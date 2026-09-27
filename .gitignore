@@ -1,0 +1,28 @@
+# Local environment values. Only sanitized examples may be committed.
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Credentials and private key material.
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+credentials*.json
+secrets/
+
+# Real business data and recovery artifacts are not repository content.
+backups/
+private-data/
+imports/private/
+uploads/
+*.dump
+*.backup
+*.sql.gz
+
+# Local logs and machine clutter.
+*.log
+Thumbs.db
+.DS_Store

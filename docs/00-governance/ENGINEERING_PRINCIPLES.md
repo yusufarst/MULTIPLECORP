@@ -1,0 +1,43 @@
+# Non-negotiable engineering principles
+
+Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+
+This document owns cross-cutting guardrails. It consolidates constraints from the [owner brief](sources/OWNER_BRIEF_2026-09-27.txt); it is not a detailed implementation design. Distinguish owner intent from technical baselines/proposals under [source governance](SOURCE_OF_TRUTH.md), and improve the latter using the [delegated authority](CHANGE_CONTROL.md#decision-authority). The title does not make every preferred mechanism immutable. Later concern specifications define mechanisms and tests in their own scope.
+
+## Integrity and historical truth
+
+- Protect critical invariants with application rules **and database guarantees**. Plan appropriate PK/FK/UNIQUE/CHECK/NOT NULL constraints and indexes; do not trust UI validation alone. Preserve business history with explicit void/reversal/correction rather than casual hard deletion. (Brief §26.)
+- Use exact decimal or integer money handling, never binary floating point. Snapshot transaction prices and issued document identity/content; changes to masters must not rewrite history. Stock changes arise from attributable business movements and an auditable immutable ledger, with a fast current balance. Overpayments require credit/refund handling. Detailed business rules remain in brief §§5, 13–16 until P2 formalizes them.
+- Identify race-sensitive stock, payment, document and state changes. Use short transactions, suitable locking/atomic operations, consistent lock order, constraints, and bounded deadlock-aware retry where justified. Never use `MAX(number) + 1` for document numbers. Test real concurrent requests. (Brief §§14, 27.)
+- Plan server-side idempotency for retry-sensitive operations; disabling a button is insufficient. Protect stale edits where needed. Slow external calls, PDF generation, uploads, image processing and other heavy work stay outside database transactions. Retryable queue work must remain safe. (Brief §§28, 31–32, 35.)
+- PostgreSQL owns business state; cache is never the only record of inventory, payment or invoice state. Critical stock mutation remains synchronous/transactional. (Brief §§30, 35.)
+
+## Authorization and security
+
+- Enforce authentication → company scope → permission → resource authorization → business preconditions on the server. Role labels and hidden buttons are not authorization. Check related-company foreign keys and private file downloads. The full capability matrix is future P5 work. (Brief §§17, 24.)
+- Security starts with design: supported password hashing, safe reset/session flows, login throttling, validation/allowed fields, CSRF, secure cookies/HTTPS, appropriate headers, escaping, parameter binding, and safe upload handling. Sensitive files require private storage and authorized retrieval. Assume a database leak is possible; hashing does not make leakage harmless. Exact controls and tests must cover brief §§24–25, 41 in P5/P8.
+- Business audit records capture actor/time/action/entity, relevant before/after values, reason and correlation where appropriate. Keep technical/security logs distinct. Do not place secrets, passwords, or tokens in either. (Brief §36.)
+
+## Secrets, public repository and production boundary
+
+- **Agents must never receive production SSH credentials, database passwords, `.env` values, API secrets, or private keys.** Agents work with development, test and staging only. The authorized human production operator retains production credentials and executes approved production operations. This is an owner requirement, not a pending implementation choice. (Brief §37.)
+- Never commit or log credentials, secret-bearing URLs, private keys, or live `.env` files. Sanitized examples contain placeholders only. Use synthetic/sanitized fixtures in the repository; keep real client documents, personal data, bank documents, signatures/stamps, payment proofs, raw migration files and backups out of this public repository. `.gitignore` is a convenience, not an access-control or secret-detection guarantee.
+- Do not request or inspect production secret files to diagnose a task. If unexpected sensitive material appears, stop exposing it, report only a redacted description/location, and have the authorized owner/operator handle containment and rotation. Do not repeat the secret in chat or commits.
+- Production forbids `migrate:fresh`, `migrate:refresh`, `db:wipe`, destructive seeds, `TRUNCATE`, `DROP DATABASE`, or careless bulk deletion. Schema changes require controlled migrations, favoring expand → backfill → switch → contract. Migration rollback is not backup recovery. (Brief §37.)
+- Plan separate application/migration/DB-administration privileges; do not expose PostgreSQL or Redis/Valkey publicly. Production debug is disabled. Plan database and file backups, offsite retention, appropriate encryption, isolated restore drills, health/disk monitoring and recovery procedures. A single VPS is not high availability; a backup without restore evidence is incomplete. (Brief §§24, 38–39.)
+
+## Maintainability, performance and experience
+
+- Current technical baseline: a modular monolith using layered MVC/actions and the intended stack. Keep the explicit exclusions of excessive/distributed architecture; exact versions and detailed design are undecided. Challenge unnecessary layers, interfaces, packages, jobs, tables and configuration. Prefer framework capabilities and the simplest mechanism satisfying established invariants; justify each abstraction by a current need, not speculative flexibility. Changes with business/cost/infrastructure impacts follow Level 2. (Brief §§18–19; mandate: Simplification.)
+- N+1 is a defect. Plan bounded queries, necessary relationships/columns, server-side catalog search/pagination, indexes, profiling and regression checks on critical pages. Do not load the full catalog. Performance claims need measured evidence and an explicit workload. (Brief §§29–30.)
+- Preserve Inertia web routes where appropriate. Version real external APIs and isolate integrations behind adapters; external events must pass internal validation and future replay/idempotency protections. SIPLAH integration is not a V1 prerequisite. (Brief §§9, 33–34.)
+- Use existing shadcn/ui primitives and keep feature logic outside them. Establish reusable operational patterns before building many pages. Design for dense readable desktop work, deliberate mobile behavior, accessibility and restrained visual treatment. The full anti-slop constraints in brief §§20–23 remain requirements for P7; P0 does not invent UI tokens or screens.
+
+## Verification and completion
+
+- Deterministic assertions, not AI confidence, establish correctness. Plan Pest/PHPUnit coverage plus UI/E2E regression (TestSprite), static/type/style/build/dependency checks, GitHub CI in a fresh environment and load tests where needed. TestSprite is not the sole layer. A future verification command belongs to execution; none is installed or claimed here. (Brief §§40–43.)
+- Every implementation unit considers correctness, authorization, company isolation, validation, constraints, N+1, race conditions, idempotency, auditability, error handling, tests, regression, security and performance. Explain non-applicability. Never weaken a valid test merely to obtain a green run. (Brief §44.)
+- Keep the required critical tests and golden business flow from brief §§41–42 in the later test plan. Record actually run checks and failures distinctly from planned checks. P0 uses document verification, not fabricated application-test results.
+- Continuous review, the final cross-module challenge, the pre-mortem and execution feedback are required by the [operating model](AGENT_OPERATING_MODEL.md#continuous-adversarial-review). Track findings in the [gap register](GAP_REGISTER.md). Improve risky technical plans directly within authority; never preserve a known failure merely to comply with an earlier proposal.
+
+When tradeoffs are necessary, the owner's order is: **data integrity → maintainability → security → correctness → operational simplicity → performance → developer convenience → architectural novelty**. Choose the simplest safe, testable, maintainable and extensible approach. (Brief §58.)
