@@ -1,6 +1,8 @@
 # Claude adapter
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+
+Approval: [APPR-001](docs/00-governance/DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
 
 Read and follow [AGENTS.md](AGENTS.md). It leads to the canonical specifications, current state, and authorized next action.
 

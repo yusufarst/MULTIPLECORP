@@ -2,3 +2,8 @@
 # Keep whitespace checks active; CR at the line ending is intentional here.
 docs/00-governance/sources/OWNER_BRIEF_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/ARCHITECT_MANDATE_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/*.pdf binary
+docs/00-governance/sources/*.png binary

@@ -1,0 +1,791 @@
+P0 has been accepted as the governance baseline.
+
+Proceed ONLY with:
+
+P1 — PRODUCT DEFINITION & V1 SCOPE
+
+Do not proceed to P2.
+Do not write application source code.
+Do not scaffold Laravel.
+Do not install packages.
+Do not start implementation.
+
+Before doing any planning work:
+
+1. Read AGENTS.md.
+2. Read CONTEXT_INDEX.
+3. Read CURRENT_STATE.
+4. Read GAP_REGISTER.
+5. Read all relevant canonical P0 documents.
+6. Treat the repository as the canonical source of truth.
+7. Treat the latest explicit Owner decisions below as binding P1 input.
+
+==================================================
+OWNER DECISIONS — EFFECTIVE NOW
+==================================================
+
+PRODUCT NAME
+
+Current product name:
+
+MultipleCorp — Company Management System
+
+Older references to:
+
+Latansa Group Multi-Company Management System
+
+refer to the SAME project.
+
+Do not rename actual legal/business entities such as:
+
+CV Latansa Jogjakarta
+
+to MultipleCorp.
+
+==================================================
+PRODUCT TARGET
+==================================================
+
+Target:
+
+Operational Production V1
+15 October 2026
+
+V1 does not mean a perfect final ERP.
+
+V1 must be mature enough to support real daily business operations safely and reliably.
+
+Priority order:
+
+1. data integrity
+2. maintainability
+3. security
+4. correctness
+5. operational simplicity
+6. performance
+7. developer convenience
+8. architectural novelty
+
+If a capability is not required for go-live:
+prefer deferral over increasing delivery risk.
+
+==================================================
+USER-FACING LANGUAGE
+==================================================
+
+ALL end-user UI in MultipleCorp must use Bahasa Indonesia.
+
+Primary users:
+
+- Super Admin / Owner
+- Admin Operasional
+
+User-facing language must be:
+
+- simple
+- natural
+- concise
+- professional
+- consistent
+- understandable by non-technical operational users
+
+Avoid unnecessarily exposing engineering terminology in English.
+
+Examples:
+
+Receivable
+→ Piutang
+
+Payment
+→ Pembayaran
+
+Goods Receiving
+→ Barang Masuk
+
+Goods Dispatch
+→ Barang Keluar
+
+Stock Movement
+→ Riwayat Stok
+
+Administrative Requirements
+→ Dokumen Administrasi
+
+Settings
+→ Pengaturan
+
+Do not use literal translations when a more natural Indonesian business term exists.
+
+Implementation-facing language may remain English:
+
+- source code
+- classes
+- functions
+- variables
+- database tables/columns
+- APIs
+- developer documentation
+
+During P7:
+create and maintain a consistent Indonesian UI terminology/glossary so all future agents use the same product language.
+
+==================================================
+RESPONSIVE / MOBILE-FIRST
+==================================================
+
+MultipleCorp must be designed as:
+
+MOBILE-FIRST
++
+DESKTOP-OPTIMIZED FOR OPERATIONAL PRODUCTIVITY
+
+Mobile-first does NOT mean desktop becomes merely an enlarged mobile layout.
+
+Mobile must be genuinely usable for:
+
+- dashboard monitoring
+- project lookup
+- project detail
+- quick actions
+- approvals
+- status monitoring
+- goods receiving/dispatch where practical
+- barcode-related workflows where practical
+- billing lookup
+- payment lookup
+- reasonable operational forms
+- product lookup
+- document lookup
+
+Desktop/web must be highly optimized for:
+
+- intensive administration
+- large datasets
+- tables
+- keyboard/mouse workflows
+- bulk data entry
+- document creation
+- inventory operations
+- managerial finance
+- reporting
+- multi-step workflows
+
+Do not simply shrink desktop tables for mobile.
+
+Design dedicated responsive patterns for:
+
+- navigation
+- tables
+- forms
+- filters
+- search
+- dialogs
+- sheets/drawers
+- detail pages
+- status presentation
+- action buttons
+- long workflows
+- barcode/scanner interaction
+
+==================================================
+VISUAL DIRECTION
+==================================================
+
+MultipleCorp must feel:
+
+professional
+modern
+elegant
+clean
+calm
+premium
+efficient
+consistent
+
+It must still behave like an operational business application.
+
+Function over decoration.
+
+UX priority for every screen:
+
+1. clarity
+2. task completion speed
+3. error prevention
+4. readability
+5. consistency
+6. responsive usability
+7. aesthetics
+
+If a design looks beautiful but slows operational work:
+treat it as a design failure.
+
+==================================================
+SHADCN/UI
+==================================================
+
+shadcn/ui is the primary UI component system.
+
+Use shadcn primitives before creating generic replacements.
+
+Examples:
+
+Button
+Input
+Select
+Dialog
+AlertDialog
+Sheet
+Table
+Tabs
+DropdownMenu
+Command
+Popover
+Tooltip
+Form
+Checkbox
+Badge
+Breadcrumb
+Pagination
+Skeleton
+
+Conceptual separation:
+
+components/ui/
+= shadcn primitives
+
+feature/business components
+= separate
+
+Do not place business logic inside generic UI primitives.
+
+Use Context7 for current framework/library documentation whenever technical planning depends on library behavior.
+
+==================================================
+ANTI AI-SLOP — STRICT
+==================================================
+
+MultipleCorp MUST NOT look like a generic AI-generated SaaS dashboard.
+
+Avoid:
+
+- putting every section inside a Card
+- excessive nested cards
+- giant rounded containers
+- pill-shaped everything
+- excessive border radius
+- decorative gradients
+- neon/glow
+- glassmorphism
+- floating decorative blobs
+- giant welcome banners
+- generic "Welcome Back!" SaaS patterns
+- oversized typography
+- excessive whitespace
+- random colorful KPI cards
+- emoji as UI decoration
+- icons on every label without purpose
+- generic illustrations
+- fake analytics
+- excessive shadows
+- excessive animation
+- parallax
+- decorative motion
+- landing-page-like application layouts
+- Dribbble-style concepts that reduce operational efficiency
+
+The design should provide:
+
+strong information hierarchy
+high information density
+without visual clutter.
+
+==================================================
+CURRENT BUSINESS DECISIONS
+==================================================
+
+1. ROLES
+
+Launch includes two built-in roles:
+
+- Super Admin / Owner
+- Admin Operasional
+
+However, backend authorization must be permission-based.
+
+In the future, the Owner may create custom roles with selected capabilities.
+
+Do not hard-code business behavior around role names only.
+
+2. CLIENTS
+
+UNY and UGM are normal clients.
+
+Use a generic model:
+
+Organization
+→ Unit / Department
+→ PIC
+
+Do NOT create:
+
+- UNY Module
+- UGM Module
+- RT UNY Module
+
+3. SIPLAH
+
+SIPLAH is a Transaction Channel.
+
+It is NOT a separate project system.
+
+V1 does not require direct SIPLAH API integration.
+
+Architecture should remain ready for future integration.
+
+4. SPJ / ADMINISTRATIVE DOCUMENTS
+
+SPJ requirements depend on each client.
+
+Do NOT create a rigid universal SPJ workflow.
+
+V1 should use flexible administrative document requirements/checklists.
+
+Do not build a complex rules engine.
+
+5. SUPPLIER COMPARISON
+
+Supplier Comparison is REMOVED from V1.
+
+Do not reintroduce it.
+
+Keep only:
+
+- Supplier Master
+- purchase history
+- previous purchase price
+- last purchase date
+- product-supplier relationships derived from history
+
+6. PURCHASE ORDER
+
+Purchase Order is optional.
+
+Purchases may proceed without a PO.
+
+7. FINANCE
+
+V1 provides managerial finance.
+
+Do NOT implement full formal accounting.
+
+Do not build:
+
+- General Ledger
+- complex Chart of Accounts
+- full debit/credit journal engine
+- balance sheet
+- depreciation
+- accounting period closing
+
+8. PROJECT
+
+Project is the operational center.
+
+Normal case:
+
+1 Project → 1 primary Company
+
+Do not complicate the normal architecture because of rare cross-company cases.
+
+9. WAREHOUSE
+
+There is one shared physical warehouse.
+
+Physical stock is one pool.
+
+However, receiving and stock movements must remain traceable to the relevant source/cost-owning company where needed.
+
+If stock purchased by Company A is later used by Company B:
+the attribution must not silently change.
+
+Design the simplest explicit and auditable V1 solution.
+
+Do not build an enterprise WMS.
+
+==================================================
+COST VS CASH-OUT
+==================================================
+
+Cost/HPP and Cash-Out are different concepts.
+
+Cost/HPP:
+used to calculate actual/direct project cost and profitability.
+
+Cash-Out:
+recorded when money is actually paid or disbursed.
+
+Do not assume that creating a purchase automatically means cash has already left the company.
+
+Do not expand this into full accounting.
+
+==================================================
+CORRECTION SEMANTICS
+==================================================
+
+Once a transaction has downstream effects:
+
+do not hard-delete it
+do not silently overwrite historical state
+
+Use appropriate mechanisms such as:
+
+revision
+void
+reversal
+return
+payment reallocation
+compensating transaction
+
+Reason + audit trail are mandatory.
+
+==================================================
+MULTI-COMPANY ACCESS
+==================================================
+
+Default deny.
+
+Super Admin / Owner:
+full company access.
+
+Admin Operasional:
+only explicitly granted companies.
+
+Every sensitive resource must pass:
+
+Authentication
+→ Company Scope
+→ Permission
+→ Resource Authorization
+→ Business Preconditions
+
+Manual manipulation of:
+
+URL
+ID
+request body
+query parameter
+
+must never expose another company's data.
+
+==================================================
+RECOVERY TARGET
+==================================================
+
+Initial V1 baseline:
+
+RPO <= 24 hours
+RTO <= 4 hours
+
+Find a simple and low-cost backup/recovery design that can meet this target.
+
+Existing VPS remains the main deployment target.
+
+==================================================
+COST CONSTRAINT
+==================================================
+
+The Owner wants additional recurring infrastructure cost to be as close as reasonably possible to:
+
+Rp0/month
+
+because the VPS and domain already exist.
+
+Design constraint:
+
+NEAR-ZERO INCREMENTAL MONTHLY INFRASTRUCTURE COST
+
+Prefer:
+
+- mature open-source technology
+- self-hosted runtime
+- existing VPS
+- local/self-hosted PDF generation
+- local barcode generation
+- self-hosted PostgreSQL
+- Nginx
+- Laravel
+- local/private file storage plus backup
+- open-source runtime dependencies
+
+Avoid mandatory paid SaaS.
+
+Do not rely on free tiers that are unsuitable for commercial/production use.
+
+Any recommendation that introduces recurring cost must document:
+
+- purpose
+- estimated recurring cost
+- free/self-hosted alternative
+- operational benefit
+- whether it is mandatory or optional
+
+Low cost must NOT weaken:
+
+- security
+- data integrity
+- authorization
+- backup
+- recovery
+
+==================================================
+ASTRA AUTONOMY
+==================================================
+
+You are not merely a documentation agent.
+
+Act as a senior architect.
+
+Actively search for:
+
+- missing requirements
+- contradictions
+- hidden dependencies
+- security weaknesses
+- authorization gaps
+- data-integrity risks
+- race conditions
+- idempotency problems
+- N+1 risks
+- performance bottlenecks
+- UX friction
+- unnecessary complexity
+- migration risks
+- backup/recovery gaps
+- deployment risks
+- maintainability problems
+- testing gaps
+- observability gaps
+- edge cases
+- potential production failures
+
+Continuously ask questions such as:
+
+What can go wrong?
+
+Which assumption may be false?
+
+What happens when two users act simultaneously?
+
+What happens when the same request is received twice?
+
+What happens after a network timeout?
+
+What happens when a queue retries?
+
+What happens if the server restarts midway?
+
+What happens when data grows 100x?
+
+What happens when an admin makes a mistake?
+
+What happens when a request is intentionally manipulated?
+
+What happens when legacy data is malformed?
+
+What happens when another agent maintains this later?
+
+What can be simplified?
+
+Do not limit yourself to these questions.
+
+Use your own reasoning to discover additional gaps.
+
+==================================================
+AUTHORITY BOUNDARY
+==================================================
+
+You may directly improve planning when the change:
+
+- preserves Owner business intent
+- does not materially expand V1 scope
+- improves security
+- improves data integrity
+- simplifies architecture
+- improves maintainability
+- improves testability
+- removes contradiction or duplication
+
+If a change would:
+
+- alter business workflow
+- alter financial meaning
+- alter stock ownership semantics
+- alter user permissions
+- add meaningful scope
+- add recurring cost
+- materially threaten the delivery date
+- remove a capability explicitly requested by the Owner
+
+mark it:
+
+OWNER_DECISION_REQUIRED
+
+For each such case provide:
+
+- the problem
+- why it matters
+- recommended solution
+- alternatives where useful
+- scope/time/risk impact
+
+Do not silently make business decisions.
+
+==================================================
+P1 OBJECTIVE
+==================================================
+
+P1 must clearly establish:
+
+- Product Definition
+- users
+- user goals
+- problems solved
+- operational outcomes
+- V1 boundaries
+- MUST SHIP
+- SHOULD SHIP
+- DEFERRED
+- OUT OF SCOPE
+- business capabilities
+- product-level acceptance criteria
+- operational success criteria
+- explicit non-goals
+- external dependencies
+- hardware dependencies
+- migration dependencies
+- cost constraints
+- unresolved Owner decisions
+
+P1 should make V1 MORE PRECISE and MORE CONTROLLED.
+
+Do not increase scope just because a feature seems technically interesting.
+
+==================================================
+P1 ADVERSARIAL REVIEW
+==================================================
+
+Before declaring P1 PASS:
+
+red-team the P1 result.
+
+Search for:
+
+- V1 scope too large for 15 October
+- hidden feature creep
+- unnecessary workflows
+- requirements without acceptance criteria
+- repeated manual input
+- UI friction
+- hidden infrastructure cost
+- unnecessary external dependencies
+- contradictory business rules
+- unclear responsibility
+- missing failure behavior
+- missing recovery assumptions
+- mobile usability problems
+- desktop productivity problems
+
+Add meaningful findings to GAP_REGISTER.
+
+If within planner authority:
+resolve directly.
+
+If business/Owner decision is required:
+mark OWNER_DECISION_REQUIRED.
+
+==================================================
+PLANNING PHASES
+==================================================
+
+Planning before implementation remains:
+
+P0 — Governance & Agent Continuity
+P1 — Product Definition & V1 Scope
+P2 — Domain Model & Business Rules
+P3 — Critical Business Workflows
+P4 — Database Architecture
+P5 — Security / Authentication / Authorization
+P6 — Concurrency / Idempotency / Performance
+P7 — UX / Information Architecture / Design System
+P8 — Testing & Quality Strategy
+P9 — Infrastructure / Deployment / Backup / Recovery
+P10 — 18-Day Implementation & Release Plan
+P11 — Build Unit / Execution Specifications
+
+After P11:
+
+PLANNING FREEZE
+→ Claude Opus 5.5 execution
+
+Do not add another planning phase without a strong reason.
+
+==================================================
+P7 FUTURE REQUIREMENT
+==================================================
+
+Record during P1 that P7 must define:
+
+- Indonesian UI terminology/glossary
+- mobile navigation
+- desktop navigation
+- responsive layout strategy
+- mobile table alternatives
+- desktop data table standard
+- responsive forms
+- dialog vs sheet behavior
+- touch target rules
+- keyboard interaction
+- barcode interaction
+- typography
+- spacing
+- radius
+- density
+- icon system
+- status system
+- loading states
+- error states
+- empty states
+- activity/history patterns
+- design tokens
+- anti AI-slop review
+
+P7 must NOT PASS until mobile-first and desktop-operational design are clearly specified.
+
+==================================================
+END-OF-P1 REPORT
+==================================================
+
+After completing P1, report:
+
+A. Product definition
+B. Primary users
+C. Core user outcomes
+D. MUST SHIP
+E. SHOULD SHIP
+F. DEFERRED
+G. OUT OF SCOPE
+H. Product acceptance criteria
+I. Operational success criteria
+J. Cost implications
+K. Gap Register changes
+L. Owner decisions required
+M. Contradictions discovered
+N. Simplifications made
+O. P1 adversarial review result
+P. P1 quality gate result
+Q. Exact next safe action
+
+STOP after P1.
+
+Do not proceed to P2 in the same turn.
+Do not start coding.

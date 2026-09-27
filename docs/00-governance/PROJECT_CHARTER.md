@@ -1,6 +1,8 @@
 # Project charter
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
 
 ## Identity and outcome
 
@@ -11,13 +13,13 @@ Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
 - Target: **operational production V1 on 2026-10-15**. Baseline planning date: 2026-09-27; approximately 18 elapsed days. This is a delivery constraint, not evidence that the scope is feasible or a production-readiness claim.
 - Decision authority: the project owner/requester, with bounded technical planning authority delegated to the planner by the latest mandate. Boundaries belong to [change control](CHANGE_CONTROL.md#decision-authority); delegation evidence is DIR-005 in the decision log.
 
-These are owner-provided facts from the [brief](sources/OWNER_BRIEF_2026-09-27.txt), opening instructions and §§1–2, 46–47. Approval of this document's new wording is still pending.
+These are owner-provided facts from the [brief](sources/OWNER_BRIEF_2026-09-27.txt), opening and §§1–2, 46–47, reaffirmed in the P1 directive. P0 governance acceptance is APPR-001; binding product clarifications are DIR-006–007. Latest DIR-008 requires full PDF/image reconciliation, source precedence and completion/DoD preservation while retaining the P1-only boundary.
 
 ## Authorized work
 
-The active assignment is **P0 — Repository Governance & Agent Continuity**, extended by the owner's architect autonomy and gap-hunting mandate. Maintain the foundation, correct unnecessary approval barriers, and identify cross-phase risks before implementation. This extension does not produce the full P1–P11 specifications.
+The active assignment is **P1 — Product Definition & V1 Scope only**. P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`. Define users, outcomes, bounded priorities, acceptance, dependencies and cost constraints; perform adversarial review and update handoff. Stop after P1. P2 and implementation are not authorized in this turn.
 
-P0 covers identity, canonical ownership, lifecycle, decisions, change control, role boundaries, continuity, safety constraints, handoff, and its quality gate. Business specifications, schema design, architecture elaboration, UX designs, roadmaps, and implementation units belong to later phases.
+P0 owns governance, authority, continuity and guardrails. P1 concern owners are indexed in CONTEXT_INDEX. Detailed domain/business-rule modeling, schema/state-machine design, UX patterns/tokens, roadmap and build units remain later-phase work.
 
 Application code, Laravel/frontend generation, dependency installation, production infrastructure, deployment, and production database changes are outside this assignment. See [role boundaries](AGENT_OPERATING_MODEL.md) and [engineering constraints](ENGINEERING_PRINCIPLES.md).
 

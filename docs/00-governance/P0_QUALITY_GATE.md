@@ -12,7 +12,7 @@ After clone: `git status --short --branch` reported `No commits yet on main...or
 
 The first sandboxed network attempt could not reach GitHub. A permitted network retry and the GitHub connector succeeded; repository access is no longer a blocker. No repository credentials were printed or copied.
 
-## Gate assessment
+## Initial gate assessment
 
 | Required check | Result | Evidence |
 | --- | --- | --- |
@@ -69,6 +69,6 @@ The initial local documentation checkpoint captures this package; CURRENT_STATE 
 
 ## Completion interpretation
 
-The table assesses the P0 documentation deliverable. It does not constitute owner approval, implementation authorization, a remote Git checkpoint, or production readiness. New documents remain REVIEW and ADR-001 remains PROPOSED.
+The table records the initial P0 documentation assessment; it was not itself owner approval, implementation authorization or production readiness. At that delivery documents were REVIEW and ADR-001 PROPOSED. The later P1 instruction explicitly accepted governance at `b425584`; APPR-001 and ADR-001 now record that acceptance. Historical verification numbers above are not current P1 file counts.
 
-No unresolved blocker to the P0 extension remains. Later-phase gates and owner decisions are tracked in GAP_REGISTER. P1 is the next planning task in [NEXT_ACTION](../07-handoff/NEXT_ACTION.md); already-delegated Level 1 improvements do not require repeated approval.
+P0 governance is accepted; later findings and owner decisions remain tracked in GAP_REGISTER. The current phase and follow-up are in the handoff. Already-delegated Level 1 improvements do not require repeated approval.

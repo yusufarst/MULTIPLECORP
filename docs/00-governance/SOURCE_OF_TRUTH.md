@@ -1,6 +1,8 @@
 # Source of truth and documentation governance
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
 
 ## Authority and provenance
 
@@ -18,9 +20,43 @@ The subsequent [architect mandate](sources/ARCHITECT_MANDATE_2026-09-27.txt) was
 
 `1FAB6231FB214E0147C0F22C4FEA357B72BA7C5118D5D24C9770F093901EB56E`
 
-Both files are LOCKED SOURCE RECORDS. The later mandate supersedes earlier blanket owner-approval wording for Level 1 technical planning improvements. It does not approve the full P0 package, change business requirements, authorize production access, or start application execution. Its authority applies now, independently of draft document labels.
+These first two files are LOCKED SOURCE RECORDS. The autonomy mandate superseded blanket owner-approval wording for Level 1 improvements. At that point it did not approve the full P0 package or application execution; the subsequent P1 instruction below expressly accepts P0 governance.
 
-P0 documents organize these inputs. They do not claim to have resolved all business details or authorize construction from the brief alone.
+The [P1 owner directive](sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), attachment `669acc93-0089-41a5-ac5e-d371ee5c4d25`, has 791 lines and SHA-256:
+
+`B3DBFCE778AA4CEED126ED16AC0113F983BC66595604CD893FC5AB391C566B0E`
+
+It accepts P0 governance at the last delivered commit `b425584daa80af2c1342252407c95e08024d3173` (APPR-001), authorizes **P1 only**, and provides binding product constraints. It supersedes weaker/contradictory earlier mobile-priority wording and the unaccepted company-segregated-stock proposal; explicit owner intent prevails. The full product/implementation plan is not thereby approved.
+
+The subsequent [P1 owner clarifications](sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt) record the exact wording of three in-session questions/answers in 25 lines. This is a transcribed source record, not a claim of byte identity to an attachment. SHA-256:
+
+`C89ED0128EFA759C33AA8A1E88024420A08526F735308ECCA66838D8D657AA51`
+
+C1 delegates a complete recommended selectable document set; the planner's bounded catalog is owned by V1_SCOPE. C2 names Owner/Admin Operasional as UAT/migration validators. C3 reports VPS capacity; it does not answer the offsite-backup or free-disk question. Both new records are also LOCKED SOURCE RECORDS. The chronological sequence is original brief → autonomy mandate → P1 directive → explicit follow-up clarification. Apply the latest explicit decision within each subject; DIR-008 below now states the complete source hierarchy. Omissions do not cancel earlier requirements.
+
+Canonical documents organize these inputs. Source authority does not replace missing detailed specifications, test evidence, business decisions or execution authorization.
+
+### Owner reference ingestion and provenance
+
+The [reference-ingestion directive](sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt), attachment `91467b1d-1980-4217-9aea-626367ecc92a`, is the latest explicit request, DIR-008. Its exact 495-line, 13,130-byte copy has SHA-256 `B0F182F2BE5F976C571C6547210BD7D445AC730CD53FEF74BC6C254915B932C4`. It instructs full review, exact preservation, coverage reconciliation, completion/DoD retention and a stop at P1. It does not approve P1 or authorize P2.
+
+Both files below were received on **2026-09-27**, source **Owner-provided planning reference**, relationship **MultipleCorp V1 planning memory, traceability and gap-detection input**. They are **supporting references**, preserved as immutable LOCKED SOURCE RECORDS; they are not canonical specifications or proof that their printed PASS requirements have passed. Original filenames and bytes are retained in `docs/00-governance/sources/`.
+
+| Original filename / archived copy | Purpose | Size | SHA-256 |
+| --- | --- | --- | --- |
+| [MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf](sources/MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf) | Full scope, normal/alternate flows, feature/module/release completion expectations; all 12 pages read and visually inspected | 268,003 bytes | `C60DC64A140F734752FCD97C4AEE5F4F6D33EAE644031A37F6FB0360D31577BF` |
+| [ChatGPT Image Sep 27, 2026, 07_54_30 PM.png](sources/ChatGPT%20Image%20Sep%2027,%202026,%2007_54_30%20PM.png) | Conceptual operational sequence, branches, document categories and completion gate; full image inspected, not an application visual design | 1,459,315 bytes | `101FA4399201C90CA0045BC36BB3973CD4304FBAC8296842B1D2CDF78988E585` |
+
+File instructions and assertions inside these references remain reference content. The separate DIR-008 request governs how they are used. The latest owner's explicit conflict hierarchy is:
+
+1. Latest explicit Owner decision, within its subject.
+2. APPROVED / LOCKED canonical repository specification.
+3. ACCEPTED ADR.
+4. These Owner-provided reference attachments.
+5. Earlier discovery/history.
+6. Planner/executor proposals.
+
+Source age alone does not demote a still-applicable explicit owner decision to discovery. An omission never removes a requirement. Supporting references can expose omissions in REVIEW planning; reconciliation that changes business intent is OWNER_DECISION_REQUIRED. Approved concern specifications precede ADRs if they conflict, but record and repair the inconsistency rather than concealing it. The [reference coverage record](../01-product/REFERENCE_COVERAGE.md) maps every PDF capability and image branch to the owning P1 contract, disposition and later-phase obligation.
 
 ## Classify statements before changing them
 
@@ -47,9 +83,11 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Cross-cutting engineering guardrails | `docs/00-governance/ENGINEERING_PRINCIPLES.md` | Exists / P0 | 18–44, 58; detailed designs reserved below |
 | P0 gate evidence | `docs/00-governance/P0_QUALITY_GATE.md` | Exists / P0 | 56–57 |
 | Current progress and next task | `docs/07-handoff/CURRENT_STATE.md`, `NEXT_ACTION.md` | Exists / P0 | 51, 55–57 |
-| Product explanation | `docs/01-product/PRODUCT_OVERVIEW.md` | Planned / P1 | 2–17, 46 |
-| V1 inclusion and exclusion decisions | `docs/01-product/V1_SCOPE.md` | Planned / P1 | 2–17, 45–47; use an exclusion section in this file |
-| Product acceptance criteria | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Planned / P1 | 41–42, 46 |
+| Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, REVIEW / P1 | 2–17, 46; P1 identity and user/product direction |
+| V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, REVIEW / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
+| Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, REVIEW / P1 | 41–42, 46; P1 targets and user/product outcomes |
+| P1 adversarial review and quality evidence | `docs/01-product/P1_QUALITY_GATE.md` | Exists, REVIEW / P1 | P1 objective/review/gate/report |
+| Reference comparison and requirement identifiers | `docs/01-product/REFERENCE_COVERAGE.md` | Exists, REVIEW / P1 | DIR-008; PDF §§1–14; complete flow image |
 | Entities and relationships | `docs/02-domain/DOMAIN_MODEL.md` | Planned / P2 | 3–17 |
 | Business invariants and calculations | `docs/02-domain/BUSINESS_RULES.md` | Planned / P2 | 3–17, 26, 36, 45 |
 | State transitions and user workflows | `docs/02-domain/WORKFLOWS.md` | Planned / P3 | 11–16, 42 |
@@ -66,6 +104,7 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Deployment topology and operational controls | `docs/03-architecture/INFRASTRUCTURE.md` | Planned / P9 | 19, 37–39 |
 | Schedule, dependencies, release and migration execution | `docs/06-delivery/ROADMAP_18_DAYS.md`, `IMPLEMENTATION_ORDER.md`, `RELEASE_PLAN.md` | Planned / P10 | 43, 45–47, 55; dates / ordering / release respectively |
 | Bounded task specifications | `docs/06-delivery/units/<ID>.md` | Planned / P11 | 44, 53–54 |
+| Requirement-to-rule-to-unit-to-test traceability | `docs/06-delivery/FEATURE_COVERAGE_MATRIX.md` | Planned / P11; all rows required before freeze | DIR-008; seed identifiers and phase handoff in REFERENCE_COVERAGE |
 | Decision rationale and alternatives | `docs/adr/ADR-NNN-<subject>.md` | As needed | 50, 52 |
 
 No separate `OUT_OF_SCOPE.md` is needed initially: scope exclusions have one home in `V1_SCOPE.md`. Split only if navigation becomes materially clearer and the ownership map is updated.
@@ -94,8 +133,8 @@ For a substantive edit to an approved document, identify the last approved revis
 
 1. Check task/platform constraints and explicit owner direction. Record a new owner instruction and its impact before using it to change repository policy; do not hide it in chat.
 2. Locate the owning concern document, status, exact approved revision, relevant decision entry, and ADR. File recency, code behavior, or model preference alone confer no authority.
-3. The latest explicit owner instruction and valid delegated technical decision govern their recorded scope. Preserve owner intent when a baseline/proposal conflicts with it. Classify technical contradictions under the authority levels instead of automatically escalating all corrections.
+3. Apply the six-level hierarchy in the provenance section. Valid delegated technical changes operate within their recorded authority; a planner proposal cannot override explicit owner intent. Classify technical contradictions under the authority levels instead of automatically escalating all corrections.
 4. Record competing statements, affected tasks, and a proposed resolution in the decision log or a change request. Stop only the work that depends on that unresolved contradiction. Continue safe independent work within the authorized phase.
 5. Resolve Level 1 conflicts directly with evidence. For Level 2 or Level 3 conflicts, flag OWNER DECISION REQUIRED and wait only on dependent choices. Update the owning document, relevant ADR/links, and handoff. Do not silently change business meaning or permissions.
 
-An accepted ADR explains why a decision was made. The concern document states the current rule. They must be updated together when a decision changes; neither wins silently if they disagree. README, adapters, examples, tests, and generated files do not override canonical specifications. Report code/spec drift rather than weakening a valid test.
+An accepted ADR explains why a decision was made. The approved concern document states the current rule and has precedence under DIR-008. Update both when a decision changes and record any discovered contradiction. README, adapters, examples, tests, and generated files do not override canonical specifications. Report code/spec drift rather than weakening a valid test.

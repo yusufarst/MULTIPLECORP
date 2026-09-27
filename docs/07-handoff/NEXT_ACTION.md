@@ -2,30 +2,20 @@
 
 Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
 
-## Next planning task
+## Stop boundary
 
-The autonomy mandate has been applied to P0. Level 1 improvements proceed directly under DIR-005; do not ask for package approval as a prerequisite to fixing technical planning weaknesses. Verify the [local checkpoint](CURRENT_STATE.md#repository-checkpoint) and arrange an authorized shared checkpoint before a different checkout takes over (GAP-002).
+The owner authorized **P1 only and explicitly prohibited P2 in the same turn**, including latest DIR-008 reference ingestion. PDF/image reconciliation is complete and P1 remains REVIEW. Do not auto-advance or start implementation. P0 governance acceptance is recorded; do not ask for it again.
 
-The next phase remains **P1 — Product Definition & V1 Scope**. This mandate-integration session did not generate those specifications. When continuing with P1, apply the existing authority delegation without new permission requests for Level 1 work. Product/scope acceptance and unresolved Level 2/3 business choices still need owner decisions; silence is not acceptance.
+## Immediate safe follow-up
 
-## Bounded P1 task
+Review [REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md), [V1_SCOPE](../01-product/V1_SCOPE.md), [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md) and the [P1 gate](../01-product/P1_QUALITY_GATE.md). Record P1 acceptance or requested changes against the delivered revision; the planner must not approve P1 on the owner's behalf. Residual choices have one home in GAP-004/006/018/022/023. Clarify financial/receivable meaning, pooled visibility, offsite resources, completion exceptions and reservation/usable-stock policy before the dependent design gates; no technical default substitutes for business authority.
 
-- Role: planner only.
-- Read: [AGENTS.md](../../AGENTS.md), [context index](../CONTEXT_INDEX.md), [current state](CURRENT_STATE.md), P0 governance, ADR-001, both owner sources, and [GAP_REGISTER](../00-governance/GAP_REGISTER.md).
-- Produce only the P1 concern documents reserved in the [ownership registry](../00-governance/SOURCE_OF_TRUTH.md#canonical-ownership-registry): product overview, V1 scope including exclusions, and product acceptance criteria.
-- Map requirements to source section IDs. Distinguish owner-confirmed requirements, planner proposals, unresolved decisions, and explicit exclusions. Include acceptance outcomes and dependency questions without prescribing a database schema or inventing unconfirmed business formulas.
-- Prioritize GAP-014 acceptance/capacity/data dependencies in P1; surface GAP-003/004/006 ownership, financial and visibility choices before later schema/policy decisions. Check feasibility against the release target and make scope tradeoffs visible for owner decision. Do not invent formulas, drop requested capabilities or weaken integrity.
-- Fix Level 1 contradictions directly; stop only choices dependent on an unresolved owner decision. Complete the phase-end adversarial review, update gaps, and record handoff/decision evidence.
-- Excluded: P2+ design, implementation units, production source, package installation, scaffolding, infrastructure and deployment.
+Owner/Admin Operasional can prepare sanitized document examples, representative opening-data structures and review availability. A human operator can provide actual free space/utilization and independent backup inventory without credentials. This is input collection, not permission for production access or a new recurring service. Arrange a shared checkpoint before another checkout takes over (GAP-002).
 
-## Owner decisions and operational inputs
+## Proposed next phase after authorization
 
-The [gap register](../00-governance/GAP_REGISTER.md) owns decision descriptions, recommendations, alternatives and impacts; do not duplicate them here. Prioritize the decisions when their phase starts:
+**P2 — Domain Model & Business Rules**, planner only, in a separately authorized task. Read AGENTS, CONTEXT_INDEX, CURRENT_STATE, all five owner directive/answer records, the two references and their coverage reconciliation, accepted P0 governance/ADR, the reviewed P1 package and GAP_REGISTER.
 
-1. P1: mandatory client acceptance examples, operator/UAT availability, execution capacity and data steward (GAP-014; migration detail in GAP-010).
-2. Before P2/P4 decisions: stock ownership and allocation (GAP-003), financial metric/payment/rounding meaning (GAP-004), shared versus company-restricted visibility (GAP-006).
-3. Before P3 transitions: corrections with downstream activity (GAP-005); before P9: recovery tolerance, resources and human operator (GAP-011/013).
+Expected outputs are the reserved `docs/02-domain/DOMAIN_MODEL.md` and `BUSINESS_RULES.md`: model concepts/invariants from accepted scope; distinguish physical pooling, source/cost attribution, allocation/usable supply, company access, actual disbursement and administrative values. Resolve or flag financial/access/completion/allocation choices before dependent design. Carry REF/IMG IDs into actual rule references, preserving document issuer truth, all completion conditions and contextual service/existing-stock/drop-ship behavior without inventing formulas. P11 must eventually complete FEATURE_COVERAGE_MATRIX; do not create build units now.
 
-Use only sanitized examples/aggregate counts for planning; do not collect live business records or secrets into the public repository. Recommendations in the register are not adopted business rules until the owner decides.
-
-Detailed architecture mechanisms, framework versions, import mappings and runtime tests remain future design/execution work. The final cross-module challenge and pre-mortem must be evidenced before freeze/execution as defined in the operating model; this initial risk scan does not replace them.
+Exclude P3 state-machine elaboration, P4 schema/migrations, P7 UI design, P10 scheduling and P11 implementation units, production source, packages, scaffolding and infrastructure. Apply Level 1 improvements without repeated approval, conduct the phase-end adversarial review and update handoff. This paragraph specifies a future bounded task; no P2 file has been created or P2 work performed here.

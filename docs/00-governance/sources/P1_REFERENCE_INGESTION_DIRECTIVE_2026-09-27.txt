@@ -1,0 +1,495 @@
+The two attachments in this conversation are Owner-provided reference materials for MultipleCorp:
+
+1. MultipleCorp Scope, Flow & Definition of Done reference PDF
+2. MultipleCorp V1 — Golden Operational Flow image
+
+Treat these files as IMPORTANT PROJECT REFERENCE INPUT.
+
+They are intended to preserve the Owner's expected:
+
+- product scope
+- operational flow
+- project lifecycle
+- feature coverage
+- completion semantics
+- Definition of Done
+- release expectations
+- critical business behavior
+
+==================================================
+IMPORTANT SOURCE HIERARCHY
+==================================================
+
+Do NOT blindly treat the attachments as higher authority than every repository decision.
+
+Use this precedence when information conflicts:
+
+1. Latest explicit Owner decision
+2. APPROVED / LOCKED canonical repository specification
+3. ACCEPTED ADR
+4. These Owner-provided reference attachments
+5. Earlier discovery/history
+6. Planner/executor proposals
+
+If an attachment reveals something missing from the canonical planning,
+do not ignore it.
+
+Reconcile it according to governance.
+
+If reconciliation would change business intent:
+mark OWNER_DECISION_REQUIRED.
+
+==================================================
+FIRST TASK — INGEST THE REFERENCES
+==================================================
+
+Read BOTH attachments completely.
+
+Do not rely only on filenames or thumbnails.
+
+Extract and understand:
+
+A. Full V1 scope/capabilities
+B. Golden operational flow
+C. Branching conditions
+D. Project completion gate
+E. Feature Definition of Done
+F. Module completion criteria
+G. V1 release completion criteria
+H. Security/integrity expectations
+I. Business correction behavior
+J. Inventory behavior
+K. Billing/payment behavior
+L. Document behavior
+M. Roles/access behavior
+N. UI/UX expectations
+O. Any implicit dependencies or gaps
+
+The flow image is a conceptual reference.
+
+Do NOT attempt to reproduce its visual styling as application UI.
+
+Use it to understand sequence, decisions, dependencies, and operational
+relationships.
+
+==================================================
+PRESERVE THE FILES AS PROJECT MEMORY
+==================================================
+
+Store exact copies of these reference inputs in an appropriate
+repository reference/source location.
+
+Prefer an existing canonical source/archive location if P0 already
+defines one.
+
+If no suitable location exists, use something conceptually similar to:
+
+docs/00-governance/sources/
+
+or
+
+docs/reference-input/
+
+Do NOT create a duplicate source hierarchy unnecessarily.
+
+Preserve the original files without editing them.
+
+Add lightweight provenance metadata recording:
+
+- filename
+- source: Owner-provided planning reference
+- date received
+- purpose
+- relationship to MultipleCorp
+- whether it is canonical or supporting reference
+- checksum/hash if the existing governance process uses hashes
+
+Do not convert the attachment itself into the sole source of truth.
+
+==================================================
+REFERENCE PURPOSE
+==================================================
+
+These attachments should serve as:
+
+REFERENCE MEMORY
++
+TRACEABILITY INPUT
++
+GAP-DETECTION INPUT
+
+They should help future planners and executors answer:
+
+"What capabilities did the Owner expect?"
+
+"What is the intended end-to-end operational flow?"
+
+"What does DONE actually mean?"
+
+"What must not disappear between planning and implementation?"
+
+==================================================
+RECONCILE WITH CURRENT P1
+==================================================
+
+P1 currently exists in REVIEW state.
+
+Before P1 is approved:
+
+compare the attachments against:
+
+- PRODUCT_OVERVIEW
+- V1_SCOPE
+- ACCEPTANCE_CRITERIA
+- GAP_REGISTER
+- DECISION_LOG
+- CURRENT_STATE
+- NEXT_ACTION
+- existing Owner clarification sources
+- any current Feature Coverage Matrix
+
+Perform a coverage comparison.
+
+For every capability shown in the PDF or operational flow determine:
+
+- already represented correctly
+- represented but incomplete
+- missing
+- contradicted
+- intentionally removed by Owner
+- explicitly deferred by Owner
+- requires Owner decision
+
+Do NOT silently omit anything merely because the implementation window
+is 18 days.
+
+==================================================
+FEATURE COVERAGE TRACEABILITY
+==================================================
+
+Ensure every Owner-required capability eventually has traceability:
+
+Requirement
+→ Canonical specification
+→ Business workflow/rule
+→ Build Unit
+→ Acceptance criteria
+→ Required test
+
+If the Feature Coverage Matrix does not yet exist because its creation
+belongs to a later planning phase, record the requirement now and
+ensure it is created at the appropriate phase.
+
+Do not let any attachment requirement disappear before P11.
+
+==================================================
+GOLDEN OPERATIONAL FLOW
+==================================================
+
+Treat the attached flow diagram as an important reference for the
+normal operational path.
+
+Conceptually validate the sequence:
+
+LOGIN
+→ AUTHENTICATION
+→ COMPANY SCOPE / PERMISSION
+→ DASHBOARD
+→ CREATE OR OPEN PROJECT
+→ SELECT COMPANY
+→ SELECT CLIENT
+→ SELECT UNIT / PIC
+→ SELECT CHANNEL
+→ PRODUCTS / SERVICES
+→ PRICING / TAX / VALUE
+→ QUOTATION
+→ REVISION IF REQUIRED
+→ APPROVAL
+→ STOCK / PROCUREMENT DECISION
+→ PURCHASE IF REQUIRED
+→ OPTIONAL PO
+→ WAREHOUSE OR DROP-SHIP
+→ RECEIVING / BARCODE / SERIAL WHEN APPLICABLE
+→ DELIVERY
+→ PARTIAL OR FULL DELIVERY
+→ DELIVERY DOCUMENTS
+→ TRANSACTION DOCUMENTS
+→ INVOICE
+→ ADMINISTRATIVE DOCUMENTS / SPJ
+→ BILLING
+→ RECEIVABLE
+→ PAYMENT
+→ PARTIAL PAYMENT LOOP WHEN REQUIRED
+→ COMPLETION VALIDATION
+→ PROJECT COMPLETED
+→ DASHBOARD / REPORTS UPDATED
+
+This is the GOLDEN NORMAL FLOW.
+
+However:
+do not force every project through irrelevant steps.
+
+Examples:
+
+- service-only project may not require warehouse movement
+- drop-ship should not fake warehouse receiving
+- PO is optional
+- required administrative documents vary by client
+- SIPLAH is a transaction channel
+- partial delivery/payment creates controlled loops
+- correction flows must preserve history
+
+Model optionality explicitly rather than creating fake transactions.
+
+==================================================
+PROJECT COMPLETION GATE
+==================================================
+
+Use the attachment as a reference for the rule that a project is not
+"Completed" merely because goods were delivered.
+
+Planning must define a reliable completion gate.
+
+At minimum evaluate:
+
+- required fulfillment completed
+- deliveries completed or formally closed
+- required documents issued
+- required administrative documents complete or validly waived
+- billing completed when applicable
+- receivable resolved or formally handled
+- no unresolved stock correction
+- no unresolved payment correction
+- required audit history exists
+
+Refine this during domain/workflow planning if a better implementation
+preserves Owner intent.
+
+==================================================
+DEFINITION OF DONE
+==================================================
+
+Preserve the core principle from the PDF:
+
+A feature is NOT DONE merely because the UI works.
+
+Every Build Unit must explicitly evaluate where applicable:
+
+1. Business correctness
+2. UI/UX correctness
+3. Backend behavior
+4. Database integrity
+5. Security / Authorization
+6. Concurrency / Idempotency / Integrity
+7. Performance / N+1
+8. Automated verification
+
+The executor must not mark work complete with statements such as:
+
+"feature implemented"
+"looks good"
+"works on screen"
+
+without deterministic verification.
+
+==================================================
+CRITICAL EXAMPLES TO PRESERVE
+==================================================
+
+Inventory dispatch is not DONE unless issues such as these are covered:
+
+- authorization
+- company scope
+- barcode correctness
+- project validity
+- quantity validation
+- sufficient stock
+- duplicate submission
+- concurrent dispatch
+- stock movement
+- audit
+- reversal/correction
+- N+1
+- responsive UI
+- backend tests
+- concurrency tests
+- regression
+
+Payment is not DONE unless issues such as these are covered:
+
+- normal payment
+- partial payment
+- full payment
+- overpayment
+- invalid amounts
+- authorization
+- company isolation
+- duplicate request
+- idempotency
+- correction/reallocation
+- audit
+- receivable calculation
+- proof upload
+- tests
+
+Invoice is not DONE unless issues such as these are covered:
+
+- correct project data
+- correct quantity/value snapshots
+- company identity
+- concurrency-safe numbering
+- PDF/print
+- issued locking
+- revision
+- void
+- history
+- authorization
+- company isolation
+- tests
+
+These examples are not exhaustive.
+
+Use architectural reasoning to discover additional cases.
+
+==================================================
+ASTRA IS ALLOWED TO IMPROVE THE SOLUTION
+==================================================
+
+These reference materials describe desired capability and behavior.
+
+They do NOT prevent you from finding a simpler or better build
+solution.
+
+You are encouraged to:
+
+- simplify implementation
+- reduce unnecessary abstractions
+- improve build sequencing
+- identify reusable patterns
+- reduce duplicated logic
+- use Laravel/framework capabilities effectively
+- reduce number of screens where workflows can be combined cleanly
+- simplify data entry
+- reduce admin clicks
+- improve mobile workflow
+- improve desktop productivity
+- identify safer concurrency models
+- improve document architecture
+- improve testing automation
+- improve maintainability
+
+However:
+
+SIMPLIFY IMPLEMENTATION
+≠
+REMOVE CAPABILITY
+
+Do not reduce Owner-required business functionality unless explicitly
+approved by the Owner.
+
+==================================================
+LOOK FOR A BETTER BUILD PATH
+==================================================
+
+Using the attachments plus the repository, actively search for ways to
+make execution easier for Claude Opus 5.5.
+
+Consider:
+
+- shared reusable business Actions
+- reusable document engine
+- reusable form/table patterns
+- reusable authorization patterns
+- reusable audit mechanism
+- centralized money/value handling
+- consistent status/state models
+- database constraints that eliminate application complexity
+- reusable idempotency mechanism
+- reusable company scoping
+- reusable document numbering
+- reusable project activity timeline
+- common validation conventions
+- component reuse through shadcn/ui
+- automation of repetitive testing
+
+Do not introduce overengineering merely for reuse.
+
+The goal is:
+
+FULL OWNER-REQUIRED CAPABILITY
+with
+THE SIMPLEST SAFE IMPLEMENTATION.
+
+==================================================
+GAP HUNTING
+==================================================
+
+While studying the attachments, actively identify anything that the
+current planning may have missed.
+
+Especially inspect cross-module boundaries:
+
+Project ↔ Company
+Project ↔ Client
+Project ↔ Product
+Project ↔ Purchase
+Purchase ↔ Inventory
+Inventory ↔ Delivery
+Delivery ↔ Document
+Document ↔ Invoice
+Invoice ↔ Billing
+Billing ↔ Payment
+Payment ↔ Profitability
+SPJ ↔ Client Requirements
+SIPLAH ↔ Project
+Permissions ↔ Company Scope
+Corrections ↔ Audit
+Migration ↔ New Data Model
+
+Record meaningful findings in GAP_REGISTER according to existing
+governance.
+
+==================================================
+CURRENT P1 STATE
+==================================================
+
+Do not automatically approve P1 merely because these attachments were
+added.
+
+P1 is currently REVIEW.
+
+After ingesting and reconciling these references:
+
+- update P1 documents if needed
+- update source/provenance tracking
+- update GAP_REGISTER if needed
+- update acceptance criteria if needed
+- update CURRENT_STATE
+- update NEXT_ACTION
+- rerun P1 quality checks
+
+Do NOT proceed to P2 until P1 is internally consistent.
+
+==================================================
+END REPORT
+==================================================
+
+After processing the attachments, report:
+
+A. Confirmation that both attachments were fully reviewed
+B. Repository location where exact reference copies were preserved
+C. Provenance/source record created
+D. Capabilities confirmed
+E. Missing capabilities discovered
+F. Existing P1 items strengthened
+G. Contradictions found
+H. New Gap Register items
+I. OWNER_DECISION_REQUIRED items
+J. Simplifications/build improvements identified
+K. Whether the Golden Flow is fully represented in P1
+L. Whether Definition of Done principles are preserved
+M. P1 quality-gate result
+N. Exact next safe action
+
+Do NOT start P2.
+Do NOT write application code.

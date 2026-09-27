@@ -1,0 +1,25 @@
+OWNER CLARIFICATIONS — P1
+Recorded: 2026-09-27
+Provenance: Owner replies to the three planning questions during the P1 session.
+The questions and answers below preserve the supplied wording. This is a source record, not an implementation specification.
+
+QUESTION 1
+Untuk go-live 15 Oktober, selain penawaran, PO, surat jalan/faktur pengiriman, nota, kuitansi, dan invoice, dokumen apa yang wajib dihasilkan otomatis oleh sistem—misalnya BAST atau SPK? Dokumen lain dapat direncanakan sebagai lampiran yang diunggah, kecuali Anda menetapkannya wajib otomatis.
+
+OWNER ANSWER 1
+Yang lengkap sesuai rekomendasimu karena kan nanti owner atau admin operasional bisa memilih sendiri dokumen mana saja yg diperlukan
+
+QUESTION 2
+Siapa yang akan memvalidasi alur operasional/UAT dan data migrasi, serta berapa waktu yang tersedia untuk review sebelum 15 Oktober? Satu orang boleh memegang kedua tanggung jawab.
+
+OWNER ANSWER 2
+Owner dan admin operasional biar lebih cepat
+
+QUESTION 3
+Apakah sudah tersedia tempat backup di luar VPS tanpa biaya tambahan, dan berapa kapasitas VPS yang tersedia (RAM serta ruang disk kosong)? Cukup informasi kapasitas; jangan kirim kredensial.
+
+OWNER ANSWER 3
+4 vCPU core
+16 GB RAM
+200 GB NVMe disk space
+16 TB bandwidth

@@ -1,6 +1,8 @@
 # Agent operating model
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
 
 ## Responsibilities and limits
 
@@ -16,7 +18,7 @@ The brief identifies Astra as initial planner and Claude Opus 5.5 as initial exe
 
 ## Execution eligibility
 
-Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. The current extension permits proactive risk discovery across planned areas and direct Level 1 corrections, without generating all later-phase specifications. A review label is not a reason to seek new permission for those corrections.
+Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. P0 governance is accepted. The current assignment authorizes P1 only; proactive risk discovery and Level 1 corrections remain allowed without generating P2+ specifications. A review label is not a reason to seek new permission for those corrections.
 
 Before application implementation, the repository must identify the owner-authorized execution phase/planning freeze, a bounded task, its APPROVED/LOCKED specification and dependencies, and approval evidence under the [document lifecycle](SOURCE_OF_TRUTH.md#document-lifecycle). An approved P0 governance file alone is insufficient.
 
@@ -28,7 +30,9 @@ Do not introduce dependencies without justification, refactor unrelated modules,
 
 Every future implementation unit must provide the fields required by brief §54: ID/title/purpose/context; scope and exclusions; dependencies; business-rule references; data impact; authorization/validation; concurrency/idempotency; audit; UI/routes; errors; acceptance criteria and deterministic tests; performance; definition of done.
 
-Specify WHAT must hold, WHY, constraints, important failure cases, acceptance criteria, protections and deterministic tests. Leave routine function names, internal code organization and implementation details to the executor within the approved architecture. Prefer references over copied business rules. Use `N/A — reason` where a concern does not apply. Do not create the units during P0.
+Specify WHAT must hold, WHY, constraints, important failure cases, acceptance criteria, protections and deterministic tests. Leave routine function names, internal code organization and implementation details to the executor within the approved architecture. Prefer references over copied business rules. Use `N/A — reason` where a concern does not apply. Do not create build units before P11.
+
+DIR-008 additionally requires the full Requirement → Canonical specification → Business workflow/rule → Build Unit → Acceptance criteria → Required test chain. Carry the identifiers from [REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md#traceability-handoff-and-non-loss-gate) through later planning; P11 must create FEATURE_COVERAGE_MATRIX before freeze, covering original owner requirements as well as references. The interim [feature/module/release obligations](../01-product/ACCEPTANCE_CRITERIA.md#feature-module-and-release-completion-obligations) preserve eight dimensions of DoD for P8/P11. A missing tool or failed check is not N/A; a working UI alone is not DONE.
 
 ## Continuous adversarial review
 

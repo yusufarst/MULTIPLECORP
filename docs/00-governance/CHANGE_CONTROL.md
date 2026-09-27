@@ -1,10 +1,12 @@
 # Decision authority, change control and ADR rules
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
 
 ## Decision authority
 
-Authority comes from the latest [architect mandate](sources/ARCHITECT_MANDATE_2026-09-27.txt), recorded as DIR-005. This delegation is effective now; REVIEW metadata is not an approval barrier to using it. Classify owner intent, technical baselines and proposals under [source governance](SOURCE_OF_TRUTH.md#classify-statements-before-changing-them).
+Authority comes from the [architect mandate](sources/ARCHITECT_MANDATE_2026-09-27.txt), reaffirmed by the [P1 directive](sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), recorded as DIR-005/006. This delegation is effective; REVIEW metadata is not an approval barrier to using it. Classify owner intent, baselines and proposals under [source governance](SOURCE_OF_TRUTH.md#classify-statements-before-changing-them).
 
 **Level 1 — improve directly.** The planner may improve planning without requesting owner approval when business behavior and approved scope remain intact and the change simplifies, removes duplication, resolves technical contradictions, clarifies documentation, improves sequencing, or strengthens security, integrity, testability, maintainability, observability or recovery. Add missing technical safeguards. Record meaningful changes in the owning document and a short decision/gap entry; use an ADR only for significant architectural tradeoffs. No separate change-request form is needed for a routine improvement.
 
@@ -51,4 +53,4 @@ Record who decided, date, owner instruction or delegated authority, exact files/
 
 Owner approval and delegated Level 1 technical acceptance are distinct. Do not infer owner acceptance from silence, a status label or a planning request. Conversely, do not repeatedly ask for permission already granted by DIR-005. Document status does not prevent ongoing authorized planning improvements.
 
-Initial product/scope acceptance, planning freeze and execution authorization remain distinct gates. No such gate is claimed complete by this mandate integration.
+P0 governance acceptance is APPR-001. Product/scope acceptance, planning freeze and execution authorization remain distinct gates; none is completed merely by authorizing P1 drafting.
