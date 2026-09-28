@@ -54,7 +54,7 @@ APPR-002 approves the P1 product/scope baseline. Remaining OPEN technical/eviden
 
 - **Description/evidence:** At the start of this extension all P0 files were untracked on unborn `main`; no remote checkpoint contained them. Losing the workstation or switching agents to another checkout would lose the canonical context.
 - **Impact:** Lost decisions, conflicting baselines or agents accidentally rebuilding the plan from chat.
-- **Mitigation/residual:** Local P0 checkpoint `b425584` exists and was accepted. Preserve P1 in a further documentation checkpoint after validation. Share an identified commit through an authorized repository workflow before remote handoff; receiver confirms commit plus CURRENT_STATE. No push was performed; a local commit alone is not an off-machine copy.
+- **Mitigation/residual:** Local P0 checkpoint `b425584` is accepted; approved P1 checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` now exists with 25 reviewed files. Read-only inspection on 2026-09-28 confirms intended origin is accessible but has no advertised refs; the checkpoint remains unpublished. Share an identified commit through an authorized repository workflow before remote handoff; receiver confirms commit plus CURRENT_STATE. No push was performed; a local commit alone is not an off-machine copy.
 - **Owner:** Planner maintains local checkpoint; owner/repository maintainer controls publication as needed. **Affected:** P0 handoff and every agent replacement. **Residual/closure:** See CURRENT_STATE for actual commit/share state; keep OPEN until a receiving checkout can obtain the same checkpoint.
 
 ## GAP-003 — One stock pool must preserve source and consuming-company attribution

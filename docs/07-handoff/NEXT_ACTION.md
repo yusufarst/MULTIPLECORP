@@ -8,13 +8,20 @@ APPR-002 explicitly approves the three P1 product specifications. DIR-014 explic
 
 ## Immediate safe follow-up
 
-The Owner's latest DIR-014 authorization is received and preserved. Reverify the actual tree, keep the valid APPR-002 status changes and stage only the reviewed **25-file** P1 package: 20 tracked modifications and five source archives. The extra file compared with the previous 24 is the latest authorization source. Inspect the complete staged diff and verify exact staged source bytes and absence of unrelated files, secrets, credentials, .env/private keys, accidental binaries/temp, implementation/P2 or destructive changes. Then create `docs: approve P1 product scope baseline`.
+P1 approval checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` is complete locally: 25 reviewed files, staged diff/source-byte checks passed, post-commit index and tree clean. Remote diagnosis is complete in CURRENT_STATE. This handoff/evidence continuation changes no business specification.
 
-If automatic review blocks staging or commit again, do not retry through variants or another path. Preserve all changes, record the exact blocked action/reason and report the minimum additional authorization/action; STOP as required by DIR-014 §8. The two prior rejections are historical facts, not failed executed Git commands.
+**Stop after reporting.** A future ordinary initial push requires separate Owner authorization and a fresh remote-ref check. Proposed commands for that future authorized action only:
 
-After the commit succeeds, inspect origin URL, repository accessibility, default branch, remote refs, local tracking configuration and history relationship to explain `origin/main [gone]`. Remote inspection is read-only. Do not force-push, recreate remote history, change configuration or push. Record the actual checkpoint/diagnosis and report the safest proposed action. Confirm actual Git state before any future action.
+```text
+git ls-remote --symref origin
+git push --set-upstream origin main
+```
 
-Owner/Admin and the human operator may supply sanitized document/data examples, review availability and measured VPS local capacity for future gates. No offsite destination or production credentials are needed. Local backup implementation/restore/disk evidence remains P9; accepted host-loss exposure remains explicit.
+Run the second command only if separately authorized and the fresh inspection still shows the expected empty remote/no conflicting history. Do not force-push or alter origin. If refs appear or conflict, stop and report before choosing another action. The proposed push command has not been executed.
+
+Tracking already targets origin/main; that ref is absent because the accessible remote has no branches. Changing tracking alone cannot publish the baseline. After authorized synchronization, verify remote/local identity and receiving-checkout availability (GAP-002), then obtain the bounded P2 authorization.
+
+Owner/Admin and the operator may prepare sanitized document/data examples, review availability and measured VPS local capacity for future gates. No offsite destination or production credentials are needed.
 
 ## Proposed next phase after authorization
 

@@ -14,14 +14,15 @@ Status: REVIEW | Updated: 2026-09-28 | Owner: Planning
 
 - DIR-011 final Owner decisions incorporated: separate five financial concepts and billing activation; permissioned physical availability separated from company business/financial data; Admin eligible N/A and Owner-only audited completion override; confirmed-demand reservation and availability invariant; explicit auditable inter-company source/cost allocation. All four business choices are resolved; technical design/evidence remains later-phase work.
 
-## Repository checkpoint
+## Repository checkpoint and remote diagnosis
 
-- Repository: `https://github.com/yusufarst/MULTIPLECORP.git`; local branch `main`. Publication/accessibility facts require the post-checkpoint inspection ordered by DIR-013.
-- Parent HEAD at approval entry: `20f8ef7f2058fd99a784a4d9088a774715769470`; P0 baseline `b425584daa80af2c1342252407c95e08024d3173`. All 23 recovered pending files matched the reviewed state; no reset/discard occurred.
-- APPR-002 records exact pre-approval hashes. The checkpoint carrying this lifecycle update is identified by `git log -1 --format='%H %s' --grep='^docs: approve P1 product scope baseline$'` once created. At preparation: 20 tracked modifications, four untracked sources, empty index; `main...origin/main [gone]`. Do not report it committed before Git confirms success.
-- Package: 35 files, including ten Owner text records and two exact PDF/image references. No domain/schema/application/P9 design files were introduced.
-- DIR-014 now explicitly authorizes the verified local commit after the prior execution-gate rejections; preserve the factual history below. Current pre-stage inventory is 20 tracked modifications plus five untracked sources (25 pending files); index empty. Remote diagnosis remains after commit. No push or remote-configuration/history change is authorized; GAP-002 stays OPEN until the intended receiving checkout can obtain the checkpoint.
-- Prior to DIR-014, automatic approval review rejected both staging requests before execution: it treated the attachment-based Git authorization as insufficient/untrusted for the earlier post-recovery permission condition. The source was re-read and hash-verified before the second request; it was still rejected. No staging or commit occurred; index remains empty, HEAD remains `20f8ef7f2058fd99a784a4d9088a774715769470`, and 20 tracked modifications plus four untracked sources are preserved. The Owner subsequently supplied DIR-014 explicitly authorizing the verified local actions and requiring a stop if rejected again; P1 business approval remains valid.
+- **P1 APPROVED BASELINE CHECKPOINT:** `a740ed2ed893539bc02c4f95b538f90ae7ceb319`, message `docs: approve P1 product scope baseline`, created locally on 2026-09-28. Exactly **25 files** committed after complete staged-diff and exact blob/source-byte checks: 20 documentation/guard updates plus five Owner sources. Parent `20f8ef7f2058fd99a784a4d9088a774715769470`; accepted P0 `b425584daa80af2c1342252407c95e08024d3173` is an ancestor.
+- Immediately after that checkpoint, working tree and index were clean. This subsequent handoff/evidence update records the actual commit and remote inspection without changing approved product files or archives. Resolve the current tip with `git rev-parse HEAD`; no self-referential hash is invented.
+- Package: **35 files**, including ten Owner text records and two exact reference binaries. No P2/application/deployment files.
+- **Origin verified read-only:** `https://github.com/yusufarst/MULTIPLECORP.git`, accessible, public and not archived. Both `git ls-remote --symref origin` and `git ls-remote --heads origin` exited 0 with empty results. GitHub metadata reports default branch name `main` and size 0; Git reports remote HEAD branch unknown because no branch exists.
+- **Why [gone]:** Tracking already says `branch.main.remote=origin`, `branch.main.merge=refs/heads/main`; neither remote main nor local refs/remotes/origin/main exists. This is an empty remote/unborn target, not proof a previously published branch was deleted.
+- **History:** No advertised remote branch/tag/HEAD or independent active history conflicts with the local linear P0→P1 history. A future ordinary initial push can establish main and refresh tracking if refs remain unchanged; reinspect immediately before an authorized write.
+- **Publication boundary:** No push, force, fetch, remote/tracking configuration change, settings edit, reset or rebase. Earlier automatic rejections remain historical; DIR-014 staging and local commit succeeded. GAP-002 stays OPEN until a receiving checkout can obtain the checkpoint.
 
 ## Verification and approval state
 
@@ -39,4 +40,4 @@ Status: REVIEW | Updated: 2026-09-28 | Owner: Planning
 - Requirement inventory now covers 18 CAP groups, 23 AC, 14 document types and six OS outcomes. GAP-024 tracks the later rule/workflow/unit/test chain and P11 FEATURE_COVERAGE_MATRIX; its existence is not claimed now.
 - Preserve P1 boundaries: no P2 modeling, state machines, schema, exact costing formulas, UX token design, roadmap, build units, installation or code in this turn.
 
-Next safe action: under DIR-014, validate and stage the reviewed 25-file package, inspect the complete staged diff, create the local checkpoint and then diagnose origin read-only as described in [NEXT_ACTION](NEXT_ACTION.md). If staging/commit is rejected again, record the exact action/reason and STOP. No push or P2.
+Next safe action: report the completed local checkpoint and read-only remote diagnosis, then await separate Owner authorization for safe synchronization under [NEXT_ACTION](NEXT_ACTION.md). Stop here; no push or P2.

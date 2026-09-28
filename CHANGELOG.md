@@ -73,3 +73,9 @@ This is a change summary; current state and approval authority live in their [ow
 - Preserved latest Owner authorization DIR-014 as the twelfth exact source record; reaffirmed APPR-002 without changing product content or evidence statuses.
 - Verified requested documents, complete unstaged diff and empty index; normalized lifecycle changes reproduce all three approved pre-approval hashes. Previous work is intact.
 - Updated continuity for the 25-file checkpoint inventory, required complete staged review, commit-before-remote order and strict stop-on-another-rejection rule. No push, remote change, P2 or code authorized.
+
+## Unreleased — 2026-09-28, checkpoint and origin verification evidence
+
+- Created approved P1 checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` with the exact requested message and 25 reviewed files; staged blobs/source bytes matched reviewed files and post-commit index/tree were clean.
+- Read-only origin inspection confirmed intended accessible public repository with no advertised refs. Default metadata is main but no branch exists, explaining origin/main [gone]. No push, fetch, remote change, reset or rebase.
+- Recorded SHA, diagnosis and conditional future initial-push recommendation in handoff/evidence. GAP-002 remains OPEN for publication/receiving-checkout proof; no product/source content change or P2.
