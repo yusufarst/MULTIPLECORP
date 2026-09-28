@@ -1,8 +1,8 @@
 # Project charter
 
-Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
 
 ## Identity and outcome
 
@@ -14,6 +14,8 @@ Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 a
 - Decision authority: the project owner/requester, with bounded technical planning authority delegated to the planner by the latest mandate. Boundaries belong to [change control](CHANGE_CONTROL.md#decision-authority); delegation evidence is DIR-005 in the decision log.
 
 These are owner-provided facts from the [brief](sources/OWNER_BRIEF_2026-09-27.txt), opening and §§1–2, 46–47, reaffirmed in the P1 directive. P0 governance acceptance is APPR-001; binding product clarifications are DIR-006–007. Latest DIR-008 requires full PDF/image reconciliation, source precedence and completion/DoD preservation while retaining the P1-only boundary.
+
+Subsequent DIR-009 expressly chooses same-production-VPS backups only for V1 and accepts the specified host/storage-loss exposure (RISK-001). Recovery targets apply only while VPS/local backup data remain recoverable. The local control/disk-safety obligations are owned by V1_SCOPE; this policy update stays within P1 and does not authorize P2 or implementation.
 
 ## Authorized work
 

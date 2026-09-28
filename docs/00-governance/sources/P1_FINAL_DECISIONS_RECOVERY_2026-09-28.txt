@@ -1,0 +1,375 @@
+The previous FINAL P1 OWNER DECISIONS reconciliation was interrupted because the Codex/Work usage limit was reached.
+
+DO NOT restart P1 from scratch.
+DO NOT undo, reset, discard, or overwrite the existing local changes.
+DO NOT proceed to P2.
+DO NOT write application code.
+DO NOT stage, commit, or push anything until the interrupted state has been verified.
+
+Treat the current working tree as POTENTIALLY PARTIAL.
+
+==================================================
+RECOVERY FIRST
+==================================================
+
+Before making any new substantive planning changes:
+
+1. Read AGENTS.md.
+2. Read CONTEXT_INDEX.md.
+3. Read CURRENT_STATE.md.
+4. Read NEXT_ACTION.md.
+5. Read GAP_REGISTER.md.
+6. Read DECISION_LOG.md.
+7. Read SOURCE_OF_TRUTH.md.
+8. Read V1_SCOPE.md.
+9. Read PRODUCT_OVERVIEW.md.
+10. Read ACCEPTANCE_CRITERIA.md.
+11. Read REFERENCE_COVERAGE.md.
+12. Read P1_QUALITY_GATE.md.
+13. Inspect git status.
+14. Inspect the complete git diff.
+15. Identify every file modified during the interrupted run.
+16. Determine exactly which parts of the Owner-decision reconciliation were completed and which may still be incomplete.
+17. Verify that no file is truncated, partially rewritten, or internally inconsistent.
+
+Do not assume that a modified file is complete merely because it exists.
+
+==================================================
+OWNER DECISIONS THAT MUST BE PRESERVED
+==================================================
+
+The interrupted run was reconciling these FINAL Owner business decisions:
+
+--------------------------------------------------
+GAP-004 — FINANCIAL SEMANTICS
+--------------------------------------------------
+
+MultipleCorp must distinguish:
+
+- Sales / Transaction Value
+- Active Receivable
+- Cash-In
+- Cost / HPP
+- Cash-Out
+
+ISSUED / FINAL INVOICE:
+- records the agreed sales/transaction value
+- does not mean payment has been received
+- does not automatically create Cash-In
+
+BILLED / DITAGIHKAN:
+- once an issued invoice is explicitly marked as billed,
+  the unpaid amount becomes an active receivable
+- store billed_at
+- store due_date
+- aging follows the finalized billing/due-date semantics
+
+Issued but not yet billed invoices remain identifiable as:
+
+BELUM DITAGIHKAN
+
+PAYMENT:
+- represents actual money received
+- reduces receivable
+- creates Cash-In
+- supports partial payment
+- full payment
+- overpayment
+- audited correction/reallocation
+
+COST / HPP:
+- actual/direct economic cost attributed to project/transaction
+- used for managerial profitability
+
+CASH-OUT:
+- actual money disbursed
+- purchase creation does not automatically mean cash has left
+
+V1 remains managerial finance.
+Do NOT turn this into full formal accounting.
+
+--------------------------------------------------
+GAP-006 — CROSS-COMPANY VISIBILITY
+--------------------------------------------------
+
+Default deny.
+
+SUPER ADMIN / OWNER:
+- full company access
+- consolidated visibility
+- company-specific visibility
+- full authorized financial/inventory attribution visibility
+
+ADMIN OPERASIONAL:
+- only explicitly granted companies
+- permission/capability based
+- company scope enforced server-side
+
+Because there is one shared physical warehouse:
+
+an appropriately authorized inventory Admin may see the PHYSICAL STOCK
+AVAILABILITY required to perform warehouse operations.
+
+This does NOT automatically expose another company's:
+
+- purchase cost
+- profitability
+- bank information
+- invoices
+- billing
+- payments
+- financial records
+- private documents
+- unrelated transaction details
+
+Explicitly separate:
+
+PHYSICAL INVENTORY VISIBILITY
+
+from:
+
+COMPANY BUSINESS / FINANCIAL VISIBILITY
+
+No URL, ID, query, payload, API, or file-download manipulation may bypass company access.
+
+--------------------------------------------------
+GAP-022 — PROJECT COMPLETION EXCEPTIONS
+--------------------------------------------------
+
+Normal completion must use the Project Completion Gate.
+
+ADMIN OPERASIONAL:
+- may satisfy normal requirements within granted permissions
+- may mark an administrative requirement as
+  TIDAK BERLAKU / NOT APPLICABLE
+  only when that requirement is explicitly waivable
+- reason is mandatory
+- audit history is mandatory
+- Admin may NOT silently bypass mandatory completion invariants
+
+SUPER ADMIN / OWNER:
+may use an exceptional:
+
+FORCE COMPLETE / COMPLETION OVERRIDE
+
+Only for legitimate exceptional business situations.
+
+Require:
+
+- explicit confirmation
+- mandatory reason
+- actor identity
+- timestamp
+- before/after state
+- audit log
+
+This is an exceptional path, not the normal workflow.
+
+--------------------------------------------------
+GAP-023 — STOCK RESERVATION AND USABLE STOCK
+--------------------------------------------------
+
+Quotation alone does NOT reserve stock.
+
+Reservation may begin only after commercial demand becomes confirmed,
+normally after quotation/order approval.
+
+Conceptually distinguish:
+
+ON HAND
+RESERVED
+UNUSABLE / QUARANTINED
+AVAILABLE
+
+Target invariant:
+
+AVAILABLE
+=
+ON HAND
+-
+RESERVED
+-
+UNUSABLE
+
+subject to technical refinement in later phases without changing the
+business meaning.
+
+Damaged/rejected/quarantined goods do not count as normally available.
+
+Reservation:
+- associates quantity with a confirmed project/order
+- does not itself create physical stock-out
+- must be released/adjusted when cancelled or changed
+
+Physical stock decreases only through a legitimate physical stock
+movement such as dispatch.
+
+Concurrency protection must prevent two simultaneous projects from
+successfully reserving or dispatching the same final available stock.
+
+Keep V1 reservation simple.
+Do NOT build an enterprise allocation engine.
+
+--------------------------------------------------
+SHARED WAREHOUSE / COMPANY ATTRIBUTION
+--------------------------------------------------
+
+One shared physical stock pool.
+
+Acquisition/cost provenance remains traceable to the company that
+originally sourced the stock.
+
+If Company A stock is used by Company B's project:
+
+do not silently change provenance.
+
+Use an explicit auditable inter-company stock allocation mechanism.
+
+V1 does NOT automatically create:
+
+- inter-company invoices
+- accounting journals
+- automatic inter-company cash transfers
+
+Purpose:
+
+inventory traceability
++
+managerial cost attribution
++
+auditability
+
+--------------------------------------------------
+BACKUP POLICY
+--------------------------------------------------
+
+The client explicitly requires:
+
+- backup only on the production VPS
+- no offsite backup requirement for V1
+- total VPS loss remains ACCEPTED_RISK
+- same-VPS backup must never be described as offsite backup
+
+Preserve this decision.
+
+Do not reopen it unless the Owner changes it.
+
+==================================================
+FULL-SCOPE POLICY
+==================================================
+
+The 18-day build window is an execution constraint.
+
+It is NOT authorization to reduce Owner-required scope.
+
+Unless the Owner explicitly removes or defers a capability:
+
+status = V1_REQUIRED
+
+Do not silently reclassify capabilities due to implementation difficulty.
+
+==================================================
+RECOVERY AND COMPLETION WORK
+==================================================
+
+After verifying the interrupted state:
+
+A. Preserve all valid completed changes.
+
+B. Resume ONLY the unfinished reconciliation work.
+
+C. Repair any partial or inconsistent planning documents.
+
+D. Resolve GAP-004, GAP-006, GAP-022, and GAP-023 at the BUSINESS DECISION level if the Owner decisions above fully answer them.
+
+E. Do not keep an Owner decision open merely because technical implementation details correctly belong to P2/P4/P5/P6.
+
+Use this distinction:
+
+BUSINESS DECISION:
+RESOLVED
+
+TECHNICAL DESIGN:
+DEFERRED TO THE APPROPRIATE PLANNING PHASE
+
+F. Ensure the shared warehouse and inter-company attribution semantics remain consistent.
+
+G. Ensure local-only backup remains correctly recorded as an accepted risk.
+
+H. Ensure no V1_REQUIRED capability was removed.
+
+I. Ensure Golden Flow and Definition of Done remain intact.
+
+==================================================
+FINAL P1 ADVERSARIAL REVIEW
+==================================================
+
+Re-run the P1 adversarial review.
+
+Explicitly verify:
+
+- financial states are not conflated
+- issued invoice != payment
+- billed receivable != cash-in
+- purchase != cash-out
+- shared inventory visibility does not leak company financial data
+- inter-company stock use is traceable
+- stock reservation does not fake physical movement
+- unavailable/damaged stock cannot be reserved as usable stock
+- concurrent reservation/dispatch risk is recognized
+- completion override remains exceptional
+- Admin cannot bypass mandatory completion rules
+- local-only backup risk is represented honestly
+- full Owner-required scope remains preserved
+- no historical requirement disappeared
+- no new contradiction was introduced
+
+==================================================
+QUALITY VERIFICATION
+==================================================
+
+Re-run:
+
+- documentation consistency checks
+- link/anchor checks
+- source/hash integrity checks
+- Feature/Reference Coverage checks
+- Gap Register consistency
+- Current State consistency
+- Next Action consistency
+
+Only declare P1 READY FOR OWNER APPROVAL if all P1 business decisions are resolved or any remaining open items clearly belong to later technical design phases.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report:
+
+1. Interruption recovery result
+2. Files inspected
+3. Files found complete
+4. Files repaired/completed
+5. GAP-004 final status
+6. GAP-006 final status
+7. GAP-022 final status
+8. GAP-023 final status
+9. Remaining OPEN gaps
+10. Remaining OWNER_DECISION_REQUIRED items, if any
+11. Which remaining gaps explicitly belong to P2/P4/P5/P6/P9 rather than P1
+12. Feature Coverage status
+13. Golden Flow consistency result
+14. Definition of Done consistency result
+15. P1 adversarial review result
+16. P1 quality-gate result
+17. Whether P1 is READY FOR OWNER APPROVAL
+18. Git working tree status
+19. Current local commit
+20. Recommended P1 checkpoint commit message
+21. Exact next safe action
+
+STOP after P1.
+
+DO NOT proceed to P2.
+DO NOT implement application code.
+DO NOT stage/commit/push unless explicitly instructed after the recovery report.

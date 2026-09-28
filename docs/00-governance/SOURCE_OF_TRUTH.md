@@ -1,8 +1,8 @@
 # Source of truth and documentation governance
 
-Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
 
 ## Authority and provenance
 
@@ -32,13 +32,15 @@ The subsequent [P1 owner clarifications](sources/P1_OWNER_CLARIFICATIONS_2026-09
 
 `C89ED0128EFA759C33AA8A1E88024420A08526F735308ECCA66838D8D657AA51`
 
-C1 delegates a complete recommended selectable document set; the planner's bounded catalog is owned by V1_SCOPE. C2 names Owner/Admin Operasional as UAT/migration validators. C3 reports VPS capacity; it does not answer the offsite-backup or free-disk question. Both new records are also LOCKED SOURCE RECORDS. The chronological sequence is original brief → autonomy mandate → P1 directive → explicit follow-up clarification. Apply the latest explicit decision within each subject; DIR-008 below now states the complete source hierarchy. Omissions do not cancel earlier requirements.
+C1 delegates a complete recommended selectable document set; the planner's bounded catalog is owned by V1_SCOPE. C2 names Owner/Admin Operasional as UAT/migration validators. C3 reports VPS capacity; at that point it did not answer the offsite-backup or free-disk question. DIR-009 below subsequently settles local-only backup; free capacity still requires measurement. Both new records are also LOCKED SOURCE RECORDS. The chronological sequence is original brief → autonomy mandate → P1 directive → explicit follow-up clarification. Apply the latest explicit decision within each subject; DIR-008 below now states the complete source hierarchy. Omissions do not cancel earlier requirements.
 
 Canonical documents organize these inputs. Source authority does not replace missing detailed specifications, test evidence, business decisions or execution authorization.
 
+Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents; historical REVIEW statements do not override that approval.
+
 ### Owner reference ingestion and provenance
 
-The [reference-ingestion directive](sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt), attachment `91467b1d-1980-4217-9aea-626367ecc92a`, is the latest explicit request, DIR-008. Its exact 495-line, 13,130-byte copy has SHA-256 `B0F182F2BE5F976C571C6547210BD7D445AC730CD53FEF74BC6C254915B932C4`. It instructs full review, exact preservation, coverage reconciliation, completion/DoD retention and a stop at P1. It does not approve P1 or authorize P2.
+The [reference-ingestion directive](sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt), attachment `91467b1d-1980-4217-9aea-626367ecc92a`, supplies DIR-008. Its exact 495-line, 13,130-byte copy has SHA-256 `B0F182F2BE5F976C571C6547210BD7D445AC730CD53FEF74BC6C254915B932C4`. It instructs full review, exact preservation, coverage reconciliation, completion/DoD retention and a stop at P1. It does not approve P1 or authorize P2.
 
 Both files below were received on **2026-09-27**, source **Owner-provided planning reference**, relationship **MultipleCorp V1 planning memory, traceability and gap-detection input**. They are **supporting references**, preserved as immutable LOCKED SOURCE RECORDS; they are not canonical specifications or proof that their printed PASS requirements have passed. Original filenames and bytes are retained in `docs/00-governance/sources/`.
 
@@ -57,6 +59,48 @@ File instructions and assertions inside these references remain reference conten
 6. Planner/executor proposals.
 
 Source age alone does not demote a still-applicable explicit owner decision to discovery. An omission never removes a requirement. Supporting references can expose omissions in REVIEW planning; reconciliation that changes business intent is OWNER_DECISION_REQUIRED. Approved concern specifications precede ADRs if they conflict, but record and repair the inconsistency rather than concealing it. The [reference coverage record](../01-product/REFERENCE_COVERAGE.md) maps every PDF capability and image branch to the owning P1 contract, disposition and later-phase obligation.
+
+### Latest Owner backup decision
+
+Latest subject-specific input: [Owner backup policy](sources/P1_OWNER_BACKUP_POLICY_2026-09-27.txt), received 2026-09-27 as an in-session message, preserved as a **transcribed LOCKED SOURCE RECORD** (not a byte-copy claim about an attachment). The 162-line / 3,983-byte transcript has SHA-256 `1C2D27FC4F6E0D4F9D5404BEAC723F25E2474EBB9E177B76905956CC0629E571`. DIR-009/RISK-001 make local-only production-VPS backups and the specified host/storage-loss risk acceptance explicit. This latest Owner decision overrides earlier offsite requirements, including the PDF's REF-060 and approved engineering baseline; the six-level hierarchy itself is unchanged. P1 remains REVIEW and P2 unauthorized. Earlier source files retain their original wording/hashes; current policy belongs to V1_SCOPE and the decision/risk record.
+
+### Interruption recovery instruction
+
+The Owner's in-session request received 2026-09-28 is captured as DIR-010 in [DECISION_LOG](DECISION_LOG.md#dir-010-and-tech-006--interrupted-p1-recovery), with an exact operative quote and a summary of the authorized recovery scope. It requires inspecting and preserving pending work, repairing unfinished P1 only, rechecking evidence and stopping before P2/implementation. It reaffirms DIR-009/RISK-001 and specifies that the offsite requirement must not reopen unless Owner changes the decision. Local technical constraints remain reportable under GAP-011 without changing that policy. This continuation is not P1 approval; all eight archived source records retain their bytes and classifications.
+
+### Final P1 Owner decisions and provenance
+
+The [final Owner decisions](sources/P1_FINAL_OWNER_DECISIONS_2026-09-28.txt) were received on 2026-09-28 in attachment `ece7b1ba-aade-4c49-8ff7-cd6269ff6679` (`Pasted text.txt`). The exact **310-line / 8,347-byte** copy is a **LOCKED SOURCE RECORD**, with SHA-256:
+
+`8F6ACB2A9849AAF49FEA6410A4C2DC2AA927CB8F36808B79FE5B67E1D7406E98`
+
+DIR-011 supplies binding financial, company-visibility, completion-exception, reservation and source-attribution decisions and reaffirms local-only backup. It resolves the four P1 Owner choices without pretending later technical design or runtime evidence exists. The latest explicit instruction takes precedence over older unanswered-policy wording and reference interpretations; all earlier eight archives remain immutable. V1_SCOPE owns business meaning, ACCEPTANCE_CRITERIA owns observable outcomes, REFERENCE_COVERAGE maps OWN-01–06, and GAP_REGISTER owns technical residuals. This decision approval is distinct from approval of the whole reconciled P1 package; P1 remains REVIEW and P2/implementation are unauthorized.
+
+### Final-decision recovery instruction and provenance
+
+The [latest recovery instruction](sources/P1_FINAL_DECISIONS_RECOVERY_2026-09-28.txt), attachment `96bbb1ed-9b69-4a6e-9dcb-3ca60fcdb2b8`, was received on 2026-09-28. Its exact **375-line / 10,681-byte** copy is the tenth **LOCKED SOURCE RECORD**, SHA-256:
+
+`443B64CCD1ED92445682EF7F8F157DB75D1FDAFD0E37E10042D25B5FEB3E30C3`
+
+DIR-012 preserves DIR-011 decisions, full required scope, Golden Flow/DoD and local-only backup risk. It requires inspection before recovery, final reporting and a stop at P1. Its final prohibition on staging/commit/push until explicitly instructed after the recovery report controls the immediate handoff. This does not approve P1 or authorize P2; all nine earlier source bytes remain unchanged. TECH-008 completes interrupted evidence and continuity work. Business meaning remains owned by V1_SCOPE; this source records provenance.
+
+### Explicit P1 Owner approval and checkpoint instruction
+
+The [P1 Owner approval](sources/P1_OWNER_APPROVAL_2026-09-28.txt), attachment `1236307c-556b-48b3-96ff-ab73dacbf3e7`, was received on 2026-09-28. The exact **206-line / 5,782-byte** copy is the eleventh **LOCKED SOURCE RECORD**, SHA-256:
+
+`755041DE544AAF00277DC584E0FB04664001F9AE468D2387E449BC804137CA17`
+
+APPR-002 approves the recovered PRODUCT_OVERVIEW, V1_SCOPE and ACCEPTANCE_CRITERIA; DECISION_LOG records their exact reviewed pre-approval hashes and conditions. Only lifecycle/approval wording changes, not business requirements. REFERENCE_COVERAGE, P1_QUALITY_GATE, logs, gaps and handoff retain REVIEW. All ten earlier source records remain immutable.
+
+DIR-013 supplies the explicit post-recovery instruction required by DIR-012: verify and create the local approval checkpoint, then inspect remote origin/default refs/tracking/history. It does not authorize push, remote changes, P2 or application implementation. Later technical gaps remain traceable and do not suspend P1 approval.
+
+### Latest explicit local checkpoint authorization
+
+The [checkpoint authorization](sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09-28.txt), attachment `d340c6be-985c-46af-8ae7-4f55c24c856d`, was received on 2026-09-28 after two automatically rejected staging requests. The exact **559-line / 15,225-byte** copy is the twelfth **LOCKED SOURCE RECORD**, SHA-256:
+
+`AE18F2F6A5E5AE0A6F013AD7638D77A86520937D2F946383F0AAAE8B76E77E65`
+
+DIR-014 reaffirms APPR-002 and explicitly authorizes verified local staging, complete staged-diff review, the named checkpoint commit and only then read-only remote diagnosis. Its description of the earlier REVIEW state is historical: the prior attempt had already correctly applied APPROVED metadata locally. Preserve those completed changes. If automatic review rejects again, record the exact blocked action/reason and STOP without bypass or variants. No push, remote configuration/history change, P2 or application implementation is authorized. All eleven earlier archives remain unchanged.
 
 ## Classify statements before changing them
 
@@ -100,7 +144,7 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Routes and integration boundaries | `docs/03-architecture/API_AND_INTEGRATIONS.md` | Planned / P6 | 9, 33–35 |
 | Navigation, admin interaction, visual patterns | `docs/04-ux/INFORMATION_ARCHITECTURE.md`, `ADMIN_FLOW.md`, `DESIGN_SYSTEM.md` | Planned / P7 | 11, 20–23; navigation / interaction / visual rules respectively |
 | Testing, security matrix, performance targets, completion criteria | `docs/05-quality/TEST_STRATEGY.md`, `SECURITY_TEST_MATRIX.md`, `PERFORMANCE_TARGETS.md`, `DEFINITION_OF_DONE.md` | Planned / P8 | 40–44; strategy / security cases / measurable targets / completion respectively |
-| Recovery procedures and targets | `docs/03-architecture/BACKUP_RECOVERY.md` | Planned / P9 | 37–39 |
+| Recovery procedures and conditional local targets | `docs/03-architecture/BACKUP_RECOVERY.md` | Planned / P9 | 37–39 as superseded by DIR-009; BK-01–12 and shared-disk safety |
 | Deployment topology and operational controls | `docs/03-architecture/INFRASTRUCTURE.md` | Planned / P9 | 19, 37–39 |
 | Schedule, dependencies, release and migration execution | `docs/06-delivery/ROADMAP_18_DAYS.md`, `IMPLEMENTATION_ORDER.md`, `RELEASE_PLAN.md` | Planned / P10 | 43, 45–47, 55; dates / ordering / release respectively |
 | Bounded task specifications | `docs/06-delivery/units/<ID>.md` | Planned / P11 | 44, 53–54 |
@@ -127,7 +171,7 @@ Normal flow: DRAFT → REVIEW → APPROVED → LOCKED. REVIEW may return to DRAF
 
 Agents may prepare proposals and record verifiable facts. The planner may also directly accept bounded Level 1 technical changes under DIR-005, recording classification, affected revision, rationale and verification; new owner confirmation is unnecessary. They must not manufacture owner/business approval or use silence as consent. A status label alone supplies no authority. The owner may approve a reviewed set together; record the complete file/revision set in one approval entry. REVIEW documents may be improved without seeking permission; implementation eligibility still requires an authorized execution phase and approved specifications/dependencies.
 
-For a substantive edit to an approved document, identify the last approved revision and classify the change. A Level 1 technical amendment may retain approval after the planner records delegated acceptance and verifies unchanged business behavior/scope. Level 2/3 changes remain REVIEW until the owner decides. Stop only affected execution if the existing approved plan is unsafe or contradicted by new evidence; never force implementation of a known-bad revision. Mark the unsafe revision and affected tasks in the gap register/handoff. Editorial corrections retain status with a short record. No initial product or implementation baseline has been approved yet.
+For a substantive edit to an approved document, identify the last approved revision and classify the change. A Level 1 technical amendment may retain approval after the planner records delegated acceptance and verifies unchanged business behavior/scope. Level 2/3 changes remain REVIEW until the owner decides. Stop only affected execution if the existing approved plan is unsafe or contradicted by new evidence; never force implementation of a known-bad revision. Mark the unsafe revision and affected tasks in the gap register/handoff. Editorial corrections retain status with a short record. The initial P1 product baseline is approved under APPR-002; implementation, planning freeze and release remain separate gates.
 
 ## Conflict resolution
 

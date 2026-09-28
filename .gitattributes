@@ -5,5 +5,10 @@ docs/00-governance/sources/ARCHITECT_MANDATE_2026-09-27.txt -text whitespace=bla
 docs/00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_OWNER_BACKUP_POLICY_2026-09-27.txt -text
+docs/00-governance/sources/P1_FINAL_OWNER_DECISIONS_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_FINAL_DECISIONS_RECOVERY_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_OWNER_APPROVAL_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+docs/00-governance/sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary

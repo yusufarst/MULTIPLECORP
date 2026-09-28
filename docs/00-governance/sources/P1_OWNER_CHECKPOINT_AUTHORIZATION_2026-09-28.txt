@@ -1,0 +1,559 @@
+OWNER AUTHORIZATION — FINALIZE AND CHECKPOINT P1
+
+This message is a DIRECT Owner authorization in the current conversation.
+
+Project:
+MultipleCorp — Company Management System
+
+Current planning phase:
+P1 — Product Definition & V1 Scope
+
+P1 has already passed its planning/documentation quality gate and was reported as:
+
+READY FOR OWNER APPROVAL
+
+I, the Owner/Product Owner, explicitly APPROVE P1.
+
+This approval is intentional and direct.
+
+==================================================
+1. CURRENT KNOWN STATE
+==================================================
+
+The most recent verified state before this authorization is:
+
+- P0 is already the accepted governance baseline.
+- P1 planning/documentation quality gate = PASS.
+- P1 was still formally marked REVIEW pending explicit Owner approval.
+- OWNER_DECISION_REQUIRED = 0.
+- Golden Operational Flow is preserved.
+- Definition of Done is preserved.
+- Feature/reference coverage is preserved.
+- Full-scope policy remains active.
+- Backup policy is local-only on the production VPS.
+- Total VPS loss is an explicit ACCEPTED_RISK.
+- Remaining OPEN gaps belong to later technical planning phases.
+- No application implementation has started.
+- No P2 work has started.
+- No production action has been performed.
+- Previous `git add` attempts were declined by automated review before execution.
+- Git index was reported empty.
+- Local tracking showed `origin/main [gone]`.
+- No push has been authorized.
+- Previous local commit before the approval checkpoint was:
+
+  20f8ef7f2058fd99a784a4d9088a774715769470
+
+  docs: define P1 scope and reconcile owner references
+
+A previous P1 approval attempt already updated planning files locally,
+but staging/commit was blocked by automated review.
+
+DO NOT restart P1 from scratch.
+
+DO NOT discard valid local changes.
+
+==================================================
+2. OWNER APPROVAL OF P1
+==================================================
+
+I explicitly approve the current P1 product baseline.
+
+The approved P1 baseline includes all current Owner decisions,
+including but not limited to:
+
+- Product name:
+  MultipleCorp — Company Management System
+
+- Full Owner-required V1 capability must be preserved.
+
+- The approximately 18-day execution window is an execution constraint,
+  NOT permission to remove requested features.
+
+- Supplier Comparison is explicitly removed from V1.
+
+- UNY and UGM are normal clients.
+
+- SIPLAH is a transaction channel, not a separate project system.
+
+- Client-specific administrative/SPJ requirements remain flexible.
+
+- Launch roles:
+  Super Admin / Owner
+  Admin Operasional
+
+- Authorization architecture remains permission/capability based so
+  future custom roles can be added.
+
+- One shared physical warehouse.
+
+- Physical stock and company/cost provenance are distinct concepts.
+
+- Inter-company use of stock must remain explicit and auditable.
+
+- Quotation alone does not reserve stock.
+
+- Reservation starts only after confirmed commercial demand.
+
+- Conceptual usable-stock semantics distinguish:
+
+  ON HAND
+  RESERVED
+  UNUSABLE / QUARANTINED
+  AVAILABLE
+
+- Project completion uses a Completion Gate.
+
+- Admin cannot silently bypass mandatory completion requirements.
+
+- Force Complete / Completion Override is exceptional and restricted to
+  Super Admin / Owner with mandatory reason and audit history.
+
+- Financial semantics distinguish:
+
+  Sales / Transaction Value
+  Active Receivable
+  Cash-In
+  Cost / HPP
+  Cash-Out
+
+- Issued invoice does not mean payment received.
+
+- Billed invoice creates active receivable according to the approved
+  billing semantics.
+
+- Payment represents actual money received.
+
+- Purchase creation does not automatically mean cash-out occurred.
+
+- V1 remains managerial finance, not full formal accounting.
+
+- End-user UI must use Bahasa Indonesia.
+
+- UI must be mobile-first and desktop-optimized for operational
+  productivity.
+
+- shadcn/ui is the primary UI component system.
+
+- Strict anti-AI-slop visual requirements remain active.
+
+- Near-zero incremental recurring infrastructure cost remains a design
+  constraint.
+
+- Existing VPS remains the production target.
+
+- Production VPS capacity:
+
+  4 vCPU
+  16 GB RAM
+  200 GB NVMe
+  16 TB bandwidth
+
+- Backup for V1 is intentionally LOCAL-ONLY on the production VPS.
+
+- No offsite backup is required by the client for V1.
+
+- Total loss of the VPS may also destroy all backup copies and this is
+  an explicitly accepted Owner/client risk.
+
+- Golden Operational Flow remains authoritative supporting reference.
+
+- Eight-dimensional Definition of Done remains active.
+
+- Security, authorization, company isolation, validation, database
+  integrity, concurrency, idempotency, N+1 prevention, auditability,
+  testing, backup/recovery procedure, and production safety remain
+  non-negotiable engineering requirements.
+
+==================================================
+3. APPROVAL STATUS CHANGES
+==================================================
+
+Record this Owner approval according to repository governance.
+
+Change the appropriate canonical P1 product documents from:
+
+REVIEW
+→ APPROVED
+
+Based on the current approved recommendation, the canonical P1 product
+documents expected to become APPROVED are:
+
+- docs/01-product/PRODUCT_OVERVIEW.md
+- docs/01-product/V1_SCOPE.md
+- docs/01-product/ACCEPTANCE_CRITERIA.md
+
+Do NOT automatically mark evidence/audit/quality-gate documents as
+APPROVED merely because the product specification is approved.
+
+Documents whose purpose is evidence, review history, quality-gate
+evidence, source archive, or audit record should retain the lifecycle
+status appropriate to their purpose.
+
+Do NOT alter substantive business scope while applying approval status.
+
+==================================================
+4. OPEN GAPS AFTER P1
+==================================================
+
+Do NOT keep P1 in REVIEW merely because later-phase technical gaps remain
+OPEN.
+
+Remaining technical gaps must stay traceable and be resolved in their
+appropriate planning phases.
+
+Conceptually:
+
+P2:
+- Domain Model
+- business invariants
+- formal domain semantics
+- detailed state rules
+- calculation semantics
+
+P4:
+- database schema
+- relationships
+- constraints
+- indexes
+- money/numeric representation
+- attribution structures
+- persistence strategy
+
+P5:
+- authentication
+- permission mapping
+- company isolation
+- resource authorization
+- Force Complete authorization
+- security implementation rules
+
+P6:
+- concurrency
+- locking
+- atomicity
+- idempotency
+- retry behavior
+- consistency
+- N+1 prevention
+- performance strategy
+
+P9:
+- production deployment
+- local-only backup implementation
+- restore procedure
+- disk capacity
+- retention
+- monitoring
+- operational recovery
+
+Do not reopen resolved Owner business decisions merely because their
+technical implementation belongs to a later phase.
+
+Use the distinction:
+
+BUSINESS DECISION:
+RESOLVED
+
+TECHNICAL DESIGN:
+TO BE COMPLETED IN THE APPROPRIATE FUTURE PHASE
+
+==================================================
+5. RECOVERY / STATE VERIFICATION BEFORE GIT ACTION
+==================================================
+
+Because the previous execution was interrupted by usage limits and
+automated staging review, verify the current state before Git mutation.
+
+Before staging anything:
+
+1. Read AGENTS.md.
+2. Read CONTEXT_INDEX.md.
+3. Read CURRENT_STATE.md.
+4. Read NEXT_ACTION.md.
+5. Read GAP_REGISTER.md.
+6. Read DECISION_LOG.md.
+7. Read SOURCE_OF_TRUTH.md.
+8. Read PRODUCT_OVERVIEW.md.
+9. Read V1_SCOPE.md.
+10. Read ACCEPTANCE_CRITERIA.md.
+11. Read REFERENCE_COVERAGE.md.
+12. Read P1_QUALITY_GATE.md.
+13. Read the latest Owner approval source/archive.
+14. Inspect `git status`.
+15. Inspect the complete unstaged diff.
+16. Inspect the current Git index.
+17. Confirm no file is truncated or partially written.
+18. Confirm the P1 approval modifications are internally consistent.
+
+Do NOT redo planning work that is already valid.
+
+If the current repository state materially differs from the most recent
+verified state in a way that cannot be safely explained:
+
+STOP and report the discrepancy.
+
+Do not guess.
+
+==================================================
+6. DIRECT GIT AUTHORIZATION
+==================================================
+
+I explicitly authorize the following LOCAL Git actions:
+
+1. Stage the already-reviewed and verified P1 documentation/source
+   package.
+
+2. Inspect the COMPLETE staged diff before committing.
+
+3. Confirm that the staged files contain only intended P1
+   documentation/governance/reference changes.
+
+4. Create a LOCAL checkpoint commit.
+
+Authorized commit message:
+
+docs: approve P1 product scope baseline
+
+A more precise equivalent may be used only if repository conventions
+clearly require it.
+
+This authorization is explicit and direct.
+
+You do NOT need to ask me again for permission to stage these verified
+P1 files and create this local checkpoint commit.
+
+==================================================
+7. STAGING SAFETY
+==================================================
+
+Do not stage unrelated files.
+
+The previous run referred to approximately 24 verified
+documentation/source files.
+
+Do not blindly require the count to be exactly 24.
+
+Instead:
+
+- inspect the current state
+- determine the correct verified P1 package
+- explain if the actual count differs
+- stage only files legitimately belonging to this approved P1
+  checkpoint
+
+Before commit, verify at minimum:
+
+- staged file list
+- staged diff
+- no secrets
+- no production credentials
+- no `.env`
+- no private keys
+- no accidental binary/temp files
+- no unrelated project files
+- no application implementation
+- no P2 files
+- no unexpected destructive change
+
+==================================================
+8. IF AUTOMATED REVIEW BLOCKS STAGING AGAIN
+==================================================
+
+If automated review blocks `git add` or the local commit again:
+
+DO NOT attempt to bypass, weaken, or circumvent the safety mechanism.
+
+DO NOT repeatedly execute variants designed to evade the review.
+
+Instead:
+
+1. Preserve all local changes.
+2. Confirm that this message contains direct Owner authorization.
+3. Record the exact blocked command/action and reason.
+4. Report the minimum additional authorization or action required.
+5. STOP.
+
+Do not lose work.
+
+==================================================
+9. LOCAL CHECKPOINT COMMIT
+==================================================
+
+If staged-diff verification passes:
+
+create the authorized LOCAL commit.
+
+After commit:
+
+verify:
+
+- commit SHA
+- commit message
+- committed file count
+- working tree state
+- index state
+
+The objective is to create a durable:
+
+P1 APPROVED BASELINE CHECKPOINT
+
+before P2 begins.
+
+==================================================
+10. REMOTE / ORIGIN DIAGNOSIS
+==================================================
+
+After the local checkpoint exists, diagnose:
+
+origin/main [gone]
+
+READ-ONLY.
+
+You are authorized to inspect remote state using safe read-only
+operations such as:
+
+- git remote -v
+- git branch -vv
+- git status
+- git remote show origin
+- git ls-remote --heads origin
+- other equivalent read-only Git inspection commands
+
+Determine:
+
+1. What repository `origin` points to.
+2. Whether the intended remote is still:
+
+   https://github.com/yusufarst/MULTIPLECORP.git
+
+3. Whether the remote is accessible.
+4. Whether a `main` branch currently exists remotely.
+5. Whether the remote repository is still empty or has independent
+   history.
+6. Why the local branch reports:
+
+   origin/main [gone]
+
+7. Whether local history can safely become the remote `main` baseline.
+8. Whether branch tracking simply needs to be established.
+
+==================================================
+11. REMOTE SAFETY — STRICT
+==================================================
+
+You are NOT authorized to:
+
+- push
+- force-push
+- force-with-lease push
+- delete remote branches
+- rewrite remote history
+- reset local history
+- rebase onto unknown remote history
+- change `origin`
+- modify remote configuration
+- create a remote branch
+- overwrite a remote repository
+- alter GitHub settings
+
+Remote actions in this turn are READ-ONLY.
+
+If remote history conflicts with local history:
+
+STOP and report it.
+
+Do NOT resolve it automatically.
+
+==================================================
+12. NO P2 YET
+==================================================
+
+Do NOT start:
+
+P2 — Domain Model & Business Rules
+
+in this turn.
+
+Do NOT create:
+
+- domain models
+- database schemas
+- application code
+- Laravel scaffolding
+- React code
+- migrations
+- packages
+- deployment configuration
+
+This turn is only for:
+
+P1 approval
++
+P1 local checkpoint
++
+read-only remote diagnosis
+
+==================================================
+13. FINAL INTEGRITY CHECK
+==================================================
+
+Before declaring the checkpoint complete, verify:
+
+- PRODUCT_OVERVIEW = APPROVED
+- V1_SCOPE = APPROVED
+- ACCEPTANCE_CRITERIA = APPROVED
+- evidence documents retain appropriate status
+- Feature Coverage remains intact
+- Golden Operational Flow remains intact
+- Definition of Done remains intact
+- full-scope V1 policy remains intact
+- Supplier Comparison remains explicitly removed
+- backup remains local-only
+- accepted VPS-loss risk remains documented
+- OWNER_DECISION_REQUIRED remains zero unless a genuinely new Owner
+  decision issue was discovered
+- remaining OPEN gaps remain assigned to future planning phases
+- no application code was introduced
+- no P2 work was introduced
+
+==================================================
+14. FINAL REPORT
+==================================================
+
+After completing the authorized work, report clearly:
+
+A. Owner approval recorded
+B. Canonical documents changed to APPROVED
+C. Documents intentionally left REVIEW or other lifecycle status
+D. Final P1 integrity-check result
+E. Remaining OPEN gaps and assigned future phases
+F. OWNER_DECISION_REQUIRED count
+G. Feature Coverage status
+H. Golden Flow status
+I. Definition of Done status
+J. Number of files staged
+K. Staged-diff verification result
+L. Number of files committed
+M. Local checkpoint commit SHA
+N. Local checkpoint commit message
+O. Git index status
+P. Git working-tree status
+Q. `origin` URL
+R. Remote `main` existence/status
+S. Explanation for `origin/main [gone]`
+T. Whether local and remote histories appear safe to connect
+U. Safest recommended next Git action
+V. Whether P1 is now fully checkpointed
+W. Exact next safe planning action
+
+Expected next planning phase after a successful checkpoint and safe
+repository synchronization is:
+
+P2 — Domain Model & Business Rules
+
+STOP after the report.
+
+DO NOT push.
+DO NOT start P2.
+DO NOT implement application code.

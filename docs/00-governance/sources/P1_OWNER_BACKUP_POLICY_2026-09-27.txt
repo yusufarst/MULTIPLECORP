@@ -1,0 +1,162 @@
+OWNER DECISION — BACKUP POLICY
+
+The client has explicitly decided that MultipleCorp V1 backups must be
+stored only on the existing production VPS.
+
+There will be NO offsite backup requirement for V1.
+
+This decision supersedes previous planning assumptions that required an
+off-VPS backup destination.
+
+\==================================================
+BACKUP CONSTRAINT
+=================
+
+V1 backup scope:
+
+PRODUCTION VPS
+\+
+LOCAL BACKUPS ON THE SAME VPS
+
+Do NOT require:
+
+- external object storage
+- another server
+- NAS
+- external cloud backup
+- paid offsite backup service
+
+unless the Owner explicitly changes this decision later.
+
+Near-zero recurring infrastructure cost remains a priority.
+
+\==================================================
+IMPORTANT RISK CLASSIFICATION
+=============================
+
+Do NOT describe same-VPS backup as offsite backup.
+
+Record the following limitation explicitly:
+
+Local VPS backups can protect against scenarios such as:
+
+- accidental data changes
+- application-level failure
+- failed deployment
+- selected database corruption scenarios
+- accidental deletion where the backup itself remains intact
+
+However, local-only backup may NOT protect against:
+
+- total VPS loss
+- total disk failure
+- VPS deletion
+- provider-level loss
+- account compromise that destroys both production and backups
+- catastrophic filesystem/storage failure affecting the whole VPS
+
+This is an explicit CLIENT/OWNER-ACCEPTED RISK.
+
+Record it in the appropriate risk/gap/decision documentation.
+
+Do not repeatedly reopen the decision unless new evidence shows that
+the implementation itself cannot satisfy the approved local-backup
+requirement.
+
+\==================================================
+V1 LOCAL BACKUP REQUIREMENTS
+============================
+
+Even though backup is local-only, design it properly.
+
+At minimum plan:
+
+1. PostgreSQL database backup
+2. Uploaded/business document backup
+3. Pre-deployment backup
+4. Automated scheduled backup
+5. Backup rotation
+6. Retention policy
+7. Integrity/checksum verification
+8. Restore procedure
+9. Periodic restore test
+10. Backup failure detection/logging
+11. Disk-space monitoring
+12. Automatic cleanup according to retention policy
+
+Do NOT continuously overwrite a single backup file.
+
+Maintain multiple recovery points.
+
+\==================================================
+DISK SAFETY
+===========
+
+Production VPS capacity:
+
+- 4 vCPU
+- 16 GB RAM
+- 200 GB NVMe
+- 16 TB bandwidth
+
+Because backups share the same 200 GB disk as production:
+
+P9 must explicitly model:
+
+- PostgreSQL growth
+- uploaded document growth
+- product image growth
+- generated PDF growth
+- logs
+- exports/temp files
+- Docker data if applicable
+- backup growth
+- backup retention
+
+Prevent backups from causing a disk-full production outage.
+
+Define sensible warning thresholds and cleanup/retention rules.
+
+\==================================================
+RECOVERY TARGET INTERPRETATION
+==============================
+
+The previously discussed:
+
+RPO <= 24 hours
+RTO <= 4 hours
+
+may be used as operational targets for failures where the VPS and local
+backup data remain recoverable.
+
+Do NOT claim that RTO <= 4 hours or recovery is guaranteed after total
+loss of the VPS because there is no offsite copy.
+
+Document this limitation honestly.
+
+\==================================================
+P1 ACTION
+=========
+
+Update the relevant P1 documents:
+
+- remove offsite backup as a V1 requirement
+- resolve the related Owner decision/gap
+- record local-only backup as the explicit Owner/client decision
+- record total-VPS-loss exposure as accepted risk
+- update ACCEPTANCE\_CRITERIA if necessary
+- update GAP\_REGISTER / DECISION\_LOG
+- update CURRENT\_STATE if necessary
+
+Do not expand the scope.
+
+Do not proceed to P2 in the same turn.
+
+After updating, report:
+
+A. Documents changed
+B. Backup-related gap resolved
+C. Accepted risk recorded
+D. Any contradiction remaining
+E. P1 quality-gate status
+F. Whether P1 is ready for Owner approval

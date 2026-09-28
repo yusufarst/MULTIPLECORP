@@ -1,0 +1,206 @@
+OWNER APPROVAL — P1 PRODUCT DEFINITION & V1 SCOPE
+
+I explicitly APPROVE P1 — Product Definition & V1 Scope for:
+
+MultipleCorp — Company Management System
+
+The approved P1 baseline includes all current Owner decisions,
+including:
+
+- full Owner-required V1 scope
+- no feature reduction merely because of the 18-day execution window
+- Supplier Comparison explicitly removed from V1
+- UNY and UGM treated as normal clients
+- SIPLAH treated as a transaction channel
+- client-specific administrative/SPJ requirements
+- two built-in launch roles:
+  Super Admin / Owner
+  Admin Operasional
+- permission-based architecture for future custom roles
+- one shared physical warehouse
+- explicit company/cost provenance for stock
+- explicit inter-company stock allocation where required
+- stock reservation only after confirmed commercial demand
+- usable stock semantics:
+  On Hand / Reserved / Unusable / Available
+- Project Completion Gate
+- exceptional Owner-only Force Complete
+- separated financial concepts:
+  Sales Value
+  Active Receivable
+  Cash-In
+  Cost/HPP
+  Cash-Out
+- managerial finance rather than full formal accounting
+- Indonesian end-user interface
+- mobile-first and desktop-optimized operational UX
+- shadcn/ui as the primary UI system
+- strict anti-AI-slop design direction
+- near-zero incremental recurring infrastructure cost
+- production on the existing VPS
+- local-only production-VPS backup
+- total VPS loss accepted as an explicit business risk
+- Golden Operational Flow
+- eight-dimensional Definition of Done
+- strict security, authorization, company isolation, concurrency,
+  idempotency, data integrity, N+1, testing, and production-safety
+  requirements
+
+==================================================
+APPROVAL ACTION
+==================================================
+
+Record this explicit Owner approval according to repository governance.
+
+Change ONLY the appropriate P1 canonical product documents from:
+
+REVIEW
+→ APPROVED
+
+Based on the current P1 recommendation, this should include:
+
+- PRODUCT_OVERVIEW.md
+- V1_SCOPE.md
+- ACCEPTANCE_CRITERIA.md
+
+Do not mark evidence/audit documents APPROVED merely because the
+canonical product specification is approved.
+
+Preserve their appropriate lifecycle status.
+
+Do not change substantive P1 business content during the approval step.
+
+==================================================
+OPEN GAPS
+==================================================
+
+Do NOT reopen P1 merely because technical gaps remain OPEN.
+
+The current open gaps that have already been classified for later
+planning phases should remain traceable and be resolved in their
+appropriate phases.
+
+Examples:
+
+P2:
+- domain rules
+- business invariants
+- detailed financial/domain semantics
+
+P4:
+- schema
+- constraints
+- indexes
+- numerical/data representation
+- attribution structures
+
+P5:
+- authorization
+- company visibility
+- completion override permissions
+
+P6:
+- concurrency
+- idempotency
+- locking
+- retry
+- consistency
+- N+1/performance strategy
+
+P9:
+- local backup implementation
+- restore procedure
+- capacity
+- disk monitoring
+- deployment/operations
+
+Do not treat these later-phase technical-design gaps as reasons to keep
+P1 in REVIEW.
+
+==================================================
+CHECKPOINT
+==================================================
+
+After recording approval:
+
+1. Re-run P1 metadata/lifecycle validation.
+2. Re-run link/anchor validation.
+3. Re-run source/hash integrity validation.
+4. Verify Feature/Reference Coverage remains unchanged.
+5. Verify Golden Flow remains unchanged.
+6. Verify Definition of Done remains unchanged.
+7. Update:
+   - DECISION_LOG
+   - CURRENT_STATE
+   - NEXT_ACTION
+   - CONTEXT_INDEX if required
+   - CHANGELOG
+8. Inspect git status and complete staged diff before committing.
+
+Then create a local checkpoint commit using an appropriate message,
+preferably:
+
+docs: approve P1 product scope baseline
+
+or a more precise equivalent if repository conventions require it.
+
+==================================================
+REMOTE SAFETY
+==================================================
+
+The local branch currently reports:
+
+origin/main [gone]
+
+Do NOT force-push.
+Do NOT recreate or overwrite remote history blindly.
+Do NOT change remote configuration without inspection.
+
+After the local P1 approval checkpoint is complete:
+
+inspect:
+
+- git remote -v
+- remote repository accessibility
+- remote default branch
+- remote refs
+- local branch tracking configuration
+- relationship between local history and remote history
+
+Determine WHY origin/main is shown as [gone].
+
+If the remote MultipleCorp repository is still the intended repository
+and there is no conflicting remote history, report the exact safest
+push/tracking action.
+
+Do NOT push yet unless the repository governance or explicit Owner
+instruction already authorizes that action.
+
+==================================================
+END REPORT
+==================================================
+
+Report:
+
+A. Owner approval recorded
+B. Documents changed to APPROVED
+C. Documents intentionally left REVIEW
+D. P1 integrity-check results
+E. Remaining open gaps and their assigned future phases
+F. Feature Coverage status
+G. Golden Flow status
+H. Definition of Done status
+I. Local checkpoint commit SHA
+J. Git working-tree status
+K. Remote/origin diagnosis
+L. Safest proposed remote action
+M. Exact next safe action
+
+The expected next planning phase after the approved checkpoint is:
+
+P2 — Domain Model & Business Rules
+
+STOP after the P1 approval/checkpoint work.
+
+Do NOT start P2 in this turn.
+Do NOT implement application code.

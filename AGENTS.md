@@ -1,10 +1,10 @@
 # Agent entry point
 
-Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
 
-Approval: [APPR-001](docs/00-governance/DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
+Approval: [APPR-001](docs/00-governance/DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](docs/00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
 
-These instructions route every planning or execution agent to the same repository context. Owner sources and precedence are recorded in [SOURCE_OF_TRUTH](docs/00-governance/SOURCE_OF_TRUTH.md). The latest P1 instruction accepts the P0 governance baseline; it authorizes P1 only. Review status does not suspend explicit owner instructions or delegated Level 1 planning improvements, and does not authorize implementation.
+These instructions route every planning or execution agent to the same repository context. Owner sources and precedence are recorded in [SOURCE_OF_TRUTH](docs/00-governance/SOURCE_OF_TRUTH.md). The P1 directive accepts the P0 governance baseline; the latest final Owner decisions also authorize P1 only. Review status does not suspend explicit owner instructions or delegated Level 1 planning improvements, and does not authorize implementation.
 
 ## Start every session
 

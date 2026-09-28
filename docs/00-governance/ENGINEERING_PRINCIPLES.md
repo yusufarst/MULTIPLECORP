@@ -1,8 +1,8 @@
 # Non-negotiable engineering principles
 
-Status: APPROVED | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. DIR-006–008 and TECH-003/004 record subsequent owner-directed and Level 1 continuity updates; P1 specifications remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
 
 This document owns cross-cutting guardrails. It consolidates constraints from the [owner brief](sources/OWNER_BRIEF_2026-09-27.txt); it is not a detailed implementation design. Distinguish owner intent from technical baselines/proposals under [source governance](SOURCE_OF_TRUTH.md), and improve the latter using the [delegated authority](CHANGE_CONTROL.md#decision-authority). The title does not make every preferred mechanism immutable. Later concern specifications define mechanisms and tests in their own scope.
 
@@ -14,9 +14,11 @@ This document owns cross-cutting guardrails. It consolidates constraints from th
 - Plan server-side idempotency for retry-sensitive operations; disabling a button is insufficient. Protect stale edits where needed. Slow external calls, PDF generation, uploads, image processing and other heavy work stay outside database transactions. Retryable queue work must remain safe. (Brief §§28, 31–32, 35.)
 - PostgreSQL owns business state; cache is never the only record of inventory, payment or invoice state. Critical stock mutation remains synchronous/transactional. (Brief §§30, 35.)
 
+DIR-011 now fixes the product meanings for five financial concepts, auditable inter-company allocation, simple confirmed-demand reservation and completion exceptions. Apply the [canonical Owner business contract](../01-product/V1_SCOPE.md#final-owner-business-decisions); physical movements, cash events and provenance must remain truthful even during an Owner completion override. P2–P6 choose the technical mechanisms without reopening those settled choices.
+
 ## Authorization and security
 
-- Enforce authentication → company scope → permission → resource authorization → business preconditions on the server. Role labels and hidden buttons are not authorization. Check related-company foreign keys and private file downloads. The full capability matrix is future P5 work. (Brief §§17, 24.)
+- Enforce authentication → company scope → permission → resource authorization → business preconditions on the server. Role labels and hidden buttons are not authorization. Check related-company foreign keys and private file downloads. DIR-011 permits necessary shared physical availability to an inventory-permitted Admin, while other-company business/financial resources remain denied outside explicit grants. Field/resource enforcement and the full capability matrix are future P5 work. (Brief §§17, 24.)
 - Security starts with design: supported password hashing, safe reset/session flows, login throttling, validation/allowed fields, CSRF, secure cookies/HTTPS, appropriate headers, escaping, parameter binding, and safe upload handling. Sensitive files require private storage and authorized retrieval. Assume a database leak is possible; hashing does not make leakage harmless. Exact controls and tests must cover brief §§24–25, 41 in P5/P8.
 - Business audit records capture actor/time/action/entity, relevant before/after values, reason and correlation where appropriate. Keep technical/security logs distinct. Do not place secrets, passwords, or tokens in either. (Brief §36.)
 
@@ -26,7 +28,7 @@ This document owns cross-cutting guardrails. It consolidates constraints from th
 - Never commit or log credentials, secret-bearing URLs, private keys, or live `.env` files. Sanitized examples contain placeholders only. Use synthetic/sanitized fixtures in the repository; keep real client documents, personal data, bank documents, signatures/stamps, payment proofs, raw migration files and backups out of this public repository. `.gitignore` is a convenience, not an access-control or secret-detection guarantee.
 - Do not request or inspect production secret files to diagnose a task. If unexpected sensitive material appears, stop exposing it, report only a redacted description/location, and have the authorized owner/operator handle containment and rotation. Do not repeat the secret in chat or commits.
 - Production forbids `migrate:fresh`, `migrate:refresh`, `db:wipe`, destructive seeds, `TRUNCATE`, `DROP DATABASE`, or careless bulk deletion. Schema changes require controlled migrations, favoring expand → backfill → switch → contract. Migration rollback is not backup recovery. (Brief §37.)
-- Plan separate application/migration/DB-administration privileges; do not expose PostgreSQL or Redis/Valkey publicly. Production debug is disabled. Plan database and file backups, offsite retention, appropriate encryption, isolated restore drills, health/disk monitoring and recovery procedures. A single VPS is not high availability; a backup without restore evidence is incomplete. (Brief §§24, 38–39.)
+- Plan separate application/migration/DB-administration privileges; do not expose PostgreSQL or Redis/Valkey publicly. Production debug is disabled. DIR-009 explicitly supersedes the earlier offsite requirement: V1 PostgreSQL/file backups stay only on the existing production VPS, with appropriate access/encryption, multiple recovery points, scheduled/pre-deployment runs, verification, retention/cleanup, periodic isolated restore proof and disk/failure monitoring. Apply the [local backup contract](../01-product/V1_SCOPE.md#v1-local-backup-and-p9-handoff-contract). RPO ≤24h/RTO ≤4h are operational targets only while VPS/local backup data remain recoverable; no total-VPS-loss guarantee. GAP-018/RISK-001 accepts that exposure. A single VPS is not high availability; a backup without restore evidence remains incomplete.
 
 ## Maintainability, performance and experience
 

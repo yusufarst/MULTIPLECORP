@@ -1,8 +1,10 @@
 # Product definition
 
-Status: REVIEW | Updated: 2026-09-27 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
 
-Authority: Owner inputs are binding; this P1 synthesis is for review, not implementation approval. Source shorthand: **OB** = [original brief](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt), **P1** = [latest owner directive](../00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), **C1–C3** = [owner's follow-up answers](../00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt). Later explicit input takes precedence. Acceptance of P0 is recorded separately as APPR-001.
+Approval: [APPR-002](../00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved), explicit Owner approval on 2026-09-28 of the recovered P1 baseline; reviewed file hashes and scope are recorded there. Approval changes lifecycle only, not business requirements or implementation authorization.
+
+Authority: Owner inputs are binding; this P1 product baseline is Owner-approved under APPR-002; application implementation requires separate authorization. Source shorthand: **OB** = [original brief](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt), **P1** = [latest owner directive](../00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), **C1–C3** = [owner's follow-up answers](../00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt). Later explicit input takes precedence. Acceptance of P0 is recorded separately as APPR-001. DIR-011 settles the four remaining P1 business decisions; its canonical product contract is in [V1_SCOPE](V1_SCOPE.md#final-owner-business-decisions). It is not approval of the whole P1 package.
 
 ## Definition and identity
 
@@ -19,7 +21,7 @@ The target remains an **Operational Production V1 on 15 October 2026**: safe dai
 | Super Admin / Owner | See operational and financial position across the group; control access and company identity | Manage users, granted capabilities and companies; examine consolidated and company/project information; resolve business exceptions |
 | Admin Operasional | Complete daily work accurately with less repeated entry | Work within explicitly granted companies/capabilities; prepare projects, purchases, fulfillment, documents, billing and payments; identify pending work and correct mistakes through authorized paths |
 
-These are the two launch roles. Permission-based behavior and company restrictions are required; future custom roles do not require a launch role-designer product. Clients, suppliers and client PICs are business records, not assumed application users. The owner names Owner and Admin Operasional jointly as UAT and migration validators (C2); their review hours are not yet confirmed. Production operation remains a separate human responsibility, not a new built-in role. (OB §§8, 17, 37; P1: Roles, Multi-Company Access.)
+These are the two launch roles. Permission-based behavior and company restrictions are required; future custom roles do not require a launch role-designer product. Clients, suppliers and client PICs are business records, not assumed application users. The owner names Owner and Admin Operasional jointly as UAT and migration validators (C2); their review hours are not yet confirmed. An inventory-permitted Admin can see necessary pooled physical availability without gaining other-company business/financial access. Eligible administrative N/A requires reason/audit; exceptional Force Complete belongs to Owner alone. Production operation remains a separate human responsibility, not a new built-in role. (OB §§8, 17, 37; P1: Roles, Multi-Company Access.)
 
 ## Problems and operational outcomes
 
@@ -28,14 +30,14 @@ These are the two launch roles. Permission-based behavior and company restrictio
 | O-01 | Disconnected client/company/item information | Staff locate one project and reuse its verified data across related operations and documents | CAP-01–05, CAP-08 |
 | O-02 | Unexplained stock and fulfillment status | Staff know quantities fulfilled/remaining and can trace physical movements and source attribution, including direct delivery | CAP-06–07 |
 | O-03 | Repeated document entry and uncertain versions | Staff produce the required company-correct documents and distinguish final history from corrections | CAP-08–09 |
-| O-04 | Invoice, submission and payment confusion | Staff distinguish invoicing from billing, see unpaid/partial/overdue amounts and record supported payments | CAP-10 |
-| O-05 | Cost confused with actual cash movement | Owner can inspect project costs/profitability separately from evidenced receipts/disbursements | CAP-11 |
+| O-04 | Invoice, submission and payment confusion | Staff distinguish issued sales value and BELUM DITAGIHKAN from billed active receivable and actual Cash-In; billing/due dates support aging and partial/full payment tracking | CAP-10 |
+| O-05 | Cost confused with actual cash movement | Owner sees actual/direct Cost/HPP for managerial profitability separately from actual Cash-Out, with auditable source-company and consuming-project attribution | CAP-11 |
 | O-06 | Unsafe access or invisible mistakes | Unauthorized users cannot obtain sensitive company data; critical corrections retain reasons and history | CAP-13 |
-| O-07 | Desk-only work and fragile go-live | Indonesian operational tasks work on appropriate mobile/desktop devices, with reconciled starting data and tested recovery | CAP-14–16 |
+| O-07 | Desk-only work and fragile go-live | Indonesian tasks work on appropriate mobile/desktop devices, with reconciled starting data and tested local recovery where VPS/backup data remain recoverable, under DIR-009 | CAP-14–16 |
 
 Scope IDs and commitments are owned by [V1_SCOPE](V1_SCOPE.md); evidence for these outcomes is owned by [ACCEPTANCE_CRITERIA](ACCEPTANCE_CRITERIA.md). No percentage productivity improvement or transaction-volume target is invented before representative tasks/workloads are known.
 
-CAP-17 makes the operational dashboards, search, alerts and reports explicit across O-01/O-04/O-05/O-07. CAP-18 adds a reliable project completion decision across O-02–06. The [reference comparison](REFERENCE_COVERAGE.md) preserves the complete PDF/image coverage and latest DIR-008 hierarchy; it does not make this REVIEW synthesis approved.
+CAP-17 makes the operational dashboards, search, alerts and reports explicit across O-01/O-04/O-05/O-07. CAP-18 adds a reliable project completion decision across O-02–06. The [reference comparison](REFERENCE_COVERAGE.md) preserves the complete PDF/image coverage and latest DIR-008 hierarchy; reference ingestion did not itself approve P1; the subsequent explicit approval is APPR-002.
 
 ## Reference business journey
 
@@ -44,18 +46,18 @@ Masuk → Autentikasi → Pemeriksaan Izin dan Lingkup Perusahaan → Dasbor →
 | Branch / loop | Product interpretation | Coverage |
 | --- | --- | --- |
 | Quotation not approved | Revise with history and obtain applicable approval; no implicit execution from merely printing | CAP-04/08; AC-04/08 |
-| Stock available | Allocate supply to the project and continue; no dummy purchase or re-receipt of existing stock. Hard-reservation semantics remain GAP-023 | CAP-06; AC-20/22 |
+| Stock available | After commercial confirmation, reserve supply for the project; a quotation alone does not reserve. Respect AVAILABLE = ON HAND - RESERVED - UNUSABLE and release/adjust when no longer needed; no dummy purchase or re-receipt | CAP-06; AC-16/20/22 |
 | Insufficient stock | Purchase remaining needs from chosen supplier(s), record actual price/components; optional PO per purchase. Existing supply and a purchased shortage can jointly meet demand without duplication | CAP-05/06; AC-05/22 |
 | Warehouse | Receive only actual arrivals, including partial/serial/damaged evidence, then use attributable dispatch for delivery; barcode/manual identification as supported | CAP-03/06/07; AC-03/06/07/16/22 |
 | Drop-ship or service | Direct supplier fulfillment has confirmation, no warehouse receipt/dispatch fiction; services use applicable fulfillment/handover, no fake goods | CAP-06; AC-20 |
 | Partial delivery | Record delivered and remaining quantities/evidence; repeat until fulfilled or validly closed, preserving each record | CAP-07/18; AC-07/21 |
-| Invoice/admin/billing | Issue applicable document snapshots; complete selected client requirements and track billing submission/date/due date separately. The diagram does not settle receivable recognition (GAP-004) | CAP-08–10; AC-08–10 |
+| Invoice/admin/billing | Issue records agreed sales value without Cash-In; show BELUM DITAGIHKAN until explicitly billed. Billing activates the unpaid receivable and records billed_at/due_date for aging; selected administrative evidence remains visible | CAP-08–10; AC-08–10 |
 | Partial payment / advance | Additional payments resolve the remainder; DP/termin may occur before delivery/invoice where applicable. A kuitansi follows a real payment, regardless of its position in the diagram | CAP-10; AC-10/12/16 |
-| Completion / later correction | Evaluate all completion conditions, not just payment or delivery. Required exceptions need authority/reason; later returns/corrections must visibly revalidate completion under the policy still to be agreed | CAP-18; AC-21; GAP-022 |
+| Completion / later correction | System checks every normal condition. Admin may satisfy requirements or mark eligible admin items TIDAK BERLAKU with reason/audit; Owner alone may exceptionally Force Complete with confirmation, reason, actor, timestamp, before/after state and audit. Preserve unmet conditions and revalidate after later material corrections | CAP-09/18; AC-09/21; DIR-011 policy resolved, GAP-022 technical work |
 
-The image's drawn partial-payment arrow is read together with the explicit completion gate: outstanding debt cannot bypass resolution by following a line to validation. Dashboards/report values and action queues update after relevant committed changes throughout the journey, including corrections; the final diagram node does not mean they update only after completion.
+The image's partial-payment arrow does not erase outstanding debt or pass normal completion. An Owner override is a separately confirmed and audited exceptional outcome; any remaining receivable stays visible and financially unchanged by the override itself. Dashboards/report values and action queues update after relevant committed changes throughout the journey, including corrections; the final diagram node does not mean they update only after completion.
 
-This is a product orientation, not a mandatory linear workflow or a P3 state machine. Existing-stock orders must not require a fictitious new purchase; service-only work must not create warehouse movements; direct supplier delivery must not create fictitious warehouse receipts. Exact applicability and transitions belong to P2/P3. The contextual clarification preserves requested capabilities while removing forced dummy work (GAP-021); all branch requirements are represented even where the policy decision remains explicit.
+This is a product orientation, not a mandatory linear workflow or a P3 state machine. Existing-stock orders must not require a fictitious new purchase; service-only work must not create warehouse movements; direct supplier delivery must not create fictitious warehouse receipts. Exact applicability and transitions belong to P2/P3. The contextual clarification preserves requested capabilities while removing forced dummy work (GAP-021); all branch requirements remain represented, now with the DIR-011 business decisions applied.
 
 The project is the operational hub. Users should be able to find outstanding items, fulfillment, documents, billing, payments, administrative requirements and history without reconstructing the process from database-oriented screens. Organization → Unit/Department → PIC is the same client concept for UNY, UGM and other clients. SIPLAH adds channel information to this same project-centered experience. (OB §§8–11; P1: Current Business Decisions.)
 
