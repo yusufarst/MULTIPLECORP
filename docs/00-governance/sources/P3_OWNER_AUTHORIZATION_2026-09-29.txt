@@ -1,0 +1,1239 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twentieth source record
+Received: 2026-09-29, in-session Owner message following the published P2
+approval checkpoint 3d652eb692ea8cced7c3e5acf1824c27993e62c9
+Subject: Owner authorization — P3 Critical Business Workflows (planning only,
+         plan-first, stop boundary) and the permanent Git commit attribution
+         rule with one housekeeping commit and a normal non-force push
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — P3 CRITICAL BUSINESS WORKFLOWS
++ PERMANENT GIT ATTRIBUTION RULE
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Role:
+PRIMARY PLANNING ARCHITECT
+
+Model autonomy:
+You have broad Level-1 planning authority.
+Think deeply and independently.
+Do not ask the Owner to choose between purely technical/planning alternatives.
+Choose the strongest design yourself.
+
+Use repository documents as the canonical source of truth.
+
+==================================================
+0. OPERATING MODE
+==================================================
+
+This task may run in AUTO permission mode.
+
+AUTO mode is permission automation only.
+It does NOT expand your scope.
+
+The instructions and phase boundaries in this prompt remain binding.
+
+You may execute safe repository reads, validations, edits explicitly
+authorized below, Git staging/commit/push only where explicitly authorized,
+and planning work within this task.
+
+Never treat AUTO mode as permission to:
+
+- start later phases
+- implement application code
+- invent business decisions
+- rewrite Git history
+- force push
+- delete repository history
+- change production systems
+- access production credentials
+
+If a material discrepancy, true business-policy ambiguity, Git divergence,
+or destructive operation is encountered:
+
+STOP and report it.
+
+==================================================
+1. EXPECTED REPOSITORY BASELINE
+==================================================
+
+Expected current state:
+
+P0:
+APPROVED
+CHECKPOINTED
+PUBLISHED
+
+P1:
+APPROVED
+CHECKPOINTED
+PUBLISHED
+
+P2:
+APPROVED
+CHECKPOINTED
+PUBLISHED
+
+Expected current HEAD / origin/main:
+
+3d652eb692ea8cced7c3e5acf1824c27993e62c9
+
+OWNER_DECISION_REQUIRED:
+0
+
+P3:
+NOT STARTED
+
+Working tree:
+CLEAN
+
+Index:
+CLEAN
+
+Before doing anything:
+
+- read AGENTS.md
+- read CLAUDE.md
+- read README.md
+- read docs/CONTEXT_INDEX.md
+- read docs/07-handoff/CURRENT_STATE.md
+- read docs/07-handoff/NEXT_ACTION.md
+- inspect git status
+- inspect current HEAD
+- inspect origin/main
+- confirm local main tracks origin/main
+- confirm no merge/rebase/cherry-pick is active
+
+If the repository materially differs from this expected baseline:
+
+STOP and report.
+
+Do not automatically repair unexpected divergence.
+
+==================================================
+2. FIRST BOUNDED HOUSEKEEPING TASK:
+   PERMANENT GIT ATTRIBUTION POLICY
+==================================================
+
+Before P3 planning, add a permanent repository instruction preventing
+AI/model/tool attribution in future Git commits.
+
+Do NOT rewrite old commits.
+
+Do NOT remove existing historical Claude attribution.
+
+Do NOT alter P0/P1/P2 commit history.
+
+The existing historical contributor entries are intentionally accepted.
+
+Update CLAUDE.md with an appropriate permanent section equivalent to:
+
+## Git commit attribution
+
+All repository commits must use the repository Owner's configured Git
+author and committer identity only.
+
+Never add AI/model/tool attribution or co-author trailers.
+
+Specifically never add:
+
+- Co-Authored-By: Claude
+- Co-Authored-By: Claude Fable
+- Co-Authored-By: Anthropic
+- Co-Authored-By for any AI model, agent, coding assistant, or automation tool
+- Generated-By
+- Assisted-By
+- AI-authorship trailers or equivalent attribution
+
+Do not identify Claude, Anthropic, an AI model, an agent, or an automation
+tool as commit author, committer, or co-author.
+
+Use only the repository Owner's existing configured Git identity unless
+the Owner explicitly instructs otherwise.
+
+Commit messages should contain only normal repository-relevant content.
+
+Also inspect AGENTS.md and repository governance.
+
+If this rule belongs in a universal agent rule as well as CLAUDE.md,
+add the shortest appropriate equivalent to AGENTS.md so future replacement
+agents inherit the same policy.
+
+Do not duplicate large blocks unnecessarily.
+Respect the repository's single-source-of-truth conventions.
+
+==================================================
+3. VERIFY OWNER GIT IDENTITY
+==================================================
+
+Read-only inspect:
+
+git config user.name
+git config user.email
+
+Do not invent or overwrite identity values.
+
+If either is missing:
+
+STOP and report before making a commit.
+
+If present:
+
+use the existing configured Owner identity.
+
+Explicitly verify that no AI Co-Authored-By trailer will be added.
+
+==================================================
+4. HOUSEKEEPING CHECKPOINT
+==================================================
+
+After the attribution-rule edit:
+
+- review complete diff
+- confirm only the intended instruction/governance file(s) changed
+- confirm no business specification changed
+- confirm no secrets
+- confirm P0/P1/P2 contents remain untouched
+
+Then create ONE small normal commit.
+
+Preferred commit message:
+
+docs: prohibit AI commit attribution
+
+IMPORTANT:
+
+The commit MUST NOT contain:
+
+Co-Authored-By: Claude
+Co-Authored-By: Anthropic
+or any AI attribution trailer.
+
+After commit:
+
+- re-check origin/main
+- ensure no divergence
+- ensure the commit is a normal descendant
+- push normally to origin/main
+- never force push
+
+After push verify:
+
+local HEAD == origin/main
+working tree clean
+index clean
+
+If any Git divergence occurs:
+
+STOP.
+
+Do not resolve it automatically.
+
+==================================================
+5. BEGIN P3 PLANNING ONLY
+==================================================
+
+After the housekeeping checkpoint is safely published, begin:
+
+P3 — Critical Business Workflows
+
+P3 planning is authorized.
+
+P3 DOCUMENTATION EXECUTION IS NOT YET AUTHORIZED.
+
+During the P3 portion of this task:
+
+Do NOT create or modify:
+
+- docs/02-domain/WORKFLOWS.md
+- P3 quality-gate files
+- domain implementation files
+- database schema
+- ERD
+- migrations
+- Laravel code
+- React/Inertia code
+- UI implementation
+- infrastructure/deployment code
+
+You are planning P3 only.
+
+==================================================
+6. REPOSITORY-FIRST P3 INTAKE
+==================================================
+
+Read the canonical repository material required to reconstruct the complete
+approved business baseline.
+
+At minimum read:
+
+- AGENTS.md
+- CLAUDE.md
+- README.md
+- CHANGELOG.md
+- docs/CONTEXT_INDEX.md
+
+Governance:
+
+- docs/00-governance/SOURCE_OF_TRUTH.md
+- docs/00-governance/DECISION_LOG.md
+- docs/00-governance/GAP_REGISTER.md
+- docs/00-governance/CHANGE_CONTROL.md
+- docs/00-governance/PROJECT_CHARTER.md
+- docs/00-governance/AGENT_OPERATING_MODEL.md
+- docs/00-governance/ENGINEERING_PRINCIPLES.md
+
+P1:
+
+- docs/01-product/PRODUCT_OVERVIEW.md
+- docs/01-product/V1_SCOPE.md
+- docs/01-product/ACCEPTANCE_CRITERIA.md
+- docs/01-product/REFERENCE_COVERAGE.md
+- docs/01-product/P1_QUALITY_GATE.md
+
+P2:
+
+- docs/02-domain/DOMAIN_MODEL.md
+- docs/02-domain/BUSINESS_RULES.md
+- docs/02-domain/P2_QUALITY_GATE.md
+
+Handoff:
+
+- docs/07-handoff/CURRENT_STATE.md
+- docs/07-handoff/NEXT_ACTION.md
+
+Inspect SOURCE_OF_TRUTH to determine exact ownership of P3 outputs.
+
+Do not invent duplicate canonical documents when an ownership path already
+exists.
+
+==================================================
+7. P3 PURPOSE
+==================================================
+
+P2 established domain truth.
+
+P3 must define how users and business processes move through that truth.
+
+P3 owns:
+
+- workflow orchestration
+- business-process sequence
+- user-triggered transitions
+- cross-domain handoffs
+- conditional branches
+- exception paths
+- partial-processing paths
+- correction flows
+- reversal flows
+- cancellation flows
+- responsibility boundaries
+- workflow preconditions
+- workflow blocking conditions
+- workflow completion conditions
+- business-level atomicity expectations
+- recovery semantics
+
+P3 does NOT own:
+
+- physical table/column design
+- SQL schema
+- ERD implementation
+- migrations
+- API implementation
+- controllers/services implementation
+- UI screen implementation
+- Tailwind/shadcn implementation
+- SQL locking strategy
+- production deployment architecture
+
+Do not leak later-phase implementation design into P3.
+
+==================================================
+8. BOUNDED PLANNING AUTONOMY
+==================================================
+
+You have broad Level-1 authority.
+
+You may independently:
+
+- determine the cleanest workflow decomposition
+- create primary workflows and reusable subflows
+- combine redundant flows
+- split dangerous overloaded flows
+- normalize terminology
+- distinguish user actions from system reactions
+- determine workflow start/end boundaries
+- derive orchestration from P2 lifecycle truth
+- identify blocking facts and completion predicates
+- define correction/recovery orchestration
+- improve the presentation of the Golden Flow
+- choose diagrams and documentation structure
+- resolve implementation-neutral ambiguity
+
+Do not ask the Owner questions that can be solved safely within Level-1
+planning authority.
+
+Only escalate TRUE business-policy decisions.
+
+If changing a choice would materially change:
+
+- commercial meaning
+- financial meaning
+- customer/supplier obligations
+- inventory ownership
+- authorization
+- legal/document meaning
+- project-completion policy
+- V1 capability
+
+then classify it as potential OWNER_DECISION_REQUIRED.
+
+Do not silently decide a Level-2/Level-3 business choice.
+
+==================================================
+9. NON-NEGOTIABLE APPROVED BASELINE
+==================================================
+
+Preserve all approved P1 and P2 decisions.
+
+Including, but not limited to:
+
+MULTI-COMPANY
+
+- one workspace
+- multiple dynamically addable legal companies
+- each company retains separate legal identity, NPWP, bank identity,
+  numbering and relevant business records
+- Owner may view consolidated and per-company data
+- permissions and company scope remain explicit/default-deny
+
+USERS
+
+- launch roles are Owner and Admin Operasional
+- multiple individual Admin Operasional accounts may exist
+- at launch there may be at least two Admin accounts
+- same role permissions do not mean shared identity
+- every sensitive action remains attributable to the exact user
+
+WAREHOUSE / INVENTORY
+
+- one shared physical warehouse
+- physical stock pool is shared
+- acquisition/company/cost provenance remains auditable
+- inter-company stock allocation is explicit
+- no automatic internal invoices/journals/transfers for that allocation
+- ON HAND
+- RESERVED
+- UNUSABLE / QUARANTINED
+- AVAILABLE = ON HAND - RESERVED - UNUSABLE
+- AVAILABLE must never become negative
+- reservation begins only from confirmed demand
+- quotation alone does not reserve
+- reservation itself is not physical movement
+- dispatch/legitimate movement reduces physical stock
+- wrong movement is reversed/corrected, not deleted
+- serial tracking applies where required
+- multi-unit semantics from P2 remain binding
+- Receiving Lot / provenance semantics remain binding
+
+PROJECT
+
+- one primary company normally owns a project
+- rare cross-company use remains explicit
+- products and services can coexist
+- service-only projects must not fake inventory activity
+- project lifecycle follows approved P2 truth
+- multiple suppliers/POs/deliveries may exist
+- project normally uses one invoice but multiple invoices are supported
+  where legitimate
+
+QUOTATION
+
+- revisions/history preserved
+- approval establishes confirmed commercial demand where applicable
+- rejected/revised paths remain possible
+
+PURCHASE
+
+- PO is optional
+- purchases without project are legitimate for replenishment
+- project purchase remains supported
+- supplier comparison is NOT a V1 capability
+
+FULFILLMENT
+
+- Warehouse and Direct/Drop-Ship are distinct
+- drop-ship must never fake receiving/dispatch
+- partial receiving and partial delivery supported
+- damaged/quarantine paths supported
+- proof/evidence supported
+
+DOCUMENTS
+
+- generated company-issued documents and external uploaded documents remain
+  distinct
+- final/issued documents are immutable except revision/void semantics
+- document numbering follows approved business-date rules
+- backdating does not rewrite recorded_at
+- numbers are never inserted, reused, or renumbered
+- rendering/PDF failure must not silently redefine business issuance
+- no fabricated external official documents
+
+FINANCE
+
+Preserve the five distinct concepts:
+
+- Sales / Transaction Value
+- Active Receivable
+- Cash-In
+- Cost / HPP
+- Cash-Out
+
+And:
+
+- Invoice issuance != Billing != Payment
+- invoice issue does not automatically mean Cash-In
+- explicit billing activates receivable where applicable
+- billed_at and due_date retained
+- partial payments supported
+- overpayment/customer credit supported
+- payment correction/reallocation audited
+- disputed receivable remains active and ages
+- Owner waiver/write-off does not create Cash-In
+- verified intermediary fee deduction follows DIR-019/DIR-020
+- no duplicate expense recognition
+- no invented SIPLAH cashback/pengembalian formula
+- managerial finance only
+- no full accounting/GL
+
+COMPLETION
+
+Normal completion requires the approved completion gate.
+
+Admin may use Not Applicable only where eligibility permits.
+
+Only Owner may use Force Complete / Completion Override.
+
+Force Complete:
+
+- exceptional
+- explicit confirmation
+- mandatory reason
+- actor/time
+- before/after evidence
+- audit trail
+
+It must never become a normal shortcut.
+
+BACKUP / INFRASTRUCTURE
+
+Do not reopen Owner-approved same-VPS backup policy in P3.
+
+GAP-018 remains ACCEPTED_RISK unless Owner changes it.
+
+==================================================
+10. GOLDEN OPERATIONAL FLOW
+==================================================
+
+Use the approved Golden Flow as a backbone, not as a rigid mandatory chain.
+
+Conceptual backbone:
+
+LOGIN
+→ Authentication
+→ Company Scope + Permission
+→ Dashboard
+→ Create/Open Project
+→ Select Company
+→ Client
+→ Unit/PIC
+→ Channel Regular/SIPLAH
+→ Products/Services
+→ Price/Tax/Value
+→ Quotation
+→ approval/revision loop
+→ confirmed demand
+→ stock/fulfillment decision
+
+Branch:
+
+A. usable stock available
+   → reserve/allocate
+   → dispatch
+
+B. stock shortage
+   → purchase
+   → optional PO
+   → Warehouse fulfillment
+      OR Drop-Ship
+
+Warehouse:
+→ receiving
+→ scan barcode/serial
+→ movement/balance update
+→ dispatch
+
+Drop-Ship:
+→ supplier direct to client
+→ record legitimate direct fulfillment
+→ NO fake warehouse movement
+
+Then where applicable:
+
+→ delivery
+→ partial/full loop
+→ delivery document
+→ handover evidence
+→ invoice
+→ administrative/SPJ requirements
+→ billing activation
+→ receivable
+→ payment / partial settlement
+→ correction/reallocation/dispute/fee settlement where needed
+→ completion validation
+→ project completed
+→ reporting/dashboard facts
+
+Do not force irrelevant workflow steps.
+
+==================================================
+11. REQUIRED WORKFLOW COVERAGE
+==================================================
+
+Independently determine the strongest workflow architecture.
+
+At minimum ensure the P3 plan covers business orchestration for:
+
+1. Authentication and company-context entry
+
+2. Project creation/amendment
+
+3. Client → Unit → PIC selection
+
+4. Regular vs SIPLAH channel selection
+
+5. Quotation:
+   - draft
+   - revision
+   - approval
+   - rejection
+   - explicit no-quotation confirmation path where legitimate
+
+6. Confirmed-demand transition
+
+7. Stock availability decision
+
+8. Reservation:
+   - create
+   - adjust
+   - release
+   - shortage after reservation
+   - damaged stock interaction
+
+9. Project purchase
+
+10. Replenishment purchase without project
+
+11. Optional PO
+
+12. Receiving
+
+13. Partial receiving
+
+14. Damaged/quarantine receiving
+
+15. Barcode handling
+
+16. Serial-number handling
+
+17. Warehouse fulfillment
+
+18. Drop-ship/direct fulfillment
+
+19. Warehouse dispatch
+
+20. Partial delivery
+
+21. Delivery completion
+
+22. Return
+
+23. Reversal/correction
+
+24. Stock opname
+
+25. Inventory adjustment
+
+26. Inter-company stock allocation
+
+27. Generated-document lifecycle
+
+28. Uploaded/external document lifecycle
+
+29. Document revision
+
+30. Document void
+
+31. Rendering/re-rendering failure path
+
+32. Invoice issuance
+
+33. Explicit billing activation
+
+34. Active receivable
+
+35. Receivable aging
+
+36. Payment receipt
+
+37. Partial payment
+
+38. Payment application/allocation
+
+39. Overpayment/customer credit
+
+40. Payment correction
+
+41. Payment reallocation
+
+42. Verified intermediary fee deduction
+
+43. Receivable dispute
+
+44. Owner waiver/write-off
+
+45. SPJ/admin checklist
+
+46. Requirement waiver / Admin N/A
+
+47. Completion gate
+
+48. Owner Force Complete
+
+49. Cancellation at meaningful lifecycle points
+
+50. Deactivation of product/supplier/client where live history exists
+
+51. Opening/migration facts where workflow-sensitive
+
+Do not mechanically create 51 separate workflows.
+
+Find reusable subflows and coherent aggregate workflows.
+
+==================================================
+12. PARTIAL OPERATIONS ARE FIRST-CLASS
+==================================================
+
+Do not design only happy paths.
+
+For each major workflow test:
+
+- zero processed
+- partial processed
+- fully processed
+- excess processed where applicable
+- cancelled
+- corrected
+- reversed
+- returned
+- disputed
+- retried
+- duplicated request
+- stale user state
+- second Admin continues first Admin's work
+
+Examples:
+
+Purchase 100 units
+→ receive 60
+→ 5 damaged
+→ remaining 40 later
+
+Delivery 100
+→ deliver 50
+→ invoice only legitimate delivered quantity where rules require
+→ remaining fulfillment continues
+
+Invoice Rp10m
+→ bill Rp10m
+→ receive Rp6m
+→ Rp4m active receivable remains
+
+Do not assume operations are all-or-nothing.
+
+==================================================
+13. CORRECTION / REVERSAL MODEL
+==================================================
+
+Correction is a core P3 concern.
+
+Explicitly define business workflow handling for:
+
+- wrong barcode scan
+- wrong quantity
+- wrong receiving
+- wrong dispatch
+- wrong delivery
+- damaged goods discovered later
+- incorrect payment
+- incorrect payment allocation
+- payment reallocation
+- wrong invoice
+- invoice void
+- return after delivery
+- return after billing
+- cancellation after purchase
+- cancellation after reservation
+- cancellation after partial fulfillment
+
+Do not delete committed business history.
+
+Prefer reversal, contra-fact, replacement, or explicit correction semantics
+consistent with P2.
+
+==================================================
+14. INVENTORY ADVERSARIAL MODEL
+==================================================
+
+Try to break:
+
+ON HAND
+RESERVED
+UNUSABLE
+AVAILABLE
+
+Attempt scenarios such as:
+
+- two projects reserve the last unit
+- stock becomes damaged after reservation
+- reserved stock is physically missing
+- a wrong dispatch is reversed
+- returned stock is damaged
+- stock originates from Company A but fulfills Company B
+- partial receiving across suppliers
+- serialized quantity mismatch
+- alternate-unit conversion creates fractional inconsistency
+- drop-ship accidentally affects warehouse stock
+- stock opname conflicts with outstanding reservations
+
+P3 should expose the business resolution path.
+
+P6 will later define locking/atomic implementation.
+
+==================================================
+15. FINANCIAL ADVERSARIAL MODEL
+==================================================
+
+Test:
+
+Invoice issuance
+→ delayed billing
+→ billing activation
+→ receivable
+→ partial payment
+→ payment allocation
+→ intermediary deduction
+→ dispute
+→ overpayment
+→ customer credit/refund
+→ correction
+→ reallocation
+→ Owner write-off
+→ project completion
+
+Attempt to create:
+
+- duplicate Cash-In
+- Cash-In from a non-cash deduction
+- vanished receivable
+- duplicate fee expense
+- duplicate payment application
+- payment assigned to wrong invoice
+- write-off disguised as payment
+- customer credit counted as profit
+- invoice void while payment still applied
+- completion while unresolved financial correction exists
+
+The P3 design must surface or prevent these conditions.
+
+==================================================
+16. DOCUMENT ADVERSARIAL MODEL
+==================================================
+
+Explicitly test:
+
+- issue once
+- rendering failure
+- duplicate click
+- revision after issue
+- void after issue
+- uploaded external evidence replacement
+- document number allocation under backdating
+- multiple Admins issuing concurrently at business level
+- invoice already billed
+- invoice already paid
+- delivery document after partial delivery
+- external SPK/official tax document authenticity
+
+Do not invent external official documents.
+
+==================================================
+17. MULTIPLE ADMIN USERS
+==================================================
+
+Design workflows assuming at least:
+
+Admin A
+Admin B
+
+may work concurrently.
+
+Examples:
+
+Admin A creates project.
+Admin B later continues purchasing.
+
+Admin A records receiving.
+Admin B records dispatch.
+
+Admin A enters payment.
+Admin B later performs an authorized correction.
+
+Same permission does not mean same identity.
+
+Every sensitive workflow must retain exact actor attribution.
+
+Do not invent ownership locks merely because different Admin accounts exist
+unless the business model requires them.
+
+==================================================
+18. ACTOR/ACTION MATRIX
+==================================================
+
+P3 should establish a clear actor/action matrix.
+
+Distinguish:
+
+- Owner allowed
+- Admin Operasional allowed
+- Owner-only exceptional
+- system-derived
+- automated/background reaction where legitimate
+
+Do not invent additional launch roles.
+
+Authorization implementation details belong primarily to P5.
+
+==================================================
+19. STATE VS WORKFLOW DISCIPLINE
+==================================================
+
+P2 remains authoritative for domain lifecycle meaning.
+
+P3 orchestrates transitions over P2 truth.
+
+Do NOT create parallel duplicate status systems simply to make workflow
+documentation easier.
+
+Identify every place where duplicate status truth would be tempting.
+
+Prefer derived workflow progress when possible.
+
+==================================================
+20. BUSINESS-LEVEL ATOMICITY / CONFLICT SENSITIVITY
+==================================================
+
+P6 owns technical concurrency implementation.
+
+P3 should identify which business actions require an indivisible result.
+
+At minimum evaluate:
+
+- reservation
+- reservation release/change
+- dispatch
+- receiving
+- stock adjustment
+- inter-company allocation
+- document number consumption
+- billing activation
+- payment recording
+- payment application
+- payment correction/reallocation
+- intermediary fee settlement
+- completion
+- Force Complete
+
+For each, identify the business invariant that must survive competing actions.
+
+Do NOT prescribe SQL locking yet.
+
+==================================================
+21. WORKFLOW DOCUMENTATION FORMAT
+==================================================
+
+Design the future P3 normative document so later P4/P5/P6/P7/P8/P11 can use it.
+
+For each major workflow consider:
+
+- Workflow ID
+- Name
+- Purpose
+- Actors
+- Trigger
+- Preconditions
+- Main path
+- Branches
+- Partial path
+- Exception path
+- Correction/reversal path
+- Cancellation path
+- Records/facts affected
+- Business invariants
+- Result
+- Completion condition
+- Audit requirements
+- Authorization sensitivity
+- Concurrency sensitivity
+- Related P2 rules
+- Related P1 capabilities
+- Related acceptance criteria
+- Later-phase technical dependencies
+
+Use Mermaid only when materially useful.
+
+Avoid decorative diagrams.
+
+==================================================
+22. TRACEABILITY
+==================================================
+
+Design explicit traceability:
+
+P1 capability / acceptance criterion
+→ P2 domain rule
+→ P3 workflow
+→ later P4/P5/P6/P8/P11 obligations
+
+No V1_REQUIRED capability may become orphaned.
+
+Check all 18 P1 capability groups.
+
+Check all 14 document types.
+
+Check relevant open gaps.
+
+==================================================
+23. GAP DISCOVERY
+==================================================
+
+Actively search for missing semantics.
+
+For every ambiguity classify:
+
+ALREADY SETTLED
+
+LEVEL-1 PLANNER DECISION
+
+TRUE OWNER_DECISION_REQUIRED
+
+DEFERRED TO P4/P5/P6/P7/P8/P9/P10/P11
+
+Resolve Level-1 items yourself.
+
+Do not reopen approved Owner decisions.
+
+Do not disguise business-policy ambiguity as technical detail.
+
+==================================================
+24. ADVERSARIAL REVIEW PASSES
+==================================================
+
+Perform at least four deliberate passes.
+
+PASS 1 — COVERAGE
+
+Can every V1_REQUIRED capability actually participate in a valid workflow?
+
+PASS 2 — FAILURE
+
+Try:
+
+- partial processing
+- duplicate input
+- wrong scan
+- stale state
+- cancellation
+- return
+- correction
+- cross-company usage
+- multiple Admins
+- already-issued documents
+- already-billed invoice
+- already-paid invoice
+
+PASS 3 — CONSERVATION / INTEGRITY
+
+Try to create:
+
+- stock from nothing
+- negative AVAILABLE
+- double reservation
+- lost provenance
+- duplicate HPP
+- duplicate Cash-In
+- disappearing receivable
+- duplicate intermediary fee
+- reused document number
+- erased history
+
+PASS 4 — DOWNSTREAM HANDOFF
+
+Imagine P4 Database Architecture,
+P5 Security,
+P6 Concurrency,
+P7 UX,
+P8 Testing,
+and P11 Build Units receiving P3.
+
+Identify anything they would still be forced to guess.
+
+==================================================
+25. DESIGNPAKEAI / SHADCN BOUNDARY
+==================================================
+
+Do NOT design visual UI in P3.
+
+Do NOT use DesainPakeAI as business truth.
+
+Do NOT define shadcn components yet.
+
+However, structure workflow documentation so P7 can later translate it into
+clear Indonesian user journeys and interface states.
+
+==================================================
+26. FABLE ESCALATION STRATEGY
+==================================================
+
+Do NOT use Fable automatically for this entire phase.
+
+Primary P3 planning should be completed by the current Opus model.
+
+At the end, identify whether any of these areas are sufficiently complex to
+justify a targeted Fable red-team:
+
+A. Inventory / reservation / provenance
+B. Financial / receivable / payment conservation
+C. Correction / reversal / cancellation
+D. Completion gate / Force Complete
+E. Cross-company interactions
+
+Recommend Fable only for a narrow review target if it would materially improve
+confidence.
+
+Do not ask Fable to rebuild all of P3 from scratch.
+
+==================================================
+27. CANONICAL FILE REVIEW
+==================================================
+
+Inspect SOURCE_OF_TRUTH.
+
+Confirm whether:
+
+docs/02-domain/WORKFLOWS.md
+
+is the registered canonical P3 normative output.
+
+Determine the repository-conformant approach for P3 quality-gate evidence.
+
+Do NOT create either file during this P3 planning portion.
+
+==================================================
+28. FINAL OUTPUT
+==================================================
+
+Return a comprehensive P3 planning report containing:
+
+A. Baseline verification
+
+B. Attribution-policy housekeeping result
+   - files changed
+   - commit SHA
+   - author identity verification
+   - explicit confirmation no AI/co-author trailer exists
+   - push result
+
+C. P3 purpose and boundary
+
+D. Proposed workflow architecture
+
+E. Primary workflows
+
+F. Reusable subflows
+
+G. Actor/action matrix
+
+H. Preconditions and completion conditions
+
+I. Partial-processing model
+
+J. Correction/reversal/cancellation model
+
+K. Inventory workflow architecture
+
+L. Financial workflow architecture
+
+M. Document workflow architecture
+
+N. SPJ/admin workflow
+
+O. Completion and Force Complete workflow
+
+P. Cross-company workflow
+
+Q. Multi-Admin continuity semantics
+
+R. Conflict-sensitive/atomic business actions
+
+S. P1/P2 traceability strategy
+
+T. Open-gap mapping
+
+U. New gaps discovered
+
+V. OWNER_DECISION_REQUIRED analysis
+
+W. Level-1 planner decisions made
+
+X. Adversarial-review findings
+
+Y. Proposed canonical P3 file set
+
+Z. P3 quality-gate strategy
+
+AA. Whether targeted Fable review is recommended, and exactly for what
+
+AB. P3 readiness result
+
+AC. Exact next safe action
+
+Readiness must be exactly one of:
+
+READY FOR OWNER DECISIONS
+
+or
+
+READY FOR DOCUMENTATION EXECUTION
+
+Do NOT execute P3 documentation.
+
+Do NOT start P4.
+
+STOP after the P3 plan.

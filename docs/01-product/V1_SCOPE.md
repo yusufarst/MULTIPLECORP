@@ -1,8 +1,10 @@
 # V1 scope and product constraints
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
 Approval: [APPR-002](../00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved), explicit Owner approval on 2026-09-28 of the recovered P1 baseline; reviewed file hashes and scope are recorded there. Approval changes lifecycle only, not business requirements or implementation authorization.
+
+Amendment: the DOC-05 row alone was narrowly amended on 2026-09-29 to represent the Owner's decision [DIR-024](../00-governance/DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution) D-4 (pre-payment Kuitansi); the pre-amendment SHA-256 is recorded there and the amended revision is approved under [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
 
 Owner requirements are binding; prioritization and minimum delivery boundaries below are the P1 baseline approved under APPR-002. **OB** refers to the [original brief](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt); **P1** to the [P1 directive](../00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt); **C1–C3** to the [follow-up answers](../00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt). **REF** denotes the PDF/image supporting references reconciled under the latest **DIR-008**; [REFERENCE_COVERAGE](REFERENCE_COVERAGE.md) owns their comparison, not scope policy. The [product overview](PRODUCT_OVERVIEW.md) owns identity, users and goals. This is the sole inclusion/exclusion list. Latest binding business decisions are DIR-011, preserved in the final Owner source indexed by SOURCE_OF_TRUTH; their product contract is below.
 
@@ -89,7 +91,7 @@ C1 authorizes a complete recommended set from which Owner/Admin chooses. The bou
 | DOC-02 | Purchase Order / PO | Optional supplier-order output; no mandatory PO step |
 | DOC-03 | Surat Jalan / Faktur Pengiriman | Delivery output matched to actual fulfillment; layout name must not create duplicate delivery |
 | DOC-04 | Nota | Business transaction output distinct from payment proof when unpaid |
-| DOC-05 | Kuitansi | Receipt using the applicable recorded payment; no fabricated settlement |
+| DOC-05 | Kuitansi | Receipt using the applicable recorded payment; no fabricated settlement. DIR-024: a clearly distinguished *Kuitansi untuk Proses Pembayaran* may be issued before payment when legitimately required for payment processing; it creates no Cash-In, payment or settlement and is linked to the actual payment when it occurs |
 | DOC-06 | Invoice | Financial/business invoice, separate from marking it billed |
 | DOC-07 | Lampiran Kuitansi | Supporting detail linked to the relevant receipt, not a second payment |
 | DOC-08 | BAST | Handover record; populated facts confirmed by authorized user, not assumed from printing |

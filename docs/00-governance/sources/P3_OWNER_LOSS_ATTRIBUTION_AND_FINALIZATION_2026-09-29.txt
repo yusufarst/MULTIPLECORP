@@ -1,0 +1,526 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-third source record
+Received: 2026-09-29, in-session Owner message following the targeted P3
+conservation review (verdict NEEDS CORRECTION BEFORE P3 CHECKPOINT)
+Subject: Owner decision F-03 (unexplained fungible shared-pool loss: the Owner
+         attributes each case) and fast-track P3 finalization — corrections,
+         conditional approval, one checkpoint commit and a normal non-force push
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISION F-03 + FAST-TRACK P3 FINALIZATION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Current task:
+Apply the completed targeted Fable red-team findings, finalize P3,
+approve it, checkpoint it, and publish it in one bounded execution.
+
+Use AUTO mode.
+
+Do not restart P3 planning.
+Do not redesign P3.
+Do not start P4.
+
+==================================================
+1. EXPECTED CURRENT STATE
+==================================================
+
+Expected repository state:
+
+HEAD / origin/main:
+b921c8b
+
+P0:
+APPROVED
+
+P1:
+APPROVED
+
+P2:
+APPROVED
+
+P3:
+DOCUMENTATION DRAFTED
+VALIDATED
+UNCOMMITTED
+NOT YET CHECKPOINTED
+NOT YET APPROVED
+
+Expected worktree:
+
+19 P3-related changed paths
+0 staged
+
+Targeted Fable review:
+COMPLETED
+
+Verdict:
+NEEDS CORRECTION BEFORE P3 CHECKPOINT
+
+Findings:
+
+OWNER_DECISION_REQUIRED:
+F-03 only
+
+CRITICAL DEFECTS:
+F-01
+F-02
+
+LEVEL-1 CORRECTIONS:
+F-04 through F-22 as identified by the targeted review
+
+Before edits:
+
+- verify HEAD
+- verify origin/main
+- verify branch tracking
+- verify changed-path census
+- verify index empty
+- verify no merge/rebase/cherry-pick is active
+
+If materially different:
+STOP and report.
+
+==================================================
+2. OWNER DECISION — F-03 / L-42
+==================================================
+
+I, the Owner, decide:
+
+For an unexplained loss of fungible shared-pool stock where provenance
+cannot establish which legal company economically owns the lost quantity:
+
+OWNER ATTRIBUTES EACH CASE.
+
+Rules:
+
+1. Do NOT use FIFO, oldest-first, proportional allocation, or another
+   automatic rule to decide which legal company bears the unexplained loss.
+
+2. Oldest-first remains only the previously approved picking suggestion.
+   It must never become an implicit valuation, ownership, or loss-allocation
+   rule.
+
+3. If provenance clearly establishes the economic/company owner, use that
+   proven owner normally.
+
+4. Only when ownership remains genuinely indeterminate after available
+   evidence and provenance are evaluated:
+
+   create/retain a pending unexplained-loss attribution case.
+
+5. Only Owner may resolve that case by assigning the economic loss to the
+   appropriate company.
+
+6. Until Owner attribution occurs:
+
+   - the physical inventory correction may still preserve physical truth
+     where required;
+   - the unresolved economic/company loss attribution remains explicitly
+     pending;
+   - no company-level profit/loss attribution may be fabricated;
+   - no arbitrary default attribution is allowed;
+   - completion or reporting that requires resolved company-level economic
+     attribution must expose/block on the unresolved case as appropriate.
+
+7. Owner resolution must preserve:
+
+   - actor
+   - timestamp
+   - reason
+   - evidence available
+   - affected product/quantity
+   - relevant lot/provenance context
+   - selected company
+   - before/after state
+   - immutable audit history
+
+8. The same principle applies where a fungible condition-change/loss event
+   cannot reliably identify which company's economic quantity was affected.
+
+9. This mirrors the already-approved D-5 treatment for unexplained found
+   stock.
+
+Record this as a new explicit Owner decision under repository conventions.
+
+After recording it:
+
+OWNER_DECISION_REQUIRED = 0.
+
+==================================================
+3. TARGETED FABLE REVIEW IS BINDING INPUT
+==================================================
+
+Treat the completed targeted Fable report as review evidence.
+
+Do not blindly copy wording.
+
+Independently verify each finding against the canonical files before editing.
+
+Required disposition:
+
+CRITICAL:
+F-01
+F-02
+
+OWNER DECISION:
+F-03 — resolved above
+
+LEVEL-1:
+F-04 through F-22
+
+Apply every valid correction.
+
+If any finding is objectively invalid after direct verification, document
+why rather than applying it mechanically.
+
+Do not invent new business policy.
+
+==================================================
+4. REQUIRED CRITICAL CORRECTIONS
+==================================================
+
+F-01 — refund-consumed payment application
+
+Ensure a payment application already economically consumed by a real refund
+cannot later be freely reallocated and thereby settle more receivable than
+the remaining economic cash supports.
+
+Required semantic direction:
+
+- a refund-consumed application is final while its disbursement stands;
+- payment contra may only redirect it consistently to a re-recorded payment;
+- any unsupported residual becomes explicit and blocks closure;
+- payment/application/refund conservation must always hold.
+
+F-02 — cross-company damaged-return provenance
+
+Ensure restoration correctly restores BOTH:
+
+- physical quantity truth
+- economic/inter-company allocation provenance
+
+Required semantic direction:
+
+- restoration reverses the original allocation together with the original
+  consumption;
+- subsequent loss creates a NEW loss-side allocation if applicable;
+- supplier return follows the correct contra/reversal semantics;
+- net allocation must equal net cross-company consumption of the lot.
+
+==================================================
+5. LEVEL-1 CORRECTIONS
+==================================================
+
+Apply the verified Fable corrections comprehensively, including:
+
+- evidence identity and duplicate-evidence prevention;
+- payment reallocation disposing/moving anchored settlements;
+- invoice void/replacement settlement handling;
+- replacement invoices preserving original aging basis where required;
+- opening customer credit semantics;
+- recovery after write-off;
+- bank-line conservation wording;
+- wrong serial/lot dispatch correction path;
+- reversal of erroneous restoration/returns;
+- fungible duplicate warning semantics;
+- conversion snapshot on returns/restorations;
+- purchase-charge reversal/re-spread semantics;
+- purchase-remainder closure conservation;
+- source-bill amount cap;
+- disposal/loss atomicity;
+- restored-lot cost matching HPP contra;
+- CANCELLED-project corrections without fake reactivation;
+- generic contra indivisible-action semantics;
+- cost-correction cascade;
+- write-off supersession;
+- reservation release vs dispatch sensitivity;
+- planner-marker/provenance corrections identified as F-21;
+- all other valid F-04–F-22 findings.
+
+Keep implementation-neutral business semantics.
+
+Do NOT prescribe SQL locks.
+
+P6 owns technical mechanisms.
+
+==================================================
+6. APPROVED FILE AMENDMENT DISCIPLINE
+==================================================
+
+The Fable review found the P1/P2 amendments narrow and governance-consistent.
+
+Therefore:
+
+Do NOT downgrade approved P1/P2 documents to REVIEW merely as ceremony.
+
+Preserve:
+
+- previous approval provenance
+- pre-change hashes where required
+- amendment decision references
+- Owner authorization chain
+
+Correct only the identified provenance/marker defects.
+
+==================================================
+7. RE-DERIVE EVERYTHING
+==================================================
+
+After corrections, do NOT reuse stale counts.
+
+Recompute from the files:
+
+- workflow count
+- subflow count
+- correction matrix rows
+- indivisible-action rows
+- Level-1 decision count
+- changed-file count
+- links/anchors count
+- gap totals
+- OWNER_DECISION_REQUIRED count
+
+Update evidence documents with measured values only.
+
+==================================================
+8. FINAL ADVERSARIAL VERIFICATION
+==================================================
+
+Re-test at minimum:
+
+- refund then attempted reallocation
+- payment contra after refund
+- cross-company damaged return then repair
+- cross-company damaged return then loss
+- cross-company damaged return then supplier return
+- unknown-company fungible loss
+- wrong serial dispatch
+- erroneous restoration
+- charge spanning multiple receipts
+- purchase remainder closure
+- duplicate source bill
+- invoice void with settlements
+- replacement invoice after partial payment
+- tax + fee on same payment
+- duplicate tax/fee evidence
+- recovery after write-off
+- cancelled project receiving late correction
+- alternate-unit partial return
+
+Verify conservation for:
+
+Inventory:
+ON HAND / RESERVED / UNUSABLE / AVAILABLE
+
+Economic provenance:
+lot / company / inter-company allocation
+
+Costs:
+acquisition cost / charge allocation / HPP / loss
+
+Receivables:
+invoice / billing / payment / application / settlement / write-off
+
+Cash:
+Cash-In only from actual received money
+Cash-Out only from actual disbursement facts
+
+==================================================
+9. P3 QUALITY GATE
+==================================================
+
+Update P3_QUALITY_GATE.md with the targeted Fable review and disposition.
+
+Expected after successful correction:
+
+CRITICAL DEFECT = 0
+OWNER_DECISION_REQUIRED = 0
+unresolved Level-1 correction = 0
+
+The gate may remain an evidence/audit document under REVIEW if that matches
+repository lifecycle conventions.
+
+The normative P3 workflow baseline itself may proceed to APPROVED below.
+
+==================================================
+10. FINAL P3 APPROVAL AUTHORIZATION
+==================================================
+
+If and ONLY if:
+
+- all critical defects are corrected;
+- F-03 is represented exactly;
+- all valid Level-1 findings are resolved;
+- OWNER_DECISION_REQUIRED = 0;
+- no unresolved contradiction remains;
+- static/governance validation passes;
+- no V1_REQUIRED scope is lost;
+- P1/P2 approved semantics remain preserved;
+- no P4 implementation/design has started;
+
+then I explicitly APPROVE the completed P3 normative workflow baseline.
+
+Update the lifecycle of the appropriate normative P3 document(s) to:
+
+APPROVED
+
+Record the approval using the next repository-conformant APPR identifier.
+
+Do not mark evidence/audit/live-register files APPROVED if repository
+convention keeps them REVIEW.
+
+==================================================
+11. FAST-TRACK CHECKPOINT AUTHORIZATION
+==================================================
+
+After successful approval validation, you are authorized to:
+
+1. review the COMPLETE diff;
+2. stage the exact P3 finalization package;
+3. verify staged content;
+4. run secret scan;
+5. verify source-record hashes;
+6. verify no unrelated files are staged;
+7. create ONE normal checkpoint commit.
+
+Preferred commit message:
+
+docs: finalize P3 critical business workflows
+
+The commit must use ONLY the Owner's configured Git author and committer.
+
+ABSOLUTELY DO NOT ADD:
+
+Co-Authored-By
+Generated-By
+Assisted-By
+Claude
+Anthropic
+AI/model/tool attribution
+
+Verify the final commit message itself contains no such trailer.
+
+Do not amend old commits.
+
+==================================================
+12. PUSH AUTHORIZATION
+==================================================
+
+After the local commit:
+
+freshly inspect origin/main.
+
+If:
+
+- intended origin is unchanged;
+- origin/main has no unexpected new commit;
+- local checkpoint is a normal descendant;
+- no divergence exists;
+- tree/index are clean;
+
+then I authorize a NORMAL NON-FORCE push to:
+
+origin/main
+
+Never use:
+
+--force
+--force-with-lease
+rebase
+reset
+history rewriting
+remote deletion
+
+If divergence appears:
+STOP and report.
+
+==================================================
+13. POST-PUSH VERIFICATION
+==================================================
+
+Verify:
+
+- local HEAD SHA
+- origin/main SHA
+- equality
+- branch tracking
+- clean working tree
+- clean index
+- no AI attribution in new commit
+- P3 normative lifecycle = APPROVED
+- P3 checkpoint published
+- OWNER_DECISION_REQUIRED = 0
+- P4 NOT STARTED
+
+==================================================
+14. NO P4 YET
+==================================================
+
+Do NOT create P4 documents.
+
+Do NOT create:
+
+- ERD
+- physical database model
+- migrations
+- Laravel application
+- React application
+- SQL implementation
+- locking implementation
+
+The next phase is P4 — Database Architecture, but it requires the next
+bounded task.
+
+==================================================
+15. FINAL REPORT
+==================================================
+
+Report:
+
+A. Baseline verification
+B. Fable findings disposition
+C. F-01 resolution
+D. F-02 resolution
+E. F-03 Owner decision implementation
+F. Level-1 corrections
+G. Final workflow/subflow/CM/AX counts
+H. Inventory conservation result
+I. Cost/HPP/loss conservation result
+J. Receivable/payment conservation result
+K. Approved-file amendment result
+L. P3 quality-gate result
+M. OWNER_DECISION_REQUIRED count
+N. P3 approval ID
+O. Exact checkpoint file set
+P. Validation result
+Q. Commit SHA
+R. Commit message
+S. Git author/committer identity
+T. Explicit confirmation no AI attribution trailer exists
+U. Push result
+V. Final local HEAD
+W. Final origin/main
+X. Working-tree/index state
+Y. P3 final lifecycle
+Z. P4 state
+AA. Exact next safe action
+
+Expected successful end state:
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 APPROVED
+P3 CHECKPOINTED
+P3 PUBLISHED TO origin/main
+OWNER_DECISION_REQUIRED = 0
+WORKING TREE CLEAN
+LOCAL HEAD = origin/main
+P4 NOT STARTED
+
+STOP after reporting.

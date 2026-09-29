@@ -1,0 +1,379 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-second source record
+Received: 2026-09-29, in-session Owner message following the P3 documentation
+report (HEAD b921c8b07cd49351c73b0cf7f71375cc274aeddd, P3 package uncommitted)
+Subject: Owner directive — targeted read-only Fable red-team of P3
+         "conservation under correction" (no repository change, staging,
+         commit or push); classification discipline and final-verdict format
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+TARGETED FABLE RED-TEAM — P3 CONSERVATION UNDER CORRECTION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Role:
+INDEPENDENT ADVERSARIAL REVIEWER
+
+This is a TARGETED READ-ONLY REVIEW.
+
+Do NOT modify repository files.
+Do NOT stage.
+Do NOT commit.
+Do NOT push.
+Do NOT rewrite history.
+Do NOT start P4.
+Do NOT redesign all of P3.
+
+Your purpose is to attack only the most correctness-critical intersection:
+
+CONSERVATION UNDER CORRECTION
+
+==================================================
+1. EXPECTED BASELINE
+==================================================
+
+Expected HEAD / origin/main:
+
+b921c8b
+
+Expected state:
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 DOCUMENTATION DRAFTED
+P3 VALIDATED
+P3 UNCOMMITTED
+P3 NOT YET CHECKPOINTED
+P3 NOT YET APPROVED
+P4 NOT STARTED
+
+Expected working tree:
+
+19 P3-related changed paths
+nothing staged
+
+Verify this first.
+
+If materially different:
+STOP and report.
+
+==================================================
+2. READ THE CANONICAL MATERIAL
+==================================================
+
+At minimum read:
+
+- AGENTS.md
+- CLAUDE.md
+- docs/00-governance/SOURCE_OF_TRUTH.md
+- docs/00-governance/DECISION_LOG.md
+- docs/00-governance/GAP_REGISTER.md
+- docs/01-product/PRODUCT_OVERVIEW.md
+- docs/01-product/V1_SCOPE.md
+- docs/01-product/ACCEPTANCE_CRITERIA.md
+- docs/02-domain/DOMAIN_MODEL.md
+- docs/02-domain/BUSINESS_RULES.md
+- docs/02-domain/P2_QUALITY_GATE.md
+- docs/02-domain/WORKFLOWS.md
+- docs/02-domain/P3_QUALITY_GATE.md
+- docs/07-handoff/CURRENT_STATE.md
+- docs/07-handoff/NEXT_ACTION.md
+
+Also inspect the relevant Owner source records for P3 decisions.
+
+Do not trust the previous summary alone.
+Verify the rules directly.
+
+==================================================
+3. REVIEW SCOPE — ONLY THESE AREAS
+==================================================
+
+Audit the intersection of:
+
+A. Receiving Lots
+B. Reservations
+C. Unusable / quarantine stock
+D. Dispatch
+E. Returns
+F. Reversals
+G. Stock adjustment / stock opname
+H. Inter-company allocation
+I. Multi-unit conversion
+J. Serial tracking
+K. Actual acquisition cost
+L. Purchase-charge allocation
+M. HPP
+N. Inventory loss / damaged returns
+O. Receivable reductions
+P. Payments
+Q. Payment application / reallocation
+R. Overpayment / customer credit
+S. Tax settlement
+T. Intermediary fee settlement
+U. Invoice revision / void
+V. Completion interaction
+
+Do NOT review UI, design, layout, deployment, or general documentation style.
+
+==================================================
+4. PRIMARY ATTACK GOAL
+==================================================
+
+Try to prove that P3 can violate conservation or historical truth.
+
+Attempt to create:
+
+- stock from nothing
+- negative AVAILABLE
+- double reservation
+- reservation resurrection after consumption
+- duplicate dispatch
+- duplicate return
+- reversal larger than original movement
+- lost serial provenance
+- incorrect multi-unit arithmetic
+- duplicate lot cost
+- lost acquisition cost
+- duplicate purchase charge
+- purchase charge counted as both cost and expense
+- duplicate HPP
+- disappearing economic loss
+- duplicate economic loss
+- wrong company absorbing a cross-company loss
+- duplicate Cash-In
+- Cash-In from non-cash settlement
+- disappearing receivable
+- receivable reduced twice using the same evidence
+- tax evidence reused
+- intermediary-fee evidence reused
+- payment application exceeding payment
+- payment applied to multiple invoices beyond its amount
+- customer credit counted as profit
+- write-off disguised as payment
+- invoice revision functioning as Admin write-off
+- invoice void while unresolved payment/application facts remain
+- aging reset by replacement invoice
+- completion while unresolved correction remains
+
+==================================================
+5. INDIVISIBLE ACTION REVIEW
+==================================================
+
+Audit the P3 catalogue of conflict-sensitive / indivisible business actions.
+
+For each relevant action determine whether the documented business invariant is sufficient.
+
+Specifically inspect:
+
+- reserve
+- release/change reservation
+- receiving
+- dispatch
+- return
+- inventory adjustment
+- inter-company allocation
+- payment creation
+- payment application
+- payment correction
+- payment reallocation
+- tax settlement
+- fee settlement
+- loss recognition
+- invoice void/revision
+- completion
+
+Do NOT prescribe SQL locks.
+
+P6 owns technical concurrency implementation.
+
+Only determine whether P3 has specified enough business truth for P6 to implement safely.
+
+==================================================
+6. CORRECTION MATRIX REVIEW
+==================================================
+
+Cross-check the correction/reversal matrix against the workflows and P2 rules.
+
+Look especially for asymmetric corrections:
+
+Example:
+
+forward action has a rule,
+but reversal does not restore all affected facts.
+
+Or:
+
+reversal restores quantity,
+but not cost provenance.
+
+Or:
+
+payment correction restores receivable,
+but does not restore customer credit.
+
+Or:
+
+invoice revision changes receivable
+without disposing existing applications.
+
+Find these mismatches.
+
+==================================================
+7. WORKED-EXAMPLE REVIEW
+==================================================
+
+Use all existing worked examples as fixtures.
+
+Then construct additional adversarial examples where needed.
+
+At minimum test:
+
+1. reserved stock becomes damaged;
+2. wrong dispatch then reversal;
+3. return after billing;
+4. cross-company stock later lost;
+5. purchase charge spanning multiple receiving lots;
+6. partial receipt with later price correction;
+7. payment partially allocated, then corrected;
+8. tax withheld and fee withheld in the same settlement;
+9. duplicate evidence submitted twice;
+10. invoice replaced after partial payment;
+11. overpayment followed by reallocation;
+12. Owner write-off after dispute;
+13. found stock whose economic owner is unknown;
+14. serialized returned item does not match the dispatched serial;
+15. alternate-unit conversion plus partial return.
+
+==================================================
+8. SPECIAL CHALLENGE — L-42
+==================================================
+
+Do NOT assume the existing L-42 classification is correct.
+
+The current P3 draft apparently resolves unidentifiable fungible
+cross-company loss using deterministic oldest-first attribution.
+
+Independently determine:
+
+A. Is this truly a Level-1 modeling decision?
+
+or
+
+B. Does deciding which legal company economically bears an unexplained loss
+materially change company-level financial meaning and therefore require an
+Owner business decision?
+
+Apply repository CHANGE_CONTROL authority rules strictly.
+
+If it is Owner-level, say so explicitly.
+
+Do not preserve L-42 merely because the previous planner already wrote it.
+
+==================================================
+9. SPECIAL CHALLENGE — APPROVED FILE AMENDMENTS
+==================================================
+
+P3 made narrow Owner-authorized amendments to approved P1/P2 documents.
+
+Verify that:
+
+- the changes are genuinely narrow;
+- previous approval provenance is preserved;
+- no unrelated P1/P2 semantics changed;
+- keeping APPROVED lifecycle status is governance-consistent.
+
+If not, identify the exact defect.
+
+Do not recommend downgrading to REVIEW merely as ceremony.
+
+==================================================
+10. AUTHORITY DISCIPLINE
+==================================================
+
+Classify every finding as exactly one of:
+
+CRITICAL DEFECT
+LEVEL-1 CORRECTION
+OWNER_DECISION_REQUIRED
+DEFERRED TECHNICAL OBLIGATION
+NO DEFECT
+
+Do not escalate technical implementation choices to the Owner.
+
+But do not downgrade a genuine financial/business allocation policy into
+Level-1 merely to avoid asking the Owner.
+
+==================================================
+11. NO TOKEN-WASTING REDESIGN
+==================================================
+
+Do not rewrite WORKFLOWS.md.
+
+Do not propose a new architecture unless the current one is fundamentally inconsistent.
+
+Prefer precise patches:
+
+- rule ID
+- workflow ID
+- matrix row
+- invariant
+- exact semantic correction
+
+This is an audit, not a new design phase.
+
+==================================================
+12. FINAL VERDICT
+==================================================
+
+Return:
+
+A. Baseline verification
+
+B. Scope reviewed
+
+C. Conservation verdict
+
+D. Inventory findings
+
+E. Cost/HPP/loss findings
+
+F. Financial/receivable findings
+
+G. Correction/reversal findings
+
+H. Indivisible-action findings
+
+I. Worked-example failures
+
+J. L-42 authority verdict
+
+K. Approved-file amendment verdict
+
+L. OWNER_DECISION_REQUIRED count
+
+M. Critical-defect count
+
+N. Level-1 correction count
+
+O. Deferred P4/P5/P6/P8 obligations
+
+P. Exact corrections required before checkpoint
+
+Q. Final verdict
+
+Final verdict must be exactly one of:
+
+PASS — READY FOR P3 CHECKPOINT
+
+or
+
+NEEDS CORRECTION BEFORE P3 CHECKPOINT
+
+Do not edit anything.
+
+STOP after reporting.

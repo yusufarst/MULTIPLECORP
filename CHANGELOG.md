@@ -112,3 +112,17 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Recorded DIR-022: every commit uses only the Owner's configured Git identity, with no AI/model/tool author, committer, co-author or attribution trailer. Added the short universal rule to AGENTS.md and the Owner-listed Claude-specific prohibitions to CLAUDE.md.
 - Historical commits and their accepted trailers are not rewritten. No business, product, domain or source-record change and no P3 file; the same message's P3 planning-only authorization produces no repository change in this checkpoint.
+
+## Unreleased — 2026-09-29, P3 critical business workflows (draft)
+
+- Preserved the P3 authorization (with the attribution rule) and the Owner's D-1–D-5 decision/execution message as transcribed source records twenty and twenty-one; recorded DIR-023, OBS-005, DIR-024 and TECH-015.
+- Created WORKFLOWS (REVIEW): command envelope, architecture, D-5 actor/authority matrix, 39 workflows, 17 subflows, partial rules, 35-row correction matrix, per-document table, completion/Force Complete/residual rules, 31 indivisible actions, 21 signals, 44 Level-1 decisions and downstream obligations; created P3_QUALITY_GATE (REVIEW evidence) with aggregate traceability, adversarial review and validation.
+- Narrow `DIR-024` amendments with pre-amendment hashes: BUSINESS_RULES (BR-FIN-16/17 tax, BR-PUR-05 charges, BR-INV-13 loss, BR-DOC-04 pre-payment Kuitansi, BR-FIN-02/04, BR-PRJ-02, CALC-08/09/11, annex 13–16), DOMAIN_MODEL (terms, concepts, relationships), V1_SCOPE DOC-05 row and one PRODUCT_OVERVIEW sentence; approval provenance preserved.
+- Updated registry (WORKFLOWS and P3 gate exist; stale REVIEW rows corrected), navigation, entry points, charter, gap register (GAP-026–029 added as business-decision-resolved; totals 29 — 3 CLOSED, 25 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK) and handoff. Not staged, committed or pushed; no schema, P4 or application work.
+
+## Unreleased — 2026-09-29, P3 targeted review, Owner loss-attribution decision and approval
+
+- Preserved the Owner's targeted-review directive and the F-03 decision/finalization message as transcribed source records twenty-two and twenty-three; recorded DIR-025, OBS-006, DIR-026, TECH-016 and APPR-004.
+- Applied the targeted conservation review: fixed the two critical defects (a refund-consumed payment application is final while its refund stands; inter-company allocation always follows the consumption it overlays) and all nineteen Level-1 findings, plus one pre-existing CM-10 inconsistency. WORKFLOWS gains SF-UNATTRIBUTED, CM-36–38, AX-32–37, QS-22 and L-45–L-50.
+- Represented DIR-026: an unexplained fungible loss or condition change across companies stays a pending case, inside no company's profit, until the Owner attributes it; no FIFO, oldest-first or proportional rule. Narrow `DIR-026`/`TECH-016` changes to BUSINESS_RULES (BR-INV-13, BR-XD-06, BR-FIN-05/11/16, CALC-11) and DOMAIN_MODEL.
+- WORKFLOWS is APPROVED under APPR-004 together with the amended P1/P2 revisions; P3_QUALITY_GATE stays REVIEW evidence with the review dispositions, final adversarial verification and re-derived counts. Gap register adds GAP-030 (totals 30 — 3 CLOSED, 26 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK). One checkpoint commit and a normal non-force push are authorized; no schema, P4 or application work.

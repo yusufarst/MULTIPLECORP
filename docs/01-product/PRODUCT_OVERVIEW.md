@@ -1,8 +1,10 @@
 # Product definition
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
 Approval: [APPR-002](../00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved), explicit Owner approval on 2026-09-28 of the recovered P1 baseline; reviewed file hashes and scope are recorded there. Approval changes lifecycle only, not business requirements or implementation authorization.
+
+Amendment: the Kuitansi sentence in the partial-payment branch was narrowly amended on 2026-09-29 to represent the Owner's decision [DIR-024](../00-governance/DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution) D-4; the pre-amendment SHA-256 is recorded there and the amended revision is approved under [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
 
 Authority: Owner inputs are binding; this P1 product baseline is Owner-approved under APPR-002; application implementation requires separate authorization. Source shorthand: **OB** = [original brief](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt), **P1** = [latest owner directive](../00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), **C1–C3** = [owner's follow-up answers](../00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt). Later explicit input takes precedence. Acceptance of P0 is recorded separately as APPR-001. DIR-011 settles the four remaining P1 business decisions; its canonical product contract is in [V1_SCOPE](V1_SCOPE.md#final-owner-business-decisions). It is not approval of the whole P1 package.
 
@@ -52,7 +54,7 @@ Masuk → Autentikasi → Pemeriksaan Izin dan Lingkup Perusahaan → Dasbor →
 | Drop-ship or service | Direct supplier fulfillment has confirmation, no warehouse receipt/dispatch fiction; services use applicable fulfillment/handover, no fake goods | CAP-06; AC-20 |
 | Partial delivery | Record delivered and remaining quantities/evidence; repeat until fulfilled or validly closed, preserving each record | CAP-07/18; AC-07/21 |
 | Invoice/admin/billing | Issue records agreed sales value without Cash-In; show BELUM DITAGIHKAN until explicitly billed. Billing activates the unpaid receivable and records billed_at/due_date for aging; selected administrative evidence remains visible | CAP-08–10; AC-08–10 |
-| Partial payment / advance | Additional payments resolve the remainder; DP/termin may occur before delivery/invoice where applicable. A kuitansi follows a real payment, regardless of its position in the diagram | CAP-10; AC-10/12/16 |
+| Partial payment / advance | Additional payments resolve the remainder; DP/termin may occur before delivery/invoice where applicable. A receipt Kuitansi follows a real payment, regardless of its position in the diagram; DIR-024 allows a distinguished *Kuitansi untuk Proses Pembayaran* before payment for payment processing, without implying money received | CAP-10; AC-10/12/16 |
 | Completion / later correction | System checks every normal condition. Admin may satisfy requirements or mark eligible admin items TIDAK BERLAKU with reason/audit; Owner alone may exceptionally Force Complete with confirmation, reason, actor, timestamp, before/after state and audit. Preserve unmet conditions and revalidate after later material corrections | CAP-09/18; AC-09/21; DIR-011 policy resolved, GAP-022 technical work |
 
 The image's partial-payment arrow does not erase outstanding debt or pass normal completion. An Owner override is a separately confirmed and audited exceptional outcome; any remaining receivable stays visible and financially unchanged by the override itself. Dashboards/report values and action queues update after relevant committed changes throughout the journey, including corrections; the final diagram node does not mean they update only after completion.

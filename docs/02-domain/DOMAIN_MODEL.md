@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
 Approval: [APPR-003](../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved), explicit Owner approval on 2026-09-29 of this document as published in checkpoint `1392966bfb89581d705e0394424705978e1d3db8`; the reviewed file hash and conditions are recorded there. Approval changes lifecycle only, not business meaning or implementation authorization.
 
+Amendment: narrowly amended on 2026-09-29 to represent the Owner's P3 decisions [DIR-024](../00-governance/DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution) (D-1–D-4) and [DIR-026](../00-governance/DECISION_LOG.md#dir-025-obs-006-dir-026-and-tech-016--targeted-review-owner-loss-attribution-decision-and-corrections) (unexplained fungible loss attribution); only rows marked `DIR-024`/`DIR-026` changed or were added, plus Level-1 clarifications marked `TECH-016` after the targeted conservation review (PLANNER-DETERMINED markers on planner elaborations inside those rows, and opening customer credit consistent with BUSINESS_RULES BR-XD-06/BR-FIN-05). The pre-amendment SHA-256 is recorded there; the amended revision is approved under [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
+
 Authority: P2 authorized by DIR-016; deep-review directives and final business decisions under DIR-017/018/019/020 ([decision log](../00-governance/DECISION_LOG.md)). This document owns entities, terminology, conceptual relationships and ownership/scope for MultipleCorp. Normative rules, lifecycles, invariants and calculation meanings are owned by [BUSINESS_RULES](BUSINESS_RULES.md). Phase evidence and P1→P2 traceability verification are owned by [P2_QUALITY_GATE](P2_QUALITY_GATE.md).
 
 **Anti-duplication contract:** [V1_SCOPE](../01-product/V1_SCOPE.md) owns the Owner's business meaning (DIR-011 contract, DOC catalog, scope classes). This document organizes concepts derived from it and cites it; it never restates that contract as a second source. On any conflict, V1_SCOPE and the latest Owner decision win and the conflict goes to [change control](../00-governance/CHANGE_CONTROL.md).
@@ -54,15 +56,19 @@ Working terms with their exact source meaning. UI copy is P7's job; these are do
 | Dokumen Eksternal | External document | Authentic third-party original stored as attachment with issuer metadata; never generated, never satisfied by a company draft | Company-prepared variants of SPK/HPS/Surat Pesanan (truthful company issuer) |
 | Dokumen Administrasi | Administrative requirement | Per-project checklist item: required/optional, waiver-eligibility, generated/uploaded/either | A universal SPJ package (none exists) |
 | TIDAK BERLAKU | N/A waiver | Decision on a waiver-eligible requirement only; reason + individual actor + audit | Force Complete (project-level, Owner-only) |
-| Invoice | Invoice | Issue records agreed Sales/Transaction Value; implies no cash | Billing (activation), Nota (transaction slip), Kuitansi (receipt) |
+| Invoice | Invoice | Issue records agreed Sales/Transaction Value; implies no cash; `DIR-024`: output-tax components are recorded separately and are not operating revenue | Billing (activation), Nota (transaction slip), Kuitansi (receipt) |
 | BELUM DITAGIHKAN / DITAGIHKAN | Unbilled / billed | Issued-unbilled invoices stay separately visible; the billing act (billed_at, due_date) activates the unpaid remainder as active receivable | — |
-| Piutang Aktif | Active receivable | Derived: billed − payment applications − fee-deduction settlements − write-off disposals; never negative | Sales value, Cash-In |
+| Piutang Aktif | Active receivable | Derived: billed − payment applications − fee-deduction settlements − tax settlements (`DIR-024`) − write-off disposals; never negative | Sales value, Cash-In |
 | Pembayaran | Payment | Immutable Cash-In fact: date, amount, method, company bank destination, reference, proof, individual actor | Payment application (allocation layer) |
 | Aplikasi Pembayaran ⚠ | Payment application | The single mutable audited layer linking a payment to invoice / refund disbursement / correction credit; Σ applications ≤ payment | Inter-company stock allocation (stock-side) |
-| Kredit Pelanggan | Customer credit | Derived: unapplied payment remainders + explicit correction credits; spending it is an application | Profit (never), refund (a disbursement consuming credit) |
+| Kredit Pelanggan | Customer credit | Derived: unapplied payment remainders + explicit correction credits + opening customer credit carried by migration (`TECH-016`); spending it is an application | Profit (never), refund (a disbursement consuming credit) |
 | Penghapusan Piutang | Receivable write-off / disposition | Owner-only decision removing a residual from active receivable + collectible aging while preserving it permanently as disposed history (DIR-019) | Payment (real money), dispute hold (stays active) |
 | Sengketa / Dispute hold | Dispute indicator | Receivable stays active and aging with a disputed reason; not settled; blocks normal completion | Write-off |
 | Penyelesaian Potongan Fee | Fee-deduction settlement | One audited non-cash record settling a verified intermediary fee portion of a receivable and attributing that fee as project expense exactly once (DIR-019; generalized to verified bank/VA/payment-intermediary fees by DIR-020) | Payment application (cash), write-off |
+| Penyelesaian Pajak Dipotong/Dipungut | Tax settlement | `DIR-024`: one audited non-cash record settling the evidenced portion of a receivable that a client, treasurer, SIPLAH operator or other legitimate intermediary withheld or collected as tax; not a payment, write-off, revenue or automatic expense | Fee-deduction settlement (expense once), payment (Cash-In) |
+| Kuitansi untuk Proses Pembayaran | Pre-payment Kuitansi | `DIR-024`: Kuitansi issued before payment for legitimate payment processing; creates no Cash-In, payment, settlement or paid state; linked to the actual payment later | Kuitansi as receipt of a recorded payment |
+| Biaya Perolehan / Beban Pembelian | Acquisition cost / purchase charge | `DIR-024`: goods price + non-creditable tax + directly attributable charges allocated on an explicit basis form actual acquisition cost; non-attributable charges are expenses | Cash-Out, master purchase price |
+| Kerugian Persediaan | Inventory loss | `DIR-024`: loss from disposal, shrinkage, transit loss or damaged return recorded once at actual/attributed lot cost, charged to the causal project or else the owning company | HPP of delivered goods, deletion |
 | Biaya / HPP | Cost / HPP | Actual/direct economic cost attributed to a project via pinned lot cost or project-attributed purchase/expense; managerial only | Cash-Out (actual disbursement), master purchase price |
 | Pengeluaran Kas | Disbursement / Cash-Out | Immutable fact of money actually paid out (purchase/expense/refund reference, evidence) | Purchase creation (never Cash-Out), HPP (economic, not cash) |
 | Beban / Expense | Expense record | Company-scoped actual cost, optionally project-attributed; part of project direct cost when attributed | Formal accounting expense classification (excluded) |
@@ -205,17 +211,19 @@ Twelve domains plus two cross-cutting conventions. **Non-domains:** dashboards, 
 | --- | --- | --- | --- | --- | --- |
 | Invoice | D/Doc/S | COMPANY/PROJECT | SM:Document (specialization) | S3 | Issue snapshots agreed Sales/Transaction Value; BELUM DITAGIHKAN until billed; DOC-06 renders it |
 | Billing act | D | COMPANY | event | S3 | billed_at + due_date; activates the unpaid remainder; invoice-level (DIR-011) |
-| Receivable | derived | COMPANY | DS | S3 | Active outstanding = billed − applications − fee settlements − disposals ≥ 0; aging from due_date; dispute indicator keeps it active |
+| Receivable | derived | COMPANY | DS | S3 | Active outstanding = billed − applications − fee settlements − tax settlements (`DIR-024`) − disposals ≥ 0; aging from due_date; dispute indicator keeps it active |
 | Payment | F | COMPANY | EV (immutable) | S3 | Cash-In fact: business_date, amount, method, bank destination, reference, proof, individual actor; corrections via contra-facts |
 | Payment Application | D/F | COMPANY | EV (superseding) | S3 | Targets: issued invoice (incl. unbilled, never drafts), refund disbursement, correction credit; Σ ≤ payment; same client + same company only |
-| Customer credit | derived | COMPANY | DS | S3 | Unapplied remainders + correction credits; every spend is an application |
+| Customer credit | derived | COMPANY | DS | S3 | Unapplied remainders + correction credits + opening customer credit (`TECH-016`); every spend is an application |
 | Refund disposition | D/F | COMPANY | EV | S3 | Disbursement consuming a specific application; never negative Cash-In, never cost |
 | Receivable formal disposition | D | COMPANY | event | S3 | Owner-only write-off / settled-out-of-band; dispute hold indicator (DIR-019 semantics) |
 | Fee-deduction settlement | D/F | COMPANY | EV | S3 | Verified intermediary fee settles its receivable portion and attributes the fee as project expense exactly once (DIR-019; generalized to verified bank/VA/payment-intermediary deductions by DIR-020) |
-| Expense record | F | COMPANY | EV | S3 | Actual cost; optional project attribution (then part of project direct cost) |
+| Tax settlement | D/F | COMPANY | EV | S3 (evidence S4) | `DIR-024`: evidenced tax withheld/collected by the payer or an intermediary settles its receivable portion; no Cash-In, not revenue, not automatically expense; exactly once (BR-FIN-16); anchoring to the payment is PLANNER-DETERMINED (WORKFLOWS L-28, marked `TECH-016`) |
+| Expense record | F | COMPANY | EV | S3 | Actual cost; optional project attribution (then part of project direct cost); `DIR-024` kinds include non-attributable purchase charges and inventory losses |
 | HPP attribution (+ contra) | F | COMPANY/PROJECT | EV | S3 | Pinned actual lot cost at dispatch / inter-company allocation / drop-ship confirmation / project-attributed purchase or expense; corrections are contra-attributions |
 | Disbursement | F | COMPANY | EV (immutable) | S3 | Cash-Out fact with purchase/expense/refund reference and evidence; purchase creation alone never creates it |
 | Opening receivable | F | COMPANY | EV | S3 | Migration fact; participates in billed sum; valid application target; explicit aging basis or migrasi bucket; import identity |
+| Opening customer credit | F | COMPANY | EV | S3 | `TECH-016`: migration fact for an advance held at cutover per client and company; application source only, never live-period Cash-In; import identity and signed opening evidence (BR-XD-06/BR-FIN-05) |
 | Non-project Cash-In category | F | COMPANY | EV | S3 | E.g., actually received cashback/pengembalian; categorized; feeds cashflow and company profit, never a formula |
 
 ## D. Relationship register
@@ -240,6 +248,9 @@ Cross-domain and integrity-critical relationships only. **live** = operational r
 | Billing act → Invoice | 1→1 | — | Invoice-level; gate condition aggregates over a project's invoices |
 | Payment Application → Payment; → target (invoice/refund/credit) | many→1; many→1 | — | Conservation per payment; same client + company |
 | Fee settlement → Receivable; → Expense attribution | 1→1; 1→1 | — | One record, both effects, exactly once |
+| Tax settlement → Receivable; → Payment (`DIR-024`) | many→1; many→1 | — | Evidence required; no Cash-In; one per payment, invoice and tax type (PLANNER-DETERMINED, WORKFLOWS L-28, marked `TECH-016`) |
+| Pre-payment Kuitansi → Invoice; → payment applications to that invoice (`DIR-024`) | many→1; many↔many | snap | Linked to the actual payment when money arrives; never a second recognition; per-(payment, invoice) links and the issue-time cap Σ open ≤ outstanding are PLANNER-DETERMINED (WORKFLOWS AX-31, marked `TECH-016`) |
+| Loss expense → lost units (lot/serial + quantity) and their movement or case; → Project or Company (`DIR-024`) | many→1; many→1 | — | Once per lost unit; reclassifies HPP when already attributed; a cross-company charge records an allocation on the loss consumption (PLANNER-DETERMINED, WORKFLOWS L-44, marked `TECH-016`); an unexplained fungible loss stays unattributed until the Owner decides (`DIR-026`) |
 | HPP attribution → Lot/Allocation/Drop-ship/Expense source; → Project | many→1; many→1 | — | Pinned actual cost; contra-attribution corrects |
 | Disbursement → Purchase/Expense/Refund | many→1 | — | Evidence required; Cash-Out only here |
 | Admin requirement → generated Doc or external attachment | many→0..1 | — | A company draft never satisfies a required client original |

@@ -2,7 +2,7 @@
 
 Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications and [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions; evidence, gap and handoff records remain REVIEW.
 
 ## Authority and provenance
 
@@ -36,7 +36,7 @@ C1 delegates a complete recommended selectable document set; the planner's bound
 
 Canonical documents organize these inputs. Source authority does not replace missing detailed specifications, test evidence, business decisions or execution authorization.
 
-Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents and APPR-003 the two P2 normative domain specifications; historical REVIEW statements do not override those approvals.
+Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents, APPR-003 the two P2 normative domain specifications and APPR-004 the P3 workflow specification with its amended P1/P2 revisions; historical REVIEW statements do not override those approvals.
 
 ### Owner reference ingestion and provenance
 
@@ -132,6 +132,28 @@ The [P2 Owner approval](sources/P2_OWNER_APPROVAL_2026-09-29.txt) was received o
 
 APPR-003/DIR-021 in [DECISION_LOG](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) record its effect: the Owner explicitly approves the completed P2 domain baseline; [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md) and [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) change REVIEW → APPROVED with unchanged substantive content; [P2_QUALITY_GATE](../02-domain/P2_QUALITY_GATE.md) and the live registers/logs/handoff stay REVIEW; and one bounded continuity commit plus a normal non-force push are authorized. This record also serves as the Owner's archived confirmation of the earlier in-session checkpoint-and-publication authorization that the checkpoint report had noted as unarchived. It does not reopen Q1/Q2/Q3, DIR-020 or the PLANNER-DETERMINED Level-1 decisions, and does not authorize P3, WORKFLOWS.md, schema/ERD/migrations or application work. All eighteen earlier source records retain their bytes and classifications.
 
+### P3 authorization, Owner decisions and documentation execution
+
+Two in-session Owner messages received 2026-09-29 are preserved as **transcribed LOCKED SOURCE RECORDS** twenty and twenty-one (transcripts, not byte-copy claims about attachments). The first authorizes the permanent Git commit attribution rule (executed as DIR-022 in commit `b921c8b07cd49351c73b0cf7f71375cc274aeddd`) and P3 planning only (DIR-023). The second decides D-1–D-5 — NET tax treatment with evidenced tax settlement, attributable purchase charges in acquisition cost, recorded inventory loss, the *Kuitansi untuk Proses Pembayaran*, and the Owner-only/ADM+ correction-authority split — and authorizes P3 documentation execution without staging, commit or push (DIR-024; [DECISION_LOG](DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution)).
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [P3_OWNER_AUTHORIZATION_2026-09-29.txt](sources/P3_OWNER_AUTHORIZATION_2026-09-29.txt) | 1,239 / 28,850 | `310426188804BFF3963DBC18493E2F5FFB288803B397DA072633C16AAA7228EA` |
+| [P3_OWNER_DECISIONS_2026-09-29.txt](sources/P3_OWNER_DECISIONS_2026-09-29.txt) | 450 / 12,967 | `24B54C7A5087D140CEAC89172E0399D87379A718657DA5924341782BF3008A20` |
+
+DIR-024 is binding within its subjects under the standing hierarchy. Its business meanings are formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (BR-FIN-16/17, BR-PUR-05, BR-INV-13, amended BR-DOC-04/BR-FIN-02/04, CALC-08/09/11, annex 13–16), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), the V1_SCOPE DOC-05 row and one PRODUCT_OVERVIEW sentence, each marked `DIR-024` with pre-amendment hashes in the decision log; D-5 authority is owned by [WORKFLOWS](../02-domain/WORKFLOWS.md#4-actor-and-authority-matrix). All nineteen earlier source records retain their bytes and classifications.
+
+### P3 targeted review, Owner loss-attribution decision and approval
+
+Two further in-session Owner messages received 2026-09-29 are preserved as **transcribed LOCKED SOURCE RECORDS** twenty-two and twenty-three (transcripts, not byte-copy claims about attachments). The first orders the targeted read-only Fable red-team of "conservation under correction" (DIR-025), which reported NEEDS CORRECTION with findings F-01–F-22. The second decides F-03 — for an unexplained loss of fungible shared-pool stock whose economic owner provenance cannot establish, the Owner attributes each case and no automatic rule decides — and authorizes the corrections, conditional P3 approval, one checkpoint commit and a normal non-force push (DIR-026; [DECISION_LOG](DECISION_LOG.md#dir-025-obs-006-dir-026-and-tech-016--targeted-review-owner-loss-attribution-decision-and-corrections); [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved)).
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt](sources/P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt) | 379 / 9,562 | `71BBF59B622808756069A161B19B9BF4EC55D2C91FC0E351E6453875D9770D97` |
+| [P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt](sources/P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt) | 526 / 13,622 | `22784B8CB8741A23965B0669DAFC52B88D451826E8692779DFB98E22F6D28FDE` |
+
+DIR-026 is binding within its subject under the standing hierarchy. Its business meaning is formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) BR-INV-13 (marked `DIR-026`) and orchestrated with Owner-only authority in [WORKFLOWS](../02-domain/WORKFLOWS.md) (section 4, SF-UNATTRIBUTED, AX-37). All twenty-one earlier source records retain their bytes and classifications.
+
 ## Classify statements before changing them
 
 | Class | Meaning | Treatment |
@@ -157,15 +179,16 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Cross-cutting engineering guardrails | `docs/00-governance/ENGINEERING_PRINCIPLES.md` | Exists / P0 | 18–44, 58; detailed designs reserved below |
 | P0 gate evidence | `docs/00-governance/P0_QUALITY_GATE.md` | Exists / P0 | 56–57 |
 | Current progress and next task | `docs/07-handoff/CURRENT_STATE.md`, `NEXT_ACTION.md` | Exists / P0 | 51, 55–57 |
-| Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, REVIEW / P1 | 2–17, 46; P1 identity and user/product direction |
-| V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, REVIEW / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
-| Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, REVIEW / P1 | 41–42, 46; P1 targets and user/product outcomes |
+| Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 46; P1 identity and user/product direction |
+| V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
+| Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, APPROVED (APPR-002) / P1 | 41–42, 46; P1 targets and user/product outcomes |
 | P1 adversarial review and quality evidence | `docs/01-product/P1_QUALITY_GATE.md` | Exists, REVIEW / P1 | P1 objective/review/gate/report |
 | Reference comparison and requirement identifiers | `docs/01-product/REFERENCE_COVERAGE.md` | Exists, REVIEW / P1 | DIR-008; PDF §§1–14; complete flow image |
-| Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, REVIEW / P2 | 2–17; DIR-016–019 |
-| Business invariants, domain lifecycles/state rules and calculation semantics | `docs/02-domain/BUSINESS_RULES.md` | Exists, REVIEW / P2 | 3–17, 26–28, 36, 45; DIR-018/019 |
+| Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004) / P2 | 2–17; DIR-016–019, DIR-024/026 |
+| Business invariants, domain lifecycles/state rules and calculation semantics | `docs/02-domain/BUSINESS_RULES.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004) / P2 | 3–17, 26–28, 36, 45; DIR-018/019/020/024/026 |
 | P2 adversarial review, traceability verification and gate evidence | `docs/02-domain/P2_QUALITY_GATE.md` | Exists, REVIEW / P2 | DIR-016 §§18–22 |
-| User/process workflows and transition orchestration over P2 lifecycles | `docs/02-domain/WORKFLOWS.md` | Planned / P3 | 11–16, 42 |
+| User/process workflows, responsibility boundaries and transition orchestration over P2 lifecycles | `docs/02-domain/WORKFLOWS.md` | Exists, APPROVED (APPR-004) / P3 | 11–16, 42; DIR-023–026 |
+| P3 adversarial review, aggregate traceability verification and gate evidence | `docs/02-domain/P3_QUALITY_GATE.md` | Exists, REVIEW / P3 | DIR-023–026 |
 | Database design and constraints | `docs/03-architecture/DATABASE.md` | Planned / P4 | 5, 13–15, 26–32, 38, 45 |
 | Application structure and stack | `docs/03-architecture/ARCHITECTURE.md` | Planned / P4 | 18–19, 35 |
 | Permissions and company-scope rules | `docs/02-domain/PERMISSIONS_MATRIX.md` | Planned / P5 | 17, 24, 41 |

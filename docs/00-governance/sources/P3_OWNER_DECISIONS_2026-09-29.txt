@@ -1,0 +1,450 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-first source record
+Received: 2026-09-29, in-session Owner message following the P3 planning report
+(HEAD b921c8b07cd49351c73b0cf7f71375cc274aeddd, clean tree)
+Subject: Owner decisions D-1 to D-5 (tax treatment, purchase charges, inventory
+         loss, pre-payment Kuitansi, correction authority) and authorization of
+         P3 documentation execution without staging, commit or push
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISIONS — P3 BUSINESS QUESTIONS
++ AUTHORIZATION FOR P3 DOCUMENTATION EXECUTION
+
+Project:
+MultipleCorp — Company Management System
+
+I, the Owner, resolve D-1 through D-5 as follows.
+
+==================================================
+D-1 — TAX TREATMENT
+==================================================
+
+DECISION:
+
+Use the NET model, with configurable tax treatment.
+
+Business semantics:
+
+1. Output tax is not part of operating revenue.
+
+2. Purchase tax enters inventory/project cost only when, for the relevant
+   company and transaction, it is legitimately non-creditable or otherwise
+   part of actual economic acquisition cost.
+
+3. Tax treatment must remain configurable by company, transaction context,
+   effective period/date, and supporting evidence.
+
+4. Do not hardcode one universal tax treatment or rate.
+
+5. When a client, government treasurer, SIPLAH operator, or other legitimate
+   intermediary withholds or collects tax from an invoice payment and valid
+   evidence exists:
+
+   - the evidenced tax amount may settle the corresponding portion of the
+     receivable;
+   - it creates no Cash-In for that portion;
+   - it is not a payment;
+   - it is not a write-off;
+   - it is not operating revenue;
+   - it is not automatically an expense;
+   - gross transaction/invoice value remains historically intact;
+   - actor, amount, tax type, evidence, date and audit linkage are preserved.
+
+6. Never invent tax formulas.
+
+7. Exact tax computation/configuration belongs to later technical design;
+   P3 owns only the business workflow semantics.
+
+==================================================
+D-2 — SHIPPING AND OTHER PURCHASE CHARGES
+==================================================
+
+DECISION:
+
+Use DIRECT ATTRIBUTION / HYBRID treatment.
+
+1. A purchase charge that is directly attributable to acquiring goods and
+   bringing them to their usable/available condition or destination forms
+   part of actual acquisition cost.
+
+2. When such a charge applies to multiple goods lines/lots, allocate it
+   proportionally using a deterministic basis appropriate to the charge,
+   with conservation and existing rounding rules preserved.
+
+3. The allocation basis must be explicit and auditable.
+
+4. A charge that is not directly attributable to inventory acquisition is
+   recorded as an expense instead.
+
+5. For project-specific expenses, attribute them to the project where the
+   causal relationship is known.
+
+6. For replenishment/general-company expenses, attribute them to the
+   relevant company.
+
+7. Never count the same charge both in lot/project cost and expense.
+
+Do not turn this P3 decision into database-schema or accounting-GL design.
+
+==================================================
+D-3 — INVENTORY LOSS / DAMAGED RETURN
+==================================================
+
+DECISION:
+
+RECORD THE LOSS.
+
+1. Disposal, shrinkage, loss in transit, and client-damaged returns must not
+   make economic cost disappear.
+
+2. Record the economic loss exactly once using the relevant actual cost /
+   attributed lot cost.
+
+3. Charge the loss to the project when the causal project is known.
+
+4. Otherwise charge it to the economic/owning company.
+
+5. Preserve quantity movement, provenance, reason, evidence where available,
+   actor, timestamp and audit history.
+
+6. Never double-count the cost as both HPP and loss expense unless the
+   underlying business facts legitimately represent distinct amounts.
+
+==================================================
+D-4 — KUITANSI BEFORE PAYMENT
+==================================================
+
+DECISION:
+
+ALLOW a pre-payment Kuitansi for legitimate payment-processing /
+administrative purposes.
+
+This is required because institutional/government administrative processes
+may require a signed Kuitansi before funds are transferred.
+
+Define clearly:
+
+KUITANSI UNTUK PROSES PEMBAYARAN
+
+may be issued before actual payment when legitimately required.
+
+However:
+
+- it does NOT create Cash-In;
+- it does NOT create a Payment fact;
+- it does NOT settle the receivable;
+- it does NOT mark the invoice paid;
+- it must remain distinguishable from evidence that money was actually
+  received;
+- when actual payment later occurs, the actual Payment fact is recorded and
+  linked appropriately;
+- the original issued Kuitansi remains immutable under the normal document
+  revision/void rules;
+- duplicate financial recognition is forbidden.
+
+Update previously approved BR-DOC-04 / DOC-05 semantics only as narrowly
+necessary to support this Owner decision.
+
+Preserve historical provenance when amending an approved P2 rule.
+
+==================================================
+D-5 — AUTHORITY FOR SENSITIVE CORRECTIONS / CLOSURES
+==================================================
+
+DECISION:
+
+Use the recommended split.
+
+OWNER ONLY:
+
+1. Removing or overriding a required, non-waivable administrative/checklist
+   requirement.
+
+2. Assigning unexplained found stock to an economic/company owner where
+   provenance cannot otherwise establish ownership.
+
+3. Existing Owner-only actions remain Owner-only, including receivable
+   write-off and Force Complete.
+
+ADMIN OPERASIONAL:
+
+Normal corrections, reversals, cancellations, reallocations, refunds,
+settlements, adjustments, inter-company allocation and operational closures
+may be performed by an Admin only when that individual account has the
+required separately grantable capability.
+
+These actions require, where applicable:
+
+- mandatory reason;
+- evidence where available/required;
+- exact actor attribution;
+- timestamp;
+- before/after or source/correction linkage;
+- immutable audit history;
+- visibility to Owner.
+
+There may be multiple Admin Operasional accounts.
+
+Never treat the Admin role as one shared identity.
+
+Do not create new launch roles.
+
+==================================================
+OWNER_DECISION_REQUIRED
+==================================================
+
+D-1 through D-5 are now resolved.
+
+Expected:
+
+OWNER_DECISION_REQUIRED = 0
+
+Do not reopen these decisions unless a genuine contradiction is discovered.
+
+==================================================
+P3 DOCUMENTATION EXECUTION AUTHORIZATION
+==================================================
+
+I authorize P3 DOCUMENTATION EXECUTION now.
+
+Use the completed and reviewed P3 plan as the execution baseline.
+
+You may create/update the repository documentation required to establish
+the P3 business-workflow baseline.
+
+Expected principal outputs:
+
+- docs/02-domain/WORKFLOWS.md
+- docs/02-domain/P3_QUALITY_GATE.md
+
+Also update only the governance/provenance/handoff files legitimately
+affected by P3.
+
+Archive this Owner decision message according to the existing locked-source
+record convention.
+
+Record the appropriate DIR / TECH / observation entries according to
+repository conventions.
+
+If D-1 through D-5 require narrow amendments to existing approved P1/P2
+documents, make only those amendments necessary to represent the new Owner
+decisions.
+
+Preserve pre-change hashes and approval provenance according to repository
+governance.
+
+==================================================
+EXECUTION REQUIREMENTS
+==================================================
+
+Use the P3 plan already produced in this session.
+
+Do not simplify it merely to save tokens.
+
+Implement the full intended workflow specification including:
+
+- primary workflow architecture
+- reusable subflows
+- actor/action matrix
+- partial-processing semantics
+- correction/reversal/cancellation matrix
+- inventory workflows
+- purchasing workflows
+- warehouse and drop-ship distinction
+- document workflows
+- financial workflows
+- tax settlement semantics from D-1
+- purchase-charge semantics from D-2
+- loss semantics from D-3
+- pre-payment Kuitansi semantics from D-4
+- correction authority from D-5
+- SPJ/admin workflow
+- completion / Force Complete
+- cross-company allocation
+- multi-Admin continuation
+- conflict-sensitive business actions
+- P1/P2/P3 traceability
+- gap reconciliation
+- downstream obligations for P4/P5/P6/P7/P8/P11
+
+Preserve the principle:
+
+P2 owns lifecycle/domain truth.
+P3 owns orchestration over that truth.
+
+Do not create duplicate workflow-state truth where progress can be derived.
+
+==================================================
+ADVERSARIAL REVIEW
+==================================================
+
+After drafting, perform the complete P3 adversarial review.
+
+At minimum attack:
+
+1. Inventory conservation
+2. Reservation conservation
+3. Lot/cost provenance
+4. Inter-company allocation
+5. Partial receiving/delivery
+6. Returns/reversals
+7. Financial conservation
+8. Receivable reductions
+9. Payment allocation/reallocation
+10. Tax settlement
+11. Intermediary fee settlement
+12. Purchase-cost allocation
+13. Loss recognition
+14. Kuitansi-before-payment
+15. Document issue/revision/void
+16. Completion gate
+17. Force Complete
+18. Multiple Admin users
+19. Duplicate/stale/retried actions
+20. Cancellation after downstream effects
+
+Try to create:
+
+- stock from nothing
+- negative AVAILABLE
+- over-reservation
+- duplicate HPP
+- lost cost
+- duplicate loss
+- duplicate Cash-In
+- disappearing receivable
+- duplicate tax settlement
+- duplicate fee settlement
+- payment disguised as non-cash settlement
+- write-off disguised as payment
+- reusable document number
+- fake external document
+- completion with unresolved corrections
+- broken provenance after inter-company usage
+
+Resolve genuine Level-1 issues yourself.
+
+Escalate only genuine business-policy contradictions.
+
+==================================================
+TARGETED FABLE REVIEW
+==================================================
+
+Do NOT invoke or depend on Fable during this execution.
+
+Finish the P3 draft and Opus adversarial review first.
+
+A separate targeted Fable review will be performed later, if authorized,
+against only:
+
+CONSERVATION UNDER CORRECTION
+
+specifically the intersection of:
+
+- correction/reversal matrix
+- indivisible-action catalogue
+- receiving lots
+- reservations
+- dispatch
+- inter-company allocation
+- actual cost/HPP
+- losses
+- receivable reductions
+- payments
+- tax settlement
+- intermediary fee settlement
+
+==================================================
+STATIC / GOVERNANCE VALIDATION
+==================================================
+
+Run the repository-conformant documentation and governance checks.
+
+Verify at minimum:
+
+- all relative links/anchors resolve
+- lifecycle metadata is correct
+- source records and hashes are correct
+- P1/P2 traceability is preserved
+- no V1_REQUIRED capability is orphaned
+- all 14 document types remain represented
+- no PENDING-OWNER markers remain
+- OWNER_DECISION_REQUIRED = 0
+- no unexplained scope loss
+- no contradiction with approved Owner decisions
+- no secret is introduced
+- no application implementation exists
+- no schema/ERD/migration is created
+- no P4 work is started
+
+==================================================
+GIT BOUNDARY
+==================================================
+
+DO NOT COMMIT.
+
+DO NOT PUSH.
+
+DO NOT STAGE for a checkpoint.
+
+Leave the completed P3 documentation package UNCOMMITTED after validation.
+
+The Owner will perform a separate targeted review and checkpoint
+authorization.
+
+The permanent Git attribution policy remains binding.
+
+Do not add:
+
+- Co-Authored-By
+- Generated-By
+- Assisted-By
+- Claude
+- Anthropic
+- any AI/model/tool attribution
+
+to future commit messages.
+
+==================================================
+FINAL REPORT
+==================================================
+
+Report:
+
+A. Baseline state
+B. Owner decisions D-1 through D-5 recorded
+C. Source record / decision IDs
+D. Files created
+E. Files amended
+F. WORKFLOWS architecture
+G. Workflow count
+H. Subflow count
+I. Correction/reversal matrix coverage
+J. Inventory conservation result
+K. Financial conservation result
+L. Tax workflow result
+M. Purchase-charge allocation result
+N. Loss/damaged-return result
+O. Kuitansi-before-payment result
+P. Authority matrix result
+Q. Traceability result
+R. P3 quality-gate result
+S. Gap register result
+T. OWNER_DECISION_REQUIRED count
+U. Remaining contradictions
+V. Exact changed-file census
+W. Working-tree/index status
+X. Whether P3 is ready for targeted review
+Y. Recommended exact Fable review scope
+Z. Exact next safe action
+
+Expected end state:
+
+P3 DOCUMENTATION DRAFTED
+P3 VALIDATED
+P3 UNCOMMITTED
+P3 NOT YET CHECKPOINTED
+P3 NOT YET APPROVED
+P4 NOT STARTED
+
+STOP after reporting.
