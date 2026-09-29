@@ -29,3 +29,7 @@ Do not launch executor work merely because planning files exist. The execution e
 ## End every session
 
 Use the [session-end checklist](docs/00-governance/AGENT_OPERATING_MODEL.md#session-end-checklist). Record actual changes, verification evidence, unresolved issues, and the next safe action in the repository before relying on a chat summary.
+
+## Git commit attribution
+
+Every commit uses only the Owner's existing configured Git author and committer identity. Never name an AI model, agent, coding assistant or automation tool as author, committer or co-author, and never add `Co-Authored-By`, `Generated-By`, `Assisted-By` or equivalent AI-attribution trailers; commit messages contain only repository-relevant content. Historical commits are not rewritten. Owner directive: [DIR-022](docs/00-governance/DECISION_LOG.md#dir-022--permanent-git-commit-attribution-rule).

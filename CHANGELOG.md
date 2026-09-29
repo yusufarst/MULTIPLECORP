@@ -107,3 +107,8 @@ This is a change summary; current state and approval authority live in their [ow
 - Preserved the Owner's explicit P2 approval / checkpoint-publication authorization as the nineteenth transcribed immutable source record with recorded SHA-256/line/byte provenance; recorded DIR-021, APPR-003 and TECH-014. This closes the continuity obligation noted in the previous checkpoint report.
 - Changed only DOMAIN_MODEL and BUSINESS_RULES from REVIEW to APPROVED with pre-approval file hashes recorded; substantive P2 content unchanged. P2_QUALITY_GATE stays REVIEW as evidence with a checkpoint/publication/approval addendum; registers, logs and handoff stay REVIEW living records.
 - Updated entry points, navigation, charter phase boundary and handoff to the approved/published P2 state. Gap totals unchanged (25 findings — 3 CLOSED, 21 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK). No P3, WORKFLOWS.md, schema/ERD/migrations, application code or settled-decision reopening; P3 requires a separate Owner authorization.
+
+## Unreleased — 2026-09-29, permanent Git commit attribution rule
+
+- Recorded DIR-022: every commit uses only the Owner's configured Git identity, with no AI/model/tool author, committer, co-author or attribution trailer. Added the short universal rule to AGENTS.md and the Owner-listed Claude-specific prohibitions to CLAUDE.md.
+- Historical commits and their accepted trailers are not rewritten. No business, product, domain or source-record change and no P3 file; the same message's P3 planning-only authorization produces no repository change in this checkpoint.
