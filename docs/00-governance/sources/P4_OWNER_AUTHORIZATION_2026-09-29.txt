@@ -1,0 +1,1646 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-fourth source record
+Received: 2026-09-29, in-session Owner message following the published P3
+finalization checkpoint 7c6549e88ba8538aa6e08d0fb9720589705e1dd0
+Subject: Owner fast-track authorization — P4 Database Architecture
+         documentation (self-reviewed, validated, left uncommitted for one
+         targeted review) and the final P3 clarification on unattributed
+         cross-company economic loss (no freezing of physical stock)
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — FAST-TRACK P4 DATABASE ARCHITECTURE
++ FINAL P3 UNATTRIBUTED-LOSS CLARIFICATION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Current phase:
+P4 — DATABASE ARCHITECTURE
+
+Role:
+PRIMARY DATABASE / APPLICATION ARCHITECT
+
+Operating mode:
+AUTO
+
+Model authority:
+Broad Level-1 planning and architecture autonomy.
+
+Think independently and deeply.
+Choose the strongest technical design yourself when business intent is
+already settled.
+
+Do not escalate ordinary database/architecture choices to the Owner.
+
+==================================================
+0. FAST-TRACK OPERATING MODEL
+==================================================
+
+We are now using FAST-TRACK governance.
+
+Do NOT split routine work into unnecessary approval cycles.
+
+Within this task you are authorized to:
+
+1. verify the published P3 baseline;
+2. record the publication checkpoint where continuity requires it;
+3. record and apply the Owner clarification below;
+4. design P4;
+5. write the complete P4 documentation;
+6. perform self-review and adversarial review;
+7. run all applicable documentation/governance validation;
+8. update governance/handoff records;
+9. leave the complete P4 package UNCOMMITTED for one targeted independent
+   review.
+
+Do NOT commit P4 in this task.
+
+Do NOT push P4 changes.
+
+Do NOT start P5.
+
+Stop only for:
+
+- a genuine OWNER_DECISION_REQUIRED business question;
+- a material contradiction in approved business meaning;
+- unexpected Git divergence;
+- a destructive action;
+- completion of this task.
+
+==================================================
+1. EXPECTED BASELINE
+==================================================
+
+Expected current state:
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 APPROVED
+P3 CHECKPOINTED
+P3 PUBLISHED
+
+Expected HEAD / origin/main:
+
+7c6549e88ba8538aa6e08d0fb9720589705e1dd0
+
+OWNER_DECISION_REQUIRED:
+0
+
+Working tree:
+CLEAN
+
+Index:
+CLEAN
+
+P4:
+NOT STARTED
+
+Verify independently:
+
+- git branch
+- HEAD
+- origin URL
+- live origin/main
+- local/remote equality
+- tracking
+- clean tree/index
+- no merge/rebase/cherry-pick
+
+Read at minimum:
+
+- AGENTS.md
+- CLAUDE.md
+- README.md
+- CHANGELOG.md
+- docs/CONTEXT_INDEX.md
+- docs/07-handoff/CURRENT_STATE.md
+- docs/07-handoff/NEXT_ACTION.md
+
+Governance:
+
+- docs/00-governance/SOURCE_OF_TRUTH.md
+- docs/00-governance/DECISION_LOG.md
+- docs/00-governance/GAP_REGISTER.md
+- docs/00-governance/CHANGE_CONTROL.md
+- docs/00-governance/PROJECT_CHARTER.md
+- docs/00-governance/AGENT_OPERATING_MODEL.md
+- docs/00-governance/ENGINEERING_PRINCIPLES.md
+
+Product:
+
+- docs/01-product/PRODUCT_OVERVIEW.md
+- docs/01-product/V1_SCOPE.md
+- docs/01-product/ACCEPTANCE_CRITERIA.md
+- docs/01-product/REFERENCE_COVERAGE.md
+
+Domain:
+
+- docs/02-domain/DOMAIN_MODEL.md
+- docs/02-domain/BUSINESS_RULES.md
+- docs/02-domain/WORKFLOWS.md
+- docs/02-domain/P2_QUALITY_GATE.md
+- docs/02-domain/P3_QUALITY_GATE.md
+
+Relevant Owner source records and decision-log entries.
+
+If the actual repository materially differs:
+
+STOP and report.
+
+==================================================
+2. PERMANENT GIT ATTRIBUTION RULE
+==================================================
+
+The existing rule remains binding.
+
+Never add:
+
+- Co-Authored-By
+- Generated-By
+- Assisted-By
+- Claude
+- Anthropic
+- model/AI/tool attribution
+
+to Git commits.
+
+Do not rewrite historical commits.
+
+==================================================
+3. OWNER CLARIFICATION — UNATTRIBUTED CROSS-COMPANY LOSS
+==================================================
+
+This supersedes only the P3 judgement call that temporarily blocked
+unrelated physical dispatch while an unexplained fungible loss awaited
+Owner attribution.
+
+OWNER DECISION:
+
+Economic attribution ambiguity must NOT unnecessarily freeze valid physical
+warehouse operations.
+
+When an unexplained fungible loss occurs and provenance cannot establish
+which legal company economically owns the missing quantity:
+
+1. Correct physical stock truth immediately.
+
+2. Create an UNATTRIBUTED ECONOMIC LOSS CASE.
+
+3. At loss recognition, preserve an immutable attribution snapshot
+   containing at minimum:
+
+   - affected product
+   - quantity
+   - location / relevant scope
+   - candidate companies
+   - candidate lot/provenance context
+   - each candidate company's relevant exposure at recognition
+   - business date
+   - recorded_at
+   - actor
+   - reason
+   - evidence
+
+4. Do NOT automatically assign the loss using:
+
+   - FIFO
+   - oldest-first
+   - pro-rata
+   - whichever stock moves next
+   - another automatic company-selection rule
+
+5. Only Owner resolves the economic/company attribution.
+
+6. Until Owner resolves it:
+
+   - company-specific loss attribution remains pending;
+   - no company-level loss/profit effect is fabricated;
+   - reports requiring resolved company attribution must expose the pending
+     amount clearly;
+   - affected completion may remain blocked where the unresolved attribution
+     is materially required;
+   - Owner action queues must expose the pending case.
+
+7. HOWEVER:
+
+   remaining valid physical stock is NOT reserved/frozen merely to preserve
+   future attribution possibilities.
+
+   Normal receiving, reservation, dispatch and fulfillment may continue
+   against actual physical stock, subject to the normal inventory invariants.
+
+8. Later physical movement does not alter the historical candidate/exposure
+   snapshot captured when the loss was recognized.
+
+9. Owner attribution later assigns the economic loss against that historical
+   case; it does not rewrite subsequent stock movements.
+
+10. If later evidence definitively identifies ownership before Owner
+    resolution, the case may resolve from that evidence according to the
+    normal authority/audit rules.
+
+11. If lost stock is physically found, reverse the physical loss and resolve
+    the pending economic case consistently without double recognition.
+
+This is an explicit Owner clarification.
+
+Apply the narrow required P3 amendment and record provenance.
+
+Do NOT reopen unrelated P3 rules.
+
+==================================================
+4. P4 CANONICAL OUTPUTS
+==================================================
+
+SOURCE_OF_TRUTH currently reserves:
+
+docs/03-architecture/DATABASE.md
+docs/03-architecture/ARCHITECTURE.md
+
+for P4.
+
+These must be the primary normative outputs.
+
+Also evaluate whether repository convention warrants:
+
+docs/03-architecture/P4_QUALITY_GATE.md
+
+as evidence/audit documentation.
+
+If created, register it in SOURCE_OF_TRUTH.
+
+Do not create duplicate sources of truth.
+
+==================================================
+5. P4 PURPOSE
+==================================================
+
+P4 translates approved product/domain/workflow truth into a robust logical
+database and application architecture.
+
+P4 must answer:
+
+- What persistent records exist?
+- What is authoritative versus derived?
+- What relationships exist?
+- What database constraints protect invariants?
+- What must be immutable?
+- What can be revised or superseded?
+- What should be unique?
+- What requires historical snapshots?
+- What must be append-only?
+- How is multi-company scope represented?
+- How does shared warehouse stock coexist with company economic attribution?
+- How are money and quantities represented exactly?
+- How are corrections represented without destructive history?
+- How do migrations/opening facts fit?
+- Which indexes/query structures will later support expected operations?
+- Which business actions require P6 concurrency mechanisms?
+- How does the modular-monolith application map around the database?
+
+P4 DOES NOT implement the database yet.
+
+Do NOT create migrations.
+
+Do NOT scaffold Laravel.
+
+Do NOT write application code.
+
+==================================================
+6. REQUIRED ARCHITECTURE BASELINE
+==================================================
+
+Preserve the approved technical direction:
+
+Laravel
++
+Inertia.js
++
+React
++
+TypeScript
++
+shadcn/ui
++
+Tailwind CSS
++
+PostgreSQL
++
+Nginx
+
+Architecture:
+
+MODULAR MONOLITH
++
+LAYERED ARCHITECTURE
++
+MVC WEB LAYER
++
+ACTION / USE CASE PATTERN
+
+One application.
+One primary PostgreSQL database.
+One repository.
+One deployment unit.
+
+Do NOT introduce:
+
+- microservices
+- event sourcing
+- Kafka
+- Kubernetes
+- full CQRS infrastructure
+- database-per-company tenancy
+- unnecessary repository abstractions
+- full DDD ceremony
+
+Simplify implementation, not capability.
+
+==================================================
+7. DATABASE DESIGN PRINCIPLES
+==================================================
+
+Use PostgreSQL as the source of transactional truth.
+
+Critical principles:
+
+- foreign keys where legitimate;
+- check constraints;
+- unique constraints;
+- partial unique constraints where useful;
+- deterministic identifiers;
+- exact numeric representation;
+- no float for money;
+- no float for business quantities where exact conversion is required;
+- immutable committed history where required;
+- correction/contra records instead of destructive rewriting;
+- company scope explicit;
+- no hard-delete of referenced business transactions;
+- derived balances must not become competing independent truth;
+- snapshot historical business content where master data may change;
+- audit actor and timestamps;
+- business_date distinct from recorded_at;
+- secure, bounded uploaded-file metadata.
+
+Do not let application validation be the only protection for critical
+invariants that PostgreSQL can safely guarantee.
+
+==================================================
+8. DATABASE MODULE BOUNDARIES
+==================================================
+
+Derive modules from P2/P3, not framework convenience.
+
+At minimum evaluate persistent models for:
+
+IDENTITY / ACCESS
+
+- users
+- roles
+- permissions/capabilities
+- role-permission
+- user-role
+- company access / grants
+
+COMPANIES
+
+- companies
+- legal/document identities
+- company bank accounts
+- numbering configurations
+
+PARTIES
+
+- clients
+- client units
+- contacts/PIC
+- suppliers
+- addresses where needed
+
+CATALOG
+
+- products
+- services
+- internal SKU
+- units
+- product alternate units
+- conversion ratios
+- barcodes
+- serial-number identity/policy
+- images/media metadata
+- supplier-product relations/history
+- minimum-stock settings
+- locations/racks
+
+PROJECTS
+
+- projects
+- project lines
+- channel metadata
+- SIPLAH metadata
+- project confirmations
+- completion decisions
+- completion override
+
+QUOTATION / COMMERCIAL
+
+- quotations
+- revisions
+- quotation lines
+- confirmation facts
+
+PROCUREMENT
+
+- purchases
+- purchase lines
+- purchase charges
+- charge allocations
+- purchase orders
+- PO lines
+- supplier returns
+
+INVENTORY
+
+- receiving
+- receiving lines
+- receiving lots
+- lot provenance
+- serial instances
+- stock movements
+- condition movements
+- reservations
+- reservation lines/facts
+- dispatch
+- dispatch lines
+- returns/restorations
+- stock-count sessions
+- stock-count observations
+- adjustments
+- inter-company allocation
+- unattributed economic-loss cases
+- Owner loss-attribution resolution
+
+FULFILLMENT
+
+- fulfillment facts/modes
+- deliveries
+- delivery lines
+- service handovers
+- drop-ship fulfillment/evidence
+
+DOCUMENTS
+
+- document records
+- document revisions
+- document numbering/sequence state
+- issuer snapshot
+- generated rendition metadata
+- external uploaded evidence
+- document links to business records
+
+ADMIN/SPJ
+
+- project requirements
+- requirement definitions/templates only where justified
+- requirement satisfaction
+- N/A / waiver decisions
+- evidence linkage
+
+FINANCE
+
+- invoice/sales record
+- invoice lines
+- billing activation
+- receivable facts
+- payments
+- payment applications
+- intermediary fee settlements
+- tax settlements
+- write-offs
+- disputes
+- customer credits
+- refunds
+- expenses
+- cash disbursements
+- supplier refunds where applicable
+- economic loss facts
+- opening financial facts
+
+AUDIT / OPERATIONS
+
+- audit log/event
+- correction cases
+- notifications/action-required facts where persistence is justified
+- imports/migration batches
+- idempotency keys only as a later-ready boundary if P6 owns final mechanism
+
+This list is analytical input.
+
+You may merge, split, normalize, or reject proposed tables where a cleaner
+model preserves the same business truth.
+
+Do not mechanically create one table per noun.
+
+==================================================
+9. SOURCE-OF-TRUTH VS DERIVED DATA
+==================================================
+
+Explicitly classify database concepts as:
+
+AUTHORITATIVE FACT
+AUTHORITATIVE DECISION
+SNAPSHOT
+DERIVED VIEW
+CACHE / MATERIALIZATION CANDIDATE
+AUDIT EVIDENCE
+
+Examples requiring deliberate treatment:
+
+- ON HAND
+- RESERVED
+- UNUSABLE
+- AVAILABLE
+- outstanding receivable
+- project profit
+- company-period profit
+- stock balance
+- aging bucket
+- workflow progress
+
+Prefer derivation from committed facts unless operational performance
+requires a controlled materialization.
+
+If materialization is proposed, identify:
+
+- source facts;
+- rebuild strategy;
+- consistency expectation;
+- why it is not a second truth.
+
+==================================================
+10. INVENTORY MODEL — HIGHEST CRITICALITY
+==================================================
+
+The schema must preserve:
+
+AVAILABLE =
+ON HAND
+- RESERVED
+- UNUSABLE
+
+and AVAILABLE >= 0.
+
+Represent clearly:
+
+- physical stock pool shared across companies;
+- receiving lots;
+- physical location;
+- condition;
+- serial tracking;
+- economic acquisition provenance;
+- economic company attribution;
+- reservation without physical movement;
+- dispatch as physical subtraction;
+- returns/restorations;
+- stock opname/adjustment;
+- drop-ship bypass of warehouse stock;
+- inter-company allocation;
+- loss recognition;
+- unattributed loss case and later Owner resolution.
+
+Do NOT model physical ownership as company-partitioned stock balances.
+
+Physical pool and economic attribution are different dimensions.
+
+Challenge whether current-stock balance should be:
+
+- ledger-derived only;
+- transactionally maintained balance;
+- controlled materialized balance;
+
+and justify the design.
+
+Design it so P6 can later make:
+
+stock=1,
+two competing dispatches
+
+produce:
+
+one success
+one failure
+final stock 0.
+
+Do not implement locks yet.
+
+==================================================
+11. RECEIVING LOT / COST MODEL
+==================================================
+
+Model cost provenance without inventing formal accounting.
+
+Support:
+
+- actual purchase price;
+- receiving lots;
+- partial receiving;
+- multiple supplier purchases;
+- purchase charges;
+- direct attributable charge allocation;
+- deterministic allocation residual;
+- corrected purchase price/charges;
+- HPP attribution;
+- returns;
+- losses;
+- drop-ship cost;
+- opening stock provenance;
+- inter-company consumption;
+- no duplicate cost.
+
+A unit of economic cost must never be counted twice.
+
+Explain the relation between:
+
+Purchase
+Purchase Line
+Receiving Lot
+Charge Allocation
+Inventory Consumption / Dispatch
+Project Cost / HPP
+Loss
+
+==================================================
+12. MULTI-UNIT MODEL
+==================================================
+
+Preserve the P2 multi-unit capability.
+
+Define a logical representation supporting:
+
+- one base counting unit;
+- alternate transaction units;
+- exact conversion ratio;
+- transaction-time conversion snapshot;
+- base-unit quantity conservation;
+- no uncontrolled floating rounding;
+- partial return;
+- historical conversion stability.
+
+Choose appropriate PostgreSQL numeric/integer representation.
+
+Explain why.
+
+==================================================
+13. SERIAL MODEL
+==================================================
+
+Serialized products must retain one physical identity.
+
+Model:
+
+- serial identity;
+- product relationship;
+- receiving lot;
+- condition;
+- current physical state/location;
+- movement history;
+- dispatch relationship;
+- return/restoration;
+- correction of wrongly identified serial;
+- duplicate serial prevention.
+
+Do not let one active serial instance exist twice.
+
+==================================================
+14. PROJECT / COMMERCIAL MODEL
+==================================================
+
+Support:
+
+- one primary company per project;
+- client/unit/PIC;
+- Regular or SIPLAH channel;
+- products and services;
+- confirmed quantities/values;
+- quotation revisions;
+- no-quotation legitimate confirmation;
+- fulfillment mode per applicable line;
+- partial fulfillment;
+- cancellation remainder;
+- completion gate;
+- Force Complete;
+- immutable decision history.
+
+Do not create redundant Order state unless required by approved P2/P3 truth.
+
+==================================================
+15. DOCUMENT ARCHITECTURE
+==================================================
+
+Separate BUSINESS DOCUMENT ISSUANCE from rendering.
+
+Model:
+
+- document business record;
+- type;
+- company;
+- project/transaction linkage;
+- revision;
+- issue event;
+- business_date;
+- document number;
+- issuer snapshot;
+- immutable issued payload/snapshot or reproducible immutable source;
+- void/supersession relationship;
+- rendered artifact metadata;
+- render retry;
+- uploaded external evidence;
+- authenticity metadata.
+
+Rendering failure must not create another issue.
+
+Do not allocate document numbers using MAX(number)+1.
+
+Design a concurrency-safe sequence concept for P6 to implement.
+
+Specify uniqueness scope such as:
+
+company
++
+document type
++
+numbering period
++
+number
+
+without prematurely coding SQL mechanisms.
+
+==================================================
+16. FINANCIAL MODEL — HIGHEST CRITICALITY
+==================================================
+
+Preserve distinctly:
+
+Sales / Transaction Value
+Active Receivable
+Cash-In
+Cost / HPP
+Cash-Out
+
+Represent:
+
+Invoice
+Billing activation
+Receivable
+Payment
+Payment Application
+Intermediary Fee Settlement
+Tax Settlement
+Dispute
+Write-Off
+Customer Credit
+Refund
+Expense
+Cash Disbursement
+
+Conservation must remain possible to enforce:
+
+Payment applications + legitimate refund consumption
+must never exceed economic money available from the payment.
+
+Receivable reductions must only arise from approved mechanisms.
+
+Non-cash settlement must never create Cash-In.
+
+Write-off must never pretend payment happened.
+
+Overpayment must never become profit automatically.
+
+Invoice replacement must not silently reset aging.
+
+Tax/fee evidence must not be reusable beyond evidenced amounts.
+
+==================================================
+17. TAX MODEL
+==================================================
+
+Do not hardcode current Indonesian tax rates into domain architecture.
+
+Design configurable:
+
+- tax types;
+- effective dates;
+- company/context applicability;
+- transaction snapshots;
+- withholding/collection evidence;
+- invoice tax components;
+- purchase tax treatment;
+- tax settlement against receivable.
+
+P4 must support D-1 NET semantics without becoming a tax/accounting engine.
+
+==================================================
+18. RECEIVABLE / PAYMENT CONSERVATION
+==================================================
+
+Explicitly design logical constraints around:
+
+payment
+→ application
+→ correction/reallocation
+→ refund
+→ customer credit
+
+and:
+
+invoice
+→ billing
+→ receivable
+→ payment application
+→ tax settlement
+→ fee settlement
+→ write-off
+
+Consider:
+
+- payment applied to multiple invoices;
+- one invoice paid by multiple payments;
+- payment correction;
+- application reallocation;
+- refund-consumed application finality;
+- write-off supersession;
+- recovery after write-off;
+- invoice void/replacement;
+- dispute hold.
+
+Use exact money values.
+
+Do not use floating point.
+
+==================================================
+19. UNATTRIBUTED LOSS MODEL
+==================================================
+
+Implement the Owner clarification from section 3 conceptually.
+
+The database design must support:
+
+UNATTRIBUTED LOSS CASE
+
+with:
+
+- physical correction fact;
+- immutable recognition-time attribution snapshot;
+- candidate companies/exposures;
+- unresolved/resolved state;
+- Owner attribution decision;
+- final company/economic loss assignment;
+- found-stock reversal where applicable.
+
+Do NOT require freezing remaining physical lots merely because economic
+attribution is unresolved.
+
+Do not let later dispatch rewrite candidate exposure history.
+
+==================================================
+20. CORRECTION / HISTORY MODEL
+==================================================
+
+Map P2/P3 semantics:
+
+EDIT
+REVISION
+VOID
+REVERSAL
+RETURN
+REALLOCATION
+CONTRA
+COMPENSATING ACTION
+ARCHIVE / INACTIVE
+
+to persistent structures.
+
+Define:
+
+- which master records may be edited;
+- which business facts are append-only;
+- which records can be voided;
+- how supersession is represented;
+- how references to original facts are preserved;
+- how correction cases link multiple corrective actions;
+- how before/after audit evidence is retained.
+
+Avoid generic "is_deleted" as a substitute for business semantics.
+
+==================================================
+21. SNAPSHOT MODEL
+==================================================
+
+Define transaction snapshots for historically significant data.
+
+At minimum evaluate snapshotting of:
+
+- company legal identity;
+- issuer identity;
+- client identity/address;
+- unit/PIC;
+- supplier identity;
+- product/service description;
+- transaction unit;
+- conversion ratio;
+- prices;
+- tax;
+- SPJ/admin values;
+- bank destination;
+- channel metadata;
+- document content.
+
+Avoid copying master data into every table unnecessarily.
+
+Specify where snapshots are required and why.
+
+==================================================
+22. COMPANY SCOPE / TENANCY
+==================================================
+
+MultipleCorp is multi-company inside one workspace.
+
+Do NOT implement separate databases per company.
+
+Design logical company scoping so P5 can later enforce default-deny access.
+
+Distinguish:
+
+- company-owned business records;
+- shared physical inventory facts;
+- economic attribution;
+- global/platform records;
+- Owner consolidated views.
+
+Prevent accidental assumptions that shared physical inventory permits shared
+financial visibility.
+
+==================================================
+23. IDENTIFIERS
+==================================================
+
+Recommend a consistent identifier strategy.
+
+Evaluate:
+
+- UUID / UUIDv7 / ULID / bigint;
+- public identifiers versus internal keys;
+- document numbers versus primary keys.
+
+Consider PostgreSQL, Laravel ergonomics, index locality, debugging,
+migration/import, and exposure through URLs.
+
+Choose the strongest pragmatic design.
+
+Do not create needless dual identifiers everywhere.
+
+==================================================
+24. MONEY / QUANTITY / DATE TYPES
+==================================================
+
+Specify logical types for:
+
+Money
+Percentage
+Quantity
+Conversion Ratio
+Business Date
+recorded_at
+effective date ranges
+document period
+tax rate
+
+Avoid float.
+
+Set practical precision/scale limits based on business requirements rather
+than arbitrary huge values.
+
+Identify where integer minor units are preferable versus NUMERIC.
+
+==================================================
+25. DATABASE CONSTRAINT CATALOGUE
+==================================================
+
+Create a catalogue mapping critical P2/P3 invariants to:
+
+APPLICATION
+DATABASE
+APPLICATION + DATABASE
+P6 ATOMIC OPERATION
+DERIVED QUERY CHECK
+P8 TEST OBLIGATION
+
+At minimum cover:
+
+- unique active barcode;
+- unique serial identity;
+- nonnegative base quantities;
+- reservation bounds;
+- document number uniqueness;
+- payment conservation;
+- evidence amount caps;
+- charge allocation conservation;
+- source-bill cap;
+- receivable reduction conservation;
+- one-time loss recognition;
+- cross-company attribution conservation;
+- company-scope references;
+- immutable issue/revision relationships;
+- duplicate migration batch/idempotency boundaries.
+
+Do not force impossible cross-row business equations into CHECK constraints.
+
+Choose the correct layer.
+
+==================================================
+26. REFERENTIAL INTEGRITY / DELETE POLICY
+==================================================
+
+Specify delete/archive semantics for every major master/transaction family.
+
+Examples:
+
+Company
+Client
+Client Unit
+PIC
+Supplier
+Product
+Unit
+Location
+Project
+Purchase
+Receiving
+Invoice
+Payment
+Document
+
+Referenced historical facts must survive master deactivation.
+
+Prefer:
+
+- restrict
+- archive/inactive
+- nullable only where semantically valid
+
+over destructive cascades.
+
+Use cascading deletes only for truly dependent, non-historical children.
+
+==================================================
+27. INDEX / QUERY DESIGN
+==================================================
+
+Design indexes from actual P3 workflows.
+
+At minimum support:
+
+- exact barcode lookup;
+- exact SKU;
+- serial lookup;
+- product name search;
+- client search;
+- supplier search;
+- project search;
+- open project lists;
+- current inventory availability;
+- reservations;
+- receiving/dispatch history;
+- project documents;
+- invoice status;
+- active receivables;
+- aging;
+- payment lookup;
+- company/date reporting;
+- audit history.
+
+Avoid indexing every column.
+
+Identify composite/partial indexes where useful.
+
+N+1 remains an application defect, but database shape must make efficient
+loading possible.
+
+==================================================
+28. SEARCH
+==================================================
+
+Use PostgreSQL capabilities where sufficient.
+
+Evaluate:
+
+- B-tree
+- pg_trgm
+- full-text search only where justified
+
+Do not introduce Elasticsearch or another search service for V1.
+
+==================================================
+29. FILE / DOCUMENT STORAGE METADATA
+==================================================
+
+File bytes may be stored outside PostgreSQL on VPS filesystem/object-like
+local storage, but database metadata remains authoritative for linkage.
+
+Design metadata for:
+
+- original filename;
+- stored path/key;
+- MIME;
+- size;
+- checksum;
+- uploaded_by;
+- uploaded_at;
+- document/evidence relation;
+- visibility/company scope.
+
+P9 owns final physical storage/deployment design.
+
+==================================================
+30. AUDIT MODEL
+==================================================
+
+Define audit persistence for:
+
+- actor
+- action
+- target
+- company context
+- reason
+- correlation/request identity
+- before/after metadata where necessary
+- recorded_at
+- privileged actions
+
+Avoid storing secrets/sensitive payloads unnecessarily.
+
+Audit history must not be normal-user editable.
+
+==================================================
+31. MIGRATION / OPENING DATA
+==================================================
+
+P4 must provide structures for:
+
+- migration batch identity;
+- source provenance;
+- row-level import result/error;
+- opening stock;
+- opening lots/cost;
+- opening receivable;
+- opening customer credit;
+- open projects;
+- useful current-year documents;
+- idempotent re-import boundaries.
+
+Do not attempt full historical reconstruction.
+
+==================================================
+32. APPLICATION ARCHITECTURE
+==================================================
+
+ARCHITECTURE.md must define practical modular-monolith structure.
+
+Recommend bounded modules such as:
+
+Identity
+Companies
+Parties
+Catalog
+Projects
+Commercial
+Procurement
+Inventory
+Fulfillment
+Documents
+Administration
+Finance
+Audit/Operations
+
+But choose the final grouping yourself.
+
+Define:
+
+- module responsibilities;
+- dependency direction;
+- Actions / Use Cases;
+- domain/application services only where meaningful;
+- policies/authorization boundary for P5;
+- Inertia web layer;
+- React frontend boundary;
+- queue/background jobs;
+- file storage abstraction;
+- integration adapter boundary;
+- future SIPLAH adapter seam;
+- reporting/query layer.
+
+Avoid one giant Services folder.
+
+Avoid one Repository class per Eloquent model.
+
+==================================================
+33. TRANSACTION BOUNDARIES
+==================================================
+
+Identify business operations that must execute within one database
+transaction.
+
+Use P3 AX-01–37 and amended actions.
+
+Examples:
+
+- receiving;
+- reservation;
+- dispatch;
+- return/restoration;
+- inter-company allocation;
+- stock adjustment;
+- document issuance + number consumption;
+- billing activation;
+- payment recording;
+- payment application;
+- correction/reallocation;
+- tax/fee settlement;
+- loss attribution;
+- completion.
+
+Specify:
+
+WHAT facts must commit together.
+
+Do NOT yet prescribe exact locking syntax.
+
+P6 owns locking and retry mechanics.
+
+Also state:
+
+No network call
+No PDF rendering
+No external API call
+
+inside critical DB transactions.
+
+==================================================
+34. IDEMPOTENCY BOUNDARY FOR P6
+==================================================
+
+Identify which P4 structures need stable command/business identity to allow
+P6 to implement idempotency.
+
+Do not fully design P6 yet.
+
+Ensure the schema does not make safe idempotency impossible.
+
+==================================================
+35. PERFORMANCE / SCALE REALITY
+==================================================
+
+Design for the actual business:
+
+- small number of internal users initially;
+- multiple companies;
+- shared warehouse;
+- growing transaction history;
+- 5 Windows PCs currently;
+- scanner-heavy exact lookup;
+- documents/images/PDFs;
+- near-zero incremental infrastructure cost.
+
+Do not overengineer for millions of concurrent users.
+
+But do not use schema shortcuts that collapse under ordinary transactional
+concurrency.
+
+==================================================
+36. SECURITY-READY DATA DESIGN
+==================================================
+
+P5 owns security implementation, but P4 must not make it impossible.
+
+Support:
+
+- explicit company scope;
+- server-side authorization;
+- default deny;
+- sensitive financial boundaries;
+- secure file ownership/linkage;
+- no plaintext passwords;
+- Laravel password hashing;
+- no secrets in database schema documentation;
+- audit of privileged changes.
+
+==================================================
+37. GAP RECONCILIATION
+==================================================
+
+Consume and update the relevant gaps, especially:
+
+GAP-003
+GAP-004
+GAP-007
+GAP-008
+GAP-010
+GAP-016
+GAP-023
+GAP-025
+GAP-026
+GAP-027
+GAP-028
+GAP-029
+GAP-030
+
+Close only the BUSINESS/DESIGN portion if satisfied.
+
+Do not close gaps whose runtime/testing/concurrency/security proof belongs
+to later phases.
+
+Discover new gaps when genuinely necessary.
+
+==================================================
+38. TRACEABILITY
+==================================================
+
+Provide explicit traceability:
+
+P1 requirement
+→ P2 rule
+→ P3 workflow
+→ P4 database structure/constraint
+→ later P5/P6/P8/P11 obligation
+
+No V1_REQUIRED capability may become orphaned.
+
+==================================================
+39. ADVERSARIAL DATABASE REVIEW
+==================================================
+
+Perform at least these passes:
+
+PASS 1 — NORMALIZATION / DUPLICATE TRUTH
+
+Look for duplicated source of truth, mutable historical joins, overloaded
+tables and derived values stored independently.
+
+PASS 2 — INVENTORY CONSERVATION
+
+Try to create:
+
+- stock from nothing;
+- negative available;
+- duplicate lot cost;
+- duplicate serial;
+- lost provenance;
+- cross-company leakage;
+- unresolved-loss attribution corrupting physical availability.
+
+PASS 3 — FINANCIAL CONSERVATION
+
+Try to create:
+
+- duplicate Cash-In;
+- payment application beyond payment;
+- duplicated tax/fee evidence;
+- duplicate purchase charges;
+- disappearing receivable;
+- duplicate write-off;
+- credit becoming profit;
+- cost counted twice.
+
+PASS 4 — HISTORY / CORRECTION
+
+Try to erase or silently mutate:
+
+- issued document;
+- invoice;
+- payment;
+- stock movement;
+- loss;
+- allocation;
+- settlement.
+
+PASS 5 — TENANCY / SCOPE
+
+Look for relationships that could permit company B to reference financial
+records owned by company A unintentionally.
+
+PASS 6 — IMPLEMENTABILITY
+
+Imagine Laravel/PostgreSQL implementation.
+
+Identify designs that are theoretically clean but unnecessarily difficult
+for an 18-day execution window.
+
+Simplify those without losing integrity.
+
+==================================================
+40. P4 QUALITY GATE
+==================================================
+
+P4 quality evidence should cover:
+
+- canonical-file completeness;
+- traceability;
+- invariant-to-constraint mapping;
+- entity/table relationship consistency;
+- no orphan foreign-key concepts;
+- no duplicated truth;
+- delete/archive matrix;
+- snapshot matrix;
+- transaction-boundary mapping;
+- index/query coverage;
+- Owner decision preservation;
+- adversarial findings and dispositions;
+- open technical obligations;
+- static documentation validation.
+
+==================================================
+41. NO PHYSICAL IMPLEMENTATION
+==================================================
+
+Do NOT create:
+
+- Laravel project files
+- migrations
+- SQL schema files intended for execution
+- seeders
+- factories
+- React code
+- Docker configuration
+- deployment configuration
+
+P4 is architecture documentation.
+
+Pseudo-DDL snippets are allowed only if they materially clarify a database
+constraint and are explicitly NON-EXECUTABLE examples.
+
+Prefer structured tables and diagrams.
+
+==================================================
+42. MERMAID / ERD
+==================================================
+
+DATABASE.md should include a logical ERD.
+
+Mermaid ER diagram is acceptable if readable.
+
+Do not produce a decorative monster diagram containing every minor table
+in one unreadable canvas.
+
+Prefer:
+
+- one high-level relationship diagram;
+- several domain-focused diagrams if necessary.
+
+The written specification remains authoritative over diagrams.
+
+==================================================
+43. TARGETED FABLE REVIEW BOUNDARY
+==================================================
+
+Do NOT use Fable during this task.
+
+Opus completes P4 and its own adversarial review first.
+
+At the end recommend a narrow Fable review scope.
+
+Expected likely review:
+
+DATABASE INTEGRITY UNDER CONCURRENCY AND CORRECTION
+
+focused on:
+
+- stock ledger/balance/reservation;
+- receiving lots and cost;
+- inter-company attribution;
+- payment/application/refund;
+- tax/fee settlements;
+- document numbering;
+- uniqueness/constraints;
+- correction/contra relationships;
+- company isolation;
+- transaction boundaries.
+
+Do not recommend Fable re-review all product requirements.
+
+==================================================
+44. P4 EXECUTION
+==================================================
+
+This task is authorized to WRITE the P4 documentation immediately.
+
+Do NOT stop merely to present a plan.
+
+Think first, then execute.
+
+Create:
+
+docs/03-architecture/DATABASE.md
+docs/03-architecture/ARCHITECTURE.md
+
+Create/register P4_QUALITY_GATE.md if repository convention supports it.
+
+Apply the narrow P3 clarification from section 3.
+
+Update necessary:
+
+- SOURCE_OF_TRUTH
+- DECISION_LOG
+- GAP_REGISTER
+- CONTEXT_INDEX
+- CURRENT_STATE
+- NEXT_ACTION
+- CHANGELOG
+- other directly affected governance navigation
+
+Do not modify unrelated approved specifications.
+
+Archive this Owner P4 authorization/clarification as ONE appropriate locked
+source record rather than creating unnecessary records for routine agent
+reasoning.
+
+==================================================
+45. STOP BOUNDARY
+==================================================
+
+After P4 documentation and validation:
+
+DO NOT STAGE.
+DO NOT COMMIT.
+DO NOT PUSH.
+
+Leave the complete package uncommitted.
+
+Expected state:
+
+P4 DOCUMENTATION DRAFTED
+P4 SELF-REVIEWED
+P4 VALIDATED
+P4 UNCOMMITTED
+P4 NOT YET APPROVED
+P5 NOT STARTED
+
+One targeted Fable audit will follow.
+
+==================================================
+46. FINAL REPORT
+==================================================
+
+Report:
+
+A. Baseline verification
+B. P3 clarification applied
+C. P4 files created
+D. Database architecture summary
+E. Application architecture summary
+F. Logical entity/table count by module
+G. Source-of-truth vs derived-data decisions
+H. Inventory architecture
+I. Lot/cost/HPP architecture
+J. Multi-unit architecture
+K. Serial architecture
+L. Project/commercial architecture
+M. Document architecture
+N. Financial architecture
+O. Tax architecture
+P. Unattributed-loss architecture
+Q. Correction/history architecture
+R. Snapshot architecture
+S. Company-scope architecture
+T. Identifier strategy
+U. Money/quantity/date type strategy
+V. Constraint catalogue summary
+W. Referential/delete policy
+X. Index/query strategy
+Y. Audit architecture
+Z. Migration/opening-data architecture
+AA. Transaction-boundary map
+AB. P6 idempotency/concurrency handoff
+AC. Traceability result
+AD. Gap reconciliation
+AE. Adversarial-review findings
+AF. P4 quality-gate result
+AG. OWNER_DECISION_REQUIRED count
+AH. Remaining contradictions
+AI. Changed-file census
+AJ. Working-tree/index state
+AK. Recommended exact targeted Fable review
+AL. Exact next safe action
+
+Final status must be:
+
+READY FOR TARGETED P4 REVIEW
+
+or
+
+READY FOR OWNER DECISIONS
+
+STOP after reporting.

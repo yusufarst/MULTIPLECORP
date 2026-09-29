@@ -1,0 +1,899 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-sixth source record
+Received: 2026-09-30, in-session Owner message following the targeted P4
+red-team (verdict NEEDS CORRECTION BEFORE P4 APPROVAL; HEAD 7c6549e with the
+19 uncommitted P4 paths)
+Subject: Owner fast-track P4 finalization — correction of red-team findings
+         RT-01–RT-37, conditional P4 approval, one checkpoint commit, a
+         normal non-force push and the continuity freeze for a zero-context
+         handoff
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+FAST-TRACK P4 CORRECTION, APPROVAL, CHECKPOINT AND PUBLICATION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Role:
+PRIMARY DATABASE / APPLICATION ARCHITECT
+
+Operating mode:
+AUTO
+
+This task finalizes P4.
+
+Do NOT restart P4.
+Do NOT redesign the product.
+Do NOT start P5.
+
+The targeted Fable red-team is complete.
+
+Its final verdict:
+
+NEEDS CORRECTION BEFORE P4 APPROVAL
+
+Counts:
+
+OWNER_DECISION_REQUIRED = 0
+CRITICAL = 0
+HIGH = 2
+MEDIUM = 15
+LOW = 20
+
+All findings are technical / Level-1 architecture corrections.
+
+==================================================
+1. EXPECTED BASELINE
+==================================================
+
+Expected current committed baseline:
+
+branch:
+main
+
+HEAD / origin/main:
+
+7c6549e88ba8538aa6e08d0fb9720589705e1dd0
+
+Expected working tree:
+
+19 P4-related changed paths
+
+Expected index:
+
+empty
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 APPROVED
+
+P4:
+DOCUMENTATION DRAFTED
+SELF-REVIEWED
+VALIDATED
+UNCOMMITTED
+NOT YET APPROVED
+
+P5:
+NOT STARTED
+
+Verify before editing:
+
+- current branch
+- HEAD
+- live origin/main
+- tracking
+- changed-path census
+- empty index
+- no merge/rebase/cherry-pick
+
+If materially different:
+
+STOP and report.
+
+==================================================
+2. COMPLETE THE REVIEW INTAKE
+==================================================
+
+The targeted reviewer explicitly reported that it did NOT open several files
+that the review prompt listed as mandatory.
+
+Before applying findings, read and reconcile:
+
+- README.md
+- docs/CONTEXT_INDEX.md
+- docs/00-governance/SOURCE_OF_TRUTH.md
+- docs/01-product/V1_SCOPE.md
+- docs/02-domain/P3_QUALITY_GATE.md
+
+Also re-read:
+
+- docs/03-architecture/DATABASE.md
+- docs/03-architecture/ARCHITECTURE.md
+- docs/03-architecture/P4_QUALITY_GATE.md
+- docs/02-domain/BUSINESS_RULES.md
+- docs/02-domain/WORKFLOWS.md
+- docs/00-governance/DECISION_LOG.md
+- docs/00-governance/GAP_REGISTER.md
+- docs/07-handoff/CURRENT_STATE.md
+- docs/07-handoff/NEXT_ACTION.md
+
+Use repository truth over reviewer assumptions.
+
+If reading these additional canonical sources invalidates any finding,
+record the reason instead of applying it blindly.
+
+Do not reopen settled Owner decisions.
+
+==================================================
+3. TARGETED REVIEW FINDINGS
+==================================================
+
+Treat the Fable report as review evidence.
+
+Verify and disposition every finding:
+
+RT-01 through RT-37.
+
+Required classifications from review:
+
+HIGH:
+RT-01
+RT-02
+
+MEDIUM:
+RT-03
+RT-04
+RT-05
+RT-06
+RT-07
+RT-08
+RT-09
+RT-10
+RT-11
+RT-12
+RT-13
+RT-14
+RT-15
+RT-16
+RT-17
+
+LOW:
+all remaining valid RT findings
+
+DEFERRED obligations:
+P5 / P6 / P8 / P9 as identified by the review
+
+OWNER_DECISION_REQUIRED:
+0
+
+Do not escalate technical architecture choices to the Owner.
+
+==================================================
+4. MANDATORY HIGH-SEVERITY FIX — RT-01
+==================================================
+
+Correct the cost-correction architecture.
+
+The current defect:
+
+after partial receipt, a later purchase-price or charge correction can update
+lot cost without updating the cumulative posted-value guards used by later
+receipts.
+
+This can make subsequent cumulative allocation over-post total cost.
+
+Required semantics:
+
+1. purchase-price correction must update all relevant cumulative guards in
+   the same transaction as the authoritative correction fact;
+
+2. purchase-line goods-value and non-creditable-tax posted values are NET of
+   corrections and reversals;
+
+3. charge correction must update:
+   - purchase-charge balances;
+   - source-bill/evidence balances where applicable;
+   - affected lot-cost balances;
+
+4. if a correction changes cost belonging to a CLOSED purchase-return case,
+   reopen or otherwise re-activate the case consistently in the same
+   transaction;
+
+5. returned-cost / replacement / refund / loss closure equations must remain
+   conserved;
+
+6. Σ attributed economic cost after correction must equal corrected source
+   economic cost exactly.
+
+Update AX-34 and related catalogue/constraint/transaction rows.
+
+P6 will later own exact locking order.
+
+==================================================
+5. MANDATORY HIGH-SEVERITY FIX — RT-02
+==================================================
+
+Correct refund/application conservation.
+
+The current defect:
+
+a payment that has already economically funded a refund can be corrected in
+a way that releases more application capacity than the remaining real money
+supports.
+
+Required semantics:
+
+1. refund-backed consumption remains economically binding while the refund
+   disbursement stands;
+
+2. payment correction must never free invoice-settlement capacity beyond
+   remaining economic money;
+
+3. add a guard structure sufficient to represent:
+   - original/gross payment amount;
+   - current net payment amount;
+   - refund-backed consumption;
+   - legitimately released refund amount;
+   - remaining application capacity;
+
+4. released refund capacity must be capped by an actual reversal/correction
+   of the refund economics, not merely by correcting the source payment;
+
+5. when a payment correction creates a refund shortfall:
+   - require an explicit residual/correction case;
+   - closure and relevant completion remain blocked until the economic
+     shortfall is resolved;
+
+6. represent typed re-record/replacement payment linkage where required;
+
+7. application + refund-backed consumption + other legitimate use must never
+   exceed the economic money represented by the payment chain.
+
+Add an adversarial worked example using:
+
+Payment 1,200,000
+Application 1,000,000
+Refund 200,000
+Payment contra 1
+
+and prove no extra 199,999 can be applied.
+
+==================================================
+6. INVENTORY / RESERVATION CORRECTIONS
+==================================================
+
+Apply all valid RT inventory findings.
+
+At minimum:
+
+RT-03:
+net-zero movement types must conserve quantity.
+
+LOCATION_MOVE and equivalent movement groups must satisfy:
+
+Σ movement entries = 0
+
+for the movement action.
+
+Add missing sign discipline for RESTORATION and COUNT_VARIANCE.
+
+RT-19:
+a dispatch reservation reference must belong to the same relevant project
+line / demand context.
+
+RT-20:
+quantity-scale constraints must apply consistently beyond ledger rows,
+including reservation and procurement quantity-bearing structures.
+
+RT-21:
+stock-count basis/version must not rely on opaque JSON if typed state is
+needed for correctness.
+
+Preserve:
+
+AVAILABLE =
+ON HAND - RESERVED - UNUSABLE
+
+and AVAILABLE >= 0.
+
+==================================================
+7. LOT / COST / HPP CORRECTIONS
+==================================================
+
+Apply RT-04 and RT-05.
+
+Economic attribution roots must be structurally tied to their causes.
+
+A receiving lot's company/provenance cannot contradict the acquisition fact
+that created it.
+
+A stock consumption's bearer project/company context cannot contradict the
+dispatch/resolution fact that caused it.
+
+Separate:
+
+NORMAL RECEIPT CAP
+
+from:
+
+REPLACEMENT RECEIPT CAP
+
+Do not allow replacement headroom to make ordinary receiving exceed the
+ordered quantity.
+
+Preserve exact cumulative rounding.
+
+==================================================
+8. UNATTRIBUTED LOSS CORRECTIONS
+==================================================
+
+Apply RT-06, RT-07 and valid LOW findings.
+
+The Owner's DIR-027 semantics remain binding.
+
+Add database-ready structures to guarantee:
+
+- assignment to a company never exceeds that company's recognition-time
+  exposure;
+- overlapping unattributed-loss cases cannot reuse the same economic
+  exposure repeatedly;
+- recognition accounts for already-pending quantity in the same scope;
+- snapshot exposure remains immutable;
+- normal physical stock is not frozen;
+- later movements cannot rewrite historical exposure;
+- reversal is capped;
+- case conversion structure is explicit;
+- serialized-policy history does not make legitimate future configuration
+  changes impossible.
+
+Do not introduce automatic company attribution.
+
+==================================================
+9. RECEIVABLE / SETTLEMENT CORRECTIONS
+==================================================
+
+Apply RT-08 through RT-12.
+
+Define explicit settlement transition semantics sufficient for:
+
+ACTIVE -> RESIDUAL
+ACTIVE -> CONTRAED
+RESIDUAL -> CONTRAED
+
+A residual must have a legitimate exit.
+
+Replacement invoices must NOT reset aging.
+
+Require a typed inherited billing relationship to the replaced invoice's
+current billing act.
+
+Invoice void/revision bases must be typed and referentially valid.
+
+Evidence roles must enforce compatible evidence types.
+
+The same real-world tax/fee evidence must not gain duplicate capacity merely
+by being uploaded under another type.
+
+Pool-level evidence must be representable without fabricating company
+ownership.
+
+==================================================
+10. DOCUMENT NUMBERING
+==================================================
+
+Apply RT-29.
+
+Do not over-claim universal "gapless" numbering.
+
+Business guarantees are:
+
+- unique within the required scope;
+- monotonic where specified;
+- append-only;
+- never reused;
+- concurrency safe;
+- no MAX+1.
+
+If project-number retirement can leave a hole, preserve the retired number
+using an explicit tombstone/retirement fact if needed.
+
+Do not impose an unnecessary legal/business requirement that every sequence
+must be gapless.
+
+==================================================
+11. CORRECTION / CONTRA STRUCTURES
+==================================================
+
+Apply RT-13, RT-14 and RT-31.
+
+Corrective receiving must not be blocked by the normal receiving
+business-identity UNIQUE rule.
+
+Represent the causal relationship to the original receipt explicitly.
+
+Drop-ship corrections must not require a warehouse movement that never
+existed.
+
+Add caps for delivery/handover reversals.
+
+Ensure superseding commercial confirmation remains possible under valid
+revision semantics.
+
+==================================================
+12. COMPANY ISOLATION
+==================================================
+
+Apply RT-15 and valid related findings.
+
+Document bank destination must be a typed company-scoped reference, not
+merely free payload data.
+
+A Company B business document must not be capable of selecting Company A's
+bank account unless an approved explicit cross-company business rule permits
+it.
+
+Audit all intentional cross-company links.
+
+Correct the documentation if the claimed count of cross-company links is
+inaccurate.
+
+Do not confuse shared physical inventory with shared financial visibility.
+
+==================================================
+13. SERIAL / BARCODE / MULTI-UNIT
+==================================================
+
+Apply valid LOW findings:
+
+- normalize barcode identity consistently;
+- define restoration unit/conversion snapshot rules;
+- prevent historical conversion drift;
+- preserve exact base-unit arithmetic;
+- prevent impossible fractional base-unit facts.
+
+Do not use float.
+
+==================================================
+14. TRANSACTION BOUNDARIES
+==================================================
+
+Apply RT-16, RT-35 and related corrections.
+
+A command that legitimately affects multiple completed projects/documents
+must be able to create multiple corresponding revalidation/revision rows.
+
+Use uniqueness scoped to the true business identity, such as:
+
+(command_id, project_id)
+
+rather than globally one row per command where inappropriate.
+
+Audit AX-01 through AX-37 after all changes.
+
+Every business action must list every authoritative fact and guard that must
+commit together.
+
+No network, PDF render, external API or email inside a critical transaction.
+
+==================================================
+15. TRIGGER / PRIVILEGE REALISM
+==================================================
+
+Apply RT-17, RT-36, RT-37.
+
+Be precise about guarantees.
+
+If PostgreSQL only guarantees the guard CHECK but coupling between fact and
+guard is ensured by the application posting path, label it:
+
+DATABASE + APPLICATION + RECONCILIATION
+
+not "database enforced" alone.
+
+Account for:
+
+- Laravel runtime role;
+- queue role;
+- migration/owner role;
+- imports;
+- maintenance.
+
+Do not claim the table owner is incapable of UPDATE/DELETE.
+
+Where draft-only deletion is required, specify enforceable semantics.
+
+Composite nullable scope references must use all-or-none constraints or
+equivalent semantics so MATCH SIMPLE cannot silently bypass scoping.
+
+==================================================
+16. REBUILD / RECONCILIATION
+==================================================
+
+Apply RT-18.
+
+Every rebuildable guard must have:
+
+- explicit authoritative formula;
+- required component discriminator;
+- deterministic reconstruction;
+- audit trail;
+- clearly named maintenance/reconciliation writer path.
+
+Rebuild is an audited exceptional writer, not an unnamed competing normal
+writer.
+
+Fix serial rebuild semantics for drop-ship states.
+
+==================================================
+17. DEFERRED OBLIGATIONS
+==================================================
+
+Do NOT implement later phases now.
+
+Record the valid deferred findings.
+
+P5:
+
+- evidence checksum duplicate warning;
+- field projection;
+- evidence-resolution authority.
+
+P6:
+
+- extended lock order;
+- anchor semantics;
+- zero-row guard update = failure;
+- counter-row creation race;
+- mechanisms for all corrected AX actions.
+
+P8:
+
+- adversarial fixtures for high/medium findings;
+- numbering tests;
+- reconciliation tests;
+- serial-state tests.
+
+P9:
+
+- migration DB role / connection;
+- database owner/TRUNCATE privilege handling;
+- post-restore guard reconciliation.
+
+==================================================
+18. RE-RUN DATABASE ADVERSARIAL REVIEW
+==================================================
+
+After corrections, re-test at minimum:
+
+1. partial receipt -> price correction -> later receipt;
+2. partial receipt -> charge correction -> later receipt;
+3. payment -> application -> refund -> Rp1 payment contra -> attempted
+   reallocation;
+4. location move -5/+6;
+5. replacement receipt versus normal receipt cap;
+6. overlapping unattributed-loss cases;
+7. replacement invoice after partial payment;
+8. settlement ACTIVE -> RESIDUAL -> resolution;
+9. duplicate real-world evidence under alternate type;
+10. corrective receiving under same delivery reference;
+11. drop-ship confirmation reversal;
+12. cross-company bank account selection;
+13. multi-project cost correction revalidation;
+14. guard rebuild after corrections.
+
+Prove the final equations.
+
+==================================================
+19. QUALITY GATE UPDATE
+==================================================
+
+Update P4_QUALITY_GATE.md with:
+
+- targeted Fable review;
+- all RT-01–RT-37 dispositions;
+- corrected severity counts;
+- previous-fix regression findings;
+- final adversarial re-test;
+- deferred P5/P6/P8/P9 obligations;
+- final static validation.
+
+Expected before approval:
+
+CRITICAL DEFECT = 0
+HIGH DEFECT = 0
+MEDIUM DEFECT = 0
+LOW DEFECT = 0 unresolved
+OWNER_DECISION_REQUIRED = 0
+
+The quality gate remains evidence and may remain REVIEW according to
+repository convention.
+
+==================================================
+20. RE-DERIVE ALL COUNTS
+==================================================
+
+Do not reuse stale counts.
+
+Recompute:
+
+- table count
+- module table totals
+- guard count
+- constraint catalogue count
+- transaction/AX coverage
+- links/anchors
+- source-record hashes
+- traceability counts
+- gap totals
+- changed-path census
+
+Record measured values only.
+
+==================================================
+21. FINAL STATIC / GOVERNANCE VALIDATION
+==================================================
+
+Verify:
+
+- relative links
+- anchors
+- lifecycle metadata
+- source hashes
+- identifiers
+- P1/P2/P3/P4 traceability
+- no orphan V1_REQUIRED capability
+- no unresolved review marker
+- OWNER_DECISION_REQUIRED = 0
+- no secrets
+- no placeholders
+- no executable migrations
+- no Laravel implementation
+- no P5 files
+- no unexpected scope change
+
+Review the COMPLETE diff.
+
+==================================================
+22. P4 APPROVAL AUTHORIZATION
+==================================================
+
+If and ONLY if:
+
+- all valid RT findings are resolved;
+- HIGH = 0 unresolved;
+- MEDIUM = 0 unresolved;
+- LOW = 0 unresolved;
+- OWNER_DECISION_REQUIRED = 0;
+- validation PASS;
+- no known contradiction remains;
+- P1/P2/P3 approved business semantics are preserved;
+- P4 remains architecture documentation only;
+
+then I explicitly APPROVE the P4 normative architecture baseline.
+
+Expected normative documents:
+
+docs/03-architecture/DATABASE.md
+docs/03-architecture/ARCHITECTURE.md
+
+Record the next repository-conformant approval identifier.
+
+P4_QUALITY_GATE remains REVIEW if that is the repository evidence-file
+convention.
+
+==================================================
+23. FAST-TRACK CHECKPOINT AUTHORIZATION
+==================================================
+
+After successful approval:
+
+- update governance/handoff continuity;
+- record approval;
+- record this review disposition;
+- review exact file set;
+- stage ONLY the P4 finalization package;
+- inspect staged diff;
+- run secret/whitespace/hash validation.
+
+Create ONE normal commit.
+
+Preferred commit message:
+
+docs: finalize P4 database architecture
+
+Commit author and committer:
+
+use ONLY the Owner's configured Git identity.
+
+Never add:
+
+Co-Authored-By
+Generated-By
+Assisted-By
+Claude
+Anthropic
+Fable
+Opus
+AI/model/tool attribution
+
+Read the raw commit message afterward and verify no attribution trailer.
+
+==================================================
+24. PUSH AUTHORIZATION
+==================================================
+
+Immediately before push:
+
+fetch/inspect live origin/main.
+
+If:
+
+- origin is unchanged;
+- origin/main is still the expected parent;
+- local commit is a normal descendant;
+- no divergence exists;
+
+then push normally:
+
+origin main
+
+NON-FORCE ONLY.
+
+Never:
+
+force
+force-with-lease
+rebase published history
+reset published history
+
+If divergence exists:
+
+STOP.
+
+==================================================
+25. POST-PUSH CONTINUITY FREEZE
+==================================================
+
+After successful push verify:
+
+- local HEAD
+- origin/main
+- equality
+- clean tree
+- clean index
+- P4 normative status APPROVED
+- approval ID
+- OWNER_DECISION_REQUIRED = 0
+- P5 NOT STARTED
+
+Update CURRENT_STATE / NEXT_ACTION so a completely new agent with zero chat
+history can reconstruct:
+
+- P0–P4 completion;
+- exact P4 checkpoint SHA;
+- latest approval;
+- unresolved gaps;
+- accepted risks;
+- exact next authorized action.
+
+This repository state will be used for handoff to a persistent Claude
+Project.
+
+Therefore continuity must NOT depend on this chat or scratchpad.
+
+==================================================
+26. HANDOFF READINESS CHECK
+==================================================
+
+Perform a zero-context-agent thought experiment.
+
+Assume a new agent knows only:
+
+C:\Projects\MultipleCorp
+
+Would that agent be able to determine:
+
+- product purpose;
+- V1 scope;
+- business rules;
+- workflows;
+- database architecture;
+- application architecture;
+- approval state;
+- Git checkpoint;
+- current gaps;
+- accepted risks;
+- next phase;
+- what it is NOT authorized to do?
+
+If anything essential still exists only in chat/scratchpad:
+
+move it to the appropriate repository continuity document before commit.
+
+Do not duplicate canonical truth.
+
+==================================================
+27. NO P5
+==================================================
+
+Do NOT begin:
+
+P5 Security / Authentication / Authorization.
+
+Do NOT create:
+
+PERMISSIONS_MATRIX.md
+SECURITY.md
+
+or application/security implementation.
+
+P5 begins only after the separate handoff/bootstrap task.
+
+==================================================
+28. FINAL REPORT
+==================================================
+
+Report:
+
+A. Baseline verification
+B. Missing canonical files review result
+C. RT-01 disposition
+D. RT-02 disposition
+E. RT-03–RT-17 dispositions
+F. RT-18–RT-37 dispositions
+G. Additional defects discovered
+H. Final table/module counts
+I. Final guard/constraint counts
+J. Inventory conservation result
+K. Cost/HPP conservation result
+L. Unattributed-loss conservation result
+M. Payment/refund conservation result
+N. Receivable/settlement conservation result
+O. Company isolation result
+P. Document numbering result
+Q. Transaction-boundary result
+R. Trigger/privilege realism result
+S. Final adversarial re-test result
+T. P4 quality-gate result
+U. OWNER_DECISION_REQUIRED count
+V. Remaining contradictions
+W. Deferred P5/P6/P8/P9 obligations
+X. P4 approval ID
+Y. Exact checkpoint file set
+Z. Validation result
+AA. Commit SHA
+AB. Commit message
+AC. Author/committer identity
+AD. Confirmation of no AI attribution
+AE. Push result
+AF. Final local HEAD
+AG. Final origin/main
+AH. Working-tree/index state
+AI. P4 lifecycle
+AJ. P5 state
+AK. Continuity-freeze result
+AL. Whether the repository is ready for zero-context Claude Project handoff
+AM. Exact next safe action
+
+Expected successful end state:
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 APPROVED
+P4 APPROVED
+P4 CHECKPOINTED
+P4 PUBLISHED
+OWNER_DECISION_REQUIRED = 0
+LOCAL HEAD = origin/main
+WORKING TREE CLEAN
+INDEX CLEAN
+P5 NOT STARTED
+READY FOR ZERO-CONTEXT HANDOFF
+
+STOP after reporting.

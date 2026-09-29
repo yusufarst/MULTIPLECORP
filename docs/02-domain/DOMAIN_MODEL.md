@@ -1,10 +1,12 @@
 # Domain model
 
-Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-30 | Owner: Planning
 
 Approval: [APPR-003](../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved), explicit Owner approval on 2026-09-29 of this document as published in checkpoint `1392966bfb89581d705e0394424705978e1d3db8`; the reviewed file hash and conditions are recorded there. Approval changes lifecycle only, not business meaning or implementation authorization.
 
 Amendment: narrowly amended on 2026-09-29 to represent the Owner's P3 decisions [DIR-024](../00-governance/DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution) (D-1–D-4) and [DIR-026](../00-governance/DECISION_LOG.md#dir-025-obs-006-dir-026-and-tech-016--targeted-review-owner-loss-attribution-decision-and-corrections) (unexplained fungible loss attribution); only rows marked `DIR-024`/`DIR-026` changed or were added, plus Level-1 clarifications marked `TECH-016` after the targeted conservation review (PLANNER-DETERMINED markers on planner elaborations inside those rows, and opening customer credit consistent with BUSINESS_RULES BR-XD-06/BR-FIN-05). The pre-amendment SHA-256 is recorded there; the amended revision is approved under [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
+
+Amendment: the loss-expense relationship row alone was further amended on 2026-09-30 to represent the Owner's clarification [DIR-027](../00-governance/DECISION_LOG.md#dir-027-obs-007-and-tech-017--p4-authorization-unattributed-loss-clarification-and-p4-documentation); only its clause marked `DIR-027` was added. The pre-amendment SHA-256 is recorded in the decision log; the amended revision is approved under [APPR-005](../00-governance/DECISION_LOG.md#appr-005--p4-database-architecture-approved).
 
 Authority: P2 authorized by DIR-016; deep-review directives and final business decisions under DIR-017/018/019/020 ([decision log](../00-governance/DECISION_LOG.md)). This document owns entities, terminology, conceptual relationships and ownership/scope for MultipleCorp. Normative rules, lifecycles, invariants and calculation meanings are owned by [BUSINESS_RULES](BUSINESS_RULES.md). Phase evidence and P1→P2 traceability verification are owned by [P2_QUALITY_GATE](P2_QUALITY_GATE.md).
 
@@ -250,7 +252,7 @@ Cross-domain and integrity-critical relationships only. **live** = operational r
 | Fee settlement → Receivable; → Expense attribution | 1→1; 1→1 | — | One record, both effects, exactly once |
 | Tax settlement → Receivable; → Payment (`DIR-024`) | many→1; many→1 | — | Evidence required; no Cash-In; one per payment, invoice and tax type (PLANNER-DETERMINED, WORKFLOWS L-28, marked `TECH-016`) |
 | Pre-payment Kuitansi → Invoice; → payment applications to that invoice (`DIR-024`) | many→1; many↔many | snap | Linked to the actual payment when money arrives; never a second recognition; per-(payment, invoice) links and the issue-time cap Σ open ≤ outstanding are PLANNER-DETERMINED (WORKFLOWS AX-31, marked `TECH-016`) |
-| Loss expense → lost units (lot/serial + quantity) and their movement or case; → Project or Company (`DIR-024`) | many→1; many→1 | — | Once per lost unit; reclassifies HPP when already attributed; a cross-company charge records an allocation on the loss consumption (PLANNER-DETERMINED, WORKFLOWS L-44, marked `TECH-016`); an unexplained fungible loss stays unattributed until the Owner decides (`DIR-026`) |
+| Loss expense → lost units (lot/serial + quantity) and their movement or case; → Project or Company (`DIR-024`) | many→1; many→1 | — | Once per lost unit; reclassifies HPP when already attributed; a cross-company charge records an allocation on the loss consumption (PLANNER-DETERMINED, WORKFLOWS L-44, marked `TECH-016`); an unexplained fungible loss stays unattributed until the Owner decides (`DIR-026`) or definitive later evidence resolves it, recognized with an immutable candidate snapshot and without freezing remaining stock (`DIR-027`) |
 | HPP attribution → Lot/Allocation/Drop-ship/Expense source; → Project | many→1; many→1 | — | Pinned actual cost; contra-attribution corrects |
 | Disbursement → Purchase/Expense/Refund | many→1 | — | Evidence required; Cash-Out only here |
 | Admin requirement → generated Doc or external attachment | many→0..1 | — | A company draft never satisfies a required client original |

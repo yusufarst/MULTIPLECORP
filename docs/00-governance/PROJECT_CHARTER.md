@@ -1,8 +1,8 @@
 # Project charter
 
-Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-30 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions; evidence, gap and handoff records remain REVIEW.
 
 ## Identity and outcome
 
@@ -19,9 +19,9 @@ Subsequent DIR-009 expressly chooses same-production-VPS backups only for V1 and
 
 ## Authorized work
 
-**P2 — Domain Model & Business Rules is complete** (DIR-016–021). P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`; P1 is APPROVED under APPR-002; the P2 normative documents are APPROVED under APPR-003, checkpointed and published. **P3 — Critical Business Workflows is complete** (DIR-023–026): WORKFLOWS is APPROVED under APPR-004 and checkpointed by the P3 finalization commit; P3_QUALITY_GATE remains REVIEW evidence. P4+ design and implementation are not authorized; P4 — Database Architecture needs its own Owner authorization.
+**P2 — Domain Model & Business Rules is complete** (DIR-016–021). P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`; P1 is APPROVED under APPR-002; the P2 normative documents are APPROVED under APPR-003, checkpointed and published. **P3 — Critical Business Workflows is complete** (DIR-023–026): WORKFLOWS is APPROVED under APPR-004 and checkpointed by the P3 finalization commit; P3_QUALITY_GATE remains REVIEW evidence. **P4 — Database Architecture is complete** (DIR-027–029): authorized by DIR-027, which also clarifies DIR-026 on unattributed cross-company loss, red-teamed under DIR-028 and corrected under DIR-029 (TECH-018); DATABASE and ARCHITECTURE are APPROVED under APPR-005, checkpointed by the commit `docs: finalize P4 database architecture` and published; P4_QUALITY_GATE remains REVIEW evidence. P5+ design and all implementation remain unauthorized; P5 begins only after a separate handoff/bootstrap task and its own Owner authorization.
 
-P0 owns governance, authority, continuity and guardrails. P1, P2 and P3 concern owners are indexed in CONTEXT_INDEX. Schema design, permission matrices, concurrency mechanisms, UX patterns/tokens, roadmap and build units remain later-phase work.
+P0 owns governance, authority, continuity and guardrails. The P1, P2, P3 and P4 concern owners are indexed in CONTEXT_INDEX. Physical schema and migrations, permission matrices, concurrency mechanisms, UX patterns/tokens, roadmap and build units remain later-phase work.
 
 Application code, Laravel/frontend generation, dependency installation, production infrastructure, deployment, and production database changes are outside this assignment. See [role boundaries](AGENT_OPERATING_MODEL.md) and [engineering constraints](ENGINEERING_PRINCIPLES.md).
 

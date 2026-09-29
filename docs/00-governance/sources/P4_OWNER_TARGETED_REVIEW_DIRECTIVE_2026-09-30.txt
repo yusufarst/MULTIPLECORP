@@ -1,0 +1,781 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-fifth source record
+Received: 2026-09-30, in-session Owner message opening a separate read-only
+review session on the uncommitted P4 package (HEAD
+7c6549e88ba8538aa6e08d0fb9720589705e1dd0, 19 uncommitted P4 paths)
+Subject: Owner directive — targeted read-only Fable red-team of P4
+         "database integrity under concurrency and correction" (no
+         repository change, staging, commit or push); classification
+         discipline and final-verdict format
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+TARGETED FABLE RED-TEAM — P4 DATABASE INTEGRITY UNDER CONCURRENCY AND CORRECTION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+
+Role:
+INDEPENDENT DATABASE / ARCHITECTURE RED-TEAM REVIEWER
+
+Operating mode:
+READ-ONLY
+
+Do NOT modify files.
+Do NOT stage.
+Do NOT commit.
+Do NOT push.
+Do NOT start P5.
+Do NOT redesign the entire system.
+
+Your task is to attack the completed P4 architecture at the exact points
+where database integrity could still fail under concurrency, correction,
+multi-company scope, or historical amendment.
+
+==================================================
+1. EXPECTED BASELINE
+==================================================
+
+Expected:
+
+branch:
+main
+
+HEAD / origin/main:
+
+7c6549e88ba8538aa6e08d0fb9720589705e1dd0
+
+Working tree:
+
+19 P4-related changed paths
+
+Index:
+
+empty
+
+P0 APPROVED
+P1 APPROVED
+P2 APPROVED
+P3 APPROVED
+P4 DOCUMENTATION DRAFTED
+P4 SELF-REVIEWED
+P4 VALIDATED
+P4 UNCOMMITTED
+P4 NOT YET APPROVED
+P5 NOT STARTED
+
+OWNER_DECISION_REQUIRED:
+0
+
+Verify independently:
+
+- branch
+- HEAD
+- origin/main
+- live remote
+- tracking
+- changed paths
+- empty index
+- no merge/rebase/cherry-pick
+
+If materially different:
+
+STOP and report.
+
+==================================================
+2. READ THE CANONICAL SOURCES
+==================================================
+
+Read at minimum:
+
+AGENTS.md
+CLAUDE.md
+README.md
+
+docs/CONTEXT_INDEX.md
+
+docs/00-governance/SOURCE_OF_TRUTH.md
+docs/00-governance/DECISION_LOG.md
+docs/00-governance/GAP_REGISTER.md
+docs/00-governance/CHANGE_CONTROL.md
+docs/00-governance/ENGINEERING_PRINCIPLES.md
+
+docs/01-product/V1_SCOPE.md
+docs/01-product/ACCEPTANCE_CRITERIA.md
+
+docs/02-domain/DOMAIN_MODEL.md
+docs/02-domain/BUSINESS_RULES.md
+docs/02-domain/WORKFLOWS.md
+docs/02-domain/P3_QUALITY_GATE.md
+
+docs/03-architecture/DATABASE.md
+docs/03-architecture/ARCHITECTURE.md
+docs/03-architecture/P4_QUALITY_GATE.md
+
+docs/07-handoff/CURRENT_STATE.md
+docs/07-handoff/NEXT_ACTION.md
+
+Also inspect the P4 Owner authorization / clarification source record.
+
+Do not trust the previous report alone.
+
+==================================================
+3. REVIEW SCOPE
+==================================================
+
+Review ONLY:
+
+DATABASE INTEGRITY UNDER CONCURRENCY AND CORRECTION
+
+Concentrate on:
+
+A. guard-balance design
+B. inventory ledger and availability
+C. reservations
+D. receiving lots
+E. lot cost / HPP / loss
+F. inter-company allocation
+G. unattributed economic loss
+H. payment / application / refund
+I. tax / fee settlement
+J. invoice / billing / receivable
+K. document numbering
+L. correction / reversal / contra
+M. company isolation
+N. uniqueness constraints
+O. transaction boundaries
+P. trigger / privilege assumptions
+Q. idempotency-readiness
+R. derived-vs-authoritative truth
+
+Do NOT re-review:
+
+- product-market fit
+- UI/UX
+- visual design
+- infrastructure
+- deployment
+- general documentation style
+
+==================================================
+4. GUARD-BALANCE ATTACK
+==================================================
+
+P4 uses rebuildable guard-balance rows updated in the same transaction as
+authoritative facts.
+
+Try to break this design.
+
+Determine whether every guard has:
+
+- one authoritative source of truth;
+- exactly one legitimate writer path;
+- a rebuild formula;
+- a reconciliation path;
+- no circular dependency;
+- no independent mutable business meaning;
+- no possibility of drift through correction paths.
+
+Attack especially:
+
+inventory guards
+reservation guards
+cost guards
+payment/application guards
+receivable guards
+evidence caps
+source-bill caps
+loss guards
+refund guards
+
+Try to create a fact without its guard update.
+
+Try to update a guard without the underlying fact.
+
+Try to double-reverse a guard.
+
+Try to rebuild to a different value than live state.
+
+==================================================
+5. INVENTORY CONCURRENCY ATTACK
+==================================================
+
+Test conceptually:
+
+stock = 1
+
+Admin A dispatches 1
+Admin B dispatches 1
+
+P4 must make it possible for P6 to implement:
+
+one success
+one failure
+final stock = 0
+
+Also test:
+
+- two reservations for last available unit;
+- reservation release racing dispatch;
+- receiving racing reservation;
+- stock condition change racing dispatch;
+- stock opname racing movements;
+- return racing re-dispatch;
+- serial return racing serial dispatch;
+- adjustment racing reservation;
+- unattributed-loss recognition racing dispatch.
+
+Do NOT prescribe exact locking syntax.
+
+Judge whether P4 provides enough structure for P6.
+
+==================================================
+6. LOT / COST / HPP ATTACK
+==================================================
+
+Try to create:
+
+- one physical unit with two lot costs;
+- duplicate purchase charge allocation;
+- charge disappearing on partial receiving;
+- purchase-return cost not closing;
+- HPP posted twice;
+- loss plus HPP double counting;
+- restored inventory with wrong cost;
+- corrected purchase price not propagating correctly;
+- inter-company consumption whose economic cost belongs to the wrong company;
+- cost correction after some quantity has already been consumed;
+- source bill entered twice against separate purchases.
+
+Audit cumulative rounding / residual handling.
+
+The sum of allocated cost must equal source cost exactly.
+
+==================================================
+7. UNATTRIBUTED LOSS ATTACK
+==================================================
+
+The Owner explicitly decided:
+
+physical truth is corrected immediately;
+economic attribution may remain unresolved;
+remaining physical stock must NOT be frozen;
+recognition-time candidate exposure is immutable.
+
+Try to prove the schema accidentally allows:
+
+- later dispatch to rewrite candidate exposure;
+- automatic company attribution;
+- a company to absorb more loss than its recognition-time exposure;
+- found stock to be recognized twice;
+- physical correction without an economic-loss case;
+- economic loss without the physical correction where one was required;
+- Owner attribution rewriting inventory history.
+
+Check whether the proposed lot-claim or exposure structures are sufficient.
+
+==================================================
+8. PAYMENT / APPLICATION / REFUND ATTACK
+==================================================
+
+Construct adversarial examples.
+
+Example A:
+
+Payment = 1,200,000
+Application A = 1,000,000
+Refund = 200,000
+
+Try to reallocate payment and settle 1,200,000 of invoices while only
+1,000,000 net cash remains.
+
+Example B:
+
+Payment partially applied
+→ refund
+→ payment contra
+→ replacement payment
+→ reapplication
+
+Ensure conservation.
+
+Example C:
+
+Overpayment becomes customer credit
+→ partial refund
+→ later reallocation
+
+Ensure:
+
+applications
++
+refund-backed consumption
++
+credit usage
+
+never exceed economic money.
+
+Try duplicate retries of each step.
+
+==================================================
+9. RECEIVABLE REDUCTION ATTACK
+==================================================
+
+Allowed reductions should come only from approved mechanisms.
+
+Attempt:
+
+- duplicate payment application;
+- duplicate tax settlement;
+- duplicate fee settlement;
+- reused evidence;
+- Owner write-off plus payment against same remaining balance;
+- void invoice while reductions remain attached;
+- replacement invoice resetting aging;
+- payment correction after invoice replacement;
+- dispute plus write-off plus later recovery.
+
+Look for a path that makes receivable disappear without a legitimate
+economic cause.
+
+==================================================
+10. EVIDENCE IDENTITY ATTACK
+==================================================
+
+Review logical identity for:
+
+- bank statement lines;
+- tax evidence;
+- fee evidence;
+- purchase source bills;
+- external documents.
+
+Try:
+
+same real-world document
+→ upload twice
+→ different file IDs
+→ duplicate settlement/cost.
+
+Determine whether business identity, checksum and versioning are properly
+separated.
+
+==================================================
+11. DOCUMENT NUMBERING ATTACK
+==================================================
+
+Try:
+
+- two Admins issue the same document type simultaneously;
+- backdated issue into earlier period;
+- void then reissue;
+- rendering retry;
+- transaction rollback after number reservation;
+- multiple companies with same document type;
+- same company / type / period under concurrency.
+
+Confirm:
+
+- no MAX+1;
+- uniqueness scope is sufficient;
+- counters never decrease;
+- number reuse is impossible;
+- rendering failure does not consume another business issue.
+
+Judge whether "gapless" wording is actually achievable and business-correct
+under rollback/failure semantics.
+
+If "gapless" conflicts with safe transactional issuance, flag it.
+
+==================================================
+12. CORRECTION / CONTRA ATTACK
+==================================================
+
+For every major append-only fact ask:
+
+What reverses it?
+How much may be reversed?
+Can reversal itself be reversed?
+Can dependents survive after the original is neutralized?
+
+Test:
+
+receiving
+dispatch
+reservation
+return
+inter-company allocation
+cost entry
+loss
+invoice
+billing
+payment
+application
+refund
+fee settlement
+tax settlement
+write-off
+expense
+cash disbursement
+
+Find asymmetric forward/reverse designs.
+
+==================================================
+13. COMPANY ISOLATION ATTACK
+==================================================
+
+The physical warehouse is shared, but finance is not.
+
+Try to create cross-company foreign-key paths allowing:
+
+Company B project
+→ Company A invoice
+
+Company B payment
+→ Company A receivable
+
+Company B document
+→ Company A bank account
+
+Company B expense
+→ Company A project
+
+Company B user grant
+→ private Company A finance
+
+Company B stock use may legitimately consume Company A-origin stock only
+through the approved allocation semantics.
+
+Audit all intentional cross-company links.
+
+Determine whether composite-key scoping is sufficient and consistently
+specified.
+
+==================================================
+14. SERIAL / BARCODE UNIQUENESS
+==================================================
+
+Try:
+
+- same active barcode twice;
+- archived barcode reused incorrectly;
+- same serial entered twice;
+- serial moved without corresponding movement history;
+- serial restored to stock while still dispatched;
+- wrong-serial correction leaving both serials active.
+
+Check database-level support, not just application intent.
+
+==================================================
+15. MULTI-UNIT EXACTNESS
+==================================================
+
+P4 uses exact quantities and integer conversion ratios.
+
+Test:
+
+- 1 box = 12 pcs;
+- partial receipt;
+- partial dispatch;
+- partial return;
+- correction after unit definition changes;
+- conversion ratio history;
+- scale mismatch;
+- fractional base-unit impossibility.
+
+Judge whether the proposed representation truly supports every P2/P3 case
+without float or historical conversion drift.
+
+==================================================
+16. TRANSACTION-BOUNDARY REVIEW
+==================================================
+
+P4 maps all AX actions to rows that must commit together.
+
+Audit especially:
+
+receiving
+reservation
+dispatch
+return/restoration
+adjustment
+inter-company allocation
+loss recognition
+loss attribution
+document issuance
+billing activation
+payment creation
+payment application
+reallocation
+refund
+tax settlement
+fee settlement
+invoice replacement
+write-off
+completion
+
+Find missing rows that must be in the same transaction.
+
+Find rows currently grouped together that should NOT require a long
+transaction.
+
+No:
+
+network call
+PDF rendering
+external API
+email
+
+inside critical DB transactions.
+
+==================================================
+17. TRIGGER / PRIVILEGE REALISM
+==================================================
+
+P4 apparently uses PostgreSQL constraints, triggers and restricted writer
+paths.
+
+Challenge whether each proposed protection can actually hold given:
+
+Laravel's database role
+queue workers
+migrations
+manual maintenance
+imports
+
+Check whether statements such as:
+
+"only this writer can modify this table"
+
+are architectural intentions or actually enforceable database guarantees.
+
+Flag any documentation that overstates PostgreSQL protection when the design
+really relies on application discipline.
+
+==================================================
+18. DELETE / ARCHIVE ATTACK
+==================================================
+
+Try to delete or deactivate:
+
+company
+client
+supplier
+product
+unit
+location
+project
+invoice
+payment
+document
+
+after historical use.
+
+Ensure historical references survive.
+
+Check whether cascade deletes are restricted only to non-historical draft
+children.
+
+==================================================
+19. DERIVED TRUTH ATTACK
+==================================================
+
+P4 says these remain derived:
+
+AVAILABLE
+active receivable
+customer credit
+profit
+aging
+paid status
+workflow progress
+action queues
+
+Verify no table elsewhere stores a competing mutable copy.
+
+Guard counters are allowed only as rebuildable integrity helpers, not
+business truth.
+
+Flag duplicate truth.
+
+==================================================
+20. INDEX / CONSTRAINT IMPLEMENTABILITY
+==================================================
+
+Review whether proposed:
+
+- composite foreign keys;
+- partial UNIQUE indexes;
+- exclusion constraints;
+- dateranges;
+- pg_trgm;
+- triggers;
+- generated/guard structures
+
+are valid and practical in PostgreSQL.
+
+Do not require executable SQL.
+
+Identify impossible, contradictory or unnecessarily complex designs.
+
+==================================================
+21. 18-DAY PRAGMATISM
+==================================================
+
+This architecture must be buildable through vibe coding under an aggressive
+delivery schedule.
+
+Identify schema patterns that preserve integrity but create disproportionate
+implementation risk.
+
+Do NOT recommend weakening integrity.
+
+Instead propose a simpler equivalent where one exists.
+
+==================================================
+22. PREVIOUS REVIEW FIXES
+==================================================
+
+P4 reports:
+
+24 findings from self-review
+
+plus
+
+23 findings from two independent Opus reviewers:
+
+1 CRITICAL
+8 HIGH
+12 MEDIUM
+2 LOW
+
+All were corrected.
+
+Focus heavily on whether those FIXES themselves introduced:
+
+- contradictory guard equations;
+- impossible foreign keys;
+- over-constrained correction paths;
+- missing reversal paths;
+- mistaken trigger assumptions;
+- transaction-boundary mistakes.
+
+Do not merely find the same issue again.
+
+==================================================
+23. FINDING CLASSIFICATION
+==================================================
+
+Classify every finding exactly as:
+
+CRITICAL DEFECT
+HIGH DEFECT
+MEDIUM DEFECT
+LOW DEFECT
+OWNER_DECISION_REQUIRED
+DEFERRED TO P5
+DEFERRED TO P6
+DEFERRED TO P8
+NO DEFECT
+
+Use OWNER_DECISION_REQUIRED only for genuine business meaning.
+
+Technical architecture corrections are not Owner questions.
+
+==================================================
+24. OUTPUT STYLE
+==================================================
+
+Do NOT rewrite P4.
+
+For every real defect provide:
+
+- Finding ID
+- severity/class
+- exact affected section/table/constraint
+- failure scenario
+- violated invariant
+- smallest safe semantic correction
+- later-phase consequence
+
+Prefer precise corrections over redesign.
+
+==================================================
+25. FINAL REPORT
+==================================================
+
+Return:
+
+A. Baseline verification
+
+B. Scope reviewed
+
+C. Overall database-integrity verdict
+
+D. Guard-balance findings
+
+E. Inventory/reservation findings
+
+F. Lot/cost/HPP findings
+
+G. Unattributed-loss findings
+
+H. Payment/application/refund findings
+
+I. Receivable/settlement findings
+
+J. Evidence-identity findings
+
+K. Document-numbering findings
+
+L. Correction/contra findings
+
+M. Company-isolation findings
+
+N. Serial/barcode findings
+
+O. Multi-unit findings
+
+P. Transaction-boundary findings
+
+Q. Trigger/privilege realism
+
+R. Delete/archive findings
+
+S. Derived-truth findings
+
+T. PostgreSQL implementability findings
+
+U. 18-day pragmatism findings
+
+V. Previous-fix regression findings
+
+W. OWNER_DECISION_REQUIRED count
+
+X. Critical count
+
+Y. High count
+
+Z. Medium count
+
+AA. Low count
+
+AB. Deferred P5/P6/P8 obligations
+
+AC. Exact corrections required before P4 approval
+
+AD. Final verdict
+
+Final verdict must be exactly one of:
+
+PASS — READY FOR P4 APPROVAL
+
+or
+
+NEEDS CORRECTION BEFORE P4 APPROVAL
+
+Do not edit files.
+
+STOP after reporting.

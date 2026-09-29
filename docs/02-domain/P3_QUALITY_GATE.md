@@ -1,6 +1,6 @@
 # P3 adversarial review and quality gate
 
-Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
+Status: REVIEW | Updated: 2026-09-30 | Owner: Planning
 
 Scope: P3 — Critical Business Workflows, planned under DIR-023, documented under DIR-024 (TECH-015), red-teamed under DIR-025 and corrected under DIR-026 (TECH-016) on the published baseline `b921c8b07cd49351c73b0cf7f71375cc274aeddd`. This report records planning evidence and the verification of the APPR-004 approval conditions; it is not implementation acceptance and not permission to begin P4. [WORKFLOWS](WORKFLOWS.md) is APPROVED under APPR-004; this gate stays REVIEW as evidence/audit material.
 
@@ -182,3 +182,7 @@ A read-only validation script checked every relative link and anchor across all 
 ## Exact next safe action
 
 Publish the P3 finalization checkpoint by the authorized normal push, verify publication, and await the Owner's explicit authorization of P4 — Database Architecture per [NEXT_ACTION](../07-handoff/NEXT_ACTION.md).
+
+## Post-approval Owner clarification — DIR-027 (2026-09-30)
+
+The sections above are accurate evidence of the P3 review at their writing time. Subsequently the Owner's P4 authorization (source record twenty-four, [DIR-027](../00-governance/DECISION_LOG.md#dir-027-obs-007-and-tech-017--p4-authorization-unattributed-loss-clarification-and-p4-documentation)) clarified DIR-026: economic attribution ambiguity must not freeze valid physical operations. The pending-case **retention** safeguard described in the P2 non-relaxation check, the concurrency row and final-verification scenario 6 is therefore superseded — a pending unexplained-loss case now blocks no dispatch; physical truth is corrected at once with an immutable recognition snapshot of the candidate companies and their exposure; the resolution (Owner, or ADM+ from definitive evidence) closes lot claims in the scope, the assigned company's own lots first and any shortfall from other lots with an inter-company allocation, without re-pointing later movements; found stock reverses the pending quantity or the recognized loss exactly. Scenario 6 under DIR-027: after the pending case of 2, all 8 physical units are dispatchable; if the Owner later assigns the loss to company B while B's lot still holds the claims, the loss is 24,000 on company B exactly as before; if B's claims were consumed meanwhile, the Owner closes the remaining claims of another lot with an allocation charging company B. The narrow `DIR-027` amendments to WORKFLOWS, BUSINESS_RULES BR-INV-13 and one DOMAIN_MODEL relationship row, and their verification, are recorded in [P4_QUALITY_GATE](../03-architecture/P4_QUALITY_GATE.md#dir-027-clarification-applied); this gate otherwise stays unchanged as P3 evidence.

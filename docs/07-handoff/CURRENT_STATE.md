@@ -1,34 +1,57 @@
 # Current state
 
-Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
+Status: REVIEW | Updated: 2026-09-30 | Owner: Planning
+
+This is the live handoff. It is written to be complete for an agent with no chat history: read [AGENTS.md](../../AGENTS.md), [CONTEXT_INDEX](../CONTEXT_INDEX.md), this file and [NEXT_ACTION](NEXT_ACTION.md), then verify the repository before acting.
 
 ## Target and phase
 
-- Release: MultipleCorp operational production V1, target 2026-10-15; [charter](../00-governance/PROJECT_CHARTER.md).
-- Current phase: **P3 — Critical Business Workflows: COMPLETE — APPROVED under APPR-004 and checkpointed by the P3 finalization commit that carries this record.** DIR-026 authorizes one normal non-force push of that commit to origin/main after a fresh divergence check. **P4 — Database Architecture is NOT STARTED** and needs its own Owner authorization; application execution remains unauthorized.
-- Last completed implementation unit: none; no application exists. P3 deliverables: [WORKFLOWS](../02-domain/WORKFLOWS.md) (APPROVED) and [P3_QUALITY_GATE](../02-domain/P3_QUALITY_GATE.md) (REVIEW evidence). P2 [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md)/[BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and P1 [V1_SCOPE](../01-product/V1_SCOPE.md)/[PRODUCT_OVERVIEW](../01-product/PRODUCT_OVERVIEW.md) stay APPROVED; their narrow `DIR-024`/`DIR-026`/`TECH-016` amendments are approved under APPR-004 (pre-amendment hashes and approved-file hashes in [DECISION_LOG](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved)).
-- Binding inputs unchanged: P0/P1/P2 approvals, DIR-009 local-only backup with accepted host-loss exposure, DIR-011, DIR-018/019/020, DIR-024 D-1–D-5, the P2 PLANNER-DETERMINED decisions, Indonesian UI, mobile-first plus desktop productivity, default-deny access, near-zero incremental cost, and the permanent Git commit attribution rule (DIR-022).
-- New binding Owner decision (DIR-026, from the targeted review's F-03): an unexplained loss or condition change of fungible shared-pool stock whose economic/company owner provenance cannot establish is attributed only by the Owner, case by case — no FIFO, oldest-first, proportional or other automatic rule; until then the physical correction stands, the company attribution stays pending and inside no company's profit, and completion/reporting expose or block on it (BR-INV-13 `DIR-026`; WORKFLOWS SF-UNATTRIBUTED). OWNER_DECISION_REQUIRED = 0.
+- Release: MultipleCorp — Company Management System, operational production V1, target 2026-10-15 ([charter](../00-governance/PROJECT_CHARTER.md)). Internal, project-centred operations for a group of legal companies sharing one physical warehouse with company-attributed cost ([product overview](../01-product/PRODUCT_OVERVIEW.md)).
+- **Completed phases:** P0 governance APPROVED (APPR-001); P1 product and V1 scope APPROVED (APPR-002); P2 domain model and business rules APPROVED (APPR-003); P3 critical business workflows APPROVED (APPR-004); **P4 database and application architecture APPROVED (APPR-005), checkpointed and published**.
+- **P4 checkpoint:** the commit with message `docs: finalize P4 database architecture`, whose parent is the P3 checkpoint `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`, pushed to origin/main by a normal non-force push. Resolve its SHA with `git log -1 --format=%H --grep='^docs: finalize P4 database architecture$'`; a commit cannot contain its own hash, so the next authorized task records the SHA literally (NEXT_ACTION). Earlier checkpoints: P2 `1392966bfb89581d705e0394424705978e1d3db8`, P3 `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`.
+- **P5 — Security & Authorization: NOT STARTED** and not authorized. The next task is a separate handoff/bootstrap task; P5 requires its own explicit Owner authorization afterwards.
+- Last completed implementation unit: none; no application, migration or infrastructure exists.
 
-## P3 deliverable summary
+## Canonical specifications (all APPROVED)
 
-- WORKFLOWS (APPROVED): standard command envelope; four-layer architecture with three diagrams; actor/authority matrix (DIR-024 D-5, DIR-026); 39 primary workflows; 18 reusable subflows; 8 partial-processing rules; 38-row correction/reversal/cancellation matrix with expected end states; per-document applicability table for DOC-01–14; ten evaluable completion predicates, Force Complete and the closed residual-command list; 37 indivisible business actions with business identities; 22 derived signals; 50 PLANNER-DETERMINED Level-1 decisions; downstream obligations for P4/P5/P6/P7/P8/P10/P11.
-- P3_QUALITY_GATE (REVIEW evidence): baseline, inputs, aggregate traceability, P2 non-relaxation check, fifteen-perspective review, the Owner's twenty attack areas, independent-review dispositions, the targeted conservation review (DIR-025) with the disposition of all 22 findings plus one further fix, the final adversarial verification of the Owner's 18 scenarios, re-derived counts and static validation.
+| Concern | Document | Approval |
+| --- | --- | --- |
+| Product purpose, users, journey | [PRODUCT_OVERVIEW](../01-product/PRODUCT_OVERVIEW.md) | APPR-002 (DIR-024 amendment APPR-004) |
+| V1 scope: 18 MUST capabilities, 14 document types, exclusions, local-only backup contract | [V1_SCOPE](../01-product/V1_SCOPE.md) | APPR-002 (DIR-024 amendment APPR-004) |
+| Observable acceptance | [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md) | APPR-002 |
+| Domain concepts, scope and sensitivity classes | [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md) | APPR-003 (amendments APPR-004, APPR-005) |
+| Business rules, lifecycles, calculations, numeric annex | [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) | APPR-003 (amendments APPR-004, APPR-005) |
+| Workflows, authority matrix, correction matrix, AX-01–37 | [WORKFLOWS](../02-domain/WORKFLOWS.md) | APPR-004 (DIR-027 amendment APPR-005) |
+| Logical database: 124 tables in 13 modules, guard registry, C-01–C-61, AX transaction map, P6 handoff | [DATABASE](../03-architecture/DATABASE.md) | APPR-005 |
+| Application structure: modular monolith, dependency tiers, actions, posting services, boundaries | [ARCHITECTURE](../03-architecture/ARCHITECTURE.md) | APPR-005 |
+
+Evidence and living records stay REVIEW by convention: the P0–P4 quality gates, REFERENCE_COVERAGE, GAP_REGISTER, DECISION_LOG, CHANGELOG and this handoff pair.
+
+## Binding inputs (never reopen without the Owner)
+
+DIR-009 local-only backup on the production VPS with the accepted total-host-loss exposure (RISK-001); DIR-011 five financial concepts, physical-versus-financial visibility, completion authority, reservation contract and auditable inter-company allocation; DIR-018 dates, backdating and numbering; DIR-019/020 write-off, dispute, SIPLAH and intermediary fee settlement; DIR-024 D-1–D-5 (NET tax, purchase charges in cost, loss once, pre-payment Kuitansi, Owner-only/ADM+ authority); DIR-026 Owner attribution of unexplained cross-company fungible loss and its DIR-027 clarification (physical truth corrected at once, immutable recognition snapshot, no freezing of stock); the P2/P3 PLANNER-DETERMINED decisions; Indonesian UI; mobile-first plus desktop productivity; default-deny access; near-zero incremental cost; the Git attribution rule (DIR-022). OWNER_DECISION_REQUIRED = 0.
+
+## P4 finalization record
+
+- **DIR-028** (source record 25): a targeted read-only Fable red-team, "database integrity under concurrency and correction", reported NEEDS CORRECTION BEFORE P4 APPROVAL — 0 CRITICAL, 2 HIGH, 15 MEDIUM, 20 LOW, 0 OWNER_DECISION_REQUIRED (RT-01–RT-37).
+- **DIR-029** (source record 26) authorized the corrections, the conditional approval, one checkpoint commit, a normal push and this continuity freeze. **TECH-018** verified all 37 findings valid and corrected them, five further defects found during disposition and 36 found by an independent consistency review of the corrections; the 14-scenario adversarial re-test and the static/governance validation passed; **APPR-005** approved DATABASE and ARCHITECTURE with the `DIR-027`-amended WORKFLOWS, BUSINESS_RULES and DOMAIN_MODEL revisions.
+- Main corrections: cost corrections move every cumulative posted-value, charge, source-bill and case guard (RT-01); refund-backed consumption stays binding so a payment correction never frees capacity beyond real money (RT-02); net-zero movements, separate replacement caps, per-company and overlap-group exposure guards for unattributed loss, settlement transitions with residual exits, aging-safe replacement invoices, typed void bases, role-bound evidence types, pool evidence, corrective receipts, drop-ship reversals, company-scoped document bank accounts, scoped command keys and an honest DB+APP+DQ guarantee layer (RT-03–RT-17); the guard registry with an audited maintenance rebuild and the remaining LOW items (RT-18–RT-37). Dispositions, re-test and validation: [P4_QUALITY_GATE](../03-architecture/P4_QUALITY_GATE.md).
 
 ## Repository state
 
-- Before this checkpoint: HEAD `b921c8b07cd49351c73b0cf7f71375cc274aeddd` (`docs: prohibit AI commit attribution`) == origin/main (OBS-006). This record is part of the single P3 finalization commit `docs: finalize P3 critical business workflows`, made with the Owner's configured identity and no attribution trailer; resolve its SHA with `git log -1 --format='%H %s' --grep='^docs: finalize P3 critical business workflows$'` (no self-referential hash). Its publication is verified in-session and recorded by the next authorized task.
-- Publication boundary unchanged: only normal non-force pushes of reviewed checkpoints under explicit Owner authorization; commit messages carry no AI/model/tool attribution (DIR-022); on divergence stop and report.
+- Remote: `https://github.com/yusufarst/MULTIPLECORP.git` (public — never commit real data, secrets or credentials). Branch `main` tracks `origin/main`.
+- At the P4 checkpoint: local HEAD == origin/main == the P4 finalization commit; working tree and index clean. A new session re-verifies this before acting and reports any difference.
+- Git rules: commits use only the Owner's configured identity with no AI/model/tool attribution or co-author trailer (DIR-022); pushes are normal and non-force; on divergence stop and report; historical commits are never rewritten.
 
-## Verification and approval state
+## Gaps and accepted risks
 
-- P0 APPROVED (APPR-001), ADR-001 ACCEPTED; P1 APPROVED (APPR-002); P2 APPROVED (APPR-003); P3 APPROVED (APPR-004), with its approval conditions verified in [P3_QUALITY_GATE](../02-domain/P3_QUALITY_GATE.md#gate-result-and-limitations): CRITICAL DEFECT = 0, OWNER_DECISION_REQUIRED = 0, unresolved Level-1 correction = 0.
-- P3 documentation validation (links/anchors, metadata, source hashes, identifier counts and references, citations, traceability, gap totals, markers, secrets, scope) is recorded in the gate. No application tests, device UAT, migration, restore or runtime evidence exists; deadline feasibility remains unproven (GAP-014).
+- [Gap register](../00-governance/GAP_REGISTER.md): **31 findings — 3 CLOSED, 27 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK.** Every OPEN gap is a technical or evidence obligation of a later phase, not a pending business choice.
+- Accepted risk: GAP-018 / RISK-001 — V1 backups live only on the production VPS; total VPS, disk, provider or account loss may leave no recovery copy (DIR-009).
+- Most consequential open gaps: GAP-006 visibility and field projection (P5); GAP-008, GAP-009 and GAP-031 retry, races and guard drift (P6/P8); GAP-011 and GAP-013 local backup proof and operational ownership (P9); GAP-010 migration overlap and cutover (P10); GAP-014 deadline feasibility, still unproven.
+- Deferred P4 obligations (DATABASE §31; P4_QUALITY_GATE): **P5** field projection, the DIR-027 evidence-resolution authority, evidence duplicate warnings; **P6** extended lock order, the completion anchor, zero-row guard updates as failures, race-safe creation of first-use guard and counter rows, mechanisms for every corrected AX action; **P8** adversarial fixtures for the targeted-review findings, numbering, reconciliation and serial-state tests; **P9** a separate migration database connection and role, owner/TRUNCATE privilege handling, guard verification after restore.
 
-## Risks and boundaries
+## Not authorized
 
-- Register: **30 findings — 3 CLOSED, 26 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK.** GAP-026–030 record the P3-discovered questions resolved by DIR-024/026 and stay OPEN only for technical representation and evidence.
-- Do not reopen settled decisions (DIR-009/011/018/019/020/024/026, the PLANNER-DETERMINED decisions); keep all twenty-three source records immutable; no real data/secrets in the public repository; agents never receive production credentials.
-- Preserve phase boundaries: no P4 schema/ERD/migrations, P5 permission matrix, P6 mechanisms, UI design, roadmap, build units, packages or code until authorized.
+P5 work of any kind (no PERMISSIONS_MATRIX.md or SECURITY.md), P6–P11 design, migrations, executable SQL, Laravel or React files, packages, Docker or deployment files, infrastructure, production access, editing any locked source record, reopening the binding inputs above, force pushes or history rewriting, and AI attribution in commits.
 
-Next safe action: confirm the P3 checkpoint's publication, then await the Owner's explicit authorization of P4 — Database Architecture per [NEXT_ACTION](NEXT_ACTION.md).
+Next safe action: [NEXT_ACTION](NEXT_ACTION.md).

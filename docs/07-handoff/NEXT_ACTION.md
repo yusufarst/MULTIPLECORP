@@ -1,18 +1,24 @@
 # Next action
 
-Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
+Status: REVIEW | Updated: 2026-09-30 | Owner: Planning
 
 ## Stop boundary
 
-DIR-026 authorized, and the P3 finalization checkpoint completes: applying the targeted review's findings, recording the Owner's F-03 decision, approving the P3 normative baseline (APPR-004), one checkpoint commit and one normal non-force push. Nothing further is authorized: do not start P4, create schema/ERD/migrations, permission matrices, concurrency mechanisms, UI or application code. Do not reopen DIR-009/011/018/019/020/024/026 or the PLANNER-DETERMINED decisions. Commit messages never carry AI/model/tool attribution (DIR-022).
+DIR-029 authorized, and the P4 finalization task completed: the review intake, verification and correction of RT-01–RT-37, the adversarial re-test, the quality-gate update, validation, the Owner's conditional approval (APPR-005), one checkpoint commit `docs: finalize P4 database architecture` with the Owner's identity and no attribution trailer, its normal non-force push to origin/main, and this continuity freeze. P4 is complete. **P5 has NOT STARTED and is not authorized.** Do not reopen DIR-009/011/018/019/020/024/026/027/029 or the PLANNER-DETERMINED decisions. Commit messages never carry AI/model/tool attribution (DIR-022).
 
-## Current state and immediate follow-up
+## Immediate next step — the separate handoff/bootstrap task
 
-P3 is APPROVED and checkpointed in the commit that carries this record (`docs: finalize P3 critical business workflows`, on top of `b921c8b07cd49351c73b0cf7f71375cc274aeddd`); its normal non-force push is authorized by DIR-026. OWNER_DECISION_REQUIRED = 0. Details: [CURRENT_STATE](CURRENT_STATE.md), [P3_QUALITY_GATE](../02-domain/P3_QUALITY_GATE.md), [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
+The Owner will hand the repository to a persistent Claude Project through a separately authorized handoff/bootstrap task. When that task is authorized:
 
-1. **Publication record:** at the next session, verify with a fresh `git ls-remote` that local main == origin/main at the P3 checkpoint with a clean tree and index, and record the checkpoint SHA and publication as an observation in the next authorized task's continuity update. No separate commit is authorized by this record.
-2. **Awaiting the Owner:** explicit authorization of P4 — Database Architecture.
+1. **Verify the baseline:** branch `main` tracking `origin/main`; fetch and confirm local HEAD == live origin/main == the P4 checkpoint (`git log -1 --format='%H %s' --grep='^docs: finalize P4 database architecture$'`, parent `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`); clean tree and index; no merge, rebase or cherry-pick. Report any difference and stop.
+2. **Record the checkpoint literally:** the P4 checkpoint SHA and its publication cannot appear inside the commit itself; the first authorized documentation change records them (an observation entry in DECISION_LOG and the SHA in CURRENT_STATE), exactly as OBS-004 and OBS-007 did for P2 and P3.
+3. **Load context from the repository only:** AGENTS.md → CONTEXT_INDEX → CURRENT_STATE → this file → the canonical specifications. Chat history and scratch files are not sources of truth.
+4. **Wait for the Owner's explicit P5 authorization** before any P5 work.
 
-## Proposed next phase after authorization
+## Proposed next phase — after the handoff task, separately authorized
 
-**P4 — Database Architecture**, planner only, in a separately authorized task, consuming BUSINESS_RULES (E-DB rules), WORKFLOWS (records named per workflow, the AX-01–37 invariants and the section 13 obligations) and GAP-003/004/007/008/010/016/023/025–030 obligations. This paragraph specifies a future bounded task; no P4 work has been performed.
+**P5 — Security & Authorization:** the permission matrix and security control design, consuming WORKFLOWS §4 (authority matrix), the DOMAIN_MODEL sensitivity classes, ARCHITECTURE §8 (authorization boundary) and DATABASE §15, §28 and §31 — including the P5 obligations recorded by P4: field projection of pooled physical versus company financial data, the DIR-027 evidence-resolution authority and the evidence duplicate warnings. Its planned outputs are `docs/02-domain/PERMISSIONS_MATRIX.md` and `docs/03-architecture/SECURITY.md` ([ownership registry](../00-governance/SOURCE_OF_TRUTH.md#canonical-ownership-registry)). This paragraph describes a future task; no P5 work has been performed and neither file exists.
+
+## Not authorized now
+
+P5–P11 design, migrations, executable SQL, Laravel or React files, packages, Docker or deployment files, infrastructure, production access, edits to locked source records, force pushes or history rewriting.
