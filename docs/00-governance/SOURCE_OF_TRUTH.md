@@ -1,6 +1,6 @@
 # Source of truth and documentation governance
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
 Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
 
@@ -101,6 +101,14 @@ The [checkpoint authorization](sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09
 `AE18F2F6A5E5AE0A6F013AD7638D77A86520937D2F946383F0AAAE8B76E77E65`
 
 DIR-014 reaffirms APPR-002 and explicitly authorizes verified local staging, complete staged-diff review, the named checkpoint commit and only then read-only remote diagnosis. Its description of the earlier REVIEW state is historical: the prior attempt had already correctly applied APPROVED metadata locally. Preserve those completed changes. If automatic review rejects again, record the exact blocked action/reason and STOP without bypass or variants. No push, remote configuration/history change, P2 or application implementation is authorized. All eleven earlier archives remain unchanged.
+
+### Owner publication confirmation and bounded continuity authorization
+
+The [publication confirmation](sources/P1_OWNER_PUBLICATION_CONFIRMATION_2026-09-29.txt) was received on 2026-09-29 as an in-session Owner message and is preserved as a **transcribed LOCKED SOURCE RECORD** (not a byte-copy claim about an attachment), the thirteenth source record. The 348-line / 8,988-byte transcript has SHA-256:
+
+`1939FED4EF714C75FC1A3762FC56F6ADE2DB66CCB3F835DD3044EABE8C632931`
+
+DIR-015 confirms that the Owner personally and intentionally executed the normal, non-force initial push (`git push --set-upstream origin main`) after commit `f31baf768550e8249cb8073c6ea879c2f17c470b`, creating remote `main` at that commit. The earlier "origin has no refs / no push executed" statements in the committed handoff were accurate at their commit time and are superseded by this later Owner action, not corrected as errors. DIR-015 authorizes exactly: recording the publication, independent receiver-checkout verification, the evidenced GAP-002 update, one bounded documentation checkpoint commit and its normal non-force push to origin/main. It does not authorize P2, changes to approved product content, business semantics, coverage, Golden Flow, DoD, backup policy or application work. Verified results are OBS-003 in [DECISION_LOG](DECISION_LOG.md); all twelve earlier archives remain immutable.
 
 ## Classify statements before changing them
 

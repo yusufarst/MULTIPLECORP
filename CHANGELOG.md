@@ -1,6 +1,6 @@
 # Changelog
 
-Status: REVIEW | Updated: 2026-09-28 | Owner: Planning
+Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
 
 ## Unreleased — 2026-09-27
 
@@ -79,3 +79,10 @@ This is a change summary; current state and approval authority live in their [ow
 - Created approved P1 checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` with the exact requested message and 25 reviewed files; staged blobs/source bytes matched reviewed files and post-commit index/tree were clean.
 - Read-only origin inspection confirmed intended accessible public repository with no advertised refs. Default metadata is main but no branch exists, explaining origin/main [gone]. No push, fetch, remote change, reset or rebase.
 - Recorded SHA, diagnosis and conditional future initial-push recommendation in handoff/evidence. GAP-002 remains OPEN for publication/receiving-checkout proof; no product/source content change or P2.
+
+## Unreleased — 2026-09-29, P1 publication record and receiver verification
+
+- Preserved the Owner's publication confirmation/bounded continuity authorization as the thirteenth immutable source record; recorded DIR-015, OBS-003 and TECH-011.
+- Recorded the Owner's manual, normal non-force initial push (`git push --set-upstream origin main`) that created origin/main at `f31baf7` after the last handoff commit. The prior no-refs/no-push statements remain historically accurate and are superseded by that later Owner action, not rewritten.
+- Verified an independent temporary receiver clone obtains the identical published HEAD, all 35 files and byte-identical source archives; deleted the clone afterwards. Closed GAP-002 on that evidence; register now 3 CLOSED, 20 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK.
+- Updated handoff and provenance to the published, synchronized state. No approved product content, business semantics, coverage, Golden Flow, DoD or backup-policy change; no P2 file or application work. P2 remains NOT STARTED pending separate Owner authorization.

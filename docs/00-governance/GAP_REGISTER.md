@@ -1,6 +1,6 @@
 # Proactive gap register
 
-Status: REVIEW | Updated: 2026-09-28 | Owner: Planning
+Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
 
 This is the single index of discovered gaps, risk treatment and pending owner decisions. Findings use the [owner records and supporting references](SOURCE_OF_TRUTH.md#authority-and-provenance) and current P0/P1 documents. They are planning risks, not claims of vulnerabilities in an application that does not yet exist. P1 decisions and follow-up answers resolve parts of earlier gaps without proving runtime mitigation. Recommendations remain proposals unless explicitly adopted or delegated under [decision authority](CHANGE_CONTROL.md#decision-authority).
 
@@ -17,7 +17,7 @@ Add findings throughout planning/execution; review at every phase end and new di
 | ID | Area | Severity | Probability | Status | Resolve before |
 | --- | --- | --- | --- | --- | --- |
 | GAP-001 | Delegated technical authority | HIGH | OBSERVED | CLOSED | P0 handoff |
-| GAP-002 | Durable repository handoff | HIGH | OBSERVED | OPEN | Another checkout/agent takeover |
+| GAP-002 | Durable repository handoff | HIGH | OBSERVED | CLOSED | Another checkout/agent takeover |
 | GAP-003 | Pooled stock with preserved source attribution | CRITICAL | POSSIBLE | OPEN | P2 rules / P4 stock design |
 | GAP-004 | Financial meaning and rounding | CRITICAL | UNKNOWN | OPEN | Business decision resolved; technical design/evidence at P2 rules / financial schema |
 | GAP-005 | Downstream corrections | HIGH | POSSIBLE | OPEN | P3 transition design |
@@ -41,7 +41,7 @@ Add findings throughout planning/execution; review at every phase end and new di
 | GAP-023 | Allocation, reservation and usable stock | HIGH | UNKNOWN | OPEN | Business decision resolved; technical design/evidence at P2/P3 stock policy / dependent P4 design |
 | GAP-024 | Reference requirements lost before build/test mapping | HIGH | POSSIBLE | OPEN | P8 test coverage / P11 freeze |
 
-APPR-002 approves the P1 product/scope baseline. Remaining OPEN technical/evidence findings retain their later gates and do not reopen P1; release readiness remains separate. DIR-011 resolves all four P1 business decisions in GAP-004/006/022/023. Each is **OPEN for technical design/evidence only — BUSINESS DECISION RESOLVED**, not OWNER_DECISION_REQUIRED. Backup location and conditional recovery targets are settled by DIR-009; do not ask for offsite resources again. Later local-backup design/evidence must still satisfy GAP-011/013. Register totals: **24 findings — 2 CLOSED, 21 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK**. No P1 business choice remains open. OPEN does not mean the settled choice must be asked again; it preserves the technical failure scenario until its design/evidence gate is satisfied.
+APPR-002 approves the P1 product/scope baseline. Remaining OPEN technical/evidence findings retain their later gates and do not reopen P1; release readiness remains separate. DIR-011 resolves all four P1 business decisions in GAP-004/006/022/023. Each is **OPEN for technical design/evidence only — BUSINESS DECISION RESOLVED**, not OWNER_DECISION_REQUIRED. Backup location and conditional recovery targets are settled by DIR-009; do not ask for offsite resources again. Later local-backup design/evidence must still satisfy GAP-011/013. DIR-015/OBS-003 close GAP-002 with publication and receiver-checkout evidence. Register totals: **24 findings — 3 CLOSED, 20 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK**. No P1 business choice remains open. OPEN does not mean the settled choice must be asked again; it preserves the technical failure scenario until its design/evidence gate is satisfied.
 
 ## GAP-001 — Blanket approval rules could preserve a known-bad plan
 
@@ -54,8 +54,8 @@ APPR-002 approves the P1 product/scope baseline. Remaining OPEN technical/eviden
 
 - **Description/evidence:** At the start of this extension all P0 files were untracked on unborn `main`; no remote checkpoint contained them. Losing the workstation or switching agents to another checkout would lose the canonical context.
 - **Impact:** Lost decisions, conflicting baselines or agents accidentally rebuilding the plan from chat.
-- **Mitigation/residual:** Local P0 checkpoint `b425584` is accepted; approved P1 checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` now exists with 25 reviewed files. Read-only inspection on 2026-09-28 confirms intended origin is accessible but has no advertised refs; the checkpoint remains unpublished. Share an identified commit through an authorized repository workflow before remote handoff; receiver confirms commit plus CURRENT_STATE. No push was performed; a local commit alone is not an off-machine copy.
-- **Owner:** Planner maintains local checkpoint; owner/repository maintainer controls publication as needed. **Affected:** P0 handoff and every agent replacement. **Residual/closure:** See CURRENT_STATE for actual commit/share state; keep OPEN until a receiving checkout can obtain the same checkpoint.
+- **Mitigation/residual:** Local P0 checkpoint `b425584` is accepted; approved P1 checkpoint `a740ed2ed893539bc02c4f95b538f90ae7ceb319` exists with 25 reviewed files. The 2026-09-28 read-only inspection correctly found origin accessible with no advertised refs at that time. The Owner then personally published the baseline with a normal non-force `git push --set-upstream origin main`, creating remote main at `f31baf768550e8249cb8073c6ea879c2f17c470b` (DIR-015 confirmation; OBS-003 evidence).
+- **Owner:** Planner maintains local checkpoint; owner/repository maintainer controls publication as needed. **Affected:** P0 handoff and every agent replacement. **Closure — CLOSED 2026-09-29 under DIR-015/OBS-003:** An independent temporary clone of the public origin obtained the identical published HEAD with all 35 files, every canonical document and byte-identical source archives (SHA-256 verified), then was deleted. The closure condition — a receiving checkout can obtain the same checkpoint — is met. Future baselines remain published through ordinary authorized pushes; a new unpublished-checkpoint situation would be a new finding, not a reopening of this one.
 
 ## GAP-003 — One stock pool must preserve source and consuming-company attribution
 
