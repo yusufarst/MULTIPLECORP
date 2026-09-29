@@ -100,3 +100,10 @@ This is a change summary; current state and approval authority live in their [ow
 - Preserved the Owner's decision/correction message as the eighteenth source record; recorded DIR-020 (fee-deduction settlement generalized to verified bank/VA/payment-intermediary deductions under seven explicit conditions; no arbitrary deductions, formulas, or unrelated treatments) and TECH-013.
 - Rewrote BR-FIN-09 to the DIR-020 semantics; normalized markers to 14 PLANNER-DETERMINED Level-1 decisions (added BR-INV-03/04, BR-RSV-04, BR-FIN-13, BR-ACC-03, BR-PRJ-05; deliberately left BR-FIN-07 unmarked as a settled DIR-011 consequence).
 - Corrected CURRENT_STATE and P2_QUALITY_GATE marker/file/path counts to Git-verified actuals (18 changed paths: 8 new + 10 modified, nothing staged) and reran full static verification. OWNER_DECISION_REQUIRED remains 0. No commit, push or P3 work.
+
+## Unreleased — 2026-09-29, P2 approval and finalization
+
+- Verified the published P2 checkpoint `1392966bfb89581d705e0394424705978e1d3db8` at task entry: local main == origin/main, clean tree/index, no P3 file, OWNER_DECISION_REQUIRED = 0 (OBS-004).
+- Preserved the Owner's explicit P2 approval / checkpoint-publication authorization as the nineteenth transcribed immutable source record with recorded SHA-256/line/byte provenance; recorded DIR-021, APPR-003 and TECH-014. This closes the continuity obligation noted in the previous checkpoint report.
+- Changed only DOMAIN_MODEL and BUSINESS_RULES from REVIEW to APPROVED with pre-approval file hashes recorded; substantive P2 content unchanged. P2_QUALITY_GATE stays REVIEW as evidence with a checkpoint/publication/approval addendum; registers, logs and handoff stay REVIEW living records.
+- Updated entry points, navigation, charter phase boundary and handoff to the approved/published P2 state. Gap totals unchanged (25 findings — 3 CLOSED, 21 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK). No P3, WORKFLOWS.md, schema/ERD/migrations, application code or settled-decision reopening; P3 requires a separate Owner authorization.

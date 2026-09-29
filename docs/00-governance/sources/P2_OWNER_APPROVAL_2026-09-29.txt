@@ -1,0 +1,280 @@
+TRANSCRIBED LOCKED SOURCE RECORD — nineteenth source record
+Received: 2026-09-29, in-session Owner message following the published P2
+checkpoint 1392966bfb89581d705e0394424705978e1d3db8
+Subject: Owner approval — completed P2 domain baseline; archival of this
+         approval / checkpoint-publication authorization; bounded lifecycle
+         finalization, one continuity commit and a normal non-force push;
+         stop before P3
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER APPROVAL — FINALIZE P2 GOVERNANCE BASELINE
+
+Project:
+MultipleCorp — Company Management System
+
+This is a bounded P2 approval and continuity-maintenance task.
+
+Current verified repository state:
+
+- P0 APPROVED
+- P1 APPROVED and published
+- P2 checkpoint commit:
+  1392966bfb89581d705e0394424705978e1d3db8
+- P2 commit message:
+  docs: establish P2 domain model and business rules
+- local main == origin/main
+- working tree clean
+- index clean
+- OWNER_DECISION_REQUIRED = 0
+- P3 NOT STARTED
+
+The published P2 package has already passed:
+- adversarial review
+- traceability review
+- static verification
+- staged-diff review
+- source-integrity verification
+- remote publication verification
+
+I, the Owner, now explicitly APPROVE the completed P2 domain baseline,
+subject to repository lifecycle rules.
+
+==================================================
+1. TASK BOUNDARY
+==================================================
+
+You are authorized ONLY to:
+
+A. Verify the published P2 checkpoint and current clean repository state.
+
+B. Archive this Owner approval / checkpoint-publication authorization
+   as the next locked source record according to repository convention.
+
+C. Record the completed P2 checkpoint/publication and this Owner approval
+   in the canonical governance records.
+
+D. Update the lifecycle status of the appropriate normative P2 documents
+   from REVIEW to APPROVED.
+
+E. Keep evidence/audit/live-register documents at REVIEW where repository
+   governance requires them to remain living records.
+
+F. Update CURRENT_STATE, NEXT_ACTION, CONTEXT_INDEX, CHANGELOG,
+   DECISION_LOG, SOURCE_OF_TRUTH, and other directly affected governance
+   records only as required for continuity accuracy.
+
+G. Run full documentation/governance validation.
+
+H. Create one bounded documentation commit.
+
+I. Re-check origin/main and, if no divergence exists, perform a normal
+   non-force push.
+
+J. Stop before P3.
+
+Do NOT implement P3.
+Do NOT create WORKFLOWS.md.
+Do NOT create schema, ERD, migrations, Laravel code, React code,
+deployment configuration, or application implementation.
+
+==================================================
+2. REPOSITORY-FIRST VERIFICATION
+==================================================
+
+Before editing:
+
+1. Read AGENTS.md.
+2. Read CLAUDE.md.
+3. Read docs/CONTEXT_INDEX.md.
+4. Read docs/07-handoff/CURRENT_STATE.md.
+5. Read docs/07-handoff/NEXT_ACTION.md.
+6. Read docs/00-governance/SOURCE_OF_TRUTH.md.
+7. Read docs/00-governance/DECISION_LOG.md.
+8. Read docs/00-governance/CHANGE_CONTROL.md.
+9. Read docs/02-domain/DOMAIN_MODEL.md.
+10. Read docs/02-domain/BUSINESS_RULES.md.
+11. Read docs/02-domain/P2_QUALITY_GATE.md.
+
+Verify:
+
+- branch = main
+- HEAD =
+  1392966bfb89581d705e0394424705978e1d3db8
+- origin/main equals the same SHA
+- working tree clean
+- index clean
+- P3 has not started
+
+If materially different:
+STOP and report.
+
+==================================================
+3. OWNER APPROVAL
+==================================================
+
+I explicitly approve the normative P2 domain baseline.
+
+Expected lifecycle result:
+
+docs/02-domain/DOMAIN_MODEL.md
+=> APPROVED
+
+docs/02-domain/BUSINESS_RULES.md
+=> APPROVED
+
+P2_QUALITY_GATE.md is evidence/audit material.
+Keep it at the lifecycle status required by repository governance rather
+than automatically marking it APPROVED merely because the normative
+specifications are approved.
+
+Likewise, live registers/logs/handoff documents remain REVIEW where their
+living-record nature requires it.
+
+Do not change substantive P2 business content during this task.
+
+Do not reopen:
+
+- Q1 backdating / numbering
+- Q2 residual receivable disposition
+- Q3 SIPLAH fee settlement
+- DIR-020 intermediary fee generalization
+- PLANNER-DETERMINED Level-1 decisions
+
+==================================================
+4. SOURCE RECORD / CONTINUITY
+==================================================
+
+The previous P2 checkpoint report noted that the checkpoint-and-publication
+authorization had not yet been archived.
+
+Preserve the relevant Owner authorization / approval message as the next
+transcribed LOCKED SOURCE RECORD according to existing repository
+convention.
+
+Record its:
+
+- source-record number
+- SHA-256
+- line count
+- byte count
+- provenance
+- related decision / approval identifier
+
+Do not alter earlier locked source records.
+
+==================================================
+5. P2 FINAL STATE
+==================================================
+
+After this task, the intended conceptual state is:
+
+P0:
+APPROVED
+
+P1:
+APPROVED
+CHECKPOINTED
+PUBLISHED
+
+P2:
+APPROVED
+CHECKPOINTED
+PUBLISHED
+
+OWNER_DECISION_REQUIRED:
+0
+
+P3:
+NOT STARTED
+
+Next safe planning phase:
+P3 — Critical Business Workflows
+
+but P3 still requires a separate Owner authorization.
+
+==================================================
+6. VALIDATION
+==================================================
+
+Before commit:
+
+- review complete diff
+- verify only intended governance/lifecycle files changed
+- verify DOMAIN_MODEL.md and BUSINESS_RULES.md substantive content
+  remains unchanged except lifecycle/provenance metadata if required
+- verify source archives
+- verify links and anchors
+- verify lifecycle metadata
+- verify gap counts
+- verify decision/approval references
+- verify no PENDING-OWNER markers
+- verify OWNER_DECISION_REQUIRED = 0
+- verify no P3 file exists
+- verify no schema / ERD / migration / application code exists
+- verify no secrets
+
+If validation fails:
+STOP.
+
+==================================================
+7. COMMIT AUTHORIZATION
+==================================================
+
+If validation passes, I authorize staging of the bounded P2 approval
+continuity package and one local commit.
+
+Preferred commit message:
+
+docs: approve P2 domain baseline
+
+Do not amend or rewrite previous history.
+
+==================================================
+8. PUSH AUTHORIZATION
+==================================================
+
+After commit, re-check origin/main.
+
+If:
+
+- origin is unchanged except for the expected current tip
+- the new commit is a normal descendant
+- no divergence exists
+- tree/index are clean
+
+then I authorize a NORMAL non-force push to origin/main.
+
+Never use force, reset, rebase, or history rewriting.
+
+If divergence exists:
+STOP and report.
+
+==================================================
+9. FINAL REPORT
+==================================================
+
+Report:
+
+A. Pre-change HEAD
+B. Source record archived
+C. Approval / decision ID
+D. Files whose lifecycle changed to APPROVED
+E. Files intentionally remaining REVIEW
+F. Validation result
+G. Commit SHA
+H. Commit message
+I. Push result
+J. Final local HEAD
+K. Final origin/main SHA
+L. Working-tree status
+M. OWNER_DECISION_REQUIRED count
+N. P2 final lifecycle state
+O. P3 status
+P. Exact next safe action
+
+Expected successful next safe action:
+
+P3 — Critical Business Workflows
+
+STOP after reporting.

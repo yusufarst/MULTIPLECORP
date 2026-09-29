@@ -1,8 +1,8 @@
 # Agent entry point
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
-Approval: [APPR-001](docs/00-governance/DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](docs/00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](docs/00-governance/DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](docs/00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications and [APPR-003](docs/00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications; evidence, gap and handoff records remain REVIEW.
 
 These instructions route every planning or execution agent to the same repository context. Owner sources and precedence are recorded in [SOURCE_OF_TRUTH](docs/00-governance/SOURCE_OF_TRUTH.md). The P1 directive accepts the P0 governance baseline; the latest final Owner decisions also authorize P1 only. Review status does not suspend explicit owner instructions or delegated Level 1 planning improvements, and does not authorize implementation.
 
@@ -16,7 +16,7 @@ These instructions route every planning or execution agent to the same repositor
 
 ## Work within the authorized phase
 
-Read the current phase/task in [CURRENT_STATE](docs/07-handoff/CURRENT_STATE.md). The current owner instruction is **P2 — Domain Model & Business Rules** (DIR-016–020), planner only; its deliverables exist in REVIEW under `docs/02-domain/`. Stop after P2; do not proceed to P3 in the same turn. Record later-phase risks without designing their schemas, workflow orchestration, permission matrices or implementation. Application code, Laravel scaffolding, installation and infrastructure setup remain unauthorized.
+Read the current phase/task in [CURRENT_STATE](docs/07-handoff/CURRENT_STATE.md). **P2 — Domain Model & Business Rules is complete**: [DOMAIN_MODEL](docs/02-domain/DOMAIN_MODEL.md) and [BUSINESS_RULES](docs/02-domain/BUSINESS_RULES.md) are APPROVED under APPR-003, checkpointed and published; [P2_QUALITY_GATE](docs/02-domain/P2_QUALITY_GATE.md) remains REVIEW evidence. The next phase, **P3 — Critical Business Workflows**, requires a separate explicit Owner authorization and has NOT STARTED; do not begin it without that authorization. Record later-phase risks without designing their schemas, workflow orchestration, permission matrices or implementation. Application code, Laravel scaffolding, installation and infrastructure setup remain unauthorized.
 
 Follow the [engineering principles](docs/00-governance/ENGINEERING_PRINCIPLES.md), [change control](docs/00-governance/CHANGE_CONTROL.md), and [documentation ownership/lifecycle](docs/00-governance/SOURCE_OF_TRUTH.md). Canonical rules belong in their owning documents; link instead of copying them into tool-specific files.
 

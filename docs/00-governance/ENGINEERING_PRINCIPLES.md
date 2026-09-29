@@ -1,8 +1,8 @@
 # Non-negotiable engineering principles
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications and [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications; evidence, gap and handoff records remain REVIEW.
 
 This document owns cross-cutting guardrails. It consolidates constraints from the [owner brief](sources/OWNER_BRIEF_2026-09-27.txt); it is not a detailed implementation design. Distinguish owner intent from technical baselines/proposals under [source governance](SOURCE_OF_TRUTH.md), and improve the latter using the [delegated authority](CHANGE_CONTROL.md#decision-authority). The title does not make every preferred mechanism immutable. Later concern specifications define mechanisms and tests in their own scope.
 

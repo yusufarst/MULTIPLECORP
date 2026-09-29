@@ -1,6 +1,8 @@
 # Business rules
 
-Status: REVIEW | Updated: 2026-09-29 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
+
+Approval: [APPR-003](../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved), explicit Owner approval on 2026-09-29 of this document as published in checkpoint `1392966bfb89581d705e0394424705978e1d3db8`; the reviewed file hash and conditions are recorded there. Approval changes lifecycle only, not business meaning or implementation authorization.
 
 Authority: P2 authorized by DIR-016; deep review, Q1, Q2/Q3 and fee-generalization Owner decisions under DIR-017/018/019/020 ([decision log](../00-governance/DECISION_LOG.md)). This document owns domain lifecycles/state rules, business invariants, correction/snapshot semantics and calculation meanings. Concepts and scope classes are owned by [DOMAIN_MODEL](DOMAIN_MODEL.md); phase evidence by [P2_QUALITY_GATE](P2_QUALITY_GATE.md).
 

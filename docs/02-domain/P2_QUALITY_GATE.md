@@ -70,3 +70,7 @@ GAP-016 marked BUSINESS DECISION RESOLVED (DIR-018) with technical residue at P4
 ## Exact next safe action
 
 Owner review of the P2 package, then an explicit checkpoint authorization per [NEXT_ACTION](../07-handoff/NEXT_ACTION.md). Stop: no P3, P4+, commit, push or application work in this turn.
+
+## Checkpoint, publication and approval — 2026-09-29
+
+The sections above are pre-checkpoint evidence and remain accurate at their writing time. Subsequently, the reviewed P2 package was committed as checkpoint `1392966bfb89581d705e0394424705978e1d3db8` (`docs: establish P2 domain model and business rules`) and published with a normal non-force push. At the approval task's entry, local main == origin/main == that checkpoint with a clean tree and index, no P3 file and OWNER_DECISION_REQUIRED = 0 (OBS-004). The Owner's approval / checkpoint-publication authorization is archived as the nineteenth source record and recorded as [APPR-003/DIR-021](../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved): [DOMAIN_MODEL](DOMAIN_MODEL.md) and [BUSINESS_RULES](BUSINESS_RULES.md) are APPROVED with unchanged substantive content; this gate report remains REVIEW evidence per the Owner's instruction. P3 stays NOT STARTED pending a separate Owner authorization.

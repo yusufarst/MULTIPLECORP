@@ -1,8 +1,8 @@
 # Project charter
 
-Status: APPROVED | Updated: 2026-09-28 | Owner: Planning
+Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications and [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications; evidence, gap and handoff records remain REVIEW.
 
 ## Identity and outcome
 
@@ -19,7 +19,7 @@ Subsequent DIR-009 expressly chooses same-production-VPS backups only for V1 and
 
 ## Authorized work
 
-The active assignment is **P2 — Domain Model & Business Rules** (DIR-016–020), planner only. P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`; P1 is APPROVED under APPR-002. P2 formalizes domain concepts, lifecycles, invariants, correction/snapshot/calculation semantics from the approved scope; perform adversarial review and update handoff. Stop after P2. P3 and implementation are not authorized in this turn.
+**P2 — Domain Model & Business Rules is complete** (DIR-016–021). P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`; P1 is APPROVED under APPR-002; the P2 normative documents are APPROVED under APPR-003, checkpointed and published. The next phase is **P3 — Critical Business Workflows**, planner only, and it requires a separate explicit Owner authorization; it has NOT STARTED. P4+ design and implementation are not authorized.
 
 P0 owns governance, authority, continuity and guardrails. P1 and P2 concern owners are indexed in CONTEXT_INDEX. Workflow orchestration, schema design, permission matrices, UX patterns/tokens, roadmap and build units remain later-phase work.
 

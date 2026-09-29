@@ -2,7 +2,7 @@
 
 Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications and [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications; evidence, gap and handoff records remain REVIEW.
 
 ## Authority and provenance
 
@@ -36,7 +36,7 @@ C1 delegates a complete recommended selectable document set; the planner's bound
 
 Canonical documents organize these inputs. Source authority does not replace missing detailed specifications, test evidence, business decisions or execution authorization.
 
-Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents; historical REVIEW statements do not override that approval.
+Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents and APPR-003 the two P2 normative domain specifications; historical REVIEW statements do not override those approvals.
 
 ### Owner reference ingestion and provenance
 
@@ -122,7 +122,15 @@ Five in-session Owner messages received 2026-09-29 are preserved as **transcribe
 | [P2_OWNER_FINAL_DECISIONS_2026-09-29.txt](sources/P2_OWNER_FINAL_DECISIONS_2026-09-29.txt) | 191 / 5,863 | `71EA03F2930380069E97C0BF706B0BA5841E29A55394509CFBD3BE981A5272A5` |
 | [P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt](sources/P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt) | 169 / 4,913 | `4F361A7F4E57343D1347879FBE85AA0939EAF4D0AC17E835CF219F594769ED44` |
 
-DIR-018/019/020 are binding within their subjects under the standing hierarchy; earlier records remain immutable. Canonical business meaning continues to live in V1_SCOPE and, for the new P2 formalization, in [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md)/[BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (REVIEW). All thirteen earlier source records retain their bytes and classifications.
+DIR-018/019/020 are binding within their subjects under the standing hierarchy; earlier records remain immutable. Canonical business meaning continues to live in V1_SCOPE and, for the new P2 formalization, in [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md)/[BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (REVIEW at these directives' receipt; subsequently APPROVED under APPR-003 below). All thirteen earlier source records retain their bytes and classifications.
+
+### P2 Owner approval and finalization authorization
+
+The [P2 Owner approval](sources/P2_OWNER_APPROVAL_2026-09-29.txt) was received on 2026-09-29 as an in-session Owner message after the P2 checkpoint `1392966bfb89581d705e0394424705978e1d3db8` was committed and published. It is preserved as a **transcribed LOCKED SOURCE RECORD** (not a byte-copy claim about an attachment), the nineteenth source record. The 280-line / 7,466-byte transcript has SHA-256:
+
+`E414A6C2304329930A7F81D10F1D9E5588EC6EBC279B279C99025DDD5AA685CA`
+
+APPR-003/DIR-021 in [DECISION_LOG](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) record its effect: the Owner explicitly approves the completed P2 domain baseline; [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md) and [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) change REVIEW → APPROVED with unchanged substantive content; [P2_QUALITY_GATE](../02-domain/P2_QUALITY_GATE.md) and the live registers/logs/handoff stay REVIEW; and one bounded continuity commit plus a normal non-force push are authorized. This record also serves as the Owner's archived confirmation of the earlier in-session checkpoint-and-publication authorization that the checkpoint report had noted as unarchived. It does not reopen Q1/Q2/Q3, DIR-020 or the PLANNER-DETERMINED Level-1 decisions, and does not authorize P3, WORKFLOWS.md, schema/ERD/migrations or application work. All eighteen earlier source records retain their bytes and classifications.
 
 ## Classify statements before changing them
 
