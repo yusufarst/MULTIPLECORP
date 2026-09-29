@@ -1,0 +1,994 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fourteenth source record
+Received: 2026-09-29, in-session Owner message (pasted text), MultipleCorp planning session
+Subject: Owner authorization to begin P2 planning (plan-only turn)
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — BEGIN P2 PLANNING
+
+Project:
+MultipleCorp — Company Management System
+
+Current phase:
+P2 — DOMAIN MODEL & BUSINESS RULES
+
+Current role:
+PRIMARY PLANNING AGENT
+
+This is a PLAN-ONLY turn.
+
+Do NOT modify files yet.
+Do NOT create files yet.
+Do NOT commit.
+Do NOT push.
+Do NOT implement application code.
+Do NOT scaffold Laravel.
+Do NOT create migrations.
+Do NOT create React/Inertia pages.
+Do NOT install packages.
+Do NOT start P3.
+
+The repository is the canonical source of truth.
+
+The previous continuity task has been completed and published.
+
+Expected current baseline:
+
+- P0 APPROVED
+- P1 APPROVED
+- P1 checkpointed
+- P1 published to origin/main
+- receiver checkout verified
+- GAP-002 CLOSED
+- working tree clean
+- local main synchronized with origin/main
+- expected HEAD:
+  afeda00a9893770743fdc879cade9479cb849033
+
+Do not trust this prompt alone.
+Verify the repository yourself.
+
+==================================================
+1. REPOSITORY INTAKE
+==================================================
+
+Before proposing any P2 design, read and reconcile the repository.
+
+At minimum read:
+
+- AGENTS.md
+- CLAUDE.md
+- README.md
+- docs/CONTEXT_INDEX.md
+- docs/07-handoff/CURRENT_STATE.md
+- docs/07-handoff/NEXT_ACTION.md
+- docs/00-governance/SOURCE_OF_TRUTH.md
+- docs/00-governance/DECISION_LOG.md
+- docs/00-governance/GAP_REGISTER.md
+- docs/00-governance/CHANGE_CONTROL.md
+- docs/01-product/PRODUCT_OVERVIEW.md
+- docs/01-product/V1_SCOPE.md
+- docs/01-product/ACCEPTANCE_CRITERIA.md
+- docs/01-product/REFERENCE_COVERAGE.md
+- docs/01-product/P1_QUALITY_GATE.md
+- all relevant ACCEPTED ADRs
+- relevant locked Owner source records
+- recent Git history
+
+Verify read-only:
+
+1. P0 is approved.
+2. P1 is approved.
+3. GAP-002 is closed.
+4. working tree is clean.
+5. local main == origin/main.
+6. current HEAD matches the current published checkpoint.
+7. P2 has not already started.
+8. there is no unresolved OWNER_DECISION_REQUIRED item blocking P2.
+
+If any material inconsistency exists:
+
+STOP.
+
+Report it instead of silently repairing it.
+
+==================================================
+2. AUTHORITY AND SCOPE RULES
+==================================================
+
+P1 is binding.
+
+The approximately 18-day implementation target is an execution
+constraint.
+
+It is NOT permission to:
+
+- cut Owner-required features
+- silently defer V1 scope
+- remove difficult business logic
+- weaken integrity
+- weaken authorization
+- weaken testing
+- weaken recoverability
+
+Only the Owner may remove or defer requested business capability.
+
+Supplier Comparison remains explicitly REMOVED from V1.
+
+Do not reintroduce it.
+
+UNY and UGM are normal clients.
+
+Do not invent:
+
+- UNY-specific module
+- UGM-specific module
+- RT-specific module
+
+SIPLAH is a transaction/purchasing channel.
+
+Do not make SIPLAH a separate business/project module.
+
+Direct SIPLAH API integration is not required for V1.
+The design should remain future-integration-ready without building
+the integration now.
+
+V1 is managerial finance.
+
+Do not transform it into full formal accounting / General Ledger.
+
+==================================================
+3. P2 PURPOSE
+==================================================
+
+P2 must establish the DOMAIN TRUTH of MultipleCorp.
+
+P2 must define:
+
+- business concepts
+- terminology
+- conceptual relationships
+- ownership/scope
+- lifecycle
+- states
+- legal transitions
+- prohibited transitions
+- business invariants
+- historical immutability
+- correction semantics
+- snapshot semantics
+- calculation meanings
+- cross-domain interaction rules
+- explicit forbidden shortcuts
+
+The result must provide a stable semantic foundation for:
+
+P3 — Critical Business Workflows
+P4 — Database Architecture / ERD
+P5 — Security / Authorization
+P6 — Concurrency / Idempotency / Performance
+P8 — Testing
+P11 — Build Units
+
+P2 must NOT prematurely create the physical PostgreSQL schema.
+
+Do not create tables, columns, indexes, migrations, FK definitions,
+or a final physical ERD.
+
+Those belong primarily to P4.
+
+==================================================
+4. DOMAIN AREAS TO MODEL
+==================================================
+
+At minimum analyze the following.
+
+IDENTITY / ACCESS
+- User
+- Role
+- Permission / Capability
+- Company Access
+
+COMPANY
+- Legal Company
+- Company Identity
+- Bank Account
+- Document Identity
+
+PARTIES
+- Client / Organization
+- Client Unit / Department
+- PIC / Contact
+- Supplier
+
+CATALOG
+- Product
+- Service
+- SKU
+- Unit
+- Unit Conversion
+- Barcode
+- Serial Number
+- Product Image
+- Active / Inactive state
+
+PRICING
+- Purchase Price
+- Selling Price
+- SPJ / Administrative Price
+- historical supplier price
+- historical selling price
+- transaction price snapshot
+- tax / adjustment component
+
+PROJECT
+- Project
+- Project Item
+- Primary Company
+- Client
+- Unit / PIC
+- Transaction Channel
+- Project lifecycle
+- Completion Gate
+- Completion Override
+
+COMMERCIAL
+- Quotation
+- Quotation Revision
+- Quotation Approval
+
+PROCUREMENT
+- Purchase
+- Purchase Item
+- Supplier
+- optional Purchase Order
+- multiple suppliers per project
+- multiple POs per project
+- purchase without PO
+
+INVENTORY
+- Shared Physical Stock
+- Stock Balance
+- Stock Movement
+- Stock Acquisition Provenance
+- Company Cost Attribution
+- Stock Reservation
+- On Hand
+- Reserved
+- Unusable / Quarantined
+- Available
+- Rack / Location
+- Goods Receiving
+- Partial Receiving
+- Damaged Goods
+- Goods Dispatch
+- Stock Adjustment
+- Stock Opname
+- Return
+- Reversal
+- Inter-company Stock Allocation
+- Minimum Stock
+- Restock Alert
+- Purchase-on-demand item
+
+FULFILLMENT
+- Warehouse Fulfillment
+- Direct / Drop-Ship Fulfillment
+- Delivery
+- Partial Delivery
+- Delivery Proof
+- Proof of Handover
+
+DOCUMENTS
+- Document
+- Document Type
+- Document Template
+- Draft
+- Issued
+- Final
+- Revision
+- Void
+- Generated Document
+- Uploaded / External Document
+- Document Number
+- Issuer Identity
+
+ADMINISTRATION / SPJ
+- Administrative Requirement
+- Required
+- Optional
+- Waivable
+- Not Applicable
+- Generated
+- Uploaded
+- Either
+- supporting evidence
+- client-specific checklist
+
+SIPLAH
+- transaction-channel metadata
+- code
+- program
+- account
+- value
+- Harga Real
+- tax
+- fee
+- VA
+- pengembalian / cashback
+- notes
+- future integration boundary
+
+BILLING / FINANCE
+- Sales / Transaction Value
+- Invoice
+- Billing
+- Active Receivable
+- Receivable Aging
+- Payment
+- Partial Payment
+- Overpayment
+- Customer Credit
+- Refund
+- Payment Correction
+- Payment Reallocation
+- Cost / HPP
+- Cash-In
+- Cash-Out
+- Project Profit
+- Margin
+- Company Profit
+- Consolidated Profit
+
+AUDIT / CORRECTION
+- Audit Event
+- Edit
+- Revision
+- Void
+- Reversal
+- Return
+- Reallocation
+- Compensating Action
+- Archive / Inactive
+- mandatory correction reason
+
+OPERATION
+- Notification
+- Restock Alert
+- Overdue Alert
+- Action Required
+
+Do not assume this list is exhaustive.
+
+Use approved P1 capability coverage to identify anything missing.
+
+==================================================
+5. SHARED WAREHOUSE SEMANTICS
+==================================================
+
+There is ONE shared physical warehouse stock pool.
+
+Physical stock availability and company acquisition/cost provenance
+are separate concepts.
+
+Stock acquired under Company A may be used by a Company B project,
+but this must create explicit and auditable inter-company stock
+allocation semantics.
+
+Conceptually preserve at minimum:
+
+- source company
+- destination company / project
+- product
+- quantity
+- relevant cost attribution
+- reason
+- actor
+- timestamp
+
+V1 must NOT automatically create:
+
+- inter-company invoices
+- formal accounting journals
+- automatic cash transfers
+
+The V1 purpose is:
+
+inventory traceability
++
+managerial cost attribution
++
+auditability
+
+==================================================
+6. INVENTORY SEMANTICS
+==================================================
+
+Preserve the approved business meaning:
+
+AVAILABLE =
+ON HAND
+- RESERVED
+- UNUSABLE / QUARANTINED
+
+Quotation alone does NOT reserve stock.
+
+Reservation starts only after confirmed commercial demand.
+
+Reservation is NOT physical stock movement.
+
+Physical stock decreases only through legitimate physical movement,
+normally dispatch.
+
+Explicitly analyze:
+
+- reservation increase
+- reservation reduction
+- reservation release
+- project cancellation after reservation
+- reserved stock becoming damaged
+- partial reservation
+- partial fulfillment
+- dispatch reversal
+- return
+- stock adjustment
+- stock opname variance
+- insufficient stock
+- concurrent demand conceptually
+
+Do not solve concurrency implementation yet.
+Identify where P6 must later provide atomic guarantees.
+
+==================================================
+7. DROP-SHIP AND SERVICES
+==================================================
+
+DROP-SHIP:
+
+Supplier → Client directly.
+
+Do NOT fabricate:
+
+warehouse receiving
++
+warehouse dispatch
+
+when goods never physically enter the warehouse.
+
+Still preserve:
+
+- project
+- supplier
+- quantity
+- actual cost
+- product
+- serial number where applicable
+- fulfillment evidence
+- delivery evidence
+- auditability
+
+SERVICES:
+
+Services must not create fake stock events.
+
+A Project may contain:
+
+- products only
+- services only
+- products + services
+
+The domain must support all three naturally.
+
+==================================================
+8. FINANCIAL SEMANTICS
+==================================================
+
+Keep these concepts explicitly separate:
+
+1. SALES / TRANSACTION VALUE
+2. ACTIVE RECEIVABLE
+3. CASH-IN
+4. COST / HPP
+5. CASH-OUT
+
+Issued invoice:
+records agreed transaction / sales value.
+
+Issued invoice does NOT mean cash has been received.
+
+Issued but not explicitly billed:
+BELUM DITAGIHKAN
+
+Explicit billing activation:
+creates / activates the receivable according to approved semantics.
+
+Billing must conceptually support:
+
+- billed_at
+- due_date
+- outstanding amount
+- aging
+
+Payment:
+represents actual money received.
+
+Payment reduces receivable.
+
+Partial payment must be supported.
+
+Overpayment must NOT automatically become profit.
+
+Model the concepts needed for:
+
+- customer credit
+- refund
+- correction
+- reallocation
+
+Purchase creation does NOT mean money has left the company.
+
+Cost / HPP:
+actual/direct economic project cost for managerial profitability.
+
+Cash-Out:
+actual money disbursed.
+
+Do NOT introduce full formal accounting.
+
+==================================================
+9. PROJECT COMPLETION
+==================================================
+
+Normal Project completion uses the defined Completion Gate.
+
+Admin Operasional may complete normal eligible requirements within
+granted permission.
+
+Administrative requirement may be marked:
+
+NOT APPLICABLE / TIDAK BERLAKU
+
+only when the requirement is waivable.
+
+It requires:
+
+- reason
+- actor
+- timestamp
+- audit history
+
+Admin cannot bypass mandatory invariants.
+
+Owner / Super Admin may use:
+
+FORCE COMPLETE / COMPLETION OVERRIDE
+
+only as an exceptional path.
+
+Require conceptually:
+
+- explicit confirmation
+- mandatory reason
+- actor
+- timestamp
+- before state
+- after state
+- audit history
+
+==================================================
+10. MULTI-COMPANY ACCESS BOUNDARY
+==================================================
+
+Conceptually preserve:
+
+Owner:
+all companies and consolidated views.
+
+Admin:
+only explicitly granted company business data.
+
+An inventory-authorized Admin may see shared physical stock
+availability required for operations.
+
+That does NOT automatically expose another company's:
+
+- purchase cost
+- profitability
+- bank information
+- invoices
+- billing
+- payments
+- financial documents
+- private documents
+- unrelated transaction detail
+
+P5 will design authorization implementation.
+
+P2 must define the domain boundary clearly enough for P5.
+
+==================================================
+11. DOCUMENT DOMAIN
+==================================================
+
+Avoid implementing every document as an unrelated system.
+
+Identify common Document semantics where safe.
+
+Company-generated documents may include where applicable:
+
+- Quotation / Surat Penawaran
+- Purchase Order
+- Delivery Note
+- Faktur Pengiriman
+- Surat Jalan
+- Nota
+- Kuitansi
+- Lampiran Kuitansi
+- Invoice
+- BAST
+- other legitimate company-generated templates
+
+External documents may include:
+
+- client SPK / Surat Pesanan
+- official Faktur Pajak
+- external HPS
+- NPWP
+- NIB
+- bank statement
+- other supporting evidence
+
+MultipleCorp must NOT pretend to be the official issuer of an external
+document.
+
+Final/issued documents must not be silently overwritten.
+
+Define conceptual semantics for:
+
+- Draft
+- Issue
+- Final
+- Revision
+- Void
+- historical preservation
+
+==================================================
+12. STATE MODELS
+==================================================
+
+Evaluate and propose explicit state models where useful.
+
+At minimum:
+
+- Project
+- Quotation
+- Purchase
+- Purchase Order
+- Reservation
+- Goods Receiving
+- Delivery
+- Document
+- Invoice
+- Billing
+- Receivable
+- Payment
+- Administrative Requirement
+
+Do NOT create one universal status enum.
+
+For every meaningful lifecycle define:
+
+- states
+- allowed transitions
+- prohibited transitions
+- triggering event
+- prerequisites
+- terminal states
+- cancellation behavior
+- correction / reversal behavior
+- historical preservation
+
+Do not over-model simple master data.
+
+==================================================
+13. BUSINESS INVARIANTS
+==================================================
+
+Discover important invariants explicitly.
+
+Expected rigor includes concepts such as:
+
+- issued/final document cannot be silently overwritten
+- historical transaction snapshot cannot change when master data changes
+- reservation cannot exceed valid available stock
+- legitimate dispatch must not produce invalid negative stock
+- void does not erase historical existence
+- payment must not silently disappear after allocation
+- overpayment is not profit
+- barcode must not ambiguously resolve to multiple active products
+- serialized items retain serial traceability
+- shared warehouse visibility does not grant financial-data access
+- correction of business history requires auditable semantics
+
+Do not stop at these examples.
+
+Classify particularly important invariants that will later need:
+
+APPLICATION ENFORCEMENT
++
+DATABASE GUARANTEE
+
+P4 decides the concrete database mechanism.
+
+==================================================
+14. CORRECTION SEMANTICS
+==================================================
+
+Define when to use:
+
+EDIT
+REVISION
+VOID
+REVERSAL
+RETURN
+REALLOCATION
+COMPENSATING ACTION
+ARCHIVE / INACTIVE
+
+Important transaction history must not disappear.
+
+Hard-delete is NOT the normal correction mechanism for referenced
+business transactions.
+
+Clarify correction behavior for all major transaction domains.
+
+==================================================
+15. HISTORICAL SNAPSHOTS
+==================================================
+
+Identify which information becomes historically significant.
+
+Evaluate at minimum:
+
+- company legal identity
+- company document identity
+- client identity
+- client address
+- unit
+- PIC
+- product/service description
+- quantity
+- unit
+- selling price
+- purchase price
+- tax
+- SPJ values
+- bank destination
+- supplier information
+- transaction channel metadata
+- document content
+
+Define the BUSINESS requirement only.
+
+Do not design the physical columns yet.
+
+==================================================
+16. CALCULATION SEMANTICS
+==================================================
+
+Define the business meaning of at least:
+
+- Available Stock
+- Reserved Quantity
+- Remaining Reservation
+- Remaining Receiving Quantity
+- Remaining Delivery Quantity
+- Outstanding Receivable
+- Payment Allocation
+- Overpayment
+- Project Revenue
+- Project Direct Cost / HPP
+- Project Profit
+- Margin
+- Company Profit
+- Consolidated Profit
+- Receivable Aging
+
+Do not invent formulas that are not approved.
+
+Especially:
+
+DO NOT invent SIPLAH pengembalian/cashback formulas.
+
+If a real business decision is missing, surface:
+
+OWNER_DECISION_REQUIRED
+
+Ask the smallest concrete question needed.
+
+==================================================
+17. PRACTICAL MODELLING ONLY
+==================================================
+
+Approved architecture direction remains:
+
+MODULAR MONOLITH
++
+LAYERED ARCHITECTURE
++
+MVC WEB LAYER
++
+ACTION / USE CASE PATTERN
+
+P2 is domain modelling, not DDD theater.
+
+Avoid unnecessary:
+
+- microservices
+- CQRS infrastructure
+- event sourcing
+- aggregate jargon
+- repository classes around every model
+- domain-event explosion
+- abstract factories
+- trivial value objects
+- speculative abstractions
+
+SIMPLIFY THE MODEL.
+
+DO NOT SIMPLIFY AWAY CAPABILITY.
+
+==================================================
+18. GAP HUNTING
+==================================================
+
+Actively test the model against difficult scenarios.
+
+At minimum evaluate:
+
+- project cancelled after reservation
+- project cancelled after purchase
+- project cancelled after partial delivery
+- reserved stock becomes damaged
+- partial receiving
+- damaged receiving
+- partial delivery
+- multiple suppliers
+- multiple POs
+- purchase without PO
+- warehouse fulfillment
+- direct/drop-ship fulfillment
+- service-only project
+- mixed product/service project
+- inter-company stock use
+- return after delivery
+- return after billing
+- correction after invoice
+- invoice void after billing
+- payment after billing correction
+- partial payment
+- overpayment
+- payment reallocation
+- completion with unresolved correction
+- document revision after issue
+- serial-number correction
+- duplicate barcode
+- stock opname variance
+- master-data changes after transaction
+- company deactivation
+- client/unit/PIC change
+- migration/opening stock
+- open receivables migration
+- open project migration
+
+Discover additional edge cases yourself.
+
+==================================================
+19. TRACEABILITY
+==================================================
+
+Every V1_REQUIRED P1 capability must have a P2 domain home.
+
+Conceptually verify:
+
+P1 Capability
+→ P2 Domain Concept
+→ Business Rule / State / Invariant where applicable
+
+Do not let any approved requirement disappear.
+
+Explicitly report anything without a clear P2 home.
+
+==================================================
+20. PROPOSED P2 DOCUMENTS
+==================================================
+
+Do NOT create them yet.
+
+Inspect the repository's reserved structure first.
+
+Propose the minimum canonical documentation necessary.
+
+At minimum P2 eventually needs to cover:
+
+A. Domain glossary
+B. Domain/module map
+C. Concept/entity catalogue
+D. Conceptual relationships
+E. Critical state models
+F. Business invariants
+G. Correction semantics
+H. Historical snapshot rules
+I. Calculation semantics
+J. Cross-domain interaction rules
+K. Forbidden shortcuts / anti-rules
+L. P1 → P2 traceability
+M. Open technical gaps
+N. Owner decisions required
+
+Prefer existing reserved canonical paths.
+
+Avoid duplicate sources of truth.
+
+Do NOT create the final ERD in P2.
+
+==================================================
+21. ADVERSARIAL REVIEW
+==================================================
+
+Before presenting your plan, red-team it.
+
+Look for:
+
+- duplicated concepts
+- overloaded concepts
+- missing concepts
+- ambiguous ownership
+- contradictory states
+- impossible states
+- correction holes
+- inventory ambiguity
+- financial ambiguity
+- document-history ambiguity
+- multi-company leakage
+- unnecessary complexity
+- hidden implementation assumptions
+- premature database decisions
+- unclear boundaries between P2 and P3/P4/P5/P6
+
+Try to break the model conceptually.
+
+==================================================
+22. PLAN-ONLY OUTPUT
+==================================================
+
+This turn must remain READ/PLAN ONLY.
+
+Do NOT edit files.
+
+At the end report:
+
+A. Repository baseline verification
+B. Proposed P2 canonical document structure
+C. Proposed domain/module boundaries
+D. Proposed core concepts
+E. Critical state models to formalize
+F. Highest-risk invariants
+G. Correction-model approach
+H. Snapshot approach
+I. Calculation semantics requiring formalization
+J. P1 capabilities at risk of lacking a domain home
+K. New gaps discovered
+L. OWNER_DECISION_REQUIRED items
+M. Simplifications proposed
+N. Adversarial-review findings
+O. Exact files you propose to create/update
+P. Whether P2 is ready for documentation execution
+Q. Exact next safe action
+
+Do NOT edit files.
+Do NOT commit.
+Do NOT push.
+Do NOT begin P3.
+
+STOP after presenting the P2 plan.

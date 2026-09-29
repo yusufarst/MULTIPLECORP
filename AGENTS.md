@@ -16,7 +16,7 @@ These instructions route every planning or execution agent to the same repositor
 
 ## Work within the authorized phase
 
-Read the current phase/task in [CURRENT_STATE](docs/07-handoff/CURRENT_STATE.md). The current owner instruction is **P1 — Product Definition & V1 Scope only**. Stop after P1; do not proceed to P2 in the same turn. Record later-phase risks without designing their schemas, state machines or implementation. Application code, Laravel scaffolding, installation and infrastructure setup remain unauthorized.
+Read the current phase/task in [CURRENT_STATE](docs/07-handoff/CURRENT_STATE.md). The current owner instruction is **P2 — Domain Model & Business Rules** (DIR-016–020), planner only; its deliverables exist in REVIEW under `docs/02-domain/`. Stop after P2; do not proceed to P3 in the same turn. Record later-phase risks without designing their schemas, workflow orchestration, permission matrices or implementation. Application code, Laravel scaffolding, installation and infrastructure setup remain unauthorized.
 
 Follow the [engineering principles](docs/00-governance/ENGINEERING_PRINCIPLES.md), [change control](docs/00-governance/CHANGE_CONTROL.md), and [documentation ownership/lifecycle](docs/00-governance/SOURCE_OF_TRUTH.md). Canonical rules belong in their owning documents; link instead of copying them into tool-specific files.
 

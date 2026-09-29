@@ -19,9 +19,9 @@ Subsequent DIR-009 expressly chooses same-production-VPS backups only for V1 and
 
 ## Authorized work
 
-The active assignment is **P1 — Product Definition & V1 Scope only**. P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`. Define users, outcomes, bounded priorities, acceptance, dependencies and cost constraints; perform adversarial review and update handoff. Stop after P1. P2 and implementation are not authorized in this turn.
+The active assignment is **P2 — Domain Model & Business Rules** (DIR-016–020), planner only. P0 governance was accepted at commit `b425584daa80af2c1342252407c95e08024d3173`; P1 is APPROVED under APPR-002. P2 formalizes domain concepts, lifecycles, invariants, correction/snapshot/calculation semantics from the approved scope; perform adversarial review and update handoff. Stop after P2. P3 and implementation are not authorized in this turn.
 
-P0 owns governance, authority, continuity and guardrails. P1 concern owners are indexed in CONTEXT_INDEX. Detailed domain/business-rule modeling, schema/state-machine design, UX patterns/tokens, roadmap and build units remain later-phase work.
+P0 owns governance, authority, continuity and guardrails. P1 and P2 concern owners are indexed in CONTEXT_INDEX. Workflow orchestration, schema design, permission matrices, UX patterns/tokens, roadmap and build units remain later-phase work.
 
 Application code, Laravel/frontend generation, dependency installation, production infrastructure, deployment, and production database changes are outside this assignment. See [role boundaries](AGENT_OPERATING_MODEL.md) and [engineering constraints](ENGINEERING_PRINCIPLES.md).
 

@@ -110,6 +110,20 @@ The [publication confirmation](sources/P1_OWNER_PUBLICATION_CONFIRMATION_2026-09
 
 DIR-015 confirms that the Owner personally and intentionally executed the normal, non-force initial push (`git push --set-upstream origin main`) after commit `f31baf768550e8249cb8073c6ea879c2f17c470b`, creating remote `main` at that commit. The earlier "origin has no refs / no push executed" statements in the committed handoff were accurate at their commit time and are superseded by this later Owner action, not corrected as errors. DIR-015 authorizes exactly: recording the publication, independent receiver-checkout verification, the evidenced GAP-002 update, one bounded documentation checkpoint commit and its normal non-force push to origin/main. It does not authorize P2, changes to approved product content, business semantics, coverage, Golden Flow, DoD, backup policy or application work. Verified results are OBS-003 in [DECISION_LOG](DECISION_LOG.md); all twelve earlier archives remain immutable.
 
+### P2 authorization, deep review and final decisions
+
+Five in-session Owner messages received 2026-09-29 are preserved as **transcribed LOCKED SOURCE RECORDS** fourteen through eighteen (transcripts, not byte-copy claims about attachments). They authorize P2, order its deep review with bounded Level-1 autonomy and the multi-unit modelling requirement, decide the dates/backdating/numbering, residual-disposition and SIPLAH-fee questions, and — after the pre-checkpoint audit — decide the fee-settlement generalization with its evidence-correction instructions; the fourth transcript also contains the Owner's micro-correction, and the plan-approval exchange authorized documentation execution (DIR-016–020 in [DECISION_LOG](DECISION_LOG.md#dir-016019-and-tech-012--p2-authorization-deep-review-and-final-business-decisions)).
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [P2_OWNER_AUTHORIZATION_2026-09-29.txt](sources/P2_OWNER_AUTHORIZATION_2026-09-29.txt) | 994 / 20,841 | `A710619AFD59D788E042E7D55308164CE1F0FC16B8C85AB43909A1E95C837535` |
+| [P2_OWNER_DEEP_REVIEW_DIRECTIVE_2026-09-29.txt](sources/P2_OWNER_DEEP_REVIEW_DIRECTIVE_2026-09-29.txt) | 431 / 11,891 | `97C0528D6B25F0760F9CDDA9E70829419F64F40D80E8BA1C1B5D674129DE1B8E` |
+| [P2_OWNER_Q1_DATES_NUMBERING_DECISION_2026-09-29.txt](sources/P2_OWNER_Q1_DATES_NUMBERING_DECISION_2026-09-29.txt) | 89 / 2,881 | `FF04E60CB98CA5C7BAF47E933C22B0D2062D40FA6016929FE2B4916DE421DF1D` |
+| [P2_OWNER_FINAL_DECISIONS_2026-09-29.txt](sources/P2_OWNER_FINAL_DECISIONS_2026-09-29.txt) | 191 / 5,863 | `71EA03F2930380069E97C0BF706B0BA5841E29A55394509CFBD3BE981A5272A5` |
+| [P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt](sources/P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt) | 169 / 4,913 | `4F361A7F4E57343D1347879FBE85AA0939EAF4D0AC17E835CF219F594769ED44` |
+
+DIR-018/019/020 are binding within their subjects under the standing hierarchy; earlier records remain immutable. Canonical business meaning continues to live in V1_SCOPE and, for the new P2 formalization, in [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md)/[BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (REVIEW). All thirteen earlier source records retain their bytes and classifications.
+
 ## Classify statements before changing them
 
 | Class | Meaning | Treatment |
@@ -140,9 +154,10 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, REVIEW / P1 | 41–42, 46; P1 targets and user/product outcomes |
 | P1 adversarial review and quality evidence | `docs/01-product/P1_QUALITY_GATE.md` | Exists, REVIEW / P1 | P1 objective/review/gate/report |
 | Reference comparison and requirement identifiers | `docs/01-product/REFERENCE_COVERAGE.md` | Exists, REVIEW / P1 | DIR-008; PDF §§1–14; complete flow image |
-| Entities and relationships | `docs/02-domain/DOMAIN_MODEL.md` | Planned / P2 | 3–17 |
-| Business invariants and calculations | `docs/02-domain/BUSINESS_RULES.md` | Planned / P2 | 3–17, 26, 36, 45 |
-| State transitions and user workflows | `docs/02-domain/WORKFLOWS.md` | Planned / P3 | 11–16, 42 |
+| Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, REVIEW / P2 | 2–17; DIR-016–019 |
+| Business invariants, domain lifecycles/state rules and calculation semantics | `docs/02-domain/BUSINESS_RULES.md` | Exists, REVIEW / P2 | 3–17, 26–28, 36, 45; DIR-018/019 |
+| P2 adversarial review, traceability verification and gate evidence | `docs/02-domain/P2_QUALITY_GATE.md` | Exists, REVIEW / P2 | DIR-016 §§18–22 |
+| User/process workflows and transition orchestration over P2 lifecycles | `docs/02-domain/WORKFLOWS.md` | Planned / P3 | 11–16, 42 |
 | Database design and constraints | `docs/03-architecture/DATABASE.md` | Planned / P4 | 5, 13–15, 26–32, 38, 45 |
 | Application structure and stack | `docs/03-architecture/ARCHITECTURE.md` | Planned / P4 | 18–19, 35 |
 | Permissions and company-scope rules | `docs/02-domain/PERMISSIONS_MATRIX.md` | Planned / P5 | 17, 24, 41 |

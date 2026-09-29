@@ -1,0 +1,169 @@
+TRANSCRIBED LOCKED SOURCE RECORD — eighteenth source record
+Received: 2026-09-29, in-session Owner message following the pre-checkpoint
+PLANNER-DETERMINED rule audit
+Subject: Owner decision — generalization of the DIR-019 fee-deduction settlement to
+         other verified intermediary deductions; final P2 evidence corrections and
+         marker normalization instructions
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISION + FINAL P2 EVIDENCE CORRECTION
+
+Do NOT commit.
+Do NOT push.
+Do NOT start P3.
+
+I resolve the remaining business decision as follows.
+
+==================================================
+1. BR-FIN-09 GENERALIZATION — OWNER DECISION
+==================================================
+
+YES.
+
+The DIR-019 fee-deduction settlement principle may also apply to other
+VERIFIED intermediary deductions outside SIPLAH, including legitimate
+bank / VA / payment-intermediary fees, provided that all of the following
+are true:
+
+- the deduction is real and evidenced
+- the gross transaction / receivable value remains unchanged
+- actual Cash-In records only the money actually received
+- the verified intermediary deduction settles the corresponding
+  receivable portion
+- the deduction is represented as project-attributed expense/cost
+  exactly once
+- it cannot be double-counted elsewhere
+- actor, evidence, amount, timestamp and audit linkage are preserved
+
+This does NOT authorize arbitrary deductions or invented formulas.
+
+Do not generalize this to unsupported cashback, discounts, write-offs,
+or other unrelated financial treatments.
+
+Record this as an explicit Owner business decision.
+
+==================================================
+2. FIX THE TWO EVIDENCE-ACCURACY DEFECTS
+==================================================
+
+Correct:
+
+A. CURRENT_STATE.md
+The statement about individually marked PLANNER-DETERMINED rules must
+match the actual BUSINESS_RULES.md markers.
+
+B. P2_QUALITY_GATE.md
+Do not say "10 PLANNER-DETERMINED markers" when one occurrence is only
+the marker definition.
+
+Count DECISIONS, not raw string occurrences.
+
+==================================================
+3. NORMALIZE PLANNER-DETERMINED MARKERS
+==================================================
+
+Review every genuine Level-1 planner decision in BUSINESS_RULES.md.
+
+Use PLANNER-DETERMINED consistently for genuine Level-1 decisions.
+
+Specifically re-evaluate the previously unmarked candidates:
+
+- BR-INV-04
+- BR-RSV-04
+- BR-FIN-13
+- BR-FIN-07
+- BR-ACC-03
+- BR-INV-03
+
+Do not mechanically mark them.
+
+For each one:
+- confirm it is genuinely Level-1;
+- if yes, mark it consistently;
+- if not, explain why it is not.
+
+After normalization, update all counts and evidence references from the
+actual file contents.
+
+==================================================
+4. RECHECK FILE/PATH COUNTS
+==================================================
+
+There is a numerical inconsistency in the prior audit report.
+
+It states:
+
+"15 paths — 5 new"
+
+but the listed contents appear to include:
+
+- 3 new P2 documents
+- 4 new Owner source transcripts
+- 10 modified tracked files
+
+which would imply 7 new + 10 modified = 17 paths.
+
+Do NOT assume either number is correct.
+
+Verify directly using Git.
+
+Report and record the ACTUAL:
+
+- total changed paths
+- new/untracked files
+- modified tracked files
+- staged files
+- clean/dirty status
+
+Update P2_QUALITY_GATE, CURRENT_STATE, NEXT_ACTION, or other evidence
+documents only where their recorded counts are inaccurate.
+
+==================================================
+5. FINAL VERIFICATION
+==================================================
+
+After the minimal corrections:
+
+- run the complete P2 static verification again
+- verify all links/anchors
+- verify lifecycle metadata
+- verify prior locked sources remain byte-identical
+- verify Q1/Q2/Q3 and this new Owner decision are faithfully represented
+- verify all 18 CAP groups and 14 document types still have P2 homes
+- verify OWNER_DECISION_REQUIRED = 0
+- verify there are no PENDING-OWNER markers
+- verify no schema / ERD / migration / application code exists
+- verify no P3 work was started
+- review the complete diff
+
+Do NOT stage.
+Do NOT commit.
+Do NOT push.
+
+==================================================
+6. FINAL REPORT
+==================================================
+
+Return:
+
+A. BR-FIN-09 final semantics
+B. Actual PLANNER-DETERMINED decision count
+C. Which additional rules were marked or not marked, with reasons
+D. Correct actual changed-path count
+E. New-file count
+F. Modified-file count
+G. Static verification result
+H. OWNER_DECISION_REQUIRED count
+I. Any remaining contradiction or evidence defect
+J. Whether the package is:
+
+READY FOR OWNER CHECKPOINT AUTHORIZATION
+
+or
+
+NEEDS FURTHER CORRECTION
+
+If READY, list the exact checkpoint file set.
+
+STOP uncommitted.

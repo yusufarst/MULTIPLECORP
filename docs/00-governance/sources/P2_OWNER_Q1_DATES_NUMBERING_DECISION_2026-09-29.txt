@@ -1,0 +1,89 @@
+TRANSCRIBED LOCKED SOURCE RECORD — sixteenth source record
+Received: 2026-09-29, in-session Owner message answering P2 question Q1
+Subject: Owner decision — backdating, dual-date model, document numbering periods,
+         multiple Admin accounts and individual audit attribution
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+==================================================
+Q1 — BACKDATING AND DOCUMENT NUMBERING
+==================================================
+
+OWNER DECISION:
+
+Owner and Admin Operasional have the SAME backdating authority.
+
+Multiple Admin Operasional accounts may exist.
+At V1 launch there may be at least two separate Admin accounts.
+
+Permissions are role/capability-based, but every action must remain
+attributable to the individual user account that performed it.
+
+Use a dual-date model:
+
+- immutable recorded_at / system event timestamp
+- explicit business_date where applicable
+
+BACKDATING RULES:
+
+1. Owner and Admin Operasional may record a legitimate business_date
+   earlier than the actual entry/recorded_at date.
+
+2. Do NOT impose an Owner-only restriction merely because the
+   business_date belongs to a previous month.
+
+3. Backdating must never rewrite the real system timestamp.
+
+4. Every backdated committed transaction must preserve:
+
+   - recorded_at
+   - business_date
+   - individual actor/user account
+   - audit trail
+   - reason where appropriate
+   - before/after information for corrections where applicable
+
+5. Backdating must represent the REAL business date of an actual
+   transaction or document.
+
+6. Backdating must NOT be usable to fabricate history, bypass lifecycle
+   rules, bypass stock/financial integrity, or evade audit controls.
+
+7. Future-dating is not allowed unless a later explicitly-defined
+   business workflow legitimately requires it.
+
+DOCUMENT NUMBERING:
+
+8. Document numbering period follows the document's business_date.
+
+9. A backdated document receives the NEXT AVAILABLE UNIQUE NUMBER
+   for that business-date period.
+
+10. NEVER:
+
+   - insert numbers between previously issued document numbers
+   - renumber previously issued documents
+   - reuse a consumed number
+   - rewrite historical sequences
+
+Therefore chronological creation order and document-number order are
+allowed to differ after legitimate backdated issuance.
+
+Uniqueness, immutability, and auditability are more important than
+cosmetic chronological numbering.
+
+ACCOUNT / AUDIT SEMANTICS:
+
+Multiple users may hold the Admin Operasional role.
+
+For example:
+
+Admin User A
+Admin User B
+
+may have the same business permissions while remaining separate identities.
+
+Audit history must record the exact user account performing every
+sensitive action.
+
+Do not collapse multiple Admin users into one shared Admin identity.

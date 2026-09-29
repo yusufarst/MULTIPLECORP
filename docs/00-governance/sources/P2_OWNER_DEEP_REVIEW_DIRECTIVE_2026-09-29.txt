@@ -1,0 +1,431 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifteenth source record
+Received: 2026-09-29, in-session Owner message rejecting the first P2 plan presentation
+Subject: P2 plan deep review under bounded autonomy; broad Level-1 planning authority;
+         explicit multi-unit modelling requirement (sections 6); final output contract A–S
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+P2 PLAN DEEP REVIEW — BOUNDED AUTONOMY
+
+You are the primary planning architect for:
+
+MultipleCorp — Company Management System
+
+Remain in PLAN MODE.
+
+Do NOT modify repository files.
+Do NOT commit.
+Do NOT push.
+Do NOT implement application code.
+Do NOT begin P3.
+
+The existing P2 plan is a strong working draft, not a solution you are
+required to defend.
+
+I want you to think independently and deeply.
+
+You have authority to challenge, restructure, simplify, replace, or improve
+your own proposed P2 model if doing so produces a more correct, coherent,
+maintainable, and implementation-ready domain foundation.
+
+==================================================
+1. YOUR AUTHORITY
+==================================================
+
+You have broad Level-1 planning authority.
+
+You MAY independently decide:
+
+- domain boundaries
+- concept boundaries
+- terminology normalization
+- whether a concept needs its own lifecycle
+- whether multiple apparent concepts should be one concept
+- whether one apparent concept should be split
+- state-model structure
+- correction semantics
+- invariant structure
+- snapshot semantics
+- calculation structure where business meaning is already established
+- cross-domain ownership
+- traceability structure
+- documentation organization
+- how to eliminate duplicated truth
+- how to avoid unnecessary complexity
+- which concerns belong in P2 vs P3/P4/P5/P6
+
+You do NOT need Owner approval for technical/planning choices that preserve
+approved business intent.
+
+Do not escalate questions merely because several valid technical solutions
+exist.
+
+Choose the strongest solution yourself.
+
+==================================================
+2. WHAT YOU MUST NOT CHANGE
+==================================================
+
+The following are authoritative constraints:
+
+- approved P1 product scope
+- explicit Owner decisions
+- V1_REQUIRED capabilities
+- explicitly removed/deferred scope
+- Supplier Comparison remains removed
+- UNY/UGM remain ordinary clients
+- SIPLAH remains a transaction/purchasing channel
+- no invented SIPLAH cashback formula
+- shared physical warehouse semantics
+- physical inventory vs economic/company attribution separation
+- reservation semantics already approved
+- Invoice != Billing != Payment
+- Sales Value != Active Receivable != Cash-In != HPP != Cash-Out
+- managerial finance, not formal GL/accounting
+- Owner-only Completion Override
+- local-only production-VPS backup policy
+- no silent feature cuts because of the delivery deadline
+
+If your proposed model conflicts with one of these, your model is wrong,
+not the approved decision.
+
+==================================================
+3. THINK FROM FIRST PRINCIPLES
+==================================================
+
+Do not merely polish the existing plan.
+
+Reconstruct the domain mentally from the approved repository evidence.
+
+Ask:
+
+- What is the minimum set of concepts required to represent reality
+  without losing capability?
+- Where could two sources of truth accidentally appear?
+- Which concepts are facts, which are documents, which are processes,
+  which are derived values?
+- Which statuses are genuinely business states versus derived progress?
+- Which values should never be stored as independent truth?
+- Which actions produce irreversible business history?
+- Which corrections must be compensating rather than destructive?
+- Which concepts cross company boundaries?
+- Which concepts expose sensitive financial information?
+- Which assumptions will make P4/P5/P6 unnecessarily difficult later?
+- Which model would still make sense five years from now?
+
+Prefer semantic clarity over implementation convenience.
+
+==================================================
+4. OWNER_DECISION_REQUIRED DISCIPLINE
+==================================================
+
+The current plan surfaced several possible Owner decisions.
+
+Do NOT automatically preserve those classifications.
+
+For every ambiguity, independently classify it as:
+
+1. ALREADY SETTLED
+   Repository evidence already determines the answer.
+
+2. LEVEL-1 PLANNER DECISION
+   Multiple valid designs exist, but choosing among them does not alter
+   approved business intent. Decide it yourself.
+
+3. TRUE OWNER BUSINESS DECISION
+   Different answers would materially change business behavior, policy,
+   authority, financial meaning, commercial meaning, or required capability.
+
+Only category 3 becomes OWNER_DECISION_REQUIRED.
+
+Be aggressive about resolving category 1 and 2 yourself.
+
+Be equally aggressive about NOT silently deciding category 3.
+
+==================================================
+5. REVIEW ALL CURRENT AMBIGUITIES
+==================================================
+
+Re-evaluate, without being anchored to the current recommendations:
+
+- timezone / business-day boundary
+- backdating
+- receivable aging basis
+- residual receivable handling
+- SIPLAH transaction-value semantics
+- purchases without a project
+- unit and unit-conversion semantics
+- project lifetime profit vs period profit
+- revenue-period attribution
+- HPP-period attribution
+- one payment across multiple invoices
+- payment allocation semantics
+- reservation against existing vs incoming supply
+- no-quotation confirmed demand
+- whether an Order concept is actually necessary
+- channel mutability
+- purchase-cost provenance
+- drop-ship HPP recognition
+- Cash-Out source concept
+- opening-stock provenance
+- document-number consumption after void
+- damaged reserved stock
+- return after billing/payment
+- company deactivation with historical transactions
+
+Also discover issues that neither the current plan nor this prompt mentions.
+
+==================================================
+6. UNIT / MULTI-UNIT MODELLING
+==================================================
+
+Do not reduce capability simply to remove ambiguity.
+
+The approved domain expects products to support multiple units.
+
+Determine the most coherent BUSINESS model for units and conversions.
+
+Possible concepts may include, but are not limited to:
+
+- base unit
+- alternate unit
+- conversion ratio
+- transaction unit
+- snapshot conversion
+
+You are free to find a better model.
+
+Do not design database columns.
+
+If exact business behavior truly cannot be determined without changing
+business meaning, escalate only the smallest necessary Owner question.
+
+==================================================
+7. FINANCIAL MODELLING
+==================================================
+
+Pay special attention to financial semantics.
+
+MultipleCorp needs managerial operational truth, not accounting theater.
+
+Independently determine the cleanest model for:
+
+- transaction value
+- invoice value
+- billing activation
+- active receivable
+- payment
+- payment allocation
+- advance payment
+- overpayment
+- customer credit
+- refund
+- project HPP
+- Cash-Out
+- project lifetime profit
+- company-period profit
+- consolidated-period profit
+- corrections after billing/payment
+
+Do not manufacture accounting journals.
+
+Do not conflate economic cost timing with cash timing.
+
+Do not invent period-recognition policy if it is genuinely a business
+decision.
+
+==================================================
+8. INVENTORY MODELLING
+==================================================
+
+Try to break your own inventory model.
+
+Ensure it naturally handles:
+
+- shared physical stock
+- acquisition provenance
+- company cost attribution
+- reservation
+- partial reservation
+- receiving
+- partial receiving
+- quarantine/damaged stock
+- dispatch
+- return
+- reversal
+- opname
+- opening stock
+- inter-company consumption
+- direct/drop-ship
+- serial items
+- multiple units
+- cancellation at different lifecycle points
+
+Derived values should remain derived wherever possible.
+
+Avoid two independent truths for the same quantity.
+
+==================================================
+9. STATE-MODEL REVIEW
+==================================================
+
+Reconsider every proposed state machine.
+
+For each concept ask:
+
+Does it really need stored state?
+
+Could its status instead be derived from immutable events/facts?
+
+Would a state machine prevent impossible business conditions or merely
+add complexity?
+
+You may add, remove, merge, or simplify state models.
+
+Do not use a universal status enum.
+
+==================================================
+10. DOCUMENT MODEL REVIEW
+==================================================
+
+Find the simplest model that supports:
+
+- generated documents
+- external authentic documents
+- numbering
+- issuer identity
+- revision
+- void
+- snapshot immutability
+- multiple layouts derived from one business record
+- retrying rendering without duplicating issuance
+
+Prevent document layout from becoming a second transaction model.
+
+==================================================
+11. CORRECTION AND HISTORY
+==================================================
+
+Design for mistakes as a normal operational reality.
+
+Determine where each applies:
+
+EDIT
+REVISION
+VOID
+REVERSAL
+RETURN
+REALLOCATION
+COMPENSATING ACTION
+ARCHIVE / INACTIVE
+
+No important committed history may silently disappear.
+
+Test the correction model against downstream effects:
+
+stock
+delivery
+invoice
+billing
+payment
+completion
+documents
+
+==================================================
+12. ADVERSARIAL MULTI-PASS REVIEW
+==================================================
+
+Perform at least three conceptual passes:
+
+PASS 1 — MODEL
+Find missing, duplicated, overloaded, or unnecessary concepts.
+
+PASS 2 — FAILURE
+Try to create impossible states, double counting, data leakage,
+or irrecoverable correction paths.
+
+PASS 3 — EXECUTION
+Imagine P3/P4/P5/P6 implementing this model.
+Identify anything that would force those phases to guess business meaning.
+
+You may use planning/sub-agents if useful.
+
+Do not optimize for speed.
+Optimize for correctness and clarity.
+
+==================================================
+13. DO NOT OVERFIT TO THE CURRENT PLAN
+==================================================
+
+The current plan is evidence, not authority.
+
+You may conclude that:
+
+- its 13 domains are correct;
+- fewer domains are better;
+- more conceptual boundaries are needed;
+- some proposed state machines should disappear;
+- some Level-1 defaults should change;
+- some alleged Owner decisions are actually planner decisions;
+- new genuine Owner decisions exist.
+
+Explain material changes.
+
+==================================================
+14. FINAL OUTPUT
+==================================================
+
+Return a revised P2 plan containing:
+
+A. Baseline integrity result
+
+B. Your recommended domain architecture
+
+C. Concepts you changed from the previous plan and why
+
+D. Final lifecycle/state-model strategy
+
+E. Final inventory model
+
+F. Final financial model
+
+G. Final document model
+
+H. Final correction/history model
+
+I. Final snapshot model
+
+J. Highest-risk invariants
+
+K. Derived-vs-stored truth decisions
+
+L. P1 capability coverage check
+
+M. Newly discovered gaps
+
+N. OWNER_DECISION_REQUIRED analysis:
+   - already-settled items
+   - Level-1 decisions you made
+   - true Owner decisions still required
+
+O. For every TRUE Owner decision:
+   - exact question
+   - meaningful options
+   - consequences
+   - your recommendation and reasoning
+
+P. Adversarial-review findings
+
+Q. Final proposed canonical P2 files
+
+R. Readiness:
+   either
+   READY FOR DOCUMENTATION EXECUTION
+   or
+   READY FOR OWNER DECISIONS
+
+S. Exact next safe action
+
+Do NOT make repository changes.
+
+STOP after the revised plan.

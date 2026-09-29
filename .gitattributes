@@ -11,5 +11,10 @@ docs/00-governance/sources/P1_FINAL_DECISIONS_RECOVERY_2026-09-28.txt -text whit
 docs/00-governance/sources/P1_OWNER_APPROVAL_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09-28.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
 docs/00-governance/sources/P1_OWNER_PUBLICATION_CONFIRMATION_2026-09-29.txt -text
+docs/00-governance/sources/P2_OWNER_AUTHORIZATION_2026-09-29.txt -text
+docs/00-governance/sources/P2_OWNER_DEEP_REVIEW_DIRECTIVE_2026-09-29.txt -text
+docs/00-governance/sources/P2_OWNER_Q1_DATES_NUMBERING_DECISION_2026-09-29.txt -text
+docs/00-governance/sources/P2_OWNER_FINAL_DECISIONS_2026-09-29.txt -text
+docs/00-governance/sources/P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt -text
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary

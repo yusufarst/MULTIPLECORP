@@ -1,0 +1,191 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventeenth source record
+Received: 2026-09-29, two consecutive in-session Owner messages closing the remaining
+P2 business decisions. Part 1 decides Q2 (residual receivable disposition) and
+Q3 (SIPLAH net fee settlement) and grants explicit Level-1 authority without a
+ratification list. Part 2 is the Owner's follow-up micro-correction removing stale
+pending-owner language. Both parts are transcribed verbatim; the same message set
+was followed by the Owner's approval of the finalized P2 plan for documentation
+execution.
+This is a transcript of in-session messages, not a byte-copy claim about attachments.
+====================================================================
+PART 1 — FINAL OWNER DECISIONS
+====================================================================
+
+FINAL OWNER DECISIONS — CLOSE REMAINING P2 BUSINESS DECISIONS
+
+Preserve the current revised P2 plan and all accepted Q1 decisions.
+
+I am now resolving the remaining TRUE OWNER_DECISION_REQUIRED items.
+
+==================================================
+Q2 — RESIDUAL RECEIVABLE DISPOSITION
+==================================================
+
+OWNER DECISION:
+
+Use the following V1 semantics.
+
+1. OWNER WAIVER / WRITE-OFF
+
+Owner may explicitly dispose of an uncollectable residual receivable.
+
+Effect:
+
+- remove the disposed amount from ACTIVE RECEIVABLE
+- remove it from collectible aging totals
+- preserve it permanently in disposed/write-off history
+- do NOT delete the original receivable
+- do NOT create Cash-In
+- do NOT create profit
+- do NOT pretend payment occurred
+- require amount, reason, actor, timestamp, before/after state and audit linkage
+
+This is managerial operational treatment only.
+It is NOT formal accounting / GL treatment.
+
+2. DISPUTE HOLD
+
+A disputed receivable:
+
+- remains ACTIVE RECEIVABLE
+- remains included in aging
+- aging continues from due_date
+- carries a disputed/hold indicator and reason
+- does NOT count as settled
+
+3. ACTUAL PAYMENT RECEIVED BUT NOT YET RECORDED
+
+If money was genuinely received outside the normal system entry flow:
+
+- record/reconstruct the legitimate Payment / Cash-In fact
+- preserve supporting evidence and audit trail
+- allocate it normally
+
+Do NOT use write-off/disposition as a substitute for a real payment.
+
+==================================================
+Q3 — SIPLAH NET FEE SETTLEMENT
+==================================================
+
+OWNER DECISION:
+
+YES.
+
+When SIPLAH legitimately remits an invoice net of a verified platform fee:
+
+Example:
+
+Gross Sales / Transaction Value = Rp10,000,000
+Actual Cash-In                = Rp9,700,000
+Verified SIPLAH Fee           = Rp300,000
+
+Business meaning:
+
+- Sales / Transaction Value remains Rp10,000,000
+- Cash-In is Rp9,700,000
+- Rp300,000 is an explicit audited SIPLAH fee-deduction settlement component
+- the fee is represented as project-attributed expense/cost exactly once
+- the full Rp10,000,000 receivable may therefore be settled
+- Owner write-off is NOT required merely because SIPLAH remitted net of fee
+
+Require:
+
+- recorded fee metadata
+- evidence where applicable
+- audit linkage
+- prevention of duplicate expense/cost recognition
+
+Do NOT invent any cashback/pengembalian formula.
+
+If cashback/pengembalian money is actually received, represent it as legitimate
+Cash-In according to the approved model.
+
+==================================================
+LEVEL-1 AUTHORITY
+==================================================
+
+Do NOT require an Owner confirm-or-correct ratification list for genuine
+Level-1 planner decisions.
+
+If a choice is correctly classified as Level-1 and preserves approved business
+intent, the planning agent is authorized to decide and document it.
+
+Remove the confirm-or-correct requirement for Level-1 decisions from the P2 plan
+and P2_QUALITY_GATE proposal.
+
+Only genuine business-policy choices require Owner approval.
+
+==================================================
+FINAL CONSISTENCY PASS
+==================================================
+
+Re-run the final adversarial consistency check for:
+
+- Q1 backdating and numbering
+- individual Admin account attribution
+- residual receivable disposition
+- receivable aging
+- Payment Application conservation
+- SIPLAH net settlement
+- Cash-In vs Sales Value vs Expense/HPP
+- project completion
+- inventory conservation
+- multi-unit arithmetic
+- historical immutability
+
+If no new genuine Owner business decision is discovered, final status must be:
+
+OWNER_DECISION_REQUIRED = 0
+READY FOR DOCUMENTATION EXECUTION
+
+Do NOT modify repository files yet.
+Do NOT commit.
+Do NOT push.
+Do NOT start P3.
+
+Return only:
+
+A. Final decision status
+B. Material plan deltas
+C. Any remaining contradiction
+D. P2 readiness result
+E. Exact next safe action
+
+STOP after the finalized plan.
+
+====================================================================
+PART 2 — FINAL MICRO-CORRECTION
+====================================================================
+
+FINAL MICRO-CORRECTION — REMOVE STALE PENDING-OWNER LANGUAGE
+
+The finalized P2 plan is approved in substance.
+
+Make only this final consistency correction:
+
+OWNER_DECISION_REQUIRED = 0.
+
+Therefore remove the stale proposal to include PENDING-OWNER markers in
+BUSINESS_RULES.md or any other P2 artifact.
+
+There are currently no pending Owner business decisions.
+
+Preserve:
+
+- PLANNER-DETERMINED markers for genuine Level-1 decisions
+- DIR-018 for Q1
+- DIR-019 for Q2/Q3
+- all finalized domain, inventory, finance, document, correction,
+  snapshot, invariant, and traceability decisions
+- OWNER_DECISION_REQUIRED = 0
+- READY FOR DOCUMENTATION EXECUTION
+
+Do not reopen Q1/Q2/Q3.
+Do not introduce a new Owner question unless a genuine contradiction is
+actually discovered.
+
+Do not modify repository files yet.
+
+Return the corrected final readiness statement and exact next safe action.
+
+STOP.
