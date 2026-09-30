@@ -8,8 +8,9 @@ This is the live handoff. It is written to be complete for an agent with no chat
 
 - Release: MultipleCorp — Company Management System, operational production V1, target 2026-10-15 ([charter](../00-governance/PROJECT_CHARTER.md)). Internal, project-centred operations for a group of legal companies sharing one physical warehouse with company-attributed cost ([product overview](../01-product/PRODUCT_OVERVIEW.md)).
 - **Completed phases:** P0 governance APPROVED (APPR-001); P1 product and V1 scope APPROVED (APPR-002); P2 domain model and business rules APPROVED (APPR-003); P3 critical business workflows APPROVED (APPR-004); **P4 database and application architecture APPROVED (APPR-005), checkpointed and published**.
-- **P4 checkpoint:** the commit with message `docs: finalize P4 database architecture`, whose parent is the P3 checkpoint `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`, pushed to origin/main by a normal non-force push. Resolve its SHA with `git log -1 --format=%H --grep='^docs: finalize P4 database architecture$'`; a commit cannot contain its own hash, so the next authorized task records the SHA literally (NEXT_ACTION). Earlier checkpoints: P2 `1392966bfb89581d705e0394424705978e1d3db8`, P3 `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`.
-- **P5 — Security & Authorization: NOT STARTED** and not authorized. The next task is a separate handoff/bootstrap task; P5 requires its own explicit Owner authorization afterwards.
+- **P4 checkpoint:** `e95d083d7114a1d0c43f6e9cb6a439c93a70134b` (`docs: finalize P4 database architecture`), whose parent is the P3 checkpoint `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`, published to origin/main by a normal non-force push and verified equal to live origin/main at the zero-context handoff ([OBS-009](../00-governance/DECISION_LOG.md#dir-030-obs-009-and-tech-019--zero-context-handoff-acceptance-and-p4-checkpoint-record)). Earlier checkpoints: P2 `1392966bfb89581d705e0394424705978e1d3db8`, P3 `7c6549e88ba8538aa6e08d0fb9720589705e1dd0`.
+- **Zero-context handoff: ACCEPTED** (DIR-030, OBS-009, TECH-019). A newly attached Claude Project session reconstructed P0–P4 from this repository alone, found no material contradiction and recorded the checkpoint above in the continuity commit `docs: record P4 handoff checkpoint` (parent `e95d083`).
+- **P5 — Security & Authorization: NOT STARTED** and not authorized; it requires a new explicit Owner authorization ([NEXT_ACTION](NEXT_ACTION.md)).
 - Last completed implementation unit: none; no application, migration or infrastructure exists.
 
 ## Canonical specifications (all APPROVED)
@@ -40,7 +41,8 @@ DIR-009 local-only backup on the production VPS with the accepted total-host-los
 ## Repository state
 
 - Remote: `https://github.com/yusufarst/MULTIPLECORP.git` (public — never commit real data, secrets or credentials). Branch `main` tracks `origin/main`.
-- At the P4 checkpoint: local HEAD == origin/main == the P4 finalization commit; working tree and index clean. A new session re-verifies this before acting and reports any difference.
+- Published HEAD: the handoff continuity commit `docs: record P4 handoff checkpoint` (resolve with `git log -1 --format='%H %s' --grep='^docs: record P4 handoff checkpoint$'`), whose parent is the P4 checkpoint `e95d083d7114a1d0c43f6e9cb6a439c93a70134b`, published by a normal non-force push with a clean tree and index. A new session re-verifies local HEAD == live origin/main before acting and reports any difference.
+- Line endings: the Owner's Windows checkout keeps CRLF working copies of CHANGELOG, DECISION_LOG, DATABASE and ARCHITECTURE whose committed blobs are LF. A Git without CRLF normalization (for example a Linux shell over the same folder) lists them as modified although each equals its blob after CR removal; confirm with `git diff --ignore-cr-at-eol --stat` (empty) before reporting a dirty tree, and stage with CRLF normalization (for example `git -c core.autocrlf=input add`) so Markdown blobs stay LF.
 - Git rules: commits use only the Owner's configured identity with no AI/model/tool attribution or co-author trailer (DIR-022); pushes are normal and non-force; on divergence stop and report; historical commits are never rewritten.
 
 ## Gaps and accepted risks
