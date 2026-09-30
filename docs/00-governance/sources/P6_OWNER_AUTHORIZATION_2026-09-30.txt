@@ -1,0 +1,1415 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-eighth source record
+Received: 2026-09-30, in-session Owner message following the published P5
+checkpoint b09e70f3a867d58b431c7ae0369b7a432c4fd1a1
+Subject: Owner fast-track authorization — P6 Concurrency, Idempotency &
+         Performance documentation (baseline verification through
+         conditional approval, one checkpoint commit, a normal non-force
+         push and the continuity freeze)
+Delivery: one pasted text block sent without an accompanying sentence; its
+         Markdown code-fence lines are not transcribed. Before any edit the
+         executor asked in-session whether to execute it exactly as written,
+         and the Owner answered "Ya, eksekusi penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — P6 CONCURRENCY, IDEMPOTENCY & PERFORMANCE
+FAST-TRACK EXECUTION (REVISED)
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+origin: https://github.com/yusufarst/MULTIPLECORP.git
+
+Date:
+2026-09-30
+
+Current phase:
+P6 — Concurrency, Idempotency & Performance
+
+Role:
+PRIMARY CONCURRENCY / PERFORMANCE ARCHITECT and repository executor
+(planning documentation only)
+
+Operating mode:
+AUTO permitted. AUTO is permission automation only. It never widens scope,
+starts later phases, rewrites history, force-pushes, touches production or
+decides Owner-level questions.
+
+==================================================
+0. AUTHORIZATION AND BOUNDARY
+==================================================
+
+I, the Owner, explicitly authorize P6 — Concurrency, Idempotency &
+Performance to begin now, using the FAST-TRACK pattern:
+
+baseline verification
+→ intake
+→ design and documentation
+→ self-review
+→ independent adversarial review
+→ fix
+→ re-derive counts and validate
+→ conditional approval
+→ one checkpoint commit
+→ one normal non-force push
+→ continuity freeze
+
+You have broad Level-1 technical authority. Resolve ordinary concurrency,
+locking, retry, idempotency, job, query and performance design choices
+yourself. Do not ask me to choose between technical alternatives when the
+repository already constrains the answer.
+
+You must STOP and report, instead of inventing an answer, when a genuine
+Owner-level business, authorization, visibility, cost or scope decision
+remains unresolved (section 11).
+
+P6 is DOCUMENTATION / SPECIFICATION ONLY. The repository says so for every
+planning phase, and nothing says otherwise for P6. Do not create any of
+the following:
+- Laravel or React code;
+- migrations or executable SQL (NON-EXECUTABLE fragments are allowed only
+  to clarify a mechanism, as in DATABASE);
+- configuration files;
+- packages;
+- Docker or infrastructure files;
+- tests or load scripts.
+
+Do NOT start P7. Do NOT design P7–P11.
+
+==================================================
+1. LANGUAGE RULE
+==================================================
+
+Every message addressed to me must be written in Bahasa Indonesia:
+- progress updates;
+- questions;
+- warnings;
+- stop reports;
+- the final report.
+
+Identifiers, SHAs, file paths, commands and technical names may stay
+verbatim inside Indonesian sentences.
+
+These stay in English:
+- repository documents;
+- identifiers;
+- commit messages;
+- the archived transcript of this message.
+
+==================================================
+2. SOURCE-OF-TRUTH RULES
+==================================================
+
+The repository is canonical. These are not sources of truth:
+- chat history;
+- project memory;
+- scratch files;
+- this message's planner notes (section 12).
+
+Apply SOURCE_OF_TRUTH's six-level hierarchy and CHANGE_CONTROL's authority
+levels. Where this message and the repository disagree on a fact, the
+repository wins; report the difference.
+
+Use current official documentation, and Context7 if available, where exact
+behaviour matters. Record source and version evidence; do not pin versions
+(DEP-07). At minimum check:
+
+PostgreSQL:
+- transaction isolation;
+- explicit and row locking (FOR UPDATE, FOR SHARE, NOWAIT);
+- advisory locks;
+- lock_timeout and statement_timeout;
+- deadlock detection;
+- INSERT ... ON CONFLICT semantics under READ COMMITTED;
+- deferred constraint triggers;
+- SQLSTATE codes;
+- EXPLAIN;
+- pg_trgm;
+- BRIN.
+
+Laravel:
+- database transactions and their deadlock retry attempts;
+- pessimistic locking;
+- queue after-commit dispatch, retries, backoff, unique jobs and failed
+  jobs;
+- job batches;
+- atomic cache locks;
+- scheduler overlap protection;
+- rate limiting;
+- Eloquent lazy-loading prevention;
+- the database session driver.
+
+Inertia:
+- partial reloads;
+- deferred and optional props.
+
+==================================================
+3. P6 ENTRY BASELINE VERIFICATION — BEFORE ANY EDIT
+==================================================
+
+Read-only first. Use equivalent syntax for your shell.
+
+1. The repository root is C:\Projects\MultipleCorp and `git remote -v`
+   shows the intended origin.
+2. Branch `main` tracks `origin/main`.
+3. Run `git fetch origin`. HEAD, the local origin/main ref and live
+   origin/main (`git ls-remote origin refs/heads/main`) must all be equal.
+   Ahead/behind must be 0.
+4. HEAD is exactly the P5 checkpoint:
+   b09e70f3a867d58b431c7ae0369b7a432c4fd1a1
+   `git log -1 --format='%H %P %s'` shows the subject
+   `docs: finalize P5 security and authorization` and the parent
+   6e640137901e0d16193e03004e142e9ea07b39ad.
+5. Working tree clean. `git diff --ignore-cr-at-eol --stat` must be empty
+   (apply the CURRENT_STATE line-ending note). The index is empty and
+   there are no untracked files.
+6. No merge, rebase, cherry-pick, revert or bisect is in progress.
+7. None of these exist:
+   - docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md
+   - docs/03-architecture/PERFORMANCE.md
+   - docs/03-architecture/API_AND_INTEGRATIONS.md
+   - any P7+ file
+   - any application code
+8. Repository state records all of the following:
+   - OWNER_DECISION_REQUIRED = 0;
+   - gap totals 33 — 3 CLOSED, 29 OPEN, 0 OWNER_DECISION_REQUIRED,
+     1 ACCEPTED_RISK;
+   - all 27 source records match their SOURCE_OF_TRUTH hashes;
+   - the three APPR-006 hashes equal the committed blobs:
+     PERMISSIONS_MATRIX BB085B2E…, SECURITY C93EEAB5…, DATABASE 88091B62….
+9. Informational only: AGENT_OPERATING_MODEL is expected to still contain
+   the stale sentence "The current assignment authorizes P1 only". Its
+   presence or absence is recorded in the entry observation and is never
+   a stop condition.
+
+If any item in 1–8 materially differs:
+- STOP and report in Bahasa Indonesia;
+- make no edits;
+- do not repair divergence.
+
+Record the verified P5 checkpoint SHA literally in the P6 entry
+observation. This discharges the NEXT_ACTION obligation.
+
+==================================================
+4. REPOSITORY INTAKE
+==================================================
+
+Read in this order:
+1. AGENTS.md
+2. CLAUDE.md
+3. README.md
+4. CONTEXT_INDEX
+5. CURRENT_STATE
+6. NEXT_ACTION
+7. SOURCE_OF_TRUTH (including the ownership registry)
+8. DECISION_LOG
+9. GAP_REGISTER
+10. CHANGE_CONTROL
+11. AGENT_OPERATING_MODEL
+12. ENGINEERING_PRINCIPLES
+13. PROJECT_CHARTER
+
+Then read the approved inputs P6 consumes.
+
+- DATABASE:
+  - §1 conventions and command identity;
+  - §3 and §3.1 guard registry;
+  - §4.1, §4.6–§4.8, §4.10–§4.13 as needed per AX;
+  - §5–§13 as needed per AX;
+  - §10 numbering;
+  - §17;
+  - §18 constraint catalogue, every ⚡ row;
+  - §20 indexes;
+  - §21 search;
+  - §22;
+  - §23;
+  - §25 transaction map;
+  - §26 idempotency and concurrency handoff;
+  - §27 scale;
+  - §28;
+  - §31 P6 items.
+- ARCHITECTURE:
+  - §2–§5 actions and SF-CMD outcome mapping;
+  - §3 inversion contracts (ProjectLifecycleParticipant,
+    CompletionPredicateProvider, DocumentChangeParticipant);
+  - §7 posting services and GuardUpdate;
+  - §9–§11 web layer and jobs;
+  - §13 integration seam;
+  - §14 reporting;
+  - §15–§17;
+  - §19;
+  - §20 P6 downstream.
+- WORKFLOWS:
+  - §1 outcome vocabulary;
+  - §2 SF-CMD, especially steps 4–6;
+  - §9 AX-01–37;
+  - §10 QS signals;
+  - §11 routing;
+  - L-13, L-23, L-30, L-37, L-42, L-45, L-46, L-49;
+  - §13 P6 obligations;
+  - WF-FIN-03, WF-FIN-05;
+  - WF-DOC-01/02 and SF-ISSUE;
+  - WF-INV-01–07, SF-RESERVE, SF-RSV-CUT, SF-RESTORE, SF-LOSS,
+    SF-UNATTRIBUTED, SF-REVAL;
+  - WF-PRJ-03, WF-PUR-02/03.
+- BUSINESS_RULES: BR-XD-07, BR-DOC-01/02, BR-RSV-01, BR-INV-01/07/08,
+  BR-FIN-03/04, BR-CR-03/05, BR-DT-01–06.
+- PERMISSIONS_MATRIX: AZ-03, AZ-05, AZ-08, AZ-09, AZ-11, RG-09, RG-10,
+  DP-07, DP-09, DP-10, DP-13, DP-14, DP-16, PJ-23.
+- SECURITY:
+  - AU-05–AU-11;
+  - WS-12;
+  - EN-04 and EN-05;
+  - FL-10;
+  - §10 H6-01–H6-12;
+  - the H8 list.
+- P4_QUALITY_GATE and P5_QUALITY_GATE deferred P6 obligations.
+- V1_SCOPE: DEP-07, DEP-09.
+- ACCEPTANCE_CRITERIA: AC-08, AC-10, AC-16, AC-22, AC-23.
+- Gaps: GAP-003, GAP-005, GAP-006, GAP-007, GAP-008, GAP-009, GAP-010,
+  GAP-012, GAP-013, GAP-015, GAP-016, GAP-017, GAP-022, GAP-023, GAP-025,
+  GAP-030, GAP-031.
+- Owner brief: §14, §27–§35, §40–§41.
+- ADR-001.
+
+Do not read the whole repository indiscriminately.
+
+==================================================
+5. SOURCE RECORD AND DECISION IDS
+==================================================
+
+Archive this entire message as the twenty-eighth transcribed LOCKED SOURCE
+RECORD under docs/00-governance/sources/. Follow the existing convention:
+- header format;
+- filename, for example P6_OWNER_AUTHORIZATION_2026-09-30.txt;
+- a `.gitattributes` `-text` entry like recent transcripts;
+- LF endings;
+- lines, bytes and SHA-256 recorded in SOURCE_OF_TRUTH.
+
+Do not alter the 27 earlier records.
+
+Use the next repository-conformant IDs. Expected (verify first):
+- DIR-032 for this authorization;
+- OBS-011 for the entry observation;
+- TECH-021 for the P6 work;
+- APPR-007 for the approval, if granted.
+
+Section 12 of this message is planner analysis, never Owner intent. It
+must not be recorded or cited as an Owner decision.
+
+==================================================
+6. NARROW GOVERNANCE CLEANUP
+==================================================
+
+Continuity wording only. No rule, business, architecture, security,
+approval or gap change. List each edit in TECH-021.
+
+6.1 AGENT_OPERATING_MODEL, "Execution eligibility": replace "The current
+    assignment authorizes P1 only; proactive risk discovery and Level 1
+    corrections remain allowed without generating P2+ specifications."
+    Use phase-agnostic wording that cannot go stale. It must say:
+    - the current authorized phase and task are recorded in CURRENT_STATE
+      and NEXT_ACTION;
+    - each phase needs its own explicit Owner authorization;
+    - proactive risk discovery and Level 1 corrections remain allowed
+      without generating specifications of unauthorized phases.
+    Keep every other rule of that section unchanged. If the sentence is
+    already gone, record that and make no edit.
+
+6.2 AGENTS.md, PROJECT_CHARTER and README: record P6 authorized under
+    DIR-032 and its actual end state. Update the phase-authorization
+    chain ("P6 by DIR-032") and "no later phase is authorized".
+
+6.3 CURRENT_STATE: record the literal verified P5 checkpoint SHA and its
+    publication (OBS-011). Remove the "known stale wording" bullet once
+    6.1 is applied.
+
+6.4 P5_QUALITY_GATE is REVIEW evidence. Do not rewrite it. Add one dated
+    addendum line stating that its "Exact next safe action" was discharged
+    by DIR-032 (P4 gate precedent).
+
+6.5 ENGINEERING_PRINCIPLES: add pointers from the concurrency,
+    idempotency and performance guardrails to the P6 owners. Pointer only.
+
+6.6 Approval pointer lines gain APPR-007 only if it is granted, following
+    the APPR-004/005/006 precedent. Include AGENT_OPERATING_MODEL's own
+    approval line.
+
+Do not broaden the cleanup. If you find other stale continuity wording:
+- in entry, navigation or handoff files: fix it and list it;
+- anywhere else: report it only.
+
+==================================================
+7. P6 OUTPUTS AND OWNERSHIP
+==================================================
+
+The SOURCE_OF_TRUTH ownership registry reserves three P6 paths.
+
+A. docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md
+   Owns:
+   - isolation, locking and the canonical lock order;
+   - the data-dependent lock-set protocol;
+   - the per-AX statement sequences;
+   - first-use row creation;
+   - stale-state detection;
+   - the command identity and replay protocol;
+   - business-duplicate handling;
+   - SQLSTATE-to-outcome mapping;
+   - retry and timeout policy;
+   - job and scheduler retry safety;
+   - numbering concurrency;
+   - authorization/revocation races;
+   - the P5 H6 mechanisms.
+
+B. docs/03-architecture/PERFORMANCE.md
+   Owns query and runtime performance design:
+   - N+1 prevention rules;
+   - query budgets per page and action class;
+   - index verification;
+   - pagination;
+   - search;
+   - dashboards and reports;
+   - exports;
+   - images;
+   - growth thresholds;
+   - cache policy;
+   - resource inputs handed to P9.
+
+   Boundary: P8 owns docs/05-quality/PERFORMANCE_TARGETS.md (measured
+   acceptance targets and how they are measured). ARCHITECTURE §20 asks P6
+   for "measured query targets", but no application exists to measure. So
+   P6 states design budgets and target values as explicit assumptions tied
+   to DEP-09 and GAP-017, plus the verification procedure (for example
+   EXPLAIN on generated fixtures at 1x/10x/100x). P8 turns them into
+   measured acceptance. Never claim a measurement.
+
+C. docs/03-architecture/API_AND_INTEGRATIONS.md
+   Owns route and integration boundaries, and stays concise:
+   - internal Inertia web routes are not converted to REST (OB §33);
+   - `/api/v1` exists only when a real integration needs it; V1 has no
+     live integration (ARCHITECTURE §13; D-03; AC-15);
+   - the idempotency, replay-protection, signature, timeout, retry and
+     queue contract any future external event must satisfy (OB §28, §34);
+   - external data never mutates stock or money without passing through
+     the internal actions.
+   Invent no integration. Link to SECURITY for authentication.
+
+D. A P6 quality gate, for example docs/03-architecture/P6_QUALITY_GATE.md.
+   REVIEW evidence, registered in SOURCE_OF_TRUTH.
+
+E. Governance, continuity and approved-document amendments only as
+   sections 6, 15 and 19 allow.
+
+Anti-duplication:
+- business meaning stays in V1_SCOPE, DOMAIN_MODEL, BUSINESS_RULES and
+  WORKFLOWS;
+- the logical model and "what commits together" stay in DATABASE §25;
+- application structure stays in ARCHITECTURE;
+- authorization truth stays in PERMISSIONS_MATRIX;
+- security controls stay in SECURITY.
+
+P6 files cite AX, C, BR, WF, SF, L, QS, AZ, RG, DP, AU, WS, FL, EN, H6
+and GAP identifiers. They never restate, relax or extend a rule.
+
+Keep the documents precise and table-driven; precision over bulk.
+
+==================================================
+8. REQUIRED P6 COVERAGE
+==================================================
+
+A. Transaction and isolation model
+   - Confirm or justify changes to READ COMMITTED with guard CHECKs as the
+     backstop (DATABASE §26).
+   - Name every place a stronger mechanism is needed and why:
+     - explicit row locks;
+     - conditional guard updates;
+     - SERIALIZABLE for a specific action;
+     - advisory locks only with a documented key namespace and
+       justification.
+   - Keep transactions short: no network, PDF, image, file, email or
+     large-report work inside them (DATABASE §25; OB §31).
+
+B. Canonical lock order
+   - Confirm and extend the DATABASE §26 order: project → correction case
+     → unattributed-loss case and group → product → scope → lot → serial
+     → reservation → project line → purchase line → charge and charge
+     share → lot cost → consumption → invoice → application source →
+     money fact → evidence → number counter.
+   - Add the positions of every other lock-bearing row family, including:
+     - command_log;
+     - user rows and their grants for in-command authorization (H6-01);
+     - the OWNER-role set for the last-Owner check (H6-02);
+     - company bank accounts, if used as a duplicate-payment anchor;
+     - bank statement lines and transfer-out money facts;
+     - reversal guards, commercial guards, deduction-settlement rows,
+       correction-case counters, import batch rows;
+     - every row family carrying lock_version (drafts, editable masters);
+     - credential tokens;
+     - sessions;
+     - counters and all first-use rows.
+   - Every §3.1 registry row family and every lock_version-bearing table
+     has a position.
+   - Within a lock class, lock rows in a deterministic order (for example
+     ascending id). The acting user's row and any target user rows are one
+     lock class: they are locked at that class's canonical position, in
+     ascending id, never "first" outside the order.
+   - Prove the order is acyclic for statically known lock sets
+     (mechanically, over the declared lock sets of section C). Data-
+     dependent lock sets follow the protocol of section C instead.
+
+C. Per-AX statement sequences, AX-01–AX-37
+   Every action gets a table row with these columns:
+   - anchors and lock set, in canonical order, marked static or
+     data-dependent;
+   - first-use rows (insert-or-lock);
+   - preconditions and authorization re-read under lock;
+   - stale-state check;
+   - guard deltas (one GuardUpdate statement per guard row per command);
+   - fact inserts;
+   - business identity and uniqueness used;
+   - audit and command_log completion;
+   - deferred-trigger checks at commit;
+   - outcome mapping;
+   - retry class.
+
+   Every action corrected by the P4 targeted review (RT-01–RT-37) must
+   have its concrete sequence. The cross-row preconditions of DATABASE §26
+   run under their anchors:
+   - completion predicates;
+   - the pre-payment Kuitansi cap;
+   - evidence resolution closing only identified lots;
+   - the reservation-cut choice.
+
+   Completion-predicate anchor. The completion anchor (AX-25/26) is the
+   project row, locked before its predicates are re-read, and the Force
+   Complete snapshot hash is compared under that lock. Therefore every
+   action that can change a project completion predicate, or trigger
+   SF-REVAL for a completed project, locks the affected project row(s) at
+   canonical position 1 before any lower anchor. This includes at least:
+   - AX-22 invoice void or downward revision;
+   - AX-34 cost correction cascades;
+   - every DocumentChangeParticipant path (document void or revision,
+     evidence replacement) and every ProjectLifecycleParticipant path;
+   - every correction affecting a completed project (BR-CR-05).
+
+   Data-dependent lock-set protocol. Where the complete lock set cannot be
+   known before reading dependent data, the action follows exactly this
+   protocol:
+   1. derive the candidate lock set without locks;
+   2. lock every currently known row in canonical order;
+   3. re-read and re-derive the lock set under those locks;
+   4. if the required set grew, release everything by rolling back and
+      restarting the whole action;
+   5. retry from the beginning using the expanded set, with a bounded
+      restart count.
+   Deadlock retry (40P01) is only a backstop, never the primary design.
+   Apply this explicitly to at least:
+   - AX-34 correction cascades (dependent consumptions, restorations,
+     losses, allocations and the completed projects they revalidate);
+   - AX-37 unattributed-loss resolution and its reversal;
+   - SF-REVAL fan-out to several completed projects;
+   - SF-UNATTRIBUTED overlap groups and candidate sets.
+   SF-UNATTRIBUTED takes its immutable candidate snapshot under the scope
+   and lot locks of the affected scope, so a concurrent movement cannot
+   change the candidates after the snapshot (DIR-027; C-36).
+
+D. Guards
+   - A guard update that matches zero rows is a failure, never a silent
+     success.
+   - First-use guard and counter rows need race-safe creation
+     (insert-or-lock), so two first users can neither both create nor
+     both miss the row:
+     - a new scope;
+     - a lot;
+     - a charge share;
+     - an overlap group;
+     - a numbering period.
+   - Set the ReconcileGuards cadence from the §3.1 registry, verify-only.
+     GuardMaintenance stays audited and manual (GAP-031).
+
+E. Stale state
+   - The lock_version protocol on editable rows, including concurrent
+     draft editing of quotation revisions and invoice versions (OB §32).
+   - Guard and scope version for counts; count staleness means a count
+     recorded against a superseded scope version returns CONFLICT and
+     never overwrites stock (C-33; GAP-009).
+   - The Force Complete snapshot hash.
+   - A form resubmitted after session expiry is a new intent through
+     SF-CMD step 5 (GAP-015).
+
+F. Command identity and replay (GAP-008, H6-03, DP-16; SF-CMD step 6)
+   - The client-generated command_id format and validation.
+   - A canonical payload fingerprint.
+   - Where command_log is written relative to the business transaction.
+   - In-flight handling for concurrent identical ids.
+   - A replay with the same id and fingerprint returns the original
+     terminal result, consistent with SF-CMD step 6: COMMITTED with its
+     result identifiers, and equally an original REJECTED or CONFLICT.
+     Define a durable mechanism that retains terminal outcomes even when
+     the business transaction itself rolled back — for example an
+     autonomous short transaction, or another mechanism the repository's
+     constraints make more correct — without changing approved business
+     semantics. A new attempt after a terminal outcome is a new intent
+     with a new command_id.
+   - The same id with a different fingerprint is CONFLICT.
+   - Reuse of a command_id by another account is CONFLICT and discloses
+     nothing (DP-16).
+   - A replay by the original actor after revocation or deactivation is
+     re-authorized first and, when re-authorization fails, follows the
+     existing AZ-11 denial response without disclosure (DP-14, DP-16).
+   - A replay that waits on an identical in-flight command beyond its wait
+     horizon maps to an existing outcome of WORKFLOWS §1 (FAILED, nothing
+     new committed, the same command_id retriable later); PENDING is used
+     only where WORKFLOWS permits it for background work.
+   - Retention derived from the real retry horizon. The per-table
+     (command_id, command_line_no) keys keep uniqueness after retention.
+   - Deterministic command ids for job-driven and import-driven effects
+     (ARCHITECTURE §11; AX-28).
+
+G. Separate duplicates (not retries)
+   - Every business identity of DATABASE §26 per AX, including the AX-04
+     receiving identity (purchase line + supplier delivery reference for
+     ORIGINAL receipts; corrective receipts cite the receipt they correct).
+   - The FL-10 evidence duplicate lookup stays outside the business
+     transaction, as H6-09 requires.
+   - L-49 likely-duplicate warnings and the WF-FIN-03 payment duplicate
+     check (same company bank account and amount within a date window)
+     may be re-checked inside the transaction under a suitable anchor, so
+     two concurrent submissions cannot both pass silently.
+   - Every approved warning remains a warning with its approved override
+     (ADM+ override with audited reason for payments per AX-18; the
+     actor's reasoned confirmation for L-49). Never convert one into a
+     hard block and never remove one (section 11).
+
+H. SQLSTATE → outcome mapping
+   Map to COMMITTED, REJECTED (with rule code), CONFLICT, PENDING or
+   FAILED. Add no new outcome vocabulary; WORKFLOWS §1 owns it. Cover at
+   least:
+   - 23514, including a deferred constraint trigger failing at commit;
+   - 23505, distinguishing command identity (replay) from business
+     identity (CONFLICT);
+   - 23503 and related lookup failures: REJECTED under AZ-11, so an
+     out-of-scope reference is indistinguishable from a nonexistent one
+     and discloses nothing;
+   - custom trigger raises;
+   - 40001 and 40P01 (bounded whole-action retry);
+   - 55P03;
+   - 57014;
+   - zero-row guard update;
+   - connection loss after commit (the client replays the command_id).
+
+I. Retry and timeouts
+   - Bounded whole-action retry: attempts, backoff and jitter.
+   - Every retry re-authorizes and re-reads.
+   - Retries only for retryable classes; the data-dependent restart of
+     section C is counted separately from deadlock retries.
+   - lock_timeout and statement_timeout per transaction class.
+   - Behaviour on exhaustion (FAILED, nothing committed, same command_id
+     retriable).
+   - P9 receives the configuration values.
+
+J. Numbering concurrency (BR-DOC-02, C-10, AX-15, GAP-016)
+   - The counter row is locked (or conditionally incremented) at the last
+     position of the lock order.
+   - First-use counter creation per (company, type, business-date period).
+   - A rolled-back issue consumes nothing; a committed number is never
+     reused.
+   - A backdated issue draws the next number of its period; an unseeded
+     pre-cutover period is REJECTED.
+   - A double issue of one draft is one effect.
+   - A committed document's numbering period, business_date and issued
+     number are reused on retries, renders and replays and never
+     recomputed (GAP-016).
+   - Retired project numbers.
+   - The UNIQUE backstops.
+   - Never MAX(number)+1 and never a gapless claim.
+
+K. Jobs, scheduler and queue (ARCHITECTURE §11, GAP-007, GAP-012,
+   GAP-013)
+   - For every job, including RenderDocument, RenditionSweeper,
+     GenerateExport, ProcessImage, ValidateImportBatch and ReconcileGuards:
+     trigger, after-commit dispatch, idempotency key, retry and backoff,
+     poison and failed-job handling, and the effect of worker crash
+     before and after commit.
+   - Sweeper and ReconcileGuards cadence and thresholds.
+   - Scheduler overlap protection.
+   - Behaviour when the queue, cache or limiter store (Valkey/Redis) is
+     unavailable: committed actions stay committed; durable rows recover
+     the work; the store is never a system of record.
+   - Job payload versioning as a mixed-version deployment input for
+     P9/P10.
+
+L. P5 obligations H6-01–H6-12 (all twelve)
+   - H6-01: in-command re-authorization and its position in the lock
+     order.
+   - H6-02: last-Owner serialization.
+   - H6-03: replay binding.
+   - H6-04: job and export context, re-checked before producing and
+     before delivering output.
+   - H6-05: cache keys.
+   - H6-06: session end inside deactivation; a cheap active-account
+     check; last-activity updates only for user-initiated requests.
+   - H6-07: limiter atomicity, and fail-closed or fail-open per limiter.
+   - H6-08: scope-first query plans and trigram thresholds.
+   - H6-09: duplicate lookups outside the business transaction.
+   - H6-10: opaque lot-code generation with race-safe uniqueness.
+   - H6-11: credential-token keys and atomic single-use consumption.
+   - H6-12: a global password-verification cap and its behaviour when its
+     store is unavailable. Size the cap using the Argon2id cost as an
+     input assumption only; Argon2id tuning itself remains P9 (H9).
+
+M. Authorization and revocation races
+   Define the linearization point between a grant, capability,
+   deactivation or role change and a concurrent command, job step, export
+   delivery or replay, consistent with PERMISSIONS_MATRIX AZ-03 and AZ-05
+   and DP-07/09/14/16, and with the user-row lock class of section B.
+
+N. Performance (PERFORMANCE.md)
+   - N+1 rules: eager-load only needed relations, select columns,
+     aggregates, lazy-loading prevention outside production.
+   - Query-count budgets for the OB §29 pages: projects, products,
+     inventory, billing, invoices, dashboard, reports.
+   - Keyset pagination rules.
+   - Scanner exact-lookup budget.
+   - pg_trgm search: minimum length, limits, similarity thresholds,
+     scope-first filtering.
+   - Dashboard and QS reads over guard rows; Owner-only consolidated
+     aggregates (CS-08).
+   - Reports and exports as streamed or chunked jobs.
+   - Thumbnails in lists.
+   - Inertia partial and deferred props.
+   - Session-table write load.
+   - The H6-12 cap sized against the P9-tuned Argon2id cost (inputs
+     only).
+   - Audit and ledger growth thresholds for BRIN or partitioning.
+   - Connection-pool and worker sizing inputs for P9.
+   - Cache policy (none required in V1; H6-05 constraints).
+   - The index verification procedure, run later on generated fixtures.
+   - Assumptions stated against DEP-09: about 5 office PCs plus phones, a
+     handful of concurrent users, and up to hundreds of thousands of rows
+     per busy table (DATABASE §27).
+
+O. Handoff obligations
+   - P7: outcome presentation, command_id reuse on client retry,
+     double-submit behaviour, CONFLICT and stale handling, likely-duplicate
+     confirmation.
+   - P8: every mandatory scenario of section 9 as a real-PostgreSQL
+     concurrency or failure test with its expected end state, plus query
+     budgets and N+1 regression checks. P8 creates its own files.
+   - P9: timeouts, pool and worker sizing, scheduler, queue and cache
+     store, deadlock/retry/failed-job/slow-query monitoring, Argon2id
+     tuning.
+   - P10: mixed-version deployment and cutover implications.
+
+P. Integration seam (API_AND_INTEGRATIONS.md), as in section 7C.
+
+==================================================
+9. MANDATORY CONCURRENCY AND FAILURE SCENARIOS
+==================================================
+
+Document for each scenario:
+- the mechanism;
+- the anchors and locks;
+- the expected end state;
+- the outcome of each participant;
+- the P8 test obligation.
+
+The M-xx labels below are working labels. Assign repository IDs that do
+not collide with existing identifiers. If any label is renamed, record an
+explicit M-xx → assigned-ID mapping table in P6_QUALITY_GATE so every
+reference in this authorization stays auditable.
+
+Stock and reservation (AC-16, OB §27, GAP-009, GAP-023):
+
+M-01 Stock = 1; two concurrent dispatches of quantity 1, from different
+     Admins for different projects.
+     - Exactly one participant COMMITTED.
+     - The other deterministically fails as REJECTED or CONFLICT according
+       to the existing SF-CMD step 4 (precondition) and step 5 (stale
+       state) semantics, carrying the current state.
+     - No partial commit.
+     - Final ON HAND = 0 and AVAILABLE = 0; one movement and one
+       consumption; lot, serial and guard invariants correct;
+       reconciliation clean.
+     - Never both succeed. Stock never becomes −1.
+M-02 Stock = 1; two concurrent reservations for different projects.
+     Exactly one succeeds.
+M-03 Reservation versus a concurrent dispatch for another project. The
+     reserved supply is never consumed by the other project.
+M-04 Dispatch or receipt concurrent with a count on the same scope. The
+     stale count returns CONFLICT and never overwrites stock (C-33).
+M-05 The same serial scanned or dispatched twice concurrently.
+M-06 Unattributed-loss recognition or resolution concurrent with a
+     dispatch in the same scope. The candidate snapshot is taken under the
+     scope and lot locks; no retention and no double effect (DIR-027,
+     AX-37).
+M-07 Cost correction cascade concurrent with a dispatch of the affected
+     lot (AX-34), under the data-dependent protocol.
+
+Money:
+
+M-08 Duplicate payment, same command_id: sequential double submit and
+     concurrent identical submit. One payment fact; the second receives
+     the original outcome after re-authorization.
+M-09 Same command_id with a different payload → CONFLICT; nothing
+     committed.
+M-10 Lost response after commit → the client retry returns the original
+     outcome.
+M-11 Two different command_ids citing the same bank statement line whose
+     sum would exceed the line → one REJECTED (AX-18).
+M-12 Two Admins record the same real payment concurrently without a bank
+     line. The likely-duplicate warning cannot be bypassed by the race:
+     the second submission receives the approved warning outcome and
+     proceeds only with the ADM+ override and audited reason (AX-18;
+     QS-21). The warning stays a warning.
+M-13 Reuse of a command_id by another account → CONFLICT disclosing
+     nothing; replay by the original actor after revocation or
+     deactivation → the AZ-11 denial response disclosing nothing (DP-14,
+     DP-16).
+M-14 Payment contra concurrent with an application or refund on the same
+     source (AX-19, AX-20, L-46). No capacity is freed beyond real money
+     (C-13).
+
+Documents (BR-DOC-02, C-10):
+
+M-15 N concurrent issues of the same company, type and business-date
+     period → N distinct, unique, monotonic numbers.
+M-16 Concurrent first issue in a new period (counter creation race).
+M-17 A rolled-back issue consumes no number.
+M-18 A backdated issue into a seeded period, and into an unseeded
+     pre-cutover period (REJECTED).
+M-19 Two concurrent issues of the same draft → one issue.
+
+Authorization and security:
+
+M-20 Grant or capability revocation during an in-flight command.
+M-21 Deactivation concurrent with a command and with an open session.
+M-22 Two concurrent demotions or deactivations of the last active Owners
+     → the last one is REJECTED (RG-09).
+M-23 An export generated before a revocation and delivered after it →
+     withheld (DP-07).
+M-24 Concurrent consumption of one credential token → one password set
+     (AU-11).
+M-25 A distributed login flood against the password-verification cap
+     (H6-12).
+
+Structure and failure:
+
+M-26 Completion (AX-25) concurrent with a correction touching the
+     project; the project row is the anchor for both.
+M-27 A Force Complete snapshot that changed after confirmation →
+     CONFLICT.
+M-28 Deadlock between two multi-anchor actions. It is prevented by the
+     lock order or the data-dependent protocol, or retried and completed
+     once as the backstop.
+M-29 A zero-row guard update → failure, nothing committed.
+M-30 Concurrent first use of the same scope, lot, charge share or
+     overlap group.
+M-31 A render job crash, a sweeper re-queue and a retry. It never
+     reissues or renumbers; the committed period, business_date and
+     number are reused.
+M-32 A worker crash after commit but before job dispatch → recovered from
+     durable rows.
+M-33 A retried import batch → deterministic command ids, no duplicate
+     effect.
+M-34 The queue, cache or limiter store is unavailable during a committed
+     action.
+
+Purchasing, invoices and drafts:
+
+M-35 Two concurrent ORIGINAL receipts for the same purchase line and
+     supplier delivery reference → one COMMITTED, the other CONFLICT
+     (AX-04 identity); concurrent legitimate partial receipts of one line
+     never exceed the purchase-line guard (C-29).
+M-36 Purchase-remainder closure racing a receipt of the same line → the
+     receipt wins or the closure wins, never both (AX-32).
+M-37 Invoice void or downward revision racing an application or
+     settlement on that invoice → every reduction and dependent
+     disposition stays atomic in one action (AX-22, C-16); outstanding
+     never becomes negative (C-15).
+M-38 Two Admins edit the same mutable draft quotation revision or invoice
+     version → the stale edit returns CONFLICT and never silently
+     overwrites the newer state (lock_version; OB §32; SF-CMD step 5).
+
+==================================================
+10. OBLIGATION COVERAGE MAP
+==================================================
+
+Produce a closure table in the P6 gate. Map every item to its owning P6
+section, with status DESIGNED, HANDED TO P7/P8/P9/P10 (with owner), or N/A
+with reason.
+
+Items:
+- DATABASE §31, every P6 item;
+- DATABASE §26, every bullet;
+- ARCHITECTURE §20 P6 items;
+- ARCHITECTURE §5 outcome mapping and §11 job table;
+- SECURITY H6-01–H6-12;
+- WORKFLOWS §13 P6 list, every clause;
+- SF-CMD step 6 replay semantics;
+- every ⚡ row of DATABASE §18;
+- every §3.1 guard;
+- AX-01–AX-37;
+- mandatory scenarios M-01–M-38;
+- GAP-003, GAP-005, GAP-006, GAP-007, GAP-008, GAP-009, GAP-012, GAP-013,
+  GAP-015, GAP-016, GAP-017, GAP-022, GAP-023, GAP-030, GAP-031 — where
+  repository truth confirms each still names a P6 obligation; repository
+  truth wins if ownership differs;
+- AC-08, AC-10, AC-16, AC-22, AC-23;
+- REF-050, REF-057, REF-058, REF-059;
+- OB §14, §27–§35.
+
+Add P6 continuation notes to the affected gaps. Do not close a gap whose
+runtime proof belongs to P8, P9 or P10. Add new gaps only for genuinely
+new failure scenarios. Re-derive the totals.
+
+==================================================
+11. AUTHORITY CLASSIFICATION — WHEN TO DECIDE, WHEN TO STOP
+==================================================
+
+LEVEL 1 — decide autonomously and record the rationale:
+- isolation;
+- locks, lock order and the data-dependent protocol;
+- anchors;
+- insert-or-lock;
+- retry and restart counts;
+- timeouts;
+- command_log protocol, terminal-outcome retention and retention period;
+- fingerprint definition;
+- SQLSTATE mapping within the approved outcome vocabulary;
+- job keys and cadences;
+- limiter behaviour within SECURITY's fail-closed/fail-open rules;
+- index and query design;
+- budgets stated as assumptions;
+- cache policy within H6-05;
+- a transient lock wait, CONFLICT or bounded retry that users may
+  briefly experience.
+
+OWNER_DECISION_REQUIRED — STOP:
+- A mechanism that rejects, blocks or serializes a previously valid
+  business operation in a way that changes the approved workflow. For
+  example: freezing all warehouse operations during a count, forbidding
+  concurrent work the workflows allow, or turning an approved
+  likely-duplicate warning into a hard block (or removing it).
+- Any change to numbering guarantees (reuse, renumbering, a gapless
+  promise) or to date and period semantics (DIR-018).
+- Any residual race that could double-count stock or money, or leak
+  data, and that cannot be closed technically. Never accept it silently.
+- Any change to who may see or do something relative to
+  PERMISSIONS_MATRIX, SECURITY, WORKFLOWS §4 or DIR-011.
+- Any new recurring cost or paid service: managed queue, APM SaaS,
+  external cache.
+- Performance targets or measures that imply scope reduction.
+- Any change to an approved business meaning, including SF-CMD step 6.
+
+On an Owner-level question:
+1. Record it in GAP_REGISTER as OWNER_DECISION_REQUIRED, in the
+   CHANGE_CONTROL format.
+2. Complete all non-dependent P6 work; mark dependent points pending with
+   the gap ID.
+3. Validate.
+4. Update the handoff to the uncommitted pending state.
+5. Do NOT approve, commit or push.
+6. Report in Bahasa Indonesia and STOP.
+
+==================================================
+12. PLANNER NOTES — NOT OWNER DECISIONS
+==================================================
+
+These are analysis only. Verify each against the repository; the
+repository wins. They grant no business authority.
+
+PN-1 Revocation linearization.
+One Level-1 option:
+- a command takes FOR SHARE on its actor's user row and re-reads grants
+  there;
+- grant, capability, role and deactivation commands take FOR UPDATE on
+  the target user row.
+Then revocation waits for in-flight commands, and every later command
+sees it. Acting-user and target-user rows are one lock class, locked in
+ascending id at that class's canonical position — never blindly first —
+so two Owners changing each other's access cannot deadlock. Check this
+against AZ-03 ("next request").
+
+PN-2 command_log placement and terminal outcomes.
+One Level-1 option:
+- insert the command_log row first, inside the business transaction,
+  keyed by command_id;
+- a concurrent identical id waits on the unique key, then reads the
+  committed outcome;
+- because a rolled-back business transaction leaves no row, the REJECTED
+  or CONFLICT terminal outcome is written durably by a separate short
+  transaction after the rollback, so a replay still returns the original
+  result (SF-CMD step 6).
+Keep replay bound to actor and company; a failed re-authorization follows
+AZ-11.
+
+PN-3 Warnings under concurrency.
+L-49 and the payment duplicate check are evaluated before commit, so two
+concurrent submissions can both miss each other. A natural anchor may
+exist: the project line or case for L-49, the company bank account row
+for payments. Lock it, then re-check inside the transaction. FL-10
+evidence lookups stay outside (H6-09). The warning and its approved
+override stay exactly as approved.
+
+PN-4 Stock = 1.
+- Dispatches of the same product meet on the product guard row, then
+  scope, lot, serial and reservation.
+- The AVAILABLE ≥ 0 CHECK and the lot CHECK are the backstop.
+- The losing dispatch fails its re-read under lock and returns REJECTED
+  or CONFLICT as the SF-CMD step 4/5 mapping defines — never a partial
+  commit and never a CHECK surprise as the primary path.
+
+PN-5 Numbering.
+The counter at the end of the lock order keeps its hold time minimal.
+First-use period creation uses insert-or-lock. The counter's position
+must stay consistent with any document-issuing AX that also locks
+business anchors, including the project row when issue can change a
+completion predicate.
+
+PN-6 AX volume.
+Thirty-seven sequences are manageable as one template plus a per-AX
+table, with a generated acyclicity check over the statically declared
+lock sets and a conformance check for the data-dependent ones. Avoid
+prose per AX.
+
+PN-7 Timeouts.
+Short lock_timeout on interactive actions avoids pile-ups on shared
+guard rows. Background and import actions may differ. P9 owns the
+configured values.
+
+PN-8 Password-verification cap (H6-12).
+It must not create a new dependency. Options include an atomic cache
+lock or semaphore with fail-closed behaviour for authentication, or a
+database-backed counter, sized against the Argon2id cost that P9 tunes.
+Choose one at Level 1.
+
+==================================================
+13. PRESERVATION AND NON-REOPENING
+==================================================
+
+Preserve all approved P0–P5 business and security semantics, all
+V1_REQUIRED capabilities, the Golden Flow and the Definition of Done.
+
+Do not reopen:
+- DIR-009, DIR-011, DIR-018, DIR-019, DIR-020, DIR-024, DIR-026, DIR-027,
+  DIR-029, DIR-031;
+- APPR-006 decisions;
+- RISK-001 / GAP-018;
+- the PLANNER-DETERMINED decisions.
+
+Keep the architecture baseline:
+- Laravel, Inertia, React/TypeScript, shadcn/ui, Tailwind, PostgreSQL,
+  Nginx;
+- Valkey/Redis only for queue, cache and limiter, never a system of
+  record; sessions stay in PostgreSQL (SECURITY AU-06);
+- modular monolith, layered, MVC, actions, posting services with one
+  writer per guard;
+- microservices, Kafka, Kubernetes, event sourcing, full CQRS and
+  external search remain excluded;
+- partitioning, materialized views, read replicas and external caches
+  remain excluded from V1 (DATABASE §27); P6 may only record them as
+  candidates for later measurement where governance allows.
+
+==================================================
+14. PHASE BOUNDARIES
+==================================================
+
+- P7 owns screens, copy and interaction design.
+- P8 owns tests, TEST_STRATEGY, SECURITY_TEST_MATRIX, PERFORMANCE_TARGETS
+  and DEFINITION_OF_DONE.
+- P9 owns infrastructure, configuration values, roles, monitoring,
+  deployment and Argon2id tuning.
+- P10 owns release and cutover.
+- P11 owns build units.
+
+Create no file reserved for those phases. List obligations instead.
+
+==================================================
+15. AMENDMENTS TO APPROVED DOCUMENTS
+==================================================
+
+Prefer expressing the P6 design in the P6 files and linking to it.
+
+Amend an APPROVED file only when its current text would otherwise
+contradict the P6 design. Candidates:
+- DATABASE: an index, a command_log column, a terminal-outcome column or
+  a first-use key;
+- ARCHITECTURE: the §5 mapping or the §11 job table;
+- WORKFLOWS: a technical note;
+- PERMISSIONS_MATRIX or SECURITY: a mechanism reference.
+
+Each amendment must:
+- be narrow;
+- be technical (Level 1);
+- be marked TECH-021;
+- record its pre-amendment SHA-256;
+- keep APPROVED status with an amendment note;
+- be approved as part of APPR-007.
+
+Any amendment that changes business meaning, authority or visibility is
+Owner-level → STOP.
+
+==================================================
+16. SELF-REVIEW AND INDEPENDENT ADVERSARIAL REVIEW
+==================================================
+
+Self-review:
+- completeness against sections 8–10;
+- lock-order acyclicity for static sets and protocol conformance for
+  data-dependent sets;
+- anti-duplication;
+- authority classification;
+- traceability.
+
+Independent adversarial review:
+- Use at least two fresh read-only reviewers (subagents, if available)
+  that did not write the documents, given only the repository.
+- They red-team every M-scenario.
+- They also try interleavings the author did not list:
+  - lost responses;
+  - crashes between effects;
+  - retries after partial job work;
+  - revocation mid-flight;
+  - replay across accounts and after revocation;
+  - a replay of an original REJECTED or CONFLICT command;
+  - first-use races;
+  - deadlock cycles between corrected AX actions;
+  - lock sets that grow between derivation and locking;
+  - completion predicates changed by a lower-order action;
+  - deferred-trigger failures at commit;
+  - zero-row updates;
+  - counters across midnight and month boundaries (WIB);
+  - backdating;
+  - N+1 on every OB §29 page;
+  - scope-first search plans.
+
+Then run an independent verification pass of the fixes.
+
+Classify every finding as exactly one of:
+- CRITICAL
+- HIGH
+- MEDIUM
+- LOW
+- LEVEL-1 CORRECTION
+- OWNER_DECISION_REQUIRED
+- DEFERRED OBLIGATION (with owning phase)
+- NO DEFECT
+
+Fix every valid finding. Re-test every M-scenario after the fixes.
+
+==================================================
+17. SEPARATE FABLE REVIEW — ONLY IF MATERIALLY JUSTIFIED
+==================================================
+
+Do not request one by default. A separate targeted Fable review is
+materially justified only if at least one of these holds:
+
+a) A CRITICAL or HIGH finding on stock, money or numbering conservation,
+   lock order, replay or revocation was fixed, but its correctness cannot
+   be verified with high confidence from the documents alone.
+b) The author and an independent reviewer disagree on a race or
+   conservation finding, and the disagreement cannot be reconciled with
+   repository evidence.
+c) P6 required approved-document amendments beyond narrow technical
+   clarifications.
+d) The acyclicity check for statically known lock sets could not be
+   performed mechanically, or a data-dependent action cannot be shown to
+   conform to the derive → lock → re-verify → restart protocol.
+
+If justified:
+- STOP before approval, commit and push;
+- leave the package uncommitted and the handoff accurate;
+- report one bounded review scope and its expected risk reduction.
+
+Otherwise:
+- proceed;
+- state "separate Fable review not recommended", with a one-line reason;
+- say whether a later targeted review of specific AX sequences would
+  still add value, and why.
+
+==================================================
+18. RE-DERIVE COUNTS AND VALIDATE
+==================================================
+
+Recompute; do not reuse stale counts:
+- AX sequences, 37 of 37, each marked static or data-dependent;
+- guards mapped to lock positions;
+- ⚡ C-rows mapped;
+- M-scenarios with mechanism and end state, 38 of 38, and the mapping
+  table if labels were renamed;
+- H6 obligations, 12 of 12;
+- SQLSTATE mappings;
+- jobs;
+- query-budget rows;
+- findings by severity;
+- gap totals;
+- links and anchors;
+- source records (28) with hashes;
+- cited identifiers;
+- the changed-path census.
+
+Validate using the prior-gate approach. Keep scripts in a temp directory
+outside the repository.
+
+Checks:
+- relative links and anchors;
+- lifecycle metadata and approval lines;
+- all source hashes, earlier records unchanged;
+- every P6 identifier defined once and referenced;
+- every cited identifier resolves in its owner;
+- orphan checks: every AX, ⚡ C-row, §3.1 guard, H6 item and M-scenario
+  has a home;
+- a mechanical acyclicity check over the statically declared lock sets;
+- a conformance check that every data-dependent lock set documents the
+  derive → lock → re-verify → restart protocol;
+- every action that can change a completion predicate lists the project
+  row at position 1;
+- gap triage matches detail sections and the totals sentences
+  everywhere;
+- OWNER_DECISION_REQUIRED values consistent;
+- no placeholder or TODO/TBD markers;
+- secret-like scan of all added lines;
+- `git diff --check`;
+- no out-of-scope paths;
+- approved files unchanged except listed continuity lines and section 15
+  amendments;
+- no P7+ file;
+- no application code.
+
+==================================================
+19. GOVERNANCE AND CONTINUITY UPDATES
+==================================================
+
+Update, only as needed:
+- DECISION_LOG: DIR-032, OBS-011, TECH-021, APPR-007 if granted, and
+  index rows.
+- SOURCE_OF_TRUTH: source record 28; registry state for the three P6
+  paths; P6 gate registration.
+- CONTEXT_INDEX: P6 rows; the approval chain; the "twenty-eight source
+  records" count.
+- GAP_REGISTER.
+- CHANGELOG.
+- README, AGENTS, CLAUDE, PROJECT_CHARTER, AGENT_OPERATING_MODEL (per
+  section 6).
+- CURRENT_STATE and NEXT_ACTION.
+
+On success, the continuity freeze states:
+- P0–P6 are complete;
+- APPR-007 is the latest approval;
+- the P6 checkpoint is the commit
+  `docs: finalize P6 concurrency, idempotency and performance`, resolved
+  by
+  `git log -1 --format='%H %s' --grep='^docs: finalize P6 concurrency, idempotency and performance$'`;
+  its parent is b09e70f3a867d58b431c7ae0369b7a432c4fd1a1; the next task
+  records its SHA;
+- open gaps and the accepted risk;
+- P7 — UX, Information Architecture & Design System is NOT STARTED and
+  requires explicit Owner authorization;
+- the exact P7 entry baseline step;
+- what is not authorized.
+
+Perform a zero-context-agent check before the commit, with a fresh
+read-only reviewer given only the repository.
+
+==================================================
+20. CONDITIONAL OWNER APPROVAL
+==================================================
+
+If and ONLY if all of the following hold:
+- CRITICAL, HIGH, MEDIUM and LOW unresolved defects = 0 (deferred
+  obligations are recorded, not defects);
+- OWNER_DECISION_REQUIRED = 0;
+- no separate Fable review is triggered under section 17;
+- all 38 M-scenarios have a documented mechanism and end state, and the
+  re-test and all validation PASS;
+- statically known lock sets have a mechanically verified acyclic
+  ordering, and every data-dependent lock set conforms to the documented
+  derive → lock → re-verify → restart protocol;
+- every completion-predicate-changing action anchors on the project row
+  at position 1;
+- no known contradiction remains;
+- P0–P5 approved business and security semantics are preserved, with
+  only section 15 technical amendments;
+- P6 remains documentation only;
+- no P7 work exists;
+
+then I explicitly APPROVE the P6 normative baseline:
+- docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md → APPROVED;
+- docs/03-architecture/PERFORMANCE.md → APPROVED;
+- docs/03-architecture/API_AND_INTEGRATIONS.md → APPROVED;
+- any section 15 amended revisions are approved as part of it.
+
+Record this as APPR-007, with the SHA-256 of each approved file exactly as
+committed (LF blob bytes, lifecycle metadata included), and verify those
+hashes after staging.
+
+The P6 gate, logs, register and handoff stay REVIEW.
+
+==================================================
+21. CHECKPOINT COMMIT
+==================================================
+
+1. Review the complete diff: `git diff --ignore-cr-at-eol` plus all new
+   files.
+2. Stage explicit paths only, with CRLF normalization, for example:
+   `git -c core.autocrlf=input add -- <paths>`
+   Never use `git add -A` or `git add .`.
+3. Verify the staged content:
+   - `git diff --cached --stat` and `git diff --cached --check`;
+   - the staged list equals the intended census;
+   - secret scan of the staged diff;
+   - source-record blobs match their recorded hashes;
+   - APPR-007 hashes match the staged blobs;
+   - no unrelated, binary or temp files;
+   - no .env or key material.
+4. Commit once, message exactly:
+   docs: finalize P6 concurrency, idempotency and performance
+5. Identity and attribution:
+   - use only the Owner's existing configured Git identity;
+   - do not modify git config;
+   - do not pass --author;
+   - no trailers of any kind;
+   - never add Co-Authored-By, Generated-By or Assisted-By;
+   - never name Claude, Anthropic, Fable, Opus or any AI/model/tool.
+   If no identity is configured: STOP.
+6. After the commit:
+   - inspect the raw message (`git cat-file -p HEAD`) and confirm there is
+     no attribution trailer;
+   - confirm author and committer equal the configured identity;
+   - confirm the parent is b09e70f…;
+   - confirm the tree and index are clean (CRLF-aware).
+
+If automated review blocks staging or the commit:
+- do not bypass it or retry variants;
+- preserve the work;
+- report the exact command and reason in Bahasa Indonesia;
+- STOP.
+
+==================================================
+22. PUSH
+==================================================
+
+Immediately before pushing, run `git ls-remote origin refs/heads/main`.
+
+It must equal b09e70f3a867d58b431c7ae0369b7a432c4fd1a1, the new commit
+must be its direct child, and there must be no divergence. If so, run:
+
+git push origin main
+
+A normal push only. Never use:
+- --force
+- --force-with-lease
+- reset or rebase of published history
+- history rewriting
+- remote deletion
+
+On divergence: STOP and report.
+
+If no working GitHub credentials exist:
+- do not seek GUI or computer control;
+- report the local commit SHA;
+- instruct the Owner to run `git push origin main`.
+
+Never claim publication until live origin/main confirms it.
+
+==================================================
+23. POST-PUSH VERIFICATION
+==================================================
+
+Verify:
+- local HEAD == live origin/main (ls-remote);
+- tracking is up to date;
+- the tree and index are clean;
+- the three P6 files are APPROVED (APPR-007);
+- OWNER_DECISION_REQUIRED = 0;
+- P7 is NOT STARTED.
+
+Make no further commits in this task.
+
+==================================================
+24. STOP CONDITIONS — SUMMARY
+==================================================
+
+STOP and report in Bahasa Indonesia on any of the following:
+- baseline mismatch or divergence (section 3, items 1–8);
+- an OWNER_DECISION_REQUIRED item (section 11 procedure);
+- a section 17 review trigger;
+- a validation failure not fixable within Level 1;
+- a required change to approved business, authority or visibility
+  meaning;
+- a destructive operation;
+- an automated review blocking a Git action;
+- a missing Git identity or credentials (sections 21–22);
+- task completion.
+
+==================================================
+25. FINAL REPORT — IN BAHASA INDONESIA
+==================================================
+
+Write the report in Bahasa Indonesia. Keep identifiers, SHAs, paths and
+commands verbatim.
+
+A. Baseline verification, including the literal P5 checkpoint SHA and
+   the informational AGENT_OPERATING_MODEL check.
+B. Source record 28: file name, lines, bytes, SHA-256.
+C. Governance cleanup edits (6.1–6.6 and any extras).
+D. P6 files and their structure.
+E. Transaction and isolation model decision.
+F. Canonical lock order, the static acyclicity result and the
+   data-dependent protocol conformance result.
+G. AX-01–AX-37 sequence coverage, notable corrected-AX sequences, and
+   the completion-predicate anchor list.
+H. Guards: zero-row rule, first-use creation, ReconcileGuards cadence.
+I. Stale-state mechanisms, including draft editing.
+J. Command identity, replay protocol and terminal-outcome retention
+   (SF-CMD step 6).
+K. Separate-duplicate handling, including payment and L-49 warnings under
+   concurrency and the FL-10 distinction.
+L. SQLSTATE → outcome mapping (including 23503 under AZ-11), retry and
+   timeouts.
+M. Numbering concurrency and committed-value reuse.
+N. Jobs, scheduler and queue failure behaviour.
+O. H6-01–H6-12 mechanisms and the revocation linearization.
+P. Performance design: N+1 rules, budgets as assumptions, search,
+   dashboards, reports, growth thresholds, P9 sizing inputs.
+Q. API_AND_INTEGRATIONS summary.
+R. M-01–M-38 results, with M-01 (stock = 1), M-08–M-13 (duplicate
+   payment and replay), M-15–M-19 (numbering) and M-35–M-38 stated
+   explicitly, plus the ID mapping table if labels were renamed.
+S. Handoffs to P7, P8, P9 and P10.
+T. Approved-document amendments with pre-amendment hashes, or "none".
+U. Gap updates and re-derived totals.
+V. Closure-table result (section 10).
+W. Self-review findings.
+X. Independent review findings, dispositions and re-test.
+Y. Remaining contradictions.
+Z. OWNER_DECISION_REQUIRED count, with full details if greater than 0.
+AA. Separate Fable review decision and rationale, and any later targeted
+    review value.
+AB. Validation results with measured counts.
+AC. Approval ID and approved-file hashes.
+AD. Commit SHA, message and exact file census.
+AE. Author/committer identity and raw-message attribution check.
+AF. Push result, final local HEAD and live origin/main.
+AG. Working tree and index state (CRLF-aware).
+AH. P6 lifecycle and P7 status.
+AI. Zero-context handoff readiness.
+AJ. Level-1 choices worth the Owner's attention.
+AK. Exact next safe action.
+
+Expected successful end state:
+
+P0–P5 APPROVED
+P6 APPROVED (APPR-007)
+P6 CHECKPOINTED
+P6 PUBLISHED
+OWNER_DECISION_REQUIRED = 0
+LOCAL HEAD = live origin/main
+WORKING TREE CLEAN
+INDEX CLEAN
+P7 NOT STARTED — requires explicit Owner authorization
+
+STOP after reporting.

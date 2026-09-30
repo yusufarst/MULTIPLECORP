@@ -1,8 +1,8 @@
 # Source of truth and documentation governance
 
-Status: APPROVED | Updated: 2026-09-30 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-01 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision and [APPR-007](DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved) the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions; evidence, gap and handoff records remain REVIEW.
 
 ## Authority and provenance
 
@@ -36,7 +36,7 @@ C1 delegates a complete recommended selectable document set; the planner's bound
 
 Canonical documents organize these inputs. Source authority does not replace missing detailed specifications, test evidence, business decisions or execution authorization.
 
-Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents, APPR-003 the two P2 normative domain specifications, APPR-004 the P3 workflow specification with its amended P1/P2 revisions, APPR-005 the two P4 normative architecture specifications with the amended P2/P3 revisions and APPR-006 the two P5 normative security and authorization specifications with the amended DATABASE revision; historical REVIEW statements do not override those approvals.
+Earlier source sections below preserve the lifecycle state at each directive's receipt. APPR-002 subsequently approves the three P1 canonical product documents, APPR-003 the two P2 normative domain specifications, APPR-004 the P3 workflow specification with its amended P1/P2 revisions, APPR-005 the two P4 normative architecture specifications with the amended P2/P3 revisions, APPR-006 the two P5 normative security and authorization specifications with the amended DATABASE revision and APPR-007 the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions; historical REVIEW statements do not override those approvals.
 
 ### Owner reference ingestion and provenance
 
@@ -185,6 +185,16 @@ One in-session Owner message received 2026-09-30, after the handoff continuity c
 
 It authorizes fast-track P5 — Security, Authentication & Authorization documentation with self-review, an independent adversarial review and validation, the conditional approval of [PERMISSIONS_MATRIX](../02-domain/PERMISSIONS_MATRIX.md) and [SECURITY](../03-architecture/SECURITY.md), one checkpoint commit, one normal non-force push and the continuity freeze (DIR-031 in [DECISION_LOG](DECISION_LOG.md#dir-031-obs-010-and-tech-020--p5-authorization-entry-baseline-and-security-documentation)). Its section 10 planner notes are analysis, never Owner intent. It authorizes no P6 work. All twenty-six earlier source records retain their bytes and classifications.
 
+### P6 fast-track authorization
+
+One in-session Owner message received 2026-09-30, after the P5 checkpoint `b09e70f3a867d58b431c7ae0369b7a432c4fd1a1` was published, is preserved as a **transcribed LOCKED SOURCE RECORD** (a transcript, not a byte-copy claim about an attachment), the twenty-eighth source record:
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [P6_OWNER_AUTHORIZATION_2026-09-30.txt](sources/P6_OWNER_AUTHORIZATION_2026-09-30.txt) | 1,415 / 58,143 | `38F89EE64D3FA138322875DB10771C50D0BC8F0268785F37A6351558AC2021DC` |
+
+It authorizes fast-track P6 — Concurrency, Idempotency & Performance documentation with self-review, an independent adversarial review and validation, the conditional approval of [CONCURRENCY_IDEMPOTENCY](../03-architecture/CONCURRENCY_IDEMPOTENCY.md), [PERFORMANCE](../03-architecture/PERFORMANCE.md) and [API_AND_INTEGRATIONS](../03-architecture/API_AND_INTEGRATIONS.md), one checkpoint commit, one normal non-force push and the continuity freeze (DIR-032 in [DECISION_LOG](DECISION_LOG.md#dir-032-obs-011-and-tech-021--p6-authorization-entry-baseline-and-concurrency-documentation)). The message arrived as one pasted text block whose code-fence lines are not part of the transcript, and the Owner confirmed its full execution in-session before any edit. Its section 12 planner notes are analysis, never Owner intent. It authorizes no P7 work. All twenty-seven earlier source records retain their bytes and classifications.
+
 ## Classify statements before changing them
 
 | Class | Meaning | Treatment |
@@ -218,17 +228,18 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P2 | 2–17; DIR-016–019, DIR-024/026/027 |
 | Business invariants, domain lifecycles/state rules and calculation semantics | `docs/02-domain/BUSINESS_RULES.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P2 | 3–17, 26–28, 36, 45; DIR-018/019/020/024/026/027 |
 | P2 adversarial review, traceability verification and gate evidence | `docs/02-domain/P2_QUALITY_GATE.md` | Exists, REVIEW / P2 | DIR-016 §§18–22 |
-| User/process workflows, responsibility boundaries and transition orchestration over P2 lifecycles | `docs/02-domain/WORKFLOWS.md` | Exists, APPROVED (APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P3 | 11–16, 42; DIR-023–027 |
+| User/process workflows, responsibility boundaries and transition orchestration over P2 lifecycles | `docs/02-domain/WORKFLOWS.md` | Exists, APPROVED (APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005; the TECH-021 amendment approved under APPR-007) / P3 | 11–16, 42; DIR-023–027, DIR-032 |
 | P3 adversarial review, aggregate traceability verification and gate evidence | `docs/02-domain/P3_QUALITY_GATE.md` | Exists, REVIEW / P3 | DIR-023–026 |
-| Database design and constraints | `docs/03-architecture/DATABASE.md` | Exists, APPROVED (APPR-005; the TECH-020 amendment approved under APPR-006) / P4 | 5, 13–15, 26–32, 38, 45; DIR-027–029 |
-| Application structure and stack | `docs/03-architecture/ARCHITECTURE.md` | Exists, APPROVED (APPR-005) / P4 | 18–19, 24, 28–36; DIR-027–029 |
+| Database design and constraints | `docs/03-architecture/DATABASE.md` | Exists, APPROVED (APPR-005; the TECH-020 amendment approved under APPR-006; the TECH-021 amendment approved under APPR-007) / P4 | 5, 13–15, 26–32, 38, 45; DIR-027–029, DIR-032 |
+| Application structure and stack | `docs/03-architecture/ARCHITECTURE.md` | Exists, APPROVED (APPR-005; the TECH-021 amendment approved under APPR-007) / P4 | 18–19, 24, 28–36; DIR-027–029, DIR-032 |
 | P4 adversarial review, traceability verification and gate evidence | `docs/03-architecture/P4_QUALITY_GATE.md` | Exists, REVIEW / P4 | DIR-027 §§39–40; DIR-028/029 |
-| Permissions and company-scope rules | `docs/02-domain/PERMISSIONS_MATRIX.md` | Exists, APPROVED (APPR-006) / P5 | 17, 24, 41; DIR-031 |
+| Permissions and company-scope rules | `docs/02-domain/PERMISSIONS_MATRIX.md` | Exists, APPROVED (APPR-006; the TECH-021 amendment approved under APPR-007) / P5 | 17, 24, 41; DIR-031, DIR-032 |
 | Security control design | `docs/03-architecture/SECURITY.md` | Exists, APPROVED (APPR-006) / P5 | 24–25, 36–38; DIR-031 |
 | P5 adversarial review, traceability verification and gate evidence | `docs/03-architecture/P5_QUALITY_GATE.md` | Exists, REVIEW / P5 | DIR-031 |
-| Concurrency and idempotency mechanisms | `docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md` | Planned / P6 | 14, 27–28, 31–32, 35 |
-| Query/runtime performance design | `docs/03-architecture/PERFORMANCE.md` | Planned / P6 | 29–31, 35 |
-| Routes and integration boundaries | `docs/03-architecture/API_AND_INTEGRATIONS.md` | Planned / P6 | 9, 33–35 |
+| Concurrency and idempotency mechanisms | `docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md` | Exists, APPROVED (APPR-007) / P6 | 14, 27–28, 31–32, 35; DIR-032 |
+| Query/runtime performance design | `docs/03-architecture/PERFORMANCE.md` | Exists, APPROVED (APPR-007) / P6 | 29–31, 35; DIR-032 |
+| Routes and integration boundaries | `docs/03-architecture/API_AND_INTEGRATIONS.md` | Exists, APPROVED (APPR-007) / P6 | 9, 33–35; DIR-032 |
+| P6 adversarial review, obligation closure, traceability verification and gate evidence | `docs/03-architecture/P6_QUALITY_GATE.md` | Exists, REVIEW / P6 | DIR-032 |
 | Navigation, admin interaction, visual patterns | `docs/04-ux/INFORMATION_ARCHITECTURE.md`, `ADMIN_FLOW.md`, `DESIGN_SYSTEM.md` | Planned / P7 | 11, 20–23; navigation / interaction / visual rules respectively |
 | Testing, security matrix, performance targets, completion criteria | `docs/05-quality/TEST_STRATEGY.md`, `SECURITY_TEST_MATRIX.md`, `PERFORMANCE_TARGETS.md`, `DEFINITION_OF_DONE.md` | Planned / P8 | 40–44; strategy / security cases / measurable targets / completion respectively |
 | Recovery procedures and conditional local targets | `docs/03-architecture/BACKUP_RECOVERY.md` | Planned / P9 | 37–39 as superseded by DIR-009; BK-01–12 and shared-disk safety |

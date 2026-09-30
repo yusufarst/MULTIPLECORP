@@ -327,3 +327,5 @@ A read-only validation script kept outside the repository, following the prior g
 ## Exact next safe action
 
 Wait for the Owner's explicit authorization of P6 — Concurrency, Idempotency & Performance ([NEXT_ACTION](../07-handoff/NEXT_ACTION.md)). At P6 entry, verify that local HEAD equals live origin/main at the P5 checkpoint — resolved by `git log -1 --format='%H %s' --grep='^docs: finalize P5 security and authorization$'`, parent `6e640137901e0d16193e03004e142e9ea07b39ad` — and record its SHA literally. No P6 work before that.
+
+**Addendum (2026-09-30):** this action was discharged by [DIR-032](../00-governance/DECISION_LOG.md#dir-032-obs-011-and-tech-021--p6-authorization-entry-baseline-and-concurrency-documentation): P6 was authorized, and its entry observation OBS-011 verified and recorded the P5 checkpoint `b09e70f3a867d58b431c7ae0369b7a432c4fd1a1` and its publication; this gate otherwise stays unchanged as P5 evidence.

@@ -1,8 +1,8 @@
 # Agent operating model
 
-Status: APPROVED | Updated: 2026-09-30 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-01 | Owner: Planning
 
-Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision; evidence, gap and handoff records remain REVIEW.
+Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision and [APPR-007](DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved) the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions; evidence, gap and handoff records remain REVIEW.
 
 ## Responsibilities and limits
 
@@ -18,7 +18,7 @@ The brief identifies Astra as initial planner and Claude Opus 5.5 as initial exe
 
 ## Execution eligibility
 
-Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. P0 governance is accepted. The current assignment authorizes P1 only; proactive risk discovery and Level 1 corrections remain allowed without generating P2+ specifications. A review label is not a reason to seek new permission for those corrections.
+Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. P0 governance is accepted. The current authorized phase and task are recorded in [CURRENT_STATE](../07-handoff/CURRENT_STATE.md) and [NEXT_ACTION](../07-handoff/NEXT_ACTION.md); each phase needs its own explicit Owner authorization; proactive risk discovery and Level 1 corrections remain allowed without generating specifications of unauthorized phases. A review label is not a reason to seek new permission for those corrections.
 
 Before application implementation, the repository must identify the owner-authorized execution phase/planning freeze, a bounded task, its APPROVED/LOCKED specification and dependencies, and approval evidence under the [document lifecycle](SOURCE_OF_TRUTH.md#document-lifecycle). An approved P0 governance file alone is insufficient.
 
