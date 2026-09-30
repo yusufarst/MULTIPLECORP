@@ -1,0 +1,1142 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-seventh source record
+Received: 2026-09-30, in-session Owner message following the published P4
+handoff continuity commit 6e640137901e0d16193e03004e142e9ea07b39ad
+Subject: Owner fast-track authorization — P5 Security, Authentication &
+         Authorization documentation (baseline verification through
+         conditional approval, one checkpoint commit, a normal non-force
+         push and the continuity freeze)
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — P5 SECURITY, AUTHENTICATION & AUTHORIZATION
+FAST-TRACK EXECUTION
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+origin: https://github.com/yusufarst/MULTIPLECORP.git
+
+Date:
+2026-09-30
+
+Current phase:
+P5 — Security & Authorization
+
+Role:
+PRIMARY SECURITY / AUTHORIZATION ARCHITECT and repository executor
+(planning documentation only)
+
+Operating mode:
+AUTO permitted. AUTO is permission automation only. It never widens scope,
+starts later phases, rewrites history, force-pushes, touches production or
+decides Owner-level questions.
+
+==================================================
+0. AUTHORIZATION AND BOUNDARY
+==================================================
+
+I, the Owner, explicitly authorize P5 — Security, Authentication and
+Authorization to begin now, using the FAST-TRACK pattern:
+
+baseline verification
+→ intake
+→ design and documentation
+→ self-review
+→ independent adversarial review
+→ fix
+→ re-derive counts and validate
+→ conditional approval
+→ one checkpoint commit
+→ one normal non-force push
+→ continuity freeze
+
+You have broad Level-1 technical and security authority. Resolve ordinary
+technical and security design choices yourself. Do not ask me to choose
+between technical alternatives when the repository already constrains the
+answer.
+
+You must STOP and report, instead of inventing an answer, when a genuine
+Owner-level visibility, authorization, business, cost or scope decision
+remains unresolved (section 9).
+
+P5 is DOCUMENTATION ONLY. Do not create any of the following:
+- Laravel code or React code
+- migrations or executable SQL
+- policies as code
+- packages
+- Docker or infrastructure files
+- tests
+
+Do NOT start P6. Do NOT design P6–P11.
+
+==================================================
+1. SOURCE-OF-TRUTH RULES
+==================================================
+
+The repository is canonical. Chat history, project memory, scratch files
+and this message's planner notes (section 10) are not sources of truth.
+
+Apply SOURCE_OF_TRUTH's six-level hierarchy and CHANGE_CONTROL's authority
+levels.
+
+Where this message and the repository disagree on a fact:
+- the repository wins;
+- report the difference.
+
+Use current official documentation, and Context7 if available, where exact
+framework behavior matters. Examples: Laravel hashing, session
+regeneration and invalidation, throttling, CSRF, cookies, signed URLs, and
+CSP with Vite/Inertia. Record source and version evidence. Do not pin
+versions (DEP-07).
+
+==================================================
+2. P5 ENTRY BASELINE VERIFICATION — BEFORE ANY EDIT
+==================================================
+
+Read-only first. Use equivalent syntax for your shell.
+
+Verify all of the following:
+
+1. The repository root is C:\Projects\MultipleCorp and `git remote -v`
+   shows the intended origin.
+2. Branch `main` tracks `origin/main`.
+3. `git fetch origin`, then compare HEAD, the local origin/main ref and
+   live origin/main (`git ls-remote origin refs/heads/main`). All three
+   must be equal. Ahead/behind must be 0.
+4. HEAD is the handoff continuity commit:
+   `git log -1 --format='%H %P %s'` shows the subject exactly
+   `docs: record P4 handoff checkpoint` and the parent
+   e95d083d7114a1d0c43f6e9cb6a439c93a70134b.
+   Also run:
+   `git log -1 --format='%H %s' --grep='^docs: record P4 handoff checkpoint$'`
+5. Working tree clean, applying the CRLF note in CURRENT_STATE:
+   - `git diff --ignore-cr-at-eol --stat` must be empty;
+   - the index is empty;
+   - no untracked files.
+6. No merge, rebase, cherry-pick, revert or bisect is in progress.
+7. The following do not exist:
+   - docs/02-domain/PERMISSIONS_MATRIX.md
+   - docs/03-architecture/SECURITY.md
+   - any P6+ file
+   - any application code
+8. Repository state records:
+   - OWNER_DECISION_REQUIRED = 0;
+   - gap totals 31 — 3 CLOSED, 27 OPEN, 0 OWNER_DECISION_REQUIRED,
+     1 ACCEPTED_RISK;
+   - all 26 source records match their SOURCE_OF_TRUTH hashes;
+   - the five APPR-005 hashes equal the committed blobs.
+
+If any item materially differs:
+- STOP and report;
+- make no edits;
+- do not repair divergence.
+
+Record the verified handoff commit SHA literally in the P5 entry
+observation. This discharges the NEXT_ACTION obligation.
+
+==================================================
+3. REPOSITORY INTAKE
+==================================================
+
+Read in this order:
+
+1. AGENTS.md
+2. CLAUDE.md
+3. README.md
+4. docs/CONTEXT_INDEX.md
+5. docs/07-handoff/CURRENT_STATE.md
+6. docs/07-handoff/NEXT_ACTION.md
+7. SOURCE_OF_TRUTH
+8. DECISION_LOG
+9. GAP_REGISTER
+10. CHANGE_CONTROL
+11. AGENT_OPERATING_MODEL
+12. ENGINEERING_PRINCIPLES
+13. PROJECT_CHARTER
+
+Then read in full the approved specifications P5 consumes:
+- V1_SCOPE, especially:
+  - Physical visibility and company isolation
+  - Normal completion and exceptional override
+  - the dependency table, especially DEP-08
+- ACCEPTANCE_CRITERIA: AC-09, AC-12, AC-13, AC-16, AC-21, AC-23
+- DOMAIN_MODEL: scope and sensitivity classes S0–S4
+- BUSINESS_RULES: BR-ACC, BR-XC, BR-ADM, BR-PRJ-02–04, BR-DT, BR-FIN-08
+- WORKFLOWS:
+  - §2 SF-CMD
+  - §4 actor and authority matrix, every row
+  - WF-ACC-01/02
+  - WF-INV-07
+  - SF-UNATTRIBUTED
+  - L-34, L-42, L-45, L-49
+  - QS-14
+  - §13 P5 obligations
+  - §14 deferred items
+- DATABASE:
+  - §1 table classes
+  - §4.1 IAM
+  - §5.1
+  - §5.8
+  - §6.5
+  - §15 company scope
+  - §22 files
+  - §23 audit and security events
+  - §28 security-ready design
+  - §31 P5 obligations
+- ARCHITECTURE:
+  - §8 authorization boundary
+  - §9 web layer
+  - §11 jobs
+  - §12 files, if present
+  - §19 prohibited patterns
+  - §20 downstream
+- P4_QUALITY_GATE: deferred P5 obligations
+- REFERENCE_COVERAGE: REF-001, REF-002, REF-003, REF-049, REF-056
+- Owner brief: §17, §24, §25, §36, §37, §41
+- ADR-001
+
+Do not read the whole repository indiscriminately.
+
+==================================================
+4. SOURCE RECORD
+==================================================
+
+Archive this entire message as the twenty-seventh transcribed LOCKED
+SOURCE RECORD under docs/00-governance/sources/. Follow the existing
+convention:
+- header format;
+- filename pattern (for example P5_OWNER_AUTHORIZATION_2026-09-30.txt);
+- a `.gitattributes` entry matching recent transcripts;
+- line count, byte count and SHA-256 recorded in SOURCE_OF_TRUTH.
+
+Do not alter the 26 earlier records.
+
+Record in DECISION_LOG, using the next repository-conformant IDs
+(expected DIR-031, OBS-010, TECH-020, APPR-006; verify first):
+- this authorization;
+- the entry observation;
+- the P5 technical work;
+- the approval, if its conditions are met.
+
+Section 10 of this message is planner analysis. It is NOT an Owner
+decision. It must never be recorded or cited as Owner intent.
+
+==================================================
+5. NARROW GOVERNANCE WORDING CLEANUP
+==================================================
+
+Continuity wording only. No rule, business, architecture, approval or gap
+change. List each edit in the TECH entry.
+
+5.1 AGENTS.md: replace the stale clause "the latest final Owner decisions
+    also authorize P1 only" with an accurate current statement.
+
+5.2 AGENTS.md: the P3 sentence still says the P3 checkpoint's push is
+    something "DIR-026 authorizes". Record that it was published (OBS-007).
+
+5.3 AGENTS.md and PROJECT_CHARTER both say "P5 begins only after a
+    separate handoff/bootstrap task and its own Owner authorization".
+    Update this to record:
+    - the handoff task completed under DIR-030;
+    - P5 authorized under DIR-031;
+    - P5's actual end state from this task.
+
+5.4 AGENTS.md: "Record later-phase risks without designing permission
+    matrices, concurrency mechanisms, UI or implementation" must reflect
+    that P5 now owns the permission matrix. Later-phase prohibitions stay.
+
+5.5 ENGINEERING_PRINCIPLES: "Field/resource enforcement and the full
+    capability matrix are future P5 work" becomes a pointer to the P5
+    owners. Pointer only.
+
+5.6 P4_QUALITY_GATE is REVIEW evidence. Do not rewrite its "Exact next
+    safe action". Add one dated addendum line stating that it was
+    discharged by DIR-030 and that P5 was authorized by DIR-031.
+    Precedent: the P3 gate addendum.
+
+5.7 CURRENT_STATE: replace the self-attested publication statement for
+    the handoff commit with the literal verified SHA (OBS-010).
+
+5.8 Update approval pointer lines to add APPR-006 only if it is granted.
+    Follow the APPR-004/005 precedent.
+
+Do not broaden this cleanup. If you find other stale continuity wording:
+- in entry, navigation or handoff files: fix it and list it;
+- anywhere else: report it only.
+
+==================================================
+6. P5 OUTPUTS
+==================================================
+
+A. docs/02-domain/PERMISSIONS_MATRIX.md
+   Owns authorization truth:
+   - capability catalogue;
+   - authority classes;
+   - role and grant model;
+   - company-scope rules;
+   - resource/field projection matrix;
+   - cross-company link authorization;
+   - Owner-only denials;
+   - Owner review queue access;
+   - data-path coverage matrix.
+
+B. docs/03-architecture/SECURITY.md
+   Owns security architecture truth:
+   - authentication, sessions and credential lifecycle;
+   - enforcement architecture on the ARCHITECTURE §8 boundary;
+   - input and web security;
+   - file security;
+   - audit and security logging;
+   - secrets and production-boundary requirements;
+   - threat model;
+   - P6–P9 handoff obligations.
+
+C. A P5 quality gate, for example docs/03-architecture/P5_QUALITY_GATE.md.
+   REVIEW evidence, registered in SOURCE_OF_TRUTH.
+
+D. Governance, continuity and approved-document amendments only as
+   sections 5, 13 and 18 allow.
+
+Anti-duplication:
+- business meaning stays in V1_SCOPE, DOMAIN_MODEL, BUSINESS_RULES and
+  WORKFLOWS;
+- the logical model stays in DATABASE;
+- application structure stays in ARCHITECTURE;
+- guardrails stay in ENGINEERING_PRINCIPLES.
+
+P5 files cite BR, WF, SF, AX, CM, L, QS, C, CAP, AC, DOC, OWN and REF IDs.
+They never restate, relax or extend a business rule.
+
+==================================================
+7. REQUIRED P5 COVERAGE
+==================================================
+
+A. Authorization model
+   - The server-side order: authentication → company scope → capability →
+     resource authorization → business preconditions.
+   - A company-scope resolver.
+   - A per-command re-check of the target record's company, for every
+     related reference (SF-CMD step 2).
+   - Checks use capabilities, never role names.
+   - Authorization is evaluated per request against current grants.
+   - Revoked grants and deactivated users are REJECTED on their next
+     request.
+
+B. Capability catalogue
+   - Every WORKFLOWS §4 row maps to one or more capabilities with the same
+     authority class: ADM, ADM_PLUS or OWNER_ONLY.
+   - Include view, report and export capabilities, for example profit
+     viewing, pooled physical view, financial views and user management.
+   - Use a naming convention compatible with OB §17.
+   - OWNER_ONLY capabilities are never grantable to Admin.
+   - ADM+ capabilities are separately grantable per individual account
+     (DIR-024 D-5).
+   - No new launch roles.
+   - No custom-role management in V1 (REF-003/D-01). The model must remain
+     compatible with future custom roles.
+
+C. Role and grant model
+   Must satisfy AC-13's "with and without inventory permission" cases for
+   individual Admin accounts. This means default deny, least privilege,
+   Owner-controlled grants, and L-34 last-active-Owner protection.
+   See PN-1.
+
+D. Field projection
+   - Classify every DATABASE §4 table, and every query/read class, as
+     S0–S4.
+   - Physical-only query classes for pooled views (S1 quantity-only).
+   - S3/S4 separation.
+   - Pool evidence, which belongs to no company.
+   - Unattributed-loss exposure and recognition rows.
+   - Inter-company allocation rows.
+   - Supplier price history.
+   - Shared masters as a leak route (GAP-006).
+   - Audit before/after values.
+   - Owner consolidated views.
+   - Admin action queues across granted companies.
+   - Include the consuming project's allocated-cost treatment (PN-5).
+
+E. Cross-company links
+   Authorize each of the five intentional cross-company link families
+   (DATABASE C-32 inventory):
+   - for example, inter-company allocation requires ADM+ plus a grant on
+     the consuming company only (WF-INV-07);
+   - it never implies source-company visibility.
+
+F. Owner-only and ADM+ enforcement, through every endpoint and API path:
+   - users, roles, capabilities and grants;
+   - company master;
+   - waiver eligibility;
+   - relaxing or removing required non-waivable requirements;
+   - write-off and its supersession;
+   - found-stock attribution;
+   - Force Complete, including denial of Admin/API attempts;
+   - unattributed-loss resolution, with the DIR-027 ADM+ exception only
+     for a resolution fully identified by definitive evidence (PN-8);
+   - all ADM+ corrections, closures, refunds, settlements, adjustments and
+     inter-company allocation;
+   - Owner review queue (QS-14) access.
+
+G. Authentication and credentials
+   - Framework-supported hashing (Argon2id or bcrypt); no custom hashing
+     or salts; an optional pepper only as justified hardening kept outside
+     the DB and repository (OB §25).
+   - Login throttling without an account-lockout denial-of-service.
+   - No user enumeration.
+   - Session regeneration on login; invalidation on logout.
+   - Idle and absolute timeouts, balanced against floor/scanner use
+     (GAP-015).
+   - Remember-me policy.
+   - Session termination on deactivation or revocation.
+   - Password policy.
+   - Onboarding and reset under DEP-08 (PN-6).
+   - Owner-account recovery as an audited operator procedure (security
+     requirements here; execution in P9).
+   - MFA only as a documented future seam (OB §24 "optional future"); not
+     V1 scope.
+   - No impersonation or "login as" feature (it would break BR-XC-02).
+
+H. Web and input security
+   - Form requests with allowed fields only; no whole-request mass
+     assignment; a policy for company_id, authority and state fields.
+   - Whitelisted sort and filter keys.
+   - Business-state validation.
+   - CSRF.
+   - Cookies: Secure, HttpOnly, SameSite.
+   - HTTPS and HSTS policy.
+   - Headers: CSP including frame-ancestors, X-Content-Type-Options,
+     Referrer-Policy, Permissions-Policy.
+   - XSS: React escaping; any raw HTML sanitized.
+   - SQL injection controls.
+   - IDOR/BOLA controls, including public_id as non-enumerable but never
+     sufficient.
+   - Inertia shared, partial and lazy props (PN-10).
+   - Error handling without stack traces; APP_DEBUG=false as a production
+     requirement.
+
+I. Files
+   - Upload validation:
+     - content/MIME sniffing;
+     - extension allowlist;
+     - size limits;
+     - image pixel and dimension limits;
+     - SVG active content;
+     - polyglots;
+     - EXIF/GPS stripping outside transactions.
+   - Generated storage keys; private storage.
+   - Downloads authorized through the owning record at request time, with
+     safe Content-Disposition.
+   - Issued PDFs and renditions.
+   - Company identity assets.
+   - Import files.
+
+J. Data paths — prove coverage for every path:
+   - URL and ID;
+   - query parameters;
+   - payload;
+   - API;
+   - download;
+   - search and lookup;
+   - export, including CSV/Excel formula-injection neutralization;
+   - reports and dashboards;
+   - queued jobs;
+   - caches;
+   - in-app alerts and notifications;
+   - audit and activity timelines;
+   - evidence duplicate warnings (PN-4);
+   - revoked access (PN-9).
+
+K. Other threat classes
+   - SSRF: the PDF renderer and any URL input never fetch remote
+     resources.
+   - Command injection: renderer and image tools, with no shell
+     interpolation.
+   - Path traversal.
+   - Rate limiting for login, reset, upload, search and export.
+   - Dependency and supply-chain policy.
+   - Decide whether PostgreSQL row-level security is used in V1, with
+     justification (DATABASE §28 option).
+
+L. Audit and security logging
+   - Business audit versus security events, kept separate (BR-XC-03;
+     DATABASE §23).
+   - Logged events and fields.
+   - Redaction.
+   - No secrets, tokens, hashes or file contents.
+   - Visibility of audit data per projection.
+   - Retention requirement, handed to P9 for storage.
+
+M. Evidence duplicate warnings (DATABASE §31)
+   - Same checksum under two identities.
+   - Same issuer, reference and date under two types.
+   - Scope-safe (PN-4).
+
+N. Threat model and abuse cases, plus explicit handoff obligations for:
+   - P6: mechanisms only;
+   - P7: presentation only;
+   - P8: required denial and security tests; do not create P8 files;
+   - P9: roles, TLS, secrets, session store, header serving, log
+     retention, operator recovery.
+
+==================================================
+8. GAP AND DEFERRED-OBLIGATION COVERAGE
+==================================================
+
+Produce a closure table in the P5 gate. Map every item below to:
+- its owning P5 section;
+- a status: DESIGNED, HANDED TO P6/P7/P8/P9 (with owner), or N/A with
+  reason.
+
+Items:
+- GAP-006 visibility and field projection (CRITICAL).
+- GAP-022 completion authority and Force Complete denial (CRITICAL).
+- GAP-005 correction capabilities (DIR-024 D-5).
+- GAP-026 protection of tax evidence (S4) and settlement authority.
+- GAP-030 Owner-only resolution and the DIR-027 evidence exception.
+- GAP-003 P5 scope aspects.
+- GAP-031 privilege requirements (hand to P9).
+- GAP-013 security-event detection (hand to P9).
+- GAP-015 session expiry versus stale forms.
+- DATABASE §31 P5 items:
+  - capability catalogue;
+  - S1 versus S3/S4 projection including pool evidence and exposure rows;
+  - scoping of queries, searches, exports and downloads;
+  - ADM+ and Owner-only enforcement including DIR-027;
+  - upload validation;
+  - duplicate warnings;
+  - the RLS option.
+- WORKFLOWS §13 P5 list, every clause.
+- WORKFLOWS §14 P5 deferred items:
+  - masking of a consuming project's own allocated cost;
+  - the P5 part of tax configuration.
+- ARCHITECTURE §8 and §20 P5 downstream items.
+- DATABASE §22 upload validation.
+- DATABASE §23 security events.
+- DATABASE §28 privileged-change audit.
+- DEP-08.
+- WF-ACC-01 Owner-account recovery (P5 part).
+- L-34.
+- AC-13, every clause.
+- AC-09 and AC-21 authority clauses.
+- AC-12 and AC-23 authority and scope clauses.
+- REF-001, REF-002, REF-003, REF-049, REF-056.
+- CAP-01, CAP-09, CAP-10, CAP-11, CAP-13, CAP-17, CAP-18 (security
+  aspects).
+- OB §17, §24, §25, §36, §37, §41.
+
+Add P5 continuation notes to affected gaps. Do not close a gap whose
+runtime proof belongs to P6, P8 or P9. Add new gaps only for genuinely new
+failure scenarios. Re-derive the totals.
+
+==================================================
+9. AUTHORITY CLASSIFICATION — WHEN TO DECIDE, WHEN TO STOP
+==================================================
+
+LEVEL 1 — decide autonomously and record the rationale:
+- mechanisms that enforce already-approved boundaries;
+- capability granularity finer than, or equal to, WORKFLOWS §4 that does
+  not change who may do what;
+- least-privilege defaults that keep the Owner in control of grants;
+- OB §24–25 controls;
+- hardening with no change to approved user-visible behavior, visibility,
+  responsibilities, cost or scope;
+- the minimum projection that approved workflows operationally need,
+  provided it exposes none of DIR-011's nine protected categories to a
+  non-granted user;
+- technical choices such as session store, CSP strategy, RLS yes/no,
+  throttling parameters, token lifetimes and upload limits.
+
+OWNER_DECISION_REQUIRED — STOP:
+- Any change, whether widening OR narrowing, to who may see or do
+  something, relative to:
+  - DIR-011;
+  - BR-ACC-01–03;
+  - DOMAIN_MODEL S0–S4;
+  - WORKFLOWS §4;
+  - DIR-018: equal Owner/Admin backdating authority; do not narrow it as
+    "hardening";
+  - DIR-019;
+  - DIR-024 D-5;
+  - DIR-026/027.
+- Any approved workflow that cannot operate without exposing a protected
+  category to a non-granted Admin.
+- Any new recurring cost or paid service (SMTP, SMS, identity provider).
+- Mandatory MFA, forced rotation or any other material change to user
+  responsibilities.
+- Any new V1 capability: impersonation, self-registration, external API
+  tokens, custom-role management, and similar.
+- Any change to an approved business meaning.
+- Level-3 locked decisions (launch roles, managerial finance, and others)
+  are never overridden. A serious concern is recorded as an
+  ARCHITECTURE/PRODUCT CONCERN and escalated.
+
+On an Owner-level question:
+1. Record it in GAP_REGISTER as OWNER_DECISION_REQUIRED, in the
+   CHANGE_CONTROL format: problem, why it matters, recommended option,
+   alternatives, scope/time/risk impact.
+2. Complete all P5 work that does not depend on it; mark dependent points
+   pending with the gap ID.
+3. Run validation.
+4. Update the handoff files to describe the uncommitted pending state.
+5. Do NOT approve, commit or push.
+6. Report and STOP.
+
+==================================================
+10. PLANNER NOTES — NOT OWNER DECISIONS
+==================================================
+
+These are pressure points identified by the planner. They are analysis
+only. Verify each against the repository; the repository wins. They grant
+no business authority.
+
+PN-1 Role versus individual capability.
+DATABASE §4.1 provides:
+- roles → role_capabilities;
+- user_capability_grants (ADM+);
+- user_company_grants.
+
+AC-13 needs individual Admins with and without inventory permission.
+Resolve how one Admin can lack a capability without new launch roles or
+custom-role management. Options include:
+- the role acts as a ceiling, with per-user grants;
+- a role baseline, with per-user optional bundles.
+
+Planner preference:
+- a new Admin has no company grant and no optional capability until the
+  Owner grants it;
+- OWNER_ONLY capabilities are never grantable to Admin.
+
+Amend §4.1 only under section 13, if its approved text is otherwise
+contradicted.
+
+PN-2 Owning-company identity in physical views.
+Three approved workflows need the actor to know whether units belong to
+another company:
+- WF-INV-07 inter-company authority;
+- L-42 single-company confirmation;
+- SF-UNATTRIBUTED recognition.
+
+Planner assessment: exposing the owning company's identity (an S0 name or
+code) for pooled units is the minimum necessary projection. This excludes
+cost, supplier, prices and purchase or receiving references. It exposes
+none of the nine protected categories, so it is Level 1.
+
+If the repository classifies this identity as protected, STOP.
+
+PN-3 Unattributed-loss snapshot.
+The snapshot holds multi-company S3 exposure (candidate lots, remainders,
+net costs). Planner assessment:
+- the recognizing Admin sees only the physical result and the pending
+  status;
+- the Owner sees all companies' exposure;
+- an ADM+ user recording an evidence-identified resolution sees the
+  physical lot/serial identification only;
+- each company's own exposure is visible to users entitled to that
+  company's S3.
+
+PN-4 Duplicate-evidence warnings as an oracle.
+Warnings must not reveal the existence, company or content of evidence
+the actor cannot see.
+
+Planner option:
+- show a detailed warning only within the actor's visible scope;
+- route cross-scope matches to the Owner review queue;
+- give the actor, at most, a non-identifying notice.
+
+PN-5 Consuming project's allocated cost.
+Approved baseline (WF-INV-07 and BR-ACC-02):
+- the allocated cost is visible as the consuming project's own cost to
+  users entitled to the consuming company's S3;
+- the source company's purchases, suppliers, prices and other lots stay
+  hidden;
+- no source-company grant is implied.
+
+WORKFLOWS §14 lists "further masking" as deferred, not an open business
+choice.
+
+Planner assessment:
+- implement the baseline exactly;
+- Level-1 further masking may remove only source-side identifiers not
+  needed to present the consuming project's cost correctly.
+
+Hiding the consuming project's own allocated cost from an entitled user,
+or exposing any additional source-company S3, changes permitted
+visibility → STOP.
+
+A per-unit cost being arithmetically derivable from the consuming
+project's own HPP is a consequence of the approved baseline. Do not
+reopen it without evidence of an internal contradiction.
+
+PN-6 Reset and onboarding channel (DEP-08).
+Do not assume SMTP or buy a service.
+
+Planner option:
+- The Owner initiates onboarding and reset.
+- Each issues a single-use, short-lived, hashed token or link.
+- The Owner delivers it out of band.
+- The password is set on first use.
+- Every step is audited as a security event.
+- Self-service email reset exists only as an optional path, conditional
+  on P9 confirming a zero-cost channel.
+
+If a secure reset flow cannot be delivered without a paid service, or
+without materially changing the responsibilities in WF-ACC-01, STOP.
+
+PN-7 Audit timelines and QS-14.
+- Project audit before/after values by sensitivity.
+- Cross-company events (for example allocation) must not leak the other
+  side's S3.
+- Only the Owner can open the Owner review queue.
+
+PN-8 DIR-027 evidence exception.
+Define server-verifiable conditions for "fully identified by definitive
+evidence", for example:
+- cited evidence of role-bound types (L-45, C-58);
+- exact lot/serial and quantity identification;
+- no discretionary choice of company.
+
+Route every such resolution to QS-14.
+
+If the approved meaning cannot be made server-verifiable without
+inventing policy, STOP.
+
+PN-9 Jobs, exports, caches, alerts, revocation.
+- Authorize at the time of request.
+- Jobs carry actor and company context and re-check current
+  authorization before producing or delivering output.
+- Cache keys include scope.
+- Alerts are scope-filtered.
+- Revocation takes effect on the next request and the next job step.
+
+PN-10 Inertia.
+- Shared props, partial reloads, lazy/deferred props and validation error
+  bags pass the same policies and projection.
+- Prop resources only, never raw models.
+
+PN-11 Sessions.
+Deactivation or revocation ending sessions (WF-ACC-02) requires either a
+server-side session store or a session-version check. Choose one at
+Level 1 and hand the infrastructure to P9. Valkey/Redis is acceptable for
+sessions; it is never a system of record.
+
+==================================================
+11. PRESERVATION AND NON-REOPENING
+==================================================
+
+Preserve all approved P0–P4 business semantics, all V1_REQUIRED
+capabilities, the Golden Flow and the Definition of Done.
+
+Do not reopen:
+- DIR-009, DIR-011, DIR-018, DIR-019, DIR-020, DIR-024, DIR-026,
+  DIR-027, DIR-029;
+- RISK-001 / GAP-018;
+- the PLANNER-DETERMINED decisions.
+
+Keep the architecture baseline:
+- Laravel, Inertia, React/TypeScript, shadcn/ui, Tailwind, PostgreSQL,
+  Nginx;
+- modular monolith, layered, MVC, actions;
+- the ARCHITECTURE §1 exclusions.
+
+Prefer framework-native Gates and Policies over the approved §4.1 tables.
+A third-party permission package requires a recorded Level-1
+justification showing it fits the approved model without business change.
+
+==================================================
+12. PHASE BOUNDARIES
+==================================================
+
+P6 owns:
+- lock order;
+- isolation;
+- retries;
+- the idempotency and command-log protocol;
+- stale-state mechanisms;
+- job-retry mechanics;
+- render durability;
+- performance targets.
+
+P5 may state a security requirement for P6, for example "authorization is
+re-evaluated inside the command against current grants". It must never
+design the mechanism.
+
+Do not create any of the following:
+- CONCURRENCY_IDEMPOTENCY.md or PERFORMANCE.md;
+- any docs/04-ux, docs/05-quality or docs/06-delivery file;
+- BACKUP_RECOVERY.md;
+- SECURITY_TEST_MATRIX.md (P8);
+- any other P6–P11 file.
+
+List the obligations instead.
+
+==================================================
+13. AMENDMENTS TO APPROVED DOCUMENTS
+==================================================
+
+Prefer to express the P5 design in the P5 files and link from there.
+
+Amend an APPROVED P1–P4 file only when its current text would otherwise
+contradict the P5 design, for example a DATABASE §4.1 grant
+representation or §23 security-event detail. Each such amendment must:
+- be narrow;
+- be technical (Level 1);
+- be marked with the TECH ID;
+- record the pre-amendment SHA-256;
+- keep the file's APPROVED status, with an amendment note (DIR-024 and
+  TECH-016 precedent);
+- be approved as part of APPR-006.
+
+Any amendment that changes business meaning is Owner-level → STOP.
+
+==================================================
+14. SELF-REVIEW AND INDEPENDENT ADVERSARIAL REVIEW
+==================================================
+
+Self-review:
+- completeness against sections 7 and 8;
+- anti-duplication;
+- authority classification;
+- traceability.
+
+Independent adversarial review:
+- Use a fresh read-only reviewer that did not write the documents (a
+  subagent if available), given only the repository.
+- Red-team at minimum the scenarios below.
+
+Company-A-only Admin attempting to reach Company B through:
+- direct URL or public_id;
+- nested or related resources;
+- shared masters (supplier price history, client relationships);
+- pooled stock view → lot → cost;
+- search;
+- export;
+- report filters;
+- dashboards and queues;
+- Inertia partial reload;
+- issued PDF, evidence or import-file download;
+- audit timeline;
+- alerts;
+- the duplicate-evidence oracle;
+- the unattributed-loss snapshot;
+- inter-company allocation views;
+- cached aggregates.
+
+Other attack scenarios:
+- A revoked grant or deactivated user with an open session or a queued
+  export.
+- Admin attempting any of the following through any endpoint:
+  - Force Complete;
+  - write-off or its supersession;
+  - found-stock attribution;
+  - required-item relaxation;
+  - unattributed-loss resolution without definitive evidence;
+  - self-granting capabilities or companies;
+  - demoting the last Owner.
+- ADM without ADM+ performing corrections.
+- ADM+ inter-company allocation leaking source-company data.
+- Mass assignment of company_id, authority or state fields.
+- Reset abuse:
+  - user enumeration;
+  - token replay;
+  - token leakage in logs or the Referer header.
+- Session fixation.
+- CSRF on state changes.
+- Stored XSS rendered into React or PDF.
+- SVG or polyglot uploads.
+- Path traversal.
+- SSRF through the renderer.
+- CSV formula injection.
+- Brute force and throttling bypass.
+- Backdating used to evade audit.
+
+Classify every finding as exactly one of:
+- CRITICAL
+- HIGH
+- MEDIUM
+- LOW
+- LEVEL-1 CORRECTION
+- OWNER_DECISION_REQUIRED
+- DEFERRED OBLIGATION (with its owning phase)
+- NO DEFECT
+
+Fix every valid finding. Re-test the scenarios after the fixes.
+
+==================================================
+15. SEPARATE FABLE REVIEW — ONLY IF MATERIALLY JUSTIFIED
+==================================================
+
+Do not request one by default. A separate targeted Fable review is
+materially justified only if at least one of these holds:
+
+a) A CRITICAL or HIGH isolation or authority finding was fixed, but its
+   correctness cannot be verified with high confidence from the documents
+   alone.
+b) The author's review and the independent review disagree on an
+   isolation finding, and the disagreement cannot be reconciled with
+   repository evidence.
+c) P5 required approved-document amendments beyond narrow technical
+   clarifications.
+
+If justified:
+- STOP before approval, commit and push;
+- leave the package uncommitted and the handoff accurate;
+- report one bounded review scope, stating its expected risk reduction.
+
+Otherwise:
+- proceed;
+- state "separate Fable review not recommended", with a one-line reason.
+
+==================================================
+16. RE-DERIVE COUNTS AND VALIDATE
+==================================================
+
+Recompute; do not reuse stale counts:
+- capabilities, total and per authority class;
+- WORKFLOWS §4 rows mapped;
+- DATABASE tables classified S0–S4;
+- projection rows;
+- Owner-only denial rules;
+- data paths covered;
+- threat scenarios;
+- findings by severity;
+- gap totals;
+- links and anchors;
+- source records (27) with hashes;
+- the traceability identifiers;
+- the changed-path census.
+
+Validate using the approach of the prior phase gates. Keep scripts in a
+temp directory outside the repository unless repository convention
+already commits them.
+
+Checks:
+- relative links and anchors;
+- lifecycle metadata and approval lines;
+- all source hashes, with earlier records unchanged;
+- every P5 identifier defined and referenced;
+- every cited BR/WF/SF/AX/CM/L/QS/C/CAP/AC/DOC/OWN/REF ID exists in its
+  owner;
+- orphan checks: every §4 row and every §4 table has a home;
+- gap triage matches detail sections and the totals sentences everywhere;
+- OWNER_DECISION_REQUIRED values are consistent;
+- no placeholder or TODO/TBD markers;
+- secret-like scan on all added lines;
+- `git diff --check`;
+- no out-of-scope paths;
+- approved files unchanged except the listed continuity lines and section
+  13 amendments;
+- no P6+ file;
+- no application code.
+
+==================================================
+17. GOVERNANCE AND CONTINUITY UPDATES
+==================================================
+
+Update, only as needed:
+- DECISION_LOG: DIR-031, OBS-010, TECH-020, APPR-006 if granted, and
+  index rows.
+- SOURCE_OF_TRUTH: source record 27; registry state for the P5 paths; P5
+  gate registration.
+- CONTEXT_INDEX: P5 rows; the approval chain; the "twenty-seven source
+  records" count.
+- GAP_REGISTER.
+- CHANGELOG.
+- README, AGENTS, CLAUDE and PROJECT_CHARTER: continuity and pointers.
+- CURRENT_STATE and NEXT_ACTION.
+
+On success, the continuity freeze states:
+- P0–P5 are complete;
+- APPR-006 is the latest approval;
+- the P5 checkpoint is the commit
+  `docs: finalize P5 security and authorization`, resolved by
+  `git log -1 --format='%H %s' --grep='^docs: finalize P5 security and authorization$'`;
+  its parent is the literal handoff SHA; the next task records its SHA;
+- open gaps and the accepted risk;
+- P6 — Concurrency, Idempotency & Performance is NOT STARTED and requires
+  explicit Owner authorization;
+- the exact P6 entry baseline step;
+- what is not authorized.
+
+Perform a zero-context-agent check before the commit.
+
+==================================================
+18. CONDITIONAL OWNER APPROVAL
+==================================================
+
+If and ONLY if all of the following hold:
+- CRITICAL, HIGH, MEDIUM and LOW unresolved defects = 0 (deferred
+  obligations are recorded, not defects);
+- OWNER_DECISION_REQUIRED = 0;
+- no separate Fable review is triggered under section 15;
+- the adversarial re-test and all validation PASS;
+- no known contradiction remains;
+- P1–P4 approved business semantics are preserved, with only section 13
+  technical amendments;
+- P5 remains documentation only;
+- no P6 work exists;
+
+then I explicitly APPROVE the P5 normative security and authorization
+baseline:
+- docs/02-domain/PERMISSIONS_MATRIX.md → APPROVED;
+- docs/03-architecture/SECURITY.md → APPROVED;
+- any section 13 amended revisions are approved as part of it.
+
+Record this as APPR-006, with the SHA-256 of each approved file exactly as
+committed (LF blob bytes, lifecycle metadata included), and verify those
+hashes after staging.
+
+The P5 gate, logs, register and handoff stay REVIEW as living or evidence
+records.
+
+==================================================
+19. CHECKPOINT COMMIT
+==================================================
+
+1. Review the complete diff: `git diff --ignore-cr-at-eol` plus all new
+   files.
+2. Stage explicit paths only, with CRLF normalization, for example:
+   `git -c core.autocrlf=input add -- <paths>`
+   Never use `git add -A` or `git add .`.
+3. Verify the staged content:
+   - `git diff --cached --stat` and `git diff --cached --check`;
+   - the staged file list equals the intended census;
+   - secret scan of the staged diff;
+   - staged source-record blobs match their recorded hashes;
+   - no unrelated, binary or temp files;
+   - no .env or key material.
+4. Commit once, message exactly:
+   docs: finalize P5 security and authorization
+5. Identity and attribution:
+   - use only the Owner's existing configured Git identity;
+   - do not modify git config;
+   - do not pass --author;
+   - no trailers of any kind;
+   - never add Co-Authored-By, Generated-By or Assisted-By;
+   - never name Claude, Anthropic, Fable, Opus or any AI/model/tool.
+   If no identity is configured: STOP.
+6. After the commit:
+   - inspect the raw message (`git cat-file -p HEAD`) and confirm there is
+     no attribution trailer;
+   - confirm author and committer equal the configured identity;
+   - confirm the tree and index are clean (CRLF-aware).
+
+If automated review blocks staging or the commit:
+- do not bypass it or retry variants;
+- preserve the work;
+- report the exact command and reason;
+- STOP.
+
+==================================================
+20. PUSH
+==================================================
+
+Immediately before pushing, run `git ls-remote origin refs/heads/main`.
+
+It must equal the literal handoff SHA, the new commit must be its normal
+descendant, and there must be no divergence. If so, run:
+
+git push origin main
+
+A normal push only. Never use:
+- --force
+- --force-with-lease
+- reset or rebase of published history
+- history rewriting
+- remote deletion
+
+On divergence: STOP and report.
+
+If no working GitHub credentials exist:
+- do not seek GUI or computer control;
+- report the local commit SHA;
+- instruct the Owner to run `git push origin main`.
+
+Never claim publication until live origin/main confirms it.
+
+==================================================
+21. POST-PUSH VERIFICATION
+==================================================
+
+Verify:
+- local HEAD == live origin/main (ls-remote);
+- tracking is up to date;
+- the tree and index are clean;
+- PERMISSIONS_MATRIX and SECURITY are APPROVED (APPR-006);
+- OWNER_DECISION_REQUIRED = 0;
+- P6 is NOT STARTED.
+
+Make no further commits in this task.
+
+==================================================
+22. STOP CONDITIONS — SUMMARY
+==================================================
+
+STOP and report on any of the following:
+- baseline mismatch or divergence;
+- an OWNER_DECISION_REQUIRED item (follow the section 9 procedure);
+- a section 15 review trigger;
+- a validation failure not fixable within Level 1;
+- a required change to approved business meaning;
+- a destructive operation;
+- an automated review blocking a Git action;
+- a missing Git identity or credentials, handled as in sections 19–20;
+- task completion.
+
+==================================================
+23. FINAL REPORT
+==================================================
+
+Report:
+
+A. Baseline verification, including the literal handoff SHA.
+B. Source record 27: file name, lines, bytes, SHA-256.
+C. Governance wording cleanup edits (5.1–5.8 and any extras).
+D. P5 files and their structure.
+E. Capability catalogue counts, per authority class.
+F. Role and grant model, and the AC-13 with/without-inventory
+   resolution.
+G. Field projection summary, including:
+   - pool evidence;
+   - exposure rows;
+   - inter-company allocation;
+   - allocated-cost treatment;
+   - audit data.
+H. Owner-only and ADM+ enforcement, including the DIR-027 exception.
+I. Authentication, session, credential, onboarding, reset and recovery
+   design (DEP-08 outcome).
+J. Web, input, file, download, export, job, cache and alert controls.
+K. Audit and security logging.
+L. Handoff obligations for P6, P7, P8 and P9.
+M. Approved-document amendments with pre-amendment hashes, or "none".
+N. Gap updates and re-derived totals.
+O. Coverage and closure table result (section 8).
+P. Self-review findings.
+Q. Independent adversarial findings, dispositions and re-test.
+R. Remaining contradictions.
+S. OWNER_DECISION_REQUIRED count, with full details if greater than 0.
+T. Separate Fable review decision and rationale.
+U. Validation results with measured counts.
+V. Approval ID and approved-file hashes.
+W. Commit SHA, message and exact file census.
+X. Author/committer identity and raw-message attribution check.
+Y. Push result, final local HEAD and live origin/main.
+Z. Working tree and index state (CRLF-aware).
+AA. P5 lifecycle and P6 status.
+AB. Zero-context handoff readiness.
+AC. Exact next safe action.
+
+Expected successful end state:
+
+P0–P4 APPROVED
+P5 APPROVED (APPR-006)
+P5 CHECKPOINTED
+P5 PUBLISHED
+OWNER_DECISION_REQUIRED = 0
+LOCAL HEAD = live origin/main
+WORKING TREE CLEAN
+INDEX CLEAN
+P6 NOT STARTED — requires explicit Owner authorization
+
+STOP after reporting.

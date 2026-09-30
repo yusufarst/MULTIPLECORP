@@ -358,3 +358,5 @@ One read-only Fable review, **"DATABASE INTEGRITY UNDER CONCURRENCY AND CORRECTI
 ## Exact next safe action
 
 The separately authorized handoff/bootstrap task in [NEXT_ACTION](../07-handoff/NEXT_ACTION.md): verify that local HEAD equals origin/main at the P4 checkpoint, record the checkpoint SHA literally, then await the Owner's explicit P5 authorization. No P5 work before that.
+
+**Addendum (2026-09-30):** this action was discharged by the zero-context handoff under [DIR-030](../00-governance/DECISION_LOG.md#dir-030-obs-009-and-tech-019--zero-context-handoff-acceptance-and-p4-checkpoint-record) (OBS-009), and P5 was authorized by [DIR-031](../00-governance/DECISION_LOG.md#dir-031-obs-010-and-tech-020--p5-authorization-entry-baseline-and-security-documentation); this gate otherwise stays unchanged as P4 evidence.
