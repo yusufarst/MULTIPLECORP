@@ -11,7 +11,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Tag `pre-aicwdf-migration` | `c511d7b0d4683e07717c962927c9f113854f227b` | P7 checkpoint and pre-migration baseline: 71 tracked files |
 | Commit 0 — stage 0 | `c9ba88b28f398c8c6177ab2b2a6df8d8ef50e017` | `docs: record AICWDF adoption directives and migration baseline`: seven source records added and registered |
 | Stage 1 | `2a89d9ea892cacf5ddae57ec3b5911b9ce2ac7d8` | `docs: move planning documents into AICWDF phase structure`: the 21 moves below; link-target paths recomputed |
-| Stage 2 — WORKFLOWS | the commit `docs: split WORKFLOWS into section files`, child of `2a89d9e` | `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
+| Stage 2 — WORKFLOWS | `3f8bd90c2545517c3c66489e60dbf79e50b9b64e` | `docs: split WORKFLOWS into section files`: `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
+| Stage 2 — DATABASE | the commit `docs: split DATABASE into section files`, child of `3f8bd90` | `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -174,6 +175,40 @@ Four documents became folders named after the document (DIR-039 §9). Each part 
 
 Link targets rewritten: 14 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 24 in 17 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/03-workflows/WORKFLOWS.md` became `docs/03-workflows/WORKFLOWS/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
 
+### DATABASE
+
+`docs/04-architecture/DATABASE.md` — 1100 lines, SHA-256 `D41180F9410F8E4FE8F87C106E6A340496D8AA1DA30861142E4F3B8BAD06C557` at the previous commit — became the folder `docs/04-architecture/DATABASE/`: its [README](../04-architecture/DATABASE/README.md) and 24 parts, each a contiguous line range of the stage-1 file, in order.
+
+| File | Baseline lines | Lines | SHA-256 |
+| --- | --- | --- | --- |
+| `docs/04-architecture/DATABASE/s01-03-foundations.md` | 1–127 | 127 | `39DD82CE9430294D2EB5B8BB4BF60C9585FD9DBF79BB97FE96F3E710657E2E6F` |
+| `docs/04-architecture/DATABASE/s04-00-module-map.md` | 128–172 | 45 | `A491F17C5A75DEFE5EF6988837294FC07EE026BC92768EC74E7931AD6A8D5EFE` |
+| `docs/04-architecture/DATABASE/s04-01-iam.md` | 173–184 | 12 | `848378C5413B605B1C24967207A0219A2228E017E351874C24AFFEEBA30DB534` |
+| `docs/04-architecture/DATABASE/s04-02-org.md` | 185–198 | 14 | `6D709F87AD59929625CCB567BFE18DB938F8027EB7A09554EE7CBAFEA5193840` |
+| `docs/04-architecture/DATABASE/s04-03-pty.md` | 199–208 | 10 | `8C4EF69689C9C2C9972517B3A1133E67BCE8A5628567CE8E3BBAFFE980DB7AE4` |
+| `docs/04-architecture/DATABASE/s04-04-cat.md` | 209–219 | 11 | `9B28E8B69833BC32128E1DF397D64D05E8663CEFE9AD41CA67648374C2F3715B` |
+| `docs/04-architecture/DATABASE/s04-05-prj.md` | 220–235 | 16 | `8704CD8C114A24F9D5581C2639543731261AE87071D8214CC0C3A30624C79F00` |
+| `docs/04-architecture/DATABASE/s04-06-pur.md` | 236–248 | 13 | `46987728A1C5000513ED6BD46F5AEB3ECCBD253D343080D752EC8A2371638B33` |
+| `docs/04-architecture/DATABASE/s04-07-inv.md` | 249–281 | 33 | `E1F578400A00BEEDFE379E9537E2A850893083DF1DA7F2CDE91B11E4D5EC68B7` |
+| `docs/04-architecture/DATABASE/s04-08-cst.md` | 282–294 | 13 | `BDD9FECA137AC16BF2E5F83FF122BD9E46DA95D1048422463D834863F4CBC78A` |
+| `docs/04-architecture/DATABASE/s04-09-ful.md` | 295–306 | 12 | `39004FCE419E1FA250E90B1BEFE88973772C733D563F22F3838752D5524F7B9C` |
+| `docs/04-architecture/DATABASE/s04-10-doc.md` | 307–321 | 15 | `726BBBC80B479B69562B555C2A736B1A1271532BA1DA19DDBCAB5CF2976FDE90` |
+| `docs/04-architecture/DATABASE/s04-11-adm.md` | 322–329 | 8 | `1FEBD32CCEBB539AE4B0D045FA6221631340E516C2D54879D1E78E5294C01F49` |
+| `docs/04-architecture/DATABASE/s04-12-fin.md` | 330–353 | 24 | `491ECE61F3A1B35D6E5BB17481D1098C1B786F126DE677950A8B33D143173027` |
+| `docs/04-architecture/DATABASE/s04-13-ops.md` | 354–365 | 12 | `36FA20812C8E6FF5EA749727A86AF0CE5FB24D77B7EF6B03AD6BFEDECD8E74E6` |
+| `docs/04-architecture/DATABASE/s05-inventory.md` | 366–462 | 97 | `0A20C5DCC1BA59ABB0D77B75ABD2F94B0184E7A6B7AF243D0045657B8DCE65FE` |
+| `docs/04-architecture/DATABASE/s06-lot-cost-hpp.md` | 463–529 | 67 | `F65FB8F1E2D1CB6722ECE854EC81258CE224875F9B5900A5224E733C2ECBA359` |
+| `docs/04-architecture/DATABASE/s07-10-representations.md` | 530–579 | 50 | `46EC2834A4B74DD84E6855C3CA237477C72C9D1336A1EF736872BF783149A3EC` |
+| `docs/04-architecture/DATABASE/s11-12-finance-tax.md` | 580–639 | 60 | `AF6152DD90337706B5122ED234E472E24177572EA616113B913A7FC2B6B6FAC5` |
+| `docs/04-architecture/DATABASE/s13-17-history-scope-types.md` | 640–736 | 97 | `17C9690616C44A8BDD829757EB0E6F60D3C80F027558893E2CC2C761AB2FCAB2` |
+| `docs/04-architecture/DATABASE/s18-19-constraints-integrity.md` | 737–839 | 103 | `47DD83D3A3B4A3BA7B525989E0FE673610F29F2AC5E6DB3E154BC0A66CFCD50A` |
+| `docs/04-architecture/DATABASE/s20-24-index-storage-migration.md` | 840–893 | 54 | `9D06241C3F64280AC0ADF33ABA1FF60AFEFD5DAE45EC8C6E7FD83BF9F0F9B5CA` |
+| `docs/04-architecture/DATABASE/s25-28-transactions-handoffs.md` | 894–967 | 74 | `21407A9DDF2B6F4A6A0C74D15D6A51556B9C1EFAF54BECD20AF5402918851149` |
+| `docs/04-architecture/DATABASE/s29-31-diagrams-traceability.md` | 968–1100 | 133 | `399720D123B1DC6A5690434B3BE89C069255D9167584C1C251447F8AC7EF0C45` |
+| `docs/04-architecture/DATABASE/README.md` | — | 32 | `C080364F5C597C8923BE7D13D94190496F101A09C1A4743978177109AB925A06` |
+
+Link targets rewritten: 32 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 27 in 16 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/04-architecture/DATABASE.md` became `docs/04-architecture/DATABASE/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
+
 ## Gate results
 
 ### G0 — stage 0 (commit 0): PASS
@@ -200,6 +235,14 @@ Link targets rewritten: 14 inside the parts — in-document anchors whose headin
 - Headings: the concatenation's 62 headings equal the stage-1 sequence; each of the 22 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
 - Anchors: all 26 links into or inside WORKFLOWS resolve to the same heading as before — 7 anchored links to the part holding the heading, 19 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/02-domain/BUSINESS_RULES.md`, `docs/03-workflows/evidence/P3_QUALITY_GATE.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/DATABASE.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
 - Repository-wide link check: 1,129 relative links outside `sources/`, none broken.
+
+### G2 — DATABASE: PASS
+
+- Concatenation: the 24 parts in table order, with link targets neutralized on both sides, are byte-identical to the stage-1 file.
+- Lines: 127 + 45 + 12 + 14 + 10 + 11 + 16 + 13 + 33 + 13 + 12 + 15 + 8 + 24 + 12 + 97 + 67 + 50 + 60 + 97 + 103 + 54 + 74 + 133 = 1100, the stage-1 count; every part ends with a newline; code fences are balanced inside every part (8 pairs).
+- Headings: the concatenation's 64 headings equal the stage-1 sequence; each of the 63 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
+- Anchors: all 27 links into or inside DATABASE resolve to the same heading as before — 11 anchored links to the part holding the heading, 16 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/evidence/P4_QUALITY_GATE.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/05-security/SECURITY.md`, `docs/05-security/evidence/P5_QUALITY_GATE.md`, `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md`, `docs/06-api-performance/PERFORMANCE.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
+- Repository-wide link check: 1,155 relative links outside `sources/`, none broken.
 
 ## Supporting evidence — rename detection
 
