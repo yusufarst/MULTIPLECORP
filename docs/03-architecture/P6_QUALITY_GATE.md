@@ -665,3 +665,5 @@ A read-only validation script kept outside the repository, following the prior g
 ## Exact next safe action
 
 Wait for the Owner's explicit authorization of P7 — UX, Information Architecture & Design System ([NEXT_ACTION](../07-handoff/NEXT_ACTION.md)). At P7 entry, verify that local HEAD equals live origin/main at the P6 checkpoint — resolved by `git log -1 --format='%H %s' --grep='^docs: finalize P6 concurrency, idempotency and performance$'`, parent `b09e70f3a867d58b431c7ae0369b7a432c4fd1a1` — and record its SHA literally. No P7 work before that; before P7 designs the Owner review queue, the record GAP-034 asks for is settled under change control (HO-38).
+
+**Addendum (2026-10-01):** this action was discharged by [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation): P7 was authorized, and its entry observation OBS-012 verified and recorded the P6 checkpoint `ff92c415c164f9fea3758fead256a2df53a74211` and its publication; this gate otherwise stays unchanged as P6 evidence.

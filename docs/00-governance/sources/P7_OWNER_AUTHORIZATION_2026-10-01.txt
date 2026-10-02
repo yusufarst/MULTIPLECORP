@@ -1,0 +1,2278 @@
+TRANSCRIBED LOCKED SOURCE RECORD — twenty-ninth source record
+Received: 2026-10-01, in-session Owner message following the published P6
+checkpoint ff92c415c164f9fea3758fead256a2df53a74211
+Subject: Owner fast-track authorization — P7 UX, Information Architecture &
+         Design System documentation (baseline verification and DesainPakai
+         CLI readiness through conditional approval, one checkpoint commit,
+         a normal non-force push and the continuity freeze)
+Delivery: one pasted text block sent without an accompanying sentence; its
+         Markdown code-fence lines are not transcribed. Before any edit the
+         executor asked in-session whether the block was the Owner's
+         authorization and how to proceed, and the Owner selected
+         "Ya, jalankan P7 penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER AUTHORIZATION — P7 UX, INFORMATION ARCHITECTURE & DESIGN SYSTEM
+FAST-TRACK EXECUTION (FINAL)
+
+Project:
+MultipleCorp — Company Management System
+
+Repository:
+C:\Projects\MultipleCorp
+origin: https://github.com/yusufarst/MULTIPLECORP.git
+
+Date:
+2026-10-01
+
+Current phase:
+P7 — UX, Information Architecture & Design System
+
+Role:
+PRIMARY UX / INFORMATION ARCHITECTURE / DESIGN-SYSTEM ARCHITECT and
+repository executor (planning documentation only)
+
+Operating mode:
+AUTO permitted. AUTO is permission automation only. It never:
+- widens scope;
+- starts later phases;
+- rewrites history or force-pushes;
+- touches production;
+- installs, upgrades, authenticates or reconfigures the DesainPakai CLI,
+  or changes its active project;
+- decides Owner-level questions.
+
+==================================================
+0. AUTHORIZATION AND BOUNDARY
+==================================================
+
+I, the Owner, explicitly authorize P7 — UX, Information Architecture &
+Design System to begin now, using the FAST-TRACK pattern:
+
+baseline verification
+→ DesainPakai CLI readiness check
+→ intake
+→ derive P7 UX / IA constraints from repository truth
+→ GAP-034 settlement
+→ bounded DesainPakai AI exploration of every required surface
+→ repository-constrained review of every alternative
+→ reject semantic conflicts
+→ compare compliant alternatives
+→ select the strongest compliant direction
+→ normalize it into the MultipleCorp design system
+→ final DesainPakai consistency and anti-AI-slop review
+→ freeze the normative P7 specifications
+→ self-review
+→ independent adversarial review
+→ fix
+→ re-derive counts and validate
+→ conditional approval
+→ one checkpoint commit
+→ one normal non-force push
+→ continuity freeze
+
+ONLY P7 IS AUTHORIZED BY THIS MESSAGE.
+
+Future intended continuation, NOT authorized by this message:
+P8
+→ P9
+→ P10
+→ P11 build-unit translation, where DesainPakai AI is intended to be
+  used again
+→ frontend implementation.
+
+Each later phase requires its own explicit Owner authorization. Every
+reference to P8–P11 or to implementation in this message is a handoff
+statement only.
+
+This message is complete. It needs no repeat confirmation before
+execution.
+
+DesainPakai AI CLI is the PRIMARY, actively used P7 design exploration
+tool when it is available and safely configured (section 4). It is never
+a source of truth; repository truth always wins. Under this
+authorization, P7 cannot be approved, APPR-008 cannot be recorded, and
+P7 cannot be committed or pushed until the required DesainPakai
+exploration of section 11 is actually completed and traced. There is no
+bypass.
+
+You have broad Level-1 UX and technical authority. Resolve ordinary
+navigation, layout, component, token, copy, interaction-state,
+responsive, accessibility and presentation choices yourself. Do not ask
+me to choose between design alternatives when the repository and this
+message already constrain the answer.
+
+You must STOP and report, instead of inventing an answer, when a genuine
+Owner-level product, scope, business, authority or visibility decision
+remains unresolved (section 13).
+
+P7 designs the UX the approved business system requires. It never
+simplifies, hides or removes a difficult approved business rule for
+visual convenience.
+
+P7 is DOCUMENTATION / SPECIFICATION ONLY. The repository says so for
+every planning phase, and nothing says otherwise for P7. Do not create
+any of the following:
+- production Laravel, PHP, React, TypeScript, TSX, JSX, HTML or CSS
+  files;
+- migrations or executable SQL;
+- configuration files, packages, Docker or infrastructure files;
+- tests, load scripts or E2E scripts;
+- binary images, screenshots, mockups or design-tool exports inside the
+  repository.
+
+Specifications may use prose, tables, Mermaid diagrams and fenced ASCII
+wireframes. Token and component tables are NON-EXECUTABLE design
+specifications, not code.
+
+Do NOT start P8. Do NOT design P8–P11. Record their obligations only as
+handoffs.
+
+Language rule:
+- Every message addressed to me is written in Bahasa Indonesia: progress
+  updates, questions, warnings, setup requests, stop reports and the
+  final report.
+- Repository documents stay in English.
+- End-user UI copy, labels and message examples inside the P7 documents
+  are written in natural, professional Bahasa Indonesia, as the V1_SCOPE
+  language contract requires.
+- Identifiers, paths, SHAs and commands stay verbatim.
+
+==================================================
+1. OWNER ACKNOWLEDGEMENT OF P6 LEVEL-1 CHOICES (OWNER INTENT)
+==================================================
+
+For purposes of entering P7, I explicitly accept the current P6 Level-1
+baseline as approved under APPR-007, including:
+
+- NM-03 numbering behaviour and its fail-closed rules;
+- Owner responsibility to perform numbering start/seed per company ×
+  document type where required;
+- the requirement that seed values must be above all relevant
+  external/paper numbers for the applicable period;
+- the prohibition on silently reusing committed numbers;
+- the current retry, timeout, queue, duplicate-warning, export and
+  command identity semantics;
+- the current P6 performance assumptions.
+
+This acknowledgement is not permission to change their business meaning.
+P7 must design UX around them.
+
+Record this acknowledgement in DIR-033 as Owner intent. It closes the
+informed-approval loop of the "Owner-visible Level-1 choices" section of
+P6_QUALITY_GATE. It reopens nothing.
+
+==================================================
+2. SOURCES OF TRUTH AND PRECEDENCE
+==================================================
+
+The Git repository is the canonical source of truth. None of the
+following is:
+- chat history;
+- project memory or model memory;
+- summaries or scratchpads;
+- DesainPakai output or DesainPakai project context.
+
+Follow the authority hierarchy of SOURCE_OF_TRUTH.md and CHANGE_CONTROL.md.
+
+Do not reopen, without me, the binding inputs CURRENT_STATE and
+NEXT_ACTION list:
+- DIR-009/011/018/019/020/022/024/026/027/029/031;
+- the APPR-006 and APPR-007 decisions;
+- RISK-001/GAP-018;
+- the PLANNER-DETERMINED decisions.
+
+My UX direction is binding Owner intent:
+- the V1_SCOPE "Language and experience contract" and "P7 handoff
+  requirements";
+- the Owner brief sections the ownership registry assigns to P7 (11,
+  20–23), including:
+  - the anti AI-slop constitution;
+  - the "design system before page explosion" list;
+- the UX sections of the P1 Owner directive: Indonesian UI, mobile-first
+  plus desktop-optimized, shadcn/ui, anti AI-slop.
+
+The reference flow image supplies conceptual sequence only. Its labels,
+gradients, cards and colours are not the design specification (V1_SCOPE).
+
+Section 14 of this message contains planner notes. They are analysis,
+never Owner intent. They must not be recorded or cited as an Owner
+decision.
+
+==================================================
+3. P7 ENTRY BASELINE VERIFICATION — BEFORE ANY EDIT
+==================================================
+
+Read-only first. Use equivalent syntax for your shell.
+
+1. The repository root is C:\Projects\MultipleCorp, and `git remote -v`
+   shows the intended origin.
+
+2. Branch `main` tracks `origin/main`.
+
+3. Run `git fetch origin`. HEAD, the local origin/main ref and live
+   origin/main (`git ls-remote origin refs/heads/main`) all equal:
+   ff92c415c164f9fea3758fead256a2df53a74211
+   Ahead/behind must be 0.
+
+4. `git log -1 --format='%H %P %s'` shows:
+   - the subject
+     `docs: finalize P6 concurrency, idempotency and performance`;
+   - the parent b09e70f3a867d58b431c7ae0369b7a432c4fd1a1.
+   Also run:
+   `git log -1 --format='%H %s' --grep='^docs: finalize P6 concurrency, idempotency and performance$'`
+   It must resolve to ff92c415c164f9fea3758fead256a2df53a74211. An empty
+   result is a failure.
+
+5. Working tree and index are clean.
+   - `git diff --ignore-cr-at-eol --stat` must be empty. Apply the
+     CURRENT_STATE line-ending note before calling the tree dirty.
+   - The index is empty.
+   - There are no untracked files.
+
+6. No merge, rebase, cherry-pick, revert or bisect is in progress.
+
+7. None of these exist:
+   - docs/04-ux/INFORMATION_ARCHITECTURE.md
+   - docs/04-ux/ADMIN_FLOW.md
+   - docs/04-ux/DESIGN_SYSTEM.md
+   - docs/04-ux/P7_QUALITY_GATE.md
+   - any P8+ file: docs/05-quality/*,
+     docs/03-architecture/BACKUP_RECOVERY.md,
+     docs/03-architecture/INFRASTRUCTURE.md, docs/06-delivery/*
+   - any application code.
+
+8. Repository state records all of the following:
+   - OWNER_DECISION_REQUIRED = 0;
+   - gap totals 34 — 3 CLOSED, 30 OPEN, 0 OWNER_DECISION_REQUIRED,
+     1 ACCEPTED_RISK;
+   - all 28 source records match their SOURCE_OF_TRUTH hashes. Record 28
+     is P6_OWNER_AUTHORIZATION_2026-09-30.txt,
+     38F89EE64D3FA138322875DB10771C50D0BC8F0268785F37A6351558AC2021DC.
+
+9. The seven APPR-007 hashes equal the committed blobs.
+   - Compute SHA-256 over the committed blob bytes. For example, write
+     `git cat-file blob HEAD:<path>` in binary-safe mode to a temp file
+     outside the repository, then hash it.
+   - Never hash a CRLF working copy.
+   - The expected values below were copied by the planner from
+     DECISION_LOG. DECISION_LOG is authoritative; report any difference.
+       CONCURRENCY_IDEMPOTENCY  07422AAD6643CD9534B5EC8115994D7437DAF46D80DE7DD2565AB2D05F966FC3
+       PERFORMANCE              50A68EEDCE34DA1CEAC000E4E1D8272211CE3E83C4C050768CA8F2E66EFEAB8D
+       API_AND_INTEGRATIONS     8B8515D52A33786B1017699A314435C54B19BE2BBDAB79C5FD04702345F4259C
+       DATABASE                 0CA6FF557035D2ABDFDF3147CEE98D18DE6509819C4AD9E65D0D8317DEDAA207
+       ARCHITECTURE             E1AEF4658899E656FA5A8BEB1201CBD712DA48FC7CB79792A98CB0B965632312
+       WORKFLOWS                6E413D012A8768E51612D1D11357EA41FF20B2E126673C1B10E292B56C712035
+       PERMISSIONS_MATRIX       D3BF4D13DF2188E05FF3A89864C54C2074BD1EA372E5E6F537FE04E1507229ED
+   - SECURITY's hash must equal its APPR-006 record.
+
+10. Informational only, never a stop condition: record in OBS-012 whether
+    `git config user.name` and `git config user.email` are set. This is
+    read-only. Confirm presence without printing the e-mail address.
+
+If any item in 1–9 materially differs:
+- STOP and report in Bahasa Indonesia;
+- make no edits;
+- do not repair divergence.
+
+Record the verified P6 checkpoint SHA literally in the P7 entry
+observation, OBS-012. This discharges the NEXT_ACTION obligation.
+
+==================================================
+4. DESAINPAKAI CLI READINESS — AT P7 ENTRY
+==================================================
+
+Run this after section 3 and before intake.
+
+DesainPakai CLI setup and authentication are an environment/setup
+action, separate from this authorization and from the repository. This
+message contains no credential. Its archived transcript (section 5) must
+never contain one.
+
+Never write any of the following into the MultipleCorp repository:
+- an API key or access token;
+- a credential of any kind;
+- an authentication command containing a secret;
+- user-level DesainPakai configuration.
+
+Where the CLI allows it, run every `dpai` command from a working
+directory outside the repository, such as a temp directory. After every
+DesainPakai session, confirm with `git status` that nothing new appeared
+in the repository.
+
+Readiness steps:
+
+1. Check availability: `dpai --version`
+
+2. If it is already installed, do not reinstall or upgrade it.
+
+3. Check authentication and the active project with these safe read-only
+   commands:
+   `dpai auth status --pretty`
+   `dpai project current --pretty`
+
+4. Confirm that the active DesainPakai project is MULTIPLECORP. Never
+   change the active project yourself. No brief is sent to DesainPakai
+   until this confirmation is recorded.
+
+5. Fetch the latest design context: `dpai context --pretty`
+   - Keep its output outside the repository.
+   - It is tool context only. It never outranks the repository. Where it
+     conflicts with the repository, the repository wins; record the
+     conflict in the P7 gate.
+
+6. Record only non-secret evidence in the P7 quality gate:
+   - CLI available or unavailable;
+   - CLI version;
+   - authenticated or not;
+   - active project name;
+   - context revision;
+   - date and time of context retrieval (WIB).
+
+7. Never print, record, archive, commit or echo an API key or access
+   token. Do not run commands that display credential or configuration
+   values. If any output unexpectedly shows a secret:
+   - do not reproduce it anywhere — not in logs, documents, reports or
+     messages;
+   - tell me in Bahasa Indonesia that a credential may have been
+     displayed, without repeating it.
+
+Discovering commands:
+- Use only the CLI's own help (`dpai --help`, `dpai <command> --help`)
+  to find exploration and generation commands.
+- Never guess subcommands or flags.
+- Never run commands that change authentication, credentials, project
+  selection, account settings or permissions.
+
+If installation, authentication, project selection or credential setup
+is still required:
+- STOP only the DesainPakai-dependent part;
+- preserve all completed repository-grounded P7 work;
+- report the exact missing setup step to me in Bahasa Indonesia and ask
+  for the exact setup authorization needed;
+- do not install, upgrade, authenticate, rotate credentials, change
+  project or widen permissions unless I explicitly authorize that
+  environment step in-session;
+- continue only repository-grounded work (sections 5–10 and the GAP-034
+  settlement) that does not claim a DesainPakai review occurred;
+- do not finalize P7: no approval, no APPR-008, no commit, no push while
+  any required exploration of section 11 is outstanding.
+
+When I confirm that the setup is complete, re-run steps 1–6 and resume
+section 11. Record the completion in the gate's readiness evidence as a
+non-secret note only; environment setup needs no DECISION_LOG entry.
+
+If DesainPakai is genuinely unavailable because of an external outage or
+an unsupported environment that cannot be resolved during this task:
+- STOP before APPR-008;
+- report the blocker in Bahasa Indonesia;
+- leave the package uncommitted and the handoff accurate;
+- do not waive the exploration, and do not propose finalizing without
+  it.
+
+==================================================
+5. SOURCE RECORD AND IDENTIFIERS
+==================================================
+
+Archive this message verbatim as the twenty-ninth transcribed LOCKED
+SOURCE RECORD:
+docs/00-governance/sources/P7_OWNER_AUTHORIZATION_2026-10-01.txt
+
+- Follow the header format of record 28 (TRANSCRIBED LOCKED SOURCE
+  RECORD, Received, Subject, Delivery, the transcript statement).
+- Describe the delivery truthfully. Code-fence lines are not
+  transcribed.
+- Use LF endings. Add the `-text` attribute line in .gitattributes,
+  following the precedent of record 28.
+- Register it in SOURCE_OF_TRUTH with its lines, bytes and SHA-256.
+- Do not alter the 28 earlier records.
+- The record must contain no credential, token, secret, authentication
+  command containing a secret, temporary credential or local private
+  configuration value. This message contains none; verify this before
+  archiving.
+
+Use the next repository-conformant IDs. Expected (verify first):
+- DIR-033 for this authorization;
+- OBS-012 for the entry observation;
+- TECH-022 for the P7 work, including the GAP-034 settlement and any
+  channel amendments;
+- APPR-008 for the approval, if granted;
+- GAP-035 onward only for genuinely new failure scenarios.
+
+Choose P7 identifier families yourself. This includes:
+- derived UX requirements;
+- bounded DesainPakai briefs (for example DPB-01);
+- design decisions;
+- screens;
+- patterns.
+
+For every family:
+- verify that it does not collide with an existing repository
+  identifier;
+- define each identifier once and keep it contiguous.
+
+If a label this message uses (for example UXS-01–UXS-44) collides,
+rename it and publish a mapping table in the P7 gate.
+
+==================================================
+6. NARROW CONTINUITY CLEANUP
+==================================================
+
+Continuity wording only. No rule, business, architecture, security,
+approval or gap-status change. List each edit in TECH-022.
+
+6.1 PROJECT_CHARTER
+    - Rewrite the stale "Latest DIR-008 … retaining the P1-only
+      boundary" sentence as historical record.
+    - Rewrite the DIR-009 paragraph's "this policy update stays within
+      P1 and does not authorize P2 or implementation" in the same way:
+      past tense, stating what each directive did at the time.
+    - At the freeze, the Authorized-work paragraph records P7's end
+      state.
+
+6.2 GAP_REGISTER triage, "Resolve before" column
+    - For every OPEN gap whose cell names a gate already passed, write
+      the next remaining gate, as named by that gap's own latest
+      continuation note (for example P8 evidence, P9 operations, P10
+      cutover, release gate).
+    - Change no severity, probability, status, detail section or total.
+    - List each changed row in TECH-022.
+
+6.3 NEXT_ACTION
+    - Replace the accumulated "Stop boundary" history with a concise
+      statement of the current boundary.
+    - Point to DECISION_LOG and CURRENT_STATE for the history.
+    - Keep the binding-input list and every rule.
+
+6.4 CURRENT_STATE, "Repository state"
+    - Replace "Published HEAD at P6 entry: the P5 checkpoint …" with the
+      literal verified P6 checkpoint
+      ff92c415c164f9fea3758fead256a2df53a74211 and its publication
+      (OBS-012).
+    - Keep the line-ending note and the Git rules.
+
+6.5 AGENTS.md, README and PROJECT_CHARTER
+    - Record P7 authorized under DIR-033 and its actual end state.
+    - Update the phase chain ("… P6 by DIR-032 and P7 by DIR-033") and
+      "no later phase is authorized".
+    - AGENTS.md's later-phase sentence ("P6 owns … without designing
+      screens …") must reflect that P7 owns UX, IA and the design
+      system. Later-phase prohibitions on tests, infrastructure and
+      implementation stay.
+
+6.6 ENGINEERING_PRINCIPLES
+    - Add pointers from the maintainability/experience guardrail to the
+      three P7 owners. Pointer only.
+
+6.7 P6_QUALITY_GATE
+    - It is REVIEW evidence. Do not rewrite it.
+    - Add one dated addendum line stating that its "Exact next safe
+      action" was discharged by DIR-033. Precedent: the P4 and P5 gate
+      addenda.
+
+6.8 Approval pointer lines gain APPR-008 only if it is granted,
+    following the APPR-004–APPR-007 precedent. This covers AGENTS,
+    CLAUDE, CHANGE_CONTROL, AGENT_OPERATING_MODEL and the other files
+    that carry the chain.
+
+Do not broaden the cleanup. If you find other stale continuity wording:
+- in entry, navigation or handoff files: fix it and list it;
+- anywhere else: report it only.
+
+==================================================
+7. REPOSITORY INTAKE
+==================================================
+
+Read in this order:
+1. AGENTS.md
+2. CLAUDE.md
+3. README.md
+4. CONTEXT_INDEX
+5. CURRENT_STATE
+6. NEXT_ACTION
+7. SOURCE_OF_TRUTH (including the ownership registry)
+8. DECISION_LOG
+9. GAP_REGISTER
+10. CHANGE_CONTROL
+11. AGENT_OPERATING_MODEL
+12. ENGINEERING_PRINCIPLES
+13. PROJECT_CHARTER
+
+Then read the approved inputs P7 consumes. Read as much as each design
+decision needs. Cite identifiers; never restate rules.
+
+- V1_SCOPE:
+  - capabilities CAP-01–CAP-18;
+  - the 14 document types;
+  - exclusions;
+  - the "Language and experience contract";
+  - the "P7 handoff requirements".
+- PRODUCT_OVERVIEW: users and journey.
+- ACCEPTANCE_CRITERIA: every AC with a presentation clause, at least
+  AC-03, AC-08, AC-13, AC-14, AC-20 and AC-23.
+- DOMAIN_MODEL: terminology and the S0–S4 sensitivity classes.
+- BUSINESS_RULES: lifecycles and states (for the status system); the
+  CALC definitions of every figure shown.
+- WORKFLOWS:
+  - §1 conventions: outcomes, the TECH-021 FAILED note, context tags,
+    Irreversible;
+  - §2 SF-CMD;
+  - §4 authority matrix;
+  - §5 every workflow, WF-ACC-01's session-expiry exception included;
+  - §8 correction matrix (entry points);
+  - §9 AX-01–AX-37;
+  - §10 QS-01–QS-22;
+  - §11;
+  - §12 L-24 and every L-row with a presentation effect;
+  - §13 P7 obligations.
+- REFERENCE_COVERAGE:
+  - REF-007, REF-008, REF-013, REF-048, REF-050, REF-052–REF-055;
+  - IMG-01–IMG-09, as conceptual sequence only.
+- PERMISSIONS_MATRIX:
+  - capabilities (§4);
+  - company scope (CS-*);
+  - projection (PJ-*, §7): PJ-04 relation marker, PJ-06, PJ-08, PJ-11,
+    PJ-13, PJ-15, PJ-17, PJ-20, PJ-21, PJ-23;
+  - cross-company links (XL-*);
+  - Owner-only denials (OD-*);
+  - §10 Owner review queue;
+  - DP-01–DP-20;
+  - AZ-01, AZ-08, AZ-11.
+- SECURITY:
+  - AU-*: sessions AU-07, step-up AU-15, credential links AU-11–AU-14;
+  - WS-03, WS-07, WS-08, WS-10, WS-12;
+  - FL-07, FL-09, FL-10;
+  - LG-01–LG-07;
+  - §8;
+  - §10 H7-01–H7-14.
+- DATABASE, as needed:
+  - §4.13 (`security_events`, `command_log`);
+  - §10 numbering;
+  - §16 public identifiers;
+  - §17 typed columns, never `jsonb`, for signals;
+  - §20 indexes;
+  - §23 audit;
+  - §24 import.
+- ARCHITECTURE: §9 web layer; §10 React boundary; §11 job states; §14
+  reporting.
+- CONCURRENCY_IDEMPOTENCY:
+  - §6 envelope;
+  - §9 ST-01–ST-09;
+  - §10 CI-01–CI-09 and the replay table;
+  - §11 BD-*;
+  - §12 SQ-01–SQ-23;
+  - §13 TX/RY timeouts;
+  - §14 NM-01–NM-10;
+  - §15 JB-*;
+  - §16 RV-*;
+  - §19 HO-01–HO-39.
+- P6_QUALITY_GATE: "Owner-visible Level-1 choices".
+- PERFORMANCE:
+  - §3–§10, PF-01–PF-43 and QB-01–QB-17;
+  - the signal register, QS-14 row included;
+  - IX-11, IX-13, IX-14, IX-17;
+  - the cache policy.
+- API_AND_INTEGRATIONS: RB-01–RB-09.
+- GAP entries: GAP-014, GAP-015, GAP-016, GAP-019, GAP-020, GAP-032,
+  GAP-034.
+
+Where a design depends on exact framework or library behaviour, read
+current official documentation (Context7 if available). Record source and
+version as evidence, not pins (DEP-07). This covers:
+- shadcn/ui and its primitives;
+- Tailwind CSS tokens and CSS variables;
+- Inertia: history encryption and clearing, 401/419 handling, partial
+  reloads, deferred and optional props;
+- WCAG 2.2.
+
+Install nothing.
+
+After intake, derive the P7 UX requirements from repository truth. Record
+them as identified rows in the P7 file that owns each concern, each
+citing its repository source. They are the first link of the
+traceability chain (section 11.9) and the content of every bounded
+DesainPakai brief.
+
+==================================================
+8. P7 OUTPUTS AND OWNERSHIP
+==================================================
+
+The SOURCE_OF_TRUTH ownership registry reserves three P7 paths for
+"navigation / interaction / visual rules respectively".
+
+A. docs/04-ux/INFORMATION_ARCHITECTURE.md
+   Owns navigation truth and covers the complete V1 application
+   structure:
+   - the Indonesian UI glossary: internal term or identifier →
+     Indonesian label → usage note → terms to avoid. This is its single
+     home, unless size makes a separate registered file materially
+     clearer (see "New files" below);
+   - the product map as users see it: every V1 area from CAP-01–CAP-18;
+   - the application shell and global navigation, mobile and desktop;
+   - the company-context model: scope, working filter, company labels,
+     relation-marker placement;
+   - the screen inventory (section 10-C);
+   - dashboard and queue placement for QS-01–QS-22, the Owner review
+     queue included, after GAP-034;
+   - search, lookup and scanner entry points;
+   - page-addressing conventions at IA level: public identifiers only,
+     nothing sensitive (H7-10).
+
+B. docs/04-ux/ADMIN_FLOW.md
+   Owns interaction truth and the Owner and Admin operational journeys:
+   - journeys per workflow and context tag, including their capability-
+     and company-dependent differences (section 10-D);
+   - the command interaction model (section 10-F);
+   - session, expiry, re-authentication and unsent input (section 10-G);
+   - forms, multi-line entry and validation presentation;
+   - confirmations: irreversible, destructive, step-up, Force Complete,
+     duplicate, numbering;
+   - correction and reversal entry and flows (WORKFLOWS §8 CM rows);
+   - background states: renditions, exports, imports;
+   - special interaction specifications:
+     - numbering and company onboarding;
+     - opening import;
+     - evidence upload;
+     - scanner flows;
+   - the Indonesian message catalogue patterns for outcomes, refusals,
+     denials and errors.
+
+C. docs/04-ux/DESIGN_SYSTEM.md
+   Owns visual rules. It contains everything section 10-M lists, as
+   NON-EXECUTABLE specification.
+
+D. docs/04-ux/P7_QUALITY_GATE.md
+   REVIEW evidence, registered in SOURCE_OF_TRUTH. It also records:
+   - the DesainPakai readiness evidence (section 4);
+   - the DesainPakai exploration summary and traceability (section
+     11.9).
+
+E. Governance, continuity and approved-document amendments only as
+   sections 6, 9, 12 and 21 allow.
+
+Anti-duplication contract:
+- Each rule has one home among the three P7 files; the others link to
+  it.
+- Business meaning stays in V1_SCOPE, DOMAIN_MODEL, BUSINESS_RULES and
+  WORKFLOWS.
+- Authorization truth stays in PERMISSIONS_MATRIX and SECURITY.
+- Mechanisms stay in CONCURRENCY_IDEMPOTENCY and PERFORMANCE.
+- P7 cites their identifiers and never restates, relaxes or extends
+  them.
+
+New files:
+- Create no other canonical file unless navigation becomes materially
+  clearer.
+- If you do, register it in the ownership registry with a one-line
+  rationale under TECH-022.
+
+Keep documents proportionate:
+- Prefer tables and patterns over page-by-page prose.
+- Specify each screen at the level a later build-unit phase will need.
+- Reference domain documents for fields they already define.
+
+==================================================
+9. FIRST DESIGN OBLIGATION — GAP-034 SETTLEMENT
+==================================================
+
+GAP-034 must be settled, under change control, before any part of the
+Owner review queue (QS-14) is designed and before any DesainPakai
+exploration of the Owner review queue.
+
+Treat it as a Level-1 technical/data-model realization of already
+approved P5 semantics (PERMISSIONS_MATRIX section 10, DP-13, DP-18;
+SECURITY FL-10). It is not a new business decision.
+
+9.1 Verify the exact repository constraints first:
+- The two missing durable items:
+  - a cross-scope or cross-family evidence duplicate the uploader may
+    not see (DP-13);
+  - a whole-import-batch collision outside the preparer's scope (DP-18).
+  Row-level collisions already have a source: `import_rows` in state
+  DUPLICATE, in the QS-14 register row.
+- DP-13: the uploader is shown nothing for such a match.
+  DP-18: the preparer sees only "not importable — Owner review".
+- PERMISSIONS_MATRIX §10: QS-14 is a derived view, never a stored queue;
+  only `review.view` opens it; the Owner acts only through normal
+  commands.
+- SECURITY:
+  - LG-02: security events are written outside business transactions
+    and never roll a command back; its field list and whitelisted
+    details object;
+  - LG-05 visibility;
+  - LG-06 retention of at least 12 months.
+- DATABASE §17: signals read typed columns only, never `jsonb`.
+  DATABASE §4.13 and its TECH-020 clause.
+- FL-10 lookups run outside the business transaction under the
+  registration keys (FU-10; LK-28; BD-15).
+- The D-CC-05 savepoint rule (a refusal commits its outcome and nothing
+  else), and its only precedents, ST-03 and SQ-23.
+- The oracle threats TM-23 and TM-27. H8-12 is the P8 proof.
+- The PERFORMANCE signal register, IX-13, IX-14 and QB-10.
+
+9.2 Decide and document. The settlement must define:
+a) The durable record shape:
+   - the kind or record name;
+   - the typed columns QS-14 needs: actor, both sides' entity types and
+     public ids, the companies concerned, detection time, correlation
+     and command ids;
+   - LG-03 redaction; no file contents.
+b) Lifecycle and retention, and whether each item is a notice (it ages
+   out, or stays within a window) or carries a review state. A review
+   state:
+   - is Owner-only;
+   - never gates, blocks or alters any business fact or command;
+   - never becomes a stored queue of business truth.
+c) How the item enters QS-14: register row, typed source, index and
+   budget.
+d) The write path:
+   - which request writes it, when, and whether inside or outside the
+     business transaction;
+   - its effect on locks, which must be none out of order;
+   - what happens if the write itself fails. The actor's outcome never
+     changes; state the residual.
+e) Owner-only visibility. The item never appears:
+   - on either record's timeline (PJ-11);
+   - in Admin lists, search, exports or notifications;
+   - in any security-log view available to Admins.
+f) No information oracle for the submitting user:
+   - response, wording, timing class and later visible state are
+     identical whether or not a hidden match exists;
+   - for a batch, exactly DP-18's wording and nothing more.
+g) Rejection semantics preserved: every outcome stays exactly as
+   approved.
+h) P6 transaction and concurrency semantics preserved. If a refusal path
+   must commit the record, state how it relates to D-CC-05 and SQ-23 and
+   add the minimal clause.
+i) The P8 proof obligation: a handoff that extends H8-12.
+j) GAP-034's status: it stays OPEN with a P7 continuation note — design
+   settled, runtime proof in P8 — unless repository evidence standards
+   allow otherwise.
+
+9.3 Prefer the option with the smallest approved-text footprint that
+    satisfies every constraint.
+    - Section 14 PN-1 lists candidate options as planner analysis.
+    - An option that adds a table must update every repository count
+      that references the table total.
+
+9.4 Permitted amendments, only where technically necessary. Each is a
+    narrow Level-1 clause marked `TECH-022`:
+    - SECURITY LG-02, and pointers in FL-10 or LG-05;
+    - DATABASE §4.13, and §20 if an index is needed;
+    - PERFORMANCE: the signal register's QS-14 row; IX rows;
+    - CONCURRENCY_IDEMPOTENCY: the HO-38 status pointer, and a minimal
+      envelope clause only if 9.2 h requires it;
+    - PERMISSIONS_MATRIX §10, DP-13 or DP-18: pointer only.
+    Each amended document:
+    - gets an amendment note after its Approval line;
+    - keeps APPROVED status;
+    - has its pre-amendment SHA-256 recorded in TECH-022, equal to its
+      latest approval record and to the committed blob.
+    The amended revisions are approved only through APPR-008.
+
+9.5 Record the ordering evidence in the P7 gate: the settlement was
+    completed and recorded before QS-14 presentation design and before
+    any DesainPakai brief for the Owner review queue.
+
+9.6 STOP (section 13) if the settlement would:
+    - change who sees or does what;
+    - change DP-13 or DP-18 outcomes;
+    - turn a warning into a block, or remove one;
+    - require any amendment of V1_SCOPE, PRODUCT_OVERVIEW,
+      ACCEPTANCE_CRITERIA, DOMAIN_MODEL, BUSINESS_RULES or WORKFLOWS.
+
+==================================================
+10. REQUIRED P7 DESIGN COVERAGE
+==================================================
+
+Every design-heavy item below passes through the DesainPakai exploration
+loop of section 11, as section 11.3 lists. The final normative content is
+repository-controlled specification.
+
+A. Glossary and copy
+   - A complete Indonesian UI glossary, consistent with the Owner's
+     terms: Piutang, Pembayaran, Barang Masuk, Barang Keluar, Riwayat
+     Stok, Dokumen Administrasi, Pengaturan.
+   - Document types keep their approved names and legal meaning.
+   - Client/legal names, codes, SKUs and user-authored content are data,
+     never translated.
+   - Tone: calm, precise, professional. No marketing copy, no "Welcome
+     back!" clichés, no emoji.
+   - Capitalization and punctuation conventions for labels, buttons,
+     messages and errors.
+   - Product-owned generated-document wording conventions.
+
+B. Information architecture and navigation (INFORMATION_ARCHITECTURE)
+   - The complete V1 application structure.
+   - Mobile navigation and desktop navigation designed separately. A
+     desktop layout that is merely shrunk is a failure.
+   - Application shell: sidebar or navigation, top bar, page header,
+     page actions.
+   - Owner and Admin entry points (WF-ACC-01).
+   - The company-context model:
+     - scope = granted companies;
+     - a working filter or company switcher narrows views only;
+     - every command form names its target record's company explicitly;
+     - a selected "current company" never substitutes for authorization.
+   - Relation-marker "perusahaan lain" placement (H7-02; PJ-04, PJ-06).
+   - Settings, master-data and audit/history areas.
+
+C. Screen inventory (INFORMATION_ARCHITECTURE). Each screen row lists:
+   - ID and Indonesian title;
+   - purpose;
+   - primary WF/SF/AX;
+   - context tag: [floor], [desk] or [both];
+   - audience and capability (PERMISSIONS_MATRIX IDs);
+   - projection sources (PJ-*);
+   - company-scope behaviour;
+   - QS signals shown;
+   - query class or budget row (QB-*);
+   - deferred groups: at most three; the dashboard at most five (PF-34;
+     QB-10);
+   - sort and filter keys, which must exist under PF-42/IX-11 or go
+     through the section 12 channel;
+   - mobile pattern and desktop pattern;
+   - commands launched;
+   - print view.
+   No screen shows a field its projection does not allow, and no screen
+   is the authorization.
+
+D. Owner and Admin operational journeys (ADMIN_FLOW)
+   - One journey per WORKFLOWS workflow, covering:
+     - entry points, screens and commands;
+     - branches and exceptions;
+     - correction and reversal entry points (CM rows);
+     - outcome handling.
+   - Each journey states its capability- and company-dependent
+     differences:
+     - Owner versus Admin;
+     - variants without a view capability (for example without
+       `finance.view` or `cost.view`);
+     - single-company and multi-company scope;
+     - other-company records behind the relation marker;
+     - routed refusals.
+   - A subflow run only by SYS or BG is marked N/A, with its reason.
+   - Orphan check: every WF has a journey, and every user-facing SF has
+     a home.
+   - Mobile must support what V1_SCOPE lists. Do not omit mobile stock
+     workflows because desktop exists.
+     - dashboard and status monitoring;
+     - project, product, document, billing and payment lookup and
+       detail;
+     - quick actions and approvals;
+     - reasonable operational forms;
+     - receiving, dispatch and barcode actions where the device permits;
+     - manual SKU lookup when no scanner is attached.
+   - Desktop optimizes:
+     - intensive administration and large tables;
+     - keyboard and mouse use;
+     - efficient multi-item entry, without a spreadsheet clone;
+     - document creation;
+     - finance, reporting and long workflows;
+     - reuse of known project data instead of retyping.
+
+E. Dashboards and queues
+   - Owner dashboard: consolidated and per company. Consolidated figures
+     appear only in the Owner's consolidated query classes (PF-25;
+     CS-08). Period figures are read in one snapshot (TX-10).
+   - Admin action queue across granted companies: rows labelled by
+     company, and never totals across companies (PF-25).
+   - Every QS-01–QS-22 is placed with its audience, entry point, action
+     link and empty state.
+   - No stored queue state beyond what the GAP-034 settlement permits.
+   - Polling no faster than once a minute, as background requests that
+     never extend a session (PF-26; H7-13).
+   - QS-20 routed refusals are notices that age out after 14 days, not
+     tasks.
+   - QS-21 acknowledged warnings.
+   - QS-22 pending unattributed losses are displayed separately in
+     company stock and profit views and block no consumption (DIR-027).
+   - QS-14 is designed only after section 9.
+   - No KPI-card wall, no fake analytics.
+
+F. Command interaction model (HO-01–HO-10; ARCHITECTURE §10; WORKFLOWS
+   §1)
+   1. Five user-visible response states. Keep the distinction between
+      recorded outcomes and transport or FAILED conditions.
+      - COMMITTED.
+      - REJECTED, with the failed precondition in business terms.
+      - CONFLICT, with the current state.
+      - PENDING, for background work only.
+      - FAILED: "could not be confirmed". Repeating the same
+        `command_id` is safe. A background FAILED means the committed
+        action stands.
+      The non-outcome answers are each presented distinctly:
+      - the AZ-11 denial, identical to not-found (WS-10);
+      - 401/419;
+      - validation errors;
+      - network loss.
+   2. `command_id` lifecycle:
+      - one per intent;
+      - reused for every automatic and manual retry until a terminal
+        outcome;
+      - kept across re-authentication for a submission that may have
+        reached the server;
+      - newly minted after a terminal outcome, after the payload
+        changes, and for a form that was never sent;
+      - a refused intent is remembered (CI-06), so a corrected request
+        is a new intent.
+   3. Double-submit (HO-03): a disabled control is a convenience only. A
+      new visit may interrupt the old one while the server completes it,
+      so the screen shows the recorded outcome.
+   4. Stale state and CONFLICT (HO-04; ST-01–ST-09):
+      - show the current state, keep the input and offer re-apply;
+      - a stale count leads to a recount;
+      - a changed Force Complete snapshot is shown again;
+      - "already recorded" (the CI-05 replay table, or SQ-07 after
+        expiry) is presented as "sudah tercatat — periksa sebelum
+        mengulang", never with a re-apply.
+   5. Duplicate confirmations (HO-05):
+      - L-49;
+      - the payment override with a reason, for an ADM+ actor (BD-02);
+      - in-scope FL-10 and L-45 evidence warnings (H7-07).
+      Each is a second, explicit submission that names the matches it
+      acknowledges.
+   6. Background requests are marked (HO-06; RB-05; RV-06). A download
+      is not background.
+   7. Retry after FAILED keeps the same `command_id` (HO-07). Lock-wait
+      FAILED copy reflects TX-01–TX-10: safe to repeat.
+   8. Business date (HO-08; ST-08):
+      - an explicit field on every command form, prefilled from the
+        server's day (WIB);
+      - the screen says whether the user chose it;
+      - a prefilled date that is no longer today returns CONFLICT for
+        confirmation;
+      - backdating is visible, and the numbering period follows the date
+        (NM-05);
+      - the pattern is compact, not a heavy field.
+   9. Exports (HO-09; H6-04; JB-03):
+      - requested, pending, ready, failed and WITHHELD states in the
+        requester's own list;
+      - at most two in progress per account;
+      - the row bound is refused with a request for a narrower period
+        (PF-28);
+      - downloads are ordinary browser requests;
+      - a withheld download answers as AZ-11.
+   10. Lists, search and scanner (HO-10), per section 10-I.
+   11. A screen may sequence several commands. It presents each outcome
+       separately and never implies that they commit together.
+   12. Money and quantities:
+       - entered and submitted as decimal strings exactly as typed;
+       - no binary floating point;
+       - authoritative totals, availability, outstanding and credit are
+         server values;
+       - any client-side preview is labelled provisional or fetched from
+         the server.
+   13. Routed refusal (SQ-23): the actor is told that the Owner, or an
+       actor with the grants, will see it (HO-01; QS-20).
+   14. A replay by another account is CONFLICT without disclosure. A
+       deactivated account is answered as unauthenticated (M-13).
+
+G. Session, expiry, re-authentication and unsent input (AU-07; H7-05;
+   H7-12; H7-13; HO-02; WF-ACC-01)
+   - 60-minute idle and 12-hour absolute timeouts. Warn before idle
+     expiry with a user-initiated "stay" action. Background requests
+     never extend a session.
+   - Distinguish two cases:
+     - a form never sent: after re-authentication it is a new intent,
+       and stale checks apply (WF-ACC-01);
+     - a submission whose response is unknown: the same `command_id` is
+       reused (HO-02).
+   - Never write form payloads, S3/S4 values or identifiers of
+     out-of-scope records to localStorage, sessionStorage, IndexedDB or
+     Cache Storage (WS-07, WS-08).
+   - Expiry, termination and login responses clear Inertia history and
+     client caches, or reload the whole document (H7-12).
+   - Design how unsent input and a pending `command_id` survive an
+     in-place re-authentication in memory, without violating H7-12.
+     Verify the documented Inertia behaviour and record the evidence.
+   - Where preservation is impossible (absolute timeout, termination,
+     logout, full reload), warn before the loss. Never lose input
+     silently.
+   - If no documented mechanism satisfies both HO-02 and H7-12 without
+     browser storage:
+     - choose the safest documented alternative;
+     - record the residual as a gap;
+     - never weaken a SECURITY control. Weakening one is a STOP
+       (section 13).
+   - Step-up confirmation within 15 minutes (AU-15; H7-09).
+   - Credential-link pages (H7-04).
+   - Generic authentication messages (H7-01).
+   - First-login and credential-event notices (H7-14).
+
+H. Numbering UX and company onboarding (HO-39; NM-03; NX-01; NX-13;
+   HO-32; C-10)
+   1. The numbering area shows, per company and type:
+      - schemes and counters;
+      - the seed boundary;
+      - go-live;
+      - the import batches that cover the company, with those still
+        holding seed rows.
+   2. Start and seed confirmations:
+      - list every period the command seeds;
+      - state exactly what the Owner vouches for: each first number
+        follows every number of its period issued outside the system,
+        whatever its date;
+      - for a start, additionally: from the start day nothing of the
+        type is numbered outside, no outside number carries a later
+        date, and each belongs to a period that contains its date or the
+        day it was issued.
+   3. The scheme form and its refusals explain:
+      - a scheme cannot take effect in the past, except as a backward
+        extension over dates no scheme covered;
+      - a first period that is not live and has no counter needs the
+        Owner's seed in the same step;
+      - the earliest date a new scheme may take effect;
+      - a same-day scheme splits that day's documents between two
+        series.
+   4. Refusals explained:
+      - a start is refused while a batch that is not ABORTED holds VALID
+        seed rows; the batch must be committed or aborted first;
+      - start and seeds are unavailable before go-live is recorded.
+        Recording go-live belongs to the cutover (HO-32). Present its
+        state; do not invent a command.
+   5. Company onboarding is a sequence of separate commands:
+      - company master;
+      - identity assets and bank accounts, with step-up;
+      - numbering schemes;
+      - the numbering start per type, PROJECT included;
+      - Admin grants.
+      Readiness is derived from state, never stored progress (WORKFLOWS
+      §1). The screen makes clear that nothing of a type can be numbered
+      before its start.
+   6. C-10 refusal UX for Admin users:
+      - it explains, in business terms, that the period has no number
+        series yet and that only the Owner can start or seed it;
+      - it discloses nothing beyond the Admin's projection;
+      - it shows the path forward.
+      Any new Owner signal for such refusals needs a durable source and
+      goes through section 12; otherwise record it as a gap.
+   7. Every confirmation above is an explicit, irreversible-aware step.
+      None is bypassable.
+
+I. Lists, search, scanner and exports (PERFORMANCE)
+   - Keyset "more" without totals or page numbers (PF-15).
+   - Page size 25, at most 100 (PF-17).
+   - Opaque cursors; a cursor error is a validation error, never a
+     silent first page (PF-14).
+   - Badges and queue sizes come only from guards or bounded per-company
+     counts (PF-15, PF-24).
+   - Multi-company lists are merged per company branch (PF-41).
+   - Sort and filter keys only as PF-42 registers them; otherwise use
+     the section 12 channel.
+   - Search:
+     - exact lookup first (PF-19);
+     - trigram terms of at least three consecutive letters or digits
+       (PF-20);
+     - equal and prefix names first; a 200-candidate bound with a "list
+       cut — narrow your term" notice; 20 rows for a type-ahead (PF-21);
+     - scope first (PF-22);
+     - 100 characters at most (PF-23).
+   - Scanner:
+     - always exact lookup, never trigram (QB-06);
+     - an ambiguous scan is never auto-selected (SF-SCAN);
+     - keyboard-wedge input never collides with keyboard shortcuts;
+     - manual SKU fallback;
+     - camera scanning only where the device permits (GAP-020), decided
+       without adding packages now.
+   - Thumbnails only in lists, one page of thumbnails, lazy below the
+     fold (PF-31, PF-32).
+   - Prefetching off on S3/S4 pages (PF-35). Partial reloads name their
+     props (PF-36).
+   - Mobile alternatives to tables: dense list rows, not a card per
+     section.
+   - A desktop data-table standard.
+
+J. Security presentation
+   - Every H7-01–H7-14 item has a home.
+   - AZ-11 not-found and forbidden are presented identically.
+   - Error pages carry the correlation id (H7-08).
+   - No sensitive data in titles, URLs, notifications or history
+     (H7-10).
+   - The pool-evidence confirmation (H7-11).
+   - Grant screens with the capability-by-company preview (H7-06;
+     GAP-032).
+
+K. WORKFLOWS §13 P7 items
+   - Journeys per workflow and context tag.
+   - Presentation of COMMITTED, REJECTED, CONFLICT and PENDING outcomes.
+   - Blockers.
+   - QS signals.
+   - The Force Complete confirmation: OWN!, blockers listed, snapshot
+     confirmed, and a changed snapshot shown again (M-27).
+   - The pre-payment Kuitansi's distinct state until it is linked or
+     voided (QS-19).
+   - Pending unattributed losses.
+
+L. Documents, SPJ and print views
+   - The DOC-01–DOC-14 issue experience:
+     - draft → irreversible issue → PENDING rendition → READY, or
+       FAILED with the sweeper's retry;
+     - the number is shown and never changes (NM-07);
+     - revision and void chains.
+   - Administrative document requirements and checklists (WF-ADM-01).
+   - Document preview.
+   - Print views identical to their pages (DP-19).
+   - Indonesian wording conventions.
+   - Per-document template layouts only to the extent the repository
+     assigns them to P7. Otherwise record the handoff (GAP-019).
+
+M. DESIGN_SYSTEM minimum content. Every item is explicit:
+   - application shell and navigation;
+   - typography; spacing; grid; density;
+   - responsive behaviour and breakpoints;
+   - forms;
+   - buttons and actions;
+   - tables, list patterns, filters, search, pagination ("more");
+   - dialogs, sheets/drawers, and dialog-versus-sheet rules;
+   - status representation: each lifecycle state has a label plus a
+     non-colour cue;
+   - destructive actions and destructive confirmation;
+   - correction and reversal patterns;
+   - financial-data presentation;
+   - inventory presentation;
+   - document preview;
+   - scanner UX;
+   - loading, skeleton, empty, error, denied, stale, CONFLICT, PENDING
+     and FAILED states;
+   - toast and feedback;
+   - audit/activity timeline and history;
+   - accessibility; keyboard interaction; touch behaviour and touch
+     targets;
+   - mobile patterns and mobile table alternatives;
+   - print-view rules;
+   - iconography, motion, radius, elevation and NON-EXECUTABLE design
+     tokens;
+   - every remaining item of the Owner brief's "design system before
+     page explosion" list and of V1_SCOPE's P7 list.
+
+   Formatting rules:
+   - Rupiah;
+   - thousands and decimal separators for the Indonesian locale;
+   - dates, times and WIB;
+   - exact decimal quantities with units;
+   - public identifiers.
+
+   shadcn/ui relationship:
+   - shadcn/ui is the implementation foundation.
+   - P7 defines how primitives are composed, extended and combined into
+     feature components, at design level only.
+   - Primitives stay separate from feature components.
+   - Business logic never enters a primitive definition.
+   - No production frontend implementation.
+
+   Feel:
+   - calm, premium, professional and operationally dense;
+   - no social-media interaction patterns: no feeds, reactions, likes,
+     streaks, confetti, gamification or chat-bubble decoration.
+
+N. Accessibility
+   - WCAG 2.2 AA as the design target (Level-1), with proof handed to
+     P8.
+   - Keyboard navigation, visible focus, semantic labels, contrast.
+   - Dialog focus management.
+   - Status never conveyed by colour alone.
+   - Reduced motion.
+   - Outcome announcements for assistive technology.
+   - Keyboard-efficient desktop flows.
+
+O. Anti AI-slop review
+   - Every prohibition of the Owner brief §21 and of the P1 directive's
+     list is mapped to the rule that prevents it.
+   - The final designs are reviewed against the list, with the
+     DesainPakai consistency and anti-AI-slop review of section 11.8
+     included.
+
+P. Handoffs, recorded only. No later phase is authorized by this
+   message; create no later-phase file:
+   - P8 (section 21);
+   - P9, if any;
+   - P10: numbering and go-live UX at cutover; UAT with the Owner and
+     Admin validators;
+   - P11:
+     - build units must use DESIGN_SYSTEM patterns and never invent
+       page-by-page conventions;
+     - DesainPakai AI is intended to be used again to translate the
+       frozen P7 designs into precise frontend build units, under the
+       same rule that it is never a source of truth (handoff statement
+       only).
+
+==================================================
+11. DESAINPAKAI AI — PRIMARY DESIGN EXPLORATION PROTOCOL
+==================================================
+
+11.1 Position in the P7 pipeline.
+
+P0–P6 repository truth
+→ derive UX constraints
+→ bounded DesainPakai brief
+→ DesainPakai exploration
+→ repository-constrained review
+→ reject semantic conflicts
+→ compare compliant alternatives
+→ select the strongest compliant direction
+→ normalize into the MultipleCorp design system
+→ final DesainPakai consistency and anti-AI-slop review
+→ freeze the normative P7 specifications.
+
+When the CLI is available and safely configured (section 4), DesainPakai
+AI is the primary, actively used design exploration tool for every
+surface in 11.3. It is never a source of truth; repository truth always
+wins. The exploration of this section is mandatory for P7 approval
+(section 22).
+
+11.2 Not a source of truth. DesainPakai must never redefine or change:
+- business rules or domain meaning;
+- workflow semantics;
+- permission or capability boundaries;
+- company visibility;
+- Owner-only authority;
+- finance semantics;
+- inventory semantics;
+- document semantics;
+- numbering semantics;
+- correction semantics;
+- concurrency rules, idempotency or command identity;
+- outcome semantics;
+- data-model truth;
+- P0–P6 approved decisions;
+- V1 scope.
+
+Whenever a proposal conflicts with the repository, the repository wins.
+The proposal is rejected, or corrected and recorded as corrected.
+
+11.3 Surfaces. Each surface passes through the loop of 11.5 at least
+     once. Related surfaces may share one brief when that does not blur
+     their constraints. Drop a surface only if repository truth shows
+     it invalid or duplicative, and record why.
+
+1.  information architecture alternatives
+2.  application shell and global navigation
+3.  desktop sidebar / top bar
+4.  mobile navigation
+5.  Owner dashboard
+6.  Admin dashboard
+7.  company-context and company-switching UX — a view filter, never
+    authorization
+8.  project workspace
+9.  client and supplier areas
+10. product / catalog
+11. purchasing
+12. receiving
+13. inventory
+14. barcode / scanner interaction
+15. dispatch and delivery
+16. quotation
+17. documents and SPJ
+18. invoice
+19. receivables
+20. payment
+21. reports
+22. settings
+23. audit / history
+24. Owner review queue — only after section 9
+25. numbering start / seed
+26. company onboarding
+27. forms
+28. dense operational tables
+29. responsive patterns
+30. loading, empty, error and permission-denied states
+31. COMMITTED / REJECTED / CONFLICT / PENDING / FAILED presentation and
+    the non-outcome answers
+32. stale-state handling
+33. correction and reversal flows
+34. confirmation and destructive-action patterns
+35. design-system exploration
+36. shadcn/ui component composition
+37. typography
+38. spacing
+39. density
+40. layout
+41. visual hierarchy
+42. accessibility
+43. keyboard-efficient desktop operation
+44. mobile operational workflows
+45. visual consistency
+46. anti-AI-slop review
+
+11.4 Multiple alternatives are expected for these twelve major surfaces,
+     where materially useful:
+     A1  application shell / navigation
+     A2  Owner dashboard
+     A3  Admin dashboard
+     A4  project workspace
+     A5  purchasing / receiving
+     A6  inventory
+     A7  documents
+     A8  billing / receivables / payment
+     A9  Owner review queue
+     A10 numbering initialization
+     A11 company onboarding
+     A12 mobile receiving / dispatch / scanner workflows
+
+     - Never simply accept the first generated design.
+     - Do not generate variants merely for quantity.
+     - Stop exploring once a clearly superior repository-compliant
+       direction is established.
+     - When fewer than two compliant alternatives exist for a major
+       surface, document why.
+
+11.5 Mandatory loop for every surface of 11.3:
+
+1.  Derive the UX constraints from repository truth (section 7, last
+    paragraph).
+2.  Create a bounded design brief containing only the relevant
+    constraints (11.6).
+3.  Give that brief to DesainPakai AI.
+4.  Generate multiple alternatives where materially useful (11.4).
+5.  Review every alternative against P0–P6 semantics (11.7).
+6.  Reject any proposal that changes business, security, authorization,
+    financial, inventory, document, numbering or concurrency meaning.
+7.  Compare the remaining compliant alternatives.
+8.  Select the strongest compliant direction.
+9.  Normalize it into the MultipleCorp design system (11.8).
+10. Record the final design decision and its rationale in the owning P7
+    normative file.
+
+11.6 Bounded brief. Give each brief an identifier (section 5).
+
+     A brief states only what its surface needs:
+     - the surface and its users, with capabilities;
+     - the context tag;
+     - the workflows involved, described plainly with their IDs;
+     - what may be shown, and what must never appear: projection, the
+       relation marker, Owner-only items;
+     - the states and outcomes to represent;
+     - PERFORMANCE limits: lists, totals, deferred groups, search,
+       polling;
+     - the relevant H7 presentation rules;
+     - Indonesian glossary terms;
+     - mobile and desktop expectations;
+     - the anti AI-slop and visual direction;
+     - the shadcn/ui foundation;
+     - an explicit "must not change" list drawn from 11.2;
+     - what is being asked of the tool.
+
+     Brief inputs:
+     - Use synthetic example data only.
+     - Never send credentials, tokens, .env content, personal data or
+       material outside the repository's documents.
+     - Never paste whole specifications when the constraint can be
+       stated.
+     - The Owner review queue brief may be written only after 9.5.
+     - Numbering briefs follow NM-03 and HO-39 exactly.
+
+11.7 Review of every alternative.
+
+     Reject or correct an alternative that fails any of:
+     - semantic fidelity: business, workflow, authority, visibility,
+       finance, inventory, document, numbering, correction,
+       concurrency/idempotency and outcome meaning;
+     - projection limits and the absence of oracles in wording, counts,
+       empty states, timing or errors;
+     - PERFORMANCE conformance;
+     - H7 security presentation.
+
+     Then score the compliant alternatives on:
+     - V1_SCOPE's priorities, in order: clarity → task speed → error
+       prevention → readability → consistency → responsive usability →
+       aesthetics;
+     - mobile-first and desktop-operational fitness;
+     - accessibility;
+     - anti AI-slop;
+     - Indonesian copy;
+     - feasibility on shadcn/ui primitives without business logic in
+       primitives;
+     - consistency with directions already adopted.
+
+11.8 Normalization, final review and freeze.
+     - Rewrite every adopted direction as MultipleCorp specification,
+       never as tool output: tokens, patterns, component compositions,
+       journeys and copy.
+     - Resolve inconsistencies across surfaces in favour of one pattern
+       per need.
+     - Establish the shell, navigation and design-system direction
+       early, so that later surfaces inherit it.
+     - Once every surface is normalized, run a final DesainPakai
+       visual-consistency and anti-AI-slop review over the normalized
+       design. Apply the 11.7 discipline to its suggestions.
+     - Then freeze the normative P7 specifications. Exploration ends at
+       the freeze. A later correction from the reviews of sections
+       17–18 is a repository-controlled edit; if it requires a new
+       direction for a surface, re-run the loop for that surface and
+       extend the traceability.
+
+11.9 Traceability. The P7 gate carries a traceability table: one row per
+     surface of 11.3, or per grouped brief listing its surfaces:
+
+     repository requirement IDs
+     → UX requirement IDs
+     → brief ID
+     → alternatives explored (count and short labels)
+     → adopted and rejected proposals, with one-line reasons, conflicts
+       found included
+     → final P7 design-decision ID
+     → normative P7 specification section (anchor).
+
+     Store summaries only — no large generated artifacts. Each DesainPakai
+     session is recorded with date and time (WIB), brief ID, the
+     non-secret command used and the result summary.
+
+     Never claim that a DesainPakai review occurred without this
+     evidence.
+
+11.10 Tool output safety.
+     - DesainPakai output, temporary code, images, mockups and exports
+       stay outside the repository during P7.
+     - Never commit generated HTML, React, CSS, images, screenshots or
+       design exports.
+     - Adopted ideas are rewritten as repository-controlled textual
+       design specifications.
+     - If the tool creates anything inside the repository:
+       - exclude it from staging;
+       - report it;
+       - remove only files this session's tool run created, after
+         confirming they hold no Owner content, and list them in the
+         gate.
+
+11.11 P11 handoff statement — not authorized by this message. Record in
+      the P7 handoffs and in CURRENT_STATE that DesainPakai AI is
+      intended to be used again in P11, when a separate Owner
+      authorization converts the frozen P7 designs into precise frontend
+      build units, under the same rules: the primary design exploration
+      tool, never a source of truth, no secrets in the repository, no
+      generated artifacts committed without explicit repository
+      governance.
+
+==================================================
+12. UX-DRIVEN TECHNICAL AMENDMENT CHANNEL
+==================================================
+
+P7 may find a genuine UX requirement that the current query, index or
+projection design cannot support without harming usability. This
+includes needs surfaced by DesainPakai exploration.
+
+Known example: invoice lists may need sorting or filtering by invoice
+date or issued number. PF-42 does not offer these because both live on
+the version.
+
+Procedure:
+1. First prove the need from the workflow and the IA: which workflow,
+   which user, what harm.
+2. Prefer existing approved structures, for example:
+   - the receivable guard's due date under IX-11;
+   - the company key of `document_versions`;
+   - the report paths of PF-27.
+3. If they are insufficient, make only a narrow Level-1 amendment to
+   PERFORMANCE, DATABASE or related technical documentation. Use
+   CONCURRENCY_IDEMPOTENCY only if a maintained column must be written
+   under an existing lock.
+   - Each clause is marked `TECH-022`.
+   - An amendment note goes after the Approval line.
+   - The pre-amendment SHA-256 equals the latest approval record.
+   - Approval comes only through APPR-008.
+4. Never change financial meaning, document semantics, numbering,
+   authorization, visibility or V1 scope.
+5. STOP (section 13) the moment the change becomes business-level or
+   Owner-level, or needs an amendment of V1_SCOPE, PRODUCT_OVERVIEW,
+   ACCEPTANCE_CRITERIA, DOMAIN_MODEL, BUSINESS_RULES or WORKFLOWS.
+
+List every channel use in the P7 gate:
+- the need and its evidence;
+- the existing structure tried;
+- the amendment and its hash.
+
+==================================================
+13. AUTHORITY CLASSIFICATION — WHEN TO DECIDE, WHEN TO STOP
+==================================================
+
+LEVEL 1 — decide autonomously and record the rationale:
+- IA, navigation, the screen inventory, layouts and page composition;
+- components, tokens, typography, density, iconography, the status
+  system and motion;
+- glossary and copy, keeping approved document names and legal meaning;
+- interaction states and the presentation of confirmations;
+- keyboard shortcuts and scanner handling;
+- responsive and mobile patterns;
+- accessibility targets;
+- placement and presentation of every QS signal;
+- the selection among compliant DesainPakai alternatives;
+- the GAP-034 record mechanism within section 9;
+- a non-gating, Owner-only presentation aid for QS-14;
+- narrow technical amendments through sections 9 and 12.
+
+OWNER_DECISION_REQUIRED — STOP:
+- Any change to who may see or do something relative to
+  PERMISSIONS_MATRIX, SECURITY, WORKFLOWS §4 or DIR-011. Examples:
+  - showing another company's identity or cost;
+  - totals across companies for an Admin;
+  - hiding an approved Owner review item.
+- "Material UX behavior" under CHANGE_CONTROL Level 2:
+  - adding or removing a mandatory business step;
+  - turning a warning into a block, or removing a warning;
+  - auto-executing a command on the user's behalf;
+  - merging two intents into one commit;
+  - changing what an irreversible action means;
+  - removing a capability from mobile that V1_SCOPE requires.
+- Any change to financial, inventory, numbering, date, document or
+  correction semantics, including one proposed by DesainPakai.
+- Any proposal to reduce V1 scope or defer a V1_SCOPE P7 requirement,
+  including to meet the deadline.
+- Any weakening of a SECURITY control, for example storing payloads in
+  browser storage.
+- Any new recurring cost: paid font, icon or component licences,
+  analytics, or a paid upgrade of DesainPakai or another design service
+  beyond my existing access.
+
+Procedure for an OWNER_DECISION_REQUIRED item:
+- stop the dependent work only;
+- leave the package uncommitted and the handoff accurate;
+- report in Bahasa Indonesia: the problem, why it matters, the
+  recommended option, the alternatives and the scope/time/risk impact.
+
+Do not escalate ordinary design choices. Do not downgrade a genuine
+business, visibility or authority change to Level 1 to avoid asking.
+
+==================================================
+14. PLANNER NOTES — ANALYSIS, NEVER OWNER INTENT
+==================================================
+
+Verify each note against the repository and record its disposition in
+the P7 gate.
+
+PN-1  GAP-034 candidates.
+      (a) Two security-event kinds in the LG-02 catalogue, with typed
+          reference columns added narrowly to LG-02 and DATABASE §4.13.
+          - Written outside the business transaction: after the
+            registration commits for evidence, and when the refusal is
+            answered for a batch.
+          - Owner-only; retained at least 12 months.
+          - Listed in QS-14 with their age.
+          - Fits LG-02's "written outside business transactions" posture
+            and needs no envelope clause.
+      (b) An Owner-only marker record owned by DATABASE, where typed
+          columns cannot be added to `security_events` narrowly.
+      (c) For evidence only, a derived Owner-only view over typed
+          columns (content hashes and evidence identities in a recent
+          window). This needs no approved change, but a refused batch
+          collision leaves nothing to derive, so (c) cannot stand alone.
+      The planner leans to (a) if LG-02's typed fields suffice after a
+      narrow extension.
+
+PN-2  QS-14 grows without bound: every ADM+ or Owner-only event.
+      - A default time window and filters are the minimum.
+      - An Owner-only "reviewed" watermark or marker may help. It must
+        never gate anything. If it needs a durable record, it goes
+        through section 9 or 12 and is recorded like DP-11's stored
+        notifications.
+
+PN-3  Re-authentication: an in-place dialog on 401/419 that keeps the
+      page's in-memory state and pending `command_id`.
+      - Clear or encrypt Inertia history as H7-12 requires.
+      - Full reload only on absolute timeout, termination or logout.
+      - Verify the Inertia mechanics before relying on them.
+
+PN-4  Invoice list: sorting or filtering by date and number is likely
+      needed for Piutang work. Try IX-11 (receivable due date) and the
+      existing paths before the channel.
+
+PN-5  Business date: a compact, visible "Tanggal transaksi" element
+      showing the chosen or prefilled state, not a large field on every
+      form.
+
+PN-6  C-10: an Owner-facing numbering-readiness indicator, derived from
+      counters and boundaries on the company page, needs no new record.
+
+PN-7  Density: one compact desktop density with generous mobile touch
+      targets is simpler than user-selectable density modes.
+
+PN-8  Scope discipline:
+      - patterns first, then a screen inventory at build-unit depth;
+      - avoid re-specifying fields the domain documents already define.
+
+PN-9  Deadline: GAP-014 stays open and no scope cut is authorized.
+      - Keep the documents concise.
+      - Add no review ceremony beyond section 18.
+
+PN-10 DesainPakai efficiency:
+      - Explore A1 (shell/navigation) and surface 35 (design-system
+        direction) first, so later briefs inherit them.
+      - Group closely related surfaces, for example 37–41, into shared
+        briefs.
+      - Keep briefs short and specific.
+      - Spend alternatives on the twelve surfaces of 11.4.
+
+==================================================
+15. MANDATORY UX SCENARIOS
+==================================================
+
+Document each scenario with:
+- its screen and pattern;
+- its copy;
+- its expected presentation;
+- the repository rule it satisfies.
+
+Red-team all of them in the adversarial review and re-test them after
+fixes.
+
+Command identity and outcomes:
+UXS-01 Double click on a command on a slow network → one effect; the
+       screen shows the recorded outcome.
+UXS-02 Response lost after commit; the user retries → same
+       `command_id`; the recorded outcome is shown; no second effect.
+UXS-03 Response lost, then the session idle-expires; in-place
+       re-authentication → same `command_id`; unsent input kept in
+       memory; nothing S3/S4 in browser storage.
+UXS-04 Session expired mid-form, never sent → re-authentication → a new
+       intent; stale checks apply; input preserved, or its loss warned
+       in advance.
+UXS-05 419 on submit → no silent loss, no double effect.
+UXS-06 Absolute timeout, remote termination or logout → history and
+       caches cleared; Back reveals no sensitive data.
+UXS-07 FAILED after a lock-wait timeout → "aman diulang"; retry with the
+       same id.
+UXS-08 FAILED with the outcome unknown → the UI never claims saved or
+       not saved; a retry returns or runs.
+UXS-09 Background FAILED rendition → the issue stands; the number is
+       unchanged; the retry state is visible.
+UXS-10 REJECTED with a failed precondition (for example C-04) → business
+       wording; a corrected request is a new intent.
+UXS-11 Two Admins edit one draft quotation or invoice (M-38) → the stale
+       editor gets CONFLICT with the current state and the kept input,
+       and re-apply is offered.
+UXS-12 CONFLICT "already recorded" → "sudah tercatat — periksa sebelum
+       mengulang"; no re-apply.
+UXS-13 A prefilled business date crosses midnight → CONFLICT for
+       confirmation; a chosen date is unaffected.
+UXS-14 A backdated command with a chosen date → visibly backdated; the
+       numbering period follows the date.
+
+Duplicates:
+UXS-15 L-49 likely duplicate → a second explicit submission naming the
+       matches, with a reason.
+UXS-16 Payment duplicate (BD-02) → ADM+ override with a reason; the path
+       for a non-ADM+ actor.
+UXS-17 An evidence duplicate in scope and in a visible family → a
+       warning plus an override with a reason (H7-07).
+UXS-18 An evidence duplicate out of scope or in an invisible family → the
+       uploader sees nothing different in wording, timing class or later
+       state; the Owner sees the item (GAP-034).
+UXS-19 A batch collision outside the preparer's scope → only the
+       Indonesian rendering of DP-18's "not importable — Owner review",
+       and nothing more; the Owner sees the item.
+
+Visibility and authority:
+UXS-20 A Company-A-only Admin views a pooled lot of Company B → the
+       relation marker only; no identity or cost.
+UXS-21 An Admin with A and B → rows labelled by company; no
+       cross-company totals.
+UXS-22 An action on another company's record without a grant → REJECTED
+       and routed; the actor is told who will see it; a QS-20 notice for
+       14 days.
+UXS-23 A grant revoked while the page is open → the next reload or
+       command is denied, identical to not-found; the export is
+       WITHHELD; its download answers AZ-11.
+UXS-24 A deactivated user retries → unauthenticated; nothing disclosed.
+UXS-25 An Admin opens the Owner review queue URL → AZ-11, identical to
+       not-found.
+UXS-26 A high-risk Owner command → step-up within 15 minutes.
+UXS-27 Owner grant screen → the effective capability-by-company preview
+       before saving.
+
+Numbering:
+UXS-28 A company created after go-live; an Admin creates a project →
+       C-10 with Admin copy; the Owner starts PROJECT numbering through
+       the confirmation; the retry succeeds.
+UXS-29 An Admin backdates an invoice into a non-live period without a
+       counter → C-10; the Owner seeds with the first number; the issue
+       proceeds.
+UXS-30 The Owner adds a scheme effective in the past → refused with the
+       earliest allowed date; the backward-extension case is accepted.
+UXS-31 A start while a batch holds VALID seed rows → refused with the
+       commit-or-abort explanation.
+UXS-32 Go-live not recorded → start and seeds unavailable, with the
+       state explained.
+
+Lists, search, scanner and exports:
+UXS-33 A two-character or trigram-less term → exact and prefix lookup
+       only; more than 200 matches → the cut notice and a narrowing
+       prompt.
+UXS-34 A scan matching two serial rows → never auto-selected. No scanner
+       attached → manual SKU entry on mobile.
+UXS-35 Mobile Barang Masuk of a multi-line purchase with a scanner;
+       desktop keyboard-only entry of 30 lines.
+UXS-36 An export above the row bound → refused with a narrow-period
+       message; a third concurrent export → refused; the state list.
+
+Workflow presentations:
+UXS-37 Force Complete → blockers listed; the snapshot confirmed; a
+       changed snapshot → CONFLICT, shown again.
+UXS-38 Pre-payment Kuitansi → a distinct state until linked or voided.
+UXS-39 A pending unattributed loss → shown separately in company stock
+       and profit views; consumption not blocked.
+UXS-40 Owner review queue → every QS-14 source, the GAP-034 items
+       included, with the settled lifecycle; items link under the Owner
+       projection; action only through normal commands.
+
+Design:
+UXS-41 Keyboard-only desktop quotation with many lines → a clear focus
+       order; shortcuts never collide with scanner input.
+UXS-42 Status legible in grayscale and for colour-blind users.
+UXS-43 Anti-slop audit of the dashboard composition.
+UXS-44 Project-detail performance conformance → at most three deferred
+       groups; no totals in lists; polling at most once a minute;
+       background requests never extend the session.
+
+==================================================
+16. OBLIGATION COVERAGE MAP
+==================================================
+
+Produce a closure table in the P7 gate. Map every item to its owning P7
+section, with status DESIGNED, HANDED TO P8/P9/P10/P11 (with owner), or
+N/A with reason.
+
+Items:
+- V1_SCOPE "P7 handoff requirements", every clause, and the "Language
+  and experience contract", every clause;
+- the Owner brief "design system before page explosion" list, every
+  item;
+- the DESIGN_SYSTEM minimum content of section 10-M, every item;
+- the anti AI-slop lists, every item;
+- the Owner brief accessibility list;
+- WORKFLOWS §13 P7 list, every clause, and L-24;
+- every WORKFLOWS workflow (journey) and QS-01–QS-22;
+- SECURITY H7-01–H7-14;
+- CONCURRENCY_IDEMPOTENCY HO-01–HO-10, HO-38 and HO-39;
+- the P6_QUALITY_GATE "Owner-visible Level-1 choices" that need copy;
+- ARCHITECTURE §9 and §10 P7 items;
+- the PERFORMANCE constraints listed in 10-I;
+- the 46 DesainPakai surfaces of 11.3 (traceability rows) and the twelve
+  major surfaces of 11.4 (alternatives or the documented reason);
+- GAP-015, GAP-019 (P7 part), GAP-020 (P7 part), GAP-032 (H7-06) and
+  GAP-034, where repository truth confirms each still names a P7
+  obligation;
+- the presentation clauses of AC-03, AC-08, AC-13, AC-14, AC-20 and
+  AC-23;
+- REF-007, REF-008, REF-048, REF-050 and REF-052–REF-055;
+- CAP-14 and CAP-17.
+
+Add P7 continuation notes to affected gaps. Do not close a gap whose
+runtime, device or E2E proof belongs to P8 or later. Add new gaps only
+for genuinely new failure scenarios. Re-derive the totals.
+
+==================================================
+17. SELF-REVIEW
+==================================================
+
+Check against sections 9–16:
+- anti-duplication: the P7 files cite rules and never restate, relax or
+  extend them;
+- authority classification: every choice is Level 1 or stopped;
+- projection fidelity: no screen shows more than its PJ rows allow;
+- PERFORMANCE conformance;
+- security presentation;
+- mobile-first and desktop-operational completeness;
+- glossary consistency;
+- anti-slop;
+- DesainPakai discipline:
+  - every surface of 11.3 passed the loop;
+  - no adopted proposal changes semantics;
+  - every adoption is normalized;
+  - traceability is complete;
+  - no claim lacks evidence;
+- overall traceability.
+
+Fix what you find and record it.
+
+==================================================
+18. INDEPENDENT ADVERSARIAL REVIEW
+==================================================
+
+Use at least three fresh read-only reviewers. Give each only the
+repository working tree and one lens. Each reviewer attacks UXS-01–UXS-44
+within its lens.
+
+R1 Business, authority and visibility fidelity:
+   - workflow semantics;
+   - Owner-only authority;
+   - relation markers and projection;
+   - oracles through UI wording, timing, counts, empty states, errors or
+     search;
+   - numbering UX against NM-03 and HO-39;
+   - the GAP-034 settlement;
+   - whether any DesainPakai-derived direction changed approved meaning.
+
+R2 Interaction robustness:
+   - command identity, outcomes and FAILED semantics;
+   - stale state and CONFLICT;
+   - duplicates;
+   - session, 401/419 and re-authentication without browser storage;
+   - exports;
+   - the business date;
+   - PERFORMANCE conformance;
+   - H7 security presentation.
+
+R3 Usability and design system:
+   - mobile-first and desktop-operational completeness;
+   - keyboard and scanner;
+   - accessibility against the WCAG 2.2 AA target;
+   - Indonesian copy and glossary;
+   - consistency of patterns and tokens;
+   - anti AI-slop;
+   - the "calm, premium, professional, no social-media style" direction;
+   - the quality of the DesainPakai normalization and traceability
+     (11.8, 11.9).
+
+Classify every finding as exactly one of:
+- CRITICAL
+- HIGH
+- MEDIUM
+- LOW
+- LEVEL-1 CORRECTION
+- OWNER_DECISION_REQUIRED
+- DEFERRED OBLIGATION (with its owning phase)
+- NO DEFECT
+
+Fix every valid finding. Then run one independent verification pass of
+the fixes.
+- Run a further round only while a round still finds MEDIUM or higher.
+- Otherwise fix the remaining LOW and Level-1 findings, and have them
+  confirmed in one narrow final check.
+- Re-test every UXS scenario after the fixes.
+
+==================================================
+19. SEPARATE FABLE REVIEW — ONLY IF MATERIALLY JUSTIFIED
+==================================================
+
+Do not request one by default. A separate targeted Fable review is
+materially justified only if at least one of these holds:
+
+a) A CRITICAL or HIGH finding was fixed, but its correctness cannot be
+   verified with high confidence from the documents alone, on any of:
+   - command identity or re-authentication;
+   - outcome truthfulness;
+   - company visibility or oracle leakage;
+   - Owner-only authority.
+b) The author and an independent reviewer disagree on a visibility,
+   oracle or authority finding — including whether an adopted
+   DesainPakai-derived design changes approved semantics — and the
+   disagreement cannot be reconciled with repository evidence.
+c) The GAP-034 settlement or a channel amendment required changes to
+   approved documents beyond narrow technical clarifications.
+d) The design cannot show both mobile-first and desktop-operational
+   patterns for every [floor] and [both] workflow.
+
+If justified:
+- STOP before approval, commit and push;
+- leave the package uncommitted and the handoff accurate;
+- report one bounded review scope and its expected risk reduction.
+
+Otherwise:
+- proceed;
+- state "separate Fable review not recommended", with a one-line reason;
+- say whether a later targeted review, for example against real screens
+  in a later phase, would add value, and why.
+
+==================================================
+20. RE-DERIVE COUNTS AND VALIDATE
+==================================================
+
+Recompute; do not reuse stale counts:
+- screens in the inventory;
+- journeys against WORKFLOWS workflows;
+- QS-01–QS-22 homes;
+- H7 items (14 of 14);
+- P7 HO items (12 of 12);
+- UXS scenarios (44 of 44, or the mapping table);
+- DesainPakai surfaces with traceability rows (46 of 46, or the
+  documented drop);
+- major surfaces with alternatives or a documented reason (12 of 12);
+- briefs, alternatives, adopted and rejected proposals;
+- glossary entries;
+- tokens and patterns;
+- anti-slop items mapped;
+- findings by severity;
+- gap totals;
+- links and anchors;
+- source records (29), with hashes;
+- cited identifiers;
+- the changed-path census.
+
+Validate using the prior-gate approach. Keep scripts in a temp directory
+outside the repository.
+
+Checks:
+- relative links and anchors;
+- lifecycle metadata and approval lines;
+- all source hashes, with earlier records unchanged;
+- every P7 identifier defined once, contiguous and referenced;
+- every cited identifier resolves in its owner, including every
+  capability and every PJ, QB, PF, IX, HO, H7, WF, SF, AX, CM, QS, L,
+  DOC, AC, CAP and REF identifier;
+- orphan checks:
+  - every workflow has a journey;
+  - every QS has a home;
+  - every H7 and P7 HO item has a home;
+  - every V1_SCOPE P7 clause, every "design system before page
+    explosion" item and every 10-M item has a home;
+- every screen names its capability and projection sources;
+- every status token has a label and a non-colour cue;
+- PERFORMANCE limits in the designs:
+  - no list design promises totals or page numbers;
+  - no sort or filter key is used without PF-42/IX-11 registration or a
+    recorded channel amendment;
+  - no page exceeds its deferred-group limit;
+- no design writes payloads to browser storage; storage APIs appear only
+  in prohibitions;
+- UI copy examples use glossary terms;
+- the GAP-034 ordering evidence is present;
+- DesainPakai evidence:
+  - the readiness evidence is present, names MULTIPLECORP as the active
+    project and contains no secret;
+  - every surface of 11.3 has a traceability row;
+  - every adopted DesainPakai decision maps to a normative P7 section;
+  - no rejected proposal appears in the normative specifications;
+  - no claim of a DesainPakai review lacks session evidence;
+- gap triage matches the detail sections and the totals sentences
+  everywhere;
+- OWNER_DECISION_REQUIRED values are consistent;
+- no placeholder or TODO/TBD markers;
+- a secret-like scan of all added lines, including token-, key- and
+  credential-like strings;
+- `git diff --check`;
+- no out-of-scope paths;
+- no binary files;
+- no generated HTML, React, CSS, image, screenshot, design export or
+  DesainPakai configuration file;
+- approved files unchanged except:
+  - the listed continuity lines;
+  - the section 9 and 12 `TECH-022` amendments, with their pre-amendment
+    hashes equal to the committed blobs;
+- no P8+ file;
+- no application code.
+
+==================================================
+21. GOVERNANCE AND CONTINUITY UPDATES
+==================================================
+
+Update, only as needed:
+- DECISION_LOG:
+  - DIR-033, including the section 1 acknowledgement;
+  - OBS-012;
+  - TECH-022, including the GAP-034 settlement, channel amendments and
+    cleanup;
+  - APPR-008 if granted;
+  - index rows.
+- SOURCE_OF_TRUTH: source record 29; the registry state for the three P7
+  paths; the P7 gate registration.
+- CONTEXT_INDEX: P7 rows; the approval chain; the "twenty-nine source
+  records" count.
+- GAP_REGISTER:
+  - the GAP-034 P7 continuation;
+  - continuations of GAP-015, GAP-019, GAP-020 and GAP-032 where P7
+    designs their part;
+  - new gaps;
+  - section 6.2.
+- CHANGELOG.
+- README, AGENTS, CLAUDE, PROJECT_CHARTER, AGENT_OPERATING_MODEL,
+  CHANGE_CONTROL and ENGINEERING_PRINCIPLES (per section 6).
+- CURRENT_STATE and NEXT_ACTION, including:
+  - DesainPakai AI is the primary P7 design exploration tool, but never
+    a source of truth; repository truth always wins;
+  - its setup and authentication are environment-level, outside the
+    repository, and never recorded there;
+  - the P11 handoff statement of 11.11.
+
+P8 handoff obligations are recorded in the P7 files and summarized in the
+handoff. Do not create P8 files.
+- E2E scenarios from UXS-01–UXS-44;
+- command-identity and re-authentication tests;
+- denial and oracle presentation tests;
+- the WCAG 2.2 AA audit;
+- real-device tests for mobile, scanner and camera (GAP-020);
+- visual consistency against DESIGN_SYSTEM;
+- TestSprite and Pest roles as the repository assigns them;
+- the GAP-034 record proof (H8-12).
+
+The P11 handoff is the statement of 11.11, nothing more.
+
+On success, the continuity freeze states:
+- P0–P7 are complete.
+- APPR-008 is the latest approval.
+- The P7 checkpoint is the commit
+  `docs: finalize P7 UX, information architecture and design system`,
+  resolved by
+  `git log -1 --format='%H %s' --grep='^docs: finalize P7 UX, information architecture and design system$'`.
+  Its parent is ff92c415c164f9fea3758fead256a2df53a74211. The next task
+  records its SHA.
+- The open gaps and the accepted risk.
+- P8 — Testing & Quality Strategy is NOT STARTED and requires explicit
+  Owner authorization; so does every later phase.
+- The exact P8 entry baseline step: verify HEAD == live origin/main at
+  the P7 checkpoint, the 29 source hashes, the APPR-008 hashes and the
+  gap totals.
+- What is not authorized.
+
+Perform a zero-context-agent check before the commit, with a fresh
+read-only reviewer given only the repository.
+
+==================================================
+22. CONDITIONAL OWNER APPROVAL
+==================================================
+
+If and ONLY if all of the following hold:
+- CRITICAL, HIGH, MEDIUM and LOW unresolved defects = 0 (deferred
+  obligations are recorded, not defects);
+- OWNER_DECISION_REQUIRED = 0;
+- no separate Fable review is triggered under section 19;
+- the GAP-034 design settlement is complete and was recorded before the
+  Owner review queue was designed or explored, with ordering evidence in
+  the gate;
+- the mandatory DesainPakai exploration of section 11 is actually
+  completed and evidenced:
+  - every surface of 11.3 passed the loop, with traceability recorded
+    per 11.9;
+  - the twelve surfaces of 11.4 have alternatives, or a documented
+    reason why fewer compliant alternatives exist;
+  - the final consistency and anti-AI-slop review of 11.8 was run;
+  There is no bypass: without this, P7 cannot be approved, APPR-008
+  cannot be recorded, and P7 cannot be committed or pushed;
+- mobile-first and desktop-operational designs are both explicit for
+  every workflow that needs them, as V1_SCOPE requires for P7 to PASS;
+- every H7-01–H7-14 item and every P7 HO item (HO-01–HO-10, HO-38,
+  HO-39) has a home;
+- every coverage item of section 16 is DESIGNED, HANDED TO a later phase
+  with its owner, or N/A with reason;
+- all UXS scenarios are documented and re-tested PASS after the fixes,
+  and all validation PASSES;
+- the anti AI-slop review PASSES;
+- no known contradiction remains;
+- P0–P6 approved business, authorization, security, concurrency and
+  performance semantics are preserved, with only section 9 and 12
+  narrow technical amendments marked `TECH-022`;
+- no DesainPakai output, configuration or credential is in the
+  repository;
+- P7 remains documentation only, with no production code;
+- no P8 work exists;
+
+then I explicitly APPROVE the P7 normative UX baseline:
+- docs/04-ux/INFORMATION_ARCHITECTURE.md → APPROVED;
+- docs/04-ux/ADMIN_FLOW.md → APPROVED;
+- docs/04-ux/DESIGN_SYSTEM.md → APPROVED;
+- any section 9 and 12 amended revisions of approved documents are
+  approved as part of it.
+
+Record this as APPR-008, with the SHA-256 of each approved file exactly
+as committed (LF blob bytes, lifecycle metadata included). Verify those
+hashes after staging.
+
+The P7 gate, logs, register and handoff stay REVIEW as living or
+evidence records.
+
+==================================================
+23. CHECKPOINT COMMIT
+==================================================
+
+1. Review the complete diff: `git diff --ignore-cr-at-eol` plus all new
+   files.
+2. Stage explicit paths only, with CRLF normalization, for example:
+   `git -c core.autocrlf=input add -- <paths>`
+   Never use `git add -A` or `git add .`.
+3. Verify the staged content:
+   - `git diff --cached --stat` and `git diff --cached --check`;
+   - the staged file list equals the intended census;
+   - a secret scan of the staged diff;
+   - staged source-record blobs match their recorded hashes;
+   - staged approved-file blobs match the APPR-008 hashes;
+   - no unrelated, binary or temp files;
+   - no .env or key material;
+   - no DesainPakai output, configuration or credential.
+4. Commit once, with this exact message:
+   docs: finalize P7 UX, information architecture and design system
+5. Identity and attribution:
+   - use only the Owner's existing configured Git identity;
+   - do not modify git config;
+   - do not pass --author;
+   - no trailers of any kind;
+   - never add Co-Authored-By, Generated-By or Assisted-By;
+   - never name Claude, Anthropic, Fable, Opus, DesainPakai or any
+     AI/model/tool.
+   If no identity is configured: STOP.
+6. After the commit:
+   - inspect the raw message (`git cat-file -p HEAD`) and confirm there
+     is no attribution trailer;
+   - confirm author and committer equal the configured identity;
+   - confirm the parent is ff92c415c164f9fea3758fead256a2df53a74211;
+   - confirm the tree and index are clean (CRLF-aware).
+
+If automated review blocks staging or the commit:
+- do not bypass it or retry variants;
+- preserve the work;
+- report the exact command and reason in Bahasa Indonesia;
+- STOP.
+
+==================================================
+24. PUSH
+==================================================
+
+Immediately before pushing, run `git ls-remote origin refs/heads/main`.
+
+It must equal ff92c415c164f9fea3758fead256a2df53a74211, the new commit
+must be its direct child, and there must be no divergence. If so, run:
+
+git push origin main
+
+A normal push only. Never use:
+- --force
+- --force-with-lease
+- reset or rebase of published history
+- history rewriting
+- remote deletion
+
+On divergence: STOP and report.
+
+If no working GitHub credentials exist:
+- do not seek GUI or computer control;
+- report the local commit SHA;
+- instruct the Owner to run `git push origin main`.
+
+Never claim publication until live origin/main confirms it.
+
+==================================================
+25. POST-PUSH VERIFICATION
+==================================================
+
+Verify:
+- local HEAD == live origin/main (ls-remote);
+- tracking is up to date;
+- the tree and index are clean;
+- the three P7 files are APPROVED (APPR-008);
+- OWNER_DECISION_REQUIRED = 0;
+- P8 is NOT STARTED.
+
+Make no further commits in this task.
+
+==================================================
+26. STOP CONDITIONS — SUMMARY
+==================================================
+
+STOP and report in Bahasa Indonesia on any of the following:
+- a baseline mismatch or divergence (section 3, items 1–9);
+- a missing DesainPakai setup step, a wrong active project or a
+  credential exposure (section 4). This stops only the
+  DesainPakai-dependent part, and it stops finalization until the setup
+  is resolved by my explicit in-session authorization;
+- DesainPakai genuinely unavailable because of an external outage or an
+  unsupported environment that cannot be resolved during this task:
+  STOP before APPR-008 and report the blocker; never waive the
+  exploration;
+- an OWNER_DECISION_REQUIRED item (section 13 procedure);
+- a contradiction with approved P0–P6 semantics;
+- any proposal to reduce V1 scope, including to meet the deadline;
+- a GAP-034 or channel change that becomes business-level (sections 9.6
+  and 12);
+- a section 19 review trigger;
+- a validation failure not fixable within Level 1;
+- a destructive operation;
+- an automated review blocking a Git action;
+- a missing Git identity or GitHub credentials (sections 23–24);
+- task completion.
+
+==================================================
+27. FINAL REPORT — IN BAHASA INDONESIA
+==================================================
+
+Write the report in Bahasa Indonesia. Keep identifiers, SHAs, paths and
+commands verbatim.
+
+A. Baseline verification: the literal P6 checkpoint SHA, the 28 source
+   hashes, the seven APPR-007 hashes and the informational identity
+   check.
+B. DesainPakai readiness, non-secret evidence only: available or not;
+   version; authenticated or not; active project (MULTIPLECORP
+   confirmed); context revision; retrieval time; any setup step that was
+   required and how it was resolved.
+C. Source record 29: file name, lines, bytes, SHA-256, and confirmation
+   that it contains no credential.
+D. Continuity cleanup edits (6.1–6.8 and any extras).
+E. GAP-034 settlement:
+   - the options weighed and the chosen record;
+   - shape, write path, visibility and oracle safety;
+   - lifecycle and retention;
+   - QS-14 entry;
+   - amendments with pre-amendment hashes;
+   - the ordering evidence.
+F. The P7 files and their structure.
+G. Glossary: size and key terms.
+H. IA and navigation, mobile and desktop; the company-context model.
+I. Screen inventory: count and coverage.
+J. Owner and Admin journeys: workflow coverage, context tags, capability-
+   and company-dependent differences, mobile [floor] coverage.
+K. Dashboards and queues: QS-01–QS-22 placement; the QS-14 design.
+L. Command interaction model:
+   - the five states versus the non-outcome answers;
+   - the `command_id` lifecycle;
+   - stale state and CONFLICT;
+   - duplicates;
+   - the business date;
+   - exports.
+M. Session, 401/419 and re-authentication: how unsent input and
+   `command_id` survive without browser storage, with the Inertia
+   evidence and any residual.
+N. Numbering and company-onboarding UX; the C-10 Admin UX.
+O. Lists, search, scanner and PERFORMANCE conformance; channel uses.
+P. Security presentation, H7-01–H7-14.
+Q. Design system:
+   - the section 10-M coverage;
+   - tokens, patterns and the status system;
+   - financial and inventory presentation;
+   - shadcn/ui composition versus feature components.
+R. Accessibility and the anti AI-slop review.
+S. DesainPakai exploration:
+   - surfaces covered (of 46) and any documented drop;
+   - alternatives for the twelve major surfaces, or the documented
+     reasons;
+   - adopted and rejected proposals with reasons;
+   - conflicts with the repository and how repository truth prevailed;
+   - the final consistency and anti-AI-slop review;
+   - traceability completeness.
+T. UXS-01–UXS-44 results, and the mapping table if labels were renamed.
+U. Handoffs to P8, P9, P10 and P11, the P11 DesainPakai handoff
+   statement included; none of them authorized.
+V. Approved-document amendments with pre-amendment hashes, or "none".
+W. Gap updates and re-derived totals.
+X. Closure-table result (section 16).
+Y. Self-review findings.
+Z. Independent review findings, dispositions and re-test.
+AA. Remaining contradictions.
+AB. OWNER_DECISION_REQUIRED count, with full details if greater than 0.
+AC. Separate Fable review decision and rationale.
+AD. Validation results with measured counts.
+AE. Approval ID and approved-file hashes.
+AF. Commit SHA, message and exact file census.
+AG. Author/committer identity and the raw-message attribution check.
+AH. Push result, final local HEAD and live origin/main.
+AI. Working tree and index state (CRLF-aware).
+AJ. P7 lifecycle and P8 status.
+AK. Zero-context handoff readiness.
+AL. Owner-visible Level-1 choices worth my attention: the UX behaviours I
+    will notice in daily use.
+AM. Exact next safe action.
+
+Expected successful end state:
+
+P0–P6 APPROVED
+P7 APPROVED (APPR-008)
+GAP-034 SETTLED IN DESIGN — runtime proof handed to P8
+DESAINPAKAI EXPLORATION COMPLETED AND TRACED
+P7 CHECKPOINTED
+P7 PUBLISHED
+OWNER_DECISION_REQUIRED = 0
+LOCAL HEAD = live origin/main
+WORKING TREE CLEAN
+INDEX CLEAN
+NO DESAINPAKAI OUTPUT, CONFIGURATION OR CREDENTIAL IN REPOSITORY
+P8 NOT STARTED — requires explicit Owner authorization
+
+STOP after reporting.
