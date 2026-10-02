@@ -13,7 +13,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Stage 1 | `2a89d9ea892cacf5ddae57ec3b5911b9ce2ac7d8` | `docs: move planning documents into AICWDF phase structure`: the 21 moves below; link-target paths recomputed |
 | Stage 2 — WORKFLOWS | `3f8bd90c2545517c3c66489e60dbf79e50b9b64e` | `docs: split WORKFLOWS into section files`: `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
 | Stage 2 — DATABASE | `8b712a829676464035a4af6718f72ef3dab366b8` | `docs: split DATABASE into section files`: `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
-| Stage 2 — CONCURRENCY_IDEMPOTENCY | the commit `docs: split CONCURRENCY_IDEMPOTENCY into section files`, child of `8b712a8` | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
+| Stage 2 — CONCURRENCY_IDEMPOTENCY | `db4e1f524579ae60812dd45a06bc6d89cad0938a` | `docs: split CONCURRENCY_IDEMPOTENCY into section files`: `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
+| Stage 2 — ADMIN_FLOW | the commit `docs: split ADMIN_FLOW into section files`, child of `db4e1f5` | `docs/07-ux-design/ADMIN_FLOW.md` split into 8 section files and a README |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -228,6 +229,24 @@ Link targets rewritten: 32 inside the parts — in-document anchors whose headin
 
 Link targets rewritten: 51 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 37 in 23 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` became `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
 
+### ADMIN_FLOW
+
+`docs/07-ux-design/ADMIN_FLOW.md` — 685 lines, SHA-256 `2EA3E3A9C6BF306BCDB4F30C3989AC19114F2A12A7664B1D2B7E9320317104AB` at the previous commit — became the folder `docs/07-ux-design/ADMIN_FLOW/`: its [README](../07-ux-design/ADMIN_FLOW/README.md) and 8 parts, each a contiguous line range of the stage-1 file, in order.
+
+| File | Baseline lines | Lines | SHA-256 |
+| --- | --- | --- | --- |
+| `docs/07-ux-design/ADMIN_FLOW/s01-04-foundations.md` | 1–101 | 101 | `502A788C7A3FFF99ADFDD441A589118E7B8346D3B4E71B5EDC2D9DE1F515E6B7` |
+| `docs/07-ux-design/ADMIN_FLOW/s05-command-model.md` | 102–221 | 120 | `BB63D748AF4B17AC9729DFF1CC87B9F47C50BF468C3FE4932A6DFF20149E3BBD` |
+| `docs/07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md` | 222–319 | 98 | `F3AE2BBF82FF6FF6A60C411C929B7A3E9AD6BA7EE7CBF190AF31FE5C446BCEA1` |
+| `docs/07-ux-design/ADMIN_FLOW/s10-a-journeys.md` | 320–371 | 52 | `42E93CEE055BD86C7BBC289539E52C6EC55ED6C902BB93C609EAC65C3C45FD42` |
+| `docs/07-ux-design/ADMIN_FLOW/s10-b-journeys.md` | 372–411 | 40 | `67F6B3E692E188DE6F26EC511CBF1BA27BC6949ED877CF17719997A1BDD911AE` |
+| `docs/07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md` | 412–528 | 117 | `9A3EF7140E4FF8E6D85F4FD5D2C47C06993333F5A613019863AE509ECE0869DD` |
+| `docs/07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md` | 529–659 | 131 | `371F8A07166BF55C6AE887DB09E7D2FBD23AD86FB7228CB24391C9690E27F012` |
+| `docs/07-ux-design/ADMIN_FLOW/s16-17-handoff-traceability.md` | 660–685 | 26 | `1310D3DFE91EDC92A77C17FC14F1FC96FF703A8D01FC21E6D91E24D0BFEEC37F` |
+| `docs/07-ux-design/ADMIN_FLOW/README.md` | — | 16 | `EAECAFF2D183156DA02B4B5C8A5F9BB13768DAE557083C0202B94D55C6B5DB6D` |
+
+Link targets rewritten: 56 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 62 in 12 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `ADMIN_FLOW.md`, written relative to its row's first path, became `ADMIN_FLOW/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
+
 ## Gate results
 
 ### G0 — stage 0 (commit 0): PASS
@@ -270,6 +289,14 @@ Link targets rewritten: 51 inside the parts — in-document anchors whose headin
 - Headings: the concatenation's 29 headings equal the stage-1 sequence; each of the 27 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
 - Anchors: all 66 links into or inside CONCURRENCY_IDEMPOTENCY resolve to the same heading as before — 47 anchored links to the part holding the heading, 19 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/ENGINEERING_PRINCIPLES.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/03-workflows/WORKFLOWS/s01-04-foundations.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/DATABASE/s01-03-foundations.md`, `docs/04-architecture/DATABASE/s04-00-module-map.md`, `docs/04-architecture/DATABASE/s04-13-ops.md`, `docs/04-architecture/DATABASE/s18-19-constraints-integrity.md`, `docs/04-architecture/DATABASE/s20-24-index-storage-migration.md`, `docs/04-architecture/DATABASE/s25-28-transactions-handoffs.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/06-api-performance/API_AND_INTEGRATIONS.md`, `docs/06-api-performance/PERFORMANCE.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
 - Repository-wide link check: 1,165 relative links outside `sources/`, none broken.
+
+### G2 — ADMIN_FLOW: PASS
+
+- Concatenation: the 8 parts in table order, with link targets neutralized on both sides, are byte-identical to the stage-1 file.
+- Lines: 101 + 120 + 98 + 52 + 40 + 117 + 131 + 26 = 685, the stage-1 count; every part ends with a newline; code fences are balanced inside every part (0 pairs).
+- Headings: the concatenation's 57 headings equal the stage-1 sequence; each of the 28 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
+- Anchors: all 73 links into or inside ADMIN_FLOW resolve to the same heading as before — 59 anchored links to the part holding the heading, 14 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/ENGINEERING_PRINCIPLES.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/07-ux-design/evidence/P7_QUALITY_GATE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`, `docs/handoff/archive/NEXT_ACTION_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
+- Repository-wide link check: 1,175 relative links outside `sources/`, none broken.
 
 ## Supporting evidence — rename detection
 
