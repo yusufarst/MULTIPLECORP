@@ -27,5 +27,13 @@ docs/00-governance/sources/P4_OWNER_CORRECTION_APPROVAL_AND_PUBLICATION_2026-09-
 docs/00-governance/sources/P5_OWNER_AUTHORIZATION_2026-09-30.txt -text
 docs/00-governance/sources/P6_OWNER_AUTHORIZATION_2026-09-30.txt -text
 docs/00-governance/sources/P7_OWNER_AUTHORIZATION_2026-10-01.txt -text
+# The AICWDF framework source keeps its original Markdown hard line breaks (two trailing spaces); its other whitespace checks stay active.
+docs/00-governance/sources/AI_First_Complex_WebApp_Task_Framework_v4.3_EN.md -text whitespace=-blank-at-eol,blank-at-eof,space-before-tab
+docs/00-governance/sources/AICWDF_OWNER_CORRECTION_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_OWNER_DECISIONS_ROUND1_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_MIGRATION_OWNER_AUTHORIZATION_2026-10-03.txt -text
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary

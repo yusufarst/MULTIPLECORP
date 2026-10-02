@@ -1,6 +1,6 @@
 # Source of truth and documentation governance
 
-Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision and [APPR-007](DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved) the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions and [APPR-008](DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved) the three P7 normative UX, information-architecture and design-system specifications with the amended SECURITY, DATABASE, PERFORMANCE and CONCURRENCY_IDEMPOTENCY revisions; evidence, gap and handoff records remain REVIEW.
 
@@ -204,6 +204,29 @@ One in-session Owner message received 2026-10-01, after the P6 checkpoint `ff92c
 | [P7_OWNER_AUTHORIZATION_2026-10-01.txt](sources/P7_OWNER_AUTHORIZATION_2026-10-01.txt) | 2,278 / 95,681 | `BA5CDD8ADDA52803B1FE8187ECE9D4E65AA88690933BFAD2053E984C7BEF8F60` |
 
 It authorizes fast-track P7 — UX, Information Architecture & Design System documentation, with DesainPakai as the primary design-exploration tool and never a source of truth, the GAP-034 settlement before the Owner review queue, self-review, three independent adversarial reviews and validation, the conditional approval of [INFORMATION_ARCHITECTURE](../04-ux/INFORMATION_ARCHITECTURE.md), [ADMIN_FLOW](../04-ux/ADMIN_FLOW.md) and [DESIGN_SYSTEM](../04-ux/DESIGN_SYSTEM.md), one checkpoint commit, one normal non-force push and the continuity freeze (DIR-033 in [DECISION_LOG](DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation)). Its §1 records the Owner's acceptance of the P6 Level-1 baseline as Owner intent. The message arrived as one pasted text block whose code-fence lines are not part of the transcript, and the Owner confirmed its full execution in-session before any edit. It contains no credential. Its section 14 planner notes are analysis, never Owner intent. It authorizes no P8 work. All twenty-eight earlier source records retain their bytes and classifications.
+
+### AICWDF v4.3 framework source, adoption directives and migration authorization
+
+Seven records received on 2026-10-03, after the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` was published, are preserved as LOCKED SOURCE RECORDS thirty to thirty-six.
+
+The thirtieth is the Owner-supplied framework source, preserved byte-for-byte under its original filename. It arrived attached to the migration authorization and is byte-identical to the planning-workspace copy that the authorization cites (76,025 bytes, the same SHA-256):
+
+| Original filename / archived copy | Framework ID / version | Lines / bytes | SHA-256 |
+| --- | --- | --- | --- |
+| [AI_First_Complex_WebApp_Task_Framework_v4.3_EN.md](sources/AI_First_Complex_WebApp_Task_Framework_v4.3_EN.md) | AICWDF-4.3 / 4.3 — English | 3,587 / 76,025 | `BB578ADABCD8EBDDCB97C278E6589B935137F26F851B7218DD86C141744B70FE` |
+
+The other six are **transcribed LOCKED SOURCE RECORDS** (transcripts, not byte-copy claims about attachments): five Owner messages sent to the planning chat on 2026-10-03 and relayed by the Owner as Appendices A–E of the migration authorization, and that authorization itself, transcribed from its first line up to its APPENDICES heading. The ZIP of the P7 prototype that Appendix A refers to was not relayed and is not archived. None of the seven records contains a credential.
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [AICWDF_OWNER_CORRECTION_2026-10-03.txt](sources/AICWDF_OWNER_CORRECTION_2026-10-03.txt) | 225 / 7,250 | `06E412EBF9E21899C2FCCBFD880921472B0A595463DC7DF3CA67A77005340588` |
+| [AICWDF_OWNER_DECISIONS_ROUND1_2026-10-03.txt](sources/AICWDF_OWNER_DECISIONS_ROUND1_2026-10-03.txt) | 188 / 6,475 | `4201B95357520A469295A76EBF87B774289B79D199A97308E1014DEBD28E431A` |
+| [AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt](sources/AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt) | 308 / 9,041 | `5568517B8CB31B54B1A97EEE36BBDADBE853A08BD380FCB66C01F30D8CF40875` |
+| [AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt](sources/AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt) | 143 / 4,582 | `313E25A7BB8BD9FDFF9E32EE121EE02B8DED1CF417E0D34B209367BDF58063DD` |
+| [AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt](sources/AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt) | 85 / 3,227 | `22DCBA9ED1F4E262DC9DD26BB0243EAF09DAAD009C56716C41E55885CD837143` |
+| [AICWDF_MIGRATION_OWNER_AUTHORIZATION_2026-10-03.txt](sources/AICWDF_MIGRATION_OWNER_AUTHORIZATION_2026-10-03.txt) | 779 / 42,730 | `9458DBBA8CB50B95AC04DF9C4D49656FEFD08305233D7204E295414ECE3C1A05` |
+
+They are DIR-034–DIR-039 in [DECISION_LOG](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration). The decisions of Appendices A–E are binding within their subjects under the standing hierarchy; their instructions to the planning chat (for example not to modify the repository yet) are archived source text, not instructions to a repository executor. The migration authorization (DIR-039) authorizes stages 0–3 of the Owner-approved structural migration only. The framework source is provenance: the operative rules are the active repository documents that map and apply it (DIR-038). All twenty-nine earlier source records retain their bytes and classifications.
 
 ## Classify statements before changing them
 

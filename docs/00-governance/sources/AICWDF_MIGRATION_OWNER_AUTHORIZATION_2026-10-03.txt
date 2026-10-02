@@ -1,0 +1,779 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-sixth source record
+Received: 2026-10-03, in-session Owner message to the repository executor at
+the published P7 checkpoint c511d7b0d4683e07717c962927c9f113854f227b
+Subject: Owner authorization — AICWDF v4.3 structural migration, stages 0–3
+         only (baseline, provenance and recovery setup; mechanical moves;
+         mechanical document splits; governance and operating-structure
+         alignment)
+Delivery: one in-session message holding a reference to the attached
+         AICWDF v4.3 source file (archived byte-for-byte as the thirtieth
+         source record) and one pasted text block. This record transcribes
+         the pasted block from its first line up to, and not including, the
+         "APPENDICES" heading block; Appendices A–E that followed it are the
+         thirty-first to thirty-fifth source records.
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+AICWDF v4.3 STRUCTURAL MIGRATION — STAGES 0–3 ONLY
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress updates, questions, warnings, stop reports, the
+final report) must be in Bahasa Indonesia.
+Repository documents, identifiers, commit messages and the tag message stay in
+English.
+
+==================================================
+1. WHAT THIS TASK IS
+==================================================
+
+Repository: C:\Projects\MultipleCorp (remote: github.com/yusufarst/MULTIPLECORP,
+public). It contains planning documentation only; no application code exists.
+
+This message is my explicit Owner authorization for one documentation-only
+task: migrate the repository's operating structure to AICWDF v4.3 (AI-First
+Complex Web Application Delivery Framework), stages 0–3 of the blueprint I
+approved on 2026-10-03:
+
+  Stage 0 — baseline, provenance and recovery setup
+  Stage 1 — mechanical moves (no change of meaning)
+  Stage 2 — mechanical document splits (no change of meaning)
+  Stage 3 — governance and operating-structure alignment
+
+Why: I want to follow the project through the AICWDF model (phase status
+P0–P11 now, TASK_PLAN after P11), and I want future agents to work from a
+small current-state layer instead of rereading the whole planning history.
+
+The existing P0–P6 content truth remains authoritative and must be preserved
+except where a binding latest Owner decision explicitly supersedes a specific
+part. In this task, only the semantic amendments explicitly listed for
+Stage 3 (section 10) are authorized: PROJECT_CHARTER, V1_SCOPE,
+ACCEPTANCE_CRITERIA, GAP_REGISTER, the narrowly conditional BUSINESS_RULES
+reference, and the governance documents named there. The D5/D6 security-auth
+semantic amendments remain deferred to the later, separately authorized
+security/auth task. Stages 1 and 2 change no meaning at all.
+
+This message is itself an Owner directive. Under the repository hierarchy
+(latest explicit Owner decision, within its subject) it supersedes
+NEXT_ACTION.md ("no further task is authorized") and the "never reopen"
+list in CURRENT_STATE.md, but only for the subjects in section 2.
+
+You are the execution agent. Resolve ordinary technical choices yourself
+(Level 1) and record them. Stop for anything in section 4.
+
+==================================================
+2. BINDING OWNER DECISIONS (2026-10-03)
+==================================================
+
+The verbatim source texts are Appendices A–E. This is the working summary.
+
+D1  No fixed delivery date. 15 October 2026 is no longer a constraint. Any
+    future target is subject to quality gates and completion criteria.
+D2  AICWDF v4.3 is the governing planning/execution framework and the target
+    OPERATING STRUCTURE. It is subject to: latest explicit Owner decisions;
+    preserved business/domain truth; preserved data-integrity guarantees;
+    preserved security/concurrency/audit semantics unless explicitly
+    superseded; controlled change management. Where AICWDF conflicts with an
+    older decision that was only a planner or technical default, AICWDF plus
+    latest Owner intent replaces it through controlled amendment, never
+    silently. APPROVED does not mean immutable.
+D3  The P7 visual baseline and information architecture (APPR-008) will be
+    substantially replaced through a new baseline. APPR-008 stays as
+    historical provenance. "Ramp" is my chosen design reference.
+    (Re-baseline itself is NOT part of this task.)
+D4  Where old anti-AI-slop rules conflict with AICWDF §18.2 or my latest UX
+    direction, AICWDF §18.2 plus latest Owner UX direction win. Keep the
+    anti-slop discipline that still helps: clarity, consistency,
+    accessibility, professional appearance, no decorative clutter, no fake
+    metrics, no meaningless cards, no duplicate actions, no UI gimmicks.
+D5  Password baseline: AICWDF-COMPAT-8. Keep common/breached-password
+    blocking, password-manager and paste support, no forced rotation, and the
+    existing throttling and security controls. Mandatory TOTP at minimum for
+    Owner/high-risk accounts. This supersedes the planner-selected
+    15-character baseline. The project is NOT labelled EXTERNAL_COMPLIANCE.
+    (The SECURITY amendment itself is NOT part of this task.)
+D6  Google sign-in ON for V1, EXISTING_ACCOUNT_ONLY, no auto-registration.
+    Owner provisioning stays authoritative. Google never defines roles,
+    capabilities or company scope. All existing authorization, session and
+    step-up controls stay authoritative. (Amendment NOT part of this task.)
+D7  Application UI: Bahasa Indonesia default, English secondary, language
+    switch required, no uncontrolled hardcoded user-facing copy. Generated or
+    issued business documents and business data stay Bahasa Indonesia for V1.
+D10 Controlled structural migration is authorized, with old→new mapping,
+    verifiable splits, preserved provenance and approval history, and no
+    cosmetic renames.
+S   The target structure in section 8 is approved. "Task" is the execution
+    term going forward; "Build Unit" is its historical name.
+P   P7 stays IN_PROGRESS (UX re-baseline). P8 stays BLOCKED.
+C1  The AICWDF source may be committed to this public repository as an
+    immutable source record. It is provenance; the operative rules are the
+    active repository documents that map and apply it.
+C2  Branch `migration/aicwdf` and one annotated recovery tag on the exact
+    pre-migration checkpoint are allowed for this migration.
+
+==================================================
+3. NOT AUTHORIZED
+==================================================
+
+- The security/authentication amendment (D5, D6): no change to any SECURITY,
+  PERMISSIONS_MATRIX, DATABASE or CONCURRENCY rule.
+- The UX re-baseline (D3): no new design system, IA, tokens or screens.
+- Any P8, P9, P10 or P11 work. No Tasks, no TASK_PLAN.md, no TASK-XXX files.
+- Application code, migrations, SQL, packages, Docker, tests, infrastructure.
+- Installing any tool or dependency. Use only what is already present.
+- Committing verification scripts. Keep them in a temporary directory
+  outside the repository.
+- Editing, renaming or moving any existing file under
+  docs/00-governance/sources/.
+- Rewriting historical text to replace "build unit" with "Task".
+- Fast-forwarding, merging into, or pushing `main`.
+- Force push, reset or rebase of published history, any history rewrite.
+- Cowork, GUI control, GitHub Desktop control.
+
+==================================================
+4. STOP CONDITIONS
+==================================================
+
+Stop immediately, repair nothing, and report to me in Bahasa Indonesia with
+the evidence, if any of these occurs:
+
+1. Local HEAD, local origin/main or live origin/main differs from
+   c511d7b0d4683e07717c962927c9f113854f227b at the start.
+2. The working tree or index is unexpectedly dirty. First apply the
+   line-ending note in CURRENT_STATE.md: a CRLF-only difference
+   (`git diff --ignore-cr-at-eol --stat` empty) is not dirty.
+3. A source hash does not match (the 29 hashes in SOURCE_OF_TRUTH, the
+   APPR-008 hashes against committed blobs, or the AICWDF file per 7.3).
+4. A mechanical move or split cannot be proven content-preserving by the
+   gates below.
+5. A reference cannot be migrated unambiguously (a link or anchor with no
+   unique target, or an expected boundary heading that is not where section 9
+   says it is).
+6. Approval provenance would be lost or weakened.
+7. A genuine Owner-level decision appears: business policy, financial or
+   legal/document meaning, scope, authorization authority, accepted risk.
+8. The tag `pre-aicwdf-migration` or the branch `migration/aicwdf` already
+   exists locally or on the remote, or unexpected divergence appears at any
+   point. Other, unrelated existing tags are informational and are not a
+   stop condition.
+9. Completing a step would require any semantic change to a P0–P6 document
+   that section 10 does not explicitly list, or a broader change to a listed
+   document than section 10 describes.
+
+==================================================
+5. GIT RULES
+==================================================
+
+- Commits and the tag use only my existing configured Git author/committer
+  identity. Never add Co-Authored-By, Generated-By, Assisted-By or any
+  AI/model/tool attribution. After every commit, read the raw message
+  (`git log -1 --format=%B`) and confirm there is no trailer.
+- Recovery tag: annotated, name `pre-aicwdf-migration`, on exactly
+  c511d7b0d4683e07717c962927c9f113854f227b. Tag message: one English line
+  naming it as the P7 checkpoint and pre-migration baseline.
+- Branch: `migration/aicwdf`, created from that commit. All work happens
+  there. `main` is never moved in this task.
+- Stage new and changed Markdown with CRLF normalization so blobs stay LF
+  (for example `git -c core.autocrlf=input add`). Never rewrite a file only
+  to normalize line endings.
+- Commit plan (exact messages):
+    Stage 0  docs: record AICWDF adoption directives and migration baseline
+    Stage 1  docs: move planning documents into AICWDF phase structure
+    Stage 2  docs: split WORKFLOWS into section files
+             docs: split DATABASE into section files
+             docs: split CONCURRENCY_IDEMPOTENCY into section files
+             docs: split ADMIN_FLOW into section files
+    Stage 3  docs: align governance and operating structure with AICWDF v4.3
+- Commit a stage only after its gate passes.
+- Rollback: if a gate fails before commit, discard that stage's uncommitted
+  changes and redo it. If a defect is found after a commit, fix it with a
+  corrective commit or `git revert`. Never reset or amend. If the migration
+  cannot be completed, leave the branch as it is and report; `main` and the
+  tag remain the recovery point.
+
+==================================================
+6. BOOTSTRAP
+==================================================
+
+Read, in this order: AGENTS.md, CLAUDE.md, README.md, docs/CONTEXT_INDEX.md,
+docs/07-handoff/CURRENT_STATE.md, docs/07-handoff/NEXT_ACTION.md,
+docs/00-governance/SOURCE_OF_TRUTH.md, DECISION_LOG.md, GAP_REGISTER.md,
+CHANGE_CONTROL.md, AGENT_OPERATING_MODEL.md, PROJECT_CHARTER.md.
+Then read the AICWDF v4.3 file (7.3) in full once; it governs stage 3.
+Read other documents only as each stage needs them.
+
+Numbers in this message (line counts, link counts, totals) come from planning
+analysis of commit c511d7b. Re-derive every count you record; do not copy
+them.
+
+==================================================
+7. STAGE 0 — BASELINE, PROVENANCE, RECOVERY
+==================================================
+
+7.1 Verify and record the baseline
+- Branch `main`; local HEAD == local origin/main == live origin/main
+  (`git ls-remote`) == c511d7b0d4683e07717c962927c9f113854f227b.
+- Clean tree and index (line-ending note applied); no merge, rebase or
+  cherry-pick in progress.
+- The tag `pre-aicwdf-migration` does not exist locally or on the remote.
+  The branch `migration/aicwdf` does not exist locally or on the remote.
+  List any other existing tags in the report as information; they are not a
+  stop condition.
+- The 29 source hashes in SOURCE_OF_TRUTH match the files.
+- The APPR-008 hashes in DECISION_LOG equal the committed blobs.
+- GAP_REGISTER totals: expected 34 findings (3 CLOSED, 30 OPEN,
+  0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK).
+- NEXT_ACTION.md requires the next task to record the P7 checkpoint SHA
+  literally and confirm its publication. Do that here, as an observation
+  entry in DECISION_LOG.
+
+7.2 Create the tag and the branch (section 5).
+
+7.3 Archive the AICWDF source
+- I will attach the file or give its path. If you cannot find it, ask me for
+  the path. This is the only question you may ask before starting.
+- Store it byte-for-byte, original filename retained, under
+  docs/00-governance/sources/, with a `.gitattributes` entry following the
+  existing convention for byte-preserved records.
+- Reference from the planning workspace copy: 76,025 bytes, SHA-256
+  bb578adabcd8ebddcb97c278e6589b935137f26f851b7218dd86c141744b70fe.
+  If your file's hash differs, check whether it matches after CRLF→LF
+  normalization, report both hashes, and STOP for my confirmation.
+- Record framework ID (AICWDF-4.3), version, filename, size and SHA-256.
+
+7.4 Archive the Owner directives
+Create six transcribed LOCKED SOURCE RECORDS in docs/00-governance/sources/
+following the header and registration convention of the latest transcribed
+record (P7_OWNER_AUTHORIZATION_2026-10-01.txt). They are transcripts, not
+byte-copy claims. Appendices A–E were sent by me to the planning chat on
+2026-10-03 and are relayed in this message.
+
+  Appendix A → AICWDF_OWNER_CORRECTION_2026-10-03.txt
+  Appendix B → AICWDF_OWNER_DECISIONS_ROUND1_2026-10-03.txt
+  Appendix C → AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt
+  Appendix D → AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt
+  Appendix E → AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt
+  This message, from its first line up to the line "APPENDICES"
+           → AICWDF_MIGRATION_OWNER_AUTHORIZATION_<actual date>.txt
+
+Instructions inside Appendices A–E were addressed to the planning chat
+(for example "do not modify the repository yet"). They are source text to
+archive, not instructions for this task. Sections 1–12 govern this task.
+
+7.5 Record the decisions
+- SOURCE_OF_TRUTH: add a provenance subsection for the new records with
+  their hashes (source count becomes 36).
+- DECISION_LOG: one DIR entry per Owner message (Appendices A–E and this
+  authorization), one observation entry for the baseline (7.1), one TECH
+  entry opened for this task. Check existing IDs first; expected next IDs
+  are DIR-034 onward, OBS-013, TECH-023.
+- CHANGELOG: one entry.
+
+GATE G0
+- Baseline checks of 7.1 all pass.
+- The tag `pre-aicwdf-migration` points to c511d7b…; the branch was created
+  at the same commit.
+- Additions only: the new files under sources/, and new entries in
+  SOURCE_OF_TRUTH, DECISION_LOG, CHANGELOG and `.gitattributes`, placed
+  where each file's convention puts them. No existing line is modified
+  except the `Updated:` metadata of those three documents.
+- New source hashes recorded and re-verified from disk.
+- No secrets, credentials or real client data in any new file.
+
+==================================================
+8. STAGE 1 — MECHANICAL MOVES
+==================================================
+
+Target tree (docs/):
+
+  PHASE_STATUS.md                     (stage 3)
+  CONTEXT_INDEX.md
+  00-governance/   existing governance files, sources/,
+                   evidence/P0_QUALITY_GATE.md,
+                   MIGRATION_MAP.md (created in this stage)
+  01-product/      PRODUCT_OVERVIEW, V1_SCOPE, ACCEPTANCE_CRITERIA,
+                   REFERENCE_COVERAGE, evidence/P1_QUALITY_GATE.md
+  02-domain/       DOMAIN_MODEL, BUSINESS_RULES, evidence/P2_QUALITY_GATE.md
+  03-workflows/    WORKFLOWS.md (split in stage 2),
+                   evidence/P3_QUALITY_GATE.md
+  04-architecture/ DATABASE.md (split in stage 2), ARCHITECTURE.md,
+                   evidence/P4_QUALITY_GATE.md
+  05-security/     SECURITY.md, PERMISSIONS_MATRIX.md,
+                   evidence/P5_QUALITY_GATE.md
+  06-api-performance/ CONCURRENCY_IDEMPOTENCY.md (split in stage 2),
+                   PERFORMANCE.md, API_AND_INTEGRATIONS.md,
+                   evidence/P6_QUALITY_GATE.md
+  07-ux-design/    ADMIN_FLOW.md (split in stage 2),
+                   INFORMATION_ARCHITECTURE.md, DESIGN_SYSTEM.md,
+                   evidence/P7_QUALITY_GATE.md
+  adr/             ADR-001-repository-governance.md
+  handoff/archive/ CURRENT_STATE_2026-10-02.md, NEXT_ACTION_2026-10-02.md,
+                   README.md (new: states these are historical snapshots,
+                   not the current state)
+
+Moves (use `git mv`; all paths under docs/):
+
+  00-governance/P0_QUALITY_GATE.md        → 00-governance/evidence/
+  01-product/P1_QUALITY_GATE.md           → 01-product/evidence/
+  02-domain/P2_QUALITY_GATE.md            → 02-domain/evidence/
+  02-domain/WORKFLOWS.md                  → 03-workflows/
+  02-domain/P3_QUALITY_GATE.md            → 03-workflows/evidence/
+  02-domain/PERMISSIONS_MATRIX.md         → 05-security/
+  03-architecture/DATABASE.md             → 04-architecture/
+  03-architecture/ARCHITECTURE.md         → 04-architecture/
+  03-architecture/P4_QUALITY_GATE.md      → 04-architecture/evidence/
+  03-architecture/SECURITY.md             → 05-security/
+  03-architecture/P5_QUALITY_GATE.md      → 05-security/evidence/
+  03-architecture/CONCURRENCY_IDEMPOTENCY.md → 06-api-performance/
+  03-architecture/PERFORMANCE.md          → 06-api-performance/
+  03-architecture/API_AND_INTEGRATIONS.md → 06-api-performance/
+  03-architecture/P6_QUALITY_GATE.md      → 06-api-performance/evidence/
+  04-ux/ADMIN_FLOW.md                     → 07-ux-design/
+  04-ux/INFORMATION_ARCHITECTURE.md       → 07-ux-design/
+  04-ux/DESIGN_SYSTEM.md                  → 07-ux-design/
+  04-ux/P7_QUALITY_GATE.md                → 07-ux-design/evidence/
+  07-handoff/CURRENT_STATE.md  → handoff/archive/CURRENT_STATE_2026-10-02.md
+  07-handoff/NEXT_ACTION.md    → handoff/archive/NEXT_ACTION_2026-10-02.md
+
+Every other tracked file keeps its path.
+
+Rewrite rules
+- In every Markdown file except those under sources/: recompute the path
+  part of each relative link target so it resolves from the file's new
+  location to the target's new location. Anchors, link text, line breaks,
+  status lines and "Updated" dates stay byte-identical. Line counts must not
+  change.
+- Path tokens written in backticks (not links) are remapped ONLY in these
+  current-state files: SOURCE_OF_TRUTH (ownership registry, existing rows),
+  CONTEXT_INDEX, AGENTS.md, CLAUDE.md, README.md.
+- In historical records (DECISION_LOG approval tables and entries, CHANGELOG,
+  quality gates, archived handoff files, sources) leave backticked paths as
+  they were. MIGRATION_MAP is their resolver.
+
+MIGRATION_MAP.md (new, in 00-governance/): for every baseline file — old
+path, SHA-256 of the blob at the tag, new path, new SHA-256, proof result.
+Also the procedure, written tool-independently, by which anyone can
+reproduce each proof from the tag. Gate results are recorded here too.
+
+GATE G1
+The authoritative proof of a mechanical move is this set of checks:
+- Every baseline path maps exactly once, old → new, and MIGRATION_MAP
+  records the mapping and the hashes.
+- For every text file that existed at commit 0: neutralize each Markdown
+  link target with a fixed placeholder in both the stage-0 version and the
+  stage-1 version (and, in the five current-state files only, the remapped
+  path tokens); the two results are byte-identical. No baseline content is
+  lost.
+- All source records are byte-identical to commit 0, and the 29 original
+  ones are byte-identical to the tag.
+- Outside sources/, every relative link resolves to an existing file and,
+  where it has an anchor, to an existing heading. Each link in a file that
+  existed at commit 0 points to the same logical document and heading as
+  before the move, and the link count of those files is equal before and
+  after.
+- The only files added in this stage are MIGRATION_MAP.md and
+  handoff/archive/README.md.
+
+Supporting evidence, not a gate: record the output of
+`git diff -M --summary` against commit 0 in MIGRATION_MAP. Git's rename
+detection is heuristic. If Git shows an otherwise proven move as delete plus
+add instead of a rename, that alone does not fail G1 and is not a stop
+condition.
+
+==================================================
+9. STAGE 2 — MECHANICAL SPLITS
+==================================================
+
+Four documents become folders named after the document. Each part is a
+contiguous line range of the stage-1 file, in order. Nothing is added and
+nothing is removed; the only permitted difference is the path part of link
+targets, rewritten under the link rules below. Line numbers are 1-based and
+inclusive, verified against commit c511d7b; stage 1 must not have changed
+them. Before cutting, confirm that each part's first line is the heading
+shown. If it is not, STOP.
+
+Each folder gets a new README.md containing only: the document title; a
+pointer to the status/approval header, which stays in the first part and is
+not restated; the table of section numbers → part file → baseline line
+range; and the rule that section numbers ("DATABASE §4.7") are unchanged and
+resolved through this table.
+
+docs/03-workflows/WORKFLOWS/   (707 lines → 9 parts)
+  s01-04-foundations.md                 1–123   "# Critical business workflows"
+  s05-01-02-access-project.md           124–213 "## 5. Workflows"
+  s05-03-inventory-purchasing.md        214–297 "### 5.3 Inventory and purchasing workflows"
+  s05-04-05-fulfillment-documents.md    298–375 "### 5.4 Fulfillment workflows"
+  s05-06-finance.md                     376–446 "### 5.6 Financial workflows"
+  s05-07-08-completion-migration.md     447–488 "### 5.7 Completion and cancellation"
+  s06-07-subflows-partial.md            489–524 "## 6. Reusable subflows"
+  s08-09-corrections-indivisible.md     525–613 "## 8. Correction, reversal and cancellation matrix"
+  s10-14-signals-decisions-traceability.md 614–707 "## 10. Derived signals and action queue"
+
+docs/04-architecture/DATABASE/   (1,100 lines → 24 parts)
+  s01-03-foundations.md                 1–127   "# Database architecture"
+  s04-00-module-map.md                  128–172 "## 4. Module map and logical model"
+  s04-01-iam.md                         173–184 "### 4.1 IAM — Identity & Access"
+  s04-02-org.md                         185–198 "### 4.2 ORG — Organization"
+  s04-03-pty.md                         199–208 "### 4.3 PTY — Parties"
+  s04-04-cat.md                         209–219 "### 4.4 CAT — Catalog"
+  s04-05-prj.md                         220–235 "### 4.5 PRJ — Projects & Commercial"
+  s04-06-pur.md                         236–248 "### 4.6 PUR — Procurement"
+  s04-07-inv.md                         249–281 "### 4.7 INV — Inventory"
+  s04-08-cst.md                         282–294 "### 4.8 CST — Costing & Expenses"
+  s04-09-ful.md                         295–306 "### 4.9 FUL — Fulfillment"
+  s04-10-doc.md                         307–321 "### 4.10 DOC — Documents & Evidence"
+  s04-11-adm.md                         322–329 "### 4.11 ADM — Administration"
+  s04-12-fin.md                         330–353 "### 4.12 FIN — Finance"
+  s04-13-ops.md                         354–365 "### 4.13 OPS — Operations"
+  s05-inventory.md                      366–462 "## 5. Inventory architecture"
+  s06-lot-cost-hpp.md                   463–529 "## 6. Lot, cost and HPP architecture"
+  s07-10-representations.md             530–579 "## 7. Multi-unit representation"
+  s11-12-finance-tax.md                 580–639 "## 11. Financial architecture"
+  s13-17-history-scope-types.md         640–736 "## 13. Correction and history representation"
+  s18-19-constraints-integrity.md       737–839 "## 18. Constraint catalogue"
+  s20-24-index-storage-migration.md     840–893 "## 20. Index and query design"
+  s25-28-transactions-handoffs.md       894–967 "## 25. Transaction-boundary map"
+  s29-31-diagrams-traceability.md       968–1100 "## 29. Domain diagrams"
+
+docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/   (708 lines → 8 parts)
+  s00-03-foundations.md                 1–102   "# Concurrency and idempotency mechanisms"
+  s04-06-locks-envelope.md              103–243 "## 4. Canonical lock order"
+  s07-statement-sequences.md            244–360 "## 7. Statement sequences"
+  s08-09-guards-stale-state.md          361–431 "## 8. Guards and first-use rows"
+  s10-13-identity-failure-retry.md      432–527 "## 10. Command identity and replay"
+  s14-17-numbering-jobs-revocation.md   528–608 "## 14. Numbering concurrency"
+  s18-scenarios.md                      609–653 "## 18. Mandatory concurrency and failure scenarios"
+  s19-20-handoff-traceability.md        654–708 "## 19. Handoff obligations"
+
+docs/07-ux-design/ADMIN_FLOW/   (685 lines → 8 parts)
+  s01-04-foundations.md                 1–101   "# Admin and Owner flows — interaction model"
+  s05-command-model.md                  102–221 "## 5. Command interaction model"
+  s06-09-session-forms-lists.md         222–319 "## 6. Session, expiry, re-authentication and unsent input"
+  s10-a-journeys.md                     320–371 "## 10. Journeys"
+  s10-b-journeys.md                     372–411 "### 10.4 Fulfilment"
+  s11-13-corrections-numbering-import.md 412–528 "## 11. Corrections and reversals"
+  s14-15-messages-scenarios.md          529–659 "## 14. Message catalogue"
+  s16-17-handoff-traceability.md        660–685 "## 16. Handoff obligations"
+
+Link rules for splits
+- A link to the old single file without an anchor → the folder's README.md.
+- A link with an anchor → the part file that contains that heading, same
+  anchor.
+- An in-document anchor link whose heading now lives in another part → that
+  part file plus the same anchor.
+- Relative links from a part to other documents are recomputed for the
+  part's new depth.
+- Textual references such as "DATABASE §4.7" or "WORKFLOWS §5" are not
+  edited.
+- Update CONTEXT_INDEX and the SOURCE_OF_TRUTH registry so the owning path is
+  the folder README.
+- Update MIGRATION_MAP with each part's range and hash.
+
+GATE G2 (per document, before its commit)
+- With link targets neutralized on both sides, the concatenation of the
+  parts in table order is byte-identical to the stage-1 file.
+- The sum of part line counts equals the original line count; every part
+  ends with a newline; code fences are balanced inside each part.
+- The heading sequence of the concatenation equals the original sequence;
+  every numbered section appears in exactly one part and once in the README
+  table.
+- Every anchor link into or inside the document resolves to the same heading
+  as before. Repository-wide link check passes again.
+
+==================================================
+10. STAGE 3 — GOVERNANCE AND OPERATING STRUCTURE
+==================================================
+
+Principle: one owner per fact. The AICWDF file in sources/ is provenance.
+The operative rules are the repository documents below, which cite AICWDF
+section numbers instead of copying the framework.
+
+The semantic amendments in 10.1 are the only ones authorized in this task.
+
+10.1 Amend existing documents (only what is listed)
+
+SOURCE_OF_TRUTH.md
+- Conflict hierarchy, new meaning:
+  1. Latest explicit Owner decision, within its subject.
+  2. For CONTENT TRUTH (business, domain, financial, inventory, document and
+     authorization semantics; database, concurrency and audit guarantees):
+     the APPROVED/LOCKED canonical specification.
+  3. For OPERATING STRUCTURE and default policies: AICWDF v4.3. It prevails
+     over older operating structure and over planner-determined (Level 1)
+     choices and technical defaults, through controlled amendment, never
+     silently.
+  4. ACCEPTED ADR.  5. Owner-provided reference attachments.
+  6. Earlier discovery/history.  7. Planner/executor proposals.
+- Ownership registry: replace the planned P8–P11 reservations
+  (docs/05-quality/…, docs/03-architecture/BACKUP_RECOVERY.md and
+  INFRASTRUCTURE.md, docs/06-delivery/…) with reservations under
+  docs/08-testing/, docs/09-operations/, docs/10-release/ and docs/11-tasks/
+  (EXECUTION_CONTEXT.md, TASK_PLAN.md, TASK-XXX.md,
+  FEATURE_COVERAGE_MATRIX.md). Drop ROADMAP_18_DAYS; IMPLEMENTATION_ORDER is
+  replaced by the TASK_PLAN dependency graph. Add rows for the new documents
+  of 10.2. Add planned P7 re-baseline outputs: ROUTE_CONTRACTS.md and
+  INTERACTION_CONTRACTS.md (03-workflows), NAVIGATION_CONTRACTS.md,
+  LOCALIZATION.md, DESIGN_REFERENCES.md (07-ux-design). Reservations are not
+  specifications.
+
+PROJECT_CHARTER.md
+- Replace the 2026-10-15 target with D1. State the P0–P11 AICWDF phase model
+  and point to PHASE_STATUS.
+
+AGENT_OPERATING_MODEL.md
+- Agent roles per AICWDF §9. Execution flow per AICWDF §24, keeping the
+  project's own review list (authorization, company isolation, validation,
+  constraints, N+1, concurrency, idempotency, auditability, regression).
+- Task model per AICWDF §19 and §22: the seven statuses, READY gate, stable
+  IDs, baseline versus current total, controlled plan changes, one READY
+  Task at a time, PARALLEL SAFE, DONE = implementation complete + required
+  tests pass + completion evidence exists, automatic progress update.
+- Task contract = AICWDF §23 template plus three project fields:
+  CONCURRENCY/IDEMPOTENCY, AUDIT, COMPANY SCOPE AND FIELD PROJECTION. It must
+  still cover every field brief §54 requires.
+- Terminology rule: "Build Unit" (historical) = "Task" from this adoption
+  point; historical text is not rewritten; the DIR-008 traceability chain
+  keeps its meaning with Task in the unit position; FEATURE_COVERAGE_MATRIX
+  stays mandatory before freeze. No Tasks are created before P11.
+- Session-end checklist: update CURRENT_HANDOFF and PHASE_STATUS instead of
+  CURRENT_STATE and NEXT_ACTION.
+- Keep: every phase needs its own explicit Owner authorization, quality
+  gate, approval and checkpoint.
+
+AGENTS.md (rewrite, concise)
+- Short status header; no history paragraph (history lives in DECISION_LOG
+  and Git).
+- Reading order: AGENTS → docs/11-tasks/EXECUTION_CONTEXT → docs/handoff/
+  CURRENT_HANDOFF → docs/PHASE_STATUS (and TASK_PLAN once it exists) → the
+  active Task → only the exact sections it references.
+- The AICWDF §34 minimum contract, adapted to this project, each rule in one
+  line with a link to its owning document.
+- Keep in full: the Git attribution rule (DIR-022); the authority levels
+  pointer; the per-phase authorization rule; the public-repository warning.
+
+CLAUDE.md
+- Keep it an adapter pointing to AGENTS.md; shorten the approval paragraph;
+  keep the attribution section.
+
+README.md and CONTEXT_INDEX.md
+- Point to PHASE_STATUS as the progress view and to the new structure.
+  CONTEXT_INDEX maps concern → owning document with a phase column and
+  includes the new documents. Preserve everything else.
+
+V1_SCOPE.md (P1 content; amend only conflicting sentences, list each one in
+the report)
+- CAP-14 and "Language and experience contract": apply D7 (Indonesian
+  default, English secondary, language switch, no uncontrolled hardcoded
+  copy; generated/issued documents and business data stay Indonesian).
+- Same sections and "P7 handoff requirements": apply D4. Remove or revise
+  only wording that mandates high density, small typography, tight spacing,
+  or that would reject my chosen direction without a business, security or
+  accessibility reason. Keep the retained anti-slop list of D4.
+- Deadline wording: change only justifications that rest on the old date.
+- DEFERRED items D-01–D-06 and OUT OF SCOPE are not reopened.
+
+ACCEPTANCE_CRITERIA.md
+- Align AC-14 with D7. Review the one deadline mention under D1.
+
+BUSINESS_RULES.md
+- Inspect the single "18-day" mention. Edit it only if it is purely a
+  delivery-schedule reference with no business meaning. Otherwise leave it
+  and report it.
+
+GAP_REGISTER.md
+- GAP-014: the deadline component is superseded by D1; capacity and business
+  acceptance stay open.
+- GAP-033: continuation note — the Owner decided mandatory TOTP (D5); design
+  belongs to the pending security amendment.
+- New gaps: route and interaction contracts (AICWDF §14.2–14.3) do not exist
+  yet and are owed by the P7 re-baseline; the security/auth amendment window
+  (10.3); localization obligations for P7 and P8. Re-derive totals.
+
+One-line status notes only (no rule text changed)
+- DESIGN_SYSTEM.md and INFORMATION_ARCHITECTURE.md: APPROVED (APPR-008),
+  under replacement per the D3 directive; do not derive new work from them.
+- SECURITY.md: an amendment for D5 and D6 is decided and pending; the text
+  below is not yet amended.
+
+10.2 New documents
+
+docs/PHASE_STATUS.md — the Owner's progress view until TASK_PLAN exists.
+Phases use the seven AICWDF statuses: TODO, READY (prerequisites met,
+awaiting Owner authorization), IN_PROGRESS, BLOCKED, VERIFYING (drafted,
+gates passed, awaiting Owner approval), DONE (approved and checkpoint
+published), SUPERSEDED. Content at the end of this task:
+
+  P0   DONE (APPR-001) · AICWDF adoption amendment: VERIFYING
+  P1   DONE (APPR-002) · amendment (target, language, experience): VERIFYING
+  P2   DONE (APPR-003)
+  P3   DONE (APPR-004) · open addition: route and interaction contracts (with P7)
+  P4   DONE (APPR-005) · open amendment: IAM tables (auth amendment)
+  P5   DONE (APPR-006) · open amendment: password, TOTP, Google sign-in — READY
+  P6   DONE (APPR-007) · open amendment: minor, with the auth amendment
+  P7   IN_PROGRESS · UX re-baseline; ADMIN_FLOW in force; DESIGN_SYSTEM and
+       INFORMATION_ARCHITECTURE under replacement
+  P8   BLOCKED · waits for the P5 auth amendment and P7
+  P9   TODO
+  P10  TODO
+  P11  TODO
+  PLANNING FREEZE   not reached
+  TASKS             none; created in P11
+  STRUCTURAL MIGRATION  stages 0–3 VERIFYING on branch migration/aicwdf;
+                        main unchanged at the P7 checkpoint
+
+docs/00-governance/AICWDF_ADOPTION.md
+- Framework ID, version, source path, size, SHA-256, adoption directives.
+- The statement of C1 (provenance versus operative rules).
+- A mapping table covering every AICWDF section: section → owning repository
+  document → status (ADOPTED / ADOPTED WITH PROJECT RULE / PROJECT EXCEPTION
+  / PENDING with the stage or phase that owes it).
+- Project exceptions and stronger invariants, each with its authority, at
+  least: DIR-009 local-only backup (AICWDF §20 offsite item not applicable);
+  per-phase Owner authorization, gates and approvals; DECISION_LOG,
+  GAP_REGISTER and evidence folders retained; D5 (COMPAT-8 with retained
+  blocklist and mandatory TOTP); D6; D7; PHASE_STATUS; existing document
+  names retained to avoid cosmetic renaming.
+- The Build Unit → Task rule and the old → new planned-path mapping.
+
+docs/00-governance/TOOLCHAIN.md (AICWDF §5–7, §6A)
+- One row per capability: current documentation (Context7), impact analysis
+  (Graphify), browser E2E (Playwright), UI components (shadcn/ui), visual
+  reference (DesainPakai AI, Ramp reference), static and automated
+  verification. Status values are honest: nothing is installed or verified
+  by this task; mark "not yet verified" with the phase that will verify it.
+- MCP on-demand activation policy.
+- The Git line-ending and CRLF staging note and the public-repository
+  warning, moved here from CURRENT_STATE as current operating rules.
+
+docs/00-governance/DECISION_INDEX.md
+- A table of binding decisions: ID, one-line subject, authority (Owner or
+  planner), status (ACTIVE / SUPERSEDED / SUPERSEDED-PENDING), link to the
+  log entry. Built from the "Binding inputs" list of the archived
+  CURRENT_STATE plus the new directives. No rule text. D-SEC-06 and
+  D-SEC-14 are SUPERSEDED-PENDING; the P7 visual and IA decisions are
+  SUPERSEDED-PENDING.
+
+docs/00-governance/COST_POLICY.md
+- Owns the AICWDF §4C procedure: selection order, paid-service stop
+  condition, no paid production AI dependency, free-tier caution, an empty
+  recurring-cost inventory and exception registry. Links to the V1_SCOPE
+  cost boundary for project specifics; restates nothing from it.
+
+docs/00-governance/PRODUCTION_DATA_SAFETY.md
+- Owns AICWDF §29–30: production database zero-touch for agents, forbidden
+  production data actions, the legitimate schema-evolution path. Links to
+  ENGINEERING_PRINCIPLES, SECURITY and DIR-009; procedures are owed by P9
+  and P10.
+
+docs/11-tasks/README.md — reservation: Tasks, TASK_PLAN.md and
+FEATURE_COVERAGE_MATRIX.md are created in P11; link to the Task model.
+
+docs/11-tasks/EXECUTION_CONTEXT.md (AICWDF §34A; short)
+- Project, release, current phase, default stack.
+- Auth profile as decided: implementation LARAVEL_NATIVE; password profile
+  AICWDF-COMPAT-8 with retained blocklist; mandatory TOTP at minimum for
+  Owner/high-risk accounts; Google sign-in ON, EXISTING_ACCOUNT_ONLY; marked
+  "decided, SECURITY amendment pending".
+- Global UI rules per D7 and AICWDF; visual direction pending the P7
+  re-baseline.
+- Cost rule, production data safety, toolchain pointer, execution entry.
+- About ten project invariants, one line each, every line citing its
+  canonical identifiers: exact money and quantities, company isolation and
+  default-deny, field projection, append-only history and correction
+  semantics, command identity and idempotency, canonical lock order,
+  transaction-boundary rule, auditability, Git attribution.
+- "Do not reopen": pointer to DECISION_INDEX.
+
+docs/08-testing/README.md, docs/09-operations/README.md,
+docs/10-release/README.md — one short reservation each: phase not started,
+see PHASE_STATUS.
+
+docs/handoff/CURRENT_HANDOFF.md (AICWDF §36 format, about one page)
+- Current phase, last completed action with commit SHAs, open blockers,
+  decisions made and pending, files changed, safe next action, do-not-do.
+  Task-plan fields read "N/A — before P11". Safe next action: Owner review
+  and approval of this migration, then fast-forward publication; after that
+  the security/auth amendment and the P7 re-baseline, each under its own
+  authorization.
+
+10.3 Records
+- Lifecycle: do not declare any amendment approved. Follow the document
+  lifecycle in SOURCE_OF_TRUTH for an approved document whose amendment
+  awaits Owner approval, and say so in each amended header.
+- DECISION_LOG (TECH entry): every amended file with its SHA-256 before and
+  after and the directive it implements; the statement that the
+  APPR-001–008 records are not edited and that they carry over to moved and
+  split files because their content is proven identical (MIGRATION_MAP);
+  the stage-3 semantic amendments marked PENDING OWNER APPROVAL.
+- CHANGELOG entry. MIGRATION_MAP completed with gate results.
+
+GATE G3
+- The diff of stage 3 touches only the files named in section 10.
+- Every amendment cites its directive; before/after hashes recorded.
+- No semantic change to any P0–P6 document beyond the amendments listed in
+  10.1.
+- No duplicate source of truth: phase status only in PHASE_STATUS;
+  DECISION_INDEX holds no rule text; every EXECUTION_CONTEXT line cites a
+  canonical identifier; AICWDF rules are cited by section, not copied;
+  CURRENT_HANDOFF repeats no history.
+- Content-truth counts are unchanged from the tag, re-derived the same way
+  on both sides: 18 MUST capabilities, 14 document types, 124 tables in 13
+  modules, 80 capabilities.
+- No V1_REQUIRED capability removed; no Owner authority weakened; no
+  placeholder text left; no secrets; no file outside the plan changed.
+- Repository-wide link check passes; every identifier referenced in the new
+  documents exists.
+- Zero-context test: start a fresh agent or session that has none of this
+  conversation, give it only the branch working tree, and have it answer
+  from the repository alone:
+  (a) the six AICWDF §11 exit questions;
+  (b) where these are defined: AU-07, AX-04, DATABASE §4.7, CS-08, D-UX-01,
+      DIR-009, CAP-14, BR-CR-01, CI-01, UXS-43;
+  (c) the current phase, why P8 is BLOCKED, what is not authorized, and the
+      next safe action.
+  All answers must be correct. If not, fix the navigation documents
+  (Level 1) and repeat. Record questions, answers and result in
+  MIGRATION_MAP.
+- Self-review the complete branch diff against: broken references, duplicate
+  source of truth, lost historical facts, lost approval provenance,
+  ambiguous current state, unnecessary AICWDF deviation.
+
+==================================================
+11. END STATE AND PUBLICATION
+==================================================
+
+- `main` stays at c511d7b0d4683e07717c962927c9f113854f227b, locally and on
+  the remote. Do not fast-forward it. I approve first.
+- After all gates pass, push the tag and the branch with normal, non-force
+  pushes: `git push origin pre-aicwdf-migration` and
+  `git push -u origin migration/aicwdf`. Then verify both on the live remote
+  and verify that live `main` is unchanged.
+- If this environment has no GitHub credentials, do not request broad
+  access. Finish locally, report the exact SHAs, and give me those two
+  commands to run.
+- Never claim anything is published until the live remote confirms it.
+
+==================================================
+12. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+A. Baseline evidence (stage 0 checks, tag, branch, any other existing tags).
+B. Commits: SHA, message, confirmation of identity and no trailers.
+C. Gate results G0–G3, each check with its evidence.
+D. Moves and splits: counts, where the mapping and hashes are recorded, and
+   the `git diff -M --summary` supporting evidence.
+E. Every semantic amendment: file, sentence-level summary, directive,
+   hashes before and after.
+F. New source records with hashes; AICWDF hash comparison result.
+G. Zero-context test: questions, answers, result.
+H. Self-review findings and what was done about each.
+I. Level-1 decisions you made.
+J. Anything left open, any stop condition met, anything you could not
+   verify.
+K. Push status as confirmed on the live remote.
+L. What I must approve next, and the exact next safe action.
+
+Stop after the report.

@@ -1,0 +1,143 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-fourth source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix D of the AICWDF migration
+authorization of the same date (thirty-sixth source record)
+Subject: Owner final decisions for structural alignment — password baseline
+         AICWDF-COMPAT-8 with mandatory TOTP (5); Google sign-in on for V1,
+         existing accounts only (6); Indonesian-default bilingual application
+         UI (7); approval of the proposed structure model; final migration
+         blueprint requested, no repository change
+Delivery: the relayed text between the "BEGIN APPENDIX D" and
+         "END APPENDIX D" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISIONS — FINAL FOR STRUCTURAL ALIGNMENT
+
+5: 8+TOTP
+6: aktif
+7: ya
+
+Model struktur yang Anda usulkan: SETUJU.
+
+Clarification:
+
+5. PASSWORD
+
+Adopt AICWDF-COMPAT-8 as the new baseline.
+
+Keep:
+- common/breached-password blocking;
+- password manager and paste support;
+- no periodic forced rotation;
+- existing throttling and security controls.
+
+Add mandatory TOTP at minimum for Owner/high-risk accounts.
+
+This intentionally supersedes the previous planner-selected 15-character
+baseline through controlled amendment.
+
+Do not label the project EXTERNAL_COMPLIANCE merely because the previous
+planner selected NIST guidance. There is currently no verified external binding
+requirement forcing the 15-character profile.
+
+6. GOOGLE SIGN-IN
+
+Google sign-in: ON for V1.
+
+Rules:
+- EXISTING_ACCOUNT_ONLY;
+- auto-registration of unknown Google users: OFF;
+- Owner/internal account provisioning remains authoritative;
+- Google identity maps to an existing MULTIPLECORP user;
+- Google does not define roles, capabilities or company scope;
+- all existing authorization/session/step-up controls remain authoritative;
+- design safely for shared-office-device risk;
+- if a stronger re-authentication rule is technically required for shared
+  devices, resolve it as a Level-1 security design unless it changes Owner
+  policy.
+
+7. LOCALIZATION
+
+YES.
+
+V1 application UI:
+- default: Bahasa Indonesia;
+- secondary: English;
+- language switch required;
+- localizable user-facing strings must not be uncontrolled hardcoded copy.
+
+Generated/issued business documents and business data remain Bahasa Indonesia
+for V1 unless a later explicit Owner decision changes this.
+
+STRUCTURE
+
+I approve the target AICWDF-aligned repository structure you proposed.
+
+The functional goal is that I can understand project progress directly through:
+
+PHASE_STATUS
+→ P0–P11
+
+and later:
+
+TASK_PLAN
+→ Baseline Total Tasks
+→ Current Total Tasks
+→ DONE
+→ READY
+→ IN_PROGRESS
+→ BLOCKED
+→ VERIFYING
+→ TODO
+→ SUPERSEDED
+→ Progress %
+→ CURRENT TASK
+→ NEXT READY TASK
+
+Proceed with the assumption that AICWDF v4.3 is the governing operating
+structure going forward.
+
+Preserve valid P0–P6 content truth, historical approvals, IDs and provenance,
+but migrate the operating structure toward AICWDF as proposed.
+
+P7 remains IN_PROGRESS for UX re-baseline.
+P8 remains BLOCKED and must not start.
+
+NEXT PLANNING ACTION
+
+Before producing an execution prompt:
+
+1. finish the two remaining verification items you identified;
+2. produce the final structural migration blueprint;
+3. include the exact target repository tree;
+4. include old path → new path mapping;
+5. include which files move unchanged;
+6. include which files split and their exact section boundaries;
+7. include which files are superseded;
+8. include all semantic amendments resulting from Owner decisions 1–7 and 10;
+9. include approval/provenance preservation strategy;
+10. include validation gates after each migration stage;
+11. include rollback/recovery approach if a migration stage fails;
+12. show the expected PHASE_STATUS immediately after migration;
+13. clearly separate:
+    - mechanical migration;
+    - governance amendment;
+    - security/auth amendment;
+    - UX re-baseline.
+
+Then self-review the migration blueprint for:
+- broken references;
+- duplicate Source of Truth;
+- lost historical facts;
+- lost approval provenance;
+- ambiguous current state;
+- unnecessary AICWDF deviation.
+
+Do not modify the repository yet.
+Do not use Cowork.
+Do not start P8.
+Do not commit or push.
+
+Return the final migration blueprint first.
+Do NOT produce the Claude Code execution prompt until I approve that blueprint.

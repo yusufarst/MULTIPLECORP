@@ -1,0 +1,308 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-third source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix C of the AICWDF migration
+authorization of the same date (thirty-sixth source record)
+Subject: Owner clarification — AICWDF v4.3 shall become the target operating
+         structure (content truth versus operating structure; P0–P11 phase
+         view and Task progress model; CURRENT_HANDOFF and
+         EXECUTION_CONTEXT); revised structural recommendation requested
+         before decisions 5–7, no repository change
+Delivery: the relayed text between the "BEGIN APPENDIX C" and
+         "END APPENDIX C" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+IMPORTANT OWNER CLARIFICATION — STRUCTURAL CONFORMANCE TO AICWDF
+
+Respond to me in Bahasa Indonesia.
+
+Before I answer Owner decisions 5–7, I need to clarify one fundamental intent
+that must affect your recommendation.
+
+I do NOT want AICWDF v4.3 to be treated merely as a collection of optional
+ideas layered on top of the existing MULTIPLECORP repository.
+
+I created / selected this framework because its structure represents how I want
+the project to be planned, tracked, executed, reviewed, released, handed off,
+and maintained going forward.
+
+Therefore:
+
+AICWDF v4.3 SHALL become the target operating structure for MULTIPLECORP.
+
+This includes, where applicable:
+
+- phase structure and progression;
+- planning-agent workflow;
+- execution-agent workflow;
+- review-agent workflow;
+- release-agent workflow;
+- repository navigation;
+- current-state representation;
+- toolchain policy;
+- execution context;
+- Task planning;
+- Task lifecycle;
+- dependency tracking;
+- READY gate;
+- PARALLEL SAFE rules;
+- completion evidence;
+- automatic progress tracking;
+- owner-visible progress dashboard;
+- handoff structure;
+- release integrity reporting;
+- long-term AI maintenance.
+
+I want to be able to look at MULTIPLECORP and understand its progress according
+to the AICWDF flow.
+
+For example, I want the project state to clearly show something conceptually
+equivalent to:
+
+P0 — ...
+P1 — ...
+P2 — ...
+P3 — ...
+P4 — ...
+P5 — ...
+P6 — ...
+P7 — ...
+P8 — ...
+P9 — ...
+P10 — ...
+P11 — ...
+
+and, once P11 is complete:
+
+Baseline Total Tasks
+Current Total Tasks
+
+DONE
+READY
+IN_PROGRESS
+BLOCKED
+VERIFYING
+TODO
+SUPERSEDED
+
+Progress: DONE / CURRENT TOTAL
+
+with a master Task checklist and clear NEXT READY TASK.
+
+I also want future Execution Agents to operate using the AICWDF Task model
+rather than having to understand the entire planning history for every coding
+operation.
+
+==================================================
+WHAT THIS MEANS FOR THE EXISTING REPOSITORY
+==================================================
+
+You are explicitly authorized to recommend structural migration toward the
+AICWDF model.
+
+Do not preserve an old structure merely because it already exists.
+
+If the AICWDF structure is clearer and better for Owner visibility,
+replacement-agent onboarding, execution reliability, progress tracking, or
+long-term maintenance, prefer the AICWDF structure.
+
+You may recommend:
+
+- splitting oversized documents;
+- merging duplicated concerns;
+- moving historical detail out of current-state/bootstrap files;
+- creating missing AICWDF operational documents;
+- creating clearer phase indexes;
+- creating concise current-state/handoff documents;
+- creating TOOLCHAIN.md;
+- creating EXECUTION_CONTEXT.md;
+- creating AICWDF adoption/mapping records;
+- reserving or creating docs/11-tasks;
+- eventually creating TASK_PLAN.md and TASK-XXX.md according to AICWDF;
+- aligning progress/status terminology to AICWDF;
+- using Task as the preferred execution term going forward;
+- mapping old Build Unit terminology to Task without losing historical
+  traceability.
+
+However, this is NOT permission to destroy valid knowledge.
+
+Preserve:
+
+- valid business rules;
+- Owner decisions;
+- domain semantics;
+- financial semantics;
+- inventory semantics;
+- document semantics;
+- authorization semantics;
+- database guarantees;
+- concurrency guarantees;
+- audit requirements;
+- historical approvals;
+- source provenance.
+
+If the document structure changes, preserve traceability through:
+
+OLD → NEW mapping
+SUPERSEDED markers
+decision records
+approval provenance
+stable identifiers where still useful.
+
+Historical documents may remain archived or referenced where useful, but they
+must not make the current operating path ambiguous.
+
+==================================================
+CONFORMANCE GOAL
+==================================================
+
+Distinguish:
+
+CONTENT TRUTH
+versus
+OPERATING STRUCTURE.
+
+Existing MULTIPLECORP P0–P6 contains substantial valid CONTENT TRUTH.
+
+AICWDF v4.3 should become the preferred OPERATING STRUCTURE going forward.
+
+Where old operating structure conflicts with AICWDF and provides no stronger
+project-specific benefit, migrate toward AICWDF.
+
+Where MULTIPLECORP has a stronger project-specific invariant, retain the
+invariant but fit it into the AICWDF structure.
+
+I do not require cosmetic renaming merely to copy the template.
+
+But I DO require functional structural alignment so that I can follow the
+project using the same mental model and progress flow defined by AICWDF.
+
+==================================================
+PHASE PROGRESSION
+==================================================
+
+Re-evaluate how the current project should be represented under the AICWDF
+phase model.
+
+The desired direction is conceptually:
+
+P0–P6
+→ preserve/reconcile valid planning truth
+
+P7
+→ UX re-baseline because the current Owner experience is not accepted
+
+P8
+→ Testing, Quality & Definition of Done
+
+P9
+→ Infrastructure, Observability, Backup & Recovery
+
+P10
+→ Release, Migration, Cutover, Rollback & UAT
+
+P11
+→ definitive Task Planning, Dependencies & Execution Specs
+
+then:
+
+PLANNING FREEZE
+→ TASK EXECUTION
+→ verification
+→ release
+
+Do not start P8 yet.
+
+First determine whether the UX re-baseline and structural migration must be
+completed before P8.
+
+==================================================
+P11 REQUIREMENT
+==================================================
+
+P11 must ultimately follow the AICWDF execution backbone closely.
+
+I expect a definitive Task baseline and an Owner-visible dashboard equivalent
+to the framework's TASK_PLAN.md model.
+
+The future P11 output should make it easy for me to see:
+
+- Baseline Total Tasks;
+- Current Total Tasks;
+- DONE;
+- READY;
+- IN_PROGRESS;
+- BLOCKED;
+- VERIFYING;
+- TODO;
+- SUPERSEDED;
+- completion percentage;
+- master Task checklist;
+- dependencies;
+- PARALLEL SAFE;
+- current Task;
+- next READY Task;
+- plan changes.
+
+Task IDs must remain stable.
+
+DONE must mean:
+required implementation complete
++
+required tests pass
++
+completion evidence exists.
+
+Execution Agents should normally execute one READY Task at a time.
+
+Do not generate the actual final Task list now.
+That remains P11 work.
+
+==================================================
+CURRENT_HANDOFF / EXECUTION CONTEXT
+==================================================
+
+I also want the spirit of the AICWDF model where:
+
+- CURRENT_HANDOFF describes current operational state rather than repeating the
+  entire project history;
+- Git and decision records preserve history;
+- EXECUTION_CONTEXT gives coding agents only the stable minimum context;
+- active Task references exact canonical source sections;
+- coding agents do not reread P0–P11 wholesale for every Task.
+
+Determine how to migrate MULTIPLECORP toward that model.
+
+==================================================
+REVISED ANALYSIS REQUEST
+==================================================
+
+Before asking me again for decisions 5–7, revise your structural recommendation.
+
+Report in Bahasa Indonesia:
+
+1. Target repository structure after AICWDF alignment.
+2. Which current files remain as-is.
+3. Which current files should be split.
+4. Which should become historical/archival provenance.
+5. Which new AICWDF-aligned files should be added.
+6. Exact current-state / phase-progress representation.
+7. How P0–P7 history maps into the new structure.
+8. How P8–P11 will follow AICWDF.
+9. How P11 Task progress will become the Owner's primary execution dashboard.
+10. How CURRENT_HANDOFF and EXECUTION_CONTEXT should work.
+11. How old Build Unit terminology maps to Task.
+12. What migration can happen without changing semantics.
+13. What requires amendment/supersession.
+14. What must remain untouched as business truth.
+15. Whether the UX re-baseline should happen before, during, or after the
+    structural migration.
+16. The safest migration sequence.
+17. Then return the remaining Owner decisions 5–7 with your verified
+    recommendations.
+
+Do not modify the repository.
+Do not start P8.
+Do not prepare the Claude Code execution prompt yet.
+
+I want the planning model settled first.

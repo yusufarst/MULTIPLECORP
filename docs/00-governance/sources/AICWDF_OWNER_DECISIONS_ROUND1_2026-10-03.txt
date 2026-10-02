@@ -1,0 +1,188 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-second source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix B of the AICWDF migration
+authorization of the same date (thirty-sixth source record)
+Subject: Owner decisions, round 1 — no fixed delivery date (1); AICWDF v4.3 as
+         the governing planning/execution framework (2); substantial
+         replacement of the P7 visual and information-architecture baseline
+         with Ramp as the Owner-chosen design reference (3); AICWDF §18.2 and
+         the latest Owner UX direction over conflicting anti-AI-slop rules
+         (4); controlled structural migration (10); verification requested
+         before decisions 5–9, no repository change
+Delivery: the relayed text between the "BEGIN APPENDIX B" and
+         "END APPENDIX B" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISIONS — ROUND 1
+
+Gunakan keputusan berikut sebagai latest explicit Owner direction.
+
+1. TARGET / DEADLINE
+
+Tidak ada fixed delivery date yang boleh menurunkan kualitas, kelengkapan,
+struktur, security, data integrity, UX quality, testing quality, atau
+implementation readiness.
+
+Tanggal 15 Oktober bukan lagi constraint.
+
+Jika perlu mencatat target ke depan, target tersebut harus selalu tunduk pada
+quality gate dan completion criteria.
+
+Jangan memotong scope atau mempertahankan keputusan lama hanya demi mengejar
+tanggal.
+
+2. AICWDF v4.3
+
+YES.
+
+AICWDF v4.3 menjadi governing planning / execution framework untuk arah
+MULTIPLECORP ke depan, subject to:
+
+- latest explicit Owner decisions;
+- preserved business/domain truth;
+- preserved valid data-integrity guarantees;
+- preserved valid security/concurrency/audit semantics unless explicitly
+  superseded;
+- controlled change management and traceability.
+
+Jika AICWDF bertentangan dengan keputusan lama yang hanya merupakan pilihan
+planner/technical default, AICWDF + latest Owner intent boleh menggantikannya
+melalui controlled amendment.
+
+Jangan menganggap APPROVED berarti immutable forever.
+
+3. P7 VISUAL / IA BASELINE
+
+YES.
+
+Saya mengotorisasi penggantian substantial terhadap visual baseline dan
+information architecture P7/APPR-008.
+
+APPR-008 tetap dipertahankan sebagai historical provenance, tetapi bagian UX
+yang digantikan harus disupersede melalui approval/baseline baru.
+
+Ramp adalah DESIGN REFERENCE yang memang saya pilih sebagai Owner.
+
+Ramp tidak perlu disalin secara literal.
+
+Yang saya inginkan dari arah Ramp antara lain:
+
+- modern;
+- clean;
+- professional;
+- visually calm;
+- lebih mudah dipahami user baru;
+- visual breathing room;
+- tipografi lebih besar dan lebih terbaca;
+- control size yang nyaman;
+- whitespace dan section separation yang jelas;
+- hierarchy yang kuat;
+- progressive disclosure;
+- navigasi yang lebih sederhana;
+- task-oriented IA, bukan backend/domain-oriented IA;
+- lebih sedikit top-level navigation bila memungkinkan;
+- hindari duplicate navigation seperti tahap + tab yang menyampaikan hal sama;
+- dashboard per role yang mudah dipindai;
+- angka/status penting lebih terlihat;
+- primary action jelas;
+- mobile-first;
+- desktop tetap produktif;
+- data-heavy screens boleh lebih dense hanya jika memang dibutuhkan;
+- lime/accent Ramp boleh digunakan secara accessible, misalnya dark text di
+  atas lime, bukan lime sebagai text dengan contrast buruk;
+- tetap cocok untuk implementasi shadcn/ui.
+
+Pertahankan pola UX lama hanya bila pola itu terbukti lebih baik atau diperlukan
+oleh business/security/accessibility constraints.
+
+Business truth tidak boleh diubah hanya demi visual.
+
+4. ANTI-AI-SLOP VS AICWDF §18.2
+
+Jika aturan anti-AI-slop lama bertentangan dengan AICWDF §18.2, Owner intent
+terbaru, atau arah Ramp yang saya pilih, maka:
+
+AICWDF §18.2 + latest Owner UX direction MENANG.
+
+Namun jangan menghapus seluruh anti-AI-slop discipline.
+
+Pertahankan aturan anti-AI-slop yang masih membantu:
+
+- kejelasan;
+- konsistensi;
+- accessibility;
+- professional appearance;
+- menghindari decorative clutter;
+- menghindari fake metrics;
+- menghindari meaningless cards;
+- menghindari duplicate actions;
+- menghindari UI gimmicks.
+
+Buang atau revisi hanya aturan lama yang memaksa excessive density,
+typography terlalu kecil, spacing terlalu rapat, atau menolak visual direction
+Owner tanpa alasan business/security/accessibility yang nyata.
+
+10. STRUCTURAL MIGRATION
+
+YES.
+
+Saya mengotorisasi controlled repository/planning structural migration jika
+hasil analisis menunjukkan manfaat yang nyata.
+
+Diizinkan antara lain:
+
+- merampingkan bootstrap/entry documents;
+- memisahkan history dari current operating context;
+- memecah dokumen sangat besar secara modular;
+- menambahkan index/aggregation layer;
+- menambahkan TOOLCHAIN.md;
+- menambahkan AICWDF adoption/mapping document;
+- menambahkan execution layer;
+- menyiapkan EXECUTION_CONTEXT.md;
+- menyiapkan struktur docs/11-tasks untuk P11;
+- memperjelas ownership dan source-of-truth routing.
+
+Syarat migrasi:
+
+- jangan hilangkan business knowledge;
+- jangan hilangkan historical provenance;
+- jangan reset approval history;
+- sediakan mapping old → new;
+- pemecahan dokumen tanpa semantic change harus dapat diverifikasi;
+- semantic changes harus dicatat sebagai amendment/supersession;
+- jangan melakukan cosmetic rename/restructure tanpa manfaat operasional;
+- repository setelah migrasi harus lebih mudah dipahami replacement agent,
+  planning agent dan execution agent.
+
+NEXT
+
+Sebelum meminta keputusan Owner untuk nomor 5–9:
+
+1. tuntaskan pembacaan dokumen kanonis yang sebelumnya bertanda
+   [perlu verifikasi], terutama:
+   - DESIGN_SYSTEM
+   - INFORMATION_ARCHITECTURE
+   - ADMIN_FLOW
+   - SECURITY
+   - DECISION_LOG
+   - CHANGE_CONTROL
+   - SOURCE_OF_TRUTH
+   - relevant Owner Brief sections;
+
+2. verifikasi sumber persis setiap konflik;
+
+3. untuk nomor 5–9, laporkan:
+   - existing rule;
+   - asal/authority existing rule;
+   - AICWDF rule;
+   - apakah AICWDF rule invariant/default/recommendation;
+   - security/business/cost consequence;
+   - rekomendasi Anda setelah deadline dihapus sebagai constraint.
+
+Jangan modifikasi repository.
+Jangan mulai P8.
+Jangan buat execution prompt dulu.
+
+Setelah verifikasi selesai, kembali kepada saya hanya dengan keputusan
+Owner 5–9 yang benar-benar masih diperlukan dan rekomendasi Anda.

@@ -1,0 +1,225 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-first source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix A of the AICWDF migration
+authorization of the same date (thirty-sixth source record)
+Subject: Owner correction — re-evaluate the AICWDF v4.3 adoption direction
+         without deadline pressure; P7 prototype UX not accepted and the
+         Owner-selected "Ramp" direction to be re-evaluated; revised planning
+         report requested, no repository change
+Delivery: the relayed text between the "BEGIN APPENDIX A" and
+         "END APPENDIX A" marker lines, which are not transcribed. The message
+         refers to an attached ZIP of the P7 DesainPakeAI prototype; that
+         attachment was not relayed to the executor and is not archived.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+IMPORTANT OWNER CORRECTION — RE-EVALUATE THE ADOPTION DIRECTION
+
+Gunakan Bahasa Indonesia untuk seluruh respons kepada saya.
+
+Saya melampirkan file ZIP yang berisi hasil prototype/desain P7 MULTIPLECORP
+yang dibuat melalui DesainPakeAI.
+
+Baca dan inspeksi isi ZIP tersebut secara nyata.
+Jangan hanya mengandalkan laporan P7 atau nama file.
+
+IMPORTANT OWNER INTENT
+
+Saya ingin mengoreksi satu asumsi penting dari analisis sebelumnya:
+
+TARGET 15 OKTOBER BUKAN CONSTRAINT YANG BOLEH MENURUNKAN KUALITAS,
+STRUKTUR, ATAU KELENGKAPAN PROJECT.
+
+Jangan mempertahankan keputusan lama hanya karena mengejar deadline tersebut.
+
+Bagi saya, kualitas struktur project dan kesesuaian terhadap
+AI_First_Complex_WebApp_Task_Framework_v4.3_EN.md lebih penting daripada
+memaksakan deadline lama.
+
+AICWDF v4.3 bukan sekadar referensi kecil.
+
+Dokumen tersebut berisi banyak kebutuhan, preferensi, dan cara kerja yang saya
+inginkan sebagai Owner untuk MULTIPLECORP ke depan.
+
+Karena itu, evaluasi ulang hubungan antara:
+
+1. AICWDF v4.3;
+2. repository MULTIPLECORP P0–P7;
+3. hasil prototype P7 dalam ZIP ini;
+4. arah build P8–P11 dan coding.
+
+Do not assume that the existing repository structure must remain unchanged.
+
+If a substantial restructuring would make the project clearer, more durable,
+more AI-agent-friendly, easier to execute, and more faithful to AICWDF,
+you may recommend it.
+
+If necessary, existing planning structure may be significantly reorganized
+through controlled migration/change control.
+
+However:
+
+- do not casually destroy valid business knowledge;
+- preserve business/domain truths that are still correct;
+- preserve data-integrity guarantees that are still desired;
+- preserve security/concurrency/audit rules unless a newer Owner intent changes
+  them;
+- preserve historical provenance even if a newer baseline supersedes an older
+  one.
+
+APPROVED does not mean IMMUTABLE FOREVER.
+
+A newer explicit Owner direction may supersede an older approved decision
+through controlled amendment.
+
+==================================================
+UX / UI RE-EVALUATION
+==================================================
+
+This is especially important.
+
+I am NOT satisfied with the current P7 UI/UX represented by the attached ZIP.
+
+As the Owner/user, I find it confusing.
+
+The resulting design also does not match the DesainPakeAI project/template
+direction that I intentionally selected.
+
+Previously the DesainPakeAI starter/template direction named "Ramp" was
+rejected during P7 because repository rules were treated as dominant.
+
+Re-evaluate that decision.
+
+My intent is NOT that Ramp blindly overrides business rules.
+
+My intent is:
+
+business truth
++ clear UX
++ the visual/design direction I selected
++ shadcn/ui implementation suitability
+
+must be reconciled together.
+
+Inspect the prototype ZIP and determine concretely:
+
+- what makes the current UX confusing;
+- what creates excessive density;
+- where navigation hierarchy is too complex;
+- where too many concepts/actions are exposed at once;
+- where the information architecture reflects backend/domain structure more
+  than user mental models;
+- where progressive disclosure is insufficient;
+- where mobile and desktop composition can be simpler;
+- where the selected DesainPakeAI template/design direction was unnecessarily
+  discarded;
+- where visual hierarchy, spacing, typography, grouping, action priority and
+  onboarding are weak;
+- whether the current "Tinta" direction should remain, be adapted, or be
+  superseded;
+- whether P7/APPR-008 should be amended or superseded by a new UX baseline.
+
+Do not protect APPR-008 merely because it is already approved.
+
+If the UX baseline is wrong for the Owner, say so.
+
+==================================================
+AICWDF RE-EVALUATION
+==================================================
+
+Re-read the relevant AICWDF sections in light of this clarification.
+
+Do not let the old October 15 target influence classifications.
+
+Reconsider any previous recommendation that was based materially on:
+- schedule pressure;
+- fear of repository restructuring;
+- avoiding scope solely to save time;
+- preserving old planning structure for convenience.
+
+I want you to determine what the project SHOULD look like if we optimize for:
+
+1. correctness;
+2. clarity;
+3. maintainability;
+4. strong AI-agent execution;
+5. security and data integrity;
+6. UX quality;
+7. traceability;
+8. implementation reliability;
+9. long-term structure;
+
+rather than optimizing for the October 15 date.
+
+You have authority as PLANNING / ARCHITECTURE / REVIEW agent to recommend a
+major re-baselining if the evidence supports it.
+
+Do not modify the repository yet.
+Do not start P8.
+Do not produce application code.
+Do not use Cowork.
+Do not commit or push.
+
+==================================================
+OUTPUT
+==================================================
+
+Produce a revised planning report in Bahasa Indonesia.
+
+At minimum include:
+
+A. What changed because of this Owner clarification
+
+B. Which conclusions from your previous AICWDF report still stand
+
+C. Which previous conclusions should be withdrawn or revised
+
+D. Critical review of the attached P7 prototype ZIP
+
+E. Concrete UX/UI problems found
+
+F. Comparison between current P7 design direction and the Owner-selected
+DesainPakeAI/template direction
+
+G. Whether P7/APPR-008 UX baseline should:
+- remain;
+- be narrowly amended;
+- be substantially revised;
+- or be superseded by a new baseline
+
+H. Whether the repository/planning structure itself should be reorganized
+
+I. Which P0–P7 knowledge must be preserved even if structure changes
+
+J. Which existing approved decisions should be reconsidered because AICWDF
+represents newer Owner intent
+
+K. Revised AICWDF adoption strategy without deadline pressure
+
+L. Recommended target repository/planning structure
+
+M. Recommended UX re-baseline process
+
+N. Recommended relationship:
+Repository truth
+→ Owner intent
+→ AICWDF
+→ DesainPakeAI
+→ shadcn/ui
+→ P11
+→ coding
+
+O. What should happen before P8
+
+P. What should happen to the current P8/P9/P10/P11 sequence if re-baselining is
+needed
+
+Q. Genuine Owner decisions still required
+
+R. Exact next action
+
+Do NOT provide an execution prompt yet.
+
+First perform the revised analysis.
+
+STOP after the report.

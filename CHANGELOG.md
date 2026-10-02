@@ -1,6 +1,6 @@
 # Changelog
 
-Status: REVIEW | Updated: 2026-10-02 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
 
 ## Unreleased — 2026-09-27
 
@@ -169,3 +169,8 @@ This is a change summary; current state and approval authority live in their [ow
 - Created INFORMATION_ARCHITECTURE (glossary, product map, shell, company context, sixty screens, signals, the Owner review queue, search and addressing), ADMIN_FLOW (interaction model, session and re-authentication, thirty-nine journeys, corrections, numbering and onboarding, opening import, messages, forty-four UX scenarios, P8–P11 handoffs), DESIGN_SYSTEM (tokens, layout, patterns, shadcn/ui composition, status system, keyboard and scanner, accessibility, copy, print, anti AI-slop mapping) and P7_QUALITY_GATE (REVIEW evidence).
 - Self-review (11 findings) and three independent adversarial reviews (CRITICAL 0, HIGH 1, MEDIUM 15, LOW 27, LEVEL-1 22, one deferred obligation; one finding classed OWNER_DECISION_REQUIRED as written, reclassified as a residual of approved rules and accepted by the Owner), all fixed or recorded; a targeted verification of the fixes (nothing at MEDIUM or above) and one narrow final check; re-test 44 of 44 and validation PASS; separate Fable review not recommended.
 - INFORMATION_ARCHITECTURE, ADMIN_FLOW and DESIGN_SYSTEM APPROVED under APPR-008 together with the amended SECURITY, DATABASE, PERFORMANCE and CONCURRENCY_IDEMPOTENCY revisions; P7_QUALITY_GATE stays REVIEW. Gap register gains P7 continuation notes, totals unchanged (34 findings — 3 CLOSED, 30 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK). Approval pointers, navigation, charter and handoff frozen. Checkpointed by one commit `docs: finalize P7 UX, information architecture and design system`, followed in the same task by a normal non-force push that the P8 entry verifies; P8 not started and requires explicit Owner authorization.
+
+## Unreleased — 2026-10-03, AICWDF adoption directives and migration baseline
+
+- Verified the migration baseline — local HEAD == live origin/main == the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b`, clean tree and index (OBS-013) — recording the P7 checkpoint and its publication literally; created the annotated recovery tag `pre-aicwdf-migration` on that commit and the branch `migration/aicwdf` from it; `main` unchanged.
+- Archived the Owner-supplied AICWDF v4.3 framework source byte-for-byte as the thirtieth source record (76,025 bytes, SHA-256 equal to the planning-workspace reference) and the Owner's adoption directives — Appendices A–E and the stages 0–3 migration authorization — as the thirty-first to thirty-sixth transcribed source records; recorded DIR-034–039, OBS-013 and TECH-023 (opened) and their provenance in SOURCE_OF_TRUTH. No existing line changed except the Updated dates; no normative content, approval, gap or earlier source record changed.

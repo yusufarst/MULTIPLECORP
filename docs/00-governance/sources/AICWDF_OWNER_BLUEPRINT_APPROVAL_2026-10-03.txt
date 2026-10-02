@@ -1,0 +1,85 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-fifth source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix E of the AICWDF migration
+authorization of the same date (thirty-sixth source record)
+Subject: Owner approval of the final AICWDF structural migration blueprint —
+         the AICWDF v4.3 source may be archived in the public repository as
+         immutable provenance; branch migration/aicwdf and one annotated
+         recovery tag at checkpoint c511d7b allowed; execution prompt for
+         stages 0–3 only requested, no execution by the planning chat
+Delivery: the relayed text between the "BEGIN APPENDIX E" and
+         "END APPENDIX E" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+BLUEPRINT APPROVAL
+
+Saya menyetujui blueprint final migrasi struktur MULTIPLECORP ke AICWDF v4.3
+sebagaimana laporan terakhir Anda.
+
+Konfirmasi tambahan:
+
+1. AICWDF v4.3 di repository publik: YA.
+
+Simpan source AICWDF yang diberikan Owner sebagai immutable provenance/source
+record di lokasi yang sesuai dengan blueprint.
+
+It may be public.
+
+Namun hindari dual Source of Truth:
+- source AICWDF = provenance / governing framework source;
+- aturan operasional MULTIPLECORP = dokumen repository aktif yang memetakan dan
+  menerapkan AICWDF beserta project-specific exceptions.
+
+Pastikan hash, version, provenance, dan mapping-nya tercatat.
+
+2. Branch `migration/aicwdf` + annotated recovery tag pada checkpoint
+`c511d7b`: YA.
+
+Saya mengizinkan praktik Git khusus ini untuk migrasi struktural AICWDF.
+
+Rules:
+- no force push;
+- no history rewrite;
+- Owner identity only;
+- no AI attribution/trailers;
+- main must remain recoverable;
+- migration branch must be validated before fast-forward publication;
+- the recovery tag must point to the exact pre-migration checkpoint.
+
+Blueprint status: OWNER APPROVED.
+
+Before execution, prepare the complete Claude Code Desktop execution prompt for
+ONLY stages 0–3 of the approved blueprint:
+
+0. baseline/provenance/recovery setup;
+1. mechanical moves;
+2. mechanical document splits;
+3. governance + operating-structure alignment.
+
+Do NOT include:
+- security/auth amendment implementation yet;
+- UX re-baseline yet;
+- P8 work;
+- application code.
+
+The execution prompt must preserve every validation gate, migration map,
+approval/provenance guarantee, rollback rule, and zero-context verification
+defined in the approved blueprint.
+
+The prompt must also require Claude Code to stop if:
+- live/local baseline differs from c511d7b;
+- the working tree/index is unexpectedly dirty;
+- a source hash does not match;
+- a mechanical split cannot be proven content-preserving;
+- a reference cannot be migrated unambiguously;
+- approval provenance would be lost;
+- a genuine Owner-level decision appears.
+
+Use Bahasa Indonesia for all communication to me, but repository documents may
+remain English according to project rules.
+
+Return only the ready-to-copy execution prompt for Claude Code Desktop.
+Do not execute anything yourself.
+Do not use Cowork.
+Do not start P8.
