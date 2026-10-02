@@ -12,7 +12,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Commit 0 — stage 0 | `c9ba88b28f398c8c6177ab2b2a6df8d8ef50e017` | `docs: record AICWDF adoption directives and migration baseline`: seven source records added and registered |
 | Stage 1 | `2a89d9ea892cacf5ddae57ec3b5911b9ce2ac7d8` | `docs: move planning documents into AICWDF phase structure`: the 21 moves below; link-target paths recomputed |
 | Stage 2 — WORKFLOWS | `3f8bd90c2545517c3c66489e60dbf79e50b9b64e` | `docs: split WORKFLOWS into section files`: `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
-| Stage 2 — DATABASE | the commit `docs: split DATABASE into section files`, child of `3f8bd90` | `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
+| Stage 2 — DATABASE | `8b712a829676464035a4af6718f72ef3dab366b8` | `docs: split DATABASE into section files`: `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
+| Stage 2 — CONCURRENCY_IDEMPOTENCY | the commit `docs: split CONCURRENCY_IDEMPOTENCY into section files`, child of `8b712a8` | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -209,6 +210,24 @@ Link targets rewritten: 14 inside the parts — in-document anchors whose headin
 
 Link targets rewritten: 32 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 27 in 16 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/04-architecture/DATABASE.md` became `docs/04-architecture/DATABASE/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
 
+### CONCURRENCY_IDEMPOTENCY
+
+`docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` — 708 lines, SHA-256 `64C899B5A8284C28C28FAE8EFD2876F288760183E97E36AF62A0A74F91332580` at the previous commit — became the folder `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/`: its [README](../06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md) and 8 parts, each a contiguous line range of the stage-1 file, in order.
+
+| File | Baseline lines | Lines | SHA-256 |
+| --- | --- | --- | --- |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s00-03-foundations.md` | 1–102 | 102 | `D5C7E4CA49995D84EF41B7000F3FEC3BA16C5DC77C8D53625D21303A962E0842` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s04-06-locks-envelope.md` | 103–243 | 141 | `D266A10FB1322242DC82095B3AEB889BA8EC21E1FB33210323C6D1CDF87148FE` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md` | 244–360 | 117 | `606F3149F73C0E3053BDB07C5C5BE9B78475702FDD7D3A7DB4014A2668C32BCD` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md` | 361–431 | 71 | `E0011915F8A4B8FEBE50D629B6AB356D60D4DCF4A379925B94D78127FAC5C84E` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md` | 432–527 | 96 | `2A1F67167AD9F6FBFD0D0381453B141C69FC8E052E60FC8F228A52F75434A3D9` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md` | 528–608 | 81 | `A27A9E793DEDCAF97490294A2647767BB2FECA26DCEAF88B4DA729201BC379A3` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s18-scenarios.md` | 609–653 | 45 | `6A429C8C7760662D2E82A178304EF3C1A6D5EF094077637E29B38FB68105F927` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s19-20-handoff-traceability.md` | 654–708 | 55 | `6180D329FCA6289563EBB2A9571B28C11A86C18FD50CF5515923B767161C010B` |
+| `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md` | — | 16 | `71573C7EF360FC8DA351F2866A729A9E64C95C9034D9B27239BCE2D6AEC53FD2` |
+
+Link targets rewritten: 51 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 37 in 23 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` became `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
+
 ## Gate results
 
 ### G0 — stage 0 (commit 0): PASS
@@ -243,6 +262,14 @@ Link targets rewritten: 32 inside the parts — in-document anchors whose headin
 - Headings: the concatenation's 64 headings equal the stage-1 sequence; each of the 63 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
 - Anchors: all 27 links into or inside DATABASE resolve to the same heading as before — 11 anchored links to the part holding the heading, 16 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/evidence/P4_QUALITY_GATE.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/05-security/SECURITY.md`, `docs/05-security/evidence/P5_QUALITY_GATE.md`, `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md`, `docs/06-api-performance/PERFORMANCE.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
 - Repository-wide link check: 1,155 relative links outside `sources/`, none broken.
+
+### G2 — CONCURRENCY_IDEMPOTENCY: PASS
+
+- Concatenation: the 8 parts in table order, with link targets neutralized on both sides, are byte-identical to the stage-1 file.
+- Lines: 102 + 141 + 117 + 71 + 96 + 81 + 45 + 55 = 708, the stage-1 count; every part ends with a newline; code fences are balanced inside every part (2 pairs).
+- Headings: the concatenation's 29 headings equal the stage-1 sequence; each of the 27 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
+- Anchors: all 66 links into or inside CONCURRENCY_IDEMPOTENCY resolve to the same heading as before — 47 anchored links to the part holding the heading, 19 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/ENGINEERING_PRINCIPLES.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/03-workflows/WORKFLOWS/s01-04-foundations.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/DATABASE/s01-03-foundations.md`, `docs/04-architecture/DATABASE/s04-00-module-map.md`, `docs/04-architecture/DATABASE/s04-13-ops.md`, `docs/04-architecture/DATABASE/s18-19-constraints-integrity.md`, `docs/04-architecture/DATABASE/s20-24-index-storage-migration.md`, `docs/04-architecture/DATABASE/s25-28-transactions-handoffs.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/06-api-performance/API_AND_INTEGRATIONS.md`, `docs/06-api-performance/PERFORMANCE.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
+- Repository-wide link check: 1,165 relative links outside `sources/`, none broken.
 
 ## Supporting evidence — rename detection
 

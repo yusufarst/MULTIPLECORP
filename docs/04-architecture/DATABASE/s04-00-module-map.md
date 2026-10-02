@@ -1,6 +1,6 @@
 ## 4. Module map and logical model
 
-Tables group into thirteen modules owned by the application modules in [ARCHITECTURE](../ARCHITECTURE.md#3-modules). Counts are logical tables (framework infrastructure tables — sessions, password-reset tokens, queue and cache tables, migrations — are excluded and belong to P5/P9; `TECH-021`: so is the operational export-request record that [CONCURRENCY_IDEMPOTENCY H6-04](../../06-api-performance/CONCURRENCY_IDEMPOTENCY.md#17-p5-obligations-h6-01h6-12) defines for the export context of PERMISSIONS_MATRIX DP-07).
+Tables group into thirteen modules owned by the application modules in [ARCHITECTURE](../ARCHITECTURE.md#3-modules). Counts are logical tables (framework infrastructure tables — sessions, password-reset tokens, queue and cache tables, migrations — are excluded and belong to P5/P9; `TECH-021`: so is the operational export-request record that [CONCURRENCY_IDEMPOTENCY H6-04](../../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#17-p5-obligations-h6-01h6-12) defines for the export context of PERMISSIONS_MATRIX DP-07).
 
 | Module | Tables | Scope | Content |
 | --- | --- | --- | --- |
