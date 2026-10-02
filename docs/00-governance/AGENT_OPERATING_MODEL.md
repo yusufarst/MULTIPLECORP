@@ -18,7 +18,7 @@ The brief identifies Astra as initial planner and Claude Opus 5.5 as initial exe
 
 ## Execution eligibility
 
-Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. P0 governance is accepted. The current authorized phase and task are recorded in [CURRENT_STATE](../07-handoff/CURRENT_STATE.md) and [NEXT_ACTION](../07-handoff/NEXT_ACTION.md); each phase needs its own explicit Owner authorization; proactive risk discovery and Level 1 corrections remain allowed without generating specifications of unauthorized phases. A review label is not a reason to seek new permission for those corrections.
+Planning may continue within the authorized assignment and after resolving blocking predecessor contradictions. P0 governance is accepted. The current authorized phase and task are recorded in [CURRENT_STATE](../handoff/archive/CURRENT_STATE_2026-10-02.md) and [NEXT_ACTION](../handoff/archive/NEXT_ACTION_2026-10-02.md); each phase needs its own explicit Owner authorization; proactive risk discovery and Level 1 corrections remain allowed without generating specifications of unauthorized phases. A review label is not a reason to seek new permission for those corrections.
 
 Before application implementation, the repository must identify the owner-authorized execution phase/planning freeze, a bounded task, its APPROVED/LOCKED specification and dependencies, and approval evidence under the [document lifecycle](SOURCE_OF_TRUTH.md#document-lifecycle). An approved P0 governance file alone is insufficient.
 

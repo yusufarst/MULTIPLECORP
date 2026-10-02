@@ -4,9 +4,9 @@ Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
 
 Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
-Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **interaction truth**: the command interaction model, session expiry and re-authentication, forms and validation, confirmations, background states, the Owner and Admin journeys per workflow, the correction entry points, the numbering, onboarding, import, evidence and scanner interactions, the Indonesian message catalogue and the mandatory UX scenarios. Navigation truth — glossary, product map, shell, company context, screen inventory, signal placement — is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md); visual rules — tokens, components, patterns, states, formatting, accessibility — by [DESIGN_SYSTEM](DESIGN_SYSTEM.md); phase evidence by [P7_QUALITY_GATE](P7_QUALITY_GATE.md).
+Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **interaction truth**: the command interaction model, session expiry and re-authentication, forms and validation, confirmations, background states, the Owner and Admin journeys per workflow, the correction entry points, the numbering, onboarding, import, evidence and scanner interactions, the Indonesian message catalogue and the mandatory UX scenarios. Navigation truth — glossary, product map, shell, company context, screen inventory, signal placement — is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md); visual rules — tokens, components, patterns, states, formatting, accessibility — by [DESIGN_SYSTEM](DESIGN_SYSTEM.md); phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
 
-**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../02-domain/WORKFLOWS.md); authorization truth in [PERMISSIONS_MATRIX](../02-domain/PERMISSIONS_MATRIX.md) and [SECURITY](../03-architecture/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../03-architecture/CONCURRENCY_IDEMPOTENCY.md), [PERFORMANCE](../03-architecture/PERFORMANCE.md), [DATABASE](../03-architecture/DATABASE.md), [ARCHITECTURE](../03-architecture/ARCHITECTURE.md) and [API_AND_INTEGRATIONS](../03-architecture/API_AND_INTEGRATIONS.md). This document cites their identifiers and never restates, relaxes or extends a rule: it says how an approved rule is met, entered, confirmed and answered on the screen. Where a sentence here and an owning document disagree, the owning document wins and the sentence is a defect to correct under [change control](../00-governance/CHANGE_CONTROL.md). A screen is never the authorization (AZ-01).
+**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../03-workflows/WORKFLOWS.md); authorization truth in [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) and [SECURITY](../05-security/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY.md), [PERFORMANCE](../06-api-performance/PERFORMANCE.md), [DATABASE](../04-architecture/DATABASE.md), [ARCHITECTURE](../04-architecture/ARCHITECTURE.md) and [API_AND_INTEGRATIONS](../06-api-performance/API_AND_INTEGRATIONS.md). This document cites their identifiers and never restates, relaxes or extends a rule: it says how an approved rule is met, entered, confirmed and answered on the screen. Where a sentence here and an owning document disagree, the owning document wins and the sentence is a defect to correct under [change control](../00-governance/CHANGE_CONTROL.md). A screen is never the authorization (AZ-01).
 
 **Boundary:** documentation only — no Laravel, PHP, React, TypeScript, HTML or CSS file, no migration, configuration, package, test or image. Copy examples are specifications of wording, not code. P8 owns the tests, P9 operations, P10 the cutover, P11 the build units; [section 16](#16-handoff-obligations) lists what each receives.
 
@@ -33,7 +33,7 @@ Framework behaviour relied on below was read on 2026-10-01 from current official
 
 ## 3. Derived interaction requirements
 
-Each row is derived from repository truth and is the first link of the traceability chain of [P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration); the last column names the section that satisfies it.
+Each row is derived from repository truth and is the first link of the traceability chain of [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration); the last column names the section that satisfies it.
 
 | ID | Requirement | Repository source | Home |
 | --- | --- | --- | --- |
@@ -82,7 +82,7 @@ Each row is derived from repository truth and is the first link of the traceabil
 
 ## 4. Design decisions
 
-Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
+Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
 
 | ID | Decision | Alternatives rejected | Grounds · exploration |
 | --- | --- | --- | --- |
@@ -576,7 +576,7 @@ Patterns, not an exhaustive string table: each fixes the structure, tone and obl
 
 ## 15. Mandatory UX scenarios
 
-The forty-four scenarios of DIR-033 §15, each with its screen and pattern, its copy, the presentation expected and the rule it satisfies. They are red-teamed and re-tested in [P7_QUALITY_GATE](P7_QUALITY_GATE.md#ux-scenario-re-test) and become E2E scenarios in P8 (UXH-01).
+The forty-four scenarios of DIR-033 §15, each with its screen and pattern, its copy, the presentation expected and the rule it satisfies. They are red-teamed and re-tested in [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#ux-scenario-re-test) and become E2E scenarios in P8 (UXH-01).
 
 ### Command identity and outcomes
 

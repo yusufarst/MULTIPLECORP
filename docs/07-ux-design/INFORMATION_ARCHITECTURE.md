@@ -4,9 +4,9 @@ Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
 
 Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
-Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **navigation truth**: the Indonesian UI glossary, the product map, the application shell and global navigation on phone and desktop, the company-context model, the screen inventory, the placement of the derived signals and queues, the search, lookup and scanner entry points and the page-addressing conventions. Interaction truth — commands, sessions, journeys, corrections, messages — is owned by [ADMIN_FLOW](ADMIN_FLOW.md); visual rules by [DESIGN_SYSTEM](DESIGN_SYSTEM.md); phase evidence by [P7_QUALITY_GATE](P7_QUALITY_GATE.md).
+Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **navigation truth**: the Indonesian UI glossary, the product map, the application shell and global navigation on phone and desktop, the company-context model, the screen inventory, the placement of the derived signals and queues, the search, lookup and scanner entry points and the page-addressing conventions. Interaction truth — commands, sessions, journeys, corrections, messages — is owned by [ADMIN_FLOW](ADMIN_FLOW.md); visual rules by [DESIGN_SYSTEM](DESIGN_SYSTEM.md); phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
 
-**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../02-domain/WORKFLOWS.md); authorization truth in [PERMISSIONS_MATRIX](../02-domain/PERMISSIONS_MATRIX.md) and [SECURITY](../03-architecture/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../03-architecture/CONCURRENCY_IDEMPOTENCY.md) and [PERFORMANCE](../03-architecture/PERFORMANCE.md). This document cites their identifiers and never restates, relaxes or extends a rule. A screen row names the capability and projection that govern it; it grants nothing — the server authorizes every request (AZ-01), and no screen shows a field its projection does not allow.
+**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../03-workflows/WORKFLOWS.md); authorization truth in [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) and [SECURITY](../05-security/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY.md) and [PERFORMANCE](../06-api-performance/PERFORMANCE.md). This document cites their identifiers and never restates, relaxes or extends a rule. A screen row names the capability and projection that govern it; it grants nothing — the server authorizes every request (AZ-01), and no screen shows a field its projection does not allow.
 
 **Boundary:** documentation only — no route file, component, configuration or image. Screens are specified at the depth a later build unit needs; fields the domain documents define are referenced, not listed again. P8 owns the tests and P11 the build units ([ADMIN_FLOW §16](ADMIN_FLOW.md#16-handoff-obligations)).
 
@@ -21,7 +21,7 @@ Authority: P7 — UX, Information Architecture & Design System, authorized by th
 
 ## 2. Derived navigation requirements
 
-Each row is derived from repository truth and is the first link of the traceability chain of [P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration).
+Each row is derived from repository truth and is the first link of the traceability chain of [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration).
 
 | ID | Requirement | Repository source | Home |
 | --- | --- | --- | --- |
@@ -286,7 +286,7 @@ The single home of the Indonesian UI vocabulary. **Label** is what the interface
 
 ## 4. Design decisions
 
-Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
+Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
 
 | ID | Decision | Alternatives rejected | Grounds · exploration |
 | --- | --- | --- | --- |
@@ -574,7 +574,7 @@ Signals are projections over facts and decisions; no queue is stored (WORKFLOWS 
 
 ### 9.2 The Owner review queue (SCR-07)
 
-Designed after the GAP-034 settlement ([P7_QUALITY_GATE](P7_QUALITY_GATE.md#gap-034-settlement-and-ordering-evidence)). SCR-07 is a **derived view**, never a stored queue and never an approval step: every listed action is already in effect; the Owner reviews it and, where something is wrong, acts on the record through its normal commands and correction rows (PERMISSIONS_MATRIX §10). Only `review.view` opens it; an Admin's request for its address is the not-found page (UXS-25).
+Designed after the GAP-034 settlement ([P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#gap-034-settlement-and-ordering-evidence)). SCR-07 is a **derived view**, never a stored queue and never an approval step: every listed action is already in effect; the Owner reviews it and, where something is wrong, acts on the record through its normal commands and correction rows (PERMISSIONS_MATRIX §10). Only `review.view` opens it; an Admin's request for its address is the not-found page (UXS-25).
 
 | Part | Sources (PERFORMANCE signal register, QS-14 row) | Presentation |
 | --- | --- | --- |

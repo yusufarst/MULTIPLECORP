@@ -1,0 +1,200 @@
+# Migration map — AICWDF structural migration
+
+Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+
+This record resolves every path of the pre-migration baseline to its place after the AICWDF v4.3 structural migration authorized by DIR-039 and recorded under [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), and holds the evidence that the moves and splits changed no content. It is evidence, not a specification: moved and split documents keep their own status and approval, and historical records that cite old paths — decision-log entries and approval tables, the changelog, quality gates, the archived handoff and the source records — are resolved through this map instead of being rewritten.
+
+## Reference points
+
+| Point | Commit | Meaning |
+| --- | --- | --- |
+| Tag `pre-aicwdf-migration` | `c511d7b0d4683e07717c962927c9f113854f227b` | P7 checkpoint and pre-migration baseline: 71 tracked files |
+| Commit 0 — stage 0 | `c9ba88b28f398c8c6177ab2b2a6df8d8ef50e017` | `docs: record AICWDF adoption directives and migration baseline`: seven source records added and registered |
+| Stage 1 | the commit `docs: move planning documents into AICWDF phase structure`, child of commit 0 | the 21 moves below; link-target paths recomputed |
+
+A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
+
+## Proof procedure
+
+Anyone can reproduce each proof from the tag with any Git client and any SHA-256 and text tool:
+
+1. Read every file as its committed content (`git show <revision>:<path>`, LF line endings), never as a working copy, at the tag, at commit 0 and at the stage-1 commit. Hashes are SHA-256 of that content.
+2. **Mapping.** Each path at the tag maps to the path the move table gives, or to itself when it is not listed. Every mapped path exists at stage 1 and no two old paths share one. The only paths at stage 1 that are neither a mapped tag path nor one of the seven stage-0 source records are this file and `docs/handoff/archive/README.md`.
+3. **Bytes.** Every file under `docs/00-governance/sources/` and every non-Markdown file is byte-identical between commit 0 and stage 1, and the 29 source records of the tag are byte-identical to the tag.
+4. **Neutralization.** For every other Markdown file, take its commit-0 version and its stage-1 version. In each, replace the target of every inline link — the text inside the parentheses that immediately follow a link label's closing `]` — outside fenced code blocks and inline code with the fixed text `LINK`. In the ownership-registry rows of SOURCE_OF_TRUTH, also replace each backtick-quoted path that names a moved file with `PATH` — the old path in the commit-0 version, the new one in the stage-1 version; CONTEXT_INDEX, AGENTS.md, CLAUDE.md and README.md, the other files where such tokens may be remapped, hold none. The two results must be byte-identical and have the same number of lines.
+5. **Link equivalence.** List the links of both versions in order: their number and labels must be equal. Resolve each target relative to its own file — the commit-0 location for the old version, the stage-1 location for the new — and map the old result through the move table: it must equal the new result, and the anchors (the part after `#`) must be identical. The remapped path tokens, mapped through the move table in order, must equal the new tokens.
+6. **Resolution.** Every relative link target at stage 1 outside `sources/` names an existing file and, where it has an anchor, a heading of that file whose GitHub-style anchor equals it — the heading text lower-cased, characters other than letters, digits, spaces, hyphens and underscores removed, spaces replaced by hyphens.
+
+## Moves
+
+| Old path (tag) | New path (stage 1) |
+| --- | --- |
+| `docs/00-governance/P0_QUALITY_GATE.md` | `docs/00-governance/evidence/P0_QUALITY_GATE.md` |
+| `docs/01-product/P1_QUALITY_GATE.md` | `docs/01-product/evidence/P1_QUALITY_GATE.md` |
+| `docs/02-domain/P2_QUALITY_GATE.md` | `docs/02-domain/evidence/P2_QUALITY_GATE.md` |
+| `docs/02-domain/WORKFLOWS.md` | `docs/03-workflows/WORKFLOWS.md` |
+| `docs/02-domain/P3_QUALITY_GATE.md` | `docs/03-workflows/evidence/P3_QUALITY_GATE.md` |
+| `docs/02-domain/PERMISSIONS_MATRIX.md` | `docs/05-security/PERMISSIONS_MATRIX.md` |
+| `docs/03-architecture/DATABASE.md` | `docs/04-architecture/DATABASE.md` |
+| `docs/03-architecture/ARCHITECTURE.md` | `docs/04-architecture/ARCHITECTURE.md` |
+| `docs/03-architecture/P4_QUALITY_GATE.md` | `docs/04-architecture/evidence/P4_QUALITY_GATE.md` |
+| `docs/03-architecture/SECURITY.md` | `docs/05-security/SECURITY.md` |
+| `docs/03-architecture/P5_QUALITY_GATE.md` | `docs/05-security/evidence/P5_QUALITY_GATE.md` |
+| `docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md` | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` |
+| `docs/03-architecture/PERFORMANCE.md` | `docs/06-api-performance/PERFORMANCE.md` |
+| `docs/03-architecture/API_AND_INTEGRATIONS.md` | `docs/06-api-performance/API_AND_INTEGRATIONS.md` |
+| `docs/03-architecture/P6_QUALITY_GATE.md` | `docs/06-api-performance/evidence/P6_QUALITY_GATE.md` |
+| `docs/04-ux/ADMIN_FLOW.md` | `docs/07-ux-design/ADMIN_FLOW.md` |
+| `docs/04-ux/INFORMATION_ARCHITECTURE.md` | `docs/07-ux-design/INFORMATION_ARCHITECTURE.md` |
+| `docs/04-ux/DESIGN_SYSTEM.md` | `docs/07-ux-design/DESIGN_SYSTEM.md` |
+| `docs/04-ux/P7_QUALITY_GATE.md` | `docs/07-ux-design/evidence/P7_QUALITY_GATE.md` |
+| `docs/07-handoff/CURRENT_STATE.md` | `docs/handoff/archive/CURRENT_STATE_2026-10-02.md` |
+| `docs/07-handoff/NEXT_ACTION.md` | `docs/handoff/archive/NEXT_ACTION_2026-10-02.md` |
+
+Every other tracked file keeps its path.
+
+## Baseline file map
+
+Proof codes: **bytes** — byte-identical at the tag, commit 0 and stage 1; **neutral (n/m)** — identical after neutralization at stage 1, with n of its m link targets rewritten; **+ k tokens** — k remapped registry path tokens; **G0 +** — the file first received the stage-0 additions verified by G0.
+
+| Old path (tag) | SHA-256 at the tag | New path (stage 1) | SHA-256 at stage 1 | Proof |
+| --- | --- | --- | --- | --- |
+| `.gitattributes` | `0FA4988D8C5E5D5C269F43E5B0440B974E485C5BEE19DD2C2DB4FAC89CF63B75` | `.gitattributes` | `92771946B3DCE2AADF05D897B05C1D07735AF3CB37C3476515D989668ADE79B5` | G0 + bytes |
+| `.gitignore` | `6603B4F23A3A7F5927967354DAAE0E271446F169B02AFE45F839F11C985BD36B` | `.gitignore` | `6603B4F23A3A7F5927967354DAAE0E271446F169B02AFE45F839F11C985BD36B` | bytes |
+| `AGENTS.md` | `22504486383E653B6E1AFFDFA79BD26B4E70A285567F597E1F37DEFB9DD9CFF4` | `AGENTS.md` | `0C8F9600EEFDA71944E8C56469143D1B2A384CADB12BE4D5E275B1F2BB073932` | neutral (20/43) |
+| `CHANGELOG.md` | `A4C21EDF41F6B14F9740DC29B223995540447A7209EAD22AD9F2E5D82FC7204F` | `CHANGELOG.md` | `E34D79E59A37CC0D6A9502521DDDAAECE36521CB1F6B250B10E5CEC4379CDD0C` | G0 + bytes |
+| `CLAUDE.md` | `140250A11D1002913D05B2B2936AE1D84EAF6DA339AE34D886F93C72C37D9DF9` | `CLAUDE.md` | `140250A11D1002913D05B2B2936AE1D84EAF6DA339AE34D886F93C72C37D9DF9` | bytes |
+| `README.md` | `27EDF2E57C9C35FE4C03356BCD9CD62C9FD7F46CFE92AAA73A9B4DE287549D68` | `README.md` | `62E66CA28F547937802AE574B7C768B743B4B5711B3F515BC8A9DD5732B69F51` | neutral (13/34) |
+| `docs/00-governance/AGENT_OPERATING_MODEL.md` | `7900720E66914DFE1D3874256329305F520082C2C32F8C8A10A1F628430F5611` | `docs/00-governance/AGENT_OPERATING_MODEL.md` | `758DA660200AA7F99A7863DFB752CE37931D11E3760D1E486077246E28CD6240` | neutral (2/17) |
+| `docs/00-governance/CHANGE_CONTROL.md` | `1D41271CBA8101910D2C12C135504BCD1DB9B6E230C40F935A700D6EF60EB41F` | `docs/00-governance/CHANGE_CONTROL.md` | `1D41271CBA8101910D2C12C135504BCD1DB9B6E230C40F935A700D6EF60EB41F` | bytes |
+| `docs/00-governance/DECISION_LOG.md` | `833B763D30ADBE5EB438F2CFF86D653EFCB6A4EBDB528E0A834E9BABA67F991F` | `docs/00-governance/DECISION_LOG.md` | `008D8C5BAC53A9256806EDAC0DC6E18A444B1A8C0B564B3BE948270D3D83FCA4` | G0 + neutral (58/138) |
+| `docs/00-governance/ENGINEERING_PRINCIPLES.md` | `FF1D7948C94B5DD94DB1D99DD194CC1A1369436E2312C3E8409C90E1D3361FF4` | `docs/00-governance/ENGINEERING_PRINCIPLES.md` | `8D74105268DC8B3C812A21ED7CEECFF87C9A02CFC873D2445BE5261E8B5BC71E` | neutral (9/27) |
+| `docs/00-governance/GAP_REGISTER.md` | `6C0D7724410126226FC2F2E05046B3FA9E3421B9E6C046C879C5BF3FBD90C6DC` | `docs/00-governance/GAP_REGISTER.md` | `A3B10BBFB36AB1DA04D29DF1FC33F6C3BE4AEC95DA993E2CB4689446583994EC` | neutral (26/43) |
+| `docs/00-governance/P0_QUALITY_GATE.md` | `11CD1E0FAAB8B6CBC3FA84377C33CA83F734B0D6E52818E71D6E3FB28CCDD686` | `docs/00-governance/evidence/P0_QUALITY_GATE.md` | `F6BD692E9FEA5728D04A7E72ACA92E11F6E2F898902E36ECA9DD5051FD575EF4` | neutral (9/9) |
+| `docs/00-governance/PROJECT_CHARTER.md` | `D96AB5BB37390A7367645D130BB66978A7F8AAF303245317A319D51025319BEA` | `docs/00-governance/PROJECT_CHARTER.md` | `D96AB5BB37390A7367645D130BB66978A7F8AAF303245317A319D51025319BEA` | bytes |
+| `docs/00-governance/SOURCE_OF_TRUTH.md` | `E5486A99E5DB07104649E85E3C3E711E0A712BF77C25687DFB11007403C8B285` | `docs/00-governance/SOURCE_OF_TRUTH.md` | `8557AC3BD40E217AB3CF1DBDCFB4BDAC74E4B094AA891A08EF50F05EC5DD7663` | G0 + neutral (15/82) + 19 tokens |
+| `docs/00-governance/sources/ARCHITECT_MANDATE_2026-09-27.txt` | `1FAB6231FB214E0147C0F22C4FEA357B72BA7C5118D5D24C9770F093901EB56E` | `docs/00-governance/sources/ARCHITECT_MANDATE_2026-09-27.txt` | `1FAB6231FB214E0147C0F22C4FEA357B72BA7C5118D5D24C9770F093901EB56E` | bytes |
+| `docs/00-governance/sources/ChatGPT Image Sep 27, 2026, 07_54_30 PM.png` | `101FA4399201C90CA0045BC36BB3973CD4304FBAC8296842B1D2CDF78988E585` | `docs/00-governance/sources/ChatGPT Image Sep 27, 2026, 07_54_30 PM.png` | `101FA4399201C90CA0045BC36BB3973CD4304FBAC8296842B1D2CDF78988E585` | bytes |
+| `docs/00-governance/sources/MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf` | `C60DC64A140F734752FCD97C4AEE5F4F6D33EAE644031A37F6FB0360D31577BF` | `docs/00-governance/sources/MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf` | `C60DC64A140F734752FCD97C4AEE5F4F6D33EAE644031A37F6FB0360D31577BF` | bytes |
+| `docs/00-governance/sources/OWNER_BRIEF_2026-09-27.txt` | `D455EBA17A9D596BEFCC0C374F68F9EF6B077214E0D279498EBC090AC2FA7A55` | `docs/00-governance/sources/OWNER_BRIEF_2026-09-27.txt` | `D455EBA17A9D596BEFCC0C374F68F9EF6B077214E0D279498EBC090AC2FA7A55` | bytes |
+| `docs/00-governance/sources/P1_FINAL_DECISIONS_RECOVERY_2026-09-28.txt` | `443B64CCD1ED92445682EF7F8F157DB75D1FDAFD0E37E10042D25B5FEB3E30C3` | `docs/00-governance/sources/P1_FINAL_DECISIONS_RECOVERY_2026-09-28.txt` | `443B64CCD1ED92445682EF7F8F157DB75D1FDAFD0E37E10042D25B5FEB3E30C3` | bytes |
+| `docs/00-governance/sources/P1_FINAL_OWNER_DECISIONS_2026-09-28.txt` | `8F6ACB2A9849AAF49FEA6410A4C2DC2AA927CB8F36808B79FE5B67E1D7406E98` | `docs/00-governance/sources/P1_FINAL_OWNER_DECISIONS_2026-09-28.txt` | `8F6ACB2A9849AAF49FEA6410A4C2DC2AA927CB8F36808B79FE5B67E1D7406E98` | bytes |
+| `docs/00-governance/sources/P1_OWNER_APPROVAL_2026-09-28.txt` | `755041DE544AAF00277DC584E0FB04664001F9AE468D2387E449BC804137CA17` | `docs/00-governance/sources/P1_OWNER_APPROVAL_2026-09-28.txt` | `755041DE544AAF00277DC584E0FB04664001F9AE468D2387E449BC804137CA17` | bytes |
+| `docs/00-governance/sources/P1_OWNER_BACKUP_POLICY_2026-09-27.txt` | `1C2D27FC4F6E0D4F9D5404BEAC723F25E2474EBB9E177B76905956CC0629E571` | `docs/00-governance/sources/P1_OWNER_BACKUP_POLICY_2026-09-27.txt` | `1C2D27FC4F6E0D4F9D5404BEAC723F25E2474EBB9E177B76905956CC0629E571` | bytes |
+| `docs/00-governance/sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09-28.txt` | `AE18F2F6A5E5AE0A6F013AD7638D77A86520937D2F946383F0AAAE8B76E77E65` | `docs/00-governance/sources/P1_OWNER_CHECKPOINT_AUTHORIZATION_2026-09-28.txt` | `AE18F2F6A5E5AE0A6F013AD7638D77A86520937D2F946383F0AAAE8B76E77E65` | bytes |
+| `docs/00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt` | `C89ED0128EFA759C33AA8A1E88024420A08526F735308ECCA66838D8D657AA51` | `docs/00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt` | `C89ED0128EFA759C33AA8A1E88024420A08526F735308ECCA66838D8D657AA51` | bytes |
+| `docs/00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt` | `B3DBFCE778AA4CEED126ED16AC0113F983BC66595604CD893FC5AB391C566B0E` | `docs/00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt` | `B3DBFCE778AA4CEED126ED16AC0113F983BC66595604CD893FC5AB391C566B0E` | bytes |
+| `docs/00-governance/sources/P1_OWNER_PUBLICATION_CONFIRMATION_2026-09-29.txt` | `1939FED4EF714C75FC1A3762FC56F6ADE2DB66CCB3F835DD3044EABE8C632931` | `docs/00-governance/sources/P1_OWNER_PUBLICATION_CONFIRMATION_2026-09-29.txt` | `1939FED4EF714C75FC1A3762FC56F6ADE2DB66CCB3F835DD3044EABE8C632931` | bytes |
+| `docs/00-governance/sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt` | `B0F182F2BE5F976C571C6547210BD7D445AC730CD53FEF74BC6C254915B932C4` | `docs/00-governance/sources/P1_REFERENCE_INGESTION_DIRECTIVE_2026-09-27.txt` | `B0F182F2BE5F976C571C6547210BD7D445AC730CD53FEF74BC6C254915B932C4` | bytes |
+| `docs/00-governance/sources/P2_OWNER_APPROVAL_2026-09-29.txt` | `E414A6C2304329930A7F81D10F1D9E5588EC6EBC279B279C99025DDD5AA685CA` | `docs/00-governance/sources/P2_OWNER_APPROVAL_2026-09-29.txt` | `E414A6C2304329930A7F81D10F1D9E5588EC6EBC279B279C99025DDD5AA685CA` | bytes |
+| `docs/00-governance/sources/P2_OWNER_AUTHORIZATION_2026-09-29.txt` | `A710619AFD59D788E042E7D55308164CE1F0FC16B8C85AB43909A1E95C837535` | `docs/00-governance/sources/P2_OWNER_AUTHORIZATION_2026-09-29.txt` | `A710619AFD59D788E042E7D55308164CE1F0FC16B8C85AB43909A1E95C837535` | bytes |
+| `docs/00-governance/sources/P2_OWNER_DEEP_REVIEW_DIRECTIVE_2026-09-29.txt` | `97C0528D6B25F0760F9CDDA9E70829419F64F40D80E8BA1C1B5D674129DE1B8E` | `docs/00-governance/sources/P2_OWNER_DEEP_REVIEW_DIRECTIVE_2026-09-29.txt` | `97C0528D6B25F0760F9CDDA9E70829419F64F40D80E8BA1C1B5D674129DE1B8E` | bytes |
+| `docs/00-governance/sources/P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt` | `4F361A7F4E57343D1347879FBE85AA0939EAF4D0AC17E835CF219F594769ED44` | `docs/00-governance/sources/P2_OWNER_FEE_GENERALIZATION_DECISION_2026-09-29.txt` | `4F361A7F4E57343D1347879FBE85AA0939EAF4D0AC17E835CF219F594769ED44` | bytes |
+| `docs/00-governance/sources/P2_OWNER_FINAL_DECISIONS_2026-09-29.txt` | `71EA03F2930380069E97C0BF706B0BA5841E29A55394509CFBD3BE981A5272A5` | `docs/00-governance/sources/P2_OWNER_FINAL_DECISIONS_2026-09-29.txt` | `71EA03F2930380069E97C0BF706B0BA5841E29A55394509CFBD3BE981A5272A5` | bytes |
+| `docs/00-governance/sources/P2_OWNER_Q1_DATES_NUMBERING_DECISION_2026-09-29.txt` | `FF04E60CB98CA5C7BAF47E933C22B0D2062D40FA6016929FE2B4916DE421DF1D` | `docs/00-governance/sources/P2_OWNER_Q1_DATES_NUMBERING_DECISION_2026-09-29.txt` | `FF04E60CB98CA5C7BAF47E933C22B0D2062D40FA6016929FE2B4916DE421DF1D` | bytes |
+| `docs/00-governance/sources/P3_OWNER_AUTHORIZATION_2026-09-29.txt` | `310426188804BFF3963DBC18493E2F5FFB288803B397DA072633C16AAA7228EA` | `docs/00-governance/sources/P3_OWNER_AUTHORIZATION_2026-09-29.txt` | `310426188804BFF3963DBC18493E2F5FFB288803B397DA072633C16AAA7228EA` | bytes |
+| `docs/00-governance/sources/P3_OWNER_DECISIONS_2026-09-29.txt` | `24B54C7A5087D140CEAC89172E0399D87379A718657DA5924341782BF3008A20` | `docs/00-governance/sources/P3_OWNER_DECISIONS_2026-09-29.txt` | `24B54C7A5087D140CEAC89172E0399D87379A718657DA5924341782BF3008A20` | bytes |
+| `docs/00-governance/sources/P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt` | `22784B8CB8741A23965B0669DAFC52B88D451826E8692779DFB98E22F6D28FDE` | `docs/00-governance/sources/P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt` | `22784B8CB8741A23965B0669DAFC52B88D451826E8692779DFB98E22F6D28FDE` | bytes |
+| `docs/00-governance/sources/P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt` | `71BBF59B622808756069A161B19B9BF4EC55D2C91FC0E351E6453875D9770D97` | `docs/00-governance/sources/P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt` | `71BBF59B622808756069A161B19B9BF4EC55D2C91FC0E351E6453875D9770D97` | bytes |
+| `docs/00-governance/sources/P4_OWNER_AUTHORIZATION_2026-09-29.txt` | `FFD64781EFB95B5A8E12D77105E1ABC60EFF6011EEE7ACAD3A6E9F6DABBBD337` | `docs/00-governance/sources/P4_OWNER_AUTHORIZATION_2026-09-29.txt` | `FFD64781EFB95B5A8E12D77105E1ABC60EFF6011EEE7ACAD3A6E9F6DABBBD337` | bytes |
+| `docs/00-governance/sources/P4_OWNER_CORRECTION_APPROVAL_AND_PUBLICATION_2026-09-30.txt` | `7743A14D60360A550E3C006E2DF430C6DB1608EC62DD7CFBFF9C197588EE9A90` | `docs/00-governance/sources/P4_OWNER_CORRECTION_APPROVAL_AND_PUBLICATION_2026-09-30.txt` | `7743A14D60360A550E3C006E2DF430C6DB1608EC62DD7CFBFF9C197588EE9A90` | bytes |
+| `docs/00-governance/sources/P4_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-30.txt` | `B83B06F8C5129EB41920A20E1CB3BB955B89B98647571B25736317831B3F35C8` | `docs/00-governance/sources/P4_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-30.txt` | `B83B06F8C5129EB41920A20E1CB3BB955B89B98647571B25736317831B3F35C8` | bytes |
+| `docs/00-governance/sources/P5_OWNER_AUTHORIZATION_2026-09-30.txt` | `9220904F8AB5A2A801223B7C4DA621679C33B0E1E39057648AC96CDB73F3C282` | `docs/00-governance/sources/P5_OWNER_AUTHORIZATION_2026-09-30.txt` | `9220904F8AB5A2A801223B7C4DA621679C33B0E1E39057648AC96CDB73F3C282` | bytes |
+| `docs/00-governance/sources/P6_OWNER_AUTHORIZATION_2026-09-30.txt` | `38F89EE64D3FA138322875DB10771C50D0BC8F0268785F37A6351558AC2021DC` | `docs/00-governance/sources/P6_OWNER_AUTHORIZATION_2026-09-30.txt` | `38F89EE64D3FA138322875DB10771C50D0BC8F0268785F37A6351558AC2021DC` | bytes |
+| `docs/00-governance/sources/P7_OWNER_AUTHORIZATION_2026-10-01.txt` | `BA5CDD8ADDA52803B1FE8187ECE9D4E65AA88690933BFAD2053E984C7BEF8F60` | `docs/00-governance/sources/P7_OWNER_AUTHORIZATION_2026-10-01.txt` | `BA5CDD8ADDA52803B1FE8187ECE9D4E65AA88690933BFAD2053E984C7BEF8F60` | bytes |
+| `docs/01-product/ACCEPTANCE_CRITERIA.md` | `648738078489AC3CC304050FCE12AF9A62AEF417E38A6DF1A245488DEC470A0D` | `docs/01-product/ACCEPTANCE_CRITERIA.md` | `648738078489AC3CC304050FCE12AF9A62AEF417E38A6DF1A245488DEC470A0D` | bytes |
+| `docs/01-product/P1_QUALITY_GATE.md` | `B2DEA405FC43B58EE60CF6F2449FBA4E11C8566B7D51FB4F7DBBD62E8F5E7F49` | `docs/01-product/evidence/P1_QUALITY_GATE.md` | `BA0DD394BEAEFF9A760CF6E079C8B4A4A0D5A236011F6E9D738FD4609AA75E24` | neutral (1/1) |
+| `docs/01-product/PRODUCT_OVERVIEW.md` | `DB6D444C9A7DF7054168E78FCEA935DB99617E698E6984773189F72395258F00` | `docs/01-product/PRODUCT_OVERVIEW.md` | `B52E2B37207037AEE1127D02A6263E1833CA039E3BFBE21B86DE39C5B28F1510` | neutral (1/16) |
+| `docs/01-product/REFERENCE_COVERAGE.md` | `BFA9B4914EFD66BB0477040983DDD865BD7F771870D4DD7B0AB96E7BE0E874EC` | `docs/01-product/REFERENCE_COVERAGE.md` | `BFA9B4914EFD66BB0477040983DDD865BD7F771870D4DD7B0AB96E7BE0E874EC` | bytes |
+| `docs/01-product/V1_SCOPE.md` | `743D55BB7DD28F21FFE8142E1A843368AF8A7938C06AFEE630F95D323ADF7B5A` | `docs/01-product/V1_SCOPE.md` | `743D55BB7DD28F21FFE8142E1A843368AF8A7938C06AFEE630F95D323ADF7B5A` | bytes |
+| `docs/02-domain/BUSINESS_RULES.md` | `48B45AA59DBA6C713BEC729DB81E16DECFDDCDB159FAAF183370FD77F31E0DE1` | `docs/02-domain/BUSINESS_RULES.md` | `6CB65FA9E77C0C2E014F849865A3E29DBE2F24E231E71BF1D3CDF9421953E8AE` | neutral (3/16) |
+| `docs/02-domain/DOMAIN_MODEL.md` | `8027099D2FE050860E9AD4EFD8D5CB44838D601C85B45A12839EFE27E9BCE86A` | `docs/02-domain/DOMAIN_MODEL.md` | `644985C8E4634F2AF005B2855125A4BA5A3C1AEF6F6558B7CDC04087005651EF` | neutral (2/14) |
+| `docs/02-domain/P2_QUALITY_GATE.md` | `2F2570621A575CFB101FAA248EA1B31AD4BE72A24A7588C0418D7CCEF7DFF7A4` | `docs/02-domain/evidence/P2_QUALITY_GATE.md` | `2739A6E2E60AA8F1E0A3E11BD187AC6F494054CC4870A00755341679BE02D1DD` | neutral (6/6) |
+| `docs/02-domain/P3_QUALITY_GATE.md` | `166686FF0D970332425A3A902B2F93869DE520B0B3FB616BE9EF93E69158C66F` | `docs/03-workflows/evidence/P3_QUALITY_GATE.md` | `AE7E7E44A335BCEAEB160F6C047DB5FF8C446630BA41D47B3321D662EA409321` | neutral (5/5) |
+| `docs/02-domain/PERMISSIONS_MATRIX.md` | `D3BF4D13DF2188E05FF3A89864C54C2074BD1EA372E5E6F537FE04E1507229ED` | `docs/05-security/PERMISSIONS_MATRIX.md` | `D1C2C296A519E8875072678A16C4545086C52D8F4CD2EF3D6F33DE19BFEE73C6` | neutral (18/27) |
+| `docs/02-domain/WORKFLOWS.md` | `6E413D012A8768E51612D1D11357EA41FF20B2E126673C1B10E292B56C712035` | `docs/03-workflows/WORKFLOWS.md` | `9B0BED95FAB3874963BFC0FEB73AEE8B9401B216A14ED89BFFF452D4D2A58002` | neutral (5/15) |
+| `docs/03-architecture/API_AND_INTEGRATIONS.md` | `8B8515D52A33786B1017699A314435C54B19BE2BBDAB79C5FD04702345F4259C` | `docs/06-api-performance/API_AND_INTEGRATIONS.md` | `B7DB27550B52ADEFC123D8C1A6DA110C8F19F2D71F00A5ACA4A8AB28741B3FFE` | neutral (4/8) |
+| `docs/03-architecture/ARCHITECTURE.md` | `E1AEF4658899E656FA5A8BEB1201CBD712DA48FC7CB79792A98CB0B965632312` | `docs/04-architecture/ARCHITECTURE.md` | `DF197C0318D97A1E673EDB1EC10CF6380D97EF3C2970D4D34815EF1FB06B46C3` | neutral (7/16) |
+| `docs/03-architecture/CONCURRENCY_IDEMPOTENCY.md` | `454D8784788E4E20BDBAEF136A03C82F09C3BB3FE71A99DB0987069CEFC22E21` | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` | `3D2BBBEAAB5BB0EFD3E950790F5821C2990F68413679C1B0BF8271D7BCA18D6A` | neutral (15/55) |
+| `docs/03-architecture/DATABASE.md` | `2CCCF57CA224A0B8A154D7B21602E6AD164095858CF849A805D7C9DC70BEE50D` | `docs/04-architecture/DATABASE.md` | `01B6B2F16B55E8FB9AC364FF7BD2B44814D86428BA302935BCBEDE6A9E6B9877` | neutral (15/32) |
+| `docs/03-architecture/P4_QUALITY_GATE.md` | `94BA40420F06A5091A8A9D059C4A6946A1B102008E796EF2E4794A0C59CB5A29` | `docs/04-architecture/evidence/P4_QUALITY_GATE.md` | `09367964B5C9A558CFF0F9389BAFC3FC62269DF4F7D6ED5747C82A589D5E7DFC` | neutral (6/6) |
+| `docs/03-architecture/P5_QUALITY_GATE.md` | `8D7C1A8C473A48822337AB986C679F6C64AC466E4295F9CF932C99A6410B6CF2` | `docs/05-security/evidence/P5_QUALITY_GATE.md` | `343DBEE9FF0070FED259CCA9DC3590D01A1A18310C7DC23B5CD58B6E290EBBB3` | neutral (9/9) |
+| `docs/03-architecture/P6_QUALITY_GATE.md` | `6349169B6C9A9C9FCB46EAA6ED2DC86C54E8FF39A8037F9DF4FAEB9C4A383683` | `docs/06-api-performance/evidence/P6_QUALITY_GATE.md` | `3D2D0CCA8A1CD32FA1DC6C0A083C2408D94E24A138A4AFC36C2FB515C693108C` | neutral (16/19) |
+| `docs/03-architecture/PERFORMANCE.md` | `C603D287B59F378E8327FA4B6B4FE7BEC28330C867F76E156A961542DDCD2949` | `docs/06-api-performance/PERFORMANCE.md` | `A8A57508F36AF5153FB8E29ED74AA2EFF5B278384EE75717D2665B4C38D1FDE8` | neutral (7/18) |
+| `docs/03-architecture/SECURITY.md` | `C9D358A6A643BA631B2E4662B210E74CD7404D24A536B78A2EB0DBE6F3B29AF4` | `docs/05-security/SECURITY.md` | `6BD8806828402CBA60F1BC8C058B842AA48C2FAAF017B5F210A98697F3785245` | neutral (6/11) |
+| `docs/04-ux/ADMIN_FLOW.md` | `5C78B9AF5EBBE072C17C204989FB1B9879C0494435D722368F7D241E84640DAC` | `docs/07-ux-design/ADMIN_FLOW.md` | `0E0496530C3DEF6AF98473C768E09A87193E1D1853534B1A77AB77E60D9CBF42` | neutral (12/56) |
+| `docs/04-ux/DESIGN_SYSTEM.md` | `26B5A41812A9D1F8DF3328830BC88280F8609B2CE8530D710672731E23258AA6` | `docs/07-ux-design/DESIGN_SYSTEM.md` | `17C7A55F8A52DDE4FBEAAEBD982BF03DA6B63053A3AD44797E182E6506CA054A` | neutral (9/33) |
+| `docs/04-ux/INFORMATION_ARCHITECTURE.md` | `F6D7E571CBEA90F2AB801BB8C42705B44FD2799FEAE4DFF55CC2AED344F3B448` | `docs/07-ux-design/INFORMATION_ARCHITECTURE.md` | `FFC7019E014A4B8B21C87EF4AFE7F3418D3BF9E030F56E7DFA3CBB0D468F7806` | neutral (9/79) |
+| `docs/04-ux/P7_QUALITY_GATE.md` | `04500FB15DA14C549338BD2A740E5FEC9A800DD23C99DB8784F316369DBAEDD7` | `docs/07-ux-design/evidence/P7_QUALITY_GATE.md` | `62834038BD0948EA91CA5549B64EC36A8A057B86877E34C677B46F5D9BEFC1DB` | neutral (66/74) |
+| `docs/07-handoff/CURRENT_STATE.md` | `0157FC3680A8F1169AA38A94533677D8CE643A0CC537422194019D717747C666` | `docs/handoff/archive/CURRENT_STATE_2026-10-02.md` | `C55ED1783F5C3DF9D05C0819D0F268359A10355DEEC7065F3821E115CE60B779` | neutral (41/41) |
+| `docs/07-handoff/NEXT_ACTION.md` | `945F626195DAAD290216C43CFEB158F92AF02DF615E01D64A10B8071E162E448` | `docs/handoff/archive/NEXT_ACTION_2026-10-02.md` | `50F88451504B4EBEC1F6342FF8EC4915885DE7EC0DE297779760255A87ADF88F` | neutral (5/5) |
+| `docs/CONTEXT_INDEX.md` | `6B354398AA7E8BEDF6503E95C346355BD25671BFA80933359D09E9922935394C` | `docs/CONTEXT_INDEX.md` | `DF7DDE88CF0418C06F893A0D4BC3B26C2B54F5A6E7810492D677510714BFA481` | neutral (26/95) |
+| `docs/adr/ADR-001-repository-governance.md` | `E99136C8C82D5843AB54601348229CB06E8B61EF8B9D7292355849B18AF42CF6` | `docs/adr/ADR-001-repository-governance.md` | `E99136C8C82D5843AB54601348229CB06E8B61EF8B9D7292355849B18AF42CF6` | bytes |
+
+## Files added at stage 0
+
+| Path | SHA-256 at commit 0 and stage 1 | Proof |
+| --- | --- | --- |
+| `docs/00-governance/sources/AICWDF_MIGRATION_OWNER_AUTHORIZATION_2026-10-03.txt` | `9458DBBA8CB50B95AC04DF9C4D49656FEFD08305233D7204E295414ECE3C1A05` | bytes |
+| `docs/00-governance/sources/AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt` | `22DCBA9ED1F4E262DC9DD26BB0243EAF09DAAD009C56716C41E55885CD837143` | bytes |
+| `docs/00-governance/sources/AICWDF_OWNER_CORRECTION_2026-10-03.txt` | `06E412EBF9E21899C2FCCBFD880921472B0A595463DC7DF3CA67A77005340588` | bytes |
+| `docs/00-governance/sources/AICWDF_OWNER_DECISIONS_ROUND1_2026-10-03.txt` | `4201B95357520A469295A76EBF87B774289B79D199A97308E1014DEBD28E431A` | bytes |
+| `docs/00-governance/sources/AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt` | `313E25A7BB8BD9FDFF9E32EE121EE02B8DED1CF417E0D34B209367BDF58063DD` | bytes |
+| `docs/00-governance/sources/AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt` | `5568517B8CB31B54B1A97EEE36BBDADBE853A08BD380FCB66C01F30D8CF40875` | bytes |
+| `docs/00-governance/sources/AI_First_Complex_WebApp_Task_Framework_v4.3_EN.md` | `BB578ADABCD8EBDDCB97C278E6589B935137F26F851B7218DD86C141744B70FE` | bytes |
+
+## Files added at stage 1
+
+| Path | Purpose |
+| --- | --- |
+| `docs/00-governance/MIGRATION_MAP.md` | This resolver and evidence record |
+| `docs/handoff/archive/README.md` | States that the archived handoff pair is a historical snapshot, not the current state |
+
+## Gate results
+
+### G0 — stage 0 (commit 0): PASS
+
+- Baseline (OBS-013): local HEAD, local origin/main and live origin/main equal `c511d7b0d4683e07717c962927c9f113854f227b`; clean tree and index; no operation in progress; no tag and no `migration/aicwdf` branch locally or on the remote; the 29 source hashes of SOURCE_OF_TRUTH, the seven APPR-008 blob hashes and the gap totals (34 — 3 CLOSED, 30 OPEN, 0 OWNER_DECISION_REQUIRED, 1 ACCEPTED_RISK) verified.
+- Tag and branch: the annotated tag `pre-aicwdf-migration` resolves to `c511d7b0d4683e07717c962927c9f113854f227b`; the reflog of `migration/aicwdf` records its creation from that commit.
+- Additions only: seven files added, all under `docs/00-governance/sources/`; four files modified by additions only — `.gitattributes` (+8 lines after the P7 entry: one comment and seven entries), SOURCE_OF_TRUTH, DECISION_LOG and CHANGELOG — whose only replaced line is each `Updated:` date; the new subsection, index rows, detail section and changelog entry sit where each file's convention places them.
+- Source hashes: 36 source files and 36 distinct hashes in SOURCE_OF_TRUTH; each new record's lines, bytes and hash re-verified from disk, working copy equal to staged blob.
+- No secrets: a credential-pattern scan of the seven new files found one match, the AICWDF §4A.4 template line "Client Secret: secret/environment-managed", which holds no value; no credential or client data.
+- Links: 40 Markdown files outside `sources/`, 1,115 links (2 external), none broken.
+
+### G1 — stage 1: PASS
+
+- Mapping: 71 tag paths, 21 moved; every mapped path exists and none is shared.
+- Neutralization: 38 files byte-identical (36 source records, `.gitattributes`, `.gitignore`); 40 Markdown files identical after neutralization, 32 of them with rewritten link targets (446 targets of 1,115 links) and SOURCE_OF_TRUTH also with 19 remapped registry tokens; line counts unchanged.
+- Sources: 36 byte-identical to commit 0; the 29 original records byte-identical to the tag.
+- Links: 1,118 relative links at stage 1 outside `sources/`, 0 broken; every link of the 40 commit-0 Markdown files keeps its count, label, logical target and anchor.
+- Added files: exactly this file and `docs/handoff/archive/README.md`.
+
+## Supporting evidence — rename detection
+
+Output of `git diff -M --summary <commit 0> <stage 1>`. Git's rename detection is heuristic and is not a gate.
+
+```text
+ create mode 100644 docs/00-governance/MIGRATION_MAP.md
+ rename docs/00-governance/{ => evidence}/P0_QUALITY_GATE.md (91%)
+ rename docs/01-product/{ => evidence}/P1_QUALITY_GATE.md (99%)
+ rename docs/02-domain/{ => evidence}/P2_QUALITY_GATE.md (93%)
+ rename docs/{02-domain => 03-workflows}/WORKFLOWS.md (99%)
+ rename docs/{02-domain => 03-workflows/evidence}/P3_QUALITY_GATE.md (93%)
+ rename docs/{03-architecture => 04-architecture}/ARCHITECTURE.md (92%)
+ rename docs/{03-architecture => 04-architecture}/DATABASE.md (97%)
+ rename docs/{03-architecture => 04-architecture/evidence}/P4_QUALITY_GATE.md (98%)
+ rename docs/{02-domain => 05-security}/PERMISSIONS_MATRIX.md (96%)
+ rename docs/{03-architecture => 05-security}/SECURITY.md (98%)
+ rename docs/{03-architecture => 05-security/evidence}/P5_QUALITY_GATE.md (95%)
+ rename docs/{03-architecture => 06-api-performance}/API_AND_INTEGRATIONS.md (95%)
+ rename docs/{03-architecture => 06-api-performance}/CONCURRENCY_IDEMPOTENCY.md (97%)
+ rename docs/{03-architecture => 06-api-performance}/PERFORMANCE.md (98%)
+ rename docs/{03-architecture => 06-api-performance/evidence}/P6_QUALITY_GATE.md (95%)
+ rename docs/{04-ux => 07-ux-design}/ADMIN_FLOW.md (99%)
+ rename docs/{04-ux => 07-ux-design}/DESIGN_SYSTEM.md (98%)
+ rename docs/{04-ux => 07-ux-design}/INFORMATION_ARCHITECTURE.md (98%)
+ rename docs/{04-ux => 07-ux-design/evidence}/P7_QUALITY_GATE.md (92%)
+ rename docs/{07-handoff/CURRENT_STATE.md => handoff/archive/CURRENT_STATE_2026-10-02.md} (73%)
+ rename docs/{07-handoff/NEXT_ACTION.md => handoff/archive/NEXT_ACTION_2026-10-02.md} (63%)
+ create mode 100644 docs/handoff/archive/README.md
+```

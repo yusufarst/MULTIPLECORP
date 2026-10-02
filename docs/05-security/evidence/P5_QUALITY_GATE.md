@@ -2,7 +2,7 @@
 
 Status: REVIEW | Updated: 2026-09-30 | Owner: Planning
 
-Scope: P5 — Security & Authorization, authorized and fast-tracked by [DIR-031](../00-governance/DECISION_LOG.md#dir-031-obs-010-and-tech-020--p5-authorization-entry-baseline-and-security-documentation) (twenty-seventh source record) on the published handoff baseline `6e640137901e0d16193e03004e142e9ea07b39ad`. This report records planning evidence for [PERMISSIONS_MATRIX](../02-domain/PERMISSIONS_MATRIX.md) and [SECURITY](SECURITY.md), for the narrow TECH-020 amendment of [DATABASE §4.13](DATABASE.md#413-ops--operations) and for the APPR-006 approval conditions. PERMISSIONS_MATRIX and SECURITY are APPROVED under [APPR-006](../00-governance/DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) together with the `TECH-020`-amended DATABASE revision; this gate stays REVIEW as evidence, following the P2–P4 gate convention. It is not implementation acceptance and not permission to begin P6. No application, policy, migration, runtime, penetration or device evidence exists or is claimed.
+Scope: P5 — Security & Authorization, authorized and fast-tracked by [DIR-031](../../00-governance/DECISION_LOG.md#dir-031-obs-010-and-tech-020--p5-authorization-entry-baseline-and-security-documentation) (twenty-seventh source record) on the published handoff baseline `6e640137901e0d16193e03004e142e9ea07b39ad`. This report records planning evidence for [PERMISSIONS_MATRIX](../PERMISSIONS_MATRIX.md) and [SECURITY](../SECURITY.md), for the narrow TECH-020 amendment of [DATABASE §4.13](../../04-architecture/DATABASE.md#413-ops--operations) and for the APPR-006 approval conditions. PERMISSIONS_MATRIX and SECURITY are APPROVED under [APPR-006](../../00-governance/DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) together with the `TECH-020`-amended DATABASE revision; this gate stays REVIEW as evidence, following the P2–P4 gate convention. It is not implementation acceptance and not permission to begin P6. No application, policy, migration, runtime, penetration or device evidence exists or is claimed.
 
 ## Baseline verification (OBS-010)
 
@@ -14,7 +14,7 @@ The directive (source record 27) in full, with its section 10 planner notes trea
 
 ## Framework and standards evidence
 
-Read on 2026-09-30 from official sources and recorded in the [SECURITY source table](SECURITY.md#source-and-version-evidence): Laravel 13.x (Hashing, Authentication, Resetting Passwords, HTTP Session, CSRF Protection, Validation, Rate Limiting, Vite), Inertia v3 (shared data, partial reloads, history encryption), NIST SP 800-63B-4 (final, July 2025), the OWASP Password Storage and CSV Injection cheat sheets. Reviewer B re-checked every claim against the official pages on the same date; four were corrected (B-15: the NIST date and NFC normalization, the formats the `image` rule admits, the scope of the framework's previous-key support). Versions are evidence, not pins; exact versions are chosen and re-verified under DEP-07.
+Read on 2026-09-30 from official sources and recorded in the [SECURITY source table](../SECURITY.md#source-and-version-evidence): Laravel 13.x (Hashing, Authentication, Resetting Passwords, HTTP Session, CSRF Protection, Validation, Rate Limiting, Vite), Inertia v3 (shared data, partial reloads, history encryption), NIST SP 800-63B-4 (final, July 2025), the OWASP Password Storage and CSV Injection cheat sheets. Reviewer B re-checked every claim against the official pages on the same date; four were corrected (B-15: the NIST date and NFC normalization, the formats the `image` rule admits, the scope of the framework's previous-key support). Versions are evidence, not pins; exact versions are chosen and re-verified under DEP-07.
 
 ## Planner notes — dispositions
 
@@ -303,7 +303,7 @@ P5 continuation notes are recorded in GAP-003/005/006/008/013/015/022/024/026/03
 
 ## Deferred obligations (P6/P7/P8/P9)
 
-Recorded in [SECURITY §10](SECURITY.md#10-handoff-obligations); none is implemented now.
+Recorded in [SECURITY §10](../SECURITY.md#10-handoff-obligations); none is implemented now.
 
 - **P6 (H6-01–H6-12):** in-command re-authorization and its place in the lock order; the last-Owner serialization; replay bound to actor and company; job and export context; cache keys; session ending on deactivation and the server-side idle rule; limiter atomicity and failure behaviour; scope-first query plans; duplicate lookups; opaque lot codes; the credential-token store and atomic consumption; a global password-verification cap.
 - **P7 (H7-01–H7-14):** generic authentication copy; the relation marker; capability hints; credential pages; expiry warnings; grant screens with the capability-by-company preview; duplicate warnings; denial pages; the step-up; no sensitive data in titles or URLs; the pool-evidence confirmation; history clearing at authentication boundaries; background requests; credential-event notices.
@@ -326,6 +326,6 @@ A read-only validation script kept outside the repository, following the prior g
 
 ## Exact next safe action
 
-Wait for the Owner's explicit authorization of P6 — Concurrency, Idempotency & Performance ([NEXT_ACTION](../07-handoff/NEXT_ACTION.md)). At P6 entry, verify that local HEAD equals live origin/main at the P5 checkpoint — resolved by `git log -1 --format='%H %s' --grep='^docs: finalize P5 security and authorization$'`, parent `6e640137901e0d16193e03004e142e9ea07b39ad` — and record its SHA literally. No P6 work before that.
+Wait for the Owner's explicit authorization of P6 — Concurrency, Idempotency & Performance ([NEXT_ACTION](../../handoff/archive/NEXT_ACTION_2026-10-02.md)). At P6 entry, verify that local HEAD equals live origin/main at the P5 checkpoint — resolved by `git log -1 --format='%H %s' --grep='^docs: finalize P5 security and authorization$'`, parent `6e640137901e0d16193e03004e142e9ea07b39ad` — and record its SHA literally. No P6 work before that.
 
-**Addendum (2026-09-30):** this action was discharged by [DIR-032](../00-governance/DECISION_LOG.md#dir-032-obs-011-and-tech-021--p6-authorization-entry-baseline-and-concurrency-documentation): P6 was authorized, and its entry observation OBS-011 verified and recorded the P5 checkpoint `b09e70f3a867d58b431c7ae0369b7a432c4fd1a1` and its publication; this gate otherwise stays unchanged as P5 evidence.
+**Addendum (2026-09-30):** this action was discharged by [DIR-032](../../00-governance/DECISION_LOG.md#dir-032-obs-011-and-tech-021--p6-authorization-entry-baseline-and-concurrency-documentation): P6 was authorized, and its entry observation OBS-011 verified and recorded the P5 checkpoint `b09e70f3a867d58b431c7ae0369b7a432c4fd1a1` and its publication; this gate otherwise stays unchanged as P5 evidence.

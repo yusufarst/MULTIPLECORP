@@ -10,7 +10,7 @@ Read before drafting: AGENTS, CONTEXT_INDEX, CURRENT_STATE, NEXT_ACTION, all P0 
 
 ## P1 → P2 traceability
 
-Every CAP maps to concept homes in [DOMAIN_MODEL](DOMAIN_MODEL.md) (domain codes) and rule IDs in [BUSINESS_RULES](BUSINESS_RULES.md). A justified no-new-rule disposition is stated where P2 correctly adds nothing. REF/IMG identifiers stay attached through the cited CAP/AC anchors in each rule (REFERENCE_COVERAGE owns that layer); P3+ must carry BR/CALC/FS IDs into workflows, schema, tests and units (GAP-024).
+Every CAP maps to concept homes in [DOMAIN_MODEL](../DOMAIN_MODEL.md) (domain codes) and rule IDs in [BUSINESS_RULES](../BUSINESS_RULES.md). A justified no-new-rule disposition is stated where P2 correctly adds nothing. REF/IMG identifiers stay attached through the cited CAP/AC anchors in each rule (REFERENCE_COVERAGE owns that layer); P3+ must carry BR/CALC/FS IDs into workflows, schema, tests and units (GAP-024).
 
 | P1 | P2 home (concepts → rules) |
 | --- | --- |
@@ -69,8 +69,8 @@ GAP-016 marked BUSINESS DECISION RESOLVED (DIR-018) with technical residue at P4
 
 ## Exact next safe action
 
-Owner review of the P2 package, then an explicit checkpoint authorization per [NEXT_ACTION](../07-handoff/NEXT_ACTION.md). Stop: no P3, P4+, commit, push or application work in this turn.
+Owner review of the P2 package, then an explicit checkpoint authorization per [NEXT_ACTION](../../handoff/archive/NEXT_ACTION_2026-10-02.md). Stop: no P3, P4+, commit, push or application work in this turn.
 
 ## Checkpoint, publication and approval — 2026-09-29
 
-The sections above are pre-checkpoint evidence and remain accurate at their writing time. Subsequently, the reviewed P2 package was committed as checkpoint `1392966bfb89581d705e0394424705978e1d3db8` (`docs: establish P2 domain model and business rules`) and published with a normal non-force push. At the approval task's entry, local main == origin/main == that checkpoint with a clean tree and index, no P3 file and OWNER_DECISION_REQUIRED = 0 (OBS-004). The Owner's approval / checkpoint-publication authorization is archived as the nineteenth source record and recorded as [APPR-003/DIR-021](../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved): [DOMAIN_MODEL](DOMAIN_MODEL.md) and [BUSINESS_RULES](BUSINESS_RULES.md) are APPROVED with unchanged substantive content; this gate report remains REVIEW evidence per the Owner's instruction. P3 stays NOT STARTED pending a separate Owner authorization.
+The sections above are pre-checkpoint evidence and remain accurate at their writing time. Subsequently, the reviewed P2 package was committed as checkpoint `1392966bfb89581d705e0394424705978e1d3db8` (`docs: establish P2 domain model and business rules`) and published with a normal non-force push. At the approval task's entry, local main == origin/main == that checkpoint with a clean tree and index, no P3 file and OWNER_DECISION_REQUIRED = 0 (OBS-004). The Owner's approval / checkpoint-publication authorization is archived as the nineteenth source record and recorded as [APPR-003/DIR-021](../../00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved): [DOMAIN_MODEL](../DOMAIN_MODEL.md) and [BUSINESS_RULES](../BUSINESS_RULES.md) are APPROVED with unchanged substantive content; this gate report remains REVIEW evidence per the Owner's instruction. P3 stays NOT STARTED pending a separate Owner authorization.

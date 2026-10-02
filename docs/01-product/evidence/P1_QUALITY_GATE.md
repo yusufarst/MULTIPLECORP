@@ -8,7 +8,7 @@ Scope: P1 product definition and V1 scope only. Latest Owner approval is APPR-00
 
 Read AGENTS, CONTEXT_INDEX, CURRENT_STATE, GAP_REGISTER and the relevant canonical P0 governance/ADR/source documents before drafting. Preserved the P1 attachment and subsequent owner answers in repository source records. Later explicit owner inputs were used as binding constraints; P0 acceptance was recorded against the exact prior checkpoint.
 
-DIR-008 extended the same P1 assignment: text-extracted the 12-page PDF, inspected all rendered pages and the full-resolution flow image, and preserved originals plus the separate request without editing. [REFERENCE_COVERAGE](REFERENCE_COVERAGE.md) records all 62 capability rows, nine image groups and eight non-tabular principle/gate groups against the prior REVIEW package. Provenance, hashes and the six-level hierarchy are in SOURCE_OF_TRUTH.
+DIR-008 extended the same P1 assignment: text-extracted the 12-page PDF, inspected all rendered pages and the full-resolution flow image, and preserved originals plus the separate request without editing. [REFERENCE_COVERAGE](../REFERENCE_COVERAGE.md) records all 62 capability rows, nine image groups and eight non-tabular principle/gate groups against the prior REVIEW package. Provenance, hashes and the six-level hierarchy are in SOURCE_OF_TRUTH.
 
 Latest DIR-009 is an explicit Owner/client policy change after checkpoint `20f8ef7`: local-only backups on the existing production VPS, accepted host/storage-loss exposure, twelve required local controls and conditional RPO/RTO. Reconciled current specifications and REF-060 while preserving all previous source bytes. RISK-001 resolves GAP-018's Owner choice without claiming its accepted exposure is mitigated.
 

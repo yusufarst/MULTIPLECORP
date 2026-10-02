@@ -4,9 +4,9 @@ Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
 
 Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
-Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **visual rules**: tokens, typography, spacing, density, layout and breakpoints, iconography, motion, radius and elevation, the reusable patterns, the composition of shadcn/ui primitives into feature components, the status system, the state presentations, the domain presentations, keyboard and scanner conventions, accessibility, copy and formatting, print views and the anti AI-slop mapping. Navigation truth is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md), interaction truth by [ADMIN_FLOW](ADMIN_FLOW.md), phase evidence by [P7_QUALITY_GATE](P7_QUALITY_GATE.md).
+Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **visual rules**: tokens, typography, spacing, density, layout and breakpoints, iconography, motion, radius and elevation, the reusable patterns, the composition of shadcn/ui primitives into feature components, the status system, the state presentations, the domain presentations, keyboard and scanner conventions, accessibility, copy and formatting, print views and the anti AI-slop mapping. Navigation truth is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md), interaction truth by [ADMIN_FLOW](ADMIN_FLOW.md), phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
 
-**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../02-domain/WORKFLOWS.md); authorization in [PERMISSIONS_MATRIX](../02-domain/PERMISSIONS_MATRIX.md) and [SECURITY](../03-architecture/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../03-architecture/CONCURRENCY_IDEMPOTENCY.md) and [PERFORMANCE](../03-architecture/PERFORMANCE.md). A pattern here says how something looks and behaves on the screen; it never decides who may see or do it, and never changes what a state, figure or document means.
+**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../03-workflows/WORKFLOWS.md); authorization in [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) and [SECURITY](../05-security/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY.md) and [PERFORMANCE](../06-api-performance/PERFORMANCE.md). A pattern here says how something looks and behaves on the screen; it never decides who may see or do it, and never changes what a state, figure or document means.
 
 **Boundary:** NON-EXECUTABLE specification. Token tables, anatomy lists and pattern rules are design statements, not code: no CSS, Tailwind configuration, component source, image or font file is created. shadcn/ui is the implementation foundation (OB §20); the build units of P11 implement these rules ([ADMIN_FLOW §16](ADMIN_FLOW.md#16-handoff-obligations)).
 
@@ -59,7 +59,7 @@ No paid font, icon set, component licence or design service is adopted; any late
 
 ## 4. Design decisions
 
-Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
+Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeAI brief whose alternatives were compared ([P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration)); a decision without one follows from repository rules alone.
 
 | ID | Decision | Alternatives rejected | Grounds · exploration |
 | --- | --- | --- | --- |
@@ -550,7 +550,7 @@ Each prohibition of the anti AI-slop constitution (OB §21) has a rule that prev
 | SLOP-33 | inconsistent spacing | §5.3: one scale |
 | SLOP-34 | fake analytics with no operational value | PT-21; INFORMATION_ARCHITECTURE §9: only QS signals and CALC figures; no charts in V1 (§5.1) |
 | SLOP-35 | looking like a landing page | PT-03, PT-19, SLOP-19–SLOP-21 |
-| SLOP-36 | looking like a Dribbble concept | §4 decisions grounded in task speed; [P7_QUALITY_GATE](P7_QUALITY_GATE.md#desainpakai-exploration) rejections |
+| SLOP-36 | looking like a Dribbble concept | §4 decisions grounded in task speed; [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration) rejections |
 | SLOP-37 | looking like a generic Tailwind SaaS template | §5.1: no default indigo or tinted pills (DPB-01 rejection of variant C) |
 | SLOP-38 | looking like an AI-generated admin dashboard | SLOP-18, SLOP-28, SLOP-34 |
 
@@ -609,7 +609,7 @@ Every screen of [INFORMATION_ARCHITECTURE §8](INFORMATION_ARCHITECTURE.md#8-scr
 ## 20. Traceability
 
 - **V1_SCOPE and the brief:** the P7 handoff requirements and the language and experience contract → §4–§18; OB §20 and REF-054 → §2, §10; OB §21, the P1 directive's anti AI-slop list and REF-055 → §18; OB §22 → §8, §11, §15; OB §23 → §9; AC-14 → §6, §11, §13, §15; AC-10 and AC-11 → §14.1.
-- **DIR-033:** §10-M minimum content → §4–§18 (the closure table is in [P7_QUALITY_GATE](P7_QUALITY_GATE.md#obligation-closure)); §10-N → §15; §13 decision levels → §4; §11 DesainPakai exploration → §4 and the gate's exploration evidence.
+- **DIR-033:** §10-M minimum content → §4–§18 (the closure table is in [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#obligation-closure)); §10-N → §15; §13 decision levels → §4; §11 DesainPakai exploration → §4 and the gate's exploration evidence.
 - **WORKFLOWS and BUSINESS_RULES:** the state machines of BUSINESS_RULES §3, WORKFLOWS' derived states and L-25, L-29 → §12.1; DIR-011 and BR-INV-01 → §14; BR-DT-06 → §16; WORKFLOWS §8 corrections → PT-26, §14.1.
 - **PERMISSIONS_MATRIX and SECURITY:** PJ-01–PJ-04, PJ-07, PJ-11, PJ-22 and PJ-23 → §14 and PT-18; H6-10 → §16; H7-02 → PT-04; H7-06 → PT-30; H7-09 → PT-28; FL-03–FL-05 and FL-07 → §14.3; WS-08 (`font-src 'self'`, camera denied) → §2, §13.2; DP-19 → §17.
 - **CONCURRENCY_IDEMPOTENCY and PERFORMANCE:** HO-01 → §12.2; HO-03 → PT-11; HO-08 → PT-25; HO-10 and PF-15, PF-17 → PT-05–PT-08; PF-31, PF-32 → PT-22; PF-34 → PT-19, PT-21.

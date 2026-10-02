@@ -65,6 +65,6 @@ The project is the operational hub. Users should be able to find outstanding ite
 
 ## Product boundary and ownership
 
-The [scope](V1_SCOPE.md) owns MUST/SHOULD/DEFERRED/OUT OF SCOPE classifications, cost/resource boundaries, dependency inventory and P7 obligations. [Acceptance criteria](ACCEPTANCE_CRITERIA.md) own product and operational success evidence. [GAP_REGISTER](../00-governance/GAP_REGISTER.md) owns unresolved decisions and risk treatment. [P1 quality gate](P1_QUALITY_GATE.md) records adversarial review and planning verification.
+The [scope](V1_SCOPE.md) owns MUST/SHOULD/DEFERRED/OUT OF SCOPE classifications, cost/resource boundaries, dependency inventory and P7 obligations. [Acceptance criteria](ACCEPTANCE_CRITERIA.md) own product and operational success evidence. [GAP_REGISTER](../00-governance/GAP_REGISTER.md) owns unresolved decisions and risk treatment. [P1 quality gate](evidence/P1_QUALITY_GATE.md) records adversarial review and planning verification.
 
 P1 does not choose a schema, stock-valuation algorithm, tax formula, permission matrix, correction state machine, library version, infrastructure topology or implementation unit. It makes their product outcomes and dependencies explicit so later phases can decide them without inventing business intent.

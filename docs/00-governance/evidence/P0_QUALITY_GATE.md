@@ -16,14 +16,14 @@ The first sandboxed network attempt could not reach GitHub. A permitted network 
 
 | Required check | Result | Evidence |
 | --- | --- | --- |
-| Important instructions survive outside chat | PASS | Complete 58-section [source archive](sources/OWNER_BRIEF_2026-09-27.txt), provenance/hash in [SOURCE_OF_TRUTH](SOURCE_OF_TRUTH.md) |
+| Important instructions survive outside chat | PASS | Complete 58-section [source archive](../sources/OWNER_BRIEF_2026-09-27.txt), provenance/hash in [SOURCE_OF_TRUTH](../SOURCE_OF_TRUTH.md) |
 | One canonical owner per concern | PASS | Ownership registry; archive is immutable evidence; navigation and adapters link to owners |
-| Planner/executor boundaries unambiguous | PASS | [Operating model](AGENT_OPERATING_MODEL.md), current P0-only task boundary |
-| Replacement agent knows where to start | PASS | Root [AGENTS.md](../../AGENTS.md) → context index → current state → concern/ADR/task |
-| Current state is identifiable | PASS | [CURRENT_STATE](../07-handoff/CURRENT_STATE.md) distinguishes unborn Git state, local changes, planned work and completed work |
-| Architecture changes have a decision trail | PASS | [Change control](CHANGE_CONTROL.md), [decision log](DECISION_LOG.md), PROPOSED ADR-001; no fabricated acceptance |
-| Handoff independent of model memory | PASS | Durable source, start/end protocol, vendor-neutral paths, bounded [next action](../07-handoff/NEXT_ACTION.md) |
-| Secrets policy explicit | PASS | [Engineering principles](ENGINEERING_PRINCIPLES.md), `.gitignore`, no live data requested |
+| Planner/executor boundaries unambiguous | PASS | [Operating model](../AGENT_OPERATING_MODEL.md), current P0-only task boundary |
+| Replacement agent knows where to start | PASS | Root [AGENTS.md](../../../AGENTS.md) → context index → current state → concern/ADR/task |
+| Current state is identifiable | PASS | [CURRENT_STATE](../../handoff/archive/CURRENT_STATE_2026-10-02.md) distinguishes unborn Git state, local changes, planned work and completed work |
+| Architecture changes have a decision trail | PASS | [Change control](../CHANGE_CONTROL.md), [decision log](../DECISION_LOG.md), PROPOSED ADR-001; no fabricated acceptance |
+| Handoff independent of model memory | PASS | Durable source, start/end protocol, vendor-neutral paths, bounded [next action](../../handoff/archive/NEXT_ACTION_2026-10-02.md) |
+| Secrets policy explicit | PASS | [Engineering principles](../ENGINEERING_PRINCIPLES.md), `.gitignore`, no live data requested |
 | Production-access policy explicit | PASS | Agent production-credential prohibition; human operation boundary and destructive-command prohibition |
 | Structure usable in the short build window | PASS | Only P0 documents created; future concern paths reserved without empty scaffolding; no duplicate scope-exclusions document |
 

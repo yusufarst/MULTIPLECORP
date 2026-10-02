@@ -8,7 +8,7 @@ Amendment: narrowly amended on 2026-09-29 to represent the Owner's P3 decisions 
 
 Amendment: the loss-expense relationship row alone was further amended on 2026-09-30 to represent the Owner's clarification [DIR-027](../00-governance/DECISION_LOG.md#dir-027-obs-007-and-tech-017--p4-authorization-unattributed-loss-clarification-and-p4-documentation); only its clause marked `DIR-027` was added. The pre-amendment SHA-256 is recorded in the decision log; the amended revision is approved under [APPR-005](../00-governance/DECISION_LOG.md#appr-005--p4-database-architecture-approved).
 
-Authority: P2 authorized by DIR-016; deep-review directives and final business decisions under DIR-017/018/019/020 ([decision log](../00-governance/DECISION_LOG.md)). This document owns entities, terminology, conceptual relationships and ownership/scope for MultipleCorp. Normative rules, lifecycles, invariants and calculation meanings are owned by [BUSINESS_RULES](BUSINESS_RULES.md). Phase evidence and P1→P2 traceability verification are owned by [P2_QUALITY_GATE](P2_QUALITY_GATE.md).
+Authority: P2 authorized by DIR-016; deep-review directives and final business decisions under DIR-017/018/019/020 ([decision log](../00-governance/DECISION_LOG.md)). This document owns entities, terminology, conceptual relationships and ownership/scope for MultipleCorp. Normative rules, lifecycles, invariants and calculation meanings are owned by [BUSINESS_RULES](BUSINESS_RULES.md). Phase evidence and P1→P2 traceability verification are owned by [P2_QUALITY_GATE](evidence/P2_QUALITY_GATE.md).
 
 **Anti-duplication contract:** [V1_SCOPE](../01-product/V1_SCOPE.md) owns the Owner's business meaning (DIR-011 contract, DOC catalog, scope classes). This document organizes concepts derived from it and cites it; it never restates that contract as a second source. On any conflict, V1_SCOPE and the latest Owner decision win and the conflict goes to [change control](../00-governance/CHANGE_CONTROL.md).
 
@@ -274,4 +274,4 @@ The nine protected categories of DIR-011 (purchase cost, profitability, banks, i
 
 ## Traceability
 
-The verified CAP-01–18 / DOC-01–14 / OWN-01–06 / REF-IMG carry-through map lives in [P2_QUALITY_GATE](P2_QUALITY_GATE.md#p1--p2-traceability). Rules referenced from this catalogue resolve in [BUSINESS_RULES](BUSINESS_RULES.md).
+The verified CAP-01–18 / DOC-01–14 / OWN-01–06 / REF-IMG carry-through map lives in [P2_QUALITY_GATE](evidence/P2_QUALITY_GATE.md#p1--p2-traceability). Rules referenced from this catalogue resolve in [BUSINESS_RULES](BUSINESS_RULES.md).
