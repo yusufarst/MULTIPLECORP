@@ -141,7 +141,7 @@ Two in-session Owner messages received 2026-09-29 are preserved as **transcribed
 | [P3_OWNER_AUTHORIZATION_2026-09-29.txt](sources/P3_OWNER_AUTHORIZATION_2026-09-29.txt) | 1,239 / 28,850 | `310426188804BFF3963DBC18493E2F5FFB288803B397DA072633C16AAA7228EA` |
 | [P3_OWNER_DECISIONS_2026-09-29.txt](sources/P3_OWNER_DECISIONS_2026-09-29.txt) | 450 / 12,967 | `24B54C7A5087D140CEAC89172E0399D87379A718657DA5924341782BF3008A20` |
 
-DIR-024 is binding within its subjects under the standing hierarchy. Its business meanings are formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (BR-FIN-16/17, BR-PUR-05, BR-INV-13, amended BR-DOC-04/BR-FIN-02/04, CALC-08/09/11, annex 13–16), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), the V1_SCOPE DOC-05 row and one PRODUCT_OVERVIEW sentence, each marked `DIR-024` with pre-amendment hashes in the decision log; D-5 authority is owned by [WORKFLOWS](../03-workflows/WORKFLOWS.md#4-actor-and-authority-matrix). All nineteen earlier source records retain their bytes and classifications.
+DIR-024 is binding within its subjects under the standing hierarchy. Its business meanings are formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) (BR-FIN-16/17, BR-PUR-05, BR-INV-13, amended BR-DOC-04/BR-FIN-02/04, CALC-08/09/11, annex 13–16), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), the V1_SCOPE DOC-05 row and one PRODUCT_OVERVIEW sentence, each marked `DIR-024` with pre-amendment hashes in the decision log; D-5 authority is owned by [WORKFLOWS](../03-workflows/WORKFLOWS/s01-04-foundations.md#4-actor-and-authority-matrix). All nineteen earlier source records retain their bytes and classifications.
 
 ### P3 targeted review, Owner loss-attribution decision and approval
 
@@ -152,7 +152,7 @@ Two further in-session Owner messages received 2026-09-29 are preserved as **tra
 | [P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt](sources/P3_OWNER_TARGETED_REVIEW_DIRECTIVE_2026-09-29.txt) | 379 / 9,562 | `71BBF59B622808756069A161B19B9BF4EC55D2C91FC0E351E6453875D9770D97` |
 | [P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt](sources/P3_OWNER_LOSS_ATTRIBUTION_AND_FINALIZATION_2026-09-29.txt) | 526 / 13,622 | `22784B8CB8741A23965B0669DAFC52B88D451826E8692779DFB98E22F6D28FDE` |
 
-DIR-026 is binding within its subject under the standing hierarchy. Its business meaning is formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) BR-INV-13 (marked `DIR-026`) and orchestrated with Owner-only authority in [WORKFLOWS](../03-workflows/WORKFLOWS.md) (section 4, SF-UNATTRIBUTED, AX-37). All twenty-one earlier source records retain their bytes and classifications.
+DIR-026 is binding within its subject under the standing hierarchy. Its business meaning is formalized narrowly in [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) BR-INV-13 (marked `DIR-026`) and orchestrated with Owner-only authority in [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) (section 4, SF-UNATTRIBUTED, AX-37). All twenty-one earlier source records retain their bytes and classifications.
 
 ### P4 fast-track authorization and unattributed-loss clarification
 
@@ -261,7 +261,7 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P2 | 2–17; DIR-016–019, DIR-024/026/027 |
 | Business invariants, domain lifecycles/state rules and calculation semantics | `docs/02-domain/BUSINESS_RULES.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P2 | 3–17, 26–28, 36, 45; DIR-018/019/020/024/026/027 |
 | P2 adversarial review, traceability verification and gate evidence | `docs/02-domain/evidence/P2_QUALITY_GATE.md` | Exists, REVIEW / P2 | DIR-016 §§18–22 |
-| User/process workflows, responsibility boundaries and transition orchestration over P2 lifecycles | `docs/03-workflows/WORKFLOWS.md` | Exists, APPROVED (APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005; the TECH-021 amendment approved under APPR-007) / P3 | 11–16, 42; DIR-023–027, DIR-032 |
+| User/process workflows, responsibility boundaries and transition orchestration over P2 lifecycles | `docs/03-workflows/WORKFLOWS/README.md` | Exists, APPROVED (APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005; the TECH-021 amendment approved under APPR-007) / P3 | 11–16, 42; DIR-023–027, DIR-032 |
 | P3 adversarial review, aggregate traceability verification and gate evidence | `docs/03-workflows/evidence/P3_QUALITY_GATE.md` | Exists, REVIEW / P3 | DIR-023–026 |
 | Database design and constraints | `docs/04-architecture/DATABASE.md` | Exists, APPROVED (APPR-005; the TECH-020 amendment approved under APPR-006; the TECH-021 amendment approved under APPR-007; the TECH-022 amendment approved under APPR-008) / P4 | 5, 13–15, 26–32, 38, 45; DIR-027–029, DIR-032, DIR-033 |
 | Application structure and stack | `docs/04-architecture/ARCHITECTURE.md` | Exists, APPROVED (APPR-005; the TECH-021 amendment approved under APPR-007) / P4 | 18–19, 24, 28–36; DIR-027–029, DIR-032 |

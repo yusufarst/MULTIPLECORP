@@ -10,7 +10,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | --- | --- | --- |
 | Tag `pre-aicwdf-migration` | `c511d7b0d4683e07717c962927c9f113854f227b` | P7 checkpoint and pre-migration baseline: 71 tracked files |
 | Commit 0 — stage 0 | `c9ba88b28f398c8c6177ab2b2a6df8d8ef50e017` | `docs: record AICWDF adoption directives and migration baseline`: seven source records added and registered |
-| Stage 1 | the commit `docs: move planning documents into AICWDF phase structure`, child of commit 0 | the 21 moves below; link-target paths recomputed |
+| Stage 1 | `2a89d9ea892cacf5ddae57ec3b5911b9ce2ac7d8` | `docs: move planning documents into AICWDF phase structure`: the 21 moves below; link-target paths recomputed |
+| Stage 2 — WORKFLOWS | the commit `docs: split WORKFLOWS into section files`, child of `2a89d9e` | `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -150,6 +151,29 @@ Proof codes: **bytes** — byte-identical at the tag, commit 0 and stage 1; **ne
 | `docs/00-governance/MIGRATION_MAP.md` | This resolver and evidence record |
 | `docs/handoff/archive/README.md` | States that the archived handoff pair is a historical snapshot, not the current state |
 
+## Stage 2 — splits
+
+Four documents became folders named after the document (DIR-039 §9). Each part holds a contiguous line range of the stage-1 file, in order; the status, approval and amendment header stays at the top of the first part, and each folder's README maps section numbers to parts. Section references such as "DATABASE §4.7" are unchanged. G2 below is the proof of each split.
+
+### WORKFLOWS
+
+`docs/03-workflows/WORKFLOWS.md` — 707 lines, SHA-256 `9B0BED95FAB3874963BFC0FEB73AEE8B9401B216A14ED89BFFF452D4D2A58002` at the previous commit — became the folder `docs/03-workflows/WORKFLOWS/`: its [README](../03-workflows/WORKFLOWS/README.md) and 9 parts, each a contiguous line range of the stage-1 file, in order.
+
+| File | Baseline lines | Lines | SHA-256 |
+| --- | --- | --- | --- |
+| `docs/03-workflows/WORKFLOWS/s01-04-foundations.md` | 1–123 | 123 | `D96F67DE2F27E4D6F30DB50931A7E4F3001AA303AC713C4B5B16BB230B9679A8` |
+| `docs/03-workflows/WORKFLOWS/s05-01-02-access-project.md` | 124–213 | 90 | `86BF14B3E4469BC6E3F959B97FB68B8D37B0D3026D160DA2D0A29BC6B3B76958` |
+| `docs/03-workflows/WORKFLOWS/s05-03-inventory-purchasing.md` | 214–297 | 84 | `5CBCDA2D4F7697DC78723A79C354C5168560864AB750F3DD71821F0755C000F7` |
+| `docs/03-workflows/WORKFLOWS/s05-04-05-fulfillment-documents.md` | 298–375 | 78 | `BD29E1FF88BDEE08930BE09DA017B5A77A8CA20F3EA234F44B5D8A47A59F2BA7` |
+| `docs/03-workflows/WORKFLOWS/s05-06-finance.md` | 376–446 | 71 | `C7F13DE6296323AA114D3EBD63B82E336B505DA1D7DCB4774DA46EDC297FD352` |
+| `docs/03-workflows/WORKFLOWS/s05-07-08-completion-migration.md` | 447–488 | 42 | `EE358C701A5D50ED8F9227804BDE1807002E1217355B081A5F346A4DA9261CF4` |
+| `docs/03-workflows/WORKFLOWS/s06-07-subflows-partial.md` | 489–524 | 36 | `E83EDB6D11D7994C9AB990C60F98DA9292934E72A7520B3AE9772A460BEF5653` |
+| `docs/03-workflows/WORKFLOWS/s08-09-corrections-indivisible.md` | 525–613 | 89 | `AD26137E6B2A2875CA17796B76470FDB35D2B0757784350681A3FB4F628A82BE` |
+| `docs/03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md` | 614–707 | 94 | `5F21B64BE7FA476589C9C6D65409F37D4DA126697D475C1F5A181B9470BFE45D` |
+| `docs/03-workflows/WORKFLOWS/README.md` | — | 17 | `6BD100F81533FBCC339614C5531D4BB24FF7431A15D983582298707F884FF093` |
+
+Link targets rewritten: 14 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 24 in 17 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `docs/03-workflows/WORKFLOWS.md` became `docs/03-workflows/WORKFLOWS/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
+
 ## Gate results
 
 ### G0 — stage 0 (commit 0): PASS
@@ -168,6 +192,14 @@ Proof codes: **bytes** — byte-identical at the tag, commit 0 and stage 1; **ne
 - Sources: 36 byte-identical to commit 0; the 29 original records byte-identical to the tag.
 - Links: 1,118 relative links at stage 1 outside `sources/`, 0 broken; every link of the 40 commit-0 Markdown files keeps its count, label, logical target and anchor.
 - Added files: exactly this file and `docs/handoff/archive/README.md`.
+
+### G2 — WORKFLOWS: PASS
+
+- Concatenation: the 9 parts in table order, with link targets neutralized on both sides, are byte-identical to the stage-1 file.
+- Lines: 123 + 90 + 84 + 78 + 71 + 42 + 36 + 89 + 94 = 707, the stage-1 count; every part ends with a newline; code fences are balanced inside every part (3 pairs).
+- Headings: the concatenation's 62 headings equal the stage-1 sequence; each of the 22 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
+- Anchors: all 26 links into or inside WORKFLOWS resolve to the same heading as before — 7 anchored links to the part holding the heading, 19 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/02-domain/BUSINESS_RULES.md`, `docs/03-workflows/evidence/P3_QUALITY_GATE.md`, `docs/04-architecture/ARCHITECTURE.md`, `docs/04-architecture/DATABASE.md`, `docs/05-security/PERMISSIONS_MATRIX.md`, `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md`, `docs/06-api-performance/evidence/P6_QUALITY_GATE.md`, `docs/07-ux-design/ADMIN_FLOW.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
+- Repository-wide link check: 1,129 relative links outside `sources/`, none broken.
 
 ## Supporting evidence — rename detection
 

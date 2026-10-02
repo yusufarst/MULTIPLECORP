@@ -2,7 +2,7 @@
 
 Status: REVIEW | Updated: 2026-09-30 | Owner: Planning
 
-Scope: P3 — Critical Business Workflows, planned under DIR-023, documented under DIR-024 (TECH-015), red-teamed under DIR-025 and corrected under DIR-026 (TECH-016) on the published baseline `b921c8b07cd49351c73b0cf7f71375cc274aeddd`. This report records planning evidence and the verification of the APPR-004 approval conditions; it is not implementation acceptance and not permission to begin P4. [WORKFLOWS](../WORKFLOWS.md) is APPROVED under APPR-004; this gate stays REVIEW as evidence/audit material.
+Scope: P3 — Critical Business Workflows, planned under DIR-023, documented under DIR-024 (TECH-015), red-teamed under DIR-025 and corrected under DIR-026 (TECH-016) on the published baseline `b921c8b07cd49351c73b0cf7f71375cc274aeddd`. This report records planning evidence and the verification of the APPR-004 approval conditions; it is not implementation acceptance and not permission to begin P4. [WORKFLOWS](../WORKFLOWS/README.md) is APPROVED under APPR-004; this gate stays REVIEW as evidence/audit material.
 
 ## Input and baseline verification
 

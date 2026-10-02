@@ -24,7 +24,7 @@ This is a navigation map, not a second specification. Read [AGENTS.md](../AGENTS
 | Domain entities, terminology, relationships, scope/sensitivity classes | [Domain model](02-domain/DOMAIN_MODEL.md) |
 | Business invariants, domain lifecycles, correction/snapshot/calculation rules | [Business rules](02-domain/BUSINESS_RULES.md) |
 | P2 adversarial review and traceability verification | [P2 quality gate](02-domain/evidence/P2_QUALITY_GATE.md) |
-| Workflow orchestration, actor/authority matrix, correction matrix, indivisible actions | [Workflows](03-workflows/WORKFLOWS.md) (APPROVED, APPR-004; DIR-027 amendment APPR-005; TECH-021 amendment APPR-007) |
+| Workflow orchestration, actor/authority matrix, correction matrix, indivisible actions | [Workflows](03-workflows/WORKFLOWS/README.md) (APPROVED, APPR-004; DIR-027 amendment APPR-005; TECH-021 amendment APPR-007) |
 | P3 adversarial review, aggregate traceability and validation evidence | [P3 quality gate](03-workflows/evidence/P3_QUALITY_GATE.md) |
 | Logical database design: records, derived-versus-authoritative data, guard registry, constraints, snapshots, scope, types, indexes, transaction map | [Database](04-architecture/DATABASE.md) (APPROVED, APPR-005; TECH-020 amendment APPR-006; TECH-021 amendment APPR-007; TECH-022 amendment APPR-008) |
 | Application structure: modules, dependency tiers, actions, posting services, web/React/job/file/integration/reporting boundaries | [Architecture](04-architecture/ARCHITECTURE.md) (APPROVED, APPR-005; TECH-021 amendment APPR-007) |

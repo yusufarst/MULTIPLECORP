@@ -27,7 +27,7 @@ This is the live handoff. It is written to be complete for an agent with no chat
 | Observable acceptance | [ACCEPTANCE_CRITERIA](../../01-product/ACCEPTANCE_CRITERIA.md) | APPR-002 |
 | Domain concepts, scope and sensitivity classes | [DOMAIN_MODEL](../../02-domain/DOMAIN_MODEL.md) | APPR-003 (amendments APPR-004, APPR-005) |
 | Business rules, lifecycles, calculations, numeric annex | [BUSINESS_RULES](../../02-domain/BUSINESS_RULES.md) | APPR-003 (amendments APPR-004, APPR-005) |
-| Workflows, authority matrix, correction matrix, AX-01–37 | [WORKFLOWS](../../03-workflows/WORKFLOWS.md) | APPR-004 (DIR-027 amendment APPR-005; TECH-021 amendment APPR-007) |
+| Workflows, authority matrix, correction matrix, AX-01–37 | [WORKFLOWS](../../03-workflows/WORKFLOWS/README.md) | APPR-004 (DIR-027 amendment APPR-005; TECH-021 amendment APPR-007) |
 | Logical database: 124 tables in 13 modules, guard registry, C-01–C-61, AX transaction map | [DATABASE](../../04-architecture/DATABASE.md) | APPR-005 (TECH-020 amendment APPR-006; TECH-021 amendment APPR-007; TECH-022 amendment APPR-008) |
 | Application structure: modular monolith, dependency tiers, actions, posting services, boundaries | [ARCHITECTURE](../../04-architecture/ARCHITECTURE.md) | APPR-005 (TECH-021 amendment APPR-007) |
 | Authorization: capabilities, role and grant model, company scope, field projection, cross-company links, Owner-only denials, data paths | [PERMISSIONS_MATRIX](../../05-security/PERMISSIONS_MATRIX.md) | APPR-006 (TECH-021 amendment APPR-007) |
