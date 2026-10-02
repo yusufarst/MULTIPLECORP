@@ -14,7 +14,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Stage 2 — WORKFLOWS | `3f8bd90c2545517c3c66489e60dbf79e50b9b64e` | `docs: split WORKFLOWS into section files`: `docs/03-workflows/WORKFLOWS.md` split into 9 section files and a README |
 | Stage 2 — DATABASE | `8b712a829676464035a4af6718f72ef3dab366b8` | `docs: split DATABASE into section files`: `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
 | Stage 2 — CONCURRENCY_IDEMPOTENCY | `db4e1f524579ae60812dd45a06bc6d89cad0938a` | `docs: split CONCURRENCY_IDEMPOTENCY into section files`: `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
-| Stage 2 — ADMIN_FLOW | the commit `docs: split ADMIN_FLOW into section files`, child of `db4e1f5` | `docs/07-ux-design/ADMIN_FLOW.md` split into 8 section files and a README |
+| Stage 2 — ADMIN_FLOW | `64431fcbca0134b4b268762cb765dc6520241ac2` | `docs: split ADMIN_FLOW into section files`: `docs/07-ux-design/ADMIN_FLOW.md` split into 8 section files and a README |
+| Stage 3 | the commit `docs: align governance and operating structure with AICWDF v4.3`, child of `64431fc` | Governance and operating-structure alignment (DIR-039 §10); no move or split |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -247,6 +248,10 @@ Link targets rewritten: 51 inside the parts — in-document anchors whose headin
 
 Link targets rewritten: 56 inside the parts — in-document anchors whose heading moved to another part, and paths recomputed for the deeper folder — and 62 in 12 other files: links without an anchor now point to the README, anchored links to the part holding the heading, with the same anchor. The SOURCE_OF_TRUTH registry token `ADMIN_FLOW.md`, written relative to its row's first path, became `ADMIN_FLOW/README.md`. Each part except the last ends with the blank line that separated it from the next section in the single file, so `git diff --check` reports a blank line at the end of those parts; the ranges are fixed by DIR-039 and nothing is removed.
 
+## Stage 3 — governance and operating-structure alignment
+
+Stage 3 moves and splits nothing. It amends thirteen existing files and creates twelve, as DIR-039 §10 lists, and adds records to the decision log, the changelog and this map. [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) records each amended file with its SHA-256 at the tag, before stage 3 and after, and the directive it implements, and the hash of each new document. Every stage-3 amendment is pending the Owner's approval.
+
 ## Gate results
 
 ### G0 — stage 0 (commit 0): PASS
@@ -297,6 +302,61 @@ Link targets rewritten: 56 inside the parts — in-document anchors whose headin
 - Headings: the concatenation's 57 headings equal the stage-1 sequence; each of the 28 numbered sections lies in exactly one part and appears exactly once in the README table, in its part's row.
 - Anchors: all 73 links into or inside ADMIN_FLOW resolve to the same heading as before — 59 anchored links to the part holding the heading, 14 links without an anchor to the README; every other link keeps its target; the other changed files differ only in link targets (`AGENTS.md`, `README.md`, `docs/00-governance/DECISION_LOG.md`, `docs/00-governance/ENGINEERING_PRINCIPLES.md`, `docs/00-governance/GAP_REGISTER.md`, `docs/00-governance/SOURCE_OF_TRUTH.md`, `docs/07-ux-design/DESIGN_SYSTEM.md`, `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `docs/07-ux-design/evidence/P7_QUALITY_GATE.md`, `docs/CONTEXT_INDEX.md`, `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`, `docs/handoff/archive/NEXT_ACTION_2026-10-02.md`), SOURCE_OF_TRUTH also in its registry token.
 - Repository-wide link check: 1,175 relative links outside `sources/`, none broken.
+
+### G3 — stage 3: PASS
+
+- **Scope.** The stage-3 diff changes thirteen files and adds twelve, all named in DIR-039 §10, plus the three records of §10.3 (DECISION_LOG, CHANGELOG, this map). No split part changes; no P0–P6 document outside the list changes; BUSINESS_RULES is inspected and left unchanged.
+- **Directives and hashes.** Each amended approved document states in its header the directive it applies and that the wording is pending the Owner's approval; TECH-023 records the before and after hashes. DESIGN_SYSTEM, INFORMATION_ARCHITECTURE and SECURITY change only their Updated date and gain one status line.
+- **No semantic change beyond §10.1.** The V1_SCOPE, ACCEPTANCE_CRITERIA, GAP_REGISTER, PROJECT_CHARTER and SOURCE_OF_TRUTH changes are those §10.1 lists; TECH-023 names each amended sentence and what was left unchanged.
+- **One owner per fact.** Phase status appears only in PHASE_STATUS, which CURRENT_HANDOFF, EXECUTION_CONTEXT, the charter, README and CONTEXT_INDEX point to; DECISION_INDEX holds subjects and statuses, no rule text; every list line of EXECUTION_CONTEXT cites its owner or an identifier; no ten-word sequence of the framework source appears in the new or amended documents, which cite framework sections instead; CURRENT_HANDOFF holds the current state only.
+- **Content truth unchanged.** Derived the same way at the tag and now: 18 MUST capabilities, 14 document types, 124 tables in 13 modules (module-map total 124), 80 capabilities; CAP-01–CAP-18 all present, so no V1_REQUIRED capability is removed; no Owner authority is weakened.
+- **Hygiene.** No placeholder text and no secret or credential pattern in any new or changed file.
+- **Links and identifiers.** 1,491 relative links outside `sources/`, none broken; the 186 distinct identifiers that the new and rewritten documents cite are all defined in the repository.
+- **Self-review of the whole branch** (tag → stage 3) against broken references, duplicate sources of truth, lost historical facts, lost approval provenance, ambiguous current state and unnecessary framework deviation: links, anchors and identifiers resolve and no current-state document names a pre-migration path; phase history left the entry documents for the decision log and Git, while the approval chain, checkpoints and source records stay intact and every APPR record is unedited; the remaining stale sentences outside the amendment list are named in CURRENT_HANDOFF and TECH-023; every deviation from the framework is a project exception with its authority in [AICWDF_ADOPTION](AICWDF_ADOPTION.md#project-exceptions-and-stronger-invariants).
+
+#### Zero-context test
+
+A fresh read-only agent, given none of the migration conversation and only the working tree of `migration/aicwdf` (stage 3 complete in the tree but not yet committed or recorded), started from the repository's own entry point and answered from the repository alone.
+
+| Question | Answer from the repository | Result |
+| --- | --- | --- |
+| What is authoritative? | The repository; the seven-level hierarchy of SOURCE_OF_TRUTH; the framework file is provenance; one owner per concern through the ownership registry and CONTEXT_INDEX; DECISION_INDEX for binding decisions; SECURITY unamended while D5 and D6 prevail; DESIGN_SYSTEM and INFORMATION_ARCHITECTURE under replacement | Correct |
+| What is the current project state? | Planning documentation only; P0–P6 DONE with their open amendments, P7 IN_PROGRESS, P8 BLOCKED, P9–P11 TODO; the migration VERIFYING with `main` at `c511d7b`; 37 gaps (PHASE_STATUS, CURRENT_HANDOFF, GAP_REGISTER) | Correct |
+| What Task is active? | None before P11; the current authorization is DIR-039 | Correct |
+| What can I safely change? | Level-1 improvements inside authorized work, REVIEW documents, and within DIR-039 only its §10 files, committed with the Owner's identity and CRLF-normalized staging | Correct |
+| What must I not change? | The "Do not do" list of CURRENT_HANDOFF and the exclusions of DIR-039; binding decisions; source records; the project invariants; the production database; the public-repository and cost rules | Correct |
+| What should I read next? | The reading order of AGENTS.md, the DIR-034–039 entry, this map and GAP-035–GAP-037, then only the exact sections through CONTEXT_INDEX | Correct |
+| AU-07 | `docs/05-security/SECURITY.md` §2 | Correct |
+| AX-04 | `docs/03-workflows/WORKFLOWS/s08-09-corrections-indivisible.md` §9 | Correct |
+| DATABASE §4.7 | `docs/04-architecture/DATABASE/s04-07-inv.md`, through the folder README | Correct |
+| CS-08 | `docs/05-security/PERMISSIONS_MATRIX.md` §6 | Correct |
+| D-UX-01 | `docs/07-ux-design/ADMIN_FLOW/s01-04-foundations.md` §4 | Correct |
+| DIR-009 | `docs/00-governance/DECISION_LOG.md`, index row and the DIR-009 and RISK-001 entry | Correct |
+| CAP-14 | `docs/01-product/V1_SCOPE.md` MUST SHIP | Correct |
+| BR-CR-01 | `docs/02-domain/BUSINESS_RULES.md` §2 | Correct |
+| CI-01 | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md` §10 | Correct |
+| UXS-43 | `docs/07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md` §15 | Correct |
+| Current phase | P7, the UX re-baseline | Correct |
+| Why is P8 BLOCKED? | It waits for the P5 authentication amendment (GAP-036) and the P7 re-baseline (GAP-035, GAP-037), as the Owner decided | Correct |
+| What is not authorized? | The security amendment, the UX re-baseline, P8–P11 and any Task, application code, migrations, packages, tests, infrastructure, tool installation, source-record edits, any change to `main`, history rewrites, AI attribution | Correct |
+| Next safe action | The Owner reviews and approves the migration; `main` is then fast-forwarded and published; then the security amendment and the UX re-baseline, each under its own authorization | Correct |
+
+**Result: PASS** — every answer correct on the first run, so no repeat was required. The agent's observations and their dispositions:
+
+| Observation | Disposition |
+| --- | --- |
+| The handoff named the stage-3 commit, the G3 result, the zero-context record and the TECH-023 hashes, which did not yet exist | Expected at the time of the test; supplied by TECH-023, this section and the stage-3 commit |
+| VERIFYING was used before G3 was recorded | Resolved by this record |
+| IN_PROGRESS read as "authorized and under way" although the re-baseline awaits authorization | Fixed: PHASE_STATUS defines IN_PROGRESS as opened by the Owner, with each piece of work still needing authorization, and the P7 row says so |
+| GAP-036 was listed as non-blocking although it blocks P8 | Fixed: CURRENT_HANDOFF lists it under the blockers of P8 |
+| The handoff did not state publication | Fixed: a publication row in CURRENT_HANDOFF; a new session verifies the pushes |
+| Stale sentences outside the amendment list (PRODUCT_OVERVIEW, ENGINEERING_PRINCIPLES, BUSINESS_RULES FS-14, REFERENCE_COVERAGE, the decision log's pointer to the archived NEXT_ACTION) | Not edited, being outside DIR-039 §10.1; named in CURRENT_HANDOFF and TECH-023 for a separately authorized amendment; the GAP-014 heading keeps its anchor and its continuation note supersedes the deadline component |
+| One link in EXECUTION_CONTEXT served three identifier families | Fixed: separate links to PERMISSIONS_MATRIX §2, §6 and §9 |
+| Whether UXS-43 still binds while its screens and patterns are replaced | Clarified in PHASE_STATUS: the re-baseline revisits ADMIN_FLOW's references to replaced screens and patterns |
+| Owner decisions 8 and 9 are nowhere defined | Recorded in TECH-023: none under those numbers is recorded or pending |
+| D, D- and C series collide | Fixed: CONTEXT_INDEX's identifier map tells D1–D7, D10, C1 and C2 apart from D-1–D-5, D-01–D-06 and C1–C3 |
+| A missing "and" before APPR-007 in SOURCE_OF_TRUTH | A pre-existing editorial slip in approved text outside the amendment list; reported, not changed |
+| Commits must carry no AI attribution | Followed (DIR-022) |
 
 ## Supporting evidence — rename detection
 

@@ -1,8 +1,10 @@
 # Information architecture
 
-Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Replacement: APPROVED (APPR-008) and under replacement by the P7 UX re-baseline the Owner decided on 2026-10-03 ([DIR-035](../00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) D3); derive no new work from this document — [PHASE_STATUS](../PHASE_STATUS.md) tracks the re-baseline.
 
 Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **navigation truth**: the Indonesian UI glossary, the product map, the application shell and global navigation on phone and desktop, the company-context model, the screen inventory, the placement of the derived signals and queues, the search, lookup and scanner entry points and the page-addressing conventions. Interaction truth — commands, sessions, journeys, corrections, messages — is owned by [ADMIN_FLOW](ADMIN_FLOW/README.md); visual rules by [DESIGN_SYSTEM](DESIGN_SYSTEM.md); phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
 

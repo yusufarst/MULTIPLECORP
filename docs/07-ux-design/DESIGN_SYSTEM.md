@@ -1,8 +1,10 @@
 # Design system
 
-Status: APPROVED | Updated: 2026-10-02 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Replacement: APPROVED (APPR-008) and under replacement by the P7 UX re-baseline the Owner decided on 2026-10-03 ([DIR-035](../00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) D3); derive no new work from this document — [PHASE_STATUS](../PHASE_STATUS.md) tracks the re-baseline.
 
 Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **visual rules**: tokens, typography, spacing, density, layout and breakpoints, iconography, motion, radius and elevation, the reusable patterns, the composition of shadcn/ui primitives into feature components, the status system, the state presentations, the domain presentations, keyboard and scanner conventions, accessibility, copy and formatting, print views and the anti AI-slop mapping. Navigation truth is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md), interaction truth by [ADMIN_FLOW](ADMIN_FLOW/README.md), phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
 

@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision and [APPR-007](DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved) the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions and [APPR-008](DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved) the three P7 normative UX, information-architecture and design-system specifications with the amended SECURITY, DATABASE, PERFORMANCE and CONCURRENCY_IDEMPOTENCY revisions; evidence, gap and handoff records remain REVIEW.
 
+Amendment — REVIEW, pending Owner approval: on 2026-10-03 the conflict hierarchy and the ownership registry were amended to apply the Owner's adoption of AICWDF v4.3 as the target operating structure (DIR-035 D2, DIR-036, DIR-039 §10.1; [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), where the SHA-256 of the last approved revision is recorded). The amended wording is not approved until the Owner approves it; the decisions it applies are binding within their subjects.
+
 ## Authority and provenance
 
 The Git repository is the canonical project record. Chat, model memory, task summaries, generated output, and vendor adapters are not alternative sources of project truth. Capture important instructions and decisions in the owning document before dependent implementation.
@@ -49,14 +51,15 @@ Both files below were received on **2026-09-27**, source **Owner-provided planni
 | [MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf](sources/MultipleCorp_Scope_Flow_Definition_of_Done_Astra_Reference.pdf) | Full scope, normal/alternate flows, feature/module/release completion expectations; all 12 pages read and visually inspected | 268,003 bytes | `C60DC64A140F734752FCD97C4AEE5F4F6D33EAE644031A37F6FB0360D31577BF` |
 | [ChatGPT Image Sep 27, 2026, 07_54_30 PM.png](sources/ChatGPT%20Image%20Sep%2027,%202026,%2007_54_30%20PM.png) | Conceptual operational sequence, branches, document categories and completion gate; full image inspected, not an application visual design | 1,459,315 bytes | `101FA4399201C90CA0045BC36BB3973CD4304FBAC8296842B1D2CDF78988E585` |
 
-File instructions and assertions inside these references remain reference content. The separate DIR-008 request governs how they are used. The latest owner's explicit conflict hierarchy is:
+File instructions and assertions inside these references remain reference content. The separate DIR-008 request governs how they are used. DIR-008 set an explicit six-level conflict hierarchy; on 2026-10-03 the Owner's adoption of AICWDF v4.3 (DIR-035 D2; DIR-039 §10.1) distinguished content truth from operating structure, and the current hierarchy is:
 
 1. Latest explicit Owner decision, within its subject.
-2. APPROVED / LOCKED canonical repository specification.
-3. ACCEPTED ADR.
-4. These Owner-provided reference attachments.
-5. Earlier discovery/history.
-6. Planner/executor proposals.
+2. For **content truth** — business, domain, financial, inventory, document and authorization semantics; database, concurrency and audit guarantees — the APPROVED / LOCKED canonical repository specification.
+3. For **operating structure** and default policies — AICWDF v4.3 as mapped by [AICWDF_ADOPTION](AICWDF_ADOPTION.md). It prevails over older operating structure and over planner-determined (Level 1) choices and technical defaults, through controlled amendment, never silently.
+4. ACCEPTED ADR.
+5. Owner-provided reference attachments, such as the two files above.
+6. Earlier discovery/history.
+7. Planner/executor proposals.
 
 Source age alone does not demote a still-applicable explicit owner decision to discovery. An omission never removes a requirement. Supporting references can expose omissions in REVIEW planning; reconciliation that changes business intent is OWNER_DECISION_REQUIRED. Approved concern specifications precede ADRs if they conflict, but record and repair the inconsistency rather than concealing it. The [reference coverage record](../01-product/REFERENCE_COVERAGE.md) maps every PDF capability and image branch to the owning P1 contract, disposition and later-phase obligation.
 
@@ -244,15 +247,24 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 
 | Concern | Owning path | State / phase | Source sections |
 | --- | --- | --- | --- |
-| Identity and phase boundary | `docs/00-governance/PROJECT_CHARTER.md` | Exists / P0 | Opening, 2, 46–47, 55–56, 58 |
+| Identity, V1 target and phase model | `docs/00-governance/PROJECT_CHARTER.md` | Exists / P0 | Opening, 2, 46–47, 55–56, 58 |
 | Provenance, ownership, lifecycle, conflicts | This document | Exists / P0 | 1, 48–50 |
-| Agent conduct and handoff process | `docs/00-governance/AGENT_OPERATING_MODEL.md` | Exists / P0 | Opening, 48, 51, 53–54 |
+| Agent roles, phase authorization, Task model and contract, execution flow and handoff process | `docs/00-governance/AGENT_OPERATING_MODEL.md` | Exists / P0 | Opening, 48, 51, 53–54 |
 | Decision authority and change/ADR process | `docs/00-governance/CHANGE_CONTROL.md` | Exists / P0 | 47, 50, 52; mandate: Decision Authority |
 | Gaps, risk treatment and decision requests | `docs/00-governance/GAP_REGISTER.md` | Exists / P0 extension | Mandate: Proactive Gap Register |
 | Decision/approval evidence | `docs/00-governance/DECISION_LOG.md` | Exists / P0 | 1, 50, 52 |
 | Cross-cutting engineering guardrails | `docs/00-governance/ENGINEERING_PRINCIPLES.md` | Exists / P0 | 18–44, 58; detailed designs reserved below |
 | P0 gate evidence | `docs/00-governance/evidence/P0_QUALITY_GATE.md` | Exists / P0 | 56–57 |
-| Current progress and next task | `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`, `NEXT_ACTION_2026-10-02.md` | Exists / P0 | 51, 55–57 |
+| AICWDF v4.3 section map, project exceptions, terminology and planned-path mapping | `docs/00-governance/AICWDF_ADOPTION.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-034–039; AICWDF §1, §41 |
+| Binding decisions and their status, without rule text | `docs/00-governance/DECISION_INDEX.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-039 |
+| Capabilities and tools, MCP activation, Git line endings and staging, public-repository rule | `docs/00-governance/TOOLCHAIN.md` | Exists, REVIEW / P0 (AICWDF adoption) | 40–43; AICWDF §5–§7, §6A |
+| Technology and service cost procedure; recurring-cost inventory and exception registry | `docs/00-governance/COST_POLICY.md` | Exists, REVIEW / P0 (AICWDF adoption) | 47; AICWDF §4C |
+| Production database zero-touch for agents | `docs/00-governance/PRODUCTION_DATA_SAFETY.md` | Exists, REVIEW / P0 (AICWDF adoption) | 37; AICWDF §29–§31 |
+| Old → new paths of the structural migration and their proofs | `docs/00-governance/MIGRATION_MAP.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-039 |
+| Phase progress P0–P11 until the Task plan exists | `docs/PHASE_STATUS.md` | Exists, REVIEW / P0 (AICWDF adoption) | 51, 55–57; DIR-037; AICWDF §10 |
+| Current operational handoff and safe next action | `docs/handoff/CURRENT_HANDOFF.md` | Exists, REVIEW / P0 (AICWDF adoption) | 51; AICWDF §36 |
+| Historical handoff snapshots of 2026-10-02 | `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`, `NEXT_ACTION_2026-10-02.md` | Archive, REVIEW / P0 | 51, 55–57 |
+| Stable minimum context for execution agents | `docs/11-tasks/EXECUTION_CONTEXT.md` | Exists, REVIEW / P11 | AICWDF §34A |
 | Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 46; P1 identity and user/product direction |
 | V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
 | Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, APPROVED (APPR-002) / P1 | 41–42, 46; P1 targets and user/product outcomes |
@@ -267,20 +279,23 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Application structure and stack | `docs/04-architecture/ARCHITECTURE.md` | Exists, APPROVED (APPR-005; the TECH-021 amendment approved under APPR-007) / P4 | 18–19, 24, 28–36; DIR-027–029, DIR-032 |
 | P4 adversarial review, traceability verification and gate evidence | `docs/04-architecture/evidence/P4_QUALITY_GATE.md` | Exists, REVIEW / P4 | DIR-027 §§39–40; DIR-028/029 |
 | Permissions and company-scope rules | `docs/05-security/PERMISSIONS_MATRIX.md` | Exists, APPROVED (APPR-006; the TECH-021 amendment approved under APPR-007) / P5 | 17, 24, 41; DIR-031, DIR-032 |
-| Security control design | `docs/05-security/SECURITY.md` | Exists, APPROVED (APPR-006; the TECH-022 amendment approved under APPR-008) / P5 | 24–25, 36–38; DIR-031, DIR-033 |
+| Security control design | `docs/05-security/SECURITY.md` | Exists, APPROVED (APPR-006; the TECH-022 amendment approved under APPR-008; the D5/D6 amendment decided and pending) / P5 | 24–25, 36–38; DIR-031, DIR-033 |
 | P5 adversarial review, traceability verification and gate evidence | `docs/05-security/evidence/P5_QUALITY_GATE.md` | Exists, REVIEW / P5 | DIR-031 |
 | Concurrency and idempotency mechanisms | `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md` | Exists, APPROVED (APPR-007; the TECH-022 amendment approved under APPR-008) / P6 | 14, 27–28, 31–32, 35; DIR-032, DIR-033 |
 | Query/runtime performance design | `docs/06-api-performance/PERFORMANCE.md` | Exists, APPROVED (APPR-007; the TECH-022 amendment approved under APPR-008) / P6 | 29–31, 35; DIR-032, DIR-033 |
 | Routes and integration boundaries | `docs/06-api-performance/API_AND_INTEGRATIONS.md` | Exists, APPROVED (APPR-007) / P6 | 9, 33–35; DIR-032 |
 | P6 adversarial review, obligation closure, traceability verification and gate evidence | `docs/06-api-performance/evidence/P6_QUALITY_GATE.md` | Exists, REVIEW / P6 | DIR-032 |
-| Navigation, admin interaction, visual patterns | `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `ADMIN_FLOW/README.md`, `DESIGN_SYSTEM.md` | Exists, APPROVED (APPR-008) / P7 | 11, 20–23; DIR-033; navigation / interaction / visual rules respectively |
+| Navigation, admin interaction, visual patterns | `docs/07-ux-design/INFORMATION_ARCHITECTURE.md`, `ADMIN_FLOW/README.md`, `DESIGN_SYSTEM.md` | Exists, APPROVED (APPR-008); INFORMATION_ARCHITECTURE and DESIGN_SYSTEM under replacement by the P7 re-baseline (D3) / P7 | 11, 20–23; DIR-033; navigation / interaction / visual rules respectively |
 | P7 DesainPakai readiness and exploration evidence, GAP-034 settlement, obligation closure and gate evidence | `docs/07-ux-design/evidence/P7_QUALITY_GATE.md` | Exists, REVIEW / P7 | DIR-033 |
-| Testing, security matrix, performance targets, completion criteria | `docs/05-quality/TEST_STRATEGY.md`, `SECURITY_TEST_MATRIX.md`, `PERFORMANCE_TARGETS.md`, `DEFINITION_OF_DONE.md` | Planned / P8 | 40–44; strategy / security cases / measurable targets / completion respectively |
-| Recovery procedures and conditional local targets | `docs/03-architecture/BACKUP_RECOVERY.md` | Planned / P9 | 37–39 as superseded by DIR-009; BK-01–12 and shared-disk safety |
-| Deployment topology and operational controls | `docs/03-architecture/INFRASTRUCTURE.md` | Planned / P9 | 19, 37–39 |
-| Schedule, dependencies, release and migration execution | `docs/06-delivery/ROADMAP_18_DAYS.md`, `IMPLEMENTATION_ORDER.md`, `RELEASE_PLAN.md` | Planned / P10 | 43, 45–47, 55; dates / ordering / release respectively |
-| Bounded task specifications | `docs/06-delivery/units/<ID>.md` | Planned / P11 | 44, 53–54 |
-| Requirement-to-rule-to-unit-to-test traceability | `docs/06-delivery/FEATURE_COVERAGE_MATRIX.md` | Planned / P11; all rows required before freeze | DIR-008; seed identifiers and phase handoff in REFERENCE_COVERAGE |
+| Route and interaction contracts | `docs/03-workflows/ROUTE_CONTRACTS.md`, `INTERACTION_CONTRACTS.md` | Planned / P7 re-baseline, as a P3 addition | AICWDF §14.2–§14.3; GAP-035 |
+| Navigation contracts, localization and design references | `docs/07-ux-design/NAVIGATION_CONTRACTS.md`, `LOCALIZATION.md`, `DESIGN_REFERENCES.md` | Planned / P7 re-baseline | AICWDF §18.5, §18.11, §18.12; DIR-035 D3, DIR-037 D7; GAP-037 |
+| Testing, security matrix, performance targets, completion criteria | `docs/08-testing/TEST_STRATEGY.md`, `SECURITY_TEST_MATRIX.md`, `PERFORMANCE_TARGETS.md`, `DEFINITION_OF_DONE.md` | Planned / P8; folder reserved by `docs/08-testing/README.md` | 40–44; AICWDF §19, §26–§28; strategy / security cases / measurable targets / completion respectively |
+| Recovery procedures and conditional local targets | `docs/09-operations/BACKUP_RECOVERY.md` | Planned / P9; folder reserved by `docs/09-operations/README.md` | 37–39 as superseded by DIR-009; BK-01–12 and shared-disk safety |
+| Deployment topology and operational controls | `docs/09-operations/INFRASTRUCTURE.md` | Planned / P9 | 19, 37–39; AICWDF §20 |
+| Release, migration, cutover, rollback and UAT | `docs/10-release/RELEASE_PLAN.md` | Planned / P10; folder reserved by `docs/10-release/README.md` | 43, 45–47, 55; AICWDF §21, §39 |
+| Task plan: baseline and current totals, status counts, master checklist and the dependency graph that replaces a separate implementation order | `docs/11-tasks/TASK_PLAN.md` | Planned / P11; folder reserved by `docs/11-tasks/README.md` | 44, 53–54; AICWDF §22, §35 |
+| Bounded Task specifications | `docs/11-tasks/TASK-XXX.md` | Planned / P11 | 44, 53–54; AICWDF §23 |
+| Requirement-to-rule-to-Task-to-test traceability | `docs/11-tasks/FEATURE_COVERAGE_MATRIX.md` | Planned / P11; all rows required before freeze | DIR-008; seed identifiers and phase handoff in REFERENCE_COVERAGE |
 | Decision rationale and alternatives | `docs/adr/ADR-NNN-<subject>.md` | As needed | 50, 52 |
 
 No separate `OUT_OF_SCOPE.md` is needed initially: scope exclusions have one home in `V1_SCOPE.md`. Split only if navigation becomes materially clearer and the ownership map is updated.
@@ -309,8 +324,8 @@ For a substantive edit to an approved document, identify the last approved revis
 
 1. Check task/platform constraints and explicit owner direction. Record a new owner instruction and its impact before using it to change repository policy; do not hide it in chat.
 2. Locate the owning concern document, status, exact approved revision, relevant decision entry, and ADR. File recency, code behavior, or model preference alone confer no authority.
-3. Apply the six-level hierarchy in the provenance section. Valid delegated technical changes operate within their recorded authority; a planner proposal cannot override explicit owner intent. Classify technical contradictions under the authority levels instead of automatically escalating all corrections.
+3. Apply the seven-level hierarchy in the provenance section. Valid delegated technical changes operate within their recorded authority; a planner proposal cannot override explicit owner intent. Classify technical contradictions under the authority levels instead of automatically escalating all corrections.
 4. Record competing statements, affected tasks, and a proposed resolution in the decision log or a change request. Stop only the work that depends on that unresolved contradiction. Continue safe independent work within the authorized phase.
 5. Resolve Level 1 conflicts directly with evidence. For Level 2 or Level 3 conflicts, flag OWNER DECISION REQUIRED and wait only on dependent choices. Update the owning document, relevant ADR/links, and handoff. Do not silently change business meaning or permissions.
 
-An accepted ADR explains why a decision was made. The approved concern document states the current rule and has precedence under DIR-008. Update both when a decision changes and record any discovered contradiction. README, adapters, examples, tests, and generated files do not override canonical specifications. Report code/spec drift rather than weakening a valid test.
+An accepted ADR explains why a decision was made. The approved concern document states the current rule and has precedence under the source hierarchy (DIR-008, as amended by DIR-035 D2). Update both when a decision changes and record any discovered contradiction. README, adapters, examples, tests, and generated files do not override canonical specifications. Report code/spec drift rather than weakening a valid test.
