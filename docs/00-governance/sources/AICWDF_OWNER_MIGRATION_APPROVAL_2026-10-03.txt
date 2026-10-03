@@ -1,0 +1,73 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-seventh source record
+Received: 2026-10-03, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix A of the AICWDF migration finalization
+authorization of the same date (thirty-eighth source record)
+Subject: Owner decision — AICWDF migration finalization: stages 0–3 on
+         migration/aicwdf approved with the reviewed stage-3 amendments;
+         three stale sentences to be corrected narrowly; the "18-day window"
+         wording kept; branch and recovery tag kept after publication; the
+         P5 security/auth amendment and the P7 UX re-baseline remain
+         separately authorized work; standing user-friendly UX intent for the
+         P7 re-baseline; finalization prompt requested, no execution by the
+         planning chat
+Delivery: the relayed text between the "BEGIN APPENDIX A" and
+         "END APPENDIX A" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER DECISION — MIGRATION FINALIZATION
+
+1. YA.
+
+Saya menyetujui migrasi AICWDF Stage 0–3 pada branch
+`migration/aicwdf`, termasuk amandemen Stage 3 yang telah direview.
+
+2. YA.
+
+Perbaiki tiga kalimat basi berikut sebagai bagian dari finalisasi:
+
+- PRODUCT_OVERVIEW: hapus/sesuaikan referensi target 15 Oktober 2026
+  agar mengikuti keputusan terbaru bahwa tidak ada fixed delivery date.
+- ENGINEERING_PRINCIPLES: sesuaikan aturan UI agar tidak lagi menyatakan
+  seluruh UI hanya Bahasa Indonesia; baseline terbaru adalah Bahasa Indonesia
+  default + English secondary + language switch.
+- DECISION_LOG bagian "Open decisions": jangan lagi menunjuk
+  NEXT_ACTION yang sudah diarsipkan sebagai sumber langkah berikutnya.
+  Arahkan ke current operating state yang baru.
+
+Perubahan ini harus sangat sempit.
+Jangan buka perubahan semantik lain.
+
+"18-day window" di BUSINESS_RULES FS-14 dan REFERENCE_COVERAGE tetap
+dibiarkan seperti hasil review Anda.
+
+3. YA.
+
+Setelah publikasi:
+- branch `migration/aicwdf` tetap dipertahankan;
+- tag `pre-aicwdf-migration` tetap dipertahankan;
+- jangan hapus keduanya.
+
+Tambahan batasan:
+
+- Jangan mulai security/auth amendment.
+- Jangan mulai P7 UX re-baseline.
+- Jangan mulai P8.
+- Jangan membuat application code.
+- Jangan melakukan force push, rebase, reset, atau history rewrite.
+- Fast-forward `main` tanpa merge commit.
+- Push normal saja.
+- Verifikasi live remote setelah push.
+- Catat Owner approval dan ubah lifecycle migration dari
+  VERIFYING/PENDING menjadi approved/published state yang benar.
+
+Setelah finalisasi, P5 security/auth amendment dan P7 UX re-baseline tetap
+menjadi pekerjaan terpisah dengan otorisasi masing-masing.
+
+Untuk P7 UX re-baseline nanti, pertahankan latest Owner intent bahwa UI/UX
+harus genuinely USER FRIENDLY; visual yang bagus tetapi membingungkan user
+dianggap gagal.
+
+Sekarang siapkan hanya ready-to-copy Claude Code Desktop finalization prompt.
+
+Jangan eksekusi sendiri.

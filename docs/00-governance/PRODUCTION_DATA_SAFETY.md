@@ -1,6 +1,8 @@
 # Production data safety
 
-Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+
+Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 This document owns the production-database rules of AICWDF §29–§30 for agents. The production boundary — no production credentials for agents, secrets kept out of the repository, forbidden destructive commands, controlled migrations — is owned by [ENGINEERING_PRINCIPLES](ENGINEERING_PRINCIPLES.md#secrets-public-repository-and-production-boundary); the security controls by [SECURITY §7](../05-security/SECURITY.md#7-secrets-production-boundary-and-supply-chain); the backup policy by DIR-009 and the [local backup contract](../01-product/V1_SCOPE.md#v1-local-backup-and-p9-handoff-contract). This document links them and adds the agent rules below.
 

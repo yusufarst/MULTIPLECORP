@@ -1,10 +1,12 @@
 # Product definition
 
-Status: APPROVED | Updated: 2026-09-29 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-002](../00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved), explicit Owner approval on 2026-09-28 of the recovered P1 baseline; reviewed file hashes and scope are recorded there. Approval changes lifecycle only, not business requirements or implementation authorization.
 
 Amendment: the Kuitansi sentence in the partial-payment branch was narrowly amended on 2026-09-29 to represent the Owner's decision [DIR-024](../00-governance/DECISION_LOG.md#dir-023-dir-024-and-tech-015--p3-authorization-owner-decisions-and-documentation-execution) D-4; the pre-amendment SHA-256 is recorded there and the amended revision is approved under [APPR-004](../00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved).
+
+Amendment: the V1 target sentence of the definition was narrowly amended on 2026-10-03 to represent the Owner's decision [DIR-035](../00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) D1, no fixed delivery date, as ordered by [DIR-040](../00-governance/DECISION_LOG.md#dir-040-dir-041-obs-014-and-tech-024--aicwdf-migration-approval-directives-finalization-baseline-and-corrections) F2; the pre-amendment SHA-256 is recorded under TECH-024 and the amended revision is approved under [APPR-009](../00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved).
 
 Authority: Owner inputs are binding; this P1 product baseline is Owner-approved under APPR-002; application implementation requires separate authorization. Source shorthand: **OB** = [original brief](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt), **P1** = [latest owner directive](../00-governance/sources/P1_OWNER_DIRECTIVE_2026-09-27.txt), **C1–C3** = [owner's follow-up answers](../00-governance/sources/P1_OWNER_CLARIFICATIONS_2026-09-27.txt). Later explicit input takes precedence. Acceptance of P0 is recorded separately as APPR-001. DIR-011 settles the four remaining P1 business decisions; its canonical product contract is in [V1_SCOPE](V1_SCOPE.md#final-owner-business-decisions). It is not approval of the whole P1 package.
 
@@ -14,7 +16,7 @@ Authority: Owner inputs are binding; this P1 product baseline is Owner-approved 
 
 The former product label **Latansa Group Multi-Company Management System** denotes this same project; it is not another application or tenant. Legal entities such as **CV Latansa Jogjakarta** retain their actual names and identities. Product rebranding must not rename legal companies, bank destinations or historical documents. (P1: Product Name; OB §§2–4.)
 
-The target remains an **Operational Production V1 on 15 October 2026**: safe daily use, recoverable data and usable business outputs. It is not a promise that the future ERP vision fits the remaining window. Priority order and role boundaries remain in the [charter](../00-governance/PROJECT_CHARTER.md) and [engineering principles](../00-governance/ENGINEERING_PRINCIPLES.md).
+The target remains an **Operational Production V1**: safe daily use, recoverable data and usable business outputs; there is no fixed delivery date, and any future target is subject to the quality gates and completion criteria (DIR-035 D1). It is not a promise that the future ERP vision fits the remaining window. Priority order and role boundaries remain in the [charter](../00-governance/PROJECT_CHARTER.md) and [engineering principles](../00-governance/ENGINEERING_PRINCIPLES.md).
 
 ## Primary users and goals
 

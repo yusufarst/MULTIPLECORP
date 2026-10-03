@@ -1,6 +1,8 @@
 # Cost policy
 
-Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+
+Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 This document owns the procedure of AICWDF §4C for technology and service choices. The project's cost facts — the near-zero incremental monthly target, the existing VPS and domain, the cost areas and the evidence still needed — are owned by the [V1_SCOPE cost boundary](../01-product/V1_SCOPE.md#cost-boundary) and are not restated here. A recurring cost or a significant infrastructure change is a Level 2 decision ([CHANGE_CONTROL](CHANGE_CONTROL.md#decision-authority)).
 

@@ -2,7 +2,7 @@
 
 Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
-Approval: [APPR-001](docs/00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted); later approvals are indexed in the [approval register](docs/00-governance/DECISION_LOG.md#approval-register). Amendment — REVIEW, pending Owner approval: rewritten on 2026-10-03 for the AICWDF v4.3 operating structure (DIR-039; [TECH-023](docs/00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)).
+Approval: [APPR-001](docs/00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted); later approvals are indexed in the [approval register](docs/00-governance/DECISION_LOG.md#approval-register). Amendment: rewritten on 2026-10-03 for the AICWDF v4.3 operating structure (DIR-039; [TECH-023](docs/00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), where its hashes are recorded); the amended revision is approved under [APPR-009](docs/00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved).
 
 This file routes every planning, execution, review and release agent to the same repository context. The repository is the source of truth; chat, memory and generated output are not.
 

@@ -35,5 +35,7 @@ docs/00-governance/sources/AICWDF_OWNER_STRUCTURAL_CONFORMANCE_2026-10-03.txt -t
 docs/00-governance/sources/AICWDF_OWNER_FINAL_DECISIONS_2026-10-03.txt -text
 docs/00-governance/sources/AICWDF_OWNER_BLUEPRINT_APPROVAL_2026-10-03.txt -text
 docs/00-governance/sources/AICWDF_MIGRATION_OWNER_AUTHORIZATION_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_OWNER_MIGRATION_APPROVAL_2026-10-03.txt -text
+docs/00-governance/sources/AICWDF_MIGRATION_FINALIZATION_OWNER_AUTHORIZATION_2026-10-03.txt -text
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary

@@ -1,6 +1,8 @@
 # Toolchain
 
-Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+
+Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 The project toolchain registry (AICWDF §5–§7, §6A). It records capabilities, their honest status and the operating rules for tools and Git in this repository. The capability is the requirement; a named tool is the preference (AICWDF §5).
 

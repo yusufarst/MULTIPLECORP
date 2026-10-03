@@ -2,7 +2,7 @@
 
 Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
-Approval: [APPR-001](docs/00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted), P0 governance at b425584; later approvals are indexed in the [approval register](docs/00-governance/DECISION_LOG.md#approval-register). Amendment — REVIEW, pending Owner approval: this approval paragraph was shortened on 2026-10-03 (DIR-039; [TECH-023](docs/00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)).
+Approval: [APPR-001](docs/00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted), P0 governance at b425584; later approvals are indexed in the [approval register](docs/00-governance/DECISION_LOG.md#approval-register). Amendment: this approval paragraph was shortened on 2026-10-03 (DIR-039; [TECH-023](docs/00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), where its hashes are recorded); the amended revision is approved under [APPR-009](docs/00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved).
 
 Read and follow [AGENTS.md](AGENTS.md). It leads to the canonical specifications, current state, and authorized next action.
 

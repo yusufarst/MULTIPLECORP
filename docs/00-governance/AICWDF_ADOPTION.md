@@ -1,6 +1,8 @@
 # AICWDF v4.3 adoption
 
-Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+
+Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 This record maps the AI-First Complex Web Application Delivery Framework to the repository documents that apply it. It owns the mapping, the project exceptions and the terminology rule; it does not restate the framework.
 
@@ -42,7 +44,7 @@ Status values: **ADOPTED** — applied as written; **ADOPTED WITH PROJECT RULE**
 | §9 | Agent roles | [AGENT_OPERATING_MODEL](AGENT_OPERATING_MODEL.md#roles-and-limits) | ADOPTED WITH PROJECT RULE — agents never hold production credentials; a human operator runs production |
 | §10 | Master delivery model | [PROJECT_CHARTER](PROJECT_CHARTER.md#planning-sequence); [PHASE_STATUS](../PHASE_STATUS.md) | ADOPTED WITH PROJECT RULE — per-phase Owner authorization; deployment path PENDING P9 and P10 |
 | §11 | P0 — governance, foundation and agent continuity | [AGENTS.md](../../AGENTS.md); this folder | ADOPTED — the exit questions are answered from AGENTS.md and [CURRENT_HANDOFF](../handoff/CURRENT_HANDOFF.md) |
-| §12 | P1 — product definition, scope and acceptance | [PRODUCT_OVERVIEW](../01-product/PRODUCT_OVERVIEW.md), [V1_SCOPE](../01-product/V1_SCOPE.md), [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md) | ADOPTED — D1 and D7 amendment awaiting Owner approval |
+| §12 | P1 — product definition, scope and acceptance | [PRODUCT_OVERVIEW](../01-product/PRODUCT_OVERVIEW.md), [V1_SCOPE](../01-product/V1_SCOPE.md), [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md) | ADOPTED — the D1 and D7 amendments approved under APPR-009 |
 | §13 | P2 — domain model and business rules | [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) | ADOPTED |
 | §14.1 | Workflow contracts | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | ADOPTED |
 | §14.2, §14.3 | Route and interaction contracts | planned `docs/03-workflows/ROUTE_CONTRACTS.md`, `INTERACTION_CONTRACTS.md` | PENDING — P7 re-baseline ([GAP-035](GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet)) |

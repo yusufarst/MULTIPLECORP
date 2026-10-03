@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-001](DECISION_LOG.md), P0 governance at b425584. Subsequent directives and continuity updates remain recorded in the decision log. [APPR-002](DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved) approves the three P1 canonical product specifications, [APPR-003](DECISION_LOG.md#appr-003--p2-domain-baseline-approved) the two P2 normative domain specifications and [APPR-004](DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved) the P3 workflow specification with its amended P1/P2 revisions and [APPR-005](DECISION_LOG.md#appr-005--p4-database-architecture-approved) the two P4 normative architecture specifications with the amended P2/P3 revisions and [APPR-006](DECISION_LOG.md#appr-006--p5-security-and-authorization-approved) the two P5 normative security and authorization specifications with the amended DATABASE revision and [APPR-007](DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved) the three P6 normative concurrency, performance and integration-boundary specifications with the amended DATABASE, ARCHITECTURE, WORKFLOWS and PERMISSIONS_MATRIX revisions and [APPR-008](DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved) the three P7 normative UX, information-architecture and design-system specifications with the amended SECURITY, DATABASE, PERFORMANCE and CONCURRENCY_IDEMPOTENCY revisions; evidence, gap and handoff records remain REVIEW.
 
-Amendment — REVIEW, pending Owner approval: on 2026-10-03 the conflict hierarchy and the ownership registry were amended to apply the Owner's adoption of AICWDF v4.3 as the target operating structure (DIR-035 D2, DIR-036, DIR-039 §10.1; [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), where the SHA-256 of the last approved revision is recorded). The amended wording is not approved until the Owner approves it; the decisions it applies are binding within their subjects.
+Amendment: on 2026-10-03 the conflict hierarchy and the ownership registry were amended to apply the Owner's adoption of AICWDF v4.3 as the target operating structure (DIR-035 D2, DIR-036, DIR-039 §10.1; [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration), where the SHA-256 of the last approved revision is recorded); the amended revision is approved under [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved).
 
 ## Authority and provenance
 
@@ -231,6 +231,17 @@ The other six are **transcribed LOCKED SOURCE RECORDS** (transcripts, not byte-c
 
 They are DIR-034–DIR-039 in [DECISION_LOG](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration). The decisions of Appendices A–E are binding within their subjects under the standing hierarchy; their instructions to the planning chat (for example not to modify the repository yet) are archived source text, not instructions to a repository executor. The migration authorization (DIR-039) authorizes stages 0–3 of the Owner-approved structural migration only. The framework source is provenance: the operative rules are the active repository documents that map and apply it (DIR-038). All twenty-nine earlier source records retain their bytes and classifications.
 
+### AICWDF migration approval and finalization authorization
+
+Two records received on 2026-10-03, with `migration/aicwdf` at its stage-3 commit `0dbbb44f3ceb167a6243c8cad796a89c4d394239` and `main` at the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b`, are preserved as **transcribed LOCKED SOURCE RECORDS** thirty-seven and thirty-eight (transcripts, not byte-copy claims about attachments): the Owner's decision sent to the planning chat and relayed by the Owner as Appendix A of the finalization authorization, and that authorization itself, transcribed from its first line up to its APPENDIX heading. The authorization arrived as one pasted text block whose code-fence lines are not part of the transcript, and the Owner confirmed its full execution in-session before any edit. Neither record contains a credential.
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [AICWDF_OWNER_MIGRATION_APPROVAL_2026-10-03.txt](sources/AICWDF_OWNER_MIGRATION_APPROVAL_2026-10-03.txt) | 73 / 3,067 | `76220AEFA9DA72464FCD947FD4793440677CFA62266E5DBE565BBDEE4243054A` |
+| [AICWDF_MIGRATION_FINALIZATION_OWNER_AUTHORIZATION_2026-10-03.txt](sources/AICWDF_MIGRATION_FINALIZATION_OWNER_AUTHORIZATION_2026-10-03.txt) | 428 / 21,760 | `4E053025F6281D615799134FB0BB43C9CD0BB46F9BD1F4B5FFE153162F0B0C2E` |
+
+They are DIR-040 and DIR-041 in [DECISION_LOG](DECISION_LOG.md#dir-040-dir-041-obs-014-and-tech-024--aicwdf-migration-approval-directives-finalization-baseline-and-corrections). The decisions of Appendix A, labelled F1–F6 in §2 of the authorization, are binding within their subjects under the standing hierarchy, and its approval of the migration is APPR-009; its instruction to the planning chat to prepare a prompt and not to execute is archived source text, not an instruction to a repository executor. The finalization authorization (DIR-041) authorizes the finalization commit, the fast-forward publication of `main` with its live-remote verification and the publication-confirmation commit only. All thirty-six earlier source records retain their bytes and classifications.
+
 ## Classify statements before changing them
 
 | Class | Meaning | Treatment |
@@ -255,19 +266,19 @@ One document owns each concern. Other files link to that owner. Paths listed as 
 | Decision/approval evidence | `docs/00-governance/DECISION_LOG.md` | Exists / P0 | 1, 50, 52 |
 | Cross-cutting engineering guardrails | `docs/00-governance/ENGINEERING_PRINCIPLES.md` | Exists / P0 | 18–44, 58; detailed designs reserved below |
 | P0 gate evidence | `docs/00-governance/evidence/P0_QUALITY_GATE.md` | Exists / P0 | 56–57 |
-| AICWDF v4.3 section map, project exceptions, terminology and planned-path mapping | `docs/00-governance/AICWDF_ADOPTION.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-034–039; AICWDF §1, §41 |
+| AICWDF v4.3 section map, project exceptions, terminology and planned-path mapping | `docs/00-governance/AICWDF_ADOPTION.md` | Exists, APPROVED (APPR-009) / P0 (AICWDF adoption) | DIR-034–039; AICWDF §1, §41 |
 | Binding decisions and their status, without rule text | `docs/00-governance/DECISION_INDEX.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-039 |
-| Capabilities and tools, MCP activation, Git line endings and staging, public-repository rule | `docs/00-governance/TOOLCHAIN.md` | Exists, REVIEW / P0 (AICWDF adoption) | 40–43; AICWDF §5–§7, §6A |
-| Technology and service cost procedure; recurring-cost inventory and exception registry | `docs/00-governance/COST_POLICY.md` | Exists, REVIEW / P0 (AICWDF adoption) | 47; AICWDF §4C |
-| Production database zero-touch for agents | `docs/00-governance/PRODUCTION_DATA_SAFETY.md` | Exists, REVIEW / P0 (AICWDF adoption) | 37; AICWDF §29–§31 |
+| Capabilities and tools, MCP activation, Git line endings and staging, public-repository rule | `docs/00-governance/TOOLCHAIN.md` | Exists, APPROVED (APPR-009) / P0 (AICWDF adoption) | 40–43; AICWDF §5–§7, §6A |
+| Technology and service cost procedure; recurring-cost inventory and exception registry | `docs/00-governance/COST_POLICY.md` | Exists, APPROVED (APPR-009) / P0 (AICWDF adoption) | 47; AICWDF §4C |
+| Production database zero-touch for agents | `docs/00-governance/PRODUCTION_DATA_SAFETY.md` | Exists, APPROVED (APPR-009) / P0 (AICWDF adoption) | 37; AICWDF §29–§31 |
 | Old → new paths of the structural migration and their proofs | `docs/00-governance/MIGRATION_MAP.md` | Exists, REVIEW / P0 (AICWDF adoption) | DIR-039 |
 | Phase progress P0–P11 until the Task plan exists | `docs/PHASE_STATUS.md` | Exists, REVIEW / P0 (AICWDF adoption) | 51, 55–57; DIR-037; AICWDF §10 |
 | Current operational handoff and safe next action | `docs/handoff/CURRENT_HANDOFF.md` | Exists, REVIEW / P0 (AICWDF adoption) | 51; AICWDF §36 |
 | Historical handoff snapshots of 2026-10-02 | `docs/handoff/archive/CURRENT_STATE_2026-10-02.md`, `NEXT_ACTION_2026-10-02.md` | Archive, REVIEW / P0 | 51, 55–57 |
-| Stable minimum context for execution agents | `docs/11-tasks/EXECUTION_CONTEXT.md` | Exists, REVIEW / P11 | AICWDF §34A |
-| Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 46; P1 identity and user/product direction |
-| V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004) / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
-| Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, APPROVED (APPR-002) / P1 | 41–42, 46; P1 targets and user/product outcomes |
+| Stable minimum context for execution agents | `docs/11-tasks/EXECUTION_CONTEXT.md` | Exists, APPROVED (APPR-009) / P11 | AICWDF §34A |
+| Product explanation, users and goals | `docs/01-product/PRODUCT_OVERVIEW.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004; the D1 correction approved under APPR-009) / P1 | 2–17, 46; P1 identity and user/product direction |
+| V1 priorities, exclusions, product cost/dependencies and P7 obligations | `docs/01-product/V1_SCOPE.md` | Exists, APPROVED (APPR-002; DIR-024 amendment approved under APPR-004; the D1, D4 and D7 amendment approved under APPR-009) / P1 | 2–17, 45–47; P1 constraints and C1–C3 |
+| Product acceptance and operational success | `docs/01-product/ACCEPTANCE_CRITERIA.md` | Exists, APPROVED (APPR-002; the D7 amendment approved under APPR-009) / P1 | 41–42, 46; P1 targets and user/product outcomes |
 | P1 adversarial review and quality evidence | `docs/01-product/evidence/P1_QUALITY_GATE.md` | Exists, REVIEW / P1 | P1 objective/review/gate/report |
 | Reference comparison and requirement identifiers | `docs/01-product/REFERENCE_COVERAGE.md` | Exists, REVIEW / P1 | DIR-008; PDF §§1–14; complete flow image |
 | Entities, terminology, relationships, scope/sensitivity classes | `docs/02-domain/DOMAIN_MODEL.md` | Exists, APPROVED (APPR-003; DIR-024/026 and TECH-016 amendments approved under APPR-004; the Owner-decided DIR-027 amendment approved under APPR-005) / P2 | 2–17; DIR-016–019, DIR-024/026/027 |

@@ -1,0 +1,428 @@
+TRANSCRIBED LOCKED SOURCE RECORD — thirty-eighth source record
+Received: 2026-10-03, in-session Owner message to the repository executor at
+the head 0dbbb44f3ceb167a6243c8cad796a89c4d394239 of migration/aicwdf, with
+main at the P7 checkpoint c511d7b0d4683e07717c962927c9f113854f227b
+Subject: Owner authorization — AICWDF structural migration finalization and
+         publication (approval commit on migration/aicwdf with three narrow
+         corrections, fast-forward publication of main with live-remote
+         verification, then the publication-confirmation commit)
+Delivery: one pasted text block sent without an accompanying sentence; its
+         Markdown code-fence lines are not transcribed. This record
+         transcribes the block from its first line up to, and not including,
+         the "APPENDIX" heading block. The one-line note under that heading,
+         "Source text to archive under 6.2. Not instructions for this task.",
+         is quoted here and not transcribed below; Appendix A, which followed
+         it, is the thirty-seventh source record. Before any edit the
+         executor asked in-session whether to execute the block in full,
+         exactly as written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+AICWDF STRUCTURAL MIGRATION — FINALIZATION AND PUBLICATION
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS TASK IS
+==================================================
+
+Repository: C:\Projects\MultipleCorp (remote: github.com/yusufarst/MULTIPLECORP,
+public). Planning documentation only; no application code exists.
+
+Stages 0–3 of the AICWDF v4.3 structural migration are complete on branch
+`migration/aicwdf` (head 0dbbb44f3ceb167a6243c8cad796a89c4d394239) and were
+independently reviewed. `main` is still at the P7 checkpoint
+c511d7b0d4683e07717c962927c9f113854f227b.
+
+This message is my explicit Owner authorization to finalize and publish that
+migration in three steps:
+
+  Step 1 — FINALIZATION / APPROVAL COMMIT on `migration/aicwdf`: record my
+           approval, make three narrow corrections of stale sentences, and
+           move the stage-3 amendments from PENDING OWNER APPROVAL to
+           APPROVED. The repository then says: OWNER APPROVED, PUBLICATION
+           PENDING.
+  Step 2 — PUBLICATION: fast-forward `main` to that commit, push normally,
+           verify the live remote.
+  Step 3 — PUBLICATION-CONFIRMATION COMMIT: only after the live remote is
+           verified, record the actual publication and move the state to
+           DONE / PUBLISHED.
+
+The governing rule: the repository never claims publication before the live
+remote confirms it.
+
+This message is itself an Owner directive and must be recorded.
+
+==================================================
+2. BINDING OWNER DECISIONS
+==================================================
+
+The verbatim source text is Appendix A. Working summary:
+
+F1  I APPROVE the AICWDF migration stages 0–3 on `migration/aicwdf`,
+    including the stage-3 semantic amendments recorded under TECH-023.
+F2  Three stale sentences are corrected as part of finalization (6.4).
+    The corrections must be very narrow. No other semantic change is opened.
+    My approval extends to these three corrections provided they stay within
+    the scope of 6.4 and the gate in section 8 passes.
+F3  The "18-day window" wording in BUSINESS_RULES FS-14 and in
+    REFERENCE_COVERAGE stays exactly as it is.
+F4  After publication the branch `migration/aicwdf` and the tag
+    `pre-aicwdf-migration` are both kept. Do not delete either.
+F5  The P5 security/auth amendment and the P7 UX re-baseline remain separate
+    work, each under its own later authorization. P8 stays BLOCKED.
+F6  Standing Owner intent for the later P7 UX re-baseline: the UI/UX must be
+    genuinely USER FRIENDLY, and a visually attractive design that confuses
+    users is a failed UX outcome. (Record this intent; do not start the
+    re-baseline.)
+
+==================================================
+3. NOT AUTHORIZED
+==================================================
+
+- The security/authentication amendment. No change to any SECURITY,
+  PERMISSIONS_MATRIX, DATABASE or CONCURRENCY rule.
+- The P7 UX re-baseline. No design system, IA, token or screen work.
+- Any P8, P9, P10 or P11 work. No Tasks, no TASK_PLAN.md.
+- Application code, packages, tests, infrastructure; installing anything.
+- Any semantic change other than the three corrections of 6.4.
+- Editing BUSINESS_RULES or REFERENCE_COVERAGE.
+- Editing, renaming or moving any existing file under
+  docs/00-governance/sources/.
+- Any change to the split part files of WORKFLOWS, DATABASE,
+  CONCURRENCY_IDEMPOTENCY or ADMIN_FLOW.
+- A merge commit. Force push, rebase, reset, amend or any history rewrite.
+- Deleting the branch `migration/aicwdf` or the tag `pre-aicwdf-migration`.
+- Committing verification scripts. Cowork, GUI control, GitHub Desktop
+  control.
+
+==================================================
+4. STOP CONDITIONS
+==================================================
+
+Stop immediately, repair nothing, and report to me in Bahasa Indonesia with
+the evidence, if any of these occurs:
+
+1. At the start, any of these is not true, locally and on the live remote:
+   - `main` == c511d7b0d4683e07717c962927c9f113854f227b;
+   - `migration/aicwdf` == 0dbbb44f3ceb167a6243c8cad796a89c4d394239;
+   - the tag `pre-aicwdf-migration` is annotated and points to c511d7b…;
+   - `main` is an ancestor of `migration/aicwdf`.
+2. The working tree or index is unexpectedly dirty. Apply the line-ending
+   note in docs/00-governance/TOOLCHAIN.md first: a CRLF-only difference is
+   not dirty.
+3. Any of the 36 existing source records does not match its recorded hash.
+4. One of the three sentences in 6.4 is not where and what 6.4 says it is,
+   or cannot be corrected without changing other meaning.
+5. Completing a step would need a semantic change beyond 6.4.
+6. Approval provenance would be lost or weakened.
+7. A genuine Owner-level decision appears.
+8. `git merge --ff-only` is refused, or unexpected divergence appears at any
+   point.
+9. A push fails, or the live remote does not show the expected state after a
+   push. Section 11 says what state to leave.
+
+==================================================
+5. GIT RULES
+==================================================
+
+- Commits use only my existing configured Git author/committer identity.
+  Never add Co-Authored-By, Generated-By, Assisted-By or any AI/model/tool
+  attribution. After each commit, read the raw message
+  (`git log -1 --format=%B`) and confirm there is no trailer.
+- All document work is done on `migration/aicwdf`. Exactly two commits, with
+  these exact messages:
+    Commit A  docs: finalize AICWDF structural migration
+    Commit B  docs: record AICWDF migration publication
+- Commit A is created only after gate A (section 8) passes. Commit B is
+  created only after the live-remote verification of section 9 succeeds and
+  gate B (section 10) passes.
+- `main` moves only by `git merge --ff-only`. Pushes are normal, non-force.
+- Stage Markdown with CRLF normalization so blobs stay LF. Never rewrite a
+  file only to normalize line endings.
+- If a gate fails before its commit, fix the work or discard the uncommitted
+  changes and redo it. If a defect is found after a commit, use a corrective
+  commit or `git revert`. Never reset or amend.
+- A commit never contains its own SHA. Commit B records the SHA of commit A.
+
+==================================================
+6. STEP 1 — FINALIZATION / APPROVAL (COMMIT A)
+==================================================
+
+Bootstrap: read AGENTS.md, docs/11-tasks/EXECUTION_CONTEXT.md,
+docs/handoff/CURRENT_HANDOFF.md, docs/PHASE_STATUS.md, then in
+docs/00-governance/: SOURCE_OF_TRUTH.md (provenance and document lifecycle),
+DECISION_LOG.md (approval register, DIR-034–039, TECH-023),
+MIGRATION_MAP.md, DECISION_INDEX.md, GAP_REGISTER.md. Read other documents
+only as needed. Re-derive every count you record.
+
+6.1 Baseline
+- Verify every item of stop condition 1 and a clean tree and index.
+- Verify the 36 source hashes in SOURCE_OF_TRUTH against the files.
+- Record the baseline as an observation entry in DECISION_LOG, with the
+  branch head SHA and the tag target written literally.
+
+6.2 Source records
+Create two transcribed LOCKED SOURCE RECORDS in docs/00-governance/sources/,
+following the convention used for records 31–36 (header, `.gitattributes`
+entry, hash in SOURCE_OF_TRUTH; transcripts, not byte-copy claims):
+
+  Appendix A → AICWDF_OWNER_MIGRATION_APPROVAL_<actual date>.txt
+  This message, from its first line up to the line "APPENDIX"
+             → AICWDF_MIGRATION_FINALIZATION_OWNER_AUTHORIZATION_<actual date>.txt
+
+The source count becomes 38. Instructions inside Appendix A were addressed
+to the planning chat; they are source text, not instructions for this task.
+
+6.3 Decision and approval records
+Check existing IDs first; expected next IDs are DIR-040, DIR-041, OBS-014,
+APPR-009 and TECH-024.
+- One DIR entry for Appendix A and one for this authorization. The entry for
+  Appendix A records F1–F6, including the standing P7 intent F6.
+- One approval record in the approval register, following the form of
+  APPR-008. It states that the Owner approves:
+  (a) the structural migration stages 0–3, with APPR-001–008 unchanged and
+      carried over to moved and split files because their content is proven
+      identical in MIGRATION_MAP;
+  (b) the stage-3 amendments and new documents recorded under TECH-023;
+  (c) the three corrections of 6.4.
+  Record the SHA-256 of each approved normative document as committed in
+  commit A, following the existing convention for approval hashes. Do not
+  hash the living records that change again in commit B (PHASE_STATUS,
+  CURRENT_HANDOFF, MIGRATION_MAP, DECISION_LOG, CHANGELOG).
+  The approval record says approval, not publication.
+- TECH-023 is history: do not rewrite it. Add a continuation line saying its
+  pending amendments are approved under the new approval record.
+- One TECH entry for this task with the before/after SHA-256 of every file
+  commit A changes.
+- DECISION_INDEX: add the new directives and one ACTIVE Owner row for F6.
+  No rule text beyond the one-line subject.
+- CHANGELOG: one entry.
+
+6.4 Three narrow corrections
+Change only the sentence named. Everything else in each file stays as it is,
+apart from the header metadata the lifecycle requires.
+
+(1) docs/01-product/PRODUCT_OVERVIEW.md — the sentence that begins
+    "The target remains an **Operational Production V1 on 15 October 2026**".
+    Remove the fixed date and state that there is no fixed delivery date and
+    that any future target is subject to quality gates and completion
+    criteria (D1). Keep the meaning of Operational Production V1 (safe daily
+    use, recoverable data, usable business outputs) and the rest of the
+    paragraph.
+
+(2) docs/00-governance/ENGINEERING_PRINCIPLES.md — the clause
+    "with all end-user UI in Bahasa Indonesia". Replace it with: end-user UI
+    in Bahasa Indonesia by default, English as the secondary language
+    through a language switch (D7). Change only this language clause. If the
+    same bullet contains other wording that an Owner decision superseded,
+    leave it and report it.
+
+(3) docs/00-governance/DECISION_LOG.md, section "Open decisions" — the
+    sentence saying that the archived NEXT_ACTION "identifies the safe
+    follow-up". Point it instead to docs/handoff/CURRENT_HANDOFF.md (safe
+    next action) and docs/PHASE_STATUS.md. Change only this sentence.
+
+6.5 Lifecycle: from pending to approved
+- Find every "pending Owner approval" / "PENDING OWNER APPROVAL" amendment
+  note that stage 3 added to active documents. Replace each with the form
+  this repository already uses for an approved amendment, citing the new
+  approval record and keeping the pointer to the recorded hashes.
+- Give each stage-3 new document the status the SOURCE_OF_TRUTH document
+  lifecycle assigns to its kind (normative document, living record or
+  evidence). Do not invent a status.
+- Leave these notes as they are, because they describe later work: the
+  "Pending amendment" note in SECURITY (D5, D6) and the "Replacement" notes
+  in DESIGN_SYSTEM and INFORMATION_ARCHITECTURE (D3).
+
+6.6 Current-state documents in commit A: APPROVED, PUBLICATION PENDING
+Nothing in commit A may say or imply that the migration is published, DONE
+or on `main`.
+
+- docs/PHASE_STATUS.md:
+    P0  DONE (APPR-001) · AICWDF adoption amendment: OWNER APPROVED (new
+        approval record), PUBLICATION PENDING
+    P1  DONE (APPR-002) · amendment: OWNER APPROVED (new approval record),
+        PUBLICATION PENDING
+    P2–P4, P6  unchanged
+    P5  DONE · open amendment: password, TOTP, Google sign-in — READY
+    P7  IN_PROGRESS · UX re-baseline, awaiting its own authorization
+    P8  BLOCKED · waits for the P5 auth amendment and P7
+    P9–P11  TODO
+    Structural migration: OWNER APPROVED (new approval record) —
+    PUBLICATION PENDING; `main` is still at the P7 checkpoint c511d7b….
+- docs/handoff/CURRENT_HANDOFF.md: last completed action = approval and
+  finalization on `migration/aicwdf`; state = OWNER APPROVED, PUBLICATION
+  PENDING; blockers and gaps updated (the three corrected sentences leave
+  the list; the retained "18-day window" wording is noted as kept by Owner
+  decision F3); F6 noted under UI/UX; safe next action = publication under
+  this directive (fast-forward `main`, push, verify the live remote, then
+  the publication-confirmation commit). The P5 and P7 work is named as
+  later, separately authorized work.
+- docs/00-governance/MIGRATION_MAP.md: append a short "Approval" section
+  with the result of gate A. It states that publication is pending.
+- GAP_REGISTER: update only what this task changes; re-derive totals.
+
+==================================================
+7. SCOPE OF COMMIT A
+==================================================
+
+Commit A may touch only:
+  docs/00-governance/sources/  (two new files), .gitattributes,
+  SOURCE_OF_TRUTH, DECISION_LOG, DECISION_INDEX, CHANGELOG, MIGRATION_MAP,
+  GAP_REGISTER, PRODUCT_OVERVIEW, ENGINEERING_PRINCIPLES, PHASE_STATUS,
+  CURRENT_HANDOFF,
+  and the documents whose pending note or status changes under 6.5.
+
+==================================================
+8. GATE A (before commit A)
+==================================================
+
+- Baseline checks of 6.1 pass.
+- The diff touches only the files of section 7.
+- For each of the three corrections, the body diff is the named sentence or
+  clause and nothing else.
+- BUSINESS_RULES, REFERENCE_COVERAGE, the four split folders, and every
+  SECURITY, PERMISSIONS_MATRIX, DATABASE and CONCURRENCY rule are unchanged.
+- No "pending Owner approval" amendment note remains in an active document,
+  except the later-work notes kept under 6.5.
+- PHASE_STATUS, CURRENT_HANDOFF and MIGRATION_MAP say OWNER APPROVED and
+  PUBLICATION PENDING. No document says the migration is published, DONE or
+  on `main`.
+- All 36 earlier source records are byte-identical to the branch head
+  0dbbb44…; the two new hashes are recorded and re-verified from disk.
+- Content-truth counts unchanged from the tag, re-derived the same way on
+  both sides: 18 MUST capabilities, 14 document types, 124 tables in 13
+  modules, 80 capabilities.
+- Phase status appears only in PHASE_STATUS; CURRENT_HANDOFF repeats no
+  history; DECISION_INDEX holds no rule text.
+- Repository-wide link check passes; every identifier referenced exists.
+- No secrets, no placeholder text.
+- Zero-context check: a fresh agent or session with none of this
+  conversation, given only the working tree, answers from the repository
+  alone: (a) what is the state of the structural migration and under which
+  approval — the correct answer is approved, publication pending; (b) what
+  is the current phase and why is P8 BLOCKED; (c) what is the safe next
+  action and what is not authorized; (d) is there any document that still
+  sends it to NEXT_ACTION or to a 15 October target as current truth.
+  All answers must be correct. Fix navigation documents (Level 1) and
+  repeat if not. Record the result in MIGRATION_MAP.
+
+Then create commit A on `migration/aicwdf`.
+
+==================================================
+9. STEP 2 — PUBLICATION OF COMMIT A
+==================================================
+
+1. `git checkout main`
+2. `git merge --ff-only migration/aicwdf`   (no merge commit; if refused, STOP)
+3. Confirm locally: `main` == `migration/aicwdf` == commit A; the tag still
+   points to c511d7b….
+4. Normal, non-force pushes:
+     git push origin migration/aicwdf
+     git push origin main
+5. Verify on the live remote (`git ls-remote`):
+   - `main` == commit A;
+   - `migration/aicwdf` == commit A;
+   - the tag `pre-aicwdf-migration` is unchanged and still points to
+     c511d7b….
+6. Keep the branch and the tag. Delete nothing.
+
+Only if step 5 succeeds in full, continue with section 10.
+
+==================================================
+10. STEP 3 — PUBLICATION-CONFIRMATION (COMMIT B)
+==================================================
+
+Work on `migration/aicwdf` (`git checkout migration/aicwdf`). This commit
+records what actually happened and nothing else.
+
+10.1 Changes
+- docs/PHASE_STATUS.md: the structural migration becomes DONE — approved and
+  published; the P0 and P1 amendment notes become approved and published.
+  No other row changes.
+- docs/handoff/CURRENT_HANDOFF.md: state = published. Record the literal
+  SHA of commit A, the date, and the live-remote verification (the refs and
+  SHAs observed for `main`, `migration/aicwdf` and the tag). Safe next
+  action = my authorization of the P5 security/auth amendment, then of the
+  P7 UX re-baseline. State that this confirmation commit follows commit A
+  and that a new session verifies live `main` before acting.
+- docs/00-governance/MIGRATION_MAP.md: append a short "Publication" section
+  with the literal SHA of commit A and the live-remote verification.
+- docs/00-governance/DECISION_LOG.md: one observation entry (expected
+  OBS-015; check first) recording the same publication facts.
+- CHANGELOG: one entry.
+
+No other file changes. No semantic change of any kind. The commit does not
+contain its own SHA; the next task records it.
+
+10.2 Gate B (before commit B)
+- The live-remote verification of section 9 succeeded and is the evidence
+  for every publication statement.
+- The diff touches only the five files of 10.1.
+- The SHA written as "published" is exactly commit A's SHA.
+- No source record, no approval hash table and no normative document
+  changed.
+- Link check passes.
+- A fresh zero-context read answers correctly: (a) the structural migration
+  is approved and published; (c) the safe next action and what is not
+  authorized.
+
+10.3 Publish commit B
+1. Create commit B on `migration/aicwdf`.
+2. `git checkout main` and `git merge --ff-only migration/aicwdf`.
+3. Normal pushes: `git push origin migration/aicwdf`, then
+   `git push origin main`.
+4. Verify on the live remote: `main` == `migration/aicwdf` == commit B; the
+   tag is unchanged.
+
+==================================================
+11. IF PUBLICATION FAILS
+==================================================
+
+- If a push in section 9 fails, or the live remote does not match in full:
+  do NOT create commit B; do NOT claim DONE or PUBLISHED anywhere; leave the
+  repository truthfully at OWNER APPROVED, PUBLICATION PENDING; report the
+  exact local and remote state.
+- If this environment has no GitHub credentials: do not request broad
+  access. Finish through step 3 of section 9, report commit A's SHA and give
+  me these commands to run:
+     git push origin migration/aicwdf
+     git push origin main
+  If I confirm in this session that I pushed, verify the live remote and
+  then continue with section 10. Otherwise stop there.
+- If the push of commit B fails after commit B exists locally: report it and
+  give me the two push commands. Commit B's statements remain true, because
+  they concern commit A, which was verified on the live remote.
+- Never claim a publication that the live remote has not confirmed.
+
+==================================================
+12. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+A. Baseline evidence.
+B. Commit A: SHA, message, identity, no trailers. Gate A, each check with
+   its evidence.
+C. The three corrections: file, sentence before and after, hashes before
+   and after.
+D. Approval record and directive IDs actually used; new source records with
+   hashes.
+E. Lifecycle changes: every note or status changed, and those kept.
+F. Zero-context checks: questions, answers, results.
+G. Publication of commit A: fast-forward, pushes, live-remote verification.
+H. Commit B: SHA, message, identity, no trailers; gate B; pushes and the
+   final live-remote verification. If commit B was not created, say so and
+   state the truthful repository state.
+I. Branch `migration/aicwdf` and tag `pre-aicwdf-migration` still present.
+J. Level-1 decisions you made; anything left open; anything you could not
+   verify; any stop condition met.
+K. The exact next safe action.
+
+Stop after the report.

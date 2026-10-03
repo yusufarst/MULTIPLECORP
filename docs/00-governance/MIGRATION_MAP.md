@@ -15,7 +15,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Stage 2 — DATABASE | `8b712a829676464035a4af6718f72ef3dab366b8` | `docs: split DATABASE into section files`: `docs/04-architecture/DATABASE.md` split into 24 section files and a README |
 | Stage 2 — CONCURRENCY_IDEMPOTENCY | `db4e1f524579ae60812dd45a06bc6d89cad0938a` | `docs: split CONCURRENCY_IDEMPOTENCY into section files`: `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
 | Stage 2 — ADMIN_FLOW | `64431fcbca0134b4b268762cb765dc6520241ac2` | `docs: split ADMIN_FLOW into section files`: `docs/07-ux-design/ADMIN_FLOW.md` split into 8 section files and a README |
-| Stage 3 | the commit `docs: align governance and operating structure with AICWDF v4.3`, child of `64431fc` | Governance and operating-structure alignment (DIR-039 §10); no move or split |
+| Stage 3 | `0dbbb44f3ceb167a6243c8cad796a89c4d394239` | `docs: align governance and operating structure with AICWDF v4.3`: governance and operating-structure alignment (DIR-039 §10); no move or split |
+| Finalization | the commit `docs: finalize AICWDF structural migration`, child of `0dbbb44` | Owner approval APPR-009 recorded, three narrow corrections and the stage-3 lifecycle from pending to approved (DIR-041); see [Approval](#approval) |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -250,7 +251,7 @@ Link targets rewritten: 56 inside the parts — in-document anchors whose headin
 
 ## Stage 3 — governance and operating-structure alignment
 
-Stage 3 moves and splits nothing. It amends thirteen existing files and creates twelve, as DIR-039 §10 lists, and adds records to the decision log, the changelog and this map. [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) records each amended file with its SHA-256 at the tag, before stage 3 and after, and the directive it implements, and the hash of each new document. Every stage-3 amendment is pending the Owner's approval.
+Stage 3 moves and splits nothing. It amends thirteen existing files and creates twelve, as DIR-039 §10 lists, and adds records to the decision log, the changelog and this map. [TECH-023](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) records each amended file with its SHA-256 at the tag, before stage 3 and after, and the directive it implements, and the hash of each new document. Every stage-3 amendment was pending the Owner's approval when stage 3 was committed; the Owner approved them on 2026-10-03 under APPR-009 ([Approval](#approval)).
 
 ## Gate results
 
@@ -387,3 +388,47 @@ Output of `git diff -M --summary <commit 0> <stage 1>`. Git's rename detection i
  rename docs/{07-handoff/NEXT_ACTION.md => handoff/archive/NEXT_ACTION_2026-10-02.md} (63%)
  create mode 100644 docs/handoff/archive/README.md
 ```
+
+## Approval
+
+**State: OWNER APPROVED, PUBLICATION PENDING.** On 2026-10-03 the Owner approved the migration under [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved) (DIR-040 F1 and F2): stages 0–3 as reviewed at the stage-3 commit `0dbbb44f3ceb167a6243c8cad796a89c4d394239`, the stage-3 amendments and new documents, and three narrow corrections made under DIR-041 in the finalization commit `docs: finalize AICWDF structural migration`, a child of `0dbbb44`. APPR-001–APPR-008 carry over unchanged to the moved and split files on the proofs above. Publication is pending: `main` is still at the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` until DIR-041 fast-forwards it to the finalization commit, and the publication is recorded only after the live remote confirms it.
+
+### Gate A — finalization: PASS
+
+- **Baseline (OBS-014).** Local and live `main` equal `c511d7b0d4683e07717c962927c9f113854f227b`; local and live `migration/aicwdf` equal `0dbbb44f3ceb167a6243c8cad796a89c4d394239`; the annotated tag `pre-aicwdf-migration` points to `c511d7b0d4683e07717c962927c9f113854f227b` locally and on the remote; `main` is an ancestor of the branch; clean tree and index; the 36 source hashes verified.
+- **Scope.** The finalization diff changes 30 files, all allowed by DIR-041 §7: the two new source records, `.gitattributes`, SOURCE_OF_TRUTH, DECISION_LOG, DECISION_INDEX, CHANGELOG, this map, GAP_REGISTER, PRODUCT_OVERVIEW, ENGINEERING_PRINCIPLES, PHASE_STATUS and CURRENT_HANDOFF, and the documents whose pending note or status changes under §6.5 — AGENTS.md, CLAUDE.md, README.md, CONTEXT_INDEX, PROJECT_CHARTER, AGENT_OPERATING_MODEL, V1_SCOPE, ACCEPTANCE_CRITERIA, AICWDF_ADOPTION, TOOLCHAIN, COST_POLICY, PRODUCTION_DATA_SAFETY, EXECUTION_CONTEXT and the four reservation READMEs of `docs/08-testing/` to `docs/11-tasks/`.
+- **Corrections.** Outside the lifecycle header, the PRODUCT_OVERVIEW diff is the target sentence alone, the ENGINEERING_PRINCIPLES diff the language clause alone, and the decision log's "Open decisions" diff the NEXT_ACTION sentence alone; putting each named text back reproduces the earlier body exactly.
+- **Unchanged.** BUSINESS_RULES, REFERENCE_COVERAGE, every file of the four split folders, SECURITY, PERMISSIONS_MATRIX, DESIGN_SYSTEM and INFORMATION_ARCHITECTURE — 59 files — are byte-identical to `0dbbb44`, so no SECURITY, PERMISSIONS_MATRIX, DATABASE or CONCURRENCY rule changes.
+- **Lifecycle.** No "pending Owner approval" amendment note remains in an active document; SECURITY's "Pending amendment" note and the "Replacement" notes of DESIGN_SYSTEM and INFORMATION_ARCHITECTURE are kept; the new normative documents are APPROVED and the living records REVIEW (TECH-024).
+- **Current state.** PHASE_STATUS, CURRENT_HANDOFF and this section say OWNER APPROVED and PUBLICATION PENDING; no document says that the migration is published, DONE or on `main`.
+- **Sources.** The 36 earlier records are byte-identical to `0dbbb44`; records 37 and 38 are registered in SOURCE_OF_TRUTH, their hashes re-verified from disk; 38 source files and 38 distinct hashes.
+- **Content truth.** Derived the same way at the tag and now: 18 MUST capabilities, 14 document types, 124 tables in 13 modules (module-map total 124), 80 capabilities (ADM 37, ADM_PLUS 26, OWNER_ONLY 17).
+- **One owner per fact.** Phase status is recorded only in PHASE_STATUS; CURRENT_HANDOFF holds the current state and the last action, not history; DECISION_INDEX holds subjects and statuses, no rule text.
+- **Links and identifiers.** 1,548 relative links in 103 Markdown files outside `sources/`, none broken, anchors included; every DIR, OBS, TECH, APPR, PROP, RISK and GAP identifier the changed files cite is defined.
+- **Hygiene.** No secret or credential pattern and no placeholder text in the added lines.
+
+#### Zero-context check
+
+A fresh read-only agent, given none of the finalization conversation and only the working tree of `migration/aicwdf` (the finalization in the tree but not yet committed), started from the repository's own entry point and answered from the repository alone.
+
+| Question | Answer from the repository | Result |
+| --- | --- | --- |
+| (a) What is the state of the structural migration, and under which approval? | OWNER APPROVED, PUBLICATION PENDING, under APPR-009 (DIR-040 F1 and F2; DIR-041), with `main` still at the P7 checkpoint — PHASE_STATUS, CURRENT_HANDOFF, this section and the decision log | Correct |
+| (b) What is the current phase, and why is P8 BLOCKED? | P7, IN_PROGRESS, its UX re-baseline awaiting its own authorization; P8 waits for the P5 authentication amendment (GAP-036) and for the P7 re-baseline, which owes GAP-035 and GAP-037 | Correct |
+| (c) What is the safe next action, and what is not authorized? | Publication under DIR-041 — `main` fast-forwarded with `git merge --ff-only`, normal pushes, the live-remote verification, then the publication-confirmation commit; afterwards the P5 amendment and the P7 re-baseline, each under its own authorization. Not authorized: P8–P11 and Tasks, application code, the security amendment or any SECURITY, PERMISSIONS_MATRIX, DATABASE or CONCURRENCY rule change, the UX re-baseline, semantic changes beyond the three corrections, edits to BUSINESS_RULES, REFERENCE_COVERAGE, source records or split parts, an early publication claim, merge commits, force pushes or history rewrites, deleting the branch or the tag, AI attribution | Correct |
+| (d) Does any document still send a reader to NEXT_ACTION or to a 15 October target as current truth? | None — every hit is a source record, the archive, a historical log, changelog or gate entry, a quoted before-text, a row marked superseded, a pointer away from the archived handoff or a statement that the date is no longer a constraint | Correct |
+
+**Result: PASS** — every answer correct on the first run, so no repeat was required. The agent's observations and their dispositions:
+
+| Observation | Disposition |
+| --- | --- |
+| The handoff, PHASE_STATUS and this section describe the finalization commit, which did not yet exist | Expected at the time of the check; supplied by the finalization commit |
+| The zero-context result was cited before it was recorded, and TECH-024 gave a hash of this map that no longer matched the tree | Expected while this section was being written; resolved by this record, and the TECH-024 and APPR-009 hashes are computed from the staged blobs before the commit |
+| ENGINEERING_PRINCIPLES' anti-slop sentence (D4) had left CURRENT_HANDOFF's list of stale sentences, although only the three corrected sentences were to leave it | Fixed: CURRENT_HANDOFF names it again; the sentence itself is unchanged and reported under TECH-024 |
+| TECH-024 cited without a link in CURRENT_HANDOFF; the stage-3 commit given only by its message in the reference points | Fixed: link added; the stage-3 SHA recorded in the reference points, which also name the finalization commit |
+| Superseded sentences of GAP-014, GAP-033 and GAP-037 are corrected only by later continuation notes in the same entry, and the GAP-014 heading keeps "Eighteen days" | The register's convention — continuation notes supersede within their entry and headings keep their anchors; not changed |
+| Earlier planned paths in PERFORMANCE (`docs/05-quality/`) and REFERENCE_COVERAGE (`docs/06-delivery/`), and P1-era present-tense lines in REFERENCE_COVERAGE | Outside DIR-041 §7, or in a file it forbids editing; the planned-path table of [AICWDF_ADOPTION](AICWDF_ADOPTION.md#terminology-and-planned-paths) resolves the paths; reported, not changed |
+| The closing lines of the P0–P7 quality gates read like live instructions and link the archived handoff | Historical evidence, resolved through this map and the archive README; not changed |
+| Wording on the P7 re-baseline (AICWDF_ADOPTION §1, AGENTS.md rule 10) and date phrases in PRODUCT_OVERVIEW ("the remaining window"), CHANGE_CONTROL and ADR-001 | Accurate in context or historical; PRODUCT_OVERVIEW's sentence is kept as DIR-041 §6.4 (1) requires; not changed |
+| DECISION_INDEX says "P8 not started" where PHASE_STATUS says BLOCKED; GAP-036 restates P8's status; SOURCE_OF_TRUTH's approval paragraph lacks "and" before APPR-007 and does not list APPR-009 | Compatible, PHASE_STATUS owning the status; the editorial slip in approved text and the approval paragraph lie outside the three corrections, and APPR-009 is cited in SOURCE_OF_TRUTH's amendment note and registry; not changed |
+| Commits must carry no AI attribution | Followed (DIR-022) |
