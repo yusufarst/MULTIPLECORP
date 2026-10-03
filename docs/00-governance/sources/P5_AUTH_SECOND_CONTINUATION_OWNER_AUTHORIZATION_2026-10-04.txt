@@ -1,0 +1,317 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-fifth source record
+Received: 2026-10-04, in-session Owner message to the repository executor with
+the branch amendment/p5-auth, local only, at
+6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98 and main, locally and on the live
+remote, at c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner authorization — second continuation of the P5 authentication
+         amendment after its second adversarial review: the Owner's decision
+         on R2-04, extending the accepted residual (e); the Level-1
+         dispositions of the other round-2 findings; a narrowed scope; a
+         third adversarial review, the gate, the fourth commit and the push
+         of the branch for review; the amendment PENDING OWNER APPROVAL;
+         main not moved
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block from its first line up to, and not
+         including, the "APPENDIX" heading block. The note under that
+         heading, "Source text to archive under step 2 of section 5. Not
+         instructions for this task.", is quoted here and not transcribed
+         below; Appendix A, which followed it, is the forty-fourth source
+         record. Before any edit the executor verified the expected state
+         read-only and asked in-session whether to execute the block in full,
+         exactly as written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+P5 AUTHENTICATION AMENDMENT — SECOND CONTINUATION (REVIEW ROUND 2)
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS IS
+==================================================
+
+You stopped at review round 2 under stop conditions 6 and 7 because R2-04
+needed an Owner decision. I have decided it, and planning has reviewed every
+round-2 finding in its verbatim text. This message is my explicit Owner
+authorization to resume and finish the task.
+
+In force, in this order of precedence (a later one wins on conflict):
+- DIR-043, the original authorization;
+- DIR-045, the continuation;
+- DIR-046, the resume instruction;
+- this message.
+
+The hard rule of DIR-046 §2 on transcripts stays in force for you and for
+every sub-agent you start.
+
+This message is itself an Owner directive and must be recorded.
+
+Expected state at the start:
+- branch `amendment/p5-auth` at 6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98,
+  with three local commits after c26f31e; none pushed;
+- uncommitted: the 26 modified files and 4 untracked files of your last
+  read-only report (source records 41–43 and the gate document); the gate
+  document's Review Round 2 report is identical, inside its fence, to the
+  scratchpad copy with SHA-256
+  DE89EA5EBC30FB3439047F771FC45E17D201E77BD24FB69B827EDC9F03ED2975;
+- `main` at c26f31e9b053689b07a29877fe1016c6b8103e37 locally and on the
+  live remote; `amendment/p5-auth` absent from the remote;
+- 43 source records: the 40 committed ones match their recorded hashes;
+  records 41–43 match the hashes recorded in SOURCE_OF_TRUTH.
+
+Keep the working tree. Do not discard, stash, reset or restart it.
+
+==================================================
+2. OWNER DECISION ON R2-04
+==================================================
+
+The verbatim source text is Appendix A.
+
+Option 1. Residual (e) is extended and now reads:
+  (e) anyone who can reach an account's second-factor step can deliberately
+      delay that account's sign-in by triggering the account-wide cooldown
+      of R-01 — a person who holds its password, a browser in which the
+      person's linked Google account is still signed in, or an abandoned
+      authenticated session within the password-confirmation window.
+
+R-01's single shared count is unchanged.
+
+Level-1 addition: every alert of a second-factor threshold breach names the
+path that triggered it — password sign-in, Google sign-in, or a step inside
+an authenticated session — so the Owner can unlink the Google identity or
+end the abandoned session.
+
+State (e) as extended, in the same words, in AU-05, TM-61, TM-73, the
+SECURITY §8 count paragraph, GAP-045, a continuation entry of RISK-006
+citing the new DIR, DECISION_INDEX, and anywhere else that states (e).
+
+==================================================
+3. ROUND-2 DISPOSITIONS
+==================================================
+
+Every other round-2 finding is Level 1. Resolve each as stated. Where this
+section is silent, follow the reviewer's recommended fix.
+
+R2-01  An account becomes high-risk only while active (K1). The activation
+       command (NX-02) runs AU-18's test. When activation makes an account
+       without confirmed TOTP high-risk, it does exactly what R-05 requires
+       of a grant: it makes the password unusable, revokes unused credential
+       tokens, ends sessions and issues one RESET link. Role and grant
+       commands on an inactive account change nothing until activation.
+       Update AU-18, D-SEC-18, AU-12, OD-01, RV-11 (or RV-05), M-45, H8-17
+       and the §8 count paragraph.
+
+R2-02  The second-factor limit must survive a store restart, an eviction and
+       a failover, and must fail closed when its durable source is
+       unavailable. Choose one approach and record why:
+       - enforcement that combines the limiter store with a durable floor
+         derived from security events, with the indexes this needs; or
+       - this one limit kept on a database-backed limiter.
+       In either case, state whether the limiter store is in the path and,
+       if it is, that its keys are excluded from eviction and that no
+       failover store is used for it. Update AU-05, H6-07, H6-16, WS-12,
+       D-CC-10, HO-24, RV-12, M-44, H8-17, the index register, and one note
+       at SZ-09. Add tests for restart, eviction and failover as P8
+       obligations.
+
+R2-03  The incident command runs this protocol:
+       a. an opening sweep deletes every session and revokes every unused
+          credential token;
+       b. while it runs, sign-in, credential-link issue and use, and NX-02
+          commands are refused, through a mechanism that needs no new table
+          or field (for example the framework's maintenance mode or an
+          incident flag);
+       c. every account is processed, including any created after the run
+          started;
+       d. a closing sweep revokes unused tokens and deletes sessions again.
+       The leaked key is not listed at all unless P9's inventory finds
+       ciphertext that must survive. In H9-14, before issuing RESET links,
+       the Owner reviews accounts, grants, credential links and Google links
+       created since the suspected leak, and unlinks suspect Google links
+       through the existing OWNER unlink. Update AU-21, SX-02, RV-17, H6-15,
+       H8-21, H9-14 and HO-41.
+
+R2-05  RV-14, and every non-challenge step of RV-12, re-read under LK-03 the
+       password hash named by the session's digest (as RV-10 does) and
+       refuse on a difference. Add the race to M-45 and HO-41.
+
+R2-06  Align AU-22 with DIR-043 §7.7 and M-43. A Google callback that
+       arrives while a challenge is pending in the session leads to that
+       challenge unchanged and consumes nothing. Any other stale or
+       mismatched callback gets the generic failure and changes nothing.
+       Adjust AU-16's "nothing else is reachable" for that callback, and
+       H8-20.
+
+R2-07  In the RG-11 exception, state that the operator's console commands of
+       AU-14 and AU-21 record the operator's identity as AU-14 records it,
+       in place of an application actor. Narrow the last clause to "no user
+       row for an operator, system identity or placeholder". Align RV-17.
+
+R2-08  Add to LG-07 every AU-20 event of an OWNER-role account, including the
+       TOTP_RESET of path (e).
+
+R2-09  Reword AU-03 and D-SEC-15 to match the source-evidence row: the
+       verifier reports a transport error to the exception handler, leaves
+       an unsuccessful answer unreported, and writes no security event.
+
+R2-10  State that Owner accounts recovered after an incident through path
+       (e) lose their Google link, and that every other account receives a
+       plain AU-12 RESET link, which keeps its link.
+
+R2-11  (a) In DATABASE §28, name `users.password` and the four TOTP fields
+           in the runtime role's UPDATE set.
+       (b) State the authority class of the actor-less operator events of
+           AU-14 and AU-21, consistently with CI-09 and H6-11.
+       (c) Make H9-03 exclude GuardMaintenance, which runs under the
+           administration role (TX-08).
+       (d) In RV-15, a reissue for an account without TOTP is not called
+           TOTP_RESET, and it names PASSWORD_RESET_REQUESTED.
+       (e) List WS-07 and H9-03 in the SECURITY header note.
+
+R2-12  Correct the CHANGELOG bullet: the earlier stage created the gate
+       record with the verification and the first review, which stopped the
+       amendment.
+
+R2-13  Mark the writing of the account's id into a pending-challenge or
+       enrolment-only session as a project step, and add it to H6-15 and
+       H8-22.
+
+==================================================
+4. SCOPE
+==================================================
+
+In addition to DIR-045 §3, DIR-043 §3 is narrowed only as follows:
+- AU-12 may be extended so that the activation command of R2-01 issues a
+  RESET link.
+- RG-11 may state the operator rule of R2-07.
+- DATABASE §28 may name `users.password` and the four TOTP fields in the
+  runtime role's UPDATE set (R2-11a). This adds no role, no privilege for
+  any other role and no change for any other table. It is not a change to
+  the database role model for the stop guard of DIR-045 §4, R-18.
+- PERFORMANCE may receive one note at SZ-09, and the indexes R2-02 needs in
+  its index register.
+- CONCURRENCY D-CC-10 and HO-24 may be amended for R2-02.
+
+Guards:
+- No new logical table and no new field. The total stays 125 logical
+  tables with IAM 8, and `users` keeps exactly the four new fields. If a
+  round-2 fix needs more, stop and report.
+- Quality-gate evidence files of earlier phases are never edited.
+- Everything else forbidden by DIR-043 §3 and DIR-045 §3 stays forbidden.
+
+Stop condition 7 now reads: accepted risk beyond the four risks of K4, (e)
+as extended in section 2, and (f).
+
+Source records: 43 at the start of this task, 45 after it.
+
+==================================================
+5. SEQUENCE
+==================================================
+
+1. Verify the expected state of section 1 with read-only commands. If
+   anything differs, stop.
+
+2. Record:
+   - Two transcribed LOCKED SOURCE RECORDS, following the convention of
+     records 31–43:
+       Appendix A → P5_AUTH_ROUND2_OWNER_DECISION_<actual date>.txt
+       This message, from its first line up to the line "APPENDIX"
+                  → P5_AUTH_SECOND_CONTINUATION_OWNER_AUTHORIZATION_<actual date>.txt
+   - One DIR entry for each. Check IDs first; expected DIR-047 and DIR-048.
+   - The RISK-006 continuation and the TECH-025 continuation.
+
+3. Apply sections 2 and 3 in the working tree, in every affected document.
+
+4. In the gate document, after the verbatim round-2 report, record the
+   round-2 dispositions one by one. Write the sections whose anchors round 2
+   found unresolved.
+
+5. Review round 3, by a fresh agent bound by DIR-046 §2, on the complete
+   corrected working tree.
+   - Scope:
+     * every change made for section 2 and section 3, and its
+       interactions with R-01, R-02, R-05 and the reset paths;
+     * a regression run of the mechanical checks of round 2;
+     * every threat-model row that states a residual risk must be
+       mitigated, accepted under K4, (e) or (f), or listed as an open gap
+       with an owner and a phase — TM-72 included.
+   - Record its report verbatim and the dispositions one by one as round 3.
+   - Resolve material findings at Level 1.
+   - If a fix changes the design of a control, run one more focused round
+     on that change only.
+   - Stop under stop condition 6 or 7 if a finding needs an Owner decision.
+
+6. Run the gate of DIR-043 §10, as amended by DIR-045 §5 step 6 and DIR-046,
+   on the final working tree, with these changes and additions:
+   - the 40 committed source records byte-identical to 6dbc49a; records
+     41–43 matching their recorded hashes; the two new hashes recorded and
+     re-verified;
+   - (e) as extended stated in the same words everywhere;
+   - every command that can make an account high-risk — grant, role
+     assignment, activation — applies R-05 the same way;
+   - the R2-02 approach and its durability stated the same way in every
+     document that carries it, with the restart, eviction and failover
+     tests listed as P8 obligations;
+   - the R2-03 protocol stated the same way in AU-21, RV-17, H8-21, H9-14
+     and HO-41;
+   - no new table or field;
+   - every residual-risk threat row has a disposition, TM-72 included;
+   - the zero-context check additionally answers:
+     * can someone who only has the person's signed-in Google account in a
+       browser trigger the cooldown, and is that accepted;
+     * what activation does for a high-risk account without TOTP;
+     * whether the second-factor limit survives a restart of its store;
+     * what sign-in does while the incident command runs.
+
+7. Compute the recorded hashes from the final content, then create Commit 4
+   with its original message:
+     docs: align scope, registers and state with the P5 authentication amendment
+   Confirm that the hashes equal the committed blobs and that the tree is
+   clean. A defect found after Commit 4 is handled by Commit 5, as DIR-043
+   says.
+
+8. Push the branch with a normal push: `git push -u origin amendment/p5-auth`.
+   - Verify the branch on the live remote, and that live `main` is
+     unchanged.
+   - The amendment stays PENDING OWNER APPROVAL.
+   - If this environment has no GitHub credentials, do not request broad
+     access; report the SHAs and give me the command.
+
+==================================================
+6. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+Sections A–N of the earlier authorizations, plus:
+O. Round-2 dispositions one by one, and the R2-02 approach chosen with its
+   reason.
+P. Round 3, and any further focused round: where the verbatim report is
+   recorded, and the findings one by one with dispositions.
+Q. Every threat-model row that states a residual risk, with its
+   disposition — TM-72 named explicitly.
+
+At the very end of your report, including a stop report, append this block
+in Bahasa Indonesia, with concrete values for the NEXT Planning step (my
+review of the amendment before approval), not for this task. Replace each
+set of alternatives with one value and leave no placeholder.
+
+Langkah selanjutnya:
+Kirim report ini ke agent: Planning
+Model: Opus 5.5 / Fable 5.1
+Effort: High / XHigh / Max
+Session: chat sesi yang sama / chat baru
+
+Reason:
+<short reason based on the next planning task>
+
+Escalation / Masalah exceptionally difficult:
+<"Fable 5.1 only if Opus 5.5 cannot resolve the task reliably." only when
+materially relevant; otherwise leave empty>
+
+Stop after the report.

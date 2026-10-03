@@ -1,6 +1,6 @@
 # Changelog
 
-Status: REVIEW | Updated: 2026-10-03 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-04 | Owner: Planning
 
 ## Unreleased — 2026-09-27
 
@@ -197,3 +197,37 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Verified the amendment baseline (OBS-016): local and live `main` at `c26f31e9b053689b07a29877fe1016c6b8103e37`, the published migration-confirmation commit, now recorded literally; no branch `amendment/p5-auth`; a clean tree and index; all 38 source hashes. Created the branch `amendment/p5-auth` from that commit; `main` unchanged.
 - Archived the Owner's decisions K1–K4 with the approval of the P5 authentication blueprint (Appendix A) and the P5 security and authentication amendment authorization as the thirty-ninth and fortieth transcribed source records, with their `.gitattributes` entries and their provenance in SOURCE_OF_TRUTH; recorded DIR-042, DIR-043, OBS-016 and TECH-025 (opened). No normative content, approval, gap or earlier source record changed.
+
+## Unreleased — 2026-10-03, P5 security and authentication amendment
+
+- Verified the framework behaviour the design relies on in current official documentation and official source — Laravel 13.x (framework v13.34.0), Fortify v1.40.0, Socialite v5.31.0, pragmarx/google2fa v9.1.0, Google's OpenID Connect documentation and the Pwned Passwords API — and recorded it in SECURITY's source evidence; nine mechanisms adjusted at Level 1, each keeping its control's intent.
+- Wrote the Owner's authentication decisions D5, D6 and K1–K4 into the approved documents: SECURITY (the password profile AICWDF-COMPAT-8, TOTP mandatory for high-risk accounts, recovery codes, the reset and recovery contract, key management, Google sign-in for existing linked accounts and its lifecycle, threat model, decisions and handoffs) and PERMISSIONS_MATRIX (authentication never authorizes; the Owner's TOTP reset and Google unlink; what each account and the Owner see); DATABASE (four TOTP fields, `user_external_identities`, 125 logical tables with IAM 8, C-62–C-65), CONCURRENCY_IDEMPOTENCY (account-row sequences, the Google subject key, M-39–M-43), ARCHITECTURE, API_AND_INTEGRATIONS and PERFORMANCE; V1_SCOPE CAP-13 with DEP-10 and DEP-11, ACCEPTANCE_CRITERIA AC-13, COST_POLICY, AICWDF_ADOPTION and EXECUTION_CONTEXT. D-SEC-06 and D-SEC-14 superseded by D-SEC-15 and D-SEC-16; no role, capability, company-scope rule or session limit changed.
+- Recorded the four residual risks the Owner accepted with K4 as GAP-038–GAP-041 (RISK-002–RISK-005) and registered GAP-042–GAP-044; totals 44 — 3 CLOSED, 36 OPEN, 0 OWNER_DECISION_REQUIRED, 5 ACCEPTED_RISK. Created P5_AUTH_AMENDMENT_GATE with the verification and the first adversarial review, which stopped the amendment for the Owner's decisions (DIR-045 §1); the amendment is PENDING OWNER APPROVAL on `amendment/p5-auth`, `main` unchanged.
+
+## Unreleased — 2026-10-04, P5 authentication amendment continuation
+
+- Recorded the Owner's decisions on the Owner-level findings of the amendment's first adversarial review, the continuation authorization and the Owner's resume instruction for a new session as the forty-first to forty-third transcribed source records, with their `.gitattributes` entries and SOURCE_OF_TRUTH provenance; recorded DIR-044, DIR-045, DIR-046, RISK-006 and RISK-007. Round 1 of the review is the verified summary kept at the stop, set deterministically under DIR-046; no session transcript or agent reasoning was used.
+- Applied the Owner's decisions (DIR-044): an account-wide limit on second-factor guessing with a capped cooldown that always ends (SECURITY AU-05); the key-compromise incident command as a full incident response for every account (AU-21); a credential reissue when a change makes an account without TOTP high-risk, and an alert on every first enrolment of a high-risk account (AU-18); recovery codes viewable only with a current code, viewing and use alerted for every high-risk account (AU-19); the breached-password check skipped and recorded when its service fails (AU-03). Resolved the other findings at Level 1 across SECURITY, PERMISSIONS_MATRIX, DATABASE, CONCURRENCY_IDEMPOTENCY and ARCHITECTURE — among them Fortify's own two-factor routes excluded, one rule for audit and security events, K1 stated exactly, the Google subject read from the ID token and the operator's key commands under the runtime role.
+- Recorded the residuals (e) and (f) the Owner accepted as GAP-045 and GAP-046 (RISK-006, RISK-007); register totals 46 — 3 CLOSED, 36 OPEN, 0 OWNER_DECISION_REQUIRED, 7 ACCEPTED_RISK. Recorded the second adversarial review in P5_AUTH_AMENDMENT_GATE; it stopped the amendment once more, for the Owner's decision on R2-04. The amendment stays PENDING OWNER APPROVAL on `amendment/p5-auth`; `main` unchanged.
+
+## Unreleased — 2026-10-04, P5 authentication amendment second continuation
+
+- Recorded the Owner's decision on R2-04 and the second continuation authorization as the forty-fourth and forty-fifth transcribed source records, with their `.gitattributes` entries and SOURCE_OF_TRUTH provenance; recorded DIR-047, DIR-048 and the RISK-006 continuation: the residual (e) is extended as DIR-047 states it (DECISION_LOG RISK-006).
+- Applied the Level-1 dispositions of the second review: every breach alert names its triggering path; the second-factor limit keeps a durable floor in security events (PERFORMANCE IX-19) so a restart, an eviction or a failover of the limiter store cannot loosen it; an activation that makes an account without TOTP high-risk reissues its credentials like a grant; the incident command runs with opening and closing sweeps under maintenance mode; a confirmation re-reads the password hash; a Google callback during a pending challenge leads to it; RG-11 states the operator rule; DATABASE §28 names the credential columns of the runtime role; and the precision items. Registered GAP-047 for the residual of TM-72, for the Owner's decision at approval; register totals 47 — 3 CLOSED, 37 OPEN, 0 OWNER_DECISION_REQUIRED, 7 ACCEPTED_RISK. Recorded the round-2 dispositions and the third review with its dispositions in P5_AUTH_AMENDMENT_GATE; a focused fourth review then stopped the amendment for the Owner's decision on R4-01. The amendment stays PENDING OWNER APPROVAL on `amendment/p5-auth`; `main` unchanged.
+
+## Unreleased — 2026-10-04, P5 authentication amendment third continuation
+
+- Recorded the Owner's decisions on R4-01 and the third continuation authorization as the forty-sixth and forty-seventh transcribed source records, with their `.gitattributes` entries and SOURCE_OF_TRUTH provenance; recorded DIR-049, DIR-050 and the RISK-005 continuation, the accepted operator-abuse risk now also covering the new OWNER-restoration command.
+- Wrote the post-incident recovery design into SECURITY AU-25, with CONCURRENCY_IDEMPOTENCY RV-18 and M-46: the compromise window and the pre-window Owner; Scenario A only when write access by the attacker to the database and the server is excluded, otherwise recovery only from an independently verified backup or snapshot, the DIR-009 backup never presumed clean; restoration of a demoted or deactivated pre-window Owner to its window-start values, then its recovery through AU-14, then the review it conducts; no account holding the OWNER role that was not a pre-window Owner restored or recovered as an Owner without that review. Applied the round-4 dispositions — among them a breach starting a new attempt window wherever the limit is stated, the exact time arithmetic of the durable floor and the limit as a project-written script on a store sized never to evict. Recorded the round-4 dispositions in P5_AUTH_AMENDMENT_GATE.
+- Ran the final focused review (round 5) and, under the convergence rule of DIR-050 §2, the focused rounds 6 and 7, after which the series converges.
+  - Applied their Level-1 dispositions:
+    - the Owner-recovery guard keyed on pre-window status, with a recovered, active confirmer confirmed in person and alerted;
+    - the end of a run's recovery only when every active Owner account is a pre-window Owner or confirmed;
+    - the OWNER-restoration command only for an account untouched since the incident command;
+    - the window start recorded once in the incident command's run;
+    - Scenario B's restored state with Scenario A's precondition, new keys, a full secret rotation and the incident command;
+    - a breach of the second-factor limit identified by its triggering submission.
+  - Registered GAP-048, the reinstatement of an Owner removed legitimately, disclosed and not accepted, for the Owner's decision at approval.
+  - Registered GAP-049 and GAP-050 for four LOW findings carried to P8 and P9. Register totals: 50 — 3 CLOSED, 40 OPEN, 0 OWNER_DECISION_REQUIRED, 7 ACCEPTED_RISK.
+  - Recorded rounds 5 to 7 verbatim with their dispositions, the carried findings, the gate and the zero-context check in P5_AUTH_AMENDMENT_GATE.
+  - The amendment stays PENDING OWNER APPROVAL on `amendment/p5-auth`; `main` unchanged.

@@ -1,8 +1,10 @@
 # Execution context
 
-Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-04 | Owner: Planning
 
 Approval: [APPR-009](../00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment — REVIEW, pending Owner approval: on 2026-10-03, under [DIR-043](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment), the auth profile lines now point to the designed authentication controls and project invariant 2 cites AZ-01–AZ-13; on 2026-10-04, under [DIR-045](../00-governance/DECISION_LOG.md#dir-044-dir-045-risk-006-risk-007-and-tech-025--p5-authentication-amendment-continuation-after-the-adversarial-review), two of those lines cite the Owner's decisions on the amendment's first adversarial review (DIR-044); [TECH-025](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment) records the SHA-256 of the last approved revision. The amended wording is not approved until the Owner approves it; the Owner decisions it applies are binding within their subjects.
 
 The stable minimum context for execution agents (AICWDF §34A). Every line points to its owning document; where a line and its owner differ, the owner wins.
 
@@ -15,11 +17,11 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 
 ## Auth profile — decided, SECURITY amendment pending
 
-- implementation: LARAVEL_NATIVE (AICWDF §4A.1, §4A.7) — [ARCHITECTURE §1](../04-architecture/ARCHITECTURE.md#1-baseline-and-constraints), [SECURITY §2](../05-security/SECURITY.md#2-authentication-sessions-and-credentials)
-- password profile: AICWDF-COMPAT-8 with the common/breached-password blocklist retained (DIR-037 D5; D-SEC-06 superseded, pending) — [DECISION_INDEX](../00-governance/DECISION_INDEX.md#approved-design-decisions)
-- second factor: TOTP mandatory at minimum for Owner and high-risk accounts (D5; D-SEC-14 superseded, pending) — [GAP-033](../00-governance/GAP_REGISTER.md#gap-033--the-owner-account-has-no-second-authentication-factor-in-v1)
-- Google sign-in: ON, EXISTING_ACCOUNT_ONLY, no auto-registration; Google never defines roles, capabilities or company scope (DIR-037 D6) — [DECISION_INDEX](../00-governance/DECISION_INDEX.md#owner-decisions)
-- until the SECURITY amendment is approved its text is not amended; design nothing from the superseded parts — [GAP-036](../00-governance/GAP_REGISTER.md#gap-036--decided-authentication-changes-are-not-yet-designed)
+- implementation: LARAVEL_NATIVE (AICWDF §4A.1, §4A.7) — Fortify and Socialite, D-SEC-17 — [ARCHITECTURE §1](../04-architecture/ARCHITECTURE.md#1-baseline-and-constraints), [SECURITY §2](../05-security/SECURITY.md#2-authentication-sessions-and-credentials)
+- password profile: AICWDF-COMPAT-8 with the common/breached-password blocklist retained (DIR-037 D5), the breached-password check skipped and recorded when its service cannot be reached (DIR-044 R-07) — SECURITY AU-03 (D-SEC-15, superseding D-SEC-06) — [DECISION_INDEX](../00-governance/DECISION_INDEX.md#approved-design-decisions)
+- second factor: TOTP mandatory for every high-risk account — the Owner, and an account with an ADM+ grant or `finance.view`, `cost.view`, `profit.view` or `evidence.view` — and optional for the others (D5; DIR-042 K1), with the account-wide second-factor limit (DIR-044 R-01) — SECURITY AU-05, AU-16, AU-18–AU-21 (D-SEC-16, superseding D-SEC-14) — [GAP-033](../00-governance/GAP_REGISTER.md#gap-033--the-owner-account-has-no-second-authentication-factor-in-v1)
+- Google sign-in: ON, EXISTING_ACCOUNT_ONLY, no auto-registration, only with active TOTP and always followed by the TOTP challenge; Google never defines roles, capabilities or company scope (DIR-037 D6; K2) — SECURITY AU-22–AU-24, PERMISSIONS_MATRIX AZ-13 — [DECISION_INDEX](../00-governance/DECISION_INDEX.md#owner-decisions)
+- amendment: the SECURITY amendment is designed and PENDING OWNER APPROVAL (TECH-025); its amended text is REVIEW until the Owner approves it, and nothing derives from the superseded D-SEC-06 or D-SEC-14 — [GAP-036](../00-governance/GAP_REGISTER.md#gap-036--decided-authentication-changes-are-not-yet-designed); the phases it affects: [PHASE_STATUS](../PHASE_STATUS.md)
 
 ## Global UI rules
 
@@ -41,7 +43,7 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 ## Project invariants
 
 1. Money is exact `numeric(18,2)`, quantities exact base-unit `numeric(18,3)`, splits deterministic and residual-absorbing — [DATABASE §17](../04-architecture/DATABASE/s13-17-history-scope-types.md#17-money-quantity-and-date-types), BR-FIN-13, [numeric annex](../02-domain/BUSINESS_RULES.md#numeric-annex-binding-examples-for-p8-fixtures-gap-004)
-2. Company isolation and default-deny on the server in the order authentication → company scope → capability → resource → preconditions; OWNER_ONLY capabilities are never grantable — AZ-01–AZ-12 ([PERMISSIONS_MATRIX §2](../05-security/PERMISSIONS_MATRIX.md#2-authorization-model)), CS-01–CS-08 ([§6](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)), OD-01–OD-16 ([§9](../05-security/PERMISSIONS_MATRIX.md#9-owner-only-denials)); EN-01–EN-08 ([SECURITY §3](../05-security/SECURITY.md#3-enforcement-architecture))
+2. Company isolation and default-deny on the server in the order authentication → company scope → capability → resource → preconditions; OWNER_ONLY capabilities are never grantable — AZ-01–AZ-13 ([PERMISSIONS_MATRIX §2](../05-security/PERMISSIONS_MATRIX.md#2-authorization-model)), CS-01–CS-08 ([§6](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)), OD-01–OD-16 ([§9](../05-security/PERMISSIONS_MATRIX.md#9-owner-only-denials)); EN-01–EN-08 ([SECURITY §3](../05-security/SECURITY.md#3-enforcement-architecture))
 3. Field projection limits what each account sees of every table — [PERMISSIONS_MATRIX §7](../05-security/PERMISSIONS_MATRIX.md#7-resource-and-field-projection) PJ-01–PJ-23
 4. History is append-only: corrections revise, void, reverse or return with reason and linkage, never hard-delete — BR-CR-01, FS-02 ([BUSINESS_RULES](../02-domain/BUSINESS_RULES.md#2-correction-taxonomy)); CM-01–CM-38 ([WORKFLOWS §8](../03-workflows/WORKFLOWS/s08-09-corrections-indivisible.md#8-correction-reversal-and-cancellation-matrix)); [DATABASE §13](../04-architecture/DATABASE/s13-17-history-scope-types.md#13-correction-and-history-representation)
 5. One client `command_id` per intent with re-authorized replay and durable business identities — CI-01–CI-09 ([CONCURRENCY_IDEMPOTENCY §10](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#10-command-identity-and-replay)); SF-CMD ([WORKFLOWS §2](../03-workflows/WORKFLOWS/s01-04-foundations.md#2-standard-command-envelope--sf-cmd))

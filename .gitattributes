@@ -39,5 +39,12 @@ docs/00-governance/sources/AICWDF_OWNER_MIGRATION_APPROVAL_2026-10-03.txt -text
 docs/00-governance/sources/AICWDF_MIGRATION_FINALIZATION_OWNER_AUTHORIZATION_2026-10-03.txt -text
 docs/00-governance/sources/P5_AUTH_OWNER_DECISIONS_AND_APPROVAL_2026-10-03.txt -text
 docs/00-governance/sources/P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_2026-10-03.txt -text
+docs/00-governance/sources/P5_AUTH_REVIEW_OWNER_DECISIONS_2026-10-03.txt -text
+docs/00-governance/sources/P5_AUTH_CONTINUATION_OWNER_AUTHORIZATION_2026-10-03.txt -text
+docs/00-governance/sources/P5_AUTH_RESUME_OWNER_INSTRUCTION_2026-10-04.txt -text
+docs/00-governance/sources/P5_AUTH_ROUND2_OWNER_DECISION_2026-10-04.txt -text
+docs/00-governance/sources/P5_AUTH_SECOND_CONTINUATION_OWNER_AUTHORIZATION_2026-10-04.txt -text
+docs/00-governance/sources/P5_AUTH_ROUND4_OWNER_DECISIONS_2026-10-04.txt -text
+docs/00-governance/sources/P5_AUTH_THIRD_CONTINUATION_OWNER_AUTHORIZATION_2026-10-04.txt -text
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary

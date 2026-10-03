@@ -1,0 +1,354 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-second source record
+Received: 2026-10-03, in-session Owner message to the repository executor with
+the branch amendment/p5-auth, local only, at
+6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98 and main, locally and on the live
+remote, at c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner authorization — continuation of the P5 authentication amendment
+         after its adversarial review: the Owner's decisions on the
+         Owner-level findings R-01, R-02, R-05, R-06 and R-07, two further
+         residual risks accepted, the Level-1 resolution of the other
+         findings, a second adversarial review, the gate, the fourth commit
+         and the push of the branch for review; the amendment PENDING OWNER
+         APPROVAL; main not moved
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block from its first line up to, and not
+         including, the "APPENDIX" heading block. The note under that
+         heading, "Source text to archive under step 3 of section 5. Not
+         instructions for this task.", is quoted here and not transcribed
+         below; Appendix A, which followed it, is the forty-first source
+         record. Before any edit the executor verified the expected state
+         read-only and asked in-session whether to execute the block in full,
+         exactly as written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+P5 AUTHENTICATION AMENDMENT — CONTINUATION AFTER THE ADVERSARIAL REVIEW
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS IS
+==================================================
+
+You stopped the P5 authentication amendment at the adversarial review
+(step b of the Commit 4 sequence) under stop conditions 6 and 7. I have now
+decided the Owner-level findings. This message is my explicit Owner
+authorization to resume and finish that task.
+
+The original authorization — DIR-043, archived as
+docs/00-governance/sources/P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_2026-10-03.txt
+— stays in force in full: its Git rules, design, document scope, review,
+gate, end state and report. Only what this message amends changes. Where
+the two conflict, this message wins.
+
+This message is itself an Owner directive and must be recorded.
+
+Expected state at the start:
+- current branch `amendment/p5-auth` at
+  6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98, with three local commits after
+  c26f31e (7135fba, 015270c, 6dbc49a), none pushed;
+- uncommitted Commit 4 drafts: 12 modified files and the untracked
+  docs/05-security/evidence/P5_AUTH_AMENDMENT_GATE.md;
+- `main` at c26f31e9b053689b07a29877fe1016c6b8103e37 locally and on the
+  live remote; `amendment/p5-auth` absent from the remote.
+Keep the drafts. Do not discard, stash, reset or restart them.
+
+==================================================
+2. OWNER DECISIONS ON THE REVIEW FINDINGS
+==================================================
+
+The verbatim source text is Appendix A. My agreement in it refers to the
+planning recommendations stated here.
+
+R-01 (A) — Account-wide limit on second-factor guessing.
+
+  Scope
+  - One failed-code count per account, shared across all IP addresses and
+    across every authentication or recovery step that accepts a TOTP code or
+    a recovery code:
+      * the sign-in challenge after a password or a Google sign-in;
+      * recovery-code sign-in (path b);
+      * the current-code check of device replacement;
+      * viewing and regenerating recovery codes;
+      * disabling TOTP;
+      * Google linking;
+      * every other step that authenticates with a TOTP or recovery code.
+  - Enrolment confirmation, which checks a code against a secret just shown
+    in the same session, stays under the existing throttles only.
+
+  Threshold
+  - The fifth failed code within the attempt window immediately does both:
+      * it invalidates the current challenge, or the pending step of the
+        other code-accepting flow;
+      * it starts the account-wide second-factor cooldown across all IP
+        addresses.
+  - The attempt window is a project-defined rolling period (Level 1).
+
+  Cooldown
+  - While the cooldown runs, every code-accepting step for the account is
+    refused without evaluating the submitted code, so a refused recovery
+    code is neither checked nor consumed. Each refusal is recorded.
+  - Every later threshold breach lengthens the cooldown along a
+    project-defined progression, capped at 15 minutes.
+  - The progression below the cap is a Level-1 choice. It is stated
+    identically wherever the limit is described, and it is a P8 test
+    obligation.
+  - The cooldown always ends. It is never a permanent account lockout.
+
+  Evidence and counters
+  - A successful, legitimate second-factor authentication never deletes or
+    rewrites security events.
+  - It never silently resets the escalation level or the aggregated counts
+    that feed abuse detection and the Owner alert.
+  - Level-1 rule, stated identically and tested in P8: how the window count,
+    the escalation level and the aggregation decay over time, and what — if
+    anything — a success resets.
+  - Any reset caused by a success is itself recorded as a security event.
+
+  Recovery codes
+  - Recovery codes keep their transactional single-use consumption under the
+    account row lock (section 7.4). This limit adds to that protection and
+    never replaces it.
+
+  Alerting
+  - Each threshold breach raises an alert to the Owner (LG-07). Failure
+    events are aggregated for alerting.
+
+  Defense in depth
+  - The existing per-account+IP and per-IP throttles stay.
+  - If the limiter store is unavailable, code-accepting steps fail closed,
+    as section 7.4 states.
+  - This supersedes "throttled like login" of section 7.4 for the
+    second-factor step.
+
+R-02 (A) — The key-and-database-leak command becomes a full incident
+response for every account:
+  - every TOTP secret and recovery-code set destroyed;
+  - every password made unusable;
+  - every unused credential token revoked;
+  - every session deleted;
+  - the HMAC keys rotated;
+  - the leaked key retired from the previous-keys list as soon as every
+    ciphertext that must survive has been re-encrypted under the new key
+    (TOTP data is voided, not re-encrypted);
+  - Google links kept, not eligible until TOTP is active again (K2);
+  - one audit event and one security event per affected account, with the
+    operator's identity recorded as AU-14 records it.
+  Recovery uses existing paths only: AU-14 operator recovery for each Owner
+  account, then Owner-issued RESET links for every other account. The
+  command is operator-run, never run by an agent. This supersedes the
+  voiding command of section 7.6.
+
+R-05 — When a grant or a role assignment makes an account high-risk and the
+account has no confirmed TOTP, the same command makes its password unusable,
+revokes its unused credential tokens, ends its sessions and issues one RESET
+link for out-of-band delivery (AU-12). An account that already has confirmed
+TOTP keeps its password; its sessions end as section 7.3 states. The first
+enrolment of any high-risk account raises an alert to the Owner. The reset
+command under `users.manage` also works for an account without TOTP
+(password reissue and unlink).
+
+R-06 (yes) — Viewing recovery codes requires password confirmation and a
+current TOTP code. Viewing and using recovery codes raise alerts for every
+high-risk account.
+
+R-07 — If the breached-password range service fails or does not answer
+within a short project-set timeout, the password is accepted only when it
+passes the local list and every other rule of section 7.2; a security event
+records that the remote check was skipped. The check never runs inside a
+database transaction. No offline corpus is required. This replaces the
+fail-closed behaviour in the current drafts.
+
+Accepted residual risks, added to the four of K4:
+  (e) a person who holds an account's password can deliberately delay that
+      account's sign-in by triggering the account-wide cooldown of R-01;
+  (f) while the range service is unreachable, a breached password that
+      passes the local list can be set.
+
+==================================================
+3. AMENDMENTS TO THE ORIGINAL AUTHORIZATION
+==================================================
+
+- Section 3 (not authorized) is narrowed only as follows:
+  * AU-05 may be extended with the second-factor limit of R-01;
+  * AU-12 may be extended so that the grant command of R-05 and the reset
+    command issue RESET links;
+  * the "Covers" description of the `users.manage` row in the capability
+    catalogue may be extended to name the TOTP reset and the Google unlink;
+    its identifier, class, prerequisites and the catalogue count stay
+    unchanged;
+  * RG-11 may state the exception for the OWNER_RECOVERY link use, which has
+    no application actor.
+  Everything else in section 3 stays forbidden.
+- Section 7 is amended by section 2 of this message: 7.2 failure behaviour,
+  7.3 grant reset, 7.4 second-factor limit and code viewing, 7.6 incident
+  command.
+- Stop condition 1 is replaced by the expected state of section 1. Stop
+  conditions 2–8 stay; stop condition 7 now reads "accepted risk beyond the
+  four risks of K4 and the residuals (e) and (f)".
+- Source records: 40 at the start of this continuation, 42 after it.
+
+==================================================
+4. LEVEL-1 RESOLUTIONS
+==================================================
+
+Planning reviewed the remaining findings from your summary. Resolve them as
+follows. Where your original detailed review shows a finding differently,
+keep the intent and record the adjustment.
+
+R-03  Fortify's own two-factor routes are not registered, or are replaced,
+      so every code and secret path follows sections 7.4–7.5; the mechanism
+      is re-verified at implementation; extend H8-02 and H8-17.
+R-04  One rule everywhere: the audit event is written in the command's
+      transaction; the security event after commit, outside it (LG-02).
+      Include GOOGLE_UNLINKED for TOTP_DISABLED.
+R-08  Nothing may describe the review, the gate, Commit 4 or the hash list as
+      done before it is.
+R-09  Add the RG-11 exception. For OWNER_RECOVERY links the token store
+      records no application issuer; the operator's identity stays in the
+      issue events (AU-14).
+R-10  Reorder RV-05 so the DEACTIVATION unlink follows LR-02.
+R-11  RV-13 and RV-14 re-read `is_active`; deactivation voids pending
+      challenges; challenge and enrolment-only sessions carry and check the
+      user id.
+R-12  Narrow the ARCHITECTURE boundary rule to provider-specific types and
+      the subject; the display e-mail of PJ-17 may leave the boundary.
+R-13  "must enrol" applies only when the account is high-risk; otherwise the
+      account may enrol. This was a drafting error in the original
+      authorization; K1 governs.
+R-14  The QR code, text key and recovery codes are shown only through
+      AU-12's non-persisted flash rule.
+R-15  The enrolment-only session receives minimal shared data and has a way
+      to re-confirm the password after 15 minutes.
+R-16  Path b's code-free enrolment is bound to the session RV-13 creates,
+      not to an account-wide state.
+R-17  The OAuth attempt marker is bound to the session's authentication
+      state and account: sign-in only when unauthenticated, linking only for
+      the authenticated account; mismatches are refused.
+R-18  Per-account audit events for the incident command. Align TX-08 with
+      DATABASE §16 and §28 instead of granting a new role or window. Extend
+      H9-03. If the commands cannot conform without changing the database
+      role model, stop and report.
+R-19  Every step that accepts a code re-checks that the secret is unchanged;
+      an exhausted recovery set is an encrypted empty list, never NULL
+      (C-62).
+R-20  Align HO-40 with AU-04's single generic answer.
+R-21  GOOGLE_LINKED raises an alert for every high-risk account; the Owner
+      sees the linked e-mail (PJ-17).
+R-22  Extend the `users.manage` "Covers" text as section 3 allows.
+R-23  (a) Keep or drop the userinfo call (Level 1), and record the choice.
+      (b) AU-18 must state exactly K1: the three criteria evaluated on
+      effective capabilities, TOTP optional for every other account. Remove
+      any reading that makes TOTP mandatory beyond K1; do not merely
+      disclose it.
+R-24  Correct the precision items.
+
+==================================================
+5. SEQUENCE
+==================================================
+
+1. Verify the expected state of section 1 with read-only commands, and the
+   hashes of the 40 source records. If anything differs, stop.
+
+2. Write the full original adversarial review — the sub-agent's detailed
+   report from this session, not the scratchpad summary — into
+   P5_AUTH_AMENDMENT_GATE.md as review round 1. If the detailed text is no
+   longer available, record the scratchpad summary verbatim with its
+   SHA-256 (ACAF24E901971E609CC214BE1F1967DEEAD9A3391792A6BB170DFCC6E522AEBE)
+   and say so; this is not a stop condition.
+
+3. Record the decisions:
+   - Two transcribed LOCKED SOURCE RECORDS, following the convention of
+     records 31–40:
+       Appendix A → P5_AUTH_REVIEW_OWNER_DECISIONS_<actual date>.txt
+       This message, from its first line up to the line "APPENDIX"
+                  → P5_AUTH_CONTINUATION_OWNER_AUTHORIZATION_<actual date>.txt
+   - One DIR entry for each.
+   - The residuals (e) and (f) as accepted-risk entries.
+   - The TECH-025 continuation.
+   Check IDs first; expected: DIR-044, DIR-045, RISK-006, RISK-007.
+
+4. Apply sections 2 and 4 in the working tree, in every affected document of
+   this task, including documents already committed in commits 2 and 3.
+
+5. Run a second adversarial review by a fresh agent, on the complete
+   corrected working tree.
+   - Scope: the full scope of section 9 of the original authorization, plus
+     the R-01 limit, the incident command, the grant reset, the fail-open
+     check and recovery-code viewing.
+   - Record findings and dispositions one by one as review round 2.
+   - Resolve material findings at Level 1.
+   - Stop under stop condition 6 or 7 if a finding needs an Owner decision.
+
+6. Run the full gate of section 10 of the original authorization on the
+   final working tree, with these changes and additions:
+   - the 40 earlier source records byte-identical to 6dbc49a; the two new
+     hashes recorded and re-verified;
+   - each decision of section 2 stated the same way in every document that
+     carries it: SECURITY, PERMISSIONS_MATRIX, DATABASE,
+     CONCURRENCY_IDEMPOTENCY, ARCHITECTURE, GAP_REGISTER and the P8/P9
+     handoffs;
+   - AU-18 states exactly K1;
+   - no fail-closed breached-password statement remains;
+   - R-01 is stated identically wherever it appears: the threshold of five,
+     its immediate effect, the attempt window, the progression, the 15-minute
+     cap, the decay and success rules, the flows covered and the exclusion of
+     enrolment confirmation;
+   - the R-01 progression and decay rules are recorded as P8 test
+     obligations;
+   - the zero-context check additionally answers:
+     * what happens at the fifth wrong second-factor code;
+     * whether a successful sign-in erases the evidence of earlier failures;
+     * what the leak command does;
+     * what happens when a grant makes an account without TOTP high-risk;
+     * whether a password can be set when the range service is down.
+
+7. Compute the recorded hashes from the final content, then create Commit 4
+   with its original message:
+     docs: align scope, registers and state with the P5 authentication amendment
+   Confirm that the hashes equal the committed blobs and that the tree is
+   clean. A defect found after Commit 4 is handled by Commit 5, as the
+   original authorization says.
+
+8. Push the branch with a normal push: `git push -u origin amendment/p5-auth`.
+   - Verify the branch on the live remote, and that live `main` is
+     unchanged.
+   - The amendment stays PENDING OWNER APPROVAL.
+   - If this environment has no GitHub credentials, do not request broad
+     access; report the SHAs and give me the command.
+
+==================================================
+6. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+Sections A–K of the original authorization, plus:
+L. How each decision of section 2 was applied, document by document,
+   including the R-01 attempt window, progression and decay rule chosen.
+M. Both review rounds: findings one by one, with dispositions.
+
+At the very end of your report, including a stop report, append this block
+in Bahasa Indonesia, with concrete values for the NEXT Planning step (my
+review of the amendment before approval), not for this task. Replace each
+set of alternatives with one value and leave no placeholder.
+
+Langkah selanjutnya:
+Kirim report ini ke agent: Planning
+Model: Opus 5.5 / Fable 5.1
+Effort: High / XHigh / Max
+Session: chat sesi yang sama / chat baru
+
+Reason:
+<short reason based on the next planning task>
+
+Escalation / Masalah exceptionally difficult:
+<"Fable 5.1 only if Opus 5.5 cannot resolve the task reliably." only when
+materially relevant; otherwise leave empty>
+
+Stop after the report.

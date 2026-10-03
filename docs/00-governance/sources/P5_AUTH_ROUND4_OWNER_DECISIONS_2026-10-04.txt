@@ -1,0 +1,61 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-sixth source record
+Received: 2026-10-04, Owner decisions relayed by the Owner to the repository
+executor as Appendix A of the third continuation authorization of the P5
+authentication amendment of the same date (forty-seventh source record)
+Subject: Owner decisions on the Owner-level finding R4-01 of the focused
+         fourth adversarial review of the P5 authentication amendment —
+         "R4-01: 1"; no Owner of the leak window without review; the
+         Scenario A/B boundary and the convergence rule agreed, with the
+         Owner's clarifications — which §§2–3 of the forty-seventh source
+         record state
+Delivery: the relayed text between the "----- BEGIN APPENDIX A -----" and
+         "----- END APPENDIX A -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+R4-01: 1
+
+Owner jendela kebocoran tanpa tinjauan: tidak
+
+Batas skenario A/B dan aturan konvergensi: setuju, dengan klarifikasi berikut.
+
+For Scenario A:
+- keep the proposed in-application incident response boundary;
+- the new operator recovery capability must be narrowly constrained to incident recovery;
+- it may restore active status and OWNER authority only for an account that can be proven to have held OWNER before the suspected compromise window began;
+- it must never create a new historical Owner or promote an account that first became Owner during the compromise window;
+- after that restoration, the person still follows the normal AU-14 credential recovery and mandatory TOTP re-enrolment path;
+- operator identity and every restoration action must be audited;
+- the existing accepted operator-abuse risk remains applicable.
+
+For Scenario B:
+Do not state or imply that the existing DIR-009 same-VPS backup is automatically a clean or trustworthy recovery source.
+
+Scenario B means direct database/server write compromise or another condition in which in-application state and audit evidence cannot be trusted.
+
+Recovery must therefore use a backup or snapshot that can be independently verified as both:
+- predating the relevant compromise; and
+- trustworthy enough for incident recovery.
+
+If no such trustworthy backup/snapshot exists, STOP the in-application recovery path and require an Owner incident decision outside the application.
+
+P9/P10 must define the recovery/runbook implications.
+
+DIR-009 remains an accepted V1 risk and must not be presented as proof that a clean backup necessarily exists.
+
+For the convergence rule:
+I agree to one final focused adversarial review after R4-01 through R4-08 are applied.
+
+After that review:
+- Level-1 findings may be corrected and validated without another full adversarial round;
+- however, run another focused review if a correction materially changes security-control semantics, introduces a new persistence/dependency mechanism, or produces a HIGH or Owner-level issue;
+- LOW non-material findings may be carried to P8/P9 when appropriate with an owner and phase;
+- any finding requiring a new Owner decision must still STOP.
+
+Do not prepare the continuation execution prompt yet.
+
+First obtain and review the complete verbatim Round 4 report R4-01 through R4-08 as already planned.
+
+Respond to me in Bahasa Indonesia.
+
+At the very end, use the required Planning handoff footer with concrete Model, Effort and Session values.

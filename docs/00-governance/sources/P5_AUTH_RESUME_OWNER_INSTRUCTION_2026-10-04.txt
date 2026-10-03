@@ -1,0 +1,196 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-third source record
+Received: 2026-10-04, in-session Owner message to the repository executor in a
+new session, with the branch amendment/p5-auth, local only, at
+6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98 and main, locally and on the live
+remote, at c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner instruction — resume of the P5 authentication amendment
+         continuation in a new session after the previous session was
+         stopped by a model safeguard: no session transcript or agent
+         reasoning accessed, the state and the uncommitted work verified and
+         inventoried, review round 1 set deterministically from the verified
+         scratchpad summary, this instruction recorded, and steps 4 to 8 of
+         the continuation carried out; the amendment PENDING OWNER APPROVAL;
+         main not moved
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block in full, from its first line to its
+         last; it has no appendix. Before any edit the executor verified the
+         state read-only, reported the inventory of the uncommitted work and
+         asked in-session whether to execute the block in full, exactly as
+         written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER INSTRUCTION
+RESUME OF THE P5 AUTHENTICATION AMENDMENT CONTINUATION (NEW SESSION)
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHY THIS SESSION EXISTS
+==================================================
+
+The previous Claude Code session was stopped by a model safeguard
+("reasoning_extraction") while it extracted the earlier sub-agent review
+from session transcripts. Its uncommitted work is on disk. This message
+resumes the same task in a new session.
+
+The task is governed by two Owner authorizations:
+- the original authorization (DIR-043), committed as
+  docs/00-governance/sources/P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_2026-10-03.txt;
+- the continuation authorization, written to disk by the previous session
+  (uncommitted) as
+  docs/00-governance/sources/P5_AUTH_CONTINUATION_OWNER_AUTHORIZATION_2026-10-03.txt.
+
+Read both in full. They stay in force, except where this message changes
+them. Where they conflict, this message wins.
+
+==================================================
+2. HARD RULE — NO TRANSCRIPTS
+==================================================
+
+Do not open, list, search, parse, copy or extract from any Claude or other
+agent session transcript, conversation log, conversation history, hidden
+reasoning, agent reasoning, history file or cache. Do not try to recover or
+reconstruct an earlier session's conversation, a sub-agent's output or any
+agent's reasoning.
+
+Work only from:
+- the repository and its working tree;
+- the scratchpad summary file named in section 4;
+- this message.
+
+Give every sub-agent you start this same rule.
+
+==================================================
+3. VERIFY THE STATE
+==================================================
+
+This section replaces the expected-state check of section 1 and step 1 of
+the continuation authorization.
+
+3.1 Read-only checks first
+- current branch `amendment/p5-auth` at
+  6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98, with commits 7135fba, 015270c
+  and 6dbc49a after c26f31e, none pushed;
+- `main` at c26f31e9b053689b07a29877fe1016c6b8103e37 locally and on the
+  live remote; `amendment/p5-auth` absent from the remote;
+- the 40 committed source records match their recorded hashes.
+
+3.2 Inventory
+Inventory the uncommitted work and report it to me file by file before
+changing anything:
+- the original Commit 4 drafts: 12 modified files and
+  docs/05-security/evidence/P5_AUTH_AMENDMENT_GATE.md;
+- work of the interrupted session: the two new source records, the
+  SOURCE_OF_TRUTH provenance entries, the DECISION_LOG entries (expected
+  DIR-044, DIR-045, RISK-006, RISK-007 and part of the TECH-025
+  continuation), and any change to the gate document;
+- any helper script or file it left, for example `round1.py`.
+
+3.3 Helper files
+Never run a helper file. Judge where a helper came from only by its Git
+status, its timestamps relative to commit 6dbc49a, its own content and this
+message, which names `round1.py`. Never use a transcript to decide.
+- Inside the repository, untracked, and clearly attributable to the
+  interrupted session: remove it; it is not part of the amendment.
+- Outside the repository: leave it alone; report its location if you find
+  it. Do not search transcript or history locations for it.
+- Tracked, pre-existing, or of unclear provenance: do not remove it; stop
+  and report.
+
+3.4 Stop and report if
+- the branch, HEAD, `main` or remote state differs from 3.1;
+- a committed source record does not match its recorded hash;
+- the continuation authorization record is missing, or does not run from
+  its title through its section 6, "FINAL REPORT";
+- work on disk cannot be attributed to the two authorizations;
+- a helper file falls under the last case of 3.3.
+
+==================================================
+4. STEP 2 OF THE CONTINUATION IS REPLACED
+==================================================
+
+Round-1 evidence is set deterministically. Do not try to work out which
+existing text in the gate document came from where.
+
+4.1 Verify the scratchpad file
+  C:\Users\YUSUFS~1\AppData\Local\Temp\claude\C--Projects-MultipleCorp\4d945a72-b385-4e08-83bf-8076dc87f5f9\scratchpad\P5_AUTH_ADVERSARIAL_REVIEW_2026-10-03.md
+  expected SHA-256 ACAF24E901971E609CC214BE1F1967DEEAD9A3391792A6BB170DFCC6E522AEBE
+
+4.2 If the file exists and its SHA-256 matches
+Replace the ENTIRE Review Round 1 content of P5_AUTH_AMENDMENT_GATE.md
+(create the section if it does not exist) with:
+- the verified scratchpad summary, verbatim, with its path and SHA-256;
+- a statement that says:
+  * this verified scratchpad summary is the persisted Round-1 evidence;
+  * any partial Round-1 content written by the interrupted session is
+    superseded by this deterministic replacement;
+  * the original longer sub-agent output is not reproduced or
+    reconstructed;
+  * no session transcript, conversation history, hidden reasoning or agent
+    reasoning was accessed;
+  * Review Round 2 is the complete new independent review record.
+
+4.3 If the file is missing or its SHA-256 differs
+Replace the ENTIRE Review Round 1 content the same way, with:
+- a statement that the summary could not be verified, with the hash
+  observed, if any;
+- the authorized fallback: Round 1 survives only as the finding list in
+  sections 2 and 4 of the continuation authorization;
+- the same statement as 4.2 about superseded partial content, no
+  reconstruction, no transcript access and Review Round 2.
+Do not access a transcript. This is not a stop condition.
+
+4.4 Content outside Round 1
+Leave the rest of the gate document as it is; the gate checks it like any
+other content.
+
+==================================================
+5. RECORD THIS INSTRUCTION
+==================================================
+
+- Archive this message as a third transcribed LOCKED SOURCE RECORD,
+  following the convention of records 31–42:
+    P5_AUTH_RESUME_OWNER_INSTRUCTION_<actual date>.txt
+  The source count becomes 43. Wherever the continuation says 42, use 43,
+  and its gate checks three new hashes instead of two.
+- Add one DIR entry. Check IDs first; expected DIR-046.
+- Complete whatever part of step 3 of the continuation the interrupted
+  session did not finish. Do not duplicate entries it already made; correct
+  them only if they are wrong.
+
+==================================================
+6. CONTINUE
+==================================================
+
+Carry out steps 4 to 8 of the continuation authorization exactly as
+written, including:
+- the second adversarial review by a fresh agent, bound by section 2 of
+  this message;
+- the full gate;
+- Commit 4 and the post-commit check;
+- the normal push.
+
+The amendment stays PENDING OWNER APPROVAL.
+
+==================================================
+7. FINAL REPORT
+==================================================
+
+Report as the continuation authorization requires, in Bahasa Indonesia,
+plus:
+N. The inventory of section 3: what you kept, corrected or removed, every
+   helper file found with its location and how you decided, and which
+   branch of section 4 you used for Round 1, with the hash observed.
+
+End with the handoff block that the continuation authorization defines,
+with concrete values for the next Planning step. Append it after a stop
+report too.
+
+Stop after the report.

@@ -1,0 +1,370 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-seventh source record
+Received: 2026-10-04, in-session Owner message to the repository executor with
+the branch amendment/p5-auth, local only, at
+6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98 and main, locally and on the live
+remote, at c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner authorization — third continuation of the P5 authentication
+         amendment after its focused fourth adversarial review: the Owner's
+         decisions on R4-01 — a narrow, audited OWNER-restoration command
+         amending R-02's "existing paths only", the post-incident recovery
+         design with Scenarios A and B, and a convergence rule —; the
+         Level-1 dispositions of the other round-4 findings; a narrowed
+         scope; a final focused review, the gate, the fourth commit and the
+         push of the branch for review; the amendment PENDING OWNER
+         APPROVAL; main not moved
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block from its first line up to, and not
+         including, the "APPENDIX" heading block. The note under that
+         heading, "Source text to archive under step 2 of section 6. Not
+         instructions for this task.", is quoted here and not transcribed
+         below; Appendix A, which followed it, is the forty-sixth source
+         record. Before any edit the executor verified the expected state
+         read-only and asked in-session whether to execute the block in full,
+         exactly as written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+P5 AUTHENTICATION AMENDMENT — THIRD CONTINUATION (REVIEW ROUND 4)
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS IS
+==================================================
+
+You stopped at review round 4 under stop conditions 6 and 7 because R4-01
+needed an Owner decision. I have decided it, and planning has reviewed every
+round-4 finding in its verbatim text. This message is my explicit Owner
+authorization to resume and finish the task.
+
+In force, in this order of precedence (a later one wins on conflict):
+- DIR-043, the original authorization;
+- DIR-045, the continuation;
+- DIR-046, the resume instruction;
+- DIR-048, the second continuation;
+- this message.
+
+The hard rule of DIR-046 §2 on transcripts stays in force for you and for
+every sub-agent you start.
+
+This message is itself an Owner directive and must be recorded.
+
+Expected state at the start:
+- branch `amendment/p5-auth` at 6dbc49a60e6d3f015ba01ad3d5335b61d0ea7c98,
+  with three local commits after c26f31e; none pushed;
+- uncommitted: the 27 modified files and 6 untracked files of your last
+  read-only report (source records 41–45 and the gate document); the gate
+  document's Review Round 4 report is identical, inside its fence, to the
+  scratchpad copy with SHA-256
+  19B335F02A4D1CE1A224540D3D7492D5725E81201A17097A296695BAA7A56AAD;
+- `main` at c26f31e9b053689b07a29877fe1016c6b8103e37 locally and on the
+  live remote; `amendment/p5-auth` absent from the remote;
+- 45 source records: the 40 committed ones match their recorded hashes;
+  records 41–45 match the hashes recorded in SOURCE_OF_TRUTH.
+
+Keep the working tree. Do not discard, stash, reset or restart it.
+
+==================================================
+2. OWNER DECISIONS
+==================================================
+
+The verbatim source text is Appendix A.
+
+R4-01 — Option 1: a new, narrow, audited operator recovery capability,
+designed in section 3. It amends DIR-044 R-02's "existing paths only".
+
+An account that first became Owner during the compromise window is never
+restored or recovered as an Owner without the review of a recovered
+pre-window Owner.
+
+Scenario A and Scenario B, as defined in section 3.
+
+Convergence rule:
+- One final focused adversarial review runs after R4-01 to R4-08 are
+  applied.
+- After that review, Level-1 findings may be corrected and validated
+  without another full adversarial round.
+- However, another focused review runs if a correction materially changes
+  security-control semantics, introduces a new persistence or dependency
+  mechanism, or produces a HIGH or Owner-level issue.
+- LOW non-material findings may be carried to P8 or P9, when appropriate,
+  with an owner and a phase.
+- Any finding requiring a new Owner decision still stops the task. When
+  such a stop occurs, the focused review follows after the Owner has decided
+  and the correction is made.
+
+==================================================
+3. POST-INCIDENT RECOVERY DESIGN
+==================================================
+
+This section replaces the recovery order written into AU-21, AU-14, H8-21,
+H9-07 and H9-14 for R3-01 and R3-13.
+
+3.1 Terms
+- Compromise window: from the suspected start of the compromise to the end
+  of the incident command. The operator records its start, as established
+  with the Owner, in the audit event of every recovery step. If the start
+  cannot be dated, it is the creation time of the leaked key in the dated
+  key register.
+- Pre-window Owner: an account that held the OWNER role and was active at
+  the start of the compromise window.
+
+3.2 Which scenario applies
+- Scenario A applies only when P9's inventory excludes write access by the
+  attacker to the database and to the server. Only then is the audit trail
+  authoritative (RG-11) and the in-application path below used.
+- Otherwise, Scenario B applies.
+
+3.3 Scenario A — order of recovery
+1. The incident command completes, protocol (a)–(d).
+2. For each pre-window Owner whose OWNER role or active flag was removed
+   during the window, as the audit trail shows, the operator verifies the
+   person in person and runs the OWNER-restoration command (3.5).
+3. The operator recovers each pre-window Owner through AU-14, path (e). The
+   person sets a new password and must enrol TOTP.
+4. The recovered pre-window Owners review the accounts, roles, grants,
+   credential links and Google links created or changed during the window
+   (R2-03, R3-01). Then:
+   - a confirmed account holding the OWNER role is recovered through AU-14,
+     path (e), and loses its Google link;
+   - a confirmed account activated during the window without the OWNER role
+     receives a plain AU-12 RESET link;
+   - for any other such account, the Owner removes the role or deactivates
+     the account (RG-09, RV-04, RV-05).
+5. Every other account receives a plain AU-12 RESET link (R-02, R2-10).
+   Grants revoked during the window are restored through normal Owner
+   commands.
+
+3.4 Scenario A — when the in-application path stops
+The in-application path stops, and the case is handled as Scenario B, when:
+- no pre-window Owner can be established from the audit trail with
+  certainty — for example, the window reaches back before every OWNER
+  assignment, or an OWNER assignment has no audit event; or
+- no pre-window Owner is available.
+An account that first became Owner during the window is never restored,
+recovered or promoted without the review of step 4.
+
+3.5 The OWNER-restoration command (new, operator console)
+- Usable only during incident recovery, after the incident command has
+  completed.
+- Only for a pre-window Owner whose OWNER role or active flag was removed
+  during the window, as the audit trail shows.
+- It restores the OWNER role and the active flag to the values the account
+  held at the window start, and nothing else. It never:
+    * creates a new Owner;
+    * promotes an account that first became Owner during the window;
+    * activates an account that was inactive at the window start;
+    * sets a password, a secret or a credential link.
+- It is not an NX-02 activation and issues no RESET link. The account's
+  password is already unusable from the incident command; the person
+  recovers only through AU-14, path (e), and must enrol TOTP.
+- Each restoration writes an audit event carrying the operator's identity as
+  AU-14 records it (RG-11 exception) and the recorded window start, and
+  raises an alert under LG-07.
+- It runs under the runtime role and under the account row lock. It adds no
+  role, privilege, table or field.
+- Agents never run it (SX-04). Operator abuse of it is the accepted K4 risk
+  of TM-57.
+
+3.6 Scenario B
+- Scenario B means direct database or server write compromise, or any other
+  condition in which in-application state and audit evidence cannot be
+  trusted. No step of 3.3 runs.
+- Recovery uses only a backup or snapshot that is independently verified as
+  both predating the relevant compromise and trustworthy enough for incident
+  recovery.
+- The DIR-009 same-VPS backup is never presumed to be clean or trustworthy.
+  DIR-009 remains an accepted V1 risk (RISK-001), and no document presents
+  it as proof that a clean backup exists.
+- If no such backup or snapshot exists, the in-application recovery path
+  stops and the Owner takes an incident decision outside the application.
+- P9 and P10 define the recovery runbooks.
+
+3.7 Obligations
+- P9/P10: the installation step that creates the first Owner account writes
+  an audit event recording the OWNER assignment and the operator's identity,
+  so the audit trail can establish every pre-window Owner.
+- P9 weighs periodic rotation of the application key. Because the window
+  cannot start before the leaked key was created, rotation shortens it when
+  a leak cannot be dated.
+
+==================================================
+4. ROUND-4 DISPOSITIONS
+==================================================
+
+Where this section is silent, follow the reviewer's recommended fix.
+
+R4-01  Owner decision, as sections 2 and 3. The Level-1 part — detecting from
+       the audit trail every pre-window Owner demoted or deactivated during
+       the window — is step 2 of 3.3.
+R4-02  Resolved by section 3:
+       - the pre-window Owner definition;
+       - the restoration to window-start values only;
+       - the removal of the AU-21 fallback that recovers every Owner account
+         unreviewed;
+       - the rule for an undatable window start.
+       Carry the order, the halt conditions and the "otherwise" outcome into
+       H8-21 and H9-14, and test them.
+R4-03  Resolved by 3.2 and 3.6. Do not refer to "the latest backup taken
+       before the suspected leak" as such; refer only to a backup or
+       snapshot independently verified as 3.6 requires. Add this to H8-21
+       and H9-14.
+R4-04  Reviewer's fix.
+R4-05  Reviewer's fix. The submission identifier and the place time go in the
+       whitelisted `details` object; no field is added.
+R4-06  Resolved by step 4 of 3.3.
+R4-07  Reviewer's wording.
+R4-08  Reviewer's fix. The lock and eviction statement goes into the single
+       SZ-09 note DIR-048 §4 allows; store sizing is a P9 obligation.
+
+==================================================
+5. SCOPE
+==================================================
+
+In addition to DIR-045 §3 and DIR-048 §4:
+- DIR-044 R-02's "existing paths only" is amended by the OWNER-restoration
+  command of 3.5.
+- AU-14 and AU-21 may be amended as section 3 requires. A new AU row, new
+  RV rows and new M rows may define the command.
+- RG-11's exception may cover the OWNER-restoration command.
+- The single SZ-09 note may also carry R4-08's lock and eviction statement.
+
+Guards:
+- No new logical table and no new field. The total stays 125 logical
+  tables with IAM 8, and `users` keeps exactly the four new fields.
+- No new database role or privilege.
+- Quality-gate evidence files of earlier phases are never edited.
+- Everything else forbidden by DIR-043 §3, DIR-045 §3 and DIR-048 §4 stays
+  forbidden.
+
+Stop condition 7 is unchanged: accepted risk beyond the four risks of K4
+(TM-57 covers operator abuse of the new command), (e) as extended, and (f).
+
+Source records: 45 at the start of this task, 47 after it.
+
+==================================================
+6. SEQUENCE
+==================================================
+
+1. Verify the expected state of section 1 with read-only commands. If
+   anything differs, stop.
+
+2. Record:
+   - Two transcribed LOCKED SOURCE RECORDS, following the convention of
+     records 31–45:
+       Appendix A → P5_AUTH_ROUND4_OWNER_DECISIONS_<actual date>.txt
+       This message, from its first line up to the line "APPENDIX"
+                  → P5_AUTH_THIRD_CONTINUATION_OWNER_AUTHORIZATION_<actual date>.txt
+   - One DIR entry for each. Check IDs first; expected DIR-049 and DIR-050.
+   - A continuation entry on the accepted operator-abuse risk, noting that
+     it covers the new command.
+   - The TECH-025 continuation.
+
+3. Apply sections 3 and 4 in the working tree, in every affected document.
+
+4. In the gate document, after the verbatim round-4 report, record the
+   round-4 dispositions one by one.
+
+5. Review round 5 — the final focused review — by a fresh agent bound by
+   DIR-046 §2, on the complete corrected working tree.
+   - Scope:
+     * every change made for sections 3 and 4;
+     * their interactions with the incident protocol, the R-01 limit and
+       the reset paths;
+     * a regression run of the mechanical checks of rounds 2 to 4.
+   - Record its report verbatim and the dispositions one by one.
+
+6. Apply the convergence rule of section 2 to round 5's findings:
+   - Correct and validate Level-1 findings without another full adversarial
+     round.
+   - However, run another focused review if a correction materially changes
+     security-control semantics, introduces a new persistence or dependency
+     mechanism, or produces a HIGH or Owner-level issue.
+   - Record each carried LOW non-material finding in the gate document and
+     the GAP register, with an owner and a phase.
+   - A finding that requires a new Owner decision stops the task first,
+     under stop condition 6 or 7. The focused review follows after the Owner
+     has decided and the correction is made.
+
+7. Run the gate of DIR-043 §10, as amended by DIR-045 §5 step 6, DIR-046 and
+   DIR-048 §5 step 6, on the final working tree, with these changes and
+   additions:
+   - the 40 committed source records byte-identical to 6dbc49a; records
+     41–45 matching their recorded hashes; the two new hashes recorded and
+     re-verified;
+   - section 3 stated the same way in AU-14, AU-21, the new AU row, RG-11,
+     the new RV and M rows, H8-21, H9-07 and H9-14;
+   - the order of 3.3 is stated unambiguously: a legitimate pre-window Owner
+     is restored where necessary (3.5), then recovered through AU-14, and
+     then conducts the review; no text requires a pre-window Owner to be
+     reviewed by another Owner before its own restoration or recovery;
+   - no account that first became Owner during the compromise window is
+     restored or recovered as an Owner without the review of a recovered
+     pre-window Owner;
+   - no account that first became Owner during the window is classified as
+     a pre-window Owner;
+   - no text presents the DIR-009 backup as clean or trustworthy;
+   - the R4-04 and R4-05 rules stated the same way wherever R-01's limit is
+     stated;
+   - the zero-context check additionally answers:
+     * what happens if every pre-window Owner was demoted or deactivated
+       during the window;
+     * in which order pre-window Owners are restored, recovered and conduct
+       the review, and whether a pre-window Owner needs another Owner's
+       review before its own restoration and recovery;
+     * whether an account that first became Owner during the window can be
+       restored or recovered as an Owner without the review of a recovered
+       pre-window Owner;
+     * what happens if the leak cannot be dated;
+     * what happens if write access to the database cannot be excluded.
+
+8. Compute the recorded hashes from the final content, then create Commit 4
+   with its original message:
+     docs: align scope, registers and state with the P5 authentication amendment
+   Confirm that the hashes equal the committed blobs and that the tree is
+   clean. A defect found after Commit 4 is handled by Commit 5, as DIR-043
+   says.
+
+9. Push the branch with a normal push: `git push -u origin amendment/p5-auth`.
+   - Verify the branch on the live remote, and that live `main` is
+     unchanged.
+   - The amendment stays PENDING OWNER APPROVAL.
+   - If this environment has no GitHub credentials, do not request broad
+     access; report the SHAs and give me the command.
+
+==================================================
+7. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+Sections A–Q of the earlier authorizations, plus:
+R. Round-4 dispositions one by one.
+S. Round 5, and any further focused round: where each verbatim report is
+   recorded, the findings one by one with dispositions, how the convergence
+   rule was applied, and every carried finding with its owner and phase.
+
+At the very end of your report, including a stop report, append this block
+in Bahasa Indonesia, with concrete values for the NEXT Planning step (my
+review of the amendment before approval), not for this task. Replace each
+set of alternatives with one value and leave no placeholder.
+
+Langkah selanjutnya:
+Kirim report ini ke agent: Planning
+Model: Opus 5.5 / Fable 5.1
+Effort: High / XHigh / Max
+Session: chat sesi yang sama / chat baru
+
+Reason:
+<short reason based on the next planning task>
+
+Escalation / Masalah exceptionally difficult:
+<"Fable 5.1 only if Opus 5.5 cannot resolve the task reliably." only when
+materially relevant; otherwise leave empty>
+
+Stop after the report.
