@@ -1,10 +1,12 @@
 # Application architecture
 
-Status: APPROVED | Updated: 2026-10-01 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
 
 Approval: [APPR-005](../00-governance/DECISION_LOG.md#appr-005--p4-database-architecture-approved), explicit conditional Owner approval on 2026-09-30 (DIR-029) of this document as committed in the P4 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: narrowly amended on 2026-09-30 as a Level-1 technical clarification under [TECH-021](../00-governance/DECISION_LOG.md#dir-032-obs-011-and-tech-021--p6-authorization-entry-baseline-and-concurrency-documentation): §5 and §11 gain clauses marked `TECH-021` that point to the mechanisms [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md) defines — the failure mapping per code and what a refusal commits, the record that takes the place of the job-batch record of an export request, the recovery of an abandoned rendition attempt and the operational tasks of the job register. Only the clauses marked `TECH-021` were added; no structure, boundary or business meaning changes; the pre-amendment SHA-256 is recorded in the decision log, and the amended revision is approved under [APPR-007](../00-governance/DECISION_LOG.md#appr-007--p6-concurrency-idempotency-and-performance-approved).
+
+Amendment — REVIEW, pending Owner approval: on 2026-10-03, under [DIR-043](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment), §1 (the one-time authentication decision of AICWDF §4A.1), §3 and §4 (the Identity module, its authentication boundary and the two outbound adapters), §8 (the authentication boundary of AICWDF §4A.9), §13 (the first outbound calls), §15, §16, §19 and §20 were amended to apply the Owner's decisions D5 and D6 ([DIR-037](../00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)) and K2 (DIR-042) as [SECURITY](../05-security/SECURITY.md) designs them; no module, tier, boundary of a business module or business meaning changes. [TECH-025](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment) records the SHA-256 of the last approved revision. The amended wording is not approved until the Owner approves it; the Owner decisions it applies are binding within their subjects.
 
 Authority: P4 — Database Architecture, authorized by [DIR-027](../00-governance/DECISION_LOG.md#dir-027-obs-007-and-tech-017--p4-authorization-unattributed-loss-clarification-and-p4-documentation), red-teamed under DIR-028 and corrected under DIR-029 ([TECH-018](../00-governance/DECISION_LOG.md#dir-028-obs-008-dir-029-and-tech-018--p4-targeted-review-corrections-and-finalization)). This document owns the **application structure**: the modular-monolith boundaries, dependency direction, layers, the action (use-case) pattern, posting services, the authorization boundary handed to P5, the Inertia web layer, the React boundary, background jobs, file storage, integration seams and the reporting layer. The logical data model, constraints and transaction map are owned by [DATABASE](DATABASE/README.md); phase evidence by [P4_QUALITY_GATE](evidence/P4_QUALITY_GATE.md).
 
@@ -18,6 +20,7 @@ Authority: P4 — Database Architecture, authorized by [DIR-027](../00-governanc
 - **Shape (OB §18):** a **modular monolith** — one Laravel application, one primary PostgreSQL database, one repository, one deployable unit — with layered architecture, an MVC web layer and the action/use-case pattern.
 - **Excluded (DIR-027 §6):** microservices, event sourcing, Kafka, Kubernetes, full CQRS infrastructure, database-per-company tenancy, a repository class per model, full DDD ceremony, a generic workflow or rules engine (V1_SCOPE).
 - **Owner priority order for trade-offs (OB §58):** data integrity → maintainability → security → correctness → operational simplicity → performance → developer convenience → novelty.
+- **Authentication (AICWDF §4A.1, §4A.7; SECURITY D-SEC-17):** Laravel-native, decided once — Laravel Fortify for the login pipeline, the two-factor challenge, password confirmation and password update, with registration, password reset, e-mail verification, profile update and passkeys off; Laravel Socialite for Google sign-in. No Sanctum, Passport or other authentication package and no hosted identity service; Tasks reuse this decision and never redesign it (EXECUTION_CONTEXT).
 
 ## 2. Layers
 
@@ -36,7 +39,7 @@ Thirteen modules own the tables of [DATABASE §4](DATABASE/s04-00-module-map.md#
 
 | Module | Responsibility | Owns (DATABASE) | Typical actions |
 | --- | --- | --- | --- |
-| Identity (IAM) | users, roles, capabilities, company grants, sessions | §4.1 | CreateUser, GrantCompany, GrantCapability, DeactivateUser |
+| Identity (IAM) | users, roles, capabilities, company grants, sessions; authentication — password, TOTP and Google sign-in — behind its authentication boundary (§8) | §4.1 | CreateUser, GrantCompany, GrantCapability, DeactivateUser, ResetTotp, UnlinkGoogleIdentity; the identity steps of SECURITY AU-16–AU-24 (enrolment, challenge, recovery codes, Google link) |
 | Organization (ORG) | companies, identity assets, bank accounts, numbering, tax configuration | §4.2 | CreateCompany, AddBankAccount, ConfigureNumbering, ConfigureTaxTreatment |
 | Parties (PTY) | client organization → unit → address/PIC, suppliers | §4.3 | CreateClientOrganization, AddClientUnit, CreateSupplier |
 | Catalog (CAT) | products, services, units, conversions, barcodes, price defaults, images | §4.4 | CreateProduct, AddAlternateUnit, RegisterBarcode, ChangeDefaultPrice |
@@ -101,9 +104,11 @@ app/
     Contracts/      the inversion contracts of §3 declared by this module
     Jobs/           background jobs owned by the module
     Http/           Controllers, Requests (validation), Resources (prop shaping)
+    Authentication/ Identity only — the authentication boundary (§8): Fortify and
+                    Socialite hooks, the Google provider and the breached-password check
   Support/          Money, Quantity, UnitConversion, BusinessDate, CommandContext,
                     GuardUpdate, AuditRecorder, OutcomeMapper (shared, business-neutral)
-  Integrations/     adapters behind module contracts (none in V1; §13)
+  Integrations/     adapters behind module contracts (none for business data in V1; §13)
 resources/js/
   Pages/<Module>/   Inertia pages
   features/<module>/ feature components and hooks
@@ -166,6 +171,7 @@ All guard updates go through one shared `GuardUpdate` helper: a conditional in-t
 - **Capabilities** (`capabilities.authority_class`) express ADM, ADM+ and Owner-only authority (WORKFLOWS §4); policies check capabilities, never role names.
 - **Field projection:** pages receive explicit prop resources, never raw models. The pooled stock views use **physical-only query classes** (quantities, locations, serial presence) that never select S3 tables (DATABASE §5.1); financial pages use separate company-scoped queries. P5 designs the matrix per resource and field.
 - Downloads and exports authorize the owning record at request time; public identifiers prevent enumeration but never replace authorization.
+- **Authentication boundary (AICWDF §4A.8, §4A.9):** authentication sits behind one boundary inside the Identity module — Fortify's pipeline and two-factor hooks, the Socialite Google provider and its subclass, the breached-password check and the TOTP library. No Fortify, Socialite, Google or TOTP-library type, and no provider subject or Google e-mail, appears outside it; the rest of the application sees only the authenticated account's id and the session's factor stamp (SECURITY AU-06). Authorization stays provider-neutral: no policy, gate, resolver or query class reads how an account authenticated (PERMISSIONS_MATRIX AZ-13), so adding or removing a login provider changes no business rule.
 
 ## 9. Web layer (Laravel + Inertia)
 
@@ -203,11 +209,12 @@ The framework filesystem abstraction with a **private** disk for all S2–S4 fil
 
 ## 13. Integration adapters and the SIPLAH seam
 
-V1 has no live external integration and core operation never depends on SIPLAH (D-03; AC-15). The seam is ready without being built:
+V1 has no live business integration and core operation never depends on SIPLAH (D-03; AC-15); its only outbound calls are authentication's, described last below. The seam is ready without being built:
 
 - A module that may one day receive external data declares a small interface (for example `ChannelOrderSource` in PRJ or `RemittanceAdviceSource` in FIN); an adapter under `app/Integrations/<Name>` implements it later.
 - Inbound events will land first in an integration inbox (introduced with the first integration) with authentication or signature checks, replay protection, event-identity uniqueness and logging; a job turns each accepted event into an ordinary action with a command id derived from the event identity, so external systems never mutate stock or money directly (OB §34).
 - External identifiers stay attributes, never keys (OB §9); timeouts and outages of an external system can only delay its own inbox, never the core application.
+- **The first outbound adapters — authentication only:** Google's OpenID Connect endpoints for sign-in and linking (SECURITY AU-22, AU-23) and the breached-password range service (SECURITY AU-03), both inside the authentication boundary (§8). They run synchronously within the authenticating request, because a person waits for them, but never inside a database transaction (§15), with a connect and a total timeout and no retry; they create no inbox, job or business effect, and an outage of either stops only its own step — a Google sign-in, or the setting of a password — while password login and every business function continue. A Google subject is an attribute of `user_external_identities`, never a key of any business record.
 
 ## 14. Reporting and query layer
 
@@ -219,13 +226,13 @@ V1 has no live external integration and core operation never depends on SIPLAH (
 ## 15. Transactions and failure semantics
 
 - One action = one database transaction containing every row of its AX entry (DATABASE §25) plus audit and command-log completion.
-- **Never inside a transaction:** network calls, external APIs, PDF rendering, image processing, file uploads, e-mail or large reports (OB §31).
+- **Never inside a transaction:** network calls, external APIs, PDF rendering, image processing, file uploads, e-mail or large reports (OB §31) — the authentication adapters of §13 included: their calls finish before the identity transaction that uses their answer opens (CONCURRENCY_IDEMPOTENCY RV-16, H6-15).
 - After commit: jobs, notifications and cache invalidation; their failure never undoes or falsifies the committed business truth.
 - A lost response after commit is answered by replaying the same `command_id` (P6); a transaction that fails leaves nothing behind; partial effects never exist.
 
 ## 16. Configuration, environments and database roles
 
-- Secrets live only in environment configuration outside the repository; only sanitized examples are committed; agents never receive production credentials (ENGINEERING_PRINCIPLES).
+- Secrets live only in environment configuration outside the repository; only sanitized examples are committed; agents never receive production credentials (ENGINEERING_PRINCIPLES). They include the Google OAuth client secret of each environment, and `APP_KEY`, which also encrypts the TOTP secrets and recovery codes (SECURITY SX-01, AU-21).
 - The application stores timestamps in UTC and computes business days in Asia/Jakarta (BR-DT-06); user-facing locale is Indonesian (P7).
 - Separate database roles, with the privileges of DATABASE §28 (P9 creates them): the **migration/owner** role reached only through a separate Laravel database connection used by deployments, whose credential the runtime never holds (an owner bypasses grants, may TRUNCATE and may disable triggers, so nothing is guaranteed against it); the **application runtime** role shared by web requests and queue workers, which run the same actions; the **administration** role used only for the audited `GuardMaintenance` and approved repairs. Opening imports run through the application actions under the runtime role. Production debug is off; the `pg_trgm` and `btree_gist` extensions are provisioned by the migration role; after any restore, guard verification runs before the application reopens (P9).
 
@@ -239,7 +246,7 @@ Tests run against real PostgreSQL (never an in-memory substitute) so CHECK, uniq
 
 ## 19. Prohibited patterns
 
-A catch-all `Services` folder; a repository class per model; business decisions in controllers, model events or React; whole-request mass assignment; float for money or quantity; `MAX(number) + 1`; direct edits of balances; cross-module writes that bypass the owning module's actions or posting services; morph-link columns for business records; delete flags on facts; slow work inside transactions; cache as the only copy of stock, payment or invoice state; role-name authorization checks.
+A catch-all `Services` folder; a repository class per model; business decisions in controllers, model events or React; whole-request mass assignment; float for money or quantity; `MAX(number) + 1`; direct edits of balances; cross-module writes that bypass the owning module's actions or posting services; morph-link columns for business records; delete flags on facts; slow work inside transactions; cache as the only copy of stock, payment or invoice state; role-name authorization checks; provider-specific authentication types, a provider subject or a Google e-mail used outside the authentication boundary, or an account found by e-mail from a Google response (§8).
 
 ## 20. Traceability and downstream obligations
 
@@ -256,5 +263,6 @@ A catch-all `Services` folder; a repository class per model; business decisions 
 | OB §35 queue | §11 |
 | OB §36 auditability | §7, §17; DATABASE §23 |
 | WORKFLOWS §2 command envelope, §4 authority, §9 indivisible actions | §5, §8, §15 |
+| AICWDF §4A.1, §4A.7 authentication decision; §4A.8, §4A.9 boundary (D5, D6; authentication amendment) | §1, §3, §4, §8, §13 |
 
 Downstream: **P5** fills policies, capabilities, field projection, upload controls and denial paths on the §8 boundary. **P6** fixes lock order, isolation, retry, command-log replay, render sweeper cadence, guard verification cadence and measured query targets. **P7** designs pages, patterns and copy on the §9–§10 boundary. **P8** builds the §18 test suites. **P9** provisions roles, extensions, storage, queues and backups. **P11** cuts build units per module and action, citing AX, C-rows and tables.
