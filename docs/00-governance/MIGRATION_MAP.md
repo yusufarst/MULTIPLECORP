@@ -16,7 +16,8 @@ This record resolves every path of the pre-migration baseline to its place after
 | Stage 2 — CONCURRENCY_IDEMPOTENCY | `db4e1f524579ae60812dd45a06bc6d89cad0938a` | `docs: split CONCURRENCY_IDEMPOTENCY into section files`: `docs/06-api-performance/CONCURRENCY_IDEMPOTENCY.md` split into 8 section files and a README |
 | Stage 2 — ADMIN_FLOW | `64431fcbca0134b4b268762cb765dc6520241ac2` | `docs: split ADMIN_FLOW into section files`: `docs/07-ux-design/ADMIN_FLOW.md` split into 8 section files and a README |
 | Stage 3 | `0dbbb44f3ceb167a6243c8cad796a89c4d394239` | `docs: align governance and operating structure with AICWDF v4.3`: governance and operating-structure alignment (DIR-039 §10); no move or split |
-| Finalization | the commit `docs: finalize AICWDF structural migration`, child of `0dbbb44` | Owner approval APPR-009 recorded, three narrow corrections and the stage-3 lifecycle from pending to approved (DIR-041); see [Approval](#approval) |
+| Finalization | `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad` | `docs: finalize AICWDF structural migration`: Owner approval APPR-009 recorded, three narrow corrections and the stage-3 lifecycle from pending to approved (DIR-041); see [Approval](#approval) |
+| Publication confirmation | the commit `docs: record AICWDF migration publication`, child of `565fbb4` | The publication of the finalization commit recorded (OBS-015); see [Publication](#publication) |
 
 A commit cannot record its own SHA; a later commit is resolved with `git log -1 --format='%H %s' --grep='^<exact message>$'`.
 
@@ -391,7 +392,7 @@ Output of `git diff -M --summary <commit 0> <stage 1>`. Git's rename detection i
 
 ## Approval
 
-**State: OWNER APPROVED, PUBLICATION PENDING.** On 2026-10-03 the Owner approved the migration under [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved) (DIR-040 F1 and F2): stages 0–3 as reviewed at the stage-3 commit `0dbbb44f3ceb167a6243c8cad796a89c4d394239`, the stage-3 amendments and new documents, and three narrow corrections made under DIR-041 in the finalization commit `docs: finalize AICWDF structural migration`, a child of `0dbbb44`. APPR-001–APPR-008 carry over unchanged to the moved and split files on the proofs above. Publication is pending: `main` is still at the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` until DIR-041 fast-forwards it to the finalization commit, and the publication is recorded only after the live remote confirms it.
+**State at the finalization commit: OWNER APPROVED, PUBLICATION PENDING** — since published; see [Publication](#publication). On 2026-10-03 the Owner approved the migration under [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved) (DIR-040 F1 and F2): stages 0–3 as reviewed at the stage-3 commit `0dbbb44f3ceb167a6243c8cad796a89c4d394239`, the stage-3 amendments and new documents, and three narrow corrections made under DIR-041 in the finalization commit `docs: finalize AICWDF structural migration`, a child of `0dbbb44`. APPR-001–APPR-008 carry over unchanged to the moved and split files on the proofs above. Publication is pending: `main` is still at the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` until DIR-041 fast-forwards it to the finalization commit, and the publication is recorded only after the live remote confirms it.
 
 ### Gate A — finalization: PASS
 
@@ -432,3 +433,24 @@ A fresh read-only agent, given none of the finalization conversation and only th
 | Wording on the P7 re-baseline (AICWDF_ADOPTION §1, AGENTS.md rule 10) and date phrases in PRODUCT_OVERVIEW ("the remaining window"), CHANGE_CONTROL and ADR-001 | Accurate in context or historical; PRODUCT_OVERVIEW's sentence is kept as DIR-041 §6.4 (1) requires; not changed |
 | DECISION_INDEX says "P8 not started" where PHASE_STATUS says BLOCKED; GAP-036 restates P8's status; SOURCE_OF_TRUTH's approval paragraph lacks "and" before APPR-007 and does not list APPR-009 | Compatible, PHASE_STATUS owning the status; the editorial slip in approved text and the approval paragraph lie outside the three corrections, and APPR-009 is cited in SOURCE_OF_TRUTH's amendment note and registry; not changed |
 | Commits must carry no AI attribution | Followed (DIR-022) |
+
+## Publication
+
+**State: DONE — approved (APPR-009) and published.** On 2026-10-03, under DIR-041 §9, `main` was fast-forwarded with `git merge --ff-only migration/aicwdf` from the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` to the finalization commit `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad` (`docs: finalize AICWDF structural migration`, parent `0dbbb44f3ceb167a6243c8cad796a89c4d394239`), without a merge commit, and `git push origin migration/aicwdf` and `git push origin main` ran as normal, non-force pushes. The live remote then showed (`git ls-remote origin`, 13:12 WIB), with `HEAD` following `main`:
+
+| Ref | Object |
+| --- | --- |
+| `refs/heads/main` | `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad` |
+| `refs/heads/migration/aicwdf` | `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad` |
+| `refs/tags/pre-aicwdf-migration` | tag object `2f8875e8b92d64b2db6c8e8dbc5991899f5d92de`, peeled to `c511d7b0d4683e07717c962927c9f113854f227b` — unchanged |
+
+The branch and the tag are kept (DIR-040 F4). The publication-confirmation commit `docs: record AICWDF migration publication`, a child of `565fbb4`, records this publication ([OBS-015](DECISION_LOG.md#obs-015--aicwdf-migration-publication-verified)); a commit cannot record its own SHA, so the next authorized task records that commit literally.
+
+### Gate B — publication confirmation: PASS
+
+- **Evidence.** The live-remote verification above is the evidence for every publication statement.
+- **Scope.** The publication-confirmation diff changes only PHASE_STATUS, CURRENT_HANDOFF, this map, the decision log and CHANGELOG.
+- **SHA.** The finalization commit `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad` is the only commit recorded as published, as the fast-forward target and as live `main` and `migration/aicwdf`.
+- **Unchanged.** No source record, no approval hash table — APPR-009 and the TECH-024 table — and no normative document changes; the 38 source hashes match SOURCE_OF_TRUTH.
+- **Links.** 1,556 relative links in 103 Markdown files outside `sources/`, none broken, anchors included.
+- **Zero-context read.** A fresh read-only agent, given only the working tree, answered (a) that the structural migration is approved under APPR-009 and published at the finalization commit, with the refs, SHAs and date above, and (c) that the safe next action is the Owner's authorization of the P5 security and authentication amendment, then of the P7 UX re-baseline, and what is not authorized: correct. Its observations — this commit not yet made at the time of the read; no gate B record and no anchored OBS-015 entry; the Approval state above and two CURRENT_HANDOFF sentences readable as current after this commit's own push; the finalization SHA missing from the reference points — were resolved in this record before the commit. The TECH-024 entry, the record of the finalization commit, keeps its wording; OBS-015 records the publication that followed it.

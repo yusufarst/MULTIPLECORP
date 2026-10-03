@@ -6,8 +6,8 @@ The Owner's progress view of the AICWDF v4.3 phases until P11 creates the Task p
 
 | Phase | Scope (AICWDF section) | Status | Approval and open items |
 | --- | --- | --- | --- |
-| P0 | Governance, foundation and agent continuity (§11) | DONE | [APPR-001](00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted). AICWDF adoption amendment: OWNER APPROVED ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)), PUBLICATION PENDING |
-| P1 | Product definition, scope and acceptance (§12) | DONE | [APPR-002](00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved). Amendment — target, language and experience: OWNER APPROVED ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)), PUBLICATION PENDING |
+| P0 | Governance, foundation and agent continuity (§11) | DONE | [APPR-001](00-governance/DECISION_LOG.md#appr-001--p0-governance-accepted). AICWDF adoption amendment: APPROVED ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)) and PUBLISHED |
+| P1 | Product definition, scope and acceptance (§12) | DONE | [APPR-002](00-governance/DECISION_LOG.md#appr-002--p1-product-definition-and-v1-scope-approved). Amendment — target, language and experience: APPROVED ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)) and PUBLISHED |
 | P2 | Domain model and business rules (§13) | DONE | [APPR-003](00-governance/DECISION_LOG.md#appr-003--p2-domain-baseline-approved) |
 | P3 | Critical workflows, routes and interactions (§14) | DONE | [APPR-004](00-governance/DECISION_LOG.md#appr-004--p3-critical-business-workflows-approved). Open addition: route and interaction contracts, with P7 ([GAP-035](00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet)) |
 | P4 | Database and application architecture (§15) | DONE | [APPR-005](00-governance/DECISION_LOG.md#appr-005--p4-database-architecture-approved). Open amendment: IAM tables, with the authentication amendment |
@@ -23,7 +23,7 @@ The Owner's progress view of the AICWDF v4.3 phases until P11 creates the Task p
 | --- | --- |
 | Planning freeze | Not reached |
 | Tasks | None; created in P11 |
-| Structural migration ([DIR-039](00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)) | OWNER APPROVED ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)) — PUBLICATION PENDING; the finalized stages 0–3 are on branch `migration/aicwdf`, and `main` is still at the P7 checkpoint `c511d7b0d4683e07717c962927c9f113854f227b` ([migration map](00-governance/MIGRATION_MAP.md#approval)) |
+| Structural migration ([DIR-039](00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)) | DONE — approved ([APPR-009](00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved)) and published: `main` fast-forwarded from the P7 checkpoint to the finalization commit `565fbb48e1c2d64f7f3fcdc780b9983ceed36cad`, verified on the live remote ([OBS-015](00-governance/DECISION_LOG.md#obs-015--aicwdf-migration-publication-verified); [migration map](00-governance/MIGRATION_MAP.md#publication)) |
 
 ## Status values
 
