@@ -1,0 +1,665 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fortieth source record
+Received: 2026-10-03, in-session Owner message to the repository executor with
+main, locally and on the live remote, at
+c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner authorization — P5 security/authentication amendment (D5, D6):
+         the decided design — password profile AICWDF-COMPAT-8, mandatory
+         TOTP for high-risk accounts and Google sign-in for existing
+         accounts — written into the approved planning documents on the
+         branch amendment/p5-auth, every gate passed, the amendment marked
+         PENDING OWNER APPROVAL and the branch pushed for review; main not
+         moved
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block from its first line up to, and not
+         including, the "APPENDIX" heading block. The one-line note under
+         that heading, "Source text to archive under 6.2. Not instructions
+         for this task.", is quoted here and not transcribed below; Appendix
+         A, which followed it, is the thirty-ninth source record. Before any
+         edit the executor asked in-session whether to execute the block in
+         full, exactly as written, and the Owner selected "Ya, jalankan
+         penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+P5 SECURITY / AUTHENTICATION AMENDMENT (D5, D6)
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS TASK IS
+==================================================
+
+Repository: C:\Projects\MultipleCorp (remote: github.com/yusufarst/MULTIPLECORP,
+public). Planning documentation only; no application code exists.
+
+This message is my explicit Owner authorization for one documentation-only
+task: amend the approved planning documents so they express my decided
+authentication design — password profile AICWDF-COMPAT-8, mandatory TOTP for
+high-risk accounts, and Google sign-in for existing accounts — exactly as the
+blueprint in section 7, which I approved.
+
+PHASE_STATUS shows this amendment READY and P8 BLOCKED on it (GAP-036).
+
+Result wanted: the amended documents on branch `amendment/p5-auth`, every
+gate passed, the amendment marked PENDING OWNER APPROVAL, the branch pushed
+for review. `main` does not move in this task. Approval and publication are
+a later, separate authorization.
+
+This message is itself an Owner directive and must be recorded.
+
+Resolve ordinary technical and wording choices yourself (Level 1) and record
+them. You may not change anything in section 2.
+
+==================================================
+2. BINDING OWNER DECISIONS
+==================================================
+
+Already recorded (DIR-037):
+D5  Password baseline AICWDF-COMPAT-8. Keep common/breached-password
+    blocking, password-manager and paste support, no forced rotation, the
+    existing throttling and security controls. Mandatory TOTP at minimum for
+    Owner/high-risk accounts. Not EXTERNAL_COMPLIANCE.
+D6  Google sign-in ON for V1, EXISTING_ACCOUNT_ONLY, no auto-registration.
+    Owner provisioning stays authoritative. Google never defines roles,
+    capabilities or company scope. Existing authorization, session and
+    step-up controls stay authoritative. Design safely for shared devices.
+
+New (Appendix A):
+K1  TOTP is mandatory for a high-risk account, defined as an active account
+    that meets at least one of:
+    (1) it holds the OWNER role — always, whatever its grants;
+    (2) it holds an active grant of any ADM_PLUS capability;
+    (3) it holds an active grant of `finance.view`, `cost.view`,
+        `profit.view` or `evidence.view`.
+    TOTP is optional for every other account.
+K2  Google sign-in is available only to an account whose TOTP is active,
+    and the TOTP challenge is still required after Google sign-in.
+K3  Recovery of an Owner account's TOTP: recovery codes first; then another
+    Owner account if one exists; then the operator recovery command of
+    AU-14, extended to reset TOTP.
+K4  These residual risks are accepted by me and recorded as accepted:
+    an 8-character password is weaker against offline guessing after a
+    database leak; TOTP does not resist real-time phishing; an Owner can be
+    deceived into resetting an Admin's TOTP; operator abuse of the recovery
+    command (already TM-57).
+
+==================================================
+3. NOT AUTHORIZED
+==================================================
+
+- The P7 UX re-baseline. No login screen, enrolment screen, copy or layout
+  design. ADMIN_FLOW, DESIGN_SYSTEM and INFORMATION_ARCHITECTURE are not
+  edited; obligations for P7 are recorded as handoffs.
+- Any P8, P9, P10 or P11 work. No test files, no Tasks, no TASK_PLAN.md.
+- Application code, migrations, SQL, packages, configuration files.
+  Installing anything.
+- Any change to roles, the 80-capability catalogue or its classes, company
+  scope rules, the session limits of AU-07 and AU-08, the 15-minute step-up
+  window of AU-15, throttling without lockout (AU-05), password hashing
+  (AU-02), Owner-issued credential links (AU-12), or the prohibitions of
+  AU-17.
+- Any business, financial, inventory or document rule.
+- Editing BUSINESS_RULES, DOMAIN_MODEL, WORKFLOWS or REFERENCE_COVERAGE.
+- Editing, renaming or moving any existing file under
+  docs/00-governance/sources/.
+- Adding or renumbering sections in the split documents; their README
+  tables must stay valid.
+- Creating any application-user representation of the production operator.
+- Moving `main`. A merge commit. Force push, rebase, reset, amend or any
+  history rewrite. Deleting any branch or tag.
+- Committing verification scripts. Cowork, GUI control, GitHub Desktop
+  control.
+
+==================================================
+4. STOP CONDITIONS
+==================================================
+
+Stop immediately, repair nothing, and report to me in Bahasa Indonesia with
+the evidence, if any of these occurs:
+
+1. At the start, locally or on the live remote, `main` is not
+   c26f31e9b053689b07a29877fe1016c6b8103e37, or the branch
+   `amendment/p5-auth` already exists.
+2. The working tree or index is unexpectedly dirty (apply the line-ending
+   note in docs/00-governance/TOOLCHAIN.md first).
+3. Any of the 38 source records does not match its recorded hash.
+4. Official documentation or official source contradicts a decision in
+   section 2 or makes a control of section 7 impossible.
+5. Completing a step would need a change that section 3 forbids.
+6. An adversarial-review finding cannot be closed without an Owner-level
+   decision.
+7. A genuine Owner-level decision appears: business policy, scope,
+   authorization authority, accepted risk beyond K4.
+8. Approval provenance would be lost or weakened, or unexpected divergence
+   appears.
+
+==================================================
+5. GIT RULES AND COMMIT SEQUENCE
+==================================================
+
+- Commits use only my existing configured Git author/committer identity.
+  Never add Co-Authored-By, Generated-By, Assisted-By or any AI/model/tool
+  attribution. After each commit, read the raw message
+  (`git log -1 --format=%B`) and confirm there is no trailer.
+- Branch `amendment/p5-auth`, created from c26f31e…. All work happens there.
+- Stage Markdown with CRLF normalization so blobs stay LF.
+- Never reset or amend. Before a commit exists, fix or discard uncommitted
+  work freely.
+
+Commit sequence (exact messages):
+
+  Commit 1  docs: record P5 authentication amendment authorization
+            Content: section 6.2. Made after the baseline checks pass.
+
+  Commit 2  docs: amend security and permission model for TOTP and Google sign-in
+            Content: section 8, "Commit 2". Made after section 6.3 is done
+            and its own diff scope and link check pass.
+
+  Commit 3  docs: amend database, concurrency and architecture for authentication changes
+            Content: section 8, "Commit 3". Made after its own diff scope
+            and link check pass.
+
+  Commit 4  docs: align scope, registers and state with the P5 authentication amendment
+            Content: section 8, "Commit 4", plus every correction that the
+            adversarial review or the gate requires in any document of this
+            task. It is created only after this fixed order is complete:
+              a. prepare all Commit 4 document changes in the working tree,
+                 without committing;
+              b. run the adversarial review of section 9 against that
+                 complete working tree;
+              c. resolve every material finding in the working tree —
+                 including in documents already committed in commits 2 and
+                 3, whose corrections then become part of Commit 4;
+              d. record the review and its dispositions in
+                 P5_AUTH_AMENDMENT_GATE.md;
+              e. run the full gate of section 10, including the zero-context
+                 check, against the complete final working tree, and record
+                 the results;
+              f. compute the recorded hashes from the final content;
+              g. only when b–f have passed, create Commit 4.
+            Commit 4 is normally the final commit of this task.
+
+  Commit 5  docs: resolve P5 authentication amendment review findings
+            Only if a defect is discovered AFTER Commit 4 already exists.
+            Do not amend or reset Commit 4. Make the correction, update the
+            evidence document and any recorded hash it affects, rerun the
+            affected checks of section 10, then create Commit 5.
+
+The push of section 11 happens only after the final commit exists and its
+checks have passed.
+
+==================================================
+6. BOOTSTRAP, BASELINE, EXTERNAL VERIFICATION
+==================================================
+
+6.1 Bootstrap
+Read, in this order:
+  AGENTS.md
+  docs/11-tasks/EXECUTION_CONTEXT.md
+  docs/handoff/CURRENT_HANDOFF.md
+  docs/PHASE_STATUS.md
+  docs/00-governance/SOURCE_OF_TRUTH.md
+  docs/00-governance/DECISION_INDEX.md
+  docs/00-governance/GAP_REGISTER.md   (GAP-033, GAP-036)
+  docs/00-governance/CHANGE_CONTROL.md
+Then read in full:
+  docs/05-security/SECURITY.md
+  docs/05-security/PERMISSIONS_MATRIX.md
+Then only the parts you amend: DATABASE (s04-00, s04-01, s04-13, s18-19,
+s20-24, s25-28, s29-31), CONCURRENCY_IDEMPOTENCY (s04-06, s10-13, s14-17,
+s18, s19-20), ARCHITECTURE, API_AND_INTEGRATIONS, PERFORMANCE §12, V1_SCOPE,
+ACCEPTANCE_CRITERIA, COST_POLICY, AICWDF_ADOPTION, and AICWDF §4A in the
+archived framework source. Re-derive every count you record.
+
+6.2 Baseline (Commit 1)
+- Verify stop conditions 1–3.
+- Record as an observation entry the literal SHA of `main`
+  (c26f31e9b053689b07a29877fe1016c6b8103e37) as the published
+  migration-confirmation commit; the previous task could not record it.
+- Create two transcribed LOCKED SOURCE RECORDS following the convention of
+  records 31–38:
+    Appendix A → P5_AUTH_OWNER_DECISIONS_AND_APPROVAL_<actual date>.txt
+    This message, from its first line up to the line "APPENDIX"
+               → P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_<actual date>.txt
+  The source count becomes 40.
+- DECISION_LOG: one DIR entry for Appendix A (K1–K4 and the blueprint
+  approval) and one for this authorization; the observation entry; one TECH
+  entry opened for this task. Check existing IDs first; expected next IDs
+  are DIR-042, DIR-043, OBS-016, TECH-025. CHANGELOG: one entry.
+
+6.3 External verification (before writing section 7 into the documents)
+Read current official documentation and, where documentation is silent,
+official source. Install nothing. Record what you read, with the version
+seen, in the source-evidence table of SECURITY; versions are evidence, not
+pinned (DEP-07).
+
+Planning findings to confirm or correct (read 2026-10-03; Laravel 13.x):
+- Official documentation establishes: the Password rule with min, max,
+  mixedCase, numbers, symbols and `uncompromised`, the last using k-Anonymity
+  through the haveibeenpwned.com service; Fortify is optional, has a
+  customizable login pipeline, six-digit TOTP with enable-then-confirm, QR
+  code, viewable and regenerable recovery codes, a challenge accepting
+  `code` or `recovery_code`, and password confirmation before changing
+  two-factor settings; the session ID is regenerated during authentication
+  with Fortify; password confirmation lasts three hours by default and is
+  configurable; `logoutOtherDevices` needs the user's current password;
+  `APP_PREVIOUS_KEYS` lets data encrypted with a previous key still be
+  decrypted; Socialite supports Google, has session state verification
+  unless `stateless` is used, and accepts optional parameters through `with`.
+- Official documentation does NOT establish, and official source showed:
+  the TOTP period (set by the third-party library Fortify uses — not read);
+  a configurable verification window; code-reuse prevention only through the
+  cache and only when a cache is present; a used recovery code replaced by a
+  new one without locking; two-factor columns `two_factor_secret`,
+  `two_factor_recovery_codes`, `two_factor_confirmed_at`, the first two
+  encrypted; Socialite storing `state` in the session and removing it at the
+  callback; PKCE available as an opt-in; the Google user ID taken from `sub`;
+  no `nonce` handling for Google; the `uncompromised` check treating a
+  service failure as "not compromised".
+- Google's OpenID Connect documentation: `prompt` accepts none, consent and
+  select_account only, so re-authentication at Google cannot be forced;
+  `sub` is the stable identifier and e-mail must not be used as one.
+
+If a finding differs, keep the control's intent, adjust the mechanism
+(Level 1) and report it. Whatever the documentation does not guarantee is
+written as a MULTIPLECORP control or as an item to re-verify in source at
+implementation — never as a framework guarantee.
+
+==================================================
+7. THE APPROVED DESIGN
+==================================================
+
+7.1 Libraries (one-time decision, AICWDF §4A.1)
+Laravel-native authentication: Fortify for the login pipeline, two-factor,
+password confirmation and password update; Socialite for Google.
+Fortify policy: registration OFF; password reset OFF (the project's
+credential-token store stays, AU-11/AU-12); e-mail verification OFF;
+profile update OFF; passkeys OFF; password update ON with a project action
+enforcing 7.2 and ending other sessions; two-factor ON with confirmation,
+password confirmation and an explicit window; password confirmation ON at
+15 minutes; "remember me" never used; login and two-factor limiters defined
+by the project per AU-05.
+
+7.2 Password (replaces the rule of AU-03)
+8 to 128 characters; at least one lowercase letter, one uppercase letter,
+one digit and one symbol; NFC normalization; paste and password managers
+allowed; no periodic expiry; a change is forced only on evidence of
+compromise. Rejected when: the `uncompromised` check finds it; or it is in a
+locally bundled list of common passwords, checked first and independent of
+any network call (list and licence chosen at implementation under DEP-07);
+or it contains the account's name or e-mail, the product name or a company
+name. The remote check runs outside any database transaction; its failure
+behaviour is stated. This is an Owner-selected profile, not a NIST claim.
+Password hashing (AU-02) is unchanged.
+
+7.3 High-risk accounts and mandatory TOTP (K1)
+- The definition of K1, evaluated on effective capabilities.
+- By RG-02 every OWNER_ONLY capability takes effect only through the OWNER
+  role, so all account, permission, company, bank-account, identity-asset,
+  credential-link and import-commit authority is covered by criterion (1).
+- Owner recovery (AU-14) is an operator console mechanism, not a capability,
+  and does not change the definition.
+- When a grant makes an account high-risk, the granting command ends that
+  account's sessions in the same transaction; the next login forces
+  enrolment. Every request also checks that a high-risk account's session
+  was established with TOTP.
+- A high-risk account without TOTP can, after its password is accepted,
+  reach only the enrolment page.
+
+7.4 TOTP
+Six digits, 30-second period, one step of tolerance — period and window set
+explicitly by the project. Secret encrypted with the application key. Code
+reuse rejected through a durable per-account last-accepted time step with a
+conditional update. Attempts throttled like login, never lockout, limiter
+fails closed. QR code generated locally. Active only after one correct
+code. No "remember this device". The pending login challenge is bound to the
+account's current factor state and expires; the session ID is regenerated
+when the challenge succeeds. A mandatory account cannot disable TOTP, only
+replace the device.
+Recovery codes: Fortify-native, encrypted at rest, viewable again only after
+password confirmation, regenerated only with password and a current code,
+each usable once, consumed under the account row lock in one transaction.
+
+7.5 Reset and recovery contract (K3)
+In every path: pending login challenges are void; the password confirmation
+of the current session is cleared; other sessions are ended; the account's
+unused credential tokens are revoked; an audit event and a security event
+are written; the account is told at its next login; Owner-account events
+and Owner resets raise alerts (LG-07). A credential link never creates a
+session and never bypasses TOTP; only an OWNER_RECOVERY link resets TOTP.
+
+ a. Normal device replacement — needs an active session, password
+    confirmation and a current code. The old secret and codes stay valid
+    until the new device is confirmed, then are destroyed; new codes are
+    issued at confirmation; this session continues with a new ID; Google
+    eligibility and the password are unchanged.
+ b. Device lost, recovery code available — password plus one recovery code,
+    consumed at once. The session can only enrol a new device. At
+    confirmation the old secret and remaining codes are destroyed and new
+    codes issued. Google sign-in is not eligible until confirmation; the
+    link is kept.
+ c. Owner resets an Admin's TOTP — `users.manage`, step-up, mandatory
+    reason. Secret and codes destroyed at once; all sessions of the account
+    ended; the password is made unusable and one new RESET credential link
+    is issued for out-of-band delivery; the Google link is unlinked with
+    reason CREDENTIAL_REISSUE and the acting Owner as `unlinked_by`. The
+    person sets a new password, logs in and must enrol.
+ d. Owner lost device and codes, another Owner exists — path c, performed by
+    the other Owner, with an alert to the affected Owner.
+ e. Operator recovery (AU-14 extended) — the audited console command issues
+    an OWNER_RECOVERY link only for an OWNER-role account; issuing changes
+    nothing else. Using the link sets a new password, destroys the TOTP
+    secret and codes, ends all sessions and unlinks Google. That unlink
+    happens in the unauthenticated credential flow, so no application
+    account performs it: `unlinked_by` is NULL and the reason is
+    OWNER_RECOVERY. The operator has no application-user representation and
+    none is created. The operator's identity stays where AU-14 already puts
+    it — the audit event and the security event of the link's issue — and
+    the audit event of the link's use refers to that credential link, so the
+    chain from the unlink to the operator is preserved. The Owner then logs
+    in and must enrol. The command never sets or reads a secret. Agents
+    never run it (SX-04).
+ f. A non-mandatory account disables TOTP — allowed only while the account
+    is not high-risk, with password and a current code. Secret and codes
+    destroyed; this session continues with a new ID; the Google link is
+    unlinked with reason TOTP_DISABLED and the account itself as
+    `unlinked_by`. A later high-risk grant ends its sessions and forces
+    enrolment.
+
+7.6 Key management
+The key is the application key, held by the P9 operator in environment
+configuration outside the repository, the web root and the database; a
+database backup holds ciphertext only. Rotation uses the framework's
+previous-keys list, so existing secrets stay readable while the old key is
+listed. The project adds: a dated key register kept in the operator's
+secret store; an operator command that re-encrypts all TOTP secrets and
+recovery codes with the current key, after which, and only after a verified
+count, the old key may be retired; an operator command that voids every
+TOTP enrolment when the key is believed leaked together with the database.
+That command does not unlink any Google identity: the links stay and Google
+sign-in is simply not eligible until each account enrols again (K2). It is
+audited like AU-14, with the operator's identity in the audit event.
+Loss of the key makes secrets unreadable but recovery does not need them:
+operator recovery for the Owner, then Owner resets for others. P9 owes key
+storage and permissions, the rotation and re-encryption runbook, pairing
+each backup with the key valid at that time, and a recovery test.
+
+7.7 Google sign-in (K2)
+- Authorization code flow through Socialite; scopes `openid email`; always
+  `prompt=select_account`; no One Tap, no Google script on any page; no
+  Google token stored; no Google API used.
+- `state` through Socialite, plus a project attempt marker in the session
+  carrying a maximum age and the purpose (sign-in or linking); PKCE enabled;
+  a project `nonce` generated, kept in the session and checked against the
+  ID token; the ID from Socialite confirmed to be `sub`.
+- A second callback while a TOTP challenge is already pending leads to that
+  challenge and does not disturb it. A stale or mismatched callback gets the
+  generic failure.
+- Mapping only through `sub` in `user_external_identities`. No automatic
+  linking by e-mail, no auto-registration. Every failure gives one generic
+  message that reveals nothing about accounts.
+- Every account keeps a password (fallback, step-up, linking).
+- Linking: by the account holder, inside an active session, with password
+  confirmation and a current TOTP code; one Google identity per account and
+  one account per Google identity; the same pair linked again is a no-op; a
+  `sub` already linked elsewhere is refused with a security event and an
+  Owner alert.
+- A Google identity never grants a role, capability or company scope.
+
+7.8 Google identity lifecycle
+Stored: provider, `sub`, the e-mail at link time (display only, never a
+key, not updated), link and unlink facts. Because no token is stored, the
+application does not detect Google-side changes.
+- Google e-mail changes: no effect.
+- Consent revoked at Google, or Google account deleted: felt only at the
+  next Google sign-in attempt; existing MULTIPLECORP sessions continue until
+  their own limits.
+- Google sign-in fails: generic message, security event, password login
+  remains.
+- MULTIPLECORP account deactivated: the link is unlinked inside the
+  deactivation transaction.
+- Unlink by the user: password confirmation; other sessions ended.
+- Unlink by the Owner: `users.manage`, step-up, reason; all sessions of the
+  account ended.
+- Unlink through reset or recovery: paths c, d, e and f of 7.5.
+- Revoking sessions is a separate action and does not change the link.
+
+7.9 Storage
+- `users` gains four fields: `two_factor_secret`, `two_factor_recovery_codes`,
+  `two_factor_confirmed_at` (framework) and `two_factor_last_step`
+  (project); all nullable; cleared together on reset or disable; a
+  constraint that confirmation requires a secret.
+- New IAM logical table `user_external_identities`:
+  * `user_id` — foreign key to `users`, RESTRICT, required.
+  * `provider` — constrained to `google`.
+  * `provider_subject` — required.
+  * `email_at_link` — nullable, display only.
+  * `linked_at` — required.
+  * `linked_by` — foreign key to `users`, RESTRICT, required. Meaning: the
+    authenticated application account that created the link. In V1 only the
+    account holder links, so `linked_by` equals `user_id`, enforced by a
+    constraint.
+  * `unlinked_at` — nullable.
+  * `unlinked_by` — foreign key to `users`, RESTRICT, nullable. Meaning: the
+    authenticated application account whose action performed the unlink. It
+    is never an operator, a system identity or a placeholder user.
+  * `unlink_reason` — constrained to SELF, OWNER, DEACTIVATION,
+    CREDENTIAL_REISSUE, TOTP_DISABLED, OWNER_RECOVERY.
+  * Unlink contract, one row per path:
+      SELF               account holder unlinks        unlinked_by = user_id
+      OWNER              Owner via `users.manage`      unlinked_by = that Owner
+      DEACTIVATION       account deactivated           unlinked_by = the Owner
+                                                       running the command
+      CREDENTIAL_REISSUE Owner resets TOTP (7.5 c, d)  unlinked_by = that Owner
+      TOTP_DISABLED      holder disables TOTP (7.5 f)  unlinked_by = user_id
+      OWNER_RECOVERY     OWNER_RECOVERY link used      unlinked_by = NULL
+                         (7.5 e)
+  * Constraints: while a row is linked, `unlinked_at`, `unlinked_by` and
+    `unlink_reason` are all NULL; once unlinked, `unlinked_at` and
+    `unlink_reason` are both present, and `unlinked_by` is NULL exactly when
+    the reason is OWNER_RECOVERY.
+  * Partial unique keys on (provider, provider_subject) and on (user_id,
+    provider) for rows not unlinked; an index on `user_id`.
+  * Rows are never deleted; relinking adds a row. The row is the history;
+    every link and unlink also writes an audit event in the same transaction
+    and a security event.
+- IAM becomes 8 tables and the logical total 125. Sessions, the
+  credential-token store, pending challenges, OAuth state and limiter
+  counters stay infrastructure or runtime and outside the count.
+- No other field and no other table. Making a password unusable stores an
+  unguessable random hash.
+
+7.10 External dependencies (zero recurring cost)
+Google OAuth client (my Google Cloud access; P9 sets it up per environment);
+the breached-password range service used by `uncompromised`; authenticator
+apps on users' own phones.
+
+==================================================
+8. AMENDMENTS PER DOCUMENT
+==================================================
+
+Keep existing identifiers; continue each sequence for new rows (check first;
+latest seen: AU-17, TM-58, D-SEC-14, H6-12, H7-14, H8-15, H9-12, LK-31, M-38,
+DEP-09, GAP-037, RISK-001). Superseded decisions are marked SUPERSEDED with
+a pointer, not deleted.
+
+Commit 2
+- SECURITY: source-evidence table; AU-03 rewritten; AU-04, AU-05, AU-06,
+  AU-09, AU-11, AU-12, AU-13, AU-14 extended (AU-14 including the evidence
+  chain of 7.5 e); AU-15 window unchanged, with the sensitive self-service
+  actions of 7.4–7.7 named; AU-16 rewritten for TOTP; AU-17 unchanged; new
+  AU rows for the high-risk definition, recovery codes and reset paths, key
+  management, Google sign-in, Google linking and lifecycle; EN-03 exceptions
+  for the Google redirect and callback and the two-factor challenge; no
+  third-party script and the outbound calls of 7.10; new security-event
+  kinds (LG-02) and alerts (LG-07); the Google client secret and key
+  rotation (SX-01, SX-02); threat model — TM-01, TM-04 and TM-06 revised and
+  new rows for OAuth forgery and replay, link takeover, shared-device Google
+  sessions, Google outage, TOTP guessing, TOTP replay, secret theft,
+  recovery-code theft, enrolment bypass, reset abuse and the K4 residuals;
+  D-SEC-06 and D-SEC-14 superseded by new decisions; new decisions for
+  libraries and Fortify policy, the high-risk definition, the reset
+  contract, storage and Google linking; new handoff rows for P6, P7, P8 and
+  P9; traceability. Replace the "Pending amendment" header note with the
+  pending-approval amendment note.
+- PERMISSIONS_MATRIX: OD-01 (TOTP reset and Google unlink under
+  `users.manage`); PJ-17 (what the account and the Owner may see: TOTP
+  status and enrolment time, linked Google e-mail and date — never a secret,
+  a recovery code or a `sub`); the rule that a Google identity grants
+  nothing. No capability added; the catalogue stays 80.
+
+Commit 3
+- DATABASE: module map (IAM 8, total 125); §4.1 (`users` fields, the new
+  table with the contract of 7.9); constraint catalogue; referential
+  integrity; indexes; security statements and traceability where they name
+  the IAM tables.
+- CONCURRENCY_IDEMPOTENCY: lock registry and order for the account row in
+  the new sequences; the conditional update of the last time step; recovery
+  code consumption; link uniqueness and idempotent relink; deactivation and
+  credential-link consumption extended to unlink; which new actions are
+  SF-CMD commands and which are outside the protocol (consistent with CI-09
+  and RG-11); new scenarios (same code twice, same recovery code twice, same
+  `sub` linked to two accounts, linking against deactivation, duplicate
+  callback); handoffs.
+- ARCHITECTURE: the library decision; the authentication boundary of AICWDF
+  §4A.9 (no Google-specific type outside it); §13 and the module tree — the
+  first outbound adapters, never inside a transaction.
+- API_AND_INTEGRATIONS: §3 wording and the route-boundary references.
+- PERFORMANCE: the index register for the new indexes. While editing it you
+  may correct its stale planned path `docs/05-quality/`.
+
+Commit 4 (prepared in the working tree first; committed only after
+sections 9 and 10 pass — see section 5)
+- V1_SCOPE: CAP-13 (today it names login, logout, reset, session, hashing
+  and throttling only) and two new dependency rows. ACCEPTANCE_CRITERIA:
+  AC-13 likewise. Change only what the decisions require.
+- GAP_REGISTER: GAP-033 and GAP-036 updated; the K4 risks recorded as
+  accepted risks; new gaps for the Google client setup, the source
+  re-verification owed at implementation, and the login journey in
+  ADMIN_FLOW that P7 must align. Re-derive totals.
+- COST_POLICY (inventory rows), DECISION_INDEX, AICWDF_ADOPTION (§4A rows),
+  EXECUTION_CONTEXT (auth profile as designed, pending approval).
+- New evidence document docs/05-security/evidence/P5_AUTH_AMENDMENT_GATE.md
+  with the verification evidence, the adversarial review and its
+  dispositions, and the gate results; its registry row in SOURCE_OF_TRUTH.
+  While editing SOURCE_OF_TRUTH you may restore the missing word "and"
+  before APPR-007 in its approval paragraph.
+- PHASE_STATUS: P5 amendment VERIFYING — awaiting Owner approval; the P1,
+  P4 and P6 rows note their part of this amendment; P7 unchanged; P8 stays
+  BLOCKED. CURRENT_HANDOFF updated; safe next action = my review and
+  approval of this amendment.
+- DECISION_LOG TECH entry: every amended file with SHA-256 before and after
+  and the directive it implements, computed from the final content; the
+  amendment marked PENDING OWNER APPROVAL. CHANGELOG entry.
+- Each amended approved document carries the pending-approval amendment
+  note in the form used before APPR-009 was granted. Do not declare
+  anything approved.
+- Any correction to a document of commits 2 or 3 that the review or the
+  gate requires.
+
+==================================================
+9. ADVERSARIAL REVIEW
+(on the complete working tree, before Commit 4 is created)
+==================================================
+
+With commits 1–3 made and all Commit 4 changes prepared but uncommitted,
+have a fresh agent or session, given only that working tree, attack the
+amended design. It must try, at least: bypassing TOTP through Google, a
+credential link, the in-place re-login dialog, a recovery session or a grant
+change; unsafe recovery; a Google identity acting as authorization; e-mail
+used as an identity key; link takeover; duplicate, stale and replayed
+callbacks; session fixation across the multi-step login; sessions surviving
+a reset; reused recovery codes and TOTP codes; account enumeration; local
+and Google identity mismatch; shared devices; a deactivated account; missing
+audit, including an unlink whose actor or evidence cannot be traced;
+contradictions with P4, P5 and P6; anything described as a framework
+guarantee that section 6.3 does not support.
+
+Resolve every material finding in the working tree, or carry it forward
+with an owner and a phase. Record findings and dispositions one by one in
+P5_AUTH_AMENDMENT_GATE.md. If the corrections are substantial, repeat the
+review on the corrected working tree before running the gate.
+
+==================================================
+10. GATE
+(on the complete final working tree, after section 9, before Commit 4)
+==================================================
+
+- Baseline checks pass; the 38 earlier source records are byte-identical to
+  c26f31e…; the two new hashes are recorded and re-verified.
+- The whole branch diff against c26f31e… touches only the documents named in
+  sections 6.2 and 8.
+- Unchanged: the 80 capabilities and their classes (37 / 26 / 17), roles,
+  company scope rules, AU-07, AU-08, the AU-15 window, AU-02, AU-17.
+- Content counts, re-derived: 18 MUST capabilities, 14 document types, 13
+  modules, 125 logical tables with IAM 8 — and every place that states the
+  table total agrees.
+- Every unlink path of 7.9 has its reason, its `unlinked_by` value and its
+  audit and security evidence stated the same way in SECURITY, DATABASE and
+  CONCURRENCY_IDEMPOTENCY; no document gives the operator a user row; the
+  OWNER_RECOVERY unlink can be traced to the operator through the credential
+  link and its issue event.
+- Every new identifier is unique; every new control traces to a decision of
+  section 2 or a design clause of section 7; no superseded decision is still
+  presented as current.
+- Nothing is described as a framework guarantee unless section 6.3 supports
+  it.
+- Section numbers and README tables of the split documents are still valid.
+- Repository-wide link check passes; every identifier referenced exists.
+- Phase status appears only in PHASE_STATUS; EXECUTION_CONTEXT lines cite
+  their owners; DECISION_INDEX holds no rule text.
+- No secrets, no placeholder text, no client ID or secret value.
+- The adversarial review is recorded and has no open material finding.
+- Zero-context check: a fresh agent, from the working tree alone, states the
+  password rule, who must have TOTP, whether a Google identity can grant
+  access, what happens when the Owner resets an Admin's TOTP, who is
+  recorded as the actor when operator recovery unlinks a Google identity,
+  the table total, and that this amendment is pending approval with P8
+  BLOCKED.
+
+When every check passes, create Commit 4. After the commit, confirm that the
+recorded hashes equal the committed blobs and that the tree is clean. A
+defect found at this point is handled by Commit 5 as section 5 says.
+
+==================================================
+11. END STATE
+==================================================
+
+- `main` stays at c26f31e…, locally and on the remote.
+- After the final commit exists (Commit 4, or Commit 5 if it was needed) and
+  its checks have passed, push the branch with a normal push:
+  `git push -u origin amendment/p5-auth`. Verify it on the live remote and
+  verify that live `main` is unchanged.
+- If this environment has no GitHub credentials, do not request broad
+  access. Finish locally, report the SHAs and give me that command.
+- Never claim anything is published until the live remote confirms it. The
+  amendment stays PENDING OWNER APPROVAL.
+
+==================================================
+12. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+A. Baseline evidence and the IDs actually used.
+B. Commits: SHA, message, identity, no trailers; whether Commit 5 was needed
+   and why.
+C. External verification: each planning finding confirmed or corrected,
+   with the source and version seen.
+D. Every amendment: document, rows changed or added, directive, hashes
+   before and after.
+E. Superseded decisions and where they now point.
+F. Adversarial review: findings one by one with dispositions.
+G. Gate results, each check with its evidence.
+H. Zero-context check: questions, answers, result.
+I. Level-1 decisions you made; anything carried forward; anything you could
+   not verify; any stop condition met.
+J. Push status as confirmed on the live remote.
+K. What I must approve next, and the exact next safe action.
+
+Stop after the report.

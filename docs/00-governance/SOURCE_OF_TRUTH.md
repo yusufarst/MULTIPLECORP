@@ -242,6 +242,17 @@ Two records received on 2026-10-03, with `migration/aicwdf` at its stage-3 commi
 
 They are DIR-040 and DIR-041 in [DECISION_LOG](DECISION_LOG.md#dir-040-dir-041-obs-014-and-tech-024--aicwdf-migration-approval-directives-finalization-baseline-and-corrections). The decisions of Appendix A, labelled F1–F6 in §2 of the authorization, are binding within their subjects under the standing hierarchy, and its approval of the migration is APPR-009; its instruction to the planning chat to prepare a prompt and not to execute is archived source text, not an instruction to a repository executor. The finalization authorization (DIR-041) authorizes the finalization commit, the fast-forward publication of `main` with its live-remote verification and the publication-confirmation commit only. All thirty-six earlier source records retain their bytes and classifications.
 
+### P5 authentication amendment decisions and authorization
+
+Two records received on 2026-10-03, with `main` at the published migration-confirmation commit `c26f31e9b053689b07a29877fe1016c6b8103e37` locally and on the live remote, are preserved as **transcribed LOCKED SOURCE RECORDS** thirty-nine and forty (transcripts, not byte-copy claims about attachments): the Owner's decisions on the P5 authentication blueprint with the approval of that blueprint, sent to the planning chat and relayed by the Owner as Appendix A of the amendment authorization, and that authorization itself, transcribed from its first line up to its APPENDIX heading. The authorization arrived as one pasted text block without an accompanying sentence, and the Owner confirmed its full execution in-session before any edit. Neither record contains a credential.
+
+| Archived transcript | Lines / bytes | SHA-256 |
+| --- | --- | --- |
+| [P5_AUTH_OWNER_DECISIONS_AND_APPROVAL_2026-10-03.txt](sources/P5_AUTH_OWNER_DECISIONS_AND_APPROVAL_2026-10-03.txt) | 19 / 955 | `0D1754CE5A159AE68A1C65B980A4415E90CD1C47EE1C94597D47338F3CD450D6` |
+| [P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_2026-10-03.txt](sources/P5_AUTH_AMENDMENT_OWNER_AUTHORIZATION_2026-10-03.txt) | 665 / 37,060 | `E5662EE0AF2A5F4887203D7C605C606C80303B539BAC79A4D1485BBF99D6670E` |
+
+They are DIR-042 and DIR-043 in [DECISION_LOG](DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment). The decisions of Appendix A, stated as K1–K4 in §2 of the authorization, are binding within their subjects under the standing hierarchy, together with D5 and D6 (DIR-037). Its closing sentence approves the P5 blueprint — the design of §7 of the authorization — and not the amended documents that express it, which stay PENDING OWNER APPROVAL. The authorization (DIR-043) authorizes that documentation-only amendment on the branch `amendment/p5-auth`, its gates and a normal push of the branch; it moves no `main` and approves nothing. All thirty-eight earlier source records retain their bytes and classifications.
+
 ## Classify statements before changing them
 
 | Class | Meaning | Treatment |
