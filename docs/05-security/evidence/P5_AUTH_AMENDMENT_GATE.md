@@ -3055,3 +3055,20 @@ Dispositions of its observations:
 - ADMIN_FLOW J-ACC-01 has no pointer to GAP-044. ADMIN_FLOW may not be edited (DIR-052 §3), and F6 keeps it deferred to P7.
 - SECURITY's traceability line does not list GAP-051. SECURITY's body may change only as DIR-052 §6.5 lists, which does not include that line; GAP-051 names H9-14 and H9-14 names GAP-051.
 - The former anchor's name in AGENTS.md is kept so that the link resolves; AGENTS.md lies outside DIR-052 §7.
+
+## Publication
+
+Recorded under DIR-052 §10 after the live-remote verification of its §9. On 2026-10-04, on `main`, `git merge --ff-only amendment/p5-auth` fast-forwarded `c26f31e9b053689b07a29877fe1016c6b8103e37` to the approval commit `e6cb6ac8d89f9a50670b75cd053699cc7ebede4d` (`docs: approve P5 authentication amendment`, parent `9b0b03be06dc44e208d9c2e8935e4949bbd241d2`) without a merge commit. Locally `main` == `amendment/p5-auth` == `e6cb6ac`, the tag still pointed to `c511d7b` and `migration/aicwdf` stayed at `c26f31e`. `git push origin amendment/p5-auth` (`9b0b03b..e6cb6ac`) and `git push origin main` (`c26f31e..e6cb6ac`) ran as normal, non-force pushes and succeeded.
+
+The live remote at 14:44 WIB (`git ls-remote origin`):
+
+| Ref | SHA |
+| --- | --- |
+| `HEAD`, `refs/heads/main` | `e6cb6ac8d89f9a50670b75cd053699cc7ebede4d` |
+| `refs/heads/amendment/p5-auth` | `e6cb6ac8d89f9a50670b75cd053699cc7ebede4d` |
+| `refs/heads/migration/aicwdf` | `c26f31e9b053689b07a29877fe1016c6b8103e37`, unchanged |
+| `refs/tags/pre-aicwdf-migration` | tag object `2f8875e8b92d64b2db6c8e8dbc5991899f5d92de`, peeled `c511d7b0d4683e07717c962927c9f113854f227b`, unchanged |
+
+After `git fetch origin`, local and remote-tracking refs were equal, ahead/behind 0. Every branch and the tag are kept. The P5 authentication amendment is DONE — approved under [APPR-010](../../00-governance/DECISION_LOG.md#appr-010--p5-authentication-amendment-approved) and published — as [OBS-018](../../00-governance/DECISION_LOG.md#obs-018--p5-authentication-amendment-publication-verified) records. This section is carried by the publication-record commit, which follows the approval commit; that commit's own SHA is recorded by the next authorized task.
+
+**Gate B (DIR-052 §10.2): PASS.** The live-remote verification above is the evidence for every publication statement. The diff touches only PHASE_STATUS, CURRENT_HANDOFF, this record, DECISION_LOG and CHANGELOG: it adds this section, the OBS-018 row and entry and a CHANGELOG entry, and replaces only the amendment's status lines in PHASE_STATUS and the state rows of CURRENT_HANDOFF; no historical or verbatim line changes. The SHA recorded as published is the approval commit's, `e6cb6ac8d89f9a50670b75cd053699cc7ebede4d`. No source record, approval hash table or normative document changes. The link check passes, 1,776 relative links and anchors resolving. A fresh zero-context agent bound by DIR-046 §2, which did not read this record, answered from the repository that the amendment is approved under APPR-010 and published at `e6cb6ac`, with the recorded refs matching the live remote, and that the safe next action is the Owner's authorization of the P7 UX re-baseline, within the limits of CURRENT_HANDOFF.
