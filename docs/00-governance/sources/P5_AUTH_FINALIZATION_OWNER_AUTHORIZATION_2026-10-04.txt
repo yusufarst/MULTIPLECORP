@@ -1,0 +1,637 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-ninth source record
+Received: 2026-10-04, in-session Owner message to the repository executor with
+the branch amendment/p5-auth at 9b0b03be06dc44e208d9c2e8935e4949bbd241d2 and
+main at c26f31e9b053689b07a29877fe1016c6b8103e37, each locally and on the
+live remote
+Subject: Owner authorization — approval, finalization and publication of the
+         P5 authentication amendment: the approval commit recording the
+         Owner's approval, the acceptance of GAP-047 and GAP-048, the P9
+         obligation, the file-count correction and the move from pending to
+         approved; the fast-forward of main, normal pushes and the
+         live-remote verification; then the publication-record commit
+Delivery: one pasted text block sent without an accompanying sentence. This
+         record transcribes the block from its first line up to, and not
+         including, the "APPENDIX" heading block. The note under that
+         heading, "Source text to archive under 6.2. Not instructions for
+         this task.", is quoted here and not transcribed below; Appendix A,
+         which followed it, is the forty-eighth source record. Before any
+         edit the executor verified the baseline read-only and asked
+         in-session whether to execute the block in full, exactly as
+         written, and the Owner selected "Ya, jalankan penuh".
+This is a transcript of the in-session message, not a byte-copy claim about an attachment.
+====================================================================
+
+MULTIPLECORP — OWNER AUTHORIZATION
+P5 AUTHENTICATION AMENDMENT — APPROVAL, FINALIZATION AND PUBLICATION
+
+==================================================
+LANGUAGE RULE
+==================================================
+
+Every message to me (progress, questions, warnings, stop reports, the final
+report) must be in Bahasa Indonesia.
+Repository documents, identifiers and commit messages stay in English.
+
+==================================================
+1. WHAT THIS TASK IS
+==================================================
+
+Repository: C:\Projects\MultipleCorp (remote: github.com/yusufarst/MULTIPLECORP,
+public). Planning documentation only; no application code exists.
+
+The P5 authentication amendment is complete on branch `amendment/p5-auth`
+(head 9b0b03be06dc44e208d9c2e8935e4949bbd241d2) and was independently
+reviewed. `main` is still at c26f31e9b053689b07a29877fe1016c6b8103e37.
+
+This message is my explicit Owner authorization to approve, finalize and
+publish that amendment in three steps:
+
+  Step 1 — APPROVAL COMMIT (commit A) on `amendment/p5-auth`: record my
+           approval and my acceptance of GAP-047 and GAP-048, record the P9
+           obligation, correct the verified file-count wording in the
+           evidence, and move the amendment's current state from PENDING
+           OWNER APPROVAL to APPROVED. The repository then says: OWNER
+           APPROVED, PUBLICATION PENDING.
+  Step 2 — PUBLICATION: fast-forward `main` to commit A, push normally,
+           verify the live remote.
+  Step 3 — PUBLICATION RECORD (commit B): only after the live remote is
+           verified, record the actual publication, re-verify the live
+           remote, then publish commit B.
+
+Governing rules:
+- the repository never claims publication before the live remote confirms
+  it;
+- this task creates at most two commits, A and B, with the exact messages
+  of section 5. Any repair after a commit exists needs a new Owner
+  authorization.
+
+This message is itself an Owner directive and must be recorded.
+
+The hard rule of DIR-046 §2 stays in force for you and every sub-agent: do
+not open, list, search, parse, copy or extract from any session transcript,
+conversation log, conversation history, hidden reasoning, agent reasoning,
+history file or cache.
+
+==================================================
+2. BINDING OWNER DECISIONS
+==================================================
+
+The verbatim source text is Appendix A. Working summary:
+
+F1  I APPROVE the P5 authentication amendment as it stands at 9b0b03b
+    (commits 7135fba, 015270c, 6dbc49a, 9b0b03b), including the decisions
+    recorded in DIR-042 to DIR-050 and the amendments recorded under
+    TECH-025, together with the finalization changes this task makes.
+F2  GAP-047 (one phone holding both the person's Google session and the
+    authenticator) is an Owner-approved accepted risk. The existing
+    mitigations stay. The authentication design is not reopened in V1 for
+    passkeys, separate-factor devices, or disabling Google sign-in for Owner
+    accounts.
+F3  GAP-048 (post-incident recovery can reinstate an Owner removed
+    legitimately) is an Owner-approved accepted risk, as currently designed.
+    DIR-050's recovery semantics are not reopened solely to remove this
+    residual.
+F4  P9 obligation: P9 must include a tabletop incident-recovery exercise for
+    the Scenario A / Scenario B recovery path. The exercise must include the
+    case where an Owner was legitimately removed during the compromise
+    window and is temporarily restored by recovery. The P8 and P9
+    obligations already recorded for this path remain in force.
+F5  Evidence correction: the amendment's file count is corrected to the
+    figures verified from Git. The independent review found 41 files: 31
+    modified and 10 new. The current wording says 33 modified and 8 new.
+    This is an evidence and reporting correction only, not a scope or design
+    change.
+F6  ADMIN_FLOW J-ACC-01 stays deferred to P7 under GAP-044. AU-03 is the
+    authoritative current password rule.
+
+==================================================
+3. NOT AUTHORIZED
+==================================================
+
+- P7, P8, P9, P10 or P11 work. No Tasks, no TASK_PLAN.md, no runbook, no
+  tests. Recording the F4 obligation is not P9 work.
+- Application code, migrations, SQL, packages, configuration; installing
+  anything.
+- Any change to the approved security design or to any rule text of
+  SECURITY, PERMISSIONS_MATRIX, DATABASE, CONCURRENCY_IDEMPOTENCY,
+  ARCHITECTURE, API_AND_INTEGRATIONS, PERFORMANCE, V1_SCOPE or
+  ACCEPTANCE_CRITERIA. The only edits allowed in these documents are the
+  current lifecycle notes of 6.6 and, in SECURITY only, the edits listed in
+  6.5.
+- Rewriting historical, verbatim or immutable evidence. Historical
+  descriptions, verbatim review and execution reports, earlier gate results,
+  earlier status paragraphs, previous stop reports, previous directives,
+  past DECISION_LOG entries, past CHANGELOG entries and transcribed source
+  records stay byte-for-byte unchanged. The only exception is the
+  file-count correction authorized in 6.4.
+- Editing ADMIN_FLOW, DESIGN_SYSTEM, INFORMATION_ARCHITECTURE,
+  BUSINESS_RULES, DOMAIN_MODEL, WORKFLOWS or REFERENCE_COVERAGE.
+- Editing, renaming or moving any existing source record, or any
+  quality-gate evidence file of an earlier phase.
+- Adding or renumbering sections of the split documents.
+- Any new file, table, record type or governance mechanism beyond those this
+  authorization names.
+- Any commit other than commit A and commit B: no corrective commit, no
+  revert, no third commit of any kind.
+- A merge commit. Force push, rebase, reset, amend or any history rewrite.
+- Deleting any branch or tag. `amendment/p5-auth`, `migration/aicwdf` and
+  `pre-aicwdf-migration` are all kept.
+- Committing verification scripts. Cowork, GUI control, GitHub Desktop
+  control.
+
+==================================================
+4. STOP CONDITIONS
+==================================================
+
+Stop immediately, repair nothing, and report to me in Bahasa Indonesia with
+the evidence, if any of these occurs:
+
+1. At the start, locally or on the live remote, any of these is not true:
+   - `main` == c26f31e9b053689b07a29877fe1016c6b8103e37;
+   - `amendment/p5-auth` == 9b0b03be06dc44e208d9c2e8935e4949bbd241d2;
+   - `main` is an ancestor of `amendment/p5-auth`;
+   - `migration/aicwdf` == c26f31e9b053689b07a29877fe1016c6b8103e37;
+   - the tag `pre-aicwdf-migration` is annotated and points to
+     c511d7b0d4683e07717c962927c9f113854f227b.
+2. The working tree or index is unexpectedly dirty. Apply the line-ending
+   note in docs/00-governance/TOOLCHAIN.md first: a CRLF-only difference is
+   not dirty.
+3. Any of the 47 source records does not match its recorded hash.
+4. The verified file counts of 6.4 differ from 41 total, 31 modified and 10
+   new.
+5. A step would need a change that section 3 forbids, or a semantic change
+   beyond sections 6.4 to 6.7.
+6. Approval provenance would be lost or weakened.
+7. A genuine Owner-level decision appears.
+8. `git merge --ff-only` is refused, or unexpected divergence appears at any
+   point.
+9. A push fails, or the live remote does not show the expected state after a
+   push. Section 11 says what state to leave.
+10. The pre-publication check of 10.3 step 2 fails. Section 11 says what
+    state to leave.
+11. After commit A has been created: any newly discovered defect,
+    inconsistency, unexpected content change, incorrect APPR-010 or TECH-026
+    hash, trailer in its message, or any need for a corrective change to
+    its content. Section 11 says what state to leave.
+12. After commit B has been created: any defect discovered in it, or in
+    commit A, before or during its publication — including a trailer in its
+    message. Section 11 says what state to leave.
+
+==================================================
+5. GIT RULES
+==================================================
+
+- Commits use only my existing configured Git author/committer identity.
+  Never add Co-Authored-By, Generated-By, Assisted-By or any AI/model/tool
+  attribution. After each commit, read the raw message
+  (`git log -1 --format=%B`) and confirm there is no trailer.
+- All document work is done on `amendment/p5-auth`. This task creates at
+  most two commits, with these exact messages:
+    Commit A  docs: approve P5 authentication amendment
+    Commit B  docs: record P5 authentication amendment publication
+  No other commit is authorized.
+- Commit A is created only after gate A (section 8) passes. Commit B is
+  created only after the live-remote verification of section 9 succeeds and
+  gate B (10.2) passes. Commit B is published only after the
+  pre-publication check of 10.3 step 2 passes.
+- Before a commit exists: if its gate fails, you may correct the still
+  uncommitted working tree, or discard the uncommitted changes and redo
+  them, provided every correction stays strictly inside this authorization.
+- After a commit exists: you never correct it. A defect found in commit A
+  after it is created, or in commit B after it is created, is a stop
+  (stop conditions 11 and 12). Do not create a corrective commit, a revert,
+  an amend, a reset or any third commit. Any repair needs a new Owner
+  authorization.
+- Push failures and remote divergence follow section 11 and never authorize
+  an extra commit.
+- `main` moves only by `git merge --ff-only`. Pushes are normal, non-force.
+- Stage Markdown with CRLF normalization so blobs stay LF. Never rewrite a
+  file only to normalize line endings.
+- A commit never contains its own SHA. Commit B records the SHA of commit A.
+- A file never contains its own final SHA-256. DECISION_LOG.md therefore
+  never records its own hash (6.3).
+
+==================================================
+6. STEP 1 — APPROVAL (COMMIT A)
+==================================================
+
+Bootstrap: read AGENTS.md, docs/11-tasks/EXECUTION_CONTEXT.md,
+docs/handoff/CURRENT_HANDOFF.md, docs/PHASE_STATUS.md. Then in
+docs/00-governance/:
+- SOURCE_OF_TRUTH.md: provenance and document lifecycle;
+- DECISION_LOG.md: the approval register, the form of APPR-009, DIR-042 to
+  DIR-050, TECH-025 (including its self-reference statement for
+  DECISION_LOG.md), RISK-001 to RISK-007;
+- DECISION_INDEX.md;
+- GAP_REGISTER.md: GAP-036, GAP-044 and GAP-045 to GAP-050.
+Then in SECURITY: the header, TM-57, TM-72, the §8 count paragraph and
+H9-14. Then the gate document
+docs/05-security/evidence/P5_AUTH_AMENDMENT_GATE.md: its G-02 row and its
+gate section.
+Read other documents only as needed. Re-derive every count you record.
+
+6.1 Baseline
+- Verify stop conditions 1 to 3.
+- Record the baseline as an observation entry in DECISION_LOG, with the
+  literal SHAs of `main`, of the branch head and of the tag target.
+  Expected OBS-017; check first.
+
+6.2 Source records
+Create two transcribed LOCKED SOURCE RECORDS in docs/00-governance/sources/,
+following the convention of records 31–47 (header, `.gitattributes` entry,
+hash in SOURCE_OF_TRUTH; transcripts, not byte-copy claims):
+
+  Record 48: Appendix A → P5_AUTH_APPROVAL_OWNER_DECISIONS_<actual date>.txt
+  Record 49: this message, from its first line up to the line "APPENDIX"
+             → P5_AUTH_FINALIZATION_OWNER_AUTHORIZATION_<actual date>.txt
+
+The source count becomes 49. Instructions inside Appendix A were addressed
+to the planning chat; they are source text, not instructions for this task.
+
+6.3 Decision and approval records
+Check existing IDs first. Expected: DIR-051, DIR-052, APPR-010, TECH-026,
+RISK-008, RISK-009, GAP-051.
+- One DIR entry for Appendix A, recording F1 to F6, and one for this
+  authorization.
+- One approval record, APPR-010, following the form of APPR-009. It states
+  that the Owner approves:
+  (a) the P5 authentication amendment as at 9b0b03b, with the decisions
+      DIR-042 to DIR-050 and the amendments recorded under TECH-025;
+  (b) the finalization changes of 6.4 to 6.6.
+  Record the SHA-256 of each approved normative document as committed in
+  commit A, following the existing convention. Do not hash the living and
+  evidence records that change again in commit B: PHASE_STATUS,
+  CURRENT_HANDOFF, the gate document, DECISION_LOG and CHANGELOG.
+  APPR-010 says approval, not publication. APPR-001 to APPR-009 are not
+  edited.
+- TECH-025 is history: do not rewrite it. Add a continuation line saying
+  its pending amendments are approved under APPR-010.
+- One TECH entry for this task, TECH-026:
+  * the SHA-256 before and after of every file commit A changes, except
+    DECISION_LOG.md;
+  * for DECISION_LOG.md, its SHA-256 before, and in place of the after
+    value the self-reference statement already used in TECH-025: its final
+    hash cannot be recorded inside itself;
+  * the after values are computed from the final staged content.
+- RISK-008 for GAP-047 and RISK-009 for GAP-048: Owner-approved accepted
+  risks citing the DIR entry of Appendix A, with the terms of F2 and F3.
+  RISK-009 also names the obligation of F4.
+- DECISION_INDEX: add the new directives. Move D-SEC-06 and D-SEC-14 from
+  SUPERSEDED-PENDING to SUPERSEDED, and likewise any other entry this
+  approval completes. Leave the P7 visual and IA entries as they are; they
+  belong to P7.
+- CHANGELOG: one new entry. Past entries stay unchanged.
+
+6.4 Evidence correction (F5)
+- Run `git diff --name-status
+  c26f31e9b053689b07a29877fe1016c6b8103e37
+  9b0b03be06dc44e208d9c2e8935e4949bbd241d2` and count the entries by
+  status. Expected: 41 files — 31 modified and 10 added (the 9 new source
+  records and the gate document). If the figures differ, stop (stop
+  condition 4).
+- Correct every statement in the repository that gives the amendment's file
+  split as 33 changed and 8 new — at least the G-02 row of the gate
+  document — to the verified figures, and name the 10 new files. Change only
+  those figures and their enumeration, and mark the correction as made
+  under this authorization.
+- Record the command, its counts and the corrected locations in TECH-026.
+
+6.5 Accepted risks and the P9 obligation (F2, F3, F4)
+- GAP-047 and GAP-048: status ACCEPTED_RISK, citing the DIR entry of
+  Appendix A and RISK-008 / RISK-009. Record in GAP-047 the list of what is
+  not reopened (F2), and in GAP-048 that the recovery semantics are not
+  reopened (F3).
+- SECURITY TM-72 and TM-57: replace only their "not accepted — an open gap
+  for the Owner's decision" dispositions with "accepted by the Owner", citing
+  the DIR entry and RISK-008 / RISK-009. Change nothing else in those rows.
+- SECURITY §8 count paragraph, and any other current statement listing the
+  accepted residuals or the open Owner decisions: align with this
+  acceptance.
+- F4: add to SECURITY H9-14 the tabletop exercise obligation, in the words of
+  F4. Record it as a new OPEN gap owned by P9 (expected GAP-051), linked from
+  GAP-048 and RISK-009. Leave H8-21, H9-07, H9-14's existing content,
+  GAP-049 and GAP-050 otherwise unchanged.
+- GAP-036 (P8 waiting for the P5 authentication amendment): close it, with
+  APPR-010 as the resolution.
+- GAP-044: add a continuation line recording F6. ADMIN_FLOW is not edited.
+- Re-derive the register totals and update every current place that states
+  them. Expected: 51 entries — 4 CLOSED, 38 OPEN, 0 OWNER_DECISION_REQUIRED,
+  9 ACCEPTED_RISK.
+
+6.6 Lifecycle: current state only, from pending to approved
+- Change only CURRENT lifecycle and state assertions. A current assertion is
+  one that states the present status of a document or of the amendment:
+  * the status and amendment notes in the headers of active documents;
+  * the current-status lines of PHASE_STATUS, CURRENT_HANDOFF and
+    EXECUTION_CONTEXT;
+  * the current statuses in DECISION_INDEX and GAP_REGISTER;
+  * the current-state lines of the gate document that describe the
+    amendment's present status, outside its historical sections.
+- Replace each current assertion that says the amendment is pending Owner
+  approval with the form this repository already uses for an approved
+  amendment (as for APPR-009), citing APPR-010 and keeping the pointer to
+  the recorded hashes.
+- EXECUTION_CONTEXT: the authentication profile marked as decided with the
+  SECURITY amendment pending becomes in force under APPR-010.
+- Do NOT change historical occurrences. Any text that correctly describes an
+  earlier state stays byte-for-byte unchanged, even when it contains
+  "pending Owner approval", "PENDING OWNER APPROVAL", "VERIFYING" or similar
+  words. This includes:
+  * transcribed source records and previous directives;
+  * past DECISION_LOG entries, including TECH-025 (only a continuation line
+    is added) and earlier OBS and DIR entries;
+  * past CHANGELOG entries;
+  * the verbatim review reports, earlier gate results, earlier status and
+    stop paragraphs, and the execution records of the gate document;
+  * archived handoff files.
+- Never make a historical or verbatim record pass a check by rewriting its
+  old state. The only exception to byte-for-byte preservation is the
+  file-count correction of 6.4.
+- Leave as they are the notes that describe later work: the "Replacement"
+  notes of DESIGN_SYSTEM and INFORMATION_ARCHITECTURE (D3).
+
+6.7 Current-state documents in commit A: APPROVED, PUBLICATION PENDING
+Nothing in commit A may say or imply that the amendment is published, DONE
+or on `main`.
+- docs/PHASE_STATUS.md:
+  * P1, P4, P5 and P6: their parts of the amendment OWNER APPROVED
+    (APPR-010), PUBLICATION PENDING;
+  * P7: unchanged — IN_PROGRESS, the UX re-baseline awaiting its own
+    authorization;
+  * P8: BLOCKED — waits for P7; the P5 dependency is resolved by APPR-010;
+  * the amendment row: OWNER APPROVED (APPR-010), PUBLICATION PENDING;
+    `main` still at c26f31e.
+- docs/handoff/CURRENT_HANDOFF.md:
+  * last completed action: approval and finalization on
+    `amendment/p5-auth`;
+  * state: OWNER APPROVED, PUBLICATION PENDING;
+  * GAP-047 and GAP-048 accepted; the F4 obligation; F6;
+  * safe next action: publication under this directive (fast-forward
+    `main`, push, verify the live remote, then commit B);
+  * the P7 UX re-baseline named as the next work, under its own
+    authorization.
+- The gate document: append a short "Approval" section with the result of
+  gate A, stating that publication is pending. Existing sections stay as
+  6.6 says. The Approval section records no SHA-256 of DECISION_LOG.md:
+  TECH-026 records the gate document's hash, so the gate document must not
+  depend on DECISION_LOG.md's final hash.
+
+==================================================
+7. SCOPE OF COMMIT A
+==================================================
+
+Commit A may touch only:
+- docs/00-governance/sources/ (the two new files) and .gitattributes;
+- SOURCE_OF_TRUTH, DECISION_LOG, DECISION_INDEX, GAP_REGISTER, CHANGELOG;
+- PHASE_STATUS, CURRENT_HANDOFF, EXECUTION_CONTEXT;
+- the gate document;
+- SECURITY, for 6.5 and its current lifecycle note;
+- every other amended document whose current lifecycle note changes under
+  6.6.
+
+==================================================
+8. GATE A (before commit A)
+==================================================
+
+A failure of any check below is corrected in the uncommitted working tree,
+within this authorization, before commit A is created (section 5).
+
+- The baseline checks of 6.1 pass.
+- The diff touches only the files of section 7.
+- In every normative document, the body diff is only the current lifecycle
+  note, except SECURITY, whose body diff is only the edits of 6.5 and its
+  lifecycle note. Prove it from the diff.
+- No CURRENT lifecycle or state assertion in an active document says that
+  the amendment is pending Owner approval or VERIFYING. To prove it, list
+  every remaining occurrence in the working tree of "pending Owner
+  approval", "PENDING OWNER APPROVAL" and "VERIFYING" that concerns this
+  amendment, with its location, and show that each one is a historical
+  occurrence that correctly describes an earlier state. Historical
+  occurrences are allowed and expected.
+- Historical and verbatim evidence is unchanged: in the diff of commit A,
+  no existing line of a source record, of a past DECISION_LOG or CHANGELOG
+  entry, or of a historical section of the gate document is modified or
+  removed, except the lines of the 6.4 correction. Prove it from the diff.
+- PHASE_STATUS, CURRENT_HANDOFF and the gate document's new Approval
+  section say OWNER APPROVED and PUBLICATION PENDING. No current assertion
+  says the amendment is published, DONE or on `main`.
+- The 47 earlier source records are byte-identical to 9b0b03b; the two new
+  hashes are recorded and re-verified from disk.
+- Unchanged counts: 80 capabilities (37 / 26 / 17), 125 logical tables with
+  IAM 8, 18 MUST capabilities, 14 document types, 13 modules.
+- The GAP totals are re-derived and agree wherever they are currently
+  stated.
+- The corrected file counts equal the verified diff of 6.4.
+- Hashes, against the staged blobs:
+  * every APPR-010 hash equals the staged blob of its document;
+  * every TECH-026 after value equals the staged blob of its file — every
+    commit-A file except DECISION_LOG.md;
+  * TECH-026 carries the self-reference statement for DECISION_LOG.md;
+  * no file of commit A records the final SHA-256 of DECISION_LOG.md.
+- Phase status appears only in PHASE_STATUS; DECISION_INDEX holds no rule
+  text; CURRENT_HANDOFF repeats no history.
+- Repository-wide link check passes; every identifier referenced exists.
+- No secrets, no placeholder text.
+- Zero-context check: a fresh agent, bound by DIR-046 §2, given only the
+  working tree, answers from the repository alone:
+  (a) the state of the P5 authentication amendment and under which record —
+      the correct answer is approved under APPR-010, publication pending;
+  (b) whether GAP-047 and GAP-048 are accepted, and under which records;
+  (c) what P9 must do about the post-incident recovery path;
+  (d) the current phase, and why P8 is BLOCKED;
+  (e) which password rule applies when ADMIN_FLOW says 15 characters;
+  (f) the safe next action, and what is not authorized.
+  All answers must be correct. Fix the navigation documents (Level 1) and
+  repeat if not. Record the result in the gate document's Approval section.
+
+Then create commit A on `amendment/p5-auth`. After the commit:
+- confirm that the raw message has no trailer;
+- confirm that every APPR-010 hash, and every TECH-026 after value
+  (DECISION_LOG.md excepted), equals the committed blob;
+- compute the SHA-256 of DECISION_LOG.md's committed blob separately, for
+  the final report only; do not amend commit A or add a commit to record it;
+- confirm that the tree is clean.
+If any of these confirmations fails, stop under stop condition 11.
+
+==================================================
+9. STEP 2 — PUBLICATION OF COMMIT A
+==================================================
+
+1. Verify the live remote again: `main` and `amendment/p5-auth` as in stop
+   condition 1, with the local branch now at commit A.
+2. `git checkout main`
+3. `git merge --ff-only amendment/p5-auth`   (no merge commit; if refused,
+   STOP)
+4. Confirm locally: `main` == `amendment/p5-auth` == commit A; the tag still
+   points to c511d7b…; `migration/aicwdf` unchanged.
+5. Normal, non-force pushes:
+     git push origin amendment/p5-auth
+     git push origin main
+6. Verify on the live remote (`git ls-remote`):
+   - `main` == commit A;
+   - `amendment/p5-auth` == commit A;
+   - `migration/aicwdf` == c26f31e…;
+   - the tag `pre-aicwdf-migration` unchanged, pointing to c511d7b….
+7. Keep every branch and tag. Delete nothing.
+
+Only if step 6 succeeds in full, continue with section 10.
+
+==================================================
+10. STEP 3 — PUBLICATION RECORD (COMMIT B)
+==================================================
+
+Work on `amendment/p5-auth` (`git checkout amendment/p5-auth`). This commit
+records what actually happened and nothing else.
+
+10.1 Changes
+- docs/PHASE_STATUS.md: the amendment becomes DONE — approved and published;
+  the P1, P4, P5 and P6 notes become approved and published; P8 stays
+  BLOCKED, waiting for P7. No other row changes.
+- docs/handoff/CURRENT_HANDOFF.md:
+  * state: published;
+  * the literal SHA of commit A, the date, and the live-remote verification
+    (the refs and SHAs observed for `main`, `amendment/p5-auth`,
+    `migration/aicwdf` and the tag);
+  * safe next action: my authorization of the P7 UX re-baseline;
+  * a statement that this record follows commit A and that a new session
+    verifies live `main` before acting.
+- The gate document: append a short "Publication" section with the literal
+  SHA of commit A and the live-remote verification. Existing sections stay
+  unchanged.
+- docs/00-governance/DECISION_LOG.md: one new observation entry recording
+  the same publication facts. Expected OBS-018; check first. Existing
+  entries stay unchanged.
+- CHANGELOG: one new entry. Existing entries stay unchanged.
+
+No other file changes. No semantic change of any kind. The commit does not
+contain its own SHA; the next task records it.
+
+10.2 Gate B (before commit B)
+A failure of a check below may be corrected only in the uncommitted changes
+to the five files of 10.1, within this authorization. If a correction would
+touch any other file or any content of commit A, stop under stop condition
+11.
+- The live-remote verification of section 9 succeeded, and it is the
+  evidence for every publication statement.
+- The diff touches only the five files of 10.1, and only adds the new
+  section, entry and status lines; no historical or verbatim line changes.
+- The SHA written as published is exactly commit A's SHA.
+- No source record, no approval hash table and no normative document
+  changed.
+- Link check passes.
+- A fresh zero-context agent, bound by DIR-046 §2, answers correctly:
+  (a) the amendment is approved under APPR-010 and published; (f) the safe
+  next action, and what is not authorized.
+
+10.3 Publish commit B
+1. Create commit B on `amendment/p5-auth`. Confirm the raw message has no
+   trailer; if it has one, stop under stop condition 12.
+2. Pre-publication check, immediately before publishing. Use read-only Git
+   operations only (`git fetch` of remote-tracking refs and `git ls-remote`)
+   and require all of the following:
+   - live remote `main` == commit A;
+   - live remote `amendment/p5-auth` == commit A;
+   - live remote `migration/aicwdf` ==
+     c26f31e9b053689b07a29877fe1016c6b8103e37;
+   - the tag `pre-aicwdf-migration` unchanged on the live remote and
+     pointing to c511d7b0d4683e07717c962927c9f113854f227b;
+   - local `main` == commit A;
+   - commit B's only parent is commit A, so that commit B is a direct
+     fast-forward descendant of commit A.
+   If any ref differs or any unexpected divergence exists, STOP without
+   merging or pushing commit B and report the exact local and remote state
+   (section 11).
+3. `git checkout main` and `git merge --ff-only amendment/p5-auth`.
+4. Normal pushes: `git push origin amendment/p5-auth`, then
+   `git push origin main`.
+5. Verify on the live remote: `main` == `amendment/p5-auth` == commit B;
+   `migration/aicwdf` and the tag unchanged.
+
+==================================================
+11. IF PUBLICATION FAILS OR A DEFECT IS FOUND
+==================================================
+
+None of the cases below authorizes a corrective commit, a revert, an amend,
+a reset or any commit beyond A and B. Any repair needs a new Owner
+authorization.
+
+- If a push in section 9 fails, or the live remote does not match in full:
+  do NOT create commit B; do NOT claim DONE or PUBLISHED anywhere; leave the
+  repository truthfully at OWNER APPROVED, PUBLICATION PENDING; report the
+  exact local and remote state.
+- If this environment has no GitHub credentials: do not request broad
+  access. Finish through step 4 of section 9, report commit A's SHA and give
+  me these commands to run:
+     git push origin amendment/p5-auth
+     git push origin main
+  If I confirm in this session that I pushed, verify the live remote and
+  then continue with section 10. Otherwise stop there.
+- If the pre-publication check of 10.3 step 2 fails: do not merge, do not
+  push, and do not alter commit B. Commit B stays only on the local
+  `amendment/p5-auth`, and `main` stays at commit A. Report the exact local
+  and remote state. Commit A remains published and verified; its record
+  waits for my instruction.
+- If the push of commit B fails after commit B exists locally: report it and
+  give me the two push commands. Commit B's statements remain true, because
+  they concern commit A, which was verified on the live remote.
+- If a defect is found after a commit exists (stop conditions 11 and 12):
+  stop at that point and do not take the next publication step. Leave every
+  commit, branch and ref exactly as it is — do not merge, push, alter or add
+  anything. Report the defect, where it is, and the exact local and remote
+  state.
+- Never claim a publication that the live remote has not confirmed.
+
+==================================================
+12. FINAL REPORT (Bahasa Indonesia)
+==================================================
+
+A. Baseline evidence.
+B. Commit A: SHA, message, identity, no trailers. Gate A, each check with
+   its evidence, including the list of remaining historical occurrences of
+   the pending wording and why each is historical.
+C. The evidence correction: the verified diff counts, and every location
+   corrected, before and after.
+D. Records:
+   - the IDs actually used (DIR, APPR, TECH, RISK, GAP, OBS);
+   - the new source records 48 and 49, with their hashes;
+   - the APPR-010 hash table;
+   - the TECH-026 hash verification: every recordable after value checked
+     against the committed blob, and the separately computed SHA-256 of
+     DECISION_LOG.md's committed blob in commit A.
+E. Accepted risks and the P9 obligation: exactly what changed in GAP-047,
+   GAP-048, TM-72, TM-57, the §8 count paragraph, H9-14 and the new gap; the
+   new GAP totals.
+F. Lifecycle changes: every current assertion changed, and every note kept.
+G. Zero-context checks: questions, answers, results.
+H. Publication of commit A: fast-forward, pushes, live-remote verification.
+I. Commit B: SHA, message, identity, no trailers; gate B; the
+   pre-publication check of 10.3 step 2; pushes; the final live-remote
+   verification. If commit B was not created or not published, say so and
+   state the truthful repository state.
+J. Branches and tag still present.
+K. Level-1 decisions you made; anything left open; anything you could not
+   verify; any stop condition met; any defect found after a commit and
+   where. Confirm that this task created at most commits A and B, and no
+   other commit, revert, amend or reset.
+L. The exact next safe action.
+
+At the very end of your report, including a stop report, append this block
+in Bahasa Indonesia, with concrete values for the NEXT Planning step (the
+review of this publication and the preparation of the P7 UX re-baseline),
+not for this task. Replace each set of alternatives with one value and
+leave no placeholder.
+
+Langkah selanjutnya:
+Kirim report ini ke agent: Planning
+Model: Opus 5.5 / Fable 5.1
+Effort: High / XHigh / Max
+Session: chat sesi yang sama / chat baru
+
+Reason:
+<short reason based on the next planning task>
+
+Escalation / Masalah exceptionally difficult:
+<"Fable 5.1 only if Opus 5.5 cannot resolve the task reliably." only when
+materially relevant; otherwise leave empty>
+
+Stop after the report.

@@ -1,0 +1,64 @@
+TRANSCRIBED LOCKED SOURCE RECORD — forty-eighth source record
+Received: 2026-10-04, Owner decisions relayed by the Owner to the repository
+executor as Appendix A of the finalization and publication authorization of
+the P5 authentication amendment of the same date (forty-ninth source record)
+Subject: Owner decisions at the approval of the P5 authentication amendment —
+         GAP-047 accepted; GAP-048 accepted; the amendment at 9b0b03b
+         approved; the P9 tabletop exercise of the post-incident recovery
+         path; the correction of the amendment's file-count evidence;
+         ADMIN_FLOW J-ACC-01 kept deferred to P7 under GAP-044 — which §2 of
+         the forty-ninth source record states as F1–F6
+Delivery: the relayed text between the "----- BEGIN APPENDIX A -----" and
+         "----- END APPENDIX A -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+GAP-047: accept
+
+GAP-048: accept
+
+P5 amendment at 9b0b03b: approve
+
+Record both accepted residual risks explicitly as Owner-approved accepted risks.
+
+For GAP-047, keep the existing mitigations and do not reopen the authentication design for passkeys, separate-factor devices, or disabling Google sign-in for Owner accounts in V1.
+
+For GAP-048, accept the residual as currently designed. Do not reopen DIR-050 recovery semantics solely to remove this residual.
+
+However, carry the post-incident recovery path forward as an explicit P9 operational obligation:
+- P9 must include a tabletop incident-recovery exercise for the Scenario A / Scenario B recovery path;
+- the exercise must include the case where an Owner was legitimately removed during the compromise window and is temporarily restored by recovery;
+- P8/P9 obligations already recorded for this recovery path remain in force.
+
+Before publication, also correct the factual file-count wording in the current amendment evidence:
+- the independent review found 41 files total, split as 31 modified and 10 new;
+- the existing report/gate wording says 33 modified and 8 new;
+- this is an evidence/reporting correction only, not a scope or design change;
+- verify the actual Git diff again before writing the corrected numbers;
+- do not change the approved security design because of this correction.
+
+ADMIN_FLOW J-ACC-01 remains deferred to P7 under GAP-044; AU-03 remains authoritative for the current password rule.
+
+Now prepare the FULL finalization and publication authorization for the Executor.
+
+The authorization must follow the established two-step publication pattern:
+1. record my approval, GAP-047 acceptance and GAP-048 acceptance, correct the verified evidence wording, update amendment status, and create the approval commit;
+2. fast-forward main normally to the approved amendment, push normally, verify the live remote;
+3. create and push the publication-record commit required by the governance pattern.
+
+Preserve all existing Git safety rules:
+- no force push;
+- no history rewrite;
+- Owner-only author/committer identity;
+- no AI/Claude attribution or trailers;
+- verify live remote refs before and after publication;
+- stop on divergence or any unexpected repository state.
+
+Do not start P7, P8, P9 or any coding task in this execution.
+
+Communicate with me in Bahasa Indonesia.
+Repository documents, identifiers and commit messages remain in English.
+
+Return the FULL ready-to-copy Executor prompt, not a patch or excerpt.
+
+At the very end, append the required Planning handoff footer with concrete Model, Effort and Session values.
