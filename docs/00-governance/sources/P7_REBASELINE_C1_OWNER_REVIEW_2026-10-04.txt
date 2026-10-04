@@ -1,0 +1,253 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifty-second source record
+Received: 2026-10-04, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix A of the P7 UX re-baseline Checkpoint
+C1 rework authorization of the same date (fifty-third source record)
+Subject: the Owner's Checkpoint C1 review input — the Owner's verdict on the
+         P7 UX re-baseline Stage 1 direction, rejected for focused rework,
+         and the Owner's requirements for the rework, which §2 of the
+         fifty-third source record states as the C1 verdict and OC-01–OC-12
+         (DIR-055)
+Note: its opening refers to the executor's Stage 0–1 final report, which is
+         not archived; the English equivalent of that report's C1 package is
+         the "Checkpoint C1 package" section of the gate record
+         docs/07-ux-design/evidence/P7_REBASELINE_GATE.md
+Delivery: the relayed text between the "----- BEGIN APPENDIX A -----" and
+         "----- END APPENDIX A -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER C1 REVIEW INPUT
+
+Review the complete Executor report above and independently verify the relevant
+state from the live `rebaseline/p7-ux` branch before making any recommendation.
+
+Do not modify the repository.
+Do not prepare a Stage 2 authorization yet.
+Do not assume that a technically passing G1 means the C1 design direction is
+approved by me.
+
+My current Owner feedback is:
+
+1. The current design still does not feel sufficiently user friendly for the
+real administrative workflow.
+
+The client's staff currently create many connected documents manually in
+Excel. MultipleCorp should not merely convert those documents into separate
+digital modules.
+
+The application should guide an Admin through the real end-to-end business
+process so that, after logging in, the Admin immediately understands:
+- what needs attention now;
+- which project it belongs to;
+- what has already been completed;
+- what is blocking it;
+- what the next valid action is;
+- which document or operational step becomes ready next;
+- what remains before the project is truly complete.
+
+The Admin should not need to remember which module or menu to open next.
+
+2. The proposed navigation is still too module-oriented.
+
+The C1 proposal of up to 10 flat entries for Owner and 8 for Admin still
+requires users to understand the software structure.
+
+I want a workflow/task-first primary experience.
+
+Module navigation may remain as secondary navigation for browsing, reporting
+or direct access, but it should not be the primary mental model required to
+operate the business.
+
+3. I do not approve the current Project Detail alternatives as-is.
+
+I do not want either:
+- eight equal tabs as the main mental model; or
+- every section simply becoming a separate page.
+
+I want a guided project journey / project progress workspace that clearly
+shows:
+- overall project progress;
+- completed stages;
+- current work;
+- blockers or missing prerequisites;
+- next recommended valid action;
+- document readiness;
+- relevant financial/payment state;
+- what remains before completion.
+
+Secondary tabs or drill-down sections may still exist, but the primary
+experience must answer:
+"What happens next on this project?"
+
+The journey must adapt to the approved business rules. Do not force warehouse,
+delivery, billing or another stage onto a project when that stage is not
+applicable.
+
+4. Connected documents should feel connected.
+
+Where P0-P6 already provide the required data, avoid making Admin users enter
+the same information repeatedly across quotation, procurement, receiving,
+delivery, administrative documents, invoicing, payment and completion.
+
+Design a clear document-readiness/checklist experience derived from the
+approved document lifecycle.
+
+The user should easily understand concepts such as:
+- completed;
+- ready to prepare;
+- waiting for prerequisite;
+- finalized;
+- revision/void when applicable.
+
+Do not invent business automation beyond P0-P6.
+
+5. Owner and Admin must have different operational experiences.
+
+Admin primarily needs work queues, next actions and workflow guidance.
+
+Owner primarily needs:
+- decisions requiring Owner attention;
+- exceptions / risks / overdue work;
+- project progress that requires attention;
+- compact business-health and financial KPIs;
+- drill-down only when needed.
+
+For Owner Beranda, I want a hybrid direction:
+- important decisions/exceptions get strong priority;
+- key KPIs remain visible and easy to scan;
+- normal Admin operational work must not compete visually with Owner-level
+  decisions.
+
+6. There is still too much explanatory text.
+
+Useful business information must be packaged more professionally.
+
+Prefer:
+- short headings;
+- clear state / number;
+- obvious action;
+- one short supporting sentence only when it materially helps;
+- progressive disclosure for secondary explanation.
+
+Before keeping helper text, ask:
+"Does the user need this text to decide or act right now?"
+
+If not, reduce it, move it behind contextual detail, or remove it.
+
+Apply this principle to dashboards, project detail, forms, authentication
+screens and mobile warehouse flows.
+
+7. I do not like the current visual colour direction.
+
+The bright lime is too visually dominant.
+
+Ramp may remain a reference for useful hierarchy, spacing and interaction
+ideas, but its lime colour is not a required MultipleCorp identity.
+
+Explore a calmer, more professional direction using accessible muted/pastel
+colours such as:
+- warm or neutral canvas;
+- soft neutral surfaces;
+- dark readable text;
+- muted sage;
+- dusty blue;
+- soft amber;
+- muted rose or equivalent accessible tones.
+
+Saturated colour should be limited.
+
+If lime remains, use it only as a small accent where it genuinely helps.
+
+The product should feel calm, premium, professional and operationally clear,
+not colourful for decoration.
+
+8. I also do not like the current chart colour treatment.
+
+Use restrained chart colours:
+- neutral baseline series;
+- one meaningful highlight when useful;
+- muted accessible colours;
+- direct labels where practical;
+- no rainbow palette;
+- colour is never the only carrier of meaning.
+
+Do not invent new metrics.
+
+9. Form and layout alignment needs stronger discipline.
+
+For example, in the purchase-line prototype the Product/Project Item,
+Quantity, Unit, Unit Price, Tax and Subtotal fields do not feel aligned as one
+deliberate row.
+
+This is only one example. Review the same issue across the other screens.
+
+I want:
+- consistent control heights;
+- deliberate column proportions;
+- aligned control baselines;
+- consistent numeric alignment;
+- secondary SKU/item metadata separated from the primary control baseline;
+- consistent spacing between labels, controls and supporting text;
+- progressive disclosure for less-common fields;
+- dense layouts only when operationally justified.
+
+10. The mobile warehouse direction is one of the stronger parts.
+
+Preserve its task-focused nature but simplify the text and improve:
+- progress visibility;
+- next item requiring action;
+- scan-first workflow;
+- manual-search fallback;
+- clear completion feedback.
+
+11. For the three C1 direction axes, do not force my answer into the existing
+A/B alternatives.
+
+My preferred direction is:
+
+Navigation:
+C — workflow/task-first primary experience with reduced secondary module
+navigation.
+
+Project detail:
+C — guided project journey / progress workspace with contextual drill-down,
+not eight equal tabs as the primary mental model.
+
+Owner Beranda:
+C — decision/exception-first with compact important KPIs visible in the same
+experience.
+
+Warehouse/field usability participant:
+I have not confirmed availability yet. This does not block C1 rework. Apply
+the already-approved K2 fallback later if Stage 2 is authorized and no
+suitable participant is available.
+
+Now review the complete Executor report and repository evidence.
+
+Determine whether these Owner requirements mean the current C1 direction
+should be:
+- approved;
+- approved with adjustment;
+- or rejected for focused C1 rework.
+
+My current inclination is that the direction needs focused C1 rework before
+Stage 2, while preserving the valid Stage 0–1 research, evidence and useful
+prototype foundations.
+
+If you agree that C1 needs rework:
+- record exactly what can be preserved;
+- identify exactly what must change;
+- keep Stage 2 unauthorized;
+- prepare a focused rework plan;
+- and then return a FULL ready-to-copy Executor authorization that is limited
+  to revising the C1 direction, prototypes and REVIEW evidence and that STOPS
+  again at C1 for my review.
+
+Do not authorize normative IA/Design System freeze, C2, P8-P11 or application
+coding.
+
+Respond to me in Bahasa Indonesia.
+Any Executor prompt you prepare must be in English.
+
+At the very end, append the required Planning handoff footer with concrete
+Model, Effort and Session values.

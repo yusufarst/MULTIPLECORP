@@ -4,6 +4,8 @@ Status: REVIEW | Updated: 2026-10-04 | Owner: Planning
 
 Authority: the P7 UX re-baseline, authorized for Stage 0 and Stage 1 by the Owner under [DIR-054](../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction), with the design reference the Owner chose in [DIR-053](../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) K3 and the standing intent of D3 and D4 (DIR-035).
 
+**Checkpoint C1.** Its Stage 1 direction was rejected at Checkpoint C1 for focused rework ([DIR-055](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework)); revision under DIR-056.
+
 **Stage 1 draft for Checkpoint C1 — not normative.** This record follows AICWDF §18.12. Nothing in it changes [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md), [DESIGN_SYSTEM](DESIGN_SYSTEM.md) or [ADMIN_FLOW](ADMIN_FLOW/README.md), and no build unit may use it until a later authorized stage approves it — until then it is not the active design reference of AGENTS.md (the stage plan is in [P7_REBASELINE_GATE](evidence/P7_REBASELINE_GATE.md#plan)). The diagnosis, the direction proposal with its contrast evidence and the prototypes it draws on are recorded in that gate record.
 
 **Precedence.** The reference informs the visual and interaction direction only. It never overrides business truth, authorization, company scope, field projection, security or accessibility, and the approved P0–P6 specifications govern wherever they speak (DIR-054 §3). DesainPakeAI is an exploration workspace and never a source of truth.

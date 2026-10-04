@@ -50,5 +50,7 @@ docs/00-governance/sources/P5_AUTH_APPROVAL_OWNER_DECISIONS_2026-10-04.txt -text
 docs/00-governance/sources/P5_AUTH_FINALIZATION_OWNER_AUTHORIZATION_2026-10-04.txt -text
 docs/00-governance/sources/P7_REBASELINE_OWNER_DECISIONS_2026-10-04.txt -text
 docs/00-governance/sources/P7_REBASELINE_STAGE01_OWNER_AUTHORIZATION_2026-10-04.txt -text
+docs/00-governance/sources/P7_REBASELINE_C1_OWNER_REVIEW_2026-10-04.txt -text
+docs/00-governance/sources/P7_REBASELINE_C1_REWORK_OWNER_AUTHORIZATION_2026-10-04.txt -text
 docs/00-governance/sources/*.pdf binary
 docs/00-governance/sources/*.png binary
