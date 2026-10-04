@@ -1607,3 +1607,330 @@ Run on the complete staged change of commit 5 before the commit (DIR-058 §9.2),
 | VC0-08 | Links and identifiers | PASS | 2,045 relative links and anchors checked in every Markdown file outside `docs/00-governance/sources/`, 0 broken; DIR-057, DIR-058, OBS-021 and TECH-029 each have one row in the decision log's index and one entry heading; the label sets C1A-1–C1A-3, OV, VD-01–VD-11, RH-1–RH-4 and VP-1–VP-8 are tabulated once, in [Checkpoint C1 — visual-direction decision (DIR-057)](#checkpoint-c1--visual-direction-decision-dir-057), REF-M1–REF-V2 in SOURCE_OF_TRUTH and [C1 visual checkpoint — reference inspection](#c1-visual-checkpoint--reference-inspection), and the items VC0-01–VC0-10 here; no GAP, RISK or APPR identifier is defined — GAP-052, RISK-010 and APPR-011 stay unused |
 | VC0-09 | Content-truth counts unchanged | PASS | V1_SCOPE, PERMISSIONS_MATRIX, DATABASE and GAP_REGISTER are byte-identical to `2996465` and were counted again: 18 MUST capabilities and 14 document types (V1_SCOPE), 80 capabilities (PERMISSIONS_MATRIX), 125 logical tables in 13 modules (DATABASE §4) and the gap totals 51 — 4 CLOSED, 38 OPEN, 0 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK |
 | VC0-10 | No P7 normative document and no P0–P6 specification changed | PASS | INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, everything under `docs/01-product/`–`docs/06-api-performance/`, CONTEXT_INDEX, AGENTS.md and the other P0 specifications are byte-identical to `2996465`; SOURCE_OF_TRUTH changes only as the continuity record of DIR-058 §§7.2 and 9.1 |
+
+## C1 visual checkpoint — intake
+
+Read on `rebaseline/p7-ux` at commit 5 on 2026-10-05, only for VC1 (DIR-058 §10), from the repository and official documentation — never from transcripts or conversation history (DIR-046 §2).
+
+| Area | Read |
+| --- | --- |
+| Re-baseline records | This record from [Checkpoint C1 — Owner verdict](#checkpoint-c1--owner-verdict) to the end; DESIGN_REFERENCES; DECISION_LOG DIR-053–DIR-058; source records 52–56 |
+| R1 work restyled | The [journey model](#c1-rework--project-journey-model), the [connected-work map and document readiness](#c1-rework--connected-work-and-document-readiness), the [revised direction](#c1-rework--revised-direction) a)–l) and the `p7r2-` page list; the sources of 18 `p7r2-` pages, read back read-only with `dpai file read` |
+| WORKFLOWS | WF-DOC-01, WF-DOC-02, WF-ADM-01; WF-FIN-01, WF-FIN-02, WF-FIN-08; WF-PUR-01, WF-INV-01; §10, L-09, L-23, L-25, L-26; SF-RENDER |
+| BUSINESS_RULES | BR-DOC-01–BR-DOC-04, BR-ADM-01–BR-ADM-03, BR-FIN-15 |
+| ADMIN_FLOW | UXI-14, IP-13, IP-16, IP-19; D-UX-01, D-UX-05, D-UX-11, D-UX-12; the document and finance journeys, J-PUR-01 and J-INV-01; MSG-19, MSG-29, MSG-39 |
+| Security | PERMISSIONS_MATRIX §7 (PJ-15, PJ-19) and §9; SECURITY AU-04, H7-01, H7-10, H7-15, H7-16 and FL-02 |
+| Data and performance | DATABASE §4.5, §4.6, §12, §17, §20; INFORMATION_ARCHITECTURE SCR-09 and §9; ACCEPTANCE_CRITERIA AC-04; PERFORMANCE QB-02, QB-10, PF-24, PF-34 and the signal register |
+| AICWDF v4.3 | §4A.10, §18.1–§18.9, §18.12 and §27 |
+| Official documentation newly relied on | Plus Jakarta Sans — SIL Open Font License 1.1, version 2.7.1, by Tokotype (Gumpita Rahayu), tabular figures since version 2.600 — <https://github.com/tokotype/PlusJakartaSans>, accessed 2026-10-05. Lucide — ISC licence — <https://github.com/lucide-icons/lucide>, accessed 2026-10-05 |
+
+**What the intake corrected in R1's prototypes** — each settled at Level 1 in the anchors, no specification changed:
+
+| Finding | Source | Treatment in the anchors |
+| --- | --- | --- |
+| R1's phone receiving line read "JPG, PNG atau PDF, maksimal 10 MB." | FL-02 allows PDF, JPEG, PNG and WebP up to 20 MB for evidence; IP-16 states the purpose's types and limit | "PDF, JPG, PNG atau WebP, maksimal 20 MB." (AN-5, AN-6) |
+| R1's purchase form had "Catatan untuk pemasok" | `purchases` has no notes column (DATABASE §4.6) | Excluded, as §11 b asks |
+| R1's purchase form chose "Kirim ke" for the whole purchase | Delivery mode is a line attribute — `purchase_lines.delivery_mode`; J-PUR-01's "Kirim langsung ke klien" where the line is drop-ship | Not shown: AN-5's lines all go to the warehouse; Stage 2 places the choice on the line |
+| R1's tax select read "PPN 11%" | The treatment is configured and resolved at the business date (DATABASE §12); §11 b: no asserted legal rate | A read-only configured treatment, "PPN dikreditkan", with no rate |
+| R1's journey and readiness pages for ARJ/PRJ/2026/0139 showed several steps doable at once — the BAST, the goods inspection and the invoice | C1A-1 | AN-4 shows the project at a later point of the same synthetic data, so that one step is doable now ([anchors](#c1-visual-checkpoint--anchors)) |
+
+## C1 visual checkpoint — reference reconciliation
+
+Built on the reference inspection above and the measurements below, Planning's findings re-checked one by one (DIR-058 §11; RH-2). Measurements come from the received image bytes, sampled by a script kept outside the repository; values are flat-area means, estimates are labelled.
+
+### a) Mockup analysis
+
+**Palette (sampled).**
+
+| Element | REF-M1 | REF-M2 | REF-M3 | Planning's sample | The draft system |
+| --- | --- | --- | --- | --- | --- |
+| Canvas | `#F4F6F1` | `#F7F8F3` | `#F7F8F3` | ~`#F5F5F1` | `#F5F6F1` |
+| Surfaces | `#FFFFFF` | `#FEFEFE` | `#FFFFFF` | white | `#FFFFFF` |
+| Ink — titles, labels | `#000000` | `#000007`–`#000008` | `#000001` | — | `#16181D`, a softened near-black |
+| Secondary text | `#4E4E59`, `#5E5F66` | `#757779` | `#57585F`, `#5A5B64` | ~`#767B82` | `#5A5E66` |
+| Borders — card edge, control edge, divider | card `#F6F6F4`; dividers `#FEFEFE` | inputs `#E5E5E5`; the Google button `#E0E0DE` | card `#F2F3F0`; inputs `#E1E1E1`–`#E4E4E4`; dividers `#F2F3EE` | — | border `#E4E5DF`; control edge `#878B83` — the mockups' input edges measure 1.26–1.31:1 on white, below 1.4.11 |
+| Selected navigation fill · its rule | `#EAEECD` · `#4C562A` | — | `#ECF1D3` | ~`#EAEECD` | `#EAEECD` · `#6B7B26` |
+| Primary | — | the sign-in button `#BFCC8A`, dark text | the save button `#1A5034`, white text | ~`#BECB89`; ~`#1B4F35` | soft `#C2CE8E` (sign-in only); primary `#1A5034` |
+| Accent fill | — | the selected language `#E4EBC2` | "Tambah barang" `#EFF5C9` | ~`#F0F5CB` | `#EEF3CF` |
+| Dark olive round button | `#56602F` | — | `#5B6633` | ~`#4E572A` | not used (§b) |
+| Table header · summary card | — | — | `#F2F3EE` · `#FDFCF3` | ~`#F3F3EE` · ~`#FEFCF4` | `#F3F4EF` · white (§b) |
+| Icon wells | `#EBEFD9`, `#D9EBF6`, `#FAECDF`, `#DDEDE8` | `#EAF0DA`, `#DFECF3`, `#F3EADF` | — | ~`#ECF0DB`, ~`#D8E8F3`, ~`#FAECDF` | `#EBEFD9`, `#DFECF6`, `#FAEBD9`, `#F8E4E1` |
+| Ageing hues | `#99B1A0`, `#EDD798`, `#CCAD8E`, `#D5705B`, `#A7322C` | — | — | the same within 1 unit | `#7C8B81`, `#A4862B`, `#B16C36`, `#B0493A`, `#882A23` (§b, VP-6) |
+| Sign-in panel | — | top `#EDF4F7`, lower `#FCF8F5` | — | ~`#EFF4F7` | `#DFEBF3` → `#F6F2E8`, with a blue sweep |
+| Stepper's active step | — | — | `#B1D304` | — | not used (OC-07): the current step is an olive ring on a pale tint |
+
+Planning's samples agree with these within 2 units per channel, except the secondary text, which the mockups give darker in REF-M1 and REF-M3 than Planning's sample (REF-M2's `#757779` matches it).
+
+**Type (measured cap heights; sizes estimated with a 0.70 cap-height ratio).** REF-M1: page title 25 px caps (about 34 px), card headings 16 px (about 22 px), key figures 17 px digits (about 24 px), navigation labels 11 px (about 15 px), KPI labels 9 px (about 13 px), row text 9 px and row metadata 8 px (about 12–13 px and 11 px). REF-M2: heading 25 px (about 34 px), labels 12 px (about 16 px), button label 14 px (about 19 px). REF-M3: title 24 px (about 33 px), card headings 13–14 px (about 19 px), labels and table headers 10 px (about 14 px), control text 10 px (about 14 px), metadata 8 px (about 11 px), total figure 15 px digits (about 21 px). One geometric neo-grotesque family in regular, medium and bold, with aligned figures. The draft keeps the scale's shape and R1's floor: nothing essential below 13 px, a 15 px body (§b).
+
+**Radii, shadow, spacing, sizes and icons.**
+
+| Quality | Measured or estimated | The draft system |
+| --- | --- | --- |
+| Card radius | about 16 px (visual estimate) | 16 px |
+| Control radius | about 8–10 px (estimate); the sign-in controls about 10–12 px | 10 px; 12 px on the sign-in |
+| Badges | pills | pills |
+| Shadow | a soft shadow below the cards; card edges nearly invisible (`#F2F3F0`, `#F6F6F4`) | a subtle resting shadow with a quiet 1 px border |
+| Card gap · card padding | 20 px (REF-M3, measured) · about 20–24 px | 20 px · 20–24 px |
+| Control heights | REF-M3: line inputs 36 px, header inputs 35–36 px, buttons 40–42 px; REF-M2: inputs 55 px, buttons 56–57 px; REF-M1: row buttons about 33 px; navigation pills 44–45 px | 40 / 36 / 48 px kept; 52 px for the sign-in (§b); navigation entries 44 px |
+| Icons | thin outline icons; round wells about 50 px on KPI cards and about 36 px in rows (REF-M1) | Lucide outline, 1.75 px stroke; wells of 40 px, 48 px on a context card |
+
+### b) Reconciliation
+
+Every Planning finding of DIR-058 §11 b, re-checked against the inspection; "Confirmed" means the inspection agrees with Planning.
+
+**REF-M1 — Owner Beranda (AN-2).**
+
+| Element | Disposition | Reason and source | Inspection |
+| --- | --- | --- | --- |
+| Canvas, surfaces, ink, borders, subtle shadow, card radius, the olive selected fill with its rule, outline icons in tinted wells | ADOPT | VD-01; VD-03 | Confirmed; ink softened to `#16181D` and the rule lightened to `#6B7B26` (4.68:1) |
+| The ten-entry module sidebar with "Khusus Owner" | ADAPT | VP-1; OC-02: R1's reduced entries — Beranda, Proyek, Pekerjaan, Tinjauan — and the collapsed *Menu lengkap* in the mockup's treatment | Confirmed |
+| The sidebar upsell card | EXCLUDE | VP-2; SLOP-21 | Confirmed |
+| Search with Ctrl K and "Pintasan" | ADOPT | D-IA-04; SH-02 | Confirmed |
+| The period selector | ADAPT | Beranda and reports only, beside the Gabungan · ARJ · BTN · CKP view switch the mockup lacks (CS-08; R1) | Confirmed |
+| The user chip "Dimas — Owner" | ADAPT | The persona Laras, Owner | Confirmed |
+| The greeting hero with emoji, quote and photo | EXCLUDE | VP-2; OC-05 | Confirmed |
+| The four KPI cards | ADOPT the form; ADAPT the content; EXCLUDE deltas and sparklines | R1's four CALC figures — *Nilai penjualan*, *Kas masuk*, *Piutang aktif* with its overdue part, *Laba manajerial* — in a 2 × 2 block beside the decisions; VP-3 | Confirmed; the mockup's olive, blue, peach and mint wells become olive wells for all four, the figures carrying no severity |
+| "Tindakan hari ini" | ADOPT the row form for "Perlu keputusan Anda"; ADAPT the content to the Owner's defined signals | The security notice (MSG-29's Owner variant), QS-22, QS-14, QS-20, QS-16, QS-10, QS-11 and QS-15 per C1A-3; QS-18's attribution row takes the same form when the data holds one — the anchor's data holds none | Confirmed |
+| "penerimaan barang perlu divalidasi — menunggu konfirmasi Anda" | EXCLUDE | No Owner receiving-validation workflow exists; receiving is an Admin command (WF-INV-01) | Confirmed |
+| "persetujuan anggaran menunggu" | EXCLUDE | No budget approval exists in V1 | Confirmed |
+| A button plus a chevron per row | ADAPT | One control per row (C1A-2) | Confirmed |
+| "Umur piutang" bar and legend | ADOPT the form; ADAPT the colours (VP-6) | The mockup's ramp fails 1.4.11 for three buckets (`#EDD798` 1.42:1, `#CCAD8E` 2.11:1, `#99B1A0` 2.29:1 on white); a darkened ordered ramp of 3.49–8.74:1, 2 px gaps, a legend with amounts and shares, and a table; values from CALC-07 summing to *Piutang aktif* | Confirmed |
+| "Aktivitas terbaru" feed | EXCLUDE as a feed | Not a defined Beranda group (QB-10; SLOP-39); QS-14 stays a decision row to *Tinjauan* | Confirmed |
+| "Proyek berjalan" with photos and percentages | ADAPT; EXCLUDE the photos | "Proyek yang perlu perhatian" with the stage, the segmented indicator of applicable stages (VP-4) and the blocker; VP-5 | Confirmed |
+| "Nilai proyek" donut | EXCLUDE | Overlapping categories (billed ⊂ invoiced; PT-24) and an undefined "Dalam proses"; PT-24 stays on the journey | Confirmed |
+| The olive round floating button | EXCLUDE | No defined action behind it (VP-7) | Added by the inspection |
+
+**REF-M2 — sign-in (AN-1).**
+
+| Element | Disposition | Reason and source | Inspection |
+| --- | --- | --- | --- |
+| The split card; the form on the right; the ID\|EN toggle; the heading; labelled fields with icons; "Tampilkan"; the primary button with an arrow; "atau"; the outline Google button; H7-16's advice | ADOPT | VD-05 | Confirmed; the soft olive primary kept for the sign-in only; controls 52 px against the mockup's 55–57 px |
+| The supporting sentence under the heading | EXCLUDE | OC-06: it fails the test "needed to decide or act now" | Confirmed |
+| "Lupa kata sandi? Minta tautan atur ulang kepada Owner." | ADAPT | R1's disclosure "Lupa kata sandi?" holding the sentence, the line itself being a link — one control, no explanatory sentence visible by default | Confirmed |
+| The eye icon inside the password field | EXCLUDE | "Tampilkan" above the field is the one control (C1A-2) | Added by the inspection |
+| The left panel's headline, paragraph, three feature bullets, "Keamanan tingkat enterprise" and the quote | EXCLUDE | SLOP-21, SLOP-35; an unsupported security claim; the panel keeps the mark only | Confirmed |
+| The building image with a blue curve | ADAPT | VD-05; VP-5: an abstract composition — a sky gradient, layered olive hills and a blue sweep with a light edge — whose curve morphs on the way to the verification step; no crop of REF-M2 is used | Confirmed |
+| The coloured Google mark | ADAPT | A neutral "G" in a circle — no third-party logo asset (DIR-058 §21) | Added by the inspection |
+| The MultipleCorp mark | ADOPT as a placeholder | VP-5: redrawn as two simple leaf shapes, never an asset | Confirmed |
+
+**REF-M3 — Buat Pembelian (AN-5).**
+
+| Element | Disposition | Reason and source | Inspection |
+| --- | --- | --- | --- |
+| Breadcrumb with its back link | ADOPT | AICWDF §18.4, adapted to R1's navigation | Confirmed |
+| Title · subtitle sentence | ADOPT · EXCLUDE | OC-06 | Confirmed |
+| Project context card | ADOPT without the photo; ADD "Perusahaan … — mengikuti proyek" | CS-01–CS-03; INFORMATION_ARCHITECTURE §7 | Confirmed |
+| The stepper "Input pembelian · Review & konfirmasi · Selesai" | EXCLUDE as a purchase flow; its style serves the journey's stage track | One saving command and no draft state (WF-PUR-01); no review step that would imply a second commit | Confirmed |
+| "Tanggal pembelian" as a full date field | ADAPT | D-UX-05's compact "Tanggal transaksi" line | Confirmed |
+| The supplier "CV Arunika Jaya" | ADAPT | A fictitious supplier, "PT Contoh Komputindo": ARJ is one of the synthetic companies | Confirmed |
+| "No. referensi" | ADOPT | `supplier_reference` | Confirmed |
+| "Mata uang" | EXCLUDE | No currency concept in P0–P6 | Confirmed |
+| "Catatan" | EXCLUDE | No purchase field holds it (DATABASE §4.6) | Confirmed |
+| "Gunakan data dari" | ADOPT with defined sources | The project's demand lines and QS-02's shortage prefill — "Kekurangan stok proyek" and "Semua baris kebutuhan proyek" | Confirmed |
+| The line table | ADOPT as the benchmark | Product select with SKU, project item and stock below the row; quantity right-aligned (OC-09); tax from the configured treatment with no legal rate | Confirmed; the mockup's own row is not exact — the product field ends 4 px above the others and the subtotal's baseline sits 2 px below the controls' (measured checks) |
+| "Tambah barang" plus "Tambah baris (atau tekan Alt + N)" | ADAPT | One add path (C1A-2): IP-13's always-present empty last row; no shortcut, none being defined consistently with SH-02 (UXI-34) | Confirmed |
+| The attachment drop zone | ADOPT | SF-EVIDENCE; IP-16's line with FL-02's types and limit | Confirmed |
+| "Ringkasan Pembelian" | ADOPT the form; ADAPT the arithmetic; label it an estimate | The mockup's subtotal, tax and total do not add up; IP-13 and UXI-14: "(perkiraan)" until saved | Confirmed |
+| "Simpan sebagai draf", "Batal", "Simpan dan lanjutkan" | ADAPT | "Batal" and one primary "Simpan Pembelian": purchases are OPEN, CLOSED or CANCELLED, lines editable until the first effect (DATABASE §4.6; L-23) | Confirmed |
+| The cream summary card · the dark olive round button | ADAPT · EXCLUDE | A white card, one surface for every card (VD-09); no defined action | Added by the inspection |
+| Purchase charges | ADD behind "Rincian lain" | Part of the same saving command (WF-PUR-01; J-PUR-01), absent from the mockup; R1's charge kept and counted in the summary | Added by the intake |
+
+### c) REF-V1 and REF-V2 — taken and not taken
+
+| Reference | Taken | Not taken |
+| --- | --- | --- |
+| REF-V1 | The split card; one coloured panel with a large curved edge; the panel's move as the state-change motion — in AN-1 it narrows from 54% to 44% and its curve morphs in 320 ms as the code step opens; a restrained form | Sign-up (no public registration, VD-05); the social sign-in row (Google only, AU-22); the greeting copy; the saturated gradient as it is (a controlled blue instead); inputs without visible labels; the tutorial's code overlay, title and the creator's watermark |
+| REF-V2 | Spacing rhythm; precise alignment; compact but calm density; a full preview over a dimmed, blurred page and side panels that keep context; modals with a scrim; short purposeful transitions; one restrained accent | The assistant panel and chat bubbles (SLOP-45); counts on navigation entries (D-IA-06); "mine / team" assignment (PL-4); goal percentages (SLOP-44); count-up numbers (VP-8); people photographs and avatars as content; the dark hero card; the camera zooms and pans of the recording; its brand |
+
+The inspection's corrections to Planning's guidance stand: REF-V1's gradient changes hue with the panel's position and its slide lasts about 0.3 s; REF-V2's blurred overlay is a command palette, and its right panels are columns that fill rather than drawers.
+
+### d) Further conflicts
+
+| Conflict | Settlement |
+| --- | --- |
+| VD-07's live preview of a draft, against the only defined producer of a document's appearance, SF-RENDER, which renders issued versions | No P0–P6 semantic change: the anchor composes the preview in the page from the draft's data, marked and provisional; the missing producer of draft previews and prints is registered as GAP-053 ([document composer](#c1-visual-checkpoint--document-composer)) |
+| The draft marking's wording: DESIGN_SYSTEM §14.3 "DRAF — bukan dokumen terbit"; DIR-058 DC-2 "DRAF — belum terbit" | The anchor follows DC-2, the later Owner instruction for this checkpoint; the normative wording stays in force until Stage 2 aligns them |
+| DC-5's read-only carried-forward data, against IP-13's "the user changes only what differs" | No conflict of semantics: IP-13's reuse holds — the composer takes the confirmed data —, and what a document carries forward is the business record it renders (WF-DOC-01), corrected at its source; ADMIN_FLOW's wording is aligned in Stage 2 |
+| "Project overdue" without a defined deadline | Not enacted; [Project overdue — controlled proposal (OV)](#project-overdue--controlled-proposal-ov) and GAP-052 |
+
+None blocks VC1, and none is enacted.
+
+## C1 visual checkpoint — visual system and disposition delta
+
+The draft visual system is recorded in [DESIGN_REFERENCES](../DESIGN_REFERENCES.md), still not normative (DIR-058 §12): colour roles with measured contrast, Plus Jakarta Sans with its licence and source, the type scale with tabular figures, the spacing scale, radii, shadow, icons, control heights per density and pointer, motion tokens, R1's alignment specification and copy rules, the shadcn/ui mapping updated to the theme variables, the reference hierarchy of VD-01 and the not-copied lists. In brief: a warm ivory canvas `#F5F6F1` with white cards of 16 px radius and a subtle shadow; near-black ink `#16181D` and secondary text `#5A5E66`; a deep green primary `#1A5034`, a soft olive sign-in primary `#C2CE8E`, an olive accent tint `#EEF3CF` with its rule `#6B7B26`, the selected fill `#EAEECD`; olive, blue, amber and rose icon wells; a darkened ordered ageing ramp; controls of 40, 36, 48 and 52 px; motion of 120, 160, 200 and 320 ms with an instant reduced-motion variant.
+
+**Disposition delta** — the 83 provisional dispositions re-evaluated against DIR-057 and DIR-058 (§12), as [C1 rework — disposition delta](#c1-rework--disposition-delta) left them. The rows whose disposition changes:
+
+| ID | R1 | VC1 | Reason |
+| --- | --- | --- | --- |
+| SLOP-03 | KEEP — no giant rounded containers; radii 4–8 px | ADAPT | Radii follow the mockups: 16 px cards, 20 px dialogs and sheets, 12 px sign-in controls and inner panels, 10 px controls; still no giant rounded container (VD-01) |
+| SLOP-04 | KEEP — no excessive radius | ADAPT | The mockups' radii, nothing above 20 px (VD-01) |
+| SLOP-31 | KEEP — consistent radius: three values and a pill | ADAPT | Consistent radius at the mockups' values, each with one role (DESIGN_REFERENCES §6) |
+| SLOP-09 | KEEP — no neon or bright accent; the lime allowance withdrawn (OC-07) | ADAPT | A restrained yellow-green accent is allowed — the selected fill, the accent tint of secondary add actions, the olive rule and the current step — never saturated lime and never text below 4.5:1 (VD-03) |
+| SLOP-13 | KEEP — no illustrations, empty states included | ADAPT | Imagery only on the sign-in visual panel, an abstract composition (VP-5); no illustration elsewhere, empty states included |
+| SLOP-14 | KEEP — no shadow at rest | ADAPT | A subtle resting shadow; menus, sheets and dialogs rise with an overlay shadow over a scrim (VD-03) |
+| SLOP-15 | KEEP — motion only as feedback, none under reduced motion | ADAPT | Functional transitions only — state changes, panels, sheets, dialogs — never delaying focus or input; none under reduced motion (VP-8) |
+| SLOP-16 | KEEP — no parallax | ADAPT | Still no parallax, looping or decorative motion; the sign-in panel's single morph between two states is a functional transition (VP-8) |
+
+Re-examined with their disposition unchanged and their reason revised: **SLOP-34** ADAPT — VP-6: one ordered, muted sequential ramp for the receivable-ageing buckets, with direct labels, amounts and a table; no categorical multi-hue or part-to-whole chart of overlapping values. **D-DS-05** SUPERSEDE — as SLOP-34 (VP-6), charts of defined values only. **D-DS-01** SUPERSEDE — by the draft visual system derived from REF-M1–REF-M3 (VD-01–VD-03). **D-DS-04** ADAPT — a state keeps its label, icon shape and tone in the new system's status fills, never colour alone (VD-03; WCAG 1.4.1).
+
+**Re-derived totals:** 17 + 9 + 12 + 45 = **83** — KEEP 56, ADAPT 19, SUPERSEDE 7, DECIDE-IN-STAGE-2 1 (R1: KEEP 64, ADAPT 11, SUPERSEDE 7, DECIDE-IN-STAGE-2 1; the eight changes move eight KEEP to ADAPT). They stay provisional; the DECISION_INDEX statuses of D-IA, D-DS and D-UX do not change.
+
+## C1 visual checkpoint — document composer
+
+VD-07's elements mapped to P0–P6, and DIR-058 §13's constraints DC-1–DC-12 re-verified one by one against the specifications (DIR-058 §13). The anchor variant is AN-4's composer, `p7r3-an4-composer-d`: an invoice drafted from confirmed lines for ARJ/PRJ/2026/0139 (WF-FIN-01; L-26).
+
+**VD-07's elements.**
+
+| VD-07 element | P0–P6 source | In the composer |
+| --- | --- | --- |
+| Business data → prefilled draft | WF-DOC-01: a document renders its business record; WF-FIN-01: a sales record drafted from confirmed lines or as a value-only DP/termin record | "Diambil dari proyek": the client, billing address, PIC, basis and delivery, each with its source tag, and the three confirmed lines |
+| Review of the allowed inputs | WF-FIN-01; L-26 (DOC-06 or DOC-04, one record); D-UX-05 | "Diisi sekarang": all confirmed lines or a value only; the layout *Invoice* or *Nota*; the transaction date line |
+| Document preview | DC-2, DC-3; no producer of draft previews defined (GAP-053) | A live preview at 476 of 1,136 px of the workspace (42%), with "Halaman 1 dari 1", zoom from 50 to 120% and "Layar penuh"; changes to the inputs appear at once |
+| Validation | WF-FIN-01's precondition; L-16's cap, checked in AX-16; the above-delivered flag (QS-15), which flags and never blocks | "Pemeriksaan": the confirmed value not yet invoiced; within the project cap; not above the delivered value |
+| Explicit finalization | SF-ISSUE; MSG-39; AX-16 | "Terbitkan Invoice" opens MSG-39's confirmation; issue assigns the number |
+| The PDF is never the editable source; data corrected at its source | BR-DOC-01; WF-DOC-01 | The preview is composed from the draft's data; "Perbaiki di data proyek" leads to the project |
+| Carried-forward and entered data distinguished | DC-5 | Two sections, the carried data read-only with source tags |
+| A draft never satisfies issuance; issued documents keep immutability, revision and void | WF-DOC-01; BR-DOC-01–BR-DOC-03 | The requirement stays "Siap disiapkan" until issue; after issue the composer is read-only |
+| External uploads stay distinct | WF-DOC-02; BR-DOC-04; FS-12 | Client originals appear in the journey's readiness as uploads, never as generated documents |
+| Phone: Edit → Preview → Finalize | WF-DOC-01 `[desk]`; DC-11 | Recorded as direction; not prototyped (VD-08) |
+
+**DC-1–DC-12.**
+
+| ID | Re-verified against | Applied |
+| --- | --- | --- |
+| DC-1 | WF-DOC-01 (main path and table); BR-DOC-01; SF-ISSUE | Supported as Planning found: the draft is editable and unnumbered, prints with draft marking, never satisfies a requirement, and issues explicitly with an immutable snapshot |
+| DC-2 | BR-DOC-02; DESIGN_SYSTEM §14.3 | The preview reads "DRAF — belum terbit" in a band and as a pale watermark marked decorative; the number shows "Nomor diberikan saat terbit". DESIGN_SYSTEM §14.3's normative wording is "DRAF — bukan dokumen terbit"; the anchor follows DC-2 and Stage 2 aligns the two ([reconciliation](#c1-visual-checkpoint--reference-reconciliation) d) |
+| DC-3 | UXI-14; IP-13 | "Ringkasan (perkiraan)" and the bar's "Total invoice (perkiraan)"; server totals are authoritative |
+| DC-4 | PJ-19; PJ-15 | No stamp or signature image in the draft preview: the signature block is text — the director's name and title; the identity assets PJ-19 lets the viewer see — NPWP, address, contact, director — appear |
+| DC-5 | IP-13; WF-DOC-01 | Read-only carried data with its source and one link to correct it at the project; IP-13's reuse holds — the composer takes the confirmed data — and ADMIN_FLOW's "changes only what differs" is aligned in Stage 2 |
+| DC-6 | GAP-019; WF-FIN-01 | Only defined inputs: the lines or the value, the layout and the transaction date. Needs definition (GAP-019): free notes or clauses on the invoice, payment-terms wording, the choice of signatory, and bank details printed on the invoice — none shown |
+| DC-7 | IP-19; WORKFLOWS §9 | The composer issues the invoice only; billing, payment and the documents that follow stay separate commands with separate answers |
+| DC-8 | MSG-39; AX-16; QS-08; WF-FIN-02 | Issue confirmed with MSG-39's text; afterwards "Terbit — Belum Ditagihkan", the number ARJ/INV/2026/0141 and the rendition "PDF sedang dibuat", then "PDF siap"; billing stays a later stage |
+| DC-9 | BR-DOC-04; FS-12; WF-DOC-02 | Client originals are uploads, never satisfied by a company draft: the client's order (*Surat Pesanan klien (asli)*) in AN-4's readiness, a client's signed BAST awaited on AN-3 |
+| DC-10 | L-25; DIR-024 | The quotation shows "Disetujui klien", never a void; AN-3's *Kuitansi untuk Proses Pembayaran* BTN/KWT/2026/0051 keeps its own name, distinct from the receipt *Kuitansi* that waits on a recorded payment in AN-4 |
+| DC-11 | WF-DOC-01 `[desk]`; J-INV-01 | Documents stay desk journeys; on a phone Edit → Preview → Finalize, full-screen, recorded as direction. The one floor exception shown is J-INV-01's optional "Nota Terima Barang" (DOC-12) at the end of receiving (AN-6) |
+| DC-12 | — | No VD-07 element needs changed document or business semantics; the draft-preview producer is a missing definition, not a changed one, and is registered as GAP-053 |
+
+## Project overdue — controlled proposal (OV)
+
+Re-verified and recorded for the Owner's later decision; nothing here is normative, and AN-2 shows no overdue row (DIR-058 §14).
+
+**OV's six points.**
+
+| Point | Answer |
+| --- | --- |
+| 1 The approved deadline fact that governs it | None single: DATABASE §4.5 lists the `projects` "deadlines" without naming them; §20's partial index `projects (company_id, deadline) WHERE state IN ('DRAFT', 'ACTIVE')` implies one nullable column; SCR-09 sorts open projects by deadline, NULL last; AC-04 names "deadline". Its meaning is defined nowhere. Deadlines are forward-looking attributes, not business dates (L-09; DATABASE §17) |
+| 2 When a project becomes overdue | Proposed: the state is ACTIVE and the governing deadline is before today at the WIB day boundary — BR-FIN-15's convention for receivables |
+| 3 The excluded states | DRAFT; CANCELLED; COMPLETED_NORMAL and COMPLETED_FORCED, whose residuals stay in QS-16; projects without a deadline |
+| 4 Who sees it | Proposed Owner-facing, in Beranda's decision group, per company; whether an Admin also sees it is part of the Owner's decision, CS-08 applying if so |
+| 5 Whether existing signals or queries support it | No signal covers it. A new bounded signal is needed — a proposed QS-23 starting from the ACTIVE projects per company (PF-24) over §20's existing index —, inside QB-10's decision group: G1 *Perlu Perhatian Owner* holds 9 of its twelve statements (INFORMATION_ARCHITECTURE §9), so one more fits |
+| 6 Whether change control is required | Yes, Level 2 through normal change control, not enacted here: P3 WORKFLOWS §10's signal list; P6 PERFORMANCE's signal register and QB-10; P7 INFORMATION_ARCHITECTURE §9; a narrow P4 clarification of the deadline column and its meaning |
+
+**The Owner decision required later — not now.** Whether a project has exactly one governing deadline, and what it means — for example the date by which the whole project must be complete for the client, or a delivery date —; and whether Admins see the signal. Registered as GAP-052, OWNER_DECISION_REQUIRED, owner Planning, before any normative signal registration (Stage 3 or a separate amendment). The deadline stays a project fact in the anchors: AN-4's header shows "Tenggat 15 Okt 2026 · 10 hari lagi", and AN-2's QS-15 row keeps the approved definition with no deadline filter (C1A-3).
+
+## C1 visual checkpoint — anchors
+
+Eleven `p7r3-` pages in the DesainPakeAI project MULTIPLECORP, authored from a temporary directory outside the repository with page-scoped styles only (DIR-058 §15); each page has a prototype state switcher labelled "Prototipe:" where its states are not reached through its own controls.
+
+| Anchor | Page | Viewport | States | What it proves |
+| --- | --- | --- | --- | --- |
+| AN-1 Sign-in | `p7r3-an1-masuk-d` | 1440 × 900 | Masuk · Galat (MSG-19 on submit) · Kode · kata sandi (with "Gunakan kode pemulihan") · Kode · Google (code only, H7-15) · Masuk aplikasi | REF-M2's split card in the system; the curved panel narrowing and morphing in 320 ms from credential to verification (VD-05); focus in the code field at once; a 160 ms hand-off; an instant change under reduced motion |
+| AN-1 English | `p7r3-an1-masuk-d-en` | 1440 × 900 | The same five, with the ID\|EN switch working live | 37 of 37 strings in English, 0 missing |
+| AN-2 Owner Beranda | `p7r3-an2-owner-d` | 1440 × 900 | Gabungan · ARJ · BTN · CKP; Oktober and September 2026 | "Perlu keputusan Anda" dominant from the first row; the four compact KPI cards in the same first view (VP-3); the receivable-ageing bar with its table (VP-6); "Proyek yang perlu perhatian" with the segmented indicator (VP-4); the Admin queue collapsed to one card; C1A-3 |
+| AN-3 Admin Pekerjaan | `p7r3-an3-pekerjaan-d` | 1440 × 900 | Groups open and closed; the company filter | R1's work groups restyled; each row its company code, record, project, stage, need and one action (C1A-2); per-company counts, never summed; the first group open, *Dokumen dan kasus* empty with its quiet sentence |
+| AN-4 Project Journey | `p7r3-an4-journey-d` | 1440 × 900 | Disclosures; "Tindakan lain" | One primary action; the stage track in REF-M3's stepper style; *Sekarang · Berikutnya · Hambatan*; "Yang tersisa sebelum selesai"; document readiness; the financial position under field projection; C1A-1 — the *Surat Permintaan Pembayaran* waits on the invoice ("Menunggu: invoice terbit") while *Berikutnya* is "Buat invoice dari 3 baris terkonfirmasi" |
+| AN-4 Composer | `p7r3-an4-composer-d` | 1440 × 900 | Draf · Pratinjau penuh · Setelah terbit; all lines or a value; Invoice or Nota | [The document composer](#c1-visual-checkpoint--document-composer) |
+| AN-5 Buat Pembelian | `p7r3-an5-pembelian-d` | 1440 × 900 | Standar · Rincian lain terbuka; "Gunakan data dari" | REF-M3's composition reconciled; R1's alignment specification; the purchase charges behind "Rincian lain"; IP-13's empty last row as the one add path; a consistent estimate |
+| AN-6 Mobile warehouse | `p7r3-an6-masuk-p`, `p7r3-an6-baris-p`, `p7r3-an6-cari-p`, `p7r3-an6-selesai-p` | 390 × 844, and 320 px locally | The line list; a scanned line's sheet; "Cari Produk"; the end summary | Scan first with the scan field fixed at the bottom; the next line prominent and the remaining work as counts; the line sheet with the three outcomes and the reservation in one command (AX-04); *Tercatat* only after the server's answer, one answer per line (HO-01; IP-19); 48 px controls |
+
+**Data.** One synthetic set with R1's companies ARJ, BTN and CKP and its personas — Laras (Owner) on AN-2; Dimas (Admin with ARJ and BTN, `finance.view` and `cost.view`) on AN-1, AN-3, AN-4 and AN-5; Bayu (Admin with ARJ warehouse grants) on AN-6 —, every name a "Contoh" name, no real person, client, supplier or credential. Its arithmetic is checked by the generator before each build: the invoice's 43,900,000 + 4,829,000 = 48,729,000 confirmed value and a 30% DP of 13,170,000 + 1,448,700 = 14,618,700; the purchase's 202,200,000 + 22,242,000 + R1's 1,250,000 charge = 225,692,000; the ageing buckets 227,650,000 + 24,750,000 + 16,500,000 = 268,900,000 = *Piutang aktif*, of which 41,250,000 overdue. AN-4 shows ARJ/PRJ/2026/0139 later than R1's pages did, so that one step is doable now (C1A-1): the BAST, the inspection record and a new SPK issued, the handover photo uploaded, the *Surat Permintaan Pembayaran* required and waiting on the invoice. No business data is in a page title, ID or URL; no reference image, video frame or third-party image is in any page — the sign-in panel is an abstract composition and the mark a two-leaf placeholder.
+
+**Sessions** — non-secret commands only; every output was filtered to named fields, so no key, key identifier, token, credential path or project identifier reached the session's output or any file; `git status` showed nothing new in the repository after each session.
+
+| Session | 2026-10-05, WIB | Commands | Result |
+| --- | --- | --- | --- |
+| P7R3-S01 | 02:31–02:43 | `dpai --version`, `dpai auth status`, `dpai context`, `dpai file list`, `dpai file read` of all 123 files, `dpai design lint`, `dpai token list`, `dpai design context`; then per page `dpai page create`, `dpai file read`, `dpai call write_file` with the expected revision and overwrite, `dpai preview verify --page`, `dpai work finish --page`, `dpai file read` | Readiness unchanged since VC0 — CLI 0.2.2, authenticated, MULTIPLECORP as owner, context revision `sha256-cfd0fe0cac39bda1`, 118 pages, none working, the 11 IDs free —; the six AN-1–AN-4 pages created, written, verified and read back identical |
+| P7R3-S02 | 02:43–02:53 | The same per page; then the full read-back | The five AN-5 and AN-6 pages created, written, verified and read back identical |
+| P7R3-S03 | 03:06–03:08 | `dpai file read`, `dpai call write_file`, `dpai preview verify --page`, `dpai work finish --page`, `dpai file read` | AN-5 rewritten with the purchase charges and without the header-level "Kirim ke" ([intake](#c1-visual-checkpoint--intake)) |
+| P7R3-S04 | 03:15–03:17 | The same | AN-5 rewritten with IP-13's empty last row instead of "Tambah baris" |
+| P7R3-S05 | 03:24–03:32 | The same, for the four AN-6 pages; then the full read-back | The phone's text links raised to 44 px |
+
+**Verification.** `dpai preview verify` passed for every page at every write — compile "passed", 0 diagnostics, 0 warnings, 0 layout issues; its browser, layout and responsive checks report "not-run", so those properties rest on the local measured checks below. Every page's source read back byte-identical to the local build. After the last session: the active project still MULTIPLECORP; context revision `sha256-1da363b00129df2d` with 129 pages — the 54 earlier, 28 `p7r-`, 36 `p7r2-` and 11 `p7r3-` pages — and none working; the 118 earlier, `p7r-` and `p7r2-` sources, `DESIGN.md`, `PRODUCT.md` and `src/styles/tokens.css` byte-identical to their readiness copies; `dpai design lint` (0 errors, 18 warnings, 1 info), `dpai token list` and `dpai design context` identical to their readiness outputs once the project revision is set back to the readiness value; `prototype.json` changed only by the 11 registrations — without them it reproduces its readiness SHA-256 —; the tool's working-state file `.prototype/agent-state.json` back in the file list, as after earlier authoring. Observation, recorded and not acted on: `.prototype/canvas.json`, the tool's board layout, gained a frame for each new page in the row after the existing ones; without them its 118 earlier frames keep the readiness byte length, 7,293 bytes, but not its SHA-256, and the file was rewritten again by later sessions — consistent with the tool re-ordering its entries on each write. The readiness copy itself was not kept, so the exact difference is not established; no page source or design asset is affected. Nothing of DesainPakeAI — no page source, export, capture or configuration — is in the repository.
+
+## C1 visual checkpoint — measured checks
+
+With scripts kept outside the repository and the installed Chrome 154 in headless mode over its DevTools protocol, on the local builds that are byte-identical to the pages in DesainPakeAI (DIR-058 §16): 49 states across the 11 pages — the prototype states, open menus, disclosures and dialogs, the four Beranda views and both periods, and every phone page at 390 and 320 px.
+
+| Check | Result |
+| --- | --- |
+| Contrast — text (≥ 4.5:1) | 3,740 rendered text pairs, every one at least 4.83:1 — the lowest is a placeholder in ink-subtle on white; the lowest other text 5.74:1, the preview's field captions. No text under reduced opacity; the decorative "DRAF" watermark is marked decorative and left out |
+| Contrast — non-text (≥ 3:1) | 447 indicators, the lowest 3.14:1 — the control edge and the selected segment's ring on the subtle surface; the focus ring 4.90–5.42:1, the current entry's rule 4.68:1, the stage marks 4.68–4.82:1, the ageing ramp 3.49–8.74:1, icon-only buttons 16.35:1, the checkbox 8.48:1 |
+| Alignment | Every row of controls, measured from the rendered DOM and from pixels at device scale 2 (0.5 px resolution): 40 rows and 175 items on the anchors — AN-5's line rows, the charge rows and its form row included — with tops, bottoms and baselines within 0.5 px (0 measurable spread); one control height per density (40 / 36 / 48 / 52 px); numbers right-aligned with tabular figures; SKU, project item and stock on their own line below the row. For comparison, `p7r2-rs9-pembelian-d` measured the same way has equal tops and bottoms and a 1 px baseline step between its selects and inputs — which VC1 closed by lifting input text 1 px —, and REF-M3's own row has its product field ending 4 px above the other controls and its subtotal's baseline 2 px below theirs |
+| Coherence (VD-09) | The computed font family, size, weight, line height, colours, border, radius, shadow and height of buttons, inputs, selects, cards, badges, navigation entries, table headers, segmented controls and company codes, compared across all anchors: one signature per component and density. The deviations found were fixed — the summary card's cream surface (made white), the prototype switcher's 13 px type (made 14 px), the top bar's 42 px search (made 40 px), the code field's 56 px (made 52 px). The remaining differences are by design: densities (40 / 36 px; 48 px on the phone; 52 px on the sign-in), the "Menu lengkap" sub-entries at 40 px beside the 44 px entries, the header band's rounded first and last cells, and the next-step emphasis (an accent-tint card) |
+| Text fitting | At 1,440 px and, for AN-6, at 390 and 320 px: no clipped or overflowing text (`scrollWidth` > `clientWidth`), no wrapped button, badge, tab, navigation or chip label, no broken table header |
+| Copy (OC-06) | Explanatory sentences visible by default, counted by DIR-056 §11's rule: 0 on every anchor — AN-1, AN-1 English, AN-2, AN-3, AN-4, the composer, AN-5 and AN-6 —, rising on no surface (R1: 0). Two lines failed the test during VC1 and were removed: "Surat Permintaan Pembayaran menyusul setelah invoice terbit" under *Berikutnya* and "Seret berkas ke sini atau pilih dari perangkat" in the drop zone. Mandated copy kept: MSG-19 and AU-04's generic second-factor answer (AN-1, on submit), H7-16's advice (AN-1), MSG-29's Owner variant (AN-2), IP-16's file line with FL-02's types and limit (AN-5, AN-6), MSG-39's confirmation (the composer, on issue); MSG-41 does not apply — no anchor shows a pooled stock view. Behind disclosures: "Minta tautan atur ulang kepada Owner." and "Masuk dengan kata sandi untuk memakai kode pemulihan." (AN-1) |
+| Target sizes | No target below 24 × 24 px; desktop controls 40 px (36 px dense); every phone target at least 44 px — the reservation checkbox is a 24 px box inside its 48 px label row, which activates it |
+| Reflow | AN-6 at 320 px: no horizontal page scrolling in any of its ten states; a row of facts wraps between its items, never inside one |
+| Motion | Measured from the CSS: 120 ms (states), 160 ms (hand-off; sheets leaving, with the exit easing), 200 ms (menus, dialogs, sheets, toasts, panes) and 320 ms (the sign-in panel), with the standard, emphasized and exit easings; no `transition: all`; no delay except on `visibility` when leaving. Measured in the page: the code field holds focus within the submit's own task (about 10 ms); the application appears within 4 ms of a valid code, then fades in over 160 ms with no artificial wait. Reduced motion, by Chrome's DevTools emulation of `prefers-reduced-motion: reduce`: every transition and animation measured at 0.001 s, the panel's change instant, focus unchanged, dialogs and sheets opening with focus inside |
+| English | AN-1's English page: 37 of 37 dictionary entries translated, 0 missing; no Indonesian string in any of its states; no wrapped or clipped label |
+| Mockup proximity | Every mapped surface and fill within ΔE00 3.3 of the sampled mockups — canvas 0.4–0.5, surface 0, selected fill 0–1.2, table header 0.2, wells 0–3.2, soft primary 0.7, primary 0, accent tint 2.2, sign-in panel 3.3; the deliberate departures: the darkened ageing ramp (ΔE00 6.5–23.0, for 1.4.11), the softened ink (6.1), one link colour (13.7), the white selected segment (16.2) and no lime (27.4). Side-by-side renders of AN-1 with REF-M2, AN-2 with REF-M1 and AN-5 with REF-M3, each at 1,440 px wide, were made outside the repository for the Owner's report; none is committed or uploaded |
+
+## C1 visual checkpoint — visual C1 package
+
+The English equivalent of the package reported to the Owner in Bahasa Indonesia (DIR-058 §17).
+
+1. **The six anchors.** AN-1 sign-in (`p7r3-an1-masuk-d`, `p7r3-an1-masuk-d-en`), AN-2 Owner Beranda (`p7r3-an2-owner-d`), AN-3 Admin *Pekerjaan* (`p7r3-an3-pekerjaan-d`), AN-4 Project Journey with its composer (`p7r3-an4-journey-d`, `p7r3-an4-composer-d`), AN-5 Buat Pembelian (`p7r3-an5-pembelian-d`) and AN-6 the phone warehouse (`p7r3-an6-masuk-p`, `p7r3-an6-baris-p`, `p7r3-an6-cari-p`, `p7r3-an6-selesai-p`) — eleven pages, what each proves as tabulated in [anchors](#c1-visual-checkpoint--anchors). The side-by-side renders are shown in the report and are local working files that may not persist.
+2. **The reconciliation.** Adopted from REF-M1–REF-M3: the canvas, surfaces, ink, shadow, card radius, the olive selected fill with its rule, icons in wells, the deep green primary and the soft olive sign-in primary, the KPI cards, the decision rows, the ageing bar, the split sign-in card, the breadcrumb, the context card, the line table and the summary. From REF-V1: the curved panel that moves with the state change. From REF-V2: rhythm, precision, the overlay full preview and short transitions. Where the anchors differ visibly from the mockups: R1's reduced navigation instead of the module sidebar; no greeting, upsell, feed, donut, photographs, deltas or sparklines; four olive KPI wells; one control per decision row; a darkened ageing ramp with a table; no marketing panel and an abstract image on the sign-in; a disclosure for "Lupa kata sandi?"; no purchase stepper, currency, notes or draft button; the compact date line; one add path through the empty last row; the purchase charges behind "Rincian lain"; a white summary card; darker control edges; softer ink; 52 px sign-in controls against the mockup's 55–57 px.
+3. **The draft visual system** — [DESIGN_REFERENCES](../DESIGN_REFERENCES.md), summarized in [visual system and disposition delta](#c1-visual-checkpoint--visual-system-and-disposition-delta).
+4. **The document composer** and its constraints DC-1–DC-12 — [document composer](#c1-visual-checkpoint--document-composer); one missing definition registered (GAP-053) and one wording to align in Stage 2.
+5. **C1A-1–C1A-3, as applied.** C1A-1 on AN-4: *Berikutnya* "Buat invoice dari 3 baris terkonfirmasi" while the *Surat Permintaan Pembayaran* waits on the invoice in "Yang tersisa sebelum selesai" and in document readiness. C1A-2 on every anchor: one control per action — one primary per page, one action per row, "Langkah berikutnya" pointing to the one button, one add path. The self-check counted identical labels truthfully: they appear only as one action per row on different records — AN-2 "Lihat" × 4 and "Buka" × 5, AN-3 "Catat Barang Masuk" × 3 and "Catat Pembayaran" × 2 —, and no two controls perform the same action on the same object. C1A-3 on AN-2: QS-15 "Syarat penyelesaian proyek belum terpenuhi" with no deadline filter, the deadline staying a project fact.
+6. **The overdue proposal** — [Project overdue — controlled proposal (OV)](#project-overdue--controlled-proposal-ov). The Owner decision it needs later, not now: whether a project has exactly one governing deadline and what it means, and whether Admins see the signal (GAP-052).
+7. **The measured checks** — [measured checks](#c1-visual-checkpoint--measured-checks): all pass.
+8. **The C1 questions.** (a) Approve the visual direction of the six anchors; approve it with named visual adjustments; or reject it. (b) The draft marking on the composer's preview: "DRAF — belum terbit" (DIR-058 DC-2, used in the anchor) or DESIGN_SYSTEM §14.3's "DRAF — bukan dokumen terbit" — which wording should Stage 2 keep?
+9. **After C1.** Stage 2 needs a separate Owner authorization; nothing of it starts here.
+
+## C1 visual checkpoint — zero-context check
+
+Run on 2026-10-05 with a fresh, read-only sub-agent on the working tree holding the VC1 records, before this section, Gate VC1 and TECH-029's VC1 hash table were written (DIR-058 §18.2). It started at AGENTS.md and followed its reading order only; it did not read records 53 or 56, the attachments or this session; it was bound by DIR-046 §2 and used no network. Its verbatim report is kept outside the repository: 152 lines, 19,471 bytes, SHA-256 `6AB84D95F8712D47A8BC3EA83C04991DA3D3A00E9E6CF070A6BAAA442DE312DB`.
+
+| Question | Its answer, in brief | Result |
+| --- | --- | --- |
+| (a) The current phase and the C1 state | P7 IN_PROGRESS, P8 BLOCKED; Checkpoint C1 not approved, R1's structure preserved, the visual direction pending the Owner's review of the six anchors, with the draft-marking question | PASS |
+| (b) DIR-057 | The reference hierarchy of VD-01 with the repository, P0–P6 and R1's structure above it; the pastel direction cancelled by VD-02 and replaced by VD-03, OC-07's lime rejection kept in spirit, K3's primary-reference clause superseded and its non-copy rules active; C1A-1–C1A-3, OV and RH-1–RH-4 stated correctly, checked against records 54 and 55 | PASS |
+| (c) What is authorized next, and what is not | The Owner's visual review, then a separate Stage 2 authorization; before that, finishing VC1 — gate VC1, commit 6 and its push — and STOP; the full not-authorized list | PASS |
+| (d) `main` and the re-baseline work | `main` at `a526daf`; the work on `rebaseline/p7-ux`, commits 1–5, VC1 uncommitted at the time of the check | PASS |
+| (e) The anchors, the reference records and the reconciliation | The eleven `p7r3-` pages in DesainPakeAI; the textual records in SOURCE_OF_TRUTH and the reference inspection; the reconciliation in this record and DESIGN_REFERENCES; none normative; the reference files outside the repository, which holds no image or video of them | PASS |
+| (f) The older P7 documents in force | ADMIN_FLOW in force; INFORMATION_ARCHITECTURE and DESIGN_SYSTEM APPROVED under APPR-008 and under replacement; the D-UX, D-IA and D-DS statuses; P7_QUALITY_GATE as evidence; the earlier re-baseline work as history | PASS |
+
+**Its findings and their treatment.**
+
+| Finding | Treatment |
+| --- | --- |
+| 1–3, 11: the records describe VC1 as committed, Gate VC1 as passed and its hashes as tabulated, while the tree was uncommitted and this section, Gate VC1 and the hash table did not exist yet | Completed before commit 6 — this section, Gate VC1 and TECH-029's VC1 table; the records describe the commit they belong to, as at R1, and the push of commit 5 was verified again before commit 6 |
+| 4: the safe next action dropped DIR-058 §23's resume rules | Fixed at Level 1 in CURRENT_HANDOFF: a new session verifies `git ls-remote origin`; if commit 6 is not pushed, it resumes DIR-058 under §23 — the references attached and re-inspected, the DesainPakeAI readiness re-run, the finished `p7r3-` pages reused |
+| 8: CHANGELOG named DECISION_INDEX among the changed records | Fixed: DECISION_INDEX needs no change and is unchanged |
+| 9: DIR-058's section citations resolve only in record 56 | CURRENT_HANDOFF now says what the cited sections list; elsewhere the citations stay, record 56 being the authorization's own text |
+| 10: C1A-1–C1A-3's wording comes from DIR-058 §2, records 54 and 55 accepting them by label | As recorded at VC0: DIR-058 §2 states them from the Owner's decisions; no change |
+| 5, 6, 7, 12: EXECUTION_CONTEXT and TOOLCHAIN still name Ramp as the reference, TOOLCHAIN's documentation line predates VC1's verification, AGENTS.md's "active design reference" names no document, and an anchor name in AGENTS.md says "pending" | Reported, not changed: these files are outside those DIR-058 lets VC1 change; R1's check reported 5, 7 and 12 as well |
+| 13, 14: CONTEXT_INDEX's approval-chain paragraph ends at APPR-009, and GAP-037's continuation cites the rejected Stage 1 proposal | Reported, not changed: outside the rows DIR-058 §18.1 lets VC1 change |
+| 15: no live-remote verification without network | The executor verifies the remote at commit 6 (DIR-058 §18.4) |
+
+## Gate VC1
+
+Run on the complete staged change of commit 6 before the commit (DIR-058 §18.3), with scripts kept outside the repository. Every item passed.
+
+| Item | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| VC1-01 | The staged diff touches only the listed files | PASS | `git diff --cached --name-status 3b17c5a` lists 9 modified paths — this record, DESIGN_REFERENCES, SOURCE_OF_TRUTH, CONTEXT_INDEX, DECISION_LOG, GAP_REGISTER (GAP-052, GAP-053, their triage rows and the totals only), PHASE_STATUS, CURRENT_HANDOFF and CHANGELOG; DECISION_INDEX unchanged |
+| VC1-02 | The reconciliation is complete and rests on the inspection | PASS | [Reference reconciliation](#c1-visual-checkpoint--reference-reconciliation): every element of REF-M1–REF-M3 and the REF-V1/REF-V2 lists with a disposition and reason; every Planning finding of DIR-058 §11 b dispositioned and re-checked; the palette and sizes measured from the received bytes |
+| VC1-03 | One draft visual system | PASS | [DESIGN_REFERENCES](../DESIGN_REFERENCES.md) with measured contrast, Plus Jakarta Sans with its licence and source, motion tokens and the shadcn/ui mapping; the [disposition delta](#c1-visual-checkpoint--visual-system-and-disposition-delta) with re-derived totals |
+| VC1-04 | The document-composer validation | PASS | [Document composer](#c1-visual-checkpoint--document-composer): VD-07's elements and DC-1–DC-12 mapped to their sources; the conflicts recorded — the draft preview's producer (GAP-053), the draft marking's wording and DC-5 against IP-13 |
+| VC1-05 | The overdue proposal | PASS | [Project overdue — controlled proposal (OV)](#project-overdue--controlled-proposal-ov) answers OV's six points; GAP-052 registered OWNER_DECISION_REQUIRED; nothing normative; no overdue row on AN-2 |
+| VC1-06 | The anchors | PASS | [Anchors](#c1-visual-checkpoint--anchors): six anchors with their states in 11 `p7r3-` pages; `preview verify` passing at every write; C1A-1 on AN-4, C1A-2 everywhere, C1A-3 on AN-2; one synthetic data set with checked arithmetic; the 118 earlier, `p7r-` and `p7r2-` sources and the Ramp design system unchanged; no DesainPakeAI output in the repository |
+| VC1-07 | The measured checks pass | PASS | [Measured checks](#c1-visual-checkpoint--measured-checks): contrast, alignment within 0.5 px, the coherence audit with every deviation fixed or explained, no clipped or wrapped label, 0 explanatory sentences, target sizes, reflow at 320 px, reduced motion and 0 missing English strings |
+| VC1-08 | No normative or specification change | PASS | INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, everything under `docs/01-product/`–`docs/06-api-performance/`, AGENTS.md, EXECUTION_CONTEXT, DECISION_INDEX and every source record byte-identical to `3b17c5a`; the overdue proposal, QS-23 and GAP-053's producer are records only |
+| VC1-09 | Links, identifiers, secrets and binaries | PASS | 2,118 relative links and anchors in 106 Markdown files, 0 broken; GAP-052 and GAP-053 each defined once, and the label sets of DIR-058 §7.3 mapped once in CONTEXT_INDEX; no key, token, key or project identifier, credential path, e-mail address or unfilled placeholder in the staged diff; no image, PNG, video, frame, screenshot or render added — the repository's only binaries remain the two P1 provenance files |
+| VC1-10 | The zero-context check | PASS | [Zero-context check](#c1-visual-checkpoint--zero-context-check): (a)–(f) answered correctly; the in-scope findings fixed and the rest reported |
+| VC1-11 | The visual C1 package | PASS | [Visual C1 package](#c1-visual-checkpoint--visual-c1-package): items 1–9, reported to the Owner in Bahasa Indonesia with the side-by-side renders |
