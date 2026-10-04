@@ -1,0 +1,97 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fiftieth source record
+Received: 2026-10-04, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix A of the P7 UX re-baseline Stage 0–1
+authorization of the same date (fifty-first source record)
+Subject: Owner decisions K1–K4 on the Planning blueprint for the P7 UX
+         re-baseline, the clarifications C-1 (language-preference storage)
+         and C-2 (review convergence), and the approval in principle of the
+         blueprint direction — which §2 of the fifty-first source record
+         states as K1–K4, C-1 and C-2; the blueprint itself is not archived
+Delivery: the relayed text between the "----- BEGIN APPENDIX A -----" and
+         "----- END APPENDIX A -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+K1: A
+
+K2: A. Use Owner + Admin Operasional + one real warehouse/field mobile user if
+such a person is reasonably available. If no suitable warehouse/field user is
+available, fall back to K2-B rather than blocking P7.
+
+K3: benar.
+
+K4: Tidak ada tambahan saat ini. Gunakan temuan konkret prototype yang sudah
+dibawa ke blueprint sebagai planning input awal. Jangan mengklaim saya memberi
+observasi tambahan yang tidak saya nyatakan.
+
+Saya menyetujui arah blueprint P7 secara prinsip, dengan dua klarifikasi
+sebelum Anda menyusun prompt Executor Tahap 0–1.
+
+1. LANGUAGE-PREFERENCE STORAGE
+
+Do not pre-authorize a new `users` column merely because per-account language
+preference is desired.
+
+During P7, define the required UX and persistence behavior first.
+
+When implementation/storage is considered:
+- first inspect whether the approved data model already provides an
+  appropriate place for this preference;
+- prefer an existing suitable mechanism when it preserves the approved
+  security and shared-device rules;
+- do not invent an inappropriate generic JSON/preferences store merely to
+  avoid schema governance;
+- if a genuinely new database field or other schema change is required, do
+  not silently treat it as an already-approved Level-1 consequence of this
+  blueprint. Surface the exact proposed change, its reason and its impact
+  through the repository's normal database/change-control process before it
+  becomes normative.
+
+The UX requirement remains:
+- id-ID is the default;
+- English is secondary;
+- authenticated preference is per account;
+- pre-login preference may be device/browser local;
+- issued documents and business data remain Indonesian as already decided.
+
+2. ROUND-REVIEW / LOW-FINDING CONVERGENCE
+
+Clarify the apparent ambiguity between:
+- Stage 4 using the P5 convergence pattern; and
+- APPR-011 requiring unresolved CRITICAL/HIGH/MEDIUM/LOW findings = 0.
+
+Use this interpretation:
+
+A LOW non-material finding may be carried to a later authorized phase only
+when it has an explicit disposition, owner, target phase and rationale.
+Such a finding is dispositioned/carried and is therefore not counted as
+"unresolved".
+
+APPR-011 must have:
+- 0 unresolved CRITICAL;
+- 0 unresolved HIGH;
+- 0 unresolved MEDIUM;
+- 0 unresolved LOW;
+- 0 OWNER_DECISION_REQUIRED.
+
+Do not create endless review rounds solely to eliminate a LOW non-material
+finding that has already been explicitly dispositioned under an authorized
+convergence rule.
+
+Preserve the rest of the blueprint unless these clarifications create a
+direct contradiction.
+
+Then prepare the FULL ready-to-copy Executor authorization for P7 Stage 0–1
+only.
+
+Do not authorize Stage 2 or later yet.
+The Stage 0–1 authorization must end at Checkpoint C1 and STOP for my design
+direction review.
+
+Do not start P8–P11 or application coding.
+
+Communicate with me in Bahasa Indonesia.
+The Executor prompt itself must be in English.
+
+At the very end, append the required Planning handoff footer with concrete
+Model, Effort and Session values.

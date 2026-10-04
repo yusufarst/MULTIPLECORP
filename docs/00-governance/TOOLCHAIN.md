@@ -1,8 +1,10 @@
 # Toolchain
 
-Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-04 | Owner: Planning
 
 Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-04 the visual-reference row recorded the DesainPakeAI readiness verified for the P7 UX re-baseline, the result that the row left to that work; no other row changes. It is an editorial continuity record authorized by [DIR-054](DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) §8.4 ([TECH-027](DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction), where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-009).
 
 The project toolchain registry (AICWDF §5–§7, §6A). It records capabilities, their honest status and the operating rules for tools and Git in this repository. The capability is the requirement; a named tool is the preference (AICWDF §5).
 
@@ -16,7 +18,7 @@ Nothing was installed, configured or verified by the AICWDF migration (DIR-039 f
 | Codebase impact analysis (§5.2) | Graphify, or equivalent targeted analysis | Not yet verified; no application code exists, so it is deferred (§6.4) | The first Tasks after P11 |
 | Browser E2E (§5.3) | Playwright | Not yet verified. [ENGINEERING_PRINCIPLES](ENGINEERING_PRINCIPLES.md#verification-and-completion) records the brief's UI/E2E regression tool, TestSprite; P8 chooses the E2E capability (§6.5) | P8 |
 | UI components (§5.4) | shadcn/ui on Tailwind CSS | Owner baseline ([ARCHITECTURE §1](../04-architecture/ARCHITECTURE.md#1-baseline-and-constraints)); nothing installed | The first UI Tasks after P11 |
-| Visual reference (§5.5) | DesainPakai AI; the Owner-chosen Ramp design reference (D3) | Not yet verified in this repository. DesainPakai AI was used in P7 as an exploration tool outside the repository and is never a source of truth ([P7 gate](../07-ux-design/evidence/P7_QUALITY_GATE.md)); Ramp guides the P7 re-baseline | The P7 re-baseline |
+| Visual reference (§5.5) | DesainPakai AI; the Owner-chosen Ramp design reference (D3) | Verified on 2026-10-04 for the P7 re-baseline: the DesainPakeAI CLI (`dpai`) 0.2.2, authenticated, with the active project MULTIPLECORP, whose design context holds the Ramp starter design system (DIR-053 K3) — found; nothing installed, upgraded or reconfigured; evidence in [P7_REBASELINE_GATE](../07-ux-design/evidence/P7_REBASELINE_GATE.md#desainpakeai-readiness). It is an exploration tool outside the repository and never a source of truth, as in P7 ([P7 gate](../07-ux-design/evidence/P7_QUALITY_GATE.md)); Ramp guides the P7 re-baseline | The P7 re-baseline |
 | Static and automated verification (§5.6) | Lint, typecheck, unit, feature, integration, authorization, route, E2E, build and security checks in CI | Not yet verified; the strategy is P8's | P8 |
 
 A tool becomes required only when a Task or phase needs its capability; an existing equivalent is reused (§6.5). Installation happens only inside an authorized task, project-local first, never as a silent major upgrade, and is recorded with its version, scope and verification (§6.2–§6.8). Paid tools follow [COST_POLICY](COST_POLICY.md).
