@@ -312,7 +312,7 @@ D4 keeps the rules that protect clarity, consistency, accessibility, professiona
 
 ## Direction proposal
 
-**Rejected at Checkpoint C1 for focused rework — DIR-055.** See [Checkpoint C1 — Owner verdict](#checkpoint-c1--owner-verdict).
+**Rejected at Checkpoint C1 for focused rework — DIR-055.** See [Checkpoint C1 — Owner verdict](#checkpoint-c1--owner-verdict); the revised direction is [C1 rework — revised direction](#c1-rework--revised-direction). The draft tokens and DESIGN_REFERENCES §§3 and 5–7 as rejected are kept in Git: `git show 2a5c8aa:docs/07-ux-design/DESIGN_REFERENCES.md` (commit 2).
 
 **Non-normative — for Checkpoint C1 (DIR-054 §16).** This proposal changes no normative document: INFORMATION_ARCHITECTURE, DESIGN_SYSTEM and ADMIN_FLOW stay as approved until Stage 3. It preserves every P0–P6 rule it touches — company scope and projection, authentication, the command model and the performance budgets — and proposes no schema change. In this record P1–P8 name the eight prototyped surfaces of DIR-054 §17 — sign-in, the shell, the two Beranda compositions, the project list and detail, the multi-line form and the phone warehouse task — listed under [Prototypes](#prototypes), not phases; the reference record is [DESIGN_REFERENCES](../DESIGN_REFERENCES.md).
 
@@ -471,6 +471,8 @@ Notes: the navigation contract is Stage 3 work (NAVIGATION_CONTRACTS; GAP-035), 
 
 ## Prototypes
 
+**Record of the rejected direction — DIR-055.** These 28 pages stay untouched as that record; the C1 retrospective found that their phone pages render the desktop text and control sizes, 15 px and 40 px ([C1 rework — retrospective](#c1-rework--retrospective)). The revised pages are under [C1 rework — prototypes](#c1-rework--prototypes).
+
 Twenty-eight pages of the eight key surfaces (DIR-054 §17), authored in the DesainPakeAI project MULTIPLECORP from the temporary directory outside the repository. Every ID carries the prefix `p7r-` and was checked free before the first page was created; every page is page-scoped (`<!-- dpai:page {"scoped":true} -->`) and changes no design asset of the project. Desktop pages are 1,440 × 900 and phone pages 390 × 844. The pages load Inter from a font CDN, as the tool's authoring guide allows for prototypes; the product self-hosts its font (SECURITY WS-08).
 
 | Surface | Desktop | Phone | Content |
@@ -509,6 +511,8 @@ After the sessions `git status` showed no path written by the tool; the only unt
 **Viewing.** In the DesainPakeAI project MULTIPLECORP, open the pages by the IDs above. The local captures (48 images and an index page) are in the session's temporary directory outside the repository, folder `scratchpad\p7r\renders-final\`; they are working files, not records, and may not persist — the page IDs are the durable pointers.
 
 ## Preliminary non-loss map
+
+**Superseded by the [C1 rework — revised non-loss map](#c1-rework--revised-non-loss-map)**, which re-places every screen and signal in the revised structure; this map stays as history.
 
 Every old screen and every Beranda signal, placed in the IA skeleton of the [Direction proposal](#a-ia-skeleton) (DIR-054 §18). No screen purpose or capability disappears. The full non-loss matrix — journeys, messages, scenarios, H7, HO and UXH, the V1_SCOPE P7 handoff list and DIR-033's coverage — is Stage 3 work.
 
@@ -612,7 +616,7 @@ All 22 signals are placed, with the old group of each kept.
 
 ## Checkpoint C1 package
 
-**Rejected at Checkpoint C1 for focused rework — DIR-055.** See [Checkpoint C1 — Owner verdict](#checkpoint-c1--owner-verdict).
+**Rejected at Checkpoint C1 for focused rework — DIR-055.** See [Checkpoint C1 — Owner verdict](#checkpoint-c1--owner-verdict); the revised package is [Revised Checkpoint C1 package](#revised-checkpoint-c1-package).
 
 The English equivalent of the package the final report gives the Owner in Bahasa Indonesia (DIR-054 §19). No question found in Stage 1 would change P0–P6 semantics, so nothing is OWNER_DECISION_REQUIRED.
 
@@ -800,3 +804,638 @@ Run on the complete staged change of commit 3 before the commit (DIR-056 §8.2),
 | R0-07 | No secret, placeholder, binary, image or DesainPakeAI output | PASS | The new files are two LF text records; a search of the staged diff finds no key, token, credential path, key or project identifier, e-mail address or unfilled placeholder — the angle-bracket templates inside record 53 are the Owner's verbatim text; no page source, export or capture of DesainPakeAI is in the repository |
 | R0-08 | Content-truth counts unchanged | PASS | V1_SCOPE, PERMISSIONS_MATRIX, DATABASE and GAP_REGISTER are byte-identical to `2a5c8aa` and were counted again: 18 MUST capabilities and 14 document types (V1_SCOPE), 80 capabilities (PERMISSIONS_MATRIX), 125 logical tables in 13 modules (DATABASE §4) and the gap totals 51 — 4 CLOSED, 38 OPEN, 0 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK |
 | R0-09 | No P7 normative document and no P0–P6 specification changed | PASS | INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, everything under `docs/01-product/`–`docs/06-api-performance/`, CONTEXT_INDEX, AGENTS.md and the other P0 specifications are byte-identical to `2a5c8aa`; SOURCE_OF_TRUTH changes only as the continuity record of DIR-056 §§6.2 and 8.1 |
+
+## C1 rework intake
+
+Read on 2026-10-04, after the verified push of commit 3, as DIR-056 §9 lists; further sections only where a specific question needed them.
+
+- **Re-baseline records:** this whole record and [DESIGN_REFERENCES](../DESIGN_REFERENCES.md); the decision-log entries DIR-053–DIR-056; source records 50–53.
+- **Product:** PRODUCT_OVERVIEW O-01–O-07; V1_SCOPE CAP-04, CAP-07–CAP-10, CAP-17 and CAP-18, the selectable document catalog, and the language and experience contract.
+- **WORKFLOWS:** §1–§4; WF-PRJ-01, WF-QUO-01, WF-PRJ-02, WF-FUL-01; WF-PUR-01, WF-PUR-02, WF-INV-01–WF-INV-03; WF-FUL-02–WF-FUL-04, WF-DOC-01 with its issue-precondition table, WF-DOC-02, WF-ADM-01; WF-FIN-01–WF-FIN-03 and WF-FIN-08; WF-PRJ-03 with its ten predicates; §10, §11 and L-01–L-50.
+- **BUSINESS_RULES:** BR-PRJ-01–BR-PRJ-06, BR-QUO, BR-DOC-01–BR-DOC-04, BR-ADM-01–BR-ADM-03, BR-XD-02–BR-XD-05, FS-01, FS-05, FS-11, FS-12 and CALC-01–CALC-14.
+- **ADMIN_FLOW:** §4 (D-UX), §5 (the command model with CONCURRENCY_IDEMPOTENCY's HO-01, IP-15, IP-19, IP-21), the journeys of project, quotation, purchase, receiving, dispatch, fulfilment, documents, administration and finance, and the MSG catalogue.
+- **INFORMATION_ARCHITECTURE:** §7's company rule "A command names its company", §9 with its signal groups, and SCR-10.
+- **DESIGN_SYSTEM:** §12.1 with the part states and readiness items, PT-12, PT-24, PT-29, PT-31, §14.1 and §18.
+- **Security and performance:** PERMISSIONS_MATRIX §2, §6, §7 and §9; SECURITY AU-04 and H7-01–H7-19; PERFORMANCE QB-01, QB-02, QB-10, PF-15, PF-24 and PF-34.
+- **AICWDF v4.3:** §4A.10, §18.1–§18.9, §18.12 and §27.
+
+R1 worked only from the repository, the branch, the DesainPakeAI project MULTIPLECORP and official documentation; nothing was recovered from session transcripts or conversation history (DIR-046 §2). The Stage 1 [documentation verification](#official-documentation-verification) stays valid. One statement is new: the revised direction folds secondary content into disclosures, which the shadcn/ui component Collapsible serves, a component outside that table. It was verified on 2026-10-04 at `https://ui.shadcn.com/docs/components/collapsible`: "An interactive component which expands/collapses a panel", with the parts Collapsible, CollapsibleTrigger and CollapsibleContent and a Base UI, React Aria and Radix switch; the page shows no version number. Nothing was installed.
+
+## C1 rework — retrospective
+
+Why the Stage 1 direction missed OC-01–OC-10, measured so that the rework fixes causes rather than symptoms (DIR-056 §11). The 28 `p7r-` sources were read back with `dpai file read --full` and measured as local copies outside the repository, with an injected script read through the installed headless Chrome 154 (`--headless=new`, a separate profile; the phone pages through a 390 px frame, because the headless window has a minimum width of about 500 px). Nothing is attributed to the Owner beyond source records 31, 32, 50 and 52.
+
+**Navigation (OC-02).** Of the Stage 1 desktop shell's ten top-level entries, one is a task — *Beranda*, the work hub — and nine are modules or record families: *Proyek*, *Pembelian*, *Dokumen* and *Data Master* are record families; *Gudang*, *Keuangan*, *Laporan* and *Pengaturan* are modules; *Tinjauan & Aktivitas* is an Owner module of review and logs. The phone bar was one task (*Beranda*), one record family (*Proyek*), one module (*Gudang*), the search (*Cari*) and the menu (*Lainnya*). The cause: the direction flattened the old module tree (H-2) but kept the module as the unit of navigation, so the user still chose a module before a task.
+
+**Project detail (OC-03).** `p7r-p6-detail-d` shows first, at 1,440 × 900: the title (y 140), the facts line (183), the actions (232), the next-step band (291), eight tabs (392), and in *Ringkasan* "Kemajuan proyek" (474–853) — six part rows in the states *Berjalan*, *Tuntas* and *Belum dimulai* with fractions such as "3 dari 4 item" — beside "Nilai proyek" (474–617) and "Info proyek" (688–831); "Syarat penyelesaian" starts at y 943, below the fold. Against OC-03's eight items: answered — the current work, the next action and the financial state; partly answered — overall progress (part states, not stages), completed stages (only *Penawaran* shows *Tuntas*) and document readiness (a count, "3 dari 5 syarat belum terpenuhi"); not answered — blockers and what remains. At 390 px (`p7r-p6-detail-p`): answered — the current work and the next action; partly — progress and completed stages (three part rows in view); not answered — blockers, document readiness, the financial state and what remains, the page having no completion section at all. *Ringkasan*'s six part rows also lead to the same parts as the eight tabs above them. The cause: the page was organized by record family (tabs), and the journey was reduced to a band.
+
+**Copy (OC-06).** Explanatory sentences or clauses visible by default, counted with the rule of DIR-056 §11 — a sentence or clause that is not a label, a value, a state, an action name, a column header or mandated copy:
+
+| Surface | Count | The sentences |
+| --- | --- | --- |
+| P1 Sign-in | 6 | "Gunakan akun yang diberikan Owner perusahaan Anda."; "Minta tautan atur ulang kepada Owner."; "Hanya untuk akun yang sudah ditautkan ke Google."; "Buka aplikasi autentikator di ponsel Anda, lalu masukkan kode 6 digit untuk MultipleCorp."; "Kode berganti setiap 30 detik."; "Kode pemulihan hanya dapat dipakai setelah masuk dengan kata sandi." |
+| P2 Shell | 8 | "Berlaku untuk akun Anda."; "Dokumen dan data bisnis tetap berbahasa Indonesia."; "Tersedia = stok fisik − direservasi − tidak layak pakai."; five purpose lines of the phone's task rows ("Pembelian menunggu barang", "Siap dikeluarkan untuk proyek", "Hitungan yang sedang berjalan", "Cari produk, lihat rak dan jumlah tersedia", "Barang yang disisihkan untuk proyek") |
+| P3 Owner's Beranda | 4 | "belum tentu uang masuk"; "Uang yang benar-benar diterima"; "nilai penjualan dari invoice terbit"; "kas dari uang yang benar-benar masuk dan keluar" |
+| P4 Admin's Beranda | 3 | "Antrean tindakan untuk CV Arunika Jaya (ARJ) dan PT Bentara Niaga (BTN)"; "Angka per perusahaan;"; "tidak dijumlahkan antar perusahaan." |
+| P4 Warehouse home | 0 | — |
+| P5 Project list | 0 | — |
+| P6 Project detail | 2 | "Yang belum terpenuhi ditampilkan lebih dulu."; "Semua perubahan dan koreksi proyek" |
+| P7 Multi-line form | 6 | "— mengikuti proyek"; "Membantu mencocokkan tagihan pemasok nanti."; "Total resmi dihitung sistem setelah disimpan."; "Menyimpan pembelian tidak mengeluarkan kas dan tidak menambah stok."; "Barang masuk dicatat saat diterima di gudang."; "Tampilan padat untuk entri banyak baris" |
+| P8 Phone warehouse task | 4 | "Pindai barang untuk membuka barisnya, atau pilih baris di bawah."; "Setiap baris dicatat sendiri."; "Atau pindai label rak."; "Dicatat bersama barang masuk ini dalam satu tindakan." |
+| **Total** | **33** | |
+
+Mandated copy in use, not counted: MSG-19 "E-mail atau kata sandi salah." and AU-04's generic second-factor answer (error states, P1); H7-16's advice "Di perangkat bersama, keluar dari Google setelah selesai." (P1); MSG-41's pending unattributed line (P2); MSG-29's Owner variant (P3); IP-16's file line "JPG, PNG atau PDF, maksimal 10 MB." (P8). H7-11's confirmation was not used. The cause: the direction answered diagnosis finding 7 ("New users get no orientation") and SLOP-20's allowance by adding purpose and supporting lines, where a clear state and action would have served.
+
+**Colour (OC-07).** Lime (`#E4F222`, its hover `#C9D61E` or its quiet tint `#F4F8B8`), from the computed styles of each page: P1 — the selected language segment and the primary button, on all eight pages; P2 — the selected navigation entry on desktop, the selected language segment in the account menu and the phone menu, the bottom bar's selected pill; P3 — the selected navigation entry, the view switch, the attention badge ("6 hal", "5 hal") and the bottom bar's pill; P4 — the selected entry, the primary "Catat Barang Masuk" on desktop and phone, the two primary "Mulai" buttons of the warehouse home and the pill; P5 — the selected entry, "Buat Proyek" and the pill; P6 — the selected entry, the primary "Catat Barang Masuk", the pale-lime next-step band and the pill; P7 — the selected entry and "Simpan Pembelian"; P8 — none on `p7r-p8-masuk-p`, the pale-lime reservation box and the primary "Catat Barang Masuk" on `p7r-p8-baris-p`. Lime appears on 27 of the 28 pages. The cause: principle 2, "One accent marks the decision", bound one saturated accent to every selected and primary element, so it repeated on every screen.
+
+**Alignment (OC-09).** Measured from the rendered DOM with an injected script (each control's top, bottom, height and text baseline), not from the CSS:
+
+| Form | Measurement |
+| --- | --- |
+| `p7r-p7-pembelian-d` line rows | Row 1: the product input top 685, bottom 721, baseline 708.5; quantity, unit, unit price, tax and the row menu top 705, bottom 741, baseline 728.5; the subtotal and the row number baseline 728 — a 20 px offset in top, bottom and baseline, the same in rows 2 and 3 (774/794, 863/883); the metadata "LPT-14-I5 · untuk item proyek: Laptop 14 inci · 20 unit · Ubah" wraps to two lines (baselines 739 and 757) inside the row. Numeric inputs right-aligned with tabular figures; selects start-aligned. The header fields Pemasok and Nomor penawaran aligned (top 317, height 40) |
+| `p7r-p1-masuk-*`, `p7r-p1-kode-*` | E-mail, password and button 40 px on desktop and on the phone; the reveal button 24 px in the label row; the code field 56 px |
+| `p7r-p8-baris-p` line sheet | Pairs aligned (117/117; 201/201); 40 px controls; the scan field 56 px; the checkbox 22 px |
+
+The causes: the line editor placed the product and its metadata in one cell whose height pushed the other cells down; and a generator defect — the Stage 1 page generator replaced the token placeholder inside the phone-token placeholder first, so every phone page re-applied the desktop tokens: its body text measured 15 px and its controls 40 px, not the 16 px and 48 px the direction stated (`p7r-p8-baris-p` and `p7r-p1-masuk-p` inputs: height 40, font 15 px). The R1 generator fixes the order and the measured checks below confirm it.
+
+**Summary of causes.** Module-first navigation (OC-02); a record-family project page with the journey reduced to a band (OC-03); orientation answered with sentences (OC-06); one saturated accent bound to every selected and primary element (OC-07); row composition and a token defect (OC-09); and an Admin home grouped by signal kind without each item's project, stage and next step (OC-01).
+
+### Persona extension
+
+Added to the Admin Operasional persona of the [persona task analysis](#persona-task-analysis), from source record 52 only: **the client's staff currently create many connected documents manually in Excel.** No other Excel practice is assumed. The Admin's real end-to-end chain, mapped onto the WORKFLOWS §3 backbone — every step a fact a later step reuses (O-01, O-03; CAP-04, CAP-08):
+
+| Step of the chain | Backbone | What the next step reuses |
+| --- | --- | --- |
+| Set up the project and its demand lines | WF-PRJ-01 | client, unit, PIC, channel and the lines |
+| Quote, or confirm without a quotation with the client's order | WF-QUO-01; WF-PRJ-02 | the approved revision, the pinned snapshots |
+| Plan fulfilment per line: warehouse, direct shipment or service | WF-FUL-01 | the line's mode |
+| Reserve, buy the shortage, receive, dispatch — or confirm the direct shipment — or hand over the service | WF-INV-02; WF-PUR-01; WF-INV-01; WF-INV-03; WF-FUL-03; WF-FUL-04 | quantities, lots, the shipment |
+| Record the delivery with its proof | WF-FUL-02 | delivered and accepted quantities |
+| Issue the documents and satisfy the administrative checklist | WF-DOC-01; WF-DOC-02; WF-ADM-01 | issued versions and uploads |
+| Invoice, bill, record the payment | WF-FIN-01; WF-FIN-02; WF-FIN-03 | the invoice, its billing and due dates, Cash-In |
+| Complete the project | WF-PRJ-03 | the ten predicates |
+
+## C1 rework — project journey model
+
+A presentation of approved facts, not a workflow engine (DIR-056 §12). Stages are derived each time and never stored (L-01; BR-XD-05); there is no new state, status field, state machine or engine (GAP-022). The states reuse DESIGN_SYSTEM §12.1's part-state meanings — *Belum Dimulai* (no record yet), *Berjalan* (records with something still open), *Tuntas* (nothing left open), *Tidak Diperlukan* (not needed by the project's lines) — with "blocked" as a derived overlay, labelled *Terhambat* beside a warning icon, when a blocker below applies.
+
+### a) Stages
+
+| Stage (Indonesian · English) | Source workflows | Applies when | Derivation inputs |
+| --- | --- | --- | --- |
+| Kesepakatan · Agreement | WF-QUO-01; WF-PRJ-02 | Always — every project is confirmed, by an approved quotation or by an explicit confirmation with the client's order evidence (BR-PRJ-06); the sub-label says which path | root columns (project state, confirmation); quotation revision states |
+| Gudang · Warehouse | WF-FUL-01; WF-INV-02; WF-PUR-01; WF-INV-01; WF-INV-03 | At least one confirmed line in mode WAREHOUSE (BR-XD-03; WF-FUL-01) | `project_line_balances` (reserved, dispatched); QS-01–QS-04 for the project |
+| Kirim langsung · Direct shipment | WF-PUR-01 (direct-to-client); WF-FUL-03 | At least one line in mode DROP-SHIP | `project_line_balances` (confirmed shipments) |
+| Pengiriman · Delivery | WF-FUL-02; WF-FUL-03 | At least one WAREHOUSE or DROP-SHIP line; a service line uses its handover instead (L-39) | `project_line_balances` (shipped, delivered); QS-06; predicate 2 |
+| Jasa · Service | WF-FUL-04 | At least one line in mode SERVICE | `project_line_balances` (handed over) |
+| Dokumen · Documents | WF-DOC-01; WF-DOC-02; WF-ADM-01 | The project has a required or selected document or an administrative requirement (CAP-08; WF-ADM-01) | the documents group (versions, renditions, requirement items); predicates 4 and 5, the invoice requirement of L-27 belonging to the Invoice stage |
+| Invoice | WF-FIN-01 | The project has confirmed commercial value (L-27) | `project_commercial_balances` (confirmed, invoiced); QS-15's "confirmed value not yet invoiced" and "invoicing above delivered value" |
+| Penagihan · Billing | WF-FIN-02 | An issued, non-void invoice exists (predicate 6) | `project_commercial_balances` (billed); predicate 6 |
+| Pembayaran · Payment | WF-FIN-03; WF-FIN-08 | A billed receivable exists (predicates 7 and 9) | `project_commercial_balances` (Cash-In); predicates 7 and 9; QS-19 |
+| Penyelesaian · Completion | WF-PRJ-03 | Always (WF-PRJ-03) | the ten predicates; root state |
+
+A fulfilment stage is *Tuntas* when its lines are dispatched, confirmed or handed over in full, or their remainder is cancelled; *Pengiriman* when every shipment is delivered or formally closed (predicate 2); *Dokumen* when predicates 4 and 5 hold, apart from the invoice item; *Invoice* when the non-void invoiced value equals the confirmed value less cancelled scope and returns (L-27); *Penagihan* when predicate 6 holds; *Pembayaran* when predicates 7 and 9 hold; *Penyelesaian* only in COMPLETED_NORMAL. The completion stage shows a plain count of unmet conditions (PL-1). **Blockers** — the overlay and the "Hambatan" list — are: a shortage (QS-02) or a cut reservation (QS-04) on *Gudang*; an open discrepancy or correction case (predicates 2 and 3) on *Pengiriman* or *Pembayaran*; a failed rendition (the documents group) on *Dokumen*; an overdue receivable or a dispute hold (predicate 7's own rows) and an unlinked pre-payment Kuitansi (QS-19) on *Pembayaran*. Predicates without a stage of their own — 3 Returns/corrections, 8 Stock and 10 Audit — appear in "what remains" when unmet and as the overlay on the stage they touch.
+
+### b) Rules
+
+- The track keeps one fixed order: the goods stages *Gudang* and *Kirim langsung*, then *Pengiriman*, then *Jasa* — the service lines' handover, which takes delivery's place for them (L-39); a mixed project shows each applicable stage in that order, and a stage that does not apply is omitted and named only in the collapsed note "Tahap yang tidak diperlukan" (PL-2).
+- Re-planning (L-21) changes the lines' modes and therefore which stages apply; nothing is stored.
+- COMPLETED_NORMAL, COMPLETED_FORCED and CANCELLED projects show their outcome badge and their residual obligations (QS-16), not open stages; residual commands stay available (L-11).
+- A material correction returns a completed project to ACTIVE (SF-REVAL); the journey derives again and shows the reopened items (BR-ADM-03).
+- No date is shown that P0–P6 do not define: there is no planned or scheduled date for a service handover or a delivery, so none appears — needs definition, not proposed.
+
+### c) The next recommended action (PL-3)
+
+One deterministic precedence, each step with its source; a recommendation the user starts — nothing runs automatically, and Beranda and the journey run no command:
+
+1. **Project state.** DRAFT: the agreement steps. COMPLETED_* or CANCELLED: no stage; the first residual obligation (QS-16; L-11).
+2. **Current stage.** The first applicable stage, in track order — *Kesepakatan*, *Gudang*, *Kirim langsung*, *Pengiriman*, *Jasa*, *Dokumen*, *Invoice*, *Penagihan*, *Pembayaran*, *Penyelesaian* — that is not *Tuntas* (WORKFLOWS §3 order; PL-1).
+3. **Its first open item**, oldest record first: *Kesepakatan* — issue the quotation, record the client's answer, or confirm with the order evidence (WF-QUO-01; WF-PRJ-02); *Gudang* — reserve (QS-01), buy the shortage (QS-02), receive the project's open purchase lines (QS-05), reserve received goods (QS-03), dispatch (the SCR-22 worklist); *Kirim langsung* — the drop-ship purchase, then its confirmation (WF-FUL-03; L-40); *Pengiriman* — the oldest undelivered shipment (QS-06); *Jasa* — the handover (WF-FUL-04); *Dokumen* — the first required document whose WF-DOC-01 precondition is met, then the first missing required upload; *Invoice* — the invoice from confirmed lines (QS-15); *Penagihan* — the oldest unbilled invoice (QS-09); *Pembayaran* — a payment for the oldest due invoice; *Penyelesaian* — "Selesaikan Proyek" when all ten predicates hold (AX-25), otherwise the first unmet predicate's place.
+4. **Capability.** The step is a control only for an account holding its capability; otherwise the control is absent and "Berikutnya" still names the step, with nothing to press (AZ-01, a hint only; H7-03; IP-21). A step that is temporarily unavailable shows its precondition — "Menunggu: …" — not a disabled control without a reason (IP-21).
+5. **Another company's records.** When the step needs a record outside the account's companies — another company's reservation or lot — "Berikutnya" carries the relation marker "perusahaan lain" and never the company's name (PJ-04; H7-02); an attempt is refused with MSG-14 and routed (QS-20).
+6. **Blockers do not reorder the precedence**; they are listed under "Hambatan" and overlaid on their stage.
+
+Its result for every prototyped scenario, from the one data set:
+
+| Scenario | Stages and states | Current stage → "Berikutnya" | Hambatan |
+| --- | --- | --- | --- |
+| A — ARJ/PRJ/2026/0142, warehouse goods on the quotation path | Kesepakatan Tuntas (via penawaran) · Gudang Tuntas · Pengiriman Berjalan · Dokumen Berjalan · Invoice, Penagihan, Pembayaran Belum dimulai · Penyelesaian Belum dimulai (4 conditions not met); not needed: direct shipment, service | Pengiriman → "Catat pengiriman" (ARJ/SJ/2026/0311) | none |
+| B — BTN/PRJ/2026/0091, direct shipment and service without a quotation | Kesepakatan Tuntas (tanpa penawaran) · Kirim langsung Tuntas · Pengiriman Tuntas · Jasa Belum dimulai · Dokumen Berjalan · Invoice, Penagihan, Pembayaran Belum dimulai · Penyelesaian (3 not met); not needed: quotation, warehouse | Jasa → "Catat serah terima jasa" | none |
+| C — BTN/PRJ/2026/0079, near completion | Kesepakatan, Gudang, Pengiriman Tuntas · Dokumen Berjalan · Invoice, Penagihan Tuntas · Pembayaran Berjalan, *Terhambat* · Penyelesaian (2 not met) | Dokumen → "Unggah BAST bertanda tangan klien (asli)" | Piutang BTN/INV/2026/0094 lewat jatuh tempo 4 hari |
+| The project list's other rows | ARJ/PRJ/2026/0150 Kesepakatan; ARJ/PRJ/2026/0147 and ARJ/PRJ/2026/0145 Gudang; ARJ/PRJ/2026/0139 Invoice; BTN/PRJ/2026/0088 Gudang | "Terbitkan penawaran"; "Terima barang ARJ/PB/2026/0216"; "Keluarkan barang"; "Buat invoice"; "Buat pembelian" | BTN/PRJ/2026/0088: stok kurang |
+
+### d) What remains before completion
+
+The ten predicates of WF-PRJ-03 in plain words — *Pemenuhan* (every line delivered or handed over, or its remainder cancelled), *Pengiriman* (every shipment delivered or closed, no open discrepancy), *Retur dan koreksi* (no open correction case), *Dokumen* (every required document issued and available), *Administrasi* (every required item satisfied, waived or removed by the Owner), *Penagihan* (every issued invoice billed or voided), *Piutang* (every invoice settled or disposed by the Owner, no dispute hold), *Stok* (no active reservation, open remainder, count finding or pending case of the project), *Pembayaran* (no open payment case, credit dispositioned, no unlinked pre-payment Kuitansi) and *Audit* (required evidence present). Only the unmet ones are expanded, each with its fact and a link to where it is resolved; the met ones fold into "N syarat lain terpenuhi". Force Complete is an Owner-only action under "Tindakan Lain" (PERMISSIONS_MATRIX §9, OD-12; AX-26) and absent for an Admin.
+
+### e) The financial and payment state
+
+PT-24's project position block — *Nilai terkonfirmasi*, *Sudah diinvoice*, *Sudah ditagihkan*, *Kas masuk*, with *Sisa tagihan* when a billed balance is open — under SCR-10's audience: money figures only with `finance.view`; *Biaya/HPP* and *Laba* only with `cost.view` and `profit.view` (scenario C, the Owner). Without `finance.view` the block is absent.
+
+### f) Fit with QB-02, and what P0–P6 do not define
+
+The first response holds the root and guard columns that derive every stage state, and the project's signals QS-01–QS-04 and QS-06 read from the same guard rows (SCR-10; HO-16); the three deferred groups of QB-02 stay as they are — the completion predicates (≤ 10, one statement per predicate, QS-15), the documents (≤ 10, document readiness) and the timeline (*Riwayat*) — within PF-34's three. **Fits**, with one Stage 2 check: an overdue receivable on the journey is read from the due dates in predicate 7's own statement of the predicates group, the way QS-10 reads `invoice_balances`, adding no query — QS-10 is not one of SCR-10's listed signals — so the "Hambatan" area fills when that group arrives. Needs definition, not proposed: a planned date for a delivery or a handover.
+
+## C1 rework — connected work and document readiness
+
+### a) Connected-work map
+
+For each step of the backbone, from project setup to completion: what is carried forward from earlier records, what the user still enters or confirms, and what is never automatic (DIR-056 §13 a). RS-1–RS-10 name the prototyped surfaces listed under [C1 rework — prototypes](#c1-rework--prototypes). The company of a new root record is chosen explicitly and never prefilled from the working filter, and a child record follows its root (INFORMATION_ARCHITECTURE §7, "A command names its company"; CS-03) — RS-9 shows "Perusahaan PT Bentara Niaga (BTN)" taken from the project, not chosen.
+
+| Step | Carried forward | Entered or confirmed by the user | Never automatic |
+| --- | --- | --- | --- |
+| Quotation from project lines | The project's demand lines — product, quantity, unit, price, tax —, the client, unit and PIC, the company identity (WF-QUO-01; DOC-01's precondition) | The revision's edits and validity; the client's answer (BR-QUO-01) | Issuing it — SENT — is explicit (SF-ISSUE); a quotation never changes stock or money (BR-QUO-03) |
+| Confirmation and its pinned snapshots | The approved revision's lines; conversion, price and tax snapshots pinned by the system (AX-13) | Without a quotation: the explicit confirmation with the client's order evidence (BR-PRJ-06) | Reservations are only proposed at confirmation, each its own command (L-02; IP-19) |
+| Reservation | The confirmed WAREHOUSE lines; the available quantity (CALC-01) | The quantity to reserve, up to the available quantity | An explicit command (AX-01; L-02); a purchased shortage is never reserved before its receipt (WF-INV-02) |
+| Purchase from a shortage, and the drop-ship purchase | The project's company, shown and not chosen (L-05); the shortage lines and quantities prefilled from QS-02; the links to the demand lines; the direct-to-client flag (WF-PUR-01; WF-FUL-03) | The supplier, unit prices, tax and charges; the supplier's quotation number and notes under "Rincian lain" | The restock advice never creates a purchase (BR-INV-10); saving a purchase moves no money and no stock (BR-PUR-03) |
+| Receiving from purchase lines | The open purchase lines and their remainders (CALC-03) | Per line the quantities *Layak pakai*, *Rusak diterima* and *Ditolak* (L-13), the rack, the supplier's delivery reference, evidence, the transaction date line (D-UX-05) | The project reservation is offered inside the same form and committed only as part of that one explicit command (AX-04; D-UX-12); DOC-12 is issued only on request |
+| Dispatch | The confirmed, reserved demand lines and their lots | The scanned items and the lots confirmed | An explicit command (AX-03) |
+| DOC-03 from the shipment | The committed dispatch or shipment lines and the delivery address (L-19) | — (issue only) | Issuing is explicit, and generating a layout changes no stock, cash or obligation (BR-XD-04; BR-DOC-03) |
+| Delivery | The shipped quantities not yet delivered (CALC-04) | Delivered quantity per line, the recipient's name, the condition and the proof (CAP-07); a discrepancy; the inspection facts behind DOC-10 | Recorded explicitly (AX-09); the signed Surat Jalan is evidence uploaded by the user (L-19) |
+| Service handover and DOC-08 | The service lines | The handover facts — date, scope, recipient and acceptance, evidence — behind BAST (BR-DOC-04) | BAST is never certified by a status or by printing (DOC-08) |
+| Invoice from confirmed lines, or a value-only DP or termin record | The confirmed lines, prices and tax, the client and billing address, the basis (the approved quotation or the client's order) and the delivery references (WF-FIN-01; L-26) | All confirmed lines or a value only; the layout *Invoice* or *Nota* (DOC-06 or DOC-04, one record, L-26); the transaction date line | Issuing is explicit with MSG-39's confirmation (AX-16); an issued invoice is *Belum Ditagihkan* and records no cash (BR-FIN-02) — billing is not automatic |
+| Billing and DOC-13 | The issued invoice | The billing date and the due date (AX-17; WF-FIN-02) | Billing is an explicit act; DOC-13 and a pre-payment Kuitansi are issued only on request (WF-FIN-08) |
+| Payment, applications, DOC-05 and DOC-07 | The client's open invoices and their outstanding amounts (CALC-05) | The payment facts and proof — date, amount, method, bank, statement line, reference (AX-18; L-29) — and the applications | Applications are explicit (AX-19); a receipt Kuitansi needs its payment fact (DOC-05 a), its *Lampiran* its issued Kuitansi (DOC-07) |
+| The administrative checklist | The default invoice requirement (L-27); the issued documents and uploads that satisfy items | Requirements — type, required or optional, satisfaction mode, client-original flag; *Tidak Berlaku* with a reason on a waiver-eligible item (WF-ADM-01; BR-ADM-02) | A draft never satisfies a requirement, and a company draft never satisfies a client original (BR-ADM-01; BR-DOC-04; FS-12); waiver eligibility is the Owner's (OD-05) |
+| Completion | The ten predicates, derived (WF-PRJ-03) | The decision "Selesaikan Proyek"; the Owner's Force Complete with its reason (AX-26) | Completion is an explicit decision (AX-25; L-12); delivery or payment alone never completes |
+
+### b) Document readiness
+
+Every user-facing readiness label mapped to an approved state or derivation (DIR-056 §13 b). Readiness is derived each time from the documents group and the requirement items and never stored; there is no new document state and no fraction or percentage (PT-29).
+
+| Label | Meaning | Approved state or derivation |
+| --- | --- | --- |
+| *Draf* | a document version not yet issued | Document version DRAFT (WF-DOC-01; DESIGN_SYSTEM §12.1) |
+| *Terbit* | the version is issued and final | ISSUED, an immutable snapshot (BR-DOC-01) |
+| *PDF sedang dibuat* · *PDF siap* · *PDF gagal dibuat* | the rendition | SF-RENDER PENDING or RENDERING · READY · FAILED (BR-DOC-03; QS-08) |
+| *Direvisi* | an earlier version, kept and linked | SUPERSEDED by a revision (WF-DOC-01) |
+| *Dibatalkan* | a voided version and number | VOIDED (WF-DOC-01; BR-CR-06) |
+| *Disetujui klien* · *Ditolak klien* · *Kedaluwarsa* | a quotation revision's answer or expiry | APPROVED · REJECTED · SENT past validity (L-25); quotations are never voided |
+| *Siap disiapkan* | it can be prepared now | The record-bound issue precondition of WF-DOC-01's table is met and no draft exists; for the invoice, WF-FIN-01's precondition — confirmed value not yet invoiced, within the cap (L-16) |
+| *Menunggu: {prasyarat}* | not yet possible; the label names what is missing | That precondition is not met — for example "Menunggu: serah terima dicatat" for BAST (DOC-08) or "Menunggu: invoice terbit" for DOC-13 |
+| *Belum ada* · *Disiapkan* · *Terpenuhi* · *Tidak berlaku* | an administrative requirement's state | missing · prepared, draft only · satisfied · waived TIDAK BERLAKU (WF-ADM-01; BR-ADM-01–BR-ADM-03) |
+| *Wajib* · *Opsional* · *Wajib bawaan* · *Dipilih* | the item's place in the checklist | required · optional · the default invoice item (L-27) · a selected catalog document (CAP-08) |
+
+OC-04's concepts: **completed** — *Terpenuhi*, or *Terbit* with *PDF siap*; **ready to prepare** — *Siap disiapkan*; **waiting for prerequisite** — *Menunggu: …*; **finalized** — *Terbit*; **revision/void** — *Direvisi*, *Dibatalkan*, and for quotations *Ditolak klien* and *Kedaluwarsa*. Required and selected items come first; the other catalog documents that could be prepared sit behind the disclosure "Dokumen lain yang bisa disiapkan". All fourteen types stay reachable from the readiness panel of RS-8 — *Penawaran* (DOC-01), *PO* (DOC-02), *Surat Jalan* (DOC-03), *Nota* (DOC-04), *Kuitansi* (DOC-05), *Invoice* (DOC-06), *Lampiran Kuitansi* (DOC-07), *BAST* (DOC-08), *SPK* (DOC-09), *Berita Acara Pemeriksaan Barang* (DOC-10), *HPS* (DOC-11), *Nota Terima Barang* (DOC-12), *Surat Permintaan Pembayaran* (DOC-13) and *Surat Pesanan* (DOC-14) — and external uploads through "Unggah Dokumen" and each upload requirement's "Unggah" (WF-DOC-02).
+
+### c) Connected creation (RS-8)
+
+`p7r2-rs8-invoice-d`: *Buat Invoice* for ARJ/PRJ/2026/0139, reached from the journey ("Kembali ke perjalanan proyek"). **Carried forward** — under "Diambil dari proyek": the client and unit, the billing address, the PIC, the basis (quotation rev 3, approved on 12 Sep 2026) and the delivery (ARJ/SJ/2026/0298, received on 30 Sep 2026); the three confirmed lines with their delivered quantities and prices. **Entered** — under "Diisi sekarang": all confirmed lines or a value only (DP or termin), the layout *Invoice* or *Nota*, and the transaction date line. **Explicit issue** — "Simpan Draf" and "Terbitkan Invoice"; the summary is an estimate until saved (IP-13). Nothing bills automatically: billing is the separate next stage of the journey.
+
+## C1 rework — revised direction
+
+**Non-normative — for the Checkpoint C1 re-review (DIR-056 §14).** It changes no normative document — INFORMATION_ARCHITECTURE, DESIGN_SYSTEM and ADMIN_FLOW stay as approved until Stage 3 — preserves every P0–P6 rule it touches, and proposes no schema change, signal, query, budget or automation. One direction per axis (PL-5): navigation C, project detail C and Owner Beranda C (OC-11). The draft tokens, alignment specification and copy rules are in [DESIGN_REFERENCES §§6–7](../DESIGN_REFERENCES.md#6-draft-tokens); the `p7r2-` pages are listed under [C1 rework — prototypes](#c1-rework--prototypes). It replaces the [Direction proposal](#direction-proposal), which stays as history.
+
+### a) Navigation — task first (OC-02; PL-4)
+
+| Persona | Lands on | Primary entries, and why each exists | How work is entered |
+| --- | --- | --- | --- |
+| Owner, desktop | *Beranda* | Four: *Beranda* — the Owner's decisions, exceptions and figures; *Proyek* — the projects as journeys; *Pekerjaan* — the operational queues, demoted from Beranda (OC-05) but one click away; *Tinjauan* — the review queue (QS-14), a recurring Owner decision | Beranda's decision rows; the journey; search and scan; "Buat" |
+| Admin at the desk | *Pekerjaan* | Two: *Pekerjaan* — work grouped by what has to happen next; *Proyek* — the journeys | The work rows; the journey's "Berikutnya" and primary action; search and scan; "Buat" |
+| Warehouse/field, phone | *Pekerjaan* | The bottom bar *Pekerjaan* · *Proyek* · *Cari* · *Lainnya* — the receiving and dispatch work first | The "Berikutnya" card and "Mulai"; the scan field inside a task |
+
+**Secondary module navigation.** Below the primary entries a collapsed *Menu lengkap* holds the modules for browsing, reports and direct access — *Pembelian*, *Gudang*, *Keuangan*, *Dokumen*, *Laporan*, *Data Master*, and for the Owner *Aktivitas & Keamanan* and *Pengaturan*; each module page keeps its sub-pages as tabs, as Gudang › Stok shows (`p7r2-rs2-owner-d`). An entry exists only when something behind it is open to the account — a hint, the server deciding (AZ-01) — and no entry carries a count (D-IA-06). **Top bar:** one field "Cari atau pindai kode" with Ctrl K for typed and scanned codes (D-IA-04); "Buat" for starting new — *Proyek*, *Pembelian*, *Barang Masuk*, *Pembayaran*, *Unggah Dokumen*, each present with its capability, each form naming its company (`p7r2-rs2-admin-d`); the account menu with *Akun Saya*, *Bahasa tampilan* and *Keluar*. **Phone:** four bottom entries, within the bar's cap of five (D-IA-03) — the Owner *Beranda* · *Proyek* · *Cari* · *Lainnya*, an Admin *Pekerjaan* · *Proyek* · *Cari* · *Lainnya*; *Lainnya* opens a sheet with *Kerja* (for the Owner *Pekerjaan* and *Tinjauan*), *Menu lengkap* and *Akun* with the display language and *Keluar* (`p7r2-rs2-menu-p`). Starting new on the phone happens where the work is — "Buat Proyek" on the project list, "Mulai" on a work row. Every old screen stays reachable ([revised non-loss map](#c1-rework--revised-non-loss-map)).
+
+### b) Admin work home (OC-01; OC-05; PL-4)
+
+`p7r2-rs4-admin-d` and `p7r2-rs4-admin-p` (and `p7r2-rs2-admin-d` with "Buat" open). Work is grouped by what has to happen next: **Barang: terima, keluarkan, kirim** (open, with the sub-groups *Terima barang*, *Keluarkan dan kirim* and *Siapkan barang*), **Dokumen dan kasus**, **Tagihan dan pembayaran** (only with `finance.view`) and **Penyelesaian proyek**. Each row names its company code and record, its project where it has one ("untuk ARJ/PRJ/2026/0147"), the project's stage in the journey's words (*Gudang*, *Pengiriman*), what is needed or blocking ("4 baris belum diterima", "Laptop 14 inci kurang 20 unit") and its one action ("Catat Barang Masuk"). Group counts are per company and never summed ("ARJ 4 · BTN 2"; CS-08; PF-15); a group with nothing pending says so in one sentence ("Tidak ada dokumen atau kasus yang perlu ditindaklanjuti."); work is scoped by grants, never by personal assignment, and records are never locked to their creator (WORKFLOWS §11; AZ-06). Composition: only QS signal rows — QS-05, QS-06 and QS-02 in the first group; QS-07, QS-08 and QS-21; QS-09–QS-13 and QS-19; QS-15 — with each row's stage taken from its signal by a fixed mapping and no extra query, inside QB-10's four signal groups of at most twelve statements: **fits**. The dispatch-ready rows (the SCR-22 worklist of remaining reservations, CALC-02) are not a QS signal: **Stage 2 check** against PF-24, as Stage 1 found.
+
+### c) Owner Beranda — direction C (OC-05)
+
+`p7r2-rs3-owner-d` (*Gabungan*), `p7r2-rs3-owner-p` and `p7r2-rs3-owner-btn-d` (one company). In order:
+
+1. **"Perlu keputusan Anda"** — the Owner's decisions and exceptions, strongest first: the security notice (MSG-29's Owner variant; AU-12, LG-07); a pending unexplained loss (QS-22); new activity to review (QS-14, counts per company); a routed refusal (QS-20); residual obligations (QS-16); overdue receivables (QS-10); disputed receivables (QS-11); projects whose completion conditions are unmet past their deadline (QS-15). Unattributed surplus and count findings (QS-18) join the same list when present — the sample data has none. Each row has one action. On the phone the first two rows show, then "Lihat semua keputusan (8)".
+2. **The four KPIs**, compact, in the same first view — beside the decisions at 1,440 × 900 and in a two-by-two grid on the phone, all four visible at 390 × 844 without scrolling: *Nilai penjualan (invoice terbit)*, *Kas masuk (uang diterima)*, *Piutang aktif* with its overdue part, *Laba manajerial* — the CALC definitions of Stage 1, unchanged (CALC-05, CALC-07, CALC-08, CALC-11–CALC-14).
+3. **"Proyek yang perlu perhatian"** — project progress needing attention: BTN/PRJ/2026/0088 at *Gudang* with the blocker "stok kurang" (QS-02), ARJ/PRJ/2026/0139 at *Invoice* with confirmed value not yet invoiced (QS-15).
+4. **"Antrean operasional"** — the Admin queues as one collapsed line with "Buka Pekerjaan", never competing visually.
+
+The view switch *Gabungan* · ARJ · BTN · CKP and the period stay; the one-company view adds the chart "Umur piutang" with its table (part i). Deferred groups: the decisions read the Owner's signal groups G1 (security notices, QS-14, QS-16, QS-18, QS-20, QS-22), G3 (QS-10, QS-11) and G4 (QS-15, a group of its own); the attention rows G2 (QS-02) and G4; the KPIs and the chart the period group G5, in one snapshot (TX-10) — five deferred groups, QB-10's and PF-34's maximum: **fits**.
+
+### d) Project list as a list of journeys
+
+`p7r2-rs6-proyek-d` and `p7r2-rs6-proyek-p`. Each row: company code, project number and title, client, the current stage as a badge, a blocker marker — a warning icon and its words, never colour alone —, the next action and the deadline with days left. The company stays a view filter ("Perusahaan"), never feeding a form; the stage filter offers the journey's stages. Per-row stage, blocker and next action against QB-01's four queries: **Stage 2 check** — if they do not fit, "needs P6 change control — not proposed".
+
+### e) Project journey workspace (OC-03; PL-1–PL-3)
+
+`p7r2-rs7-a-d`, `p7r2-rs7-a-d-en`, `p7r2-rs7-a-p`, `p7r2-rs7-b-d`, `p7r2-rs7-c-d` (Owner) and `p7r2-rs7-c-p` (Admin). In order:
+
+- **Header** — the title, one facts line (company code, number, client and unit, PIC, deadline with days left, the project state), the one primary action — the next step when the account may do it ("Catat Pengiriman", "Catat Serah Terima Jasa", "Unggah BAST Klien") — and "Tindakan Lain" (edit, add a requirement, create an invoice, for the Owner "Selesaikan Paksa", cancel).
+- **"Tahap proyek"** — the stage track of the [journey model](#c1-rework--project-journey-model): each applicable stage with its state, a short fact and the current one marked *Sekarang*; "Tahap yang tidak diperlukan" folded.
+- **The "now" strip** — *Sekarang* (the stage and its current work), *Berikutnya* (the recommended step) and *Hambatan* (the blockers, or "Tidak ada").
+- **"Yang tersisa sebelum selesai"** — only the unmet conditions, each with its fact and its action; "N syarat lain terpenuhi" folded.
+- **"Kesiapan dokumen"** — the required and selected items with their readiness, "Semua dokumen" leading to the full panel (RS-8).
+- **"Posisi keuangan"** — PT-24's block, and for the Owner *Biaya dan laba*.
+- **"Rincian proyek"** — contextual drill-down to *Item dan pemenuhan*, *Pengadaan*, *Pengiriman*, *Dokumen*, *Keuangan* and *Riwayat*; not eight equal tabs.
+
+At 1,440 × 900 the header, the track, the now strip and the tops of the three panels are in the first view; on the phone the header, the primary action, the now card and the track come first, then the panels and the drill-down rows. Each part's state appears once: the track carries stage states, the panels their own facts, and an exception's reason only under *Hambatan* — the track marks its stage *Terhambat*.
+
+### f) Warehouse and field (OC-10)
+
+`p7r2-rs5-gudang-p`, `p7r2-rs10-masuk-p`, `p7r2-rs10-baris-p`, `p7r2-rs10-cari-p` and `p7r2-rs10-selesai-p`. The home shows the next item first — a "Berikutnya" card "Terima ARJ/PB/2026/0216" with "4 baris belum dicatat" and "Mulai Terima Barang" — then *Terima barang*, *Keluarkan barang* and *Catat pengiriman*. Receiving keeps the line checklist: remaining work as counts ("2 baris tercatat · 2 baris tersisa"), the next line marked *Berikutnya*, the scan field fixed at the bottom ("Siap memindai") with "Cari Produk" beside it as the manual fallback, the three outcomes and the project reservation in the same command (AX-04). Each line shows *Tercatat* and its confirmed outcome only after the server's answer, one answer per line command (HO-01; D-UX-01; IP-19) — never one combined "Tersimpan"; the end-of-task summary lists every line's confirmed outcome, with "Terbitkan Nota Terima Barang" and "Kembali ke Pekerjaan". The surface's copy has no explanatory sentence; the file line of IP-16 stays.
+
+### g) Copy (OC-06)
+
+A copy budget: a heading, a state or number and an action; a helper sentence only when the user needs it to decide or act now, otherwise reduced, folded into a disclosure or removed. Measured under [C1 rework — measured checks](#c1-rework--measured-checks): from 33 explanatory sentences on the Stage 1 surfaces to 0 on the revised ones; secondary explanation sits in disclosures ("Lupa kata sandi?", "Tidak bisa memakai aplikasi?", "Tahap yang tidak diperlukan"). Mandated copy stays visible and concise: AU-04's generic answers — MSG-19 "E-mail atau kata sandi salah." and the second-factor answer — and H7-01; H7-16's advice "Di perangkat bersama, keluar dari Google setelah selesai; kunci ponsel saat tidak dipakai."; MSG-41 on the pooled stock view; MSG-29's Owner variant on Beranda; IP-16's file line. H7-11's confirmation belongs to the pool-evidence upload, which no revised surface shows. Labels and states are plain Indonesian; the page states its purpose through its title and its first actionable element, not a sentence.
+
+### h) Colour (OC-07)
+
+Draft roles in [DESIGN_REFERENCES §6](../DESIGN_REFERENCES.md#6-draft-tokens): a warm neutral canvas `#F6F5F1`; soft neutral surfaces `#FFFFFF`, `#EFEDE7` and `#F2F1EC`; dark readable ink `#1C1E1B` with `#5C5F59` for secondary text; one restrained primary-action colour, a deep slate `#2C3E50` with white text; and four muted tones bound to meanings, each a pastel fill under dark text with a mid-tone mark — sage (done, satisfied), dusty blue (in progress, information, the current step, focus), soft amber (attention, waiting, overdue) and muted rose (missing, blocked, failed) — plus a neutral for not started and history. Saturated colour is limited to these small marks; nothing is coloured for decoration. **Lime: none.** It is not needed: the primary action is carried by the slate fill, the selected entry by a muted fill, a heavier weight, a 3 px slate rule and `aria-current`, and the current step by a dusty-blue ring and the word *Sekarang*; a lime accent would add a second emphasis colour without a purpose — the dominance OC-07 rejects. Every indicator that must be perceived meets 3:1 — control edges 3.29–3.85, the focus ring 5.49–6.43 (2 px with a 2 px offset, so it sits on the surface), the primary fill 9.38–10.98, status marks 3.94–4.75, chart marks 3.27–4.35 — and every text pair at least 5.44:1 as rendered.
+
+### i) Charts (OC-08)
+
+One chart, "Umur piutang", in the one-company view of the Owner's Beranda (`p7r2-rs3-owner-btn-d`), with "Tutup rincian" and its data table. A neutral base series (`#83867E`) for *Belum jatuh tempo* and one highlight (`#A0701F`) with a meaning, *Lewat jatuh tempo*; direct labels — the bucket names "Lewat 1–30 hari" … carry "lewat" in words, so colour is never the only cue — and the amount at the end of each bar; no rainbow, no gradient. Only defined values: CALC-07's buckets and QS-10 for the company and period, the amounts summing to *Piutang aktif* (CALC-05). The marks measure 3.70 and 4.35 against white and 3.27 and 3.84 against the sunk surface; each bar sits in its own row, so no two marks touch. The *Gabungan* view keeps the figures and links "Rincian angka" instead of a chart in its first view; Stage 1's "Penjualan dan kas" chart is not kept in the first view — its values stay in the period report.
+
+### j) Layout and alignment (OC-09)
+
+The alignment specification, applied to every revised surface (DESIGN_REFERENCES §7):
+
+- **One control height per density:** 40 px with a fine pointer, 36 px in the dense mode and for row actions, 48 px on the phone and with a coarse pointer; the code field 56 px. Text links and disclosures at least 24 px on desktop and 44 px on the phone.
+- **A column grid for multi-line editors** with stated proportions — the purchase line: number 40 px · product and project item minmax(260 px, 1fr) · quantity 96 px · unit 104 px · unit price 148 px · tax 120 px · subtotal 156 px · row menu 36 px, 12 px gaps; every cell of a row in the first grid row, one control height, so tops, bottoms and baselines coincide.
+- **Numbers** right-aligned with tabular figures — quantity, price and subtotal inputs and cells, every amount in a table or position block.
+- **Labels above controls** with one 6 px gap; **supporting text below controls** with one 6 px gap.
+- **Secondary metadata** — SKU, project item, available stock — on a line below the control row, spanning the product to the unit columns, never shifting the row's baseline.
+- **Less-common fields behind "Rincian lain"** — the supplier's quotation number, notes and purchase charges (`p7r2-rs9-rincian-d`).
+- **The dense mode only on the named screens** — the multi-line editors of quotations and purchases (SCR-13, SCR-17), *Riwayat Stok* (SCR-20), *Mutasi Bank* (SCR-46), *Laporan* and *Laporan Gabungan* (SCR-47, SCR-48), *Riwayat Aktivitas* and *Log Keamanan* (SCR-59, SCR-60) — re-checked under OC-09 and unchanged: each is read or entered row by row. The invoice draft's line table is read-only and comfortable.
+- **Summaries beside their form** — the purchase's estimate beside the supplier panel, so the line editor keeps the full width.
+
+### k) Language and authentication
+
+C-1 unchanged: Indonesian by default, English secondary; before sign-in the choice may stay on the device, after sign-in the account's preference applies; issued documents and business data stay Indonesian; the storage of the choice is not decided (GAP-037). The switch placements are kept with fewer words: "ID | EN" at the top right of sign-in, and "Bahasa tampilan: Indonesia | English" in the account menu and the phone's *Lainnya* — the line "Berlaku untuk akun Anda. Dokumen dan data bisnis tetap berbahasa Indonesia." is removed. Sign-in (`p7r2-rs1-masuk-*`): the heading "Masuk ke MultipleCorp", *E-mail*, *Kata sandi* with "Tampilkan", "Masuk", the disclosure "Lupa kata sandi?" (its answer "Minta tautan atur ulang kepada Owner." folded), "atau", "Lanjutkan dengan Google" and H7-16's advice. The second factor (`p7r2-rs1-kode-*`): "Masukkan kode verifikasi", the label "Kode 6 digit dari aplikasi autentikator" carrying the instruction, "Verifikasi", and after a password "Gunakan kode pemulihan"; after Google the code only, with the disclosure "Tidak bisa memakai aplikasi?" (H7-15; AU-16; AU-19; AU-22) — a prototype switch shows both states. AU-04's generic answers are unchanged.
+
+### l) Self-check
+
+The quality gates of AICWDF §18.2 and §27 applied to the revised surfaces — **PROVISIONAL**: a judgement on R1 prototypes, not the Stage 4 gate. P = PASS, provisional; — = not applicable; S2 = not yet shown, Stage 2.
+
+| Item | RS-1 | RS-2 | RS-3 | RS-4 | RS-5 | RS-6 | RS-7 | RS-8 | RS-9 | RS-10 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Visual breathing room (§18.2, §27) | P | P | P | P | P | P | P | P | P | P |
+| Content density appropriate (§18.2, §27) | P | P | P | P | P | P | P | P | P | P |
+| Auth screen simplicity (§18.2) | P | — | — | — | — | — | — | — | — | — |
+| Google login visual consistency (§18.2) | P | — | — | — | — | — | — | — | — | — |
+| Section separation (§18.2) | P | P | P | P | P | P | P | P | P | P |
+| Spacing consistency (§18.2) | P | P | P | P | P | P | P | P | P | P |
+| Readability (§18.2) | P | P | P | P | P | P | P | P | P | P |
+| Modern visual quality | P | P | P | P | P | P | P | P | P | P |
+| Design system consistency | P | P | P | P | P | P | P | P | P | P |
+| Primary action clear | P | — | P | P | P | P | P | P | P | P |
+| Unnecessary duplicate actions: 0 | P | P | P | P | P | P | P | P | P | P |
+| Back action clear | P | — | — | — | — | — | P | P | P | P |
+| Navigation contract valid | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 |
+| Indonesian default | P | P | P | P | P | P | P | P | P | P |
+| Plain Indonesian | P | P | P | P | P | P | P | P | P | P |
+| English available | P | P | S2 | S2 | S2 | S2 | P | S2 | S2 | S2 |
+| Missing translations: 0 | P | P | S2 | S2 | S2 | S2 | P | S2 | S2 | S2 |
+| Language switch | P | P | P | P | P | P | P | P | P | P |
+| Mobile-first | P | P | P | P | P | P | P | P | — | P |
+| Responsive | P | P | P | P | P | P | P | P | S2 | P |
+| Adaptive | P | P | P | P | P | P | P | P | S2 | P |
+| Loading state | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 |
+| Empty state | — | — | S2 | P | S2 | S2 | P | S2 | S2 | S2 |
+| Error state | P | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 | S2 |
+| Destructive action safety | — | — | — | — | — | — | S2 | S2 | S2 | S2 |
+| Accessibility critical checks | P | P | P | P | P | P | P | P | P | P |
+
+Notes: the navigation contract is Stage 3 work (GAP-035), and the prototypes' links lead nowhere. RS-3 to RS-10 are Indonesian except the English desktop of RS-7 A, as DIR-056 §16 asks; their language switch is the account menu shown in RS-2. RS-9 exists only on desktop; its phone form is D-DS-07's line sheets. RS-7's empty state is "Tidak ada" under *Hambatan*; RS-4's is the quiet sentence of an empty group. "Accessibility critical checks" covers what R1 can show — measured contrast, target sizes, labelled fields and landmarks, the focus ring, `aria-current` and status never by colour alone; keyboard and screen-reader checks belong to Stage 2 and the Stage 4 gate.
+
+## C1 rework — disposition delta
+
+The 83 [provisional dispositions](#provisional-dispositions) re-evaluated against DIR-055 (DIR-056 §15). Only the rows whose disposition changes:
+
+| ID | Stage 1 | Revised | Reason |
+| --- | --- | --- | --- |
+| D-IA-01 | ADAPT | SUPERSEDE | The module sidebar, grouped or flat, is no longer the primary navigation: task-first entries — two to four per persona — with the modules in a collapsed *Menu lengkap* (OC-02) |
+| D-IA-03 | KEEP | ADAPT | The phone bottom bar keeps at most five entries, *Cari* and *Lainnya*, but its entries follow the persona — *Beranda* or *Pekerjaan*, then *Proyek* — and *Gudang* moves into *Lainnya* while the warehouse work sits in *Pekerjaan* (OC-02; DIR-056 §14 a) |
+| D-IA-10 | KEEP | ADAPT | The checklist with derived states stays (BR-ADM-01), but it joins the generated documents in one document-readiness view, required and selected items first and the other catalog documents behind a disclosure (OC-04) |
+| SLOP-09 | ADAPT | KEEP | No neon or bright accent at all — the lime allowance is withdrawn (OC-07) |
+| SLOP-20 | ADAPT | KEEP | Greetings, clichés and purpose lines stay out; the sign-in page has its heading without a supporting line (OC-06) |
+
+Re-examined with their disposition unchanged and their reason revised: **D-IA-07** SUPERSEDE — by the Owner's Beranda C: decisions and exceptions first, the four KPIs compact in the same view, the Admin queues collapsed (OC-05). **D-IA-08** ADAPT — work grouped by what has to happen next, each row with its project, stage, need and one action, counts per company (OC-01; PL-4). **D-IA-09** SUPERSEDE — by the journey workspace (OC-03; PL-1–PL-3). **D-DS-01** SUPERSEDE — by the calm muted palette without lime (OC-07). **D-DS-04** ADAPT — the pill becomes a pastel fill under dark text, keeping label, icon shape and tone (OC-07). **D-DS-05** SUPERSEDE — charts of defined values only where they earn their place, a neutral base and one highlight, behind a drill-down otherwise (OC-08). **SLOP-18** ADAPT — four compact KPIs beside the decisions (OC-05). **SLOP-29** KEEP — one restrained primary colour and muted tones bound to meanings (OC-07). **SLOP-34** ADAPT — as D-DS-05 (OC-08). **SLOP-44** KEEP — no percentage, bar, ring or score; plain counts allowed (PL-1). D-DS-03's list of dense screens was re-checked under OC-09 and is unchanged.
+
+**Re-derived totals:** 17 + 9 + 12 + 45 = **83** — KEEP 64, ADAPT 11, SUPERSEDE 7, DECIDE-IN-STAGE-2 1 (Stage 1: KEEP 64, ADAPT 12, SUPERSEDE 6, DECIDE-IN-STAGE-2 1; the five changes move one ADAPT to SUPERSEDE, two KEEP to ADAPT and two ADAPT to KEEP). They stay provisional; the DECISION_INDEX statuses of D-IA, D-DS and D-UX do not change.
+
+## C1 rework — prototypes
+
+Thirty-six pages of RS-1–RS-10 (DIR-056 §16), authored in the DesainPakeAI project MULTIPLECORP from the temporary directory outside the repository. Every ID carries the prefix `p7r2-` and was free before the first page was created; every page is page-scoped (`<!-- dpai:page {"scoped":true} -->`) and changes no design asset of the project. Desktop pages are 1,440 × 900 and phone pages 390 × 844. The pages load Inter from a font CDN, as the tool's authoring guide allows for prototypes; the product self-hosts its font (SECURITY WS-08).
+
+| Surface | Desktop | Phone | States shown |
+| --- | --- | --- | --- |
+| RS-1 Sign-in and second factor | `p7r2-rs1-masuk-d`, `p7r2-rs1-masuk-d-en`, `p7r2-rs1-kode-d`, `p7r2-rs1-kode-d-en` | `p7r2-rs1-masuk-p`, `p7r2-rs1-masuk-p-en`, `p7r2-rs1-kode-p`, `p7r2-rs1-kode-p-en` | Indonesian and English; the code screen after a password and, by a prototype switch, after Google; the generic error on submit |
+| RS-2 Shell and navigation | `p7r2-rs2-owner-d`, `p7r2-rs2-owner-d-en` (Owner; Gudang › Stok through *Menu lengkap*; the account menu with the display language); `p7r2-rs2-admin-d` (Admin; "Buat" open) | `p7r2-rs2-menu-p`, `p7r2-rs2-menu-p-en` (the bottom bar and the *Lainnya* sheet) | The Owner's and the Admin's primary experience, the secondary module access, Indonesian and English |
+| RS-3 Owner Beranda | `p7r2-rs3-owner-d` (*Gabungan*), `p7r2-rs3-owner-btn-d` (BTN, with the chart and its table) | `p7r2-rs3-owner-p` (*Gabungan*) | Decisions first, the four KPIs in the same view, attention projects, the collapsed queue, one restrained chart |
+| RS-4 Admin work home | `p7r2-rs4-admin-d` | `p7r2-rs4-admin-p` | The first group open; a group with nothing pending |
+| RS-5 Warehouse home | — | `p7r2-rs5-gudang-p` | What to receive and to dispatch; the next item first |
+| RS-6 Project list | `p7r2-rs6-proyek-d` | `p7r2-rs6-proyek-p` | Stage, blocker marker and next action per row |
+| RS-7 Project journey | `p7r2-rs7-a-d`, `p7r2-rs7-a-d-en`, `p7r2-rs7-b-d`, `p7r2-rs7-c-d` (Owner) | `p7r2-rs7-a-p`, `p7r2-rs7-c-p` (Admin) | Scenarios A, B and C of the [journey model](#c-the-next-recommended-action-pl-3); C with "what remains" expanded |
+| RS-8 Connected documents | `p7r2-rs8-dok-d`, `p7r2-rs8-invoice-d` | `p7r2-rs8-dok-p` | Every readiness label; *Buat Invoice* drafted from confirmed lines |
+| RS-9 Purchase form | `p7r2-rs9-pembelian-d` ("Rincian lain" closed), `p7r2-rs9-rincian-d` (open) | — | The alignment specification on the line editor and the charges |
+| RS-10 Phone receiving | — | `p7r2-rs10-masuk-p`, `p7r2-rs10-baris-p`, `p7r2-rs10-cari-p`, `p7r2-rs10-selesai-p` | The checklist with counts and the next line; a scan opening its line sheet; "Cari Produk"; per-line answers; the summary |
+
+**One synthetic data set.** The fictitious companies CV Arunika Jaya (ARJ), PT Bentara Niaga (BTN) and CV Cakra Persada (CKP); "Contoh" names for clients and suppliers; the personas Laras (Owner), Dimas (Admin with ARJ and BTN, `finance.view` and `cost.view`) and Bayu (Admin with ARJ warehouse grants, without `finance.view`). The same projects, numbers, counts and amounts recur wherever they reappear — for example BTN/PRJ/2026/0079's invoice BTN/INV/2026/0094 of Rp83.250.000 with Rp24.750.000 overdue on the journey, the BTN ageing chart and the Owner's KPIs (*Piutang aktif* BTN Rp121.050.000 = Rp79.800.000 + Rp24.750.000 + Rp16.500.000), and purchase ARJ/PB/2026/0216's four lines on the Admin's work home, the warehouse home and the receiving flow. **H7.** Generic authentication messages (AU-04); page titles, IDs and routes carry no business data, and a phone title is a screen name (H7-10); no surface shows another company's record to an account outside its scope, so the relation marker is described in the journey model rather than drawn. Nothing real — no person, client, supplier or credential — appears.
+
+**Verification.** `dpai preview verify` passed for all 36 pages at the first attempt — compile passed, 0 diagnostics, 0 warnings and 0 layout issues; the tool reports its browser, layout and responsive checks as not run, so they are *Not verified* by the tool. The executor rendered every page locally with the installed headless Chrome — 1,440 px, and the phone pages through a 390 px frame and at 320 px — and inspected them; the findings and fixes are under [measured checks](#c1-rework--measured-checks). A read-back of the 36 sources (`dpai file read --full`) is byte-identical to the local build, and `dpai work status` shows no page in a working state.
+
+**Sessions.** Non-secret commands only, run from the temporary directory; times in WIB on 2026-10-04.
+
+| Session | Time | Commands | Result |
+| --- | --- | --- | --- |
+| P7R2-S01 | 20:44–20:48 | `dpai --version`; `dpai auth status --pretty` (only its authenticated field read); `dpai project current --pretty` (only the name and role read); `dpai file list`; `dpai page create --id p7r2-rs1-masuk-d … --width 1440 --height 900`; `dpai file read --start-line 1 --end-line 1` for the revision; `dpai call write_file` with the expected revision and overwrite; `dpai preview verify --page p7r2-rs1-masuk-d`; `dpai work finish --page p7r2-rs1-masuk-d` | 0.2.2; authenticated; MULTIPLECORP, role owner; 87 files, 82 pages, 28 `p7r-` pages and no `p7r2-` page, so every ID was free; created, written, compile passed; a repeated write was answered NO_SOURCE_CHANGE, the content being identical |
+| P7R2-S02 | 20:49–20:56 | For the other seven RS-1 pages and the five RS-2 pages: `dpai file read`, `dpai page create`, `dpai call write_file`, `dpai preview verify --page` (one retry on failure), `dpai work finish --page` | 12 created and written; all passed at the first attempt |
+| P7R2-S03 | 20:57–21:08 | The same for the 14 pages of RS-3–RS-7 | All passed at the first attempt |
+| P7R2-S04 | 21:08–21:16 | The same for the nine pages of RS-8–RS-10 | All passed at the first attempt |
+| P7R2-S05 | 21:17–21:22 | `dpai file list` and `dpai file read --full` of every project file; `dpai design lint`; `dpai token list --format css` and `--format json`; `dpai design context --detail full`; `dpai work status`; `dpai project current --pretty`; `dpai context --pretty` | The results below |
+
+`git status` showed nothing new in the repository after each session.
+
+**After authoring (P7R2-S05, 21:22).** The active project is still MULTIPLECORP (role owner); the context revision is `sha256-cfd0fe0cac39bda1` with 118 pages — the 54 earlier pages, the 28 `p7r-` pages and the 36 `p7r2-` pages — and none in a working state; the Ramp design system is unchanged (alpha.3; 18 colour tokens, 8 typography tokens, 8 sections). `dpai design lint` gives 0 errors, 18 warnings and 1 info, identical to the readiness run, because the pages change no design asset. The reference is untouched: its tokens (CSS and JSON) and its full design context are identical to the readiness copies, apart from the project revision. The 28 `p7r-` page sources and the 54 earlier page sources are byte-identical to their readiness state, as are `DESIGN.md`, `PRODUCT.md`, `src/styles/tokens.css` and `.prototype/canvas.json`. `prototype.json` changed only by the 36 page registrations that `dpai page create` appends — without them it reproduces its readiness SHA-256 exactly. The tool's own working-state file `.prototype/agent-state.json` is back in the file list, as after Stage 1 authoring. Nothing of DesainPakeAI — no page source, export, capture or configuration — is in the repository.
+
+**Viewing.** In the DesainPakeAI project MULTIPLECORP, open the pages by the IDs above. The local renders (PNG images) are in the session's temporary directory outside the repository, folder `scratchpad\r1\render\r2\`; they are working files, not records, and may not persist — the page IDs are the durable pointers.
+
+## C1 rework — measured checks
+
+With scripts kept outside the repository (DIR-056 §17): the 36 page sources rendered by the installed headless Chrome with an injected measuring script, the results read back as JSON; the contrast of every rendered text segment against its effective background, and of the draft tokens, with the WCAG 2.2 relative-luminance formula.
+
+**Contrast.** Every rendered text pair on the 36 pages, at 1,440 px, 390 px and 320 px, is at least 4.5:1 — the lowest **5.44:1**, secondary text `#5C5F59` on the dusty-blue fill `#E4ECF4` of the next line in `p7r2-rs10-baris-p`; among the token pairs the lowest is ink-muted on surface-muted, 5.54:1. Every required non-text indicator is at least 3:1 — the lowest the control edge on surface-muted, **3.29:1**, and the chart base on the sunk surface, 3.27:1 (3.70:1 on the panel's white, where the chart sits); the focus ring 5.49–6.43:1 against the surfaces it sits on; status marks 3.94–4.75:1; the chart highlight 4.35:1. The tables are in [DESIGN_REFERENCES §6](../DESIGN_REFERENCES.md#6-draft-tokens).
+
+**Alignment** — each control's top, bottom, height and text baseline, by the method of the retrospective:
+
+| Form | Stage 1 | Revised |
+| --- | --- | --- |
+| Purchase line rows — `p7r-p7-pembelian-d` → `p7r2-rs9-pembelian-d`, `p7r2-rs9-rincian-d` | Rows 1–3: 20 px spread in top, bottom and baseline; height 36 px; the metadata wrapping inside the row | Rows 1–4, and the charges row: 0.0 px spread in top, bottom and baseline; one height, 36 px; quantity, unit price and subtotal right-aligned with tabular figures; the metadata on its own line |
+| Header fields (Pemasok · Kirim ke) | Aligned, 40 px | Aligned (0.0), 40 px; the "Rincian lain" fields aligned (0.0), 40 px |
+| Sign-in and code — `p7r-p1-*` → `p7r2-rs1-*` | 40 px on desktop and on the phone; code 56 px | 40 px on desktop, 48 px on the phone; code 56 px |
+| Phone line sheet — `p7r-p8-baris-p` → `p7r2-rs10-baris-p` | Pairs aligned; 40 px controls | Pairs and fields 0.0 spread; 48 px controls; the checkbox inside a 48 px label row |
+| Invoice draft — new, `p7r2-rs8-invoice-d` | — | The two segmented fields aligned (0.0), 40 px; the line table's numbers right-aligned |
+
+**Copy** — explanatory sentences per surface by the counting rule of the retrospective, visible by default:
+
+| Stage 1 surface | Stage 1 | Revised surface | Revised |
+| --- | --- | --- | --- |
+| P1 Sign-in | 6 | RS-1 | 0 |
+| P2 Shell | 8 | RS-2 | 0 |
+| P3 Owner's Beranda | 4 | RS-3 | 0 |
+| P4 Admin's Beranda | 3 | RS-4 | 0 |
+| P4 Warehouse home | 0 | RS-5 | 0 |
+| P5 Project list | 0 | RS-6 | 0 |
+| P6 Project detail | 2 | RS-7 | 0 |
+| — | — | RS-8 (new) | 0 |
+| P7 Multi-line form | 6 | RS-9 | 0 |
+| P8 Phone warehouse task | 4 | RS-10 | 0 |
+| **Total** | **33** | | **0** |
+
+The count rises on no surface and falls overall. Mandated copy kept: MSG-19 and AU-04's generic second-factor answer (RS-1, on submit); H7-16's advice on shared devices and phone locks (RS-1); MSG-41's pending unattributed line (RS-2, Gudang › Stok); MSG-29's Owner variant (RS-3); IP-16's file line (RS-10). Secondary explanation moved into disclosures: "Minta tautan atur ulang kepada Owner." behind "Lupa kata sandi?", and "Masuk dengan kata sandi untuk memakai kode pemulihan." behind "Tidak bisa memakai aplikasi?". During R1 one sentence of the invoice draft ("Penagihan dicatat terpisah setelah invoice terbit.") and the conditions of three "Berikutnya" lines were removed when they failed the OC-06 test.
+
+**Target sizes.** No interactive target below 24 × 24 CSS px on any page (WCAG 2.5.8; the smallest, a 24 px high text link on the code screen). The direction's sizes apply: controls 40 px with a fine pointer and 36 px in the dense mode and for row actions; on the phone pages all 222 targets are at least 44 × 44 px — buttons, inputs and selects 48 px, text links, disclosures and segments at least 44 px — and a checkbox is reached through its 48 px label row.
+
+**Reflow.** All 17 phone pages at 320 px have a page width of 320 px — no horizontal page scrolling (WCAG 1.4.10).
+
+**Colour use.** Lime on 0 of the 36 pages. No saturated colour: the strongest colours are the slate primary, the muted status marks and the chart highlight, each bound to a meaning.
+
+**English renderings.** The seven English pages — RS-1's four, `p7r2-rs2-owner-d-en`, `p7r2-rs2-menu-p-en` and `p7r2-rs7-a-d-en` — have 0 missing strings, checked by the generator; their visible text holds no Indonesian interface string — only business data such as company, client, product and document-type names, which stay Indonesian (D7) — and no broken layout at 1,440, 390 and 320 px.
+
+**Found and fixed during R1** (before upload): the phone tokens, applied at last (the Stage 1 defect); an overlapping line editor and summary (the summary moved beside the supplier panel); text and badges wrapping in the journey's panels; standalone links and phone targets below their sizes; the Owner's phone KPI grid wider than 320 px; two facts lines and a back link missing their shared styles on the phone; a vocabulary drift between the project list, the work home and the journey (one stage vocabulary, and "Hambatan" reserved for blockers); a service handover date that P0–P6 do not define (removed); a waived item marked optional (corrected to a required, waiver-eligible item).
+
+## C1 rework — revised non-loss map
+
+Every old screen and every signal re-placed in the revised structure, each with its entry point — the primary task flow, a journey drill-down, the secondary navigation (*Menu lengkap*) or search (DIR-056 §18). No screen purpose or capability disappears. The full non-loss matrix stays Stage 3 work.
+
+### Revised screens SCR-01–SCR-60
+
+| Screen | Revised place | Entry point | Stage 2 |
+| --- | --- | --- | --- |
+| SCR-01 Masuk | The sign-in page with the second-factor screen (RS-1) | Primary | — |
+| SCR-02 Atur Kata Sandi | The credential-link page outside the shell | The Owner's credential link | DECIDE-IN-STAGE-2, kept: the second-factor enrolment in the same journey (H7-15; GAP-044) |
+| SCR-03 Akun Saya | The account menu › *Akun Saya*; the phone's *Lainnya* › *Akun* | Primary (account menu) | DECIDE-IN-STAGE-2, kept: AU-13's self-service with TOTP, recovery codes and the Google link |
+| SCR-04 Halaman Sistem | Unchanged — not found, forbidden, error (AZ-11; IP-21) | — | — |
+| SCR-05 Beranda (Owner) | *Beranda* (RS-3) | Primary | — |
+| SCR-06 Beranda — Antrean Tindakan | *Pekerjaan* (RS-4; RS-5) — the Admin's landing page and the Owner's primary entry | Primary | — |
+| SCR-07 Tinjauan Owner | *Tinjauan* | Primary (Owner); Beranda's decision row (QS-14) | — |
+| SCR-08 Cari | The top-bar field "Cari atau pindai kode"; the phone's *Cari* | Search | — |
+| SCR-09 Daftar Proyek | *Proyek* as journeys (RS-6) | Primary | — |
+| SCR-10 Detail Proyek | The journey workspace (RS-7) | Primary, from *Proyek*, *Pekerjaan*, Beranda and search | — |
+| SCR-11 Formulir Proyek | "Buat" › *Proyek*; "Buat Proyek" on *Proyek*; "Ubah proyek" in *Tindakan Lain* | Primary | — |
+| SCR-12 Daftar Penawaran | *Menu lengkap* › *Dokumen* › *Penawaran*; the projects at *Kesepakatan* on *Proyek* | Secondary; primary (stage filter) | — |
+| SCR-13 Penawaran | The journey's *Kesepakatan* stage; *Rincian proyek* | Journey | — |
+| SCR-14 Penyelesaian Proyek | "Yang tersisa sebelum selesai" and the *Penyelesaian* stage; *Pekerjaan* › *Penyelesaian proyek*; Beranda's QS-15 row | Journey; primary | — |
+| SCR-15 Daftar Pembelian | *Menu lengkap* › *Pembelian* | Secondary | — |
+| SCR-16 Detail Pembelian | From the purchase list, a work row and *Rincian proyek* › *Pengadaan* | Secondary; journey | — |
+| SCR-17 Formulir Pembelian | "Buat" › *Pembelian*; the work row "Buat Pembelian" (QS-02); the journey's *Gudang* stage (RS-9) | Primary; journey | — |
+| SCR-18 Stok | *Menu lengkap* › *Gudang* › *Stok* (RS-2) | Secondary | — |
+| SCR-19 Detail Stok Produk | From *Stok* and search | Secondary; search | — |
+| SCR-20 Riwayat Stok | *Gudang* › *Lainnya* › *Riwayat Stok* (dense) | Secondary | — |
+| SCR-21 Barang Masuk | The work rows "Catat Barang Masuk" and the warehouse home (RS-4; RS-5; RS-10); "Buat" › *Barang Masuk*; *Gudang* › *Barang Masuk* | Primary; secondary | — |
+| SCR-22 Barang Keluar | The work rows "Catat Barang Keluar" and "Keluarkan barang"; *Gudang* › *Barang Keluar* | Primary; secondary | — |
+| SCR-23 Reservasi | *Gudang* › *Reservasi*; *Rincian proyek* › *Item dan pemenuhan* | Secondary; journey | — |
+| SCR-24 Stok Opname | *Gudang* › *Stok Opname* | Secondary | — |
+| SCR-25 Penyesuaian & Kondisi | *Gudang* › *Lainnya* | Secondary | — |
+| SCR-26 Retur ke Pemasok | *Gudang* › *Lainnya*; the purchase page | Secondary | — |
+| SCR-27 Selisih & Temuan | Beranda's decision rows (QS-22, QS-18) — for the Owner, and for an Admin with `stock.resolve_unattributed_evidence`; *Gudang* › *Lainnya* | Primary (Owner); secondary | — |
+| SCR-28 Pengiriman | The work rows of QS-06; the journey's *Pengiriman* stage and *Rincian proyek* › *Pengiriman*; *Gudang* › *Lainnya* › *Pengiriman* | Primary; journey; secondary | — |
+| SCR-29 Catat Pengiriman | The journey's primary action "Catat Pengiriman"; the work row "Catat Pengiriman" | Journey; primary | — |
+| SCR-30 Kirim Langsung | The journey's *Kirim langsung* stage | Journey | — |
+| SCR-31 Serah Terima Jasa | The journey's *Jasa* stage and primary action "Catat Serah Terima Jasa" | Journey | — |
+| SCR-32 Retur dari Klien | *Rincian proyek* › *Pengiriman*; *Tindakan Lain* | Journey | DECIDE-IN-STAGE-2, kept: its cross-project entry |
+| SCR-33 Kasus Koreksi | *Pekerjaan* › *Dokumen dan kasus* (QS-07); the journey's *Retur dan koreksi* condition | Primary; journey | DECIDE-IN-STAGE-2, kept: its cross-project home, as cases also arise from purchases and stock |
+| SCR-34 Dokumen | *Menu lengkap* › *Dokumen*; the journey's "Kesiapan dokumen" › "Semua dokumen" (RS-8) | Secondary; journey | — |
+| SCR-35 Detail Dokumen | From document readiness and the document list | Journey; secondary | — |
+| SCR-36 Bukti | *Dokumen* › *Bukti*; "Buat" › *Unggah Dokumen* | Secondary; primary | — |
+| SCR-37 Dokumen Administrasi | The project's checklist inside document readiness (RS-8); *Dokumen* › *Dokumen Administrasi* for the cross-project view | Journey; secondary | — |
+| SCR-38 Daftar Invoice | *Menu lengkap* › *Keuangan* › *Invoice* | Secondary | — |
+| SCR-39 Detail Invoice | Document readiness; *Rincian proyek* › *Keuangan*; the work rows of QS-09–QS-11 | Journey; primary | — |
+| SCR-40 Piutang | *Keuangan* › *Piutang*; Beranda's QS-10 and QS-11 rows | Secondary; primary (Owner) | — |
+| SCR-41 Pembayaran | *Keuangan* › *Pembayaran* | Secondary | — |
+| SCR-42 Catat Pembayaran | "Buat" › *Pembayaran*; the journey's *Pembayaran* stage and "Catat Pembayaran" | Primary; journey | — |
+| SCR-43 Potongan | *Keuangan* › *Potongan*; the work rows of QS-13 | Secondary; primary | — |
+| SCR-44 Kredit Pelanggan | *Keuangan* › *Lainnya*; the work rows of QS-12 | Secondary | — |
+| SCR-45 Pengeluaran & Kas Lain | *Keuangan* › *Lainnya* | Secondary | — |
+| SCR-46 Mutasi Bank | *Keuangan* › *Lainnya* (dense) | Secondary | — |
+| SCR-47 Laporan | *Menu lengkap* › *Laporan* (dense) | Secondary | — |
+| SCR-48 Laporan Gabungan | *Laporan* › *Laporan Gabungan*, Owner only (dense); Beranda's "Rincian angka" | Secondary; primary (Owner) | — |
+| SCR-49 Ekspor Saya | *Laporan* › *Ekspor Saya* | Secondary | — |
+| SCR-50 Klien | *Menu lengkap* › *Data Master* › *Klien* | Secondary | — |
+| SCR-51 Pemasok | *Data Master* › *Pemasok* | Secondary | — |
+| SCR-52 Produk & Jasa | *Data Master* › *Produk & Jasa* | Secondary | — |
+| SCR-53 Lokasi Rak | *Data Master* › *Lokasi Rak* | Secondary | — |
+| SCR-54 Perusahaan | *Menu lengkap* › *Pengaturan* › *Perusahaan* (Owner) | Secondary | — |
+| SCR-55 Penomoran Dokumen | *Pengaturan* › *Penomoran Dokumen* | Secondary | — |
+| SCR-56 Pajak | *Pengaturan* › *Pajak* | Secondary | — |
+| SCR-57 Pengguna & Akses | *Pengaturan* › *Pengguna & Akses*; Beranda's security notice | Secondary; primary (Owner) | DECIDE-IN-STAGE-2, kept: the Owner's account screens of H7-17 |
+| SCR-58 Impor Data Awal | *Data Master* › *Impor Data Awal* | Secondary | — |
+| SCR-59 Riwayat Aktivitas | *Menu lengkap* › *Aktivitas & Keamanan* › *Riwayat Aktivitas* (dense) | Secondary | — |
+| SCR-60 Log Keamanan | *Aktivitas & Keamanan* › *Log Keamanan* (dense); Beranda's security notice | Secondary; primary (Owner) | — |
+
+All 60 screens are placed; the five DECIDE-IN-STAGE-2 notes are kept unchanged — two about a location (SCR-32, SCR-33) and three about content the authentication amendment adds (SCR-02, SCR-03, SCR-57).
+
+### Revised signals QS-01–QS-22
+
+Each count per company (CS-08); every signal row leads to the screen where its next action happens for an account with the capability, otherwise to the record's view (PJ-13).
+
+| QS | Signal | Owner | Admin | Also |
+| --- | --- | --- | --- | --- |
+| QS-01 | Warehouse demand not yet reserved | *Pekerjaan* › *Barang* | *Pekerjaan* › *Barang* | The journey's *Gudang* stage |
+| QS-02 | Shortage, purchase needed | Beranda › "Proyek yang perlu perhatian"; *Pekerjaan* | *Pekerjaan* › *Barang* › *Siapkan barang* | The journey's blocker "Stok kurang"; "Buat Pembelian" prefilled |
+| QS-03 | Received for a project, awaiting reservation | *Pekerjaan* › *Barang* | *Pekerjaan* › *Barang* | The journey's *Gudang* stage |
+| QS-04 | Reservations cut | *Pekerjaan* › *Barang* | *Pekerjaan* › *Barang* | The journey's blocker on *Gudang* |
+| QS-05 | Open purchase remainders | *Pekerjaan* › *Barang* › *Terima barang* | The same; the warehouse home | RS-10 |
+| QS-06 | Dispatched or shipped, not delivered | *Pekerjaan* › *Barang* › *Keluarkan dan kirim* | The same; the warehouse home | The journey's *Pengiriman* stage |
+| QS-07 | Discrepancies and correction cases | *Pekerjaan* › *Dokumen dan kasus* | The same | The journey's *Retur dan koreksi* condition |
+| QS-08 | Rendition pending or failed | *Pekerjaan* › *Dokumen dan kasus* | The same | Document readiness: *PDF gagal dibuat* |
+| QS-09 | Invoices *Belum Ditagihkan* | *Pekerjaan* › *Tagihan dan pembayaran* | The same, with `finance.view` | The journey's *Penagihan* stage |
+| QS-10 | Overdue receivables by ageing bucket | Beranda › "Perlu keputusan Anda"; the chart "Umur piutang"; the overdue part of *Piutang aktif* | *Pekerjaan* › *Tagihan dan pembayaran* | The journey's blocker on *Pembayaran* |
+| QS-11 | Disputed receivables | Beranda › "Perlu keputusan Anda" | *Pekerjaan* › *Tagihan dan pembayaran* | *Keuangan* › *Piutang* |
+| QS-12 | Unapplied credit, payments without proof, uncited bank lines | *Pekerjaan* › *Tagihan dan pembayaran* | The same | Credit linked to a written-off invoice also in *Tinjauan* (QS-14) |
+| QS-13 | Deductions awaiting evidence | *Pekerjaan* › *Tagihan dan pembayaran* | The same | *Keuangan* › *Potongan* |
+| QS-14 | The Owner review queue | Beranda › "Aktivitas baru untuk ditinjau"; *Tinjauan* | Absent — no entry, count or badge | — |
+| QS-15 | Completion blockers; invoicing above delivered value; confirmed value not invoiced | Beranda › "Syarat penyelesaian belum terpenuhi" and "Proyek yang perlu perhatian"; *Pekerjaan* › *Penyelesaian proyek* | *Pekerjaan* › *Penyelesaian proyek* (money items with `finance.view`) | The journey's "Yang tersisa sebelum selesai" |
+| QS-16 | Residual obligations of force-completed or cancelled projects | Beranda › "Kewajiban tersisa" | *Pekerjaan* › *Barang* | The project's outcome view |
+| QS-17 | Low stock and restock advice | *Pekerjaan* › *Barang* | *Pekerjaan* › *Barang* | *Gudang* › *Stok* ("Stok Menipis") |
+| QS-18 | Count findings, stale counts, unattributed surplus | Attribution: Beranda › "Perlu keputusan Anda"; findings and stale counts: *Pekerjaan* › *Barang* | *Pekerjaan* › *Barang* (findings, stale counts) | *Gudang* › *Stok Opname*; *Selisih & Temuan* |
+| QS-19 | Pre-payment Kuitansi not linked or voided | *Pekerjaan* › *Tagihan dan pembayaran* | The same | The journey's blocker on *Pembayaran*; the Kuitansi's page |
+| QS-20 | Routed refusals | Beranda › "Penolakan diteruskan kepada Anda" | *Pekerjaan* › *Barang* | The refused command's record |
+| QS-21 | Duplicate warnings overridden or confirmed | *Pekerjaan* › *Dokumen dan kasus* | The same | Each also in QS-14 |
+| QS-22 | Pending unexplained-loss cases | Beranda › "Selisih menunggu penetapan Anda" | Not in the Admin's work | The pending line on *Gudang* › *Stok* (MSG-41), blocking nothing (DIR-027) |
+
+All 22 signals are placed; the old group of each is kept inside *Pekerjaan*, and the Owner's decisions take their rows from groups G1, G3 and G4 of INFORMATION_ARCHITECTURE §9.
+
+### Journey stages and predicates
+
+Every stage of the [journey model](#a-stages) is reachable on the track and through *Rincian proyek*; every predicate of WF-PRJ-03 is reachable from the journey: unmet ones are listed under "Yang tersisa sebelum selesai" with their resolving action, met ones behind "N syarat lain terpenuhi", and all ten on SCR-14.
+
+| Predicate | Where it shows on the journey |
+| --- | --- |
+| 1 Fulfillment | the *Gudang*, *Kirim langsung* and *Jasa* stages; "Yang tersisa" › *Pemenuhan* |
+| 2 Delivery | the *Pengiriman* stage; "Yang tersisa" › *Pengiriman* |
+| 3 Returns/corrections | the blocker overlay on *Pengiriman* or *Pembayaran*; "Yang tersisa" › *Retur dan koreksi* |
+| 4 Documents | the *Dokumen* stage; "Kesiapan dokumen"; "Yang tersisa" › *Dokumen* |
+| 5 Administration | the *Dokumen* and *Invoice* stages; "Kesiapan dokumen"; "Yang tersisa" › *Administrasi* |
+| 6 Billing | the *Penagihan* stage; "Yang tersisa" › *Penagihan* |
+| 7 Receivable | the *Pembayaran* stage and its blocker; "Posisi keuangan"; "Yang tersisa" › *Piutang* |
+| 8 Stock | the blocker overlay on *Gudang*; "Yang tersisa" › *Stok* |
+| 9 Payment | the *Pembayaran* stage; "Yang tersisa" › *Pembayaran* |
+| 10 Audit | the *Penyelesaian* stage; "Yang tersisa" › *Audit* |
+
+### Documents
+
+All fourteen document types and the external-upload path are reachable from document readiness (RS-8), as [listed](#b-document-readiness): DOC-01–DOC-14 among the required, selected or other catalog documents, and WF-DOC-02's uploads through "Unggah Dokumen" and each upload requirement's "Unggah".
+
+### Owner-only actions (PERMISSIONS_MATRIX §9)
+
+| OD | Action | The Owner reaches it | For an Admin |
+| --- | --- | --- | --- |
+| OD-01, OD-02 | Accounts, credential links, resets and unlinks; grants | *Pengaturan* › *Pengguna & Akses*; Beranda's security notice | Absent — *Pengaturan* is not in an Admin's menu |
+| OD-03 | Company master, banks, numbering, identity assets | *Pengaturan* › *Perusahaan*, *Penomoran Dokumen* | Absent |
+| OD-04 | Tax configuration | *Pengaturan* › *Pajak* | Absent; configured values read-only |
+| OD-05, OD-06 | Waiver eligibility; requirement relaxation | The requirement's controls in document readiness and *Dokumen Administrasi* | Absent; an Admin may only add or tighten |
+| OD-07, OD-11 | Write-off supersession; write-off | The invoice and *Keuangan* › *Piutang*; Beranda's overdue and dispute rows | Absent |
+| OD-08, OD-09 | Surplus attribution; unexplained-loss resolution | Beranda's decision rows (QS-18, QS-22) › *Selisih & Temuan* — "Tetapkan" | Absent; OD-10's evidence exception stays available with `stock.resolve_unattributed_evidence` |
+| OD-12 | Force Complete | The journey's *Tindakan Lain* › "Selesaikan Paksa" (shown on `p7r2-rs7-c-d`) | Absent (`p7r2-rs7-c-p`) |
+| OD-13 | Opening import commit | *Data Master* › *Impor Data Awal* | Absent |
+| OD-14 | Consolidated views, the review queue, audit search, the security log, all-company scope | *Gabungan*, *Laporan Gabungan*, *Tinjauan*, *Aktivitas & Keamanan* | Absent |
+| OD-15 | Superseding an OWN! decision | The decision's record, from *Tinjauan* and *Riwayat Aktivitas* | Absent |
+| OD-16 | Authorization anomalies — a consistency rule, no action | Security-logged; *Log Keamanan* | — |
+
+## Revised Checkpoint C1 package
+
+The English equivalent of the package the final report gives the Owner in Bahasa Indonesia (DIR-056 §19).
+
+**1. What changed for each decision**
+
+- **OC-01** — after sign-in an Admin lands on *Pekerjaan*: work grouped by what has to happen next, each row with its company, project, stage, need and one action; every project page answers what is done, what blocks it and what is next — `p7r2-rs4-admin-d`, `p7r2-rs4-admin-p`, `p7r2-rs7-*`.
+- **OC-02** — task-first navigation: the Owner has four primary entries, an Admin two; the modules sit in a collapsed *Menu lengkap*; "Buat" starts new work — `p7r2-rs2-owner-d`, `p7r2-rs2-admin-d`, `p7r2-rs2-menu-p`.
+- **OC-03** — the project journey: stages with their states and the current one marked, *Sekarang* · *Berikutnya* · *Hambatan*, what remains, document readiness, the financial position and contextual drill-down; stages that do not apply are omitted — `p7r2-rs7-a-d`, `p7r2-rs7-b-d`, `p7r2-rs7-c-d`, `p7r2-rs7-a-p`, `p7r2-rs7-c-p`.
+- **OC-04** — one document-readiness view derived from the document lifecycle and the checklist; the invoice drafted from the project's confirmed lines — `p7r2-rs8-dok-d`, `p7r2-rs8-dok-p`, `p7r2-rs8-invoice-d`; the purchase taking its company and lines from the project — `p7r2-rs9-pembelian-d`.
+- **OC-05** — the Owner's Beranda: decisions and exceptions first, the four KPIs in the same view, projects needing attention, the Admin queues as one collapsed line — `p7r2-rs3-owner-d`, `p7r2-rs3-owner-p`, `p7r2-rs3-owner-btn-d`.
+- **OC-06** — explanatory sentences from 33 to 0; secondary explanation behind disclosures; mandated copy kept — all `p7r2-` pages, notably `p7r2-rs1-*` and `p7r2-rs10-*`.
+- **OC-07** — no lime; a warm neutral canvas, white surfaces, dark ink, a deep slate primary and muted sage, dusty blue, soft amber and muted rose bound to meanings — all `p7r2-` pages.
+- **OC-08** — one chart, a neutral base and one highlight for "overdue", direct labels and its table — `p7r2-rs3-owner-btn-d`.
+- **OC-09** — one control height per density, a column grid for the line editor, numbers right-aligned, metadata below the row, less-common fields behind "Rincian lain"; every row measured flat — `p7r2-rs9-pembelian-d`, `p7r2-rs9-rincian-d`, `p7r2-rs8-invoice-d`, `p7r2-rs10-baris-p`.
+- **OC-10** — the warehouse flow kept with the next item first, counts of lines done and left, scan first with "Cari Produk", per-line answers and a summary — `p7r2-rs5-gudang-p`, `p7r2-rs10-*`.
+- **OC-11** — one direction per axis: navigation C, project detail C, Owner Beranda C; no A/B.
+- **OC-12** — unchanged: the warehouse/field participant is still pending and does not block.
+
+**2. The direction as each user experiences it**
+
+- **An Admin's first minutes.** Dimas signs in and lands on *Pekerjaan*. The first group, "Barang: terima, keluarkan, kirim", is open: ARJ/PB/2026/0216 for ARJ/PRJ/2026/0147, stage *Gudang*, "4 baris belum diterima", with "Catat Barang Masuk"; ARJ/SJ/2026/0311, stage *Pengiriman*, "Menunggu tanda terima klien", with "Catat Pengiriman"; BTN/PRJ/2026/0088, "Laptop 14 inci kurang 20 unit", with "Buat Pembelian". "Dokumen dan kasus" says there is nothing to follow up; "Tagihan dan pembayaran" and "Penyelesaian proyek" are folded with their per-company counts ("ARJ 2 · BTN 3", "ARJ 1 · BTN 1"). He never needs to remember a module: each row opens the place where its next step happens.
+- **One project from quotation to completion.** The journey shows *Kesepakatan* (the quotation issued, the client's answer recorded, or a confirmation with the client's order), then *Gudang* — reserve, buy the shortage from the prefilled purchase, receive, dispatch — or *Kirim langsung*, then *Pengiriman*, and *Jasa* for service lines, then *Dokumen*, *Invoice*, *Penagihan*, *Pembayaran* and *Penyelesaian*; each stage shows its state and the current one is marked. *Berikutnya* always names the next valid step and the primary button starts it; documents show what is ready, waiting or done; the invoice is drafted from the confirmed lines without retyping; billing and completion stay explicit decisions. Near the end only the unmet conditions remain open — on BTN/PRJ/2026/0079: the client's signed BAST and the outstanding Rp24.750.000, overdue by four days.
+- **The Owner's Beranda.** Laras sees first what needs her decision — a credential link used today, a pending loss of 24 metres of cable, new activity to review, a routed refusal, residual obligations, overdue and disputed receivables, completion conditions unmet past the deadline — each with one action; beside them the four figures for *Gabungan* or one company; below, the projects needing attention; the Admin queues are one folded line. In one company's view the ageing chart shows the overdue amounts in one highlight with its table.
+- **The warehouse task on the phone.** Bayu's *Pekerjaan* shows "Berikutnya: Terima ARJ/PB/2026/0216 — 4 baris belum dicatat" with "Mulai Terima Barang". In the task the lines form a checklist — "2 baris tercatat · 2 baris tersisa" — the next line marked; he scans, the line's sheet opens, he records the usable, damaged and rejected quantities, the rack and the project reservation in one command; each line shows *Tercatat* when the server answers; without a scanner he uses "Cari Produk"; at the end a summary lists every line's confirmed outcome.
+
+**3. How to view**
+
+- In the DesainPakeAI project MULTIPLECORP, the 36 pages whose IDs start with `p7r2-`, listed under [C1 rework — prototypes](#c1-rework--prototypes); the 28 `p7r-` pages stay as the record of the rejected direction.
+- Local renders (PNG) in the session's temporary directory outside the repository, folder `scratchpad\r1\render\r2\` — working files that may not persist; the page IDs are the durable pointers.
+- All data is fictitious; the pages show "Prototipe C1 (revisi) · data contoh fiktif".
+
+**4. What is preserved, and why.** The Stage 0–1 evidence and the parts of the Stage 1 direction DIR-056 §10 lists — the type scale, the control sizes, spacing, radii, flat structure, one icon family, the density policy and its named screens, the contrast method and thresholds, status never by colour alone, the focus ring, Inter with tabular figures, the four KPIs and their CALC definitions, the company context (CS-01–CS-03, CS-08), no counts on navigation entries, one search for typed and scanned codes, C-1's language behaviour and the switch placements, the sign-in and second-factor screens with AU-04's generic answers, the command model, the phone warehouse pattern, the desktop multi-line editor, the not-copied list and the fictitious data conventions — because business, security or accessibility requires them or because they already work; 64 of the 83 earlier decisions and rules stay KEEP.
+
+**5. The Planning interpretations, as applied.** PL-1: the track shows the applicable stages with their states and plain counts — no percentage, bar, ring or score. PL-2: stages that do not apply are omitted and named only in "Tahap yang tidak diperlukan". PL-3: *Berikutnya* comes from the recorded precedence; a step is a button only with its capability, otherwise named without a control; another company's records only with the relation marker. PL-4: *Pekerjaan* is scoped by grants with counts per company, never summed and never by assignment. PL-5: one direction per axis and no new A/B.
+
+**6. Open items.**
+
+- *Stage 2 checks, not proposed:* the project list's per-row stage, blocker and next action within QB-01; the dispatch-ready rows of the work home within PF-24; an overdue receivable on the journey read inside QB-02's predicate group.
+- *Needs definition — not proposed:* a planned date for a delivery or a service handover; the Stage 1 list — multi-month trends, a win rate, collection days, a stock-value trend, client rankings.
+- *Owner-level questions:* none — the rework raised no question it could not settle within P0–P6 and DIR-055.
+
+**7. The C1 questions**
+
+1. Do you **approve** the revised direction, **approve it with named adjustments** (name them), or **reject** it?
+2. *Note, no answer needed:* the warehouse/field participant (OC-12) stays pending and does not block; if Stage 2 is authorized without one, the K2 fallback applies.
+
+**8. After C1.** Stage 2 — the complete IA, the design system, the localization architecture under C-1, the authentication journeys, the end-to-end prototypes and the usability kit — needs a separate Owner authorization; nothing of it starts on its own. The re-baseline continues on the branch `rebaseline/p7-ux`; `main` stays at `a526daf` until Stage 5.
+
+## C1 rework — zero-context check
+
+Run on 2026-10-04 (DIR-056 §20.2) by a fresh, read-only sub-agent that started at AGENTS.md and read only through its reading order and the documents those point to. It was told not to open source records 51 and 53 or anything of this session, and was given the DIR-046 §2 hard rule in its own words; it used only file reads and read-only Git commands. Its verbatim report is kept outside the repository: 20,608 bytes, SHA-256 `8861D4093301CB8F1A7FE44DD9A9FFA75881ABEB3EC448D9C864E0CA17931562`. It ran on the working tree before commit 4, so it also saw what was still missing then — this section, Gate R1, the R1 hash table and commit 4.
+
+| Question | The check's answer | Result |
+| --- | --- | --- |
+| (a) The current phase and the state of the re-baseline | P7 IN_PROGRESS; Checkpoint C1 decided — the Stage 1 direction rejected for focused rework (DIR-055); R0 done, commit 3 pushed and verified; R1 recorded as done, still in the working tree; next gate R1, commit 4 and its push, then STOP for the Owner's re-review at Checkpoint C1, the warehouse/field participant pending and not blocking, Stage 2 only under a separate authorization | Correct |
+| (b) DIR-055 and its relation to DIR-053 K3 and DIR-035 D3 | The verdict and OC-01–OC-12, one line each, with their sources; K1, K2, K4, C-1 and C-2 unchanged; K3 ACTIVE with its limits, its role narrowed by OC-07; D3 allowing lime only when used accessibly and never requiring it; the standing intent of D3, D4, D7 and DIR-040 F6 | Correct |
+| (c) What is authorized next and what is not | The rest of R1 — the zero-context check, gate R1, commit 4 and its normal push with the live-remote verification —, then STOP; Stage 2 only under a separate authorization; the whole "Do not do" list; APPR-011 reserved | Correct |
+| (d) `main` and the re-baseline work | `main` at `a526daf` locally and live; `rebaseline/p7-ux` at commit 3, also live; commits 1–3 stated pushed and verified; commit 4 resolved by its `git log --grep` command, its push not claimed | Correct |
+| (e) Where the revised direction, the journey model, the connected-work map, the `p7r2-` prototypes, the rejected Stage 1 direction and the `p7r-` pages are, and their status | Each located in this record and DESIGN_REFERENCES, or by its page IDs in DesainPakeAI; none normative; the rejected direction kept as history, the `p7r-` pages untouched | Correct |
+| (f) The old P7 documents in force | INFORMATION_ARCHITECTURE and DESIGN_SYSTEM APPROVED (APPR-008) and under replacement; ADMIN_FLOW APPROVED and in force, its login journeys deferred under GAP-044; P7_QUALITY_GATE REVIEW evidence | Correct |
+
+Its 22 navigation findings and their handling:
+
+| Finding | Handling |
+| --- | --- |
+| 1–4. This section, Gate R1, the R1 hash table and commit 4 did not exist yet, so two anchors were broken and the PASS claims and the hash table had no evidence yet | Expected before commit 4: the records are written for the state they are committed in. Resolved by this section, [Gate R1](#gate-r1), the R1 hash table under TECH-028 and commit 4 |
+| 5. The phone bottom bar's cap given as four and as five | Fixed: four entries within the bar's cap of five (D-IA-03), in [revised direction a)](#a-navigation--task-first-oc-02-pl-4) |
+| 6. The rejected Stage 1 tokens and DESIGN_REFERENCES §§3 and 5–7 survived only in Git, behind circular pointers | Fixed: the Direction proposal's note and DESIGN_REFERENCES's header and §6 name `git show 2a5c8aa:docs/07-ux-design/DESIGN_REFERENCES.md` (commit 2) |
+| 7, 21. CONTEXT_INDEX's rows for DESIGN_REFERENCES and this record were stale, and the R1 sections hard to find | Fixed: both rows brought up to date, the second linking the journey model, the connected-work map, the revised direction, the `p7r2-` prototypes and the revised package |
+| 8. Scenario B's track order differed from the recorded order | Fixed: the recorded order is *Gudang*, *Kirim langsung*, *Pengiriman*, *Jasa* — the service handover taking delivery's place (L-39) —, as the pages show; the stage table, rule b) and the precedence follow it |
+| 9. Two Stage 2 checks in the journey model, three elsewhere | Fixed: one QB-02 check in the journey model and three in all — QB-01's per-row stage, blocker and next action, PF-24's dispatch rows and QB-02's overdue reading — in the same words everywhere |
+| 10. "R1-01…" also names P7 review findings | Fixed: the identifier-map row tells them apart; the label set is the one DIR-056 defines |
+| 11. Citations of DIR-056 sections readable only in record 53 | Fixed where R1 writes them: CONTEXT_INDEX's note and TECH-028 say, in the same words, what each section asks for; the R0 text of DIR-056's entry is left as recorded — reported |
+| 12. "Phone pages on desktop sizes" | Fixed: "the desktop text and control sizes, 15 px and 40 px", with a note under the Stage 1 [Prototypes](#prototypes) |
+| 13. Stage 1's Prototypes and Preliminary non-loss map without a pointer | Fixed: a note on each, pointing to the C1 rework's sections |
+| 14. RS-8 and RS-9 used before RS-1–RS-10 are listed; HO-01 placed under ADMIN_FLOW | Fixed: a forward reference at first use; HO-01 named as CONCURRENCY_IDEMPOTENCY's |
+| 15. A statement among the C1 questions | Fixed: labelled a note needing no answer |
+| 16. EXECUTION_CONTEXT and TOOLCHAIN do not reflect OC-07; TOOLCHAIN's documentation row still reads "Not yet verified" | Outside the files R1 may change — reported, for a later authorized continuity correction |
+| 17. No active design reference is designated (AGENTS.md rule 10) | Outside the files R1 may change; DESIGN_REFERENCES states that it is not that reference until approved — reported |
+| 18. DECISION_INDEX's D3 row did not show OC-07's narrowing | Fixed: the D3 row points to it, as the K3 row does — the one DECISION_INDEX navigation correction of R1 |
+| 19. GAP-037's continuation cites the rejected proposal's "d) Language" | GAP_REGISTER takes only new gaps in R1 — reported; the current design is [revised direction k)](#k-language-and-authentication) |
+| 20. Known open items — CONTEXT_INDEX's approval chain ending at APPR-009 and its rows without APPR-010; an EXECUTION_CONTEXT anchor; ADMIN_FLOW's header silent on J-ACC-01 | Outside R1 — reported, as before |
+| 22. Commit 3's push had no literal record | Fixed: TECH-028 records commit 3, its raw commit and its push, verified on the live remote at 19:26 WIB and again at 21:49 WIB |
+
+**Result: PASS** — all six answers are correct; the navigation findings within scope are fixed at Level 1, and the rest are reported.
+
+## Gate R1
+
+Run on the complete staged change of commit 4 before the commit (DIR-056 §20.3), with scripts kept outside the repository. Every item passed.
+
+| Item | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| R1-01 | The staged diff touches only the listed files | PASS | `git diff --cached --name-status 295fec4` lists 9 paths, all modified — this record, DESIGN_REFERENCES, SOURCE_OF_TRUTH, CONTEXT_INDEX, DECISION_LOG, DECISION_INDEX — only the D3 row's navigation correction that the zero-context check found —, PHASE_STATUS, CURRENT_HANDOFF and CHANGELOG; GAP_REGISTER unchanged, R1 having found no new gap |
+| R1-02 | The retrospective is evidenced and measured | PASS | [C1 rework — retrospective](#c1-rework--retrospective): navigation classified entry by entry; the project detail's first view at 1,440 × 900 and 390 px against OC-03's eight items; 33 explanatory sentences listed by surface with the mandated copy apart; lime located on 27 of 28 pages; the line rows and forms measured from the rendered DOM, and the generator defect; the persona extension states only what record 52 says; nothing attributed to the Owner beyond records 31, 32, 50 and 52 |
+| R1-03 | The journey model is complete | PASS | [C1 rework — project journey model](#c1-rework--project-journey-model): ten stages, each with its names, source workflows, applicability rule with its source, derived states and inputs; derived only, with no new state, status field or engine; the precedence written step by step with sources and applied to scenarios A, B and C and the list's other rows; the capability and relation-marker cases named; the QB-02 fit recorded with two Stage 2 checks |
+| R1-04 | The connected-work map and document readiness | PASS | [C1 rework — connected work and document readiness](#c1-rework--connected-work-and-document-readiness): the fourteen steps of DIR-056 §13 a, each with what is carried, entered and never automatic, with sources; every readiness label mapped to an approved state or derivation, OC-04's five concepts, all fourteen types and the uploads; nothing automatic beyond P0–P6 |
+| R1-05 | The revised direction answers OC-01–OC-11 and applies PL-1–PL-5 | PASS | [C1 rework — revised direction](#c1-rework--revised-direction), parts a–l, each traced to `p7r2-` pages; the package's [line per decision](#revised-checkpoint-c1-package); PL-1–PL-5 applied as its part 5 records |
+| R1-06 | The disposition delta | PASS | [C1 rework — disposition delta](#c1-rework--disposition-delta): five changed rows with old and new dispositions and reasons; the thirteen rows DIR-056 §15 names re-examined; totals re-derived — 83: KEEP 64, ADAPT 11, SUPERSEDE 7, DECIDE-IN-STAGE-2 1; DECISION_INDEX statuses unchanged |
+| R1-07 | Prototypes | PASS | [C1 rework — prototypes](#c1-rework--prototypes): every RS-1–RS-10 state on at least one of 36 `p7r2-` pages; `preview verify` passed for each; one synthetic data set; the Ramp tokens, design context and lint, the 28 `p7r-` sources and the 54 earlier sources identical to the readiness state; no DesainPakeAI output in the repository |
+| R1-08 | The measured checks pass | PASS | [C1 rework — measured checks](#c1-rework--measured-checks): text at least 5.44:1 and indicators at least 3:1; every measured row within 0.0 px, one control height per density, numbers right-aligned; explanatory sentences 33 to 0, rising on no surface, the mandated copy kept; no target below 24 px and every phone target at least 44 px; reflow at 320 px on all 17 phone pages; 0 missing English strings |
+| R1-09 | The revised non-loss map | PASS | [C1 rework — revised non-loss map](#c1-rework--revised-non-loss-map): 60 screens and 22 signals, each with its entry point; every stage and the ten predicates reachable from the journey; DOC-01–DOC-14 and the uploads from document readiness; OD-01–OD-16 for the Owner and absent for an Admin; the five DECIDE-IN-STAGE-2 notes kept |
+| R1-10 | No normative P7 document and no P0–P6 specification changed; nothing proposed as normative | PASS | INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, everything under `docs/01-product/`–`docs/06-api-performance/`, AGENTS.md and every source record are byte-identical to `295fec4`; CONTEXT_INDEX changes only by navigation rows and its amendment note — its last approved hash recorded under TECH-028 —, SOURCE_OF_TRUTH only by two registry rows and DECISION_INDEX only by the D3 row's pointer; no schema change, signal, query, budget or automation is proposed, three Stage 2 checks being listed as checks |
+| R1-11 | Links, identifiers, secrets | PASS | 1,995 relative links and anchors checked in every Markdown file outside `docs/00-governance/sources/`, 0 broken; R1 defines no DIR, OBS, TECH, APPR, GAP or RISK identifier — GAP-052, RISK-010 and APPR-011 stay unused —, the labels RS-1–RS-10, P7R2-S01–P7R2-S05 and R1-01–R1-13, which DIR-056 sets, are tabulated once, in this record; a scan of the staged diff finds no key, token, credential path, key or project identifier, e-mail address, binary, image or unfilled placeholder |
+| R1-12 | The zero-context check passes | PASS | [C1 rework — zero-context check](#c1-rework--zero-context-check) |
+| R1-13 | The revised C1 package is complete | PASS | [Revised Checkpoint C1 package](#revised-checkpoint-c1-package): its eight parts |
