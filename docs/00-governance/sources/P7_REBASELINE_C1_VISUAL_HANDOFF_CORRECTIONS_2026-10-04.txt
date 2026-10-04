@@ -1,0 +1,217 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifty-fifth source record
+Received: 2026-10-04, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix B of the P7 UX re-baseline Checkpoint
+C1 visual-checkpoint authorization received on 2026-10-05 (fifty-sixth source
+record)
+Subject: the Owner's execution-handoff corrections — the five visual
+         references attached to the Executor message itself, with no folder,
+         path or repository copy; no visual binary in the repository, the
+         references recorded textually; attachment identity by content, with
+         hashes as supporting evidence only —, which §2 of the fifty-sixth
+         source record states as DIR-057 RH-1–RH-4
+Delivery: the relayed text between the "----- BEGIN APPENDIX B -----" and
+         "----- END APPENDIX B -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+TWO FINAL EXECUTION-HANDOFF CORRECTIONS BEFORE I SEND THIS TO THE EXECUTOR.
+
+Respond to me in Bahasa Indonesia.
+
+Do not modify the repository.
+Do not reopen any Owner visual decision.
+Do not change the six-anchor scope.
+Do not authorize Stage 2.
+Do not change C1A-1, C1A-2, C1A-3, the document-composer direction, or the
+visual-reference hierarchy.
+
+The authorization is otherwise accepted.
+
+==================================================
+1. USE CHAT ATTACHMENTS — NOT AN EXTERNAL FOLDER PATH
+==================================================
+
+I explicitly want the Executor workflow to be:
+
+- I paste ONE complete Executor prompt into a NEW Claude Code / Executor chat;
+- in THAT SAME message, I upload the THREE approved mockup images and the TWO
+  video references.
+
+Do not require me to:
+- save the files into a separate folder;
+- provide a Windows path;
+- rename the files;
+- copy them into the repository;
+- use a temporary filesystem path.
+
+Rewrite the Executor authorization so it refers to:
+
+"the five visual-reference files attached to this Executor message."
+
+Use semantic roles:
+
+REF-M1 / REF-M2 / REF-M3
+= the three attached approved MultipleCorp mockup images.
+
+REF-V1
+= the attached modern-login/auth video.
+
+REF-V2
+= the attached application UI video.
+
+Before any edit or DesainPakeAI authoring, require the Executor to:
+
+1. confirm that exactly the five expected reference attachments are accessible;
+2. directly inspect all three mockup images;
+3. directly inspect/decode both videos using representative frames across each
+   video's duration, not merely a thumbnail or first frame;
+4. classify each attachment into REF-M1/M2/M3/V1/V2 based on its contents and
+   the authorization;
+5. report that classification to me in Bahasa Indonesia;
+6. summarize the relevant observed visual/motion principles;
+7. STOP before any edit if one of the five attachments cannot be inspected
+   reliably.
+
+The Executor must not guess an unavailable reference from Planning's written
+description.
+
+Planning's descriptions may be used as reconciliation guidance AFTER the
+Executor has inspected the attachment itself.
+
+Do not require a local path.
+
+Do not make successful execution depend on preserving an exact sandbox,
+temporary, Windows or chat-history file location.
+
+==================================================
+2. DO NOT COMMIT THE THREE MOCKUP PNG FILES TO THE REPOSITORY
+==================================================
+
+Remove the plan to archive M1, M2 and M3 as binary PNG source records in the
+repository.
+
+The mockups are visual-reference attachments, not repository assets.
+
+Preserve the project's existing rule against committing generated screenshots
+or other visual binaries merely as design evidence.
+
+The repository should record their provenance and design role TEXTUALLY,
+without copying their binary files into Git.
+
+The same remains true for the two videos and extracted frames.
+
+For the five visual references, repository evidence may record, where
+reliably available:
+
+- semantic reference ID (REF-M1...REF-V2);
+- role in the reference hierarchy;
+- original attachment/display name if available and safe;
+- file type;
+- dimensions/duration where relevant;
+- SHA-256 only if the Executor can calculate it from the actually received
+  attachment bytes without creating a repository dependency on that hash;
+- a concise factual description of what was observed;
+- ADOPT / ADAPT / EXCLUDE reconciliation;
+- statement that the reference itself remains outside the repository.
+
+Do NOT add:
+- PNG source-record binaries;
+- video files;
+- extracted video frames;
+- screenshots/renders of those references.
+
+If preserving the Owner decision requires a source record, use a TEXT source
+record containing the Owner decision and reference metadata/roles, not the
+binary attachment itself.
+
+Recalculate the source-record numbering/counts and all gates accordingly.
+
+Do not assume records 56–58 are PNGs merely because the previous draft said
+so.
+
+==================================================
+3. ATTACHMENT IDENTITY / HASH SAFETY
+==================================================
+
+Do not make the Executor prompt brittle by requiring the uploaded chat
+attachments to have byte-for-byte hashes that may depend on a prior Planning
+session's copy.
+
+The PRIMARY requirement is direct inspection of the five attachments I
+actually send to the Executor.
+
+If the interface preserves original bytes and hashes can be verified, record
+that as supporting evidence.
+
+If the chat attachment pipeline changes representation while preserving the
+visible/reference content, do not reject the reference solely because an
+old Planning-session hash differs.
+
+Instead:
+- verify that the attachment is the intended reference by its content and
+  semantic role;
+- report any material ambiguity;
+- STOP only if the reference cannot be identified or inspected reliably.
+
+Do not silently substitute another file.
+
+==================================================
+4. PRESERVE EVERYTHING ELSE
+==================================================
+
+Preserve in substance:
+
+- C1 remains visually unapproved;
+- R1 structural UX remains preserved;
+- C1A-1, C1A-2 and C1A-3;
+- project-overdue remains a controlled non-normative proposal;
+- THREE mockups are PRIMARY visual references;
+- application video is SECONDARY;
+- modern-login video is SPECIAL auth/motion reference;
+- broad pastel direction is superseded;
+- repository/P0-P6 truth overrides visual references;
+- exactly SIX anchor areas;
+- no seventh anchor;
+- document composer / live preview as a Project Journey state/variant;
+- one coherent visual theme across all six anchors;
+- no 36-page rework;
+- no broad propagation;
+- no Stage 2;
+- no C2;
+- no P8-P11;
+- no application coding;
+- STOP again at C1 for my visual approval.
+
+Also preserve the useful reconciliation already identified where visual mockup
+content conflicts with repository truth, such as:
+- no invented currency concept;
+- no purchase draft state if P0-P6 do not define one;
+- no invented Owner receiving validation;
+- no invented budget approval;
+- no fake project percentage;
+- no overlapping/invalid financial chart categories;
+- no unsupported marketing/security claims.
+
+==================================================
+5. RETURN THE COMPLETE EXECUTOR PROMPT
+==================================================
+
+Return the FULL corrected ready-to-copy Executor authorization.
+
+Do not return:
+- a patch;
+- an addendum;
+- instructions telling me to edit the previous prompt;
+- a reference to an earlier message.
+
+The final Executor authorization must be self-contained so that I can:
+
+1. open a new Claude Code / Executor chat;
+2. paste ONE prompt;
+3. attach the THREE mockup images and TWO videos in that same message;
+4. confirm execution when asked.
+
+All Executor communication to me must remain Bahasa Indonesia.
+
+At the very end, append the required Planning handoff footer with concrete
+Model, Effort and Session values.

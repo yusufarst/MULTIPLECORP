@@ -1,10 +1,10 @@
 # P7 UX re-baseline — evidence and gates
 
-Status: REVIEW | Updated: 2026-10-04 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-05 | Owner: Planning
 
-Authority: the Owner's authorization [DIR-054](../../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) (fifty-first source record) for Stage 0 and Stage 1 of the P7 UX re-baseline only, ending at Checkpoint C1, under the Owner's decisions K1–K4, C-1 and C-2 of [DIR-053](../../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) (fiftieth source record) and the standing intent of D3, D4 and D7 and DIR-040 F6. After the Owner's verdict at Checkpoint C1, [DIR-055](../../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework) (fifty-second source record), the Owner's authorization [DIR-056](../../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework) (fifty-third source record) governs the focused C1 rework, which ends again at Checkpoint C1.
+Authority: the Owner's authorization [DIR-054](../../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) (fifty-first source record) for Stage 0 and Stage 1 of the P7 UX re-baseline only, ending at Checkpoint C1, under the Owner's decisions K1–K4, C-1 and C-2 of [DIR-053](../../00-governance/DECISION_LOG.md#dir-053-dir-054-obs-019-and-tech-027--p7-ux-re-baseline-decisions-stage-01-authorization-baseline-and-direction) (fiftieth source record) and the standing intent of D3, D4 and D7 and DIR-040 F6. After the Owner's verdict at Checkpoint C1, [DIR-055](../../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework) (fifty-second source record), the Owner's authorization [DIR-056](../../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework) (fifty-third source record) governs the focused C1 rework, which ends again at Checkpoint C1. After the Owner's decisions at the re-review of Checkpoint C1, [DIR-057](../../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors) (fifty-fourth and fifty-fifth source records), the Owner's authorization [DIR-058](../../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors) (fifty-sixth source record) governs the C1 visual checkpoint, which ends again at Checkpoint C1.
 
-This is the evidence record of the re-baseline: its baseline, the DesainPakeAI readiness, the stage plan with its checkpoints, the Stage 1 diagnosis and direction for Checkpoint C1, the Owner's verdict at Checkpoint C1 and the C1 rework, and the gates. It is evidence, not a specification, and nothing in it is normative: [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement (D3), and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage replaces or aligns them. DesainPakeAI is an exploration workspace outside the repository and never a source of truth. The record stays REVIEW, following the gate convention.
+This is the evidence record of the re-baseline: its baseline, the DesainPakeAI readiness, the stage plan with its checkpoints, the Stage 1 diagnosis and direction for Checkpoint C1, the Owner's verdict at Checkpoint C1 and the C1 rework, the Owner's visual-direction decision and the C1 visual checkpoint, and the gates. It is evidence, not a specification, and nothing in it is normative: [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement (D3), and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage replaces or aligns them. DesainPakeAI is an exploration workspace outside the repository and never a source of truth. The record stays REVIEW, following the gate convention.
 
 ## Baseline
 
@@ -45,7 +45,7 @@ The four read-only commands of DIR-054 §7, run on 2026-10-04 from a temporary d
 
 ## Plan
 
-The stage plan of the re-baseline as DIR-054 §§9, 20 and 21 record it. K1 places two Owner checkpoints before the normative documents are frozen. Only Stage 0 and Stage 1 are authorized; the rest is the approved plan, recorded and not authorized. After the Owner's verdict at Checkpoint C1 (DIR-055), DIR-056 adds the C1 rework, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-056 §21).
+The stage plan of the re-baseline as DIR-054 §§9, 20 and 21 record it. K1 places two Owner checkpoints before the normative documents are frozen. Only Stage 0 and Stage 1 are authorized; the rest is the approved plan, recorded and not authorized. After the Owner's verdict at Checkpoint C1 (DIR-055), DIR-056 adds the C1 rework, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-056 §21). After the Owner's decisions at the re-review (DIR-057), DIR-058 adds the C1 visual checkpoint, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-058 §19).
 
 | Stage | Content | Authorization |
 | --- | --- | --- |
@@ -53,6 +53,7 @@ The stage plan of the re-baseline as DIR-054 §§9, 20 and 21 record it. K1 plac
 | Stage 1 — diagnosis and direction | Intake; official-documentation verification; the diagnosis of the approved P7 baseline, with the Planning hypotheses H-1 to H-5 verified (K4); the Ramp reference record DESIGN_REFERENCES as a Stage 1 draft; the persona task analysis; provisional dispositions of the 83 earlier P7 decisions and anti-slop rules; a non-normative direction proposal; prototypes of eight key surfaces in DesainPakeAI; a preliminary non-loss map; the C1 package; a zero-context check; gate G1; commit 2 `docs: record P7 UX re-baseline direction for checkpoint C1`; a normal push of the branch | Authorized — DIR-054 |
 | Checkpoint C1 | The Owner's design-direction review: approve, approve with named adjustments or reject the direction; one choice per contentious axis; whether a suitable warehouse/field user is reasonably available for Stage 2 | The Owner |
 | C1 rework (DIR-056) | After the Owner's verdict at Checkpoint C1 — the Stage 1 direction rejected for focused rework under OC-01–OC-12 (DIR-055). R0: the baseline (OBS-020), source records 52 and 53, DIR-055, DIR-056, OBS-020 and TECH-028, the DesainPakeAI readiness, gate R0, commit 3 `docs: record P7 checkpoint C1 rework decision` and a normal push of the branch. R1: the retrospective and persona extension, the project journey model, the connected-work map and document readiness, the revised direction, the disposition delta, `p7r2-` prototypes of RS-1–RS-10, measured checks, the revised non-loss map, the revised C1 package, a zero-context check, gate R1, commit 4 `docs: record revised P7 UX direction for checkpoint C1` and a normal push of the branch; then STOP again at Checkpoint C1 for the Owner's re-review | Authorized — DIR-056 |
+| C1 visual checkpoint (DIR-058) | After the Owner's decisions at the re-review of Checkpoint C1 — C1 not approved, the R1 structure preserved and the visual, art and motion direction pending a focused visual checkpoint (DIR-057). VC0: the baseline (OBS-021), the inspection and classification of the five attached visual references, source records 54–56, DIR-057, DIR-058, OBS-021 and TECH-029, the DesainPakeAI readiness, gate VC0, commit 5 `docs: record P7 checkpoint C1 visual direction decision` and a normal push of the branch. VC1: the reference reconciliation, one draft visual system, the document-composer validation, the non-normative project-overdue proposal (GAP-052), six visual anchors AN-1–AN-6 in at most 14 `p7r3-` pages, measured checks, the visual C1 package, a zero-context check, gate VC1, commit 6 `docs: record P7 C1 visual anchors for checkpoint C1` and a normal push of the branch; then STOP again at Checkpoint C1 for the Owner's visual review | Authorized — DIR-058 |
 | Stage 2 — core design and usability | The complete IA and page inventory; the design system — tokens, shadcn/ui mapping, patterns, states, density; the localization architecture under C-1; the authentication journeys (SECURITY H7-15–H7-19, AICWDF §4A.10, GAP-044, J-ACC-01 under AU-03); end-to-end prototypes of the critical journeys on phone and desktop in both languages; the usability kit in Indonesian with the K2 participants | Not authorized |
 | Checkpoint C2 | The usability results and the Owner's verdict, with fixes and re-tests when needed. K2: the Owner, the Admin Operasional validator and one real warehouse/field mobile user if reasonably available, otherwise the first two only; short task-based sessions on the prototype with synthetic data, moderated by the Owner from the executor's script and recorded by role without personal names | The Owner |
 | Stage 3 — normative documents | INFORMATION_ARCHITECTURE and DESIGN_SYSTEM replaced in place with stable IDs; NAVIGATION_CONTRACTS, LOCALIZATION and DESIGN_REFERENCES; ROUTE_CONTRACTS and INTERACTION_CONTRACTS as a P3 addition; the ADMIN_FLOW alignment; the full non-loss matrix and the governance records; any schema change only through C-1 and change control | Not authorized |
@@ -1335,6 +1336,8 @@ All fourteen document types and the external-upload path are reachable from docu
 
 ## Revised Checkpoint C1 package
 
+**Structure preserved; visual direction not approved — DIR-057; successor: the visual checkpoint.** See [Checkpoint C1 — visual-direction decision (DIR-057)](#checkpoint-c1--visual-direction-decision-dir-057).
+
 The English equivalent of the package the final report gives the Owner in Bahasa Indonesia (DIR-056 §19).
 
 **1. What changed for each decision**
@@ -1439,3 +1442,168 @@ Run on the complete staged change of commit 4 before the commit (DIR-056 §20.3)
 | R1-11 | Links, identifiers, secrets | PASS | 1,995 relative links and anchors checked in every Markdown file outside `docs/00-governance/sources/`, 0 broken; R1 defines no DIR, OBS, TECH, APPR, GAP or RISK identifier — GAP-052, RISK-010 and APPR-011 stay unused —, the labels RS-1–RS-10, P7R2-S01–P7R2-S05 and R1-01–R1-13, which DIR-056 sets, are tabulated once, in this record; a scan of the staged diff finds no key, token, credential path, key or project identifier, e-mail address, binary, image or unfilled placeholder |
 | R1-12 | The zero-context check passes | PASS | [C1 rework — zero-context check](#c1-rework--zero-context-check) |
 | R1-13 | The revised C1 package is complete | PASS | [Revised Checkpoint C1 package](#revised-checkpoint-c1-package): its eight parts |
+
+## Checkpoint C1 — visual-direction decision (DIR-057)
+
+Recorded from the fifty-fourth to fifty-sixth source records ([DIR-057 and DIR-058](../../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors)): the Owner's decisions and handoff corrections sent to the planning chat on 2026-10-04, and the visual-checkpoint authorization received on 2026-10-05 with the branch at commit 4 `2996465136442eac37e779dfd1f80b8b28ec5b8c`.
+
+**C1 status.**
+
+| Item | Decision |
+| --- | --- |
+| Checkpoint C1 | Not approved |
+| The structural UX of the C1 rework — R1, commit 4 | Preserved |
+| The visual, art and motion direction | Not yet approved; C1 pending a focused visual checkpoint |
+| What follows | The C1 visual checkpoint of DIR-058 — six visual anchors —, then STOP again at Checkpoint C1 for the Owner's visual review; Stage 2 not authorized |
+
+**The preserved structure** — R1's work, which the visual checkpoint restyles and corrects for its anchors and never redesigns:
+
+| Preserved | Where R1 records it |
+| --- | --- |
+| The workflow/task-first Admin experience; reduced primary navigation | [Revised direction](#c1-rework--revised-direction) a) and b) |
+| The Admin *Pekerjaan* work queue | [Revised direction](#c1-rework--revised-direction) b) |
+| The guided Project Journey; derived applicable stages; the deterministic next recommended action | [Project journey model](#c1-rework--project-journey-model) a)–c); [revised direction](#c1-rework--revised-direction) e) |
+| The connected-work map; the document-readiness model | [Connected work and document readiness](#c1-rework--connected-work-and-document-readiness) a) and b) |
+| Different Owner and Admin experiences; the Owner's decision/exception-first hierarchy | [Revised direction](#c1-rework--revised-direction) b) and c) |
+| The mobile warehouse task flow | [Revised direction](#c1-rework--revised-direction) f) |
+| Reduced explanatory copy | [Revised direction](#c1-rework--revised-direction) g) |
+| Accessibility; precise form alignment | [Measured checks](#c1-rework--measured-checks); [revised direction](#c1-rework--revised-direction) j) |
+| P0–P6 business, security and data truth | The approved specifications |
+
+**Accepted Level-1 corrections C1A-1–C1A-3**, carried forward and applied where the anchors need them:
+
+| ID | Correction | Where VC1 applies it |
+| --- | --- | --- |
+| C1A-1 | *Berikutnya* is always a step that can be done now, when one exists. An item that waits for a prerequisite produced by another stage never becomes *Berikutnya* while the step that satisfies that prerequisite is available; the waiting item stays visible in document readiness and in "Yang tersisa" | AN-4 — a required document waiting on the invoice while *Berikutnya* is "Buat invoice" |
+| C1A-2 | One control per action on a page: one button for the next step; rows resolved by the same step merged, or linked to where they are resolved; no repeated identical buttons; the self-check counts duplicates truthfully | Every anchor |
+| C1A-3 | The Owner Beranda's QS-15 row uses the approved definition, with no deadline filter; the deadline stays a project fact and the defined deadline sort of the project list (SCR-09) | AN-2 |
+
+**Project overdue (OV).** "Project overdue" is explored as an Owner-facing signal by a controlled proposal only, never normative here. The governing deadline is not invented. The proposal answers six points — the approved deadline fact that governs it; exactly when a project becomes overdue; the excluded states; who sees it; whether existing signals or queries support it; whether P3/P6/IA change control is required — and, if the repository defines no single unambiguous deadline, names the exact Owner decision required later. VC1 records it in its own section of this record.
+
+**Visual direction VD-01–VD-11:**
+
+| ID | Decision |
+| --- | --- |
+| VD-01 Reference hierarchy | PRIMARY: the three attached approved MultipleCorp mockups REF-M1–REF-M3, governing palette, typography, card treatment, spacing, density, icon style, component proportions, hierarchy, chart treatment, premium feeling and identity — as visually close as practical while adapting to the real workflow. SECONDARY (application): the application video REF-V2, refining premium restraint, spacing rhythm, layout precision, density, panels, drawers, modals, transitions and interaction polish, never overriding the mockups. SPECIAL (authentication only): the modern-login video REF-V1, informing the sign-in composition, the split panel, curved/asymmetric geometry, the authentication transition and motion and the first impression. BUSINESS/SECURITY TRUTH: the repository, P0–P6 and the preserved R1 UX win wherever a reference conflicts with them, and the design adapts |
+| VD-02 Pastel direction cancelled | No general visual system of sage, dusty-blue, soft-amber, muted-rose or other multi-pastel decorative surfaces |
+| VD-03 Target foundation | A warm neutral/ivory canvas; clean white or subtly differentiated surfaces; charcoal/near-black typography; quiet neutral borders; restrained olive/green/yellow-green accents; supporting blue only where useful; subtle shadows; disciplined spacing; elegant simple icons; premium information density. Semantic colours only where real business meaning requires them, never as decorative identity |
+| VD-04 Character | Premium, elegant, calm, precise, modern, professional, mature, operationally clear — never pastel-themed, a generic admin template, AI-generated, playful, decorative, over-coloured or visually loose |
+| VD-05 Sign-in | A split panel, a clean form surface, a strong visual panel with a smooth curved/asymmetric shape, controlled blue/cyan, minimal copy, a smooth panel transition and strong hierarchy; no Sign Up — MultipleCorp has no public registration; motion following credential/Google → TOTP/verification → the application with P5 semantics unchanged, clarifying the state change, smooth and restrained, never delaying work and supporting prefers-reduced-motion |
+| VD-06 Role-specific experience in one visual language | Admin: what to do now, which project, the current stage, the blocker, the next valid action, relevant document readiness and what remains, never having to remember which module to open. Owner: decisions needing the Owner, exceptions and meaningful risks, project progress needing attention, compact KPIs and drill-down only when useful, Admin work never competing visually. Warehouse/field: scan first, the next item first, minimal text, large targets, per-line feedback and a manual fallback |
+| VD-07 Document creation and preview | For system-generated documents: business data → prefilled draft → review of the allowed inputs → document preview → validation → explicit finalization or issue; the Admin sees the document before it is final. On desktop, where suitable, a composer — editable or confirmable data, the inputs still needed, validation and source context on the left; a live preview of about 40–45% of the workspace with page, zoom and full-preview controls on the right; changes to allowed inputs shown in the preview. The PDF is never the editable source of truth; reused data comes from approved records and is corrected through its authorized source flow; carried-forward data is distinguished from entered data; a draft preview never satisfies issuance; issued documents keep their immutability, revision and void semantics; external uploads stay distinct. On a phone no forced split — Edit → Preview → Finalize, or a full-screen preview. All verified against P0–P6 first, a conflict surfaced rather than behaviour invented |
+| VD-08 Six anchors | Exactly six anchor areas, no 36-screen rework and no seventh anchor; a document-preparation/preview state of the Project Journey anchor is not a seventh anchor |
+| VD-09 One product | All six anchors visibly belong to one design system, defined by the three mockups; the videos refine interaction and never create separate themes |
+| VD-10 Visual quality is a C1 gate | Accessibility, alignment and reflow stay mandatory; the Owner also judges premium feel, composition, hierarchy, typography, spacing rhythm, proportion, icon consistency, colour restraint, chart quality, visual balance, form quality, document-preview quality, motion quality, text wrapping, anything visually offside and whether the six surfaces form one coherent system |
+| VD-11 Next action | Stage 2 not authorized; the normative INFORMATION_ARCHITECTURE, DESIGN_SYSTEM and ADMIN_FLOW unfrozen; no propagation of the new theme across the P7 pages; first, the Owner's visual approval of the six anchors |
+
+**Reference handling RH-1–RH-4** (Appendix B):
+
+| ID | Decision |
+| --- | --- |
+| RH-1 Delivery and naming | The five references are attached to the executor's message; no folder, Windows path, renaming, temporary-path dependency or repository copy is required or used. REF-M1–REF-M3 are the three approved mockup images, REF-V1 the modern-login video and REF-V2 the application video |
+| RH-2 Inspection first | Before any edit or DesainPakeAI authoring: exactly five attachments confirmed, the three images inspected directly, both videos decoded through frames across their whole duration, each classified by content and reported to the Owner with the observed principles; a STOP if one cannot be inspected reliably; never a guess from Planning's description, which is reconciliation guidance only after the executor's own inspection |
+| RH-3 No visual binary | No PNG, image, video, extracted frame, screenshot or render of a reference in the repository; each recorded textually — its ID and role, its display name if available and safe, its type, its dimensions or duration, its SHA-256 only if computed from the received bytes, as supporting evidence, a factual description, its ADOPT/ADAPT/EXCLUDE reconciliation and a statement that it stays outside the repository; a source record preserving an Owner decision is text only |
+| RH-4 Identity by content | Identity by content and semantic role, never by an earlier session's hash; hashes are supporting evidence only when verifiable; a representation change by the attachment pipeline is no reason to reject; a material ambiguity is reported; a STOP only if a reference cannot be identified or inspected reliably; never a silent substitution |
+
+**Relation to earlier decisions.** DIR-055 OC-07's pastel exploration is superseded by VD-02 and VD-03; its rejection of a dominant lime stays in spirit, yellow-green being a restrained accent only. OC-08's protections stay — neutral/one-highlight discipline, direct labels, no rainbow, never colour alone, no new metric —, reconciled with the mockups' chart treatment by VP-6. DIR-053 K3's "primary reference is Ramp" clause is superseded by VD-01, and its non-copy rules stay ACTIVE: no Ramp name, logo, wordmark, brand asset or screenshot, no chat composer, no low-contrast lime text. R1's "Lime: none" and its pastel token set in DESIGN_REFERENCES §6 are superseded; R1's structure, PL-1–PL-5, journey model, connected-work map and readiness mapping stay. D3, D4, D7, DIR-040 F6 and DIR-053 K1, K2, K4, C-1 and C-2 are unchanged. Under D4 the latest Owner UX direction prevails over conflicting older anti-slop rules, and the anti-slop rules that protect clarity, honesty and accessibility stay.
+
+**Planning interpretations VP-1–VP-8** (Level 1, presentation only; recorded with DIR-058):
+
+| ID | Interpretation |
+| --- | --- |
+| VP-1 Sidebar | The mockups' module sidebar is visual evidence, not structure: its treatment — icons, the selected olive fill with its rule, spacing — applies to R1's reduced primary entries and the collapsed *Menu lengkap* |
+| VP-2 No marketing inside the application | No greeting banner, emoji, hero header, quote, upsell card or marketing copy (SLOP-19, SLOP-20, SLOP-21, SLOP-22 and SLOP-27 stay KEEP); Beranda starts with its title and view controls, then the decisions |
+| VP-3 KPI cards | The mockups' card form is kept; period-over-period deltas and sparklines are excluded — they need a second period or a series that QB-10 and TX-10 do not budget ("needs definition — not proposed") |
+| VP-4 Project progress | The R1 stage track; on lists at most a segmented indicator of the applicable stages, the done ones filled — never a percentage or a weighted bar (PL-1; SLOP-44) |
+| VP-5 Imagery | No photographs of projects or people — no such data exists in P0–P6; the sign-in visual panel may carry imagery, in the prototype either a crop of REF-M2 inside the DesainPakeAI prototype only or an abstract composition, never an external stock image and never anything in the repository; the final imagery and logo are later Owner asset decisions, the prototype redrawing the mockups' mark as a simple placeholder |
+| VP-6 Charts | The receivable-ageing bar may use one ordered, muted sequential ramp from a neutral base towards the warning/danger hue, its buckets being ordered by severity, with direct labels, amounts and a data table, colour never the only cue; categorical multi-hue charts and part-to-whole charts of overlapping financial values are excluded |
+| VP-7 Traceability | Every element shown maps to a defined record, field, command, signal, CALC value or capability; anything else is excluded or listed as "needs definition — not proposed" |
+| VP-8 Motion | Functional only — state changes, panels, drawers and modals; no count-up numbers, parallax, looping or decorative motion; SLOP-15 and SLOP-16 adapted only for functional transitions |
+
+## C1 visual checkpoint — reference inspection
+
+Done on 2026-10-05 before any edit of the repository and before any DesainPakeAI authoring (DIR-058 §5.2; RH-2), with tools already installed only: Node.js 24 and the installed Google Chrome 154 in headless mode, driven over its DevTools protocol, playing each video in a local page served from the session's temporary directory and drawing frames to a canvas; ffmpeg is not installed, and nothing was installed. The frames, crops and sampling scripts are working files in that temporary directory outside the repository; none is committed or uploaded to DesainPakeAI, and this section holds no image or frame.
+
+**Classification.** Exactly five attachments were accessible — three images shown in the message and two videos attached as files — and each was identified by its content:
+
+| Attachment as received | Identified as | Evidence |
+| --- | --- | --- |
+| Image `3.webp` | REF-M1 — the Owner Beranda mockup | The sidebar with "Khusus Owner", four KPI cards, "Tindakan hari ini", "Umur piutang", "Aktivitas terbaru", "Proyek berjalan" and "Nilai proyek" |
+| Image `2.webp` | REF-M2 — the login mockup | The split card, the image panel on the left and "Masuk ke MultipleCorp" on the right |
+| Image `1.webp` | REF-M3 — the Buat Pembelian mockup | The project card, "Informasi Pembelian", the line table and "Ringkasan Pembelian" |
+| Video `Modern login page using css #webdesign #webdevelopement #css #webdevelopment #html.mp4` | REF-V1 — the modern-login video | A vertical tutorial whose curved gradient panel slides across a split authentication card; its size and SHA-256 equal the Planning-session values |
+| Video `15a91bf104b6d2e185c822ce59dd6e1e.mp4` | REF-V2 — the application video | A landscape showcase of a dashboard, lists, record pages, side panels, a modal and transitions; its size and SHA-256 equal the Planning-session values |
+
+**Frames inspected.**
+
+| Reference | Duration and resolution | Timestamps inspected |
+| --- | --- | --- |
+| REF-V1 | 11.59 s — the video track 11.50 s, 345 frames at 30 fps; 720 × 1280 | Every 0.5 s from 0.00 to 11.50 s, and 11.54 s (25 frames); a change scan every 0.1 s (116 samples), which places the motion at 0.1–0.7 s (the entrance), 3.4–4.0 and 7.5–7.9 s (the code panels changing), 5.8–6.1 s (the panel sliding to sign-up), 9.2–9.4 s (the title fading), 10.8–11.0 s (the panel sliding back) and 11.0–11.5 s (the fade-out); the change peaks and the sample before each — 0.10, 0.20, 0.30, 0.40, 3.70, 3.80, 5.90, 6.00, 10.80, 10.90, 11.10, 11.20, 11.30 and 11.40 s; dense runs 5.20–6.30 s every 0.10 s (12 frames) and 10.70–11.55 s every 0.05 s (18 frames); the card enlarged at 2.0, 5.9 and 6.5 s |
+| REF-V2 | 47.48 s — 2,849 frames at 60 fps; 2400 × 1800 | Every 1 s from 0 to 47 s, and 47.43 s (49 frames); a change scan every 0.25 s (190 samples) and its 21 change peaks with the sample before each — 0.75/1.00, 1.50/1.75, 3.00/3.25, 6.25/6.50, 7.25/7.50, 9.75/10.00, 12.50/12.75, 15.00/15.25, 17.00/17.25, 20.50/20.75, 22.00/22.25, 23.75/24.00, 27.75/28.00, 29.50/29.75, 32.00/32.25, 32.75/33.00, 36.75/37.00, 39.00/39.25, 40.00/40.25, 43.25/43.50 and 44.25/44.50 s; dense runs 3.00–6.30 s every 0.30 s (the dashboard building in), 12.30–13.40 s every 0.10 s (the command palette opening) and 39.80–40.90 s every 0.10 s (a detail panel filling), 12 frames each; full-size frames at 7, 10 and 19 s |
+
+**Observed principles.**
+
+- **REF-M1–REF-M3, the primary references.** One light product: a warm ivory canvas (sampled `#F4F6F1`–`#F7F8F3`) with white cards, a large card radius and a soft shadow; near-black ink with grey secondary text (`#5E5F66`–`#757779`); an olive-tinted selected navigation entry (`#EAEECD`, `#ECF1D3`) with a rule at its edge; thin outline icons in round tinted wells (olive `#EBEFD9`, blue `#D9EBF6`, peach `#FAECDF`, mint `#DDEDE8`); a deep green primary save button (`#1A5034`) with white text, a soft olive sign-in button (`#BFCC8A`) with dark text, a pale yellow-green accent fill (`#EFF5C9`), a pale table header (`#F2F3EE`) and a cream summary card (`#FDFCF3`); one neo-grotesque sans family — bold page titles, medium labels, small grey metadata, Indonesian number formatting; the receivable-ageing bar an ordered ramp `#99B1A0`, `#EDD798`, `#CCAD8E`, `#D5705B`, `#A7322C` with a legend and amounts. These are first samples from flat areas; VC1 measures the full set (DIR-058 §11 a).
+- **REF-V1, sign-in composition and motion only.** The split card: a white form half — a heading, a row of four social sign-in tiles, a caption, two filled inputs with placeholders and no visible labels, a forgotten-password link and a pill button — and a gradient half whose edge facing the form is a large curve, with a greeting, one sentence and an outline button. Activating that button slides the panel across the card in about 0.3 s: halfway it covers the middle of the card as a rounded block while the form behind it changes to sign-up; the gradient shifts from blue-to-teal on the right to indigo-to-blue on the left; the return takes about 0.2–0.3 s. The background, title, watermark and code panels belong to the tutorial, and the final fade is the video's ending, not interface motion.
+- **REF-V2, the application refinement.** A warm light-grey canvas with white panels of about 16–20 px radius, thin borders, small type, pill badges, one yellow highlight and black pill primary buttons; a compact but calm rhythm. Interface motion is short and purposeful: the command palette opens with ⌘K over a dimmed and blurred page in about 0.2–0.3 s, and a detail panel fills its column with a quick fade while the list beside it keeps its place. The dashboard builds in with staggered cards and a count-up, and the recording zooms and pans between views — showcase motion, not interface behaviour. Lists group rows under collapsible headings with counts; rows carry avatars and two icon actions; navigation entries carry counts; an assistant panel, a "Mine / Team" switch and photographs appear.
+
+**Differences from Planning's guidance (DIR-058 §5.5).** REF-V1's gradient changes hue with the panel's position rather than being one teal-to-blue gradient; its inputs have no visible labels; the slide lasts about 0.3 s. REF-V2's "modal over a blurred background" is a command palette opened from the keyboard, and its right panels are columns of the layout that fill with content rather than drawers sliding over it; the recording adds camera zooms and pans of its own. Everything else Planning describes was observed.
+
+**Ambiguities and their resolution.**
+
+| Ambiguity | Resolution |
+| --- | --- |
+| The three images arrived as lossy WebP files (VP8 with an ICC profile) of 109,962–153,490 bytes, so their SHA-256 differs from the Planning-session PNG values | A representation change by the attachment pipeline (RH-4): each is identified by content and has the same 1448 × 1086 pixels; colours sampled from flat areas agree with Planning's samples within 2 units per channel, while thin text is only approximate after lossy compression — VC1 samples flat areas |
+| The images arrived in the order M3, M2, M1 | Classified by content, not by order |
+| The desktop client attached the two videos as references to files on the Owner's computer | Read in this session only; their location is not recorded and nothing depends on it — a later session asks the Owner to attach them again (DIR-058 §23) |
+| REF-V1 shows a creator watermark and REF-V2 a product's own brand | Not named, recorded or used anywhere (DIR-058 §§5.4 and 21) |
+| Instructions inside an attachment | None found; the code shown in REF-V1 is tutorial content |
+
+**Textual reference records (RH-3).** The references stay outside the repository and none is business truth; their provenance and observed descriptions are in [SOURCE_OF_TRUTH](../../00-governance/SOURCE_OF_TRUTH.md#p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-handoff-corrections-and-visual-checkpoint-authorization).
+
+| ID | Role | Received as | Dimensions / duration | SHA-256 of the received bytes — supporting evidence | Against DIR-058 §5.3 | Reconciliation |
+| --- | --- | --- | --- | --- | --- | --- |
+| REF-M1 | PRIMARY | `3.webp`, WebP, 153,490 bytes | 1448 × 1086 | `9D4BB880B73EB98C5011D7C3E35BAF4DF6039125E0CE140B4EC1C2447EFA5F15` | Differs — a PNG of 1,376,484 bytes there; re-encoded | ADOPT, ADAPT or EXCLUDE per element in VC1 (DIR-058 §11) |
+| REF-M2 | PRIMARY | `2.webp`, WebP, 109,962 bytes | 1448 × 1086 | `F5EEA4265EB15DC1FB67C82B1EA28D1298E2432C6EF34304AC0AD574A716357B` | Differs — a PNG of 1,374,911 bytes there; re-encoded | As above |
+| REF-M3 | PRIMARY | `1.webp`, WebP, 124,716 bytes | 1448 × 1086 | `3AD1A3ADF82666BED3B6310E7EBA5DD78CDF1370F3188EB72E49929AECA4AF15` | Differs — a PNG of 1,221,499 bytes there; re-encoded | As above |
+| REF-V1 | SPECIAL — sign-in composition and motion | `Modern login page using css #webdesign #webdevelopement #css #webdevelopment #html.mp4`, MP4 (H.264 30 fps, AAC), 1,057,375 bytes | 720 × 1280, 11.59 s | `852CC69D537F75A3B4A372466CF11CE296D18FD1CE14A8F1CAE7AD3330D29559` | Equal | Taken and not taken in VC1 |
+| REF-V2 | SECONDARY — application | `15a91bf104b6d2e185c822ce59dd6e1e.mp4`, MP4 (H.264 60 fps, embedded cover), 18,799,610 bytes | 2400 × 1800, 47.48 s | `9A67E4C5DD4125425A8995162BA08CCB42473633D25545FBD42A1C124B72005C` | Equal | Taken and not taken in VC1 |
+
+## C1 visual checkpoint — readiness
+
+The five read-only commands of DIR-058 §8, run on 2026-10-05 from a temporary directory outside the repository, before any file of the repository was edited. Non-secret evidence only: the output filter first printed only the shape of each answer — its keys, booleans and numbers, every string replaced by its length — and then only named fields, so no key field, masked or not, no key identifier, project identifier or credential path reached the session's output, and none is recorded; nothing was installed, upgraded, re-authenticated or reconfigured, the active project was not switched, and no paid plan was used.
+
+| Item | Evidence |
+| --- | --- |
+| CLI version | 0.2.2 — `dpai --version` |
+| Authenticated | yes — `dpai auth status --pretty` |
+| Active project | **MULTIPLECORP**, role owner — `dpai project current --pretty`; not switched |
+| Context revision | `sha256-cfd0fe0cac39bda1` — `dpai context --pretty`; the revision [C1 rework — prototypes](#c1-rework--prototypes) records after R1 authoring |
+| Retrieval time | 2026-10-05 00:34 WIB; the context kept outside the repository |
+| Ramp design system | found — the context's design summary names "Ramp", version alpha.3, with 18 colour tokens, 8 typography tokens and 8 sections |
+| Page count | 118 — the count after R1 authoring; no page in a working state |
+| Earlier pages | all 54 present — `dpb-probe` and the 53 DPB pages |
+| `p7r-` pages | all 28 IDs listed under [Prototypes](#prototypes) present, and no other `p7r-` page |
+| `p7r2-` pages | all 36 IDs listed under [C1 rework — prototypes](#c1-rework--prototypes) present, and no other `p7r2-` page |
+| `p7r3-` pages | none |
+| Project files | `dpai file list`: 123 entries — the 118 page sources, `DESIGN.md`, `PRODUCT.md`, `prototype.json`, `.prototype/canvas.json` and `src/styles/tokens.css` |
+| Setup steps needed | none — no stop |
+
+`git status` showed nothing new in the repository after the commands.
+
+## Gate VC0
+
+Run on the complete staged change of commit 5 before the commit (DIR-058 §9.2), with scripts kept outside the repository. Every item passed.
+
+| Item | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| VC0-01 | The baseline equals DIR-058 §4 | PASS | Items 1–11 verified read-only before any change and recorded as [OBS-021](../../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors): the live remote and the local branches as stated, commit 4 `2996465136442eac37e779dfd1f80b8b28ec5b8c` and commit 3 under the Owner's identity without a trailer, a clean tree and index, the 53 source hashes, sizes and line counts, the commit-4 hashes of TECH-028 with DECISION_LOG's `F38F9B815DF194ABEC3FDD9686126ED48BFBDA50DCA1FEC251B03087BB43BC1D`, the gap totals, the unused identifiers and labels, the absent paths and the unchanged specifications |
+| VC0-02 | The attachments inspected, classified and reported, and execution confirmed | PASS | [C1 visual checkpoint — reference inspection](#c1-visual-checkpoint--reference-inspection): five attachments — the three images inspected directly and both videos decoded through frames across their whole duration — each classified by content; the classification and principles reported to the Owner in Bahasa Indonesia with the baseline and the readiness in one message, and the Owner selected "Ya, jalankan penuh" before any edit (DIR-058) |
+| VC0-03 | The staged diff touches only the listed files | PASS | `git diff --cached --name-status 2996465` lists 12 paths — `.gitattributes`, CHANGELOG, the three new source records (added), SOURCE_OF_TRUTH, DECISION_LOG, DECISION_INDEX, this record, DESIGN_REFERENCES — its header note only, by a word-level diff —, PHASE_STATUS and CURRENT_HANDOFF; GAP_REGISTER unchanged, VC0 having found no new gap |
+| VC0-04 | Records 54–56 | PASS | All three follow the header convention of records 48–53 — the first line, Received, Subject, a Note on the unarchived references for record 54 and an Attachments line for record 56, Delivery, the transcript sentence, a separator of 68 `=` characters and a blank line before the transcript — with LF bytes, no byte-order mark and a final line break; their lines, bytes and SHA-256 in SOURCE_OF_TRUTH — 526 / 14,208, 217 / 8,011 and 1,785 / 79,333 — equal the staged blobs; the 53 earlier records are byte-identical to `2996465`; the folder holds 56 source records |
+| VC0-05 | No visual binary, secret or placeholder; the references recorded as text only | PASS | The new files are three LF text records; a search of the staged diff finds no image, video, frame, screenshot, render, DesainPakeAI output, key, token, credential path, key or project identifier, e-mail address or unfilled placeholder — the angle-bracket templates inside record 56 are the Owner's verbatim text; the five references appear only as text rows in SOURCE_OF_TRUTH and this record (RH-3) |
+| VC0-06 | Readiness evidence | PASS | [C1 visual checkpoint — readiness](#c1-visual-checkpoint--readiness) records the CLI version, authentication, the active project, the context revision, the retrieval time in WIB, the Ramp design system, the page count, the earlier, `p7r-` and `p7r2-` pages, the absence of `p7r3-` pages and no setup step; no key, key identifier, token, credential path or project identifier is recorded |
+| VC0-07 | The current-state records agree | PASS | PHASE_STATUS, CURRENT_HANDOFF, DECISION_INDEX, DECISION_LOG and this record give Checkpoint C1 not approved with the structure preserved (DIR-057), the visual checkpoint authorized (DIR-058), VC0 done and VC1 next, and Stage 2 not authorized; none claims VC1 work, a push of commit 5 or publication |
+| VC0-08 | Links and identifiers | PASS | 2,045 relative links and anchors checked in every Markdown file outside `docs/00-governance/sources/`, 0 broken; DIR-057, DIR-058, OBS-021 and TECH-029 each have one row in the decision log's index and one entry heading; the label sets C1A-1–C1A-3, OV, VD-01–VD-11, RH-1–RH-4 and VP-1–VP-8 are tabulated once, in [Checkpoint C1 — visual-direction decision (DIR-057)](#checkpoint-c1--visual-direction-decision-dir-057), REF-M1–REF-V2 in SOURCE_OF_TRUTH and [C1 visual checkpoint — reference inspection](#c1-visual-checkpoint--reference-inspection), and the items VC0-01–VC0-10 here; no GAP, RISK or APPR identifier is defined — GAP-052, RISK-010 and APPR-011 stay unused |
+| VC0-09 | Content-truth counts unchanged | PASS | V1_SCOPE, PERMISSIONS_MATRIX, DATABASE and GAP_REGISTER are byte-identical to `2996465` and were counted again: 18 MUST capabilities and 14 document types (V1_SCOPE), 80 capabilities (PERMISSIONS_MATRIX), 125 logical tables in 13 modules (DATABASE §4) and the gap totals 51 — 4 CLOSED, 38 OPEN, 0 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK |
+| VC0-10 | No P7 normative document and no P0–P6 specification changed | PASS | INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, everything under `docs/01-product/`–`docs/06-api-performance/`, CONTEXT_INDEX, AGENTS.md and the other P0 specifications are byte-identical to `2996465`; SOURCE_OF_TRUTH changes only as the continuity record of DIR-058 §§7.2 and 9.1 |

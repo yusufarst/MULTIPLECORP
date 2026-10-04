@@ -1,0 +1,526 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifty-fourth source record
+Received: 2026-10-04, Owner message to the planning chat, relayed by the Owner
+to the repository executor as Appendix A of the P7 UX re-baseline Checkpoint
+C1 visual-checkpoint authorization received on 2026-10-05 (fifty-sixth source
+record)
+Subject: the Owner's C1 visual-direction decisions — Checkpoint C1 not yet
+         approved, the R1 structural UX preserved, C1A-1–C1A-3 accepted, the
+         project-overdue proposal (OV), the visual-reference hierarchy, the
+         broad pastel direction superseded, the target character and the
+         authentication, role, document-preview and six-anchor directions —,
+         which §2 of the fifty-sixth source record states as DIR-057
+Note: the five visual references it names — three MultipleCorp mockup images
+         and two videos — were attachments; they are not archived and are
+         recorded textually as REF-M1–REF-M3, REF-V1 and REF-V2 in
+         SOURCE_OF_TRUTH
+Delivery: the relayed text between the "----- BEGIN APPENDIX A -----" and
+         "----- END APPENDIX A -----" marker lines, which are not transcribed.
+This is a transcript of the relayed message, not a byte-copy claim about an attachment.
+====================================================================
+
+OWNER C1 UPDATE — FINAL VISUAL DIRECTION BEFORE ANY STAGE 2 AUTHORIZATION
+
+Respond to me in Bahasa Indonesia.
+Any Executor prompt you prepare must be in English.
+
+Your independent technical review of R0+R1 is accepted.
+
+I also accept C1A-1, C1A-2 and C1A-3 as Level-1 corrections to carry
+forward.
+
+However:
+
+DO NOT record C1 as approved yet.
+DO NOT prepare or authorize Stage 2 yet.
+
+My visual/art-direction requirements have now been clarified and supersede my
+earlier broad pastel preference.
+
+I am attaching exactly FIVE visual references to this Planning message:
+
+- THREE MultipleCorp mockup images that I explicitly approve;
+- TWO video references.
+
+Use the hierarchy below exactly.
+
+==================================================
+1. CURRENT C1 STATUS
+==================================================
+
+The STRUCTURAL UX improvements from R1 are preserved.
+
+The VISUAL / ART / MOTION direction is NOT YET APPROVED.
+
+Therefore C1 remains pending a focused visual checkpoint.
+
+Preserve the successful R1 structural work:
+
+- workflow/task-first Admin experience;
+- reduced primary navigation;
+- Admin Pekerjaan/work queue;
+- guided Project Journey;
+- derived applicable stages;
+- deterministic next recommended action;
+- connected-work map;
+- document-readiness model;
+- different Owner and Admin experiences;
+- Owner decision/exception-first hierarchy;
+- mobile warehouse task flow;
+- reduced explanatory copy;
+- accessibility;
+- precise form alignment;
+- P0–P6 business/security/data truth.
+
+C1A-1, C1A-2 and C1A-3 are accepted.
+
+==================================================
+2. PROJECT OVERDUE SIGNAL
+==================================================
+
+For your previous question B:
+
+YES, I want "project overdue" explored as an official Owner-facing signal.
+
+But this is only authorization to PREPARE A CONTROLLED PROPOSAL.
+
+Do not invent the governing deadline.
+
+The proposal must identify:
+
+- which approved deadline fact would govern it;
+- exactly when a project becomes overdue;
+- which project states are excluded;
+- who can see it;
+- whether existing signals/queries can support it;
+- whether P3/P6/IA change control is required.
+
+If the repository does not define one unambiguous deadline, surface the exact
+Owner decision required later.
+
+Do not make this signal normative yet.
+
+==================================================
+3. VISUAL REFERENCE PRIORITY — BINDING
+==================================================
+
+PRIMARY VISUAL REFERENCES:
+The THREE attached MultipleCorp mockup images.
+
+These are the main target for:
+- colour palette;
+- typography;
+- card treatment;
+- spacing;
+- visual density;
+- icon style;
+- component proportions;
+- hierarchy;
+- chart treatment;
+- premium feeling;
+- overall application identity.
+
+I like these mockups very much.
+
+The resulting design should stay as visually close to this theme as
+practical while adapting it to the real MultipleCorp workflow.
+
+SECONDARY APPLICATION REFERENCE:
+The SECOND attached video.
+
+Use it to refine:
+- premium restraint;
+- spacing rhythm;
+- layout precision;
+- information density;
+- panels;
+- drawers;
+- modals;
+- transitions;
+- interaction polish.
+
+It must NOT override the three approved MultipleCorp mockups.
+
+SPECIAL AUTHENTICATION REFERENCE:
+The FIRST attached modern-login video.
+
+Use it only for:
+- login/auth composition;
+- split-panel treatment;
+- curved/asymmetric geometry;
+- auth transition/motion;
+- premium first impression.
+
+BUSINESS / SECURITY SOURCE OF TRUTH:
+The repository, P0–P6 and the preserved R1 UX.
+
+If any visual reference conflicts with repository truth, repository truth
+wins and the visual design must adapt.
+
+==================================================
+4. PASTEL DIRECTION IS SUPERSEDED
+==================================================
+
+My earlier request for a broad pastel visual identity is cancelled.
+
+Do NOT create a general visual system composed of:
+
+- sage cards;
+- dusty-blue cards;
+- soft-amber cards;
+- muted-rose cards;
+- or other multi-pastel decorative surfaces.
+
+The visual identity should follow the three approved mockups instead.
+
+The target foundation is approximately:
+
+- warm neutral / ivory canvas;
+- clean white or subtly differentiated surfaces;
+- charcoal / near-black typography;
+- quiet neutral borders;
+- restrained olive / green / yellow-green accents;
+- supporting blue only where useful;
+- subtle shadows;
+- disciplined spacing;
+- elegant simple icons;
+- premium information density.
+
+Semantic colours may still appear when actual business meaning requires them,
+but they are not the decorative identity of the product.
+
+==================================================
+5. TARGET CHARACTER
+==================================================
+
+The application should feel:
+
+PREMIUM
+ELEGANT
+CALM
+PRECISE
+MODERN
+PROFESSIONAL
+MATURE
+OPERATIONALLY CLEAR
+
+It should NOT feel:
+
+PASTEL-THEMED
+GENERIC ADMIN TEMPLATE
+AI-GENERATED
+PLAYFUL
+DECORATIVE
+OVER-COLOURED
+VISUALLY LOOSE
+
+==================================================
+6. LOGIN / AUTH DIRECTION
+==================================================
+
+Use the first video as the special authentication reference.
+
+I like:
+
+- split-panel composition;
+- clean form surface;
+- strong visual panel;
+- smooth curved/asymmetric shape;
+- controlled blue/cyan treatment;
+- minimal copy;
+- smooth panel transition;
+- strong hierarchy.
+
+Do not copy Sign Up.
+
+MultipleCorp has no public registration.
+
+Adapt the motion language to the approved auth flow:
+
+Credential / Google
+        ->
+TOTP / verification
+        ->
+authenticated application.
+
+Do not change P5 authentication/security semantics.
+
+Motion must:
+- clarify the auth-state change;
+- be smooth and restrained;
+- never delay work unnecessarily;
+- support prefers-reduced-motion.
+
+==================================================
+7. ROLE-SPECIFIC EXPERIENCE
+==================================================
+
+The shared visual language must adapt to each role.
+
+ADMIN
+
+The Admin should immediately understand:
+- what must be done now;
+- which project it belongs to;
+- current stage;
+- blocker;
+- next valid action;
+- relevant document readiness;
+- what remains before completion.
+
+The Admin should not need to remember which module to open next.
+
+OWNER
+
+The Owner should see:
+- decisions requiring Owner attention;
+- exceptions and meaningful risks;
+- project progress that requires attention;
+- compact business-health and financial KPIs;
+- drill-down only when useful.
+
+Normal Admin operational work should not compete visually with Owner-level
+decisions.
+
+WAREHOUSE / FIELD
+
+The experience should remain:
+- scan-first;
+- next-item-first;
+- minimal text;
+- large clear targets;
+- per-line feedback;
+- manual fallback.
+
+==================================================
+8. DOCUMENT CREATION / PREVIEW REQUIREMENT
+==================================================
+
+A major purpose of MultipleCorp is to eliminate repeated manual document work
+currently performed in Excel.
+
+For SYSTEM-GENERATED documents, the UX direction must support this pattern:
+
+existing business data
+        ->
+prefilled draft
+        ->
+review / editable allowed inputs
+        ->
+document preview
+        ->
+validation
+        ->
+explicit finalization / issue.
+
+The Admin must be able to see the document before it is finalized.
+
+For desktop, when suitable, design a document-composer pattern such as:
+
+LEFT:
+- editable/confirmable data;
+- fields that genuinely still need Admin input;
+- validation;
+- source-data context.
+
+RIGHT:
+- live document preview;
+- approximately 40–45% of the workspace;
+- page/zoom/full-preview controls where useful;
+- preview remains visible while reviewing where practical.
+
+Changes to allowed draft inputs should be reflected in the preview.
+
+Important:
+
+- do not make the final PDF itself the editable source of truth;
+- reused Company/Client/Project/Item/Delivery/Finance data should come from
+  the approved business records;
+- if such data is wrong, correction should happen through the authorized
+  source/input flow;
+- clearly distinguish carried-forward data from data the Admin must enter;
+- a draft preview does not satisfy issuance;
+- final/issued documents retain approved immutability, revision and void
+  semantics;
+- external uploads remain distinct from generated documents.
+
+For mobile, do not force a desktop split layout.
+
+A mobile flow may use:
+
+Edit
+  ->
+Preview
+  ->
+Finalize
+
+or an appropriate full-screen preview.
+
+First verify this requirement against P0–P6 document semantics.
+
+If any requested behaviour would require changing approved document/business
+semantics, surface that exact conflict rather than inventing behaviour.
+
+==================================================
+9. SIX ANCHOR AREAS ONLY
+==================================================
+
+Do NOT create another 36-screen visual rework.
+
+Do NOT create a seventh anchor.
+
+The focused visual checkpoint uses exactly SIX anchor areas:
+
+1. LOGIN DESKTOP
+
+Prove:
+- the premium auth composition;
+- the visual theme;
+- the transition toward TOTP/verification;
+- minimal, well-packaged copy.
+
+2. OWNER BERANDA DESKTOP
+
+Prove:
+- the approved MultipleCorp mockup theme;
+- Owner decisions/exceptions first;
+- compact KPIs;
+- restrained charts;
+- premium information density.
+
+3. ADMIN PEKERJAAN DESKTOP
+
+Prove:
+- workflow/task-first operation;
+- project context;
+- one clear action per row;
+- blockers and next work visible;
+- productive density without clutter.
+
+4. PROJECT JOURNEY DESKTOP
+
+Prove:
+- current stage;
+- completed stages;
+- blockers;
+- next valid action;
+- document readiness;
+- financial state where authorized;
+- what remains before completion.
+
+The Project Journey anchor may include a STATE / VARIANT showing document
+preparation and preview where useful.
+
+This does NOT create a seventh anchor.
+
+5. BUAT PEMBELIAN DESKTOP
+
+Use this as a precision benchmark.
+
+Product / Project Item, Quantity, Unit, Unit Price, Tax and Subtotal must align
+cleanly.
+
+Secondary SKU/project metadata must never distort the primary control
+baseline.
+
+Demonstrate:
+- clean form composition;
+- correct column proportions;
+- numeric alignment;
+- deliberate spacing;
+- premium visual balance.
+
+6. MOBILE WAREHOUSE
+
+Prove:
+- scan-first workflow;
+- next item prominent;
+- minimal copy;
+- clear per-line result;
+- manual search fallback;
+- mobile-specific composition.
+
+==================================================
+10. DO NOT MIX VISUAL THEMES
+==================================================
+
+All six anchors must look like parts of ONE PRODUCT.
+
+Do not create:
+
+- one visual style for Beranda;
+- another style for Pembelian;
+- another style for Project Journey;
+- another style for Warehouse.
+
+The visual system must be coherent.
+
+The three approved MultipleCorp mockups define that coherence.
+
+The videos refine interaction quality; they do not create separate themes.
+
+==================================================
+11. VISUAL QUALITY IS A REAL C1 GATE
+==================================================
+
+A technical PASS is not enough.
+
+Accessibility, alignment and reflow remain mandatory, but Owner visual
+approval must also judge:
+
+- premium feel;
+- composition;
+- hierarchy;
+- typography;
+- spacing rhythm;
+- proportion;
+- icon consistency;
+- colour restraint;
+- chart quality;
+- visual balance;
+- form quality;
+- document-preview quality;
+- motion quality;
+- text wrapping;
+- whether anything feels visually offside;
+- whether all six surfaces clearly belong to one design system.
+
+==================================================
+12. NEXT ACTION
+==================================================
+
+Stage 2 remains NOT authorized.
+
+Normative INFORMATION_ARCHITECTURE, DESIGN_SYSTEM and ADMIN_FLOW remain
+unfrozen.
+
+Do not propagate the new theme through all P7 pages.
+
+First obtain my visual approval of the six anchors.
+
+Now:
+
+1. preserve C1A-1, C1A-2 and C1A-3;
+2. preserve the successful R1 structural UX;
+3. record the THREE attached MultipleCorp mockups as PRIMARY visual evidence;
+4. record video 2 as SECONDARY application visual evidence;
+5. record video 1 as SPECIAL auth/motion evidence;
+6. supersede the broad pastel direction;
+7. incorporate the document-preview/composer requirement after validating it
+   against P0–P6;
+8. prepare a focused six-anchor visual-checkpoint plan;
+9. return a FULL ready-to-copy Executor authorization limited to:
+   - the six anchors;
+   - their necessary variants/states;
+   - visual-reference evidence;
+   - REVIEW evidence;
+   - C1A-1 to C1A-3 where needed for the anchors;
+10. require the Executor to STOP again for my visual C1 review.
+
+Do not authorize Stage 2, C2, broad visual propagation, P8-P11 or application
+coding.
+
+If one genuine Owner decision must be made before this focused checkpoint can
+be authorized, ask only that decision.
+
+At the very end, append the required Planning handoff footer with concrete
+Model, Effort and Session values.
