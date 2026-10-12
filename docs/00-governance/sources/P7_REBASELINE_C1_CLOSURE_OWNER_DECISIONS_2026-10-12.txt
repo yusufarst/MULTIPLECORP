@@ -1,0 +1,52 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifty-seventh source record
+Received: 2026-10-12, the Owner's answers to Planning in the planning session
+         of the MULTIPLECORP Project, relayed as Appendix A of the
+         fifty-eighth source record
+Subject: the Owner's Checkpoint C1 closure answers — Golden Frontend
+         Reference adoption, the R1 navigation structure and the draft
+         marking (DIR-059)
+Delivery: Appendix A of the Owner's message of 2026-10-13, the fifty-eighth
+         source record. This record transcribes the lines between its BEGIN
+         and END markers, which are not transcribed, mechanically from the
+         text file in which that message arrived, its text normalized to LF
+         without a byte-order mark.
+This is a transcript of the relayed answers, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-12. Planning asked
+three questions; the Owner selected one option for each.
+
+Question 1: "Bagaimana Checkpoint C1 ditutup, mengingat Golden v1.0.0 sudah
+frozen?"
+Options offered:
+- "Adopsi Golden (Rekomendasi)" — "Golden jadi referensi visual primer
+  lewat change control (VD-01 diubah); C1 ditutup dengan arah Golden;
+  anchor VC1 tinggal bukti historis; DesainPakeAI berhenti."
+- "Checkpoint visual Golden dulu" — "Golden diadopsi, tapi C1 tetap terbuka
+  sampai enam anchor dirender ulang dengan Golden di atas struktur R1 untuk
+  Anda review."
+- "Setujui anchor VC1" — "Arah visual VC1 (DesainPakeAI, Plus Jakarta Sans)
+  disetujui apa adanya; Golden baru dipakai saat implementasi — ada risiko
+  dua acuan visual."
+Owner's answer: "Adopsi Golden (Rekomendasi)"
+
+Question 2: "Struktur navigasi mana yang berlaku untuk MultipleCorp?"
+Options offered:
+- "Tetap struktur R1 (Rekomendasi)" — "Task-first seperti yang Anda
+  pertahankan di C1. Golden hanya menata tampilan sidebar, rail, bottom bar
+  dan palette."
+- "Pohon modul Golden" — "Model lab Golden: pohon modul penuh, antrean
+  kerja di Beranda Admin. Mengubah struktur R1, jadi perlu change control
+  dan peta non-loss baru."
+- "Putuskan setelah rekonsiliasi" — "Executor memetakan perbedaannya dulu,
+  lalu Anda memutuskan di akhir run."
+Owner's answer: "Tetap struktur R1 (Rekomendasi)"
+
+Question 3: "Wording tanda draf pada pratinjau dokumen yang dipakai
+Stage 2?"
+Options offered:
+- "DRAF — belum terbit (Rekomendasi)" — "Sesuai DC-2; sudah dipakai di
+  anchor VC1 dan di Golden."
+- "DRAF — bukan dokumen terbit" — "Sesuai DESIGN_SYSTEM §14.3 (baseline
+  lama APPR-008)."
+Owner's answer: "DRAF — belum terbit (Rekomendasi)"
