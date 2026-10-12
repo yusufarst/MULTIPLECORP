@@ -1,10 +1,12 @@
 # Execution context
 
-Status: APPROVED | Updated: 2026-10-04 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-13 | Owner: Planning
 
 Approval: [APPR-009](../00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-03, under [DIR-043](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment), the auth profile lines now point to the designed authentication controls and project invariant 2 cites AZ-01–AZ-13; on 2026-10-04, under [DIR-045](../00-governance/DECISION_LOG.md#dir-044-dir-045-risk-006-risk-007-and-tech-025--p5-authentication-amendment-continuation-after-the-adversarial-review), two of those lines cite the Owner's decisions on the amendment's first adversarial review (DIR-044), and under [DIR-052](../00-governance/DECISION_LOG.md#dir-051-dir-052-obs-017-risk-008-risk-009-and-tech-026--p5-authentication-amendment-approval-finalization-baseline-and-accepted-risks) the auth profile is marked in force; [TECH-025](../00-governance/DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment) records the SHA-256 of the last approved revision, and the amended revision is approved under [APPR-010](../00-governance/DECISION_LOG.md#appr-010--p5-authentication-amendment-approved).
+
+Amendment: on 2026-10-13 the "visual direction" line of "Global UI rules" names the Golden Frontend Reference v1.0.0, applied to the R1 structure and adapted to shadcn/ui (DIR-059), non-normative until Stage 3 replaces DESIGN_SYSTEM; no other line changes. It is a narrow continuity record authorized by [DIR-060](../00-governance/DECISION_LOG.md#dir-059-dir-060-obs-022-and-tech-030--p7-ux-re-baseline-checkpoint-c1-closure-golden-frontend-reference-adoption-authorization-baseline-and-reconciliation) §14 ([TECH-030](../00-governance/DECISION_LOG.md#dir-059-dir-060-obs-022-and-tech-030--p7-ux-re-baseline-checkpoint-c1-closure-golden-frontend-reference-adoption-authorization-baseline-and-reconciliation), where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
 
 The stable minimum context for execution agents (AICWDF §34A). Every line points to its owning document; where a line and its owner differ, the owner wins.
 
@@ -29,7 +31,7 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 
 - language: Indonesian default, English secondary, a language switch, no uncontrolled hardcoded copy; generated or issued documents and business data in Indonesian (DIR-037 D7) — [V1_SCOPE CAP-14](../01-product/V1_SCOPE.md#must-ship), [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)
 - mobile-first operation with desktop productivity; comfortable density and visual breathing room under AICWDF §18.2 with the retained anti-slop discipline (DIR-035 D4) — [V1_SCOPE](../01-product/V1_SCOPE.md#language-and-experience-contract)
-- visual direction: pending the P7 re-baseline with the Owner-chosen Ramp reference (DIR-035 D3); interaction rules in force — [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md), [PHASE_STATUS](../PHASE_STATUS.md)
+- visual direction: the Golden Frontend Reference v1.0.0, applied to the R1 structure and adapted to shadcn/ui (DIR-059), non-normative until Stage 3 replaces DESIGN_SYSTEM; interaction rules in force — [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md), [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md), [PHASE_STATUS](../PHASE_STATUS.md)
 - route and interaction contracts: pending — [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet)
 
 ## Cost, safety and toolchain

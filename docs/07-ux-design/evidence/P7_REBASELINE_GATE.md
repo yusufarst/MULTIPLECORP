@@ -45,7 +45,7 @@ The four read-only commands of DIR-054 §7, run on 2026-10-04 from a temporary d
 
 ## Plan
 
-The stage plan of the re-baseline as DIR-054 §§9, 20 and 21 record it. K1 places two Owner checkpoints before the normative documents are frozen. Only Stage 0 and Stage 1 are authorized; the rest is the approved plan, recorded and not authorized. After the Owner's verdict at Checkpoint C1 (DIR-055), DIR-056 adds the C1 rework, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-056 §21). After the Owner's decisions at the re-review (DIR-057), DIR-058 adds the C1 visual checkpoint, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-058 §19). After the Owner's decisions closing Checkpoint C1 (DIR-059), DIR-060 adds the C1 closure, which ends before Stage 2; Stages 2–5 stay unauthorized, and Stage 2's prototyping medium is set by the Stage 2 authorization (DIR-059 GD-06; DIR-060 §18).
+The stage plan of the re-baseline as DIR-054 §§9, 20 and 21 record it. K1 places two Owner checkpoints before the normative documents are frozen. DIR-054 authorized only Stage 0 and Stage 1; the rest is the approved plan, recorded and not authorized unless a later authorization below adds a step. After the Owner's verdict at Checkpoint C1 (DIR-055), DIR-056 adds the C1 rework, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-056 §21). After the Owner's decisions at the re-review (DIR-057), DIR-058 adds the C1 visual checkpoint, which ends again at Checkpoint C1; Stages 2–5 stay unauthorized (DIR-058 §19). After the Owner's decisions closing Checkpoint C1 (DIR-059), DIR-060 adds the C1 closure, which ends before Stage 2; Stages 2–5 stay unauthorized, and Stage 2's prototyping medium is set by the Stage 2 authorization (DIR-059 GD-06; DIR-060 §18).
 
 | Stage | Content | Authorization |
 | --- | --- | --- |
@@ -1952,7 +1952,7 @@ Recorded from the fifty-seventh and fifty-eighth source records ([DIR-059 and DI
 | The six anchors (eleven `p7r3-` pages) | Not re-rendered; kept as evidence of the structure; where their visual specifics differ from the Golden Frontend Reference, the reference governs |
 | The draft marking | "DRAF — belum terbit" (GD-07), answering question 8 (b) of the [visual C1 package](#c1-visual-checkpoint--visual-c1-package) |
 | Normative status | None: non-normative until Stage 3 replaces the normative documents and Stage 5 grants APPR-011 |
-| What follows | GA1 of DIR-060, in a new session, then STOP before Stage 2; Stage 2 needs the Owner's separate authorization (GD-10) |
+| What follows | GA1 of DIR-060, in a new session — done ([Gate GA1](#gate-ga1)) —, then STOP before Stage 2; Stage 2 needs the Owner's separate authorization (GD-10) |
 
 **Owner decisions GD-01–GD-10:**
 
@@ -2026,3 +2026,630 @@ Run on the complete staged change of commit 7 before the commit (DIR-060 §9.1),
 | GA0-08 | Links and identifiers | PASS | 2,151 relative links and anchors in 106 Markdown files outside `docs/00-governance/sources/`, 0 broken; DIR-059, DIR-060, OBS-022 and TECH-030 each have one row in the decision log's index and one entry heading; the label sets GD-01–GD-10 and GP-1–GP-8 are stated in DIR-059 and DIR-060 and restated in [Checkpoint C1 — closure on the Golden Frontend Reference (DIR-059)](#checkpoint-c1--closure-on-the-golden-frontend-reference-dir-059) and DECISION_INDEX with a pointer to them, and the items GA0-01–GA0-10 are defined here; no GAP, RISK or APPR identifier is defined — GAP-054, RISK-010 and APPR-011 stay unused |
 | GA0-09 | Content-truth counts unchanged | PASS | V1_SCOPE, PERMISSIONS_MATRIX, DATABASE and GAP_REGISTER are byte-identical to `03f61a7` and were counted again: 18 MUST capabilities and 14 document types (V1_SCOPE), 80 capabilities — ADM 37, ADM_PLUS 26, OWNER_ONLY 17 (PERMISSIONS_MATRIX §4) —, 125 logical tables in 13 modules, each module's table definitions equal to its count in the module map (DATABASE §4), and the gap totals 53 — 4 CLOSED, 39 OPEN, 1 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK |
 | GA0-10 | No P7 normative document and no P0–P6 specification changed | PASS | The staged tree equals commit 6 over INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, `docs/01-product/`, `docs/02-domain/`, `docs/03-workflows/`, `docs/04-architecture/`, `docs/05-security/` in full and `docs/06-api-performance/`; CONTEXT_INDEX, AGENTS.md, EXECUTION_CONTEXT and TOOLCHAIN are unchanged |
+
+## C1 closure — Golden Frontend Reference intake
+
+GA1 of DIR-060 (§10), on 2026-10-13, in a new session resumed under §22: commit 7 existed and was pushed, the live remote advertised `main`, `amendment/p5-auth`, `migration/aicwdf`, the tag `pre-aicwdf-migration` and the branch at commit 7 `1e3db5d8d6623275e1a5142195d6aa10eff0cfae` and nothing else, the local branch equalled its remote-tracking ref, the tree and index were clean with no operation in progress and no stale lock file, and records 57 and 58 equalled their SOURCE_OF_TRUTH lines, bytes and SHA-256. §6 was then run again in a fresh temporary directory outside the repository, and both results were reported to the Owner before any edit; the Owner confirmed GA1 (DIR-060's GA1 part in TECH-030).
+
+| Item | Check (DIR-060 §6), run again in this session | Result |
+| --- | --- | --- |
+| 1 | `git ls-remote` of the reference's public repository: `refs/tags/v1.0.0` = `9d46af300949b2dd4b2f3d443652d78c38067deb`, `refs/tags/v1.0.0^{}` = `14497d997ee7994dfa9153d41b8cea636578e24c` | PASS |
+| 2 | `git clone --depth 1 --branch v1.0.0` into the new temporary directory: HEAD `14497d997ee7994dfa9153d41b8cea636578e24c`; the line-ending configuration unchanged, the reference's `.gitattributes` (`* -text`) in force; a clean status | PASS |
+| 3 | `sha256sum -c release/golden-frontend-v1.0/SHA256SUMS-scope.txt`: 41 of 41 OK; the list's own SHA-256 `39fa879dc304275e55b1ffecda290ebd6b481a27d89bbda67011c26e0796eca4` | PASS |
+| 4 | The freeze record and the root `PUBLIC_RELEASE.md`: version `1.0.0`; FROZEN — OWNER APPROVED; freeze date 2026-10-12; baseline `golden-frontend-v1.0`; 41 frozen files | PASS |
+| 5 | The clone a working copy only; no other copy of the reference used | PASS |
+
+The intake worked from that clone only, verified again with the scope list (41 OK) before the first file was read. As supporting evidence, the package's own list `SHA256SUMS-public.txt` was checked with the same `sha256sum` (55 of 55 OK), so the release records outside the frozen scope are identified too. Nothing was installed, configured or run beyond the installed Git, `sha256sum` and Node.js scripts kept outside the repository; the reference's tools, smoke tests and consumer demo were not run or opened (GP-6). No file, quotation beyond the short ones the reconciliation needs, or path of the private lab entered the repository.
+
+**Files read**, one at a time, with their SHA-256 from the frozen list `SHA256SUMS-scope.txt` where listed, otherwise from the package list `SHA256SUMS-public.txt`; each equals the file in the clone:
+
+| File | SHA-256 | Read |
+| --- | --- | --- |
+| `release/golden-frontend-v1.0/FREEZE_RECORD.md` | public list: `37ace898e749ecb3e75d3d7a459b4a90859f159a2b7be72369f745e111544e6c` | In full |
+| `docs/GOLDEN_FRONTEND_V1_START_HERE.md` | frozen list: `a956e72da0ba5305e521e6b43588cce421ab0d84485ec3f37800055ceaa6173e` | In full |
+| `README.md` | public list: `4287b6a37699cd8d471dc59cd54634f0b0a2d9cf6a4329855cb9ec70de201d65` | In part — the front matter, "Purpose and design policy", "Status of v1.0", "Framework adaptation", "Respecting project approvals and stages" and "License and third-party notices"; the other sections by their headings only |
+| `PUBLIC_RELEASE.md` | public list: `b4da47ad9a2dcf68c0f5d24b18f8cca7e68586e9f5465936c2693ea1323bf3a5` | In part — the header table, §1 and §2; the verification table of §3 by search |
+| `template/TEMPLATE_MANIFEST.json` | frozen list: `f03c9e20602ee68d13852c5499f0cb7673cbacfe49fe1b07dc8e1633d5e6d965` | In part — the `goldenFrontendV1` block and the top-level keys |
+| `docs/DESIGN_SYSTEM.md` | frozen list: `08c9213af065caac87d92b2e683dcd3582d6e03820c921c2bd62ec985a377565` | In full |
+| `docs/COMPONENT_CATALOG.md` | frozen list: `600d66d798d62c23098412553a2fc23182f42b2ad94daddddb8a07358067f0da` | In full |
+| `docs/COMPONENT_RULES.md` | frozen list: `a2a0f589f7345977c5333c693207f7f7f8930ec9a72603e95f08e1670397a392` | In part — all but the date-range filter rules |
+| `docs/UX_PRINCIPLES.md` | frozen list: `8db478755a00bb712c00287590e75336820c66a4ff5c58b1e1032cf271f5c574` | In full |
+| `docs/MOTION_SYSTEM.md` | frozen list: `5f7aa102dd56c139438135ec7b49c3d221e4b6d6568a8e4412d31dd2bc82adbe` | In part — the header, §§1–3, §4's general patterns and the navigation tree, §§5–6; not the per-component recipes of the date range, account menu, dialog, split menu, greeting, period response, row actions and drawer |
+| `docs/DOCUMENT_SYSTEM.md` | frozen list: `ed6dba0ccf3bc375a73d0c15fd6f8850a38f58b8800b90f69c75de311ef8a604` | In part — §§1–6; not §6b (the MULTIPLECORP documents, GP-3), §7 or §8 |
+| `docs/GUIDED_WORKFLOW.md` | frozen list: `f8f72c4bd9efe080b1ad45bdf089846c4083c66d174e01361f74f7f3223a11c8` | In full |
+| `docs/PORTABILITY_CONTRACT.md` | frozen list: `00d7bb1cff87f8d28da9dfe0db8f30041cebe2a7d59eba281a73d4d764b2e4bd` | In part — the introduction, the responsibility classes, §1, §2.9, §§3–4 and the r13 safety contracts; not §§2.1–2.8 |
+| `docs/PERSISTENT_SHELL.md` | frozen list: `103fbc8f027bc5a5f0fa5d681bc372e792ebe45b44badcf0f7bbcae7bad580b1` | In part — §2 and the storage statements found by search; not §§1, 3–5 |
+| `docs/APP_ARCHITECTURE.md` | frozen list: `c829407c3e1991ec11317f19ecd8891d6d5b5af3657b478d0ed53e2919134575` | In full |
+| `docs/NAVIGATION_ARCHITECTURE.md` | frozen list: `328fa9912837d94f12428684fb8f1344fc265076fb7e6c347816111dae8dfa8b` | In part — §1 and §§4–7 and §12 as principles; the trees of §3 and the taxonomy of §2 not read (GP-3) |
+| `assets/css/tokens.css` | frozen list: `d6ded788fc73127e47f1247814ca66df96c4c9e5f79f0c2a3c9ddbc7a4ab252c` | In full |
+| `assets/css/base.css` | frozen list: `b62321e4e9840bd0075bedc3d9068d7f974302f39ec705e1b83ea2ee5209e974` | In full |
+| `assets/css/motion.css` | frozen list: `10f34bfefb8b2565fd6d989b8f04e784d8ca9200f50f126952bf37a8bf10476c` | In part — the header and §7, reduced motion |
+| `assets/css/components.css` | frozen list: `339bb99c33285274b172cf9c7b8b1e7afc8739c3fdc36e11e47f950b6aa74906` | In part — buttons and the danger button, the text link, the field, the status text, the segmented control, the sidebar entry, the bottom bar, the density block and the stepper, to confirm anatomy, states and sizes |
+| `assets/css/patterns.css` | frozen list: `671b7e76bad75c66edbf8aeb84f9320a64eefdd5ced2a2ccbdbf4fc5cd509eb0` | In part — the selected table row, the selected tab and the segmented control |
+| `assets/js/guide.js` | frozen list: `109b56efdb0197b2ffaa9e068be5b9b35550dc6438fd1ca9d5f3e9bb22c1646e` | Searched only, for its browser-storage use (GP-7) |
+| `assets/js/interactions.js` | frozen list: `58b49d7a1747f73df3f2da52029be04ac1777ab54f4f65974639e1fbbdde6808` | Searched only, for its browser-storage use (GP-7) |
+| `assets/js/patterns.js` | frozen list: `f4c0e52990597cab3c82fa1d88f5567d5dbb37dba439d4837d8887d9e97afc4b` | Searched only, for its browser-storage use (GP-7) |
+| `assets/js/project-config.js` | frozen list: `e3238f0379de41b3d4b32f786abaed209992008dc7dae916af5eaa6aa110fa69` | Searched only, for its browser-storage use (GP-7) |
+| `assets/js/router.js` | frozen list: `203fd1dbdde66a177e1761db50d8beb04361090e9572c8146c755ed24a0bf2c2` | Searched only, for its browser-storage use (GP-7) |
+
+**Not read:** `docs/DESIGN_DECISIONS.md`, `docs/ROLE_JOURNEYS.md`, `docs/ACTION_ROUTE_MATRIX.md` and `docs/UX_AUDIT_R11.md`, because no question of the reconciliation needed them (GP-3); the reference's `AGENTS.md`, `PUBLIC_START_HERE.md`, `docs/AGENT_START_HERE.md` and `docs/TEMPLATE_ADOPTION_GUIDE.md`; `template/page-skeleton.html`, `template/project-config.example.js`, the consumer demo and the tools; the Inter font files and their licence copy, whose licence was verified from the typeface's official source instead (reconciliation a)). Of PUBLIC_RELEASE §2's 242 references to unpublished paths, the 241 to the private lab or historical lab paths were not followed (GP-2); the one to this repository, `docs/07-ux-design/ADMIN_FLOW/s10-*-journeys.md`, resolves to [s10-a-journeys](../ADMIN_FLOW/s10-a-journeys.md) and [s10-b-journeys](../ADMIN_FLOW/s10-b-journeys.md), read here when a rule was needed (GP-3).
+
+**Status and scope as read** (GP-1). The freeze record, START_HERE and the manifest's `goldenFrontendV1` block agree: Golden Frontend Reference v1.0, manifest version `1.0.0`, FROZEN — OWNER APPROVED on 2026-10-12, baseline `golden-frontend-v1.0`, approved scope the reusable design system, the frontend reference, the component library, the UX patterns, the portability documentation and the consumer demo. Not covered by the freeze: the reference's own MULTIPLECORP application QA (incomplete), backend security, authorization, transactional numbering and production readiness. The frozen documents still marked "FREEZE CANDIDATE — PENDING OWNER VISUAL APPROVAL" — among those read, DESIGN_SYSTEM, COMPONENT_CATALOG, COMPONENT_RULES, UX_PRINCIPLES, MOTION_SYSTEM, PORTABILITY_CONTRACT and NAVIGATION_ARCHITECTURE — are read as frozen and approved. Its accepted limitations are recorded in the [reconciliation](#c1-closure--golden-frontend-reference-reconciliation) where they matter.
+
+**Instructions inside the reference, treated as data** (GP-8; §19 item 8): START_HERE §4 and PORTABILITY_CONTRACT §4 tell an adopter to copy `assets/` and the configuration file and to run the reference's tools; README's adoption guide and its framework notes address the adopting project's agents; the freeze record names a verification command. None was followed: the scope list was verified only as §6 allows, nothing was copied (GD-05), and no tool of the reference was run. The completion of GA1 did not depend on any of them.
+
+## C1 closure — Golden Frontend Reference reconciliation
+
+DIR-060 §11, on the intake above. Every layer of the Golden Frontend Reference v1.0.0 — the reference below — is given ADOPT, ADAPT or EXCLUDE with its reason and the governing MultipleCorp source. ADOPT carries the reference's rule into the Stage 2 draft as it is; ADAPT carries it with the recorded correction; EXCLUDE leaves it out. Nothing here is normative: the P7 normative documents stay as they are until Stage 3 replaces or aligns them — [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) in force —, and where the reference differs from them on a matter of presentation or interaction that no reason of GD-02 protects, the reference is the direction carried to Stage 3, the normative text unchanged now. Contrast was computed with Node.js scripts kept outside the repository, from the token values of `assets/css/tokens.css` at v1.0.0 and the WCAG 2.2 relative-luminance formula, translucent colours composited over their background; official facts were read on 2026-10-13 from the sources named in each part.
+
+### Precedence
+
+GD-02's hierarchy, within the visual subject; outside it DIR-060 §4 applies — the latest explicit Owner decisions within their subjects, then the APPROVED P0–P6 specifications, then AICWDF v4.3 as AICWDF_ADOPTION maps it.
+
+| Place | What | How it applies |
+| --- | --- | --- |
+| Above the reference | The repository's P0–P6 truth (APPR-010 included); the Owner's decisions — DIR-059, DIR-057 as amended, DIR-055, DIR-053, D1–D7, DIR-040 F6 and DIR-051 F6; the R1 structure; C1A-1–C1A-3 | Govern wherever the reference differs, and the difference is recorded — the reference's own rule for adopting projects (its README, "Respecting project approvals and stages"). P0–P6 semantics are never changed for a visual reason |
+| PRIMARY | The Golden Frontend Reference v1.0.0, pinned (GD-05): design foundations — tokens for typography, colour roles, spacing, radius, surfaces, status tones, density and motion —, component anatomy and states, interaction and UX patterns, accessibility rules and responsive behaviour | The visual foundation, its visual and motion fidelity preserved; a deviation needs a recorded reason — accessibility, a P0–P6 rule, the R1 structure, an Owner decision or a shadcn/ui constraint |
+| Where the reference is silent | DIR-057 VD-02–VD-07, VD-09 and VD-10; DIR-058 VP-2–VP-8 — as reconciled below | Apply; no other reference is introduced |
+| Provenance only | REF-M1–REF-M3, REF-V1 and REF-V2, from which the reference was derived | No longer govern directly |
+| Never a source of truth | The reference for business, security or data; its frontend guards; DesainPakeAI output | — |
+
+### a) Tokens
+
+**Typography.**
+
+| Item | Reference (v1.0.0) | Disposition | Reason and governing source |
+| --- | --- | --- | --- |
+| Family | Inter, self-hosted variable font with a cap-height-matched local fallback; the text cut at every size (`"opsz" 14`, optical sizing off); weights 400, 500, 600 and 700; tabular figures in tables and live values | ADOPT — replaces VC1's Plus Jakarta Sans | GD-02. Inter's official source, read 2026-10-13: <https://rsms.me/inter/> and <https://github.com/rsms/inter>, latest release `v4.1` ("4.1", published 2024-11-16, from <https://api.github.com/repos/rsms/inter/releases/latest>), a variable font with an optical-size axis from text to display, licensed under the SIL Open Font License, Version 1.1 — "Copyright (c) 2016 The Inter Project Authors", no Reserved Font Name (<https://raw.githubusercontent.com/rsms/inter/v4.1/LICENSE.txt>). Self-hosting keeps SECURITY WS-08's `font-src 'self'` and COST_POLICY's zero recurring cost (GD-08) |
+| Desktop scale (canvas values) | display 44/50 (sign-in only); title 32/40; figures 28/36 and 22/28; heading 20/28 (card titles 16.5–21); lead 17/26; body 15/22 and 14/20; label 13/18; caption 12/16; micro 11/16; pills 12, 11 and 10.5 | ADOPT, except the 10.5 px pill size — EXCLUDE | GD-02. The 10.5 px size is below the reference's own 11 px floor and still an open item inside it ("owner decision pending" in `tokens.css`) |
+| Phone scale | title 25/31 (26/32 from 400 px); heading 18/24; row 15/20; body 15/22; meta 12.5/17; button 15; figure 17/22; total 22; text fields 16 px on touch devices | ADOPT | GD-02; the 16 px fields keep Stage 1's touch-input rule (D-DS-02) |
+| Runtime text unit `--tu` | 1 px on phones, tablets and sign-in; on desktops ≥ 1,025 px, `clamp(.92px, …, .96px)` for every fixed size above 12 px, so 14 px body text renders about 12.9 px at 1,366 px; 12 px and less never shrinks | ADOPT, verified at C2 | GD-02 (density); legibility of the smallest desktop text is judged in the Stage 2 usability sessions and against AICWDF §18.2 (GR-16) |
+| Units | px-based sizes scaled by the runtime units; never `zoom` or `transform: scale()` | ADAPT | WCAG 2.2 1.4.4: browser zoom to 200 % scales px text, PASS; but px ignore the browser's default font-size setting, so the Tailwind theme expresses the sizes in rem at a 16 px root, the desktop text unit as a factor, values unchanged at the default setting (GR-06) |
+| Minimum width | the phone composition is validated from 360 px; no horizontal page scroll from 360 px up | ADAPT | WCAG 2.2 1.4.10 and DESIGN_SYSTEM §6: reflow at 320 CSS px without horizontal page scrolling, data tables excepted; the phone composition is extended to 320 px (GR-05) |
+
+**Colour roles.** The reference separates project brand tokens (`--brand-*`, the only colours a project re-tints; their defaults are MultipleCorp's) from fixed tokens.
+
+| Role | Reference value | Disposition | Reason |
+| --- | --- | --- | --- |
+| Canvas · surface · sunken · warm | `#f7f8f3` · `#ffffff` · `#f2f3ee` · `#fdfcf4` | ADOPT | GD-02; VD-03's warm neutral canvas with white surfaces |
+| Ink tiers | primary `#0f1014`, strong `#3a3b42`, secondary `#55565c`, tertiary `#6b6d73`; muted `#75767a` on white only, `#717276` on the canvas, `#6d6e72` on tinted panels, tertiary `#696b71` on a selected lime row; disabled `#9b9da1` | ADOPT, with the per-surface rule made mandatory — ADAPT | The reference's own table assigns each grey to its surface; a grey on another surface falls below 4.5:1 (contrast below), so a grey token is never used off its surface (GR-04) |
+| Borders | subtle `#f0f1ef`; default `#e4e4e2`; strong `#d8d8d6`; control `#e0e0de`; field `#dededc`; dense field `#d7d7d5`; sign-in field `#d9d9d7`; Google button `#cdcec9` | ADOPT as dividers and card edges; ADAPT as control edges | A field's or a select's edge identifies the control and measures 1.19–1.58:1; the control edge becomes `#898982`, the field border's hue darkened to 3:1 on every surface (contrast below; GR-01) |
+| Brand primary family | primary `#1a5035` with rim `#12452b`, hover `#154530`, press `#113c29`; deep `#0e3b25` for totals; white label | ADOPT | GD-02; one action colour |
+| Accent (olive) | `#545e21` — navigation indicator, focus, accent controls; text tones `#353e1c`, `#4c572c`; links `#5a643c`, `#3d4624` | ADOPT | GD-02; it carries every 3:1 correction below |
+| Lime tints and signal | tint 50 `#f5f9df`, 100 `#f0f5ca`, 150 `#ecf1d2` (selected navigation), 200 `#e4ebc2`; signal `#bbdf06` for the current step only | ADOPT as fills under ink | GD-02; K3 and SLOP-09: lime as a fill under dark ink, never as text or a thin line; selection never shown by a tint alone (GR-02, GR-03) |
+| Sign-in primary | `#bdca88` with band `#b0ba7d` and ink `#0b1005`; a soft olive shadow | ADOPT, on the sign-in only | GD-02; the reference keeps it to the sign-in |
+| Status tones | success `#e3f4e9`/`#236b49`; warning `#fff1e2`/`#8a4a0e`; pending `#fef1d8`/`#7a5a22`; danger `#fde7e8`/`#b4373f`, solid `#b4373f`; info `#e2ecf4`/`#0f2b4f`; neutral `#f2f3ee`/`#3a3b42`; each with a dot | ADOPT | GD-02; a state keeps a word and an icon or dot, never colour alone (D-DS-04; WCAG 1.4.1); the business states map to tones in Stage 2 |
+| Category discs | olive, blue, peach, mint, red, lavender, tan, lime and neutral tints with their inks | ADOPT as identity wells only | VD-02: no multi-pastel decorative surfaces; a disc marks a subject, never decorates |
+| Charts | ageing `#99b1a0` `#edd798` `#cbac8d` `#d56e5b` `#a9322e`; categorical `#7e9e85` `#82adc9` `#e6d6c5` `#dadee0`; progress on track `#e6e8eb` | ADAPT — the ageing palette under VP-6; categorical and progress palettes EXCLUDE | VP-6: one ordered ramp by severity with direct labels, amounts and a data table; no categorical multi-hue or part-to-whole chart of overlapping values (GR-23) |
+| Logo colours | teal `#335f65`, olive `#84a64c` | EXCLUDE | GD-08: the MultipleCorp mark is a later Owner asset decision (VP-5) |
+
+**Spacing, shape, depth and layout.**
+
+| Item | Reference | Disposition | Reason |
+| --- | --- | --- | --- |
+| Spacing | 4 px base with a 2 px step: 2, 4, 8, 12, 16, 20, 24, 32, 40, 48, 56, 64, 72; card padding 20 (phone 18); grid gap 12 (phone cards 14); sections 28 on phones | ADOPT | GD-02; one spacing scale (SLOP-33) |
+| Radius | 4 · 6 · 8 · 10 · 12 · full; cards 10, controls about 0.18 × height, menus 10 with 6 px highlights, dialogs 12, sheets 16 on the top corners | ADOPT | GD-02; still no giant rounded container (SLOP-03, SLOP-04 revised in d)) |
+| Elevation | card `0 1px 3px` at 4 %, the border carrying the edge; menu, toast, modal, drawer and palette shadows; scrim `rgba(15,16,20,.32)` with an optional 4 px backdrop blur | ADOPT | GD-02 |
+| Translucent bars | the phone app bar and bottom bar translucent with blur | ADAPT — opaque | SLOP-10 protects contrast: text under a translucent bar varies with what scrolls beneath it (GR-22) |
+| Layers | one z-index scale from raised bars to the skip link | ADOPT | GD-02 |
+| Desktop density | geometry × `--du` with `--density-scale` .9 at browser zoom 100 % (1,366 × 768: sidebar 220, top bar 59); control floors header ≥ 34, large ≥ 32, medium ≥ 30, small ≥ 28 px | ADOPT | GD-02 (density); AICWDF §18.2 judged at C2 |
+| Breakpoints | desktop ≥ 1,200 px reference composition; 1,025–1,199 full sidebar; tablet 768–1,024 icon rail; phone ≤ 767 | ADOPT | GD-02; DESIGN_SYSTEM's 768 and 1,024 bands align at Stage 3 |
+| Page widths | data 1,680, standard 1,440, settings 1,280, form 1,120, focused 960 px | ADOPT | GD-02; replaces VC1's 1,240 and 1,440 px |
+| Control heights | desktop small 32, medium 36 (fields, default buttons), large 40 (page actions), top bar 42, sign-in 55–56, with the density floors above; phone fields and primary buttons 48, other targets ≥ 44, rows ≥ 60, bottom-bar items ≥ 60 × 60, sheet rows 52 | ADOPT; ADAPT for warehouse/field and coarse pointers | Warehouse and field controls are 48 px (R1; AN-6) and a coarse pointer gets at least 44 px targets at every width (DESIGN_SYSTEM UXV-10) — the reference sizes by width, the repository by input as well (GR-07) |
+| Motion durations | instant 80, hover 140, fast 160, state 200, base 240, moderate and sheet 320, check 360, slow 400, compact sign-in step 480, sign-in step 600, reduced 150, spinner 900 ms; stagger 30/40/60 ms within 300 ms; data-ready to last element ≤ 900 ms | ADOPT | GD-02; VP-8 as reconciled in d) |
+| Motion curves | standard `(.42,0,.58,1)`, enter `(0,0,.2,1)`, reveal `(.25,1,.5,1)`, exit `(.37,0,.63,1)`, linear; emphasis `(.34,1.45,.64,1)` for one datum per view | ADOPT; emphasis EXCLUDE | VP-8: no decorative chart motion |
+
+**Contrast, computed.** 129 pairs from the token values: 69 text pairs against 4.5:1 (WCAG 2.2 1.4.3) and 60 non-text pairs against 3:1 (1.4.11), the latter covering the four indicator kinds §11.2 a) names and, for information, status dots, chart marks and fills. Ratios are not rounded up.
+
+| Text pair | Ratio | Result |
+| --- | --- | --- |
+| Primary ink on white, the canvas, sunken, warm, lime 50/150/200, row tints and the navigator band | 15.36–19.01 | PASS |
+| Strong ink (links, status text) on white, canvas, sunken | 9.99–11.15 | PASS |
+| Secondary on white, canvas, sunken, warm, band, upcoming marker | 6.56–7.31 | PASS |
+| Tertiary on white, canvas, sunken, warm, row hover, band | 4.64–5.17 | PASS |
+| Muted on white · muted-canvas on canvas and warm · muted-tint on sunken, row tints, lime 50 and the hero tint · tertiary-lime on lime 150 · placeholder on white | 4.50–4.81 | PASS — the lowest designed pairs: muted-canvas on the canvas 4.50 and muted-tint on `#f1f1ef` 4.50 |
+| Muted off its surface: on canvas 4.25, sunken 4.07, warm 4.41 · tertiary on lime 150: 4.45 | 4.07–4.45 | ADAPT — never used; the per-surface tokens above apply (GR-04) |
+| Button labels — white on primary, hover, press 9.36–12.34; white on danger solid 5.90 and hover 7.21; near-black on lime 100 and hover 16.32–17.24; sign-in ink on its CTA 10.15–10.97 | 5.90–17.24 | PASS |
+| Status text on its tint — success 5.62, trend 6.94, warning 6.17, pending 5.67, danger 4.99, info 11.86, neutral 9.99; warning, danger and success inks on white 5.90–6.85 | 4.99–11.86 | PASS |
+| Primary green text 8.77–9.36; totals 12.21–12.57; accent and link tones 6.32–11.31; required asterisk 4.52; text on the selected navigation fill (primary ink on lime 150) 16.37; current step number (near-black on the signal) 12.66 | 4.52–16.37 | PASS |
+
+| Non-text indicator | Against | Ratio | Result and correction |
+| --- | --- | --- | --- |
+| Control edges — default `#e4e4e2`, field `#dededc`, dense `#d7d7d5`, sign-in `#d9d9d7`, header control `#e0e0de`, icon button `#e3e3e2` | white; canvas | 1.19–1.44 | ADAPT: the edge that identifies an input, a select, a date field or an author-styled checkbox or radio is `#898982` — 3.52 on white, 3.30 on the canvas and the band, 3.16 on sunken, 3.42 on warm — which keeps the field border's hue (GR-01). W3C's Understanding 1.4.11 (updated 6 September 2026, read 2026-10-13) requires 3:1 for a text input's border when the border identifies it |
+| Button edges — outline `#d8d8d6`, Google `#cdcec9`; the accent fill `#f0f5ca` 1.13 and the sign-in CTA `#bdca88` 1.75 | white | 1.13–1.75 | PASS — a button identified by its visible label needs no boundary (the same Understanding page); icon-only buttons are identified by their glyph in primary ink |
+| Focus ring — 2 px `#545e21` outline, 2 px offset; on fields the border turns olive under a 3 px halo | white, canvas, sunken, lime 150 | 6.03–7.00 | PASS; the 35 % halo, 1.74, is supplementary to the olive border |
+| Selected marks — navigation indicator 3 px olive on lime 150; child entry 2 px olive rule; selected option's olive check on lime 50; selected tab's 2 px primary underline; selected table row's 3 px primary rule on the row tint | lime 150, white, lime 50, row hover | 6.03–9.36 | PASS — the lime fills (1.08–1.24 against white) are supplementary |
+| Selected marks without a 3:1 mark — the bottom bar's current item (lime 150 pill only, 1.16); the selected segment (white on the sunken track, 1.12) and the sign-in language toggle (lime 200, 1.24) | white; sunken | 1.12–1.24 | ADAPT: the current item and the selected segment carry an olive `#545e21` mark — 7.00 on white, 6.28 on sunken — in the reference's indicator language (GR-02) |
+| Stage marks — current: signal disc `#bbdf06` | white; band | 1.54; 1.44 | ADAPT: the current marker takes a 2 px olive ring, 7.00 and 6.56 — the stage navigator's own 2 px olive rule already passes, 6.56; the read-only stepper had no 3:1 mark (GR-03) |
+| Stage marks — complete: disc `#dde7a6` with a check in primary ink | white; band | disc 1.31; check 14.54 | PASS — the check identifies the state; the fill is not relied upon |
+| Stage marks — upcoming: ring `#d0d0d2` around its number in secondary ink | white; disc `#f3f4f5` | ring 1.54; number 6.64 | PASS — the marker is identified by its number, so no boundary is needed; connectors are decorative |
+| Stage marks — attention: ring and number in warning ink on the warning tint | warning tint | 6.17 | PASS |
+| For information: status dots — success 3.70, danger 4.53, info 3.55, warning 2.74, pending 2.48, neutral 2.72 | white | 2.48–4.53 | No correction: the word carries the state and the dot is supplementary |
+| For information: chart marks — ageing 2.14–6.60, categorical 1.35–2.95, progress on its track 1.69–2.20 | white; track | 1.35–6.60 | The ageing values are carried as text — direct labels, amounts and a table (VP-6) — so the marks are not needed for understanding (1.4.11's exception); categorical and progress palettes are excluded |
+
+The lowest values: text 4.50 among designed pairs (4.07 for muted placed off its surface, which the per-surface rule forbids); non-text 1.08 for a lime fill, never relied upon, and 1.19 for a control edge, corrected to 3.03 at the least (on lime 150).
+
+**Against VC1's draft tokens** (`git show 03f61a7:docs/07-ux-design/DESIGN_REFERENCES.md`, §6) **and VD-02–VD-04.** VC1's tokens are superseded as the visual direction (GD-01); the material differences:
+
+| VC1 | The reference | Disposition |
+| --- | --- | --- |
+| Plus Jakarta Sans 2.7.1; body 15/22 desktop, 16/24 phone; nothing essential below 13 px; title 30/38 | Inter 4.1 text cut; body 14/20 desktop (about 12.9 px on 1,366 px laptops), 15/22 phone; captions 12, micro 11 px; title 32/40 at the canvas, 28–33 px at runtime | The reference's, with the 10.5 px pill excluded and the smallest desktop text verified at C2 (GR-16) |
+| Canvas `#F5F6F1`; ink `#16181D`, `#5A5E66`, `#6E727A` | Canvas `#f7f8f3`; ink `#0f1014`, `#55565c`, `#6b6d73` and per-surface muted greys | The reference's |
+| Control edge `#878B83` (3.47 on white), decorative borders `#E4E5DF` and `#D2D4CC` | Control borders `#d7d7d5`–`#e4e4e2`, below 3:1 | ADAPT: VC1's control-edge role kept, at `#898982` in the reference's hue (GR-01) |
+| Focus `#2B6CB0`, a blue ring | Olive `#545e21`, 2 px with a 2 px offset | The reference's; it passes 3:1 on every surface |
+| Primary `#1A5034`; sign-in `#C2CE8E`; accent tint `#EEF3CF`; selected `#EAEECD` with a 3 px `#6B7B26` rule | Primary `#1a5035`; sign-in `#bdca88`; lime 100 `#f0f5ca`; selected lime 150 `#ecf1d2` with a 3 px `#545e21` indicator; the lime signal `#bbdf06` for the current step | The reference's, the current step ringed in olive (GR-03) |
+| Radii 16 cards, 20 dialogs and sheets, 12 sign-in controls, 10 controls | 10 cards, 12 dialogs, 16 sheet tops, 6–8 controls, 10 sign-in controls | The reference's |
+| Controls 40 px fine pointer, 36 dense, 48 coarse, 52 sign-in | 32–40 px desktop with density floors, 48 phone fields and primaries, 44 minimum, 55–56 sign-in | The reference's, with 48 px warehouse controls and ≥ 44 px coarse-pointer targets (GR-07) |
+| Motion fast 120, base 200, panel 320 ms; reduced motion instant | Tiers 80–600 ms; reduced motion a 150 ms crossfade without movement | The reference's (VP-8 reconciled in d)) |
+| Status fills ok, info, warn, danger, neutral; ageing ramp `#7C8B81`–`#882A23` (3.49–8.74 on white) | Success, warning, pending, danger, info, neutral tones; ageing palette 2.14–6.60 on white | The reference's, the ageing values carried as text (VP-6) |
+| Lucide icons, 1.75 px stroke | An original outline sprite on a 24-unit grid, 1.75 / 1.5 / 1.25 px strokes, round caps | Lucide kept as the draft icon set, styled to the reference's strokes; the reference's sprite is not copied (GD-05; GR-18) |
+
+VD-02 holds — the reference has no multi-pastel system, its tints mark identity and state only. VD-03 is what the reference realizes: a warm canvas, white surfaces, near-black ink, quiet borders, restrained olive and green accents, blue only for information, a subtle resting shadow and semantic colour only for meaning; its "supporting blue only where useful" no longer needs a blue focus ring. VD-04 holds: the reference's character — calm, precise, spacious but productive — matches it.
+
+### b) Components
+
+Every component of COMPONENT_CATALOG and COMPONENT_RULES, mapped to shadcn/ui on the official documentation read on 2026-10-13: the components index <https://ui.shadcn.com/docs/components> (no version or date shown; the changelog <https://ui.shadcn.com/docs/changelog> lists entries to September 2026, among them "Base UI as the Default" and "React Aria" in July 2026 and the CLI v4 in March 2026) and the theming page <https://ui.shadcn.com/docs/theming> (no version or date shown). Theming: semantic CSS variables — `--background`, `--foreground`, `--card`, `--popover`, `--primary`, `--secondary`, `--muted`, `--accent`, each with its `-foreground`, `--destructive`, `--border`, `--input`, `--ring`, `--chart-1`–`--chart-5`, the `--sidebar-*` set and `--radius` — written in OKLCH, mapped to Tailwind with `@theme inline` (`--color-primary: var(--primary)`), a new colour added under `:root` and `.dark` and exposed under a `--color-` name; `components.json`'s `tailwind.cssVariables` defaults to true. Tailwind CSS: <https://tailwindcss.com/docs/theme>, documentation v4.3, latest release v4.3.3 published 2026-07-16 (<https://api.github.com/repos/tailwindlabs/tailwindcss/releases/latest>) — `@theme` variables become CSS variables and utilities in namespaces such as `--color-*`, `--font-*`, `--text-*`, `--spacing`, `--radius-*`, `--shadow-*`, `--ease-*` and `--breakpoint-*`; `@theme inline` uses a referenced variable's value; `@theme` is top-level only; `--color-*: initial` clears a namespace. The reference's tokens therefore map in two steps: its values as CSS variables, then shadcn/ui's semantic variables and the Tailwind theme pointing at them, the default palettes cleared so no utility introduces a value outside the token set (the reference's README, "Tailwind CSS" and "shadcn/ui").
+
+| Reference component | Anatomy, states, sizes, keyboard and focus | shadcn/ui | Kind | Disposition |
+| --- | --- | --- | --- | --- |
+| Card | White surface, 1 px subtle border, radius 10, resting shadow; text-first header with one action slot; one purpose; no card inside a card | Card | Primitive | ADOPT |
+| Button | Primary, outline, ghost, sunken, accent, danger and the sign-in CTA; 32 / 36 / 40 / 42 / 56 px; icon-only ≥ 24 px desktop and ≥ 44 px phone with an accessible name; hover tint, press scale .97, 2 px olive focus, disabled at 48 %, loading keeps width and label | Button — default for primary, outline, ghost, secondary for sunken, destructive for danger; accent and the sign-in CTA as added variants | Primitive | ADOPT |
+| Split action | One primary segment and a chevron (`aria-haspopup="menu"`, "Aksi lain") opening a menu, destructive last; opens upward from the action bar; Enter, Space and arrows | Button Group with Dropdown Menu | Composition | ADAPT — no draft entry on the purchase form, which has one saving command (WF-PUR-01) |
+| Text field | Label above with an 8 px gap; bordered box with an optional addon; hover, focus halo, invalid with `aria-invalid`, a danger border and its message, disabled sunken; 36 px desktop, 48 px phone, 16 px text on touch | Field, Label, Input, Input Group | Primitives | ADOPT, with the control edge of a) |
+| Custom select | A combobox trigger over the native select; popover listbox with 42 px rows, the selected option lime 50 with an olive check; a 52 px-row bottom sheet on phones; arrows, Home, End, PageUp/Down, typeahead, Esc | Select, with Drawer on phones; Native Select where a native control suits | Primitive and composition | ADOPT |
+| Status pill and status text | A badge for the record in view (24 or 28 px, tint with same-hue ink, dot); a text density for rows (7 px dot and a 13 px label); tones neutral, info, pending, attention, success, warning, danger, inactive; one dimension per badge, never colour alone | Badge; the text density as a custom element | Primitive; custom — Badge has no unfilled dot-and-label form | ADOPT |
+| Delta badge | Arrow, sign and tone for a period comparison | Badge | — | EXCLUDE — VP-3 |
+| Attention badge | A count of derived signals | Badge | Primitive | ADOPT for per-company counts outside navigation only (CS-08; D-IA-06) |
+| Disc | An icon well of 32–56 px with a category tint | — | Custom — no primitive for an icon well | ADOPT as an identity marker |
+| Keycap | Shortcut keys | Kbd | Primitive | ADOPT |
+| Progress bar | Value bar on a track | Progress | Primitive | ADAPT — for a process such as an upload, never a project's completion (PL-1; SLOP-44) |
+| Progress stepper | Read-only derived steps on 30 px discs — complete, current, upcoming, attention —, equal columns, `aria-current="step"` with "(langkah n dari N)" for screen readers | — | Custom — shadcn/ui has no stepper | ADOPT, with the current ring of a) |
+| Stage navigator | The stepper as native buttons on the top band of the card it steers; current, complete, upcoming, attention or blocked, locked; arrows, Home, End | — | Custom — steps are not tab panels, so Tabs' semantics do not fit | ADOPT for the composer's stages (VD-07) |
+| Business date and date field | A compact "Tanggal transaksi" line or a read-only formatted date with a calendar addon; typed fallback; no date after today | Popover, Calendar, Button; Date Picker | Composition | ADOPT, with IP-07's semantics and copy |
+| Date range | Presets and independent start and end calendars; a sheet with a start/end switch on phones | Popover, Calendar in range mode, Toggle Group; Drawer on phones | Composition | ADAPT — presets bound to the repository's period rules (GR-19) |
+| Forbidden and not-found states | Nothing of the record rendered; a reference code | Empty | Composition | ADOPT, with IP-21 and its messages |
+| Guidance level, "Cara kerja", resume memory, walkthrough | Terpandu or Ringkas per viewer; a closed two-to-four-line help; the last six records opened; an offered tour on real controls | Collapsible for a closed help | — | EXCLUDE the level, the resume memory and the walkthrough (c) 6; g)); a closed "Cara kerja" only where Stage 2 finds a screen needs it (OC-06) |
+| Disclosure | A real button with `aria-expanded` and `aria-controls`, ≥ 44 px, chevron on the right; the safe header row forwards clicks; an invalid field is never left hidden; phone only | Collapsible | Primitive | ADOPT; ADAPT where R1 folds on the desktop — the *Pekerjaan* groups, "Rincian lain", "Tahap yang tidak diperlukan" (GR-21) |
+| Page header | Title, an ancestors-only breadcrumb, a meta line, one primary and "Tindakan Lain" | Breadcrumb with a composition | Composition | ADOPT — DESIGN_SYSTEM PT-03 agrees |
+| KPI tile | Disc, label, value, optional delta and sparkline, the whole card a link | Card | Composition | ADAPT — no delta, sparkline or period comparison (VP-3) |
+| Toast | White card with a 3 px type edge and icon disc; top right, below the app bar on phones; at most three; success and info polite and auto-dismissed after 4.5 s, paused on hover and focus; warning and error assertive and sticky | Toast (Base UI) or Sonner (Radix) | Primitive | ADAPT — WCAG 2.2.1 (GR-15) |
+| Dialog and confirmation | Application-level, centred, 400 px, the safe action focused, Esc and the scrim cancel, focus trapped and returned; other dialogs become bottom sheets on phones | Dialog, Alert Dialog; Drawer on phones | Primitives | ADOPT, with the confirmation mapping of c) |
+| Long text | One line with an ellipsis and a full-text reveal; record numbers never truncate | Tooltip with truncation | Composition | ADOPT |
+| Filter toolbar | Search, the company view and one or two promoted filters, the rest behind one "Filter (n)" popover or sheet; never wraps; phones show search and Filter | Input, Select or Toggle Group, Popover or Sheet, Badge | Composition | ADAPT — aligned with DESIGN_SYSTEM PT-07 at Stage 3 (GR-20) |
+| Company view | "Tampilkan" for two or more companies, filtering lists | Select or Toggle Group | Composition | ADAPT — a page control, never in the shell or browser storage (D-IA-02; g)) |
+| List, table, cell and row list | One data set as a table from 768 px and as rows on phones; a position number on every record list; loading, empty, filtered-empty and error states; columns tighten before the rows form; rows ≥ 60 px with 44 px targets | Table and the Data Table guide; Item | Primitives and composition | ADAPT — "Muat Lagi" instead of pages (c) 1) |
+| Pager | Pages of 10 with "Menampilkan 11–20 dari 34", previous and next, 20 or 50 per page | Pagination | — | EXCLUDE — PF-15 forbids totals and page numbers |
+| Company tag | A company code, "perusahaan lain" for another company | Badge, outline | Primitive | ADOPT |
+| States | Loading, empty, error, permission, done; "Muat Ulang Bagian Ini"; one region never blanks the page; a spinner only after 300 ms, no skeleton shimmer | Empty, Spinner, Alert | Composition | ADOPT — Skeleton not used |
+| Tabs | Real tabs with `?tab=`; overflow into "Bagian Lain"; the selected tab underlined in primary | Tabs | Primitive | ADOPT |
+| Segmented control | Views inside one section on a sunken track | Toggle Group | Primitive | ADOPT, with the olive selected mark of a) |
+| Facts, key-value, metrics | Header facts; detail attributes; key figures as one strip with hairlines | A composition with Separator | Composition — description lists have no primitive | ADOPT |
+| Timeline | Activity and history, numbered chronologically | — | Custom | ADOPT |
+| Checklist | Conditions with state, reason and the link that fixes them | Item, Badge | Composition | ADOPT — derived each time, no fraction or progress bar (PT-29) |
+| Split view and sheet | List beside the record from 1,101 px, a sheet below; a bottom sheet with handle, title, 44 px close, at most 78 % of the height, modal | Sheet, Drawer | Primitives and composition | ADOPT |
+| Form grid and action bar | Form sections, one column on phones; a sticky action region above the bottom bar | Field layout; a sticky region with Button | Composition | ADOPT |
+| Document paper, totals, number entry | One A4 renderer with letterhead, parties, references, item table, totals, validity, notes, text-only signatures, page footer and the draft marking; one totals contract in integer rupiah; an Indonesian number parser with an explicit error | — ; Input with a parser | Custom — a document renderer (GAP-053) | ADAPT — c) 7 and GP-5 |
+| Checks, result, next step, prerequisite, notice | "Pemeriksaan" with "Perbaiki"; the result with the number as headline and "Salin nomor", the PDF state and one next action; "Perlu kewenangan …" with nothing to press | Item, Alert, Card, Button | Composition | ADOPT |
+| Composer | Editor beside a sticky preview with "Pas lebar", "100 %" and "Layar penuh"; "Rincian \| Pratinjau" below 1,280 px; one sticky bar; explicit save; dirty guard | Card, Tabs or Toggle Group, Dialog | Custom on the reference's foundation | ADAPT — c) 7 |
+| Risk confirmation | LOW, COMMIT, DESTRUCTIVE, CRITICAL; a required reason; a typed confirmation for CRITICAL; an acknowledgement tick; one execution in flight | Alert Dialog with Field | Composition | ADAPT — c) 3 |
+| Actions and demo actions | Delegated handlers; `data-demo` toasts explaining the real behaviour | — | — | ADOPT the delegation as a pattern; EXCLUDE demo actions (GD-04) |
+| Page helpers and container widths | Guard, breadcrumbs, title, dirty guard, archetype widths | Inertia layouts; the server's denial | — | ADAPT — Inertia replaces the router (GD-05); the server decides access (IP-21) |
+| Menu and "Tindakan Lain" | A body-level popover, never clipped; a bottom action sheet with 48 px rows and "Batal" on phones; Enter or ↓ opens, arrows, Home, End, Esc returns focus; destructive last | Dropdown Menu; Drawer on phones | Primitives | ADOPT |
+| Signals | "Perlu tindakan": worst first, three shown and "Lihat semua (n)", one link per row | Item | Composition | ADOPT — R1's "Perlu keputusan Anda" |
+| Command palette | Ctrl/Cmd K; grouped results; a top sheet on phones | Command in a Dialog | Composition | ADOPT as R1's "Cari atau pindai kode" (D-IA-04; PF-19) |
+| Navigation components | Sidebar entry, disclosure group header, child entry, icon rail (Ctrl/Cmd B), drawer, phone bottom bar, account block and menu, top-bar search | Sidebar collapsible to icons, Collapsible, Sheet or Drawer, Dropdown Menu, Avatar; the bottom bar custom | Primitives, composition and custom — shadcn/ui has no phone bottom bar | ADAPT — e) |
+| Upload | States idle to success or error; keyboard path; announcements; drag and drop only as an extra | Attachment (in the index; its fit verified in Stage 2) or a file Input in a Field | Composition | ADAPT — types and limits per purpose from FL-02 |
+| Sign-in compositions | Split card, form column, visual panel; six code cells; the ID/EN toggle | Card, Field, Input, Input OTP, Toggle Group | Composition | ADAPT — f) |
+| Hub tiles, greeting, hero, the four original pages' sections | — | — | — | EXCLUDE — navigation dressed as content; VP-2; GD-04 |
+| Icons | An original outline sprite with a logo mark and a drawn Google "G" | Lucide, styled | — | ADAPT — GR-18; the marks EXCLUDE (GD-08) |
+| Skip link | The top layer of the z-index scale | — | Custom | ADOPT |
+
+**Target sizes**, against the repository's rules — at least 24 × 24 px, phone targets at least 44 px, warehouse controls 48 px. Desktop: the smallest targets are the 24 px round chevron buttons (`--control-xs`, which the density block does not scale), small controls with a 28 px floor, navigation child rows at 36 × `--du` — 27.9 px at 1,366 × 768 — and the 28 px toast close: PASS. Phone: `--touch-min` 44, icon buttons 44, disclosure toggles ≥ 44, drawer rows 48, fields and primary buttons 48, sheet rows 52, bottom-bar items ≥ 60 × 60: PASS. Warehouse/field: 48 px for fields and primaries, but 44 px icon buttons, toggles and links: ADAPT — every control of a warehouse or field task 48 px (GR-07). A coarse pointer on a wide screen: the reference enlarges navigation rows only; ADAPT — ≥ 44 px targets at every width (DESIGN_SYSTEM UXV-10; GR-07).
+
+**Keyboard and focus.** `:focus-visible` only, instant; dialogs, sheets and the drawer trap and return focus, Esc and the scrim closing or cancelling them, never confirming — the re-authentication dialog excepted (KB-04); menus, listboxes and the stage navigator follow the WAI-ARIA patterns above. ADOPT. The shortcuts stay DESIGN_SYSTEM's KB-01–KB-09 — Ctrl K, Ctrl B and Alt N agree with the reference; its "?" for the shortcut list is not adopted, KB-02's Ctrl / opening it.
+
+### c) Patterns
+
+| # | Pattern — the reference | Repository owner | Disposition |
+| --- | --- | --- | --- |
+| 1 | **Numbered lists and pagination.** Every record list numbered by display position — offset plus index plus one, never an identifier, recomputed on sort and filter; pages of 10 with "Menampilkan 11–20 dari 34", previous and next and a size choice (COMPONENT_RULES, r13), where its UX_PRINCIPLES §11 (r11) still says "Muat Lagi" (25) | SECURITY WS-03 — page size ≤ 100, opaque cursors re-validated; PERFORMANCE PF-15 — "more", never a total or page numbers; PF-17 and DESIGN_SYSTEM PT-08 — "Muat Lagi", 25 per load | ADAPT: the position numbers stay, continuing across "Muat Lagi" (the rows already shown plus the index); the pager, the total and the size choice are excluded. Level 1 — a P5 and P6 rule (GR-08) |
+| 2 | **Validation and recovery.** Labels always visible; inline field errors; validation focuses the first problem and opens its section; "Pemeriksaan" with "Perbaiki"; warnings never in the error tone; replacing typed input asks first ("Ganti Isian" or "Batal") | ADMIN_FLOW's message catalogue and IP-14 (a server validation error returns to the form); the allowed-fields rule — only defined inputs (DC-6; IP-13), page props listing their fields (WS-07) | ADOPT the anatomy; ADAPT the wording to the catalogue (GP-5); checks only over defined inputs |
+| 3 | **Risk-based confirmation.** LOW without a dialog; COMMIT with a confirmation naming the object, "Kembali" focused, one execution; DESTRUCTIVE in red with a reason; CRITICAL adding a typed confirmation; an optional acknowledgement tick; every logout confirmed ("Keluar dari akun?") | ADMIN_FLOW IP-08 — irreversible commands confirmed in one step, naming object and consequence, the verb on the button, "Kembali", focus on the first input or "Kembali", a full-height sheet on phones; IP-09 — a reason for ADM+ actions, closures and corrections; IP-10 and SECURITY AU-15 — step-up enforced by the server; MSG-35 — a logout asks only when input is unsent | ADAPT: LOW, COMMIT and DESTRUCTIVE map to no dialog, IP-08 and IP-09; CRITICAL's typed confirmation and the tick are excluded — IP-08 is one step and the server's step-up is the stronger guard. The reference's every-logout confirmation and its centred phone confirmation are the direction for Stage 3 (GD-02 — no reason of its list protects ADMIN_FLOW's behaviour), with MSG-35's sentence when input is unsent; ADMIN_FLOW is unchanged now (GR-09) |
+| 4 | **Result anatomy.** One result surface: the outcome line, the official number as headline with "Salin nomor", the facts, the PDF state and one next action; no toast for the same event; an honest wait ("Menunggu jawaban klien") | DESIGN_SYSTEM D-DS-06 — the outcome in the action region (HO-01; WCAG 4.1.3); DC-8 — after issue "Terbit — Belum Ditagihkan", the number and the rendition state | ADOPT the anatomy; the wording from the catalogue (GP-5) |
+| 5 | **Guided workflow and stepper.** Guidance on the real screens; derived steps; one next step from the record's state, open to the account, never pretending a fact; the stage navigator | R1's Project Journey — the stage track, *Sekarang · Berikutnya · Hambatan*; PL-1 — the applicable stages only, no percentage; PL-2 — a stage that does not apply is omitted, at most named in a folded note; PL-3 — one deterministic precedence, a recommendation the user starts, offered only with its capability; C1A-1 — *Berikutnya* always a step that can be done now | ADOPT the marker language and the anatomy; the next-step logic stays the repository's (PL-3; C1A-1) |
+| 6 | **Guidance levels, tours and "Cara kerja".** Terpandu by default — context lines, stage hints and a tour offer —, Ringkas removing them; a closed two-to-four-line "Cara kerja"; a walkthrough offered once, restarted from "Panduan" | OC-06 and DIR-056 §11's copy budget — 0 explanatory sentences visible by default, secondary explanation behind a disclosure; R1's account menu (*Akun Saya*, *Bahasa tampilan*, *Keluar*); GP-7 | ADAPT: MultipleCorp has one presentation, equal to Ringkas — no level switch and no stored level; a closed "Cara kerja" only where Stage 2 finds a screen needs it; the walkthrough is excluded — its offer is visible explanation, its state per-viewer storage, and V1 defines no such capability |
+| 7 | **Document paper and composer.** Editor beside a live preview (46 % of the row from 1,280 px, 42 % from 1,600 px; the staged variant 52–60 %); one sticky bar with the check count, the numbering cue, "Simpan Draf" and one primary; explicit save; dirty guard; the preview never saves, issues, numbers or changes anything; issue through a confirmation to the result; the paper's draft mode marked "DRAF — belum terbit", text-only signatures, "Nomor: Ditetapkan saat terbit", an optional photo column | VD-07 — a live preview of about 40–45 % with page, zoom and full-preview controls; DC-1–DC-12; GD-07; GAP-053 — the draft preview's producer undefined | ADOPT the anatomy, the bar, the lifecycle and the draft marking; ADAPT: the preview share stays VD-07's — the base 46 % and 42 % fit, the staged 52–60 % does not; the number line reads DC-2's "Nomor diberikan saat terbit"; only defined inputs (DC-6; GAP-019); a photo column only where a document's template defines one; the client's totals provisional, the server's authoritative (DC-3; UXI-14; IP-13); the producer stays GAP-053's question for Stage 2 (GR-10) |
+| 8 | **Transaction date.** Prefilled with today; no date after today; an earlier date "dipilih" with "Tanggal Mundur"; the audit keeps the real time | ADMIN_FLOW IP-07 and DESIGN_SYSTEM PT-25 — the server's day (WIB), "Hari ini, {tanggal} · Ubah", L-09, "Nomor mengikuti periode {periode}" (NM-05), CONFLICT across midnight (ST-08; MSG-16), the numbering commands' fixed date | ADOPT the component; the semantics and copy are IP-07's — the reference cites the same rule |
+| 9 | **Live status, long text and uploads.** A live dot only for a genuinely live state; one-line long text with a full reveal; the upload state machine with retry, keyboard path and announcements, PDF, JPG or PNG up to 10 MB | SECURITY FL-02 — the allowlist and limit per purpose (evidence, product images, identity assets, imports, archive items, attachment-only office files); ADMIN_FLOW IP-16's file line | ADOPT the states, live rule and long-text rule; ADAPT the types and limits per purpose to FL-02 |
+| 10 | **Persistent shell and router.** `router.js` swaps the page in place over HTTP; the shell never re-renders; exit, fetch, swap, entrance; reduced motion swaps at once | GD-05 — Inertia handles navigation; ARCHITECTURE §1 | EXCLUDE the router; ADOPT its behaviour as criteria for Inertia's persistent layouts — the shell kept between pages, focus and scroll handled, the page-state transition of the motion tokens, an instant swap under reduced motion |
+
+Further patterns read: the action budget (one primary per region, at most two quiet secondaries and "Tindakan Lain" on desktop, primary and "⋯" on phones) — ADOPT, DESIGN_SYSTEM PT-03 and C1A-2 agree; tables becoming rows below 1,024 px, a data table scrolling only inside its own frame — ADOPT, replacing VC1's tablet rule, within 1.4.10's exception; feedback through one channel, a toast only for background completion or undo — ADOPT, under the toast ADAPT of b); the item-add group "Tambah dari katalog… | Tambah baris" — ADAPT: one add path, IP-13's empty last row with the catalogue search inside its product picker (C1A-2; AN-5); "Kembalikan isian" restoring the last saved draft after asking — ADOPT for drafts.
+
+### d) Principles
+
+**UX_PRINCIPLES** — ADOPT, as design and review criteria: a screen answers where, what, what needs attention, the one next action and where the rest lives; task before capability, never removing a capability to calm a screen; one dominant next action per local region and none on a page without a single job; the action budget; a button changes data or starts a task, navigation is a place, one destination offered once per block; destructive actions last and deliberate, keeping their confirmation; role-aware emphasis — the Owner's oversight verbs, the Admin's execution —, hiding what a capability disallows rather than disabling it; calm chrome, one status per context; fewer surfaces, no card inside a card; filters that never wrap; columns that earn their place; responsive simplification by priority; minimal feedback; copy said once; navigation versus action. They agree with C1A-2, AICWDF §18.3–§18.5, DESIGN_SYSTEM PT-03 and AZ-01's absent-not-disabled hint; its list pagination is c) 1's, its §§18–19 c) 5 and 6's.
+
+**The reference's DESIGN_SYSTEM principles** — ADOPT: calm, precise and spacious but productive; surfaces, not decoration; one action colour, lime only as a signal; hierarchy by size and colour tier, four weights; macro breathing room with micro density; truthful data; the same product on every width. Its Do and Don't list is adopted with its exceptions recorded in e) — the account placement, the top bar and the phone app bar.
+
+**MOTION_SYSTEM against VP-8 and reduced motion** — RECONCILED: the reference's motion is "quiet, exact, never decorative" — state changes, the page-state transition with the shell still, panels, drawers, sheets, dialogs, menus, feedback, nothing tied to scrolling, focus never animated, loading by a spinner only after 300 ms, data-ready to the last element within 900 ms. Excluded under VP-8: counts rolling per digit, the one-datum emphasis curve and chart reveals. The sign-in panel's parallax, inside its single transition between steps, is kept with VD-05, which takes the sign-in motion from REF-V1, and goes under reduced motion. Reduced motion: no translate, scale, blur, clip, parallax, stagger, rolls or stroke drawing, a 150 ms linear crossfade, indicators jump, the in-place page swap instant — ADOPT; VC1's 1 ms is superseded, a crossfade without movement still honouring `prefers-reduced-motion`. No transition delays focus or input — VD-05 and the reference agree.
+
+**Accessibility against WCAG 2.2 AA** (the W3C Recommendation and Understanding pages, as the gate's [official documentation verification](#official-documentation-verification) recorded them, with 1.4.11's Understanding page read again on 2026-10-13):
+
+| Criterion | The reference | Result |
+| --- | --- | --- |
+| 1.4.1 Use of colour | A state is a word with a dot, arrow or tint; links underlined | PASS |
+| 1.4.3 Contrast (minimum) | Every designed text pair ≥ 4.50 | PASS, with the per-surface greys mandatory (GR-04) |
+| 1.4.4 Resize text | px sizes scale with browser zoom; no `zoom` or `transform` fitting | PASS; rem in the Tailwind theme (GR-06) |
+| 1.4.10 Reflow | Validated from 360 px | ADAPT — 320 px (GR-05) |
+| 1.4.11 Non-text contrast | Focus, the navigation indicator, tabs, the selected row and the option check pass; control edges, the bottom bar's current item, the selected segment and the current stage marker do not | ADAPT — a) (GR-01–GR-03) |
+| 1.4.12 Text spacing | Fixed heights for rows, pills and bars; one-line status text | Stage 2 check — no clipping with the 1.4.12 overrides (GR-06) |
+| 1.4.13 Content on hover or focus | Tooltips for truncated text and rail entries | Stage 2 check — dismissible, hoverable, persistent |
+| 2.1.1 Keyboard | Select, menus, disclosure, palette, stage navigator, drawer and sheets fully operable | PASS |
+| 2.2.1 Timing adjustable | Success and info toasts dismissed after 4.5 s, paused on hover and focus | ADAPT — a toast only for an event that leaves a visible trace elsewhere and never as the only place of a message (GR-15) |
+| 2.4.3 Focus order · 2.4.7 Focus visible | Overlays trap and return focus; a 2 px olive outline | PASS |
+| 2.4.11 Focus not obscured (minimum) | Sticky action bars, the phone bottom bar and toasts with toast-safe offsets | Stage 2 check — scroll padding under the sticky regions (GR-06) |
+| 2.5.7 Dragging movements | Drag and drop only as an extra to the file picker | PASS |
+| 2.5.8 Target size (minimum) | ≥ 24 px desktop, ≥ 44 px touch | PASS; 48 px warehouse controls (GR-07) |
+| 3.3.1 · 3.3.3 Error identification and suggestion | Inline errors at the field; "Perbaiki" focuses it | PASS |
+| 4.1.3 Status messages | Polite and assertive live regions; the result announced | PASS |
+
+**Density and breathing room against AICWDF §18.2** — ADOPT: clear sections, one vertical rhythm, padded cards, forms, dialogs and panels, content widths per archetype rather than wall-to-wall, few controls per cluster, progressive disclosure for secondary detail, spacing from tokens, uncramped phone forms, and a denser mode only where the work needs it (OC-09's named screens); "not too dense" and "not artificially empty" are judged on the Stage 2 prototype at C2.
+
+**AICWDF §27's UI/UX consistency gate**, item by item against the reference: modern visual quality and design-system consistency — the reference's tokens and components; primary action clear — one primary per region; unnecessary duplicate actions 0 — its redundancy rules with C1A-2; back action clear — ADAPT, a contextual back on every child flow (e)); navigation contract valid — GAP-035, Stage 3; Indonesian default, plain Indonesian, English available, missing translations 0 and the language switch — ADAPT, the reference's copy is Indonesian with partial English through `L(id, en)`, never normative (GP-5), and is localized under CAP-14, GAP-037 and C-1 (GR-17); mobile-first, responsive and adaptive — its responsive classes with the coarse-pointer ADAPT; loading, empty and error states — its states; destructive-action safety — c) 3; accessibility critical checks — the table above; visual breathing room and content density — §18.2 above.
+
+**The anti-slop rules SLOP-01–SLOP-45** against the reference — under D4 the latest Owner direction, now GD-02, prevails over an older visual rule, and a rule protecting clarity, honesty or accessibility stays. KEPT 35, REVISED 9, SUPERSEDED 1; the provisional dispositions and their DECISION_INDEX statuses are not changed by this table.
+
+| ID | Result | Reason |
+| --- | --- | --- |
+| SLOP-01 | KEPT | A card only for a distinct object, a group scanned as one, an actionable summary or a region with its own state — the reference's rule |
+| SLOP-02 | KEPT | No card inside a card — the reference's rule |
+| SLOP-03 | REVISED | The reference's radius family, 4–12 px and 16 px sheet tops, replaces VC1's 16–20 px; still no giant rounded container |
+| SLOP-04 | KEPT | Nothing above 12 px but the sheets' top corners |
+| SLOP-05 | KEPT | Pills for states, counts and the bottom bar's current marker only |
+| SLOP-06 | KEPT | No gradients in the application; the sign-in visual panel follows VD-05 |
+| SLOP-07 | KEPT | As SLOP-06 |
+| SLOP-08 | REVISED | No decorative glow; the soft shadow under the sign-in CTA is the reference's (GD-02) — the rule guards against clutter, not accessibility (D4) |
+| SLOP-09 | REVISED | Lime only as a fill under dark ink — selection, attention, the current step's signal, the sign-in CTA —, never text or a thin line, never a state's only mark (a)); strong fills under 2 % of a screen |
+| SLOP-10 | KEPT | Opaque surfaces: the reference's translucent bars become opaque (a)); a blurred scrim is not a surface |
+| SLOP-11 | REVISED | A plain canvas at the reference's `#f7f8f3` instead of `#F7F7F2` |
+| SLOP-12 | KEPT | No decorative shapes; the sign-in panel's curve is VD-05's |
+| SLOP-13 | KEPT | As VC1 adapted it: imagery only on the sign-in panel, abstract; the reference's photographs excluded (GD-08; VP-5); empty states without illustration |
+| SLOP-14 | KEPT | As VC1 adapted it: the reference's barely visible resting shadow, the border carrying the edge; overlays over a scrim |
+| SLOP-15 | REVISED | Functional motion on the reference's tokens; under reduced motion no movement, a 150 ms crossfade instead of none |
+| SLOP-16 | REVISED | No parallax in the application; inside the sign-in panel's one transition the reference's restrained parallax stays (VD-05), removed under reduced motion |
+| SLOP-17 | KEPT | Hover never the only path — the reference rejects hover-only actions |
+| SLOP-18 | KEPT | Four key figures on the Owner's Beranda, the reference's tile anatomy without deltas (VP-3) |
+| SLOP-19 | KEPT | No welcome banner: the reference's greeting and hero are excluded (VP-2) |
+| SLOP-20 | KEPT | No greeting or cliché; the sign-in has its heading and one line, the reference's editorial headline, lead and feature rows excluded |
+| SLOP-21 | KEPT | No marketing copy — the reference removed its own |
+| SLOP-22 | KEPT | No emoji |
+| SLOP-23 | KEPT | Icons only where they mean something — the reference's text-first headings |
+| SLOP-24 | KEPT | Not an icon in every label or button |
+| SLOP-25 | SUPERSEDED | Still superseded: the reference's density — the desktop density scale, touch sizes on phones, a dense mode only on OC-09's named screens — under §18.2's guard |
+| SLOP-26 | REVISED | Headings on the reference's scale: page titles 32/40 at the canvas, 28–33 px at runtime, figures 22–28 px; a display size only on the sign-in |
+| SLOP-27 | REVISED | Still no hero-like header; titles at the reference's size rather than 26 px |
+| SLOP-28 | KEPT | At most five groups on a dashboard (QB-10), figures from defined values |
+| SLOP-29 | KEPT | One action colour; olive for selection and focus; lime only as a signal; tones bound to states |
+| SLOP-30 | KEPT | A badge carries one state; trend badges excluded (VP-3); counts per company, never in navigation |
+| SLOP-31 | REVISED | Consistent radius at the reference's five steps and a pill, each with a role |
+| SLOP-32 | KEPT | The reference's icon boxes, 12–32 px, with their stroke ratios |
+| SLOP-33 | KEPT | The reference's spacing scale |
+| SLOP-34 | KEPT | Charts of defined values with a table alternative (VP-6) |
+| SLOP-35 | KEPT | No landing-page look |
+| SLOP-36 | KEPT | No concept-shot look |
+| SLOP-37 | KEPT | No generic template look |
+| SLOP-38 | KEPT | No generated admin-dashboard look |
+| SLOP-39 | KEPT | No feed or infinite scroll; "Muat Lagi" (c) 1) — the reference rejects infinite scroll too |
+| SLOP-40 | KEPT | No reactions |
+| SLOP-41 | KEPT | No likes |
+| SLOP-42 | KEPT | No streaks |
+| SLOP-43 | KEPT | No confetti — the reference forbids celebration |
+| SLOP-44 | KEPT | No gamification or completion percentage; progress bars for processes only |
+| SLOP-45 | KEPT | No chat bubbles — the reference has none |
+
+### e) Navigation components
+
+GD-03: R1's entries stay — the Owner's *Beranda*, *Proyek*, *Pekerjaan* and *Tinjauan*, the Admin's *Pekerjaan* and *Proyek*, the modules in the collapsed *Menu lengkap*, R1's phone bottom bars, and the top bar's "Cari atau pindai kode" (Ctrl K), "Buat" and the account menu. The reference supplies only the treatment.
+
+**The reference's treatment on R1's entries** — ADOPT unless marked:
+
+| Component | Treatment |
+| --- | --- |
+| Sidebar entry | A 24 px icon and a 15 / 500 label; the current entry a lime 150 pill, 44 px tall and 10 px round, with a 3 px olive indicator, primary ink at 600 and `aria-current`; hover and press tints; the indicator slides 400 ms between entries, the shell never moves |
+| *Menu lengkap* | The reference's group header: a disclosure-only button with `aria-expanded`, `aria-controls` and a chevron, never navigating, never a flyout; the modules as child entries without icons, the current one in primary ink, semibold, with a 2 px olive rule; open on load only when it holds the current entry, nothing remembered |
+| Icon rail | The collapsed desktop sidebar (Ctrl B, KB-03) and the tablet rail at 768–1,024 px: icons with tooltips and accessible names; the *Menu lengkap* icon opens the drawer at that group |
+| Drawer | One modal from the left, `min(86vw, 340px)`, 48 px rows: focus trapped, Esc, scrim, close and Back, the page inert, focus returned |
+| Phone bottom bar | R1's bars — the Owner's *Beranda* · *Proyek* · *Cari* · *Lainnya*, the Admin's *Pekerjaan* · *Proyek* · *Cari* · *Lainnya* — in the reference's item anatomy: a 22 px icon in a 54 × 30 pill above an 11.5 / 500 label; ADAPT: the current item adds an olive mark, the lime pill alone being 1.16:1 (a); GR-02); opaque (SLOP-10) |
+| *Lainnya* | The reference's drawer or a full-height sheet, chosen in Stage 2 (GR-11) — the content stays R1's: *Kerja*, *Menu lengkap* and *Akun* |
+| Command palette | R1's search and scan entry, "Cari atau pindai kode" with Ctrl K: Command in a Dialog, a top sheet on phones, exact lookup first (D-IA-04; PF-19; QB-06); it lists only what the account may open (AZ-01 as a hint) |
+| Account menu | The reference's menu anatomy — `role="menu"`, keys, 42 px rows — holding R1's entries *Akun Saya*, *Bahasa tampilan* and *Keluar*, in R1's place, the top bar |
+| Current marking | Exactly one `aria-current` per navigation landmark — `page` on the entry, `true` inside its area |
+
+**The reference's navigation principles against R1 and D-IA-03, D-IA-04 and D-IA-06:**
+
+| Principle | Verdict | Reason |
+| --- | --- | --- |
+| One two-level tree drives sidebar, rail, drawer and palette | Compatible | R1's primary entries and *Menu lengkap* are two levels; a module's sub-pages are tabs (D-IA-01, R1) |
+| Group headers only open and close; only the current group open on load; nothing persisted | Compatible | And GP-7 |
+| No badge, count, dot or pulse on an entry | Compatible | It is D-IA-06 |
+| Role-aware by filtering: absent, never disabled | Compatible | AZ-01 and D-IA-03's hint; the server decides |
+| Removing a link never removes a path | Compatible | R1's non-loss map |
+| A focused task hides the bottom bar while its action bar shows | ADOPT, verified in Stage 2 | It frees the bottom of the phone for the scan step's dock and action bar (PT-20; AN-6) without removing a path (GR-11) |
+| One entry for typed and scanned codes | Compatible | It is D-IA-04 |
+| The bottom bar holds the role's four most frequent level-1 destinations | Not adopted | GD-03 keeps R1's bars with *Cari* and *Lainnya* (D-IA-03) |
+| The account at the bottom of the sidebar, never top right | Not adopted | GD-03 keeps the account menu in the top bar |
+| A calm top bar with search and the period only | Not adopted | GD-03 keeps "Cari atau pindai kode", "Buat" and the account menu; the period and the company view stay page controls (D-IA-02) |
+| The phone app bar holds Menu, the brand and search, with no explicit Back | Not adopted | AGENTS.md rule 12 and AICWDF §18.3–§18.5 require a clear contextual back on every child flow — R1's phone top bar keeps the back action and the title; Menu and search already live in the bottom bar as *Lainnya* and *Cari*, one control per intent (C1A-2) |
+
+**Excluded** (GD-03; GD-04): the reference's MULTIPLECORP navigation trees and its 48-route taxonomy, route identifiers and page set; its bottom-bar compositions — the Owner's *Beranda* · *Proyek* · *Gudang* · *Keuangan* and the Admin's *Beranda* · *Proyek* · *Gudang* · *Pengiriman*; its "Khusus Owner" contents; its default of no phone Back.
+
+### f) Sign-in and authentication surfaces
+
+Against VD-05 and SECURITY H7-15–H7-19, AU-04, AU-08 and AU-22–AU-24; P5's semantics are unchanged.
+
+| Element | The reference | Disposition | Reason |
+| --- | --- | --- | --- |
+| Composition | A split card on desktop fitted to the viewport without scrolling; a stacked card with an editorial header on portrait tablets, a split one on landscape tablets; a calm form page on phones | ADOPT the geometry and fitted units | VD-05's split panel and clean form surface |
+| Visual panel | A photographic scene cropped from REF-M2 with a sky palette, a building and gradients | ADAPT: no photograph — an abstract composition with VD-05's smooth curved or asymmetric shape and controlled blue/cyan, from the reference's sky tones (GR-12) | VP-5; GD-08 (no imagery reused); SLOP-13 |
+| Editorial copy | A three-line headline, a lead and three feature rows | EXCLUDE | Marketing copy (SLOP-21, SLOP-35; OC-06); the sign-in keeps its plain heading and one supporting line (SLOP-20) |
+| Steps and motion | Credential, verification, the application; one 600 ms clock on desktop, 480 ms when compact, the content swapped while hidden, a 150 ms fade under reduced motion | ADOPT | VD-05: a smooth, restrained panel transition that never delays work, honouring reduced motion; R1's sequence — a password, then a TOTP or recovery code ("Gunakan kode pemulihan"); after Google the code only, with "Tidak bisa memakai aplikasi?" (H7-15; AU-16; AU-19; AU-22) |
+| Registration and persistence | No sign-up; no "remember me" | ADOPT | VD-05 — no public registration; AU-08 — no persistent login |
+| Answers | Field errors and a generic failure | ADOPT the presentation | AU-04's generic answers — MSG-19 "E-mail atau kata sandi salah." and the generic second-factor answer —, the throttled answer while a cooldown runs (H7-15), the wording from the catalogue (GP-5) |
+| Code entry | Six cells with a filled-cell rule and wash | ADAPT: Input OTP or one input with `autocomplete="one-time-code"`, decided in Stage 2; paste and autofill work either way (GR-12) | As VC1 left it; the cells' selected state follows a)'s non-text rule |
+| Google button | An outline button with the Google "G" drawn in the reference's sprite | ADAPT to Google's own branding (GR-13); the drawn "G" EXCLUDE | Google's [sign-in branding guidelines](https://developers.google.com/identity/branding-guidelines) (last updated 2026-07-07, read 2026-10-13): the label "Sign in with Google", "Sign up with Google" or "Continue with Google", localizable — R1's "Lanjutkan dengan Google"; the standard full-colour G unmodified on white; the light theme with fill `#FFFFFF`, stroke `#747775` and text `#1F1F1F`, or the dark or neutral theme; Google Sans Medium 14/20; on the web 12 px left of the G, 10 px right of it and 12 px right of the text; the aspect ratio kept when scaled; at least as prominent as any other third-party option. With no Google script on any page (AU-22) the button is a custom one that follows these rules; the font's self-hosting under WS-08 and COST_POLICY is checked at implementation (GR-13; GAP-042). The reference's README excludes the G from reuse too |
+| Advice | — | Kept from R1 | H7-16's advice "Di perangkat bersama, keluar dari Google setelah selesai; kunci ponsel saat tidak dipakai." stays visible (OC-06's mandated copy) |
+| Language toggle | ID / EN in a segmented toggle on the sign-in | ADOPT, with a)'s selected mark | C-1 and GAP-037: before sign-in the choice may stay on the device, its storage undecided |
+| After logout | A one-time note on the sign-in | ADOPT | After a logout the sign-in loads fresh with history and caches cleared (H7-12); the note's wording from the catalogue |
+| Re-authentication in place, enrolment, the enrolment-only session, recovery codes, device replacement, the Owner's account screens, linking and unlinking Google, notices | Not in the reference | Stage 2 builds them on the reference's components | D-UX-03; H7-15, H7-17–H7-19; AU-23; AU-24; GAP-044 |
+
+### g) Client-side storage and shared devices
+
+GP-7 against SECURITY AU-08 (no "remember me" on shared office PCs and floor devices) and WS-07 (shared props only the display name, the account's own capabilities and granted companies as hints, the locale and generic flash text), H7-12 (a logout clears history and client caches), the company-scope rules and DIR-037 D6's shared-office-device rule. The Level-1 default: no business identifier, record title, record history or company selection persists in browser storage across sessions or accounts; company scope is always decided on the server. The keys below were found by searching the reference's scripts.
+
+| Key and store | Holds | Disposition |
+| --- | --- | --- |
+| `mc.guide.recent`, local storage | The last six records the viewer opened — kind, identifier, label, subtitle, address | EXCLUDE — record identifiers and titles across sessions and accounts; a per-account list would need storage chosen under C-1 and database change control, and is not proposed |
+| `mc:company`, session storage | The company view | ADAPT — never in browser storage: a page control (D-IA-02), carried in the address or the server session and checked on the server on every request |
+| `mc:range`, session storage | The report period | ADAPT — as the company view |
+| `mc.guide.level` and `mc.guide.tour`, local storage | The guidance level and the walkthrough's state | EXCLUDE — neither is adopted (c) 6) |
+| `mc-shell-sidebar`, local storage | The desktop sidebar collapsed or expanded | Stage 2–3 under C-1: whether a UI preference persists, and how — on a shared device a browser-stored choice follows the device, not the account (GR-14) |
+| `mc:prev` and `mc:router-fallback`, session storage | The router's previous address and loop guard | EXCLUDE with the router (c) 10) |
+| `mc:project`, `mc:brand`, `mc:role`, session storage; session records | The lab's previews of other projects and roles; records created in the prototype's tab | EXCLUDE — demonstration material (GD-04); the server records |
+| No form data in browser storage (the composer and every form) | — | ADOPT — unsent input is kept in memory only, as AU-07 and H7-05 already require |
+
+### h) The reference's MULTIPLECORP material
+
+EXCLUDE by category (GD-04; GP-3; GP-4): the demonstration routes, pages, page modules and fixtures, which the package does not even contain; the personas — Dimas as Owner, Sari as Admin — and the `multiplecorp.id` addresses, the repository's synthetic set governing (ARJ, BTN and CKP; Laras, Dimas and Bayu); the sample data and figures; the numbering formats; the business states, status registries and business copy, with the components' default micro-copy (GP-5); the domain logic — the numbering service, the tax profile, the document view models, `project-config.js`'s routes, modules, fixtures and navigation trees, the dashboard's demonstration periods; the example-page CSS blocks (`.pur-*`, `.atq-*`, `.prj-*`) and the four original pages' sections in `components.css` and `motion.css`, read as anatomy only; DOCUMENT_SYSTEM §6b, ROLE_JOURNEYS, ACTION_ROUTE_MATRIX, UX_AUDIT_R11 and DESIGN_DECISIONS' examples; the private lab, its 239 demonstration files and its imagery; the logo mark `i-logo-mark` and the drawn Google "G" `i-google` (GD-08). Where such material cites a canonical rule — IP-21, D-IA-02, D-IA-06, KB-03, PT-25, MSG-01, MSG-10, MSG-17, MSG-39, AX-13, CS-08 among those met — the rule was read in this repository; the differences are information only and adopt nothing — for example its bottom bars and trees (e)).
+
+### Earlier P7 re-baseline decisions
+
+Each against the reference: KEPT, RECONCILED (how), SUPERSEDED (by what), HISTORICAL (fulfilled, no longer operative) or CONFLICT. No decision is in CONFLICT.
+
+| Decision | Disposition | How |
+| --- | --- | --- |
+| DIR-057 VD-01 | SUPERSEDED | By GD-02; REF-M1–REF-M3, REF-V1 and REF-V2 are provenance only |
+| VD-02 | KEPT | The reference has no multi-pastel system; its tints mark identity and state |
+| VD-03 | RECONCILED | The reference realizes it (a)); blue only for information, the focus ring olive |
+| VD-04 | KEPT | The reference's character matches it |
+| VD-05 | RECONCILED | f): the split panel, an abstract curved panel in controlled blue/cyan, the reference's step transition, no sign-up, P5 unchanged |
+| VD-06 | KEPT | R1's role experiences; the reference's role-aware emphasis agrees; the warehouse's scan-first flow with 48 px targets (GR-07) |
+| VD-07 | RECONCILED | c) 7: the reference's composer within VD-07's preview share |
+| VD-08 | HISTORICAL | Fulfilled by VC1 |
+| VD-09 | RECONCILED | One product, now on the reference's design system |
+| VD-10 | KEPT | Accessibility, alignment and reflow stay mandatory (a); d)); the visual judgement moves to C2 and Stage 4 |
+| VD-11 | SUPERSEDED | By GD-01 and GD-10 |
+| C1A-1–C1A-3 | KEPT | Above the reference (GD-02); C1A-2 decides the item-add path and the phone app bar (c); e)) |
+| DIR-058 VP-1 | SUPERSEDED | By GD-03 — the reference's treatment on R1's entries (e)) |
+| VP-2 | KEPT | No greeting, hero, quote or upsell — the reference's greeting and hero excluded |
+| VP-3 | KEPT | The reference's KPI tile without deltas, sparklines or period comparison |
+| VP-4 | KEPT | The stage track on the reference's progress stepper; the lists' segmented indicator built in Stage 2; no percentage |
+| VP-5 | RECONCILED | No photographs; an abstract sign-in panel; the reference's imagery and marks not reused (GD-08); the logo a later Owner decision |
+| VP-6 | RECONCILED | The reference's ageing palette ordered by severity, with direct labels, amounts and a table; its categorical, donut and progress palettes excluded |
+| VP-7 | KEPT | Every element traced to a record, field, command, signal, CALC value or capability |
+| VP-8 | RECONCILED | d): functional motion on the reference's tokens; count rolls, emphasis and chart reveals excluded; the sign-in parallax only inside its transition; reduced motion without movement |
+| DC-1 | KEPT | The draft editable and unnumbered, issued explicitly |
+| DC-2 | RECONCILED | GD-07's "DRAF — belum terbit" as the reference's draft mode; the number line "Nomor diberikan saat terbit"; DESIGN_SYSTEM §14.3 aligned in Stage 3 |
+| DC-3 | KEPT | "(perkiraan)" — the reference's draft total agrees; the server's totals authoritative |
+| DC-4 | KEPT | Text-only signatures — the reference's paper agrees |
+| DC-5 | KEPT | Read-only carried data with one source and one link — the reference's identity strip with "Perbaiki di …" |
+| DC-6 · DC-7 · DC-8 · DC-10 | KEPT | Defined inputs only; the composer issues only; MSG-39 and the result; distinct document names |
+| DC-9 | KEPT | Client originals stay uploads — the reference's scan mode agrees |
+| DC-11 | RECONCILED | Phone: "Rincian \| Pratinjau" and "Layar penuh" serve Edit → Preview → Finalize |
+| DC-12 | KEPT | GAP-053 stays open for Stage 2 |
+| DIR-055 OC-01–OC-05 | KEPT | R1's structure; the reference's patterns serve it |
+| OC-06 | KEPT | c) 6: one presentation without explanatory sentences by default |
+| OC-07 | RECONCILED | Superseded earlier by VD-02 and VD-03; its rejection of a dominant lime holds — the reference's lime is a signal, its CTA lime confined to the sign-in, strong fills under 2 % of a screen |
+| OC-08 | RECONCILED | Neutral discipline, direct labels, no rainbow, never colour alone, no new metric — VP-6 on the reference's chart rules (from data, no axes inside cards) |
+| OC-09 | KEPT | One control height per density at the reference's values; column grids; right-aligned tabular numbers; labels above with one gap, the reference's 8 px; metadata on its own line; "Rincian lain"; the dense mode only on the named screens; summaries beside their form — the reference's purchase alignment rule agrees |
+| OC-10 | KEPT | Scan first, the next item first, the manual fallback, clear completion; 48 px (GR-07) |
+| OC-11 | HISTORICAL | The three axes were settled by R1 |
+| OC-12 | KEPT | The warehouse/field participant pending, not blocking |
+| DIR-053 K3's non-copy rules | KEPT | No Ramp name, logo, asset or screenshot; no chat composer; lime only accessibly — the reference's lime is never text |
+| D-DS-01 | SUPERSEDED | Now by GD-02 — the reference |
+| D-DS-02 | RECONCILED | Inter, self-hosted, tabular figures, 16 px touch inputs — now Inter 4.1 on the reference's scale |
+| D-DS-03 | RECONCILED | The reference's density, with OC-09's named dense screens |
+| D-DS-04 · D-DS-05 · D-DS-06 · D-DS-07 · D-DS-08 · D-DS-09 | KEPT | Label, icon and tone; charts of defined values (VP-6); the outcome in the action region; the line editor and the phone's line sheets; the scan field at the bottom, built in Stage 2 on the reference's input group; the capability-by-company preview |
+| VC1's draft visual system | SUPERSEDED | By GD-01 and GD-02, recoverable at commit 6; its rules that protect accessibility carry forward — the control-edge role (GR-01), the 320 px reflow (GR-05), the coarse-pointer sizing (GR-07) and no lime as text |
+| VC1's disposition delta | RECONCILED | Its eight ADAPT rows re-examined in d): SLOP-03, SLOP-09, SLOP-15, SLOP-16 and SLOP-31 REVISED to the reference; SLOP-04, SLOP-13 and SLOP-14 KEPT as VC1 adapted them. Its totals stay the provisional record, and the DECISION_INDEX statuses of D-IA, D-DS and D-UX do not change |
+
+### Conflicts
+
+Every difference between the reference and the repository that is not a plain ADOPT, classified under [CHANGE_CONTROL](../../00-governance/CHANGE_CONTROL.md#decision-authority). Each is Level 1: it applies an Owner decision already taken — GD-02's own rule that the project's decision governs and its list of reasons for a deviation —, a P0–P6 rule or an accessibility requirement, and changes no business behaviour.
+
+| # | Difference | Resolved by | Where |
+| --- | --- | --- | --- |
+| 1 | Control edges, the bottom bar's current item, the selected segment and the current stage marker below 3:1; greys off their surface below 4.5:1 | WCAG 2.2 1.4.11 and 1.4.3 — accessibility, a reason of GD-02 | a); GR-01–GR-04 |
+| 2 | A 360 px minimum width; px units | WCAG 1.4.10 and 1.4.4; DESIGN_SYSTEM §6 | a); GR-05, GR-06 |
+| 3 | 44 px phone targets; sizing by width only | R1's 48 px warehouse controls; DESIGN_SYSTEM UXV-10 | b); GR-07 |
+| 4 | Pages with a total and a size choice | SECURITY WS-03; PERFORMANCE PF-15 and PF-17 — P5 and P6 | c) 1; GR-08 |
+| 5 | CRITICAL's typed confirmation and the acknowledgement tick | ADMIN_FLOW IP-08's one-step confirmation; SECURITY AU-15's server step-up | c) 3; GR-09 |
+| 6 | Every logout confirmed; a centred confirmation on phones | GD-02: the reference's pattern is the direction for Stage 3, ADMIN_FLOW unchanged now | c) 3; GR-09 |
+| 7 | The staged composer's 52–60 % preview; its number line; an optional photo column | VD-07 (an Owner decision); DC-2, DC-3, DC-6 | c) 7; GR-10 |
+| 8 | The account at the sidebar's foot; a top bar of search and period; the reference's bottom-bar compositions; a phone app bar without Back | GD-03; AGENTS.md rule 12; C1A-2 | e) |
+| 9 | A photographic sign-in panel; its editorial copy; a drawn Google "G" | VP-5; GD-08; SLOP-21; OC-06; Google's branding guidelines | f); GR-12, GR-13 |
+| 10 | Records, the company view, the period, the guidance level and the tour kept in browser storage | GP-7; AU-08; WS-07; DIR-037 D6; C-1 | g); GR-14 |
+| 11 | Toasts dismissed after 4.5 s | WCAG 2.2.1 | b); d); GR-15 |
+| 12 | A 10.5 px pill size; desktop text about 12.9 px | GD-02 with the reference's own 11 px floor; judged at C2 | a); GR-16 |
+| 13 | Indonesian micro-copy with partial English | GP-5; V1_SCOPE CAP-14; GAP-037; C-1 | d); GR-17 |
+| 14 | The reference's own icon sprite | GD-05; GD-08 | a); b); GR-18 |
+| 15 | Demonstration date presets | The repository's period rules | b); GR-19 |
+| 16 | The filter toolbar against PT-07; phone-only disclosures against R1's desktop folds | GD-02 for Stage 3; R1's structure | b); GR-20, GR-21 |
+| 17 | Translucent phone bars | SLOP-10, kept for contrast | a); GR-22 |
+| 18 | Categorical, donut and progress charts; KPI deltas and sparklines; the greeting and the hero | VP-2, VP-3, VP-6 | a); b); d); GR-23 |
+| 19 | Guidance levels, the resume memory and the walkthrough | OC-06; GP-7; no V1 capability | c) 6; g) |
+| 20 | A second add path; a draft entry in the purchase's split action | C1A-2 and ADMIN_FLOW IP-13; WF-PUR-01's one saving command | b); c) |
+| 21 | The router and its storage | GD-05 — Inertia | c) 10; g) |
+| 22 | Count rolls, the emphasis curve and chart reveals; the sign-in's parallax | VP-8 as reconciled; VD-05 | d) |
+| 23 | Nine SLOP rules revised and one still superseded | D4 with GD-02; the rules protecting clarity, honesty and accessibility kept | d) |
+| 24 | The reference's internal differences — "Muat Lagi" (its UX_PRINCIPLES, r11) against pages (its COMPONENT_RULES, r13); a persistent bottom bar (r3) against one hidden on focused tasks (r12); a result with a toast (APP_ARCHITECTURE) against no toast (DOCUMENT_SYSTEM); a fixed 32 px small control against the stylesheet's 28 px floor | The repository's rule where one exists (PF-15; D-DS-06), otherwise the later revision and the stylesheet | c); e); b) |
+
+**Level 2 or 3: none.** No difference needs a change of P0–P6 semantics — business, financial, inventory, document, authorization, company scope, field projection, security, concurrency, performance budgets or data — and none a decision beyond DIR-059 and the earlier Owner decisions; nothing is enacted as a P0–P6 change. GAP_REGISTER gains no OWNER_DECISION_REQUIRED item and no new gap: what later stages must still do is carried below under C-2, each with its owner and target.
+
+### Carried items GR-01…
+
+| ID | Carried result | Owner | Target |
+| --- | --- | --- | --- |
+| GR-01 | The control edge `#898982` for inputs, selects, date fields and author-styled checkboxes and radios (a)) | Planning | Stage 2; normative in Stage 3 |
+| GR-02 | An olive mark on the bottom bar's current item, the selected segment and the sign-in language toggle (a)) | Planning | Stage 2 |
+| GR-03 | A 2 px olive ring on the current marker of the read-only stage track (a)) | Planning | Stage 2 |
+| GR-04 | The per-surface greys made mandatory: muted on white only, muted-canvas, muted-tint, tertiary-lime on a selected lime row (a)) | Planning | Stage 2; normative in Stage 3 |
+| GR-05 | The phone composition reflowing at 320 CSS px (a)) | Planning | Stage 2; verified in Stage 4 |
+| GR-06 | Sizes in rem at a 16 px root with the desktop text unit as a factor; the text-spacing (1.4.12) and focus-not-obscured (2.4.11) checks under the sticky regions (a); d)) | Planning; the Architect at implementation | Stage 2; P11 |
+| GR-07 | 48 px controls on warehouse and field task screens; ≥ 44 px targets with a coarse pointer at every width (b)) | Planning | Stage 2 |
+| GR-08 | Position numbers with "Muat Lagi"; no pager, total or size choice (c) 1) | Planning | Stage 3 — DESIGN_SYSTEM PT-05, PT-06 and PT-08 aligned |
+| GR-09 | The confirmation mapping without a typed confirmation or tick; every logout confirmed, with MSG-35's sentence when input is unsent; the phone confirmation's form (c) 3) | Planning | Stage 2 prototype; ADMIN_FLOW aligned in Stage 3 |
+| GR-10 | The composer within VD-07's preview share, DC-2's number line, defined inputs only, provisional totals, and GAP-053's producer (c) 7) | Planning, with the Architect for the producer | Stage 2 |
+| GR-11 | *Lainnya* as the reference's drawer or a sheet; the bottom bar hidden on a focused scan step with its action bar (e)) | Planning | Stage 2, with the C2 sessions |
+| GR-12 | The abstract sign-in panel (VD-05), the code-entry control, and the authentication journeys on the reference's components (f); GAP-044) | Planning | Stage 2 |
+| GR-13 | The Google button to Google's branding guidelines, including the self-hosting of its font under WS-08 and COST_POLICY (f)) | The Architect | P11, with GAP-042 (P9) |
+| GR-14 | Whether a UI preference — the sidebar's state, the language before sign-in — persists, and how, under C-1; the company view and the period kept out of browser storage (g)) | Planning | Stage 2–3 |
+| GR-15 | Toasts only for events that leave a visible trace elsewhere, never the only place of a message (WCAG 2.2.1) (b); d)) | Planning | Stage 2 |
+| GR-16 | The legibility of the smallest desktop text — the body at about 12.9 px on 1,366 px, 11–12 px meta and pills —, the 10.5 px pill excluded (a)) | Planning, judged with the Owner at C2 | Stage 2 |
+| GR-17 | The localization of the reference's micro-copy under CAP-14, GAP-037 and C-1 (d)) | Planning | Stage 2 |
+| GR-18 | Lucide styled to the reference's strokes; the reference's sprite not copied (a); b)) | Planning | Stage 2 |
+| GR-19 | Date-range presets bound to the repository's period rules (b)) | Planning | Stage 2 |
+| GR-20 | The filter toolbar against DESIGN_SYSTEM PT-07 (b)) | Planning | Stage 3 |
+| GR-21 | Desktop disclosures where R1 folds — the *Pekerjaan* groups, "Rincian lain", "Tahap yang tidak diperlukan" (b)) | Planning | Stage 2 |
+| GR-22 | Opaque phone bars (a)) | Planning | Stage 2 |
+| GR-23 | The receivable-ageing chart in the reference's palette with direct labels, amounts and a table (a)) | Planning | Stage 2 |
+
+## C1 closure — anchor coverage
+
+DIR-060 §12: the structural elements of AN-1–AN-6, as the gate record's [anchors](#c1-visual-checkpoint--anchors) and R1's [revised direction](#c1-rework--revised-direction) describe them, each with the component or pattern of the Golden Frontend Reference that renders it, or "Stage 2 builds" with what the reference lacks. No anchor is re-rendered; the eleven `p7r3-` pages stay evidence of the structure (GD-01).
+
+| Anchor | Element | Rendered by the reference | Stage 2 builds |
+| --- | --- | --- | --- |
+| AN-1 Sign-in | Split card, form column and visual panel; E-mail, Kata sandi with "Tampilkan", "Masuk", the folded "Lupa kata sandi?", "atau" and H7-16's advice | The sign-in composition, fields, the CTA, the strong inline action, the disclosure (b); f)) | The abstract visual panel (VP-5; GR-12) |
+| AN-1 | MSG-19 on submit | Field and form error states | — |
+| AN-1 | The TOTP code after a password, with "Gunakan kode pemulihan"; after Google the code only, with "Tidak bisa memakai aplikasi?" | The verification step and its transition (f)) | The code-entry control — Input OTP or one input (GR-12) |
+| AN-1 | "Lanjutkan dengan Google" | — | The button to Google's guidelines (GR-13) |
+| AN-1 | ID \| EN; the hand-off into the application; reduced motion | The language toggle; the step clock and the reduced-motion fade | The toggle's selected mark (GR-02) |
+| AN-2 Owner Beranda | "Perlu keputusan Anda" — decision rows strongest first, one action each, the first two on phones then "Lihat semua keputusan" | Signals and action rows: worst first, three shown and "Lihat semua (n)", one labelled action per row (b)) | — |
+| AN-2 | Four compact KPI cards in the same first view; two by two on phones | The KPI tile without delta or sparkline (VP-3) | — |
+| AN-2 | The receivable-ageing bar with its legend and its table | The chart card in the ageing palette, the legend with amounts, the table (VP-6) | The bar's direct labels and its table under one composition (GR-23) |
+| AN-2 | "Proyek yang perlu perhatian" with a segmented stage indicator | Row list, status text, company tag | The segmented indicator of the applicable stages, done ones filled — the reference has only the full stepper and a progress bar (VP-4) |
+| AN-2 | "Antrean operasional" collapsed to one line with "Buka Pekerjaan"; the view switch *Gabungan* · ARJ · BTN · CKP; the period; C1A-3's QS-15 row | Card with a text link; segmented control; the date-range treatment; row list | The selected segment's mark (GR-02); the period presets (GR-19) |
+| AN-3 Admin *Pekerjaan* | Work groups, the first open, the others closed, each header with per-company counts never summed | Section, status text and counts as text | The desktop group disclosure — the reference's disclosure is phone only (GR-21) |
+| AN-3 | Rows: company code, record, project, stage, need and one action | Action rows with one labelled action, the company tag, the status text (b)) | — |
+| AN-3 | A group with nothing pending says so in one sentence; the company filter | The empty state; the filter toolbar's company view (b)) | — |
+| AN-4 Project Journey | The header: title, one facts line, one primary, "Tindakan Lain" | Page header, facts, the action budget, the menu (b); c)) | — |
+| AN-4 | The stage track: applicable stages with their state and a short fact, the current marked *Sekarang*; "Tahap yang tidak diperlukan" folded | The progress stepper with its step notes (b)) | The current marker's ring (GR-03); the desktop fold (GR-21) |
+| AN-4 | *Sekarang · Berikutnya · Hambatan* | Next step and prerequisite (b); c) 5) | The three-part strip composed from them — the reference has no such strip |
+| AN-4 | "Yang tersisa sebelum selesai" — unmet conditions with their fact and action, "N syarat lain terpenuhi" folded | The checklist; the checks' folding of passed items | — |
+| AN-4 | Document readiness, with C1A-1's waiting item | The checklist and status text | — |
+| AN-4 | The financial position under field projection; "Rincian proyek" drill-down rows | Facts and key-value with the metrics strip; row list with chevrons | — (field projection is the server's) |
+| AN-4 Composer | Editor beside a live preview of about 40–45 %; page, zoom and full preview | The composer and its preview toolbar (c) 7) | Its preview share within VD-07 (GR-10) |
+| AN-4 Composer | Draft marking, "(perkiraan)" totals, carried data read-only with one link, defined inputs only | The paper's draft mode, the identity strip, the checks (c) 7) | The draft preview's producer (GAP-053; GR-10) |
+| AN-4 Composer | Issue confirmation (MSG-39); after issue the number, "Terbit — Belum Ditagihkan", "PDF sedang dibuat" then "PDF siap" | The COMMIT confirmation and the result surface (c) 3, 4) | — |
+| AN-5 Buat Pembelian | The supplier panel and the form sections; "Tanggal transaksi" | Form grid, fields, the business-date line (b); c) 8) | — |
+| AN-5 | The line table — product and project item, quantity, unit, price, tax, subtotal, row action — with metadata on a line below, aligned headers, rows becoming item cards below 1,024 px | The purchase line's anatomy and alignment rule as patterns, its `.pur-*` CSS excluded (GD-04); the number parser | — |
+| AN-5 | IP-13's empty last row as the one add path | — | The reference's two add actions reduced to IP-13's row with the catalogue search in its picker (C1A-2) |
+| AN-5 | "Rincian lain" with the purchase charges; the estimate beside the form; "Gunakan data dari" asking before replacing typed input | Summary card rule; the replace-input confirmation | The desktop "Rincian lain" disclosure (GR-21) |
+| AN-5 | The action bar: total and one primary | The sticky action bar | Without a draft entry (WF-PUR-01) |
+| AN-6 Mobile warehouse | The line list with counts — "2 baris tercatat · 2 baris tersisa" — and the next line marked *Berikutnya* | Row list, status text, the task archetype's one-line-at-a-time rule | — |
+| AN-6 | The scan field fixed at the bottom, "Siap memindai", "Cari Produk" beside it | — | The scan dock (PT-20) on the reference's input group; the bottom bar hidden on the scan step (GR-11) |
+| AN-6 | A scanned line's sheet: the three outcomes and the project reservation in one command | Bottom sheet with its actions (b)) | — |
+| AN-6 | *Tercatat* only after the server's answer, one answer per line | Status text with live-region announcements; pending state, no optimistic result | — |
+| AN-6 | The end summary with each line's confirmed outcome, "Terbitkan Nota Terima Barang" and "Kembali ke Pekerjaan" | Result surface | — |
+| AN-6 | 48 px controls; 320 px | — | 48 px controls (GR-07); reflow at 320 px (GR-05) |
+
+**In short**, the reference already renders the anatomy of every anchor; Stage 2 builds the segmented stage indicator, the *Sekarang · Berikutnya · Hambatan* strip, the scan dock, the desktop folds, the abstract sign-in panel, the code-entry control and the Google button, and applies the corrections GR-01–GR-23 where the anchors need them.
+
+## C1 closure — Stage 2 inputs
+
+DIR-060 §15 — inputs for a later Stage 2 authorization, non-normative; nothing of Stage 2 starts here (GD-10).
+
+| Input | Content |
+| --- | --- |
+| The prototyping medium after GD-06 | DesainPakeAI is discontinued for design work. Whatever medium the Owner chooses at the Stage 2 authorization must: show both languages, Indonesian by default and English available (CAP-14); run on a phone and a desktop at real viewport sizes — 320 px included — and respond to a coarse pointer; use synthetic data only, the repository's set (GP-4); support short task-based usability sessions that the Owner moderates from the executor's script, recorded by role (K2); put no binary in the repository — no render, capture, export or font file (RH-3; DIR-060 §20); cost nothing recurring (COST_POLICY); and reproduce the Golden Frontend Reference faithfully — its tokens, components, states and motion, reduced motion included — so that accessibility can be measured on it. No medium is proposed as decided here; the choice is the Owner's |
+| The shadcn/ui and Tailwind CSS translation | The reference's tokens as CSS variables, shadcn/ui's semantic variables and the Tailwind theme pointing at them, the default palettes cleared, with the corrections of GR-01–GR-07 ([reconciliation](#c1-closure--golden-frontend-reference-reconciliation) a)); the component mapping completed with every state and density (b)); verified again against the official shadcn/ui and Tailwind CSS documentation current at that time — the primitive library, Base UI, Radix or React Aria, staying a P11 choice (DEP-07) |
+| Inter's sourcing | A note only: Inter 4.1 under the SIL Open Font License 1.1, self-hosted as the reference does, within SECURITY WS-08's `font-src 'self'` and COST_POLICY's zero recurring cost; the font files enter the repository only with an authorized implementation Task (GD-05) |
+| The micro-copy's localization | The reference's component copy is never normative (GP-5); every string in Indonesian and English under V1_SCOPE CAP-14, GAP-037 and C-1, from the approved message catalogue (GR-17) |
+| The authentication journeys | GAP-044's journeys — re-authentication in place, enrolment, the enrolment-only session, recovery codes, device replacement, Google linking and unlinking, the Owner's account screens — on the reference's sign-in and components (f); GR-12, GR-13) |
+| The route and interaction contracts | GAP-035, in Stage 3; the reference's ACTION_ROUTE_MATRIX is illustrative only (GP-3) |
+| The composer | GAP-053's producer of the draft preview and print, with VD-07, DC-1–DC-12 and GD-07 (GR-10) |
+| The checks already listed | The project list's per-row stage, blocker and next action within QB-01; the dispatch-ready rows of the Admin's work home within PF-24; an overdue receivable on the journey read inside QB-02's predicate group ([revised Checkpoint C1 package](#revised-checkpoint-c1-package)) — a result that does not fit is "needs P6 change control — not proposed" |
+| Participants | OC-12 — the warehouse/field participant still pending, not blocking; if none is reasonably available, K2's fallback applies: the Owner and the Admin Operasional validator |
+| Owner decisions from this reconciliation | None: no Level 2 or 3 item was found ([conflicts](#conflicts)) |
+| Carried items | GR-01–GR-23, with their owners and targets ([carried items](#carried-items-gr-01)) |
+
+## C1 closure report
+
+DIR-060 §17 — the English equivalent of the report given to the Owner in Bahasa Indonesia at the stop before Stage 2.
+
+1. **The decisions recorded.** DIR-059: Checkpoint C1 APPROVED with one named adjustment, the Golden Frontend Reference v1.0.0 as the visual foundation on the R1 structure (GD-01); its hierarchy (GD-02); R1's navigation kept (GD-03); its demonstration material not imported (GD-04); its adaptation to the approved stack and its pinning (GD-05); DesainPakeAI discontinued (GD-06); the draft marking "DRAF — belum terbit" (GD-07); the Owner's permission (GD-08); what stays unchanged (GD-09); the stop after GA1 (GD-10). They are in [DECISION_LOG](../../00-governance/DECISION_LOG.md#dir-059-dir-060-obs-022-and-tech-030--p7-ux-re-baseline-checkpoint-c1-closure-golden-frontend-reference-adoption-authorization-baseline-and-reconciliation), in DECISION_INDEX's rows and in this record's [closure section](#checkpoint-c1--closure-on-the-golden-frontend-reference-dir-059), from source records 57 and 58.
+2. **The reference's verified identity.** <https://github.com/yusufarst/golden-frontend-reference>, tag `v1.0.0` — the tag object `9d46af300949b2dd4b2f3d443652d78c38067deb` on commit `14497d997ee7994dfa9153d41b8cea636578e24c` —, baseline `golden-frontend-v1.0`, FROZEN — OWNER APPROVED on 2026-10-12, 41 frozen files verified against `SHA256SUMS-scope.txt`, whose digest is `39fa879dc304275e55b1ffecda290ebd6b481a27d89bbda67011c26e0796eca4` — verified in GA0 and again in GA1, each time in a fresh temporary clone.
+3. **The reconciliation in brief.** ADOPTED: the foundations — Inter's text cut and the type scale, the warm canvas, white surfaces and ink tiers, one dark-green action colour with olive indicators and lime only as a signal, the status tones, spacing, radius, elevation, density and motion —; the component anatomy and states; the action budget, validation and recovery, result anatomy, guided work on real screens, the composer's lifecycle and the transaction-date control; the principles. ADAPTED: control edges and three selection or stage marks to 3:1, greys bound to their surfaces, reflow at 320 px, rem units, 48 px warehouse controls and coarse-pointer targets, "Muat Lagi" instead of pages, the confirmation levels mapped to ADMIN_FLOW, the composer within VD-07, the sign-in panel without a photograph, the Google button to Google's guidelines, toasts never the only place of a message, the reference's navigation treatment on R1's entries. EXCLUDED: its MULTIPLECORP material, trees and bottom bars, logos, imagery and drawn Google "G", its greeting, hero, KPI deltas and sparklines, categorical charts, guidance levels, resume memory and walkthrough, its router and browser storage. Contrast: 129 pairs computed — every designed text pair at least 4.50:1; the non-text failures were control edges at 1.19–1.44, a bottom-bar current item at 1.16, selected segments at 1.12–1.24 and the current stage marker at 1.44–1.54, corrected to `#898982` (3.03–3.52) and olive marks (6.28–7.00). Main differences from VC1's draft: Inter for Plus Jakarta Sans; an olive focus ring for the blue; 10 px cards and 6–8 px controls for 16 px and 10 px; the reference's density and type scale; a 150 ms crossfade under reduced motion for VC1's instant change.
+4. **The conflicts.** 24 differences, all resolved at Level 1 by a P0–P6 rule, an earlier Owner decision, GD-02's own rule or an accessibility requirement ([conflicts](#conflicts)). **No Level 2 or 3 item was found, so there is no question for the Owner** from this reconciliation; GAP_REGISTER is unchanged.
+5. **The anchor coverage.** The reference renders the anatomy of every element of AN-1–AN-6. Stage 2 must build: the segmented stage indicator for project rows, the *Sekarang · Berikutnya · Hambatan* strip, the scan dock, the desktop folds (the *Pekerjaan* groups, "Rincian lain", the stages that do not apply), the abstract sign-in panel, the code-entry control and the Google button, and apply GR-01–GR-23 ([anchor coverage](#c1-closure--anchor-coverage)).
+6. **The Stage 2 inputs** ([Stage 2 inputs](#c1-closure--stage-2-inputs)): the prototyping medium must show both languages, run on phone and desktop at real sizes down to 320 px, use synthetic data only, support short task-based sessions the Owner moderates, put no binary in the repository, cost nothing recurring and reproduce the reference faithfully; the shadcn/ui and Tailwind CSS translation; Inter's self-hosting; the micro-copy's localization; the authentication journeys (GAP-044); the route and interaction contracts (GAP-035); the composer's producer (GAP-053); the QB-01, PF-24 and QB-02 checks; OC-12 and K2; the carried items.
+7. **What was not done.** No Stage 2–5 work; no prototype, page or rendered design; no edit of INFORMATION_ARCHITECTURE, DESIGN_SYSTEM or ADMIN_FLOW and no change to a P0–P6 specification; no file of the reference, no font file and no visual binary in the repository; no DesainPakeAI command; no schema change, signal, query, budget or automation made normative; no tool installed; `main` not touched. CONTEXT_INDEX's rows describing DESIGN_REFERENCES and this record, and a row for source records 57 and 58, are beyond §14's bounds and left for a later authorized update.
+8. **After this.** Stage 2 needs the Owner's separate authorization, with its prototyping medium; nothing of it starts here.
+
+## C1 closure — zero-context check
+
+DIR-060 §16.2, run on 2026-10-13 by a fresh sub-agent of a read-only type, without write tools: it started at AGENTS.md and followed its reading order only, was told not to read source records 57 and 58, the clone or this session, and was bound by DIR-046 §2. It read the working tree as it stood, GA1's changes uncommitted, before this section, gate GA1, the GA1 hash table and commit 8 existed. Its verbatim report is saved outside the repository as a working file of this session (DIR-060 §20): 174 lines, 17,853 bytes, SHA-256 `0d803520effca04534d108d17d5791b8ade8857d491a785bc6d5a6e370238b54`.
+
+| Question | Its answer, in brief | Result |
+| --- | --- | --- |
+| (a) The phase and C1 | P7 IN_PROGRESS, the UX re-baseline; C1 closed, approved with one named adjustment — the Golden Frontend Reference v1.0.0 as the visual foundation on the preserved R1 structure, "DRAF — belum terbit"; Stage 2 not authorized, needing the Owner's separate authorization | Correct |
+| (b) DIR-059 | GD-02's hierarchy — P0–P6, the Owner's decisions, R1 and C1A-1–C1A-3 above the reference; the reference primary for foundations, components, patterns, accessibility and responsive behaviour, a deviation needing a recorded reason; VD and VP where it is silent; the five references provenance only —; GD-03 — R1's entries, bottom bars, *Menu lengkap* and top bar, the reference supplying the treatment only, its trees and bottom bars not adopted —; GD-04's exclusions; GD-06 — DesainPakeAI discontinued, the earlier pages kept, K3's rules active, the medium set by the Stage 2 authorization —; GD-07's "DRAF — belum terbit" | Correct |
+| (c) What is next | Nothing authorized now; the Owner's Stage 2 authorization, with its medium, pending; the "Do not do" list | Correct |
+| (d) The branches | `main` at `a526daf47444d12b4ae5c51e1ae14c9dfe3f4978`; the work on `rebaseline/p7-ux`, commits 1–7 identified and commit 8 found by its subject | Correct |
+| (e) Where, and whether normative | The identity record in SOURCE_OF_TRUTH, with this record's identity verification and intake; the reconciliation and the anchor coverage here; the Golden-based draft in DESIGN_REFERENCES — none normative; the reference outside the repository, pinned at v1.0.0 | Correct |
+| (f) The old P7 documents | ADMIN_FLOW in force; INFORMATION_ARCHITECTURE and DESIGN_SYSTEM APPROVED under APPR-008 and under replacement until Stage 3 | Correct |
+
+| Finding | Disposition |
+| --- | --- |
+| B1–B5 — eight anchors to this section and to gate GA1 | Resolved: both sections exist; GA1-09's link check finds none broken |
+| C1–C3 — commit 8, these two sections and the GA1 hash table absent when it ran | Expected at that point: the sections are written here, the hash table before staging (TECH-030), commit 8 under §16.4 |
+| C4 — the handoff's safe next action did not cover a commit never made | Fixed at Level 1: CURRENT_HANDOFF's "Safe next action" covers an interrupted GA1 |
+| S4 — the closure table's "What follows" row | Fixed at Level 1: GA1 marked done, with a link to gate GA1 |
+| S5 — the plan's opening sentence | Fixed at Level 1: "DIR-054 authorized only Stage 0 and Stage 1" |
+| S6 — SOURCE_OF_TRUTH's VD-01 roles without a pointer | Fixed at Level 1: a sentence after that table points to GD-02 |
+| A1 — the status wording of the P7 normative documents | Fixed at Level 1: the reconciliation's opening states it as GA0's record does |
+| A3 — "the reference" in DESIGN_REFERENCES §8 | Fixed at Level 1: a sentence names the Ramp design system there |
+| S1–S3 and S7 — CONTEXT_INDEX's rows describing DESIGN_REFERENCES and this record, no row for source records 57 and 58, the approval chain's record count | Reported, not fixed: beyond §14's bounds for CONTEXT_INDEX (§19 item 4); left for a later authorized update |
+| A2 — DECISION_INDEX's "DIR-057 C1 status" row ACTIVE with a superseding note | Reported, unchanged: GA0's recorded Level-1 choice (TECH-030) |
+| A4 — the wording of AGENTS.md rule 16's legacy anchor | Reported, unchanged: it resolves, and GA1 may change only rule 10 in AGENTS.md |
+| R1 — a local ref `refs/codex/…` pointing to a tree object | Reported, untouched: not created by this task, not on the live remote, neither a branch nor a tag; no ref is modified (§20) |
+
+**Result: PASS** — every question answered correctly from the repository alone; the in-scope navigation findings fixed at Level 1; the rest reported.
+
+## Gate GA1
+
+Run on the complete staged change of commit 8 before the commit (DIR-060 §16.3), with scripts kept outside the repository. Every item passed.
+
+| Item | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| GA1-01 | The staged diff touches only the listed files | PASS | `git diff --cached --name-status 1e3db5d` lists 12 modified paths and nothing added or deleted: this record and DESIGN_REFERENCES; TOOLCHAIN, EXECUTION_CONTEXT, AGENTS.md and CONTEXT_INDEX within §14; SOURCE_OF_TRUTH and DECISION_LOG; DECISION_INDEX, with status notes only; PHASE_STATUS, CURRENT_HANDOFF and CHANGELOG. GAP_REGISTER is unchanged — no new gap and no Level 2 or 3 item |
+| GA1-02 | The intake is recorded and rests on the verified clone of §6 | PASS | [Intake](#c1-closure--golden-frontend-reference-intake): §6 run again in a fresh temporary directory, items 1–5 PASS; the clone verified again before the first file was read; every file read listed with its SHA-256 and whether it was read in full or in part |
+| GA1-03 | The reconciliation covers every layer of §11.2 and every decision of §11.3, with dispositions and reasons; contrast computed; official sources cited | PASS | [Reconciliation](#c1-closure--golden-frontend-reference-reconciliation): parts a)–h), each with ADOPT, ADAPT or EXCLUDE and its reason; VD-01–VD-11, VP-1–VP-8, DC-1–DC-12, OC-01–OC-12, K3's non-copy rules, the D-DS dispositions, VC1's draft and its delta, and SLOP-01–SLOP-45 each dispositioned; 129 pairs computed from the token values; shadcn/ui (the components index, changelog and theming page, which show no version; changelog entries to September 2026), Tailwind CSS (documentation v4.3; release v4.3.3 of 2026-07-16), Inter (4.1, published 2024-11-16; SIL Open Font License 1.1), Google's branding guidelines (last updated 2026-07-07) and W3C's Understanding of 1.4.11 (updated 2026-09-06), each with its URL, read on 2026-10-13 |
+| GA1-04 | Every conflict classified; no Level 2 or 3 item enacted; every carried item with an owner and a target | PASS | [Conflicts](#conflicts): 24 differences at Level 1, each with its resolution; no Level 2 or 3 item, nothing enacted; [carried items](#carried-items-gr-01) GR-01–GR-23, each with its owner and target stage |
+| GA1-05 | The anchor coverage covers AN-1–AN-6 | PASS | [Anchor coverage](#c1-closure--anchor-coverage): every structural element of the six anchors, rendered by the reference or built in Stage 2 |
+| GA1-06 | One Golden-based draft in DESIGN_REFERENCES, not normative, with Inter's licence and source; the VC1 revision recoverable | PASS | [DESIGN_REFERENCES](../DESIGN_REFERENCES.md): REVIEW, "Draft — not normative" (AICWDF §18.12), sections 1–8 kept, Inter's licence, version and official sources in §6; `git show 03f61a7:docs/07-ux-design/DESIGN_REFERENCES.md` returns the VC1 revision |
+| GA1-07 | The §14 edits stay within their bounds and keep their APPROVED status, with before and after hashes | PASS | Word-level diffs against commit 7: TOOLCHAIN — the visual-reference row, one amendment note and the `Updated` date; EXECUTION_CONTEXT — the "visual direction" line, one note and the date; AGENTS.md — rule 10's pointer, one note and the date; CONTEXT_INDEX — the identifier-map row, APPR-010 in six approved-document rows and in the approval chain, its amendment paragraph and the date. Each keeps APPROVED with its last approved revision — APPR-009, APPR-010, APPR-009 and APPR-009 —, whose hashes, with the before and after hashes, are in TECH-030 |
+| GA1-08 | No P7 normative document and no P0–P6 specification changed | PASS | The staged tree equals commit 6 `03f61a7` over INFORMATION_ARCHITECTURE, DESIGN_SYSTEM, ADMIN_FLOW, `docs/01-product/`, `docs/02-domain/`, `docs/03-workflows/`, `docs/04-architecture/`, `docs/05-security/` in full and `docs/06-api-performance/` (`git diff --cached --quiet 03f61a7 -- …` succeeds); no schema change, signal, query, budget or automation is made normative — the carried items are carried, not enacted |
+| GA1-09 | Links, identifiers, binaries and placeholders | PASS | 2,229 relative links and anchors in 106 Markdown files outside `docs/00-governance/sources/`, 0 broken; GR-01–GR-23 and GA1-01–GA1-11 defined once, in this record; GD-01–GD-10 and GP-1–GP-8 defined in DIR-059 and DIR-060 (GA0); the label sets mapped once, in one identifier-map row of CONTEXT_INDEX; GAP-054, RISK-010 and APPR-011 still unused; the only tracked binaries are the two P1 provenance files; a search of the staged diff finds no secret, credential, e-mail address, local, temporary or lab path, file of the reference, font file or visual binary, and no unfilled placeholder |
+| GA1-10 | The zero-context check passes | PASS | [Zero-context check](#c1-closure--zero-context-check) |
+| GA1-11 | The C1 closure report is complete | PASS | [C1 closure report](#c1-closure-report): its eight items, given to the Owner in Bahasa Indonesia at the stop |
