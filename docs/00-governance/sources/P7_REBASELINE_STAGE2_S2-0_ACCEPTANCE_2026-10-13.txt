@@ -1,0 +1,46 @@
+TRANSCRIBED LOCKED SOURCE RECORD — sixty-second source record
+Received: 2026-10-13, the Owner's message to Planning in the planning session
+         of the MULTIPLECORP Project, relayed as Appendix A of the sixty-third
+         source record
+Subject: the Owner's acceptance of run S2-0 of Stage 2 of the P7 UX
+         re-baseline and the requirements for the S2-1 authorization (DIR-063)
+Delivery: Appendix A of the Owner's message of 2026-10-13, the sixty-third
+         source record. This record transcribes the lines between its BEGIN
+         and END markers, which are not transcribed, mechanically from the
+         text file in which that message arrived, its text normalized to LF
+         without a byte-order mark. Before any edit the executor asked the
+         Owner in-session to confirm that Appendix A is the Owner's message as
+         the Owner wrote it (section 8 item 1 of the sixty-third source
+         record); the Owner answered: "1. YA. Saya menerima Appendix A sebagai
+         transkripsi pesan persetujuan S2-0 saya, dengan pengantar metadata
+         Planning diperlakukan sebagai keterangan provenance, bukan bagian
+         dari kata-kata saya." Planning's introduction, before the first line
+         of dashes, is therefore provenance and not the Owner's words; the
+         Owner's message is the text between the two lines of dashes.
+This is a transcript of the relayed message, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-13 (times in WIB).
+The Owner's message accepting run S2-0 and asking Planning for the S2-1
+authorization, reproduced as relayed in the planning session, between two
+lines of dashes. Before it, the Owner had received the executor's S2-0
+report and Planning's independent verification of both repositories,
+reported to the Owner in the same session and not transcribed.
+
+1. About 20:15 — the Owner's message
+------------------------------------------------------------------------
+Saya menerima hasil S2-0 berdasarkan laporan Executor dan verifikasi independen Planning.
+S2-0 dinyatakan ACCEPTED sebagai checkpoint persiapan prototipe P7 Stage 2.
+Silakan siapkan otorisasi lengkap S2-1 saja, dengan tetap mempertahankan:
+* Business flow, permissions, security, finance, inventory, dan document lifecycle mengikuti repository kanonik MULTIPLECORP.
+* Golden Frontend Reference v1.0.0 menyesuaikan dengan MULTIPLECORP, bukan sebaliknya.
+* Aturan AK-1–AK-8 dan enam journey S2-J01–S2-J06.
+* Struktur R1: Admin task-first, Owner decision-first, dan guided Project Journey.
+* Penyelesaian tiga catatan kontinuitas yang Anda identifikasi, sesuai change-control dan batas file yang diotorisasi.
+* Matriks traceability lengkap dan non-loss coverage.
+* Tidak ada pembangunan halaman prototipe pada S2-1.
+Pastikan masalah atau keputusan baru yang benar-benar membutuhkan persetujuan Owner disampaikan secara eksplisit, tanpa membuat asumsi bisnis baru.
+Persetujuan ini hanya menerima hasil S2-0 dan mengizinkan Planning menyiapkan otorisasi S2-1. Ini BUKAN otorisasi untuk Executor menjalankan S2-1, S2-2, atau coding aplikasi.
+Berikan satu prompt Executor S2-1 yang lengkap, mandiri, dan siap saya review terlebih dahulu.
+Jawab dalam Bahasa Indonesia.
+------------------------------------------------------------------------
