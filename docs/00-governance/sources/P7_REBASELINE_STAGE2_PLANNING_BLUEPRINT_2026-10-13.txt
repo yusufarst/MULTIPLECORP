@@ -1,0 +1,447 @@
+TRANSCRIBED LOCKED SOURCE RECORD — sixtieth source record
+Received: 2026-10-13, Planning's Stage 2 texts delivered to the Owner in
+         the same planning session of the MULTIPLECORP Project, relayed as
+         Appendix B of the sixty-first source record
+Subject: Planning's P7 Stage 2 texts — Planning proposals, binding only
+         through DIR-061 (SP-7): the first blueprint, which the Owner refined
+         and did not approve as such; revision 2, which the Owner approved in
+         principle with the adjustments of P-3; and Planning's
+         acknowledgement, written after that approval
+Superseded labels: as SP-8 of DIR-062 maps them, Planning's earlier labels
+         stay here as delivered and are superseded — its journeys P1–P5 and
+         the candidate P6 are S2-J01–S2-J06; its checks RSV-1–RSV-9 are
+         S2-R01–S2-R09; its candidate journeys O1–O4, A1–A5 and W1–W3 and its
+         "Otorisasi 1–3" are superseded proposals. Outside this record they
+         appear only where they are mapped to those labels.
+Corrected reference: revision 2's journey table cites J-INV-02 for the
+         invoice journey; the canonical invoice-issue journey is ADMIN_FLOW
+         J-FIN-01 (J-INV-02 is reservation management). This record keeps
+         the text as delivered; DIR-061 uses J-FIN-01 (SP-5).
+Delivery: Appendix B of the Owner's message of 2026-10-13, the sixty-first
+         source record. This record transcribes the lines between its BEGIN
+         and END markers, which are not transcribed, mechanically from the
+         text file in which that message arrived, its text normalized to LF
+         without a byte-order mark.
+This is a transcript of the relayed texts, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-13 (times in WIB).
+Planning's Stage 2 texts as delivered to the Owner, in Bahasa Indonesia,
+each reproduced verbatim between two lines of dashes. They are Planning
+proposals, not Owner instructions: the Owner's messages (the fifty-ninth
+source record) and DIR-061 decide what binds.
+
+1. 10:29 — the first Stage 2 blueprint, answering the Owner's requirement
+   (the fifty-ninth source record, item 2). The Owner refined it (item 3)
+   and did not approve it as such:
+------------------------------------------------------------------------
+# Blueprint Stage 2 P7 (rekomendasi Planning, belum otorisasi)
+
+Ini belum mengizinkan Stage 2 dimulai maupun coding aplikasi. Blueprint ini memadukan empat keputusan Anda:
+- medium prototipe: repo privat dengan HTML Golden;
+- peserta gudang/lapangan: belum pasti;
+- pratinjau: Anda melihat prototipe dulu sebelum kit usability dan sesi C2;
+- aturan bahwa Golden yang beradaptasi ke MULTIPLECORP, bukan sebaliknya.
+
+## 1. Aturan Adaptasi Kanonik (AK-1–AK-8), mengikat
+
+Aturan Anda saya catat sebagai keputusan Owner. Kode AK-1–AK-8 belum terpakai di repo. Aturan ini mempersempit GD-02: **Golden hanya mengatur presentasi, sedangkan perilaku selalu mengikuti MULTIPLECORP.**
+- **Presentasi** (porsi Golden): tampilan, anatomi komponen, gerak, responsif, aksesibilitas, dan cara interaksi tampil.
+- **Perilaku** (porsi MULTIPLECORP): aksi apa yang ada, kapan konfirmasi diminta, transisi status, izin, arti pesan, penomoran, dan aturan daftar.
+
+| Aturan | Cara ditegakkan di Stage 2 |
+|---|---|
+| AK-1 Repo kanonik mengatur semua workflow | Tiap record Stage 2 memuat tabel urutan otoritas. Setiap perbedaan diselesaikan dengan menyesuaikan Golden |
+| AK-2 P0–P6 tetap | Tidak ada edit P0–P6. Konflik dicatat OWNER_DECISION_REQUIRED dan tidak pernah dijalankan |
+| AK-3 Struktur R1 tetap | IA dan inventaris halaman dibangun dari R1: Admin mulai dari tugas, Owner mulai dari keputusan, Project Journey, dan navigasi per peran. Peta non-loss dicek terhadap SCR-01–SCR-60 |
+| AK-4 Golden untuk visual dan presentasi | File inti Golden (Layer A) dipakai tanpa diubah. Penyimpangan visual hanya lewat lapisan override proyek yang tercatat |
+| AK-5 Tanpa materi demo Golden | Prototipe ditulis baru dari dokumen kanonik. Ada checklist khusus untuk memastikan tidak ada rute, workflow, peran, fixture, logika, atau kapabilitas di luar V1 |
+| AK-6 Setiap journey tertelusur | Matriks jejak per langkah: aksi → command (AX/SF-CMD) → transisi (WF/BR/CM) → izin (kapabilitas, AZ/CS/PJ/OD) → pesan (MSG) → layar (SCR) → sinyal/data (QS/CALC). Langkah tanpa sumber dibuang |
+| AK-7 Golden yang menyesuaikan | Register deviasi Golden, lanjutan GR-01–GR-23. Semantik bisnis tidak berubah |
+| AK-8 Data sintetis dan simulasi ditandai | Data contoh dari repo (ARJ/BTN/CKP; Laras, Dimas, Bayu). Ada register simulasi dan penanda prototipe (lihat §5) |
+
+**Dua hal dari GA1 yang harus dikoreksi karena AK:**
+1. **Logout (GR-09, konflik #6).** GA1 menjadikan "setiap logout dikonfirmasi" sebagai arah Stage 3. Itu perilaku Golden yang bertentangan dengan aturan kanonik ADMIN_FLOW MSG-35, yaitu logout hanya bertanya bila ada isian yang belum terkirim. Arah itu saya batalkan: perilaku mengikuti MSG-35, Golden hanya menyumbang tampilan dialognya. Ini juga menjawab butir C2 yang saya sebut sebelumnya.
+2. **Toolbar filter (GR-20).** Toolbar Golden dipakai sebagai tampilan saja. Kunci filter, status di alamat (URL), dan aturan PF-42/PT-08 tetap kanonik.
+
+## 2. Medium prototipe (keputusan Anda)
+
+- **Repo:** GitHub privat baru, usulan nama `multiplecorp-p7-prototype`, Anda buat dalam keadaan kosong. Executor tidak membuat repo di akun Anda.
+- **Isi repo:**
+  - Layer A Golden v1.0.0 disalin byte-identik, diverifikasi dengan checksum, dan tidak pernah diedit.
+  - Font Inter beserta lisensi OFL-nya.
+  - Konfigurasi proyek ditulis baru dari template, bukan dari konfigurasi demo MULTIPLECORP.
+  - Halaman MultipleCorp ditulis baru.
+  - Lapisan override CSS untuk deviasi yang tercatat.
+  - Data sintetis.
+- **Cara menjalankan:** lokal di PC Anda dengan server statis kecil memakai modul bawaan Node.js, tanpa instalasi apa pun. Ponsel mengakses lewat Wi-Fi yang sama. Tidak ada hosting publik.
+- **Repo MULTIPLECORP:** hanya menyimpan bukti tekstual, yaitu SHA commit prototipe, daftar halaman, matriks jejak, dan hasil pemeriksaan. Tidak ada binary.
+- **Bukan kode aplikasi.** Prototipe tidak dipakai sebagai dasar implementasi. Implementasi P11 dibangun di Laravel/Inertia/React/shadcn mengikuti dokumen pemetaan.
+
+## 3. Isi Stage 2
+
+1. **IA dan inventaris halaman lengkap** dari R1, dengan rute draf sebagai bahan GAP-035 di Stage 3.
+2. **Pemetaan design system:** token Golden ditambah koreksi GR, lalu dipetakan ke CSS variable, shadcn/ui dan tema Tailwind, termasuk semua state dan densitas. Diverifikasi ulang ke dokumentasi resmi.
+3. **Arsitektur bahasa ID/EN** sesuai C-1. Perilaku UX ditetapkan dulu, tanpa perubahan skema.
+4. **Journey autentikasi** sesuai GAP-044 dan H7-15–H7-19. Semantik P5 tidak berubah.
+5. **Produser pratinjau dan cetak draf dokumen** (GAP-053), bersama Arsitek, mengikuti VD-07 dan DC-1–DC-12.
+6. **Cek QB-01, PF-24 dan QB-02** yang sudah tercatat.
+7. **Prototipe journey kritis** di ponsel dan desktop, dua bahasa.
+8. **Kit usability** berbahasa Indonesia.
+
+**Lokasi draf:** usul saya `docs/07-ux-design/stage2/`, berstatus DRAFT non-normatif. Draf ini nanti dipakai Stage 3 untuk mengganti IA dan DESIGN_SYSTEM.
+
+## 4. Journey kritis kandidat
+
+Daftar final dan matriks jejaknya ditetapkan di S2-1. Kandidatnya diambil dari analisis persona yang sudah tercatat di repo:
+
+**Owner:**
+- O1 masuk: kata sandi atau Google, lalu TOTP; kode pemulihan; sesi berakhir di tempat; logout dengan isian belum terkirim (MSG-35);
+- O2 Beranda: memutuskan satu item perhatian, lalu menelusuri proyek;
+- O3 Pengguna & Akses: memberi hak akses dan tautan kredensial (khusus Owner);
+- O4 penyelesaian proyek dan Force Complete (khusus Owner).
+
+**Admin:**
+- A1 dari *Pekerjaan*: Buat Pembelian beserta baris dan biaya;
+- A2 dari Journey: buat invoice lewat composer, lalu terbitkan;
+- A3 catat pembayaran beserta alokasinya;
+- A4 koreksi yang menyatakan apa yang dibalik dan apa yang tetap;
+- A5 penawaran banyak baris.
+
+**Gudang/lapangan:**
+- W1 Barang Masuk dengan pindai: Layak pakai, Rusak diterima, atau Ditolak, ditambah reservasi;
+- W2 Barang Keluar dengan lot dan serial;
+- W3 cek stok dan rak.
+
+**Lintas journey:**
+- ganti bahasa;
+- varian izin, misalnya Admin tanpa `finance.view`;
+- tampilan Gabungan dibanding per perusahaan.
+
+## 5. Penandaan simulasi (AK-8)
+
+Penandaan dibuat jelas tanpa membanjiri layar, karena anggaran teks OC-06 tetap berlaku.
+- **Badge tetap** "PROTOTIPE · data contoh" di shell. Badge ini dikecualikan dari hitungan anggaran teks.
+- **Panel "Tentang prototipe ini"** yang dibuka dari badge, dalam dua bahasa.
+- **Register simulasi di repo** yang memisahkan:
+  - perilaku tersimulasi: autentikasi, TOTP dan Google; pemeriksaan izin; penomoran; idempotensi/`command_id`; posting stok dan keuangan; PDF; pemindai;
+  - yang setia desain: urutan alur, layar, status, konfirmasi, dan pesan.
+- **Chip "Simulasi"** hanya di titik yang bisa disangka efek sistem nyata, misalnya nomor dokumen terbit.
+- **Naskah moderator** menjelaskan semua ini di awal sesi.
+- **Tanpa kredensial nyata.** Prototipe tidak pernah tampil sebagai sistem yang berfungsi.
+
+## 6. Urutan kerja dan titik keputusan
+
+| Run | Isi | Berakhir di |
+|---|---|---|
+| S2-0 | Pencatatan keputusan: AK, medium, peserta, pratinjau, perluasan izin GD-08, koreksi GR-09/GR-20. Baseline. Isi awal repo prototipe beserta verifikasi checksum, dan uji akses dari ponsel | Commit 9 + commit awal repo prototipe; laporan |
+| S2-1 | Semua draf di §3 butir 1–6, daftar journey final, matriks jejak, register simulasi dan register deviasi | Commit 10; laporan |
+| S2-2 | Bangun prototipe; audit kesetiaan pada Golden; cek aksesibilitas | Commit 11; **STOP untuk pratinjau Anda** |
+| Pratinjau | Anda mencoba prototipe, termasuk perbandingan ukuran teks desktop: standar Golden (sekitar 12,9 px) dibanding batas bawah 14 px (GR-16) | Umpan balik ke Planning |
+| S2-3 | Perbaikan dari pratinjau; kit usability untuk 3 peran dengan fallback K2; uji coba kering | Commit 12; **STOP untuk C2** |
+| C2 → S2-4 | Anda memandu sesi; hasilnya dicatat, diperbaiki, dan diuji ulang | Putusan C2 Anda |
+
+Batas otorisasi yang saya usulkan:
+- Otorisasi 1: S2-0 sampai S2-2, berakhir di pratinjau.
+- Otorisasi 2: S2-3, berakhir di C2.
+- Otorisasi 3: S2-4, setelah sesi C2.
+
+Setiap run boleh dipecah ke beberapa sesi di batas bagian, memakai aturan resume yang sama seperti GA. Aturan tulis bertahap dan aturan berhenti bila respons dihentikan classifier tetap berlaku.
+
+## 7. Gate utama
+
+- **Jejak:** 100 % langkah journey tertelusur ke sumber kanonik, dan tidak ada tombol mati.
+- **Bebas materi demo:** tidak ada materi demo Golden. File Layer A identik checksum. Override hanya dari register deviasi.
+- **Penanda simulasi:** ada di setiap halaman, dan register simulasinya lengkap.
+- **Aksesibilitas (WCAG 2.2 AA tingkat desain):**
+  - kontras dihitung, bukan dikira;
+  - fokus terlihat;
+  - target 24/44/48 px;
+  - reflow sampai 320 px;
+  - reduced motion;
+  - text spacing;
+  - keyboard.
+- **Bahasa:** dua bahasa dengan 0 string hilang.
+- **Repo MULTIPLECORP:** P0–P6 tidak berubah dan tidak ada binary.
+- **Pemeriksaan per run:** zero-context check; commit dengan identitas Anda tanpa trailer; push terverifikasi.
+
+## 8. Tidak termasuk
+
+- Stage 3–5.
+- Edit IA, DESIGN_SYSTEM atau ADMIN_FLOW.
+- Perubahan P0–P6.
+- Kode aplikasi.
+- Instalasi paket.
+- DesainPakeAI.
+- Lab Golden dan 239 file demonya.
+- Hosting publik.
+- Data nyata.
+- P8 dan seterusnya.
+
+## 9. Risiko utama
+
+| Risiko | Mitigasi |
+|---|---|
+| Prototipe HTML berbeda dari hasil React/shadcn nanti | Dokumen pemetaan dan audit kesetiaan |
+| Ponsel tidak bisa mengakses PC (Wi-Fi atau firewall Windows) | Diuji sejak S2-0 |
+| Peserta gudang tidak ada | Fallback K2, tidak memblokir |
+| Ukuran teks desktop terlalu kecil | Diputuskan saat pratinjau |
+| Respons Executor dihentikan classifier | Aturan berhenti yang sama seperti GA |
+
+## 10. Fakta yang saya verifikasi, dan kelengkapan
+
+**Diverifikasi ke sumber resmi (13 Okt 2026):**
+- GitHub Free menyediakan repo privat tanpa batas, dengan fitur terbatas. GitHub Pages di akun Free hanya untuk repo publik, jadi prototipe dijalankan lokal, bukan di-hosting.
+- Node.js punya modul `http` bawaan (`require('node:http')`) dengan contoh resmi `createServer` dan `listen` (docs v26.11.1).
+- Bukti repo menunjukkan Node.js sudah terpasang di PC Anda. Executor akan mengecek ulang di S2-0.
+
+**Dibawa dari GA1** (diverifikasi Executor, tercatat di gate): Inter 4.1 berlisensi OFL 1.1, dokumentasi shadcn/ui dan Tailwind CSS v4.3, serta pedoman branding Google.
+
+**Belum terverifikasi:** apakah ponsel bisa mengakses PC lewat Wi-Fi. Ini diuji di S2-0.
+
+**Kelengkapan:** blueprint ini lengkap untuk semua keputusan tingkat Owner di Stage 2, dan tidak memuat keputusan bisnis baru. Yang sengaja belum ada karena merupakan produk run:
+- daftar halaman final;
+- matriks jejak per langkah;
+- pemetaan komponen lengkap;
+- skenario usability.
+
+Setiap hasil run itu saya periksa sebelum run berikutnya.
+
+## Yang saya perlukan dari Anda
+
+1. **Setujui blueprint ini secara prinsip**, termasuk urutan run dan batas otorisasinya.
+2. **Setujui AK-1–AK-8 dicatat sebagai keputusan Owner yang mengikat**, termasuk koreksi logout ke MSG-35 dan batasan toolbar filter.
+3. **Buat repo GitHub privat kosong.** Nama usulan `multiplecorp-p7-prototype`, atau sebutkan nama lain.
+4. **Perluas izin GD-08.** File frozen Golden v1.0.0 (tanpa diubah) dan font Inter boleh disalin ke repo prototipe privat itu.
+5. **Lokasi draf** `docs/07-ux-design/stage2/`: setujui, atau usulkan tempat lain.
+
+Setelah kelima butir ini Anda setujui atau koreksi, saya tulis **Otorisasi 1 (S2-0 sampai S2-2)** untuk Executor.
+
+Sumber:
+- [GitHub's plans — GitHub Docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)
+- [HTTP | Node.js Documentation](https://nodejs.org/api/http.html)
+------------------------------------------------------------------------
+
+2. 10:37 — revision 2, answering the Owner's refinements. The Owner
+   approved it in principle with the adjustments of P-3 (the fifty-ninth
+   source record, item 4):
+------------------------------------------------------------------------
+# Blueprint Stage 2 P7, revisi 2 (rekomendasi Planning, belum otorisasi)
+
+Ketiga penyempurnaan Anda sudah masuk. Arah yang Anda minta dipertahankan juga tetap utuh:
+- repo prototipe GitHub privat dengan HTML Golden;
+- tanpa DesainPakeAI;
+- peserta gudang belum pasti, dengan fallback K2;
+- file frozen Golden tidak diubah;
+- arsitektur akhir tetap Laravel + Inertia + React + TypeScript + shadcn/ui + Tailwind;
+- semantik bisnis kanonik MULTIPLECORP tidak berubah.
+
+Aturan AK-1–AK-8 tetap berlaku: perilaku mengikuti MULTIPLECORP, Golden hanya mengatur presentasi. Dua koreksi atas GA1 juga tetap berlaku: logout mengikuti MSG-35, dan toolbar filter Golden dipakai sebagai tampilan saja.
+
+## 1. Satu run, satu otorisasi
+
+Tidak ada otorisasi yang mencakup lebih dari satu run. Setiap run berakhir dengan urutan yang sama:
+1. commit dan push yang terverifikasi di remote;
+2. STOP dan laporan;
+3. verifikasi independen oleh Planning terhadap kedua repo;
+4. baru setelah itu Anda memutuskan run berikutnya.
+
+| Run | Isi | Syarat mulai |
+|---|---|---|
+| **S2-0** | Mencatat keputusan, baseline, dan menyiapkan repo prototipe: salin Layer A Golden dan font Inter tanpa diubah, verifikasi checksum, konfigurasi proyek dari template, server lokal, dan shell kosong bertanda PROTOTIPE. **Tanpa halaman journey** | Otorisasi S2-0; repo privat sudah Anda buat |
+| **S2-1** | Dokumen: IA dan inventaris halaman lengkap, peta non-loss SCR-01–SCR-60, pemetaan design system, arsitektur bahasa, journey autentikasi, produser pratinjau (GAP-053), cek QB-01/PF-24/QB-02. Spesifikasi P1–P5: daftar layar, matriks jejak, cek RSV, register simulasi, register deviasi | Laporan S2-0 terverifikasi, lalu otorisasi S2-1 |
+| **S2-2** | Membangun P1–P5 saja, ditambah seluruh verifikasi visual dan keamanan di §3 | Laporan S2-1 terverifikasi dan daftar layar disetujui, lalu otorisasi S2-2 |
+| **Pratinjau visual Anda** | Gate formal. Putusan Anda: setujui, setujui dengan penyesuaian yang Anda sebut, atau tolak | Laporan S2-2 terverifikasi |
+| **S2-3** | Perbaikan dari pratinjau, lalu kit usability untuk 3 peran dengan fallback K2 | Putusan pratinjau tercatat, lalu otorisasi S2-3 |
+| **C2 → S2-4** | Anda memandu sesi usability; hasilnya dicatat, diperbaiki, dan diuji ulang | Otorisasi S2-4 |
+
+## 2. Cakupan prototipe terbatas
+
+**Kelengkapan IA dan non-loss dijaga di tingkat dokumen.** Dokumen-dokumen ini dibuat di S2-1 dan mencakup semua halaman, peran, dan kapabilitas V1:
+- inventaris halaman;
+- peta navigasi per peran;
+- matriks non-loss;
+- alur tertulis.
+
+**Prototipe interaktif hanya untuk lima journey:**
+
+| ID | Journey | Persona dan perangkat | Anchor C1 | Sumber kanonik utama |
+|---|---|---|---|---|
+| P1 | Masuk dan sesi: kata sandi → TOTP; Google → TOTP (disimulasikan); kode pemulihan; ganti bahasa; logout dengan isian belum terkirim | Owner dan Admin; desktop dan ponsel | AN-1 | AU-03–AU-05, AU-22–AU-24, H7-15–H7-19, J-ACC-01, MSG-35, CAP-14 |
+| P2 | Beranda Owner: Gabungan atau per perusahaan; buka satu item keputusan; telusuri ke proyek | Owner; desktop dan ponsel | AN-2 | IA §9, sinyal QS, CALC, CS-08, VP-3, VP-6 |
+| P3 | *Pekerjaan* → Project Journey → "Buat invoice" → composer ("DRAF — belum terbit") → terbitkan dengan konfirmasi satu langkah | Admin; desktop | AN-3, AN-4 | J-INV-02, IP-08, NM-03, VD-07, DC-1–DC-12, PL-1–PL-3, C1A-1–C1A-3 |
+| P4 | Buat Pembelian dengan baris dan biaya, termasuk satu baris yang tertaut ke proyek | Admin; desktop | AN-5 | J-PUR-01/02, WF-PUR-01/02, IP-13 |
+| P5 | Barang Masuk dengan pindai: tiga hasil per baris, tawaran reservasi, ringkasan, Nota Terima Barang | Gudang; ponsel 390/320 px | AN-6 | J-INV-01, WF-INV-01, AX-04, HO-01, IP-19 |
+
+P4 menyuplai P5: baris pembelian yang tertaut proyek di P4 menjadi barang yang diterima di P5.
+
+**Supaya tidak menjadi aplikasi kedua:**
+- Tanpa backend, CRUD generik, atau penyimpanan apa pun, termasuk browser storage.
+- Transisi berjalan mengikuti skrip dari data sintetis tetap.
+- Hanya layar yang ada di jalur P1–P5. Daftar layarnya dikunci di S2-1, dan setiap tambahan perlu persetujuan Anda.
+- Entri navigasi R1 tetap tampil supaya kemudahan mencari menu tetap teruji. Tujuan di luar cakupan diarahkan ke satu halaman berlabel "Di luar cakupan prototipe", yang dicatat di register simulasi. Jadi bukan tombol mati.
+
+**Konsekuensi yang perlu Anda sadari:** pembayaran, koreksi, Barang Keluar, penawaran, serta akun dan hak akses khusus Owner tidak diuji usability di Stage 2. Ketiganya hanya didokumentasikan di S2-1, ditinjau adversarial di Stage 4, dan diuji di P8 lewat E2E dan UAT. Kandidat pertama kalau Anda ingin menambah satu journey adalah **P6 Catat pembayaran beserta alokasinya**.
+
+**Verifikasi reservasi.** Saya sudah membaca aturannya di repo, dan aturan kanoniknya sesuai dengan persyaratan Anda. Barang Masuk hanya **menawarkan** reservasi yang bersifat opsional dalam aksi yang sama (AX-04, WF-INV-01), dan tidak pernah otomatis. P5 dan matriks jejaknya wajib lolos semua cek berikut:
+
+| Cek | Aturan kanonik | Skenario uji di P5 |
+|---|---|---|
+| RSV-1 Tidak otomatis | AX-04 "optional same-action reservation"; WF-INV-01 "offer" | Tawaran tidak terpilih secara default. Tanpa pilihan eksplisit, tidak ada reservasi |
+| RSV-2 Hanya untuk permintaan terkonfirmasi | BR-RSV-01; BR-PRJ-06 (persetujuan penawaran, atau konfirmasi dengan bukti pesanan klien); V1_SCOPE: penawaran saja tidak mereservasi | Proyek dengan penawaran SENT yang belum disetujui: tawaran tidak muncul |
+| RSV-3 Hanya baris tertaut proyek | WF-INV-01; WF-PUR-02 (tanpa proyek, barang masuk stok bebas) | Baris tanpa proyek: tawaran tidak muncul |
+| RSV-4 Hanya kuantitas layak pakai | BR-RSV-01; L-13 (Rusak diterima masuk UNUSABLE; Ditolak tanpa event stok) | Baris Rusak diterima atau Ditolak: tidak ada tawaran untuk bagian itu |
+| RSV-5 Ada batas jumlah | BR-RSV-01 (AVAILABLE ≥ 0) | Jumlah tawaran ≤ min(diterima layak pakai, permintaan terkonfirmasi yang belum direservasi) |
+| RSV-6 Perlu izin | PERMISSIONS_MATRIX: `stock.receive`, ditambah `stock.reserve` untuk tawaran | Persona tanpa `stock.reserve`: barang tetap bisa diterima, tetapi tawaran tidak muncul |
+| RSV-7 Satu perintah | AX-04 (aksi tak terpisah) | Terima dan reservasi menghasilkan satu jawaban per baris |
+| RSV-8 Bila dilewati | QS-03 (barang proyek diterima, menunggu reservasi) | Tawaran dilewati: muncul sebagai sinyal menunggu reservasi |
+| RSV-9 Tidak sebelum penerimaan, dan bukan perpindahan fisik | BR-RSV-02, BR-RSV-03 | Barang yang belum diterima tidak pernah tereservasi |
+
+Anchor AN-6 dari VC1 tidak dipakai sebagai sumber perilaku. P5 dibangun ulang dari aturan di atas.
+
+## 3. Verifikasi visual dan keamanan
+
+**Visual.** Dijalankan di S2-2 untuk semua layar P1–P5:
+- **Render berdampingan dengan Golden** pada viewport yang sama. Gaya hasil render (font, ukuran, warna, border, radius, bayangan, tinggi) diukur terhadap token Golden. Penyimpangan hanya boleh yang tercatat di register.
+- **Responsif:** desktop 1440×900 dan 1366×768, ponsel 390×844 dan lebar 320 px. Tidak ada scroll horizontal, kecuali tabel data.
+- **Tipografi dan ruang napas:** skala huruf diukur per viewport, lalu dinilai dengan checklist AICWDF §18.2. Untuk pratinjau, GR-16 disiapkan dalam dua varian: standar Golden (sekitar 12,9 px di 1366) dan batas bawah 14 px. Anda yang memilih.
+- **Motion:** durasi dan easing diaudit terhadap token Golden dan VP-8, dan reduced motion diverifikasi.
+- **Aksesibilitas (WCAG 2.2 AA, tingkat desain):**
+  - kontras teks ≥ 4,5:1 dan non-teks ≥ 3:1, diukur dari hasil render;
+  - fokus terlihat dan tidak tertutup;
+  - target 24/44/48 px;
+  - jalur keyboard di setiap journey;
+  - text spacing dan reflow;
+  - pesan status;
+  - informasi tidak hanya lewat warna.
+- **Bukti:** file render disimpan di repo prototipe privat. Repo MULTIPLECORP hanya mencatat hash-nya, tanpa binary.
+- **Pratinjau visual Anda adalah gate.** Kit usability dan sesi C2 tidak bisa diotorisasi sebelum putusan pratinjau Anda tercatat.
+
+**Keamanan server lokal:**
+- **Data sintetis saja:** set dari repo dengan nama "Contoh".
+- **Tanpa kredensial nyata:** tidak ada e-mail, kata sandi, atau secret TOTP sungguhan, dan kode yang diketik tidak disimpan.
+- **Tanpa OAuth live:** Google disimulasikan, tanpa OAuth client dan tanpa panggilan ke Google. GAP-042 tetap di P9.
+- **Server hanya baca:** modul `http` bawaan Node, hanya melayani file statis dari folder prototipe, tanpa endpoint tulis, dan aman dari path traversal.
+- **Tanpa permintaan keluar:** tidak ada CDN, font dari internet, atau analitik. Ini dibuktikan lewat log jaringan saat render.
+- **Akses jaringan:**
+  - Bawaannya hanya `127.0.0.1`.
+  - Akses lewat LAN hanya selama sesi yang Anda pandu, di jaringan berprofil **Private**, tidak pernah di Wi-Fi publik. Izin firewall diberikan hanya untuk profil Private.
+  - Tanpa port forwarding, tunnel, atau hosting publik. Repo tetap privat.
+  - Server dimatikan setelah dipakai.
+
+## 4. Fakta terverifikasi dan kelengkapan
+
+**Diverifikasi 13 Okt 2026:**
+- **GitHub:** akun Free mendapat repo privat tanpa batas, sedangkan Pages di akun Free hanya untuk repo publik. Karena itu prototipe tidak di-hosting.
+- **Node.js:** modul `http` adalah bawaan, dan contoh resminya mengikat server ke `127.0.0.1`.
+- **Windows Firewall:** punya profil Private dan Public, dan aplikasi bisa diizinkan di jaringan privat tanpa diizinkan di jaringan publik.
+- **Aturan reservasi:** dibaca dari repo di commit `e9538a5`, yaitu V1_SCOPE, BR-PRJ-06, BR-RSV-01–03, WF-INV-01, AX-04, PERMISSIONS_MATRIX dan QS-03.
+
+**Kelengkapan:** semua keputusan tingkat Owner untuk Stage 2 sudah tercakup, dan tidak ada keputusan bisnis baru. Produk run seperti daftar layar, matriks jejak dan skenario usability akan saya periksa per run.
+
+**Yang belum terverifikasi:** akses ponsel ke PC lewat Wi-Fi. Ini diuji di S2-0.
+
+## Persetujuan Owner yang masih diperlukan
+
+| No | Persetujuan |
+|---|---|
+| **P-1** | Blueprint revisi 2 ini secara prinsip, termasuk aturan satu run satu otorisasi serta seluruh verifikasi visual dan keamanan |
+| **P-2** | AK-1–AK-8 dicatat sebagai keputusan Owner yang mengikat (mempersempit GD-02), beserta dua koreksi GA1 (logout ikut MSG-35; toolbar filter hanya tampilan) |
+| **P-3** | Lima journey interaktif P1–P5. Anda boleh menambah P6 Catat pembayaran, atau mengganti salah satunya |
+| **P-4** | File render dan bukti visual disimpan di repo prototipe privat, bukan di MULTIPLECORP |
+| **P-5** | Perluasan izin GD-08: file frozen Golden v1.0.0 (tanpa diubah) dan font Inter boleh disalin ke repo prototipe privat |
+| **P-6** | Nama repo privat, usul saya `multiplecorp-p7-prototype`. Repo ini Anda buat dalam keadaan kosong sebelum S2-0 dijalankan |
+| **P-7** | Lokasi draf Stage 2 di `docs/07-ux-design/stage2/`, berstatus non-normatif |
+
+Saran opsional: setelah repo prototipe di-clone ke PC, hubungkan foldernya ke sesi Planning ini, seperti folder MultipleCorp. Dengan begitu saya bisa memverifikasinya sendiri di setiap review.
+
+## Satu langkah berikutnya
+
+**Balas dalam satu pesan berisi persetujuan atau koreksi untuk P-1 sampai P-7.** Setelah itu saya tulis **Otorisasi S2-0 saja**. Ini tetap bukan otorisasi untuk menjalankan Stage 2 sekarang.
+
+Sumber:
+- [GitHub's plans — GitHub Docs](https://docs.github.com/en/get-started/learning-about-github/githubs-plans)
+- [HTTP | Node.js Documentation](https://nodejs.org/api/http.html)
+- [Windows Firewall overview — Microsoft Learn](https://learn.microsoft.com/en-us/windows/security/operating-system-security/network-security/windows-firewall/)
+- [Windows Firewall profiles — Microsoft Learn](https://learn.microsoft.com/en-us/previous-versions/windows/desktop/ics/windows-firewall-profiles)
+- [Set-NetFirewallProfile — Microsoft Learn](https://learn.microsoft.com/en-us/powershell/module/netsecurity/set-netfirewallprofile)
+------------------------------------------------------------------------
+
+3. 10:56 — Planning's acknowledgement, written after the Owner's approval,
+   with the final journey set; the Owner's decisions on its content are
+   those that DIR-061 states:
+------------------------------------------------------------------------
+# Blueprint Stage 2 revisi 2: disetujui secara prinsip
+
+Persetujuan Anda (P-1 sampai P-7, dengan penyesuaian di P-3) sudah saya pegang. Statusnya tetap **bukan otorisasi**: belum ada S2-0, S2-1, S2-2, coding aplikasi, maupun tahap lain yang dimulai. Aturan bahwa workflow kanonik MULTIPLECORP berwenang penuh, dan Golden yang beradaptasi, berlaku di seluruh Stage 2.
+
+## Set journey final (S2-J01–S2-J06)
+
+| ID | Journey | Perangkat |
+|---|---|---|
+| S2-J01 | Masuk dan sesi (Owner dan Admin): kata sandi → TOTP; Google → TOTP (disimulasikan, tanpa OAuth nyata); kode pemulihan; ganti bahasa; logout dengan isian belum terkirim (MSG-35) | Desktop dan 390 px |
+| S2-J02 | Beranda Owner: Gabungan atau per perusahaan, buka satu item keputusan, telusuri ke proyek | Desktop dan 390 px |
+| S2-J03 | Admin: *Pekerjaan* → Project Journey → "Buat invoice" → composer → terbitkan. **Validasi ponsel interaktif di 390 px** untuk *Pekerjaan* dan Project Journey | Desktop dan 390 px |
+| S2-J04 | Buat Pembelian dengan baris dan biaya, termasuk satu baris yang tertaut proyek | Desktop |
+| S2-J05 | Barang Masuk dengan pindai, ditambah cek reservasi RSV-1–RSV-9 | Ponsel 390/320 px |
+| S2-J06 | **Catat pembayaran parsial dan alokasinya** (baru, sempit) | Desktop |
+
+**Validasi ponsel S2-J03 tanpa membuat aplikasi kedua.** Layarnya sama, hanya responsif, dengan navigasi ponsel R1. Di 390 px, *Pekerjaan* dan Project Journey interaktif penuh:
+- buka grup kerja;
+- buka proyek;
+- disclosure;
+- *Sekarang · Berikutnya · Hambatan*;
+- tindakan berikutnya.
+
+Penerbitan invoice bertanda `[desk]` di repo (J-FIN-01). Di ponsel, langkah itu tampil sesuai aturan kanonik yang dipastikan di matriks jejak S2-1. Tidak dibuat versi ponsel baru.
+
+**Cakupan S2-J06.** Aturan ini sudah saya cek di repo: J-FIN-03, WF-FIN-03, AX-18, AX-19, BR-FIN-03/05, lampiran numerik 1–3, serta izin `payment.record` dan `finance.view`.
+- **Termasuk:**
+  - Satu fakta pembayaran (tanggal, jumlah > 0, metode, rekening perusahaan, baris mutasi bank, referensi, bukti).
+  - Alokasi dalam perintah yang sama ke invoice terbit milik klien dan perusahaan yang sama. Tiap alokasi ≤ sisa tagihan, total alokasi ≤ pembayaran, dan sisanya menjadi *Kredit Pelanggan*.
+  - Contoh parsial lampiran 1: invoice Rp1.000.000, dibayar Rp300.000, sisa Rp700.000.
+  - Kasus tolak yang disimulasikan: alokasi melebihi sisa tagihan, atau total alokasi melebihi pembayaran.
+  - Bukti tidak ada: wajib alasan dan ditandai (L-29).
+- **Tidak termasuk (hanya didokumentasikan):**
+  - potongan fee atau pajak;
+  - refund;
+  - realokasi;
+  - contra;
+  - tautan Kuitansi;
+  - satu baris mutasi bank untuk banyak klien;
+  - write-off.
+
+## Pencatatan keputusan
+
+Checkpoint tata kelola berikutnya adalah **S2-0**. Run itu akan mencatat:
+- **Source record verbatim:**
+  - jawaban Anda soal medium, peserta dan pratinjau;
+  - aturan adaptasi kanonik Anda;
+  - tiga penyempurnaan blueprint Anda;
+  - persetujuan P-1–P-7 Anda;
+  - teks blueprint revisi 2 sebagai usulan Planning yang disetujui, beserta penyesuaian P-3.
+- **Keputusan Owner** di DECISION_LOG dan DECISION_INDEX, mencakup:
+  - AK-1–AK-8;
+  - koreksi GA1 (logout ikut MSG-35; toolbar filter hanya tampilan);
+  - set journey S2-J01–S2-J06;
+  - medium prototipe dan izin GD-08 yang diperluas;
+  - status peserta (belum pasti, fallback K2);
+  - gate pratinjau visual;
+  - lokasi draf `docs/07-ux-design/stage2/`.
+- **Dokumen kontinuitas** (PHASE_STATUS, CURRENT_HANDOFF dan gate record) menyatakan bahwa hanya S2-0 yang diotorisasi.
+
+**Keputusan Anda yang masih tersisa nanti, bukan sekarang:**
+- putusan pratinjau visual, termasuk soal ukuran teks GR-16, setelah S2-2;
+- kepastian peserta gudang, saat S2-3 atau C2;
+- otorisasi terpisah untuk setiap run.
+
+## Satu tindakan berikutnya dari Anda
+
+**Buat repository GitHub privat kosong `multiplecorp-p7-prototype`** di akun yang sama dengan MULTIPLECORP, yaitu `yusufarst`:
+- Visibility: **Private**.
+- **Jangan** centang README, .gitignore, maupun license, supaya repo benar-benar kosong.
+
+Lalu balas di sini: **"repo sudah dibuat"**.
+
+Setelah itu saya kirimkan draf **Otorisasi S2-0** untuk Anda tinjau. Mengirim draf itu ke Executor adalah tindakan otorisasi Anda sendiri.
+------------------------------------------------------------------------

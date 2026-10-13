@@ -1,0 +1,136 @@
+TRANSCRIBED LOCKED SOURCE RECORD — fifty-ninth source record
+Received: 2026-10-13, the Owner's Stage 2 answers and messages to Planning
+         in the planning session of the MULTIPLECORP Project, relayed as
+         Appendix A of the sixty-first source record
+Subject: the Owner's P7 Stage 2 decisions — the prototyping medium, the
+         participants and the visual preview; the canonical-adaptation
+         requirement; the blueprint refinements; the approval P-1–P-7; the
+         notice that the prototype repository exists (DIR-061)
+Delivery: Appendix A of the Owner's message of 2026-10-13, the sixty-first
+         source record. This record transcribes the lines between its BEGIN
+         and END markers, which are not transcribed, mechanically from the
+         text file in which that message arrived, its text normalized to LF
+         without a byte-order mark.
+This is a transcript of the relayed answers and messages, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-13 (times in WIB).
+The Owner's Stage 2 decisions and messages to Planning, in the order they
+were given. Each Owner message is reproduced verbatim, as the Owner wrote
+it, between two lines of dashes.
+
+1. 10:23 — Planning asked three questions; the Owner selected one option
+   for each.
+
+Question 1: "Medium prototipe Stage 2 mana yang dipakai, sekarang
+DesainPakeAI sudah dihentikan?"
+Options offered:
+- "Repo privat, HTML Golden (Rekomendasi)" — "HTML statis dari file Golden
+  v1.0.0 tanpa diubah, ditambah halaman MultipleCorp baru. Disimpan di repo
+  GitHub privat baru yang gratis dan dijalankan lokal."
+- "Folder lokal, HTML Golden" — "Sama seperti opsi pertama, tetapi hanya di
+  folder PC Anda. Lebih sederhana, tetapi tanpa riwayat atau cadangan di
+  luar PC."
+- "React + shadcn/ui, repo terpisah" — "Langsung menguji pemetaan
+  shadcn/ui, tetapi jauh lebih berat, perlu instalasi paket npm, dan
+  tampilannya berisiko melenceng dari Golden."
+- "Di dalam repo MULTIPLECORP" — "Satu tempat dengan dokumen, tetapi GD-05
+  harus diubah, salinan Golden ikut terbit di repo publik, dan kode
+  prototipe bercampur dengan dokumen."
+Owner's answer: "Repo privat, HTML Golden (Rekomendasi)"
+
+Question 2: "Apakah ada pengguna gudang/lapangan nyata yang bisa ikut sesi
+usability C2 (OC-12)?"
+Options offered:
+- "Belum pasti" — "Kit usability disiapkan untuk tiga peran. Kalau nanti
+  tidak ada pengguna gudang/lapangan, dipakai fallback K2: Owner dan Admin
+  Operasional."
+- "Ada, bisa diatur" — "Satu pengguna gudang/lapangan ikut sesi di ponsel."
+- "Tidak ada" — "Sesi hanya dengan Owner dan Admin Operasional (fallback
+  K2)."
+Owner's answer: "Belum pasti"
+
+Question 3: "Mau melihat prototipe lebih dulu sebelum kit usability dan
+sesi C2 disiapkan?"
+Options offered:
+- "Ya, lihat dulu (Rekomendasi)" — "Ada satu jeda singkat setelah
+  prototipe jadi untuk tinjauan Anda. Masalah besar bisa ketahuan sebelum
+  sesi dengan peserta."
+- "Tidak, langsung lanjut" — "Prototipe dan kit usability dibuat
+  berurutan tanpa jeda. Anda pertama kali melihatnya di sesi C2."
+Owner's answer: "Ya, lihat dulu (Rekomendasi)"
+
+2. 10:24 — the Owner's requirement, sent before Planning finalized its
+   first Stage 2 blueprint:
+------------------------------------------------------------------------
+Before finalizing the P7 Stage 2 blueprint, enforce this Owner requirement:
+MULTIPLECORP's canonical repository governs all business workflows. Golden Frontend Reference v1.0.0 must adapt to MULTIPLECORP, never the reverse.
+
+* Preserve approved P0–P6 domain rules, workflows, security, permissions, finance, inventory, document lifecycles, and architecture.
+* Preserve the Owner-approved R1 UX structure, including Admin task-first, Owner decision-first, Project Journey, and role-specific navigation.
+* Use Golden for visual design, component anatomy, motion, responsive behavior, accessibility, and interaction presentation.
+* Do not import Golden demonstration routes, sample workflows, roles, fixtures, business logic, or unsupported capabilities.
+* For each Stage 2 prototype journey, trace its actions, transitions, and permissions to canonical MULTIPLECORP requirements.
+* Where Golden and MULTIPLECORP differ, adapt Golden. Record any necessary visual deviations without changing approved business semantics.
+* Use synthetic data and clearly distinguish simulated prototype behavior from actual backend functionality.
+* Preserve Golden's visual quality while making the application genuinely easy for MULTIPLECORP's Owner, Admin, and warehouse users.
+
+Treat this as a binding constraint for the Stage 2 planning recommendation, not as authorization to start Stage 2 or application coding.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+3. 10:33 — the Owner's refinements, after reading Planning's first Stage 2
+   blueprint (the sixtieth source record, item 1):
+------------------------------------------------------------------------
+I have reviewed your P7 Stage 2 blueprint.
+The AK-1–AK-8 direction is aligned with my requirement: MULTIPLECORP's canonical business workflows and security rules govern all behavior, and Golden Frontend Reference v1.0.0 must adapt to them.
+Before I formally authorize Stage 2, please refine the blueprint in three areas:
+
+1. Execution checkpoints: Prefer an initial authorization for S2-0 only. Require a verified report and review before authorizing S2-1, and likewise before S2-2. Do not automatically authorize three runs at once.
+2. Prototype scope: Maintain complete IA and non-loss coverage, but select a bounded set of high-priority interactive journeys. Avoid building a second application in static HTML. Explicitly verify that inventory reservation is triggered only by approved confirmed demand, not automatically by goods receipt.
+3. Visual and safety verification: Require rendered side-by-side comparison with Golden, responsive checks at desktop and 390/320 px, typography and breathing-room evaluation, motion and accessibility verification, and my visual preview before usability testing. Any local server must use synthetic data, no real credentials or live OAuth, and must not expose the prototype publicly.
+
+Preserve the previously selected direction:
+
+* Private GitHub prototype repository using Golden HTML.
+* No DesainPakeAI.
+* Warehouse participant availability remains uncertain, with the approved fallback.
+* Golden's frozen files remain unchanged.
+* The final application architecture stays Laravel + Inertia + React + TypeScript + shadcn/ui + Tailwind.
+* No modification of canonical MULTIPLECORP business semantics.
+
+These are blueprint refinements, not yet my formal authorization to execute Stage 2.
+Return the updated blueprint, identify the exact Owner approvals still needed, and recommend the next single action. Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+4. 10:54 — the Owner's approval, after reading revision 2 of the blueprint
+   (the sixtieth source record, item 2):
+------------------------------------------------------------------------
+I approve the P7 Stage 2 Revision 2 blueprint in principle, with the following explicit decisions and adjustments.
+P-1: APPROVED — one run per authorization, with independent verification and Owner review between runs.
+P-2: APPROVED — AK-1 through AK-8 are binding, including the correction that logout follows MULTIPLECORP MSG-35 and Golden's filter toolbar supplies presentation only.
+P-3: APPROVED WITH ADJUSTMENTS — retain the five proposed interactive journeys and add a sixth, narrowly scoped journey for recording a partial payment and allocating it according to canonical MULTIPLECORP financial rules.
+Ensure that Admin Pekerjaan and Project Journey have meaningful interactive mobile validation at 390 px, without expanding into a second application.
+Use unambiguous journey identifiers such as S2-J01 through S2-J06 to avoid confusion with project phases P1 through P6.
+P-4: APPROVED — rendered prototype evidence may be stored in the separate private prototype repository, while MULTIPLECORP retains textual evidence and verified references.
+P-5: APPROVED — I authorize the byte-identical Golden Frontend Reference v1.0.0 frozen runtime files and appropriately licensed Inter font files to be used in this private MULTIPLECORP prototype repository, subject to the established brand and asset restrictions.
+P-6: APPROVED — the repository name is `multiplecorp-p7-prototype`. I will create it as an empty private GitHub repository before S2-0 execution.
+P-7: APPROVED — Stage 2 non-normative drafts belong under `docs/07-ux-design/stage2/`.
+MULTIPLECORP's canonical business workflows remain authoritative. Golden must adapt to MULTIPLECORP, never the reverse.
+This is approval of the blueprint and decisions only. It is NOT authorization to start S2-0, S2-1, S2-2, application coding, or any later stage.
+Record these decisions in the next appropriately authorized governance checkpoint.
+Respond in Bahasa Indonesia and identify the next single action required from me.
+------------------------------------------------------------------------
+
+5. 11:00 — the Owner's notice that the prototype repository exists, after
+   Planning's acknowledgement of the approval (the sixtieth source record,
+   item 3):
+------------------------------------------------------------------------
+Repo sudah dibuat.
+Repository: https://github.com/yusufarst/multiplecorp-p7-prototype
+Visibility: Private.
+Initial state: Empty, without README, .gitignore, LICENSE, or commits.
+Please prepare the complete, self-contained S2-0 Executor authorization according to the approved Stage 2 Revision 2 blueprint and its P-3 adjustments.
+Authorize S2-0 only. Do not authorize S2-1, S2-2, Stage 3, or application coding.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
