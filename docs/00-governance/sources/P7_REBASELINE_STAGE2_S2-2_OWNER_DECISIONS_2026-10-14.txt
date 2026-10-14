@@ -1,0 +1,70 @@
+TRANSCRIBED LOCKED SOURCE RECORD — sixty-fourth source record
+Received: 2026-10-14, the Owner's messages to Planning in the planning session
+         of the MULTIPLECORP Project, relayed as Appendix A of the sixty-fifth
+         source record
+Subject: the Owner's notice that commit 10 of the P7 UX re-baseline is pushed,
+         the Owner's decisions on the questions of run S2-1 of Stage 2 — OQ-01,
+         OQ-06, OQ-07 and OQ-09 decided, the others deferred — and the Owner's
+         decision on OQ-06 replacing the earlier answer (DIR-065)
+Delivery: Appendix A of the Owner's message of 2026-10-14, the sixty-fifth
+         source record. This record transcribes the lines between its BEGIN and
+         END markers, which are not transcribed, mechanically from the text
+         file in which that message arrived, its text normalized to LF without
+         a byte-order mark; the transcript equals the values that message's
+         section 9 item 1 gives — 47 lines, 2,751 bytes, SHA-256
+         c65f081738a7ad8d448826af8eb3ab57ec1c0f2f33875ff85249f34320988728. As
+         the appendix states, the Owner's three messages are the texts between
+         the lines of dashes, each reproduced as relayed in the planning
+         session; Planning's introduction and the numbered headings are
+         provenance, not the Owner's words, and Planning's report between the
+         messages is not transcribed.
+This is a transcript of the relayed messages, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-14 (WIB).
+The Owner's three messages after run S2-1, in the order given, each
+reproduced as relayed in the planning session between two lines of dashes.
+Between them, Planning reported its independent verification of S2-1 and of
+both repositories (result PASS) and its recommendations on OQ-01–OQ-09; that
+report is not transcribed.
+
+1. The Owner's notice that commit 10 is pushed
+------------------------------------------------------------------------
+OWNER UPDATE — S2-1 PUSH COMPLETED
+I manually completed the authorized S2-1 push using a normal Git push, without --force.
+The subsequent git ls-remote origin verification confirms:
+
+* rebaseline/p7-ux: 0c1194d9a2a035eb6511bff64d776762d52249f5
+* main: a526daf47444d12b4ae5c51e1ae14c9dfe3f4978
+* amendment/p5-auth: unchanged
+* migration/aicwdf: unchanged
+* existing tags: unchanged
+
+The push succeeded.
+Please perform the previously planned single focused independent verification of S2-1 and both repositories, without repeating the completed audits or restarting the work.
+Then present OQ-01 through OQ-09 with concise recommendations for my decisions, prioritizing the four questions required before S2-2.
+Apply the approved planning efficiency policy. Do not authorize S2-2 until the necessary Owner decisions are made.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+2. The Owner's decisions on the questions of S2-1
+------------------------------------------------------------------------
+I approve the following Owner decisions:
+OQ-01: b
+OQ-06: a
+OQ-07: a
+OQ-09: a
+Defer OQ-02, OQ-03, OQ-04, OQ-05, and OQ-08 until their required decision gates before Stage 3.
+Please prepare the concise S2-2 authorization in accordance with the agreed planning efficiency policy. Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+3. The Owner's decision on OQ-06, replacing the answer "OQ-06: a" of message 2
+------------------------------------------------------------------------
+OWNER DECISION — OQ-06
+For OQ-06, I want the Google sign-in button to display the authentic, full-color Google "G" logo, not a neutral placeholder.
+Preserve the Golden Frontend Reference visual style and use the official Google brand colors.
+The S2-2 prototype must still simulate Google sign-in without implementing real OAuth authentication.
+Record this as my explicit Owner decision for OQ-06, overriding recommendation (a). Do not mislabel this decision as option (a).
+Keep the other Owner questions and the established S2-2 scope unchanged.
+Respond briefly in Bahasa Indonesia.
+------------------------------------------------------------------------

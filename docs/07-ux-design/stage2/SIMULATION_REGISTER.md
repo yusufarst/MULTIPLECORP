@@ -80,3 +80,14 @@ The PS screens of the six [journey specifications](journeys/S2-J01.md#4-the-scre
 | SIM-14 | every screen, in both page sets |
 | SIM-15 | PS-25, PS-38 |
 | SIM-16 | PS-27, PS-33, PS-34, PS-47, PS-52 |
+
+## 6. The S2-2 build
+
+How run S2-2 ([DIR-066](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes)) simulated where this register is silent or the build differs, each with its reason; the journeys' own notes are in each specification's §9.
+
+- **The marker (§4)** also sits in the head of the full-height sheets of [S2-J05](journeys/S2-J05.md), which cover the phone's app bar, and on the phone it takes two lines, so that the page's title keeps its room (GR-33). The panel opens as an application dialog on the desktop and as a sheet on the phone, above any sheet already open, which closing the panel leaves as it was; beneath MSG-39's modal confirmation the marker stays shown and opens the panel once the confirmation is closed.
+- **The out-of-scope page (§4)** reached from PS-06 has no shell and offers "Kembali" only: no session exists there to give a start page.
+- **SIM-07:** the server's answers are scripted texts of the story's figures — a confirmation, an answer, a rejection —; figures other than the story's still show them. A rejection (S2-R05; PS-50; PS-51) comes after a short simulated send, with the input kept.
+- **SIM-10:** "Unduh" and "Cetak" of an issued document show the notice "Prototipe tidak membuat PDF." beside them.
+- **SIM-15:** a lookup searches the page's synthetic set — an exact code first, then names beginning with the term, then similar ones; a short term matches by prefix only; at most 20 rows. A code outside the set gets no answer, an unknown code not being prototyped (S2-J05 §7).
+- **SIM-16:** "Pilih File" adds the synthetic file's row with no file picker, shows an upload bar for 1.4 seconds — 0.3 seconds under reduced motion — with "Batalkan", then *Terunggah*; "Hapus file" returns the choice. No file of the participant is read or kept.

@@ -147,6 +147,8 @@ Google's [sign-in branding guidelines](https://developers.google.com/identity/br
 
 **Recommendation: (a)** for the prototype; the application's button follows the guidelines in full, the "G" and the font included, in P11 with [GAP-042](../../00-governance/GAP_REGISTER.md#triage) (GR-13). The choice is an Owner question.
 
+**The Owner's decision (DIR-065, 2026-10-14): option (c)**, replacing the recommendation (a) and the Owner's own earlier answer "a" — Google's authentic full-colour "G", unaltered, in a button keeping the reference's style; Google sign-in simulated. Google's official asset download holds no standalone "G", so S2-2 made `site/assets/mc/google-g.svg` by script from its light, icon-only button file, removing only the button's background and stroke and setting the viewBox to the "G"'s bounds, as the Owner directed under SP-24; its provenance is in `google-g.SOURCE.txt` and TECH-033, and the differences from Google's button rules are [GR-32](DEVIATION_REGISTER.md).
+
 ## 7. The AK-5 checklist
 
 Before S2-2's commit, each item is checked by script over the files written new — everything outside `site/vendor/` — and the result recorded; any finding is fixed before the commit. Nothing outside V1 — a route, workflow, role, persona, fixture, logic, copy or capability — is imported from the reference ([AK-5](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup)).
@@ -306,3 +308,103 @@ The names a runtime configuration or a journey screen supplies, beyond §2.5's: 
 **The state shapes** — [DESIGN_SYSTEM_MAPPING §5](DESIGN_SYSTEM_MAPPING.md#5-states-and-tones)'s, each under the `i-` id of its Lucide name, for the states the journeys name: `circle-dashed` — *Belum Dimulai* (S2-J02, S2-J03) and *Belum Dicatat* (S2-J05); `contrast` — *Berjalan* (S2-J02, S2-J03); `check` — *Tuntas* (S2-J02, S2-J03) and *Tercatat* (S2-J05); `circle-minus` — *Tidak Diperlukan* (S2-J02, S2-J03); `triangle-alert` — *Lewat Jatuh Tempo* (S2-J02); `square` — *Belum Ditagihkan* (S2-J02, S2-J03, S2-J06); `flag` — *Sengketa* (S2-J02); `scale` — *Menunggu Penetapan* (S2-J02); `file-text` — *Terbit* (S2-J03, S2-J06); `ellipsis` — *PDF Sedang Dibuat* (S2-J03, S2-J04); `file-check` — *PDF Siap* (S2-J03); `circle-dot` — *Terbuka* (S2-J04); `file-question-mark` — *Tanpa Bukti* (S2-J06), the release's name for §12.1's `file-question`.
 
 **Totals.** 24 Lucide names beyond §2.5's — `list-checks`, `layout-grid`, `languages`, `chart-column`, `database`, `shield`, `settings`, `coins`, `shield-alert`, `circle-x`, `list-todo`, `mail`, `lock`, `download` and `printer`, proposed, and the shapes `circle-dashed`, `contrast`, `circle-minus`, `square`, `flag`, `scale`, `file-check`, `circle-dot` and `file-question-mark`, fixed by §12.1 —, each checked present on 2026-10-14; `i-logo-mark` and the Google "G" stay not drawn (§2.5; §6).
+
+## 9. The S2-2 build
+
+What run S2-2 built ([DIR-066](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes), under the Owner's decisions DIR-065) where this plan is silent or the build differs, each with its reason; the journeys' own notes are in each specification's §9, the checks' results in [VERIFICATION_S2-2](VERIFICATION_S2-2.md).
+
+- **The page sets (§1).** Under `site/id/` and `site/en/`, one folder per persona's page set — `laras/`, `dimas/`, `bayu/` and `bayu-r06/`, SP-19's variant without `stock.reserve` (SIM-05) — with the sign-in pages and the bare out-of-scope page at the top; each set has its own out-of-scope page with the shell.
+- **The start page (§1).** `site/index.html` links each journey in both languages and in GR-16's variant B, and loads the same stylesheets and scripts as every page, so that its marker opens the panel.
+- **States (§3).** Every state a screen of the list names is an address of its page, `#ps-NN`, written with `history.replaceState` — an address only (SP-13); the language switch keeps the path, the query and the fragment; `?varian=b` sets GR-16's variant B and is kept on every link.
+- **The sprite (§2.5).** The pages carry the Lucide sprite inline, as the first element of `<body>`, since the vendored scripts reference its symbols by `#i-` id in the same document; `site/assets/mc/icons.svg` is its source copy.
+- **The verification tooling (§4).** `tools/verify/` holds `cdp.mjs`, `screens.mjs`, `page-checks.mjs`, `render.mjs`, `static.mjs`, `journeys.mjs` with `journeys-b.mjs`, `focus.mjs`, `motion.mjs`, `panel.mjs` — the marker and the panel on every screen (SS-08) — and `sv01.mjs`. A full-height render grows the viewport to the document, so that fixed bars sit at its foot; each screen's job runs under a 60-second guard. The reference's demonstration page re-themes the brand with its own tokens, so a brand-coloured property is compared with the reference's token; the reference's renders are not kept in the prototype repository, their demonstration copy staying out (AK-5). The installed Chrome updated itself during the run, from 155.0.8059.39 to 155.0.8059.41; each run records its version.
+- **The copy dictionary (LOCALIZATION_ARCHITECTURE §2.7).** The journeys' copy-table cells that hold several keys are split by explicit rules — `pages.pg_001.language`; `glossary.gl_041` with `pages.pg_006.view`; `journey.stage.*`; `status.part.*` with `journey.blocked`; `composer.layout`; `pt25.today`; `composer.fit_width`, `composer.full_screen` and `composer.page_n`; `pt10.columns`; `pages.pg_017.line_link`; `pages.pg_022.progress`; `journey.deadline` —, each split re-joined and verified equal to its cell. S2-2 added 200 strings, each with its kind, source and reason: the journeys' own in their specifications' §9, and these, common to every journey — the shell, the panel, the out-of-scope page, the start page and the pages' names:
+
+**The shell, the panel and the out-of-scope page**
+
+| Key | Indonesian | English (proposed) | Kind | Source | Where and why |
+| --- | --- | --- | --- | --- | --- |
+| `panel.title` | Tentang prototipe ini | About this prototype | proposed | SIMULATION_REGISTER §4 | the panel the marker opens (SS-08) |
+| `panel.line_1` | Ini prototipe desain MultipleCorp, bukan aplikasinya. | This is a design prototype of MultipleCorp, not the application. | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.line_2` | Semua data adalah contoh. Tidak ada yang disimpan atau dikirim. | All data are examples. Nothing is saved or sent. | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.line_3` | Disimulasikan: masuk dan verifikasi dua langkah, masuk dengan Google, hak akses, penomoran, pencatatan stok dan keuangan, pembuatan PDF, dan pemindai. | Simulated: sign-in and two-step verification, Google sign-in, permissions, numbering, stock and finance posting, PDF creation and the scanner. | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.line_4` | Sesuai rancangan: urutan langkah, layar, status, konfirmasi, dan pesan. | As designed: the order of steps, the screens, states, confirmations and messages. | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.line_5` | Tanda "Simulasi" menandai hasil yang di aplikasi dibuat oleh sistem, seperti nomor dokumen. | The "Simulation" mark flags what the application's system would produce, such as a document number. | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.line_6` | Halaman di luar enam alur prototipe membuka halaman "Di luar cakupan prototipe". | Pages outside the prototype's six journeys open the page "Outside the prototype's scope". | proposed | SIMULATION_REGISTER §4 |  |
+| `panel.close` | Tutup | Close | proposed | SIMULATION_REGISTER §4 |  |
+| `oos.title` | Di luar cakupan prototipe | Outside the prototype's scope | proposed | SIMULATION_REGISTER §4 | the out-of-scope page |
+| `oos.line` | Halaman ini ada di MultipleCorp, tetapi tidak termasuk dalam prototipe ini. | This page exists in MultipleCorp but is not part of this prototype. | proposed | SIMULATION_REGISTER §4 |  |
+| `oos.back` | Kembali | Back | proposed | SIMULATION_REGISTER §4 |  |
+| `shell.nav.beranda` | Beranda | Home | recorded | IA_PAGE_INVENTORY §5.1 PG-006; GL-001 | the Owner's primary entry and bottom-bar item |
+| `shell.nav.pekerjaan` | Pekerjaan | Work | recorded | IA_PAGE_INVENTORY §5.1 PG-007 | a primary entry and the Admin's bottom-bar item |
+| `shell.nav.proyek` | Proyek | Projects | recorded | IA_PAGE_INVENTORY §5.1 PG-010; GL-004 | a primary entry and bottom-bar item |
+| `shell.nav.tinjauan` | Tinjauan | Review | recorded | IA_PAGE_INVENTORY §5.1 PG-008 | the Owner's primary entry |
+| `shell.nav.cari` | Cari | Search | recorded | IA_PAGE_INVENTORY §5.1 PG-009; GL-023 | the bottom-bar item |
+| `shell.nav.lainnya` | Lainnya | More | recorded | GL-030 (phone navigation); R1 a) | the bottom-bar item opening the drawer |
+| `shell.nav.menu` | Menu lengkap | Full menu | proposed | R1 a); IA_PAGE_INVENTORY §2.2 | the collapsed group of modules |
+| `shell.nav.kerja` | Kerja | Work queues | proposed | IA_PAGE_INVENTORY §3.2; NAVIGATION_MAP §1.2 | the Owner's section of the Lainnya drawer |
+| `shell.nav.pembelian` | Pembelian | Purchases | recorded | IA_PAGE_INVENTORY §5.1 PG-015; GL-006 | a module of Menu lengkap |
+| `shell.nav.gudang` | Gudang | Warehouse | recorded | IA_PAGE_INVENTORY §2.2; GL-007 | a module |
+| `shell.nav.keuangan` | Keuangan | Finance | recorded | IA_PAGE_INVENTORY §2.2; GL-016 | a module |
+| `shell.nav.dokumen` | Dokumen | Documents | recorded | IA_PAGE_INVENTORY §5.1 PG-035; GL-014 | a module |
+| `shell.nav.laporan` | Laporan | Reports | recorded | IA_PAGE_INVENTORY §5.1 PG-051; GL-020 | a module |
+| `shell.nav.data_master` | Data Master | Master data | recorded | IA_PAGE_INVENTORY §2.2; GL-021 | a module |
+| `shell.nav.aktivitas` | Aktivitas & Keamanan | Activity & security | proposed | IA_PAGE_INVENTORY §2.2 | the Owner's module |
+| `shell.nav.pengaturan` | Pengaturan | Settings | recorded | IA_PAGE_INVENTORY §2.2; GL-022 | the Owner's module |
+| `shell.nav.label` | Navigasi utama | Main navigation | proposed | IA_PAGE_INVENTORY §3.1 | the navigation landmark's name |
+| `shell.search` | Cari atau pindai kode | Search or scan a code | recorded | IA_PAGE_INVENTORY §3.1; R1 a) | the top bar's field |
+| `shell.search_kbd` | Ctrl K | Ctrl K | recorded | IA_PAGE_INVENTORY §3.1 (KB-01) | the field's hint, the same in both languages |
+| `shell.create` | Buat | Create | recorded | IA_PAGE_INVENTORY §§3.1, 6.3; R1 a) | the top bar's menu |
+| `shell.skip` | Langsung ke konten utama | Skip to main content | proposed | WCAG 2.2 2.4.1; the S2-0 shell | the skip link |
+| `shell.collapse` | Ciutkan navigasi | Collapse navigation | proposed | IA_PAGE_INVENTORY §3.1 (KB-03) | the sidebar's collapse button |
+| `shell.expand` | Perluas navigasi | Expand navigation | proposed | IA_PAGE_INVENTORY §3.1 (KB-03) | the same button, collapsed |
+| `shell.rail_menu` | Tampilkan navigasi lengkap | Show the full navigation | proposed | IA_PAGE_INVENTORY §3.1 | the icon rail's menu button |
+| `shell.account.trigger` | Akun | Account | proposed | IA_PAGE_INVENTORY §2.3 | the account menu's trigger name |
+| `shell.account.menu` | Menu akun | Account menu | proposed | IA_PAGE_INVENTORY §2.3; the name of the vendored menu, rewritten from its default (GR-31) | the list of the account menu |
+| `shell.back` | Kembali | Back | proposed | IA_PAGE_INVENTORY §3.2 | the phone app bar's back action |
+| `shell.drawer.label` | Menu aplikasi | Application menu | proposed | the drawer's name, rewritten from the vendored default | Lainnya drawer |
+| `shell.drawer.nav` | Navigasi lengkap | Full navigation | proposed | as above | Lainnya drawer |
+| `shell.drawer.close` | Tutup menu | Close menu | proposed | as above | Lainnya drawer |
+| `shell.drawer.account` | Akun | Account | proposed | IA_PAGE_INVENTORY §3.2 | Lainnya › Akun |
+| `roles.owner` | Owner | Owner | canonical | GL-031 — the role's name stays as the Owner uses it | the account's role |
+| `roles.admin` | Admin Operasional | Operations admin | canonical | GL-032; English proposed | the account's role |
+
+**The start page**
+
+| Key | Indonesian | English (proposed) | Kind | Source | Where and why |
+| --- | --- | --- | --- | --- | --- |
+| `start.title` | Prototipe MultipleCorp | MultipleCorp prototype | proposed | PROTOTYPE_PLAN §1 (the S2-0 shell kept as the start page) | the start page |
+| `start.lead` | Enam alur desain Tahap 2. Semua data adalah contoh; tidak ada yang disimpan atau dikirim. | Six Stage 2 design journeys. All data are examples; nothing is saved or sent. | proposed | SIMULATION_REGISTER §4; SS-08 | the start page |
+| `start.journeys` | Alur | Journeys | proposed | PROTOTYPE_PLAN §8 | the start page |
+| `start.j01` | Masuk dan sesi | Sign-in and session | proposed | S2-J01 (SD-05) | the start page |
+| `start.j02` | Beranda Owner | The Owner's Beranda | proposed | S2-J02 (SD-05) | the start page |
+| `start.j03` | Pekerjaan → Perjalanan Proyek → terbitkan invoice | Work → Project journey → issue an invoice | proposed | S2-J03 (SD-05) | the start page |
+| `start.j04` | Buat Pembelian | New purchase | proposed | S2-J04 (SD-05) | the start page |
+| `start.j05` | Barang Masuk dengan pemindaian di ponsel | Goods receiving with scanning on the phone | proposed | S2-J05 (SD-05) | the start page |
+| `start.j05_r06` | Skenario S2-R06: tanpa kewenangan reservasi | Scenario S2-R06: without the reservation grant | proposed | S2-J05 §1; SP-19 | the start page |
+| `start.j06` | Pembayaran sebagian, diterapkan dalam satu perintah | A partial payment, applied in the same command | proposed | S2-J06 (SD-05) | the start page |
+| `start.phone` | Ponsel | Phone | proposed | PROTOTYPE_PLAN §8.1 | the start page |
+| `start.variant` | Teks desktop untuk pratinjau (GR-16) | Desktop text for the preview (GR-16) | proposed | GR-16; SD-08 | the start page |
+| `start.variant_a` | Varian A — standar referensi | Variant A — the reference's standard | proposed | DESIGN_SYSTEM_MAPPING §1 | the start page |
+| `start.variant_b` | Varian B — teks 14 px tetap | Variant B — 14 px text kept | proposed | DESIGN_SYSTEM_MAPPING §1 | the start page |
+| `start.language` | Bahasa | Language | proposed | LOCALIZATION_ARCHITECTURE §4 | the start page |
+
+**The pages' names**
+
+| Key | Indonesian | English (proposed) | Kind | Source | Where and why |
+| --- | --- | --- | --- | --- | --- |
+| `pages.pg_001.name` | Masuk | Sign in | recorded | IA_PAGE_INVENTORY §5.1 PG-001 | the document title and the phone app bar's title |
+| `pages.pg_002.name` | Verifikasi Dua Langkah | Two-step verification | recorded | IA_PAGE_INVENTORY §5.1 PG-002 | the document title and the phone app bar's title |
+| `pages.pg_004.name` | Aktifkan Verifikasi Dua Langkah | Turn on two-step verification | recorded | IA_PAGE_INVENTORY §5.1 PG-004 | the document title and the phone app bar's title |
+| `pages.pg_006.name` | Beranda | Home | recorded | IA_PAGE_INVENTORY §5.1 PG-006 | the document title and the phone app bar's title |
+| `pages.pg_007.name` | Pekerjaan | Work | recorded | IA_PAGE_INVENTORY §5.1 PG-007 | the document title and the phone app bar's title |
+| `pages.pg_011.name` | Perjalanan Proyek | Project journey | recorded | IA_PAGE_INVENTORY §5.1 PG-011 | the document title and the phone app bar's title |
+| `pages.pg_016.name` | Detail Pembelian | Purchase | recorded | IA_PAGE_INVENTORY §5.1 PG-016 | the document title and the phone app bar's title |
+| `pages.pg_017.name` | Buat Pembelian | New purchase | recorded | IA_PAGE_INVENTORY §5.1 PG-017 | the document title and the phone app bar's title |
+| `pages.pg_022.name` | Terima Barang | Receive goods | recorded | IA_PAGE_INVENTORY §5.1 PG-022 | the document title and the phone app bar's title |
+| `pages.pg_042.name` | Buat Invoice | New invoice | recorded | IA_PAGE_INVENTORY §5.1 PG-042 | the document title and the phone app bar's title |
+| `pages.pg_043.name` | Detail Invoice | Invoice | recorded | IA_PAGE_INVENTORY §5.1 PG-043 | the document title and the phone app bar's title |
+| `pages.pg_044.name` | Piutang | Receivables | recorded | IA_PAGE_INVENTORY §5.1 PG-044 | the document title and the phone app bar's title |
+| `pages.pg_045.name` | Pembayaran | Payments | recorded | IA_PAGE_INVENTORY §5.1 PG-045 | the document title and the phone app bar's title |
+| `pages.pg_046.name` | Catat Pembayaran | Record payment | recorded | IA_PAGE_INVENTORY §5.1 PG-046 | the document title and the phone app bar's title |
+| `pages.pg_004.start` | Atur aplikasi autentikator | Set up the authenticator app | proposed | AUTH_JOURNEYS §2.4 step 5; H7-15 | PS-06: the enrolment's first step, which leads to the out-of-scope page (S2-J01 §4) |

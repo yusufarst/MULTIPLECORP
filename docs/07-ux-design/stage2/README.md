@@ -13,7 +13,7 @@ Each part is added only under its own run's authorization ([DIR-061](../../00-go
 | Run | Drafts | Status |
 | --- | --- | --- |
 | S2-1 | The documents: the complete IA and page inventory; the non-loss map against [SCR-01](../INFORMATION_ARCHITECTURE.md#81-system-account-and-beranda)–SCR-60; the design-system mapping; the localization architecture; the authentication journeys; the document preview and print producer ([GAP-053](../../00-governance/GAP_REGISTER.md#triage)); the [QB-01](../../06-api-performance/PERFORMANCE.md#6-query-budgets), PF-24 and QB-02 checks; and for S2-J01–S2-J06 the screen list, the per-step trace matrix, the S2-R checks, the simulation register and the deviation register | Done under DIR-064 |
-| S2-2 | The verification records of the six journeys — [SV-01](../evidence/P7_REBASELINE_GATE.md#stage-2--owner-decisions-dir-061)–SV-06 and SS-01–SS-08 —, with the hashes of the render files kept in the prototype repository | Not authorized |
+| S2-2 | The verification records of the six journeys — [SV-01](../evidence/P7_REBASELINE_GATE.md#stage-2--owner-decisions-dir-061)–SV-06 and SS-01–SS-08 —, with the hashes of the render files kept in the prototype repository: [VERIFICATION_S2-2](VERIFICATION_S2-2.md), for the prototype repository's commit `a273207e3ea7c906e311cecd567c00ff19cf98ad`, and the S2-2 notes in S2-1's documents | Done under DIR-066 — [Gate S2-2](../evidence/P7_REBASELINE_GATE.md#gate-s2-2); the Owner's visual preview next |
 | S2-3 | The usability kit for three roles, with K2's fallback | Not authorized |
 | Checkpoint C2 and S2-4 | The results of the sessions the Owner moderates, their fixes and re-tests | Not authorized |
 

@@ -6,21 +6,23 @@ Status: DRAFT | Updated: 2026-10-14 | Owner: Planning
 
 **Sources.** [CHANGE_CONTROL](../../00-governance/CHANGE_CONTROL.md#decision-authority) — Levels 2 and 3 and the form of a flagged decision; [GAP_REGISTER](../../00-governance/GAP_REGISTER.md); DIR-064 §14 and SP-21; the S2-1 documents each question comes from, linked in its entry. No technology behaviour is stated here beyond what the linked documents verify.
 
+**S2-2 decisions.** On 2026-10-14 the Owner decided OQ-01 (b), OQ-06 (c), OQ-07 (a) and OQ-09 (a) under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes); OQ-02, OQ-03, OQ-04, OQ-05 and OQ-08 stay open and deferred, OQ-04's option (a) shown until the preview.
+
 ## How this register works
 
 Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL Levels 2 and 3; [AK-2](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup); SP-21). Each entry states the problem, why it matters, its canonical sources, the options, the recommendation, the impact on scope, time and risk, when the answer is needed — before S2-2, at the Owner's preview, before Stage 3, or at P11 —, whether it is prototype-only or would change P0–P6, with its gap number then, and its status. A question whose answer would change P0–P6 semantics is also a gap in [GAP_REGISTER](../../00-governance/GAP_REGISTER.md), OWNER_DECISION_REQUIRED; a prototype-only question stays here and in [the gate record](../evidence/P7_REBASELINE_GATE.md#p7-ux-re-baseline--evidence-and-gates). OQ-01 is reserved for the runtime question (SP-15); the others are numbered from OQ-02 as they arise.
 
 | OQ | Subject | Needed | Kind | Gap | Status |
 | --- | --- | --- | --- | --- | --- |
-| [OQ-01](#oq-01--the-runtime-for-the-vendored-scripts) | The runtime for the vendored scripts | before S2-2 | prototype-only | — | OPEN |
-| [OQ-02](#oq-02--the-project-lists-journey-summary-per-row) | The project list's journey summary per row | before Stage 3 | would change P6 ([QB-01](../../06-api-performance/PERFORMANCE.md#6-query-budgets)) | GAP-054 | OPEN |
-| [OQ-03](#oq-03--dispatch-ready-rows-in-pekerjaan) | Dispatch-ready rows in *Pekerjaan* | before Stage 3 | would change P3 and P6 (a new signal) | GAP-055 | OPEN |
-| [OQ-04](#oq-04--value-formats-in-the-english-interface) | Value formats in the English interface | at the preview | prototype and Stage 3 | — | OPEN |
-| [OQ-05](#oq-05--where-the-accounts-language-preference-is-kept) | Where the account's language preference is kept | before Stage 3 | would change P4 ([DATABASE](../../04-architecture/DATABASE/README.md#database-architecture)) | GAP-056 | OPEN |
-| [OQ-06](#oq-06--the-simulated-google-button-of-s2-j01) | The simulated Google button of S2-J01 | before S2-2 | prototype-only | — | OPEN |
-| [OQ-07](#oq-07--the-phone-tests-arrangement) | The phone test's arrangement | before S2-2 | prototype-only | — | OPEN |
-| [OQ-08](#oq-08--the-purchases-own-identifier) | The purchase's own identifier | before Stage 3 | would change P4 and P6, or P5's wording | GAP-057 | OPEN |
-| [OQ-09](#oq-09--the-screen-list-for-s2-2) | The screen list for S2-2 | before S2-2 | prototype-only | — | OPEN |
+| [OQ-01](#oq-01--the-runtime-for-the-vendored-scripts) | The runtime for the vendored scripts | before S2-2 | prototype-only | — | DECIDED (b) — DIR-065 |
+| [OQ-02](#oq-02--the-project-lists-journey-summary-per-row) | The project list's journey summary per row | before Stage 3 | would change P6 ([QB-01](../../06-api-performance/PERFORMANCE.md#6-query-budgets)) | GAP-054 | OPEN — deferred (DIR-065) |
+| [OQ-03](#oq-03--dispatch-ready-rows-in-pekerjaan) | Dispatch-ready rows in *Pekerjaan* | before Stage 3 | would change P3 and P6 (a new signal) | GAP-055 | OPEN — deferred (DIR-065) |
+| [OQ-04](#oq-04--value-formats-in-the-english-interface) | Value formats in the English interface | at the preview | prototype and Stage 3 | — | OPEN — deferred (DIR-065); (a) shown until the preview |
+| [OQ-05](#oq-05--where-the-accounts-language-preference-is-kept) | Where the account's language preference is kept | before Stage 3 | would change P4 ([DATABASE](../../04-architecture/DATABASE/README.md#database-architecture)) | GAP-056 | OPEN — deferred (DIR-065) |
+| [OQ-06](#oq-06--the-simulated-google-button-of-s2-j01) | The simulated Google button of S2-J01 | before S2-2 | prototype-only | — | DECIDED (c) — DIR-065 |
+| [OQ-07](#oq-07--the-phone-tests-arrangement) | The phone test's arrangement | before S2-2 | prototype-only | — | DECIDED (a) — DIR-065 |
+| [OQ-08](#oq-08--the-purchases-own-identifier) | The purchase's own identifier | before Stage 3 | would change P4 and P6, or P5's wording | GAP-057 | OPEN — deferred (DIR-065) |
+| [OQ-09](#oq-09--the-screen-list-for-s2-2) | The screen list for S2-2 | before S2-2 | prototype-only | — | DECIDED (a) — DIR-065 |
 
 ## OQ-01 — The runtime for the vendored scripts
 
@@ -33,7 +35,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) No runtime** — interactions.js and patterns.js do not load; the prototype's own script provides the dialogs, menus, disclosures, tabs, sheets and drawer its screens use, on the reference's classes and motion tokens.
 - **Recommendation.** (b): the reference's interaction code runs byte-identical, no line of its demonstration configuration is copied, and every difference from MultipleCorp's behaviour is a configuration that S2-2's checks can read. (c) is the fallback if the Owner prefers the smallest import surface; (a) is not recommended.
 - **Impact.** (a): scope — the fastest wiring, then a full AK-5 audit of a modified reference file; risk — demonstration material left behind; a new permission. (b): scope — one script written new, with its checks; time — moderate in S2-2; risk — a member's expected shape misread, which S2-2's checks find before its commit. (c): scope — the prototype's own interaction script; time — moderate; risk — keyboard and motion details that differ from the reference's, measured by SV-01, SV-04 and SV-05.
-- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** OPEN.
+- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (b), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): the runtime provider `site/assets/mc/runtime.js` written new, no line of `project-config.js` copied.
 
 ## OQ-02 — The project list's journey summary per row
 
@@ -46,7 +48,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) Show only what guards give** — the fulfilment stages and the shortage blocker — and nothing beyond them: a stage present on some rows and absent on others, which would mislead.
 - **Recommendation.** (b) for the application, decided before Stage 3: it realizes the list of journeys of the R1 structure the Owner approved for Stage 2 (GD-01), at a bounded cost — page size times twelve set queries, deferred so the rows render first. S2-2 prototypes (a), as DIR-064 §12.8 requires, so the Owner sees the fitting design at the preview.
 - **Impact.** (a): none. (b): scope — one P6 change to QB-01 and the list's query class, and P8's fixtures and plans at 10x and 100x (HO-16); time — small in Stage 3, with one more registered query class in P8; risk — list latency at 100 rows per page (PF-17), bounded by the deferral and PF-41's branches. (c): misleading rows, not recommended.
-- **Needed.** Before Stage 3. **Kind.** Would change P6 — [GAP-054](../../00-governance/GAP_REGISTER.md#gap-054--the-project-list-cannot-show-each-projects-journey-stage-blocker-and-next-action-within-its-query-budget). **Status.** OPEN.
+- **Needed.** Before Stage 3. **Kind.** Would change P6 — [GAP-054](../../00-governance/GAP_REGISTER.md#gap-054--the-project-list-cannot-show-each-projects-journey-stage-blocker-and-next-action-within-its-query-budget). **Status.** OPEN — deferred by DIR-065 (2026-10-14).
 
 ## OQ-03 — Dispatch-ready rows in *Pekerjaan*
 
@@ -58,7 +60,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(b) A new signal for dispatch-ready lines** — the remaining reservations of ACTIVE projects' WAREHOUSE lines (CALC-02), one bounded statement registered in WORKFLOWS §10 and PERFORMANCE's register, placed in the Admin's G1, which then holds twelve statements: inside QB-10, no budget change; P3 and P6 change control.
 - **Recommendation.** (b), decided before Stage 3: the rows sit with the other goods work where the warehouse/field Admin starts, at the cost of one statement within an existing group's bound. S2-2 prototypes (a).
 - **Impact.** (a): none. (b): scope — one signal in WORKFLOWS §10, one register row in PERFORMANCE, the Admin's G1 at twelve; time — small in Stage 3, one more signal for P8 to verify; risk — G1 then at its bound, so a later signal there needs a budget change.
-- **Needed.** Before Stage 3. **Kind.** Would change P3 and P6 — [GAP-055](../../00-governance/GAP_REGISTER.md#gap-055--dispatch-ready-work-has-no-registered-signal-for-the-admins-work-home). **Status.** OPEN.
+- **Needed.** Before Stage 3. **Kind.** Would change P3 and P6 — [GAP-055](../../00-governance/GAP_REGISTER.md#gap-055--dispatch-ready-work-has-no-registered-signal-for-the-admins-work-home). **Status.** OPEN — deferred by DIR-065 (2026-10-14).
 
 ## OQ-04 — Value formats in the English interface
 
@@ -71,7 +73,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) English conventions in English** — "Rp1,250,000.50", "3.5 kg", "Oct 2, 2026": entry would need a second convention — a change to ADMIN_FLOW's IP-13 and IP-14 —, and the same figure would read differently on the screen and on paper.
 - **Recommendation.** (a): every figure reads one way whatever the language, entry stays as it is, and the screen matches the paper, with English the secondary language (C-1). (b) is acceptable if the Owner prefers English month names.
 - **Impact.** (a): none beyond Stage 3's localization contract stating it. (b): the date format takes the language for month names only, and P8 checks each language. (c): scope — IP-13 and IP-14 changed, with a second parser; risk — misread or mistyped amounts; time — more P8 tests.
-- **Needed.** At the Owner's preview, before Stage 3; the prototype shows (a) until then. **Kind.** Prototype and Stage 3; no P0–P6 change, so no gap. **Status.** OPEN.
+- **Needed.** At the Owner's preview, before Stage 3; the prototype shows (a) until then. **Kind.** Prototype and Stage 3; no P0–P6 change, so no gap. **Status.** OPEN — deferred by DIR-065 (2026-10-14).
 
 ## OQ-05 — Where the account's language preference is kept
 
@@ -84,7 +86,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) A device cookie** — no schema change; it follows the device, and on a shared device carries one person's choice into another's account.
 - **Recommendation.** (a): the only option that gives the per-account preference C-1 asks for while keeping the approved security and shared-device rules, with one column and no generic store. As C-1 requires, it goes through the database change-control process with its exact change, reason and impact before it becomes normative.
 - **Impact.** (a): scope — one column in DATABASE §4.1, the 125 logical tables unchanged; the account's own change from the account menu and *Akun Saya* (PG-065), its route defined in P6 under SECURITY; P8's tests. Time — small, with Stage 3's localization contract. Risk — low: the value is not sensitive, and WS-07 already shares the locale. (b): no change, against C-1's per-account preference. (c): no schema change, against GR-14 on shared devices.
-- **Needed.** Before Stage 3. **Kind.** Would change P4 — DATABASE — under (a): [GAP-056](../../00-governance/GAP_REGISTER.md#gap-056--the-accounts-language-preference-has-no-approved-storage-place). **Status.** OPEN.
+- **Needed.** Before Stage 3. **Kind.** Would change P4 — DATABASE — under (a): [GAP-056](../../00-governance/GAP_REGISTER.md#gap-056--the-accounts-language-preference-has-no-approved-storage-place). **Status.** OPEN — deferred by DIR-065 (2026-10-14).
 
 ## OQ-06 — The simulated Google button of S2-J01
 
@@ -97,7 +99,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) Google's own "G"** — the official logo file, obtained under Google's terms and kept in the prototype only.
 - **Recommendation.** (a): recognizable by its label and place, with no Google artwork and no download; the marker and the panel already say that Google sign-in is simulated. The application's button follows the guidelines in full, in P11 with [GAP-042](../../00-governance/GAP_REGISTER.md#triage) (GR-13).
 - **Impact.** (a): none beyond S2-2's drawing. (b): none; the furthest from the guidelines and the least recognizable. (c): a download of Google's asset, which needs the Owner's permission; still no Google Sans.
-- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** OPEN.
+- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (c), the Owner's explicit decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14), replacing the recommendation (a) and the Owner's own earlier answer "a": Google's authentic full-colour "G", unaltered, in a button keeping the reference's style, on S2-J01's screens only; Google sign-in stays simulated. The "G" came from Google's official asset download under SP-24 as the Owner clarified it — made by script from the light, icon-only button file, only the button's background and stroke removed —, its provenance in the prototype's `google-g.SOURCE.txt` and in TECH-033; the differences from Google's button rules, the "G"'s displayed size included, are [GR-32](DEVIATION_REGISTER.md).
 
 ## OQ-07 — The phone test's arrangement
 
@@ -110,7 +112,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) Emulation only** — SV-02's renders by emulation, the real phone first in C2's sessions.
 - **Recommendation.** (a): S2-2 relies on emulation, and the real phone joins the preview the Owner attends anyway.
 - **Impact.** (a): the Owner changes the network profile for the preview and the server runs with `--host` for its length; (b): the same, during S2-2; (c): no setting changes, and no real-phone evidence before C2.
-- **Needed.** Before S2-2, to plan it. **Kind.** Prototype-only; no gap. **Status.** OPEN.
+- **Needed.** Before S2-2, to plan it. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (a), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): S2-2 used emulation only; the real phone joins the Owner's preview (SS-06).
 
 ## OQ-08 — The purchase's own identifier
 
@@ -123,7 +125,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) The supplier's reference alone** — no change; it is the supplier's, may be empty and is not unique.
 - **Recommendation.** (a): every purchase gets one stable name from the moment it exists, as PJ-18 already assumes and the Owner's approved data set uses, at the cost of one more numbered sequence per company. S2-1's journeys use (b), the design that fits the current rules (DIR-064 §14.5), so S2-J04 issues the order and S2-J05 receives "ARJ/PB/2026/0216" as the order's number.
 - **Impact.** (a): scope — a number column and its sequence in DATABASE and CONCURRENCY_IDEMPOTENCY's numbering, the numbering start for the type (NX-01), P8's tests; time — small in P4 and P6 change control; risk — low. (b): none in P0–P6; the screens name a purchase without an order by supplier and date, and PJ-18's wording is aligned. (c): ambiguity.
-- **Needed.** Before Stage 3. **Kind.** Would change P4 and P6 under (a), and P5's wording under (b): [GAP-057](../../00-governance/GAP_REGISTER.md#gap-057--a-purchase-has-no-identifier-of-its-own-while-the-receiving-projection-lists-one). **Status.** OPEN.
+- **Needed.** Before Stage 3. **Kind.** Would change P4 and P6 under (a), and P5's wording under (b): [GAP-057](../../00-governance/GAP_REGISTER.md#gap-057--a-purchase-has-no-identifier-of-its-own-while-the-receiving-projection-lists-one). **Status.** OPEN — deferred by DIR-065 (2026-10-14).
 
 ## OQ-09 — The screen list for S2-2
 
@@ -133,4 +135,4 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
 - **Options.** (a) approve the list as it stands; (b) approve it with named changes; (c) reject it, with the reason, for S2-1's list to be revised.
 - **Recommendation.** (a): the list is exactly SD-05's six journeys, each screen traced to its canonical source in its specification, with the out-of-scope page for everything else.
 - **Impact.** (a): S2-2 can be authorized on it. (b): the named changes before S2-2. (c): a revision of the journeys' screen lists before S2-2.
-- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** OPEN.
+- **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (a), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): S2-2 built exactly PS-01–PS-53 and the out-of-scope page.
