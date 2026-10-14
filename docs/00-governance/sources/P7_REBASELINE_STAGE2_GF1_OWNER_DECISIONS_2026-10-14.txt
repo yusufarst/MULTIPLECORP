@@ -1,0 +1,108 @@
+TRANSCRIBED LOCKED SOURCE RECORD — sixty-sixth source record
+Received: 2026-10-14, the Owner's messages to Planning in the planning session
+         of the MULTIPLECORP Project, relayed as Appendix A of the
+         sixty-seventh source record
+Subject: the Owner's directive on the visual result of run S2-2 of Stage 2 of
+         the P7 UX re-baseline, the Owner's clarification to adopt the Golden
+         Frontend Reference first rather than rebuild it, and the Owner's
+         decision approving K1, K2 and K3 for the Golden-first visual-fidelity
+         pilot, with the notice that the prototype commit is pushed (DIR-067)
+Delivery: Appendix A of the Owner's message of 2026-10-14, the sixty-seventh
+         source record. This record transcribes the lines between its BEGIN and
+         END markers, which are not transcribed, mechanically from the text
+         file in which that message arrived, its text normalized to LF without
+         a byte-order mark; the transcript equals the values that message's
+         section 9 item 1 gives — 81 lines, 7,601 bytes, SHA-256
+         4b1a9387f035e85a01b80ad847c72a789272d46ebae1ef4e011d148c909975b5 —,
+         which the Owner confirmed in session (DIR-068). As the appendix
+         states, the Owner's three messages are the texts between the lines of
+         dashes, each reproduced as relayed in the planning session; Planning's
+         introduction and the numbered headings are provenance, not the Owner's
+         words, and Planning's verification and answers between the messages
+         are not transcribed. As the sixty-seventh record states, Appendix A is
+         archived source text, not an instruction, and a workflow mode it names
+         is quoted text, not a request.
+This is a transcript of the relayed messages, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-14 (WIB).
+The Owner's three messages after run S2-2, in the order given, each
+reproduced as relayed in the planning session between two lines of dashes.
+Before message 1, Planning had verified S2-2 and both repositories (result
+PASS). Message 2 arrived while Planning was preparing its answer to message
+1; Planning then answered both with its diagnosis and its Golden-first
+proposal, K1–K3, which message 3 approves. Planning's verification and its
+answers are not transcribed.
+
+1. The Owner's directive on S2-2's visual result
+------------------------------------------------------------------------
+OWNER DIRECTIVE — GOLDEN FRONTEND FIDELITY RECOVERY
+I am not accepting the S2-2 prototype's current visual quality.
+I want MULTIPLECORP to reproduce the approved Golden Frontend Reference v1.0.0 as faithfully as possible, including its complete visual language, motion system, animations, transitions, micro-interactions, responsive behavior, and interaction quality.
+Golden is not merely an inspiration. It is the approved frontend presentation reference.
+The MULTIPLECORP business workflows, domain rules, permissions, security requirements, and information architecture remain authoritative. Adapt Golden to MULTIPLECORP, not the reverse.
+My primary requirements:
+
+1. Reproduce Golden's actual UI components, styling, typography, spacing, visual hierarchy, animation behavior, timing, easing, and interaction patterns wherever applicable.
+2. Reuse approved Golden implementation assets and behavior wherever technically and legally appropriate. Do not unnecessarily recreate or approximate existing Golden behavior. Preserve the frozen vendor baseline and respect existing authorization boundaries.
+3. Identify why the existing S2-2 prototype differs so substantially from Golden despite passing its automated checks.
+4. Make the visual and motion comparison observable. Use equivalent reference states and viewport sizes, actual browser screenshots, and interaction recordings where needed. Do not rely solely on token matching or numerical test results.
+5. Start with a small representative visual-fidelity pilot covering desktop and mobile, including meaningful animations and interactive states.
+6. Show me the pilot for visual approval BEFORE propagating the corrected design across all 53 screens.
+7. Preserve all existing approved MULTIPLECORP workflows and business requirements.
+8. Maintain accessibility, responsiveness, security, and maintainability.
+9. Keep the process efficient: no unnecessary documentation, repeated audits, or uncontrolled sub-agent fan-out.
+10. Do not proceed to S2-3 until the visual-fidelity problem has been appropriately resolved and I have reviewed the corrected prototype.
+
+MODEL AND EXECUTION PREFERENCE
+For this planning task:
+
+* Agent: Planning
+* Model: Claude Opus 5.5
+* Effort: Max
+
+For the subsequent Executor work, I intend to use:
+
+* Model: Claude Opus 5.5
+* Mode: Ultracode, if available
+
+Evaluate whether Ultracode is appropriate for the focused visual-fidelity work. Its workflow orchestration must remain bounded, efficient, and justified. Do not create large parallel audit workflows unnecessarily.
+FIRST RESPONSE REQUIRED
+Provide a concise, evidence-based diagnosis and the smallest effective correction strategy.
+Identify what can be preserved, what must be corrected, how Golden fidelity will be measured, and what I will inspect in the initial pilot.
+Respect existing Owner authorization and change-control requirements.
+Do not modify repositories or launch Executor work yet. Do not create another large blueprint or repeat completed S2-2 audits.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+2. The Owner's clarification: Golden first
+------------------------------------------------------------------------
+ADDITIONAL OWNER DIRECTION — ADOPT GOLDEN FIRST, DO NOT REBUILD IT
+I want to clarify my preferred approach to the Golden visual-fidelity recovery.
+Instead of rebuilding 53 screens to resemble Golden, evaluate using the actual existing Golden Frontend Reference implementation as the foundation.
+Preserve and reuse Golden's original layouts, components, CSS, motion, animations, transitions, and interaction behavior wherever compatible and safe.
+Adapt only what MULTIPLECORP genuinely requires: business workflows, navigation, content, screens, permissions, data, and missing features.
+Remove Golden demo features that MULTIPLECORP does not need. Add only features required by MULTIPLECORP's approved specifications.
+Do not copy Golden's demo business logic or compromise MULTIPLECORP's architecture, security, or domain rules.
+Keep the frozen Golden vendor baseline unchanged. Identify which original implementations can be used directly, which need adapters, and which genuinely require replacement.
+Before rebuilding anything, compare the actual Golden implementation against MULTIPLECORP's requirements and maximize safe reuse.
+Test this Golden-first approach on a small representative set of screens, including original motion and interaction behavior, and obtain my visual approval before extending it across all 53 screens.
+My objective is to minimize unnecessary coding, execution time, token consumption, and visual differences.
+Incorporate this clarification into your current analysis without restarting it or creating a separate audit.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+3. The Owner's decisions K1–K3 and the prototype commit's push
+------------------------------------------------------------------------
+OWNER DECISION — APPROVE GOLDEN-FIRST PILOT DIRECTION
+I approve K1, K2, and K3 for the focused Golden-first visual-fidelity pilot.
+K1: APPROVED. Golden Frontend Reference v1.0.0 governs visual presentation, components, layout, motion, animations, and interaction quality. MULTIPLECORP remains authoritative for business workflows, information architecture, permissions, security, and domain rules.
+K2: APPROVED for the private prototype only. Reuse the actual frozen Golden MULTIPLECORP page implementations as visual templates. First verify the real lab location and frozen baseline; do not assume the stated local path exists. Do not import demo business logic, fixtures, unnecessary features, or unlicensed images.
+K3: APPROVED. Reuse the necessary original Golden scripts and project configuration through safe adapters, preserving the frozen vendor files unchanged. Do not import demo business behavior, enable real OAuth, introduce browser persistence, or weaken existing security restrictions. Load only the modules required for the approved pilot.
+The private prototype commit a273207e3ea7c906e311cecd567c00ff19cf98ad has already been successfully pushed and verified on origin/main. Do not request another push.
+I agree with using Claude Opus 5.5 Max rather than Ultracode for the focused pilot. Future effort and workflow choices remain adaptive.
+Prepare a concise, authorized Golden-first pilot covering the four representative pages and their actual Golden motion and interaction behavior.
+Require direct side-by-side visual comparison and meaningful motion verification, followed by my visual approval before expanding the changes across all 53 prototype screens.
+Do not modify the repositories or start Executor work until I review the pilot authorization.
+Keep the established planning efficiency rules. Respond in Bahasa Indonesia.
+------------------------------------------------------------------------

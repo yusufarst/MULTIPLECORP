@@ -1,6 +1,6 @@
 # Deviation register
 
-Status: DRAFT | Updated: 2026-10-14 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-15 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §12.10 (AK-7). Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
@@ -61,3 +61,44 @@ The carried items as [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-0
 | GR-23 | the ageing chart with direct labels, amounts and a table | deviation — an Owner decision (VP-6) | mapped | mapping §§1.2, 3 |
 
 **State after S2-2** ([DIR-066](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes)): applied in the override layer, the pages' markup or `prototype.js` — GR-01–GR-04, GR-06, GR-07, GR-09–GR-12, GR-14, GR-15, GR-17, GR-18 and GR-21–GR-23; GR-05 verified at 320 px; GR-08 on PS-45's "Muat Lagi", which leads to the out-of-scope page; GR-16 rendered in both variants for the Owner's choice at the preview (SD-08); GR-13 stays for P11, the prototype's button being GR-32; GR-19 and GR-20 not exercised by the approved screens, whose period and filter controls lead to the out-of-scope page. The measurements are in [VERIFICATION_S2-2](VERIFICATION_S2-2.md).
+
+## 4. The pilot pages (GF-1)
+
+Run GF-1 ([DIR-068](../../00-governance/DECISION_LOG.md#dir-067-dir-068-obs-026-and-tech-034--p7-ux-re-baseline-golden-first-decisions-pilot-authorization-baseline-and-pilot), 2026-10-14) builds four pages from Golden's own implementation under the Owner's K1 ([DIR-067](../../00-governance/DECISION_LOG.md#dir-067-dir-068-obs-026-and-tech-034--p7-ux-re-baseline-golden-first-decisions-pilot-authorization-baseline-and-pilot)): on those pages Golden's form applies, and a deviation stays only for SP-31's reasons. Each entry's status there; S2-2's pages keep §§2–3 unchanged. The pilot's overrides live in its own stylesheet, `site/pilot/assets/pilot.css`, each labelled with its entry; no new entry was needed. [GOLDEN_FIRST_PILOT](GOLDEN_FIRST_PILOT.md) §5 summarizes it.
+
+| GR | Status on the pilot pages | Reason or where |
+| --- | --- | --- |
+| GR-01 | kept, applied | accessibility, 1.4.11: the control edge `#898982` on Golden's fields, selects and stepper frame |
+| GR-02 | kept, **not applied** | accessibility, 1.4.11 — found after the one authorized prototype commit; the pilot shows Golden's own selection marks until the pilot is next changed ([GOLDEN_FIRST_PILOT](GOLDEN_FIRST_PILOT.md) §10 item 9) |
+| GR-03 | not exercised | no stage marker on the four pages |
+| GR-04 | kept as a rule | Golden's greys pass on every pilot surface (contrast measured); no override needed |
+| GR-05 | kept, applied | reflow at 320 px: the six code cells keep 44 px below 360 px by a narrower gap |
+| GR-06 | kept as checks | 1.4.12 and 2.4.11 measured on every state; no override needed |
+| GR-07 | kept, applied | 44 px targets on the phone (segmented choices, the period control, the marker's hit area) and 48 px on the floor task (the scan field, Golden's stepper, the sheet's fields and file action) |
+| GR-08 | not exercised | no list with "Muat Lagi" on the four pages |
+| GR-09 | kept, applied | logout asks only over unsent input (MSG-35), through the configuration patch |
+| GR-10 | not exercised | no composer on the four pages |
+| GR-11 | kept, applied | *Lainnya* as Golden's drawer; Golden's action bar hides the bottom bar on the scan step |
+| GR-12 | kept, applied | VD-05's abstract sign-in panel |
+| GR-13 | not exercised | P11's; GR-32 stands for it in the prototype |
+| GR-14 | kept, applied | no browser storage: S2-2's storage guard first on every pilot page |
+| GR-15 | not exercised | no toast on the four pages |
+| GR-16 | open; its switch **not applied** | the Owner's choice; SP-31 keeps variant B as a switch, which the pilot pages lack (found after the prototype commit); S2-2's pages keep it |
+| GR-17 | kept, applied | Golden's strings keyed, their English rendering proposed |
+| GR-18 | retired where Golden has the symbol | Golden's sprite (`icons.js`); Lucide 1.56.0 only for the symbols it lacks, under `mcp-` ids |
+| GR-19, GR-20 | not exercised | the period and filter controls lead to the out-of-scope page |
+| GR-21 | kept, applied | "Rincian lain" folded on every width, on Golden's disclosure recipe |
+| GR-22 | retired | Golden's translucent phone bars: contrast passes |
+| GR-23 | not exercised | no ageing chart in *Gabungan* |
+| GR-24 | kept, applied | the line states' Lucide shapes beside their words |
+| GR-25 | retired | VP-8's no-looping rule superseded on the pilot pages by K1; no live state appears there |
+| GR-26 | kept, applied | R1's account menu in the top bar — a choice for the Owner |
+| GR-27 | kept, applied | the top bar's content |
+| GR-28 | kept, applied | the phone app bar's back action and title, the back action at Golden's leading offset |
+| GR-29 | kept, applied | R1's bottom bars |
+| GR-30 | not exercised | no shortcut list on the four pages |
+| GR-31 | kept, applied | no Indonesian interface string on an English page (checked) |
+| GR-32 | kept, applied | Google's own "G" (OQ-06 (c)) |
+| GR-33 | kept, applied | the marker, the panel, the out-of-scope page and the start page |
+| GR-34 | content and order kept; layout and styling retired | R1's compositions drawn with Golden's components and grid |
+| GR-35 | gives way where content passes | Golden's ellipsis and nowrap stay where nothing is cut; copy wraps where it would be cut (decision rows, KPI labels, line meta, the drawer's language entry, a card head under 1.4.12) |
