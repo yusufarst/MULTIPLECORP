@@ -1,6 +1,6 @@
 # Deviation register
 
-Status: DRAFT | Updated: 2026-10-15 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-17 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §12.10 (AK-7). Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
@@ -102,3 +102,20 @@ Run GF-1 ([DIR-068](../../00-governance/DECISION_LOG.md#dir-067-dir-068-obs-026-
 | GR-33 | kept, applied | the marker, the panel, the out-of-scope page and the start page |
 | GR-34 | content and order kept; layout and styling retired | R1's compositions drawn with Golden's components and grid |
 | GR-35 | gives way where content passes | Golden's ellipsis and nowrap stay where nothing is cut; copy wraps where it would be cut (decision rows, KPI labels, line meta, the drawer's language entry, a card head under 1.4.12) |
+
+## 5. The pilot pages after GF-2 and GF-2A
+
+*Note of 2026-10-17, written by run PC-1 under [DIR-075](../../00-governance/DECISION_LOG.md#dir-073dir-075-obs-029-and-tech-036--p7-ux-re-baseline-cp-1r-verdict-p7p11-completion-plan-run-pc-1-and-stage-2-completion) §10 item 2 from the evidence.* GF-2's stage 1 (commit A) and GF-2A's stage 1R (commit A2) changed the statuses below on the pilot pages; every other entry keeps §4's status. No new entry was needed: GF-2's and GF-2A's labels cite only existing entries — GR-02, GR-11, GR-23, GR-24, GR-27, GR-29 and GR-32 — and canonical sources (`evidence/gf2/labels.json`, `evidence/gf2a/labels.json` in the prototype repository); the sign-in fields' focus ring of SP-48 is the ring Golden draws round its other controls, and PS-35's facts-panel gap is a C adaptation for legibility (SP-46). The pages PC-1 builds take these statuses (DIR-075 SP-54, SP-55). [GOLDEN_FIRST_PILOT](GOLDEN_FIRST_PILOT.md) §§14, 17 and 20 describe the changes.
+
+| GR | Status on the pilot pages after GF-2A | Reason or where |
+| --- | --- | --- |
+| GR-02 | kept, **applied** (GF-2) | accessibility, 1.4.11: GR-02's olive inset edge where Golden's grey selection mark fails — the segmented choices (*Gabungan* 5.65:1), the bottom bar's current item (*Beranda* 6.56:1) and the selected language; the sidebar's current mark kept as Golden's (6.03:1) |
+| GR-05 | kept as a check | reflow at 320 × 640 (SP-44); the code step's one input, shown segmented (SP-48) |
+| GR-07 | kept, applied as CQ-5 sets it | 48 px for the floor task's operational controls — the scan field and "Cari Produk", the line rows, "Catat Barang Masuk", "Kembali" and the sheet's controls —, 44 px for the page's other controls (SP-47; OQ-12) — a B difference from S2-J05's "every control 48 px", its source CQ-5 |
+| GR-12 | the panel **retired**; the code entry changed | SP-48's concept A "Meja Kerja", drawn in code in Golden's panel (OQ-13; CQ-3), in place of VD-05's abstract panel; one input for the six digits (S2-J01 §9); the unused CSS block kept unchanged by the Owner's disposition, a cleanup for a later authorized run |
+| GR-16 | open; its switch **applied** (GF-2) | `?varian=b` on the desktop pages; the Owner's choice at CP-A (OQ-15) |
+| GR-23 | kept, applied (GF-2A) | PS-12, one company's view, with "Umur piutang", its direct labels, amounts and table (VP-6; SP-43) |
+| GR-26 | **retired** (GF-2) | the account at the sidebar's foot with Golden's upward menu and R1's three entries (OQ-10) |
+| GR-27 | kept, in Golden's slots | "Cari atau pindai kode" in Golden's search, "Buat" and the marker in its actions slot (OQ-10; SP-38); D2's icon "Buat" a switch, not approved |
+| GR-28 | kept, in Golden's form | Golden's labelled back pill "Kembali" on a child flow, its brand with the placeholder mark on a top-level page, no menu or search button; the title as the page head in the content (OQ-10; IA 6.2) |
+| GR-33 | kept, applied as OQ-11 sets it | the marker one line, Golden's info pill in the phone app bar's trailing slot and the top bar's actions slot, 44 px with a coarse pointer; the marker's panel names the placeholder logo |

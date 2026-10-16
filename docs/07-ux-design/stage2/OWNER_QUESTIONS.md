@@ -1,12 +1,14 @@
 # Owner questions — S2-1
 
-Status: DRAFT | Updated: 2026-10-15 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-17 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §14. Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
 **Sources.** [CHANGE_CONTROL](../../00-governance/CHANGE_CONTROL.md#decision-authority) — Levels 2 and 3 and the form of a flagged decision; [GAP_REGISTER](../../00-governance/GAP_REGISTER.md); DIR-064 §14 and SP-21; the S2-1 documents each question comes from, linked in its entry. No technology behaviour is stated here beyond what the linked documents verify.
 
 **S2-2 decisions.** On 2026-10-14 the Owner decided OQ-01 (b), OQ-06 (c), OQ-07 (a) and OQ-09 (a) under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes); OQ-02, OQ-03, OQ-04, OQ-05 and OQ-08 stay open and deferred, OQ-04's option (a) shown until the preview.
+
+**GF-2, GF-2A and PC-1 decisions** (note of 2026-10-17, written by run PC-1 under [DIR-075](../../00-governance/DECISION_LOG.md#dir-073dir-075-obs-029-and-tech-036--p7-ux-re-baseline-cp-1r-verdict-p7p11-completion-plan-run-pc-1-and-stage-2-completion) §10 item 2). Run GF-2's checkpoint CP-0 asked OQ-10–OQ-16, which the Owner decided on 2026-10-15 under [DIR-069](../../00-governance/DECISION_LOG.md#dir-069-dir-070-obs-027-and-tech-035--p7-ux-re-baseline-gf-2-decisions-authorization-baseline-and-corrected-pilot), OQ-15 deferred; GF-2's proposed visuals raised OQ-17 and OQ-18 (SP-39 (b)). At CP-1 the Owner chose OQ-13's concept A and kept OQ-15 and OQ-17–OQ-18 open under [DIR-071](../../00-governance/DECISION_LOG.md#dir-071-dir-072-and-obs-028--p7-ux-re-baseline-gf-2-cp-1-decisions-amendment-gf-2a-and-its-baseline) (CQ-2–CQ-4). DIR-075 replaces the preview by the Owner's checkpoint CP-A: OQ-04, OQ-15, OQ-17, OQ-18 and the phone test (OQ-07) are on CP-A's decision sheet, with OQ-02, OQ-03, OQ-05, OQ-08 and GAP-052 marked as needed before Stage 3 (PC-2). Planning's options and recommendations for OQ-10–OQ-16 were given in the planning session and are not transcribed (the sixty-eighth source record's note); their entries state the decisions.
 
 ## How this register works
 
@@ -17,12 +19,21 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
 | [OQ-01](#oq-01--the-runtime-for-the-vendored-scripts) | The runtime for the vendored scripts | before S2-2 | prototype-only | — | DECIDED (b) — DIR-065 |
 | [OQ-02](#oq-02--the-project-lists-journey-summary-per-row) | The project list's journey summary per row | before Stage 3 | would change P6 ([QB-01](../../06-api-performance/PERFORMANCE.md#6-query-budgets)) | GAP-054 | OPEN — deferred (DIR-065) |
 | [OQ-03](#oq-03--dispatch-ready-rows-in-pekerjaan) | Dispatch-ready rows in *Pekerjaan* | before Stage 3 | would change P3 and P6 (a new signal) | GAP-055 | OPEN — deferred (DIR-065) |
-| [OQ-04](#oq-04--value-formats-in-the-english-interface) | Value formats in the English interface | at the preview | prototype and Stage 3 | — | OPEN — deferred (DIR-065); (a) shown until the preview |
+| [OQ-04](#oq-04--value-formats-in-the-english-interface) | Value formats in the English interface | at CP-A | prototype and Stage 3 | — | OPEN — deferred (DIR-065), at CP-A (DIR-075); (a) shown until then |
 | [OQ-05](#oq-05--where-the-accounts-language-preference-is-kept) | Where the account's language preference is kept | before Stage 3 | would change P4 ([DATABASE](../../04-architecture/DATABASE/README.md#database-architecture)) | GAP-056 | OPEN — deferred (DIR-065) |
 | [OQ-06](#oq-06--the-simulated-google-button-of-s2-j01) | The simulated Google button of S2-J01 | before S2-2 | prototype-only | — | DECIDED (c) — DIR-065 |
 | [OQ-07](#oq-07--the-phone-tests-arrangement) | The phone test's arrangement | before S2-2 | prototype-only | — | DECIDED (a) — DIR-065 |
 | [OQ-08](#oq-08--the-purchases-own-identifier) | The purchase's own identifier | before Stage 3 | would change P4 and P6, or P5's wording | GAP-057 | OPEN — deferred (DIR-065) |
 | [OQ-09](#oq-09--the-screen-list-for-s2-2) | The screen list for S2-2 | before S2-2 | prototype-only | — | DECIDED (a) — DIR-065 |
+| [OQ-10](#oq-10--the-navigation-shells-anatomy) | The navigation shell's anatomy | at CP-0 | prototype and Stage 3 | — | DECIDED — DIR-069 |
+| [OQ-11](#oq-11--the-prototype-marker) | The prototype marker | at CP-0 | prototype-only | — | DECIDED — DIR-069 |
+| [OQ-12](#oq-12--where-48-px-targets-apply) | Where 48 px targets apply | at CP-0 | prototype and Stage 3 | — | DECIDED — DIR-069; CQ-5 (DIR-071) |
+| [OQ-13](#oq-13--goldens-hero-logo-and-visual-richness-and-the-sign-in-illustration) | Golden's hero, logo and visual richness, and the sign-in illustration | at CP-0 | prototype-only | — | DECIDED — DIR-069; concept A (DIR-071) |
+| [OQ-14](#oq-14--kembali-on-the-code-step) | "Kembali" on the code step | at CP-0 | prototype and Stage 3 | — | DECIDED — DIR-069; the server side open for P11 |
+| [OQ-15](#oq-15--gr-16s-variant) | GR-16's variant | at CP-A | prototype and Stage 3 | — | OPEN — deferred to CP-1 (DIR-069), CP-1R (DIR-071) and CP-A (DIR-075) |
+| [OQ-16](#oq-16--gf-2s-execution-configuration) | GF-2's execution configuration | at CP-0 | process | — | DECIDED — DIR-069 |
+| [OQ-17](#oq-17--a-sparkline-on-the-kpi-cards) | A sparkline on the KPI cards | at CP-A | prototype-only; would change P2 and P6 as a metric | — | OPEN — a prototype-only proposal, off by default (DIR-071 CQ-2) |
+| [OQ-18](#oq-18--a-delta-on-the-kpi-cards) | A delta on the KPI cards | at CP-A | prototype-only; would change P2 and P6 as a metric | — | OPEN — a prototype-only proposal, off by default (DIR-071 CQ-2) |
 
 ## OQ-01 — The runtime for the vendored scripts
 
@@ -73,7 +84,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) English conventions in English** — "Rp1,250,000.50", "3.5 kg", "Oct 2, 2026": entry would need a second convention — a change to ADMIN_FLOW's IP-13 and IP-14 —, and the same figure would read differently on the screen and on paper.
 - **Recommendation.** (a): every figure reads one way whatever the language, entry stays as it is, and the screen matches the paper, with English the secondary language (C-1). (b) is acceptable if the Owner prefers English month names.
 - **Impact.** (a): none beyond Stage 3's localization contract stating it. (b): the date format takes the language for month names only, and P8 checks each language. (c): scope — IP-13 and IP-14 changed, with a second parser; risk — misread or mistyped amounts; time — more P8 tests.
-- **Needed.** At the Owner's preview, before Stage 3; the prototype shows (a) until then. **Kind.** Prototype and Stage 3; no P0–P6 change, so no gap. **Status.** OPEN — deferred by DIR-065 (2026-10-14).
+- **Needed.** At the Owner's preview, before Stage 3; the prototype shows (a) until then. **Kind.** Prototype and Stage 3; no P0–P6 change, so no gap. **Status.** OPEN — deferred by DIR-065 (2026-10-14). *Note of 2026-10-17:* the preview is the Owner's checkpoint CP-A (DIR-075), where this question is asked.
 
 ## OQ-05 — Where the account's language preference is kept
 
@@ -112,7 +123,7 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
   - **(c) Emulation only** — SV-02's renders by emulation, the real phone first in C2's sessions.
 - **Recommendation.** (a): S2-2 relies on emulation, and the real phone joins the preview the Owner attends anyway.
 - **Impact.** (a): the Owner changes the network profile for the preview and the server runs with `--host` for its length; (b): the same, during S2-2; (c): no setting changes, and no real-phone evidence before C2.
-- **Needed.** Before S2-2, to plan it. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (a), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): S2-2 used emulation only; the real phone joins the Owner's preview (SS-06).
+- **Needed.** Before S2-2, to plan it. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (a), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): S2-2 used emulation only; the real phone joins the Owner's preview (SS-06). *Note of 2026-10-17:* the preview is the Owner's checkpoint CP-A (DIR-075), where the phone journeys S2-J01, S2-J03 and S2-J05 are tested on a real phone.
 
 ## OQ-08 — The purchase's own identifier
 
@@ -136,3 +147,60 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
 - **Recommendation.** (a): the list is exactly SD-05's six journeys, each screen traced to its canonical source in its specification, with the out-of-scope page for everything else.
 - **Impact.** (a): S2-2 can be authorized on it. (b): the named changes before S2-2. (c): a revision of the journeys' screen lists before S2-2.
 - **Needed.** Before S2-2. **Kind.** Prototype-only; no gap. **Status.** DECIDED — option (a), the Owner's decision under [DIR-065](../../00-governance/DECISION_LOG.md#dir-065-dir-066-obs-025-and-tech-033--p7-ux-re-baseline-s2-2-decisions-authorization-baseline-and-journey-prototypes) (2026-10-14): S2-2 built exactly PS-01–PS-53 and the out-of-scope page.
+
+## OQ-10 — The navigation shell's anatomy
+
+- **Problem.** GF-1 kept R1's placements in the shell — the account menu in the top bar (GR-26) among them — where Golden puts its account at the sidebar's foot and its search and primary action in its own slots ([GOLDEN_FIRST_PILOT §10](GOLDEN_FIRST_PILOT.md#10-open-items-and-questions-for-the-owner) item 3); GD-03 had made R1 authoritative for the shell.
+- **Decision.** "APPROVED as recommended": Golden governs the navigation shell's visual anatomy, placement and interaction quality; MULTIPLECORP's approved role-based information architecture, labels, actions and security boundaries remain authoritative — GD-03 narrowed for presentation ([DIR-069](../../00-governance/DECISION_LOG.md#dir-069-dir-070-obs-027-and-tech-035--p7-ux-re-baseline-gf-2-decisions-authorization-baseline-and-corrected-pilot)). GF-2 applied it to the shell (SP-38; GOLDEN_FIRST_PILOT §13).
+- **Kind.** Prototype and Stage 3's DESIGN_SYSTEM; no P0–P6 change, so no gap. **Status.** DECIDED — DIR-069 (2026-10-15).
+
+## OQ-11 — The prototype marker
+
+- **Problem.** GF-1's marker (GR-33) took room in the phone's app bar and pushed the two longest titles onto two lines at 320 px (GOLDEN_FIRST_PILOT §10 item 8).
+- **Decision.** "APPROVED as recommended": the marker stays clearly identifiable without disrupting headings, proportions or visual balance, SS-08's meaning unchanged (DIR-069). GF-2 made it one line in the phone app bar's trailing slot and the desktop top bar's actions slot (SP-38).
+- **Kind.** Prototype-only; no gap. **Status.** DECIDED — DIR-069 (2026-10-15).
+
+## OQ-12 — Where 48 px targets apply
+
+- **Problem.** GR-07's 48 px floor controls made GF-1's scan bar 91 px where Golden's is 69 px (GOLDEN_FIRST_PILOT §10 item 4).
+- **Decision.** "APPROVED in principle": 48 px only where canonical field-operation and accessibility requirements actually demand it, accessible touch targets throughout (DIR-069); CQ-5 then set 48 px for the warehouse operational controls where required and the applicable canonical rules (UXV-10) for the other controls ([DIR-071](../../00-governance/DECISION_LOG.md#dir-071-dir-072-and-obs-028--p7-ux-re-baseline-gf-2-cp-1-decisions-amendment-gf-2a-and-its-baseline)), applied by GF-2A's SP-47 and PC-1's SP-53 (b).
+- **Kind.** Prototype and Stage 3; no gap. **Status.** DECIDED — DIR-069 (2026-10-15); CQ-5, DIR-071.
+
+## OQ-13 — Golden's hero, logo and visual richness, and the sign-in illustration
+
+- **Problem.** GF-1 left out Golden's hero and greeting, its logo and the visual elements whose data MULTIPLECORP does not define, and drew no sign-in imagery (GD-08; VP-3; VP-5).
+- **Decision.** "PARTIALLY APPROVED, WITH REVISION REQUIRED": Golden's hero and greeting restored and its logo `i-logo-mark` used as a clearly identified prototype placeholder, in the private prototype only; Golden's visual richness kept without invented data — data-backed visuals and plainly marked proposals (SP-39); the sign-in illustration original and drawn in code, never unlicensed photography, two concepts at CP-1 (SP-40) (DIR-069). At CP-1 the Owner chose concept A "Meja Kerja" (DIR-071 CQ-3), built in GF-2A (SP-48).
+- **Kind.** Prototype-only — the final logo stays open (VP-5); no gap. **Status.** DECIDED — DIR-069 (2026-10-15); concept A, DIR-071.
+
+## OQ-14 — "Kembali" on the code step
+
+- **Problem.** Golden's code step offers "Kembali" to the credentials; S2-J01 gave none (GOLDEN_FIRST_PILOT §10 item 7).
+- **Decision.** "APPROVED as recommended, provided the back action safely cancels the pending authentication attempt and preserves the canonical security rules" (DIR-069): back to PS-01, the pending attempt discarded and nothing kept but the e-mail (SP-38), as [S2-J01](journeys/S2-J01.md) and [AUTH_JOURNEYS](AUTH_JOURNEYS.md) §2.1 now state; how the server voids a challenge the person cancels — AU-16 names no such case — is open for P11.
+- **Kind.** Prototype and Stage 3, the server side for P11; no gap now. **Status.** DECIDED — DIR-069 (2026-10-15).
+
+## OQ-15 — GR-16's variant
+
+- **Problem.** GR-16 offers two desktop text scales: variant A, Golden's sizes, and variant B (`?varian=b`), with the smallest desktop text at 14 px.
+- **Options.** (a) variant A; (b) variant B.
+- **History.** Deferred to CP-1 (DIR-069); at CP-1 the Owner found variant B promising but did not approve it (the seventieth source record) and deferred the choice to CP-1R (DIR-071 CQ-4); after CP-1R, DIR-075 puts it on CP-A's decision sheet. Both variants stay switchable on the desktop pages.
+- **Needed.** At CP-A. **Kind.** Prototype and Stage 3's DESIGN_SYSTEM; no gap. **Status.** OPEN.
+
+## OQ-16 — GF-2's execution configuration
+
+- **Problem.** The Owner preferred Claude Opus 5.5 with Ultracode for the corrective pilot; unbounded multi-agent workflows could cross the Owner's approval boundaries.
+- **Decision.** "REVISE THE EXECUTION STRATEGY": a staged Ultracode approach keeping the Owner's approval at CP-1 and CP-2, no workflow crossing an approval boundary, narrow agent ownership, commits and pushes under the main executor and the lab and baselines protected (DIR-069), enacted as DIR-070 §3 — Claude Opus 5.5 at Max effort with Ultracode on, WF-1–WF-4 bounded — and continued by GF-2A's WF-2R and PC-1's WF-PC1.
+- **Kind.** Process; no gap. **Status.** DECIDED — DIR-069 (2026-10-15).
+
+## OQ-17 — A sparkline on the KPI cards
+
+- **Problem.** Golden's KPI tiles carry a sparkline; MULTIPLECORP defines no series for it (VP-3: needs definition, not proposed). GF-2 drew one from a plainly illustrative series, marked "Usulan" and listed in the marker's panel, behind a switch (SP-39 (b)).
+- **Options.** (a) keep it as a prototype-only proposal, off by default; (b) drop it; (c) define it through change control — the metric's definition (P2) and its query budget (P6 QB-10, TX-10) —, which the Owner has not authorized (DIR-071 CQ-2).
+- **Recommendation.** Planning's answer at OG-0 keeps OQ-17 and OQ-18 in the prototype only, not part of V1 (the seventy-third source record).
+- **Impact.** (a) and (b): none beyond the prototype; (c): a new metric and query in P2 and P6, then a gap.
+- **Needed.** At CP-A. **Kind.** Prototype-only now; would change P2 and P6 as a production metric. **Status.** OPEN — behind `?usulan=1`, off by default (DIR-071 CQ-2).
+
+## OQ-18 — A delta on the KPI cards
+
+- **Problem.** Golden's KPI tiles carry a delta against an earlier period; MULTIPLECORP defines no comparison for them (VP-3). GF-2 drew one from the same illustrative series, marked "Usulan" (SP-39 (b)); WF-2R found that its wording "dari Sep 2026" reads as a real comparison and lacks Golden's screen-reader direction word (BR2R-14, a D, not implemented).
+- **Options, recommendation and impact.** As OQ-17's.
+- **Needed.** At CP-A. **Kind.** Prototype-only now; would change P2 and P6 as a production metric. **Status.** OPEN — behind `?usulan=1`, off by default (DIR-071 CQ-2).

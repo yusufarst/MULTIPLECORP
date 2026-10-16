@@ -1,0 +1,258 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventy-third source record
+Received: 2026-10-17, the Owner's directive and decision to Planning in the
+         planning session of the MULTIPLECORP Project, with Planning's answer
+         between them, relayed as Appendix B of the seventy-fourth source
+         record
+Subject: the Owner's directive to complete MULTIPLECORP's P0–P11 planning
+         before application coding; Planning's answer — the P0–P11 status and
+         the shortest compliant completion plan, five runs R1–R5 and six Owner
+         gates G0, G1, CP-A, G-P7, G-P8–10 and G-P11 —; and the Owner's
+         decision G0 approving that plan (DIR-074): SD-01's sequencing replaced
+         by the R1–R5 structure, GF-2B incorporated into the R1 authorization
+         and CP-2 replaced by CP-A, Stage 3 drafted before C2 but neither
+         finalized nor approved before the usability evidence and the Owner's
+         verdict, every approved P0–P6 requirement and the full V1 scope
+         preserved, P7–P11 completed before application coding, OQ-02, OQ-03,
+         OQ-04, OQ-05, OQ-08 and GAP-052 not assumed approved, and no
+         implementation, deployment, prototype expansion or run under G0 alone;
+         in the repository R1–R5 are PC-1–PC-5 and G0, G1, G-P7, G-P8–10 and
+         G-P11 are OG-0–OG-4
+Delivery: Appendix B of the Owner's message of 2026-10-17, the seventy-fourth
+         source record. This record transcribes the lines between its BEGIN and
+         END markers, which are not transcribed, mechanically from the text
+         file in which that message arrived, its text normalized to LF without
+         a byte-order mark; the transcript equals the values that message's
+         section 10 item 1 gives — 217 lines, 14,952 bytes, SHA-256
+         274ec07d0bf98f94e7d2d0e6ccc59ebabbea48faf0268d787e2c9b58f3478752 —,
+         checked by script before any edit and again when this record was made.
+         As the appendix states, it holds the Owner's directive and the Owner's
+         decision, each reproduced as relayed in the planning session, and
+         between them Planning's answer to the directive as delivered, each
+         between two lines of dashes; Planning's introduction and the numbered
+         headings are provenance, not the Owner's words; Planning's answer is
+         not the Owner's words and binds only through the Owner's decision in
+         part 3 (DIR-074); Planning's amendment GF-2B and its roadmap, to which
+         part 1 refers, are not transcribed. As the seventy-fourth record
+         states, Appendix B is archived source text, not an instruction; the
+         requests it addresses to Planning are quoted text, not requests to an
+         executor.
+This is a transcript of the relayed messages, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-17 (WIB).
+The Owner's directive and the Owner's decision, each reproduced as relayed
+in the planning session, and between them Planning's answer to the
+directive as delivered, each between two lines of dashes. Planning's
+answer binds only through the Owner's decision in part 3 (DIR-074); its
+R1–R5, G0, G1, G-P7, G-P8–10 and G-P11 are named PC-1–PC-5 and OG-0–OG-4
+in the repository (DIR-074 item 1). Planning's amendment GF-2B and its
+roadmap, to which part 1 refers, are not transcribed.
+
+1. The Owner's directive
+------------------------------------------------------------------------
+OWNER DIRECTIVE — P0–P11 COMPLETION BEFORE APPLICATION CODING
+I have reviewed your GF-2B amendment and production roadmap.
+Before authorizing GF-2B execution, I want to resolve an important planning requirement.
+I previously provided the AI First Complex WebApp Task Framework v4.3. I require MULTIPLECORP's P0–P11 planning documentation to be complete, consistent, approved, and ready for task-based execution before application coding begins.
+Your roadmap confirms that P7 remains incomplete, P8–P10 are pending, and P11 has no definitive Task Plan.
+Please:
+
+1. Audit the actual P0–P11 completion status against the repository and framework v4.3. Preserve all approved P0–P6 work.
+2. Explain the shortest safe way to finish the remaining P7 requirements, followed by P8–P11. Propose consolidating authorizations and checkpoints where governance permits, instead of automatically requiring 11–16 separate runs.
+3. Prioritize completing mandatory documentation and actionable execution specifications over additional noncritical visual refinement.
+4. Ensure P11 produces the definitive TASK_PLAN.md, real task counts, dependencies, stable task IDs, full Task contracts, acceptance criteria, tests, evidence requirements, risk classifications, execution order, and production release tasks.
+5. Include the validated GF-2/GF-2A prototype work as reusable evidence, without claiming that prototype pages are completed application features.
+6. Produce a clear task-based path from the current repository state to production deployment, without silently reducing approved V1 requirements.
+7. Identify which remaining planning tasks genuinely require separate Owner approval and which can be handled together under an explicitly approved authorization.
+8. Minimize repeated audits, cosmetic reviews, excessive documentation administration, and unnecessary token usage. Preserve essential security, business rules, data integrity, testing, and release safeguards.
+
+Do not rewrite valid approved documentation, do not implement application code, and do not send GF-2B to the Executor yet.
+FIRST DELIVERABLE:
+Give me a concise verified status table for P0–P11 and the shortest compliant completion plan, including the minimum required approval gates.
+I will decide whether to approve the consolidated plan before further execution.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+2. Planning's answer
+------------------------------------------------------------------------
+# Status P0–P11 dan rencana penyelesaian terpendek
+
+P0–P6 sudah selesai. Pekerjaan yang tersisa adalah P7 sampai P11. Dengan rencana di bawah, sisanya bisa diselesaikan dalam **5 run Eksekutor dan 6 gerbang Owner**, bukan 11–16 run. V1 tidak dikurangi dan tidak ada kode aplikasi.
+
+Status ini saya periksa pada salinan `rebaseline/p7-ux` di commit da3040a dan pada remote live (`main` di a526daf, `rebaseline/p7-ux` di da3040a, keduanya tidak berubah). Kerja GF-2/GF-2A setelah da3040a hanya bersumber dari laporan Eksekutor; saya belum memverifikasinya langsung.
+
+## 1. Status per fase
+
+| Fase | Status | Bukti | Sisa pekerjaan wajib |
+|---|---|---|---|
+| P0 | DONE | APPR-001; amandemen AICWDF APPR-009, sudah terbit | — |
+| P1 | DONE | APPR-002 (+ APPR-009, APPR-010) | — |
+| P2 | DONE | APPR-003 | — |
+| P3 | DONE | APPR-004 | Kontrak rute dan interaksi (ROUTE_CONTRACTS, INTERACTION_CONTRACTS; GAP-035) dibuat di P7 Tahap 3 |
+| P4 | DONE | APPR-005 (+ APPR-010) | Perubahan kecil hanya jika jawaban OQ-05, OQ-08 atau GAP-052 memerlukannya |
+| P5 | DONE | APPR-006; amandemen auth APPR-010, sudah terbit | — |
+| P6 | DONE | APPR-007 (+ APPR-010) | Perubahan kecil hanya jika jawaban OQ-02, OQ-03, OQ-08 atau GAP-052 memerlukannya |
+| P7 | IN_PROGRESS | Tahap 0–1 selesai, C1 ditutup (Golden v1.0.0), S2-0/1/2 dan GF-1 selesai. GF-2 dan GF-2A selesai di repo prototipe (commit A2 `f926e1c`, sudah di-push). CP-1R diterima untuk lanjut. Record 68–71 belum di-commit di MULTIPLECORP | Penyelesaian Tahap 2 (S2-3, sesi usability dan C2), Tahap 3 dokumen normatif, Tahap 4 review, Tahap 5 APPR-011 |
+| P8 | BLOCKED (menunggu P7) | Hanya README reservasi | TEST_STRATEGY, SECURITY_TEST_MATRIX, PERFORMANCE_TARGETS, DEFINITION_OF_DONE |
+| P9 | TODO | Hanya README reservasi | INFRASTRUCTURE, BACKUP_RECOVERY |
+| P10 | TODO | Hanya README reservasi | RELEASE_PLAN (rilis, migrasi data lama, cutover, rollback, UAT) |
+| P11 | TODO | README reservasi; EXECUTION_CONTEXT sudah ada | TASK_PLAN, TASK-XXX, FEATURE_COVERAGE_MATRIX |
+
+- Planning freeze belum tercapai. Belum ada Task dan belum ada kode aplikasi.
+- **Gap:** total 57.
+  - 4 CLOSED, 39 OPEN, 9 ACCEPTED_RISK, dan 5 OWNER_DECISION_REQUIRED (GAP-052 dan GAP-054 sampai GAP-057).
+  - Empat gap OPEN selesai di P7 Tahap 3: GAP-035, GAP-037, GAP-044, GAP-053.
+  - Sisanya bertarget P8–P11 atau eksekusi. Semuanya harus terpetakan ke Task atau tes sebelum freeze.
+
+## 2. Batas konsolidasi menurut aturan repository
+
+**Yang tidak bisa diubah:**
+- Setiap fase P0–P11 tetap butuh otorisasi eksplisit, quality gate, approval Owner dan checkpoint terbit sendiri (AGENT_OPERATING_MODEL).
+- Planning freeze dan izin mulai eksekusi adalah dua gerbang terpisah setelah P11.
+
+**Syarat APPR-011 (P7 DONE):**
+- Verdict Anda setelah C2 bahwa UI benar-benar ramah pengguna (DIR-040 F6).
+- Semua tugas kritis diselesaikan peserta tanpa bantuan, atau ada disposisi Anda.
+- Tidak ada kemampuan V1 yang hilang.
+- Kontrak lengkap dan semua gate PASS.
+- 0 temuan terbuka dan 0 OWNER_DECISION_REQUIRED.
+
+**Yang boleh:**
+- Satu pesan Owner boleh memuat beberapa keputusan, asalkan masing-masing eksplisit dan dicatat terpisah. Presedennya: DIR-040 F1–F6 dan DIR-042 K1–K4 beserta approval.
+- Aturan "satu run per otorisasi" (SD-01) dan urutan di DIR-067 adalah keputusan Anda sendiri, jadi Anda boleh mengubahnya.
+
+## 3. Rencana: 5 run
+
+| Run | Isi | Berakhir di |
+|---|---|---|
+| **R1** — penyelesaian Tahap 2 | Commit record GF-2 dan GF-2A dulu. Isi GF-2B: Buat Pembelian dan kewajiban a11y (target sentuh, kode perusahaan QS-20, MSG-19). Perluasan Golden ke sekitar 30 layar sisa dari 53 (9 halaman lain, state PG-002 dan menu akun) memakai pola yang sudah diterima, tanpa review per halaman. S2-3: perbaikan, kit usability untuk 3 peran, dry run. Satu evidence run, paling banyak 2 agen review | CP-A |
+| *(Owner)* | Sesi usability S2-4 yang Anda moderasi. Ini kegiatan Anda, bukan run Eksekutor | — |
+| **R2** — Tahap 3 dan P9, paralel dengan sesi | Dokumen normatif P7 (IA, DESIGN_SYSTEM, NAVIGATION_CONTRACTS, LOCALIZATION, DESIGN_REFERENCES), kontrak rute dan interaksi, penyelarasan ADMIN_FLOW, matriks non-loss, perubahan kecil P3/P4/P6 dari jawaban OQ, dan draf P9 | lanjut ke R3 |
+| **R3** — C2 dan Tahap 4 | Hasil sesi, perbaikan dan uji ulang bila perlu, delta ke dokumen Tahap 3, 3 review adversarial dan 1 review final dalam satu workflow, gate P7 | G-P7 |
+| **R4** — Tahap 5 dan P8/P10 | Publikasi P7 (APPR-011, fast-forward `main`), draf P8 dan P10, finalisasi P9, satu review adversarial gabungan, tiga gate record terpisah | G-P8–10 |
+| **R5** — P11 | Publikasi P8–P10, TASK_PLAN, TASK-XXX, FEATURE_COVERAGE_MATRIX, uji arsitektur seluruh sistem, pemetaan semua gap | G-P11 |
+
+Publikasi P11 dan catatan freeze menjadi langkah pertama sesi eksekusi pertama, jadi tidak perlu run tersendiri.
+
+## 4. Gerbang Owner minimum
+
+1. **G0 (sekarang)** — setujui rencana ini, termasuk tiga perubahan atas keputusan Anda sebelumnya:
+   - SD-01 digantikan oleh R1–R5.
+   - GF-2B digabung ke R1, dan CP-2 diganti CP-A.
+   - Tahap 3 boleh di-draf sebelum C2; finalisasinya tetap setelah C2.
+2. **G1** — setujui teks otorisasi R1. Saya susun dari GF-2B yang sudah ada ditambah dua bagian baru.
+3. **CP-A** — satu tinjauan yang mencakup:
+   - prototipe yang sudah dikoreksi (memenuhi DIR-067 dan SD-08), termasuk tes di HP nyata (OQ-07);
+   - satu lembar keputusan visual: GR-16, varian D satu per satu, teks ID/EN, motion, arah kartu, OQ-17/18, OQ-04;
+   - persetujuan kit usability;
+   - otorisasi R2 dan P9.
+4. **G-P7** — verdict C2, APPR-011, dan otorisasi P8 serta P10.
+5. **G-P8–10** — tiga approval terpisah (P8, P9, P10) dan otorisasi P11.
+6. **G-P11** — approval P11, planning freeze, dan izin mulai eksekusi.
+
+Gerbang 4–6 masing-masing berupa satu pesan dari Anda, tetapi setiap keputusan di dalamnya dicatat terpisah.
+
+**Harus tetap keputusan tersendiri:** setiap approval fase, verdict C2, freeze, izin mulai eksekusi, go/no-go rilis, perubahan scope atau P0–P6, dan penerimaan risiko.
+
+**Boleh digabung:** otorisasi beberapa fase, jawaban OQ, keputusan visual, dan approval teks run.
+
+## 5. Keputusan bisnis — sebaiknya di G0/G1, paling lambat di CP-A
+
+Kalau dijawab sekarang, prototipe yang diuji di sesi usability sama dengan yang nanti dibangun.
+
+- **OQ-02** (tahap, hambatan dan aksi berikutnya per baris daftar proyek): rekomendasi (b), dengan perubahan kecil P6.
+- **OQ-03** (baris siap kirim di Pekerjaan): rekomendasi (b), sinyal baru di P3/P6.
+- **OQ-05** (preferensi bahasa per akun): rekomendasi (a), kolom `users.locale` di P4.
+- **OQ-08** (nomor pembelian sendiri): rekomendasi (a), perubahan di P4/P6.
+- **GAP-052:**
+  - Apakah proyek punya satu tenggat yang mengatur?
+  - Apa artinya?
+  - Apakah Admin juga melihat sinyal "terlambat"?
+- **OQ-04** (format angka dan tanggal di UI Inggris): rekomendasi (a). Bisa diputuskan di CP-A.
+
+## 6. Yang dikurangi dan yang tidak
+
+**Dikurangi:**
+- Tidak ada siklus koreksi visual baru.
+- Tidak ada review visual per halaman.
+- Tidak ada audit berulang.
+- OQ-17/18 tetap hanya di prototipe. Rekomendasi saya: bukan bagian V1.
+- Review P8–P10 digabung menjadi satu.
+
+**Tidak dikurangi:**
+- Sesi usability C2.
+- Aksesibilitas wajib.
+- Non-loss 100%.
+- Kontrak rute dan interaksi.
+- Tiga review adversarial P7.
+- Tes keamanan, otorisasi dan konkurensi.
+- Bukti backup dan restore.
+- Rehearsal migrasi data lama.
+- Staging dan UAT.
+
+## 7. GF-2/GF-2A sebagai bukti
+
+- Hasilnya adalah referensi visual non-normatif: bukan fitur aplikasi dan bukan kode aplikasi.
+- Dipakai sebagai masukan DESIGN_SYSTEM di Tahap 3, dan sebagai acuan penerimaan visual di Task UI pada P11.
+- Implementasinya tetap dibangun ulang di Laravel, Inertia, React dan shadcn/ui.
+- Record 68–71 harus di-commit di R1 supaya bukti ini tidak hanya ada di working tree lokal.
+
+## 8. Isi wajib P11 (kriteria G-P11)
+
+- **TASK_PLAN:**
+  - total baseline dan total saat ini yang nyata, beserta penghitung status;
+  - checklist dan tabel dependensi;
+  - urutan atau gelombang eksekusi;
+  - Task saat ini dan Task READY berikutnya.
+- **TASK-XXX:** kontrak penuh (§23 ditambah tiga field proyek: konkurensi/idempotensi, audit, cakupan perusahaan). Masing-masing punya kriteria penerimaan, tes, bukti dan kelas risiko.
+- **Task rilis produksi:**
+  - staging;
+  - latihan restore;
+  - rehearsal migrasi;
+  - UAT;
+  - cutover;
+  - go-live;
+  - smoke test dan monitoring.
+- **Task ketergantungan eksternal:** berstatus BLOCKED dengan nomor DEP-nya.
+- **FEATURE_COVERAGE_MATRIX:** setiap CAP/AC terhubung ke aturan, Task dan tes; setiap gap terpetakan.
+- Jumlah Task tidak saya tebak sekarang; framework (§37) melarangnya sebelum perencanaan cukup lengkap.
+
+## 9. Jalur ke produksi setelah G-P11
+
+Gelombang Task (urutannya ditetapkan di P11) → regresi per kelompok → regresi penuh → staging di VPS → uji restore → rehearsal migrasi → UAT → laporan integritas rilis → go/no-go dari Anda → deploy oleh operator manusia → health dan smoke test → live.
+
+**Yang bisa Anda mulai sekarang** karena paling menentukan waktu:
+- jadwal peserta usability dan validator UAT (DEP-06);
+- contoh dokumen (DEP-04);
+- sampel data lama (DEP-05);
+- perangkat: scanner, HP, printer (DEP-03);
+- VPS (DEP-01);
+- Google OAuth client (DEP-10);
+- kanal alert (DEP-08).
+
+Jika G0 Anda setujui, langkah saya berikutnya adalah menyusun teks otorisasi R1 untuk G1. Belum ada yang saya kirim ke Eksekutor, dan GF-2B tetap tertahan.
+------------------------------------------------------------------------
+
+3. The Owner's decision (G0)
+------------------------------------------------------------------------
+OWNER DECISION — G0 APPROVAL: CONSOLIDATED P7–P11 COMPLETION PLAN
+I approve the proposed consolidated R1–R5 planning-completion strategy and its six Owner gates.
+My explicit decisions:
+
+1. Approve replacing the previous SD-01 execution sequencing with the proposed R1–R5 structure, subject to preserving all mandatory governance and quality requirements.
+2. Approve incorporating GF-2B into the proposed R1 authorization and replacing CP-2 with CP-A.
+3. Allow Stage 3 normative documentation to be drafted before C2, but not finalized or approved until the required usability evidence and Owner verdict are available.
+4. Preserve all approved P0–P6 requirements and the full V1 scope. No silent scope reduction.
+5. Complete P7–P11 documentation before application coding. P11 must produce a definitive, approved and published TASK_PLAN.md, complete Task contracts, dependencies, acceptance criteria, tests and production-release tasks.
+6. Minimize repetitive visual reviews, unnecessary workflows, token consumption and separate execution runs. Reuse existing approved documentation and validated evidence.
+7. Every phase must retain its own explicit authorization and approval, even when multiple decisions are combined into one Owner message.
+8. Do not assume approval of OQ-02, OQ-03, OQ-04, OQ-05, OQ-08 or GAP-052. Present only the business decisions actually required before execution.
+9. Do not begin application implementation, deploy anything, expand the prototype or execute R1 under this G0 decision alone.
+
+NEXT ACTION:
+Prepare the consolidated R1 authorization for my G1 review.
+Ensure the R1 authorization explicitly reconciles GF-2B, the existing GF-2/GF-2A commitments, repository integrity, the proposed 53-screen extension, S2-3 and the CP-A acceptance criteria.
+Keep R1 executable without ambiguous instructions or unnecessary intermediate checkpoints.
+Do not send anything to Executor until I explicitly approve G1.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 # Authentication journeys
 
-Status: DRAFT | Updated: 2026-10-14 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-17 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §12.5 (BP-4). Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
@@ -27,11 +27,13 @@ Each journey lists its steps — page, what the person does, the rule, the answe
 | --- | --- | --- | --- | --- | --- |
 | 1 | PG-001 | sees "Masuk ke MultipleCorp", *E-mail*, *Kata sandi* with "Tampilkan", "Masuk", the disclosure "Lupa kata sandi?" — its answer "Minta tautan atur ulang kepada Owner." folded —, "atau", "Lanjutkan dengan Google", [H7-16](../../05-security/SECURITY.md#p7--presentation-only)'s advice and the switch "ID \| EN" (R1 k)) | no self-registration and no self-service reset in V1 (AU-01; AU-12; AU-17); paste and password managers allowed (H7-04) | — | — |
 | 2 | PG-001 | enters the e-mail and password, "Masuk" | AU-04; the throttles of AU-05 | [MSG-19](../ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue) for any failure; MSG-20 while a throttle runs | step 3 |
-| 3 | PG-002 | an account with active TOTP: "Masukkan kode verifikasi", the label "Kode 6 digit dari aplikasi autentikator", "Verifikasi", and "Gunakan kode pemulihan" after a password (R1 k)) | the pending challenge, five minutes, nothing else reachable (AU-16); the session identifier regenerated at the password step (AU-06) | — | — |
+| 3 | PG-002 | an account with active TOTP: "Masukkan kode verifikasi", the label "Kode 6 digit dari aplikasi autentikator", "Verifikasi", and "Gunakan kode pemulihan" after a password (R1 k)), and "Kembali" (OQ-14) | the pending challenge, five minutes, nothing else reachable (AU-16); the session identifier regenerated at the password step (AU-06); "Kembali" cancels the pending challenge and returns to step 1 with the e-mail kept, the server's side open for P11 (SP-38) | — | step 1 on "Kembali" |
 | 4 | PG-002 | enters the code | a code at a later time step only, once (AU-16); the second-factor limit (AU-05) | the generic code answer, recorded copy "Kode tidak cocok atau sudah tidak berlaku. Masukkan kode terbaru dari aplikasi autentikator." ([the gate record](../evidence/P7_REBASELINE_GATE.md#p7-ux-re-baseline--evidence-and-gates)'s Stage 1 direction e), kept by R1 k)); MSG-20 in a cooldown | step 5 |
 | 5 | the landing page | is signed in — PG-006 for the Owner, PG-007 for an Admin | LOGIN_SUCCEEDED at the challenge's success; the identifier regenerated; history cleared (AU-04; AU-06) | MSG-29 on the first page after a credential event (AU-13; H7-14; H7-18) | — |
 
 A high-risk account without active TOTP goes from step 2 to the enrolment-only session (§2.4, steps 4–7). **Simulated** in S2-J01 (SIM-01; SIM-02): the accounts, the password check and the code check, with fixed synthetic values (SS-01; SS-02).
+
+*Note of 2026-10-17 (run PC-1, [DIR-075](../../00-governance/DECISION_LOG.md#dir-073dir-075-obs-029-and-tech-036--p7-ux-re-baseline-cp-1r-verdict-p7p11-completion-plan-run-pc-1-and-stage-2-completion) §10 item 2):* step 3's "Kembali" is the Owner's decision OQ-14 ([DIR-069](../../00-governance/DECISION_LOG.md#dir-069-dir-070-obs-027-and-tech-035--p7-ux-re-baseline-gf-2-decisions-authorization-baseline-and-corrected-pilot)), as run GF-2 built it (SP-38): the pending attempt discarded and nothing kept but the e-mail; AU-16 names no cancelled challenge, so how the server voids one is recorded for P11.
 
 ### 2.2 Google, then TOTP
 

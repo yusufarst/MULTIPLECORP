@@ -1,0 +1,592 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventy-first source record
+Received: 2026-10-15, in-session Owner message to the repository executor with
+         the branch rebaseline/p7-ux checked out at
+         da3040a4b9e130d2474bb4cdef84f2f9a25695ab with GF-2's Part 1 records
+         uncommitted in its working tree, main and amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978 and migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37, each locally and on the live
+         remote, and the private prototype repository's main at
+         b028e6af6c051d0ca177527bc4edd92a93c28852, GF-2's commit A
+Subject: Owner decisions and amendment GF-2A to run GF-2 — the Owner's
+         decisions after GF-2's checkpoint CP-1 (DIR-071: Terima Barang and
+         Beranda not visually approved, GF-2's records and commit A kept as
+         history; the Owner's design requirements binding stage 1R; the answers
+         CQ-1–CQ-7 — SP-39 (a) revised for Golden's compact KPI cards, the
+         overdue amount kept on the receivables card and the company breakdowns
+         behind "Rincian angka"; OQ-17 and OQ-18 kept as prototype-only
+         proposals behind a switch; Masuk's concept A "Meja Kerja" and the
+         code-step states in stage 1R; GR-16 decided at CP-1R; 48 px for the
+         warehouse operational controls where required; no unapproved D variant
+         made a permanent default, nor an implemented one reverted, without the
+         Owner's decision; new copy proposed in Indonesian and English and
+         motion accepted only by the Owner's review) and the corrective stage
+         1R of run GF-2 only authorized (DIR-072, with the Planning
+         interpretations SP-43–SP-50): the pre-flight and the baseline
+         read-only; source records 70 and 71 and the decision records in the
+         working tree, without a MULTIPLECORP commit; stage 1R — Beranda,
+         Terima Barang and Masuk's sign-in panel and code step corrected, and
+         the review tooling —; the one workflow WF-2R, started only through the
+         Owner's approval prompt; prototype commit A2, pushed through the
+         Owner's approval prompt; the CP-1R report, then STOP at CP-1R; no
+         stage 2, no Part 5, no commit 13, no extension of the pilot and no
+         S2-3
+Attachments: GF-2's final authorization, in its own text file, as the message's
+         section 0 states — not transcribed again: that file holds 872 lines
+         and 53,974 bytes with LF line endings and no byte-order mark, SHA-256
+         245ce4251fbcd2e2bb6017284593bc0a70213d1b3a8e0b9442f04d9284e9ee47, the
+         values the sixty-ninth source record gives for the file it
+         transcribes; its lines up to the APPENDIX heading block equal that
+         record's transcript and its Appendix A the sixty-eighth record's,
+         checked by script
+Delivery: The message arrived as one of the two text files referenced in the
+         session message, their paths not recorded; the session message itself,
+         a pasted block, said: "OWNER AUTHORIZATION — START GF-2A PART 1R ONLY"
+         — "I explicitly approve execution of the finalized GF-2A amendment for
+         MULTIPLECORP, strictly limited to corrective Stage 1R and ending at
+         checkpoint CP-1R." — "This is a NEW Executor session, not a
+         continuation into GF-2 Stage 2." — "Two authorization files are
+         attached:" — "1. P7_STAGE2_GF-2_AUTHORIZATION.txt — final GF-2
+         authorization." — "2. P7_STAGE2_GF-2A_AMENDMENT.txt — approved GF-2A
+         amendment." — "Treat GF-2A as governing wherever it amends GF-2.
+         Preserve all unaffected GF-2 requirements." — "IMPORTANT:" — "* Do NOT
+         execute "LANJUTKAN GF-2"." — "* Do NOT enter GF-2 Part 4, Stage 2,
+         WF-3, WF-4, or Part 5." — "* Do NOT expand to 53 screens." — "* Do NOT
+         modify canonical business or security rules." — "* Do NOT create
+         MULTIPLECORP commit 13." — "* Do NOT reset, clean, discard, or
+         overwrite existing working-tree changes." — "* Do NOT change
+         permissions, settings, hooks, or execution modes." — "* Follow all
+         existing ask/deny rules and approval gates." — "FIRST RESPONSE ONLY:"
+         — "Follow GF-2A §3.1 and §5." — "Perform only the permitted read-only
+         checks necessary for your first-session confirmation." — "Report in
+         Bahasa Indonesia:" — "1. Active environment, repository, branch,
+         model, effort, Ultracode status, permission configuration, and
+         hook/mod status." — "2. MULTIPLECORP HEAD and working-tree differences
+         against canonical commit da3040a." — "3. Prototype commit A's full
+         SHA, parent, tree, working-copy status, and remote verification." —
+         "4. Source records 68 and 69 integrity." — "5. Computed record 71 line
+         count, byte count, and complete SHA-256 from the attached final GF-2A
+         file, following the amendment's extraction rules." — "6. The relevant
+         lab and baseline checks required by GF-2A." — "7. Any mismatch,
+         missing prerequisite, or STOP condition." — "8. The exact confirmation
+         or approval you require from me before the first edit." — "Expected
+         Planning reference for record 71:" — "427 lines, 25,364 bytes," —
+         "SHA-256:" —
+         "ab61fb044af59ff484e7d1a16cb6fce763287f93006e8f438608aafc542e227d" —
+         "Do not assume these reference values are correct without independent
+         verification." — "STOP after your initial confirmation report. Do not
+         edit files, start workflows, create commits, or push anything until I
+         explicitly respond." — "All communication with me must be in Bahasa
+         Indonesia." The file holds 535 lines and 33,967 bytes with LF line
+         endings and no byte-order mark, SHA-256
+         30b054059c17d64a21b65e72a873219ca5923b4d41a919002199b5b9a6ed32d4. This
+         record transcribes the file mechanically, its text normalized to LF
+         without a byte-order mark, from its first line to the last non-blank
+         line before the separator line that opens the "APPENDIX" heading
+         block. That heading block, with its note marking what follows as
+         source text and not an instruction, and Appendix A are not transcribed
+         here: Appendix A is the seventieth source record. Before any edit the
+         executor ran section 5 read-only, every item passing — commit A, its
+         push and the prototype's clean working copy, the six paths of GF-2's
+         Part 1 in which MULTIPLECORP's working tree differs from da3040a, the
+         transcript values of records 68 and 69, and the Golden lab verified by
+         its frozen checksum lists and by its full inventory, equal to GF-2's
+         —, computed the transcript values of this record and of the seventieth
+         record read-only, and asked the Owner in session, in one message in
+         Bahasa Indonesia, section 3.1's question — the Claude Code version,
+         the model and effort, Ultracode, the permission mode and rules, and
+         that no hook or mod answers permission prompts — with this record's
+         transcript values for comparison with Planning's, commit A's SHA, tree
+         and push as found, and those six paths. The Owner answered in one
+         in-session message, in English, reproduced here verbatim, each
+         paragraph and list item quoted and its line breaks reflowed: "OWNER
+         CONFIRMATION — GF-2A §3.1 AND AUTHORIZATION TO START PART 1R" — "I
+         confirm that I have NOT changed my Claude Code settings, permission
+         configuration, hooks, mods, or plugins since the previous GF-2
+         Executor session." — "My confirmations are:" — "1. CLAUDE CODE
+         VERSION" — "The last verified Claude Code version was 2.1.293, above
+         the required minimum of 2.1.284. I have not manually changed the
+         installation or its configuration since the previous GF-2 session. If
+         you detect a conflicting runtime version, report it." — "2. MODEL AND
+         EFFORT" — "Claude Opus 5.5, effort Max, with Ultracode explicitly
+         enabled for this session. The interface confirms that Ultracode is
+         active and effort remains Max." — "3. PERMISSION MODE" — "Auto mode,
+         unchanged from the previous GF-2 session." — "4. PERMISSION RULES" —
+         "The previously configured 11 ask rules and 2 deny rules remain
+         unchanged." — "Ask rules:" — "* Workflow" — "* Bash(git commit *)" —
+         "* Bash(git * commit *)" — "* Bash(git push *)" — "* Bash(git * push
+         *)" — "* Bash(git * push)" — "* PowerShell(git commit *)" — "*
+         PowerShell(git * commit *)" — "* PowerShell(git push *)" — "*
+         PowerShell(git * push *)" — "* PowerShell(git * push)" — "Deny rules:"
+         — "* Edit(//c/DesignLab/MultipleCorp-Golden-Reference/**)" — "*
+         Edit(//c/Projects/multiplecorp-p7-prototype/site/vendor/**)" — "This
+         is my confirmation of unchanged settings, not an instruction to modify
+         or reinstall them." — "5. HOOKS, MODS AND AUTOMATIC APPROVALS" — "I
+         have not added or changed any hook, mod, plugin, or managed policy. No
+         mechanism is known to automatically approve permission prompts. If you
+         find evidence to the contrary, STOP and report it." — "6. SOURCE
+         RECORD 71" — "I confirm your independently computed values match
+         Planning and the approved GF-2A amendment:" — "427 lines" — "25,364
+         bytes" — "SHA-256:" —
+         "ab61fb044af59ff484e7d1a16cb6fce763287f93006e8f438608aafc542e227d" —
+         "7. PROTOTYPE COMMIT A" — "I confirm that these values match the CP-1
+         baseline:" — "Commit:" — "b028e6af6c051d0ca177527bc4edd92a93c28852" —
+         "Tree:" — "0ec634bad9ef030119b00c7fde724d5c93d77dd0" — "Parent:" —
+         "9db43f805b4b1b62566aed084c78391a1ebd43ef" — "The reported successful
+         remote push is consistent with the CP-1 report." — "8. MULTIPLECORP
+         WORKING TREE" — "I confirm that the six reported changed paths are
+         expected GF-2 Part 1 work:" — "* .gitattributes" — "*
+         DECISION_INDEX.md" — "* DECISION_LOG.md" — "* SOURCE_OF_TRUTH.md" — "*
+         Source record 68" — "* Source record 69" — "Preserve all existing
+         work. Do not clean, reset, discard, or overwrite it." — "9. REMAINING
+         PREFLIGHT NOTES" — "9.1 README Part 3:" — "I accept the existing
+         wording as equivalent progress information. Do not rewrite commit A
+         merely to change its wording." — "9.2 CP-1 report identifiers:" — "The
+         CP-1 report predates GF-2A. No newly introduced GF-2A identifiers were
+         identified in the CP-1 material previously reviewed. Verify against
+         the actual archived CP-1 report where available. If any conflict is
+         discovered, STOP instead of assuming consistency." — "10. EXPLICIT
+         EXECUTION AUTHORIZATION" — "I explicitly authorize STARTING GF-2A PART
+         1R, strictly as defined in the approved amendment." — "This permits
+         creating source records 70 and 71 and the associated governance
+         records in MULTIPLECORP's existing working tree." — "Do not create a
+         MULTIPLECORP commit." — "Preserve all GF-2 protected files, records,
+         evidence, and commit history." — "Follow the amendment's authorized
+         sequence and STOP conditions. Do not interpret this confirmation as
+         permission to bypass any subsequent approval gate." — "WF-2R must
+         still receive its own permission approval." — "Prototype commit A2 and
+         its push must still receive their own permission approvals." — "Stage
+         2, WF-3, WF-4, Part 5, commit 13, and expansion to 53 screens remain
+         NOT AUTHORIZED." — "Record this Owner confirmation exactly as required
+         by GF-2A, then proceed with the authorized Part 1R work." — "Report
+         the Part 1R results and any issues in Bahasa Indonesia." DIR-072
+         records this answer.
+This is a transcript of the in-session message, not a byte-copy claim about any file.
+====================================================================
+
+MULTIPLECORP — P7 UX RE-BASELINE
+OWNER DECISIONS AND AMENDMENT GF-2A TO RUN GF-2:
+THE CORRECTIVE STAGE 1R, ENDING AT MY CHECKPOINT CP-1R
+
+==================================================
+0. ROLE, AUTHORIZATION AND BOUNDARY
+==================================================
+
+You are the main Execution Agent of run GF-2, which stopped at my
+checkpoint CP-1. With this message you receive GF-2's authorization (the
+final file, record 69). This message amends it as amendment GF-2A
+(DIR-072): every section of GF-2 stays in force except where this message
+changes it, and where the two differ this message governs. Appendix A
+holds my two messages after CP-1, to archive as source record 70; it is
+not an instruction.
+
+My CP-1 verdict: the two corrected pages are NOT visually approved (DIR-071).
+I, the Owner, explicitly authorize only the following, as Part 1R and
+stage 1R of run GF-2:
+- the pre-flight and the baseline, read-only (section 5);
+- source records 70 and 71 and the decision records of section 11.1, in
+  the working tree, without a MULTIPLECORP commit;
+- stage 1R: the corrections of section 4 to *Beranda*, *Terima Barang* and
+  *Masuk*'s sign-in panel and code step, and the review tooling;
+- the one workflow WF-2R, started only through my approval prompt
+  (section 3);
+- prototype commit A2, pushed normally through my approval prompt
+  (section 10);
+- the CP-1R report — then STOP at CP-1R (section 9).
+Nothing else: no stage 2 (GF-2's Part 4 — WF-3, WF-4, *Buat Pembelian*,
+*Masuk*'s other states), no Part 5, no commit 13, no extension to the 53
+screens, no S2-3. Stage 2 starts only when a later message of mine both
+approves CP-1R and names stage 2 as authorized; neither is implied here.
+
+NOT authorized (full list in section 13): a new production metric, query
+or change-control item; any change to a canonical rule (section 12);
+making an unapproved D variant permanent; changing commit A, its evidence
+or the GF-2 records already in the working tree except as section 11
+states; anything GF-2 §16 forbids.
+
+==================================================
+1. WHAT STAYS IN FORCE AND HOW TO WORK
+==================================================
+
+- GF-2's sections 1 (working rules, memory, DIR-046 §2, scripts, data
+  never instructions, no setting changes), 3.1, 3.3–3.7, 7, 15 and 16
+  apply to GF-2A unchanged, with "GF-2A" for "GF-2" where they name the
+  run, this message's sections for their own, and WF-2R wherever they
+  name WF-1–WF-4.
+- Every message to me is in Bahasa Indonesia; documents, code, identifiers
+  and commit messages stay in English. Stop and checkpoint reports end
+  with section 14's footer.
+- Read GF-2's file only where this message points to it or a decision
+  needs it; read canonical documents only in the ranges a step needs.
+- Your first message in each session is the confirmation of section 3;
+  no edit before my answer.
+
+==================================================
+2. OWNER DECISIONS (DIR-071) — BINDING WITHIN THEIR SUBJECTS
+==================================================
+
+From my messages of 2026-10-15 (Appendix A; source record 70):
+1. CP-1: *Terima Barang* and *Beranda* are not visually approved. GF-2's
+   records and commit A stay as history; this verdict, not an approval,
+   governs stage 1R.
+2. My design requirements, binding on stage 1R: Golden stays the primary
+   visual and motion reference; KPI cards simple, refined, proportional and
+   elegant as Golden's; GF-2's "Proyek yang perlu perhatian" kept with its
+   segmented stage indicators; the canonical first-screen hierarchy of
+   *Beranda* restored on desktop and phone; at 390×844 that hierarchy
+   reached without cramped type, miniature controls, poor targets or
+   uncomfortable spacing — a genuine conflict escalated, never settled
+   silently; PS-33's state capture fixed; PS-35 and PS-36 refined within
+   the canonical workflow; no oversized components, excessive whitespace,
+   unnecessary detail or decorative filler; Golden's animations,
+   interaction rhythm, transitions and reduced motion kept; scope limited
+   to stage 1R.
+3. My answers CQ-1–CQ-7:
+   - CQ-1: SP-39 revised (SP-43): Golden's compact KPI cards; the overdue
+     amount stays on the receivables card; company breakdowns and long
+     explanations move to the existing "Rincian angka" view; mandatory
+     canonical data stays reachable.
+   - CQ-2: OQ-17 (sparklines) and OQ-18 (deltas) stay prototype-only
+     proposals, labelled, behind a switch; no production metric, query or
+     change control now; the production-compatible card, with the switch
+     off, stays elegant and balanced.
+   - CQ-3: *Masuk*'s concept A "Meja Kerja" and its code-step states are
+     in stage 1R; canonical authentication and security behaviour kept;
+     the illustration follows the real form state and never suggests
+     success during an error.
+   - CQ-4: GR-16 decided at CP-1R; variants A and B compared directly.
+   - CQ-5: 48 px targets for warehouse operational controls where
+     required; other controls by the applicable canonical accessibility
+     rules (UXV-10).
+   - CQ-6: an unapproved D variant never silently becomes a permanent
+     default; before any implemented variant is reverted, its visual and
+     functional consequences are identified; clearly successful
+     improvements stay unless canon requires reverting them; each
+     remaining D decision is presented to me individually at CP-1R.
+   - CQ-7: new copy is presented in Indonesian and English as proposed
+     content; motion is accepted only by my explicit review.
+Relation to earlier decisions: DIR-070 amended by DIR-072; SP-39 (a)
+revised by SP-43; OQ-13's concept choice made (concept A); OQ-15 still
+open (GR-16 at CP-1R); OQ-17 and OQ-18 open as prototype-only proposals;
+VP-3, VP-4, OC-05, OC-08, IP-08, PT-26, IP-19 and SECURITY unchanged.
+
+==================================================
+3. EXECUTION CONFIGURATION AND THE ONE WORKFLOW
+==================================================
+
+3.1 GF-2 §3.1 applies to every session: my configuration, my ask and deny
+rules, the direct-command rule for commits and pushes, and the
+confirmation before the first edit. In the first session the same
+message also gives: record 71's computed lines, bytes and SHA-256 (section
+11) for me to compare with Planning's; commit A's SHA, tree and push as you
+find them (section 5), for me to compare with the CP-1 report; and the
+paths that differ from da3040a in MULTIPLECORP's working tree.
+
+3.2 One workflow only, started only through my approval prompt:
+
+| Name | When | Agents, at most | Task | Writes |
+| --- | --- | --- | --- | --- |
+| WF-2R `gf2a-wf2r-reaudit` | after stage 1R's build and its metrics | 3: *Beranda*, *Terima Barang*, *Masuk* | an independent re-audit of each corrected page against Golden, section 4, GF-2 §7's metrics and their canonical sources | findings only |
+
+GF-2's run limit becomes 17 agents with WF-2R, besides GF-2 §12's
+sub-agent; at most 3 at once in GF-2A. Every other task — the baseline,
+the records, the corrections, the tooling, the evidence, the commit and
+push — you do turn by turn, without a workflow; if Ultracode plans another
+workflow, do not start it. GF-2 §3.3 binds each agent; GF-2 §3.5's checks
+run after WF-2R.
+
+==================================================
+4. PLANNING INTERPRETATIONS SP-43–SP-50 (LEVEL 1, WITH DIR-072)
+==================================================
+
+SP-43 The KPI card (revises SP-39 (a); SP-39 (b) and (c) stay). On *Beranda*
+each of the four KPIs is Golden's compact card: the icon, the label with
+its definition, the value — DESIGN_SYSTEM_MAPPING's "KPI tile", the whole
+card a link —; *Piutang aktif* adds one short line with its overdue part
+(CALC-07; R1 c)). No company breakdown, ageing split or explanation on the
+card; the per-company figures stay behind "Rincian angka" (OC-08; S2-J02),
+which leads to the out-of-scope page as S2-J02 states. In one company's
+view, "Umur piutang" with its table stays after the KPIs (VP-6; OC-08).
+OQ-17's sparkline and OQ-18's delta appear only with the proposals' switch
+on, each marked "Usulan", from a plainly illustrative series. The switch
+starts off — the production-compatible card, complete and balanced, no
+empty slot, Golden's proportions (FM-02, FM-05, FM-07) —, and the review
+page shows both states (this replaces SP-39 (b)'s "on for my review"). No
+figure without its CALC.
+
+SP-44 Scope and files. Stage 1R's states: PS-08, PS-12 and PS-13; PS-32,
+PS-33, PS-35 and PS-36; *Masuk*'s sign-in panel in its three variants, and
+the code step PS-03 and PS-04 — the same code field on PS-07, and on
+PS-05's recovery-code field only the message spacing and the focus and
+error tokens; each at the viewports CP-1 delivered for it, in both
+languages, with 320×640 for reflow. Files as GF-2's SP-36, with
+new evidence under `evidence/gf2a/` and `evidence/gf2/` unchanged as
+commit A holds it. *Buat Pembelian*, *Masuk*'s other form states, the
+shell and the marker stay as commit A holds them; a change a stage 1R page
+needs in a shared file is made, listed and checked on every page that uses
+it.
+
+SP-45 *Beranda*'s composition (R1 c); OC-05; S2-J02 §6). The decisions
+first, in reading and DOM order; at 1440×900 the four KPIs beside the
+decisions, both in the first view without scrolling; each decision row
+compact — its condition, company code, subject, age where the signal gives
+one, and one action (PT-21's row);
+on the phone the first two decisions, "Lihat semua keputusan (7)" and the
+four KPIs two by two in the first view at 390×844; Golden's hero and
+greeting (OQ-13) sized so that first view holds; "Proyek yang perlu
+perhatian" kept as commit A holds it (FM-02 ±2 px), its indicator VP-4's
+segmented stages; "Antrean operasional" one line.
+
+SP-46 Comfort floors (requirement 5). At 390×844, and at every viewport:
+every text role at least Golden's size for the same role on that device
+class (FM-07; GR-16's variants never below it); targets 24 px, 44 px with
+a coarse pointer, 48 px for the warehouse controls of SP-47; spacing only
+from Golden's scale, never below Golden's phone values; no canonical label
+truncated; no horizontal scroll. The first view is demonstrated with these
+measurements. If a canonical first view cannot be met within the floors,
+STOP with the measured options (section 12) — never shrink to fit.
+
+SP-47 *Terima Barang* (S2-J05; IP-08; PT-26; IP-19; CQ-5). PS-32: the
+checklist, the progress line and the fixed scan bar in Golden's
+composition. PS-33: the current line's sheet — the three outcomes, the
+rack, the delivery reference, the evidence line, the reservation offer
+not preselected with its limit — inspected through a verified capture
+(SP-49). PS-35: the full-height sheet with its confirming button at the
+bottom stays; its facts and the fixed action bar read as one unit, the
+sheet's empty share within FM-05 at 390×844 and 360×780; no decorative
+filler; the question's copy and the verbs unchanged. PS-36:
+the hierarchy is the line's own answer, then "1 baris tercatat · 3 baris
+tersisa", then line 2 *Berikutnya* with the scan field as the next
+action; no combined answer, no action S2-J05 does not give, no decoration.
+48 px: the scan field and its "Cari Produk", the line rows, "Catat Barang
+Masuk", "Kembali" and the sheet's controls; 44 px for the page's other
+controls — a B difference from GR-07's "every control 48 px" (S2-J05),
+its source my CQ-5 and OQ-12.
+
+SP-48 *Masuk* (CQ-3; SP-40; S2-J01; SECURITY AU-04, AU-05, AU-16). Concept
+A refined to Golden's panel: one focal object, secondary objects quieter,
+legible illustrative synthetic text, Golden's proportions, breathing room
+and motion (M1). The variant follows the form's state: credentials on
+PS-01 and PS-02, code on PS-03, PS-04, PS-05 and PS-07, done only during
+the successful transition; an error never shows the done variant. The
+code field stays one input for the six digits with
+`autocomplete="one-time-code"` (S2-J01), shown segmented if Golden's form
+calls for it; the error message under it at Golden's field-message
+spacing, by text and icon, `aria-invalid` and `aria-describedby` set; the
+focus ring and the error border with one set of tokens on every field,
+both visible together at 3:1. Supporting security information only from
+canonical copy, or as proposed copy (SP-50); nothing about the account's
+state, remaining attempts or the challenge's internals; no "remember this
+device"; "Kembali" as DIR-070 keeps it.
+
+SP-49 Review tooling and state integrity. Find and record PS-33's root
+cause and fix it in `tools/` or in the stage 1R page's own SP-44 files,
+listed. Every capture first asserts its state's defining elements, stores
+the assertion with the image, and is not taken if it fails; every
+stage 1R state and every GF-2 state the corrections touch is captured
+again. The review page shows Golden | CP-1 | CP-1R side by side, with swipe
+and difference, each image labelled with its PS and its assertion; it
+shows only whole page states — any preview-only view is labelled as such.
+
+SP-50 Open items at CP-1R. GR-16: A and B side by side on the corrected
+pages. D items: an inventory of every D variant implemented at CP-1 — what
+it changes, its visual and functional consequences of keeping and of
+reverting, its canonical status, my recommendation slot; each stays as
+implemented, switchable and labelled "not approved", unless canon
+requires reverting it (then it is an A correction with its source); none
+is recorded as approved. New copy: each string with its key, in
+Indonesian and English, marked proposed. Motion: M1–M8 for the three
+pages with frames, for my explicit acceptance.
+
+==================================================
+5. PRE-FLIGHT AND BASELINE, READ-ONLY, BEFORE ANY EDIT
+==================================================
+
+Record the result as OBS-028; a mismatch is a STOP.
+1. MULTIPLECORP: `git fetch origin`; `git ls-remote origin` exactly as
+   GF-2 §5 item 1 states, `rebaseline/p7-ux` still at da3040a; local branch
+   and HEAD at da3040a; no operation in progress; no stale `.lock`.
+2. MULTIPLECORP's working tree differs from da3040a only in GF-2's Part 1
+   paths — source records 68 and 69, DECISION_LOG, DECISION_INDEX,
+   SOURCE_OF_TRUTH and `.gitattributes` (CRLF-only differences excepted);
+   record 68's transcript 162 lines, 10,176 bytes, SHA-256
+   8262e6d570a87064b003e46b3a402f4c68e7a55c9f517051e311b9ac003231f7;
+   record 69's 701 lines, 43,557 bytes, SHA-256
+   c77efed75bceb8011189246560948dfbd3f5085e38eef53203e289bd629fc0b7.
+3. The prototype: `git ls-remote --symref` shows HEAD → main at commit A —
+   message exactly "fix: correct Golden-first pilot, stage 1 (GF-2)",
+   parent 9db43f8, my identity, no trailer —, no other ref; both addresses
+   404 without credentials; the working copy clean at commit A; the
+   vendored files 17 OK; `evidence/gf1/` and `evidence/gf2/` every line OK;
+   README.md's "GF-2 progress" showing Parts 1–3 done and CP-1 delivered.
+4. The lab: its two lists 41 OK and 239 OK, and its full inventory equal to
+   GF-2's (the line count and SHA-256 in the progress table).
+5. Free, in the working tree and in the CP-1 report: DIR-071, DIR-072,
+   OBS-028, SP-43–SP-50, GF2A-nn, WF-2R, CP-1R, CQ-1–CQ-7.
+6. My answer to section 3.1's question, quoted.
+
+==================================================
+6. PARTS, SESSIONS AND RESUME
+==================================================
+
+| Part | Content |
+| --- | --- |
+| 1R | Section 5; records 70 and 71; section 11.1's records |
+| 2R | Stage 1R: SP-49's tooling and PS-33's root cause first; SP-43 and SP-45 (*Beranda*); SP-47 (*Terima Barang*); SP-48 (*Masuk*); SP-46's measurements; SP-50's inventory; FM-01–FM-10 and GF-2 §7's regression; WF-2R and its fixes; prototype commit A2 and its verified push; the CP-1R report — STOP at CP-1R |
+
+The progress lives in README.md's "GF-2 progress", rows 1R and 2R. A
+session ends only at a part boundary, at CP-1R or at a STOP; a resume
+starts with "LANJUTKAN GF-2A", my configuration set again, section 3.1's
+confirmation, section 5 checked against the tips this run's commits
+explain plus Part 1R's own listed changes, and the last unit re-checked —
+never a finished unit or a finished workflow done again.
+
+==================================================
+7. PROTECTIONS FOR COMPLETED GF-2 WORK
+==================================================
+
+1. Commit A, its tree and `evidence/gf2/` stay as they are — the CP-1
+   "before"; no amend, reset, rebase or rewrite; commit A2 builds on it.
+2. GF-2's Part 1 records in MULTIPLECORP's working tree stay byte-equal
+   except the additions of section 11.1, checked again before CP-1R.
+3. What I kept or did not criticize stays as commit A holds it: "Proyek
+   yang perlu perhatian", PS-35's facts panel content, the shell, the
+   marker, GR-02's result, *Buat Pembelian*, *Masuk*'s other form states;
+   a change one of them needs is labelled, justified and shown to me.
+4. A D variant is never reverted or made permanent without SP-50's
+   inventory and my decision, canon excepted.
+5. The lab stays read-only; the vendored files, S2-2's pages,
+   `site/assets/`, `tools/serve.mjs`, `.gitattributes` and `evidence/gf1/`
+   unchanged against 9db43f8.
+
+==================================================
+8. CP-1R ACCEPTANCE CRITERIA AND CHECKLIST GF2A-01–GF2A-12
+==================================================
+
+My acceptance is my visual judgment; these are the evidence I expect.
+
+| Item | Check |
+| --- | --- |
+| GF2A-01 | Pre-flight and baseline as section 5 (OBS-028); section 3.1's confirmation in every session, quoted |
+| GF2A-02 | Records 70 and 71 by script, conventions kept, 71 records; records 1–69 unchanged |
+| GF2A-03 | Only SP-44's states and files; section 7's protections hold |
+| GF2A-04 | WF-2R only, approved by me, within section 3.2; GF-2 §3.5's checks passed |
+| GF2A-05 | SP-43: four Golden KPI cards, the overdue line on *Piutang aktif*, no breakdown or explanation on the cards, "Rincian angka" present, proposals only with the switch on and marked, balanced with it off |
+| GF2A-06 | SP-45 and SP-46: the first views at 1440×900 and 390×844 met, with the comfort floors measured and listed |
+| GF2A-07 | SP-47: PS-32, PS-33, PS-35 and PS-36 as stated, 48 px where SP-47 names it |
+| GF2A-08 | SP-48: the variant matches the form state in every capture; one code input; error spacing, focus and error borders consistent at 3:1 |
+| GF2A-09 | SP-49: PS-33's root cause recorded; every capture asserted; the review page complete |
+| GF2A-10 | FM-01–FM-10 met or labelled, thresholds unchanged; GF-2 §7's regression passes; symmetry — cards in a row equal in height ±1 px, equal gutters ±1 px, FM-04's edges |
+| GF2A-11 | SP-50: GR-16's A and B, every D variant, every proposed string and M1–M8 ready for my individual decision |
+| GF2A-12 | Commit A2: my identity, no trailer, parent commit A, only SP-44's files; pushed and verified, or STOPPED under SP-42 |
+
+==================================================
+9. CP-1R — THE REPORT AND MY QUESTIONS
+==================================================
+
+Deliver the three pages corrected at SP-44's viewports in both languages;
+the review page; FM-01–FM-10 against CP-1; SP-46's measurements; PS-33's
+root cause; SP-50's lists; WF-2R's findings with their disposition; the
+checklist item by item; what was not done. Ask me in one message: my
+verdict on each page; GR-16 A or B; each D variant keep or revert; each
+proposed string yes or no; motion accepted or not per page; any further
+correction. My answer is archived as a source record by the run that
+follows; nothing in it is assumed before I send it. Then STOP.
+
+==================================================
+10. COMMITS AND PUSHES
+==================================================
+
+1. Prototype commit A2, parent commit A, message exactly:
+   fix: correct Golden-first pilot, stage 1 revision (GF-2A)
+   My identity, no trailer, the raw commit inspected, only SP-44's files;
+   `git push origin main` through my approval prompt; verified with
+   `git ls-remote --symref origin`; both addresses still 404 without
+   credentials. If I deny the prompt or the push is refused: GF-2's SP-42.
+2. No MULTIPLECORP commit in GF-2A. GF-2 §10 changes: commit B's parent is
+   the last prototype commit before it (A2, or a later corrective commit I
+   authorize); commit 13 still has parent da3040a and carries GF-2A's
+   records with GF-2's.
+
+==================================================
+11. RECORDS
+==================================================
+
+11.1 In Part 1R, in the working tree, following GF-2 §11's conventions:
+1. Source record 70 —
+   docs/00-governance/sources/P7_REBASELINE_STAGE2_GF2A_OWNER_DECISIONS_2026-10-15.txt,
+   the transcript of Appendix A between its markers, made by script and
+   equal to: 99 lines, 8,362 bytes, SHA-256
+   c03024c1e91530d8d6d609fe418cc0a4a61114c829a84b92d1b465e6a2c13cce (a
+   mismatch is a STOP); first line "TRANSCRIBED LOCKED SOURCE RECORD —
+   seventieth source record". Source record 71 —
+   docs/00-governance/sources/P7_REBASELINE_STAGE2_GF2A_OWNER_AUTHORIZATION_<WIB date of receipt>.txt,
+   this message up to the separator line before "APPENDIX"; my first
+   session's answer to section 3.1 quoted in its header. `-text` entries.
+2. DECISION_LOG: index rows and one entry "DIR-071, DIR-072 and OBS-028 —
+   P7 UX re-baseline GF-2 CP-1 decisions, amendment GF-2A and its
+   baseline", after GF-2's entry; SP-43–SP-50 with DIR-072; my answers to
+   section 3.1 quoted in DIR-072's entry. In DIR-070's entry, in place of
+   GF-2 §8's verbatim quote, my verdict line "MY VERDICT: CP-1 IS NOT
+   VISUALLY APPROVED." with a link to record 70.
+3. DECISION_INDEX: rows DIR-071 and DIR-072, ACTIVE; DIR-070's status
+   gains "; CP-1 not visually approved (DIR-071); amended by DIR-072
+   (GF-2A), SP-39 (a) revised by SP-43"; DIR-072 in the language row.
+4. SOURCE_OF_TRUTH: a subsection "P7 UX re-baseline GF-2 CP-1 decisions
+   and amendment GF-2A" (71 records).
+11.2 Added to GF-2's Part 5, which a later authorization of mine starts:
+TECH-035 also records commit A2, WF-2R, `evidence/gf2a/` and record 71's
+values; GOLDEN_FIRST_PILOT gains GF-2A's sections — the verdict, stage
+1R's changes, the measurements, CP-1R and my answer; OWNER_QUESTIONS —
+OQ-13 concept A chosen, OQ-15 as CP-1R decides it, OQ-17 and OQ-18 open as
+prototype-only proposals (DIR-071); DECISION_INDEX — DIR-069's status
+gains "; OQ-13 concept A chosen and OQ-15 deferred to CP-1R (DIR-071)";
+the gate record gains "Stage 2 — GF-2A amendment (DIR-071, DIR-072)",
+"Stage 2 — GF-2A verification" (OBS-028) and "Stage 2 — CP-1R" with
+GF2A-01–GF2A-12; CONTEXT_INDEX gains SP-43–SP-50, WF-2R, CP-1R, CQ-1–CQ-7
+(my CP-1 answers — not an OQ), GF2A-nn and records 70 and 71, its
+approval-chain sentence counting the source records as they then stand;
+gate GF-2's GF2-02 counts those records, GF2-04 includes WF-2R and GF2-12
+commit A2. Everything else of GF-2 §11 and §13 stays.
+
+==================================================
+12. STOP CONDITIONS
+==================================================
+
+GF-2 §15's conditions apply, and STOP and report, without working around
+the condition, when: section 5 fails — commit A, the working tree, the
+records' values, the lab or a free identifier —; my first-session answer
+does not confirm commit A or record 71's values; a canonical first view
+cannot be met within SP-46's floors (report the measured options); a
+correction would change OC-05's order, IP-08 or PT-26's full-height sheet,
+IP-19's one answer per line, VP-3, VP-4, OC-08, S2-J01's one code field or
+a SECURITY rule, or would need a new metric, query or chart; the
+illustration could follow the form state only by changing authentication
+behaviour; PS-33's root cause cannot be found, or fixed within SP-49's
+files; a
+protected item of section 7 would have to change beyond a labelled,
+listed need; a D variant would be reverted or kept permanently without my
+decision; work would reach stage 2's pages or states, WF-3, WF-4 or Part
+5; a second workflow or more than 3 agents would be needed.
+
+==================================================
+13. NOT AUTHORIZED
+==================================================
+
+Everything GF-2 §16 lists, and: stage 2 and Part 5; commit 13 or any
+MULTIPLECORP commit; a production metric, query, chart or change-control
+item; a disclosure on a KPI card beyond "Rincian angka"; any change to the
+canonical rules section 12 names; recording a D variant, GR-16, a
+proposed string or motion as approved without my explicit answer;
+changing commit A, `evidence/gf1/` or `evidence/gf2/`; any workflow but
+WF-2R.
+
+==================================================
+14. FOOTER
+==================================================
+
+End the CP-1R report and every stop report with GF-2 §17's footer, one
+concrete value each. A report that ends a session for a resume uses it
+with "Kirim prompt ini ke agent: Executor", the Model and Effort of my
+confirmed configuration, Session "chat baru", and in Reason: send GF-2's
+file and this file with "LANJUTKAN GF-2A" once that configuration is set
+again, Ultracode included.

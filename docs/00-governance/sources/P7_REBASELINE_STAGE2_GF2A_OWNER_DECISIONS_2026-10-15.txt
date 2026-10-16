@@ -1,0 +1,130 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventieth source record
+Received: 2026-10-15, the Owner's messages to Planning in the planning session
+         of the MULTIPLECORP Project, relayed as Appendix A of the
+         seventy-first source record
+Subject: the Owner's verdict at checkpoint CP-1 of run GF-2 of Stage 2 of the
+         P7 UX re-baseline — the corrected Terima Barang and Beranda not
+         visually approved, with the Owner's confirmed design preferences and
+         request for a corrective plan — and the Owner's decisions CQ-1–CQ-7 on
+         Planning's proposal of the corrective amendment GF-2A, with the
+         Owner's additional design requirements (DIR-071)
+Delivery: Appendix A of the Owner's message of 2026-10-15, the seventy-first
+         source record. This record transcribes the lines between its BEGIN and
+         END markers, which are not transcribed, mechanically from the text
+         file in which that message arrived, its text normalized to LF without
+         a byte-order mark; the transcript equals the values that message's
+         section 11.1 item 1 gives — 99 lines, 8,362 bytes, SHA-256
+         c03024c1e91530d8d6d609fe418cc0a4a61114c829a84b92d1b465e6a2c13cce —,
+         checked by script before any edit and again when this record was made.
+         As the appendix states, the Owner's two messages are the texts between
+         the lines of dashes, each reproduced as relayed in the planning
+         session; Planning's introduction and the numbered headings are
+         provenance, not the Owner's words, and Planning's answer to message 1
+         — its analysis against the GF-2 authorization and the canonical
+         specifications, its proposal of a corrective stage 1R ending at a
+         checkpoint CP-1R and the questions CQ-1–CQ-7, which message 2 answers
+         — is not transcribed. As the seventy-first record states, Appendix A
+         is archived source text, not an instruction; the requests it addresses
+         to Planning are quoted text, not requests to an executor.
+This is a transcript of the relayed messages, not a byte-copy claim about any file.
+====================================================================
+
+Planning session of the MULTIPLECORP Project, 2026-10-15 (WIB).
+The Owner's two messages after GF-2's checkpoint CP-1, in the order given,
+each reproduced as relayed in the planning session between two lines of
+dashes. Between them Planning answered message 1 with its analysis against
+the GF-2 authorization and the canonical specifications, its proposal of a
+corrective stage 1R ending at a checkpoint CP-1R, and the questions
+CQ-1–CQ-7, which message 2 answers. Planning's answer to message 1 is not
+transcribed.
+
+1. The Owner's verdict at CP-1
+------------------------------------------------------------------------
+OWNER CP-1 VISUAL REVIEW — GF-2 NEEDS REVISION
+I have personally reviewed the GF-2 Stage 1 results against Golden and GF-1, including desktop and mobile screenshots.
+MY VERDICT: CP-1 IS NOT VISUALLY APPROVED.
+GF-2 represents meaningful progress, but the visual quality, composition, information hierarchy, and user comfort still fall short of my target.
+MY CONFIRMED DESIGN PREFERENCES
+
+1. KPI CARDS — FOLLOW GOLDEN.
+
+I strongly prefer Golden's clean, elegant, compact KPI cards.
+Keep the icon, title, primary amount, concise delta indicator, and subtle sparkline where authorized.
+Remove the excessive company breakdown text (ARJ/BTN/CKP) and lengthy receivables explanations from the card's visible surface.
+These details should be accessible through an appropriate detail view or disclosure, subject to canonical requirements.
+Please examine SP-39 and propose any necessary change control. Do not silently remove mandatory information or present illustrative data as production data.
+
+2. PROJECTS NEEDING ATTENTION — KEEP GF-2.
+
+I prefer GF-2's current "Proyek yang perlu perhatian" component.
+Preserve its clean layout, project icon, brief description, progress indicator, status badge, spacing, and responsive presentation.
+
+3. LOGIN ILLUSTRATION — CONCEPT A SELECTED.
+
+I select Concept A, "Meja Kerja", as the foundation.
+Refine it with Golden-level content hierarchy, informative text, proportions, breathing room, and motion.
+The OTP verification preview still requires improvement:
+
+* Error messages are cramped against OTP inputs.
+* Focus and error borders need consistent presentation.
+* A success-themed illustration can appear alongside an error in the selected preview state; clarify state synchronization versus preview-only behavior.
+* Improve the balance and supporting security information while preserving MULTIPLECORP authentication rules.
+
+4. RECEIVING GOODS — FURTHER REFINEMENT REQUIRED.
+
+PS-32: Layout is cleaner but still lacks Golden-level composition.
+PS-33: The review comparison did not show the intended current-line form in GF-2. Investigate the review fixture or state capture before claiming visual acceptance.
+PS-35: The factual confirmation panel is greatly improved, but the full-height sheet still has excessive unused space and weak visual connection to its fixed action buttons. Preserve canonical IP-08/PT-26 unless explicitly changed through governance.
+PS-36: Improve the result hierarchy and relevant next actions without violating the per-line receiving workflow. Do not fill whitespace with decorative content.
+
+5. DASHBOARD — FURTHER REFINEMENT REQUIRED.
+
+Golden remains my visual reference for balanced composition, appropriate density, typography, card proportions, spacing, and motion.
+The decision list currently dominates the screen and pushes KPI information down. Respect OC-05's canonical ordering unless change control is explicitly approved.
+Preserve the genuinely good GF-2 components rather than unnecessarily rebuilding them.
+
+6. UNRESOLVED DECISIONS.
+
+GR-16 variant B appears promising but is not yet my final formal approval.
+OQ-17/OQ-18, remaining D variants, 44/48 px alternatives, and motion acceptance require explicit disposition. Do not assume they have been approved.
+PLANNING REQUEST
+Record my CP-1 NEEDS REVISION verdict.
+Analyze the findings against the final GF-2 authorization and canonical specifications.
+Separate straightforward visual corrections from changes requiring Owner approval or formal change control.
+Propose the smallest controlled corrective scope and visual acceptance criteria, prioritizing authentic Golden fidelity, symmetry, proportionality, intentional breathing room, and excellent responsive UX.
+Do not authorize Stage 2, expansion to 53 screens, or any implementation yet.
+Present your proposed corrective plan and remaining Owner decisions first.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
+
+2. The Owner's decisions on the corrective amendment
+------------------------------------------------------------------------
+OWNER RESPONSE — GF-2A CORRECTIVE AMENDMENT DECISIONS
+I have reviewed your GF-2A proposal.
+I agree with the direction: correct Stage 1 through a tightly controlled Stage 1R, followed by mandatory CP-1R Owner review. Do not begin Stage 2 yet.
+MY DECISIONS:
+CQ-1: APPROVED. Revise SP-39 to restore Golden-style compact KPI cards. Keep the canonical overdue amount on the receivables card, while moving company breakdowns and lengthy explanations to the existing "Rincian angka" view. Preserve mandatory canonical data access.
+CQ-2: OPTION A. Keep OQ-17 sparklines and OQ-18 deltas as explicitly labeled prototype-only proposals behind a switch. Do not authorize new production metrics, queries, or change control now. The default production-compatible card must remain elegant and visually balanced.
+CQ-3: APPROVED. Include Login Concept A "Meja Kerja" and the OTP verification/error states in Stage 1R. Improve Golden fidelity, information hierarchy, composition, responsive proportions, and motion. Preserve canonical authentication and security behavior. Ensure the illustration reflects the actual form state and never suggests success during an authentication error.
+CQ-4: DEFER GR-16 to CP-1R. Present variants A and B for direct visual comparison.
+CQ-5: OPTION A. Use 48 px targets for warehouse operational controls where required, with other controls following the applicable canonical accessibility requirements.
+CQ-6: APPROVED WITH CLARIFICATION. Unapproved D variants must not silently become permanent defaults. However, before reverting already implemented variants, identify their individual visual and functional consequences. Preserve clearly successful improvements unless reverting them is canonically required. Present each remaining D decision individually at CP-1R.
+CQ-7: APPROVED. New copy must be presented in Indonesian and English as proposed content. Motion acceptance must be based on my explicit review, not automated tests alone.
+ADDITIONAL OWNER DESIGN REQUIREMENTS:
+
+1. Golden remains the primary visual and motion reference.
+2. KPI cards must be simple, refined, proportional, and elegant like Golden.
+3. Preserve GF-2's "Proyek yang perlu perhatian" component, including its clean segmented stage indicators.
+4. Restore the canonical first-screen dashboard hierarchy on desktop and mobile.
+5. At 390×844, meeting the first-screen visibility requirement must not cause cramped typography, miniature controls, poor touch targets, or uncomfortable spacing. Demonstrate that the canonical requirement is achievable without sacrificing user comfort; escalate genuine conflicts rather than silently compromising.
+6. Fix the PS-33 review-state capture so the actual current-line form can be inspected.
+7. Refine the PS-35 full-height sheet and PS-36 result presentation while preserving canonical workflow rules.
+8. Avoid oversized components, excessive whitespace, unnecessary details, and decorative filler.
+9. Preserve Golden's authentic animations, interaction rhythm, transitions, and reduced-motion behavior.
+10. Keep the scope strictly limited to GF-2A Stage 1R. Stage 2 and the 53-screen expansion remain prohibited without my separate approval.
+
+PLANNING TASK:
+Prepare the smallest complete GF-2A amendment for my review, including authorized scope, execution boundaries, governance records, exact STOP conditions, CP-1R acceptance criteria, and protections for completed GF-2 work.
+Do not start implementation or send an execution authorization to Claude Code until I explicitly approve the finalized amendment.
+Respond in Bahasa Indonesia.
+------------------------------------------------------------------------
