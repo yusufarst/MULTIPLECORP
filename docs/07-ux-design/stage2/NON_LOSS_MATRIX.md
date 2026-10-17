@@ -1,10 +1,12 @@
 # Non-loss matrix
 
-Status: DRAFT | Updated: 2026-10-14 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-18 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §12.3. Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
 **Sources.** Each section's identifier column is built by script from its defining document — INFORMATION_ARCHITECTURE [§8](../INFORMATION_ARCHITECTURE.md#8-screen-inventory), [§2](../INFORMATION_ARCHITECTURE.md#2-derived-navigation-requirements), [§3](../INFORMATION_ARCHITECTURE.md#3-glossary) and [§4](../INFORMATION_ARCHITECTURE.md#4-design-decisions); [WORKFLOWS §10](../../03-workflows/WORKFLOWS/s10-14-signals-decisions-traceability.md#10-derived-signals-and-action-queue), [§9](../../03-workflows/WORKFLOWS/s08-09-corrections-indivisible.md#9-indivisible-business-actions) and [WF-PRJ-03](../../03-workflows/WORKFLOWS/s05-07-08-completion-migration.md#wf-prj-03--project-completion-penyelesaian-desk); [V1_SCOPE](../../01-product/V1_SCOPE.md) — MUST SHIP, the selectable document catalog, SHOULD SHIP, DEFERRED and OUT OF SCOPE; [PERMISSIONS_MATRIX](../../05-security/PERMISSIONS_MATRIX.md) §§3, 4 and 9; ADMIN_FLOW [§10](../ADMIN_FLOW/s10-a-journeys.md#10-journeys) and [§14](../ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue); DESIGN_SYSTEM [§3](../DESIGN_SYSTEM.md#3-derived-visual-requirements) and [§4](../DESIGN_SYSTEM.md#4-design-decisions); the gate record's [provisional dispositions](../evidence/P7_REBASELINE_GATE.md#provisional-dispositions) as R1's [disposition delta](../evidence/P7_REBASELINE_GATE.md#c1-rework--disposition-delta) revised them —, and its destinations from the S2-1 drafts: [IA_PAGE_INVENTORY](IA_PAGE_INVENTORY.md) (PG), [NAVIGATION_MAP](NAVIGATION_MAP.md), [WRITTEN_FLOWS](WRITTEN_FLOWS.md) (J-…, WFL) and [QUERY_BUDGET_CHECKS](QUERY_BUDGET_CHECKS.md). It completes R1's [revised non-loss map](../evidence/P7_REBASELINE_GATE.md#c1-rework--revised-non-loss-map), which said the full matrix stays Stage 3 work: S2-1 drafts the complete matrix and Stage 3 makes it normative (DIR-061 SD-05; DIR-063). No technology behaviour is stated.
+
+*Note of 2026-10-18:* run PC-2 completed this matrix against Stage 3's drafts in [section Q](#q-stage-3--every-requirement-to-its-page-route-and-interaction) (DIR-078 SP-63); the matrix keeps its DRAFT status.
 
 ## How to read the matrix
 
@@ -568,3 +570,366 @@ Each section's identifier column against the identifiers its defining document h
 | O | D-IA-01–D-IA-17 and D-DS-01–D-DS-09 | 26 | 26 — D-IA 17, D-DS 9; KEEP 14, ADAPT 6, SUPERSEDE 6 | equal, same order | 0 |
 
 **In all:** 428 rows in sections A–O, each section equal to its defining document; **rows without a destination: 0**. The counts equal Planning's of DIR-064 §11.4 — SCR 60, QS 22, DOC 14, CAP 18, 80 capabilities (ADM 37, ADM_PLUS 26, OWNER_ONLY 17), OD 16, 39 journeys, AX 37, MSG 41, the ten predicates, UXN 26, UXV 22, D-IA 17 and D-DS 9. The glossary carried in section O holds 191 terms, GL-001–GL-191.
+
+### Q. Stage 3 — every requirement to its page, route and interaction
+
+*Added on 2026-10-18 by run PC-2 under [DIR-078](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-63 and SP-68.* Sections A–P map the approved revision's identifiers to Stage 2's pages; this section maps every V1 capability, acceptance criterion, SCR and user-visible rule to the Stage 3 drafts — a page of [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) §8 with its [NAVIGATION_CONTRACTS](../NAVIGATION_CONTRACTS.md) contract, a route of [ROUTE_CONTRACTS](../../03-workflows/ROUTE_CONTRACTS.md), an interaction of [INTERACTION_CONTRACTS](../../03-workflows/INTERACTION_CONTRACTS.md) or a key of [LOCALIZATION](../LOCALIZATION.md). Built by script from those documents and sections A–P.
+
+#### Q.1 The approved screens SCR-01–SCR-60
+
+Each screen with its pages ([INFORMATION_ARCHITECTURE §8.7](../INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages)) and their navigation contracts and views.
+
+| SCR | Pages | NAV · ROUTE |
+| --- | --- | --- |
+| SCR-01 | PG-001, PG-002 | NAV-001 · ROUTE-001; NAV-002 · ROUTE-002 |
+| SCR-02 | PG-003, PG-004 | NAV-003 · ROUTE-003; NAV-004 · ROUTE-004 |
+| SCR-03 | PG-065 | NAV-065 · ROUTE-065 |
+| SCR-04 | PG-005 | NAV-005 · ROUTE-005 |
+| SCR-05 | PG-006, PG-007 | NAV-006 · ROUTE-006; NAV-007 · ROUTE-007 |
+| SCR-06 | PG-007 | NAV-007 · ROUTE-007 |
+| SCR-07 | PG-008 | NAV-008 · ROUTE-008 |
+| SCR-08 | PG-009 | NAV-009 · ROUTE-009 |
+| SCR-09 | PG-010 | NAV-010 · ROUTE-010 |
+| SCR-10 | PG-011 | NAV-011 · ROUTE-011 |
+| SCR-11 | PG-013 | NAV-013 · ROUTE-013 |
+| SCR-12 | PG-037 | NAV-037 · ROUTE-037 |
+| SCR-13 | PG-014 | NAV-014 · ROUTE-014 |
+| SCR-14 | PG-011, PG-012 | NAV-011 · ROUTE-011; NAV-012 · ROUTE-012 |
+| SCR-15 | PG-015 | NAV-015 · ROUTE-015 |
+| SCR-16 | PG-016 | NAV-016 · ROUTE-016 |
+| SCR-17 | PG-017 | NAV-017 · ROUTE-017 |
+| SCR-18 | PG-018 | NAV-018 · ROUTE-018 |
+| SCR-19 | PG-019 | NAV-019 · ROUTE-019 |
+| SCR-20 | PG-020 | NAV-020 · ROUTE-020 |
+| SCR-21 | PG-021, PG-022 | NAV-021 · ROUTE-021; NAV-022 · ROUTE-022 |
+| SCR-22 | PG-023, PG-024 | NAV-023 · ROUTE-023; NAV-024 · ROUTE-024 |
+| SCR-23 | PG-025 | NAV-025 · ROUTE-025 |
+| SCR-24 | PG-026 | NAV-026 · ROUTE-026 |
+| SCR-25 | PG-027 | NAV-027 · ROUTE-027 |
+| SCR-26 | PG-028 | NAV-028 · ROUTE-028 |
+| SCR-27 | PG-029 | NAV-029 · ROUTE-029 |
+| SCR-28 | PG-030 | NAV-030 · ROUTE-030 |
+| SCR-29 | PG-031 | NAV-031 · ROUTE-031 |
+| SCR-30 | PG-032 | NAV-032 · ROUTE-032 |
+| SCR-31 | PG-033 | NAV-033 · ROUTE-033 |
+| SCR-32 | PG-034 | NAV-034 · ROUTE-034 |
+| SCR-33 | PG-040 | NAV-040 · ROUTE-040 |
+| SCR-34 | PG-035 | NAV-035 · ROUTE-035 |
+| SCR-35 | PG-036 | NAV-036 · ROUTE-036 |
+| SCR-36 | PG-038 | NAV-038 · ROUTE-038 |
+| SCR-37 | PG-039 | NAV-039 · ROUTE-039 |
+| SCR-38 | PG-041, PG-042 | NAV-041 · ROUTE-041; NAV-042 · ROUTE-042 |
+| SCR-39 | PG-042, PG-043 | NAV-042 · ROUTE-042; NAV-043 · ROUTE-043 |
+| SCR-40 | PG-044 | NAV-044 · ROUTE-044 |
+| SCR-41 | PG-045 | NAV-045 · ROUTE-045 |
+| SCR-42 | PG-046 | NAV-046 · ROUTE-046 |
+| SCR-43 | PG-047 | NAV-047 · ROUTE-047 |
+| SCR-44 | PG-048 | NAV-048 · ROUTE-048 |
+| SCR-45 | PG-049 | NAV-049 · ROUTE-049 |
+| SCR-46 | PG-050 | NAV-050 · ROUTE-050 |
+| SCR-47 | PG-051 | NAV-051 · ROUTE-051 |
+| SCR-48 | PG-052 | NAV-052 · ROUTE-052 |
+| SCR-49 | PG-053 | NAV-053 · ROUTE-053 |
+| SCR-50 | PG-054 | NAV-054 · ROUTE-054 |
+| SCR-51 | PG-055 | NAV-055 · ROUTE-055 |
+| SCR-52 | PG-056 | NAV-056 · ROUTE-056 |
+| SCR-53 | PG-057 | NAV-057 · ROUTE-057 |
+| SCR-54 | PG-059 | NAV-059 · ROUTE-059 |
+| SCR-55 | PG-061 | NAV-061 · ROUTE-061 |
+| SCR-56 | PG-062 | NAV-062 · ROUTE-062 |
+| SCR-57 | PG-060 | NAV-060 · ROUTE-060 |
+| SCR-58 | PG-058 | NAV-058 · ROUTE-058 |
+| SCR-59 | PG-063 | NAV-063 · ROUTE-063 |
+| SCR-60 | PG-064 | NAV-064 · ROUTE-064 |
+
+#### Q.2 V1 capabilities CAP-01–CAP-18
+
+Section F's pages and written flows with their contracts.
+
+| CAP | Pages | NAV · ROUTE | Written flows |
+| --- | --- | --- | --- |
+| CAP-01 | PG-059, PG-060, PG-061 | NAV-059 · ROUTE-059; NAV-060 · ROUTE-060; NAV-061 · ROUTE-061 | J-MD-01, J-ACC-02, WFL-09 |
+| CAP-02 | PG-054, PG-055, PG-016, PG-017 | NAV-054 · ROUTE-054; NAV-055 · ROUTE-055; NAV-016 · ROUTE-016; NAV-017 · ROUTE-017 | J-MD-02, J-MD-03 |
+| CAP-03 | PG-056 | NAV-056 · ROUTE-056 | J-MD-04 |
+| CAP-04 | PG-010, PG-011, PG-013, PG-014, PG-037 | NAV-010 · ROUTE-010; NAV-011 · ROUTE-011; NAV-013 · ROUTE-013; NAV-014 · ROUTE-014; NAV-037 · ROUTE-037 | J-PRJ-01, J-QUO-01, J-PRJ-02, J-FUL-01 |
+| CAP-05 | PG-015, PG-016, PG-017 | NAV-015 · ROUTE-015; NAV-016 · ROUTE-016; NAV-017 · ROUTE-017 | J-PUR-01, J-PUR-02 |
+| CAP-06 | PG-018, PG-029 | NAV-018 · ROUTE-018; NAV-029 · ROUTE-029 | J-INV-01–J-INV-07, J-PUR-03 |
+| CAP-07 | PG-030, PG-031, PG-032, PG-033, PG-034 | NAV-030 · ROUTE-030; NAV-031 · ROUTE-031; NAV-032 · ROUTE-032; NAV-033 · ROUTE-033; NAV-034 · ROUTE-034 | J-FUL-02, J-FUL-03, J-FUL-04, J-FUL-05 |
+| CAP-08 | PG-011, PG-035, PG-036 | NAV-011 · ROUTE-011; NAV-035 · ROUTE-035; NAV-036 · ROUTE-036 | J-DOC-01 |
+| CAP-09 | PG-011, PG-039, PG-038 | NAV-011 · ROUTE-011; NAV-039 · ROUTE-039; NAV-038 · ROUTE-038 | J-ADM-01, J-DOC-02 |
+| CAP-10 | PG-041, PG-046 | NAV-041 · ROUTE-041; NAV-046 · ROUTE-046 | J-FIN-01, J-FIN-02, J-FIN-03, J-FIN-05, J-FIN-08 |
+| CAP-11 | PG-051, PG-052, PG-006, PG-011, PG-047, PG-050 | NAV-051 · ROUTE-051; NAV-052 · ROUTE-052; NAV-006 · ROUTE-006; NAV-011 · ROUTE-011; NAV-047 · ROUTE-047; NAV-050 · ROUTE-050 | J-FIN-04, J-FIN-06, J-FIN-07 |
+| CAP-12 | PG-013 | NAV-013 · ROUTE-013 | J-PRJ-01 |
+| CAP-13 | PG-001, PG-004, PG-065, PG-060 | NAV-001 · ROUTE-001; NAV-004 · ROUTE-004; NAV-065 · ROUTE-065; NAV-060 · ROUTE-060 | J-ACC-01, WFL-05, WFL-06, WFL-09; [AUTH_JOURNEYS](AUTH_JOURNEYS.md) |
+| CAP-14 | PG-001 | NAV-001 · ROUTE-001 | WFL-04; [LOCALIZATION_ARCHITECTURE](LOCALIZATION_ARCHITECTURE.md) |
+| CAP-15 | PG-058 | NAV-058 · ROUTE-058 | J-MIG-01 |
+| CAP-16 | no page by design — operated by the human operator (INFORMATION_ARCHITECTURE §5; V1_SCOPE) | — | — |
+| CAP-17 | PG-006, PG-007, PG-008, PG-009 | NAV-006 · ROUTE-006; NAV-007 · ROUTE-007; NAV-008 · ROUTE-008; NAV-009 · ROUTE-009 | WFL-01, WFL-03; section B |
+| CAP-18 | PG-011, PG-012 | NAV-011 · ROUTE-011; NAV-012 · ROUTE-012 | J-PRJ-03, J-PRJ-04; section J |
+
+#### Q.3 Acceptance criteria AC-01–AC-23
+
+Each criterion through its capabilities ([ACCEPTANCE_CRITERIA](../../01-product/ACCEPTANCE_CRITERIA.md)).
+
+| AC | Capabilities | Pages | Also |
+| --- | --- | --- | --- |
+| AC-01 | CAP-01 | PG-059, PG-060, PG-061 | — |
+| AC-02 | CAP-02 | PG-054, PG-055, PG-016, PG-017 | — |
+| AC-03 | CAP-03 | PG-056 | — |
+| AC-04 | CAP-04 | PG-010, PG-011, PG-013, PG-014, PG-037 | — |
+| AC-05 | CAP-05 | PG-015, PG-016, PG-017 | — |
+| AC-06 | CAP-06 | PG-018, PG-029 | — |
+| AC-07 | CAP-07 | PG-030, PG-031, PG-032, PG-033, PG-034 | — |
+| AC-08 | CAP-08 | PG-011, PG-035, PG-036 | — |
+| AC-09 | CAP-09 | PG-011, PG-039, PG-038 | — |
+| AC-10 | CAP-10 | PG-041, PG-046 | — |
+| AC-11 | CAP-11 | PG-051, PG-052, PG-006, PG-011, PG-047, PG-050 | — |
+| AC-12 | CAP-08, CAP-10, CAP-13 | PG-011, PG-035, PG-036, PG-041, PG-046, PG-001, PG-004, PG-065, PG-060 | — |
+| AC-13 | CAP-01, CAP-13 | PG-059, PG-060, PG-061, PG-001, PG-004, PG-065 | [ROUTE_CONTRACTS](../../03-workflows/ROUTE_CONTRACTS.md) — each route's capability and scope |
+| AC-14 | CAP-14 | PG-001 | [LOCALIZATION](../LOCALIZATION.md) — both languages, the key inventory |
+| AC-15 | CAP-12 | PG-013 | — |
+| AC-16 | CAP-03, CAP-06, CAP-10, CAP-13 | PG-056, PG-018, PG-029, PG-041, PG-046, PG-001, PG-004, PG-065, PG-060 | — |
+| AC-17 | CAP-15 | PG-058 | — |
+| AC-18 | CAP-16 | — | P9 — backup and recovery ([docs/09-operations](../../09-operations/README.md); SP-67) |
+| AC-19 | CAP-16 | — | P9 — backup and recovery ([docs/09-operations](../../09-operations/README.md); SP-67) |
+| AC-20 | CAP-04, CAP-06, CAP-14 | PG-010, PG-011, PG-013, PG-014, PG-037, PG-018, PG-029, PG-001 | — |
+| AC-21 | CAP-09, CAP-18 | PG-011, PG-039, PG-038, PG-012 | — |
+| AC-22 | CAP-06 | PG-018, PG-029 | — |
+| AC-23 | CAP-17 | PG-006, PG-007, PG-008, PG-009 | — |
+
+#### Q.4 Indivisible actions AX-01–AX-37
+
+Each command with its routes and interactions ([ROUTE_CONTRACTS](../../03-workflows/ROUTE_CONTRACTS.md) §3; [INTERACTION_CONTRACTS](../../03-workflows/INTERACTION_CONTRACTS.md) §3, the same numbers).
+
+| AX | Pages | Routes and interactions |
+| --- | --- | --- |
+| AX-01 | PG-025, PG-011, PG-022 | ROUTE-184 · INT-184 |
+| AX-02 | PG-025 | ROUTE-185 · INT-185 |
+| AX-03 | PG-024 | ROUTE-186 · INT-186 |
+| AX-04 | PG-022 | ROUTE-181 · INT-181 |
+| AX-05 | PG-016, PG-020 | ROUTE-183 · INT-183 |
+| AX-06 | PG-027, PG-026 | ROUTE-193 · INT-193; ROUTE-194 · INT-194; ROUTE-195 · INT-195 |
+| AX-07 | PG-029 | ROUTE-197 · INT-197 |
+| AX-08 | PG-032 | ROUTE-205 · INT-205; ROUTE-206 · INT-206 |
+| AX-09 | PG-031 | ROUTE-201 · INT-201; ROUTE-204 · INT-204; ROUTE-208 · INT-208; ROUTE-209 · INT-209 |
+| AX-10 | PG-034 | ROUTE-188 · INT-188; ROUTE-207 · INT-207; ROUTE-210 · INT-210 |
+| AX-11 | PG-028 | ROUTE-176 · INT-176 |
+| AX-12 | PG-016 | ROUTE-173 · INT-173 |
+| AX-13 | PG-014, PG-011 | ROUTE-157 · INT-157; ROUTE-158 · INT-158 |
+| AX-14 | PG-011 | ROUTE-159 · INT-159; ROUTE-160 · INT-160 |
+| AX-15 | PG-036, PG-014, PG-016, PG-022, PG-024 | ROUTE-155 · INT-155; ROUTE-182 · INT-182; ROUTE-187 · INT-187; ROUTE-202 · INT-202; ROUTE-208 · INT-208; ROUTE-222 · INT-222 |
+| AX-16 | PG-042, PG-043 | ROUTE-242 · INT-242 |
+| AX-17 | PG-043 | ROUTE-243 · INT-243; ROUTE-244 · INT-244 |
+| AX-18 | PG-046 | ROUTE-251 · INT-251 |
+| AX-19 | PG-045, PG-048 | ROUTE-252 · INT-252; ROUTE-253 · INT-253 |
+| AX-20 | PG-045 | ROUTE-254 · INT-254 |
+| AX-21 | PG-047 | ROUTE-255 · INT-255 |
+| AX-22 | PG-043 | ROUTE-245 · INT-245 |
+| AX-23 | PG-048 | ROUTE-256 · INT-256 |
+| AX-24 | PG-043 | ROUTE-247 · INT-247; ROUTE-248 · INT-248 |
+| AX-25 | PG-012 | ROUTE-161 · INT-161 |
+| AX-26 | PG-012 | ROUTE-162 · INT-162 |
+| AX-27 |  | ROUTE-163 · INT-163 |
+| AX-28 | PG-058 | ROUTE-275 · INT-275 |
+| AX-29 | PG-017 | ROUTE-171 · INT-171 |
+| AX-30 | PG-027 | ROUTE-194 · INT-194; ROUTE-196 · INT-196 |
+| AX-31 | PG-043, PG-036, PG-046 | ROUTE-249 · INT-249; ROUTE-250 · INT-250 |
+| AX-32 | PG-016 | ROUTE-174 · INT-174 |
+| AX-33 | PG-047, PG-049 | ROUTE-200 · INT-200; ROUTE-260 · INT-260 |
+| AX-34 | PG-016 | ROUTE-175 · INT-175 |
+| AX-35 | PG-024, PG-011 | ROUTE-189 · INT-189 |
+| AX-36 | PG-034, PG-028 | ROUTE-211 · INT-211 |
+| AX-37 | PG-029 | ROUTE-198 · INT-198; ROUTE-199 · INT-199 |
+
+#### Q.5 Messages MSG-01–MSG-41
+
+Each message with its key ([LOCALIZATION](../LOCALIZATION.md) §6.1) and the contracts that use it.
+
+| MSG | Key | Interactions |
+| --- | --- | --- |
+| MSG-01 | `messages.msg_01` | IG-02, every contract |
+| MSG-02 | `messages.msg_02` | IG-02, every contract |
+| MSG-03 | `messages.msg_03` | IG-02, every contract; INT-016 |
+| MSG-04 | `messages.msg_04` | IG-02, every contract |
+| MSG-05 | `messages.msg_05` | — |
+| MSG-06 | `messages.msg_06` | IG-02, every contract; INT-017 |
+| MSG-07 | `messages.msg_07` | IG-02, every contract; INT-017 |
+| MSG-08 | `messages.msg_08` | — |
+| MSG-09 | `messages.msg_09` | IG-02, every contract; INT-003, INT-014, INT-019, INT-020 |
+| MSG-10 | `messages.msg_10` | IG-02, every contract; INT-014 |
+| MSG-11 | `messages.msg_11` | IG-02, every contract; INT-010 |
+| MSG-12 | `messages.msg_12` | IG-02, every contract; INT-101, INT-104, INT-105, INT-106, INT-107, INT-108, INT-109, INT-111 and 131 more |
+| MSG-13 | `messages.msg_13` | IG-02, every contract |
+| MSG-14 | `messages.msg_14` | — |
+| MSG-15 | `messages.msg_15` | INT-013, INT-015 |
+| MSG-16 | `messages.msg_16` | — |
+| MSG-17 | `messages.msg_17` | INT-137, INT-151, INT-155, INT-171, INT-222 |
+| MSG-18 | `messages.msg_18` | — |
+| MSG-19 | `messages.msg_19` | INT-010, INT-011, INT-101, INT-102, INT-103, INT-104, INT-105, INT-106 and 10 more |
+| MSG-20 | `messages.msg_20` | IG-02, every contract; INT-011, INT-101, INT-102, INT-103, INT-104, INT-105, INT-106, INT-107 and 9 more |
+| MSG-21 | `messages.msg_21` | — |
+| MSG-22 | `messages.msg_22` | — |
+| MSG-23 | `messages.msg_23` | INT-005 |
+| MSG-24 | `messages.msg_24` | INT-005 |
+| MSG-25 | `messages.msg_25` | INT-006 |
+| MSG-26 | `messages.msg_26` | INT-008 |
+| MSG-27 | `messages.msg_27` | INT-011, INT-112, INT-113, INT-114, INT-115, INT-116, INT-117, INT-124 and 7 more |
+| MSG-28 | `messages.msg_28` | — |
+| MSG-29 | `messages.msg_29` | — |
+| MSG-30 | `messages.msg_30` | INT-191 |
+| MSG-31 | `messages.msg_31` | INT-013, INT-228 |
+| MSG-32 | `messages.msg_32` | — |
+| MSG-33 | `messages.msg_33` | INT-010 |
+| MSG-34 | `messages.msg_34` | INT-010 |
+| MSG-35 | `messages.msg_35` | INT-009 |
+| MSG-36 | `messages.msg_36` | INT-006 |
+| MSG-37 | `messages.msg_37` | INT-006 |
+| MSG-38 | `messages.msg_38` | — |
+| MSG-39 | `messages.msg_39` | INT-133, INT-137, INT-153, INT-155, INT-157, INT-158, INT-161, INT-186 and 6 more |
+| MSG-40 | `messages.msg_40` | INT-127, INT-128, INT-129, INT-159, INT-162, INT-163, INT-166, INT-168 and 37 more |
+| MSG-41 | `messages.msg_41` | — |
+
+#### Q.6 Signals QS-01–QS-24
+
+Each signal with its place ([INFORMATION_ARCHITECTURE §9.1](../INFORMATION_ARCHITECTURE.md#91-placement-of-every-signal)) and its row's interaction, INT-019.
+
+| QS | Group | Pages |
+| --- | --- | --- |
+| QS-01 | G2 · G1 | PG-025, PG-011 — INT-019 |
+| QS-02 | G2 · G1 | PG-017, PG-011 — INT-019 |
+| QS-03 | G2 · G1 | PG-025, PG-011 — INT-019 |
+| QS-04 | G2 · G1 | PG-011 — INT-019 |
+| QS-05 | G2 · G1 | PG-022, PG-016 — INT-019 |
+| QS-06 | G2 · G1 | PG-031, PG-030 — INT-019 |
+| QS-07 | G2 · G2 | PG-040 — INT-019 |
+| QS-08 | G2 · G2 | PG-036 — INT-019 |
+| QS-09 | G3 · G3 | PG-044, PG-043 — INT-019 |
+| QS-10 | G3 · G3 | PG-044 — INT-019 |
+| QS-11 | G3 · G3 | PG-044 — INT-019 |
+| QS-12 | G3 · G3; the credit linked to a written-off invoice also in the Owner review queue | PG-048, PG-045, PG-050 — INT-019 |
+| QS-13 | G3 · G3 | PG-047, PG-043 — INT-019 |
+| QS-14 | G1 · absent — no entry, count or badge exists for an Admin | PG-008 — INT-019 |
+| QS-15 | G4 · G4 | PG-011, PG-012, PG-042 — INT-019 |
+| QS-16 | G1 · G1 | PG-011 — INT-019 |
+| QS-17 | G2 · G1 | PG-018 — INT-019 |
+| QS-18 | G1 (attribution) and G2 · G1 (findings, stale counts) | PG-026, PG-019, PG-029 — INT-019 |
+| QS-19 | G3 · G3 | PG-036, PG-043 — INT-019 |
+| QS-20 | G1 · G1 | the refused command's target record; a notice with its age that leaves the list after 14 days — no task state, no "selesai" control — INT-019 |
+| QS-21 | G2 · G2 | the record — INT-019 |
+| QS-22 | G1 · not in *Pekerjaan* — the pending quantities show on PG-018 and PG-019 as their own line, blocking nothing (DIR-027) | PG-029 — INT-019 |
+| QS-23 | G1 · absent — no Admin page shows it; an Admin sees the deadline as the project's fact only | PG-011 — INT-019 |
+| QS-24 | — · G1, in *Keluarkan dan kirim* | PG-024, PG-011, PG-023 — INT-019 |
+
+#### Q.7 Capabilities — all 80 of PERMISSIONS_MATRIX §4
+
+Each capability with the views and commands that declare it.
+
+| Capability | Class | Views | Commands |
+| --- | --- | --- | --- |
+| `stock.view` | ADM | ROUTE-018, ROUTE-019, ROUTE-020, ROUTE-025, ROUTE-028, ROUTE-056, ROUTE-057 | ROUTE-176, ROUTE-184, ROUTE-282 |
+| `projects.view` | ADM | ROUTE-010, ROUTE-011, ROUTE-012, ROUTE-037, ROUTE-020, ROUTE-025, ROUTE-030, ROUTE-035, ROUTE-039, ROUTE-040, ROUTE-054, ROUTE-055 | ROUTE-184 |
+| `finance.view` | ADM | ROUTE-007, ROUTE-010, ROUTE-011, ROUTE-013, ROUTE-014, ROUTE-037, ROUTE-016, ROUTE-041, ROUTE-042, ROUTE-043, ROUTE-044, ROUTE-045, ROUTE-046, ROUTE-047, ROUTE-048, ROUTE-049, ROUTE-050 | ROUTE-154, ROUTE-241, ROUTE-251, ROUTE-255, ROUTE-261 |
+| `cost.view` | ADM | ROUTE-011, ROUTE-015, ROUTE-016, ROUTE-017, ROUTE-019, ROUTE-020, ROUTE-028, ROUTE-032, ROUTE-049, ROUTE-055 | ROUTE-171, ROUTE-176, ROUTE-205, ROUTE-257 |
+| `profit.view` | ADM | ROUTE-011 | — |
+| `evidence.view` | ADM | ROUTE-038, ROUTE-047 | ROUTE-255 |
+| `reports.export` | ADM | ROUTE-053 | ROUTE-283, ROUTE-284 |
+| `reports.consolidated` | OWNER_ONLY | ROUTE-006, ROUTE-052 | ROUTE-283 |
+| `review.view` | OWNER_ONLY | ROUTE-008 | — |
+| `audit.view` | OWNER_ONLY | ROUTE-063 | — |
+| `security_log.view` | OWNER_ONLY | ROUTE-064 | — |
+| `scope.all_companies` | OWNER_ONLY | — | no control of its own — the Owner's scope in every branch (RC-03) |
+| `users.manage` | OWNER_ONLY | ROUTE-060 | ROUTE-121, ROUTE-122, ROUTE-123, ROUTE-125, ROUTE-126, ROUTE-127, ROUTE-128, ROUTE-130, ROUTE-129 |
+| `permissions.manage` | OWNER_ONLY | ROUTE-060 | ROUTE-124 |
+| `companies.manage` | OWNER_ONLY | ROUTE-059, ROUTE-061 | ROUTE-131, ROUTE-132, ROUTE-133, ROUTE-134, ROUTE-135, ROUTE-136, ROUTE-137, ROUTE-228 |
+| `tax.configure` | OWNER_ONLY | ROUTE-062 | ROUTE-138 |
+| `requirements.set_waiver_eligibility` | OWNER_ONLY |  | ROUTE-167 |
+| `requirements.relax` | OWNER_ONLY |  | ROUTE-168 |
+| `writeoff.supersede` | OWNER_ONLY |  | ROUTE-245, ROUTE-248 |
+| `stock.attribute_surplus` | OWNER_ONLY | ROUTE-029 | ROUTE-197 |
+| `stock.resolve_unattributed` | OWNER_ONLY | ROUTE-029 | ROUTE-198, ROUTE-200 |
+| `receivables.write_off` | OWNER_ONLY |  | ROUTE-247 |
+| `projects.force_complete` | OWNER_ONLY |  | ROUTE-162 |
+| `import.commit` | OWNER_ONLY | ROUTE-058 | ROUTE-275 |
+| `parties.manage` | ADM |  | ROUTE-141, ROUTE-142, ROUTE-143, ROUTE-144 |
+| `products.edit` | ADM |  | ROUTE-145, ROUTE-146, ROUTE-147 |
+| `warehouse.manage` | ADM |  | ROUTE-148 |
+| `projects.manage` | ADM | ROUTE-013 | ROUTE-151, ROUTE-152, ROUTE-153, ROUTE-160 |
+| `quotation.manage` | ADM | ROUTE-014 | ROUTE-154, ROUTE-155, ROUTE-156, ROUTE-157, ROUTE-222 |
+| `projects.confirm` | ADM |  | ROUTE-157, ROUTE-158 |
+| `stock.reserve` | ADM | ROUTE-022, ROUTE-025 | ROUTE-181, ROUTE-184, ROUTE-185 |
+| `purchase.manage` | ADM | ROUTE-017 | ROUTE-171, ROUTE-172 |
+| `stock.receive` | ADM | ROUTE-021, ROUTE-022 | ROUTE-181 |
+| `stock.dispatch` | ADM | ROUTE-023, ROUTE-024 | ROUTE-186 |
+| `stock.move` | ADM |  | ROUTE-190 |
+| `stock.count` | ADM | ROUTE-026 | ROUTE-191, ROUTE-192 |
+| `delivery.record` | ADM | ROUTE-031 | ROUTE-201 |
+| `dropship.confirm` | ADM | ROUTE-032 | ROUTE-205 |
+| `handover.record` | ADM | ROUTE-033 | ROUTE-208 |
+| `documents.issue` | ADM | ROUTE-036 | ROUTE-182, ROUTE-187, ROUTE-202, ROUTE-208, ROUTE-221, ROUTE-222, ROUTE-249 |
+| `evidence.upload` | ADM |  | ROUTE-228, ROUTE-229, ROUTE-230, ROUTE-231, ROUTE-261 |
+| `invoice.issue` | ADM | ROUTE-042 | ROUTE-241, ROUTE-242 |
+| `billing.record` | ADM |  | ROUTE-243 |
+| `payment.record` | ADM | ROUTE-046 | ROUTE-250, ROUTE-251 |
+| `payment.apply` | ADM |  | ROUTE-252 |
+| `expense.record` | ADM |  | ROUTE-257 |
+| `disbursement.record` | ADM |  | ROUTE-258 |
+| `cashin.record` | ADM |  | ROUTE-259 |
+| `bank_statement.record` | ADM | ROUTE-050 | ROUTE-261 |
+| `requirements.manage` | ADM |  | ROUTE-164, ROUTE-165 |
+| `projects.complete` | ADM |  | ROUTE-161 |
+| `receivables.dispute` | ADM |  | ROUTE-246 |
+| `requirements.waive` | ADM |  | ROUTE-166 |
+| `import.prepare` | ADM | ROUTE-058 | ROUTE-272, ROUTE-273, ROUTE-274 |
+| `stock.reverse` | ADM_PLUS |  | ROUTE-183, ROUTE-188, ROUTE-189, ROUTE-196, ROUTE-212, ROUTE-213, ROUTE-211 |
+| `sales_return.record` | ADM_PLUS | ROUTE-034 | ROUTE-207, ROUTE-210 |
+| `purchase_return.record` | ADM_PLUS | ROUTE-028 | ROUTE-176, ROUTE-177 |
+| `purchase.correct_cost` | ADM_PLUS |  | ROUTE-175 |
+| `finance.contra` | ADM_PLUS |  | ROUTE-214, ROUTE-254, ROUTE-260 |
+| `payment.reallocate` | ADM_PLUS |  | ROUTE-253 |
+| `invoice.correct` | ADM_PLUS |  | ROUTE-245 |
+| `documents.correct` | ADM_PLUS | ROUTE-036 | ROUTE-223, ROUTE-224 |
+| `billing.correct` | ADM_PLUS |  | ROUTE-244 |
+| `decisions.supersede` | ADM_PLUS |  | ROUTE-169 |
+| `fulfillment.correct` | ADM_PLUS |  | ROUTE-204, ROUTE-206, ROUTE-209 |
+| `warnings.override` | ADM_PLUS |  | ROUTE-251 |
+| `cash.correct` | ADM_PLUS |  | ROUTE-262 |
+| `purchase.cancel` | ADM_PLUS |  | ROUTE-173 |
+| `refund.record` | ADM_PLUS |  | ROUTE-256 |
+| `settlement.record` | ADM_PLUS | ROUTE-047 | ROUTE-255 |
+| `stock.adjust` | ADM_PLUS | ROUTE-027 | ROUTE-194, ROUTE-203 |
+| `stock.condition` | ADM_PLUS | ROUTE-027 | ROUTE-195 |
+| `stock.count_apply` | ADM_PLUS |  | ROUTE-193 |
+| `stock.resolve_unattributed_evidence` | ADM_PLUS | ROUTE-029 | ROUTE-199 |
+| `stock.allocate_intercompany` | ADM_PLUS | ROUTE-024 | ROUTE-176, ROUTE-186, ROUTE-194 |
+| `projects.cancel_scope` | ADM_PLUS |  | ROUTE-159 |
+| `delivery.close` | ADM_PLUS |  | ROUTE-203 |
+| `purchase.close_remainder` | ADM_PLUS |  | ROUTE-174 |
+| `cases.close` | ADM_PLUS |  | ROUTE-271 |
+| `projects.cancel` | ADM_PLUS |  | ROUTE-163 |
+
+#### Q.8 Owner-only denials OD-01–OD-16
+
+Each denial with the Owner's page and the Admin's absence ([ROUTE_CONTRACTS](../../03-workflows/ROUTE_CONTRACTS.md) §4, intentionally hidden; NV-08).
+
+| OD | Owner's pages | For an Admin |
+| --- | --- | --- |
+| OD-01 | PG-060 | absent — *Pengaturan* is not in an Admin's menu |
+| OD-02 | PG-060 | absent |
+| OD-03 | PG-059, PG-061 | absent; identity fields read where they print (PJ-19) |
+| OD-04 | PG-062 | absent; configured values read-only in forms |
+| OD-05 | PG-011, PG-039 | absent; an Admin may only add or tighten |
+| OD-06 | the requirement's relaxation controls, same places | absent; an Admin may only add or tighten |
+| OD-07 | PG-043 | absent |
+| OD-08 | PG-029 | absent; an Admin's count application leaves the finding open |
+| OD-09 | PG-029 | absent |
+| OD-10 | PG-029 | present only with `stock.resolve_unattributed_evidence` (the full Admin); absent for Dimas and Bayu |
+| OD-11 | PG-043, PG-044 | absent |
+| OD-12 | PG-012 | absent; the address answers IP-21 |
+| OD-13 | PG-058 | absent; preparation with `import.prepare` |
+| OD-14 | PG-006, PG-052, PG-008, PG-063, PG-064 | absent |
+| OD-15 | PG-008, PG-063 | absent; `decisions.supersede` covers ADM and ADM+ decisions only |
+| OD-16 | PG-064, PG-008 | — |
+
+#### Q.9 Totals
+
+**299 rows** in Q.1–Q.8 — SCR 60, CAP 18, AC 23, AX 37, MSG 41, QS 24, capabilities 80, OD 16; **rows without a destination: 0** — **100 % mapped**. **Orphans:** pages no requirement reaches 0; routes without a capability or rule 0; interactions without a route or a client-only mark 0 of 166 — **0 orphan**.

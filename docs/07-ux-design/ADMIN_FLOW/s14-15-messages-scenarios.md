@@ -62,9 +62,9 @@ The forty-four scenarios of DIR-033 §15, each with its screen and pattern, its 
 | UXS-06 | Absolute timeout, remote termination or logout | section 6 | MSG-34, MSG-35, MSG-11 | Absolute timeout and logout: a full document load of the sign-in page with history and caches cleared. Remote termination: history and caches cleared at the first 401 and the page covered by the opaque re-authentication dialog. In every case Back shows the sign-in page or an entry that can no longer be decrypted and is fetched afresh — and refused — never a page of the ended session | AU-06; H7-12; TM-28 |
 | UXS-07 | FAILED after a lock-wait timeout | IP-04 | MSG-06 | "Sistem sedang sibuk … Aman diulang." with "Coba Lagi" on the same `command_id`; inputs frozen meanwhile | SQ-14; RY-07; TX-01 |
 | UXS-08 | FAILED with the outcome unknown | IP-04 | MSG-07 | Nothing asserts that the action was saved or that it was not saved; a transport failure after dispatch is this state too (IP-01); the retry returns the outcome or runs the command, and any other answer to it keeps the intent open (IP-02) | SQ-17; HO-01; HO-02 |
-| UXS-09 | A rendition fails in the background | SCR-35; IP-12 | MSG-08 | The document shows *Terbit* with its number, *PDF gagal dibuat* with the attempt count and the automatic retry, and after the fifth attempt MSG-08's exhausted variant; the number is the same in every state; no re-issue control | NM-07; JB-01; JB-02; QS-08 |
+| UXS-09 | A rendition fails in the background | PG-036; IP-12 | MSG-08 | The document shows *Terbit* with its number, *PDF gagal dibuat* with the attempt count and the automatic retry, and after the fifth attempt MSG-08's exhausted variant; the number is the same in every state; no re-issue control | NM-07; JB-01; JB-02; QS-08 |
 | UXS-10 | REJECTED with a failed precondition, for example C-04 | any command form; IP-01 | MSG-02 | The rule in business words with the current fact; the input kept; the corrected submission is a new intent | SQ-02; SQ-04; CI-06 |
-| UXS-11 | Two Admins edit one draft quotation or invoice | SCR-13, SCR-39; IP-03 | MSG-03 | The later editor gets CONFLICT: the current state beside the kept input, changed fields marked, "Terapkan Ulang pada Versi Terbaru" | ST-01; M-38; PX-07 |
+| UXS-11 | Two Admins edit one draft quotation or invoice | PG-014, PG-043; IP-03 | MSG-03 | The later editor gets CONFLICT: the current state beside the kept input, changed fields marked, "Terapkan Ulang pada Versi Terbaru" | ST-01; M-38; PX-07 |
 | UXS-12 | CONFLICT "already recorded" | IP-03 | MSG-04 | "Sudah tercatat — periksa sebelum mengulang", "Buka Catatan" when in scope; no re-apply control exists in this state | HO-04; CI-05; SQ-07 |
 | UXS-13 | A prefilled business date crosses midnight | PT-25; IP-07 | MSG-16 | CONFLICT with both dates and the picker; a chosen date passes unchanged | ST-08 |
 | UXS-14 | A backdated command with a chosen date | PT-25; IP-07 | "Tanggal Mundur" · "Nomor mengikuti periode {periode}" | The mark is visible on the form before sending and on the record's timeline after; the number comes from the date's period | NM-05; BR-DT-03 |
@@ -73,59 +73,59 @@ The forty-four scenarios of DIR-033 §15, each with its screen and pattern, its 
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-15 | A likely duplicate of a fungible event | SCR-22, SCR-29, SCR-25; IP-05 | MSG-15 | The matches listed; a tick per match and a reason; the second submission is a new intent naming them | L-49; BD-13; HO-05 |
-| UXS-16 | A payment duplicate | SCR-42; IP-05 | MSG-15, both forms | With `warnings.override`: reason and acknowledged matches. Without it: the matches, the advice to check them and to ask an account with the authority; nothing is recorded | BD-02; L-22 |
-| UXS-17 | An evidence duplicate in scope and in a visible family | SCR-36; IP-16, IP-05 | MSG-15 | The warning with the matching evidence linked; the override with its reason | H7-07; FL-10; DP-13 |
-| UXS-18 | An evidence duplicate out of scope or in an invisible family | SCR-36; IP-16 | the ordinary MSG-01 | Nothing differs for the uploader in the answer — wording, steps, timing class — and no flag, note or reason appears on the evidence (IP-16). A client-original requirement the upload was linked to stays open in its ordinary state: the residual recorded in GAP-034. The Owner finds the item in SCR-07 | DP-13; SECURITY LG-02 (`TECH-022`); TM-23 |
-| UXS-19 | A batch collision outside the preparer's scope | SCR-58; section 13 | MSG-18 | Exactly "Tidak dapat diimpor — perlu tinjauan Owner" and nothing more, under the neutral face of DESIGN_SYSTEM §12.2; a row with an out-of-scope twin is listed under *Tidak Valid* with the same sentence, never under *Duplikat*. The Owner finds the item in SCR-07 | DP-18; TM-27 |
+| UXS-15 | A likely duplicate of a fungible event | PG-024, PG-031, PG-027; IP-05 | MSG-15 | The matches listed; a tick per match and a reason; the second submission is a new intent naming them | L-49; BD-13; HO-05 |
+| UXS-16 | A payment duplicate | PG-046; IP-05 | MSG-15, both forms | With `warnings.override`: reason and acknowledged matches. Without it: the matches, the advice to check them and to ask an account with the authority; nothing is recorded | BD-02; L-22 |
+| UXS-17 | An evidence duplicate in scope and in a visible family | PG-038; IP-16, IP-05 | MSG-15 | The warning with the matching evidence linked; the override with its reason | H7-07; FL-10; DP-13 |
+| UXS-18 | An evidence duplicate out of scope or in an invisible family | PG-038; IP-16 | the ordinary MSG-01 | Nothing differs for the uploader in the answer — wording, steps, timing class — and no flag, note or reason appears on the evidence (IP-16). A client-original requirement the upload was linked to stays open in its ordinary state: the residual recorded in GAP-034. The Owner finds the item in PG-008 | DP-13; SECURITY LG-02 (`TECH-022`); TM-23 |
+| UXS-19 | A batch collision outside the preparer's scope | PG-058; section 13 | MSG-18 | Exactly "Tidak dapat diimpor — perlu tinjauan Owner" and nothing more, under the neutral face of DESIGN_SYSTEM §12.2; a row with an out-of-scope twin is listed under *Tidak Valid* with the same sentence, never under *Duplikat*. The Owner finds the item in PG-008 | DP-18; TM-27 |
 
 ### Visibility and authority
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-20 | A Company-A-only Admin views a pooled lot of Company B | SCR-18, SCR-19; PT-04, PT-17 | "perusahaan lain" | The lot's code, product, remaining quantity, rack and condition with the relation marker; no name, code, supplier, date, kind or cost; no link | PJ-01; PJ-04; H7-02 |
+| UXS-20 | A Company-A-only Admin views a pooled lot of Company B | PG-018, PG-019; PT-04, PT-17 | "perusahaan lain" | The lot's code, product, remaining quantity, rack and condition with the relation marker; no name, code, supplier, date, kind or cost; no link | PJ-01; PJ-04; H7-02 |
 | UXS-21 | An Admin with companies A and B | every list; PT-04 | — | Each row carries its company label; no figure sums S3 values of both; counts are per company | CS-08; PF-25; PF-41 |
-| UXS-22 | An action on another company's record without a grant | SCR-22, SCR-25; IP-06 | MSG-14 | REJECTED and routed: the actor is told who will see it; the notice is in QS-20 for 14 days for those with the grants | SQ-23; AZ-08; PJ-13 |
+| UXS-22 | An action on another company's record without a grant | PG-024, PG-027; IP-06 | MSG-14 | REJECTED and routed: the actor is told who will see it; the notice is in QS-20 for 14 days for those with the grants | SQ-23; AZ-08; PJ-13 |
 | UXS-23 | A grant is revoked while a page is open | IP-21; IP-12 | MSG-09 | The next reload or command gets the not-found answer, identical to a missing page; an export of the account turns *Tidak Tersedia* and its download answers the same way | AZ-03; RV-08; DP-14 |
 | UXS-24 | A deactivated user retries | section 6 | MSG-11, then MSG-19 | The request is answered as unauthenticated; the dialog cannot be passed; nothing about the account's state is disclosed | AU-04; AU-09; RV-05 |
 | UXS-25 | An Admin opens the Owner review queue address | IP-21 | MSG-09 | The not-found page, identical to a nonexistent address; no menu entry, badge or count exists for the Admin | AZ-11; OD-14 |
 | UXS-26 | A high-risk Owner command | IP-10 | MSG-27 | The password dialog when the last confirmation is older than 15 minutes, above any open confirmation; the form behind it keeps its input in memory, and the same `command_id` is sent after the confirmation | AU-15; H7-09 |
-| UXS-27 | The Owner grants capabilities | SCR-57; J-ACC-02 | "Pratinjau Akses" | The capability-by-company matrix of the result before "Simpan Akses"; a capability whose prerequisite is removed shows "Nonaktif — prasyarat dicabut" and keeps its grant | H7-06; RG-06; RG-07; GAP-032 |
+| UXS-27 | The Owner grants capabilities | PG-060; J-ACC-02 | "Pratinjau Akses" | The capability-by-company matrix of the result before "Simpan Akses"; a capability whose prerequisite is removed shows "Nonaktif — prasyarat dicabut" and keeps its grant | H7-06; RG-06; RG-07; GAP-032 |
 
 ### Numbering
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-28 | A company created after go-live; an Admin creates a project | SCR-11; then SCR-55 | MSG-17; statements (a)–(d) | The Admin gets the C-10 refusal with input kept; the Owner sees "Penomoran belum dimulai: Proyek" and runs "Mulai Penomoran" through its confirmation; the Admin's repeated submission succeeds | C-10; NM-03; HO-39 |
-| UXS-29 | An Admin backdates an invoice into a period that is not live and has no counter | SCR-39; SCR-55 | MSG-17; statement (a) | C-10 for the Admin naming the period; the Owner sets that period's first number; the issue then draws it | NM-03; NM-05 |
-| UXS-30 | The Owner adds a scheme effective in the past | SCR-55; 12.2 | "Format nomor tidak dapat berlaku mundur. Tanggal paling awal: {tanggal}." | Refused with the earliest date; the backward extension over uncovered dates is offered and accepted | NM-03; HO-39 |
-| UXS-31 | A start while a batch holds valid seed rows | SCR-55; 12.2 | "Batch impor {batch} masih memuat baris nomor awal …" | Refused with the batch linked and the commit-or-abort path | NM-03 |
-| UXS-32 | Go-live is not recorded | SCR-55; 12.2 | "Go-live belum dicatat. …" | The start and seed commands are not offered; the state is explained; no control records go-live | NM-03; HO-32 |
+| UXS-28 | A company created after go-live; an Admin creates a project | PG-013; then PG-061 | MSG-17; statements (a)–(d) | The Admin gets the C-10 refusal with input kept; the Owner sees "Penomoran belum dimulai: Proyek" and runs "Mulai Penomoran" through its confirmation; the Admin's repeated submission succeeds | C-10; NM-03; HO-39 |
+| UXS-29 | An Admin backdates an invoice into a period that is not live and has no counter | PG-043; PG-061 | MSG-17; statement (a) | C-10 for the Admin naming the period; the Owner sets that period's first number; the issue then draws it | NM-03; NM-05 |
+| UXS-30 | The Owner adds a scheme effective in the past | PG-061; 12.2 | "Format nomor tidak dapat berlaku mundur. Tanggal paling awal: {tanggal}." | Refused with the earliest date; the backward extension over uncovered dates is offered and accepted | NM-03; HO-39 |
+| UXS-31 | A start while a batch holds valid seed rows | PG-061; 12.2 | "Batch impor {batch} masih memuat baris nomor awal …" | Refused with the batch linked and the commit-or-abort path | NM-03 |
+| UXS-32 | Go-live is not recorded | PG-061; 12.2 | "Go-live belum dicatat. …" | The start and seed commands are not offered; the state is explained; no control records go-live | NM-03; HO-32 |
 
 ### Lists, search, scanner and exports
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-33 | A two-character term; more than 200 matches | SCR-08; IP-17 | MSG-24; MSG-23 | Exact and prefix matches only for the short term; the cut notice and the narrowing prompt above the list for the long one | PF-20; PF-21; PF-23 |
-| UXS-34 | A scan matching two serial rows; no scanner attached | SCR-21, SCR-22; IP-15 | MSG-37 | The two candidates listed for the user's choice; with no scanner the same field takes a typed SKU and "Cari Produk" sits beside it | SF-SCAN; PF-19; V1_SCOPE |
-| UXS-35 | *Barang Masuk* of a multi-line purchase on a phone with a scanner; thirty lines by keyboard on a desktop | SCR-21; SCR-17; IP-13, IP-15 | — | Phone: one line at a time, scan-led, each line its own answer, a progress list; a scan while a confirmation is open is discarded; a coarse pointer gets touch-size controls at any width. Desktop: the row form with its focus order and shortcuts | WF-INV-01; AC-14; GAP-020 |
-| UXS-36 | An export above the row bound; a third concurrent export | SCR-47, SCR-49; IP-12 | MSG-21; MSG-22 | Both refused with their message — a row bound the job finds before generating shows *Gagal* with MSG-21's text (IP-12); the list shows the five states | PF-28; WS-12; HO-09 |
+| UXS-33 | A two-character term; more than 200 matches | PG-009; IP-17 | MSG-24; MSG-23 | Exact and prefix matches only for the short term; the cut notice and the narrowing prompt above the list for the long one | PF-20; PF-21; PF-23 |
+| UXS-34 | A scan matching two serial rows; no scanner attached | PG-022, PG-024; IP-15 | MSG-37 | The two candidates listed for the user's choice; with no scanner the same field takes a typed SKU and "Cari Produk" sits beside it | SF-SCAN; PF-19; V1_SCOPE |
+| UXS-35 | *Barang Masuk* of a multi-line purchase on a phone with a scanner; thirty lines by keyboard on a desktop | PG-022; PG-017; IP-13, IP-15 | — | Phone: one line at a time, scan-led, each line its own answer, a progress list; a scan while a confirmation is open is discarded; a coarse pointer gets touch-size controls at any width. Desktop: the row form with its focus order and shortcuts | WF-INV-01; AC-14; GAP-020 |
+| UXS-36 | An export above the row bound; a third concurrent export | PG-051, PG-053; IP-12 | MSG-21; MSG-22 | Both refused with their message — a row bound the job finds before generating shows *Gagal* with MSG-21's text (IP-12); the list shows the five states | PF-28; WS-12; HO-09 |
 
 ### Workflow presentations
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-37 | Force Complete | SCR-14; J-PRJ-03 | "Selesaikan Paksa" dialog | The unmet conditions and residual obligations listed; the reason; the confirmation bound to that list; a changed list returns as CONFLICT and is shown again | AX-26; ST-04; M-27 |
-| UXS-38 | A pre-payment Kuitansi | SCR-35, SCR-39; J-FIN-08 | *Menunggu Pembayaran* · "untuk proses pembayaran" | A state of its own, with its own cue, until "Tautkan Kuitansi" links it (J-FIN-08) or it is voided; the invoice's position block unchanged | QS-19; BR-DOC-04 |
-| UXS-39 | A pending unattributed loss | SCR-18, SCR-27, SCR-47 | MSG-41 | A separate line, outside every company's figures: on SCR-18 and SCR-19 the case's pending quantity; in a company's stock and profit views only that company's own exposure; dispatch and receiving work as usual | QS-22; SF-UNATTRIBUTED; PJ-22; PJ-07 |
-| UXS-40 | The Owner review queue | SCR-07 | — | Every QS-14 source, the two `TECH-022` kinds included; open conditions and the activity tabs; items link to their records under the Owner's projection; no approve or dismiss control | PERMISSIONS_MATRIX §10; SECURITY LG-02 |
+| UXS-37 | Force Complete | PG-012; J-PRJ-03 | "Selesaikan Paksa" dialog | The unmet conditions and residual obligations listed; the reason; the confirmation bound to that list; a changed list returns as CONFLICT and is shown again | AX-26; ST-04; M-27 |
+| UXS-38 | A pre-payment Kuitansi | PG-036, PG-043; J-FIN-08 | *Menunggu Pembayaran* · "untuk proses pembayaran" | A state of its own, with its own cue, until "Tautkan Kuitansi" links it (J-FIN-08) or it is voided; the invoice's position block unchanged | QS-19; BR-DOC-04 |
+| UXS-39 | A pending unattributed loss | PG-018, PG-029, PG-051 | MSG-41 | A separate line, outside every company's figures: on PG-018 and PG-019 the case's pending quantity; in a company's stock and profit views only that company's own exposure; dispatch and receiving work as usual | QS-22; SF-UNATTRIBUTED; PJ-22; PJ-07 |
+| UXS-40 | The Owner review queue | PG-008 | — | Every QS-14 source, the two `TECH-022` kinds included; open conditions and the activity tabs; items link to their records under the Owner's projection; no approve or dismiss control | PERMISSIONS_MATRIX §10; SECURITY LG-02 |
 
 ### Design
 
 | ID | Scenario | Screen and pattern | Copy | Expected presentation | Rule |
 | --- | --- | --- | --- | --- | --- |
-| UXS-41 | A keyboard-only desktop quotation with many lines | SCR-13; PT-10; KB rows | "Pintasan" help | One focus order through the row form; visible focus; no shortcut is a single printable key — Enter, Esc and the arrows act only as keys of the focused widget —, none is active in a scan field, and a scan outside a field that accepts scans is discarded | SH-02; UXI-42 |
+| UXS-41 | A keyboard-only desktop quotation with many lines | PG-014; PT-10; KB rows | "Pintasan" help | One focus order through the row form; visible focus; no shortcut is a single printable key — Enter, Esc and the arrows act only as keys of the focused widget —, none is active in a scan field, and a scan outside a field that accepts scans is discarded | SH-02; UXI-42 |
 | UXS-42 | Status in greyscale and for colour-blind users | every status; PT-13 | the status labels | Each state is a text label with a shape cue; no two states differ by hue alone | UXV-08; OB §22 |
-| UXS-43 | An anti-slop audit of the dashboard | SCR-05, SCR-06; PT-21 | — | Row lists and one figures table; no KPI-card wall, chart for decoration, banner or greeting | OB §21; [DESIGN_SYSTEM §18](../DESIGN_SYSTEM.md#18-anti-ai-slop-mapping) |
-| UXS-44 | Project detail within the performance rules | SCR-10 | — | At most three deferred groups; lists without totals; polling no faster than once a minute as background requests that never extend the session | QB-02; PF-15; PF-26; PF-34; RV-06 |
+| UXS-43 | An anti-slop audit of the dashboard | PG-006, PG-007; PT-21 | — | Row lists and one figures table; no KPI-card wall, chart for decoration, banner or greeting | OB §21; [DESIGN_SYSTEM §18](../DESIGN_SYSTEM.md#18-anti-ai-slop-mapping) |
+| UXS-44 | Project detail within the performance rules | PG-011 | — | At most three deferred groups; lists without totals; polling no faster than once a minute as background requests that never extend the session | QB-02; PF-15; PF-26; PF-34; RV-06 |
 

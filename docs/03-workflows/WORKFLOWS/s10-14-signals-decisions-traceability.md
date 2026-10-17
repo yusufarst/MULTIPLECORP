@@ -15,6 +15,7 @@ Signals are projections over facts and decisions (BR-XD-05), never stored truth.
 | QS-09 | Issued invoices BELUM DITAGIHKAN | QS-20 | Routed blockers needing other-company grants |
 | QS-10 | Overdue receivables by aging bucket | QS-21 | Duplicate warnings overridden or confirmed (payments, evidence, fungible stock and delivery events) |
 | QS-11 | Disputed receivables | QS-22 | Pending unexplained-loss attribution cases (Owner) with their recognition snapshots, and their separate unattributed display in company stock and profit views (`DIR-027`: they block no consumption) |
+| QS-23 | `DIR-077` CA-10: Overdue projects — ACTIVE, the project's one governing deadline (the date by which the whole project must be complete for the client) before today at the WIB day boundary; DRAFT, CANCELLED, COMPLETED_NORMAL, COMPLETED_FORCED and projects without a deadline excluded; Owner only, per company | QS-24 | `DIR-077` CA-07: Dispatch-ready lines — the remaining reservations of ACTIVE projects' WAREHOUSE lines (CALC-02) |
 
 ## 11. Cross-company and multi-Admin rules
 

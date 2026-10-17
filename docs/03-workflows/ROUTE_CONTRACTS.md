@@ -1,0 +1,334 @@
+# Route contracts
+
+Status: REVIEW — Draft of the P7 re-baseline, not normative before APPR-011 | Updated: 2026-10-18 | Owner: Planning
+
+**Draft of the P7 re-baseline, not normative before APPR-011.** Run PC-2 wrote this new document on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-64, as the P3 addition [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet) asks for: one ROUTE- row for every V1 user-facing action, in the form of AICWDF §14.2. Route URIs and handler names are contracts for P11, not code. It is approved, or not, with APPR-011 at OG-2.
+
+**Sources.** The pages, their routes and their entries — [INFORMATION_ARCHITECTURE](../07-ux-design/INFORMATION_ARCHITECTURE.md) §§8 and 11; the actions and their pages — [NON_LOSS_MATRIX](../07-ux-design/stage2/NON_LOSS_MATRIX.md) sections E and H, [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md)'s journeys and interaction patterns; the handlers — [ARCHITECTURE](../04-architecture/ARCHITECTURE.md) §§3–5, one action per command in its module; capabilities and scope — [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) §§4, 6 and 7; command identity and the statement families — [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md) CI-01–CI-09 and §7's AX- and NX- sequences; the request rules — [API_AND_INTEGRATIONS](../06-api-performance/API_AND_INTEGRATIONS.md) RB-01–RB-10; step-up, rate limits and files — [SECURITY](../05-security/SECURITY.md) AU-15, WS-04, WS-12 and FL-01–FL-07; the outcome vocabulary — [WORKFLOWS](WORKFLOWS/README.md) §1.
+
+Authority: P3 — the route of every V1 user-facing action, beside [INTERACTION_CONTRACTS](INTERACTION_CONTRACTS.md). It adds no command, capability, rule or effect: what a command does is WORKFLOWS' and CONCURRENCY_IDEMPOTENCY's, who may run it PERMISSIONS_MATRIX's, how a request is protected SECURITY's and API_AND_INTEGRATIONS'. A row that seems to need more is a gap, never a change made here.
+
+## 1. Conventions
+
+| RC | Rule | Grounds |
+| --- | --- | --- |
+| RC-01 | **Paths** follow INFORMATION_ARCHITECTURE §11: lowercase Indonesian segments of the product map, `{id}` a public identifier (UUIDv7). A page's view is a GET at the page's route; a command is a state-changing request — POST, or PUT and DELETE where it replaces or removes the account's own setting — at its record's path with an Indonesian verb segment. No GET changes state, and every route lives in the web group under session and request-forgery protection. | IA §11; RB-01; RB-03; WS-04 |
+| RC-02 | **Handlers** are named "module code + action": `PRJ CompleteProject` is the action class `CompleteProject` of ARCHITECTURE's Projects module, one class per command (ARCHITECTURE §§4–5); `Show…` names a page's controller method with its query class; `IMPORT` is the tier-7 import orchestration. The names are Level 1 choices (TECH-037), the module never. | ARCHITECTURE §§3–5 |
+| RC-03 | **Capability and scope** are PERMISSIONS_MATRIX's: the capability the route declares (RB-02), the company scope SF-CMD step 2 checks against the target's company — the Owner's covering every company (`scope.all_companies`) —, "the pool" for pooled stock (S1), "SELF" for the account's own row (AU-13; PJ-17), and "none" only for the exceptions of SECURITY EN-03. A control is present only with its capability (AZ-01). | RB-02; AZ-01; EN-03 |
+| RC-04 | **Protections.** *Identity:* every SF-CMD command carries `command_id` (CI-01), its family named — an AX- of WORKFLOWS §9 or an NX- of CONCURRENCY_IDEMPOTENCY §7.3; the authentication requests (CI-09), an upload, an export request and RB-10's own-locale change carry none (RB-03). *Step-up:* AU-15's password confirmation within 15 minutes, where it applies. *Rate class:* WS-12's — auth (fail closed), password change, search, scanner, uploads, exports, heavy reports, commands. *Background:* RB-05's — previews, thumbnails and polling only; a request that is not a GET is never background. | CI-01; CI-09; RB-03; RB-05; AU-15; WS-12 |
+| RC-05 | **Results.** *Success:* COMMITTED, the answer in place (IP-01) and the destination the page's NAV- contract names. *Validation:* the answer at the fields, the input kept (IP-14). *Error:* REJECTED with its rule code and message (IP-01), CONFLICT on a stale version (IP-03), FAILED with a retry under the same `command_id` (IP-04), a denial, an unknown or out-of-scope record and an Owner-only address answered by PG-005, identical for each (IP-21; AZ-11), an expired session re-authenticated in place (IP-11). Each row names what it adds. | IP-01–IP-04; IP-11; IP-14; IP-21 |
+| RC-06 | **A visible control without a route** is marked in §4 — client-only, intentionally disabled or intentionally hidden (AICWDF §14.3): visible, clickable and not implemented is forbidden. | AICWDF §14.3 |
+
+## 2. Page views — ROUTE-001–ROUTE-065
+
+One GET per page, its number the page's (NAV- and PG- alike). Each answers RC-05's errors; the deferred groups and status reads a page makes are ROUTE-285's.
+
+| ROUTE | Page | Method · route | Handler | Capability · scope | Success |
+| --- | --- | --- | --- | --- | --- |
+| ROUTE-001 | PG-001 *Masuk* | GET `/masuk` | `IAM ShowSignIn` | none — unauthenticated (EN-03) | the page; NAV-001 |
+| ROUTE-002 | PG-002 *Verifikasi Dua Langkah* | GET `/masuk/verifikasi` | `IAM ShowTwoFactorChallenge` | none — the pending attempt's account (EN-03) | the page; NAV-002 |
+| ROUTE-003 | PG-003 *Atur Kata Sandi* | GET `/atur-kata-sandi`, the token in the fragment (AU-12) | `IAM ShowSetPassword` | none — the link's holder (AU-12; EN-03) | the page; NAV-003 |
+| ROUTE-004 | PG-004 *Aktifkan Verifikasi Dua Langkah* | GET `/verifikasi-dua-langkah` | `IAM ShowTotpEnrolment` | the enrolment-only session (AU-18) | the page; NAV-004 |
+| ROUTE-005 | PG-005 *Halaman Sistem* | GET — the address requested | the exception handler (WS-10) | every request it answers (AZ-11) | the page; NAV-005 |
+| ROUTE-006 | PG-006 *Beranda* | GET `/beranda` | `Reporting ShowBeranda` | the OWNER role; *Gabungan* `reports.consolidated` | the page; NAV-006 |
+| ROUTE-007 | PG-007 *Pekerjaan* | GET `/pekerjaan` | `Reporting ShowWorkQueue` | any account, each group by its read class (PJ-13); *Tagihan dan pembayaran* `finance.view` | the page; NAV-007 |
+| ROUTE-008 | PG-008 *Tinjauan* | GET `/tinjauan` | `OPS ShowReviewQueue` | `review.view` | the page; NAV-008 |
+| ROUTE-009 | PG-009 *Cari* | GET `/cari`, the term never in the address (§11) | `Reporting ShowSearch` | any account; company records by their view capability (PJ-10) | the page; NAV-009 |
+| ROUTE-065 | PG-065 *Akun Saya* | GET `/akun` | `IAM ShowOwnAccount` | SELF (PJ-17) | the page; NAV-065 |
+| ROUTE-010 | PG-010 *Proyek* | GET `/proyek` | `PRJ ShowProjects` | `projects.view`; values `finance.view` | the page; NAV-010 |
+| ROUTE-011 | PG-011 *Perjalanan Proyek* | GET `/proyek/{id}` | `PRJ ShowProjectJourney` | `projects.view`; *Posisi keuangan* `finance.view`; *Biaya dan laba* `cost.view` and `profit.view`; *Pengadaan* `cost.view` | the page; NAV-011 |
+| ROUTE-012 | PG-012 *Penyelesaian Proyek* | GET `/proyek/{id}/penyelesaian` | `PRJ ShowProjectCompletion` | `projects.view` | the page; NAV-012 |
+| ROUTE-013 | PG-013 *Formulir Proyek* | GET `/proyek/baru`; `/proyek/{id}/ubah` | `PRJ ShowProjectForm` | `projects.manage`; prices `finance.view` | the page; NAV-013 |
+| ROUTE-014 | PG-014 *Penawaran* | GET `/proyek/{id}/penawaran` | `PRJ ShowQuotation` | `quotation.manage` with `finance.view` | the page; NAV-014 |
+| ROUTE-037 | PG-037 *Daftar Penawaran* | GET `/dokumen/penawaran` | `PRJ ShowQuotations` | `projects.view`; values `finance.view` | the page; NAV-037 |
+| ROUTE-015 | PG-015 *Pembelian* | GET `/pembelian` | `PUR ShowPurchases` | `cost.view` | the page; NAV-015 |
+| ROUTE-016 | PG-016 *Detail Pembelian* | GET `/pembelian/{id}` | `PUR ShowPurchase` | `cost.view`; disbursements `finance.view` | the page; NAV-016 |
+| ROUTE-017 | PG-017 *Buat Pembelian* | GET `/pembelian/baru`, a project's shortage prefilled by its public id | `PUR ShowPurchaseForm` | `purchase.manage` with `cost.view` | the page; NAV-017 |
+| ROUTE-018 | PG-018 *Stok* | GET `/gudang/stok` | `INV ShowStock` | `stock.view` · the pool (S1) | the page; NAV-018 |
+| ROUTE-019 | PG-019 *Detail Stok Produk* | GET `/gudang/stok/{id}` | `INV ShowProductStock` | `stock.view` · the pool; lot cost `cost.view` | the page; NAV-019 |
+| ROUTE-020 | PG-020 *Riwayat Stok* | GET `/gudang/riwayat-stok` | `INV ShowStockHistory` | `stock.view`; project `projects.view`; purchase `cost.view` | the page; NAV-020 |
+| ROUTE-021 | PG-021 *Barang Masuk* | GET `/gudang/barang-masuk` | `INV ShowReceivingWorklist` | `stock.receive` (PJ-18) | the page; NAV-021 |
+| ROUTE-022 | PG-022 *Terima Barang* | GET `/gudang/barang-masuk/{id}`, the purchase | `INV ShowReceiveGoods` | `stock.receive`; the offer `stock.reserve` | the page; NAV-022 |
+| ROUTE-023 | PG-023 *Barang Keluar* | GET `/gudang/barang-keluar` | `INV ShowDispatchWorklist` | `stock.dispatch` | the page; NAV-023 |
+| ROUTE-024 | PG-024 *Keluarkan Barang* | GET `/gudang/barang-keluar/{id}`, the project | `INV ShowDispatchGoods` | `stock.dispatch`; another company's lot `stock.allocate_intercompany` | the page; NAV-024 |
+| ROUTE-025 | PG-025 *Reservasi* | GET `/gudang/reservasi` | `INV ShowReservations` | `stock.reserve` with `stock.view` and `projects.view` | the page; NAV-025 |
+| ROUTE-026 | PG-026 *Stok Opname* | GET `/gudang/stok-opname` | `INV ShowStockCounts` | `stock.count` | the page; NAV-026 |
+| ROUTE-027 | PG-027 *Penyesuaian & Kondisi* | GET `/gudang/penyesuaian` | `INV ShowAdjustments` | `stock.condition` or `stock.adjust` | the page; NAV-027 |
+| ROUTE-028 | PG-028 *Retur ke Pemasok* | GET `/gudang/retur-pemasok` | `INV ShowSupplierReturns` | `purchase_return.record` with `stock.view` and `cost.view` | the page; NAV-028 |
+| ROUTE-029 | PG-029 *Selisih & Temuan* | GET `/gudang/selisih-temuan` | `INV ShowDiscrepancies` | `stock.resolve_unattributed`, `stock.attribute_surplus`; `stock.resolve_unattributed_evidence` under PJ-07 | the page; NAV-029 |
+| ROUTE-030 | PG-030 *Pengiriman* | GET `/gudang/pengiriman` | `FUL ShowDeliveries` | `projects.view` | the page; NAV-030 |
+| ROUTE-031 | PG-031 *Catat Pengiriman* | GET `/gudang/pengiriman/{id}`, the shipment | `FUL ShowRecordDelivery` | `delivery.record` | the page; NAV-031 |
+| ROUTE-032 | PG-032 *Kirim Langsung* | GET `/proyek/{id}/kirim-langsung` | `FUL ShowDirectShipment` | `dropship.confirm`; cost `cost.view` | the page; NAV-032 |
+| ROUTE-033 | PG-033 *Serah Terima Jasa* | GET `/proyek/{id}/serah-terima` | `FUL ShowServiceHandover` | `handover.record` | the page; NAV-033 |
+| ROUTE-034 | PG-034 *Retur dari Klien* | GET `/proyek/{id}/retur` | `FUL ShowClientReturn` | `sales_return.record` | the page; NAV-034 |
+| ROUTE-035 | PG-035 *Dokumen* | GET `/dokumen` | `DOC ShowDocuments` | `projects.view` for metadata; payload by family (PJ-15) | the page; NAV-035 |
+| ROUTE-036 | PG-036 *Detail Dokumen* | GET `/dokumen/{id}` | `DOC ShowDocument` | the document's family view capability (PJ-15); acting `documents.issue`, `documents.correct` | the page; NAV-036 |
+| ROUTE-038 | PG-038 *Bukti* | GET `/dokumen/bukti` | `DOC ShowEvidence` | `evidence.view` with the family's view capability (PJ-08) | the page; NAV-038 |
+| ROUTE-039 | PG-039 *Dokumen Administrasi* | GET `/dokumen/administrasi` | `ADM ShowAdministrativeDocuments` | `projects.view` | the page; NAV-039 |
+| ROUTE-040 | PG-040 *Kasus Koreksi* | GET `/dokumen/kasus` | `OPS ShowCorrectionCases` | `projects.view` of the case's company; money by family (PJ-16) | the page; NAV-040 |
+| ROUTE-041 | PG-041 *Invoice* | GET `/keuangan/invoice` | `FIN ShowInvoices` | `finance.view` | the page; NAV-041 |
+| ROUTE-042 | PG-042 *Buat Invoice* | GET `/keuangan/invoice/baru`, the project by its public id | `FIN ShowInvoiceComposer` | `invoice.issue` with `finance.view` | the page; NAV-042 |
+| ROUTE-043 | PG-043 *Detail Invoice* | GET `/keuangan/invoice/{id}` | `FIN ShowInvoice` | `finance.view` | the page; NAV-043 |
+| ROUTE-044 | PG-044 *Piutang* | GET `/keuangan/piutang` | `FIN ShowReceivables` | `finance.view` | the page; NAV-044 |
+| ROUTE-045 | PG-045 *Pembayaran* | GET `/keuangan/pembayaran` | `FIN ShowPayments` | `finance.view` | the page; NAV-045 |
+| ROUTE-046 | PG-046 *Catat Pembayaran* | GET `/keuangan/pembayaran/baru` | `FIN ShowRecordPayment` | `payment.record` with `finance.view` | the page; NAV-046 |
+| ROUTE-047 | PG-047 *Potongan* | GET `/keuangan/potongan` | `FIN ShowDeductions` | `settlement.record` with `finance.view` and `evidence.view` | the page; NAV-047 |
+| ROUTE-048 | PG-048 *Kredit Pelanggan* | GET `/keuangan/kredit-pelanggan` | `FIN ShowCustomerCredit` | `finance.view` | the page; NAV-048 |
+| ROUTE-049 | PG-049 *Pengeluaran & Kas Lain* | GET `/keuangan/kas-lain` | `FIN ShowOtherCash` | `finance.view`; expenses `cost.view` | the page; NAV-049 |
+| ROUTE-050 | PG-050 *Mutasi Bank* | GET `/keuangan/mutasi-bank` | `FIN ShowBankStatement` | `bank_statement.record` with `finance.view` | the page; NAV-050 |
+| ROUTE-051 | PG-051 *Laporan* | GET `/laporan` | `Reporting ShowReports` | each report by its read class (RD-02–RD-06) | the page; NAV-051 |
+| ROUTE-052 | PG-052 *Laporan Gabungan* | GET `/laporan/gabungan` | `Reporting ShowConsolidatedReport` | `reports.consolidated` | the page; NAV-052 |
+| ROUTE-053 | PG-053 *Ekspor Saya* | GET `/laporan/ekspor` | `Reporting ShowOwnExports` | `reports.export`, the requester only | the page; NAV-053 |
+| ROUTE-054 | PG-054 *Klien* | GET `/data-master/klien` | `PTY ShowClients` | any account — S0 names; units, addresses and PICs `projects.view` | the page; NAV-054 |
+| ROUTE-055 | PG-055 *Pemasok* | GET `/data-master/pemasok` | `PTY ShowSuppliers` | any account — S0 names; details `projects.view` or `cost.view`; price history `cost.view` | the page; NAV-055 |
+| ROUTE-056 | PG-056 *Produk & Jasa* | GET `/data-master/produk` | `CAT ShowProducts` | any account; price defaults by family (PJ-14); stock `stock.view` | the page; NAV-056 |
+| ROUTE-057 | PG-057 *Lokasi Rak* | GET `/data-master/lokasi-rak` | `INV ShowLocations` | `stock.view` | the page; NAV-057 |
+| ROUTE-058 | PG-058 *Impor Data Awal* | GET `/data-master/impor` | `IMPORT ShowOpeningImport` | `import.prepare` with every batch company in scope; `import.commit` | the page; NAV-058 |
+| ROUTE-059 | PG-059 *Perusahaan* | GET `/pengaturan/perusahaan` | `ORG ShowCompanies` | `companies.manage` | the page; NAV-059 |
+| ROUTE-060 | PG-060 *Pengguna & Akses* | GET `/pengaturan/pengguna` | `IAM ShowUsersAndAccess` | `users.manage`, `permissions.manage` | the page; NAV-060 |
+| ROUTE-061 | PG-061 *Penomoran Dokumen* | GET `/pengaturan/penomoran` | `ORG ShowNumbering` | `companies.manage` | the page; NAV-061 |
+| ROUTE-062 | PG-062 *Pajak* | GET `/pengaturan/pajak` | `ORG ShowTax` | `tax.configure` | the page; NAV-062 |
+| ROUTE-063 | PG-063 *Riwayat Aktivitas* | GET `/aktivitas/riwayat` | `OPS ShowActivityHistory` | `audit.view` | the page; NAV-063 |
+| ROUTE-064 | PG-064 *Log Keamanan* | GET `/aktivitas/log-keamanan` | `OPS ShowSecurityLog` | `security_log.view` | the page; NAV-064 |
+
+## 3. Commands and other requests — ROUTE-101 onward
+
+Grouped by module. *Identity · step-up · rate · background* follows RC-04; *Validation · error* names only what a row adds to RC-05.
+
+### Sign-in and the session (EN-03 exceptions; SECURITY AU-04–AU-24)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-101 | PG-001 — sign in with e-mail and password | POST `/masuk` | `IAM AttemptLogin` | none — unauthenticated (EN-03) | none (CI-09) · auth, fail closed (AU-05; WS-12) | PG-002 for the code; PG-004 for an enrolment-only session (AU-18) | AU-04's one generic answer (MSG-19); the throttled answer (AU-05); never which part was wrong |
+| ROUTE-102 | PG-001 "Lanjutkan dengan Google" | GET `/masuk/google` | `IAM RedirectToGoogle` | none (EN-03) | none (CI-09) · auth, fail closed | Google's consent page with the state and nonce (AU-22) | a refused start answers generically on PG-001 |
+| ROUTE-103 | — Google's callback, no control | GET `/masuk/google/callback` | `IAM HandleGoogleCallback` | none (EN-03) | none (CI-09) · auth, fail closed; changes no business state (RB-03) | PG-002 with the challenge in the session (AU-22) | fails generically on PG-001; no account is created or linked by it (AU-22; AU-23) |
+| ROUTE-104 | PG-002 — submit the TOTP code | POST `/masuk/verifikasi` | `IAM VerifyTwoFactorChallenge` | none — the pending attempt's account (EN-03) | none (CI-09; one TX-07 transaction) · auth, fail closed | the landing page — PG-006 for the Owner, PG-007 for an Admin (NAV-002) | the generic and cooldown answers, truthfully one for every failing code (AU-04; AU-05; HO-40); an expired attempt → PG-001 |
+| ROUTE-105 | PG-002 "Gunakan kode pemulihan" | POST `/masuk/verifikasi/pemulihan` | `IAM UseRecoveryCode` | none — after a password only (AU-19; AU-22) | none (CI-09; TX-07) · auth, fail closed | the landing page; the code used once, the account told (AU-13) | as ROUTE-104 |
+| ROUTE-106 | PG-003 — set the password from the link | POST `/atur-kata-sandi` | `IAM ConsumeCredentialLink` | none — the link's holder, the token from the fragment (AU-12; EN-03) | none (CI-09) · auth, fail closed | PG-001 with "Kata sandi tersimpan. Masuk untuk melanjutkan." — PG-004 for a high-risk account (AU-18) | the password rules at the field (AU-03); a used, expired or revoked link answers on the page (AUTH_JOURNEYS) |
+| ROUTE-107 | PG-004 — confirm the enrolment with a code | POST `/verifikasi-dua-langkah` | `IAM ConfirmTotpEnrolment` | the enrolment-only session (AU-18) | none (CI-09; TX-07) · auth, fail closed · the password confirmed again after 15 minutes (H7-15) | the recovery codes shown once, then the landing page (AU-19) | a wrong code answers in place; the enrolment-only session reaches nothing else, its password confirmed again (AU-18; H7-15–H7-19; HO-40) |
+| ROUTE-108 | the account menu "Keluar" | POST `/keluar` | `IAM Logout` | SELF — any session | none (CI-09) · — | PG-001; history state cleared (AU-06) | — |
+| ROUTE-109 | the step-up dialog (IP-10) — confirm the password | POST `/konfirmasi-kata-sandi` | `IAM ConfirmPassword` | SELF | none (CI-09) · auth, fail closed (AU-15) | the guarded action continues; the confirmation holds 15 minutes (AU-15) | a wrong password answers in the dialog, throttled and logged (WS-12; LG-02) |
+
+### The account itself — *Akun Saya* (SELF under SECURITY AU-13; PERMISSIONS_MATRIX PJ-17)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-111 | PG-065 "Ubah Kata Sandi" (AUTH_JOURNEYS) | PUT `/akun/kata-sandi` | `IAM ChangeOwnPassword` | SELF (AU-13) | none (CI-09) · password change, 5 per 15 minutes | the change in place; the other sessions ended (AU-13) | the current password and AU-03 rules at the fields |
+| ROUTE-112 | PG-065 — enrol TOTP or replace its device | POST `/akun/verifikasi-dua-langkah` | `IAM EnrolTotp · ReplaceTotpDevice` | SELF (AU-13; AU-16) | none (CI-09; TX-07) · step-up (AU-15) · auth, fail closed | the new recovery codes shown once (AU-19); the account told (AU-13) | a wrong confirming code answers in place |
+| ROUTE-113 | PG-065 — view the recovery codes | POST `/akun/kode-pemulihan` | `IAM ViewRecoveryCodes` | SELF, with a current code (AU-19) | none (CI-09; TX-07) · step-up (AU-15) · auth, fail closed | the codes shown in place, never cached (AU-19) | as ROUTE-112 |
+| ROUTE-114 | PG-065 — regenerate the recovery codes | POST `/akun/kode-pemulihan/baru` | `IAM RegenerateRecoveryCodes` | SELF, with a current code (AU-19) | none (CI-09; TX-07) · step-up (AU-15) · auth, fail closed | the new codes shown once, the old ones void | as ROUTE-112 |
+| ROUTE-115 | PG-065 — turn TOTP off | DELETE `/akun/verifikasi-dua-langkah` | `IAM DisableTotp` | SELF, an account that is not high-risk (AU-20 a) | none (CI-09; TX-07) · step-up (AU-15) · auth, fail closed | TOTP off; the account told (AU-13) | refused while the account is high-risk (AU-13; AU-20 a) |
+| ROUTE-116 | PG-065 — link a Google identity, the confirming request | POST `/akun/google` | `IAM LinkGoogleIdentity` | SELF (AU-23) | none (CI-09; TX-07) · step-up (AU-15) · auth, fail closed | the link and its date in place; the account told (AU-13) | AU-23's checks answer generically |
+| ROUTE-117 | PG-065 — unlink its own Google identity | DELETE `/akun/google` | `IAM UnlinkOwnGoogleIdentity` | SELF (AU-24) | none (CI-09; TX-07) · step-up (AU-15) · commands | the link removed; the account told (AU-13) | — |
+| ROUTE-118 | PG-065 and the account menu "Bahasa tampilan" | PUT `/akun/bahasa` | `IAM SetOwnLocale` | SELF (AU-13; RB-10, `DIR-077` CA-08) | none (RB-03) · commands; request-forgery protected (WS-04); its audit event (RG-11) | the display language applied at once and kept in `users.locale` (LOCALIZATION) | a value other than `id`, `en` or the default refused in validation |
+
+### Users and access — *Pengguna & Akses* (PG-060; OWNER_ONLY)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-121 | PG-060 — create an account (J-ACC-02) | POST `/pengaturan/pengguna` | `IAM CreateUser` | `users.manage` | command_id (CI-01) · NX-02 · commands | the account's detail; its credential link by ROUTE-125 (AU-12) | a duplicate e-mail at the field |
+| ROUTE-122 | PG-060 — edit an account | PUT `/pengaturan/pengguna/{id}` | `IAM UpdateUser` | `users.manage` | command_id · NX-02 · commands | the change in place | CONFLICT on a stale `lock_version` (IP-03) |
+| ROUTE-123 | PG-060 — deactivate or reactivate an account | POST `/pengaturan/pengguna/{id}/status` | `IAM DeactivateUser · ReactivateUser` | `users.manage`; never the acting Owner itself | command_id · NX-02 · commands | the state in place; a deactivation ends its sessions and voids a pending challenge (SECURITY) | refused on the acting Owner |
+| ROUTE-124 | PG-060 — the role, company and capability grants, after the preview (J-ACC-02) | PUT `/pengaturan/pengguna/{id}/akses` | `IAM GrantRole · GrantCompany · GrantCapability` | `permissions.manage` | command_id · NX-02 · step-up (AU-15) · commands | the grants in place; an account made high-risk without TOTP has its credentials reissued in the same command (AU-18) | — |
+| ROUTE-125 | PG-060 "Buat Tautan Atur Kata Sandi" — issue a credential link | POST `/pengaturan/pengguna/{id}/tautan` | `IAM IssueCredentialLink` | `users.manage` | command_id · NX-02 · step-up (AU-15) · commands | the link shown once (AU-12) | — |
+| ROUTE-126 | PG-060 — revoke a credential link | POST `/pengaturan/pengguna/{id}/tautan/cabut` | `IAM RevokeCredentialLink` | `users.manage` | command_id · NX-02 · commands | the link void in place | — |
+| ROUTE-127 | PG-060 — reset another account's TOTP | POST `/pengaturan/pengguna/{id}/reset-verifikasi` | `IAM ResetTotp` | `users.manage`; never the acting Owner itself (AU-20 c) | command_id · NX-02 · step-up (AU-15) · commands; a mandatory reason (IP-09) | the reset in place; an account without TOTP has its credentials reissued (DIR-044 R-05) | the reason required |
+| ROUTE-128 | PG-060 — unlink another account's Google identity | POST `/pengaturan/pengguna/{id}/lepas-google` | `IAM UnlinkGoogleIdentity` | `users.manage`; never the acting Owner itself (AU-24) | command_id · NX-02 · step-up (AU-15) · commands; a mandatory reason | the link removed; the account told (AU-13) | the reason required |
+| ROUTE-130 | PG-060 "Akhiri Sesi" — end one of an account's sessions; a quick action on the phone too (J-ACC-02) | POST `/pengaturan/pengguna/{id}/sesi/{sesi}/akhiri` | `IAM EndUserSession` | `users.manage` | command_id · NX-02 · commands | the session ended in place; its holder signs in again (IP-11) | REJECTED by NX-02's checks (§7.3) |
+| ROUTE-129 | PG-060 — the incident command (AU-21) | POST `/pengaturan/pengguna/{id}/insiden` | `IAM VoidAccountCredentials` | `users.manage` (AU-21) | command_id · NX-02 · step-up (AU-15) · commands; a mandatory reason | credentials and sessions void; a credential link to issue (AU-21) | the reason required |
+
+### Companies and settings — *Perusahaan*, *Penomoran Dokumen*, *Pajak* (PG-059, PG-061, PG-062; OWNER_ONLY; J-MD-01)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-131 | PG-059 — create a company | POST `/pengaturan/perusahaan` | `ORG CreateCompany` | `companies.manage` | command_id (CI-01) · NX-01 · commands | the company's page | a duplicate legal identity at the field |
+| ROUTE-132 | PG-059 — the legal data | PUT `/pengaturan/perusahaan/{id}` | `ORG UpdateCompany` | `companies.manage` | command_id · NX-01 · commands | the change in place (IP-19) | CONFLICT on a stale `lock_version` (IP-03) |
+| ROUTE-133 | PG-059 — deactivate a company | POST `/pengaturan/perusahaan/{id}/nonaktifkan` | `ORG DeactivateCompany` | `companies.manage` | command_id · NX-01 · commands; the confirmation (IP-08) | the state in place | REJECTED by NX-01's checks (CONCURRENCY_IDEMPOTENCY §7.3) |
+| ROUTE-134 | PG-059 — add or change a bank account | POST `/pengaturan/perusahaan/{id}/rekening` | `ORG AddBankAccount · ChangeBankAccount` | `companies.manage` | command_id · NX-01 · step-up (AU-15) · commands | the account in place (IP-19) | — |
+| ROUTE-135 | PG-059 — the identity assets: logo, stamp, signature | POST `/pengaturan/perusahaan/{id}/aset-identitas` | `ORG ReplaceIdentityAsset` | `companies.manage` | command_id · NX-01 · step-up (AU-15) · commands; its file by ROUTE-216 first | the asset in place | a file the purpose's allowlist refuses (FL-02) |
+| ROUTE-136 | PG-061 — a numbering scheme | PUT `/pengaturan/penomoran/{type}` | `ORG ConfigureNumbering` | `companies.manage` | command_id · NX-01 · commands | the scheme in place; it creates no counter (NM-03) | CONFLICT on a stale `lock_version` |
+| ROUTE-137 | PG-061 "Mulai Penomoran" and "Tetapkan Nomor Awal" — start a sequence's numbering, its seed (HO-39) | POST `/pengaturan/penomoran/{type}/mulai` | `ORG StartNumbering` | `companies.manage` | command_id · NX-01 · commands; the confirmation (IP-08) | PG-061 with the started numbering (NAV-061) | a seed the period rule no longer admits (NM-03) |
+| ROUTE-138 | PG-062 — the tax configuration | PUT `/pengaturan/pajak` | `ORG ConfigureTaxTreatment` | `tax.configure` | command_id · NX-01 · commands | the change in place | CONFLICT on a stale `lock_version` |
+
+### Master data — *Klien*, *Pemasok*, *Produk & Jasa*, *Lokasi Rak* (PG-054–PG-057; J-MD-02–J-MD-05)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-141 | PG-054 — create a client organization, unit, address or PIC; inline from PG-013 | POST `/data-master/klien` | `PTY CreateClientOrganization · AddClientUnit` | `parties.manage` | command_id · NX-01 · commands | the client's record, or the form it was opened from with the new value chosen | the search-first duplicate list (J-MD-02; PF-21) |
+| ROUTE-142 | PG-054 — edit or archive a client | PUT `/data-master/klien/{id}` | `PTY UpdateClient · ArchiveClient` | `parties.manage` | command_id · NX-01 · commands | the change in place | CONFLICT on a stale `lock_version` |
+| ROUTE-143 | PG-055 — create a supplier; inline from PG-017 | POST `/data-master/pemasok` | `PTY CreateSupplier` | `parties.manage` | command_id · NX-01 · commands | the supplier's record, or PG-017 with the supplier chosen | a duplicate name answered as J-MD-03 states |
+| ROUTE-144 | PG-055 — edit or archive a supplier | PUT `/data-master/pemasok/{id}` | `PTY UpdateSupplier · ArchiveSupplier` | `parties.manage` | command_id · NX-01 · commands | the change in place; an archive blocks new purchases only (J-MD-03) | CONFLICT on a stale `lock_version` |
+| ROUTE-145 | PG-056 — create a product or service | POST `/data-master/produk` | `CAT CreateProduct` | `products.edit` | command_id · NX-01 · commands | the product's record | the SKU and the base unit at their fields (J-MD-04) |
+| ROUTE-146 | PG-056 — edit a product: units, conversions, serial policy, price defaults | PUT `/data-master/produk/{id}` | `CAT UpdateProduct · AddAlternateUnit · ChangeDefaultPrice` | `products.edit`; price defaults by family (PJ-14) | command_id · NX-01 · commands | the change in place | a serial-policy switch re-reads ON HAND under the product's guard (L-35; ST-09; NX-01) |
+| ROUTE-147 | "Daftarkan Barcode" from a scan (IP-15); "Buat Barcode Internal" on PG-056 | POST `/data-master/produk/{id}/barcode` | `CAT RegisterBarcode` | `products.edit` | command_id · NX-01 · commands | the barcode registered; the scan continues | a barcode already registered to another product |
+| ROUTE-148 | PG-057 — create or edit a rack and a product's minimum | POST `/data-master/lokasi-rak` | `INV SaveLocation · SetMinimumStock` | `warehouse.manage` | command_id · NX-01 · commands | the rack's row (NAV-057) | a duplicate code at the field |
+
+### Projects — *Proyek*, *Formulir Proyek*, *Penawaran*, the journey and its completion (PRJ; J-PRJ-01–J-PRJ-05)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-151 | PG-013 "Buat Proyek" — create the project | POST `/proyek` | `PRJ CreateProject` | `projects.manage` · the chosen company | command_id · NX-03 · commands | PG-011 of the created project, its number drawn (NAV-013) | a save whose period has no counter REJECTED (NM-03; C-10) |
+| ROUTE-152 | PG-013, from PG-011 *Tindakan Lain* "Ubah proyek" — amend the project | PUT `/proyek/{id}` | `PRJ UpdateProject` | `projects.manage` | command_id · NX-03 · commands | PG-011 with the amendment | CONFLICT on a stale `lock_version` |
+| ROUTE-153 | PG-011 *Tindakan Lain* "Buang Draf" — discard a draft project | POST `/proyek/{id}/hapus-draf` | `PRJ DiscardDraftProject` | `projects.manage`; DRAFT only | command_id · NX-03 · commands; the confirmation (IP-08) | PG-010; the number kept as a tombstone (L-37) | refused once the project is not DRAFT |
+| ROUTE-154 | PG-014 — save the quotation draft | POST `/proyek/{id}/penawaran` | `PRJ SaveQuotationDraft` | `quotation.manage` with `finance.view` | command_id · NX-03 · commands | the draft in place | CONFLICT on a stale `lock_version` |
+| ROUTE-155 | PG-014 "Terbitkan Penawaran" | POST `/proyek/{id}/penawaran/terbitkan` | `PRJ IssueQuotation` | `quotation.manage` (DOC-01, AX-15) | command_id · AX-15 · commands; the confirmation (IP-08) | PG-014 with the issued revision and its number; the rendition follows (SF-RENDER) | REJECTED when the numbering may create no counter (NM-03) |
+| ROUTE-156 | PG-014 "Buat Revisi" | POST `/proyek/{id}/penawaran/revisi` | `PRJ ReviseQuotation` | `quotation.manage` | command_id · NX-03 · commands | a new draft revision in place | — |
+| ROUTE-157 | PG-014 "Catat Jawaban Klien" — *Disetujui* or rejected | POST `/proyek/{id}/penawaran/jawaban` | `PRJ ApproveQuotation · RecordQuotationRejection` | the approval `projects.confirm` (AX-13); the rejection `quotation.manage` | command_id · AX-13 · commands; the confirmation (IP-08) | PG-011 confirmed (AX-13) or the rejection in place | REJECTED by AX-13's checks (§7.2) |
+| ROUTE-158 | PG-011 "Konfirmasi Proyek" — confirmation without a quotation | POST `/proyek/{id}/konfirmasi` | `PRJ ConfirmWithoutQuotation` | `projects.confirm` | command_id · AX-13 · commands; the confirmation (IP-08) | PG-011 ACTIVE | REJECTED by AX-13's checks (§7.2) |
+| ROUTE-159 | PG-011 *Item dan pemenuhan* "Batalkan Sisa" | POST `/proyek/{id}/batalkan-sisa` | `PRJ CancelRemainingScope` | `projects.cancel_scope` | command_id · AX-14 · commands; the reason step (IP-09) and the reservation cut (IP-20) | the lines' remainder cancelled in place | REJECTED by AX-14's checks (§7.2) |
+| ROUTE-160 | PG-011 *Item dan pemenuhan* "Ubah Cara Pemenuhan" | POST `/proyek/{id}/ubah-pemenuhan` | `PRJ SplitReplanLine` | `projects.manage` | command_id · AX-14 · commands | the re-planned lines in place | as ROUTE-159 |
+| ROUTE-161 | PG-012 "Selesaikan Proyek" | POST `/proyek/{id}/selesaikan` | `PRJ CompleteProject` | `projects.complete` | command_id · AX-25 · commands; the confirmation (IP-08) | PG-011 COMPLETED_NORMAL (NAV-012) | REJECTED with WF-PRJ-03's unmet predicates (AX-25's checks, §7.2) |
+| ROUTE-162 | PG-012 "Selesaikan Paksa" | POST `/proyek/{id}/selesaikan-paksa` | `PRJ ForceCompleteProject` | `projects.force_complete` | command_id · AX-26 · commands; the reason step (IP-09) | PG-011 COMPLETED_FORCED | the reason required |
+| ROUTE-163 | PG-011 *Tindakan Lain* "Batalkan Proyek" | POST `/proyek/{id}/batalkan` | `PRJ CancelProject` | `projects.cancel` | command_id · AX-27 · commands; the reason step (IP-09) | PG-011 CANCELLED | REJECTED by AX-27's checks (§7.2) |
+
+### Requirements — *Kesiapan dokumen* and *Dokumen Administrasi* (ADM; PG-011, PG-039; WF-ADM-01)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-164 | "Kesiapan dokumen" — add or tighten a requirement | POST `/proyek/{id}/persyaratan` | `ADM AddRequirement · TightenRequirement` | `requirements.manage` | command_id · NX-03 · commands | the requirement in place | never the Owner-only fields (OD-05; OD-06) |
+| ROUTE-165 | "Kesiapan dokumen" — link a satisfying document or evidence | POST `/proyek/{id}/persyaratan/{req}/tautkan` | `ADM LinkRequirementEvidence` | `requirements.manage` | command_id · NX-03 · commands | the requirement satisfied in place; completion re-evaluated (SF-REVAL) | REJECTED by NX-03's checks (§7.3) |
+| ROUTE-166 | "Tandai Tidak Berlaku" | POST `/proyek/{id}/persyaratan/{req}/tidak-berlaku` | `ADM WaiveRequirement` | `requirements.waive`; waiver-eligible requirements only (BR-ADM-02) | command_id · NX-03 · commands; the reason step (IP-09) | TIDAK BERLAKU in place | refused for a requirement that is not waiver-eligible |
+| ROUTE-167 | the requirement's waiver eligibility (OD-05) | POST `/proyek/{id}/persyaratan/{req}/kelayakan` | `ADM SetWaiverEligibility` | `requirements.set_waiver_eligibility` | command_id · NX-03 · commands | the eligibility in place | — |
+| ROUTE-168 | the requirement's relaxation or removal (OD-06) | POST `/proyek/{id}/persyaratan/{req}/longgarkan` | `ADM RelaxRequirement · RemoveRequirement` | `requirements.relax` | command_id · NX-03 · commands; the reason step (IP-09) | the change in place | — |
+| ROUTE-169 | a decision's record — an approval on PG-014, a waiver in readiness or on PG-039 — superseded (CM-27) | POST `/keputusan/{id}/ganti` | `ADM SupersedeDecision` | `decisions.supersede`; an Owner decision only by the Owner (OD-15) | command_id · CM-27's sequence · commands; the reason step (IP-09) | the new decision in place, both visible | — |
+
+### Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR-03)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-171 | PG-017 "Simpan Pembelian", its lines with their "Kirim langsung ke klien" flag; from PG-016 "Tambahkan Pembelian Susulan" prefilled | POST `/pembelian` | `PUR RecordPurchase` | `purchase.manage` with `cost.view` · the purchase's company | command_id · NX-04 with AX-29's charges · commands | PG-016 of the saved purchase with its business number (`DIR-077` CA-09; NAV-017) | REJECTED when the period may create no PURCHASE counter (NM-03; C-10) |
+| ROUTE-172 | PG-016 — amend the purchase before its first effect (L-23) | PUT `/pembelian/{id}` | `PUR AmendPurchase` | `purchase.manage` | command_id · NX-04 · commands | the amendment in place | REJECTED after the purchase's first effect (L-23) |
+| ROUTE-173 | PG-016 "Batalkan Pembelian" | POST `/pembelian/{id}/batalkan` | `PUR CancelPurchase` | `purchase.cancel` | command_id · AX-12 · commands; the reason step (IP-09) | PG-016 cancelled, its number kept (`DIR-077` CA-09) | REJECTED by AX-12's checks (§7.2) |
+| ROUTE-174 | PG-016 "Tutup Sisa Pembelian" | POST `/pembelian/{id}/tutup-sisa` | `PUR ClosePurchaseRemainder` | `purchase.close_remainder` | command_id · AX-32 · commands; the reason step (IP-09) | the remainder closed in place | — |
+| ROUTE-175 | PG-016 "Koreksi Harga, Pajak atau Biaya" | POST `/pembelian/{id}/koreksi-biaya` | `PUR CorrectPurchaseCost` | `purchase.correct_cost` | command_id · AX-34 · commands; the reason step (IP-09) | the correction and its cascade in place (CM-17; CM-35) | — |
+| ROUTE-176 | PG-028 "Retur ke Pemasok", from PG-016 | POST `/pembelian/{id}/retur` | `INV ReturnToSupplier` | `purchase_return.record` with `stock.view` and `cost.view`; another company's lot `stock.allocate_intercompany` | command_id · AX-11 · commands; the reason step (IP-09) | PG-028 with the case and the answer (NAV-028) | REJECTED by AX-11's checks (§7.2) |
+| ROUTE-177 | PG-028 — the return's outcome: replacement, refund, supplier credit or the unrecovered share | POST `/pembelian/{id}/retur/{ret}/hasil` | `PUR RecordReturnOutcome` | `purchase_return.record` | command_id · NX-16 · commands | the outcome in place (WF-PUR-03) | — |
+
+### Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; PG-018–PG-029)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-181 | PG-022 "Catat Barang Masuk" — one line, with its optional reservation, "Reservasi untuk Proyek Ini" | POST `/gudang/barang-masuk/{id}/terima` | `INV ReceiveGoods` | `stock.receive`; the reservation `stock.reserve` (PJ-18) | command_id (CI-01) per line · AX-04 · commands | the line's answer in place (IP-19); after the last line the summary, then PG-007 (NAV-022) | REJECTED by AX-04's checks (CONCURRENCY_IDEMPOTENCY §7.2) |
+| ROUTE-182 | PG-022 "Terbitkan Nota Terima Barang" (DOC-12) | POST `/gudang/barang-masuk/{id}/nota` | `DOC IssueDocument` | `documents.issue` | command_id · AX-15 · commands | the issued note and its rendition's state in place (SF-RENDER) | REJECTED by AX-15's checks (§7.2) |
+| ROUTE-183 | "Balikkan Penerimaan" on PG-016 or PG-020 | POST `/gudang/penerimaan/{id}/balikkan` | `INV ReverseReceipt` | `stock.reverse` | command_id · AX-05 · commands; the reason step (IP-09) | the reversal in place (CM-02; CM-03) | REJECTED by AX-05's checks (§7.2) |
+| ROUTE-184 | PG-025 "Reservasi"; *Item dan pemenuhan* on PG-011; the offer on PG-022 | POST `/gudang/reservasi` | `INV Reserve` | `stock.reserve` with `stock.view` and `projects.view` | command_id · AX-01 · commands | the reservation's answer in the row (NAV-025) | REJECTED by AX-01's checks (§7.2) |
+| ROUTE-185 | PG-025 "Kurangi Reservasi", "Lepas"; the cut block inside a supply-reducing form (IP-20) | POST `/gudang/reservasi/{id}/kurangi` | `INV ReleaseReservation` | `stock.reserve` | command_id · AX-02 · commands | the reduced or released reservation in the row | REJECTED by AX-02's checks (§7.2) |
+| ROUTE-186 | PG-024 "Catat Barang Keluar", with "Alasan alokasi antar-perusahaan" for another company's lot | POST `/gudang/barang-keluar/{id}/keluarkan` | `INV Dispatch` | `stock.dispatch`; another company's lot `stock.allocate_intercompany` (XL-1) | command_id · AX-03 · commands; the confirmation (IP-08) | the dispatch's answer in place, then PG-023 (NAV-024) | REJECTED by AX-03's checks (§7.2) |
+| ROUTE-187 | PG-024 "Terbitkan Surat Jalan" (DOC-03) | POST `/gudang/barang-keluar/{id}/surat-jalan` | `DOC IssueDocument` | `documents.issue` | command_id · AX-15 · commands | the issued delivery note and its rendition's state in place | REJECTED by AX-15's checks (§7.2) |
+| ROUTE-188 | the dispatch's reversals (CM-05; CM-06), with their restoration | POST `/gudang/barang-keluar/{id}/balikkan` | `INV ReverseDispatch` | `stock.reverse` | command_id · AX-10 · commands; the reason step (IP-09) | the reversal and the restored stock in place | REJECTED by AX-10's checks (§7.2) |
+| ROUTE-189 | the dispatch record — PG-024, or *Rincian proyek* on PG-011 — its identity substitution (CM-36) | POST `/gudang/barang-keluar/{id}/ganti-identitas` | `INV SubstituteDispatchIdentity` | `stock.reverse` | command_id · AX-35 · commands; the reason step (IP-09) | the substitution in place | REJECTED by AX-35's checks (§7.2) |
+| ROUTE-190 | "Pindah Lokasi" on PG-018 and PG-019 | POST `/gudang/stok/{id}/pindah` | `INV MoveLocation` | `stock.move` | command_id · NX-05 · commands | the move in place, a zero-net movement (L-36) | REJECTED by NX-05's checks (§7.3) |
+| ROUTE-191 | PG-026 and PG-019 "Mulai Hitungan"; "Hitung Ulang" after a stale count (MSG-30) | POST `/gudang/stok-opname` | `INV OpenCount` | `stock.count` | command_id · NX-05 · commands | the count opened in place | REJECTED by NX-05's checks (§7.3) |
+| ROUTE-192 | PG-026 — record the count lines | POST `/gudang/stok-opname/{id}/baris` | `INV RecordCount` | `stock.count` | command_id per line · NX-05 · commands | each line's answer in place (IP-19) | REJECTED by NX-05's checks (§7.3) |
+| ROUTE-193 | PG-026 "Terapkan Selisih" | POST `/gudang/stok-opname/{id}/terapkan` | `INV ApplyCountVariance` | `stock.count_apply` | command_id · AX-06 · commands; the reason step (IP-09) | the count's answer in place (NAV-026) | REJECTED by AX-06's checks (§7.2) |
+| ROUTE-194 | PG-027 "Catat Penyesuaian Stok" — a decrease or a loss | POST `/gudang/penyesuaian` | `INV AdjustStock · RecognizeLoss` | `stock.adjust`; another company's lot `stock.allocate_intercompany` | command_id · AX-06 or AX-30 · commands; the reason step (IP-09) | the adjustment in place; an unexplained loss opens its pending case (QS-22) | REJECTED by AX-06's or AX-30's checks (§7.2) |
+| ROUTE-195 | PG-027 "Ubah Kondisi", "Periksa Ulang" | POST `/gudang/kondisi` | `INV ChangeCondition · Reinspect` | `stock.condition` | command_id · AX-06, the re-inspection NX-05 · commands; the reason step (IP-09) | the condition in place | REJECTED by AX-06's checks (§7.2) |
+| ROUTE-196 | a loss's exact reversal (CM-34) from its record | POST `/gudang/penyesuaian/{id}/balikkan` | `INV ReverseLoss` | `stock.reverse` | command_id · AX-30 · commands; the reason step (IP-09) | the reversal in place | REJECTED by AX-30's checks (§7.2) |
+| ROUTE-197 | PG-029 "Tetapkan Surplus" | POST `/gudang/selisih-temuan/{id}/surplus` | `INV AttributeSurplus` | `stock.attribute_surplus` | command_id · AX-07 · commands; the reason step (IP-09) | PG-029 with the case resolved (NAV-029) | REJECTED by AX-07's checks (§7.2) |
+| ROUTE-198 | PG-029 "Tetapkan Perusahaan" | POST `/gudang/selisih-temuan/{id}/tetapkan` | `INV ResolveUnattributedLoss` | `stock.resolve_unattributed` | command_id · AX-37 · commands; the reason step (IP-09) | PG-029 with the case resolved | REJECTED by AX-37's checks (§7.2) |
+| ROUTE-199 | PG-029 "Tetapkan dengan Bukti" (OD-10) | POST `/gudang/selisih-temuan/{id}/tetapkan-bukti` | `INV ResolveUnattributedLossWithEvidence` | `stock.resolve_unattributed_evidence`; definitive evidence only (`DIR-027`) | command_id · AX-37 · commands; the reason step (IP-09) | PG-029 with the case resolved | REJECTED by AX-37's checks (§7.2) |
+| ROUTE-200 | PG-029 "Balikkan Penetapan" | POST `/gudang/selisih-temuan/{id}/balikkan` | `INV ReverseUnattributedResolution` | `stock.resolve_unattributed` | command_id · AX-33 · commands; the reason step (IP-09) | the reversal in place, both visible | REJECTED by AX-33's checks (§7.2) |
+| ROUTE-212 | "Balikkan" on PG-020 — a wrong adjustment, condition change or count application (CM-28) | POST `/gudang/riwayat-stok/{id}/balikkan` | `INV ReverseMovement` | `stock.reverse` | command_id · NX-11 · commands; the reason step (IP-09) | the linked reversal in place; a linked loss reversed exactly (SF-LOSS) | REJECTED by NX-11's checks (§7.3) |
+| ROUTE-213 | "Koreksi Data Awal" on an opening stock fact's record (CM-33) | POST `/gudang/riwayat-stok/{id}/koreksi-data-awal` | `INV ReverseOpeningMovement` | `stock.reverse` | command_id · NX-11 · commands; the reason step (IP-09); never a re-import | the reversal in place, by its import identity | REJECTED by NX-11's checks (§7.3) |
+| ROUTE-214 | "Koreksi Data Awal" on an opening receivable's or credit's record (CM-33) | POST `/keuangan/data-awal/{id}/koreksi` | `FIN ContraOpeningFact` | `finance.contra` | command_id · NX-11 · commands; the reason step (IP-09); never a re-import | the contra in place, after its applications are disposed (CM-33) | REJECTED by NX-11's checks (§7.3) |
+
+### Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-034)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-201 | PG-031 "Catat Pengiriman"; the journey's primary action; the QS-06 row | POST `/gudang/pengiriman/{id}/catat` | `FUL RecordDelivery` | `delivery.record` | command_id · AX-09 · commands | PG-030 or the origin, the delivery recorded (NAV-031) | REJECTED by AX-09's checks (§7.2) |
+| ROUTE-202 | PG-031 "Terbitkan" — DOC-08 or DOC-10 | POST `/gudang/pengiriman/{id}/dokumen` | `DOC IssueDocument` | `documents.issue` | command_id · AX-15 · commands | the issued document in place | REJECTED by AX-15's checks (§7.2) |
+| ROUTE-203 | PG-031 "Tutup Pengiriman"; "Catat Hilang di Perjalanan" on PG-030 with `stock.adjust` (CM-07) | POST `/gudang/pengiriman/{id}/tutup` | `FUL CloseDelivery` | `delivery.close`; the loss `stock.adjust` | command_id · NX-15 · commands; the reason step (IP-09) | the closure in place | REJECTED by NX-15's checks (§7.3) |
+| ROUTE-204 | PG-031 "Koreksi Catatan Pengiriman" (CM-08) | POST `/gudang/pengiriman/{id}/koreksi` | `FUL CorrectDelivery` | `fulfillment.correct` | command_id · AX-09 · commands; the reason step (IP-09) | the correcting line in place | REJECTED by AX-09's checks (§7.2) |
+| ROUTE-205 | PG-032 "Konfirmasi Kirim Langsung" | POST `/proyek/{id}/kirim-langsung` | `FUL ConfirmDropShip` | `dropship.confirm`; cost `cost.view` | command_id · AX-08 · commands; the confirmation (IP-08) | PG-011 with the confirmation recorded (NAV-032) | REJECTED by AX-08's checks (§7.2) |
+| ROUTE-206 | PG-032 — the confirmation's reversal | POST `/proyek/{id}/kirim-langsung/{dsc}/balikkan` | `FUL ReverseDropShipConfirmation` | `fulfillment.correct` | command_id · AX-08 · commands; the reason step (IP-09) | the reversal in place | REJECTED by AX-08's checks (§7.2) |
+| ROUTE-207 | PG-032 — a drop-ship return (CM-14; CM-15) | POST `/proyek/{id}/kirim-langsung/{dsc}/retur` | `FUL ReturnDropShipToSupplier` | `sales_return.record` | command_id · AX-10 · commands; the reason step (IP-09) | the return and its case in place | REJECTED by AX-10's checks (§7.2) |
+| ROUTE-208 | PG-033 — record the service handover; "Terbitkan" BAST | POST `/proyek/{id}/serah-terima` | `FUL RecordHandover` | `handover.record`; the BAST `documents.issue` | command_id · AX-09, the BAST AX-15 · commands | PG-011 with the handover recorded (NAV-033) | REJECTED by AX-09's checks (§7.2) |
+| ROUTE-209 | PG-033 — the handover's reversal line | POST `/proyek/{id}/serah-terima/{ho}/balikkan` | `FUL ReverseHandover` | `fulfillment.correct` | command_id · AX-09 · commands; the reason step (IP-09) | the reversal line in place | REJECTED by AX-09's checks (§7.2) |
+| ROUTE-210 | PG-034 "Retur dari Klien", from a delivery | POST `/proyek/{id}/retur` | `INV RestoreStock` | `sales_return.record`; companions by their capability | command_id · AX-10 · commands; the reason step (IP-09) | PG-034 with the case opened and the answer (NAV-034) | REJECTED by AX-10's checks (§7.2) |
+| ROUTE-211 | the return's record — PG-034 or PG-028 — its reversal (CM-37) | POST `/retur/{id}/balikkan` | `INV ReverseRestorationOrReturn` | `stock.reverse` | command_id · AX-36 · commands; the reason step (IP-09) | the reversal in place | REJECTED by AX-36's checks (§7.2) |
+
+### Documents, files and evidence (DOC; PG-035, PG-036, PG-038; WF-DOC-01, WF-DOC-02)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-221 | PG-036 — save the document's draft | POST `/dokumen` | `DOC SaveDocumentDraft` | `documents.issue` · the document's company | command_id (CI-01) · NX-12 · commands | the draft in place | CONFLICT on a stale `lock_version` (IP-03) |
+| ROUTE-222 | PG-036 "Terbitkan" — any selectable document, *Surat Pesanan* and *Surat Permintaan Pembayaran* among them; PG-016 "Terbitkan PO" | POST `/dokumen/{id}/terbitkan` | `DOC IssueDocument` | `documents.issue`; DOC-01 `quotation.manage` | command_id · AX-15 · commands; the confirmation (IP-08) | PG-036 with the issued version, its number and the rendition's state (NAV-036; SF-RENDER) | REJECTED by AX-15's checks (CONCURRENCY_IDEMPOTENCY §7.2), the numbering's included (NM-03) |
+| ROUTE-223 | PG-036 "Revisi" | POST `/dokumen/{id}/revisi` | `DOC ReviseDocument` | `documents.correct` | command_id · NX-12 (CM-26) · commands | the revision's draft in place | REJECTED by NX-12's checks (§7.3) |
+| ROUTE-224 | PG-036 "Batalkan Dokumen" | POST `/dokumen/{id}/batalkan` | `DOC VoidDocument` | `documents.correct` | command_id · NX-12 (CM-26) · commands; the reason step (IP-09) | the void in place; completion and requirements re-evaluated (L-41) | REJECTED by NX-12's checks (§7.3) |
+| ROUTE-225 | PG-036 — an issued document's rendition shown inline | GET `/berkas/{id}/tampil` | `DOC ShowRendition` | the document's family view capability (PJ-15), at request time (FL-07) | — · — · background by its route (RB-05) | the issued rendition inline, under FL-07's RENDITION profile | RC-05; a draft has no rendition — its preview is composed in the browser (§4; SF-RENDER) |
+| ROUTE-226 | a rendition's or a file's download | GET `/berkas/{id}/unduh` | `DOC DownloadFile` | the owning record's view capability, at request time (DP-05; FL-07) | — · — · user-initiated (RB-04) | the file with FL-07's header profile | RC-05; never a signed link as the only authorization (RB-04) |
+| ROUTE-227 | a file's thumbnail | GET `/berkas/{id}/gambar-kecil` | `DOC ShowThumbnail` | the owning record's view capability, at request time (DP-05; FL-07) | — · — · background by its route (RB-05) | the thumbnail | RC-05 |
+| ROUTE-228 | an upload — PG-038's sheet, "Buat" › *Unggah Dokumen*, readiness "Unggah", the proof fields of PG-022, PG-031 and PG-046 | POST `/berkas` | `DOC StoreUpload` | `evidence.upload` with the family's view capability (PJ-08); a company asset `companies.manage` | none (RB-03) · uploads, 60 per hour and a daily byte budget (WS-12) | the file's id for the command that follows (FL-01) | a type, size or content the purpose's allowlist refuses, at the field (FL-02–FL-06) |
+| ROUTE-229 | the evidence's registration after an upload | POST `/bukti` | `DOC RegisterEvidence` | `evidence.upload` | command_id · NX-07 · commands; a duplicate's second submission `warnings.override` (IP-05) | PG-038 with the registered evidence (NAV-038) | the duplicate warning (IP-05; QS-21) |
+| ROUTE-230 | PG-038 — a new version of an evidence; "Jadikan Versi Berlaku" | POST `/bukti/{id}/versi` | `DOC AddEvidenceVersion` | `evidence.upload` | command_id · NX-07 · commands | the new version in place | REJECTED by NX-07's checks (§7.3) |
+| ROUTE-231 | PG-038 and the record pages — link, unlink or replace an evidence (L-41) | POST `/bukti/{id}/tautan` | `DOC LinkEvidence · UnlinkEvidence · ReplaceEvidence` | `evidence.upload` | command_id · NX-14 · commands | the link in place; a replacement re-evaluates completion and requirements (L-41) | REJECTED by NX-14's checks (§7.3) |
+
+### Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG-041–PG-050)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-241 | PG-042 "Simpan Draf"; PG-041 "Buat Invoice" | POST `/keuangan/invoice` | `FIN SaveInvoiceDraft` | `invoice.issue` with `finance.view` | command_id · NX-09 · commands | the draft in place | CONFLICT on a stale `lock_version` (IP-03) |
+| ROUTE-242 | PG-042 or PG-043 "Terbitkan Invoice" | POST `/keuangan/invoice/{id}/terbitkan` | `FIN IssueInvoice` | `invoice.issue` | command_id · AX-16 · commands; MSG-39 in the confirmation (IP-08) | the result with the number in place, then "Buka Invoice" → PG-043 (NAV-042) | REJECTED by AX-16's checks (§7.2) |
+| ROUTE-243 | PG-043 "Tagihkan"; PG-044 | POST `/keuangan/invoice/{id}/tagihkan` | `FIN BillInvoice` | `billing.record` | command_id · AX-17 · commands | the billing act in place | REJECTED by AX-17's checks (§7.2) |
+| ROUTE-244 | PG-043 — the billing act's correction (CM-25) | POST `/keuangan/invoice/{id}/koreksi-tagihan` | `FIN CorrectBilling` | `billing.correct` | command_id · AX-17 · commands; the reason step (IP-09) | the correction in place | REJECTED by AX-17's checks (§7.2) |
+| ROUTE-245 | PG-043 — void or downward revision (CM-23; CM-24) | POST `/keuangan/invoice/{id}/koreksi` | `FIN VoidInvoice · ReviseInvoiceDown` | `invoice.correct`; with a standing write-off `writeoff.supersede` | command_id · AX-22 · commands; the reason step (IP-09) | the corrected invoice in place | REJECTED by AX-22's checks (§7.2) |
+| ROUTE-246 | PG-043 "Tandai Sengketa", "Cabut Sengketa" | POST `/keuangan/invoice/{id}/sengketa` | `FIN SetDisputeHold · ClearDisputeHold` | `receivables.dispute` | command_id · NX-09 · commands; the reason step (IP-09) | the hold in place (QS-11) | REJECTED by NX-09's checks (§7.3) |
+| ROUTE-247 | PG-043 "Hapuskan Piutang" | POST `/keuangan/invoice/{id}/hapuskan` | `FIN WriteOffReceivable` | `receivables.write_off` | command_id · AX-24 · commands; the reason step (IP-09) | the write-off in place | REJECTED by AX-24's checks (§7.2) |
+| ROUTE-248 | PG-043 "Terapkan dan Cabut Penghapusan" | POST `/keuangan/invoice/{id}/cabut-penghapusan` | `FIN SupersedeWriteOff` | `writeoff.supersede` | command_id · AX-24 · commands; the reason step (IP-09) | the supersession in place | REJECTED by AX-24's checks (§7.2) |
+| ROUTE-249 | PG-043 "Terbitkan Kuitansi untuk Proses Pembayaran" (AX-31) | POST `/keuangan/invoice/{id}/kuitansi` | `FIN IssuePrepaymentKuitansi` | `documents.issue` | command_id · AX-31 · commands | the Kuitansi issued in place | REJECTED by AX-31's checks (§7.2) |
+| ROUTE-250 | "Tautkan Kuitansi" on PG-036, PG-043 or PG-046 | POST `/keuangan/kuitansi/{id}/tautkan` | `FIN LinkPrepaymentKuitansi` | `payment.record` | command_id · AX-31 · commands | the link in place (QS-19) | REJECTED by AX-31's checks (§7.2) |
+| ROUTE-251 | PG-046 "Catat Pembayaran", with its same-command applications (AX-18) | POST `/keuangan/pembayaran` | `FIN RecordPayment` | `payment.record` with `finance.view`, covering the applications; a duplicate's second submission `warnings.override` | command_id · AX-18 · commands; MSG-39 in the confirmation (IP-08) | PG-045 with the recorded payment first (NAV-046; S2-J06) | the duplicate warning (IP-05); REJECTED by AX-18's checks — an invoice of another company, more than its outstanding, more than the payment (BR-FIN-03; BR-FIN-04; BR-FIN-07) —; without a proof its reason required (L-29) |
+| ROUTE-252 | PG-045 "Terapkan"; PG-048 "Terapkan ke Invoice" | POST `/keuangan/pembayaran/{id}/terapkan` | `FIN ApplyPayment` | `payment.apply` | command_id · AX-19 · commands | the application in place | REJECTED by AX-19's checks (§7.2) |
+| ROUTE-253 | PG-045 — the reallocation (CM-21) | POST `/keuangan/pembayaran/{id}/realokasi` | `FIN ReallocateApplication` | `payment.reallocate` | command_id · AX-19 · commands; the reason step (IP-09) | the reallocation in place | REJECTED by AX-19's checks (§7.2) |
+| ROUTE-254 | PG-045 — the payment's contra | POST `/keuangan/pembayaran/{id}/kontra` | `FIN ContraPayment` | `finance.contra` | command_id · AX-20 · commands; the reason step (IP-09) | the contra in place, both visible (SF-CONTRA) | REJECTED by AX-20's checks (§7.2) |
+| ROUTE-255 | PG-047 "Catat Potongan" | POST `/keuangan/potongan` | `FIN RecordDeductionSettlement` | `settlement.record` with `finance.view` and `evidence.view` | command_id · AX-21 · commands | PG-047 with the settlement recorded (NAV-047) | REJECTED by AX-21's checks (§7.2) |
+| ROUTE-256 | PG-048 "Kembalikan Dana" | POST `/keuangan/kredit-pelanggan/{id}/kembalikan` | `FIN RefundCredit` | `refund.record` | command_id · AX-23 · commands; the confirmation (IP-08) | the refund in place | REJECTED by AX-23's checks (§7.2) |
+| ROUTE-257 | PG-049 "Catat Beban" | POST `/keuangan/kas-lain/beban` | `CST RecordExpense` | `expense.record` with `cost.view` | command_id · NX-10 · commands | PG-049 with the record (NAV-049) | REJECTED by NX-10's checks (§7.3) |
+| ROUTE-258 | PG-049 "Catat Pengeluaran Kas" | POST `/keuangan/kas-lain/pengeluaran` | `FIN RecordDisbursement` | `disbursement.record` | command_id · NX-10 · commands | PG-049 with the record | REJECTED by NX-10's checks (§7.3) |
+| ROUTE-259 | PG-049 "Catat Kas Masuk Lain" | POST `/keuangan/kas-lain/kas-masuk` | `FIN RecordOtherCashIn` | `cashin.record` | command_id · NX-10 · commands | PG-049 with the record | REJECTED by NX-10's checks (§7.3) |
+| ROUTE-260 | the contra of a settlement, expense, disbursement or attribution — PG-047, PG-049 | POST `/keuangan/kontra` | `FIN RecordContra` | `finance.contra` | command_id · AX-33 · commands; the reason step (IP-09) | the contra in place, both visible (SF-CONTRA) | REJECTED by AX-33's checks (§7.2) |
+| ROUTE-261 | PG-050 "Catat Mutasi Bank" | POST `/keuangan/mutasi-bank` | `DOC RecordBankStatementLine` | `bank_statement.record` with `finance.view` and `evidence.upload` | command_id · NX-08 · commands | PG-050 with the line (NAV-050) | REJECTED by NX-08's checks (§7.3) |
+| ROUTE-262 | PG-050 — a statement line's void, a citation's correction, a claimed deduction's supersession | POST `/keuangan/mutasi-bank/{id}/koreksi` | `DOC VoidBankStatementLine · FIN CorrectBankCitation · SupersedeClaimedDeduction` | `cash.correct` | command_id · NX-08 · commands; the reason step (IP-09) | the correction in place | REJECTED by NX-08's checks (§7.3) |
+
+### Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-271 | PG-040 "Tutup Kasus"; PG-028; PG-034 | POST `/dokumen/kasus/{id}/tutup` | `OPS CloseCorrectionCase` | `cases.close` | command_id · NX-06 · commands; the reason step (IP-09) | the case closed with its outcome (SF-CASE) | REJECTED while a residual the case carries stands (SF-CASE) |
+| ROUTE-272 | PG-058 — prepare a batch from its file | POST `/data-master/impor` | `IMPORT PrepareImport` | `import.prepare` with every batch company in scope | command_id · NX-13 · commands; its file by ROUTE-228 first | PG-058 with the batch's state (NAV-058) | malformed and duplicate rows surfaced (WF-MIG-01) |
+| ROUTE-273 | PG-058 — the dry run | POST `/data-master/impor/{id}/uji` | `IMPORT DryRunImport` | `import.prepare` | command_id · NX-13 · commands; run as a job (IP-12) | the batch with its dry-run result | REJECTED by NX-13's checks (§7.3) |
+| ROUTE-274 | PG-058 — the sign-off against the signed control totals | POST `/data-master/impor/{id}/setujui` | `IMPORT SignOffImport` | `import.prepare` | command_id · NX-13 · commands | the batch SIGNED_OFF | REJECTED by NX-13's checks (§7.3) |
+| ROUTE-275 | PG-058 — the Owner's commit | POST `/data-master/impor/{id}/terapkan` | `IMPORT CommitImport` | `import.commit` | command_id · AX-28 · step-up (AU-15) · commands; the confirmation (IP-08); the rows driven as a job with deterministic identities (CI-01) | the batch COMMITTED when no VALID row remains (AX-28) | a start refused while a batch holds valid seed rows (UXS-31); REJECTED by AX-28's checks (§7.2) |
+
+### Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053)
+
+| ROUTE | UI action | Method · route | Handler | Capability · scope | Identity · step-up · rate · background | Success | Validation · error |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| ROUTE-281 | PG-009 — search, and the lookups inside forms (IP-17) | POST `/cari` | `Reporting Search` | any account; each result under its view capability (PJ-10) | none — read-only, no state changed · search, 60 per minute | the results in place; the term never in the address (§11; DP-02) | no result: the empty state with the term kept |
+| ROUTE-282 | the scan fields of the warehouse pages (IP-15) | POST `/gudang/pindai` | `INV ScanLookup` | `stock.view` · the pool (S1) | none — read-only · scanner, burst-sized (WS-12) | the matched product, lot or serial in place | no match: "Daftarkan Barcode" offered with `products.edit` (IP-15) |
+| ROUTE-283 | "Ekspor" on PG-051 and PG-052; "Minta Lagi" on PG-053 | POST `/laporan/ekspor` | `Reporting RequestExport` | `reports.export`; the consolidated report `reports.consolidated` | none (RB-03) · exports, 10 per hour and 2 at once (WS-12); run as a job | PG-053 with the request (NAV-051) | a limit reached answers in place |
+| ROUTE-284 | PG-053 — download an export | GET `/laporan/ekspor/{id}/unduh` | `Reporting DownloadExport` | `reports.export`, the requester only | — · — · user-initiated (RB-04) | the file | RC-05 |
+| ROUTE-285 | a deferred group, a status or a count the page polls — renditions, exports, the import batch | GET `/status/{kind}/{id}` | `the page's query class` | the page's view capability | — · — · background (RB-05), never extending the session | the current state | RC-05 |
+
+## 4. Visible controls without a route of their own
+
+AICWDF §14.3: a visible, clickable control that is not implemented is forbidden. Every visible control of the pages either has its row in §§2–3 or is one of these.
+
+| Control | Mark | What it does instead | Grounds |
+| --- | --- | --- | --- |
+| The language switch "ID \| EN" on PG-001–PG-004 | client-only | sets the `bahasa` key of the address and reloads the page's view (ROUTE-001–ROUTE-004); nothing is stored | IA §11; D-IA-23; LOCALIZATION |
+| "Kembali" on PG-002 | client-only | PG-001 with the e-mail kept; the server-side voiding of the pending attempt stays open for P11 | NAV-002; AU-16; OQ-14 |
+| Filters, sort, tabs, the company filter and "Muat Lagi" of a list, a queue or a report | client-only, through the page's view | the page's own GET with whitelisted keys and the opaque cursor | IA §11; IP-18; NV-05 |
+| "Kembali" and "Batal" of a form, sheet, dialog, confirmation, reason step or step-up | client-only | NV-01 and NV-02 — the parent or the form, MSG-35 first with unsent input; nothing is sent | NAV- contracts; ADMIN_FLOW §6 |
+| The account menu, *Lainnya*, "Buat" and *Menu lengkap*; a group's or a section's fold — "Rincian lain" among them —; "Lihat Semua", "Lihat semua keputusan", "Semua dokumen", "Rincian angka", "Mulai Terima Barang" and every row that opens a record | client-only, navigation | opens a page through its view route | IA §§5–6; NAV- contracts |
+| "Cari Produk" on PG-022 | client-only | filters the purchase's own lines on the page; a search that matches nothing says so (FA-22) | IP-17; DESIGN_SYSTEM §15 |
+| "Cetak Label" on PG-056 | client-only | the browser's print of the product's label view; nothing is written | J-MD-04; DESIGN_SYSTEM §17 |
+| A draft's live preview and its full preview layer — PG-036, PG-042 | client-only | composed in the browser from the page's own props with the document layout's template, marked "DRAF — belum terbit", writing nothing; printed by the browser as a marked draft | DOCUMENT_PREVIEW_PRODUCER option A; DESIGN_SYSTEM §14.3; GAP-053 |
+| "Simpan Pembelian" on PG-017 before a supplier and each line's quantity and price are given | intentionally disabled | `aria-disabled`, its reason beside it — "Pilih pemasok dan isi jumlah serta harga setiap baris." — until ROUTE-171 can be sent | PB-C05; DESIGN_SYSTEM §9.3 |
+| Every command or entry whose capability the account lacks | intentionally hidden | absent, never disabled | AZ-01; H7-03; NV-08 |
+| The prototype marker, the "Usulan" proposals — the KPI sparkline and delta — and D1's and D2's variants | intentionally hidden — not part of V1 | absent from the application | DIR-077 CA-04 items 2, 3 and 13; OQ-17; OQ-18 |
+
+## 5. Counts
+
+Derived by script when this draft was written, and checked again for gate PC-2 (SP-68): **211 routes** — 65 page views, ROUTE-001–ROUTE-065, one for each page of INFORMATION_ARCHITECTURE §8, and 146 commands and other requests, ROUTE-101–ROUTE-285, numbered with gaps between their groups. **Indivisible actions:** 37 of 37 — AX-01–AX-37 each on at least one route. **Command families:** 16 of 16 — NX-01–NX-16. **Capabilities:** every one of PERMISSIONS_MATRIX §4's 80 is declared by a route, the view capabilities by the page views; `scope.all_companies` has no control of its own (RC-03).

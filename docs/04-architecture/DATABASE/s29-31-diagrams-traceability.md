@@ -113,10 +113,10 @@ P1 capability → P2 rules → P3 workflows and actions → P4 structures and co
 | CAP-11 | BR-FIN-09–14/17, BR-PUR-05, BR-INV-13, CALC-08–14 | WF-FIN-04/07; SF-CHARGE, SF-LOSS, SF-UNATTRIBUTED; AX-21/29/30/34/37 | §6, §11, §12; C-21, C-24–26, C-57 | P8 profitability reconciliation |
 | CAP-12 | BR-PRJ-05, BR-FIN-09/10/16 | WF-PRJ-01, WF-FIN-04 | `project_siplah_details`; settlements; C-51 | P7 channel fields; SIPLAH adapter seam (ARCHITECTURE §13) |
 | CAP-13 | BR-XC-01–03, BR-ACC-01–03, BR-CR-01–06 | SF-CMD; WORKFLOWS §4, §8 | §13, §15, §23, §26, §28; C-32, C-40, C-48, C-53, C-61; §4.1 TOTP fields and `user_external_identities`, C-62–C-65 | P5 matrix and SECURITY AU-16–AU-24; P8 denial and authentication tests; P9 roles and key management |
-| CAP-14 | glossary | context tags | no schema content (public ids only) | P7 |
+| CAP-14 | glossary | context tags | `users.locale`, the account's language preference (§4.1; `DIR-077` CA-08); otherwise public ids only | P7 |
 | CAP-15 | BR-INV-12, BR-FIN-05/14, BR-XD-06 | WF-MIG-01; AX-28; CM-33 | §24; C-47 | P10 rehearsal and cutover |
 | CAP-16 | BR-DOC-01/03 | N/A — P9 | `file_objects` and rendition metadata for coherent backup | P9 backup and restore |
-| CAP-17 | BR-XD-05, CALC-01–14 | WORKFLOWS §10 (QS-01–22) | §3 derived views, guard reads, §20 partial indexes | P6 targets; P7 dashboards |
+| CAP-17 | BR-XD-05, CALC-01–14 | WORKFLOWS §10 (QS-01–24, `DIR-077`) | §3 derived views, guard reads, §20 partial indexes | P6 targets; P7 dashboards |
 | CAP-18 | BR-PRJ-02–04, BR-CR-05, BR-ADM-03 | WF-PRJ-03, SF-REVAL; AX-25/26 | `project_state_transitions`; C-38, C-39 | P5 Owner-only; P8 predicate tests |
 
 **E-DB rules and their database guarantees:** BR-XC-01 → `audit_events` in the same transaction, C-53; BR-DT-01 → immutable `recorded_at` and `business_date` columns, C-50; BR-SN-01 → C-11 and §14; BR-CR-02 → C-45, C-53 and §13; BR-DOC-01 → C-11; BR-DOC-02 → C-10; BR-RSV-01 → C-04, C-05; BR-INV-01 → C-03, C-04; BR-INV-02 → C-07 (deliveries write no ledger rows); BR-INV-03 → C-09; BR-INV-04 → C-08, C-26; BR-INV-05 → C-28; BR-INV-08 → §3.1 guard registry and DQ checks, C-61; BR-FIN-03 → C-13, C-14; BR-FIN-04 → C-15, C-16.

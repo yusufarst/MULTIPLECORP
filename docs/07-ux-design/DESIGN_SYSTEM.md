@@ -1,38 +1,43 @@
 # Design system
 
-Status: APPROVED | Updated: 2026-10-03 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-18 | Owner: Planning
 
-Approval: [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), explicit conditional Owner approval on 2026-10-01 (DIR-033) of this document as committed in the P7 finalization checkpoint; the approved file hash, the verified conditions and the exclusions are recorded there. Approval changes lifecycle only, not implementation authorization.
+**Draft of the P7 re-baseline — not normative before APPR-011; the approved revision stays in force.** Run PC-2 replaced this document in place on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-63, as Stage 3 of the P7 UX re-baseline drafts it: not finalized, its section skeleton kept so that every link into it still holds. Until the Owner's APPR-011 at OG-2 the approved revision — APPROVED under [APPR-008](../00-governance/DECISION_LOG.md#appr-008--p7-ux-information-architecture-and-design-system-approved), under replacement since DIR-035 D3 — stays in force; its SHA-256 is recorded in TECH-037, and Git holds its text.
 
-Replacement: APPROVED (APPR-008) and under replacement by the P7 UX re-baseline the Owner decided on 2026-10-03 ([DIR-035](../00-governance/DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration) D3); derive no new work from this document — [PHASE_STATUS](../PHASE_STATUS.md) tracks the re-baseline.
+**Sources.** Stage 2's drafts are reused, never re-derived (DIR-078 §0): [DESIGN_REFERENCES](DESIGN_REFERENCES.md) — the Golden-based draft, AICWDF §18.12's record — and [DESIGN_SYSTEM_MAPPING](stage2/DESIGN_SYSTEM_MAPPING.md) — the reference's tokens, components, patterns, states and responsive rules on shadcn/ui and Tailwind —; the approved revision for every rule they do not supersede; the Owner's CP-A decisions ([DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-04 items 1–17); the deviation register's GR rules ([DEVIATION_REGISTER](stage2/DEVIATION_REGISTER.md)); [DOCUMENT_PREVIEW_PRODUCER](stage2/DOCUMENT_PREVIEW_PRODUCER.md), made normative in §14.3 (GAP-053); and the prototype's evidence at its commit D `70539fec8e40d8fb83b3fde8a8fa808d61b40d7d` — the pilot and its carry-forward ledger, dispositioned in Annex A (SP-66). The prototype is evidence, never a source of truth.
 
-Authority: P7 — UX, Information Architecture & Design System, authorized by the Owner's fast-track directive [DIR-033](../00-governance/DECISION_LOG.md#dir-033-obs-012-and-tech-022--p7-authorization-entry-baseline-and-ux-documentation) (twenty-ninth source record). This document owns **visual rules**: tokens, typography, spacing, density, layout and breakpoints, iconography, motion, radius and elevation, the reusable patterns, the composition of shadcn/ui primitives into feature components, the status system, the state presentations, the domain presentations, keyboard and scanner conventions, accessibility, copy and formatting, print views and the anti AI-slop mapping. Navigation truth is owned by [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md), interaction truth by [ADMIN_FLOW](ADMIN_FLOW/README.md), phase evidence by [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md).
+Authority: P7 — UX, Information Architecture & Design System, re-baselined under the Owner's decisions DIR-053–DIR-077 and drafted in Stage 3 by run PC-2 (DIR-078). This document owns **visual rules**: tokens, typography, spacing, breathing room and density (AICWDF §18.2), layout and breakpoints, iconography, motion, radius and elevation, the reusable patterns, the composition of shadcn/ui primitives into feature components, the status and state patterns, keyboard and scanner behaviour, the domain presentations, accessibility, copy formatting, print views and the anti-AI-slop rules. Presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse; behaviour follows MULTIPLECORP (decision 3; OQ-10; DIR-069).
 
-**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../03-workflows/WORKFLOWS/README.md); authorization in [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) and [SECURITY](../05-security/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md) and [PERFORMANCE](../06-api-performance/PERFORMANCE.md). A pattern here says how something looks and behaves on the screen; it never decides who may see or do it, and never changes what a state, figure or document means.
+**Anti-duplication contract:** business meaning stays in [V1_SCOPE](../01-product/V1_SCOPE.md), [DOMAIN_MODEL](../02-domain/DOMAIN_MODEL.md), [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and [WORKFLOWS](../03-workflows/WORKFLOWS/README.md); authorization in [PERMISSIONS_MATRIX](../05-security/PERMISSIONS_MATRIX.md) and [SECURITY](../05-security/SECURITY.md); mechanisms in [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/README.md) and [PERFORMANCE](../06-api-performance/PERFORMANCE.md); navigation truth in [INFORMATION_ARCHITECTURE](INFORMATION_ARCHITECTURE.md) and [NAVIGATION_CONTRACTS](NAVIGATION_CONTRACTS.md); interaction truth in [ADMIN_FLOW](ADMIN_FLOW/README.md), [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) and [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md); strings in [LOCALIZATION](LOCALIZATION.md). This document references them and restates none.
 
-**Boundary:** NON-EXECUTABLE specification. Token tables, anatomy lists and pattern rules are design statements, not code: no CSS, Tailwind configuration, component source, image or font file is created. shadcn/ui is the implementation foundation (OB §20); the build units of P11 implement these rules ([ADMIN_FLOW §16](ADMIN_FLOW/s16-17-handoff-traceability.md#16-handoff-obligations)).
+**Boundary:** NON-EXECUTABLE specification. Token tables, anatomy lists and pattern rules are design statements, not code: no CSS, Tailwind configuration, component source, image or font file is created here. shadcn/ui is the implementation foundation (OB §20); P11's UI Tasks name the rules of this document ([ADMIN_FLOW §16](ADMIN_FLOW/s16-17-handoff-traceability.md#16-handoff-obligations)).
 
 ## 1. Conventions
 
-- **Identifier families defined here:** UXV (derived visual requirements), D-DS (design-system decisions), PT (patterns), KB (keyboard shortcuts), SLOP (anti AI-slop prohibitions and their rules). GL, SCR, UXN and D-IA are defined in INFORMATION_ARCHITECTURE; UXI, IP, J, MSG, UXS and UXH in ADMIN_FLOW.
-- **Must** and **never** are normative for build units; a value given as "starting value" may be tuned by P8 measurement without changing the rule.
-- **Phone** means a viewport narrower than 768 px, whatever the input; **desktop** 1024 px and wider; the band between them is §6's tablet rule. Bands are chosen by width alone; target size follows the input (§6).
+- **Identifier families defined here:** UXV (derived visual requirements), D-DS (design-system decisions), PT (patterns), KB (keyboard shortcuts), SLOP (anti-AI-slop prohibitions and their rules), and DA- (the dispositions of Annex A). GR (the carried items of the reference's reconciliation) is DESIGN_SYSTEM_MAPPING's and DEVIATION_REGISTER's; GL, PG, UXN and D-IA are INFORMATION_ARCHITECTURE's; NAV- NAVIGATION_CONTRACTS'; ROUTE- and INT- P3's; UXI, IP, J, MSG, UXS and UXH ADMIN_FLOW's.
+- **Must** and **never** are normative for build units; a value given as a "starting value" may be tuned by P8 measurement without changing the rule.
+- **Bands.** *Phone* means a viewport narrower than 768 px, whatever the input; *desktop* 1,025 px and wider, the reference's desktop band, where GR-16's text unit applies (§5.2); the band between them is §6's tablet rule. Bands follow the width alone; target size follows the input (§§5.3, 15).
 - Colours are given in sRGB hex with their contrast ratio against the surface they are used on, computed with the WCAG 2.2 formula.
-- **Examples** use a fictional group — CV Arunika Jaya (code ARJ), PT Bentara Niaga (BTN) and CV Cakra Persada (CKP) — and no real company, person or account. Document numbers in examples are illustrative: a number's format is its company's numbering scheme, whose exact formats are validated under GAP-019 (DATABASE `numbering_schemes`).
+- **Examples** use the fictional group — CV Arunika Jaya (ARJ), PT Bentara Niaga (BTN) and CV Cakra Persada (CKP) — and no real company, person or account. Document numbers in examples are illustrative: a number's format is its company's numbering scheme (DATABASE `numbering_schemes`).
+- **What the reference shows and MULTIPLECORP does not define** — a sparkline, a delta, an eyebrow, a marketing lead — is absent, never filled with invented content (VP-3; CA-04 item 13).
 
 ## 2. Foundation and source evidence
 
-| Foundation | Use | Evidence read 2026-10-02 (versions are evidence, not pins — DEP-07) |
+| Foundation | Use | Evidence (versions are evidence, not pins — DEP-07) |
 | --- | --- | --- |
-| **shadcn/ui** | the primitive component system (OB §20; REF-054): copied into the codebase, owned and adapted there; primitives stay free of business logic (§10) | ui.shadcn.com documentation as of 2026-10: primitives Sidebar, Sheet, Drawer, Dialog, Alert Dialog, Command, Combobox, Data Table (a guide built on TanStack Table), Table, Tabs, Badge, Toast (and Sonner on the Radix path), Skeleton, Spinner, Empty, Breadcrumb, Field, Input, Input Group, Select, Native Select, Checkbox, Radio Group, Switch, Textarea, Calendar, Date Picker, Popover, Dropdown Menu, Tooltip, Item, Kbd, Separator, Scroll Area, Alert; new projects default to Base UI primitives and Radix remains supported; theming through CSS variables (`--background`, `--foreground`, `--primary`, `--muted`, `--destructive`, `--border`, `--input`, `--ring`, `--radius`, the sidebar tokens) exposed to Tailwind v4 with `@theme inline`; MIT licence (repository licence file) |
-| **Tailwind CSS** | utility layer behind shadcn/ui | tailwindcss.com v4.3: theme variables through `@theme`; default breakpoints 40, 48, 64, 80, 96 rem; container queries; `motion-reduce`, `print`, `forced-colors`, `pointer-coarse` variants |
-| **Inter** | the one typeface — SIL Open Font License, no cost; self-hosted with the application, never from a third-party font service (SECURITY WS-08: `font-src 'self'`) | the typeface's own licence; features `tnum` (tabular figures) and `zero` (slashed zero) used for numbers and codes |
-| **Lucide** | the icon set shadcn/ui uses — ISC licence, no cost; inline SVG components, no icon font | the set's own licence |
-| **WCAG 2.2** | the accessibility target at level AA (§15) | W3C Recommendation, 12 December 2024 edition |
+| **The Golden Frontend Reference v1.0.0** | the presentation reference (DIR-061 SD-02; GD-02; AK-1): its tokens, components, page patterns and motion recipes, adapted to MULTIPLECORP's behaviour and content | its five stylesheets as DESIGN_SYSTEM_MAPPING read them — `tokens.css` SHA-256 `d6ded788fc73127e47f1247814ca66df96c4c9e5f79f0c2a3c9ddbc7a4ab252c`, 424 custom properties, with `base.css`, `components.css`, `patterns.css` and `motion.css` —, vendored with their checksums in the private prototype repository; the frozen lab read-only |
+| **shadcn/ui** | the primitive component system (OB §20; REF-054): copied into the codebase, owned and adapted there; primitives stay free of business logic (§10) | the documentation as DESIGN_SYSTEM_MAPPING records it to September 2026: theming through CSS variables exposed to Tailwind v4 with `@theme inline`; Base UI the default primitives, Radix supported — the choice P11's under DEP-07 |
+| **Tailwind CSS** | the utility layer behind shadcn/ui | v4.3 documentation: theme variables, container queries, the `motion-reduce`, `print`, `forced-colors` and `pointer-coarse` variants |
+| **Inter** | the one typeface, 4.1 — SIL Open Font License 1.1, no cost; self-hosted with the application, never from a font service (SECURITY WS-08: `font-src 'self'`) | its release and licence; `tnum` and `zero` for numbers and codes |
+| **Lucide** | the icon set — 1.56.0, ISC licence (MIT for the icons derived from Feather), no cost; inline SVG components, no icon font | its release and licence |
+| **WCAG 2.2** | the accessibility target at level AA (§15) | W3C Recommendation, 12 December 2024 |
+| **The prototype** | evidence of the reference applied to MULTIPLECORP's six journeys, in both languages, for the Owner's checkpoints and the usability sessions — not a source of truth and not application code | the private repository at commit D (`70539fe`): GR-16's variant B the default, D1–D6 as decided, its evidence directories and its ledger (Annex A) |
 
-No paid font, icon set, component licence or design service is adopted; any later one is an Owner decision (V1_SCOPE cost boundary).
+No paid font, icon set, component licence or design service is adopted; any later one is an Owner decision ([COST_POLICY](../00-governance/COST_POLICY.md)).
 
 ## 3. Derived visual requirements
+
+Carried from the approved revision; §§5–18 give each requirement its form on the reference.
 
 | ID | Requirement | Repository source | Home |
 | --- | --- | --- | --- |
@@ -65,121 +70,223 @@ Each decision is Level 1 under DIR-033 §13. "Exploration" names the DesainPakeA
 
 | ID | Decision | Alternatives rejected | Grounds · exploration |
 | --- | --- | --- | --- |
-| D-DS-01 | The visual foundation is "Tinta": white surfaces, ink neutrals, one deep-blue accent, five tones bound to meanings, flat colour, hairline rules, 4 px and 6 px radii | "Kertas": a second typeface and looser spacing that cost density; "Batu": the framework's default indigo with tinted pills and alert fills — the generic-template look of SLOP-37; the tool's starter design: an acid-lime accent at 1.23:1 on white, display type up to 56 px and a chat composer, with 19 findings from `dpai design lint` | UXV-02, UXV-03, UXV-08; WCAG 1.4.3, 1.4.11 · DPB-01 |
+| D-DS-01 | *Superseded at Stage 3 — see below.* The visual foundation is "Tinta": white surfaces, ink neutrals, one deep-blue accent, five tones bound to meanings, flat colour, hairline rules, 4 px and 6 px radii | "Kertas": a second typeface and looser spacing that cost density; "Batu": the framework's default indigo with tinted pills and alert fills — the generic-template look of SLOP-37; the tool's starter design: an acid-lime accent at 1.23:1 on white, display type up to 56 px and a chat composer, with 19 findings from `dpai design lint` | UXV-02, UXV-03, UXV-08; WCAG 1.4.3, 1.4.11 · DPB-01 |
 | D-DS-02 | One typeface, Inter, self-hosted; seven text styles from 12 to 20 px; tabular figures and slashed zero for numbers and codes; 16 px in touch inputs | a display or serif face beside it: one more font to load for no task value; the system font stack: figures and widths differ between devices, which breaks column alignment | WS-08 (`font-src 'self'`); SLOP-26; UXV-12 · DPB-01 |
-| D-DS-03 | One density: compact with a fine pointer, touch-sized with a coarse pointer; no density setting | a user-selectable density: more states to design and test for no V1 need (PN-7); one size for both: slow desktop work or touch targets below 44 px | PN-7; UXV-10; WCAG 2.5.8 · DPB-01, DPB-17 |
+| D-DS-03 | *Superseded at Stage 3 — see below.* One density: compact with a fine pointer, touch-sized with a coarse pointer; no density setting | a user-selectable density: more states to design and test for no V1 need (PN-7); one size for both: slow desktop work or touch targets below 44 px | PN-7; UXV-10; WCAG 2.5.8 · DPB-01, DPB-17 |
 | D-DS-04 | A state is a bordered rectangular badge: label, icon shape and tone; never a filled pill, dot or row tint alone | tinted pills ("Batu"): colour-dependent and pill-shaped (SLOP-05); text alone: slower to scan in dense tables | UXV-08; WCAG 1.4.1; UXS-42 · DPB-01, DPB-16 |
-| D-DS-05 | No chart on any V1 screen: every figure is a CALC value or a QS signal shown as text and tables | charts on Beranda and reports: no V1 decision needs a trend picture, and decorative analytics is SLOP-34 | V1_SCOPE CAP-11, CAP-17; SLOP-18, SLOP-34 · DPB-03, DPB-13 |
+| D-DS-05 | *Superseded at Stage 3 — see below.* No chart on any V1 screen: every figure is a CALC value or a QS signal shown as text and tables | charts on Beranda and reports: no V1 decision needs a trend picture, and decorative analytics is SLOP-34 | V1_SCOPE CAP-11, CAP-17; SLOP-18, SLOP-34 · DPB-03, DPB-13 |
 | D-DS-06 | An outcome message is part of the sticky action region of the form or dialog that sent the command — directly above its buttons, the region growing to hold it — so the answer is in view whenever the buttons are; for CONFLICT and FAILED focus moves to it (PT-14) | a banner at the top of the form: out of view at the bottom of a long form and on a phone; a toast: it disappears and cannot hold a decision (WCAG 2.2.1) | HO-01; UXV-17; WCAG 4.1.3 · DPB-16 |
 | D-DS-07 | Multi-line entry on desktop is a table of form rows — Tab moves between cells, Enter in the last cell opens the next row, one empty row always at the end, line details that do not fit open under their row; on a phone each line is a row that opens an editing sheet (PT-10) | read-only rows edited one at a time on desktop: one more keystroke per line for thirty lines (UXS-35); a summary column beside the lines: every line wraps to two rows; stepped sections: more clicks and step badges that read as progress; inline cells on a phone: they overflow 390 px | UXV-06, UXV-07; V1_SCOPE (no spreadsheet clone) · DPB-07, DPB-17 |
 | D-DS-08 | On a phone the scan field of a scan step is fixed at the bottom, above the action bar (PT-20) | at the top of the screen: out of thumb reach while the line list scrolls | GAP-020; UXV-10 · DPB-09 |
 | D-DS-09 | The capability-by-company preview marks each cell *Dapat*, *Baru*, *Dicabut* or empty, and marks the capabilities a removed prerequisite disables "Nonaktif — prasyarat dicabut", keeping their grants (PT-30; RG-06) | a plain yes/no matrix: it does not show what the save changes | H7-06; GAP-032 · DPB-14 |
 
+**Stage 3's dispositions of D-DS-01–D-DS-09** ([NON_LOSS_MATRIX](stage2/NON_LOSS_MATRIX.md) section O): D-DS-01 superseded by the reference's tokens (§5); D-DS-02 adapted — Inter, self-hosted, tabular figures and 16 px touch inputs on the reference's scale (§§5.2, 7); D-DS-03 superseded — the reference's density with OC-09's named dense screens (§5.3); D-DS-04 adapted — label, icon shape and tone in the reference's pill (§12.1); D-DS-05 superseded — a chart only of defined values, *Beranda*'s and the report's ageing chart (VP-6; OC-08); D-DS-06–D-DS-09 kept.
+
+**Stage 3's decisions** — the Owner's CP-A answers and the rules Stage 3 draws from them; each is Level 1 within Golden's scales unless the Owner decided it (TECH-037 lists the notable ones):
+
+| ID | Decision | Alternatives rejected | Grounds |
+| --- | --- | --- | --- |
+| D-DS-10 | GR-16's variant B: from 1,025 px the desktop text unit `--tu` is fixed at 1 px, so body text stays at 14 px and no size shrinks; the sidebar's brand keeps the reference's own size beside the placeholder mark (GF-2 BR2-07) | variant A, the reference's `clamp(.92px, …, .96px)`, which renders 14 px body text at about 12.9 px at 1,366 px | the Owner's choice, `DIR-077` CA-04 item 1; OQ-15 |
+| D-DS-11 | MSG-29 stays one message in the notice's body — D1 reverted | MSG-29 split into the reference's title and meta slots | `DIR-077` CA-04 item 2 |
+| D-DS-12 | "Buat" keeps its visible label from 768 to 1,024 px — D2 reverted | the reference's icon button in that band | `DIR-077` CA-04 item 3; R1 |
+| D-DS-13 | The receipt's result card follows the reference's floor-task result, as corrected (D3, TB-D01) | CP-1's centred card | `DIR-077` CA-04 item 4 |
+| D-DS-14 | A task line's title, meta and business date sit in its card's head (D4, TB-D02); "Berikutnya" is the reference's floor badge (D5, TB-D03); MSG-01's lead is the notice's title with no colon (D6, TB-D04), its punctuation LOCALIZATION §5's | their earlier forms | `DIR-077` CA-04 items 5–7 |
+| D-DS-15 | **The card direction** (DIR-073 (3), reading (a)): a card is compact and content-driven — its dimensions follow its canonical content, the reference's typography, spacing, padding, alignment, radius and hierarchy kept; **option B** for the KPI cards and the context card, as built; shown to the Owner at APPR-011 | option A — the reference's card dimensions with the lesser canonical content's empty space accepted (measured more empty and moving *Beranda*'s attention list below the fold at 1,440 × 900) | `DIR-077` CA-04 item 12; the prototype's `sp50.txt` §§5.1, 5.9 |
+| D-DS-16 | **Motion is the reference's recipes**: every motion the application shows is one of `motion.css`'s, on a MULTIPLECORP state change (§8); a motion the pilot added is not part of V1; the ledger's raw differences close by this rule (Annex A, DA-04) | reworking the prototype's motion | `DIR-077` CA-04 item 11 (CQ-7); VP-8 |
+| D-DS-17 | **Reduced motion**: under `prefers-reduced-motion: reduce` no movement — no translate, scale, rotation, height rise or chevron turn, the reference's own included —; a 150 ms crossfade at most; indicators jump (§8) | keeping the reference's chevron and select turns, which hold their 160 ms under reduced motion | DESIGN_SYSTEM_MAPPING §2; Annex A, DA-12; WCAG 2.3.3 read under VP-8 |
+| D-DS-18 | **Mandated copy is never cut**: a select's value, a form bar's reason, a read-only value and a label wrap under WCAG 2.2 1.4.12's text spacing instead of the reference's ellipsis, one line at its height otherwise (§15) | the reference's ellipsis | GR-35; LOCALIZATION §3.7; the prototype's commit D |
+| D-DS-19 | **Targets**: 24 × 24 CSS px at least with a fine pointer; 44 px with a coarse pointer at every width; 48 px for the floor task's operational controls (§§5.3, 15) | one size for every input | WCAG 2.5.8; GR-07; CQ-5 (DIR-071) |
+| D-DS-20 | **The draft preview** is composed in the browser from the page's own props with the document layout's template, marked "DRAF — belum terbit" (§14.3) | a non-persistent server preview, or both | GAP-053; DOCUMENT_PREVIEW_PRODUCER option A |
+| D-DS-21 | FA-20, FA-21 and FA-22 are rules (§15) — the current step's position inside its step, each worklist group with its own heading, an empty search saying so | — | `DIR-077` CA-04 item 16 |
+| D-DS-22 | The D refinements not adopted — WF-2R's BR2R-14 and MS2R-15–MS2R-17, WF-PC1's D findings other than FA-20–FA-22 — are dropped as prototype refinements; one may come back only as a Level 1 choice within Golden's scales that changes no behaviour, content or copy meaning | implementing them now | `DIR-077` CA-04 items 15–16 |
+
 ## 5. Tokens
 
-NON-EXECUTABLE. The left column names the shadcn/ui theme variable a build unit sets, so that every primitive inherits the value; the tokens below the line are this design system's own additions. shadcn/ui's `--accent` is the hover surface of menus and lists, not this design's accent colour, which is `--primary`.
+**Three layers, one source** (Level 1). The application keeps the reference's token names and values as CSS custom properties — the `--brand-*` set remaining the only one a project re-tints —; the shadcn/ui theme variables point to them; and the Tailwind CSS theme keys expose them to utilities. Tailwind's theme variables "aren't _just_ CSS variables": a key in a namespace generates utilities, and a theme variable that references another variable belongs in `@theme inline` (Tailwind v4.3, *Theme variables*). So a token whose name already is a Tailwind key — `--color-canvas`, `--radius-lg`, `--shadow-card`, `--font-sans` — is declared once in `@theme` with its literal value, and is both; a key that points to another variable, as shadcn/ui's `--color-primary: var(--primary)`, sits in `@theme inline`. Every default namespace the tokens replace is cleared with `initial` — `--color-*: initial` removes "all of the default utilities that use that namespace" (Tailwind v4.3) —, so no utility brings a value outside the token set. Values stay the reference's hex; a conversion to OKLCH, the form shadcn/ui's default theme uses, is optional and keeps the computed colour. Sizes are written in rem at a 16 px root, the desktop text unit kept as a factor ([GR-06](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01)). How the keys are generated and linted is P11's — needs verification at implementation.
+
+**GR-16** (D-DS-10): the reference's desktop text unit `--tu` is `clamp(.92px, …, .96px)` from 1,025 px; MULTIPLECORP fixes it at 1 px there — variant B, the Owner's choice at CP-A (`DIR-077` CA-04 item 1) —, so 14 px body text stays 14 px and no size shrinks. The 12, 11 and 12.5 px sizes are fixed; the 10.5 px pill size is excluded (GR-16).
 
 ### 5.1 Colour
 
-The "Tinta" foundation of D-DS-01.
+**The shadcn/ui theme variables.** The variables of shadcn/ui's theming page — surfaces and text, actions and emphasis, muted content, form and focus, charts, the sidebar set and `--radius` —, each pointing to a token; a new colour is added with its `-foreground` pair and exposed as `--color-` keys in `@theme inline` (shadcn/ui, *Theming*).
 
-| Variable | Role | Value | Contrast |
+| shadcn/ui variable | Token | Value |
+| --- | --- | --- |
+| `--background` · `--foreground` | `--color-canvas` · `--color-text-primary` | `#f7f8f3` · `#0f1014` |
+| `--card`, `--popover` · their `-foreground` | `--color-surface` · `--color-text-primary` | `#ffffff` · `#0f1014` |
+| `--primary` · `--primary-foreground` | `--brand-primary` · `--color-text-on-primary` | `#1a5035` · `#ffffff` |
+| `--secondary` · `--secondary-foreground` | `--color-surface-sunken` · `--color-text-primary` — the sunken button | `#f2f3ee` · `#0f1014` |
+| `--muted` · `--muted-foreground` | `--color-surface-sunken` · `--color-text-tertiary`, 4.64:1 on sunken | `#f2f3ee` · `#6b6d73` |
+| `--accent` · `--accent-foreground` | `--color-row-press` · `--color-text-primary` — menu and row highlights | `#f2f3ec` · `#0f1014` |
+| `--destructive` | `--color-danger-solid` | `#b4373f` |
+| `--border` | `--color-border-subtle` — dividers and card edges, never a control's edge | `#f0f1ef` |
+| `--input` | the control edge of GR-01, a new token `--color-border-input` (proposed name) | `#898982` |
+| `--ring` | `--color-focus`, which is `--brand-accent` | `#545e21` |
+| `--chart-1`–`--chart-5` | `--chart-age-1`–`--chart-age-5`, in order of severity (VP-6; GR-23) | `#99b1a0` `#edd798` `#cbac8d` `#d56e5b` `#a9322e` |
+| `--sidebar` · `--sidebar-foreground` | `--color-surface` · `--color-text-primary` | `#ffffff` · `#0f1014` |
+| `--sidebar-primary` · `--sidebar-primary-foreground` | `--brand-accent` — the selected entry's indicator — · `--color-text-on-primary` | `#545e21` · `#ffffff` |
+| `--sidebar-accent` · `--sidebar-accent-foreground` | `--brand-tint-150` — the selected entry's fill — · `--color-text-primary` | `#ecf1d2` · `#0f1014` |
+| `--sidebar-border` · `--sidebar-ring` | `--color-border-subtle` · `--color-focus` | `#f0f1ef` · `#545e21` |
+| `--radius` | the card radius, `--radius-lg`; the steps set to the reference's values rather than derived, since shadcn/ui's derived scale (0.6×, 0.8×, 1×, 1.4×) gives 14 px where the reference has 12 | 10 px (0.625rem) |
+| Added, each with its pair where it has one | the status tones `--color-{success,warning,pending,danger,info,neutral}-{bg,fg,dot}`; the lime tints, the signal and the sign-in CTA; the category tints `--tint-*` | §1.2 |
+
+**Colour tokens.** Each name is kept as the application's CSS custom property; the last column gives the Tailwind key, "CSS only" where no utility needs one. A token excluded here is not used by any journey screen or by the application.
+
+| Tokens and values | Role | Disposition | Tailwind key |
 | --- | --- | --- | --- |
-| `--background` | page canvas and work surface | #FFFFFF | — |
-| `--foreground` | ink — text and icons | #14171C | 17.96:1 on #FFFFFF |
-| `--card` · `--card-foreground` | the rare bordered panel (§9 PT-12) | #FFFFFF · #14171C | as above |
-| `--popover` · `--popover-foreground` | menus, popovers, dialogs, sheets | #FFFFFF · #14171C | as above |
-| `--primary` · `--primary-foreground` | the accent: the primary action of a region and the current navigation entry's rule; through `--ring`, focus. Never links or selection | #1E3A8A · #FFFFFF | 10.36:1 on #FFFFFF; white on it 10.36:1 |
-| `--secondary` · `--secondary-foreground` | secondary surfaces | #F4F5F7 · #14171C | 16.46:1 |
-| `--muted` · `--muted-foreground` | table header, read-only fields, quiet text | #F4F5F7 · #5A616B | 6.26:1 on #FFFFFF; 5.73:1 on #F4F5F7 |
-| `--accent` · `--accent-foreground` | hover and highlighted rows in menus and lists | #F4F5F7 · #14171C | 16.46:1 |
-| `--destructive` | destructive buttons and the danger tone | #B3261E | 6.54:1 on #FFFFFF; white on it 6.54:1 |
-| `--border` | decorative dividers and rules — never the only boundary of a control | #E3E5E9 | 1.26:1 (decorative) |
-| `--input` | the boundary of inputs, selects and checkboxes | #868D97 | 3.35:1 on #FFFFFF (WCAG 1.4.11) |
-| `--ring` | focus ring | #1E3A8A | 10.36:1 |
-| `--sidebar` and its foregrounds | the navigation surface; the current entry's rule is `--primary` and its surface `--muted` ([§9 PT-01](#9-patterns)) | #FFFFFF · #14171C | 17.96:1 on #FFFFFF |
-| `--chart-1`–`--chart-5` | not used in V1: no chart is part of any screen (§18 SLOP-34); a later chart needs a decision recorded here | — | — |
-| `--tone-info` | information, active, in progress | #0B5E7A | 7.25:1 |
-| `--tone-success` | completed, satisfied, paid, saved | #17663A | 7.00:1 |
-| `--tone-warning` | needs attention, exceptional, unknown outcome | #8A4B00 | 6.80:1 |
-| `--tone-danger` | refused, failed | #B3261E | 6.54:1 |
-| `--tone-neutral` | draft, ended, inactive | #4B525C | 7.89:1 |
-| `--accent-hover` | hover of `--primary` | #172E6E | — |
-| `--danger-hover` | hover of `--destructive` | #96201A | — |
-
-Links are ink with a 1 px underline in `--input`. A selected tab is ink at 600 weight over a 2 px ink rule; a selected segment of a segmented control is ink at 600 weight inside a 1 px ink boundary; a selected option in a list or menu has the `--accent` surface and a check. Tones colour only icons, badge labels and 1 px borders — a sentence is never set in a tone; no surface, row or message is filled with a tone (§12). Every pair above that carries text meets 4.5:1, and every boundary that identifies a control meets 3:1. P8 measures the built screens (UXH-05).
+| `--color-canvas` `#f7f8f3` · `--color-surface` `#ffffff` · `--color-surface-sunken` `#f2f3ee` · `--color-surface-warm` `#fdfcf4` | the page canvas; cards, panels and popovers; tracks, sunken buttons and disabled fields; warm panels | ADOPT | the same names |
+| `--color-row-hover` `#f8f9f4` · `--color-row-press` `#f2f3ec` · `--color-sunken-hover` `#e9eae4` · `--color-avatar` `#dfe1e3` | row hover and press; a sunken control's hover; the avatar disc | ADOPT | the same names |
+| `--color-surface-hero-start` `#f1f1ef` · `--color-surface-hero-end` `#f3f5f5` | the greeting hero's tint | EXCLUDE — no hero (VP-2; [SLOP-19](#18-anti-ai-slop-mapping)) | — |
+| `--color-border-subtle` `#f0f1ef` · `--color-border` `#e4e4e2` · `--color-border-strong` `#d8d8d6` · `--color-border-hover` `#d6d6d4` · `--color-header-divider` `#ecedec` · `--color-addon-divider` `#efefef` · `--color-separator` `#c6c6c4` · `--color-divider-label` `#dcdcdb` · `--color-border-dashed` `#e7e7e7` · `--color-card-hover-border` `#e3e4df` · `--color-card-press-border` `#dcddd7` · `--color-link-underline` `#c9cacd` | dividers, card edges, separators, their hover and press; a link's underline — decorative, never a control's identifying edge | ADOPT | the same names |
+| `--color-border-control` `#e0e0de` · `--color-border-field` `#dededc` · `--color-border-field-dense` `#d7d7d5` · `--color-border-field-xl` `#d9d9d7` · `--color-border-icon-btn` `#e3e3e2` · `--color-border-toggle` `#e8e8e8` · `--color-border-kbd` `#e7e7e7` · `--color-border-field-hover` `#c8c8c6` · `--color-border-control-hover` `#cfcfcd` | the edges of fields, selects, header controls, icon buttons, toggles and keycaps, and their hover | ADAPT — the edge that identifies an input, select, date field or author-styled checkbox or radio is `--color-border-input` `#898982`: 3.52:1 on white, at least 3.16:1 on every surface (GR-01) | the same names; `--color-input` |
+| `--color-border-outline-xl` `#cdcec9` · `--color-border-outline-xl-hover` `#bebfba` | the sign-in's outline buttons | ADOPT; the Google button follows Google's own theme (GR-13) | the same names |
+| `--color-text-primary` `#0f1014` · `--color-text-strong` `#3a3b42` · `--color-text-secondary` `#55565c` · `--color-text-tertiary` `#6b6d73` | the ink tiers — primary; links and status text; secondary; tertiary | ADOPT | the same names |
+| `--color-text-muted` `#75767a` · `--color-text-muted-canvas` `#717276` · `--color-text-muted-tint` `#6d6e72` · `--color-text-tertiary-lime` `#696b71` · `--color-text-placeholder` `#75767a` | muted text on white, on the canvas, on tinted panels; tertiary on a selected lime row; placeholders | ADAPT — each grey only on its own surface, where it meets 4.5:1 (GR-04) | the same names |
+| `--color-text-disabled` `#9b9da1` · `--color-text-on-primary` `#ffffff` · `--color-text-on-lime` `#0d0e00` · `--color-icon-field` `#262626` | inactive text; labels on the primary fill and on lime; icons inside fields | ADOPT — disabled ink never for text a user needs | the same names |
+| `--brand-primary` `#1a5035` · `--brand-primary-rim` `#12452b` · `--brand-primary-hover` `#154530` · `--brand-primary-press` `#113c29` · `--brand-primary-deep` `#0e3b25`, aliased as `--color-primary`, `--color-primary-rim`, `--color-primary-hover`, `--color-primary-press`, `--color-primary-deep` | the one action colour, its edge, hover and press; the deep green of totals | ADOPT | the aliases, with shadcn/ui's `--primary` |
+| `--brand-accent` `#545e21` · `--brand-accent-strong` `#353e1c` · `--brand-accent-link` `#4c572c` · `--brand-accent-soft` `#8b936d` · `--brand-link-soft` `#5a643c` · `--brand-link-strong` `#3d4624` · `--brand-link-rule` `#969c71`, with the aliases `--color-accent-olive`, `--color-accent-ink`, `--color-accent-link`, `--color-accent-underline` | olive — the navigation indicator, focus, selection marks; accent text and links; their rules | ADOPT; olive carries the 3:1 corrections (GR-01–GR-03) | the aliases; `--color-ring`, `--color-sidebar-primary` |
+| `--brand-tint-50` `#f5f9df` · `--brand-tint-100` `#f0f5ca` · `--brand-tint-100-hover` `#e9f0b9` · `--brand-tint-150` `#ecf1d2` · `--brand-tint-200` `#e4ebc2` · `--brand-on-tint` `#556a08` · `--brand-nav-hover` `#f6f9eb` · `--brand-nav-press` `#f0f4dc` · `--brand-fill-rule` `#cfd6ad` · `--brand-fill-wash` `#fbfcf6`, with the aliases `--color-lime-50`, `--color-lime-100`, `--color-lime-100-hover`, `--color-lime-150`, `--color-lime-200`, `--color-lime-700` | lime fills under dark ink — the selected option and entry, the accent button; hover and press; fill rules | ADOPT as fills only — never text, a thin line or a state's only mark (SLOP-09; GR-02) | the aliases; `--color-sidebar-accent` |
+| `--brand-signal` `#bbdf06`, aliased as `--color-lime-signal` | the current step only | ADAPT — the current marker ringed in olive (GR-03) | the alias |
+| `--brand-cta` `#bdca88` · `--brand-cta-band` `#b0ba7d` · `--brand-cta-hover` `#b5c37e` · `--brand-cta-ink` `#0b1005` · `--brand-cta-rim` `#a9b676` · `--brand-cta-glow` `rgba(120,140,40,.28)` · `--brand-cta-shadow` `rgba(108,122,52,.22)`, with the aliases `--color-lime-cta`, `--color-lime-cta-band`, `--color-lime-cta-hover`, `--color-lime-cta-ink` | the sign-in's primary button — fill, band, hover, ink, edge, glow | ADOPT on the sign-in only (GA1 f)); its soft shadow kept (SLOP-08 revised) | the aliases |
+| `--brand-focus-halo` `rgba(84,94,33,.35)` | a focused field's halo, beside its olive border | ADOPT | CSS only |
+| `--brand-progress` `#a3b26a` · `--brand-step-done-line` `#e4e9cb` · `--brand-step-done-dot` `#dde7a6` | a process's progress; completed steps' line and disc | ADOPT — progress for processes only (SLOP-44), a completed step identified by its check | `--color-progress`, `--color-step-done-line`, `--color-step-done-dot` (proposed) |
+| `--color-logo-teal` `#335f65` · `--color-logo-olive` `#84a64c` | the reference's MultipleCorp mark | EXCLUDE (GD-08; VP-5) | — |
+| `--color-success-bg` `#e3f4e9` · `--color-success-fg` `#236b49` · `--color-success-dot` `#319664`; `--color-warning-bg` `#fff1e2` · `--color-warning-fg` `#8a4a0e` · `--color-warning-dot` `#d98a3d`; `--color-pending-bg` `#fef1d8` · `--color-pending-fg` `#7a5a22` · `--color-pending-dot` `#cb9d4e`; `--color-danger-bg` `#fde7e8` · `--color-danger-fg` `#b4373f` · `--color-danger-icon` `#9b2e30` · `--color-danger-dot` `#d0454c`; `--color-info-bg` `#e2ecf4` · `--color-info-fg` `#0f2b4f` · `--color-info-dot` `#5b8db5`; `--color-neutral-bg` `#f2f3ee` · `--color-neutral-fg` `#3a3b42` · `--color-neutral-dot` `#9b9da1` | the six status tones — tint, ink and dot; ink on its tint 4.99–11.86:1 | ADOPT — a state is a word with its icon (§5), never colour alone (D-DS-04; WCAG 1.4.1) | the same names; shadcn/ui pairs such as `--success` and `--success-foreground` added (proposed) |
+| `--color-danger-solid` `#b4373f` · `--color-danger-solid-hover` `#9e2f36` · `--color-danger-rim` `#9b2e30` · `--color-required` `#cf4747` | the destructive button, its hover and edge; the required mark | ADOPT | the same names; `--color-destructive` |
+| `--color-trend-up-bg` `#edf8f1` · `--color-trend-up-fg` `#2d5e3e` | the delta badge | EXCLUDE (VP-3) | — |
+| `--tint-olive` `#eaf0d9` / `--tint-olive-ink` `#1a2e0d` · `--tint-blue` `#e1ecf4` / `--tint-blue-ink` `#0f2b4f` · `--tint-peach` `#f6ede1` / `--tint-peach-ink` `#432817` · `--tint-mint` `#deefe9` / `--tint-mint-ink` `#032f11` · `--tint-red` `#fce8e6` / `--tint-red-ink` `#9b2e30` · `--tint-lavender` `#ede5fc` / `--tint-lavender-ink` `#341d5d` · `--tint-tan` `#f1e6dc` / `--tint-tan-ink` `#432817` · `--tint-lime` `#f5f9df` / `--tint-lime-ink` `#556a08` · `--tint-neutral` `#f2f3ee` / `--tint-neutral-ink` `#0f1014` · `--tint-blue-strong` `#d5e7f3` · `--tint-peach-strong` `#faece0` | the category discs, a tint with its ink | ADOPT as identity wells only, never decoration (VD-02) | `--color-tint-*` (proposed) |
+| `--chart-age-1` `#99b1a0` · `--chart-age-2` `#edd798` · `--chart-age-3` `#cbac8d` · `--chart-age-4` `#d56e5b` · `--chart-age-5` `#a9322e` | the receivable-ageing ramp, by severity | ADAPT — always with direct labels, amounts and a data table (VP-6; GR-23) | `--color-chart-age-1`…`-5`; shadcn/ui `--chart-1`–`--chart-5` |
+| `--chart-track` `#e6e8eb` · `--chart-segment-gap` 2 px · `--chart-line-width` 1.5 px · `--progress-height` 10 px | the bar's track and gaps; a line's width; the progress bar | ADOPT for the ageing bar and process progress | CSS only |
+| `--chart-cat-1` `#7e9e85` · `--chart-cat-2` `#82adc9` · `--chart-cat-3` `#e6d6c5` · `--chart-cat-4` `#dadee0` · `--chart-progress-1` `#94a469` · `--chart-progress-2` `#89b3cd` · `--chart-progress-3` `#ccaf90` · `--chart-olive-soft` `#c5d1a3` · `--chart-area-opacity-top` 0.4 · `--chart-donut-ring-ratio` 0.16 | categorical, progress, area and donut charts | EXCLUDE (VP-6; GR-23) | — |
 
 ### 5.2 Typography
 
-| Token | Size / line height / weight | Use |
-| --- | --- | --- |
-| `title` | 20 / 28 / 600 | the one page heading (h1) |
-| `section` | 16 / 24 / 600 | h2 — page sections, Beranda groups, dialog and sheet titles |
-| `subheading` | 14 / 20 / 600 | h3 — form sections, field groups, the name of an open line or row |
-| `body` | 14 / 20 / 400 | text, form fields on desktop, list primary lines |
-| `data` | 13 / 20 / 400 | table cells and dense rows, with tabular figures |
-| `label` | 12 / 16 / 500 | field labels, column headers, badges, captions, shortcut hints (Kbd) |
-| `input-touch` | 16 / 24 / 400 | text inside inputs wherever the pointer is coarse, so the browser does not zoom on focus |
-
-One family, Inter, at 400, 500 and 600; the fallback is the system UI sans-serif. Numbers, amounts, quantities, dates and codes use tabular figures and the slashed zero (`font-variant-numeric: tabular-nums slashed-zero`). No size above 20 px exists in the application (§18 SLOP-26).
+| Tokens and values | Role | Disposition | Tailwind key |
+| --- | --- | --- | --- |
+| `--font-sans` "Inter", "Inter Fallback", "Segoe UI Variable Text", "Segoe UI", system fonts · `--font-mono` ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", … · `--font-variation-text` `"opsz" 14` · `--numeric-figures` `tabular-nums` | the family with its cap-height-matched local fallback; codes and keycaps; Inter's text cut at every size; tabular figures for numbers | ADOPT — Inter 4.1 self-hosted under [WS-08](../05-security/SECURITY.md#4-web-and-input-security)'s `font-src 'self'` | `--font-sans`, `--font-mono` |
+| `--font-quote` · `--font-quote-serif` | quotations | EXCLUDE — no quote (VP-2) | — |
+| `--weight-regular` 400 · `--weight-medium` 500 · `--weight-semibold` 600 · `--weight-bold` 700 | the four weights | ADOPT | `--font-weight-regular`, `-medium`, `-semibold`, `-bold` |
+| `--text-display-size` 44 · `--text-display-lh` 50 px · `--text-display-track` −0.02em | the sign-in display only | ADOPT on the sign-in (SLOP-26) | `--text-display` with `--text-display--line-height` and `--text-display--letter-spacing` |
+| `--text-title-size` 32 · `--text-title-lh` 40 · `--text-title-track` −0.02em; `--text-figure-xl-size` 28 · `--text-figure-xl-lh` 36 · `--text-figure-xl-track` −0.02em; `--text-figure-lg-size` 22 · `--text-figure-lg-lh` 28 · `--text-figure-lg-track` −0.01em; `--text-heading-size` 20 · `--text-heading-lh` 28 · `--text-heading-track` −0.01em; `--text-heading-md-size` 20 · `--text-heading-md-lh` 26 · `--text-heading-md-track` −0.04em; `--text-heading-lg-size` 21 · `--text-heading-lg-lh` 28 · `--text-heading-lg-track` −0.01em; `--text-heading-sm-size` 16.5 · `--text-heading-sm-lh` 20 · `--text-heading-sm-track` −0.03em; `--text-lead-size` 17 · `--text-lead-lh` 26; `--text-body-lg-size` 15 · `--text-body-lg-lh` 22 · `--text-body-lg-lh-para` 24; `--text-body-size` 14 · `--text-body-lh` 20; `--text-label-size` 13 · `--text-label-lh` 18 — px at the canvas | the desktop scale at the canvas, each size × `--tu` | ADOPT; GR-16's two variants (§1) | one `--text-{role}` key per role with its `--line-height` and `--letter-spacing`, Tailwind's form for a size's defaults (Tailwind v4.3, *Font size*) |
+| `--text-caption-size` 12 · `--text-caption-lh` 16 · `--text-micro-size` 11 · `--text-micro-lh` 16 · `--text-pill-size` 12 · `--text-pill-sm-size` 11 · `--text-input-sm-size` 12 px | fixed small sizes, never shrunk | ADOPT; legibility judged at the preview (GR-16) | `--text-caption`, `--text-micro`, `--text-pill`, `--text-pill-sm` |
+| `--text-pill-xs-size` 10.5 px | the smallest pill | EXCLUDE — below the reference's own 11 px floor (GR-16) | — |
+| `--text-btn-sm-size` 13 · `--text-btn-md-size` 14 · `--text-btn-lg-size` 14 · `--text-btn-header-size` 14 · `--text-btn-secondary-size` 12.5 · `--text-btn-outline-xl-size` 17 · `--text-input-size` 14 · `--text-field-label-size` 13 · `--text-pill-lg-size` 13 · `--text-kbd-size` 12.5 · `--text-toggle-size` 15 | component text sizes, × `--tu` | ADOPT | CSS only, read by the components |
+| `--text-auth-title-size` 35 · `--text-auth-title-lh` 42 · `--text-auth-lead-size` 17.5 · `--text-auth-lead-lh` 26.5 · `--text-auth-label-size` 16 · `--text-auth-label-lh` 22 · `--text-auth-input-size` 15.5 · `--text-auth-button-size` 18 · `--text-auth-helper-size` 15 · `--text-auth-helper-lh` 24 | the sign-in's own sizes | ADOPT on the sign-in; the lead without editorial copy (SLOP-20; GA1 f)) | CSS only |
+| `--text-delta-size` 12 | the delta badge | EXCLUDE (VP-3) | — |
+| `--m-text-title` 25 · `--m-text-title-lh` 31 (26 and 32 from 400 px) · `--m-text-heading` 18 · `--m-text-heading-lh` 24 · `--m-text-row` 15 · `--m-text-row-lh` 20 · `--m-text-body` 15 · `--m-text-body-lh` 22 · `--m-text-meta` 12.5 · `--m-text-meta-lh` 17 · `--m-text-button` 15 · `--m-text-figure` 17 · `--m-text-figure-lh` 22 · `--m-text-total` 22 px | the phone scale | ADOPT; text fields 16 px on touch (D-DS-02) | CSS only, read by the phone compositions |
 
 ### 5.3 Spacing, sizing and density
 
-| Token | Value | Use |
-| --- | --- | --- |
-| Spacing scale | 4 · 8 · 12 · 16 · 24 · 32 · 48 px | every gap between elements, every margin and the padding of regions; inside a fixed-height control, badge or row the padding follows from its height and its text |
-| Page padding | 24 px desktop · 16 px phone | the content area's inner edge |
-| Group gap · inside a group | 24 px · 8–12 px | the space between groups is at least twice the space within them |
-| Control height | 32 px with a fine pointer · 44 px with a coarse pointer, at any width (§6) | buttons, inputs, selects, the business-date control |
-| Table row | 36 px; a two-line cell grows the row | PT-05 |
-| Phone list row | at least 56 px | PT-06 |
-| Icon | 16 px, stroke 1.5 px; 14 px inside badges and inline marks; 20 px in the phone navigation | §8 |
-| Form width | at most 720 px for a one-column form; two columns up to 1,040 px | PT-09 |
-| Content width | fluid; at most 1,440 px on very wide screens, centred | §6 |
+| Tokens and values | Role | Disposition | Tailwind key |
+| --- | --- | --- | --- |
+| `--space-0-5` 2 · `--space-1` 4 · `--space-2` 8 · `--space-3` 12 · `--space-4` 16 · `--space-5` 20 · `--space-6` 24 · `--space-8` 32 · `--space-10` 40 · `--space-12` 48 · `--space-14` 56 · `--space-16` 64 · `--space-18` 72 px | the spacing scale, a 4 px base with a 2 px step | ADOPT (SLOP-33) | `--spacing: 0.25rem`, each step a multiple of it |
+| `--page-gutter` 16 · `--grid-gap` 12 · `--card-padding` 20 · `--card-header-icon-gap` 12 · `--search-max-width` 592 · `--header-height` 76 · `--header-control-top` 18 · `--footer-height` 64 px | page gutter, card grid gap and padding, the top bar's height and search width, the sticky footer | ADOPT, geometry × `--du` on the desktop | CSS only |
+| `--sidebar-width` 264 · `--sidebar-inset-x` 16 · `--nav-item-height` 44 · `--nav-item-gap` 6 · `--nav-icon-inset` 12 · `--nav-icon-label-gap` 20 · `--nav-indicator-width` 3 · `--nav-indicator-inset-y` 8 px | the sidebar and its entries, with the 3 px indicator | ADOPT — R1's entries (GD-03; GA1 e)); at least 220 px at runtime | shadcn/ui Sidebar's `--sidebar-width`, set from the token instead of its 16rem default |
+| `--auth-card-width` 1336 · `--auth-split` 13fr 11fr · `--auth-form-width` 487 · `--auth-visual-inset` 48 px | the sign-in's split card | ADOPT, the visual panel abstract (GR-12) | CSS only |
+| `--radius-xs` 4 · `--radius-sm` 6 · `--radius-md` 8 · `--radius-lg` 10 · `--radius-xl` 12 px · `--radius-full` 9999 px | the radius family; cards 10, dialogs 12, sheets' top corners 16 | ADOPT (SLOP-03, SLOP-31 revised) | the same names, set explicitly; `--radius` = `--radius-lg` |
+| `--control-xs` 24 · `--control-sm` 32 · `--control-md` 36 · `--control-lg` 40 · `--control-header` 42 · `--control-xl` 56 · `--control-xl-field` 55 · `--control-add-row` 28 px | control heights — round chevrons, small, fields and default buttons, page actions, top-bar controls, sign-in | ADOPT with the density floors (§2); ADAPT — 48 px on warehouse and field tasks, ≥ 44 px targets with a coarse pointer (GR-07) | CSS only, read by the components |
+| `--badge-height` 24 · `--badge-height-lg` 28 · `--badge-height-sm` 22 · `--badge-dot` 8 · `--badge-dot-lg` 9 · `--keycap-height` 22 · `--keycap-min-width` 23 px | status pills and dots; keycaps | ADOPT | CSS only |
+| `--stepper-disc` 30 px · `--stepper-disc-bg` `#f3f4f5` · `--stepper-ring` `#d0d0d2` · `--stepper-line` `#d9d9db` | the stage track's markers and connectors | ADOPT; the current marker ringed in olive (GR-03) | CSS only |
+| `--icon-lg` 24 · `--icon-md` 20 · `--icon-sm` 16 · `--icon-xs` 12 px · `--icon-stroke` 1.75 · `--icon-stroke-sm` 1.5 · `--icon-stroke-xs` 1.25 · `--icon-stroke-lg` 2 · `--icon-button-round` 24 px | icon boxes and their strokes | ADOPT — Lucide drawn at these strokes (GR-18; SP-16) | CSS only |
+| `--icon-disc-lg` 56 · `--icon-disc-kpi` 52 · `--icon-disc-row` 42 · `--icon-disc-md` 40 · `--icon-disc-sm` 32 px | icon wells | ADOPT as identity markers | CSS only |
+| `--shadow-xs` · `--shadow-card` `0 1px 3px` at 4 % · `--shadow-card-hover` · `--shadow-pop` · `--shadow-raised` · `--shadow-menu` · `--shadow-toast` · `--shadow-modal` · `--shadow-drawer` · `--shadow-footer` · `--shadow-cta` | controls, cards and their hover, toggles and tab bars, the sign-in card, menus, toasts, dialogs, drawers, the sticky footer, the sign-in button | ADOPT (SLOP-14) | the same names in `--shadow-*` |
+| `--shadow-palette` (two drop shadows) | the command palette | ADOPT | `--drop-shadow-palette` |
+| `--color-focus` = `--brand-accent` · `--focus-ring-width` 2 px · `--focus-ring-offset` 2 px · `--focus-ring` 3 px halo · `--focus-ring-danger` 3 px danger halo | the focus outline and a field's halo | ADOPT — 6.03–7.00:1 on every surface | `--color-focus`; `--color-ring` |
+| `--z-raised` 2 · `--z-bar` 30 · `--z-popover` 80 · `--z-sheet` 90 · `--z-drawer` 95 · `--z-modal` 100 · `--z-toast` 110 · `--z-skip` 120 | the layer scale up to the skip link | ADOPT | CSS only — Tailwind's table lists no layer namespace |
+| `--safe-top`, `--safe-right`, `--safe-bottom`, `--safe-left` (the safe-area insets) · `--touch-min` 44 · `--m-gutter` 18 (20 from 375 px) · `--m-section-gap` 28 · `--m-card-gap` 14 · `--m-card-pad` 18 · `--m-row-min` 60 · `--m-control-h` 48 · `--m-control-r` = `--radius-md` · `--m-appbar-h` 56 · `--m-bottom-nav-h` 60 · `--m-action-bar-h` 72 px | the phone composition — insets, gutters, rows, controls, the app bar, the bottom bar and the action bar | ADOPT; the bars opaque (GR-22) | CSS only |
+| `--select-menu-pad` 8 · `--select-row-h` 42 · `--select-row-px` 14 · `--select-row-r` = `--radius-sm` · `--select-menu-r` = `--radius-lg` · `--select-menu-max-h` 320 · `--select-sheet-row-h` 52 px | the custom select's popover and its phone sheet | ADOPT | CSS only |
+| `--upload-success` · `--upload-success-dot` · `--upload-success-bg` (aliases of the success tone) | the upload's success state | ADOPT | CSS only |
+| `--du`, `--dt`, `--tu`, `--iu` (1 px on phones and by default) · `--density-scale` (1; .9 from 1,025 px) | the runtime units: from 1,025 px `--du` follows the viewport's height and width, × .9, `--dt` half its compression, `--tu` 1 px — GR-16's variant B (D-DS-10), the reference's `clamp(.92px, …, .96px)` not used —, `--iu` = `--tu`; tablets 768–1,024 px `--du` .86–.94 from the height; the reference's sign-in page keeps 1 px | ADOPT (GR-06; GR-16's variant B) | CSS only; the factor applied to rem keys (GR-06) |
 
-**One density.** Controls are compact with a fine pointer and touch-sized with a coarse pointer (§6); there is no user-selectable density mode (D-DS-03; PN-7).
+**Spacing.** The 4 px scale with its 2 px step (SLOP-33): card padding 20 px, 18 on phones; 12 px between cards, 14 on phones; 28 px between sections on phones; 8 px from a label to its control and from a control to its supporting text — the reference's gap, which DESIGN_REFERENCES' alignment specification keeps (OC-09). Macro breathing room, micro density: sections separated by space and rules, not by a card each (SLOP-01; AICWDF §18.2).
+
+
+**Density and size.**
+
+- Desktop: the density layer `--du` with `--density-scale` 0.9 at browser zoom 100 %, control floors of 34 px for header controls, 32 large, 30 medium and 28 small; one control height per density — 36 px for fields and default controls, 40 px for page actions, 32 px inside cards (OC-09).
+- Phone: fields and primary buttons 48 px, every other target at least 44 px, rows at least 60 px, bottom-bar items at least 60 × 60 px, sheet rows 52 px.
+- Warehouse and field task screens — the pages [IA_PAGE_INVENTORY](stage2/IA_PAGE_INVENTORY.md) marks `[floor]`, PG-022 *Terima Barang* and PG-024 *Keluarkan Barang* among them —: every control 48 px; a coarse pointer gets targets of at least 44 px at every width (GR-07; DESIGN_SYSTEM UXV-10).
+- No target below 24 × 24 CSS px on the desktop — WCAG 2.2 2.5.8 Target Size (Minimum), level AA, "at least 24 by 24 CSS pixels" with its exceptions.
+- The dense mode only on OC-09's named screens: the multi-line editors of quotations and purchases (PG-014, PG-017), *Riwayat Stok* (PG-020), *Mutasi Bank* (PG-050), *Laporan* and *Laporan Gabungan* (PG-051, PG-052), *Riwayat Aktivitas* and *Log Keamanan* (PG-063, PG-064).
+- The alignment specification of [DESIGN_REFERENCES §7](DESIGN_REFERENCES.md#alignment-specification-oc-09): one control height per row, a stated column grid for multi-line editors — S2-2 states the purchase line's proportions on the reference's geometry —, numbers right-aligned with tabular figures, secondary metadata on its own line below the control row, less-common fields behind "Rincian lain", a summary beside or below the form it totals.
+
 
 ### 5.4 Radius, elevation, layers and motion
 
-| Token | Value | Use |
-| --- | --- | --- |
-| `--radius` | 4 px | controls, badges, inputs, buttons, the rare panel; a segmented control has one 4 px outer boundary with its segments separated by 1 px rules, never inset shapes |
-| Overlay radius | 6 px | dialogs, popovers, menus, sheets, toasts |
-| Elevation | none at rest; overlays only: `0 8px 24px rgba(20,23,28,.12)`; the one other shadow is the edge cue of a table that scrolls inside its frame (PT-05, PT-10) | §18 SLOP-14 |
-| `--scrim` | `rgba(20,23,28,.32)` | behind a dialog or sheet; the re-authentication dialog's layer is opaque instead (PT-28) |
-| Layers | content · sticky headers and action bars · navigation · popovers and menus · sheets · dialogs · toasts | a higher layer never hides the focused element (WCAG 2.4.11) |
-| Durations | 100 ms hover and press · 140 ms menus, popovers and dialogs · 200 ms sheets | §8 |
-| Easing | `cubic-bezier(0.2, 0, 0, 1)` entering; ease-in leaving | — |
+| Tokens and values | Role | Disposition | Tailwind key |
+| --- | --- | --- | --- |
+| `--mc-dur-instant` 80 · `--mc-dur-hover` 140 · `--mc-dur-fast` 160 · `--mc-dur-state` 200 · `--mc-dur-base` 240 · `--mc-dur-moderate` 320 · `--mc-dur-sheet` 320 · `--mc-dur-check` 360 · `--mc-dur-slow` 400 ms | press; hover; state morphs and selection; component states; item reveals and the page exit; dialogs and disclosures; bottom sheets; the success check; the navigation indicator and panel reveals | ADOPT (VP-8 as GA1 d) reconciles it) | CSS only — Tailwind's table lists no duration namespace; how utilities read them is P11's, needs verification at implementation |
+| `--mc-dur-auth-compact` 480 · `--mc-dur-auth-step` 600 · `--mc-dur-auth-signature` 600 ms | the sign-in's step on narrow screens and on the desktop; its desktop hand-off | ADOPT on the sign-in (VD-05) | CSS only |
+| `--mc-dur-reduced` 150 · `--mc-dur-spin` 900 ms | the crossfade under reduced motion; one spinner turn | ADOPT | CSS only |
+| `--mc-ease-standard` `cubic-bezier(0.42, 0, 0.58, 1)` · `--mc-ease-enter` `cubic-bezier(0, 0, 0.2, 1)` · `--mc-ease-reveal` `cubic-bezier(0.25, 1, 0.5, 1)` · `--mc-ease-exit` `cubic-bezier(0.37, 0, 0.63, 1)` · `--mc-ease-linear` `linear` | persistent moves, entrances, reveals, exits, the crossfade | ADOPT | `--ease-standard`, `--ease-enter`, `--ease-reveal`, `--ease-exit`, `--ease-linear` |
+| `--mc-ease-emphasis` `cubic-bezier(0.34, 1.45, 0.64, 1)` | an overshoot for one datum per view | EXCLUDE (VP-8) | — |
+| `--mc-stagger-tight` 30 · `--mc-stagger-row` 40 · `--mc-stagger-card` 60 ms · `--mc-stagger-max-steps` 8 · `--mc-stagger-window` 300 ms · `--mc-content-offset` 120 ms · `--mc-page-budget` 900 ms | staggers within 300 ms; a container before its content; data-ready to the last element | ADOPT | CSS only |
+| `--mc-enter-scale` 0.97 · `--mc-exit-scale` 0.98 · `--mc-enter-rise` 8 px · `--mc-title-rise` 6 px · `--mc-item-rise` 4 px · `--mc-item-blur` 3 px · `--mc-validation-rise` −4 px · `--mc-press-scale` 0.97 · `--mc-pop-scale` 0.8 | entrance and exit transforms; a title's and an item's rise; text-level blur; an inline message dropping in; press; the success check's pop | ADOPT; none of them under reduced motion | CSS only |
+| `--mc-auth-shift` 24 px · `--mc-auth-parallax` 48 px · `--mc-auth-swap-at` 0.5 · `--mc-auth-exit-end` 0.45 · `--mc-auth-enter-start` 0.55 | the sign-in panel's one transition and its restrained parallax | ADOPT on the sign-in only (VD-05; SLOP-16 revised); removed under reduced motion | CSS only |
+| `--mc-panel-start` 3 % · `--mc-scrim` `rgba(15, 16, 20, 0.32)` · `--mc-backdrop-blur` 4 px | a side panel's clip reveal; the overlay scrim and its optional blur | ADOPT | `--color-scrim` and `--blur-backdrop` (proposed) |
+
+**Coverage.** §§1.2–1.5 name every custom property of `tokens.css` — 424 names, 436 declarations with the breakpoint overrides —, each in one row, checked by script against the file.
+
+The radius, elevation and layer tokens are §5.3's table; their rules are §8's.
 
 ## 6. Layout, grid and breakpoints
 
-| Band | Width | Layout |
+The reference's classes, with the repository's corrections (GA1 a), e); [DESIGN_REFERENCES §7](DESIGN_REFERENCES.md#7-draft-responsive-rules)).
+
+| Width | Composition | Tailwind key (proposed) |
 | --- | --- | --- |
-| Phone | below 768 px | phone navigation ([§9 PT-02](#9-patterns)); one column; dense list rows instead of tables; full-height sheets for forms and filters; the primary action in a bottom action bar; 16 px page padding |
-| Tablet | 768–1023 px | desktop patterns with the navigation collapsed to icons; forms in one column; tables keep their columns and scroll horizontally only inside their own frame, with a visible edge cue |
-| Desktop | 1024 px and wider | the full shell; two-column forms; data tables; side panels and sheets beside the content; 24 px page padding |
-| Wide | 1440 px and wider | content centred at most 1,440 px wide; tables may use the width, text measures stay as in §5.3 |
+| Phone, to 767 px | the 56 px app bar with the back action and the title; R1's bottom bar; one column, sections disclosed by priority; tables as rows; selects, dialogs and menus as bottom sheets, the palette as a top sheet; one sticky action region above the bottom bar; the gutter 18 px, 20 px from 375 px; the title 26/32 from 400 px | the default, mobile-first |
+| Tablet, 768–1,024 px | the 80 px icon rail with the drawer; tables tighten their cells, hide their low-priority columns, then become rows when they still do not fit; multi-line editors as item cards | `--breakpoint-md: 48rem` |
+| Desktop, from 1,025 px | R1's sidebar, 264 px at the canvas and at least 220 px at runtime, collapsing to the rail with Ctrl B; the top bar; one density at browser zoom 100 % | `--breakpoint-lg: 64.0625rem` |
+| Desktop, from 1,200 px | the reference's full composition | `--breakpoint-xl: 75rem` |
 
-Breakpoints follow where content stops fitting; the Tailwind defaults at 768 and 1024 px coincide with these bands, and components with their own breakpoints use container queries. Page reflow at 320 CSS px works without horizontal scrolling of the page (WCAG 1.4.10); only a data table may scroll inside its own frame, and its first column stays visible.
+The default breakpoints are cleared with `--breakpoint-*: initial` before these are set (Tailwind v4.3, *Theme variables*); [DESIGN_SYSTEM](#design-system)'s 768 and 1,024 px bands align in Stage 3. Each page type takes the reference's archetype width (proposed, Level 1): data, 1,680 px, for the lists, work queues and reports; standard, 1,440 px, for *Beranda* and the record workspaces; settings, 1,280 px, for the settings pages and *Akun Saya*; form, 1,120 px, for the forms, editors and task steps; focused, 960 px, for PG-005.
 
-**Width sets the layout, the input sets the size.** A band is chosen by width alone, so a desktop browser narrowed or zoomed to 200–400 % gets the phone patterns. A coarse pointer (`pointer: coarse`) gets 44 px controls and targets and 56 px list rows at every width, and on a scan step the phone layout of that step — the scan dock fixed at the bottom and the bottom action bar (PT-20; D-DS-08) — so a touch tablet or a landscape phone running a `[floor]` task keeps them.
+**Reflow at 320 px** ([GR-05](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01)). The phone composition reflows at 320 CSS px without horizontal page scrolling — WCAG 2.2 1.4.10 Reflow, "320 CSS pixels" for vertical scrolling content —, the reference validating from 360 px; a data table scrolls only inside its own frame, the criterion's exception. Titles and meta wrap; single-line values truncate with the full text available (1.4.13); record numbers never truncate; codes such as racks and SKUs never break at their hyphens.
 
-**Not a shrunk desktop.** Every screen of [INFORMATION_ARCHITECTURE §8](INFORMATION_ARCHITECTURE.md#8-screen-inventory) names its phone pattern; a desktop table never appears on a phone as a scaled-down table (UXV-11).
+**The phone bars** (GR-11; GR-22). Both opaque, without the reference's blur. The bottom bar holds R1's items — the Owner's *Beranda* · *Proyek* · *Cari* · *Lainnya*, the Admin's *Pekerjaan* · *Proyek* · *Cari* · *Lainnya*, each present only when the account may open it —, the current item with its olive mark (GR-02). On a focused scan step whose action bar shows, the bottom bar hides; no path is lost, the back action leads out (GA1 e)). *Lainnya* — *Kerja*, *Menu lengkap* and *Akun* — opens the reference's drawer, a navigation surface by nature; a full-height sheet remains the alternative the C2 sessions may prefer (proposed; GR-11).
+
+**Input, not only width** (GR-07). A coarse pointer gets targets of at least 44 px at every width, warehouse and field tasks 48 px; text fields are 16 px on touch devices (D-DS-02).
+
+**Density** ([OC-09](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework); D-DS-03). The dense mode only on the named screens of §2; every other screen keeps the reference's comfortable density, judged against AICWDF §18.2 at the preview.
+
+These rules replace the approved revision's §6; the alignment specification of [DESIGN_REFERENCES §7](DESIGN_REFERENCES.md#alignment-specification-oc-09) applies within them.
 
 ## 7. Typography rules
 
-- One typeface and seven styles (D-DS-02). One `title` per page; section headings in `section`; no heading above 20 px, no display sizes, no hero headings.
-- Body text measure at most 72 characters; table cells wrap within their column rather than truncate, except a single-line identifier that truncates with the full value in a tooltip and in the row's detail.
-- Long Indonesian institution names wrap to two lines in a list row and are never ellipsized in a form or detail.
-- Emphasis by weight (600) or by the ink and muted colours; never by colour hue, italics for data, or underline except for links.
-- Numbers right-aligned in tables, with tabular figures, so digits align by place value.
+**Typography.**
+
+- Inter's text cut at every size, the four weights, tabular figures for every number in an input, a cell or a summary ([OC-09](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework)). Hierarchy by size and ink tier, never by colour alone.
+- Desktop roles at the canvas, × `--tu`: title 32/40; figures 28/36 and 22/28; heading 20/28 and card titles 16.5–21; lead 17/26; body 15/22 and 14/20; label 13/18; caption 12/16; micro 11/16. Phone: title 25/31 (26/32 from 400 px), heading 18/24, row 15/20, body 15/22, meta 12.5/17, button 15, figure 17/22, total 22; text fields 16 px on touch (D-DS-02).
+- A display size only on the sign-in (SLOP-26); page titles on the reference's scale, never a hero (SLOP-27; VP-2).
+- Nothing below 11 px; the 10.5 px pill excluded; the legibility of the smallest desktop text fixed by GR-16's variant B (D-DS-10).
+- Capitalization, punctuation and formats are DESIGN_SYSTEM §16's and [LOCALIZATION_ARCHITECTURE](stage2/LOCALIZATION_ARCHITECTURE.md#24-formats)'s; the reference's micro-copy is never wording (GP-5).
+
 
 ## 8. Iconography, motion, radius and elevation
 
-- **Icons** are Lucide line icons at 16 px with 1.5 px strokes, inline. An icon is used only where it carries meaning a word alone would not: a status shape (§12), a navigation item that collapses to icons, a control whose meaning is universal (close, search, calendar, menu, download, scan) — always with an accessible name and, outside the navigation, beside a text label. A button with a text label has no icon unless the icon distinguishes it from a neighbour; no icon inside every label; one icon size per context (§18 SLOP-23, SLOP-24, SLOP-32).
-- **Motion** is feedback only: a pressed button, a menu or dialog appearing (opacity and at most 4 px of movement), a sheet sliding in, a row being added. No decorative, looping, parallax or attention motion; the only repeating animation is a progress indicator, and under `prefers-reduced-motion: reduce` it becomes a still mark with text and every movement is removed.
-- **Radius** is 4 px or 6 px (§5.4); nothing is rounded into a pill; the only circles are the shapes inside the status icons.
-- **Elevation** exists only for overlays; surfaces at rest are separated by space and hairline rules, not shadows or nested panels.
+**Iconography.** Lucide icons as inline SVG components, never an icon font; sizes on the reference's scale — 24 px in the navigation, 16–18 px in buttons and rows, 14 px in a status badge (§12.1) —; an icon never the only cue (§15); each icon's meaning is one throughout the application.
+
+**Radius.** Cards 10 px, controls about 0.18 × their height, menus 10 with 6 px highlights, dialogs 12, sheets 16 on their top corners; nothing else above 12 px (SLOP-03, SLOP-04).
+
+
+**Elevation.** A card's barely visible resting shadow with its border carrying the edge; menus, toasts, dialogs, drawers and the palette with their own shadows over the scrim (SLOP-14); the phone's app bar and bottom bar opaque, without the reference's blur (GR-22; SLOP-10).
+
+
+**Motion** (VP-8, as GA1 d) reconciles it).
+
+- Functional only: state changes, the page-state transition with the shell still, panels, drawers, sheets, dialogs, menus and feedback; nothing tied to scrolling; focus never animated; a spinner only after 300 ms; data-ready to the last element within 900 ms; no transition delays focus or input.
+- Excluded: counts rolling per digit, the emphasis curve, chart reveals, looping. The sign-in's restrained parallax stays inside its one transition between steps (VD-05; SLOP-16 revised).
+- Under `prefers-reduced-motion: reduce`: no translate, scale, blur, clip, parallax, stagger, roll or stroke drawing; a 150 ms linear crossfade; indicators jump; a page swap instant (SLOP-15 revised).
+- In the application the reference's router is replaced by Inertia's persistent layouts, which keep a layout "alive between visits" (Inertia v3, *Layouts*): the shell stays mounted, the page region takes the page-state transition, focus and scroll are handled on each visit (GA1 c) 10) — needs verification at implementation.
+
+
+**Stage 3 rules** (Annex A; §4):
+
+- **The reference's recipes only** (D-DS-16): every motion is one of `motion.css`'s on a MULTIPLECORP state change; a motion the pilot added is not part of V1 (DA-04).
+- **Reduced motion** (D-DS-17): no movement at all under `prefers-reduced-motion: reduce` — the reference's own chevron and select turns included —; a 150 ms crossfade at most (DA-12).
+- A fold opens with its chevron's turn only, as the reference's help fold; its body does not rise (GF-42).
+- Each Inertia visit sets focus and scroll; a full document load is never the answer's carrier (FA-09's cause, the prototype router's).
 
 ## 9. Patterns
 
@@ -196,6 +303,12 @@ Every screen is assembled from these patterns; a build unit that needs something
 | PT-31 | **Derived part strip** (D-IA-09) | one row above a record's parts: each part's name in `label` style, its part state as the 14 px shape followed by the state's label (§12.1), and one derived fact in `data` style; at most eight parts, wrapping to a second row rather than scrolling | not used — the phone's part list carries the same fact in each row | Derived each time from the parts' own figures; never a stored stage, a progress bar or a percentage (§18 SLOP-44) |
 | PT-12 | **Detail layout** | PT-03 · a facts summary as a definition list in two to four columns · the record's parts · the timeline (PT-18) | PT-03 · facts stacked · parts as a list of drill-in rows or a segmented switcher · timeline | A bordered panel (4 px radius, 1 px `--border`) only where a group needs its own boundary — never a panel inside a panel, never every section in a panel |
 
+**Stage 3 rules** (Annex A; §4):
+
+- One shell component set on every page, so its geometry is the same everywhere (DA-03).
+- A page's secondary links sit in its actions or overflow menu, never as a loose button under the last card (GF-23).
+
+
 ### 9.2 Lists, tables and filters
 
 | ID | Pattern | Desktop | Phone | Rules |
@@ -205,6 +318,13 @@ Every screen is assembled from these patterns; a build unit that needs something
 | PT-07 | **Filters** | a filter bar above the table: the list's search field, at most four filter controls, the company filter, "Atur Ulang"; applied filters as removable tags under the bar | "Filter" with the number applied opens a full-height sheet with the same controls and "Terapkan"; a summary line of applied filters under the header | Only the keys the screen inventory names; values in the address (INFORMATION_ARCHITECTURE §11); a filter in PF-42's bounded form shows the partial-page note of PT-08 |
 | PT-08 | **List continuation and list notices** | "Muat Lagi" below the last row; "Semua sudah ditampilkan." when nothing is left; the cut notice (ADMIN_FLOW MSG-23); a bounded filter's page that came back short: "Sebagian data sudah diperiksa. Muat lagi untuk melanjutkan."; a cursor that fails its check: MSG-26 | a full-width "Muat Lagi" button; the same notices | Never a total, page number or page-size selector; the page size is 25 (PF-17) |
 | PT-27 | **Search and type-ahead** (Command, Combobox) | results grouped by type, an exact code match first with the mark "Kode Cocok" (§12.1), at most 20 rows, keyboard navigation, the cut notice; in a form picker "Tidak ditemukan." with "Buat {Objek}" — "Buat Klien" — where the account may create | full-screen search; the same groups | The rules of ADMIN_FLOW IP-17; results are chosen with KB-11; no recent-searches history is stored in the browser |
+
+**Stage 3 rules** (Annex A; §4):
+
+- A list's filters are the reference's filter controls — label, value, chevron — in the list's toolbar (GF-17).
+- A list's columns keep their widths when a status appears in a row (GF-18).
+- A tab row that overflows on the phone scrolls, the reference's edge mask its cue (GF-14).
+
 
 ### 9.3 Forms and entry
 
@@ -217,6 +337,16 @@ Every screen is assembled from these patterns; a build unit that needs something
 | PT-29 | **Derived readiness list** | rows: item · *Lengkap* or *Belum* (PT-13) · what is missing · link | the same as dense rows | Derived from state each time it is shown; no stored progress, fraction such as "2 dari 10", progress bar, percentage or checkmark animation (§18 SLOP-44); missing items first |
 | PT-30 | **Capability-by-company preview** | a matrix: capabilities grouped by area as rows, the account's granted companies as columns, each cell *Dapat* (kept), *Baru* (added), *Dicabut* (removed) or empty; prerequisites stated per capability — removing one marks the capabilities that need it "Nonaktif — prasyarat dicabut": their grants are kept and take effect again when the prerequisite is granted again (RG-06), and they are revoked only when the Owner removes them; Owner-only capabilities absent; a summary sentence per company | read-only list per company with the same marks | Shown as "Pratinjau Akses" before "Simpan Akses", whose confirmation lists each change and the companies it applies to (H7-06; D-DS-09); the server decides what the grants allow |
 
+**Stage 3 rules** (Annex A; §4):
+
+- Every required field carries the reference's required mark (GF-16).
+- A field that depends on another stays disabled, its reason beside it, until that field is chosen (GF-12).
+- One-line choices are a radio group; the reference's choice cards hold a title with its description (GF-28).
+- PT-25's business-date line has one form on every page that shows it, *Terima Barang*'s included, and shows the chosen date once one is chosen (PB-A12; FA-06).
+- *Rincian lain*'s fields sit on the reference's widths — a reference number on the reference-field track, an amount at the money control's width, a group's heading in the reference's in-form subhead role (PB-D02).
+- A save that cannot be sent yet is `aria-disabled` with its reason beside it — *Buat Pembelian*'s "Simpan Pembelian" (PB-C05) —, never silently inert.
+
+
 ### 9.4 Actions, overlays and feedback
 
 | ID | Pattern | Desktop | Phone | Rules |
@@ -226,9 +356,16 @@ Every screen is assembled from these patterns; a build unit that needs something
 | PT-26 | **Confirmation of an irreversible or correcting command** | AlertDialog: title "{Kata kerja} {objek}?"; the consequence and how a mistake is corrected (MSG-39); the affected items; the reason field where required (MSG-40); for numbering the type's numbering facts expanded, the statements and the required tick of ADMIN_FLOW §12.2; the confirming button with the action's verb, "Kembali" beside it | a full-height sheet with the confirming button at the bottom | The payload's formats are checked before the dialog opens, and it opens with focus on its first input or, when it has none, on "Kembali"; KB-10 opens the dialog and only the dialog's button sends the command (ADMIN_FLOW IP-08, IP-09) |
 | PT-28 | **Step-up and re-authentication dialog** | AlertDialog naming the account; for re-authentication an e-mail field and a password field, for the step-up one password field — with `autocomplete`, show-password, paste and password managers allowed, focus in the first field; "Lanjutkan"; step-up adds "Batal", re-authentication "Keluar"; for re-authentication the backdrop is opaque so the page content is not readable | the same as a full-height sheet | ADMIN_FLOW IP-10 and §6 |
 | PT-14 | **Inline message** — outcomes, notices and errors of a part | one anatomy for every inline message: white, a 1 px `--border` boundary, the tone's icon, the label in 600 weight, the text in ink, and at most one action button | the same, full width | An outcome message is part of the sticky action region of the form or dialog that sent the command: it appears directly above the buttons inside that region, which grows to hold it — up to a third of the viewport, scrolling inside beyond that — so the answer is in view whenever the buttons are (D-DS-06); announced through a live region — polite for COMMITTED and PENDING, assertive for REJECTED, CONFLICT and FAILED — without moving focus, except that a CONFLICT or FAILED answer moves focus to its message (§15). Never a filled colour block (§12) |
-| PT-15 | **Toast** | bottom right, above other content, 6 px radius, overlay elevation | bottom, above the navigation | Only for a quiet confirmation that needs no action and is also visible on the page, such as "Draf tersimpan." after navigating away; it disappears after five seconds unless focused or hovered. Never for REJECTED, CONFLICT, FAILED, unknown outcomes, warnings or anything that needs a decision |
+| PT-15 | **Toast** | bottom right, above other content, the reference's radius and elevation (§8) | bottom, above the navigation | Only for a quiet confirmation that needs no action and is also visible on the page, such as "Draf tersimpan." after navigating away; it disappears after five seconds unless focused or hovered. Never for REJECTED, CONFLICT, FAILED, unknown outcomes, warnings or anything that needs a decision |
 | PT-18 | **Activity timeline** (*Riwayat*) | entries newest first: when recorded and — when it differs — the business date ("Tanggal transaksi 28 Sep 2026 · dicatat 01 Okt 2026 14.05 WIB"); the acting account's name where the viewer may see it; one sentence of what happened — a routed refusal "ditolak — diteruskan", a count made stale "kedaluwarsa"; the reason; changed fields as "field: lama → baru"; links "Mengoreksi" and "Dikoreksi oleh"; "Sistem" only for an entry no account caused; "Muat Lagi" | the same as stacked entries | Projected per PJ-11: keys the viewer may not see are absent, the other side of a cross-company event is the relation marker. No avatars, reactions, comments or chat bubbles (§18) |
 | PT-19 | **Loading, skeleton, empty, error and denied** | a skeleton that mirrors the real layout, shown after 300 ms so fast answers do not flash; a spinner only inside a busy control; *empty*: one sentence and at most one action; a group error: the message, "Muat Ulang Bagian Ini" and the reference code; the not-found and forbidden pages of ADMIN_FLOW IP-21 | the same | No illustrations, mascots or decorative empty states; a search empty state names the term and offers clearing it |
+
+**Stage 3 rules** (Annex A; §4):
+
+- A page's overflow actions are the reference's overflow menu with its toggle (GF-01).
+- MSG-39's dialog puts the question in its title and the consequence and the correction in its body (GF-04; PB-D01).
+- A long form's sticky bar holds "Batal" before the primary action (GF-15; PT-09).
+
 
 ### 9.5 Dashboard, records and media
 
@@ -240,6 +377,76 @@ Every screen is assembled from these patterns; a build unit that needs something
 | PT-22 | **Thumbnails and previews** | product thumbnails 40 px in lists only, one page of them, loaded lazily below the fold; a neutral placeholder while a derivative is not ready; the document preview of [§14.3](#143-document-preview) | the same | PF-31, PF-32; an original image only on its record |
 | PT-13 | **Status badge** | [§12.1](#121-status-system) | the same | — |
 | PT-23 | **Money, quantity and date presentation** | [§16](#16-copy-and-formatting) | the same | — |
+
+**Stage 3 rules** (Annex A; §4):
+
+- Cards are compact and content-driven — option B for the KPI cards and the context card (D-DS-15); what MULTIPLECORP does not define stays absent (§1).
+
+### 9.6 The patterns on the reference's forms
+
+DESIGN_SYSTEM_MAPPING §4.1, normative here: each pattern PT-01–PT-31 with the reference's form it takes.
+
+| PT | Pattern | Presentation from the reference | shadcn/ui | What stays canonical |
+| --- | --- | --- | --- | --- |
+| PT-01 | Application shell | R1's entries in the reference's shell: the 264 px sidebar, at least 220 px at runtime, collapsing to the rail; the top bar with "Cari atau pindai kode", "Buat" and the account menu (GA1 e)) | Sidebar, Collapsible, Dropdown Menu, Avatar, Tooltip | groups that open in place; the notice strip only while a notice is due. The *Pintasan* help (KB-02) gets no shell control: Ctrl / and an entry "Pintasan keyboard" in the search palette open it (proposed, Level 1; [IA_PAGE_INVENTORY](stage2/IA_PAGE_INVENTORY.md)'s pending choice) |
+| PT-02 | Phone navigation | the 56 px app bar with the back action and the title; R1's four bottom items, 60 px plus the safe area; *Lainnya* as a drawer or a sheet | custom bars; Drawer or Sheet | the back action on every child flow (AGENTS.md rule 12); R1's four destinations rather than five (GD-03); GR-11; GR-22 |
+| PT-03 | Page header and page actions | title, ancestors-only breadcrumb, meta line, one primary, "Tindakan Lain" | Breadcrumb, Button, Dropdown Menu | at most three levels; the facts line; the business-date control (PT-25); one primary (C1A-2) |
+| PT-04 | Company label, working filter and relation marker | the company tag; "Tampilkan" | Badge, outline; Select or a Popover with a checklist | the code first; the view a page control, never in storage ([D-IA-02](INFORMATION_ARCHITECTURE.md#4-design-decisions); GA1 g)) |
+| PT-05 | Data table | the reference's frame, sticky header, hairline rows, a position number | Table; the Data Table guide | the number as a link in the first column; tabular figures; row actions in "⋯"; position numbers with "Muat Lagi" (GR-08) |
+| PT-06 | Dense list rows | the reference's row list, rows of at least 60 px | Item | two lines, the key figure right-aligned, the whole row the target |
+| PT-07 | Filters | the toolbar: search, the company view, one or two promoted filters and "Filter (n)" | Input, Select or Toggle Group, Popover or Sheet, Badge | at most four filter controls, "Atur Ulang", applied filters as removable tags, the phone sheet, PF-42's bounded filters — the toolbar is presentation only (GR-20; SD-02) |
+| PT-08 | List continuation and list notices | a "Muat Lagi" button and the reference's notice anatomy | Button; Alert | "Muat Lagi", "Semua sudah ditampilkan.", MSG-23's cut notice, the bounded filter's short page, the failed cursor (PF-14; PF-42) |
+| PT-09 | Form layout and validation | labels above with an 8 px gap; inline errors; "Pemeriksaan" with "Perbaiki"; the reference's form width, 1,120 px | Field, Label, Input, Alert, Item | "(wajib)"; helper text only to prevent an error (OC-06); IP-14 |
+| PT-10 | Multi-line entry | the purchase line's geometry and alignment rule; one add path (C1A-2) | Table with Field, Input, Combobox | one empty row at the end (IP-13); "Perkiraan" subtotals (UXI-14); the frame scrolling at tablet widths |
+| PT-11 | Buttons and actions | the reference's variants and sizes | Button | destructive only as the confirming button of a destructive dialog; one primary per region |
+| PT-12 | Detail layout | header facts, parts as tabs or a segmented switcher, the timeline | Tabs, Toggle Group, Separator, Card | the facts as a definition list; the record's parts; PT-18 |
+| PT-13 | Status badge | the pill with its dot; the row density | Badge | [§12.1](#121-status-system) through §5 |
+| PT-14 | Inline message | the reference's notice anatomy | Alert | one anatomy with at most one action; an outcome in the sticky action region (D-DS-06) |
+| PT-15 | Toast | the white card with its type edge, at most three | Toast | only a quiet confirmation also visible on the page (GR-15); the reference's position and 4.5 s replace PT-15's in Stage 3 |
+| PT-16 | Dialogs and sheets | the 400 px dialog; sheets with a handle; bottom sheets on phones | Alert Dialog, Dialog, Sheet, Drawer | Alert Dialog for confirmations, step-up and re-authentication; Dialog for at most five fields; Sheet for longer forms, filters and previews |
+| PT-17 | Inventory presentation | the facts and metric strip | Table, Separator | DESIGN_SYSTEM §14.2 |
+| PT-18 | Activity timeline | the reference's timeline, numbered | custom | the business date beside the recorded time; the acting account where visible; "Sistem" |
+| PT-19 | Loading, skeleton, empty, error and denied | a spinner after 300 ms, no skeleton; empty; "Muat Ulang Bagian Ini"; permission | Spinner, Empty, Alert | the 300 ms delay; one sentence and one action when empty; the reference code; IP-21. PT-19's skeleton is replaced by the reference's spinner in Stage 3 |
+| PT-20 | Scan field | the input group in the scan dock | Input Group | "Pindai atau ketik kode", "Siap Memindai", "Cari Produk", the last result line; IP-15 |
+| PT-21 | Signal group and queue row | the reference's signal rows, worst first | Item | at most five rows per signal in the statement's order, bounded per-company counts, "Lihat Semua" |
+| PT-22 | Thumbnails and previews | 40 px thumbnails with a neutral placeholder | an image with a placeholder | PF-31, PF-32; DESIGN_SYSTEM §14.3 |
+| PT-23 | Money, quantity and date presentation | tabular figures | — | DESIGN_SYSTEM §16; [LOCALIZATION_ARCHITECTURE §2.4](stage2/LOCALIZATION_ARCHITECTURE.md#24-formats) |
+| PT-24 | Financial position block | the facts and metric strip | Table, Separator | DESIGN_SYSTEM §14.1; server values (UXI-14) |
+| PT-25 | Business date control | the reference's business date line | Popover, Calendar | IP-07's semantics and copy |
+| PT-26 | Confirmation of an irreversible or correcting command | the reference's commit and destructive dialogs | Alert Dialog with Field | the title, the consequence, the items, the reason (MSG-39, MSG-40) and the numbering statements with their required tick; the reference's typed confirmation and optional tick excluded (GR-09) |
+| PT-27 | Search and type-ahead | the palette and the lookup | Command, Combobox | the exact code first with "Kode Cocok", at most 20 rows, the cut notice, "Buat {Objek}" (IP-17) |
+| PT-28 | Step-up and re-authentication dialog | the reference's dialog | Alert Dialog | PT-28's fields, autocomplete, paste and password managers; the re-login of [AUTH_JOURNEYS §2.5](stage2/AUTH_JOURNEYS.md#25-the-re-login-after-an-expiry--d-ux-03s-redesign-proposed) |
+| PT-29 | Derived readiness list | the checklist | Item, Badge | derived each time; no fraction, progress bar or percentage (SLOP-44) |
+| PT-30 | Capability-by-company preview | a matrix | Table | *Dapat*, *Baru*, *Dicabut*; prerequisites per capability ([RG-06](../05-security/PERMISSIONS_MATRIX.md#3-role-and-grant-model)) |
+| PT-31 | Derived part strip | the stage marker language on one row | custom | at most eight parts, derived each time (D-IA-09) |
+
+### 9.7 The interaction patterns on the reference's forms
+
+DESIGN_SYSTEM_MAPPING §4.2: ADMIN_FLOW's IP-01–IP-21 with the reference's components that carry them.
+
+| IP | Pattern | Presentation from the reference | shadcn/ui | What stays canonical (ADMIN_FLOW) |
+| --- | --- | --- | --- | --- |
+| IP-01 | Answers of a command | the result anatomy; the inline message | Alert, Card | the server's answer decides what the screen says, never an optimistic result; each answer announced and never by colour alone |
+| IP-02 | One `command_id` per intent | the busy button keeping its width and label | Button | the identifier minted at the trigger; the control busy while the request runs; inputs frozen while the outcome is unknown |
+| IP-03 | CONFLICT and stale state | the inline message with its action | Alert | the cause and the current state where the actor may see them; the other account named only within PJ-11 |
+| IP-04 | FAILED, the unknown outcome and retry | the inline message with a retry | Alert, Button | MSG-06 and MSG-07; the same identifier and payload on every retry |
+| IP-05 | Duplicate warnings | the warning block with its matches | Alert, Field | a warning never a block and never skipped; the reason on the second submission |
+| IP-06 | A routed refusal | the inline message | Alert | MSG-14, naming no company, lot owner or project |
+| IP-07 | Business date | the business date line (PT-25) | Popover, Calendar | "Tanggal transaksi" in the form's header; the numbering commands' fixed date |
+| IP-08 | Confirming an irreversible command | the centred dialog; a full-height sheet on phones | Alert Dialog; Drawer | one step, naming the object and the consequence, the verb on the button, "Kembali" |
+| IP-09 | Corrections, closures and destructive actions | the dialog with its reason field | Alert Dialog with Field and Textarea | the required reason and what it is used for; evidence where the rule asks |
+| IP-10 | Step-up confirmation | the dialog (PT-28) | Alert Dialog | the commands of [AU-15](../05-security/SECURITY.md#2-authentication-sessions-and-credentials); the password when not confirmed in the last 15 minutes; enforced by the server |
+| IP-11 | Session limits, expiry and re-authentication | the idle warning and the re-login dialog | Alert Dialog | AU-06–AU-08; unsent input kept in memory; [AUTH_JOURNEYS §§2.5–2.6](stage2/AUTH_JOURNEYS.md#26-session-expiry-and-the-idle-warning) |
+| IP-12 | Derived background work | status pills on the record | Badge; Toast only under GR-15 | the committed action shown as done; *PDF sedang dibuat*, *PDF siap*, *PDF gagal dibuat* |
+| IP-13 | Entry | fields, the number parser, reuse of confirmed data | Field, Input, Combobox | decimal strings with the Indonesian separators; "Perkiraan" totals; server values after the answer |
+| IP-14 | Validation | inline errors; "Pemeriksaan" | Field, Alert | a server validation error returns to the form |
+| IP-15 | Scanner | the scan dock (PT-20) | Input Group | keyboard-wedge scanners; stale scans and counts answered as CONFLICT |
+| IP-16 | Evidence upload | the upload component | Attachment or a file Input | FL-02's types and limit per purpose, MSG-31; the upload outside any command |
+| IP-17 | Search and lookup | the palette and the lookup (PT-27) | Command, Combobox | the exact match first; a master chosen by lookup |
+| IP-18 | Continuing a list | "Muat Lagi" | Button | 25 rows, no total, no page number, "Semua sudah ditampilkan." (PF-13–PF-17) |
+| IP-19 | Several commands on one screen | the split action and the result list | Button Group, Dropdown Menu, Item | each command with its own button, identifier and answer |
+| IP-20 | Choosing a reservation cut | the block in the same form | Alert, Radio Group or Checkbox | "Stok Tidak Cukup untuk Semua Reservasi", the shortfall and the active reservations |
+| IP-21 | Denial and not-found | the system page and the region state | Empty | MSG-09, the reference code and the way back; the same answer for an unknown and an out-of-scope address (AZ-11) |
 
 ## 10. Component composition
 
@@ -271,9 +478,62 @@ shadcn/ui primitives are copied into the codebase and kept generic: they receive
 | Loading, empty, error and denied (PT-19) | Skeleton, Spinner, Empty, Alert, Button | the group's state and its reference code |
 | List continuation and list notices (PT-08) | Button ("Muat Lagi"), Alert | the opaque cursor and whether rows remain |
 
-**Primitives not used in V1.** Pagination — page numbers are forbidden (PF-15), lists continue by "Muat Lagi"; Chart (D-DS-05); Progress and Carousel (SLOP-44, SLOP-35); Avatar (no avatars, SLOP-45); Hover Card and Context Menu — information or actions reachable only by hover or right-click; Resizable — no column resizing in V1 (PT-05); Navigation Menu and Menubar — the horizontal menu was rejected (D-IA-01). A build unit that needs one of them changes this section first.
+**Primitives not used in V1.** Pagination — page numbers are forbidden (PF-15), lists continue by "Muat Lagi"; Chart, except the ageing chart of *Beranda* and the report — a chart of defined values (D-DS-05 superseded; VP-6) —; Progress and Carousel (SLOP-44, SLOP-35); Avatar (no avatars, SLOP-45); Hover Card and Context Menu — information or actions reachable only by hover or right-click; Resizable — no column resizing in V1 (PT-05); Navigation Menu and Menubar — the horizontal menu was rejected (D-IA-01). A build unit that needs one of them changes this section first.
 
 Whether the build uses the Base UI or the Radix variant of the primitives, and Toast or Sonner, is decided with the versions under DEP-07 in P11; the patterns do not depend on it. SECURITY WS-08 leaves open whether a vetted primitive needs inline styles (HO-37); that question stays with P11.
+
+**The reference's anatomy on shadcn/ui** (DESIGN_SYSTEM_MAPPING §3) — the visual form of each component above, normative here:
+
+Every component the [page inventory](stage2/IA_PAGE_INVENTORY.md)'s 65 pages need — 61 inside the shell, PG-001–PG-004 outside it —, from the reference's anatomy (GA1 b)) to the shadcn/ui component or composition that builds it, each name checked in shadcn/ui's components index on 2026-10-14. **The states**, common to every interactive component unless its row says otherwise: *default*; *hover* — a tint within 140 ms, never the only path ([SLOP-17](#18-anti-ai-slop-mapping)); *focus-visible* — the 2 px olive outline with its 2 px offset, instant, a field's border turning olive under its 3 px halo; *active* — a press tint, buttons scaling to 0.97; *selected* — a lime fill with an olive mark and `aria-selected` or `aria-current`, never the fill alone ([GR-02](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01)); *disabled* — at 48 % with the reason beside it, the state that blocks it or "Perlu kewenangan …" — an action the account may not perform is absent, not disabled ([AZ-01](../05-security/PERMISSIONS_MATRIX.md#2-authorization-model) as a hint; GA1 d)); *pending* — the control keeps its width and label, a spinner after 300 ms, one execution in flight and the inputs frozen while the outcome is unknown ([ADMIN_FLOW](ADMIN_FLOW/README.md#admin-and-owner-flows--interaction-model) IP-02); *error* — a danger border, `aria-invalid` and the message in text below (WCAG 2.2 3.3.1); *read-only* — the value as text with its source where it is carried ([DC-5](../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors)); *empty* — the Empty composition, with one action only where the account may act.
+
+| Component | The reference's anatomy | shadcn/ui | Density, target and accessibility | Pages |
+| --- | --- | --- | --- | --- |
+| Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link | 24 px icon and 15/500 label; the current entry a lime 150 pill, 44 px × `--du`, with a 3 px olive indicator; the group header a disclosure only; the rail on Ctrl B; "Cari atau pindai kode", "Buat" and the account menu in the top bar | Sidebar — `collapsible="icon"`, Ctrl or Cmd B, a Sheet on mobile —, Collapsible, Dropdown Menu, Avatar, Tooltip | exactly one `aria-current` per landmark; nothing remembered across pages; no count on an entry ([D-IA-06](INFORMATION_ARCHITECTURE.md#4-design-decisions)) | the 61 shell pages, PG-005–PG-065 |
+| Phone app bar and bottom bar; *Lainnya* | a 56 px bar with the contextual back and the title; R1's four items, a 22 px icon in a 54 × 30 pill over an 11.5/500 label; a modal drawer, `min(86vw, 340px)`, or a full-height sheet | custom bars — shadcn/ui has no bottom bar —; Drawer, built on Base UI with `swipeDirection` (shadcn/ui, *Drawer*), or Sheet | items ≥ 60 × 60 px; the current item with an olive mark (GR-02); opaque (GR-22); the bar hidden on a focused scan step with its action bar (GR-11) | the shell pages below 768 px |
+| Page header | title, ancestors-only breadcrumb, a meta line, one primary and "Tindakan Lain" | Breadcrumb, Button, Dropdown Menu | one primary per region (C1A-2; PT-03) | every shell page but PG-005 |
+| Button | primary, outline, ghost, sunken, accent, danger, the sign-in CTA; 32/36/40/42/56 px; loading keeps width and label | Button — default, outline, ghost, secondary for sunken, destructive —, accent and sign-in variants added | icon-only ≥ 24 px on the desktop and ≥ 44 px on the phone, with an accessible name | all |
+| Split action | a primary segment and a chevron, "Aksi lain", opening a menu, destructive last | Button Group with Dropdown Menu | Enter, Space and the arrows; no draft entry where a form has one saving command ([WF-PUR-01](../03-workflows/WORKFLOWS/s05-03-inventory-purchasing.md#wf-pur-01--project-purchase-desk)) | record workspaces and forms with several commands |
+| Field and number entry | label above, 8 px gap; the box with an optional addon; invalid with its message; 36 px desktop, 48 px phone, 16 px text on touch | Field, Label, Input, Input Group, Textarea | the control edge `#898982` (GR-01); money and quantities parsed by IP-13's Indonesian separators, the formatted value shown on leaving the field | the forms, task steps and settings |
+| Select and lookup | a combobox trigger over the native select, a listbox popover with 42 px rows and an olive check, a 52 px-row sheet on phones; the type-ahead lookup | Select, Native Select, Combobox, with Drawer on phones | arrows, Home, End, typeahead, Esc; a master chosen by lookup, never retyped (IP-17) | forms and toolbars |
+| Date field and business date | "Tanggal transaksi" with a calendar addon, a typed fallback, no date after today | Popover with Calendar; Date Picker | IP-07's semantics and copy (PT-25) | forms with a business date |
+| Date range | presets and a custom range; a start/end sheet on phones | Popover with Calendar in range mode, Toggle Group; Drawer on phones | presets bound to the repository's periods (GR-19) | PG-051, PG-052, PG-063, PG-064 and dated lists |
+| Code entry | six cells with a filled-cell rule | Input OTP — built on `input-otp`, with copy and paste, `REGEXP_ONLY_DIGITS` and `maxLength` (shadcn/ui, *Input OTP*) — or one input with `autocomplete="one-time-code"` | paste and autofill work either way; the page does not state the `autocomplete` attribute, so the choice is S2-2's with AUTH_JOURNEYS (GR-12) — needs verification at implementation | PG-002, PG-004, PG-065 |
+| Checkbox, radio and switch | author-styled marks | Checkbox, Radio Group, Switch | the control edge at 3:1 (GR-01) | forms and settings |
+| Status pill and status text | a badge, 24 or 28 px, tint with its ink and a dot; a row density with a 7 px dot and a 13 px label | Badge; the row density custom | one state per badge, the word and the icon of §5, never colour alone | lists, records, the journey |
+| Company tag and count badge | a company code; "perusahaan lain"; a count of derived signals | Badge, outline | counts per company outside navigation (CS-08; D-IA-06) | lists of several companies, PG-006, PG-007 |
+| Card and section card | white surface, subtle border, radius 10, resting shadow; a text-first header with one action slot; no card in a card | Card | a card only for a distinct object, a group scanned as one or a region with its own state (SLOP-01, SLOP-02) | PG-006, PG-007, PG-011 and the record workspaces |
+| KPI tile | disc, label and value, the whole card a link | Card | no delta, sparkline or period comparison (VP-3); four on the Owner's *Beranda* (SLOP-18) | PG-006 |
+| Facts, key-value and metric strip | header facts; detail attributes; key figures in one strip with hairlines | a composition with Separator — description lists have no primitive | numbers right-aligned with tabular figures (OC-09) | the record workspaces, PG-011, PG-043 |
+| Tabs | real tabs with `?tab=`, overflow into "Bagian Lain", the selected tab underlined in primary | Tabs | the address keeps the tab; arrows between tabs | the record workspaces; *Gudang*'s and *Keuangan*'s tabs |
+| Segmented control | views inside one section on a sunken track | Toggle Group | the selected segment with an olive mark (GR-02) | sections with views; the sign-in's "ID \| EN" |
+| Data table and row list | one data set — a table from 768 px, rows on phones; a position number on every record list; columns tighten before rows form; rows ≥ 60 px with 44 px targets on phones | Table, the Data Table guide, Item; a "Muat Lagi" Button | position numbers continue across "Muat Lagi"; no pager, total or size choice ([PF-15](../06-api-performance/PERFORMANCE.md#4-pagination); GR-08); a table scrolls only inside its frame (WCAG 1.4.10's exception) | the 25 lists, the 4 work queues and the 4 reports |
+| Filter toolbar and company view | search, the company view "Tampilkan" and one or two promoted filters, the rest behind "Filter (n)"; never wraps | Input, Select or Toggle Group, Popover or Sheet, Badge | presentation only — DESIGN_SYSTEM PT-07's behaviour and PF-42 stay (GR-20; DIR-061 SD-02); the company view a page control, never in the shell or in storage (D-IA-02) | the lists and reports |
+| States of a region | loading with a spinner after 300 ms; empty; filtered empty; error with "Muat Ulang Bagian Ini"; permission; done | Empty, Spinner, Alert — Skeleton not used | one region never blanks the page; status messages announced (WCAG 4.1.3) | all |
+| System page | not found, forbidden and error, nothing of the record rendered | Empty | the same answer for an unknown, an out-of-scope and an Owner-only address (AZ-11; IP-21) | PG-005 |
+| Timeline | activity and history, numbered chronologically; both dates of a backdated entry | custom — no primitive | PT-18; "Sistem" only for an entry no account caused | record workspaces, PG-063 |
+| Checklist | conditions with state, reason and the link that fixes each | Item, Badge | derived each time; no fraction or progress bar (PT-29; SLOP-44) | PG-012 |
+| Stage track and stage navigator | read-only derived steps on 30 px discs — complete, current, upcoming, attention —; the navigator's native buttons on the card it steers | custom — shadcn/ui has no stepper | `aria-current="step"` with "(langkah n dari N)"; the current marker ringed in olive (GR-03); applicable stages only, no percentage (PL-1; VP-4) | PG-011; the composer's stages |
+| Segmented stage indicator | on a list row, the applicable stages as segments, the done ones filled, in the stepper's marker language | custom — no primitive | never a percentage or a weighted bar (VP-4; PL-1; SLOP-44); the stage named in words beside it | PG-006's projects needing attention |
+| The now strip | *Sekarang*, *Berikutnya* and *Hambatan* side by side on the desktop, a card on the phone; the one primary action with *Berikutnya* | Card, Item, Button | each part's state once — an exception's reason only under *Hambatan* (R1 e)); *Berikutnya* doable now (C1A-1) | PG-011 |
+| Dialog and confirmation | application-level, centred, 400 px; the safe action focused; Esc and the scrim cancel; focus trapped and returned; a bottom sheet on phones | Dialog, Alert Dialog; Drawer on phones | Base UI traps focus with `modal` and returns it with `finalFocus`, by default to the trigger; Radix traps it in a modal and returns it to the trigger on Esc; IP-08's one-step confirmation, IP-09's reason, IP-10's step-up; the reference's typed confirmation and tick excluded (GR-09) | every irreversible command |
+| Menu and "Tindakan Lain"; account menu | a body-level popover, never clipped; 42 px rows; destructive last; a bottom action sheet with 48 px rows on phones | Dropdown Menu; Drawer on phones | Radix: Space or Enter open it on the first item, the arrows move, Esc closes and returns focus to the trigger, typeahead supported; Base UI: `modal` by default, `loopFocus`, `finalFocus` | the record workspaces; the shell |
+| Popover, tooltip and long text | one line with an ellipsis and a full-text reveal; record numbers never truncate | Popover, Tooltip | dismissible, hoverable and persistent (WCAG 1.4.13) | lists and the icon rail |
+| Search and scan | Ctrl or Cmd K; grouped results, an exact code match first; a top sheet on phones; the scan dock on floor tasks, the phone's scan field fixed at the bottom (D-DS-08) | Command in a Dialog; Input Group, Kbd; the scan dock custom (PT-20) | lists only what the account may open (AZ-01 as a hint); keyboard-wedge scanners as keyboards (IP-15) | the shell, PG-009, PG-022, PG-024 |
+| Toast | a white card with a 3 px type edge; at most three; polite or assertive | Toast — built on Base UI's Toast, whose provider defaults to a 5,000 ms timeout, `0` for none, `limit` 3 and a `low` or `high` priority (Base UI v1.9.0) | only for an event that leaves a visible trace elsewhere, never the only place of a message (GR-15; WCAG 2.2.1) | background completions |
+| Notice and alert | a notice band with its tone | Alert | the security notices and MSG-29's Owner variant on PG-006 ([AU-12](../05-security/SECURITY.md#2-authentication-sessions-and-credentials); LG-07) | PG-006, PG-007, forms |
+| Checks, result, next step and prerequisite | "Pemeriksaan" with "Perbaiki"; the result with the number as headline and "Salin nomor", the PDF state and one next action; "Perlu kewenangan …" with nothing to press | Item, Alert, Card, Button | the outcome in the action region (D-DS-06); no toast for the same event | forms, task steps, the composer |
+| Disclosure | a real button with `aria-expanded` and `aria-controls`, ≥ 44 px, the chevron on the right; an invalid field never left hidden | Collapsible | desktop disclosures where R1 folds — the *Pekerjaan* groups, "Rincian lain", "Tahap yang tidak diperlukan" (GR-21) | PG-007, PG-011, forms |
+| Position and inventory blocks | server figures in a table or a definition list | Table, Separator | server values only (UXI-14) | PG-019, PG-043, PG-044 |
+| Multi-line editor | one add path — IP-13's empty last row with the catalogue search in its product picker; the alignment grid of §2; on phones each line edited in its own sheet (D-DS-07) | Table with Field, Input, Combobox | the dense mode on its named screens (OC-09); "Kembalikan isian" restores the last saved draft after asking | PG-014, PG-017 |
+| Sticky action bar | one region above the bottom bar with the total and the one primary | a sticky region with Button | scroll padding so nothing focused hides under it (WCAG 2.4.11; GR-06) | forms and task steps |
+| Upload | idle, dragging, uploading, success, error, with retry and announcements; drag and drop only as an extra | Attachment, or a file Input in a Field — the fit of Attachment checked in S2-2 | types and limits per purpose from FL-02 (IP-16) | PG-031, PG-038, PG-039, PG-058 and the evidence steps |
+| Document composer and paper | the editor beside a sticky preview with "Pas lebar", "100 %" and "Layar penuh"; "Rincian \| Pratinjau" below 1,280 px; one sticky bar; the A4 paper | custom on Card, Tabs or Toggle Group and Dialog | VD-07's preview share; [DOCUMENT_PREVIEW_PRODUCER](stage2/DOCUMENT_PREVIEW_PRODUCER.md)'s option A | PG-036, PG-042 |
+| Chart | the ageing bar | Chart, always with its data table | direct labels and amounts; the ramp of §1.2 (VP-6; GR-23) | PG-006, PG-044 |
+| Progress bar, keycap, avatar, icon disc, link | a process's bar; shortcut keys; the account's initial; an identity well; underlined text links | Progress, Kbd, Avatar; the disc custom; a link | progress for processes only (SLOP-44); links underlined (WCAG 1.4.1) | uploads and imports; shortcut hints; the account menu |
+| Sign-in compositions | the split card fitted to the viewport; the visual panel; the steps with one 600 ms clock; the language toggle | Card, Field, Input, Input OTP, Toggle Group | the panel abstract (GR-12); no editorial copy; the Google button to Google's guidelines ([PROTOTYPE_PLAN](stage2/PROTOTYPE_PLAN.md); GR-13) | PG-001–PG-004 |
+| Print view | the page prepared for paper: header, applied filters as a line, page numbers | print styles | DESIGN_SYSTEM §17; a generated document printed from its rendition | lists, records and the draft paper |
+
+**Not used** (GA1 b)): the pager and its total (PF-15), Skeleton, the delta badge (VP-3), the hub tiles, greeting and hero (VP-2; GD-04), the guidance level, resume memory and walkthrough (GA1 c) 6), and the demonstration actions (GD-04).
 
 ## 11. Responsive pattern matrix
 
@@ -294,11 +554,16 @@ Whether the build uses the Base UI or the Radix variant of the primitives, and T
 
 Touch targets are at least 44 by 44 px wherever the pointer is coarse, at any width (§6), with at least 8 px between them; with a fine pointer no target is smaller than 24 by 24 px (WCAG 2.5.8).
 
+**Stage 3 rules** (Annex A; §4):
+
+- On a phone row an amount takes its own line below the main column before the column falls under its minimum (GF-13).
+- On the phone, meta items that share a line keep a visible separator (GF-24).
+
 ## 12. Status, outcome and state patterns
 
 ### 12.1 Status system
 
-Every lifecycle or derived state that a screen shows is a status badge (PT-13; D-DS-04): a 22 px high badge with a 4 px radius, a 1 px border and text in its tone, a 14 px Lucide icon whose **shape** identifies the state within its family, and its label. The label alone is sufficient; the shape is the non-colour cue that keeps two states apart in greyscale and for colour-blind viewers; the tone only reinforces (WCAG 1.4.1; UXS-42). The states and their meanings are those of BUSINESS_RULES §3 and WORKFLOWS; this table only gives them a face.
+Every lifecycle or derived state that a screen shows is a status badge (PT-13; D-DS-04 as adapted): the reference's status pill — its height, radius and tone tokens (§5; the tones below) — with text in its tone, a 14 px Lucide icon whose **shape** identifies the state within its family, and its label. The label alone is sufficient; the shape is the non-colour cue that keeps two states apart in greyscale and for colour-blind viewers; the tone only reinforces (WCAG 1.4.1; UXS-42). The states and their meanings are those of BUSINESS_RULES §3 and WORKFLOWS; this table only gives them a face.
 
 | Family | State (meaning owner) | Label | Tone | Icon shape (Lucide) |
 | --- | --- | --- | --- | --- |
@@ -367,6 +632,29 @@ Every lifecycle or derived state that a screen shows is a status badge (PT-13; D
 
 Within a family no two states share an icon shape; across families the same shape means the same kind of state. A label never relies on its tone to be understood, and a state never appears as a coloured dot, pill or row tint alone. **Marks are not states.** "Tanggal Mundur" (PT-25) and "Kode Cocok" (PT-27) are inline marks: the `label` style in ink after a 14 px icon — `calendar-clock` and `scan-barcode` — with no border, tone or badge shape. The Lucide names identify the intended shapes; P11 confirms them against the icon set's version chosen under DEP-07 and keeps the shape where a name has changed.
 
+**The tones on the reference's tokens** (DESIGN_SYSTEM_MAPPING §5):
+
+[DESIGN_SYSTEM §12.1](#121-status-system) gives every state a screen shows — 74 states in 23 families, counted by script — a label, one of five tones and a Lucide shape; the meanings are [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md#business-rules) §3's and [WORKFLOWS](../03-workflows/WORKFLOWS/README.md#critical-business-workflows)' (D-DS-04). The mapping keeps every state, label, tone and shape and puts them in the reference's pill — D-DS-04's ADAPT disposition ([NON_LOSS_MATRIX](stage2/NON_LOSS_MATRIX.md) section O).
+
+**The pill.** The reference's pill: full radius, the tone's tint with its same-hue ink, 24 px with 12 px text at weight 500, 28 px with 13 px at 600 for the record in view, 22 px with 11 px in compact lists; the 10.5 px size excluded ([GR-16](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01)). In the dot's place the state's 14 px Lucide shape in the ink — the shape keeps two states of one family apart in greyscale, where a dot of the same tone cannot (D-DS-04; WCAG 2.2 1.4.1) —, recorded as a deviation in [DEVIATION_REGISTER](stage2/DEVIATION_REGISTER.md). The row density keeps the reference's 13 px label with the shape before it. The label alone is sufficient; the tone only reinforces; a state never appears as a dot, pill or row tint alone. The reference's live pill — a dot whose ring breathes every 2 s — appears only for a genuinely live state and without its looping ring ([VP-8](../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors)), also a recorded deviation.
+
+| Tone (§12.1) | States | The reference's tone | Tint · ink · shape colour | Ink on tint |
+| --- | --- | --- | --- | --- |
+| neutral | 25 | `neutral` | `--color-neutral-bg` · `--color-neutral-fg` · the ink | 9.99:1 |
+| info | 16 | `info` | `--color-info-bg` · `--color-info-fg` · the ink | 11.86:1 |
+| success | 16 | `success` | `--color-success-bg` · `--color-success-fg` · the ink | 5.62:1 |
+| warning | 13 | `warning` — the reference's `attention` uses the same tokens | `--color-warning-bg` · `--color-warning-fg` · the ink | 6.17:1 |
+| danger | 4 | `danger` | `--color-danger-bg` · `--color-danger-fg` · the ink | 4.99:1 |
+| — | — | `pending` | `--color-pending-bg` · `--color-pending-fg` | unused: §12.1 gives no state this tone |
+
+**Shapes.** §12.1 names 40 Lucide icons. At Lucide 1.56.0, `file-warning` (*PDF Gagal Dibuat*) and `file-question` (*Tanpa Bukti*) are published as `file-exclamation-point` and `file-question-mark`; the others are published under their names, checked against the release's `icons/` folder on 2026-10-14. §12.1 itself asks P11 to confirm the names against the icon set's version and keep the shape where a name changes; Stage 3 records the two new names. The marks "Tanggal Mundur" and "Kode Cocok" are not states: `calendar-clock` and `scan-barcode` before a `label`-style word, with no tone or pill.
+
+**Stage 3 rules** (Annex A; §4):
+
+- A passed check's icon is the reference's 16 px check in the success tone (GF-10).
+- A company chip is followed by its context text or sits inline with the row's note (GF-25).
+
+
 ### 12.2 Outcome presentation
 
 The five answers of a command and the answers that are not outcomes ([ADMIN_FLOW IP-01](ADMIN_FLOW/s05-command-model.md#ip-01--answers-of-a-command)) have one face each:
@@ -381,7 +669,7 @@ The five answers of a command and the answers that are not outcomes ([ADMIN_FLOW
 | PENDING | Sedang Diproses | info · `ellipsis` | PT-14 on the record; the status badge of the derived work |
 | FAILED — not processed | Belum Diproses | warning · `circle-pause` | PT-14 with "Coba Lagi"; a defect with MSG-06's defect variant and the reference code |
 | FAILED — unknown | Belum Dapat Dipastikan | warning · `circle-help` | PT-14 with "Coba Lagi"; the form's inputs frozen and marked as such |
-| Not found · forbidden · error | Halaman Tidak Ditemukan · Tidak Berwenang · Terjadi Kesalahan | neutral · `search-x` · `lock` · `triangle-alert` | SCR-04 with the reference code |
+| Not found · forbidden · error | Halaman Tidak Ditemukan · Tidak Berwenang · Terjadi Kesalahan | neutral · `search-x` · `lock` · `triangle-alert` | PG-005 with the reference code |
 | Session ended | Sesi Berakhir | neutral · `lock` | PT-28 |
 | Validation | Periksa Isian | danger · `circle-alert` | PT-09 field messages and the summary line |
 | No connection | Koneksi Terputus | neutral · `wifi-off` | PT-14 |
@@ -393,7 +681,7 @@ The five answers of a command and the answers that are not outcomes ([ADMIN_FLOW
 | Loading | the skeleton of PT-19 for the page or for a deferred group; a busy control's spinner |
 | Empty | one sentence, at most one action (PT-19) |
 | Error of a part | PT-14 with the label "Bagian Ini Tidak Dapat Dimuat", warning tone and `triangle-alert`, the reference code and "Muat Ulang Bagian Ini"; the rest of the page keeps working |
-| Denied or not found | SCR-04 (ADMIN_FLOW IP-21) |
+| Denied or not found | PG-005 (ADMIN_FLOW IP-21) |
 | Stale | the CONFLICT face above; a count marked *Kedaluwarsa* with "Hitung Ulang" |
 | PENDING and FAILED of background work | the status badges of §12.1 on the record and in Beranda's signals |
 | Frozen input during an unknown outcome | inputs read-only with the note "Menunggu kepastian — isian dikunci agar tidak tercatat dua kali", the action bar offering "Coba Lagi" and "Tinggalkan" |
@@ -434,20 +722,30 @@ The scanner is a keyboard wedge (ADMIN_FLOW IP-15). The scan field (PT-20) holds
 - **Money** follows §16; a contra or correction shows as its own line with "Dikontra"/"Koreksi", never as a silently changed figure. Totals typed in a form are *Perkiraan* until saved (ADMIN_FLOW IP-13).
 - **Per company.** An Admin sees subtotals per company and never a grand total across companies; the Owner's *Gabungan* figures are labelled as such (CS-08).
 
+**Stage 3 rules** (Annex A; §4):
+
+- A composer's totals are the reference's totals band at the editor's foot (GF-22).
+
+
 ### 14.2 Inventory
 
 - **Quantity block** (PT-17) per product, and per rack and condition: *Stok fisik* · *Direservasi* · *Tidak layak pakai* · **Tersedia** — with the line "Tersedia = Stok fisik − Direservasi − Tidak layak pakai" in muted text, quantities in base units with the unit and the alternate unit as a hint ("120 rim (24 dus)", §16).
 - **Lots**: the opaque code in tabular figures with slashed zeros, rack, condition, remaining quantity and the "Ambil Lebih Dulu" marker on the oldest — a picking aid, never a rule. A lot of a company in scope names that company; a lot of another company shows the relation marker and nothing more (PJ-01, PJ-02).
 - **Serials**: presence, lot, rack and condition; any other state only with the movement that explains it (PJ-03).
-- **Pending unattributed loss** on its own line: on the pooled views SCR-18 and SCR-19 the case's pending quantity — "Selisih menunggu penetapan: 3 rim — menunggu keputusan Owner" (MSG-41); in a company's stock view only that company's own exposure (§14.1); never inside a company's figures, never blocking (DIR-027).
+- **Pending unattributed loss** on its own line: on the pooled views PG-018 and PG-019 the case's pending quantity — "Selisih menunggu penetapan: 3 rim — menunggu keputusan Owner" (MSG-41); in a company's stock view only that company's own exposure (§14.1); never inside a company's figures, never blocking (DIR-027).
 - **Restock advice**: "Di bawah minimum 20 rim" in ink after the warning tone's icon; no button buys by itself (BR-INV-10).
 
 ### 14.3 Document preview
 
-- A system rendition is shown inline in a frame beside its version chain, with "Unduh" and "Cetak"; the header states the document type, number, version, state and rendition state (FL-07's inline profile).
-- An uploaded file is never shown inline: it is a file row — name, type, size, uploaded by and when, evidence type and issuer — with "Unduh" as an attachment; an image shows the re-encoded preview (FL-03, FL-04, FL-07).
-- A draft prints and previews with the marking "DRAF — bukan dokumen terbit"; a voided version is shown with "Dibatalkan" across its header and is never offered as current.
+- **An issued rendition** is shown inline in a frame beside its version chain, with "Unduh" and "Cetak"; the header states the document type, number, version, state and rendition state (FL-07's inline profile; ROUTE-225).
+- **An uploaded file** is never shown inline: it is a file row — name, type, size, uploaded by and when, evidence type and issuer — with "Unduh" as an attachment; an image shows the re-encoded preview (FL-03, FL-04, FL-07).
+- **A draft's preview** (D-DS-20; [GAP-053](../00-governance/GAP_REGISTER.md#triage); [DOCUMENT_PREVIEW_PRODUCER](stage2/DOCUMENT_PREVIEW_PRODUCER.md) option A, normative here): the composer page receives the draft's fields as page props — only those the viewer may see (WS-07; PJ-15; PJ-19) — and the browser composes the paper from the document layout's template, the one FL-08's renderer uses for the issued rendition, updating it as the allowed inputs change. Its totals are provisional, computed on the entered strings and labelled "perkiraan", until "Simpan Draf" returns the server's (IP-13; UXI-14; DC-3). The template's draft mode marks every page "DRAF — belum terbit", with the number line "Nomor diberikan saat terbit" and a text signature block — no stamp or signature file (DC-2–DC-4; GD-07). The browser prints the composed paper as a marked draft (§17); nothing is written — no rendition, file, number, counter or snapshot. On the phone: edit, preview, finalize, the preview full-screen (DC-11). The paper is Indonesian whatever the interface language (LOCALIZATION §3.4). Its interaction is INT-012.
+- **What P11 builds** (DOCUMENT_PREVIEW_PRODUCER §3): one template per document layout, read by the browser's composer and by the renderer; the fonts served from the application's origin (WS-08); the template's draft mode; the print style — A4 with the renderer's margins, the marking on every page —; the data contract — the draft's fields as props by family, PJ-19's identity assets, without the number, the stamp and the signature —; provisional totals while typing, the server's after each save, the issued rendition reproducing the server's (BR-DOC-03). The renderer's technology is P11's under DEP-07.
+- **What P8 tests** (DOCUMENT_PREVIEW_PRODUCER §4): a draft preview never satisfies a requirement; it never writes; it matches the issued layout within the tolerance P8 sets; its totals are labelled, then equal to the server's; only projected fields reach the browser; the paper stays Indonesian; the phone at 390 px.
+- A document's layout choice uses the reference's draft-document choice, never the preview's zoom toggle (GF-03).
+- A voided version is shown with "Dibatalkan" across its header and is never offered as current.
 - A reproduction of a company document uploaded as evidence carries the note "Salinan dokumen terbitan perusahaan — tidak memenuhi syarat dokumen asli" (FL-05) only when the reproduced rendition is one the viewer may see — its company in scope and its family visible (FL-10; DP-13); otherwise the evidence shows as an ordinary upload (ADMIN_FLOW IP-16).
+
 
 ### 14.4 Timeline
 
@@ -472,6 +770,15 @@ WCAG 2.2 at level AA is the design target; P8 audits the built screens (UXH-05).
 | Motion | reduced-motion removes movement (§8) |
 | Reflow and text | content reflows at 320 px; text spacing overrides and 200 % zoom lose nothing (1.4.10, 1.4.12) |
 | Consistent help | the "Pintasan" help and the account menu sit in the same place on every page (3.2.6) |
+
+**Stage 3 rules** (Annex A; §4):
+
+- **Mandated copy is never cut** (D-DS-18; GR-35): a select's value, a form bar's reason, a read-only value and a label wrap under WCAG 2.2 1.4.12's text spacing instead of the reference's ellipsis, one line at its height otherwise; a text that wraps stays inside its bar.
+- **Targets** (D-DS-19): 24 × 24 CSS px at least with a fine pointer, 44 px with a coarse pointer at every width, 48 px for the floor task's operational controls.
+- The current step's position — "(langkah n dari m)" — sits inside its own step's item, so a screen reader hears it with the step (FA-20).
+- Each group of a worklist has its own heading; no row is filed under another group's heading (FA-21).
+- A search or filter that matches nothing says so in a status line and announces it (FA-22).
+- Content in another language than the page's carries its own `lang` — an Indonesian document's paper inside the English interface (LOCALIZATION §3.4).
 
 ## 16. Copy and formatting
 
@@ -500,6 +807,12 @@ WCAG 2.2 at level AA is the design target; P8 audits the built screens (UXH-05).
 
 All dates and times are WIB (BR-DT-06). Generated documents use the same formats and the document-type names; their full wording and layouts are validated under GAP-019.
 
+**Stage 3 rules** (Annex A; §4):
+
+- Strings are [LOCALIZATION](LOCALIZATION.md)'s keys in both languages; the formats are this section's in both languages, values never translated (OQ-04 (a)).
+- An estimate is marked in text — "(perkiraan)" —, never with a pill (GF-05; DC-3).
+- A figure never breaks inside itself; its box widens or its row wraps (GF-20).
+
 ## 17. Print views
 
 A print view is the page itself prepared for paper (DP-19): the same records, fields and figures the viewer sees, nothing more and nothing less.
@@ -519,7 +832,7 @@ Each prohibition of the anti AI-slop constitution (OB §21) has a rule that prev
 | --- | --- | --- |
 | SLOP-01 | every section inside a card | PT-12: panels only where a group needs a boundary; space and rules group content |
 | SLOP-02 | nested cards without meaningful hierarchy | PT-12: never a panel inside a panel |
-| SLOP-03 | giant rounded containers everywhere | §5.4: radius 4 px and 6 px only |
+| SLOP-03 | giant rounded containers everywhere | §8: cards 10 px, controls about 0.18 × their height, menus 10, dialogs 12, sheets 16 on their top corners; nothing else above 12 px |
 | SLOP-04 | excessive border radius | §5.4 |
 | SLOP-05 | pill-shaped everything | §8: no pill shapes; badges are 4 px rectangles |
 | SLOP-06 | excessive gradients | §5.1: flat colours only; no gradient token exists |
@@ -550,10 +863,10 @@ Each prohibition of the anti AI-slop constitution (OB §21) has a rule that prev
 | SLOP-31 | inconsistent radius | §5.4: two values |
 | SLOP-32 | inconsistent icon size | §5.3: 16 px; 14 px only inside badges and inline marks; 20 px only in the phone navigation |
 | SLOP-33 | inconsistent spacing | §5.3: one scale |
-| SLOP-34 | fake analytics with no operational value | PT-21; INFORMATION_ARCHITECTURE §9: only QS signals and CALC figures; no charts in V1 (§5.1) |
+| SLOP-34 | fake analytics with no operational value | PT-21; INFORMATION_ARCHITECTURE §9: only QS signals and CALC figures; a chart only of defined values — the ageing chart (VP-6) —, never decorative |
 | SLOP-35 | looking like a landing page | PT-03, PT-19, SLOP-19–SLOP-21 |
 | SLOP-36 | looking like a Dribbble concept | §4 decisions grounded in task speed; [P7_QUALITY_GATE](evidence/P7_QUALITY_GATE.md#desainpakai-exploration) rejections |
-| SLOP-37 | looking like a generic Tailwind SaaS template | §5.1: no default indigo or tinted pills (DPB-01 rejection of variant C) |
+| SLOP-37 | looking like a generic Tailwind SaaS template | §5.1: the reference's palette and tones, never the framework's default indigo |
 | SLOP-38 | looking like an AI-generated admin dashboard | SLOP-18, SLOP-28, SLOP-34 |
 
 | P1 directive item | Rule |
@@ -577,36 +890,88 @@ Each prohibition of the anti AI-slop constitution (OB §21) has a rule that prev
 | SLOP-44 | gamification | no points, levels, progress rings, completion percentages or leaderboards (PT-29) |
 | SLOP-45 | chat-bubble decoration | PT-18: timeline entries are rows, not bubbles; no avatars; the tool context's chat composer was rejected (DPB-01) |
 
+**The reference's anti-slop rules** (DESIGN_SYSTEM_MAPPING §9):
+
+SLOP-01–SLOP-45 of [DESIGN_SYSTEM §18](#18-anti-ai-slop-mapping), with GA1 d)'s dispositions — KEPT 35, REVISED 9, SUPERSEDED 1 —, a rule protecting clarity, honesty or accessibility kept (D4); the right column says where this mapping honours each.
+
+| SLOP | Prohibition | Disposition | Honoured in |
+| --- | --- | --- | --- |
+| SLOP-01 | every section inside a card | KEPT | §3, Card — a card only for a distinct object; §2, spacing |
+| SLOP-02 | nested cards | KEPT | §3, Card — no card in a card |
+| SLOP-03 | giant rounded containers | REVISED — the reference's radius family, still no giant container | §§1.4, 2 |
+| SLOP-04 | excessive border radius | KEPT — nothing above 12 px but the sheets' top corners | §2 |
+| SLOP-05 | pill-shaped everything | KEPT — pills for states, counts and the bottom bar's current marker only | §§3, 5 |
+| SLOP-06 | excessive gradients | KEPT — none in the application; the sign-in panel under [VD-05](../00-governance/DECISION_LOG.md#dir-057-dir-058-obs-021-and-tech-029--p7-ux-re-baseline-checkpoint-c1-visual-direction-decisions-visual-checkpoint-authorization-baseline-and-visual-anchors) | §1.2 — the hero tints excluded; §3, sign-in |
+| SLOP-07 | decorative gradients | KEPT | as SLOP-06 |
+| SLOP-08 | glowing UI | REVISED — the sign-in button's soft shadow only | §1.2, the CTA row |
+| SLOP-09 | neon | REVISED — lime only as a fill under dark ink, never a state's only mark | §1.2, the lime rows; [GR-02](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01), GR-03 |
+| SLOP-10 | generic glassmorphism | KEPT — opaque surfaces; a blurred scrim is not a surface | §§2, 6 — the opaque bars (GR-22) |
+| SLOP-11 | generic mesh backgrounds | REVISED — the plain canvas `#f7f8f3` | §1.2 |
+| SLOP-12 | floating decorative blobs | KEPT — the sign-in panel's curve is VD-05's | §3, sign-in |
+| SLOP-13 | generic abstract illustrations | KEPT — abstract imagery only on the sign-in panel; no illustrated empty state | §3, states and sign-in (GR-12) |
+| SLOP-14 | excessive shadows | KEPT — the resting shadow; overlays over the scrim | §§1.4, 2 |
+| SLOP-15 | excessive animation | REVISED — functional motion on the tokens; a 150 ms crossfade under reduced motion | §§1.5, 2 |
+| SLOP-16 | parallax | REVISED — none, but inside the sign-in's one transition | §§1.5, 2 |
+| SLOP-17 | useless hover tricks | KEPT — hover never the only path | §3, the states |
+| SLOP-18 | excessive dashboard KPI cards | KEPT — four key figures on the Owner's *Beranda*, without deltas | §3, KPI tile (VP-3) |
+| SLOP-19 | giant welcome banner | KEPT — no greeting or hero | §1.2; §3, not used |
+| SLOP-20 | "Welcome back!" clichés | KEPT — the sign-in's heading and one line | §3, sign-in; [LOCALIZATION_ARCHITECTURE §5](stage2/LOCALIZATION_ARCHITECTURE.md#5-copy-rules-for-the-journey-specifications) |
+| SLOP-21 | startup marketing copy | KEPT | §3, sign-in — no editorial copy; LOCALIZATION_ARCHITECTURE §5 |
+| SLOP-22 | emoji as decoration | KEPT | DESIGN_SYSTEM §16; LOCALIZATION_ARCHITECTURE §5 |
+| SLOP-23 | unnecessary icons | KEPT — text-first headings | §3, Card |
+| SLOP-24 | an icon in every label or button | KEPT | §3, Button and Card |
+| SLOP-25 | excessive whitespace that slows work | SUPERSEDED — the reference's density, touch sizes on phones, the dense mode on OC-09's screens, under AICWDF §18.2 | §§2, 6 |
+| SLOP-26 | gigantic headings | REVISED — the reference's scale; a display size only on the sign-in | §§1.3, 2 |
+| SLOP-27 | hero-like headers | REVISED — titles at the reference's size, no hero | §2; §3, page header |
+| SLOP-28 | noisy dashboards | KEPT — at most five groups ([QB-10](../06-api-performance/PERFORMANCE.md#6-query-budgets)) | §4, PT-21 |
+| SLOP-29 | random colour | KEPT — one action colour, olive for selection and focus, lime only as a signal, tones bound to states | §§1.2, 5 |
+| SLOP-30 | arbitrary badges | KEPT — one state per badge; no trend badge; counts per company | §§3, 5 |
+| SLOP-31 | inconsistent radius | REVISED — five steps and a pill, each with a role | §§1.4, 2 |
+| SLOP-32 | inconsistent icon size | KEPT — the reference's icon boxes and strokes | §1.4 |
+| SLOP-33 | inconsistent spacing | KEPT — one scale | §§1.4, 2 |
+| SLOP-34 | fake analytics | KEPT — charts of defined values with a table (VP-6) | §3, Chart; §1.2 |
+| SLOP-35 | a landing-page look | KEPT | §3, not used |
+| SLOP-36 | a concept-shot look | KEPT | §8 — one product, measured against the reference |
+| SLOP-37 | a generic template look | KEPT — the default palettes cleared | §1 |
+| SLOP-38 | a generated admin-dashboard look | KEPT | as SLOP-18, SLOP-28 and SLOP-34 |
+| SLOP-39 | feeds | KEPT — "Muat Lagi", no infinite scroll | §4, PT-08 and [IP-18](ADMIN_FLOW/s06-09-session-forms-lists.md#ip-18--continuing-a-list) |
+| SLOP-40 | reactions | KEPT | §3 holds no reaction control |
+| SLOP-41 | likes | KEPT | as SLOP-40 |
+| SLOP-42 | streaks | KEPT | §3 holds no streak or per-user counter |
+| SLOP-43 | confetti | KEPT — no celebratory motion | §2, motion |
+| SLOP-44 | gamification | KEPT — no percentage; progress for processes only | §3, progress bar and checklist |
+| SLOP-45 | chat-bubble decoration | KEPT — timeline entries are rows | §3, timeline |
+
 ## 19. Pattern coverage
 
 Every screen of [INFORMATION_ARCHITECTURE §8](INFORMATION_ARCHITECTURE.md#8-screen-inventory) and every journey of [ADMIN_FLOW §10](ADMIN_FLOW/s10-a-journeys.md#10-journeys) is composed of the patterns of §9; none needs a pattern that is not defined here. A build unit that finds a screen it cannot compose from them raises the gap through change control instead of inventing a pattern.
 
 | Pattern | Used by |
 | --- | --- |
-| PT-01, PT-02 shell and phone navigation | every authenticated screen (SCR-03, SCR-05–SCR-60) |
-| PT-03 page header and page actions | every screen except SCR-01, SCR-02 and SCR-04 |
-| PT-04 company label, working filter and relation marker | every list and record that carries company-owned data; the pooled stock views SCR-18 and SCR-19 |
+| PT-01, PT-02 shell and phone navigation | every authenticated screen (PG-065, PG-006–PG-064) |
+| PT-03 page header and page actions | every screen except PG-001, PG-003 and PG-005 |
+| PT-04 company label, working filter and relation marker | every list and record that carries company-owned data; the pooled stock views PG-018 and PG-019 |
 | PT-05 data table · PT-06 dense list rows | every list screen: desktop and phone respectively |
 | PT-07 filters · PT-08 list continuation | every list screen |
 | PT-09 form layout · PT-10 multi-line entry | every command form; PT-10 for project, quotation, purchase, invoice, receiving, dispatch, count and import lines (ADMIN_FLOW IP-13) |
 | PT-11 buttons and actions · PT-16 dialogs and sheets | every screen with a command |
-| PT-12 detail layout | every record screen; the project hub SCR-10 with its parts |
+| PT-12 detail layout | every record screen; the project hub PG-011 with its parts |
 | PT-13 status badge | every list and record of a state family of §12.1 |
 | PT-14 outcome message · PT-15 toast | every command (ADMIN_FLOW IP-01); PT-15 only as §9.4 allows |
-| PT-17 inventory · PT-24 financial position | stock screens SCR-18, SCR-19 and the warehouse forms; invoice, receivable, payment and project figures |
-| PT-18 activity timeline | every record screen's *Riwayat*; the Owner's SCR-59 |
-| PT-19 loading, skeleton, empty, error and denied | every screen and every deferred group; SCR-04 |
-| PT-20 scan field | SCR-19, SCR-21, SCR-22, SCR-24, SCR-25, SCR-26, SCR-32 (INFORMATION_ARCHITECTURE §10) |
-| PT-21 signal group and queue row | Beranda SCR-05 and SCR-06; the Owner review queue SCR-07 |
-| PT-22 thumbnails and previews | product lists and records; document and evidence screens SCR-34–SCR-37 |
+| PT-17 inventory · PT-24 financial position | stock screens PG-018, PG-019 and the warehouse forms; invoice, receivable, payment and project figures |
+| PT-18 activity timeline | every record screen's *Riwayat*; the Owner's PG-063 |
+| PT-19 loading, skeleton, empty, error and denied | every screen and every deferred group; PG-005 |
+| PT-20 scan field | PG-019, PG-022, PG-024, PG-026, PG-027, PG-028, PG-034 (INFORMATION_ARCHITECTURE §10) |
+| PT-21 signal group and queue row | Beranda PG-006 and PG-007; the Owner review queue PG-008 |
+| PT-22 thumbnails and previews | product lists and records; document and evidence screens PG-035–PG-039 |
 | PT-23 money, quantity and date presentation | every figure on every screen and print view |
 | PT-25 business date control | every command form (ADMIN_FLOW IP-07; HO-08); the numbering commands show their date as the fixed day of recording instead (ADMIN_FLOW §12.2; NM-03) |
 | PT-26 confirmation of an irreversible or correcting command | every irreversible, destructive or correcting command (ADMIN_FLOW IP-08, IP-09, §11, §12.2) |
-| PT-27 search and type-ahead | *Cari* and SCR-08; every picker inside a form |
+| PT-27 search and type-ahead | *Cari* and PG-009; every picker inside a form |
 | PT-28 step-up and re-authentication dialog | step-up commands (ADMIN_FLOW IP-10); every session expiry (ADMIN_FLOW §6) |
-| PT-29 derived readiness list | the project's completion readiness (SCR-14), administrative requirements, company onboarding (ADMIN_FLOW §12.4) |
-| PT-30 capability-by-company preview | grant editing on SCR-57 (H7-06) |
-| PT-31 derived part strip | the project detail SCR-10 on desktop (D-IA-09) |
+| PT-29 derived readiness list | the project's completion readiness (PG-012), administrative requirements, company onboarding (ADMIN_FLOW §12.4) |
+| PT-30 capability-by-company preview | grant editing on PG-060 (H7-06) |
+| PT-31 derived part strip | the project detail PG-011 on desktop (D-IA-09) |
 
 ## 20. Traceability
 
@@ -616,3 +981,105 @@ Every screen of [INFORMATION_ARCHITECTURE §8](INFORMATION_ARCHITECTURE.md#8-scr
 - **PERMISSIONS_MATRIX and SECURITY:** PJ-01–PJ-04, PJ-07, PJ-11, PJ-22 and PJ-23 → §14 and PT-18; H6-10 → §16; H7-02 → PT-04; H7-06 → PT-30; H7-09 → PT-28; FL-03–FL-05 and FL-07 → §14.3; WS-08 (`font-src 'self'`, camera denied) → §2, §13.2; DP-19 → §17.
 - **CONCURRENCY_IDEMPOTENCY and PERFORMANCE:** HO-01 → §12.2; HO-03 → PT-11; HO-08 → PT-25; HO-10 and PF-15, PF-17 → PT-05–PT-08; PF-31, PF-32 → PT-22; PF-34 → PT-19, PT-21.
 - **Gaps:** GAP-019 → §1, §14.3, §16; GAP-020 → §6, §11, §13; GAP-029 → §12.1; GAP-032 → PT-30.
+
+- **Stage 3 (DIR-078):** the Owner's CP-A decisions → §4 (D-DS-10–D-DS-22); DESIGN_SYSTEM_MAPPING → §§5–12; DESIGN_REFERENCES → §§2, 6; DOCUMENT_PREVIEW_PRODUCER → §14.3 (GAP-053); the carry-forward ledger → Annex A (SP-66); the carried GR items → Annex B; every page's pattern → INFORMATION_ARCHITECTURE §8 and [NAVIGATION_CONTRACTS](NAVIGATION_CONTRACTS.md).
+
+## Annex A. The carry-forward disposition (SP-66)
+
+PC-1's ledger — the prototype's `evidence/pc1/carry-forward.txt`, 7,407 lines at commit D, compiled from the evidence by script — dispositioned as [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-66 asks: each category a **rule** of this document, an **accepted and documented difference**, or **dropped** with its reason; WF-PC1's 33 carried findings and PB-A12, PB-D01 and PB-D02 one by one; FA-20, FA-21 and FA-22 as rules (CA-04 item 16). Nothing here is recorded as passed: a raw value stays raw in the ledger, and the application is measured by P8, never by the prototype's renders.
+
+### A.1 By category
+
+| DA | Ledger section | What it holds | Disposition | Where |
+| --- | --- | --- | --- | --- |
+| DA-01 | B — GF-2A's raw FM failures (CP-1R, commit A2) | 1,040 failing measures in each language, 852 and 853 labelled B or C, 188 and 187 unlabelled | **dropped as requirements**, with their reason: each measures the prototype against the reference, not the application; the application is built from §§5–12 and P8 measures it against the reference's recipes. A B or C label stays an **accepted and documented difference** where its cause is a decision of §4 or a canonical rule its label names — S2-J01's sign-in content, no marketing copy, OQ-13's illustration, VP-3's absent metrics | §§4–12; P8 |
+| DA-02 | C — PC-1's raw FM failures (SP-60) | 689 failing measures in each language, none labelled | **dropped as requirements**, as DA-01 — the extension's screens measured against the reference's nearest pages | §§4–12; P8 |
+| DA-03 | E — FM-10 beyond ±1 px | 16 rows: the shell's components across the pilot's pages | **rule**: one shell — sidebar, brand, navigation, account, top bar, search, app bar, bottom bar and action bar — as one component set on every page, so its geometry cannot vary between pages | §§9.1, 10 |
+| DA-04 | D — FM-08 motion | 40 motions; 53 of the reference's animations missing on the pilot, 17 the pilot's own | **rule** D-DS-16: the reference's recipes on MULTIPLECORP's state changes; a pilot-only motion is not part of V1 | §8 |
+| DA-05 | F — SV-01 and SV-04 on the new screens | values the pilot's stylesheets render outside the reference's tokens | **rule**: only §5's tokens; a value outside them is a defect (SLOP-33) | §5 |
+| DA-06 | G — WF-PC1's findings carried to Stage 3 | 33 — 13 A, 10 N, 10 D | one by one — §A.2 | §A.2 |
+| DA-07 | H — SP-52's items not applied in PC-1 | PB-A12, PB-D01, PB-D02 | one by one — §A.3 | §A.3 |
+| DA-08 | I — GF-2A's "recorded for later work" | the KPI cards' empty share, the context card, PS-12's cards, PS-35's sheet, PS-33's chrome, the overdue line on two lines, "Antrean operasional" at 360 px, the decision count's pill, the marker on the code step, the brand under wider spacing at 320 px, the sign-in's tablet step and done transitions, GR-12's unused CSS, the tooling | **rules**: the card direction (D-DS-15) for the cards and the sheet; D-DS-16 for the transitions; mandated copy wrapping (D-DS-18) for the overdue line and the brand. **Dropped**: the marker (prototype-only), GR-12's unused CSS and the tooling notes (the prototype's own) | §§8, 9.5, 15 |
+| DA-09 | J — the accepted pages' cards | *Masuk*, *Beranda* and *Terima Barang* as commit A2 built them | **rule** D-DS-15, option B | §§4, 9.5 |
+| DA-10 | K — not compared, by the Owner's direction | PG-004 against the reference's expired step | **dropped**, by the Owner's direction; the expired link's answer is AUTH_JOURNEYS' | — |
+| DA-11 | L — the accepted pages' differences from commit A2 | decision row 4 (SP-53 (a)); PS-32's scan field focused at the task's start (FA-03) | **accepted and documented differences** — the Owner's instructions required both | — |
+| DA-12 | M — motion under reduced motion | the reference's chevron and select turns and the pilot's copies keeping their duration | **rule** D-DS-17 | §8 |
+| DA-13 | A and N — the counts and the evidence run as run | the run's facts | documented in the ledger; no disposition needed | — |
+
+### A.2 WF-PC1's 33 carried findings
+
+| Finding | Label | Disposition | The rule, or the reason |
+| --- | --- | --- | --- |
+| GF-01 | A | rule | a page's overflow actions are the reference's overflow menu with its toggle, never a bare outline link (§9.4) |
+| GF-02 | A | dropped | the "Simulasi" chip is the prototype's simulation marker (SIMULATION_REGISTER), absent from V1 |
+| GF-03 | A | rule | a document's layout choice uses the reference's draft-document choice, never the preview's zoom toggle (§14.3) |
+| GF-04 | A | rule | MSG-39's dialog: the question in the title, the consequence and the correction in the body (§9.4; with PB-D01) |
+| GF-05 | A | rule | an estimate is marked in text — "(perkiraan)" —, never with a pill (§16; DC-3; UXI-14) |
+| GF-10 | A | rule | a passed check's icon is the reference's 16 px check in the success tone (§12.1) |
+| GF-12 | A | rule | a field that depends on another stays disabled, its reason beside it, until the field it depends on is chosen (§9.3) |
+| GF-13 | A | rule | on a phone row an amount takes its own line below the main column before the column falls under its minimum (§11) |
+| GF-14 | A | rule | a tab row that overflows on the phone scrolls, the reference's edge mask its cue (§9.2) |
+| GF-15 | A | rule | a long form's sticky bar holds "Batal" before the primary action (PT-09; §9.4) |
+| GF-16 | A | rule | every required field carries the reference's required mark (§9.3) |
+| GF-17 | A | rule | a list's filters are the reference's filter controls — label, value, chevron — in its toolbar (§9.2) |
+| GF-20 | A | rule | a figure never breaks inside itself; its box widens or its row wraps (§16) |
+| FA-06 | N | rule | the business-date line shows the chosen date once one is chosen (PT-25; §9.3) |
+| FA-25 | N | dropped | the "Simulasi" chip is prototype-only (GF-02) |
+| GF-08 | N | accepted and documented difference | the floor task's sheet head holds the 48 px "Kembali" with the reference's padding, which D-DS-19 causes |
+| GF-18 | N | rule | a list's columns keep their widths when a status appears in a row (§9.2) |
+| GF-22 | N | rule | a composer's totals are the reference's totals band at the editor's foot (§14.1) |
+| GF-23 | N | rule | a page's secondary links sit in its actions or overflow menu, never as a loose button under the last card (§9.1) |
+| GF-24 | N | rule | on the phone, meta items sharing a line keep a visible separator (§11) |
+| GF-25 | N | rule | a company chip is followed by its context text or sits inline with the row's note (§12.1) |
+| GF-28 | N | rule | one-line choices are a radio group; the reference's choice cards hold a title with its description (§9.3) |
+| GF-42 | N | rule | a fold opens with its chevron's turn only, as the reference's help fold (§8) |
+| FA-09 | D | dropped (CA-04 item 16) | the full-load fallback is the prototype router's; Inertia's visits set focus and scroll on each visit (§8) |
+| FA-15 | D | dropped (CA-04 item 16) | the review panel is prototype-only |
+| FA-16 | D | dropped (CA-04 item 16) | the code steps' controls stay AUTH_JOURNEYS' and OQ-14's |
+| FA-18 | D | dropped (CA-04 item 16) | V1's search finds codes exactly under IP-17 (INT-005); the gap was the prototype palette's |
+| FA-20 | D | rule (D-DS-21) | the current step's "(langkah n dari m)" sits inside its own step's item (§15) |
+| FA-21 | D | rule (D-DS-21) | each group of a worklist has its own heading (§15) |
+| FA-22 | D | rule (D-DS-21) | a search or filter that matches nothing says so in a status line, announced (§15) |
+| FA-23 | D | dropped (CA-04 item 16) | the prototype's fixed sentences; V1 answers with MSG-02's actual rule and facts |
+| GF-21 | D | dropped (CA-04 item 16) | a presentation refinement of the result |
+| GF-38 | D | dropped (CA-04 item 16) | the payment form's summary aside, a presentation refinement |
+
+### A.3 SP-52's items on *Buat Pembelian*
+
+| Item | Disposition | The rule |
+| --- | --- | --- |
+| PB-A12 | rule | PT-25's business-date line has one form on every page that shows it, *Terima Barang*'s included (§9.3) |
+| PB-D01 | rule | the confirmation dialog's hierarchy: the question in the title, the consequence and the correction in the body (§9.4; GF-04) |
+| PB-D02 | rule | "Rincian lain"'s fields on the reference's widths — a reference number on the reference-field track, an amount at the money control's width, the charge's heading in the reference's in-form subhead role (§9.3) |
+
+## Annex B. The carried items GR-01–GR-23
+
+DESIGN_SYSTEM_MAPPING §7, normative here; the later GR rules are [DEVIATION_REGISTER](stage2/DEVIATION_REGISTER.md)'s, each applied where this document names it.
+
+The [carried items](evidence/P7_REBASELINE_GATE.md#carried-items-gr-01) as [DIR-061](../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-02 corrects them — GR-09's clause "every logout confirmed" withdrawn, [MSG-35](ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue) governing; GR-20 presentation only; GR-16 judged at the Owner's preview in two variants. [DEVIATION_REGISTER](stage2/DEVIATION_REGISTER.md) tabulates their current state; GR-24 onward are its own.
+
+| GR | Carried item | What S2-1 settles | What S2-2 or the preview checks | What stays for Stage 3 or P11 |
+| --- | --- | --- | --- | --- |
+| GR-01 | the control edge `#898982` | `--color-border-input`, shadcn/ui's `--input` (§§1.1, 1.2) | SV-05: the edges of fields, selects, date fields, checkboxes and radios at 3:1 on each surface | the normative token (Stage 3) |
+| GR-02 | an olive mark on the bottom bar's current item, the selected segment and the sign-in toggle | §§3, 6 | SV-05: the marks at 3:1 | Stage 3 |
+| GR-03 | the olive ring on the current stage marker | §§1.4, 3 | SV-05 on S2-J03's journey | Stage 3 |
+| GR-04 | the per-surface greys | §1.2 | SV-05: each grey measured on its surface | normative in Stage 3; a lint rule in P11 |
+| GR-05 | reflow at 320 px | §6 | SV-02 at 320 px: no horizontal scroll but a table's | verified in Stage 4 |
+| GR-06 | rem at a 16 px root; the 1.4.12 and 2.4.11 checks | §1; scroll padding under the sticky regions (§3) | SV-05: the text-spacing override and focus not obscured, as the probe's items h) and e) show possible ([PROTOTYPE_PLAN](stage2/PROTOTYPE_PLAN.md)) | the rem keys (P11) |
+| GR-07 | 48 px warehouse and field controls; ≥ 44 px with a coarse pointer | §§2, 6 | SV-05: target sizes on S2-J05 at 390 and 320 px | Stage 3 |
+| GR-08 | position numbers with "Muat Lagi"; no pager or total | §3; [PT-05](#92-lists-tables-and-filters), PT-08 | the lists of the journeys | PT-05, PT-06 and PT-08 aligned (Stage 3) |
+| GR-09 | the confirmation mapping without a typed confirmation or tick; logout asking only when input is unsent (MSG-35) | §4: PT-26, IP-08 | S2-J01's logout with and without unsent input | ADMIN_FLOW aligned (Stage 3) |
+| GR-10 | the composer within VD-07's share, DC-2's number line, defined inputs, provisional totals, [GAP-053](../00-governance/GAP_REGISTER.md#triage)'s producer | [DOCUMENT_PREVIEW_PRODUCER](stage2/DOCUMENT_PREVIEW_PRODUCER.md)'s option A; §3 | S2-J03's composer, simulated | the normative producer (Stage 3); the template (P11); P8's tests |
+| GR-11 | *Lainnya* as a drawer or a sheet; the bottom bar hidden on a focused scan step | §6 proposes the drawer | S2-J05's scan step; the C2 sessions confirm | Stage 3 |
+| GR-12 | the abstract sign-in panel, the code entry, the authentication journeys | [AUTH_JOURNEYS](stage2/AUTH_JOURNEYS.md); §3's code entry | S2-J01's screens | Stage 3; P11 |
+| GR-13 | the Google button to Google's guidelines, its font's self-hosting | the prototype's drawing is an Owner question in PROTOTYPE_PLAN | the preview shows the simulated button | the Architect, in P11 with GAP-042 (P9) |
+| GR-14 | whether a UI preference persists; the company view and the period out of browser storage | the language in [LOCALIZATION_ARCHITECTURE §3](stage2/LOCALIZATION_ARCHITECTURE.md#3-persistence--stated-not-decided); the sidebar's state kept nowhere in the prototype (SS-07), its persistence in the application stated, not decided, under C-1 | the prototype stores nothing (SP-13's guard; the probe's item k)) | Stage 3 under C-1 |
+| GR-15 | toasts only for events that leave a visible trace | §§3, 4 (PT-15) | no journey message only in a toast | PT-15 aligned (Stage 3) |
+| GR-16 | the smallest desktop text | §1's variants A and B | SV-03 renders both; the Owner chooses (SD-08) | the choice recorded: variant B (D-DS-10) |
+| GR-17 | the reference's micro-copy | [LOCALIZATION_ARCHITECTURE §2.6](stage2/LOCALIZATION_ARCHITECTURE.md#26-the-references-micro-copy-gr-17-gp-5) | its string check; the vendored strings in DEVIATION_REGISTER | the localization contract (Stage 3) |
+| GR-18 | Lucide styled to the reference's strokes | §1.4's strokes; Lucide 1.56.0 pinned (SP-16) | the prototype's sprite from the release's SVG files | the icon set under [DEP-07](../01-product/V1_SCOPE.md#dependencies-and-evidence-needed) (P11) |
+| GR-19 | date-range presets bound to the periods | §3 | a period control where a journey screen shows one (Part 6) | Stage 3 |
+| GR-20 | the filter toolbar, presentation only | §4: PT-07 | the journeys' lists | PT-07's presentation aligned (Stage 3) |
+| GR-21 | desktop disclosures where R1 folds | §3 | S2-J03's *Pekerjaan* and the journey's folded stages | Stage 3 |
+| GR-22 | opaque phone bars | §§1.4, 2, 6 | SV-01 and SV-02 on the phone renders | Stage 3 |
+| GR-23 | the ageing chart with labels, amounts and a table | §§1.2, 3 | S2-J02's *Beranda* | Stage 3 |

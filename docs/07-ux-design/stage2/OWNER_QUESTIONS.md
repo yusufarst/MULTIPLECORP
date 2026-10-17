@@ -36,6 +36,9 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
 | [OQ-16](#oq-16--gf-2s-execution-configuration) | GF-2's execution configuration | at CP-0 | process | — | DECIDED — DIR-069 |
 | [OQ-17](#oq-17--a-sparkline-on-the-kpi-cards) | A sparkline on the KPI cards | at CP-A | prototype-only; would change P2 and P6 as a metric | — | DECIDED — not part of V1; prototype-only, off (DIR-077 CA-04 item 13) |
 | [OQ-18](#oq-18--a-delta-on-the-kpi-cards) | A delta on the KPI cards | at CP-A | prototype-only; would change P2 and P6 as a metric | — | DECIDED — not part of V1; prototype-only, off (DIR-077 CA-04 item 13) |
+| [OQ-19](#oq-19--an-imported-purchases-number) | An imported purchase's number | at OG-2 | would change P3, P4 and P6 | GAP-058 | OPEN — raised by PC-2 (DIR-078 SP-65) |
+| [OQ-20](#oq-20--the-purchase-sequences-seeds) | The PURCHASE sequence's seeds | at OG-2 | would change P6 | GAP-059 | OPEN — raised by PC-2 (DIR-078 SP-65) |
+| [OQ-21](#oq-21--the-receivables-kpi-and-the-ageing-chart-within-qb-10) | The receivables KPI and the ageing chart within QB-10 | before Stage 3's approval | would change P6 under (a) | GAP-060 | OPEN — raised by PC-2 (DIR-078) |
 
 ## OQ-01 — The runtime for the vendored scripts
 
@@ -206,3 +209,40 @@ Every question here is the Owner's to decide; S2-1 enacts none (CHANGE_CONTROL L
 - **Problem.** Golden's KPI tiles carry a delta against an earlier period; MULTIPLECORP defines no comparison for them (VP-3). GF-2 drew one from the same illustrative series, marked "Usulan" (SP-39 (b)); WF-2R found that its wording "dari Sep 2026" reads as a real comparison and lacks Golden's screen-reader direction word (BR2R-14, a D, not implemented).
 - **Options, recommendation and impact.** As OQ-17's.
 - **Needed.** At CP-A. **Kind.** Prototype-only now; would change P2 and P6 as a production metric. **Status.** DECIDED — not part of V1, under [DIR-077](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-04 item 13 (2026-10-18): prototype-only and switched off behind `?usulan=1`, with no metric, query or change control.
+
+## OQ-19 — An imported purchase's number
+
+- **Problem.** Under CA-09 every purchase receives its business number at its save from its company's PURCHASE sequence (DATABASE §4.6; CONCURRENCY_IDEMPOTENCY NM-08, as drafted). WF-MIG-01 also imports the open purchases with their remaining quantities and seeds every number sequence after the last legacy number used (BR-DOC-02), but no source says which number an imported purchase carries: none is drawn by a save.
+- **Why it matters.** At go-live the warehouse/field Admin receives against imported purchases by their names on *Pekerjaan* and in *Barang Masuk*; a purchase known by one number in the old records and another in the application, or by none, breaks that.
+- **Canonical sources.** [WF-MIG-01](../../03-workflows/WORKFLOWS/s05-07-08-completion-migration.md#wf-mig-01--opening-facts-desk); [NM-03](../../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#14-numbering-concurrency); AX-28; BR-DOC-02; [DATABASE §4.6](../../04-architecture/DATABASE/s04-06-pur.md#46-pur--procurement); CA-09.
+- **Options.**
+  - **(a) The legacy number kept** where the company's old records numbered the purchase in its PURCHASE scheme, the period's seed starting after the last legacy number (WF-MIG-01's rule for documents); a purchase without one draws a new number at the import's commit.
+  - **(b) Always a new number** drawn at the import's commit, the legacy number kept only as the import row's reference.
+  - **(c) No number** for an imported purchase — `purchase_number` nullable for imported rows, against CA-09's "every purchase".
+- **Recommendation.** (a): the people who receive the goods keep the names they know, and the seeding rule is the one WF-MIG-01 already applies to documents, so no number collides.
+- **Impact.** (a) and (b): scope — WF-MIG-01's purchase rows, AX-28's seed rows and the import's validation (P3, P6), P10's rehearsal; time — small; risk — low. (c): a nullable number and a second way to name a purchase.
+- **Needed.** At OG-2, with the CA-09 amendment (APPR-011); at the latest before P10's import design. **Kind.** Would change P3, P4 and P6: GAP-058, registered with gate PC-2's records. **Status.** OPEN — raised by run PC-2 (DIR-078 SP-65) on 2026-10-18.
+
+## OQ-20 — The PURCHASE sequence's seeds
+
+- **Problem.** NM-03's allocator fails closed: an issue never creates a counter for a company and sequence type without a seed boundary, and a numbering scheme creates no counter by itself. CA-09's new sequence type PURCHASE therefore needs, per company, a numbering scheme and a seed before the first purchase can be saved; the sources seed document sequences from the opening import (AX-28) and leave PURCHASE's unstated.
+- **Why it matters.** Until a company's PURCHASE counter is seeded, every purchase save of that company is REJECTED (NM-03; C-10, as drafted).
+- **Canonical sources.** [NM-03](../../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#14-numbering-concurrency); AX-28; NX-01; [DATABASE §4.2](../../04-architecture/DATABASE/s04-02-org.md#42-org--organization) (`numbering_schemes`); WF-MIG-01; CA-09.
+- **Options.**
+  - **(a) As the document types:** each company's PURCHASE scheme set in *Penomoran Dokumen* (PG-061), its seed from the opening import's last legacy purchase number per period, or a seed of 1 entered there before go-live where the company has none; NM-03 unchanged.
+  - **(b) Created on first use at 1** — an exception to NM-03's fail-closed rule for PURCHASE only.
+- **Recommendation.** (a): one rule for every sequence type, no exception to NM-03, and the Owner's format — the approved data set's ARJ/PB/2026/0216 shape — configured like the others.
+- **Impact.** (a): PG-061 lists PURCHASE beside DOC-01–DOC-14 and PROJECT; AX-28's seed rows include it; P10's checklist gains the seed. (b): a P6 rule change and a risk of numbers colliding with legacy ones.
+- **Needed.** At OG-2, with the CA-09 amendment (APPR-011). **Kind.** Would change P6 (NM-03's application, AX-28's seeds): GAP-059, registered with gate PC-2's records. **Status.** OPEN — raised by run PC-2 (DIR-078 SP-65) on 2026-10-18.
+
+## OQ-21 — The receivables KPI and the ageing chart within QB-10
+
+- **Problem.** R1 c)'s *Beranda* for the Owner shows the KPI *Piutang aktif* — the outstanding receivables, CALC-05 — with its overdue line and an ageing chart, CALC-07, and the prototype built them on Golden's KPI cards. [QB-10](../../06-api-performance/PERFORMANCE.md#6-query-budgets)'s period figures name CALC-08–CALC-14 only, one group of at most six statements read in one snapshot (TX-10); no budget names CALC-05 or CALC-07 for the dashboard.
+- **Why it matters.** Stage 3's INFORMATION_ARCHITECTURE places *Beranda*'s period figures in QB-10; a figure outside the budget cannot be shown without a P6 change, and dropping it changes the approved Stage 2 design.
+- **Canonical sources.** QB-10; TX-10; [CALC-05, CALC-07](../../02-domain/BUSINESS_RULES.md#finance-fin); BR-FIN-15; [QUERY_BUDGET_CHECKS](QUERY_BUDGET_CHECKS.md) §4; R1 c).
+- **Options.**
+  - **(a) Within QB-10:** one grouped statement over `invoice_balances` per company in scope — the outstanding total and its due-date buckets — joins the period figures' group, its bound rising by at most one; P6's QB-10 amended, verified in P8.
+  - **(b) On *Piutang* only:** *Beranda* shows no receivables figure or chart; its decision row for overdue receivables (QS-10) links to *Piutang* (PG-044), which holds them — no P6 change.
+- **Recommendation.** (a): the Owner's first screen keeps the receivables position R1 c) gave it, at the cost of one bounded statement over rows QS-10 already reads.
+- **Impact.** (a): scope — QB-10's group and its P8 test; time — small; risk — low. (b): *Beranda* loses a figure the Owner reviewed at CP-A.
+- **Needed.** Before Stage 3's approval (OG-2). **Kind.** Would change P6 under (a): GAP-060, registered with gate PC-2's records. **Status.** OPEN — raised by run PC-2 (DIR-078) on 2026-10-18; INFORMATION_ARCHITECTURE §9's draft places both in the period figures' group as (a) would.
