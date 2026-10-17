@@ -119,3 +119,23 @@ Run GF-1 ([DIR-068](../../00-governance/DECISION_LOG.md#dir-067-dir-068-obs-026-
 | GR-27 | kept, in Golden's slots | "Cari atau pindai kode" in Golden's search, "Buat" and the marker in its actions slot (OQ-10; SP-38); D2's icon "Buat" a switch, not approved |
 | GR-28 | kept, in Golden's form | Golden's labelled back pill "Kembali" on a child flow, its brand with the placeholder mark on a top-level page, no menu or search button; the title as the page head in the content (OQ-10; IA 6.2) |
 | GR-33 | kept, applied as OQ-11 sets it | the marker one line, Golden's info pill in the phone app bar's trailing slot and the top bar's actions slot, 44 px with a coarse pointer; the marker's panel names the placeholder logo |
+
+## 6. The pilot after PC-1
+
+*Note of 2026-10-17, written by run PC-1 under [DIR-075](../../00-governance/DECISION_LOG.md#dir-073dir-075-obs-029-and-tech-036--p7-ux-re-baseline-cp-1r-verdict-p7p11-completion-plan-run-pc-1-and-stage-2-completion) §11 item 3 from the evidence (the prototype's `evidence/pc1/`).* PC-1 finished the pilot (*Buat Pembelian*, SP-53) and built every remaining screen of PS-01–PS-53 on Golden's form ([GOLDEN_FIRST_PILOT](GOLDEN_FIRST_PILOT.md) §§24–29). The statuses below are those PC-1 changed or exercised on the new pages; every other entry keeps §5's status, and the accepted pages keep theirs (SP-54). No new entry was needed: each change cites an existing entry or a canonical source. One correction is not a deviation from Golden's look: PG-044's status tabs, which lead to other pages, are a labelled navigation with the current page marked, Golden's active-tab look re-targeted unchanged (WF-PC1 FA-13; WCAG 4.1.2).
+
+| GR | Status on the pilot after PC-1 | Reason or where |
+| --- | --- | --- |
+| GR-01 | kept, applied; **extended** | the control edge `#898982` now also on the payment form's reason field (Golden's `.kb-textarea` had 1.27:1; R-03); an invalid field with the focus keeps Golden's danger edge and halo and gains Golden's 2 px focus ring outside them, the two visible together at 3:1, as GF-2A's sign-in fields (R-03) |
+| GR-05 | kept as a check | reflow at 320 × 640 on every new screen (SV-02; FM-09), 0 failing |
+| GR-06 | kept; its 2.4.11 check now **applied** | no control the keyboard reaches ends under a bar: the fixed action bar's height kept free below the focus from 768 px, the line sheet's sticky bar's in the sheet (R-04); 1.4.12 and 2.4.11 measured on every new screen, 0 failing |
+| GR-07 | kept, applied | 44 px with a coarse pointer and on the phone on every new screen and on *Buat Pembelian* (SP-53 (b); `pc1-targets.mjs` 0 failing); 48 px on PG-022's new states' floor controls (CQ-5) |
+| GR-08 | exercised, as Golden's | PG-045's "Muat Lagi" kept as Golden's control, leading outside the pilot; no pager or total |
+| GR-10 | kept | PG-042, the invoice composer, on Golden's composer form with S2-2's composition: the draft preview marked, provisional totals, the number only at issue (DOCUMENT_PREVIEW_PRODUCER unchanged) |
+| GR-16 | open; its switch applied on every new desktop page | `?varian=b`; the Owner's choice at CP-A (OQ-15) |
+| GR-21 | kept, applied on the new pages | PG-011's notes and PG-007's groups as Golden's disclosure buttons, folded as R1 folds them |
+| GR-33 | kept, applied | the marker on every page and on every sheet (WF-PC1 GF-06) |
+| GR-34 | content and order kept | R1's compositions of the new pages drawn with Golden's components and grid |
+| GR-35 | gives way where content passes | as §5, and on the new pages: the start page's row titles unclamped under 1.4.12, PG-044's phone rows wrapping, the line sheet's file state whole below 360 px with Golden's own phone spacing (R-02) |
+
+**Carried, with their target stage** (the prototype's `evidence/pc1/carry-forward.txt`; CP-A's decision sheet `cp-a-sheet.txt`): every raw FM failure and noncritical visual difference of GF-2A and PC-1 — Stage 3; the card direction as built and the KPI and context cards' option A or B — CP-A, then Stage 3; GR-16, D1–D6 and the proposed strings — CP-A; Golden's and the pilot's chevron transitions that stay under reduced motion — Stage 3 (VP-8's reading); GR-12's unused CSS — a cleanup for a later authorized run.
