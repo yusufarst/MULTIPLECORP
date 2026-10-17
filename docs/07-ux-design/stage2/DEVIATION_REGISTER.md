@@ -1,6 +1,6 @@
 # Deviation register
 
-Status: DRAFT | Updated: 2026-10-17 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-18 | Owner: Planning
 
 **Draft — not normative.** This is an S2-1 document of Stage 2 of the P7 UX re-baseline, written under [DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-01, SD-05 and SD-10 and [DIR-064](../../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) §12.10 (AK-7). Behaviour follows MULTIPLECORP — P0–P6 and ADMIN_FLOW —, structure follows R1, and presentation follows the Golden Frontend Reference v1.0.0, which adapts to MULTIPLECORP and never the reverse (AK-1; SD-02). [INFORMATION_ARCHITECTURE](../INFORMATION_ARCHITECTURE.md) and [DESIGN_SYSTEM](../DESIGN_SYSTEM.md) stay APPROVED under APPR-008 and under replacement, and [ADMIN_FLOW](../ADMIN_FLOW/README.md) stays in force, until a later authorized stage changes them; Stage 3 uses this draft, and nothing in it is normative.
 
@@ -139,3 +139,19 @@ Run GF-1 ([DIR-068](../../00-governance/DECISION_LOG.md#dir-067-dir-068-obs-026-
 | GR-35 | gives way where content passes | as §5, and on the new pages: the start page's row titles unclamped under 1.4.12, PG-044's phone rows wrapping, the line sheet's file state whole below 360 px with Golden's own phone spacing (R-02) |
 
 **Carried, with their target stage** (the prototype's `evidence/pc1/carry-forward.txt`; CP-A's decision sheet `cp-a-sheet.txt`): every raw FM failure and noncritical visual difference of GF-2A and PC-1 — Stage 3; the card direction as built and the KPI and context cards' option A or B — CP-A, then Stage 3; GR-16, D1–D6 and the proposed strings — CP-A; Golden's and the pilot's chevron transitions that stay under reduced motion — Stage 3 (VP-8's reading); GR-12's unused CSS — a cleanup for a later authorized run.
+
+## 7. The CP-A decisions
+
+*Note of 2026-10-18, written by run PC-2 under [DIR-078](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) §7 item 5.* At checkpoint CP-A the Owner decided GR-16 and D1–D6 ([DIR-077](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-04 items 1–7); the prototype's commit D makes variant B the pilot's default and keeps D1–D6 as decided, each already the default (SP-62). Nothing here is normative before Stage 3, whose DESIGN_SYSTEM sets the final form.
+
+| Entry | The Owner's decision at CP-A | In the pilot from commit D |
+| --- | --- | --- |
+| GR-16 | variant B (item 1) — the desktop text unit at 1 px from 1,025 px, the smallest desktop text 14 px | the default on every pilot page; `?varian=b` still accepted, and the start page's links to it kept |
+| D1 — BR-C03 (1), MSG-29 split into Golden's title and meta slots | reverted (item 2) | off, as before; the switch `?d=msg29` unchanged |
+| D2 — BR-D02, "Buat" as Golden's icon button from 768 to 1024 px | reverted (item 3): R1's visible label stays | off, as before; the switch `?d=buat-ikon` unchanged |
+| D3 — TB-D01, PS-35's card | the correction confirmed (item 4) | as built |
+| D4 — TB-D02, the line's title, meta and business date in the card's head | kept (item 5) | on, as built |
+| D5 — TB-D03, "Berikutnya" as Golden's floor badge | kept (item 6) | on, as built |
+| D6 — TB-D04, MSG-01's lead as Golden's notice title, the colon dropped | kept (item 7); its punctuation settled in Stage 3's copy validation | on, as built |
+
+**Carried to Stage 3** (CA-04 items 11, 12 and 15–17; CA-05): the motion accepted for the sessions, its raw differences resolved in DESIGN_SYSTEM from Golden's motion; the card direction as built, with option A or B for the KPI and context cards; FA-20, FA-21 and FA-22 as rules; WF-2R's D findings and WF-PC1's other D findings dropped as prototype refinements, adoptable only as a Level 1 choice within Golden's scales; GF-2A's further measured decisions; every noncritical visual difference, never recorded as passed.

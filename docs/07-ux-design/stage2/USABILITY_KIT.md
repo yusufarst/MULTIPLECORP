@@ -1,10 +1,12 @@
 # Usability kit (S2-3)
 
-Status: DRAFT | Updated: 2026-10-17 | Owner: Planning
+Status: DRAFT | Updated: 2026-10-18 | Owner: Planning
 
 **Draft — not normative.** This is S2-3, the usability kit of Stage 2 of the P7 UX re-baseline, written by run PC-1 under [DIR-075](../../00-governance/DECISION_LOG.md#dir-073dir-075-obs-029-and-tech-036--p7-ux-re-baseline-cp-1r-verdict-p7p11-completion-plan-run-pc-1-and-stage-2-completion) SP-58 for the sessions of Checkpoint C2 ([DIR-061](../../00-governance/DECISION_LOG.md#dir-061-dir-062-obs-023-and-tech-031--p7-ux-re-baseline-stage-2-decisions-s2-0-authorization-baseline-and-prototype-setup) SD-09, SD-10; DIR-053 K2). Its structure is in English; everything a participant or the moderator reads or says is in plain Indonesian. It decides nothing: the sessions (S2-4), their dates and the participants are the Owner's — the sessions run while PC-2 runs and their results, fixes and re-tests are PC-3's (DIR-074) —, and only the Owner's verdict closes C2.
 
 **Sources.** The journey specifications [S2-J01](journeys/S2-J01.md)–[S2-J06](journeys/S2-J06.md) (§§1, 4, 5); [PROTOTYPE_PLAN](PROTOTYPE_PLAN.md) §§5, 8.1 and 8.2; [SIMULATION_REGISTER](SIMULATION_REGISTER.md); the gate's [plan](../evidence/P7_REBASELINE_GATE.md#plan) — Checkpoint C2's row and APPR-011's conditions — and its [safety rules SS-01–SS-08](../evidence/P7_REBASELINE_GATE.md#stage-2--owner-decisions-dir-061); the pilot under `site/pilot/` of the private prototype repository, as run PC-1 completes it; the dry run of §9 (SP-59).
+
+*Note of 2026-10-18 (run PC-2, [DIR-078](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) §7 item 5):* the Owner approved the kit at checkpoint CP-A ([DIR-077](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-11); §5's GR-16 sentence now states variant B, the prototype's default from its commit D (CA-04 item 1); §7.3's C2 record gains the device, browser and CSS width of each phone task (CA-02, CA-11); the sessions follow SD-09 unless a warehouse/field user is confirmed before they start (CA-12).
 
 ## 1. Purpose and C2's criteria
 
@@ -266,7 +268,7 @@ The same cards, taken in order, with no moderator:
   - desktop only: `node tools/serve.mjs`, then open `http://127.0.0.1:8780/pilot/`;
   - with the phone: `node tools/serve.mjs --host <this computer's private address>`, then open `http://<that address>:8780/pilot/` on the phone and on the computer.
 - **Stopping it.** Ctrl+C in its window right after the session; the phone's tab closed.
-- **Between participants.** The prototype keeps nothing (SS-07): close the browser window — on the phone, the tab — and open the start page again. The language starts in Indonesian; GR-16's variant is A (no `?varian=b`) unless the Owner has chosen B at CP-A.
+- **Between participants.** The prototype keeps nothing (SS-07): close the browser window — on the phone, the tab — and open the start page again. The language starts in Indonesian; GR-16's variant is B — the prototype's default from its commit D, the Owner's choice at CP-A (DIR-077 CA-04 item 1).
 - **Synthetic data only.** No participant's own account, data or file on the devices; the cards' values are the prototype's synthetic ones, and the files the tasks attach are simulated by the prototype (SIM-16).
 - **Before each session** — open once every start the session's tasks use (§3), close every other tab, and lay the cards out in the order of §8.
 
@@ -304,11 +306,11 @@ Each session's sheet starts with its header — the role (never a name), the ses
 
 ### 7.3 The C2 record
 
-The final round only — each critical task's result per participant:
+The final round only — each critical task's result per participant and, for each phone task — UT-06, UT-12 and UT-18–UT-24 —, the device, the browser and the CSS width it ran on (CA-02):
 
-| Task | The Owner | The Admin Operasional validator | The warehouse/field user (or the validator, SD-09) |
-| --- | --- | --- | --- |
-| UT-01 … UT-24 | without help · with help · not completed · Owner-accepted disposition (its reference) | | |
+| Task | The Owner | The Admin Operasional validator | The warehouse/field user (or the validator, SD-09) | Phone task: device | Phone task: browser | Phone task: CSS width |
+| --- | --- | --- | --- | --- | --- | --- |
+| UT-01 … UT-24 | without help · with help · not completed · Owner-accepted disposition (its reference) | | | the phone's model, by role where participants differ; empty for a desktop task | the browser and its version | the viewport's width in CSS px, as the browser reports it |
 
 APPR-011's condition holds when every critical task is *without help* for every participant of the final round, or carries an Owner-accepted disposition. Then the Owner's verdict (DIR-040 F6):
 

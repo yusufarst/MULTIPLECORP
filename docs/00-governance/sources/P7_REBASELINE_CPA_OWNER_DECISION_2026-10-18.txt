@@ -1,0 +1,189 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventy-fifth source record
+Received: 2026-10-18, in-session Owner message to the repository executor with
+         the branch rebaseline/p7-ux checked out at
+         8da7e8914c6e744156b66f25a2c90bb910eeecfb, clean and equal to its live
+         remote, main and amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978, migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37, and the private prototype
+         repository's main at 3c3ce841434f0f0e30af047a995106c12f2619b3, run
+         PC-1's commit C
+Subject: the Owner's decision at checkpoint CP-A of run PC-1 (DIR-077),
+         CA-01–CA-16: the CP-A verdict APPROVED (CA-01); the real-phone check
+         NOT TESTED at CP-A, replaced by C2's phone tasks and a P8 real-device
+         check under GAP-020 (CA-02); DIR-075's record of the Owner's three
+         in-session messages of 2026-10-17 confirmed (CA-03); the decision
+         sheet's items 1–17 — GR-16's variant B, D1–D6, the proposed strings
+         and copy accepted for the sessions, the motion, the card direction,
+         OQ-17 and OQ-18 not part of V1, OQ-04 (a), the D findings and GF-2A's
+         measured decisions (CA-04); every noncritical visual difference
+         carried to Stage 3, no prototype rework and no further FM run (CA-05);
+         the business decisions OQ-02 (b), OQ-03 (b), OQ-05 (a), OQ-08 (a) and
+         GAP-052's one governing deadline, the overdue signal Owner-facing only
+         (CA-06–CA-10), each needing a narrow amendment drafted in PC-2 and
+         approved, or not, with APPR-011 at OG-2; the usability kit approved
+         (CA-11); the participants not yet scheduled, SD-09's fallback (CA-12);
+         run PC-2 authorized (CA-13); P9 authorized — drafted in PC-2,
+         completed in PC-4, approved separately at OG-3 (CA-14); PC-3 as PC-2's
+         continuation on a text Planning prepares from the session results
+         (CA-15); and what stays not authorized (CA-16)
+Delivery: The decision arrived as one of the two text files referenced in the
+         session message, their paths not recorded, sent with the authorization
+         of run PC-2, the seventy-sixth source record, whose header quotes the
+         session message and the Owner's confirmation. The file holds 146 lines
+         and 8,091 bytes with LF line endings and no byte-order mark, SHA-256
+         3db31d060eb0636c8ec5ba2073703c3f4903cf96ae2293a6bc7bd1caee4ec30d — the
+         values the seventy-sixth record's section 7 item 1 gives, which the
+         Owner confirmed in session —, checked by script before any edit and
+         again when this record was made. This record transcribes the whole
+         file mechanically, its text normalized to LF without a byte-order
+         mark, which leaves it unchanged; its first line is the decision's
+         title.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+OWNER DECISION — CP-A CLOSURE AND AUTHORIZATION OF RUN PC-2 WITH P9 DRAFTING
+
+My decision rests on the PC-1 CP-A report, its evidence and Planning's
+verification. It concerns the corrected prototype at commit C
+3c3ce841434f0f0e30af047a995106c12f2619b3 with its
+evidence/pc1/cp-a-sheet.txt, and USABILITY_KIT at commit 14
+8da7e8914c6e744156b66f25a2c90bb910eeecfb. Each item below is a separate
+decision of mine.
+
+CA-01 CP-A verdict: APPROVED.
+
+CA-02 Phone test (OQ-07 (a)): NOT TESTED. I waive the real-phone check at
+      CP-A; it is never recorded as PASS, and PC-1's emulated phone
+      renders stay evidence only. OQ-07 (a) (DIR-065) and DIR-075 §14's
+      criterion 1 are amended for that check alone. It is replaced by:
+      (1) C2 — the kit's phone tasks run on a real phone under SS-06, as
+      USABILITY_KIT §5 already requires, and the C2 record names each
+      phone task's device, browser and CSS width; and (2) P8 — a
+      real-device check, on the application, of S2-J01's sign-in, S2-J03's
+      work home and project journey at 390 CSS px and S2-J05's receiving
+      at 390 and 320 CSS px, recorded as a P8 obligation under GAP-020.
+      No accessibility, functional, security or production test is
+      reduced.
+
+CA-03 DIR-075's entry at 8da7e89 — its bullet "DIR-075, continued — the
+      sessions after Part 1, WF-PC1 and the Owner's amendment", the
+      amendment's ten conditions included — records the content of my
+      three in-session messages of 2026-10-17 correctly: the recovery
+      direction, "OWNER DIRECTIVE — STOP REPEATED AUDIT CYCLES" and "OWNER
+      APPROVAL — PC-1 MINIMAL AMENDMENT". This confirmation is my record
+      of them. WF-PC1 stays recorded as not completed and not passed.
+
+CA-04 CP-A decision sheet, items 1–17:
+      1. GR-16: variant B.
+      2. D1 (MSG-29 split): revert.
+      3. D2 ("Buat" as an icon button at 768–1024 px): revert — the label
+         stays visible.
+      4. D3 (PS-35's card): the correction confirmed.
+      5. D4: keep.
+      6. D5: keep.
+      7. D6: keep; its punctuation is settled in Stage 3's copy validation.
+      8. GF-2A's eight proposed strings: accepted for the sessions.
+      9. PC-1's three proposed strings: accepted for the sessions.
+      10. S2-1's proposed copy and English renderings: accepted for the
+          sessions. The final wording of items 8–10 is validated in Stage
+          3 (LOCALIZATION).
+      11. Motion: accepted for the sessions on Masuk, Beranda, Terima
+          Barang, Buat Pembelian and the extension, without exceptions,
+          by my explicit decision (CQ-7). The raw differences are resolved
+          in Stage 3's DESIGN_SYSTEM from Golden's motion, not by
+          reworking the prototype.
+      12. The card direction as built: kept as Stage 3's direction. Option
+          A or B for the KPI and context cards is chosen in Stage 3 by
+          that direction within Golden's scales, and shown to me at
+          APPR-011.
+      13. OQ-17 and OQ-18: not part of V1. They stay prototype-only and
+          switched off, with no metric, query or change control.
+      14. OQ-04: option (a).
+      15. WF-2R's D findings (BR2R-14, MS2R-15–MS2R-17): dropped as
+          prototype refinements. Stage 3 may adopt one only as a Level 1
+          choice within Golden's scales that changes no behaviour, content
+          or copy meaning.
+      16. WF-PC1's D findings: FA-20, FA-21 and FA-22 implemented in Stage
+          3; the others as item 15.
+      17. GF-2A's further measured decisions: kept as built for the
+          sessions; their final form is set by Stage 3's DESIGN_SYSTEM.
+
+CA-05 Visual evidence: every noncritical visual difference is accepted for
+      carry-forward to Stage 3; there is no prototype redesign or
+      cosmetic rework. The prototype's Golden comparisons (FM-01–FM-10)
+      end with PC-1: no further FM run or broad visual audit on the
+      prototype. The carried raw differences are inputs to Stage 3's
+      DESIGN_SYSTEM and are never recorded as passed. From Stage 3 on,
+      visual acceptance is my judgment at APPR-011 and, in
+      implementation, conformance to the approved DESIGN_SYSTEM as P8
+      defines it.
+
+Business decisions. The prototype is not changed for CA-06–CA-10: the
+sessions test the current screens, and PC-3's C2 record names the screens
+these decisions change. The narrow amendments each requires are drafted
+in PC-2 as REVIEW revisions and approved, or not, with APPR-011 at OG-2.
+
+CA-06 OQ-02 (GAP-054): option (b). The project list shows each row's
+      journey stage, blocker marker and next action through a second,
+      deferred query group in QS-15's set-query form — at most twelve
+      statements per page; the stage filter stays out unless P8 shows a
+      bounded filter that meets PF-42. P6 change control of QB-01.
+
+CA-07 OQ-03 (GAP-055): option (b). A new bounded signal for dispatch-ready
+      lines — the remaining reservations of ACTIVE projects' WAREHOUSE
+      lines (CALC-02) — in the Admin's G1 of Pekerjaan, which then holds
+      twelve statements. P3, P5 (its read class) and P6 change control.
+
+CA-08 OQ-05 (GAP-056): option (a). A nullable users.locale limited to id
+      and en, NULL meaning Indonesian, read into the session at sign-in
+      and changed from the account menu and Akun Saya. Database change
+      control (P4), the account's route (P6) and SECURITY AU-13's
+      self-service list (P5); the 125 logical tables unchanged.
+
+CA-09 OQ-08 (GAP-057): option (a). Every purchase receives a business
+      number at its save from its company's numbering sequence under
+      NM-01–NM-10; PJ-18's "purchase number" is that number. Database and
+      numbering change control (P4, P6).
+
+CA-10 GAP-052: each project has at most one governing deadline — the date
+      by which the whole project must be complete for the client. A project
+      is overdue when it is ACTIVE and that date is before today at the WIB
+      day boundary; DRAFT, CANCELLED, COMPLETED_NORMAL, COMPLETED_FORCED
+      and projects without a deadline are excluded. In V1 the signal is
+      Owner-facing only, per company, in Beranda's decision group; Admins'
+      view of the deadline stays as the approved design shows it, without
+      the signal. Level 2 change control: WORKFLOWS §10, PERFORMANCE's
+      signal register and QB-10, PERMISSIONS_MATRIX's read class (§7.4,
+      PJ-13), INFORMATION_ARCHITECTURE §9 and a narrow DATABASE
+      clarification of the deadline column.
+
+CA-11 The usability kit: approved. Under SD-09's fallback the Admin
+      Operasional validator also takes the warehouse tasks, on the phone;
+      the C2 record also names each phone task's device, browser and CSS
+      width (CA-02).
+
+CA-12 Participants: not yet scheduled, and nothing about them is assumed.
+      The sessions follow SD-09: the Owner and the Admin Operasional
+      validator, the validator also taking the warehouse tasks on the
+      phone (USABILITY_KIT §8, sessions V-3 and V-4), unless a
+      warehouse/field user is confirmed before the sessions start (then
+      W-1 and W-2). I run the sessions (S2-4) myself after PC-2 reports
+      the prototype session-ready, under the kit, with synthetic data
+      only; each session's date and participant role are recorded with
+      its results, never a name. C2 stays mandatory, APPR-011's conditions
+      unchanged.
+
+CA-13 I authorize run PC-2 under P7_STAGE2_PC-2_AUTHORIZATION.txt, which I
+      send with this decision.
+
+CA-14 I explicitly authorize P9 — infrastructure, observability, backup and
+      recovery: drafted in PC-2, completed in PC-4. Its approval is a
+      separate decision at OG-3.
+
+CA-15 PC-3 is authorized as PC-2's continuation (DIR-075, reading (b)).
+      Planning prepares its text from my session results, and I approve it
+      before it is sent.
+
+CA-16 Not authorized: C2's verdict; finalizing or approving Stage 3;
+      Stages 4 and 5; P8, P10 and P11; PC-4 and PC-5; application code;
+      any production or VPS access; moving main.
