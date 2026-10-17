@@ -76,7 +76,7 @@ One GET per page, its number the page's (NAV- and PG- alike). Each answers RC-05
 | ROUTE-048 | PG-048 *Kredit Pelanggan* | GET `/keuangan/kredit-pelanggan` | `FIN ShowCustomerCredit` | `finance.view` | the page; NAV-048 |
 | ROUTE-049 | PG-049 *Pengeluaran & Kas Lain* | GET `/keuangan/kas-lain` | `FIN ShowOtherCash` | `finance.view`; expenses `cost.view` | the page; NAV-049 |
 | ROUTE-050 | PG-050 *Mutasi Bank* | GET `/keuangan/mutasi-bank` | `FIN ShowBankStatement` | `bank_statement.record` with `finance.view` | the page; NAV-050 |
-| ROUTE-051 | PG-051 *Laporan* | GET `/laporan` | `Reporting ShowReports` | each report by its read class (RD-02–RD-06) | the page; NAV-051 |
+| ROUTE-051 | PG-051 *Laporan* | GET `/laporan` | `Reporting ShowReports` | any of `stock.view`, `projects.view`, `finance.view`, `cost.view` and `profit.view` — each report by its read class (RD-02–RD-06) | the page; NAV-051 |
 | ROUTE-052 | PG-052 *Laporan Gabungan* | GET `/laporan/gabungan` | `Reporting ShowConsolidatedReport` | `reports.consolidated` | the page; NAV-052 |
 | ROUTE-053 | PG-053 *Ekspor Saya* | GET `/laporan/ekspor` | `Reporting ShowOwnExports` | `reports.export`, the requester only | the page; NAV-053 |
 | ROUTE-054 | PG-054 *Klien* | GET `/data-master/klien` | `PTY ShowClients` | any account — S0 names; units, addresses and PICs `projects.view` | the page; NAV-054 |
