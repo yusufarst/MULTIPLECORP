@@ -121,7 +121,7 @@ Where each document is prepared, previewed, issued, printed or uploaded (RS-8; d
 | DOC-05 | Kuitansi | receipt mode from the recorded payment (PG-045, PG-043, readiness); the pre-payment mode from PG-043 (J-FIN-08) | PG-036 "Terbitkan" (AX-15); the pre-payment Kuitansi with AX-31, *Menunggu Pembayaran* until linked | its rendition |
 | DOC-06 | Invoice | PG-042, the composer (J-FIN-01; S2-J03) | PG-042 or PG-043 "Terbitkan Invoice" with MSG-39 (AX-16) | its rendition |
 | DOC-07 | Lampiran Kuitansi | from its issued Kuitansi, in readiness (R1's connected work a)) | PG-036 (AX-15) | its rendition |
-| DOC-08 | BAST | PG-031 or PG-033, from the handover facts (J-FUL-02, J-FUL-04) | PG-033 beside its preview (D-DS-23) or PG-036 (AX-15); PG-031's in place, pending OQ-22 | its rendition; the client's signed BAST uploaded through readiness "Unggah" (DC-9) |
+| DOC-08 | BAST | PG-031 or PG-033, from the handover facts (J-FUL-02, J-FUL-04) | PG-033 beside its preview (D-DS-23) or PG-036 (AX-15) | its rendition; the client's signed BAST uploaded through readiness "Unggah" (DC-9) |
 | DOC-09 | SPK | PG-011 after the confirmation (J-PRJ-02) | PG-036 (AX-15) | its rendition |
 | DOC-10 | Berita Acara Pemeriksaan Barang | PG-031, from the inspection facts (J-FUL-02) | PG-036 (AX-15) | its rendition |
 | DOC-11 | HPS | readiness, "Dokumen lain yang bisa disiapkan" | PG-036 (AX-15) | its rendition; a client's or third party's HPS stays an upload (THIRD_PARTY_HPS) |
@@ -317,7 +317,7 @@ The page and control where each command of [WORKFLOWS §9](../../03-workflows/WO
 
 | AX | Action | Page and control | Capability |
 | --- | --- | --- | --- |
-| AX-01 | Reservation create/increase | PG-025 "Reservasi"; *Item dan pemenuhan* on PG-011; the same-action offer on PG-022 | `stock.reserve` |
+| AX-01 | Reservation create/increase | PG-025 "Reservasi"; *Item dan pemenuhan* on PG-011; the same-action offer on PG-022 and at a restoration on PG-020 and PG-034 (AX-10; IP-19) | `stock.reserve` |
 | AX-02 | Reservation reduce/release/cut | PG-025 "Kurangi Reservasi", "Lepas"; the cut block inside a supply-reducing form (IP-20) | `stock.reserve` |
 | AX-03 | Dispatch | PG-024 "Catat Barang Keluar" | `stock.dispatch`; another company's lot `stock.allocate_intercompany` |
 | AX-04 | Receiving | PG-022 "Catat Barang Masuk", with its optional reservation | `stock.receive`; the reservation `stock.reserve` |
@@ -703,7 +703,7 @@ Each command with its routes and interactions ([ROUTE_CONTRACTS](../../03-workfl
 
 | AX | Pages | Routes and interactions |
 | --- | --- | --- |
-| AX-01 | PG-025, PG-011, PG-022 | ROUTE-184 · INT-184 |
+| AX-01 | PG-025, PG-011, PG-022, PG-020, PG-034 | ROUTE-184 · INT-184; the offer inside a receipt or a restoration (IP-19): ROUTE-181 · INT-181; ROUTE-188 · INT-188; ROUTE-210 · INT-210 |
 | AX-02 | PG-025 | ROUTE-185 · INT-185; the cut inside a supply-reducing action (IP-20): ROUTE-176 · INT-176; ROUTE-183 · INT-183; ROUTE-193 · INT-193; ROUTE-194 · INT-194; ROUTE-195 · INT-195; ROUTE-211 · INT-211 |
 | AX-03 | PG-024 | ROUTE-186 · INT-186 |
 | AX-04 | PG-022 | ROUTE-181 · INT-181 |
@@ -786,7 +786,7 @@ Each message with its key ([LOCALIZATION](../LOCALIZATION.md) §6.1) and the con
 | MSG-37 | `messages.msg_37` | INT-006 |
 | MSG-38 | `messages.msg_38` | — |
 | MSG-39 | `messages.msg_39` | INT-121, INT-122, INT-123, INT-126, INT-130, INT-133, INT-137, INT-153 and 20 more |
-| MSG-40 | `messages.msg_40` | INT-127, INT-128, INT-159, INT-162, INT-163, INT-166, INT-168, INT-169 and 40 more |
+| MSG-40 | `messages.msg_40` | INT-127, INT-128, INT-159, INT-160, INT-162, INT-163, INT-166, INT-168 and 42 more |
 | MSG-41 | `messages.msg_41` | — |
 
 #### Q.6 Signals QS-01–QS-24
