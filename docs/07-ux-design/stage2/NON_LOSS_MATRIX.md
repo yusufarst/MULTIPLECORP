@@ -121,7 +121,7 @@ Where each document is prepared, previewed, issued, printed or uploaded (RS-8; d
 | DOC-05 | Kuitansi | receipt mode from the recorded payment (PG-045, PG-043, readiness); the pre-payment mode from PG-043 (J-FIN-08) | PG-036 "Terbitkan" (AX-15); the pre-payment Kuitansi with AX-31, *Menunggu Pembayaran* until linked | its rendition |
 | DOC-06 | Invoice | PG-042, the composer (J-FIN-01; S2-J03) | PG-042 or PG-043 "Terbitkan Invoice" with MSG-39 (AX-16) | its rendition |
 | DOC-07 | Lampiran Kuitansi | from its issued Kuitansi, in readiness (R1's connected work a)) | PG-036 (AX-15) | its rendition |
-| DOC-08 | BAST | PG-031 or PG-033, from the handover facts (J-FUL-02, J-FUL-04) | PG-036 (AX-15) | its rendition; the client's signed BAST uploaded through readiness "Unggah" (DC-9) |
+| DOC-08 | BAST | PG-031 or PG-033, from the handover facts (J-FUL-02, J-FUL-04) | PG-033 beside its preview (D-DS-23) or PG-036 (AX-15); PG-031's in place, pending OQ-22 | its rendition; the client's signed BAST uploaded through readiness "Unggah" (DC-9) |
 | DOC-09 | SPK | PG-011 after the confirmation (J-PRJ-02) | PG-036 (AX-15) | its rendition |
 | DOC-10 | Berita Acara Pemeriksaan Barang | PG-031, from the inspection facts (J-FUL-02) | PG-036 (AX-15) | its rendition |
 | DOC-11 | HPS | readiness, "Dokumen lain yang bisa disiapkan" | PG-036 (AX-15) | its rendition; a client's or third party's HPS stays an upload (THIRD_PARTY_HPS) |
@@ -704,7 +704,7 @@ Each command with its routes and interactions ([ROUTE_CONTRACTS](../../03-workfl
 | AX | Pages | Routes and interactions |
 | --- | --- | --- |
 | AX-01 | PG-025, PG-011, PG-022 | ROUTE-184 · INT-184 |
-| AX-02 | PG-025 | ROUTE-185 · INT-185 |
+| AX-02 | PG-025 | ROUTE-185 · INT-185; the cut inside a supply-reducing action (IP-20): ROUTE-176 · INT-176; ROUTE-183 · INT-183; ROUTE-193 · INT-193; ROUTE-194 · INT-194; ROUTE-195 · INT-195; ROUTE-211 · INT-211 |
 | AX-03 | PG-024 | ROUTE-186 · INT-186 |
 | AX-04 | PG-022 | ROUTE-181 · INT-181 |
 | AX-05 | PG-016, PG-020 | ROUTE-183 · INT-183 |
@@ -717,7 +717,7 @@ Each command with its routes and interactions ([ROUTE_CONTRACTS](../../03-workfl
 | AX-12 | PG-016 | ROUTE-173 · INT-173 |
 | AX-13 | PG-014, PG-011 | ROUTE-157 · INT-157; ROUTE-158 · INT-158 |
 | AX-14 | PG-011 | ROUTE-159 · INT-159; ROUTE-160 · INT-160 |
-| AX-15 | PG-036, PG-014, PG-016, PG-022, PG-024 | ROUTE-155 · INT-155; ROUTE-182 · INT-182; ROUTE-187 · INT-187; ROUTE-202 · INT-202; ROUTE-208 · INT-208; ROUTE-222 · INT-222 |
+| AX-15 | PG-036, PG-014, PG-016, PG-022, PG-024, PG-031, PG-033 | ROUTE-155 · INT-155; ROUTE-182 · INT-182; ROUTE-187 · INT-187; ROUTE-202 · INT-202; ROUTE-222 · INT-222 |
 | AX-16 | PG-042, PG-043 | ROUTE-242 · INT-242 |
 | AX-17 | PG-043 | ROUTE-243 · INT-243; ROUTE-244 · INT-244 |
 | AX-18 | PG-046 | ROUTE-251 · INT-251 |
@@ -735,11 +735,11 @@ Each command with its routes and interactions ([ROUTE_CONTRACTS](../../03-workfl
 | AX-30 | PG-027 | ROUTE-194 · INT-194; ROUTE-196 · INT-196 |
 | AX-31 | PG-043, PG-036, PG-046 | ROUTE-249 · INT-249; ROUTE-250 · INT-250 |
 | AX-32 | PG-016 | ROUTE-174 · INT-174 |
-| AX-33 | PG-047, PG-049 | ROUTE-200 · INT-200; ROUTE-260 · INT-260 |
+| AX-33 | PG-047, PG-049 | ROUTE-260 · INT-260 |
 | AX-34 | PG-016 | ROUTE-175 · INT-175 |
 | AX-35 | PG-024, PG-011 | ROUTE-189 · INT-189 |
 | AX-36 | PG-034, PG-028 | ROUTE-211 · INT-211 |
-| AX-37 | PG-029 | ROUTE-198 · INT-198; ROUTE-199 · INT-199 |
+| AX-37 | PG-029 | ROUTE-198 · INT-198; ROUTE-199 · INT-199; ROUTE-200 · INT-200 |
 
 #### Q.5 Messages MSG-01–MSG-41
 
@@ -761,7 +761,7 @@ Each message with its key ([LOCALIZATION](../LOCALIZATION.md) §6.1) and the con
 | MSG-12 | `messages.msg_12` | IG-02, every contract; INT-101, INT-104, INT-105, INT-106, INT-107, INT-108, INT-109, INT-111 and 131 more |
 | MSG-13 | `messages.msg_13` | IG-02, every contract |
 | MSG-14 | `messages.msg_14` | — |
-| MSG-15 | `messages.msg_15` | INT-013, INT-015 |
+| MSG-15 | `messages.msg_15` | INT-013, INT-015, INT-186, INT-188, INT-193, INT-194, INT-195, INT-196 and 7 more |
 | MSG-16 | `messages.msg_16` | — |
 | MSG-17 | `messages.msg_17` | INT-137, INT-151, INT-155, INT-171, INT-222 |
 | MSG-18 | `messages.msg_18` | — |
@@ -773,7 +773,7 @@ Each message with its key ([LOCALIZATION](../LOCALIZATION.md) §6.1) and the con
 | MSG-24 | `messages.msg_24` | INT-005 |
 | MSG-25 | `messages.msg_25` | INT-006 |
 | MSG-26 | `messages.msg_26` | INT-008 |
-| MSG-27 | `messages.msg_27` | INT-011, INT-112, INT-113, INT-114, INT-115, INT-116, INT-117, INT-124 and 7 more |
+| MSG-27 | `messages.msg_27` | INT-011, INT-112, INT-113, INT-114, INT-115, INT-116, INT-117, INT-121 and 12 more |
 | MSG-28 | `messages.msg_28` | — |
 | MSG-29 | `messages.msg_29` | — |
 | MSG-30 | `messages.msg_30` | INT-191 |
@@ -785,8 +785,8 @@ Each message with its key ([LOCALIZATION](../LOCALIZATION.md) §6.1) and the con
 | MSG-36 | `messages.msg_36` | INT-006 |
 | MSG-37 | `messages.msg_37` | INT-006 |
 | MSG-38 | `messages.msg_38` | — |
-| MSG-39 | `messages.msg_39` | INT-133, INT-137, INT-153, INT-155, INT-157, INT-158, INT-161, INT-186 and 6 more |
-| MSG-40 | `messages.msg_40` | INT-127, INT-128, INT-129, INT-159, INT-162, INT-163, INT-166, INT-168 and 37 more |
+| MSG-39 | `messages.msg_39` | INT-121, INT-122, INT-123, INT-126, INT-130, INT-133, INT-137, INT-153 and 20 more |
+| MSG-40 | `messages.msg_40` | INT-127, INT-128, INT-159, INT-162, INT-163, INT-166, INT-168, INT-169 and 40 more |
 | MSG-41 | `messages.msg_41` | — |
 
 #### Q.6 Signals QS-01–QS-24
@@ -827,18 +827,18 @@ Each capability with the views and commands that declare it.
 | Capability | Class | Views | Commands |
 | --- | --- | --- | --- |
 | `stock.view` | ADM | ROUTE-018, ROUTE-019, ROUTE-020, ROUTE-025, ROUTE-028, ROUTE-051, ROUTE-056, ROUTE-057 | ROUTE-176, ROUTE-184, ROUTE-282 |
-| `projects.view` | ADM | ROUTE-010, ROUTE-011, ROUTE-012, ROUTE-037, ROUTE-020, ROUTE-025, ROUTE-030, ROUTE-035, ROUTE-039, ROUTE-040, ROUTE-051, ROUTE-054, ROUTE-055 | ROUTE-184 |
-| `finance.view` | ADM | ROUTE-007, ROUTE-010, ROUTE-011, ROUTE-013, ROUTE-014, ROUTE-037, ROUTE-016, ROUTE-041, ROUTE-042, ROUTE-043, ROUTE-044, ROUTE-045, ROUTE-046, ROUTE-047, ROUTE-048, ROUTE-049, ROUTE-050, ROUTE-051 | ROUTE-154, ROUTE-241, ROUTE-251, ROUTE-255, ROUTE-261 |
+| `projects.view` | ADM | ROUTE-010, ROUTE-011, ROUTE-012, ROUTE-014, ROUTE-037, ROUTE-020, ROUTE-025, ROUTE-030, ROUTE-035, ROUTE-039, ROUTE-040, ROUTE-051, ROUTE-054, ROUTE-055 | ROUTE-184 |
+| `finance.view` | ADM | ROUTE-007, ROUTE-010, ROUTE-011, ROUTE-013, ROUTE-014, ROUTE-037, ROUTE-016, ROUTE-041, ROUTE-042, ROUTE-043, ROUTE-044, ROUTE-045, ROUTE-046, ROUTE-047, ROUTE-048, ROUTE-049, ROUTE-050, ROUTE-051 | ROUTE-151, ROUTE-152, ROUTE-154, ROUTE-241, ROUTE-251, ROUTE-255, ROUTE-261 |
 | `cost.view` | ADM | ROUTE-011, ROUTE-015, ROUTE-016, ROUTE-017, ROUTE-019, ROUTE-020, ROUTE-028, ROUTE-032, ROUTE-049, ROUTE-051, ROUTE-055 | ROUTE-171, ROUTE-176, ROUTE-205, ROUTE-257 |
 | `profit.view` | ADM | ROUTE-011, ROUTE-051 | — |
 | `evidence.view` | ADM | ROUTE-038, ROUTE-047 | ROUTE-255 |
 | `reports.export` | ADM | ROUTE-053 | ROUTE-283, ROUTE-284 |
 | `reports.consolidated` | OWNER_ONLY | ROUTE-006, ROUTE-052 | ROUTE-283 |
-| `review.view` | OWNER_ONLY | ROUTE-008 | — |
+| `review.view` | OWNER_ONLY | ROUTE-006, ROUTE-008 | — |
 | `audit.view` | OWNER_ONLY | ROUTE-063 | — |
 | `security_log.view` | OWNER_ONLY | ROUTE-064 | — |
 | `scope.all_companies` | OWNER_ONLY | — | no control of its own — the Owner's scope in every branch (RC-03) |
-| `users.manage` | OWNER_ONLY | ROUTE-060 | ROUTE-121, ROUTE-122, ROUTE-123, ROUTE-125, ROUTE-126, ROUTE-127, ROUTE-128, ROUTE-130, ROUTE-129 |
+| `users.manage` | OWNER_ONLY | ROUTE-060 | ROUTE-121, ROUTE-122, ROUTE-123, ROUTE-125, ROUTE-126, ROUTE-127, ROUTE-128, ROUTE-130 |
 | `permissions.manage` | OWNER_ONLY | ROUTE-060 | ROUTE-124 |
 | `companies.manage` | OWNER_ONLY | ROUTE-059, ROUTE-061 | ROUTE-131, ROUTE-132, ROUTE-133, ROUTE-134, ROUTE-135, ROUTE-136, ROUTE-137, ROUTE-228 |
 | `tax.configure` | OWNER_ONLY | ROUTE-062 | ROUTE-138 |
@@ -851,12 +851,12 @@ Each capability with the views and commands that declare it.
 | `projects.force_complete` | OWNER_ONLY |  | ROUTE-162 |
 | `import.commit` | OWNER_ONLY | ROUTE-058 | ROUTE-275 |
 | `parties.manage` | ADM |  | ROUTE-141, ROUTE-142, ROUTE-143, ROUTE-144 |
-| `products.edit` | ADM |  | ROUTE-145, ROUTE-146, ROUTE-147 |
+| `products.edit` | ADM |  | ROUTE-145, ROUTE-146, ROUTE-147, ROUTE-228 |
 | `warehouse.manage` | ADM |  | ROUTE-148 |
 | `projects.manage` | ADM | ROUTE-013 | ROUTE-151, ROUTE-152, ROUTE-153, ROUTE-160 |
 | `quotation.manage` | ADM | ROUTE-014 | ROUTE-154, ROUTE-155, ROUTE-156, ROUTE-157, ROUTE-222 |
-| `projects.confirm` | ADM |  | ROUTE-157, ROUTE-158 |
-| `stock.reserve` | ADM | ROUTE-022, ROUTE-025 | ROUTE-181, ROUTE-184, ROUTE-185 |
+| `projects.confirm` | ADM | ROUTE-014 | ROUTE-157, ROUTE-158 |
+| `stock.reserve` | ADM | ROUTE-022, ROUTE-025 | ROUTE-160, ROUTE-176, ROUTE-181, ROUTE-183, ROUTE-184, ROUTE-185, ROUTE-188, ROUTE-193, ROUTE-194, ROUTE-195, ROUTE-210, ROUTE-211 |
 | `purchase.manage` | ADM | ROUTE-017 | ROUTE-171, ROUTE-172 |
 | `stock.receive` | ADM | ROUTE-021, ROUTE-022 | ROUTE-181 |
 | `stock.dispatch` | ADM | ROUTE-023, ROUTE-024 | ROUTE-186 |
@@ -865,13 +865,13 @@ Each capability with the views and commands that declare it.
 | `delivery.record` | ADM | ROUTE-031 | ROUTE-201 |
 | `dropship.confirm` | ADM | ROUTE-032 | ROUTE-205 |
 | `handover.record` | ADM | ROUTE-033 | ROUTE-208 |
-| `documents.issue` | ADM | ROUTE-036 | ROUTE-182, ROUTE-187, ROUTE-202, ROUTE-208, ROUTE-221, ROUTE-222, ROUTE-249 |
+| `documents.issue` | ADM | ROUTE-036 | ROUTE-182, ROUTE-187, ROUTE-202, ROUTE-221, ROUTE-222, ROUTE-249 |
 | `evidence.upload` | ADM |  | ROUTE-228, ROUTE-229, ROUTE-230, ROUTE-231, ROUTE-261 |
 | `invoice.issue` | ADM | ROUTE-042 | ROUTE-241, ROUTE-242 |
 | `billing.record` | ADM |  | ROUTE-243 |
 | `payment.record` | ADM | ROUTE-046 | ROUTE-250, ROUTE-251 |
 | `payment.apply` | ADM |  | ROUTE-252 |
-| `expense.record` | ADM |  | ROUTE-257 |
+| `expense.record` | ADM | ROUTE-049 | ROUTE-257 |
 | `disbursement.record` | ADM |  | ROUTE-258 |
 | `cashin.record` | ADM |  | ROUTE-259 |
 | `bank_statement.record` | ADM | ROUTE-050 | ROUTE-261 |
@@ -879,9 +879,9 @@ Each capability with the views and commands that declare it.
 | `projects.complete` | ADM |  | ROUTE-161 |
 | `receivables.dispute` | ADM |  | ROUTE-246 |
 | `requirements.waive` | ADM |  | ROUTE-166 |
-| `import.prepare` | ADM | ROUTE-058 | ROUTE-272, ROUTE-273, ROUTE-274 |
+| `import.prepare` | ADM | ROUTE-058 | ROUTE-228, ROUTE-272, ROUTE-273, ROUTE-274 |
 | `stock.reverse` | ADM_PLUS |  | ROUTE-183, ROUTE-188, ROUTE-189, ROUTE-196, ROUTE-212, ROUTE-213, ROUTE-211 |
-| `sales_return.record` | ADM_PLUS | ROUTE-034 | ROUTE-207, ROUTE-210 |
+| `sales_return.record` | ADM_PLUS | ROUTE-032, ROUTE-034 | ROUTE-207, ROUTE-210 |
 | `purchase_return.record` | ADM_PLUS | ROUTE-028 | ROUTE-176, ROUTE-177 |
 | `purchase.correct_cost` | ADM_PLUS |  | ROUTE-175 |
 | `finance.contra` | ADM_PLUS |  | ROUTE-214, ROUTE-254, ROUTE-260 |
@@ -890,7 +890,7 @@ Each capability with the views and commands that declare it.
 | `documents.correct` | ADM_PLUS | ROUTE-036 | ROUTE-223, ROUTE-224 |
 | `billing.correct` | ADM_PLUS |  | ROUTE-244 |
 | `decisions.supersede` | ADM_PLUS |  | ROUTE-169 |
-| `fulfillment.correct` | ADM_PLUS |  | ROUTE-204, ROUTE-206, ROUTE-209 |
+| `fulfillment.correct` | ADM_PLUS | ROUTE-031, ROUTE-032 | ROUTE-204, ROUTE-206, ROUTE-209 |
 | `warnings.override` | ADM_PLUS |  | ROUTE-251 |
 | `cash.correct` | ADM_PLUS |  | ROUTE-262 |
 | `purchase.cancel` | ADM_PLUS |  | ROUTE-173 |
@@ -898,11 +898,11 @@ Each capability with the views and commands that declare it.
 | `settlement.record` | ADM_PLUS | ROUTE-047 | ROUTE-255 |
 | `stock.adjust` | ADM_PLUS | ROUTE-027 | ROUTE-194, ROUTE-203 |
 | `stock.condition` | ADM_PLUS | ROUTE-027 | ROUTE-195 |
-| `stock.count_apply` | ADM_PLUS |  | ROUTE-193 |
-| `stock.resolve_unattributed_evidence` | ADM_PLUS | ROUTE-029 | ROUTE-199 |
+| `stock.count_apply` | ADM_PLUS | ROUTE-026 | ROUTE-193 |
+| `stock.resolve_unattributed_evidence` | ADM_PLUS | ROUTE-029 | ROUTE-199, ROUTE-200 |
 | `stock.allocate_intercompany` | ADM_PLUS | ROUTE-024 | ROUTE-176, ROUTE-186, ROUTE-194 |
 | `projects.cancel_scope` | ADM_PLUS |  | ROUTE-159 |
-| `delivery.close` | ADM_PLUS |  | ROUTE-203 |
+| `delivery.close` | ADM_PLUS | ROUTE-031 | ROUTE-203 |
 | `purchase.close_remainder` | ADM_PLUS |  | ROUTE-174 |
 | `cases.close` | ADM_PLUS |  | ROUTE-271 |
 | `projects.cancel` | ADM_PLUS |  | ROUTE-163 |
@@ -932,4 +932,4 @@ Each denial with the Owner's page and the Admin's absence ([ROUTE_CONTRACTS](../
 
 #### Q.9 Totals
 
-**299 rows** in Q.1–Q.8 — SCR 60, CAP 18, AC 23, AX 37, MSG 41, QS 24, capabilities 80, OD 16; **rows without a destination: 0** — **100 % mapped**. **Orphans:** pages no requirement reaches 0; routes without a capability or rule 0; interactions without a route or a client-only mark 0 of 166 — **0 orphan**.
+**299 rows** in Q.1–Q.8 — SCR 60, CAP 18, AC 23, AX 37, MSG 41, QS 24, capabilities 80, OD 16; **rows without a destination: 0** — **100 % mapped**. **Orphans:** pages no requirement reaches 0; routes without a capability or rule 0; interactions without a route or a client-only mark 0 of 165 — **0 orphan**.

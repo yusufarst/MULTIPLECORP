@@ -52,7 +52,7 @@ A string with values carries named placeholders — Laravel's `:name` form —, 
 
 | Copy | Indonesian | English |
 | --- | --- | --- |
-| Defined by a source — MSG-01–MSG-41, the GL terms, AU-04's answers, H7-16's advice, the state labels of [DESIGN_SYSTEM §12.1](DESIGN_SYSTEM.md#121-status-system), the document type names | canonical, quoted exactly | proposed by Planning, validated by the Owner in one pass at APPR-011 (§5; [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)) |
+| Defined by a source — MSG-01–MSG-41, the GL terms, AU-04's answers, H7-16's advice, the state labels of [DESIGN_SYSTEM §12.1](DESIGN_SYSTEM.md#121-status-system), the document type names, the signals' empty states and the control labels the contracts quote; other copy a source defines is keyed when P11 writes it (§7) | canonical, quoted exactly | proposed by Planning, validated by the Owner in one pass at APPR-011 (§5; [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)) |
 | Recorded in the gate record — R1's and VC1's labels ([R1 k)](evidence/P7_REBASELINE_GATE.md#k-language-and-authentication) for sign-in) | quoted from there | proposed, validated by the Owner in the same pass (§5) |
 | Not defined by any source — a heading, a label, a helper line, the prototype's panel | proposed copy, drafted by Planning with the GL terms and within [OC-06](../00-governance/DECISION_LOG.md#dir-055-dir-056-obs-020-and-tech-028--p7-ux-re-baseline-checkpoint-c1-decision-rework-authorization-baseline-and-rework), citing the requirement it serves; validated by the Owner in the same pass at APPR-011 (§5) | proposed, validated by the Owner in the same pass (§5) |
 
@@ -116,52 +116,52 @@ Each journey specification's copy section ([DIR-064](../00-governance/DECISION_L
 
 1. **Mandated copy** — each canonical Indonesian text quoted exactly, with its source: a MSG text of [ADMIN_FLOW §14](ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue), a GL term of [INFORMATION_ARCHITECTURE §3](INFORMATION_ARCHITECTURE.md#3-glossary), an [AU-04](../05-security/SECURITY.md#2-authentication-sessions-and-credentials) answer, H7-16's advice, a state label of [DESIGN_SYSTEM §12.1](DESIGN_SYSTEM.md#121-status-system), a document type name, or a label the gate record holds for R1 or VC1. Mandated copy stays on the screen, visible and concise ([R1 g)](evidence/P7_REBASELINE_GATE.md#g-copy-oc-06)); its English is marked "proposed".
 2. **Proposed copy** — a heading, label, helper line or panel text the sources do not define, drafted in Indonesian with the GL terms within OC-06's budget — a heading, a state or number, an action; a helper sentence only when the user needs it to decide or act now —, citing the requirement it serves and marked "proposed copy", with a proposed English rendering.
-3. **Data** — the names, numbers, amounts and dates the screen shows, from the synthetic set (SP-20), marked as data and never translated (§3.4), formatted under §2.
-4. **Counted strings and values** — a counted string gives its English forms (§2); a string with values gives its placeholders (§3.1).
+3. **Data** — the names, numbers, amounts and dates the screen shows, from the synthetic set (SP-20), marked as data and never translated (§3.4), formatted under §3.3.
+4. **Counted strings and values** — a counted string gives its English forms (§3.3); a string with values gives its placeholders (§3.1).
 5. **Limits** — no copy states a rule, figure or business meaning beyond its source, and none is marketing language (DIR-064 §11.3).
 
 The Owner validates the proposed copy and every English rendering in one pass at APPR-011 (§5; `DIR-079` CB-15, CD-07; [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)).
 
 ## 5. Copy validation (CA-04 items 7–10)
 
-**The validation rule** ([DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-15 and CD-07; [DIR-080](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) SP-73). Indonesian stays the canonical text. The Owner validates the copy in one pass at APPR-011: every key on the review list of §5.1 — the proposed Indonesian copy, D6's punctuation and CA-04 items 8–10 included (CD-07), and every proposed English rendering, the 306 run PC-3 wrote among them (CB-15). The table is accepted as proposed except the keys the Owner marks, and each marked key is corrected before Stage 5. This changes how the Owner validates, not that the Owner validates (CB-15).
+**The validation rule** ([DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-15 and CD-07; [DIR-080](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) SP-73). Indonesian stays the canonical text. The Owner validates the copy in one pass at APPR-011: every key on the review list of §5.1 — the proposed Indonesian copy, D6's punctuation and CA-04 items 8–10 included (CD-07), and every proposed English rendering, the 306 run PC-3 wrote for the keys owed at PC-2's end (CB-15) and those Stage 4 added among them. The table is accepted as proposed except the keys the Owner marks, and each marked key is corrected before Stage 5. This changes how the Owner validates, not that the Owner validates (CB-15).
 
 The Owner accepted CA-04 items 7–10 for the sessions and left their final wording to Stage 3 (`DIR-077` CA-04 items 7–10). The table below records Stage 3's check of each against its canonical name and §4's rules — none changes a meaning, a business term or a glossary label —; each stays on the review list for the Owner's pass. The Owner's C2 decision names no change of copy (DIR-079).
 
 | Item | Key | Indonesian | English | Stage 3's check (PC-2) |
 | --- | --- | --- | --- | --- |
 | 7 — D6 | MSG-01's lead as the notice's title (TB-D04) | the title is the message's lead, with no colon and no final full stop; the detail follows in the body as whole sentences | the same rule | settled as this rule (Level 1, TECH-037) |
-| 8 | `pages.pg_002.back` | Kembali | Back | validated — the canonical "Kembali" of IP-08's dialogs (OQ-14) |
-| 8 | `pages.pg_002.code_advice` | Jangan bagikan kode ini kepada siapa pun. | Never share this code with anyone. | validated — H7-16's advice (SP-48) |
-| 8 | `pages.pg_006.ageing_table` | Tabel | Table | validated — the chart's table alternative (S2-J02 §§8–9) |
-| 8 | `pages.pg_006.col_bucket` | Umur | Age | validated |
-| 8 | `pages.pg_006.col_amount` | Jumlah | Amount | validated |
-| 8 | `pages.pg_006.bucket_31_60` | Lewat 31–60 hari | 31–60 days overdue | validated — BR-FIN-15's buckets |
-| 8 | `pages.pg_006.bucket_61_90` | Lewat 61–90 hari | 61–90 days overdue | validated — BR-FIN-15 |
-| 8 | `pages.pg_006.bucket_90` | Lewat lebih dari 90 hari | More than 90 days overdue | validated — BR-FIN-15 |
-| 9 | `pages.pg_017.cancel` | Batal | Cancel | validated — "Batal" canonical (PT-09) |
-| 9 | `result.copied` | Nomor tersalin | Number copied | validated — Golden's result text (GR-17) |
-| 9 | the palette's answer when nothing matches | Tidak ada hasil untuk “:q”. | No results for “:q”. | validated — Golden's own text, its value a named placeholder (§3.1) |
-| 10 | S2-1's proposed copy and English renderings — the journeys' copy sections | as §6 lists them, kind *proposed* or *session copy* | as §6 lists them | validated as written for every key §6 holds; a value in them becomes a named placeholder (§3.1) |
+| 8 | `pages.pg_002.back` | Kembali | Back | checked — the canonical "Kembali" of IP-08's dialogs (OQ-14) |
+| 8 | `pages.pg_002.code_advice` | Jangan bagikan kode ini kepada siapa pun. | Never share this code with anyone. | checked — H7-16's advice (SP-48) |
+| 8 | `pages.pg_006.ageing_table` | Tabel | Table | checked — the chart's table alternative (S2-J02 §§8–9) |
+| 8 | `pages.pg_006.col_bucket` | Umur | Age | checked |
+| 8 | `pages.pg_006.col_amount` | Jumlah | Amount | checked |
+| 8 | `pages.pg_006.bucket_31_60` | Lewat 31–60 hari | 31–60 days overdue | checked — BR-FIN-15's buckets |
+| 8 | `pages.pg_006.bucket_61_90` | Lewat 61–90 hari | 61–90 days overdue | checked — BR-FIN-15 |
+| 8 | `pages.pg_006.bucket_90` | Lewat lebih dari 90 hari | More than 90 days overdue | checked — BR-FIN-15 |
+| 9 | `pages.pg_017.cancel` | Batal | Cancel | checked — "Batal" canonical (PT-09) |
+| 9 | `result.copied` | Nomor tersalin | Number copied | checked — Golden's result text (GR-17) |
+| 9 | the palette's answer when nothing matches | Tidak ada hasil untuk “:q”. | No results for “:q”. | checked — Golden's own text, its value a named placeholder (§3.1); its key `shell.palette.no_results` |
+| 10 | S2-1's proposed copy and English renderings — the journeys' copy sections | as §6 lists them, kind *proposed* or *session copy* | as §6 lists them | checked as written for every key §6 holds; a value in them becomes a named placeholder (§3.1) |
 
 ### 5.1 The review list (CB-15, CD-07)
 
-Counted by script over §6 when run PC-3 completed this draft. A key is on the list when its Indonesian text is proposed — its kind *proposed* or *session copy*, alone or beside another — or its English text is proposed, which every English text is except one that is never translated (§3.4) or a value (*data*). **783 keys** are on the list; 3 are not: `documents.draft_marking`, `documents.number_line`, `pages.pg_006.period`. The keys themselves, with both texts and their kind, are §6's rows.
+Counted by script over §6 when run PC-3 completed this draft, and again after Stage 4's fixes. A key is on the list when its Indonesian text is proposed — its kind *proposed* or *session copy*, alone or beside another — or its English text is proposed, which every English text is except one that is never translated (§3.4) or a value (*data*). **881 keys** are on the list; 8 are not: `documents.draft_marking`, `documents.number_line`, `pages.pg_006.period`, `pages.pg_006.view.arj`, `pages.pg_006.view.btn`, `pages.pg_006.view.ckp`, `pages.pg_017.line_link.code`, `pages.pg_017.line_link.qty`. The English written by PC-3, 410 texts, is CB-15's renderings of the 306 keys owed at PC-2's end — five of them split by Stage 4 into one key per state or merged into the per-state keys that already held their states, so that eleven keys now carry those texts — and the renderings of the 98 keys Stage 4 added or corrected: the second forms of six messages (eight keys), the signals' empty states (24), a region's states (3), the composer's toggle (1), the control labels that ROUTE_CONTRACTS and INFORMATION_ARCHITECTURE §8 quote (59), the PO's approved name (1), PG-001's password message (1) and the reservation cut's block title (1) — the S4F rows of the gate record. The keys themselves, with both texts and their kind, are §6's rows.
 
 | Group | Keys | On the list | Indonesian proposed | English proposed | English written by PC-3 |
 | --- | --- | --- | --- | --- | --- |
-| `messages` | 77 | 77 | 25 | 77 | 40 |
+| `messages` | 85 | 85 | 25 | 85 | 48 |
 | `glossary` | 213 | 213 | 0 | 213 | 208 |
-| `status` | 75 | 75 | 4 | 75 | 51 |
+| `status` | 81 | 81 | 4 | 81 | 57 |
 | `auth` | 2 | 2 | 0 | 2 | 0 |
-| `documents` | 16 | 14 | 0 | 14 | 7 |
-| `pages` | 233 | 232 | 179 | 232 | 0 |
-| the shared groups of §6.7 | 170 | 170 | 89 | 170 | 0 |
-| **All** | **786** | **783** | **297** | **783** | **306** |
+| `documents` | 16 | 14 | 0 | 14 | 8 |
+| `pages` | 234 | 228 | 175 | 228 | 1 |
+| the shared groups of §6.7 | 258 | 258 | 97 | 258 | 88 |
+| **All** | **889** | **881** | **301** | **881** | **410** |
 
 ## 6. Key inventory
 
-Every key, built by script from its source when this draft was written and checked again for gate PC-2 (SP-68): the group of LOCALIZATION_ARCHITECTURE §2.2 (§3.1 here), the key, its Indonesian and English texts, its kind — *canonical* from its source, *recorded* from a measured reference, *proposed* awaiting the Owner's single pass (§5), *session copy* the text the usability sessions read (CA-04 item 10) — and its source. Every key holds both texts: the 306 English texts marked **owed** at PC-2's end were written by run PC-3 as proposed renderings — from the key's canonical or proposed Indonesian, with the GL terms and the key's placeholders and formats kept, a counted string with its two forms (§3.3) — and are marked *en proposed (PC-3)* in the Kind column ([DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-15); P8 fails a page with a missing string (§3.6). A *session copy* text that holds a synthetic value — an amount, a number, a name — becomes a named placeholder in P11 (§3.1). The prototype-only keys — the marker, its panel, the proposals and the out-of-scope page, 20 keys — are not part of V1 and are left out.
+Every key, built by script from its source when this draft was written and checked again for gate PC-2 (SP-68): the group of LOCALIZATION_ARCHITECTURE §2.2 (§3.1 here), the key, its Indonesian and English texts, its kind — *canonical* from its source, *recorded* from a measured reference, *proposed* awaiting the Owner's single pass (§5), *session copy* the text the usability sessions read (CA-04 item 10), *data* a value shown as it is — a company code, an SKU, a quantity — and *never translated* a text §3.4 keeps in Indonesian, both off the review list — and its source. Each `{name}` in a text is the key's named placeholder, written `:name` in P11's string files and `:count` for the number of a counted string, whose two English forms are separated by `\|` (§§3.1, 3.3). A catalogue key whose slots describe prose to be written per case — MSG-39's `{Kata kerja} {objek}?` and its consequence, among them — is the message's pattern, not a runtime string: its instances carry the copy (§6.1), and P11 keys each instance. Every key holds both texts: the 306 English texts marked **owed** at PC-2's end were written by run PC-3 as proposed renderings — from the key's canonical or proposed Indonesian, with the GL terms and the key's placeholders and formats kept, a counted string with its two forms (§3.3) — and are marked *en proposed (PC-3)* in the Kind column ([DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-15); P8 fails a page with a missing string (§3.6). A *session copy* text that holds a synthetic value — an amount, a number, a name — becomes a named placeholder in P11 (§3.1). The prototype-only keys — the marker, its panel, the proposals and the out-of-scope page, 20 keys — are not part of V1 and are left out.
 
 ### 6.1 `messages` — the message catalogue and its instances
 
@@ -227,8 +227,8 @@ Every key, built by script from its source when this draft was written and check
 | `messages.msg_02_above_payment` | Tidak dapat diproses: jumlah penerapan melebihi pembayaran. Pembayaran Rp300.000, diterapkan Rp550.000. Kurangi penerapan atau biarkan sisanya sebagai kredit pelanggan. | Cannot be processed: the applications exceed the payment. Payment Rp300.000, applied Rp550.000. Reduce the applications or leave the rest as customer credit. | proposed | S2-J06 §8 |
 | `messages.msg_05_pdf` | PDF sedang dibuat. Invoice sudah terbit. | The PDF is being created. The invoice is issued. | canonical · recorded | S2-J03 §8 |
 | `messages.msg_05_po` | PDF sedang dibuat. PO sudah terbit. | The PDF is being created. The PO is issued. | canonical | S2-J04 §8 |
-| `messages.msg_29_owner` | Tautan atur kata sandi yang Anda buat untuk Bayu dipakai pada 04 Okt 2026 16.20 WIB. Jika bukan orang tersebut yang memakainya, akhiri sesinya di Pengguna & Akses. | The password-setting link you created for Bayu was used on 04 Okt 2026 16.20 WIB. If it was not that person, end the session in Users & Access. | canonical | S2-J02 §8 |
-| `messages.msg_29_owner_tpl` | Tautan atur kata sandi yang Anda buat untuk {v} dipakai pada {w} WIB. Jika bukan orang tersebut yang memakainya, akhiri sesinya di Pengguna & Akses. | The password-setting link you created for {v} was used on {w} WIB. If it was not that person, end the session in Users & Access. | session copy | the pilot's copy |
+| `messages.msg_29_owner` | Tautan atur kata sandi yang Anda buat untuk Bayu dipakai pada 04 Okt 2026 16.20 WIB. Jika bukan orang tersebut yang memakainya, akhiri sesinya di Pengguna & Akses. | The password-setting link you created for Bayu was used on 04 Okt 2026 16.20 WIB. If it was not that person, end the session in Users and access. | canonical | S2-J02 §8 |
+| `messages.msg_29_owner_tpl` | Tautan atur kata sandi yang Anda buat untuk {v} dipakai pada {w} WIB. Jika bukan orang tersebut yang memakainya, akhiri sesinya di Pengguna & Akses. | The password-setting link you created for {v} was used on {w} WIB. If it was not that person, end the session in Users and access. | session copy | the pilot's copy |
 | `messages.msg_35_leave` | Isian yang belum dikirim akan hilang. Tetap tinggalkan halaman? | Unsent input will be lost. Leave the page anyway? | canonical | S2-J04 §8 |
 | `messages.msg_35_logout` | Isian yang belum dikirim akan hilang. Tetap keluar? | Unsent input will be lost. Sign out anyway? | canonical | S2-J01 §8 |
 | `messages.msg_39_invoice` | Terbitkan Invoice? Nomor akan ditetapkan dan tidak dapat diubah. Kekeliruan hanya dapat diperbaiki dengan revisi atau pembatalan dokumen. | Issue the invoice? The number will be assigned and cannot change. A mistake can only be corrected by revising or voiding the document. | canonical | S2-J03 §8 |
@@ -244,6 +244,14 @@ Every key, built by script from its source when this draft was written and check
 | `messages.msg_39_receipt_noreserve_tpl` | Catat barang masuk? {usable} unit layak pakai di {rack}, {damaged} unit rusak diterima, {rejected} unit ditolak. Kekeliruan hanya dapat diperbaiki dengan koreksi penerimaan. | Record the goods received? {usable} unit usable at {rack}, {damaged} unit damaged and accepted, {rejected} unit rejected. A mistake can only be corrected by a receiving correction. | session copy | the pilot's copy |
 | `messages.msg_39_receipt_tpl` | Catat barang masuk? {usable} unit layak pakai di {rack}, {damaged} unit rusak diterima, {rejected} unit ditolak; {reserve} unit direservasi untuk {project}. Kekeliruan hanya dapat diperbaiki dengan koreksi penerimaan. | Record the goods received? {usable} unit usable at {rack}, {damaged} unit damaged and accepted, {rejected} unit rejected; {reserve} unit reserved for {project}. A mistake can only be corrected by a receiving correction. | session copy | the pilot's copy |
 | `messages.no_receivable_yet` | Belum ada piutang aktif dan belum ada kas yang tercatat. | No receivable is active and no cash is recorded yet. | proposed | S2-J03 §8 |
+| `messages.msg_06_defect` | Terjadi kesalahan sistem; tindakan ini belum diproses. Kode rujukan {kode} — laporkan bila terulang. | A system error occurred; this action has not been processed. Reference code {kode} — report it if it happens again. | canonical — FAILED — a defect · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_08_exhausted` | {Jenis} sudah terbit dengan nomor {nomor}. PDF gagal dibuat setelah 5 percobaan; operator sudah diberi tahu. | {Jenis} is issued with number {nomor}. The PDF could not be created after 5 attempts; the operator has been notified. | canonical — A failed rendition, after the fifth attempt · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_14_allocation` | Tindakan ini memerlukan kewenangan alokasi antar-perusahaan. Tidak diproses, dan diteruskan: Owner atau admin yang berwenang akan melihatnya. | This action needs the inter-company allocation authority. It was not processed and has been passed on: the Owner or an authorized admin will see it. | canonical — Routed refusal, without the allocation authority · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_15_no_authority` | Kemungkinan catatan ganda. {daftar catatan yang cocok}. Periksa catatan di atas. Jika ini memang {catatan} yang berbeda, minta admin berwenang atau Owner untuk mencatatnya. | Possible duplicate record. {daftar catatan yang cocok}. Check the records above. If this really is a different {catatan}, ask an authorized admin or the Owner to record it. | canonical — Duplicate warning, without the authority · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_29_used` | Kata sandi akun ini diatur pada {waktu} melalui tautan yang dibuat {penerbit}. | This account's password was set at {waktu} through a link created by {penerbit}. | canonical — Notice after a credential event, link used · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_29_changed` | Kata sandi akun ini diubah pada {waktu}. | This account's password was changed at {waktu}. | canonical — Notice after a credential event, password changed · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_29_not_you` | Jika bukan Anda, segera beri tahu Owner. | If this was not you, tell the Owner at once. | canonical — Notice after a credential event, its closing sentence · en proposed (PC-3) | ADMIN_FLOW §14 |
+| `messages.msg_41_company` | Paparan perusahaan ini pada selisih yang menunggu penetapan Owner: {jumlah} {satuan}. Belum menjadi biaya atau kerugian. | This company's exposure to the discrepancy awaiting the Owner's attribution: {jumlah} {satuan}. Not yet a cost or a loss. | canonical — A pending unattributed quantity, in a company's views · en proposed (PC-3) | ADMIN_FLOW §14 |
 
 ### 6.2 `glossary` — the terms used as labels
 
@@ -352,7 +360,7 @@ Every key, built by script from its source when this draft was written and check
 | `glossary.gl_101` | Tutup Pengiriman | Close delivery | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — Delivery closure |
 | `glossary.gl_102` | Kasus koreksi | Correction case | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — Correction case |
 | `glossary.gl_103` | Penawaran | Penawaran | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-01 |
-| `glossary.gl_104` | Purchase Order (PO) | Purchase Order (PO) | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-02 |
+| `glossary.gl_104` | Purchase Order / PO | Purchase Order / PO | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-02 |
 | `glossary.gl_105` | Surat Jalan / Faktur Pengiriman | Surat Jalan / Faktur Pengiriman | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-03 |
 | `glossary.gl_106` | Nota | Nota | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-04 |
 | `glossary.gl_107` | Kuitansi | Kuitansi | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §3 — DOC-05 |
@@ -523,19 +531,25 @@ Every key, built by script from its source when this draft was written and check
 | `status.export.ready` | Siap Diunduh | Ready to download | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — READY |
 | `status.export.failed` | Gagal | Failed | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — FAILED |
 | `status.export.withheld` | Tidak Tersedia | Not available | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — WITHHELD |
-| `status.import_batch.prepared_dry_run_passed_signed_off_committing_committed_stopped_aborted` | Disiapkan · Uji Coba Lolos · Disetujui Bersama · Sedang Diimpor · Selesai Diimpor · Terhenti · Dibatalkan | Prepared · Dry run passed · Signed off jointly · Importing · Imported · Stopped · Cancelled | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — PREPARED · DRY_RUN_PASSED · SIGNED_OFF · committing · COMMITTED · stopped · ABORTED |
-| `status.account_and_company.active_inactive` | Aktif · Nonaktif | Active · Inactive | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — active · inactive |
+| `status.import_batch.prepared` | Disiapkan | Prepared | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — PREPARED |
+| `status.import_batch.dry_run_passed` | Uji Coba Lolos | Dry run passed | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — DRY_RUN_PASSED |
+| `status.import_batch.signed_off` | Disetujui Bersama | Signed off jointly | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — SIGNED_OFF |
+| `status.import_batch.committing` | Sedang Diimpor | Importing | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — committing |
+| `status.import_batch.committed` | Selesai Diimpor | Imported | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — COMMITTED |
+| `status.import_batch.stopped` | Terhenti | Stopped | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — stopped |
+| `status.import_batch.aborted` | Dibatalkan | Cancelled | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — ABORTED |
+| `status.account_and_company.active` | Aktif | Active | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — active |
+| `status.account_and_company.inactive` | Nonaktif | Inactive | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — inactive |
 | `status.product_stock.below_its_minimum` | Stok Menipis | Low stock | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — below its minimum |
-| `status.part_of_a_project.no_record_yet_records_with_something_still_open_nothing_left_open_not_needed_by_the_project_s_lines` | Belum Dimulai · Berjalan · Tuntas · Tidak Diperlukan | Not started · In progress · Done · Not needed | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — no record yet · records with something still open · nothing left open · not needed by the project's lines |
-| `status.readiness_item.complete_not_complete` | Lengkap · Belum | Complete · Not yet | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — complete · not complete |
-| `status.line_of_a_receiving_or_dispatch_task_on_a_phone.not_yet_recorded_in_this_task_recorded` | Belum Dicatat · Tercatat | Not yet recorded · Recorded | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — not yet recorded in this task · recorded |
+| `status.readiness_item.complete` | Lengkap | Complete | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — complete |
+| `status.readiness_item.not_complete` | Belum | Not yet | canonical · en proposed (PC-3) | DESIGN_SYSTEM §12.1 — not complete |
 | `status.document.issued` | Terbit | Issued | canonical | S2-J03 §8 |
 | `status.invoice.issued_unbilled` | Terbit — Belum Ditagihkan | Issued — not yet billed | recorded | S2-J03 §8 |
 | `status.invoice.unbilled` | Belum Ditagihkan | Not yet billed | canonical | S2-J02 §8 |
-| `status.part.done` | Tuntas | Done | session copy | the pilot's pages |
-| `status.part.in_progress` | Berjalan | In progress | session copy | the pilot's pages |
-| `status.part.not_needed` | Tidak Diperlukan | Not needed | session copy | the pilot's pages |
-| `status.part.not_started` | Belum Dimulai | Not started | session copy | the pilot's pages |
+| `status.part.done` | Tuntas | Done | session copy | the pilot's pages; DESIGN_SYSTEM §12.1 — the part of a project |
+| `status.part.in_progress` | Berjalan | In progress | session copy | the pilot's pages; DESIGN_SYSTEM §12.1 — the part of a project |
+| `status.part.not_needed` | Tidak Diperlukan | Not needed | session copy | the pilot's pages; DESIGN_SYSTEM §12.1 — the part of a project |
+| `status.part.not_started` | Belum Dimulai | Not started | session copy | the pilot's pages; DESIGN_SYSTEM §12.1 — the part of a project |
 | `status.payment.no_proof` | Tanpa Bukti | No proof | canonical | S2-J06 §8 |
 | `status.receivable.disputed` | Sengketa | Disputed | canonical | S2-J02 §8 |
 | `status.receivable.overdue` | Lewat Jatuh Tempo | Overdue | canonical | S2-J02 §8 |
@@ -555,7 +569,7 @@ Every key, built by script from its source when this draft was written and check
 | Key | Indonesian | English | Kind | Source |
 | --- | --- | --- | --- | --- |
 | `documents.doc_01` | Penawaran | Penawaran | canonical — the approved name · en proposed (PC-3) | V1_SCOPE's document catalog |
-| `documents.doc_02` | Purchase Order / PO | PO | canonical — the approved name | V1_SCOPE's document catalog |
+| `documents.doc_02` | Purchase Order / PO | Purchase Order / PO | canonical — the approved name · en proposed (PC-3) | V1_SCOPE's document catalog |
 | `documents.doc_03` | Surat Jalan / Faktur Pengiriman | Surat Jalan / Faktur Pengiriman | canonical — the approved name · en proposed (PC-3) | V1_SCOPE's document catalog |
 | `documents.doc_04` | Nota | Nota | canonical — the approved name · en proposed (PC-3) | V1_SCOPE's document catalog |
 | `documents.doc_05` | Kuitansi | Kuitansi | canonical — the approved name · en proposed (PC-3) | V1_SCOPE's document catalog |
@@ -588,6 +602,7 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_001.password` | Kata sandi | Password | recorded | S2-J01 §8 |
 | `pages.pg_001.show` | Tampilkan | Show | recorded | S2-J01 §8 |
 | `pages.pg_001.submit` | Masuk | Sign in | recorded | S2-J01 §8 |
+| `pages.pg_001.password_saved` | Kata sandi tersimpan. Masuk untuk melanjutkan. | Password saved. Sign in to continue. | proposed · en proposed (PC-3) | ROUTE_CONTRACTS ROUTE-106; NAVIGATION_CONTRACTS NAV-003 |
 | `pages.pg_002.title` | Verifikasi Dua Langkah | Two-step verification | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_002.back` | Kembali | Back | proposed | S2-J01 §8 |
 | `pages.pg_002.code_advice` | Jangan bagikan kode ini kepada siapa pun. | Never share this code with anyone. | session copy | the pilot's pages |
@@ -636,19 +651,19 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_006.row_qs11` | Piutang dalam sengketa | Disputed receivables | proposed | S2-J02 §8 |
 | `pages.pg_006.row_qs14` | Aktivitas baru sejak Anda masuk sebelumnya | New activity since your previous sign-in | proposed | S2-J02 §8 |
 | `pages.pg_006.row_qs16` | Kewajiban tersisa | Remaining obligations | proposed | S2-J02 §8 |
-| `pages.pg_006.row_qs16_meta` | Selesai paksa · 1 reservasi tersisa untuk dilepas | Completed by force · 1 remaining reservation to release | proposed | S2-J02 §8 |
-| `pages.pg_006.row_qs16_meta_tpl` | Selesai paksa · {v} reservasi tersisa untuk dilepas | Completed by force · {v} remaining reservation to release | session copy | the pilot's copy |
+| `pages.pg_006.row_qs16_meta` | Selesai paksa · 1 reservasi tersisa untuk dilepas | Completed (forced) · 1 remaining reservation to release | proposed | S2-J02 §8 |
+| `pages.pg_006.row_qs16_meta_tpl` | Selesai paksa · {v} reservasi tersisa untuk dilepas | Completed (forced) · {v} remaining reservation to release\|Completed (forced) · {v} remaining reservations to release | session copy | the pilot's copy |
 | `pages.pg_006.row_qs20` | Penolakan yang diteruskan | Forwarded refusals | proposed | S2-J02 §8 |
 | `pages.pg_006.row_qs20_meta` | ARJ · Barang keluar menyentuh lot perusahaan lain · 2 hari lalu | ARJ · A dispatch touched another company's lot · 2 days ago | proposed | S2-J02 §8 |
-| `pages.pg_006.row_qs20_meta_tpl` | Barang keluar menyentuh lot perusahaan lain · {v} hari lalu | A dispatch touched another company's lot · {v} days ago | session copy | the pilot's copy |
-| `pages.pg_006.row_qs22` | Selisih Tinta printer hitam menunggu penetapan Owner. | A difference in Tinta printer hitam awaits the Owner's attribution. | proposed | S2-J02 §8 |
-| `pages.pg_006.row_qs22_tpl` | Selisih {v} menunggu penetapan Owner. | A difference in {v} awaits the Owner's attribution. | session copy | the pilot's copy |
+| `pages.pg_006.row_qs20_meta_tpl` | Barang keluar menyentuh lot perusahaan lain · {v} hari lalu | A dispatch touched another company's lot · {v} day ago\|A dispatch touched another company's lot · {v} days ago | session copy | the pilot's copy |
+| `pages.pg_006.row_qs22` | Selisih Tinta printer hitam menunggu penetapan Owner. | A discrepancy in Tinta printer hitam awaits the Owner's attribution. | proposed | S2-J02 §8 |
+| `pages.pg_006.row_qs22_tpl` | Selisih {v} menunggu penetapan Owner. | A discrepancy in {v} awaits the Owner's attribution. | session copy | the pilot's copy |
 | `pages.pg_006.shortage_0088` | Laptop 14 inci kurang 20 unit | Laptop 14 inci short by 20 unit | recorded | S2-J02 §8 |
 | `pages.pg_006.shortage_tpl` | {v} kurang {w} unit | {v} short by {w} unit | session copy | the pilot's copy |
-| `pages.pg_006.view` | Gabungan · ARJ · BTN · CKP — the company codes are data | Consolidated · ARJ · BTN · CKP | canonical · recorded | S2-J02 §8 |
-| `pages.pg_006.view.arj` | ARJ | ARJ | session copy | the pilot's pages |
-| `pages.pg_006.view.btn` | BTN | BTN | session copy | the pilot's pages |
-| `pages.pg_006.view.ckp` | CKP | CKP | session copy | the pilot's pages |
+| `pages.pg_006.view` | Gabungan · ARJ · BTN · CKP | Consolidated · ARJ · BTN · CKP | canonical · recorded — the company codes are data | S2-J02 §8 |
+| `pages.pg_006.view.arj` | ARJ | ARJ | data | the pilot's pages |
+| `pages.pg_006.view.btn` | BTN | BTN | data | the pilot's pages |
+| `pages.pg_006.view.ckp` | CKP | CKP | data | the pilot's pages |
 | `pages.pg_006.view.gabungan` | Gabungan | Consolidated | session copy | the pilot's pages |
 | `pages.pg_006.view_label` | Tampilan | View | proposed | S2-J02 §8 |
 | `pages.pg_007.title` | Pekerjaan | Work | proposed | INFORMATION_ARCHITECTURE §8 |
@@ -667,6 +682,7 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_007.not_received_3` | 3 baris belum diterima | 3 lines not yet received | proposed | S2-J05 §8 |
 | `pages.pg_007.not_received_4` | 4 baris belum diterima | 4 lines not yet received | proposed | S2-J05 §8 |
 | `pages.pg_007.qs06_open` | Buka pengiriman | Open delivery | proposed | S2-J03 §8 |
+| `pages.pg_007.receipt_for_project_tpl` | {v} untuk {w} | {v} for {w} | proposed | S2-J03 §3 — the receipt row, "ARJ/PB/2026/0213 untuk ARJ/PRJ/2026/0152" |
 | `pages.pg_007.row_qs03` | 15 unit diterima menunggu reservasi | 15 unit received, awaiting reservation | proposed | S2-J05 §8 |
 | `pages.pg_007.shortage` | Laptop 14 inci kurang 15 unit | Laptop 14 inci short by 15 unit | recorded · proposed | S2-J03 §8 |
 | `pages.pg_007.sub_delivery` | Catat pengiriman | Record delivery | recorded | S2-J05 §8 |
@@ -675,7 +691,6 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_007.sub_prepare` | Siapkan barang | Prepare goods | recorded | S2-J03 §8 |
 | `pages.pg_007.sub_receive` | Terima barang | Receive goods | recorded | S2-J03 §8 |
 | `pages.pg_007.unmet` | 2 syarat belum terpenuhi | 2 conditions not met | proposed | S2-J03 §8 |
-| `pages.pg_007.untuk` | untuk | for | proposed | S2-J03 §8 |
 | `pages.pg_008.title` | Tinjauan | Review | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_009.title` | Cari | Search | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_065.title` | Akun Saya | My account | proposed | INFORMATION_ARCHITECTURE §8 |
@@ -699,9 +714,9 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_017.classification` | Klasifikasi | Classification | proposed | S2-J04 §8 |
 | `pages.pg_017.line_link` | LPT-14-I5 · untuk item proyek: Laptop 14 inci · 20 unit · Ubah | LPT-14-I5 · for project item: Laptop 14 inci · 20 unit · Change | recorded | S2-J04 §8 |
 | `pages.pg_017.line_link.change` | Ubah | Change | session copy | the pilot's pages |
-| `pages.pg_017.line_link.code` | LPT-14-I5 | LPT-14-I5 | session copy | the pilot's pages |
+| `pages.pg_017.line_link.code` | LPT-14-I5 | LPT-14-I5 | data | the pilot's pages |
 | `pages.pg_017.line_link.for_item` | untuk item proyek: Laptop 14 inci | for project item: Laptop 14 inci | session copy | the pilot's pages |
-| `pages.pg_017.line_link.qty` | 20 unit | 20 unit | session copy | the pilot's pages |
+| `pages.pg_017.line_link.qty` | 20 unit | 20 unit | data | the pilot's pages |
 | `pages.pg_017.line_link_tpl` | untuk item proyek: {v} · {w} unit | for project item: {v} · {w} unit | session copy | the pilot's copy |
 | `pages.pg_017.new_supplier` | Pemasok Baru | New supplier | proposed | S2-J04 §8 |
 | `pages.pg_017.save` | Simpan Pembelian | Save purchase | proposed | S2-J04 §8 |
@@ -714,7 +729,7 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_020.title` | Riwayat Stok | Stock history | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_021.title` | Barang Masuk | Goods receiving | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_022.title` | Terima Barang | Receive goods | proposed | INFORMATION_ARCHITECTURE §8 |
-| `pages.pg_022.damaged` | Rusak diterima | Damaged, accepted | canonical | S2-J05 §8 |
+| `pages.pg_022.damaged` | Rusak diterima | Damaged and accepted | canonical | S2-J05 §8 |
 | `pages.pg_022.delivery_ref` | Nomor surat jalan pemasok | Supplier's delivery reference | proposed | S2-J05 §8 |
 | `pages.pg_022.name` | Terima Barang | Receive goods | session copy | the pilot's pages |
 | `pages.pg_022.not_received_1` | 1 unit belum diterima | 1 unit not yet received | proposed | S2-J05 §8 |
@@ -784,7 +799,7 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_046.method_transfer` | Transfer bank | Bank transfer | proposed | S2-J06 §8 |
 | `pages.pg_046.name` | Catat Pembayaran | Record payment | session copy | the pilot's pages |
 | `pages.pg_046.net_paid` | Klien membayar setelah potongan | The client paid net of deductions | proposed | S2-J06 §8 |
-| `pages.pg_046.no_proof_reason` | Alasan tanpa bukti (wajib) — tercatat di riwayat dan terlihat oleh Owner. | Reason for no proof (required) — kept in the history and visible to the Owner. | proposed | S2-J06 §8 |
+| `pages.pg_046.no_proof_reason` | Alasan tanpa bukti (wajib) — tercatat di riwayat dan terlihat oleh Owner. | Reason for no proof (required) — recorded in the history and visible to the Owner. | proposed | S2-J06 §8 |
 | `pages.pg_046.outstanding` | Sisa piutang | Outstanding | proposed | S2-J06 §8 |
 | `pages.pg_046.proof` | Bukti | Proof | proposed | S2-J06 §8 |
 | `pages.pg_046.record_reason` | Lengkapi data pembayaran. | Complete the payment details. | proposed | S2-J06 §8 |
@@ -809,24 +824,82 @@ Every key, built by script from its source when this draft was written and check
 | `pages.pg_063.title` | Riwayat Aktivitas | Activity history | proposed | INFORMATION_ARCHITECTURE §8 |
 | `pages.pg_064.title` | Log Keamanan | Security log | proposed | INFORMATION_ARCHITECTURE §8 |
 
-### 6.7 Shared groups — forms, totals, files, dialogs, the shell, actions and the composer
+### 6.7 Shared groups — forms, totals, files, dialogs, the shell, actions, the composer, the signals' empty states and a region's states
 
 | Key | Indonesian | English | Kind | Source |
 | --- | --- | --- | --- | --- |
+| `actions.add_follow_up_purchase` | Tambahkan Pembelian Susulan | Add follow-up purchase | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-171 |
+| `actions.apply` | Terapkan | Apply | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-252 |
+| `actions.apply_and_lift_write_off` | Terapkan dan Cabut Penghapusan | Apply and lift write-off | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-248 |
+| `actions.apply_to_invoice` | Terapkan ke Invoice | Apply to invoice | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-252 |
+| `actions.apply_variance` | Terapkan Selisih | Apply variance | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-193 |
+| `actions.attribute_company` | Tetapkan Perusahaan | Attribute to a company | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-198 |
+| `actions.attribute_surplus` | Tetapkan Surplus | Attribute surplus | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-197 |
+| `actions.attribute_with_evidence` | Tetapkan dengan Bukti | Attribute with evidence | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-199 |
 | `actions.back_to_work` | Kembali ke Pekerjaan | Back to Work | recorded | S2-J05 §8 |
 | `actions.bill` | Tagihkan | Bill | proposed · canonical | S2-J03 §8 |
+| `actions.cancel_purchase` | Batalkan Pembelian | Cancel purchase | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-173 |
+| `actions.cancel_remainder` | Batalkan Sisa | Cancel remainder | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-159 |
+| `actions.change_condition` | Ubah Kondisi | Change condition | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-195 |
+| `actions.change_fulfilment` | Ubah Cara Pemenuhan | Change fulfilment mode | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-160 |
+| `actions.change_password` | Ubah Kata Sandi | Change password | proposed · en proposed (PC-3) | ROUTE_CONTRACTS ROUTE-111 |
+| `actions.close_case` | Tutup Kasus | Close case | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-271 |
+| `actions.complete_project` | Selesaikan Proyek | Complete project | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-161 |
+| `actions.confirm_direct_shipment` | Konfirmasi Kirim Langsung | Confirm direct shipment | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-205 |
 | `actions.copy_number` | Salin nomor | Copy number | canonical · recorded | S2-J03 §8 |
+| `actions.correct_delivery_record` | Koreksi Catatan Pengiriman | Correct delivery record | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-204 |
+| `actions.correct_opening_data` | Koreksi Data Awal | Correct opening data | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-213 |
+| `actions.correct_price_tax_charge` | Koreksi Harga, Pajak atau Biaya | Correct price, tax or charge | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-175 |
+| `actions.count_again` | Hitung Ulang | Count again | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-191 |
+| `actions.create_credential_link` | Buat Tautan Atur Kata Sandi | Create password-setting link | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-125 |
+| `actions.create_internal_barcode` | Buat Barcode Internal | Create internal barcode | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-147 |
 | `actions.create_invoice` | Buat Invoice | Create invoice | recorded | S2-J03 §8 |
+| `actions.create_project` | Buat Proyek | Create project | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-151 |
 | `actions.create_purchase` | Buat Pembelian | Create purchase | recorded · proposed | S2-J03 §8 |
+| `actions.create_revision` | Buat Revisi | Create revision | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-156 |
+| `actions.discard_draft` | Buang Draf | Discard draft | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-153 |
 | `actions.download` | Unduh | Download | canonical | S2-J03 §8 |
-| `actions.issue_ntb` | Terbitkan Nota Terima Barang | Issue the goods received note | recorded | S2-J05 §8 |
+| `actions.edit_project` | Ubah proyek | Edit project | proposed · en proposed (PC-3) | ROUTE_CONTRACTS ROUTE-152 |
+| `actions.end_session` | Akhiri Sesi | End session | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-130 |
+| `actions.issue_ntb` | Terbitkan Nota Terima Barang | Issue Nota Terima Barang | recorded | S2-J05 §8 |
 | `actions.issue_po` | Terbitkan PO | Issue PO | canonical | S2-J04 §8 |
+| `actions.issue_prepayment_kuitansi` | Terbitkan Kuitansi untuk Proses Pembayaran | Issue Kuitansi for the payment process | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-249 |
+| `actions.issue_quotation` | Terbitkan Penawaran | Issue Penawaran | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-155 |
+| `actions.issue_surat_jalan` | Terbitkan Surat Jalan | Issue Surat Jalan | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-187 |
+| `actions.lift_dispute` | Cabut Sengketa | Lift dispute | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-246 |
+| `actions.link_kuitansi` | Tautkan Kuitansi | Link Kuitansi | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-250 |
 | `actions.load_more` | Muat Lagi | Load more | canonical | S2-J06 §8 |
+| `actions.make_current_version` | Jadikan Versi Berlaku | Make the current version | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-230 |
+| `actions.mark_disputed` | Tandai Sengketa | Mark disputed | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-246 |
+| `actions.mark_not_applicable` | Tandai Tidak Berlaku | Mark not applicable | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-166 |
 | `actions.more` | Tindakan Lain | More actions | recorded · canonical | S2-J02 §8 |
+| `actions.move_location` | Pindah Lokasi | Move location | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-190 |
 | `actions.open_invoice` | Buka Invoice | Open invoice | proposed · canonical | S2-J03 §8 |
 | `actions.open_project` | Buka Proyek | Open project | recorded · proposed | S2-J03 §8 |
 | `actions.print` | Cetak | Print | canonical | S2-J03 §8 |
+| `actions.print_label` | Cetak Label | Print label | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE_CONTRACTS §4; J-MD-04 |
+| `actions.record_adjustment` | Catat Penyesuaian Stok | Record stock adjustment | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-194 |
+| `actions.record_bank_line` | Catat Mutasi Bank | Record bank statement line | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-261 |
+| `actions.record_cash_disbursement` | Catat Pengeluaran Kas | Record cash disbursement | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-258 |
+| `actions.record_client_answer` | Catat Jawaban Klien | Record the client's answer | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-157 |
+| `actions.record_deduction` | Catat Potongan | Record deduction | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-255 |
+| `actions.record_dispatch` | Catat Barang Keluar | Record goods dispatch | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-186 |
+| `actions.record_expense` | Catat Beban | Record expense | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-257 |
+| `actions.record_loss_in_transit` | Catat Hilang di Perjalanan | Record loss in transit | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-203 |
+| `actions.record_other_cash_in` | Catat Kas Masuk Lain | Record other cash-in | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-259 |
 | `actions.record_payment` | Catat Pembayaran | Record payment | canonical | S2-J06 §8 |
+| `actions.reduce_reservation` | Kurangi Reservasi | Reduce reservation | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-185 |
+| `actions.refund` | Kembalikan Dana | Refund | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-256 |
+| `actions.register_barcode` | Daftarkan Barcode | Register barcode | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-147 |
+| `actions.reinspect` | Periksa Ulang | Re-inspect | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-195 |
+| `actions.release` | Lepas | Release | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-185 |
+| `actions.request_again` | Minta Lagi | Request again | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-283 |
+| `actions.reverse` | Balikkan | Reverse | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-212 |
+| `actions.reverse_attribution` | Balikkan Penetapan | Reverse attribution | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-200 |
+| `actions.reverse_receipt` | Balikkan Penerimaan | Reverse receipt | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-183 |
+| `actions.set_first_number` | Tetapkan Nomor Awal | Set first number | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-137 |
+| `actions.ship_direct` | Kirim langsung ke klien | Ship directly to the client | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-171 |
+| `actions.start_count` | Mulai Hitungan | Start count | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-191 |
 | `actions.start_receiving` | Mulai Terima Barang | Start receiving | recorded | S2-J05 §8 |
 | `actions.view_purchase` | Lihat Pembelian | View purchase | recorded · proposed | S2-J03 §8 |
 | `composer.all_lines` | Semua baris terkonfirmasi | All confirmed lines | proposed | S2-J03 §8 |
@@ -840,6 +913,7 @@ Every key, built by script from its source when this draft was written and check
 | `composer.checks_ok` | 3 pemeriksaan lolos | 3 checks passed | proposed | S2-J03 §8 |
 | `composer.client_block` | Klien dan penagihan | Client and billing | proposed | S2-J03 §8 |
 | `composer.close_full` | Tutup | Close | proposed | S2-J03 §8 |
+| `composer.details` | Rincian | Details | proposed · en proposed (PC-3) | DESIGN_SYSTEM D-DS-23 — the tablet's "Rincian \| Pratinjau" and the phone's first step (DC-11) |
 | `composer.entered` | Diisi sekarang | Filled in now | recorded | S2-J03 §8 |
 | `composer.fit_width` | Pas lebar | Fit width | recorded | S2-J03 §8 |
 | `composer.fit_width.actual` | 100% | 100% | session copy | the pilot's pages |
@@ -856,16 +930,16 @@ Every key, built by script from its source when this draft was written and check
 | `composer.page_next` | Halaman berikutnya | Next page | proposed | S2-J03 §8 |
 | `composer.page_prev` | Halaman sebelumnya | Previous page | proposed | S2-J03 §8 |
 | `composer.preview` | Pratinjau | Preview | proposed | S2-J03 §8 |
-| `composer.preview_label` | Pratinjau Invoice, draf belum terbit | Invoice preview, draft not issued | proposed | S2-J03 §8 |
+| `composer.preview_label` | Pratinjau {jenis}, draf belum terbit | {jenis} preview, draft not issued | proposed | S2-J03 §8; DESIGN_SYSTEM §14.3 — the paper's name for every document type |
 | `composer.sales_value` | Nilai penjualan | Sales value | proposed | S2-J03 §8 |
 | `composer.save_draft` | Simpan Draf | Save draft | recorded | S2-J03 §8 |
 | `composer.scope` | Yang ditagihkan | What is invoiced | proposed | S2-J03 §8 |
 | `composer.source` | Dari proyek ARJ/PRJ/2026/0139 | From project ARJ/PRJ/2026/0139 | proposed | S2-J03 §8 |
 | `composer.summary` | Ringkasan | Summary | proposed | S2-J03 §8 |
-| `composer.summary_estimate` | Ringkasan (perkiraan) | Summary (estimate) | decided | S2-J03 §8 |
+| `composer.summary_estimate` | Ringkasan (perkiraan) | Summary (estimate) | proposed | S2-J03 §8 |
 | `composer.tax` | PPN 11% | PPN 11% | proposed | S2-J03 §8 |
 | `composer.total` | Total invoice | Invoice total | proposed | S2-J03 §8 |
-| `composer.total_estimate` | Total invoice (perkiraan) | Invoice total (estimate) | decided | S2-J03 §8 |
+| `composer.total_estimate` | Total invoice (perkiraan) | Invoice total (estimate) | proposed | S2-J03 §8 |
 | `composer.unit` | Unit | Unit | proposed | S2-J03 §8 |
 | `composer.value_only` | Nilai saja (DP atau termin) | Value only (down payment or instalment) | proposed | S2-J03 §8 |
 | `dialogs.back` | Kembali | Back | canonical | S2-J03 §8 |
@@ -879,6 +953,7 @@ Every key, built by script from its source when this draft was written and check
 | `files.uploaded` | Terunggah | Uploaded | proposed | S2-J04 §8 |
 | `files.uploading` | Mengunggah | Uploading | proposed | S2-J04 §8 |
 | `forms.company` | Perusahaan | Company | canonical | S2-J04 §8 |
+| `forms.intercompany_reason` | Alasan alokasi antar-perusahaan | Reason for inter-company allocation | canonical · en proposed (PC-3) | ADMIN_FLOW — the control's label; ROUTE_CONTRACTS ROUTE-186 |
 | `forms.max_exceeded` | Maksimal 15 unit. | At most 15 unit. | proposed | S2-J05 §8 |
 | `forms.max_exceeded_tpl` | Maksimal {v} unit. | At most {v} unit. | session copy | the pilot's copy |
 | `forms.more_details` | Rincian lain | More details | recorded | S2-J04 §8 |
@@ -886,12 +961,13 @@ Every key, built by script from its source when this draft was written and check
 | `forms.qty_decrease` | Kurangi | Decrease | session copy | the pilot's copy |
 | `forms.qty_increase` | Tambah | Increase | session copy | the pilot's copy |
 | `forms.remove_line` | Hapus baris | Remove line | proposed | S2-J04 §8 |
+| `forms.reservation_cut` | Stok Tidak Cukup untuk Semua Reservasi | Not enough stock for all reservations | canonical · en proposed (PC-3) | ADMIN_FLOW IP-20 |
 | `forms.supplier` | Pemasok | Supplier | canonical | S2-J04 §8 |
 | `journey.all_documents` | Semua dokumen | All documents | recorded | S2-J03 §8 |
 | `journey.blocked` | Terhambat | Blocked | canonical · recorded | S2-J02 §8 |
 | `journey.blocker_overdue` | Piutang BTN/INV/2026/0094 lewat jatuh tempo 4 hari | Receivable BTN/INV/2026/0094 4 days overdue | recorded | S2-J02 §8 |
 | `journey.blockers` | Hambatan | Blockers | recorded | S2-J02 §8 |
-| `journey.cost.direct` | Biaya/HPP | Cost / COGS | recorded | S2-J02 §8 |
+| `journey.cost.direct` | Biaya/HPP | Cost / HPP | recorded | S2-J02 §8 |
 | `journey.cost.margin` | Margin | Margin | proposed | S2-J02 §8 |
 | `journey.cost.profit` | Laba | Profit | recorded | S2-J02 §8 |
 | `journey.cost_profit` | Biaya dan laba | Cost and profit | recorded | S2-J02 §8 |
@@ -919,7 +995,7 @@ Every key, built by script from its source when this draft was written and check
 | `journey.pred.billing` | Penagihan | Billing | recorded | S2-J02 §8 |
 | `journey.pred.delivery` | Pengiriman | Delivery | recorded | S2-J02 §8 |
 | `journey.pred.documents` | Dokumen | Documents | recorded | S2-J02 §8 |
-| `journey.pred.fulfilment` | Pemenuhan | Fulfillment | recorded | S2-J02 §8 |
+| `journey.pred.fulfilment` | Pemenuhan | Fulfilment | recorded | S2-J02 §8 |
 | `journey.pred.payment` | Pembayaran | Payment | recorded | S2-J02 §8 |
 | `journey.pred.receivable` | Piutang | Receivable | recorded | S2-J02 §8 |
 | `journey.pred.returns` | Retur dan koreksi | Returns and corrections | recorded | S2-J02 §8 |
@@ -940,7 +1016,6 @@ Every key, built by script from its source when this draft was written and check
 | `journey.step_of_0139` | (langkah 6 dari 9) | (step 6 of 9) | recorded | S2-J02 §8 |
 | `journey.track` | Tahap proyek | Project stages | recorded | S2-J02 §8 |
 | `journey.waiting_invoice` | Menunggu: invoice terbit | Waiting: invoice issued | recorded | S2-J03 §8 |
-| `pt10.columns` | Produk/Jasa · Jumlah · Satuan · Harga · Pajak · Subtotal Perkiraan | Product/Service · Quantity · Unit · Price · Tax · Subtotal Estimate | canonical | S2-J04 §8 |
 | `pt10.columns.price` | Harga | Price | session copy | the pilot's pages |
 | `pt10.columns.product` | Produk/Jasa | Product/Service | session copy | the pilot's pages |
 | `pt10.columns.quantity` | Jumlah | Quantity | session copy | the pilot's pages |
@@ -979,11 +1054,39 @@ Every key, built by script from its source when this draft was written and check
 | `shell.nav.cari` | Cari | Search | session copy | the pilot's copy |
 | `shell.nav.lainnya` | Lainnya | More | session copy | the pilot's copy |
 | `shell.nav.pekerjaan` | Pekerjaan | Work | session copy | the pilot's pages |
+| `shell.palette.no_results` | Tidak ada hasil untuk “{q}”. | No results for “{q}”. | recorded · proposed | CA-04 item 9 — Golden's own text (§5) |
 | `shell.search` | Cari atau pindai kode | Search or scan a code | session copy | the pilot's copy |
 | `shell.search_kbd` | Ctrl K | Ctrl K | session copy | the pilot's pages |
 | `shell.skip` | Langsung ke konten utama | Skip to main content | session copy | the pilot's pages |
+| `signals.qs_01_empty` | Semua permintaan gudang sudah direservasi. | All warehouse demand is reserved. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-01's empty state |
+| `signals.qs_02_empty` | Tidak ada kekurangan stok. | No stock shortages. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-02's empty state |
+| `signals.qs_03_empty` | Tidak ada barang diterima yang menunggu reservasi. | No received goods awaiting reservation. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-03's empty state |
+| `signals.qs_04_empty` | Tidak ada reservasi yang dikurangi. | No reservations have been cut. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-04's empty state |
+| `signals.qs_05_empty` | Tidak ada sisa pembelian yang menunggu barang. | No purchase remainders awaiting goods. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-05's empty state |
+| `signals.qs_06_empty` | Semua barang yang keluar sudah tercatat terkirim. | All dispatched goods are recorded as delivered. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-06's empty state |
+| `signals.qs_07_empty` | Tidak ada kasus koreksi terbuka. | No open correction cases. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-07's empty state |
+| `signals.qs_08_empty` | Semua PDF sudah tersedia. | All PDFs are available. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-08's empty state |
+| `signals.qs_09_empty` | Tidak ada invoice yang belum ditagihkan. | No invoices that are not yet billed. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-09's empty state |
+| `signals.qs_10_empty` | Tidak ada piutang yang lewat jatuh tempo. | No overdue receivables. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-10's empty state |
+| `signals.qs_11_empty` | Tidak ada piutang dalam sengketa. | No disputed receivables. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-11's empty state |
+| `signals.qs_12_empty` | Tidak ada kredit atau pembayaran yang perlu ditindaklanjuti. | No customer credit or payments that need follow-up. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-12's empty state |
+| `signals.qs_13_empty` | Tidak ada potongan yang menunggu bukti. | No claimed deductions awaiting evidence. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-13's empty state |
+| `signals.qs_14_empty` | Tidak ada aktivitas baru sejak Anda masuk sebelumnya. | No new activity since your previous sign-in. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-14's empty state |
+| `signals.qs_15_empty` | Tidak ada proyek aktif yang terhambat. | No active projects are blocked. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-15's empty state |
+| `signals.qs_16_empty` | Tidak ada kewajiban tersisa. | No remaining obligations. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-16's empty state |
+| `signals.qs_17_empty` | Tidak ada stok di bawah minimum. | No stock below minimum. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-17's empty state |
+| `signals.qs_18_empty` | Tidak ada temuan hitungan yang terbuka. | No open count findings. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-18's empty state |
+| `signals.qs_19_empty` | Tidak ada Kuitansi untuk Proses Pembayaran yang menunggu. | No Kuitansi for the payment process awaiting its payment. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-19's empty state |
+| `signals.qs_20_empty` | Tidak ada penolakan yang diteruskan dalam 14 hari terakhir. | No forwarded refusals in the last 14 days. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-20's empty state |
+| `signals.qs_21_empty` | Tidak ada peringatan duplikat yang dikonfirmasi. | No confirmed duplicate warnings. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-21's empty state |
+| `signals.qs_22_empty` | Tidak ada selisih yang menunggu penetapan. | No discrepancies awaiting attribution. | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-22's empty state |
+| `signals.qs_23_empty` | Tidak ada proyek yang melewati tenggat. | No projects past their deadline. | proposed · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-23's empty state |
+| `signals.qs_24_empty` | Tidak ada barang yang siap dikeluarkan. | No goods ready for dispatch. | proposed · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9.1 — QS-24's empty state |
+| `states.group_reload` | Muat Ulang Bagian Ini | Reload this section | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9; DESIGN_SYSTEM PT-19 |
+| `states.refresh` | Muat Ulang | Reload | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9 — Refresh |
+| `states.updated_at` | Diperbarui {waktu} WIB | Updated {waktu} WIB | canonical · en proposed (PC-3) | INFORMATION_ARCHITECTURE §9 — "Diperbarui 14.05 WIB" |
 | `totals.estimate` | Perkiraan | Estimate | canonical | S2-J04 §8 |
 
 ## 7. Counts
 
-Derived by script (SP-68): **786 keys** — 77 messages (MSG-01–MSG-41 each with its key), 213 glossary keys (GL-001–GL-212 each with its key), 75 state labels, 2 sign-in answers, 16 document keys, 233 page keys and 170 shared keys. **Pages:** 65 of 65 with a title in both languages. **Indonesian:** 786 of 786 written. **English:** 786 of 786 written, 306 of them proposed by run PC-3 (`DIR-079` CB-15); 0 owed. **Missing:** 0 — every key holds both texts. **The review list (§5.1):** 783 keys — 297 with proposed Indonesian, 783 with proposed English —, 3 keys off it.
+Derived by script (SP-68), and again after Stage 4's fixes: **889 keys** — 85 messages (MSG-01–MSG-41 each with its key, with its instances and second forms), 213 glossary keys (GL-001–GL-212 each with its key), 81 state labels, 2 sign-in answers, 16 document keys, 234 page keys and 258 shared keys. **Pages:** 65 of 65 with a title in both languages. **Indonesian:** 889 of 889 written. **English:** 889 of 889 written, 410 of them proposed by run PC-3 — CB-15's renderings of the 306 keys owed at PC-2's end (`DIR-079` CB-15), eleven keys after Stage 4 split five of them by state, and those of the 98 keys Stage 4 added or corrected —; 0 owed. **Missing:** 0 — every key of this inventory holds both texts. The inventory holds the copy of §3.2's first row, the copy recorded in the gate record and the six journeys' copy. Outside it, keyed when P11 writes it, under GAP-037 and [OQ-24](stage2/OWNER_QUESTIONS.md#oq-24--copy-written-after-appr-011): the pattern and accessibility copy of DESIGN_SYSTEM §§9–17 — the outcome and state labels of §§12.2 and 12.3, the scanner's notices (§13.2), the print header and footer (§17) —; the labels ADMIN_FLOW defines beyond its message catalogue and the journeys — the correction entries of §11, the numbering statements of §12, the import actions of §13 and labels such as "Buka Catatan" and "Terapkan Ulang pada Versi Terbaru" —; the fields, column headings and helper lines of the pages beyond the six journeys; and the single labels inside the glossary entries that join several, GL-159 "Tersimpan / Tercatat / Terbit" among them. **The review list (§5.1):** 881 keys — 301 with proposed Indonesian, 881 with proposed English —, 8 keys off it.

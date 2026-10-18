@@ -113,7 +113,7 @@ The Tailwind theme carries the reference's other tokens the same way: `--font-sa
 
 | Pattern | shadcn/ui | Notes |
 | --- | --- | --- |
-| Application shell and navigation | Sidebar collapsible to icons (the rail), Collapsible (*Menu lengkap*), Sheet or Drawer (the phone's *Lainnya*), Dropdown Menu and Avatar (the account), Tooltip | R1's entries (GD-03); the phone bottom bar is custom — no primitive — with the olive current mark (GR-02) |
+| Application shell and navigation | Sidebar collapsible to icons (the rail), Collapsible (*Menu lengkap*), Drawer (the phone's *Lainnya*; GR-11), Dropdown Menu and Avatar (the account), Tooltip | R1's entries (GD-03); the phone bottom bar is custom — no primitive — with the olive current mark (GR-02) |
 | Search and scan | Command in a Dialog; Input, Input Group and Kbd | "Cari atau pindai kode", exact lookup first (D-IA-04; PF-19); the scan dock built in Stage 2 (PT-20) |
 | Buttons | Button — default, outline, ghost, secondary for the sunken button, destructive —, with accent and sign-in variants added; Button Group with Dropdown Menu for the split action | One primary per region |
 | Fields and forms | Field, Label, Input, Input Group, Textarea, Select, Native Select, Combobox, Checkbox, Radio Group, Date Picker (Popover and Calendar), Input OTP | Control edge `#898982`; 16 px text on touch |
@@ -199,7 +199,7 @@ No count-up, no emphasis curve, no chart reveal, no looping, nothing tied to scr
 ## 7. Draft responsive rules
 
 - **Phone, up to 767 px:** a 56 px top bar with the contextual back action and the page title (AGENTS.md rule 12); R1's bottom bar — the Owner's *Beranda* · *Proyek* · *Cari* · *Lainnya*, the Admin's *Pekerjaan* · *Proyek* · *Cari* · *Lainnya*, each entry present only when the account may open it — in the reference's item anatomy, 60 px plus the safe area, the current item with an olive mark; *Lainnya* as the reference's drawer or a full-height sheet (GR-11); one column, sections disclosed by priority; tables as rows; selects, dialogs and drawers as bottom sheets, the palette as a top sheet; one sticky action region above the bottom bar, the bar hidden on a focused scan step whose scan dock and action bar sit at the bottom.
-- **Tablet, 768–1,024 px:** the icon rail, 80 px, with the drawer; tables tighten their cells before becoming rows; multi-line editors as item cards up to 1,023 px.
+- **Tablet, 768–1,024 px:** the icon rail, 80 px, with the drawer; tables tighten their cells before becoming rows; multi-line editors as item cards up to 1,024 px.
 - **Desktop, from 1,025 px:** R1's sidebar — the primary entries and the collapsed *Menu lengkap* —, 264 px at the reference canvas and at least 220 px at runtime, collapsible to the rail with Ctrl B; the top bar with "Cari atau pindai kode", "Buat" and the account menu; the reference's composition from 1,200 px; content no wider than its archetype allows, 1,680 px at most; one density at browser zoom 100 %.
 - **Size follows the input:** a coarse pointer gets targets of at least 44 px at any width, warehouse and field tasks 48 px; text fields are 16 px on touch devices.
 - **Reflow and long text:** pages reflow at 320 px without horizontal page scrolling (WCAG 2.2 1.4.10; GR-05), a data table scrolling only inside its own frame; titles and meta wrap, single-line values truncate with the full text available, record numbers never truncate; codes such as racks and SKUs never break at their hyphens.
