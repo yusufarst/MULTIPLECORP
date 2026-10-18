@@ -160,36 +160,43 @@ Each Owner-level choice of this document, with its options and one recommendatio
 
 - **Options.** (a) An **ephemeral staging stack on the existing VPS**, started by the operator before a release with synthetic data, isolated — its own containers, database, Valkey and storage, resource-capped —, the release rehearsed there, then removed; the operator alone runs it (INF-01). Cost: none. Disk: a transient term of BACKUP_RECOVERY §3 during the release window. (b) A **standing staging stack on the VPS**: always available; a permanent share of RAM and disk beside production; cost none. (c) **A separate paid server for staging**: recorded under COST_POLICY §4C.2, not adopted. In every option CI runs the production-like stack for agents (§3).
 - **Recommendation.** (a): GAP-012's rehearsal and GAP-013's failure drill need a production-like place, and only the release window needs it; it costs nothing and takes no standing share of the shared VPS.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-04.** Option (a): an ephemeral staging stack on the existing VPS, run by the operator, with synthetic data only.
 
 ### P9Q-02 — The deployment tooling on the VPS
 
 - **Options.** (a) **Docker Compose**, run by the operator — ARCHITECTURE §1's accepted baseline; (b) **Coolify**, self-hosted — AICWDF §20's default routing — only if the VPS already runs it, since its control plane takes RAM and disk; (c) services installed directly on the host.
 - **Recommendation.** (a), unless OPI-03 shows the VPS already runs (b): the fewest moving parts on a shared host, and nothing new for the operator to learn if the host already uses it.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-05.** Option (a): Docker Compose — unless OPI-03 records that the VPS already runs Coolify; then (b). **The operator input its rule waits on:** OPI-03, what the VPS already runs (§9); PC-4 records it and applies the rule, no further decision of the Owner being needed unless the rule cannot be met.
 
 ### P9Q-03 — The alert channel
 
 - **Options.** (a) An **existing zero-cost mail channel**, only if the operator confirms one (DEP-08: never assumed); (b) a **zero-cost push channel** to the operator's and the Owner's own phones; (c) the **floor only**: the in-app notice at the Owner's next login and the operator's daily look at the heartbeat; (d) a paid SMS or mail service — COST_POLICY §4C.2, not adopted.
 - **Recommendation.** (b), with (c) always kept as the floor, the Owner's part of it a channel the Owner controls — which also lets GAP-041's accepted risk be reviewed.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-06.** Option (b): a zero-cost push channel to the operator's and the Owner's own phone, with (c) always kept as the floor; the channel is confirmed by OPI-05 and tested by the staging failure drill before go-live (GAP-013); no paid channel. **The operator input its rule waits on:** OPI-05, the zero-cost channel the operator confirms (§9); PC-4 records it and applies the rule, no further decision of the Owner being needed unless the rule cannot be met.
 
 ### P9Q-04 — Error tracking
 
 - **Options.** (a) **The framework's logs with a self-hosted log viewer**; (b) a **self-hosted error tracker** on the VPS — more memory; (c) a free-tier hosted tracker — error data, possibly with S3 or S4 values, leaves the VPS, and free-tier limits apply (COST_POLICY §4C.4).
 - **Recommendation.** (a) for V1; (b) if errors become hard to triage after go-live.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-07.** Option (a): the framework's logs with a self-hosted viewer.
 
 ### P9Q-05 — DNS and an edge proxy
 
 - **Options.** (a) **DNS at the domain's current provider**, TLS on the VPS (§7); (b) a **free edge proxy** in front of the VPS — shielding, at the price of TLS terminating at the edge, the trusted-proxy configuration of WS-11 and a free-tier dependency.
 - **Recommendation.** (a), unless OPI-04 shows the domain already uses (b).
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-08.** Option (a): DNS at the current provider with TLS on the VPS — unless OPI-04 records that the domain is already behind an edge proxy; then (b), with WS-11's trusted-proxy configuration. **The operator input its rule waits on:** OPI-04, the domain's DNS provider and any proxy in front of it (§9); PC-4 records it and applies the rule, no further decision of the Owner being needed unless the rule cannot be met.
 
 ### P9Q-06 — The optional malware scanner
 
 - **Options.** (a) **None in V1** — uploads validated by FL-01–FL-06; (b) a **self-hosted scanner** when the measured memory headroom allows it (H9-05; FL-11).
 - **Recommendation.** decide on OPI-07: (b) if the headroom after production sizing holds the scanner, otherwise (a).
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-09.** Decided by OPI-07's measured figures: (b), a self-hosted scanner, if the memory headroom after production sizing holds it; otherwise (a). FL-01–FL-06 apply either way. **The operator input its rule waits on:** OPI-07, the measured memory on the VPS (§9); PC-4 records it and applies the rule, no further decision of the Owner being needed unless the rule cannot be met.
 
 ### P9Q-07 — Uptime monitoring from outside
 
 - **Options.** (a) a **free external uptime check** — a free-tier dependency recorded under COST_POLICY §4C.4; (b) **no external check** — only the business heartbeat, which cannot report the VPS's own outage.
 - **Recommendation.** (a): only an outside check sees the VPS down.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-10.** Option (a): a free external uptime check.
 
 ## 11. Coverage
 

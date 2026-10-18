@@ -123,21 +123,25 @@ Answered at the latest at OG-2 (SP-67); a paid option is recorded under COST_POL
 
 - **Options.** (a) **7 daily, 4 weekly and 3 monthly** generations, as the starting shape; (b) **14 daily and 4 weekly**; (c) fewer, where the measured disk cannot hold (a). The counts are confirmed against §3's budget in PC-4 either way.
 - **Recommendation.** (a): a week of daily points for mistakes found quickly, and three months for those found at a month's closing, within the budget if the measured terms allow.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-11.** Option (a): 7 daily, 4 weekly and 3 monthly backups, confirmed against §3's disk budget in PC-4; if the budget does not hold it, PC-4 brings a revised retention to OG-3. **The operator input its rule waits on:** OPI-21, the measured disk terms of §3 (§7); PC-4 records it and applies the rule, no further decision of the Owner being needed unless the rule cannot be met.
 
 ### P9Q-11 — The restore drill's cadence
 
 - **Options.** (a) **Monthly for the first three months after go-live, then quarterly**, and after any change to the backup tooling; (b) **quarterly** from the start; (c) twice a year.
 - **Recommendation.** (a): the procedure is proved while it is new, then kept alive.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-12.** Option (a): a restore drill monthly for the first three months, then quarterly.
 
 ### P9Q-12 — Protecting the backup files
 
 - **Options.** (a) **Restricted permissions on the VPS** — owned by the service account, unreadable to others (SX-07) —, the TOTP secrets and recovery codes already ciphertext under `APP_KEY` (AU-21); (b) (a) plus **encrypting each generation** with a key held off the VPS by the Owner and the operator — protecting a copy that leaves the VPS, which DIR-009 does not foresee, at the cost of a key whose loss makes every backup unreadable.
 - **Recommendation.** (a): every backup stays on the VPS, and a separately held key adds a failure that could block a restore.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-13.** Option (a): restricted permissions.
 
 ### P9Q-13 — Who holds backup and restore duty
 
 - **Options.** (a) **The named operator, the Owner as the alternate who can call the operator in**; (b) **two named operators**.
 - **Recommendation.** (a) at V1's size; (b) when a second person can take the duty.
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-14.** Option (a): a named operator with the Owner as the alternate, recorded by role (OPI-01).
 
 ## 9. Coverage
 

@@ -41,7 +41,7 @@ Every phase needs its own explicit Owner authorization, quality gate, approval a
 13. User-facing UI defaults to plain Indonesian with English available; business documents and data stay Indonesian — [V1_SCOPE CAP-14](docs/01-product/V1_SCOPE.md#must-ship).
 14. Additional recurring production cost target 0 outside the client-funded domain and VPS; a paid dependency needs explicit Owner approval — [COST_POLICY](docs/00-governance/COST_POLICY.md).
 15. Direct production database access is forbidden to agents — [PRODUCTION_DATA_SAFETY](docs/00-governance/PRODUCTION_DATA_SAFETY.md).
-16. Reuse the recorded authentication profile — password AICWDF-COMPAT-8 with the blocklist and mandatory TOTP, Google sign-in for existing accounts only — and never redesign it per Task — [EXECUTION_CONTEXT](docs/11-tasks/EXECUTION_CONTEXT.md#auth-profile--decided-security-amendment-pending).
+16. Reuse the recorded authentication profile — password AICWDF-COMPAT-8 with the blocklist and mandatory TOTP, Google sign-in for existing accounts only — and never redesign it per Task — [EXECUTION_CONTEXT](docs/11-tasks/EXECUTION_CONTEXT.md#auth-profile--in-force-under-appr-010).
 17. Do not silently change the stack, architecture, scope, schema or design direction — [CHANGE_CONTROL](docs/00-governance/CHANGE_CONTROL.md#decision-authority).
 18. End every session with the checklist and record changes, evidence, open issues and the next safe action in the repository — [session-end checklist](docs/00-governance/AGENT_OPERATING_MODEL.md#session-end-checklist).
 
