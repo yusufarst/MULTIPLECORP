@@ -1,8 +1,8 @@
 # Infrastructure
 
-Status: REVIEW — Draft of P9, not normative before its approval | Updated: 2026-10-18 | Owner: Planning
+Status: REVIEW — Draft of P9, not normative before its approval | Updated: 2026-10-19 | Owner: Planning
 
-**Draft of P9, not normative before its approval.** Run PC-2 drafted this document on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-67, P9 being authorized by the Owner's [DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-14: drafted in PC-2, completed in PC-4 with the operator's inputs and the Owner's answers, and approved separately at OG-3. Nothing here is installed, configured or connected; no agent connected to the VPS or any production system to write it.
+**Draft of P9, not normative before its approval.** Run PC-2 drafted this document on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-67, P9 being authorized by the Owner's [DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-14: drafted in PC-2, completed in PC-4 with the operator's inputs and the Owner's answers, and approved separately at OG-3. Run PC-4 completed it on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-87, with the operator's inputs the Owner gave in session as the operator and the tabletop exercise of BACKUP_RECOVERY §6; an input that was not available is an obligation of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), never a result. Nothing here is installed, configured or connected; no agent connected to the VPS or any production system to write it.
 
 **Sources.** [AICWDF](../00-governance/AICWDF_ADOPTION.md) §20 and §32; [V1_SCOPE](../01-product/V1_SCOPE.md) DEP-01, DEP-02, DEP-07, DEP-08, DEP-10 and DEP-11; [SECURITY](../05-security/SECURITY.md) §10's H9-01–H9-15 with the P9 items of its rules; [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s19-20-handoff-traceability.md) HO-21–HO-30 and HO-32; [PERFORMANCE](../06-api-performance/PERFORMANCE.md) AS-01, PF-28, PF-39, GT-06, GT-07, §12 and §13; [DATABASE](../04-architecture/DATABASE/README.md) §§19, 22, 27, 28 and 31; [ARCHITECTURE](../04-architecture/ARCHITECTURE.md) §§1, 12, 16, 17 and 20; the gaps whose resolution names P9 ([GAP_REGISTER](../00-governance/GAP_REGISTER.md)); [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md), [COST_POLICY](../00-governance/COST_POLICY.md) and [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md); [PERMISSIONS_MATRIX §13](../05-security/PERMISSIONS_MATRIX.md) hands P9 what SECURITY §10 lists. Every requirement an approved document hands to P9 was found by a scripted search and is mapped in §11; backup and recovery are [BACKUP_RECOVERY](BACKUP_RECOVERY.md)'s.
 
@@ -19,11 +19,13 @@ Authority: P9 — the environments, the topology and processes, configuration an
 | INF-03 | **Every deployment comes from `main`** and is run by the human operator, never by an agent or an automatic trigger from the repository (§5). | AICWDF §32; GAP-012 |
 | INF-04 | **No paid service** is adopted: an option that needs one is recorded under COST_POLICY §4C.2 as an Owner question and never adopted; the existing VPS and free or self-hosted components come first. | COST_POLICY; AICWDF §20 |
 | INF-05 | **No secret enters the repository**, a log, an issue or a document: secrets live in environment configuration outside the repository and the web root, with restricted permissions (§4). | SECURITY SX-01, SX-02 |
-| INF-06 | **Backups stay on the production VPS** — local backup, never offsite —; the exposure to total VPS loss stays an accepted risk, unchanged. | DIR-009; GAP-018 |
+| INF-06 | **Backups stay on the production VPS** — local backup, never offsite —; the exposure to total VPS loss stays an accepted risk, unchanged unless the Owner decides OQ-26 otherwise. | DIR-009; GAP-018; OQ-26 |
+| INF-07 | **Two production applications share the VPS.** The client's VPS runs MULTIPLECORP and a second production application of the client. MULTIPLECORP has its own containers, PostgreSQL instance, Valkey, storage, backups, environment secrets, logs, schedules and deployment project, and shares only the host — its operating system, CPU, memory, disk and network —, the edge proxy that terminates HTTPS for both, the host firewall and the provider account. A deployment, migration, backup, restore drill, restore or rollback of MULTIPLECORP never stops, changes or reads the other application, its data or its secrets, and every capacity figure counts both applications' combined use. | the Owner's conditions in session, 2026-10-19 (§9) |
+| INF-08 | **No provider feature is assumed.** The managed plan's provider-side features — backups or snapshots, firewall, malware scanning, automation and AI assistance — are unverified and nothing here relies on them; none operates MULTIPLECORP's production, which INF-01 and INF-02 reserve to the named human operator. A feature verified later (OPI-29) is evidence for a decision, never a default. | the Owner's conditions in session; INF-01; INF-02 |
 
 ## 2. Topology
 
-AICWDF §20's default topology on the existing VPS of DEP-01 (4 vCPU, 16 GB RAM, 200 GB NVMe, shared by production and its backups — AS-01):
+AICWDF §20's default topology on the existing VPS of DEP-01 — 4 vCPU, 16 GB RAM, 200 GB NVMe and 16 TB bandwidth, the plan's nominal figures, shared by production and its backups (AS-01) and by the client's second production application (INF-07):
 
 ```text
 User's browser
@@ -40,7 +42,8 @@ The existing VPS
 ```
 
 - **Containers.** The application, its workers and scheduler, PostgreSQL, Valkey and Nginx run as containers under Docker Compose, which ARCHITECTURE §1 accepts — or under the tooling the VPS already runs, the operator's input (P9Q-02; OPI-03) —, each service bound to the host's private interface except the proxy's HTTPS port (H9-09).
-- **One instance of each store.** A single PostgreSQL instance is sufficient (DATABASE §27); no connection pooler — sessions end with the request (SZ-03; HO-22) —, so a transaction-pooling proxy is never added without moving the evidence registration keys first (FU-10).
+- **One instance of each store.** A single PostgreSQL instance of MULTIPLECORP's own is sufficient (DATABASE §27) — never one shared with the second application (INF-07) —; no connection pooler — sessions end with the request (SZ-03; HO-22) —, so a transaction-pooling proxy is never added without moving the evidence registration keys first (FU-10).
+- **Shared with a second production application** (INF-07). The edge proxy routes each application's domain to that application's own services; MULTIPLECORP's site configuration is its own file, changed only after a configuration test and applied by a reload that keeps the other application's connections, never by a restart; memory and CPU limits on each of MULTIPLECORP's containers, set from the measured figures (§8), keep one application from starving the other.
 
 ## 3. Environments
 
@@ -51,7 +54,7 @@ The existing VPS
 | Staging | **P9Q-01** — recommended: an ephemeral stack the operator starts on the VPS before a release, isolated from production, removed after | the human operator only, since it runs on the production host (INF-01) | synthetic only, never a copy of production (PRODUCTION_DATA_SAFETY) |
 | Production | the existing VPS (DEP-01) | the human operator only (INF-02) | the business's data |
 
-The branch and environment model is AICWDF §32's as the repository adopts it: work through pull requests and CI into `main`; a release rehearsed in staging; production deployed from `main` by the operator (§5). P10 owns the release, its rehearsal and the cutover.
+The branch and environment model is AICWDF §32's as the repository adopts it: work through pull requests and CI into `main`; a release rehearsed in staging; production deployed from `main` by the operator (§5). P10 owns the release, its rehearsal and the cutover. On the shared VPS staging is resource-capped below the headroom both production applications need and never touches the second one (INF-07); it starts only once the client has given the operator access (OPI-26).
 
 ## 4. Processes, configuration and secrets
 
@@ -77,12 +80,12 @@ The branch and environment model is AICWDF §32's as the repository adopts it: w
 
 - **Storage.** `APP_KEY`, the credentials of DATABASE §28's roles, Valkey's password, the Google client secret and every other secret of SX-01 live in environment configuration outside the repository and the web root, readable only by the service account (SX-01; H9-09); backup files carry restricted permissions (SX-07).
 - **Rotation.** SX-02's schedule and triggers; the key-compromise incident runbook of AU-21 orders the rotation — a new `APP_KEY` and new HMAC keys first, then every other secret of SX-01 the leak may have included unless the inventory shows it could not (H9-14).
-- **Key management** (H9-14): `APP_KEY`'s storage and permissions, the dated key register, the rotation and re-encryption runbook and the key-compromise incident runbook — the maintenance mode on every web process, its flag where every process reads it, before the incident command and lifted only after its closing sweep. The TOTP secrets and recovery codes are encrypted with `APP_KEY`, so a database copy or a backup holds ciphertext only (AU-21; DATABASE §28). The runbooks are written in PC-4 and rehearsed in the tabletop exercise (BACKUP_RECOVERY §6).
+- **Key management** (H9-14): `APP_KEY`'s storage and permissions, the dated key register, the rotation and re-encryption runbook and the key-compromise incident runbook — the maintenance mode on every web process, its flag where every process reads it, before the incident command and lifted only after its closing sweep. The TOTP secrets and recovery codes are encrypted with `APP_KEY`, so a database copy or a backup holds ciphertext only (AU-21; DATABASE §28). The runbooks are §7.1–§7.3, written in PC-4 and rehearsed in its tabletop exercise (BACKUP_RECOVERY §6).
 - **The Google OAuth client** of each environment, created with the Owner under the Owner's own Google Cloud access: the consent screen, the scopes `openid email`, each environment's exact redirect URI, the client secret stored and rotated as SX-01 and SX-02 say, and outbound HTTPS from the VPS to Google and to the breached-password range service with the timeouts of AU-03 and AU-22 (H9-13; DEP-10; DEP-11; GAP-042; GAP-046). Google sign-in — and its button, drawn to Google's guidelines (GR-13) — stays off in an environment until its client exists; the free-tier record of COST_POLICY §4C.4 is confirmed at set-up.
 
 ### 4.4 Database roles
 
-The roles of DATABASE §28, created by P9 (H9-01; ARCHITECTURE §16; GAP-031; C-53):
+The roles of DATABASE §28, created by P9 (H9-01; ARCHITECTURE §16; GAP-031; C-53; the database roles of CAP-01 and CAP-13):
 
 | Role | Reached by | Rule |
 | --- | --- | --- |
@@ -104,7 +107,9 @@ From `main`, run by the human operator, never by an agent (INF-02, INF-03) — t
 7. **Contract later**, in a following release (HO-31).
 8. **Record** the deployed commit and schema version (GAP-012). A failed step stops for the operator's decision: code rollback is not data recovery, and recorded stock or issued documents are never undone by a code rollback (GAP-012; BACKUP_RECOVERY).
 
-The first-Owner installation step writes the audit event of the OWNER assignment with the operator's identity — the host account and the stated name, never a user row —, RG-11's operator rule extended to it under P9's approval (AU-25; GAP-049).
+The first-Owner installation step writes the audit event of the OWNER assignment with the operator's identity — the host account and the stated name, never a user row —, RG-11's operator rule extended to it under P9's approval (AU-25; GAP-049). The Owner, as the operator, runs it (OPI-09).
+
+**On the shared VPS** (INF-07) every step acts on MULTIPLECORP's own project only — its containers, its database through its own connections, its storage, its backup directory and its schedules —; the edge proxy changes only as §2 states; the maintenance mode is MULTIPLECORP's, and the other application keeps serving throughout.
 
 ## 6. Observability
 
@@ -113,7 +118,7 @@ Free and self-hosted components on the VPS, unless P9Q-04 and P9Q-07 decide othe
 - **Logs.** The application's structured logs with request, job and business-action correlation, redacted of secrets and S3/S4 values; log files with restricted permissions; retention within the disk budget (LG-06; H9-08; BACKUP_RECOVERY §3).
 - **The business heartbeat** — the signals an HTTP health check hides (GAP-013): the oldest queued job's age, failed jobs, the scheduler's last successful run, `ReconcileGuards`' and the purges' daily success (HO-25), stale renditions and owed work (GAP-007), database connections, free disk (BK-11) and backup freshness (BK-04).
 - **Monitored and alerted** (HO-25): every deadlock (`40P01` — each one a defect, CONCURRENCY_IDEMPOTENCY §4.4), retries and restarts, lock waits by class, FAILED rates by cause, a FAILED access change, guard-missing alerts and reconciliation differences (GAP-031; C-61), failed jobs, stale renditions and owed work, a day without a successful `ReconcileGuards` or purge run, slow queries — statements slower than 500 ms (SZ-06).
-- **Statement statistics.** `pg_stat_statements` and `auto_explain` in staging and production; the heaviest statements and the table and index sizes reported monthly; crossing half of a threshold opens a measured review, never an automatic change (PERFORMANCE §12 item 6; GT-07).
+- **Statement statistics.** `pg_stat_statements` and `auto_explain` in staging and production; the heaviest statements and the table and index sizes reported monthly; crossing half of a threshold opens a measured review, never an automatic change, P8's sizes at 100x being the first baseline (PERFORMANCE §12 item 6; GT-07; PERFORMANCE_TARGETS PFM-18).
 - **Uptime.** An external check that sees the VPS from outside — the VPS cannot report its own death — at no cost (P9Q-07), with the business heartbeat inside.
 - **Error tracking.** The framework's logs with a self-hosted viewer in V1 (P9Q-04); no error data leaves the VPS without the Owner's decision.
 - **Security monitoring.** LG-07's detection signals — failures for one identifier across addresses, throttling spikes, bursts of ACCESS_DENIED, credential and factor events — delivered to the named operator and the Owner (H9-10), with the alerts AU-03, AU-05, AU-18–AU-21 and AU-23 add (H9-15) and the confirmer an OWNER_RECOVERY_LINK_ISSUED names (LG-07); until P9 confirms a channel the operator does not solely control, the Owner's floor is the in-app notice at the next login, *Beranda*'s security row (INFORMATION_ARCHITECTURE §9; AU-14; TM-57; GAP-033's alerting).
@@ -126,31 +131,79 @@ What SECURITY §10 hands P9 — the H9 items, which PERMISSIONS_MATRIX §13 poin
 - **TLS and the proxy** (H9-02; WS-06): free certificates with automatic renewal, plain HTTP redirected, HSTS introduced in stages — `max-age=300`, then one week, then one year with `includeSubDomains` once every subdomain serves HTTPS —, Nginx's static security headers, version banners off; forwarded-header, trusted-proxy and trusted-host configuration (WS-11); a proxy rate limit on the login endpoint that bounds total concurrency (TM-58; HO-24).
 - **Network.** A host firewall allowing only HTTPS and the operator's own administrative access; PostgreSQL and Valkey bound to the private interface with authentication (H9-09).
 - **Operator-only commands** (H9-03): `GuardMaintenance` under the administration role (TX-08), and, under the runtime role, the Owner-recovery command (AU-14), the re-encryption and key-compromise incident commands of AU-21 and the OWNER-restoration command (AU-25) — each run only by the operator, each audited, never exposed to a web route.
-- **Runbooks owed in PC-4:** the Owner-account recovery (AU-14; H9-07) — identity verification, K3's order, the command, the hand-over and the alert; key management and the key-compromise incident (AU-21; H9-14); the post-incident recovery of AU-25 with the carried cases of GAP-050; each rehearsed in the tabletop exercise (BACKUP_RECOVERY §6; GAP-051). WF-ACC-01's Owner-account recovery is this human procedure.
+- **Runbooks**, written in PC-4 and rehearsed in its tabletop exercise (BACKUP_RECOVERY §6; GAP-051): the Owner-account recovery (§7.1; AU-14; H9-07), the key-compromise incident (§7.2; AU-21; H9-14) and the post-incident recovery of AU-25 with the carried cases of GAP-050 (§7.3). WF-ACC-01's Owner-account recovery is §7.1's human procedure.
 - **Retention and cleanup jobs** (H9-04; HO-27; HO-29), over the framework's own tables DATABASE §4 leaves to P5 and P9: session-store garbage collection — a session row's raw address and user agent go with it —; the credential-token purge; queue and failed-job retention with identifier-only payloads, failed-job retention shorter than `command_log`'s; `command_log`'s purge JB-08 under DATABASE §19's trigger-guarded DELETE (CI-07); the audit events that record a start of numbering kept for as long as the company numbers here (NM-03); export-file cleanup, expired export requests included, and a withheld file removed at once (RV-08; FL-09); an upload never linked to any record removed after the retention window `<UPLOAD_ORPHAN_DAYS>` (DATABASE §19); business audit never deleted by an application role (LG-06).
 - **The undisclosed security events** — a duplicate the uploader may not see, an import collision outside the preparer's scope — written by the post-response step SECURITY LG-02 prefers (UXH-09; HO-38).
 - **Uploads.** The image library's policy — only the allowlisted input coders, no delegates, remote URLs or indirect reads, memory, time and pixel limits (H9-12; FL-03); the optional malware scanner only with confirmed memory headroom (H9-05; FL-11; P9Q-06).
 
+### 7.1 The Owner-account recovery runbook
+
+AU-14 and H9-07, with the tabletop's findings (BACKUP_RECOVERY §6). Run by the operator alone, never by an agent (SX-04).
+
+1. **The last resort.** Outside a key-compromise run, the Owner's own recovery codes come first (AU-20 b) — a code a sustained second-factor cooldown keeps from use counts as not usable (AU-05) —, then another active Owner (AU-20 d); the operator records why neither can serve (K3). After the incident command, recovery follows §7.3.
+2. **Identity in person.** The operator verifies the Owner in person through the private contact record of the Owners, made before go-live and kept outside the application and the VPS, never through contact details the application holds or a session or e-mail that may be compromised (TT-F12); the verification is written into the private incident record before the command runs, since the command cannot check an identity (TT-F13). When the Owner is the operator the record says so, and no independent verification is claimed (TT-F15; P9Q-14).
+3. **The audit trail first.** The account's removals during an open compromise window are checked before any issue, a pending restoration run coming first (H9-07).
+4. **The command**, on the production host, issues an OWNER_RECOVERY link for an active account holding the OWNER role and refuses any other; it never sets, reads or reveals a password or a TOTP secret, and its events record the operator's identity — the host account and the stated name, never a user row.
+5. **The hand-over.** The Owner is present and opens the link on the Owner's own device; the link travels outside the application and is never written into a log, a ticket or the repository.
+6. **The use.** Setting the password clears the TOTP secret and the recovery codes, ends every session, revokes the other unused links and unlinks Google (AU-20 e); the Owner enrols TOTP at once.
+7. **The alert and the record.** OWNER_RECOVERY_LINK_ISSUED alerts the operator and the Owner — the in-app notice at the next login until a channel the operator does not solely control exists (OPI-05) —; the private record holds the time, the account, the reason, the link's issue and use and the result, never the token.
+
+### 7.2 The key-compromise incident runbook
+
+AU-21 and H9-14, with the tabletop's findings (BACKUP_RECOVERY §6).
+
+1. **The alarm.** The operator — the Owner today — is told by the alert channel or finds the sign; the private incident record takes first the detection time (WIB), the incident's type, its source and the environments possibly affected, its status — suspected —, and the evidence, masked, with no key value or credential (TT-F03). The client is told once the incident is confirmed or may affect the service or its data (TT-F02).
+2. **The window's start** (AU-25), set with the Owner at the earliest the evidence allows — the leaked key's creation time in the dated key register when the leak cannot be dated —, recorded once, in the private record and as the incident command's input, never guessed: an unregistered or ambiguous creation time is §7.3's first halt. The register's first entry is written when the installation's key is created, and every later key is entered at its creation (TT-F04).
+3. **The inventory and the scenario.** Host access, network and firewall, credentials, logs and access through the other application on the VPS; a binding to the private interface never proves that there was no write access (TT-F07). Scenario A only when the inventory excludes write access, otherwise Scenario B: the host taken out of service — which stops the second application too, so the client is told and involved without delaying containment (TT-F06; INF-07).
+4. **Rotate before the command** (TT-F09). A new `APP_KEY` and new HMAC keys in the environment, then every other secret of SX-01 the leak may have included — the database role credentials, the Valkey password, the Google client secret, any mail credential —; the leaked key listed among the previous keys only if the ciphertext inventory finds data that must survive.
+5. **The maintenance mode on every process** (TT-F10): without a bypass on every web process of MULTIPLECORP, each confirmed by a forbidden request answered as refused; an unconfirmed process stops the run.
+6. **The command**, AU-21's protocol (a)–(d): the opening sweep, the maintenance mode kept, every account processed — those created during the run included —, the closing sweep; it refuses to start or continue outside the maintenance mode and, on a restart, any other window start.
+7. **Lifted only when safe.** The maintenance mode is lifted after the closing sweep, every step verified and the security and recovery-readiness checks met; a failed step keeps it and stops the run.
+8. **MULTIPLECORP only** (TT-F11): every action applies to MULTIPLECORP's environment; the second application's data and credentials change only under its own incident procedure.
+9. **Then recovery**, §7.3.
+
+### 7.3 The post-incident recovery runbook
+
+AU-25, H9-14 and GAP-050's carried cases, with the tabletop's findings (BACKUP_RECOVERY §6).
+
+1. **The order.** Restoration by the OWNER-restoration command, then recovery through §7.1's command, path (e), then the review; no account is touched before its restoration.
+2. **Restoration.** Each pre-window Owner removed during the window is verified in person (§7.1 step 2) and restored, temporarily; before the review the restored Owners are shown with the account and the actor and time of the removal each reversed; the command refuses a window start other than the recorded one, an account that is not a pre-window Owner and a second restoration of one account in one run (M-46) (TT-F14).
+3. **Recovery.** Each pre-window Owner through §7.1, each with its own audit event and the recorded window start.
+4. **The review.** The recovered pre-window Owners review the accounts, roles, grants, credential links and Google links changed in the window: a removal confirmed as legitimate is made again through the ordinary command, ending its temporary restoration (GAP-048); suspect Google links are unlinked; a confirmed account holding the OWNER role is recovered through path (e) and loses its Google link; an account activated in the window without the OWNER role gets a RESET link; any change the review does not confirm is reversed. A disagreement between the Owners presumes neither right: the disputed change stays unvalidated and the protections stay until it is settled (TT-F17; P9Q-15).
+5. **Scenario B.** A backup or snapshot is used only when independently verified — its integrity, date and source — as predating the compromise; a backup on the compromised host is never presumed clean, and an off-server copy proves nothing by existing (TT-F21; TT-F24; OQ-26). The restored state, on a clean environment, serves no request before the maintenance mode is kept, the keys and secrets are rotated, the incident command has run in full under the new keys and every precondition is verified (TT-F23); pre-window status is read at the backup's time when the backup is older than the window, and the restored Owners are shown with it; MULTIPLECORP's recovery stays isolated from the second application, which is never presumed safe and recovers by its own procedure (TT-F08).
+6. **The halts** (AU-25). No pre-window Owner certain: on a trusted state, Scenario B; on a restored state, the Owner's decision outside the application. No pre-window Owner available: the same — or, if the Owner approves OQ-28, the authorized Owner's decision before any restore (TT-F29). An undatable leak of the installation's key always meets the first halt, since its creation precedes every OWNER assignment (TT-F05; OQ-27). No Owner is created or guessed, and OWNER authority is never given to the operator, the client or anyone not authorized (TT-F16; TT-F25); the decision outside the application covers isolation, evidence, recovery from verifiable sources, a clean rebuild and every data-loss risk, each recorded and approved by its authority (TT-F22).
+7. **A corrected window start** — narrower, earlier or mistyped — is a new run of the incident command with that start and AU-25's recovery again, the earlier run's decisions shown to the recovered Owners; the start's history, its corrections and their reasons stay in the private record outside the application and the VPS, never deleted (TT-F28; GAP-050).
+8. **The end of recovery** is recorded only when every active account holding the OWNER role is a pre-window Owner of the run or has a recovery issue in the run naming a recovered pre-window Owner as its confirmer (AU-14), the review is complete and no security decision is open (TT-F18) — atomically, in one transaction under the OWNER role row's lock, a competing role change taking its place in a deterministic order (TT-F30; GAP-050); a later change is an ordinary Owner act.
+9. **The record.** Every decision, reversal and open matter is in the private incident record with its audit events; nothing secret is in it or in the repository.
+
 ## 8. Capacity and cost
 
-- **Capacity.** The VPS's actual free space, utilization, bandwidth period and workload are measured, never taken from the nominal figures (DEP-01; AS-01; OPI-02); the shared-disk budget, its thresholds and its peaks are BACKUP_RECOVERY §3's, with PERFORMANCE's growth inputs (SZ-08; GT-06) and PF-28's export row bound — 200,000 rows as the starting value — as a disk guard.
-- **Cost.** No new recurring cost: the components here are the VPS's own and free or self-hosted software; the zero-cost services — the Google OAuth client, the authenticator apps, the breached-password range service — are COST_POLICY's inventory with their free-tier records. **Paid-service exception registry:** empty. Every option of §10 that needs a paid service is recorded there under COST_POLICY §4C.2 and not adopted.
+- **Capacity.** The VPS's actual free space, utilization, bandwidth period and workload are measured, never taken from the nominal figures (DEP-01; AS-01; OPI-02); both production applications' combined use counts — the second application's measured CPU, memory, disk and bandwidth (OPI-27) beside MULTIPLECORP's —, and PERFORMANCE's sizing inputs SZ-01–SZ-04 are set from what remains (INF-07); the shared-disk budget, its thresholds and its peaks are BACKUP_RECOVERY §3's, with PERFORMANCE's growth inputs (SZ-08; GT-06) and PF-28's export row bound — 200,000 rows as the starting value — as a disk guard.
+- **Cost.** No new recurring cost: the components here are the VPS's own and free or self-hosted software; the zero-cost services — the Google OAuth client, the authenticator apps, the breached-password range service, and once confirmed the alert channel of OPI-05 and the external uptime check of DIR-079 CB-10 — are COST_POLICY's inventory with their free-tier records. **Paid-service exception registry:** empty. Every option of §10 that needs a paid service is recorded there under COST_POLICY §4C.2 and not adopted.
 
 ## 9. The operator's inputs
 
-What the operator supplies in PC-4, outside the repository where it is sensitive — never assumed here. "Recorded" means written into this document as a fact without a secret; "kept" means held only by the operator.
+What the operator supplies, outside the repository where it is sensitive — never assumed here. "Recorded" means written into this document as a fact without a secret; "kept" means held only by the operator. The Owner answered in session on 2026-10-19 as the operator: each answer is recorded below as given, and each input not available is an obligation of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist) before the step the last column names — staging or go-live —, never a result (SP-87; `DIR-081` OB-10).
 
-| OPI | Input | Where it goes |
-| --- | --- | --- |
-| OPI-01 | The named human operator and an alternate, `<OPERATOR>` (GAP-013) | recorded by role, not by account |
-| OPI-02 | The VPS's measured free disk, current usage, operating system and the bandwidth allowance's period (DEP-01; AS-01) | recorded as figures |
-| OPI-03 | What the VPS already runs — Docker, Docker Compose, Coolify, Nginx, other services — and its firewall tooling (P9Q-02) | recorded |
-| OPI-04 | The domain's DNS provider and whether a proxy fronts it (P9Q-05) | recorded |
-| OPI-05 | A zero-cost alert or mail channel the operator can confirm (H9-06; DEP-08; P9Q-03) | recorded; its credentials kept |
-| OPI-06 | The Owner's Google Cloud access for the OAuth clients (DEP-10; H9-13) | used with the Owner; the secret kept |
-| OPI-07 | Measured PHP worker memory, Argon2id timing and PostgreSQL behaviour on the VPS (SZ-01; H9-11; HO-26) | recorded as figures |
-| OPI-08 | Outbound HTTPS from the VPS to Google and to the breached-password range service (DEP-11; H9-13) | recorded as tested |
-| OPI-09 | The installation step's operator identity — host account and stated name (GAP-049) | recorded in the audit event, not here |
+**The facts given in session.** The VPS is a managed plan of a hosting provider with DEP-01's nominal figures — 4 vCPU, 16 GB RAM, 200 GB NVMe and 16 TB bandwidth —, bought by the client and held in the client's provider account; its runtime state is not verified. The Owner is the primary technical operator. The client has not yet given the operator access to the VPS or to its management panel. The VPS will run two production applications of the client: MULTIPLECORP and a second one (INF-07). The provider's name and the second application's name are kept out of this public repository.
+
+**The Owner's conditions for the shared VPS**, stated in session and applied in this document, BACKUP_RECOVERY and RELEASE_PLAN: (1) the two applications isolated in application, database, storage, environment secrets and deployment (INF-07); (2) capacity computed from their combined use (§8; BACKUP_RECOVERY §3); (3) a backup, restore or rollback of one never damaging the other (§5; BACKUP_RECOVERY BKR-07; RELEASE_PLAN RBK-06); (4) no provider backup, security or configuration feature assumed active without verification (INF-08); (5) every input not available recorded as a pre-staging or pre-go-live obligation, never as a PASS (RELEASE_PLAN §9); (6) no server access, installation or request for a credential now (INF-01).
+
+| OPI | Input | Where it goes | Recorded in PC-4 | Needed before |
+| --- | --- | --- | --- | --- |
+| OPI-01 | The named human operator and an alternate, `<OPERATOR>` (GAP-013) | recorded by role, not by account | **The Owner** is the operator; an alternate is **not yet named** — DIR-079 CB-14's rule, the Owner as the alternate, cannot hold while the Owner is the operator (P9Q-14) | go-live, for the alternate |
+| OPI-02 | The VPS's measured free disk, current usage, operating system and the bandwidth allowance's period (DEP-01; AS-01) | recorded as figures | **Not available** — only the plan's nominal 200 GB NVMe and 16 TB bandwidth are known | staging |
+| OPI-03 | What the VPS already runs — Docker, Docker Compose, Coolify, Nginx, other services — and its firewall tooling (P9Q-02) | recorded | **Not known**, and none assumed installed; DIR-079 CB-05's rule — Docker Compose unless the VPS already runs Coolify — is applied when it is recorded | staging |
+| OPI-04 | The domain's DNS provider and whether a proxy fronts it (P9Q-05) | recorded | **Not available**; DIR-079 CB-08's rule is applied when it is recorded | go-live |
+| OPI-05 | A zero-cost alert or mail channel the operator can confirm (H9-06; DEP-08; P9Q-03) | recorded; its credentials kept | **Not chosen.** Recommended under DIR-079 CB-06: a Telegram bot sending to the operator's own chat — zero cost, a push to the phone, one outbound HTTPS call from the VPS, its token a secret kept as SX-01 says, each message a neutral signal name with no S3 or S4 value —, with the floor of the in-app notice and the daily look kept; the operator confirms it, and the failure drill tests it | go-live |
+| OPI-06 | The Owner's Google Cloud access for the OAuth clients (DEP-10; H9-13) | used with the Owner; the secret kept | **Not confirmed**; until it is, Google sign-in stays off (GAP-042) | go-live, if Google sign-in is to be on |
+| OPI-07 | Measured PHP worker memory, Argon2id timing and PostgreSQL behaviour on the VPS (SZ-01; H9-11; HO-26) | recorded as figures | **Not available**; DIR-079 CB-09's rule is applied to the headroom left after sizing both production applications (INF-07) — until then no scanner is installed and FL-01–FL-06 apply | go-live |
+| OPI-08 | Outbound HTTPS from the VPS to Google and to the breached-password range service (DEP-11; H9-13) | recorded as tested | **Not tested** | go-live |
+| OPI-09 | The installation step's operator identity — host account and stated name (GAP-049) | recorded in the audit event, not here | **The Owner**, as the operator, runs the installation step; the identity is written into its audit event then | go-live |
+| OPI-26 | Access to the VPS — and to the provider's panel where an operation needs it — granted by the client to the operator, never to an agent (INF-01) | recorded as granted, by role | **Not yet given** | staging |
+| OPI-27 | The second production application's measured use of CPU, memory, disk and bandwidth, and its own backup, maintenance and deployment windows (INF-07) | recorded as figures and times | **Not available** | staging |
+| OPI-28 | Who holds the provider account, by role, and whether its sign-in uses a second factor — whoever holds it can reach, snapshot or delete the VPS and its local backups (GAP-018) | recorded by role | **The client** holds it; its second factor not recorded | go-live |
+| OPI-29 | The plan's provider-side features — backups or snapshots, firewall, malware scanning, automation and AI assistance — and whether each is active, verified on the panel (INF-08) | recorded | **Not verified**; none relied on | staging |
 
 ## 10. Owner questions
 
@@ -198,9 +251,21 @@ Each Owner-level choice of this document, with its options and one recommendatio
 - **Recommendation.** (a): only an outside check sees the VPS down.
 - **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-10.** Option (a): a free external uptime check.
 
+### P9Q-14 — An alternate operator while the Owner is the operator
+
+- **Context.** DIR-079 CB-14 made the Owner the alternate of a named operator (BACKUP_RECOVERY P9Q-13). In session the Owner is the operator (OPI-01; OPI-24), so that rule cannot hold, and no one else can take the operator's duty — the alerts, backups, restores and operator-only commands of INF-02 — while the Owner is unavailable (GAP-013). The tabletop exercise found the same for AU-14 (BACKUP_RECOVERY §6, TT-F15): the in-person verification and the Owner's alert have no second, independent person, and the Owner asks for an alternate or a substitute control that fits AU-14.
+- **Options.** (a) **An alternate named before go-live**, preferably someone the client designates, who receives the alerts (OPI-05), puts MULTIPLECORP into maintenance mode when a signal needs it and follows the written runbooks, given host access only while acting; (b) **one operator in V1**, the Owner accepting that operator duty waits for the Owner — recorded as an accepted risk with its review trigger —, the runbooks written so that a replacement can take over; (c) **the provider's support as the fallback** — it can restart or restore the VPS but cannot operate the application, and it acts on the whole VPS, the second application included (INF-07).
+- **Recommendation.** (a): a second person who can at least receive the alerts and take the first steps keeps a failing backup or a stalled queue from going unnoticed for days, at no cost; the operator-only commands stay with whoever holds host access under INF-02.
+
+### P9Q-15 — Who settles a disagreement between recovered pre-window Owners
+
+- **Context.** AU-25 gives the post-incident review to the recovered pre-window Owners, each holding the same OWNER authority. The tabletop exercise found no rule for a disagreement between them (BACKUP_RECOVERY §6, TT-F17), and the Owner asked that none be invented; until it is settled neither Owner is presumed right, the disputed change stays unvalidated and the protections stay (§7.3 step 4).
+- **Options.** (a) **The business's own governance, outside the application**: the client, as the business and the VPS's owner, names in advance who decides between its Owners, and the runbook records that decision before any disputed change is made again; (b) **one Owner named in advance** as the decider of a dispute in a recovery review, recorded in the private Owner contact record — a procedural rule, the application unchanged; (c) **no rule**: the disputed change stays unresolved, with the protections in place, until the Owners agree.
+- **Recommendation.** (a): who decides between the business's Owners belongs to the business's own governance, and naming it in advance keeps a review from stalling; the application and AU-25 stay unchanged.
+
 ## 11. Coverage
 
-Every requirement an approved document hands to P9, found by a scripted search of P0–P7's normative documents for "P9" and joined with SP-67's list, each mapped by script to the sections of this document (INF) and of [BACKUP_RECOVERY](BACKUP_RECOVERY.md) (BKR) that answer it; PC-4 completes the answers and gate OG-3 checks them. **143 requirements, 143 answered, 0 missing.**
+Every requirement an approved document hands to P9, found by a scripted search of P0–P7's normative documents for "P9" and joined with SP-67's list, each mapped by script to the sections of this document (INF) and of [BACKUP_RECOVERY](BACKUP_RECOVERY.md) (BKR) that answer it. Run PC-4 re-ran it on 2026-10-19 over P0–P7 and the drafts of P8 and P10, with the Owner's answers and conditions given in session (§9): 127 units of the search, each named by a row — 4 hits that only name P9's drafts as a searched source are no requirement —, and every row's identifier found in a section it cites. Gate OG-3 checks it. **178 requirements, 178 answered, 0 missing.**
 
 | Source | Requirement | Answered in |
 | --- | --- | --- |
@@ -347,3 +412,38 @@ Every requirement an approved document hands to P9, found by a scripted search o
 | AICWDF_ADOPTION | AICWDF_ADOPTION — the deployment path pending P9 and P10 | INF §5 |
 | PERMISSIONS_MATRIX | PERMISSIONS_MATRIX §13 | INF §7 |
 | REFERENCE_COVERAGE | OWN-06 | BKR §1 |
+| GAP_REGISTER | GAP-046 | INF §4, INF §9 |
+| DATABASE §30 | CAP-01 | INF §4 |
+| DATABASE §30 | CAP-13 | INF §4 |
+| DATABASE §30 | CAP-16 | BKR §1, BKR §2 |
+| PROJECT_CHARTER | PROJECT_CHARTER — P9, infrastructure, observability, backup and recovery | INF §1, BKR §1 |
+| ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — recovery measurements and workloads operationalized with P8 | BKR §5, INF §8 |
+| PERFORMANCE_TARGETS | PFM-18 | INF §6 |
+| PERFORMANCE_TARGETS | PERFORMANCE_TARGETS §5 — the measured figures P9 sizes from | INF §4, INF §8 |
+| SECURITY_TEST_MATRIX | SM-20 — the staging OAuth client | INF §4 |
+| SECURITY_TEST_MATRIX | SM-24 — the installation event's rule | INF §5 |
+| RELEASE_PLAN | RELEASE_PLAN §2 and P10Q-02 — the release model on P9's environments | INF §3, INF §5 |
+| RELEASE_PLAN | RELEASE_PLAN §7 — the tabletop exercise is P9's | BKR §6 |
+| RELEASE_PLAN | RELEASE_PLAN §9 — the operator's inputs OPI-01–OPI-29 as go-live items | INF §9, BKR §7 |
+| RELEASE_PLAN | PRQ-10 — the drill procedures beside P9's backup tooling | BKR §5 |
+| RELEASE_PLAN | PRQ-15 — the recovery runbooks of AU-25 with P9 | INF §7, BKR §6 |
+| Owner in session | The facts of the VPS and its operation, given in session on 2026-10-19 | INF §9 |
+| Owner in session | Condition 1 — the two production applications isolated | INF §1, INF §2, INF §5 |
+| Owner in session | Condition 2 — capacity from both applications' combined use | INF §8, BKR §3 |
+| Owner in session | Condition 3 — a backup, restore or rollback of one application never damages the other | INF §5, BKR §1, BKR §4 |
+| Owner in session | Condition 4 — no provider feature assumed active | INF §1, INF §9 |
+| Owner in session | Condition 5 — inputs not available as pre-staging or pre-go-live obligations, never PASS | INF §9, BKR §7 |
+| Owner in session | Condition 6 — no server access, installation or credential request now | INF §9 |
+| Owner in session | OPI-05 — a simple zero-cost push channel recommended, testable before go-live | INF §9 |
+| Owner in session | OPI-23 — a backup time outside business hours recommended, approved before go-live | BKR §7 |
+| Owner in session | OPI-22 — an off-server backup to be considered (OQ-26) | INF §1, BKR §1 |
+| Owner in session | OPI-01 and OPI-24 — no alternate yet (P9Q-14) | INF §10, BKR §8 |
+| INFRASTRUCTURE §9 | OPI-26 | INF §3, INF §9 |
+| INFRASTRUCTURE §9 | OPI-27 | INF §8, INF §9, BKR §3 |
+| INFRASTRUCTURE §9 | OPI-28 | INF §9 |
+| INFRASTRUCTURE §9 | OPI-29 | INF §1, INF §9 |
+| BACKUP_RECOVERY §6 | The tabletop exercise TT-01–TT-12, held in PC-4 (GAP-051) | BKR §6 |
+| INFRASTRUCTURE §7 | The runbooks owed in PC-4 — AU-14, AU-21 and AU-25 with GAP-050 | INF §7 |
+| Owner in session | P9Q-15 — a disagreement between recovered pre-window Owners | INF §10, BKR §6 |
+| Owner in session | OQ-27 — one APP_KEY rotation after the first Owner, before go-live | INF §7, BKR §6 |
+| Owner in session | OQ-28 — a decision of the Owner before any restore on a trusted state | INF §7, BKR §6 |

@@ -60,7 +60,7 @@ AICWDF §28, applied here:
 
 ## 4. Environments and data
 
-**Environments** are INFRASTRUCTURE §3's: *local*, on the agent's or developer's machine; *CI*, the public repository's pipeline at no cost, with a production-like stack — web, workers, PostgreSQL and the queue store — started fresh for the integration and end-to-end suites; *staging*, the ephemeral stack the operator starts on the VPS before a release, isolated from production and removed after (DIR-079 CB-04), the only place where the VPS's own hardware, TLS and the operator's commands are exercised; *production*, where no test runs. Agents work locally and through CI only; staging is the operator's.
+**Environments** are INFRASTRUCTURE §3's: *local*, on the agent's or developer's machine; *CI*, the public repository's pipeline at no cost, with a production-like stack — web, workers, PostgreSQL and the queue store — started fresh for the integration and end-to-end suites; *staging*, the ephemeral stack the operator starts on the VPS before a release, isolated from production — and from the client's second production application on the same VPS, which no test touches (INFRASTRUCTURE INF-07) — and removed after (DIR-079 CB-04), the only place where the VPS's own hardware, TLS and the operator's commands are exercised; *production*, where no test runs. Agents work locally and through CI only; staging is the operator's.
 
 **Fixture sets.** Built by the test code from fixed seeds, versioned with it, and synthetic: names, tax numbers, bank accounts, telephone numbers and addresses are invented, e-mail addresses use the reserved example domains, and no value is copied from a real document.
 
@@ -560,7 +560,7 @@ Each P8 matter that is the Owner's, with its options and one recommendation; not
 
 ## 19. Coverage
 
-Every requirement P8 receives, each mapped by script to the sections of this document (TST), of [SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md) (STM), of [PERFORMANCE_TARGETS](PERFORMANCE_TARGETS.md) (PFT) and of [DEFINITION_OF_DONE](DEFINITION_OF_DONE.md) (DOD) that answer it: AICWDF §19, §§25–28 and §4B's proof as AICWDF_ADOPTION maps them; the brief's §§40–44, the ownership registry's inputs for P8; SP-85's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P8", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **329 requirements, 329 answered, 0 missing.**
+Every requirement P8 receives, each mapped by script to the sections of this document (TST), of [SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md) (STM), of [PERFORMANCE_TARGETS](PERFORMANCE_TARGETS.md) (PFT) and of [DEFINITION_OF_DONE](DEFINITION_OF_DONE.md) (DOD) that answer it: AICWDF §19, §§25–28 and §4B's proof as AICWDF_ADOPTION maps them; the brief's §§40–44, the ownership registry's inputs for P8; SP-85's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P8", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **334 requirements, 334 answered, 0 missing.**
 
 | Source | Requirement | Answered in |
 | --- | --- | --- |
@@ -893,3 +893,8 @@ Every requirement P8 receives, each mapped by script to the sections of this doc
 | BACKUP_RECOVERY §6 | TT-11 — what stays open for P8 (M-46) | STM §3, TST §6 |
 | INFRASTRUCTURE | INFRASTRUCTURE — it operates what P0–P8 define | TST §4 |
 | INFRASTRUCTURE §3 | INFRASTRUCTURE §3 — the CI stack for P8's integration and E2E suites | TST §4 |
+| BACKUP_RECOVERY §6 | TT-F30 — the end-of-recovery race tested in P8 | STM §3 |
+| BACKUP_RECOVERY §9 | BACKUP_RECOVERY §9 — the recovery measurements and workloads P8 operationalizes with P9 | PFT §3 |
+| INFRASTRUCTURE §6 | INFRASTRUCTURE §6 — the sizes P8 measures at 100x as the first baseline | PFT §3 |
+| INFRASTRUCTURE §11 | INFRASTRUCTURE §11 — the rows P8 shares with P9 | PFT §3, STM §3 |
+| Owner in session | The second production application on the VPS untouched by every test and load run | TST §4, PFT §1 |

@@ -32,7 +32,8 @@ feature/* or hotfix/*
   ↓ pull request, CI (TEST_STRATEGY Layer 1)
 main, protected — required CI, the Owner's approval of the pull request, no force push
   ↓ a release: a tagged commit of main whose CI passed (Layer 2 for its modules)
-STAGING — the ephemeral stack the operator starts on the VPS, synthetic data (DIR-079 CB-04)
+STAGING — the ephemeral stack the operator starts on the shared VPS, resource-capped and never touching the
+  second production application, synthetic data (DIR-079 CB-04; INFRASTRUCTURE INF-07)
   ↓ rehearsal, Layer 3 regression, drills, UAT with the Owner
 the Owner's release approval on the release integrity report
   ↓
@@ -49,7 +50,7 @@ Every release, the first included, follows these steps in order; a failed step s
 | --- | --- | --- | --- |
 | REL-01 | **Ready** | The release's required Tasks DONE (DEFINITION_OF_DONE); CI green on the release commit of `main`; Layer 2's regression passed for every module the release touches | AICWDF §21; TEST_STRATEGY §3 |
 | REL-02 | **Declarations** | DB CHANGE and ADDITIONAL RECURRING COST CHANGE (RL-03); the rollback target — the previous release's commit, its schema version and the pre-deployment backup (§6) | AICWDF §21 |
-| REL-03 | **Staging rehearsal** | The operator starts staging, seeds the synthetic data and deploys the release there by the same steps as production: the migration, the worker restart, an interrupted-migration case and its recovery; job payload versions and a page loaded before the deployment posting a command afterwards (HO-31); the measured duration of each step, for the release window | GAP-012; HO-31; CB-04 |
+| REL-03 | **Staging rehearsal** | The operator starts staging — resource-capped beside both production applications, never touching the second one (INFRASTRUCTURE INF-07) —, seeds the synthetic data and deploys the release there by the same steps as production: the migration, the worker restart, an interrupted-migration case and its recovery; job payload versions and a page loaded before the deployment posting a command afterwards (HO-31); the measured duration of each step, for the release window | GAP-012; HO-31; CB-04 |
 | REL-04 | **Layer 3 regression and drills** | TEST_STRATEGY Layer 3 on staging, the operator running the steps only staging can host; for the first release, and after a change to alerting or backup tooling, the failure drill and the restore drill of §7 | AICWDF §28; GAP-013; CB-12 |
 | REL-05 | **UAT, when required** | §8 with the Owner and the validators; every release that changes what a user does or sees | AICWDF §21 |
 | REL-06 | **The release integrity report** | §11, compiled from the evidence; PASS or FAIL | AICWDF §39 |
@@ -130,13 +131,14 @@ Under the delta option instead, CUT-04's freeze is replaced by a delta batch wit
 | RBK-03 | **Before go-live**, when the reconciliation shows a committed batch wrong in bulk, the Owner may decide on a data recovery to the backup verified before the commit (CUT-05) by BACKUP_RECOVERY §4, the legacy system staying authoritative; the corrected batch is then committed for the first time on the recovered state, so no opening fact is ever imported twice. Otherwise, and always **after go-live**, a wrong opening fact is corrected on its record (CM-33) | CM-33; BACKUP_RECOVERY §4; BKR-05 |
 | RBK-04 | **A failed step stops** the release: the application goes into maintenance mode when writes are at risk; the operator and the Owner choose between fixing forward, a code rollback and a data recovery, and the choice and its reason are recorded | GAP-012; INFRASTRUCTURE §5 step 8 |
 | RBK-05 | **An interrupted migration** is recovered by the procedure its staging rehearsal proved (REL-03) | GAP-012 |
+| RBK-06 | **The second application is never touched**: a deployment, rollback, restore or maintenance mode of MULTIPLECORP acts on its own project, database, storage and backups alone, and the shared edge proxy changes only by its tested reload | INFRASTRUCTURE INF-07, §§2 and 5; BACKUP_RECOVERY BKR-07; the Owner's condition 3 in session |
 
 ## 7. Rehearsal and drills
 
 - **The release rehearsal**, every release, on the ephemeral staging stack the operator starts on the VPS with synthetic data and removes afterwards — the migration, the worker restart, the interrupted-migration case, the mixed-version checks and the steps' durations (REL-03; DIR-079 CB-04; GAP-012).
 - **The import rehearsal** before the cutover (IMP-13).
 - **The failure drill**, on staging before go-live and again after a change to alerting: a stopped worker, a stuck queue, a failed and a stale backup, the disk's warning level, a reconciliation difference and a scheduler that missed its run — each signal reaching the operator and the Owner through the zero-cost push channel the operator confirms (OPI-05), with the floor of the in-app notice and the operator's daily look kept (DIR-079 CB-06; GAP-013; INFRASTRUCTURE §6).
-- **The restore drill**: the first before go-live on the VPS, restoring staging's synthetic data into isolation and timing it against the 4-hour RTO and the 24-hour RPO, with the reconciliation of BACKUP_RECOVERY §4 (GAP-011) — a successful local drill proves no recovery after total VPS or storage loss, which stays accepted under GAP-018 (RISK-001) —; then monthly for the first three months after go-live, then quarterly, and after any change to the backup tooling (DIR-079 CB-12; BK-09; AC-18).
+- **The restore drill**: the first before go-live on the VPS, restoring staging's synthetic data into isolation, never touching the second application (BKR-07), and timing it against the 4-hour RTO and the 24-hour RPO, with the reconciliation of BACKUP_RECOVERY §4 (GAP-011) — a successful local drill proves no recovery after total VPS or storage loss, which stays accepted under GAP-018 (RISK-001) —; then monthly for the first three months after go-live, then quarterly, and after any change to the backup tooling (DIR-079 CB-12; BK-09; AC-18).
 - **The tabletop incident-recovery exercise** is P9's, held with the Owner in run PC-4 (BACKUP_RECOVERY §6; GAP-051); its findings are tracked to their owners and the open ones are go-live items (§9).
 
 ## 8. UAT
@@ -164,7 +166,7 @@ Every item is true, with its evidence, before go-live is recorded (CUT-07); each
 | GLC-02 | Every operator input of INFRASTRUCTURE §9 and BACKUP_RECOVERY §7 recorded and its rule applied — the table below; an input not available in PC-4 stays here until it is | the operator |
 | GLC-03 | The failure drill passed, the alert channel tested end to end (§7; DIR-079 CB-06) | the operator |
 | GLC-04 | The first restore drill passed and recorded (§7; DIR-079 CB-12) | the operator |
-| GLC-05 | The disk budget of BACKUP_RECOVERY §3 checked against the measured terms and the retention of 7 daily, 4 weekly and 3 monthly generations confirmed — a retention the budget cannot hold comes back to the Owner before go-live (DIR-079 CB-11; `DIR-081` OB-10) | the operator; the Owner |
+| GLC-05 | The disk budget of BACKUP_RECOVERY §3 checked against the measured terms — both production applications' combined use included (OPI-27; INFRASTRUCTURE INF-07) — and the retention of 7 daily, 4 weekly and 3 monthly generations confirmed — a retention the budget cannot hold comes back to the Owner before go-live (DIR-079 CB-11; `DIR-081` OB-10) | the operator; the Owner |
 | GLC-06 | Backups scheduled outside business hours, the first verified backup taken, the disk thresholds set and the backup duty named (BK-04; BK-07; BK-11; DIR-079 CB-13, CB-14) | the operator |
 | GLC-07 | The production configuration validated: debug off, secrets present with restricted permissions, TLS and HSTS, the headers of SECURITY_TEST_MATRIX SM-08, the go-live setting unset until CUT-07 | the operator |
 | GLC-08 | Outbound HTTPS from the VPS to Google and to the breached-password range service tested (DEP-11; H9-13) | the operator |
@@ -175,28 +177,37 @@ Every item is true, with its evidence, before go-live is recorded (CUT-07); each
 | GLC-13 | The installation step's audit event recorded with the operator's identity (GAP-049; SM-24) | the operator |
 | GLC-14 | The opening import committed, reconciled and signed; reservations re-created; statistics refreshed (§5; CUT-06) | the Owner; the validators; the operator |
 | GLC-15 | UAT signed by the Owner and the validators, the per-page copy lists reviewed (§8) | the Owner |
-| GLC-16 | The tabletop exercise held with the recovery runbooks of AU-25, its findings assigned and those open for go-live closed (GAP-051; PRQ-15) | Planning; the Owner |
+| GLC-16 | The tabletop exercise held — in PC-4 on 2026-10-19, as a discussion with the runbooks of INFRASTRUCTURE §7.1–§7.3 (BACKUP_RECOVERY §6; GAP-051) —, and its pre-go-live findings closed: the alert channel tested, the private incident record and the private contact record of the Owners in place, the dated key register started at the installation (TT-F01; TT-F03; TT-F04; TT-F12) | the operator; the Owner |
 | GLC-17 | The validators' review time held and the representative document templates validated (GAP-014; DEP-04) | the Owner |
 | GLC-18 | The release integrity report PASS and the Owner's go-live approval (§11) | the Owner |
+| GLC-19 | The isolation of the two production applications shown on staging — MULTIPLECORP's own containers, database instance, storage, secrets, backups and deployment —, and its deployment, backup, restore drill and rollback rehearsed without touching the second application (INFRASTRUCTURE INF-07; BKR-07; RBK-06) | the operator |
+| GLC-20 | OQ-26 — the off-server backup — answered by the Owner, and what it decides in place and drilled | the Owner; the operator |
+| GLC-21 | INFRASTRUCTURE P9Q-14 answered — an alternate operator named, with the alert channel tested on the alternate's phone too, or the single-operator risk accepted by the Owner | the Owner |
+| GLC-22 | The backup time approved by the Owner (OPI-23), and the provider account's second factor confirmed by its holder (OPI-28) | the Owner; the client |
+| GLC-23 | OQ-27 — one `APP_KEY` rotation after the first Owner, before go-live — and OQ-28 — the Owner's decision before any restore — answered by the Owner, and where approved their narrow amendments of SECURITY made under change control (BACKUP_RECOVERY §6, TT-F26 and TT-F29) | the Owner; Planning |
 
-**The operator's inputs and their rules** (GLC-02). Each is recorded by role or as a figure, never as a secret, host name, address, port or account name:
+**The operator's inputs and their rules** (GLC-02). Each is recorded by role or as a figure, never as a secret, host name, address, port or account name. The Owner answered in session on 2026-10-19 as the operator ([INFRASTRUCTURE §9](../09-operations/INFRASTRUCTURE.md#9-the-operators-inputs)); staging — every rehearsal and drill with it — cannot start before the inputs needed before staging are recorded, and go-live waits for all of them:
 
-| Input | What it decides | Status |
-| --- | --- | --- |
-| OPI-01 | the named operator and an alternate (GAP-013; DIR-079 CB-14) | owed — PC-4's P9 session |
-| OPI-02 | the VPS's measured free disk, usage, operating system and bandwidth period | owed — PC-4's P9 session |
-| OPI-03 | Docker Compose, or Coolify if the VPS already runs it (DIR-079 CB-05) | owed — PC-4's P9 session |
-| OPI-04 | DNS at the current provider, or the edge proxy with WS-11's trusted proxy (DIR-079 CB-08) | owed — PC-4's P9 session |
-| OPI-05 | the zero-cost push channel, tested by the failure drill (DIR-079 CB-06) | owed — PC-4's P9 session |
-| OPI-06 | the Owner's Google Cloud access for the OAuth clients (GLC-09) | owed — PC-4's P9 session |
-| OPI-07 | measured worker memory, Argon2id timing and PostgreSQL behaviour, deciding the optional scanner (DIR-079 CB-09) and PFM-12 | owed — PC-4's P9 session |
-| OPI-08 | outbound HTTPS tested (GLC-08) | owed — PC-4's P9 session |
-| OPI-09 | the installation step's operator identity (GLC-13) | owed — PC-4's P9 session |
-| OPI-21 | the measured disk terms, deciding the retention check (DIR-079 CB-11; GLC-05) | owed — PC-4's P9 session |
-| OPI-22 | the backup directory's volume and permissions, by role (DIR-079 CB-13) | owed — PC-4's P9 session |
-| OPI-23 | the backup time, outside business hours | owed — PC-4's P9 session |
-| OPI-24 | backup and restore duty and its alternate (DIR-079 CB-14) | owed — PC-4's P9 session |
-| OPI-25 | the measured durations of a full backup and a restore drill, against the RPO and RTO | owed — PC-4's P9 session |
+| Input, as P9 defines it | What it decides | Recorded in PC-4 | Needed before |
+| --- | --- | --- | --- |
+| OPI-01 | the named operator and an alternate (GAP-013; DIR-079 CB-14) | the Owner is the operator; the alternate not yet named (INFRASTRUCTURE P9Q-14) | go-live |
+| OPI-02 | the VPS's measured free disk, usage, operating system and bandwidth period | not available; only the plan's nominal figures known | staging |
+| OPI-03 | Docker Compose, or Coolify if the VPS already runs it (DIR-079 CB-05) | not known; none assumed installed | staging |
+| OPI-04 | DNS at the current provider, or the edge proxy with WS-11's trusted proxy (DIR-079 CB-08) | not available | go-live |
+| OPI-05 | the zero-cost push channel, tested by the failure drill (DIR-079 CB-06) | not chosen; a Telegram bot to the operator's own chat recommended (INFRASTRUCTURE §9) | go-live |
+| OPI-06 | the Owner's Google Cloud access for the OAuth clients (GLC-09) | not confirmed; Google sign-in stays off until it is | go-live, if Google sign-in is to be on |
+| OPI-07 | measured worker memory, Argon2id timing and PostgreSQL behaviour, deciding the optional scanner (DIR-079 CB-09) and PFM-12 | not available | go-live |
+| OPI-08 | outbound HTTPS tested (GLC-08) | not tested | go-live |
+| OPI-09 | the installation step's operator identity (GLC-13) | the Owner, as the operator, runs the step | go-live |
+| OPI-21 | the measured disk terms, deciding the retention check (DIR-079 CB-11; GLC-05) | not available | staging |
+| OPI-22 | the backup directory's volume and permissions, by role (DIR-079 CB-13) | not determined; MULTIPLECORP's own directory (BKR-07); the off-server question is OQ-26 | staging |
+| OPI-23 | the backup time, outside business hours | not determined; 03:00 WIB recommended, approved before go-live (GLC-22) | go-live |
+| OPI-24 | backup and restore duty and its alternate (DIR-079 CB-14) | the Owner; the alternate not yet named (INFRASTRUCTURE P9Q-14) | go-live |
+| OPI-25 | the measured durations of a full backup and a restore drill, against the RPO and RTO | not measured | go-live |
+| OPI-26 | the client's grant of access to the VPS for the operator | not yet given | staging |
+| OPI-27 | the second production application's measured use and its own windows (INFRASTRUCTURE INF-07) | not available | staging |
+| OPI-28 | the provider account's holder and its second factor (GAP-018) | the client holds it; its second factor not recorded | go-live |
+| OPI-29 | the plan's provider-side features, verified (INFRASTRUCTURE INF-08) | not verified; none relied on | staging |
 
 ## 10. Production-release requirements for P11
 
@@ -218,7 +229,7 @@ Requirements the Tasks of P11 must meet — **not Tasks**: P11 cuts its own, eac
 | PRQ-12 | The verification of the release tooling and of P8's tooling before the first release | TEST_STRATEGY §17; TOOLCHAIN |
 | PRQ-13 | The FEATURE_COVERAGE_MATRIX before the planning freeze, with no unexplained missing mapping | GAP-024; REFERENCE_COVERAGE |
 | PRQ-14 | The release record — commit, schema version, declarations, report, approval and actual effort — and the application's change log | REL-12; GAP-014 |
-| PRQ-15 | The recovery runbooks AU-25 asks of P9 and P10 — the key-compromise incident runbook of H9-14 with Scenario B — as operator documents, exercised by the tabletop exercise before go-live | AU-25; H9-14; GAP-051 |
+| PRQ-15 | The runbooks of INFRASTRUCTURE §7.1–§7.3 — the Owner-account recovery, the key-compromise incident and the post-incident recovery with Scenario B, which AU-25 asks of P9 and P10 — as the operator's working documents, their filled records private, with the tabletop's findings applied | AU-25; H9-14; GAP-051 |
 
 ## 11. The release integrity report
 
@@ -263,7 +274,7 @@ Each P10 matter that is the Owner's, with its options and one recommendation; no
 
 ## 13. Coverage
 
-Every requirement P10 receives, each mapped by script to this document's sections (RLP): AICWDF §21's declarations and requirements, §32's model and §39's report sections; the brief's §§43, 45–47 and 55; SP-86's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P10", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **99 requirements, 99 answered, 0 missing.**
+Every requirement P10 receives, each mapped by script to this document's sections (RLP): AICWDF §21's declarations and requirements, §32's model and §39's report sections; the brief's §§43, 45–47 and 55; SP-86's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P10", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **113 requirements, 113 answered, 0 missing.**
 
 | Source | Requirement | Answered in |
 | --- | --- | --- |
@@ -366,3 +377,17 @@ Every requirement P10 receives, each mapped by script to this document's section
 | INFRASTRUCTURE §4.2 | INFRASTRUCTURE §4.2 — the cutover ordered around the go-live setting | RLP §6 |
 | INFRASTRUCTURE §5 | INFRASTRUCTURE §5 — each release's plan, rehearsal, cutover and rollback | RLP §3, RLP §6 |
 | INFRASTRUCTURE §11 | INFRASTRUCTURE §11 — AICWDF §32 with P10; the deployment path pending P9 and P10 | RLP §2 |
+| BACKUP_RECOVERY §6 | The pre-go-live findings TT-F01, TT-F03, TT-F04 and TT-F12 of the tabletop | RLP §9 |
+| BACKUP_RECOVERY §6 | OQ-27 and OQ-28, answered before go-live (TT-F26; TT-F29) | RLP §9 |
+| INFRASTRUCTURE §7 | The runbooks of INFRASTRUCTURE §7.1–§7.3 as working documents of the operator | RLP §10 |
+| Owner in session | Condition 1 — the two production applications isolated | RLP §6, RLP §9 |
+| Owner in session | Condition 2 — capacity from the combined use of both applications | RLP §9 |
+| Owner in session | Condition 3 — a backup, restore or rollback of one application never damages the other | RLP §6, RLP §7 |
+| Owner in session | Condition 4 — no provider feature assumed active | RLP §9 |
+| Owner in session | Condition 5 — every input not available a pre-staging or pre-go-live obligation, never a PASS | RLP §9 |
+| Owner in session | OQ-26 — an off-server backup against total VPS loss, for the Owner | RLP §9 |
+| Owner in session | P9Q-14 — the alternate operator while the Owner is the operator | RLP §9 |
+| INFRASTRUCTURE §9 | OPI-26 | RLP §9 |
+| INFRASTRUCTURE §9 | OPI-27 | RLP §9 |
+| INFRASTRUCTURE §9 | OPI-28 | RLP §9 |
+| INFRASTRUCTURE §9 | OPI-29 | RLP §9 |

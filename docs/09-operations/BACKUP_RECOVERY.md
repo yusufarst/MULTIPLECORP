@@ -1,8 +1,8 @@
 # Backup and recovery
 
-Status: REVIEW — Draft of P9, not normative before its approval | Updated: 2026-10-18 | Owner: Planning
+Status: REVIEW — Draft of P9, not normative before its approval | Updated: 2026-10-19 | Owner: Planning
 
-**Draft of P9, not normative before its approval.** Run PC-2 drafted this document on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-67 and the Owner's [DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-14: completed in PC-4 with the operator's measurements and the Owner's answers, approved separately at OG-3. Nothing here is installed, scheduled or run; no agent connected to the VPS or any production system to write it.
+**Draft of P9, not normative before its approval.** Run PC-2 drafted this document on 2026-10-18 under [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-67 and the Owner's [DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-14: completed in PC-4 with the operator's measurements and the Owner's answers, approved separately at OG-3. Run PC-4 completed it on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-87, with the operator's inputs the Owner gave in session as the operator and the tabletop exercise of BACKUP_RECOVERY §6; an input that was not available is an obligation of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), never a result. Nothing here is installed, scheduled or run; no agent connected to the VPS or any production system to write it.
 
 **Sources.** [V1_SCOPE](../01-product/V1_SCOPE.md#v1-local-backup-and-p9-handoff-contract)'s local-backup contract — BK-01–BK-12, the 200 GB disk budget and its thresholds — and DEP-01 and DEP-02; [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md) AC-18 and AC-19; DIR-009 and DIR-010; [GAP_REGISTER](../00-governance/GAP_REGISTER.md) GAP-007, GAP-011, GAP-013, GAP-018, GAP-031, GAP-048, GAP-050 and GAP-051; [SECURITY](../05-security/SECURITY.md) AU-21, AU-25, SX-07 and H9-14; [CONCURRENCY_IDEMPOTENCY](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s19-20-handoff-traceability.md) HO-28 and §8; [DATABASE](../04-architecture/DATABASE/README.md) §§22 and 31; [PERFORMANCE](../06-api-performance/PERFORMANCE.md) GT-06 and SZ-08; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md)'s owed procedures; REFERENCE_COVERAGE OWN-06. The rest of P9 is [INFRASTRUCTURE](INFRASTRUCTURE.md), whose §11 maps every P9 requirement.
 
@@ -12,7 +12,7 @@ Authority: P9 — backup, restore, restore testing, the shared-disk budget and t
 
 ## 1. The decision and its limits
 
-- **Local only (DIR-009).** Every V1 backup is stored on the existing production VPS: local backup, never offsite; no external storage, second server or paid service. An external destination needs a later explicit Owner change (DIR-010), which this document does not ask for.
+- **Local only (DIR-009).** Every V1 backup is stored on the existing production VPS: local backup, never offsite; no external storage, second server or paid service. An external destination needs a later explicit Owner change (DIR-010), which this document does not ask for. In session on 2026-10-19 the Owner asked that an off-server backup against total VPS loss be considered; it would change DIR-009 and V1_SCOPE's local-backup contract, so it is Owner question OQ-26 with its gap, and nothing here changes before the Owner decides it.
 - **What local backup can do.** Recover from accidental data changes, application failure, a failed deployment, selected database corruption and accidental deletion, **when an intact suitable backup and a recoverable VPS remain**. It cannot protect against total VPS loss, total disk failure, deletion of the VPS, provider-level loss, an account compromise that destroys production and backups, or a storage failure of the whole VPS: that exposure stays **accepted** under GAP-018 (RISK-001), unchanged, and is never claimed mitigated.
 - **The backup obligation of REFERENCE_COVERAGE OWN-06** — CAP-16 with BK-01–BK-12 — is this document.
 - **Targets.** RPO ≤ 24 hours and RTO ≤ 4 hours are operational targets for that recoverable-VPS scenario, measured in drills (§5); a successful local drill does not demonstrate recovery after host or storage loss (AC-18).
@@ -25,6 +25,7 @@ Authority: P9 — backup, restore, restore testing, the shared-disk budget and t
 | BKR-04 | Cleanup deletes only expired generations, after the newer ones verified, never live data and never the last verified recovery points the retention keeps; a failed backup deletes nothing. | BK-05; BK-12 |
 | BKR-05 | A restore never runs over live writes and never as the migration/owner role without the guard verification afterwards; the application reopens only after `ReconcileGuards` reports no difference or the operator decides the differences. | BK-08; HO-28; GAP-031; DATABASE §28 |
 | BKR-06 | Backups are operated by the named human operator only; no agent ever holds a backup file or access to one. | INFRASTRUCTURE INF-01, INF-02; PRODUCTION_DATA_SAFETY |
+| BKR-07 | **One application's backups are its own.** MULTIPLECORP's dumps, files and manifests live in its own directory, readable only by its own service account and never mixed with the second application's; a backup, restore drill or restore of MULTIPLECORP reads and writes only MULTIPLECORP's database, files and backup directory, and its schedule never overlaps the other application's backup or maintenance window (OPI-27). | INFRASTRUCTURE INF-07; DIR-079 CB-13; the Owner's conditions in session |
 
 ## 2. The twelve obligations
 
@@ -45,11 +46,12 @@ Authority: P9 — backup, restore, restore testing, the shared-disk budget and t
 
 ## 3. The shared-disk budget
 
-The 200 GB nominal disk of DEP-01 holds production and its backups; nominal capacity is not free space. P9 budgets it from **measured** figures (OPI-21), never from the nominal size, and sets every number below in PC-4.
+The 200 GB nominal disk of DEP-01 holds production and its backups — and the client's second production application with its own (INFRASTRUCTURE INF-07); nominal capacity is not free space. P9 budgets it from **measured** figures (OPI-21; OPI-27), never from the nominal size. In PC-4 none was available (§7): every number below is set once measured, the check being RELEASE_PLAN's pre-go-live item GLC-05, and a retention the budget cannot hold comes back to the Owner before go-live (DIR-079 CB-11; `DIR-081` OB-10).
 
 | Term | What it holds | Input |
 | --- | --- | --- |
-| U₀ | the operating system and everything else already on the VPS | measured (OPI-21) |
+| U₀ | the operating system and everything else on the VPS outside K | measured (OPI-21) |
+| K | the client's second production application — its data, files, logs, containers and backups, with their growth (INFRASTRUCTURE INF-07) | measured (OPI-27) |
 | DB | PostgreSQL's data with its indexes and WAL | measured, grown by PERFORMANCE's GT-04–GT-05 (SZ-08) |
 | F | uploaded evidence, identity assets, product images and renditions | measured, grown by GT-06 |
 | L | logs and audit files within LG-06's retention (H9-08) | measured |
@@ -60,17 +62,17 @@ The 200 GB nominal disk of DEP-01 holds production and its backups; nominal capa
 | P | the peak during a backup — one generation being written beside the retained ones — or during a restore drill — a restored copy beside production | computed |
 | H | reserved free headroom | set by P9 |
 
-- **The budget holds** when U₀ + DB + F + L + X + D + B + max(S, P) + H stays within the measured capacity, with the growth of one year projected; the projection is redone monthly with GT-07's report.
+- **The budget holds** when U₀ + K + DB + F + L + X + D + B + max(S, P) + H stays within the measured capacity, with the growth of one year projected; the projection is redone monthly with GT-07's report.
 - **Thresholds.** A warning at `<DISK_WARN_PCT>` and a critical level at `<DISK_CRIT_PCT>` of used space, each derived from the terms above so that a backup and a restore drill still fit at the warning level (BK-11).
-- **Disk pressure.** At the warning level the operator is alerted and the capacity response starts: shorten the transient terms first — exports, temporary files, staging —, then review retention with the Owner. At the critical level no new backup generation starts unless the space for it and the retained verified generations is there; the skipped run is logged and alerted, never reported successful; nothing required is deleted to make room (BKR-02, BKR-04; V1_SCOPE).
+- **Disk pressure.** At the warning level the operator is alerted and the capacity response starts: shorten the transient terms first — exports, temporary files, staging —, then review retention with the Owner. At the critical level no new backup generation starts unless the space for it and the retained verified generations is there; the skipped run is logged and alerted, never reported successful; nothing required is deleted to make room (BKR-02, BKR-04; V1_SCOPE); MULTIPLECORP's cleanup never deletes a file of the second application, whose own response is its operator's (BKR-07).
 
 ## 4. The restore procedure
 
 Run by the operator alone, from the recovery point chosen with the Owner; never over live writes (BK-08; BKR-05; GAP-011).
 
-1. **Stop writes.** The application in maintenance mode; queue workers and the scheduler stopped.
+1. **Stop writes.** MULTIPLECORP in maintenance mode; its queue workers and scheduler stopped; the second application keeps running, untouched (BKR-07).
 2. **Choose and verify** the recovery point: its manifest's checksums verify (BK-07); a corrupt or missing generation sends the procedure to the next older verified one.
-3. **Restore into isolation.** The dump into a new database and the files into a new directory, never over the live ones; the operator keeps the live state until the restore is accepted.
+3. **Restore into isolation.** The dump into a new database of MULTIPLECORP's own PostgreSQL instance and the files into a new directory of its own storage, never over the live ones and never into the second application's; the operator keeps the live state until the restore is accepted.
 4. **Reconcile.** Every `file_objects` row has its bytes and every byte file its row; issued documents with their renditions — a missing rendition is rendered again from the issued snapshot, never re-issued or renumbered (GAP-007); the critical records the operator and the Owner check — the latest payments, receipts and issued numbers — against the business's own papers.
 5. **Verify the guards.** `ReconcileGuards` before reopening; a difference is reported to the operator and the Owner and never repaired silently (HO-28; GAP-031; CONCURRENCY_IDEMPOTENCY §8).
 6. **Resume safely.** Owed work restarts through its durable rows and sweeps (JB-02; JB-09), not from Valkey; the scheduler and the workers restart (GAP-011).
@@ -80,7 +82,7 @@ A restore after a key compromise is not this procedure alone: it is AU-25's Scen
 
 ## 5. Restore testing
 
-- **Drills** at the cadence of P9Q-11, on the VPS outside business hours, with the transient space of §3's P term: the restore of §4 into isolation, the elapsed time measured against the 4-hour RTO and the recovery point's age against the 24-hour RPO, the reconciliation done, the result recorded — usable or not (BK-09; AC-18).
+- **Drills** at the cadence of P9Q-11, on the VPS outside both applications' business hours, planned around the second application's windows and load (OPI-27) and never touching it (BKR-07), with the transient space of §3's P term: the restore of §4 into isolation, the elapsed time measured against the 4-hour RTO and the recovery point's age against the 24-hour RPO, the reconciliation done, the result recorded — usable or not (BK-09; AC-18).
 - **Cases** (AC-18; AC-19): an intact backup; a corrupt generation; a missing generation; an incomplete run; a disk-pressure run; a failed cleanup — each with its expected truthful status.
 - **Record.** Each drill's date, recovery point, elapsed time, result and follow-ups, kept by the operator; a summary without secrets enters P9's evidence for OG-3.
 
@@ -105,15 +107,71 @@ The script for the exercise DIR-051 F4 requires (GAP-051), to run **with the Own
 | TT-11 | **GAP-050's variations**: a window start later found to be wrong; a halt on a trusted state; the end of recovery and a late role change | what does the runbook say, and what stays open for P8 (M-46)? | each answered or recorded as open |
 | TT-12 | **The end of recovery** — every active Owner a pre-window Owner of the run or confirmed by one — and the record | is the end recorded only then, and the exercise's findings assigned? | findings with owners; GAP-051's result recorded |
 
+### The exercise held in PC-4
+
+Held on 2026-10-19 in session with the Owner, who is also the operator, Planning the scribe (SP-87; `DIR-081` OB-10) — a discussion only: no system was touched, nothing was run, and it is no recovery test. TT-05–TT-07 and TT-09 were walked on stated variations — a dated leak, two fictional pre-window Owners, a verified off-server backup — so that each step could be answered. Every answer is recorded as given, by role; the names of the provider and of the second application are kept out of the repository. The runbooks it rehearsed are [INFRASTRUCTURE §7.1–§7.3](INFRASTRUCTURE.md#7-security-operations), which now carry its findings. **Result:** GAP-051's exercise is held, within the scope of a tabletop discussion; GAP-048's accepted risk was walked (TT-05; TT-07) and stays unchanged; five questions go to the Owner at OG-3 — OQ-26, OQ-27 and OQ-28, which would change P0–P7, and INFRASTRUCTURE's P9Q-14 and P9Q-15.
+
+| TT | The Owner's answer, by role | Against the expected |
+| --- | --- | --- |
+| TT-01 | The Owner, as the operator, receives the alarm and leads. The planned channel — a personal Telegram bot — is not yet set up, so the alarm is handled and recorded manually; the client is told once the incident is confirmed or may affect the service or its data. Written first: the detection time (WIB), the type, the source and the environments possibly affected, the status — suspected —, the evidence masked with no key value | met; the channel owed (TT-F01) |
+| TT-02 | The start at the earliest the evidence allows — with an earlier leak not excluded, the key's creation time in the register —, recorded once in the private record and as the command's input; every later step refuses another value; an unregistered or ambiguous creation time never guessed, the first halt | met |
+| TT-03 | Write access judged from host access, network, firewall, credentials, logs and access through the other application, a private-interface binding proving nothing: **Scenario B**, since the store credentials leaked too. The host untrusted and taken out of service; the client told that the second application stops too and involved without delaying containment; recovery only from a verified backup older than the window's start, on a trusted environment; both applications kept isolated, the second never presumed safe | met |
+| TT-04 | The maintenance mode on every process, confirmed by a refused forbidden request; the opening sweep; `APP_KEY`, the HMAC keys, the database and Valkey credentials and every affected secret rotated; no old key kept unless ciphertext needs it; the closing sweep; the mode lifted only after verification, kept on any failure; MULTIPLECORP's environment only | met; the rotation placed after the opening sweep (TT-F09) |
+| TT-05 | On a stated variation — a dated leak, two fictional pre-window Owners —: Owner-2 verified directly through a trusted contact known before the compromise; the restored Owners shown with the account and the actor and time of the removal; the refusals expected — another window start, an account that is not a pre-window Owner, a second restoration (M-46), a missing verification —; the restoration temporary, the removal decided at TT-07 | met |
+| TT-06 | The order restoration → recovery → review; Owner-2 through path (e) with a private hand-over; Owner-1 — the Owner and operator — through the official command outside the application, no token recorded and no independent verification claimed. AU-14, read for the Owner's condition, neither forbids an operator's recovery of its own Owner account nor requires a separate verifier | met (TT-F15) |
+| TT-07 | The window's changes reviewed; a removal confirmed as legitimate made again through the ordinary command, ending the temporary restoration; in a disagreement neither Owner presumed right and no new authority invented — unresolved for OG-3, the protections kept —; unconfirmed changes reversed; the review not complete while a security decision is open | met; no deciding rule (TT-F17) |
+| TT-08 | No backup independently verified as older than the compromise, the local backups untrusted: the in-application path stops, and the Owner decides outside the application with the client — isolation, evidence, verifiable sources, a clean rebuild considered, every risk recorded and approved —, the second application separately. On OQ-26 the Owner supports an isolated, encrypted, restore-tested off-server backup as a pre-go-live obligation, its details at OG-3 | met |
+| TT-09 | On a stated variation — a verified off-server backup of day X−1 —: used only after its integrity, date and source are verified; before the first request the maintenance mode, the new keys and the rotation, the incident command in full and the verification; pre-window status read at the backup's time and the restored Owners shown with it; isolation from the second application | met |
+| TT-10 | Both halts where AU-25 sends them; no Owner created or guessed; no OWNER authority to the operator, the client or anyone not authorized; OQ-27 recorded with the Owner's recommendation | met |
+| TT-11 | (a) a corrected start as a new run — agreed; (b) the Owner's decision before any restore — option (ii), recorded as OQ-28; (c) the end recorded atomically — agreed | each answered |
+| TT-12 | The end of recovery only when its conditions hold — the OWNER accounts verified, the review complete, no decision open, AU-14's and AU-25's actions recorded, the end atomic —; the findings' owners approved, which neither approves the OG-3 questions nor marks any pre-go-live obligation passed | met |
+
+**The findings and their owners**, approved by the Owner at TT-12 — an assignment, which neither approves an OG-3 question nor marks a pre-go-live obligation passed:
+
+| Finding | What it records | Owner | Where it lands |
+| --- | --- | --- | --- |
+| TT-F01 | The alert channel not yet configured or tested; the alarm manual until it is | the operator | RELEASE_PLAN GLC-03; OPI-05 |
+| TT-F02 | The client told once an incident is confirmed or may affect the service or its data | Planning; the Owner | INFRASTRUCTURE §7.2 step 1 |
+| TT-F03 | The incident record private, outside the repository, its evidence masked | the operator | §7.2 step 1 |
+| TT-F04 | The dated key register started when the installation's key is created | the operator | §7.2 step 2; GLC-16 |
+| TT-F05 | An undatable leak of the installation's key always halts the in-application path | Planning | §7.3 step 6; OQ-27 |
+| TT-F06 | Scenario B stops both applications; the runbooks and the recovery plans cover both | Planning; the Owner | §7.2 step 3; RELEASE_PLAN RBK-06 |
+| TT-F07 | The inventory's scope; a private-interface binding proves nothing | the operator | §7.2 step 3 |
+| TT-F08 | The second application never presumed safe; its recovery its own | the client | §7.3 step 5 |
+| TT-F09 | Every key and affected secret rotated before the incident command | Planning | §7.2 step 4 |
+| TT-F10 | The maintenance mode confirmed on every process by a refused request | the operator | §7.2 step 5 |
+| TT-F11 | The incident actions on MULTIPLECORP only | the client | §7.2 step 8 |
+| TT-F12 | A private contact record of the Owners, made before go-live, as the trusted channel | the operator | §7.1 step 2; GLC-16 |
+| TT-F13 | The in-person verification recorded as a precondition before the command | Planning; the operator | §7.1 step 2 |
+| TT-F14 | The restoration temporary; the removal's legitimacy decided by the review | the recovered pre-window Owners | §7.3 step 2 |
+| TT-F15 | No second, independent person while the Owner is the operator | the Owner | INFRASTRUCTURE P9Q-14 |
+| TT-F16 | The client confirms operationally but is not by that an operator or a link recipient | the Owner | §7.3 step 6 |
+| TT-F17 | No deciding rule for a disagreement between recovered pre-window Owners | the Owner | INFRASTRUCTURE P9Q-15 |
+| TT-F18 | The review and the end of recovery wait for every open security decision | the recovered pre-window Owners | §7.3 step 8 |
+| TT-F19 | No backup can serve Scenario B today | the Owner | OQ-26 |
+| TT-F20 | The Owner's direction: an isolated, encrypted, restore-tested off-server backup before go-live | the Owner, at OG-3 | OQ-26; RELEASE_PLAN GLC-20 |
+| TT-F21 | An off-server copy serves only when verified to predate the compromise | Planning; the operator | §7.3 step 5 |
+| TT-F22 | The decision outside the application and what it covers | the Owner with the client | §7.3 step 6 |
+| TT-F23 | The restored state's opening checklist | Planning; the operator | §7.3 step 5 |
+| TT-F24 | An off-server backup verified independently before use | the operator | §7.3 step 5 |
+| TT-F25 | The halts where AU-25 sends them; no Owner created or guessed | the Owner | §7.3 step 6 |
+| TT-F26 | One `APP_KEY` rotation after the first Owner, before go-live | the Owner, at OG-3 | OQ-27; RELEASE_PLAN GLC-23 |
+| TT-F27 | With one Owner, halt (2) waits on that person; a second Owner account is the business's decision | the Owner with the client | — |
+| TT-F28 | A corrected window start as a new run; the start's history kept | Planning; the operator | §7.3 step 7 |
+| TT-F29 | The authorized decision before any restore on a trusted state | the Owner, at OG-3 | OQ-28; RELEASE_PLAN GLC-23 |
+| TT-F30 | The end of recovery atomic under the OWNER role row; the race tested in P8 | P8 and P11 | §7.3 step 8; SECURITY_TEST_MATRIX SM-21 |
+
 ## 7. The operator's inputs
 
-| OPI | Input | Where it goes |
-| --- | --- | --- |
-| OPI-21 | The measured disk terms U₀, DB, F, L and D of §3, and the VPS's free space (DEP-01) | recorded as figures |
-| OPI-22 | The local backup directory, `<BACKUP_DIR>`, on a volume the operator names, and its permissions (DEP-02; SX-07) | recorded as a role, the path kept |
-| OPI-23 | The backup time `<BACKUP_TIME>`, outside business hours | recorded |
-| OPI-24 | The person who holds backup and restore duty and an alternate (GAP-013) | recorded by role |
-| OPI-25 | The measured duration of a full backup and of a restore drill on the VPS | recorded as figures, against the RPO and RTO |
+The Owner answered in session on 2026-10-19 as the operator; each answer is recorded as given, and each input not available is an obligation of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist) before the step the last column names, never a result (INFRASTRUCTURE §9).
+
+| OPI | Input | Where it goes | Recorded in PC-4 | Needed before |
+| --- | --- | --- | --- | --- |
+| OPI-21 | The measured disk terms U₀, DB, F, L and D of §3, and the VPS's free space (DEP-01) | recorded as figures | **Not available** — the nominal 200 GB is shared by two production applications; DIR-079 CB-11's rule: the disk-budget check moves to RELEASE_PLAN GLC-05, and a retention of 7 daily, 4 weekly and 3 monthly generations the budget cannot hold comes back to the Owner before go-live (`DIR-081` OB-10) | staging |
+| OPI-22 | The local backup directory, `<BACKUP_DIR>`, on a volume the operator names, and its permissions (DEP-02; SX-07) | recorded as a role, the path kept | **Not determined**; the Owner, as the operator, is responsible; the directory is MULTIPLECORP's own, apart from the second application's (BKR-07); the Owner's request to consider an off-server copy is OQ-26 | staging |
+| OPI-23 | The backup time `<BACKUP_TIME>`, outside business hours | recorded | **Not determined.** Recommended: **03:00 WIB** daily — after `ReconcileGuards`' 02:00 WIB run (HO-28), outside business hours and clear of the second application's own backup and maintenance windows (OPI-27) —, confirmed against the measured duration (OPI-25) and approved by the Owner before go-live | go-live |
+| OPI-24 | The person who holds backup and restore duty and an alternate (GAP-013) | recorded by role | **The Owner**; an alternate not yet named (INFRASTRUCTURE P9Q-14) | go-live, for the alternate |
+| OPI-25 | The measured duration of a full backup and of a restore drill on the VPS | recorded as figures, against the RPO and RTO | **Not measured** | go-live |
 
 ## 8. Owner questions
 
@@ -141,11 +199,11 @@ Answered at the latest at OG-2 (SP-67); a paid option is recorded under COST_POL
 
 - **Options.** (a) **The named operator, the Owner as the alternate who can call the operator in**; (b) **two named operators**.
 - **Recommendation.** (a) at V1's size; (b) when a second person can take the duty.
-- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-14.** Option (a): a named operator with the Owner as the alternate, recorded by role (OPI-01).
+- **Decided — [DIR-079](../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) CB-14.** Option (a): a named operator with the Owner as the alternate, recorded by role (OPI-01). In session the Owner is the operator (OPI-01; OPI-24), so the Owner cannot also be the alternate: INFRASTRUCTURE P9Q-14 asks who is.
 
 ## 9. Coverage
 
-The requirements this document answers, from [INFRASTRUCTURE §11](INFRASTRUCTURE.md#11-coverage)'s scripted table: **49 of 143**.
+The requirements this document answers, from [INFRASTRUCTURE §11](INFRASTRUCTURE.md#11-coverage)'s scripted table: **67 of 178**.
 
 | Source | Requirement | Answered in |
 | --- | --- | --- |
@@ -198,3 +256,21 @@ The requirements this document answers, from [INFRASTRUCTURE §11](INFRASTRUCTUR
 | DATABASE | DATABASE §22 | INF §2, BKR §1, BKR §2 |
 | DATABASE | DATABASE §28 | INF §2, INF §4, BKR §1 |
 | REFERENCE_COVERAGE | OWN-06 | BKR §1 |
+| DATABASE §30 | CAP-16 | BKR §1, BKR §2 |
+| PROJECT_CHARTER | PROJECT_CHARTER — P9, infrastructure, observability, backup and recovery | INF §1, BKR §1 |
+| ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — recovery measurements and workloads operationalized with P8 | BKR §5, INF §8 |
+| RELEASE_PLAN | RELEASE_PLAN §7 — the tabletop exercise is P9's | BKR §6 |
+| RELEASE_PLAN | RELEASE_PLAN §9 — the operator's inputs OPI-01–OPI-29 as go-live items | INF §9, BKR §7 |
+| RELEASE_PLAN | PRQ-10 — the drill procedures beside P9's backup tooling | BKR §5 |
+| RELEASE_PLAN | PRQ-15 — the recovery runbooks of AU-25 with P9 | INF §7, BKR §6 |
+| Owner in session | Condition 2 — capacity from both applications' combined use | INF §8, BKR §3 |
+| Owner in session | Condition 3 — a backup, restore or rollback of one application never damages the other | INF §5, BKR §1, BKR §4 |
+| Owner in session | Condition 5 — inputs not available as pre-staging or pre-go-live obligations, never PASS | INF §9, BKR §7 |
+| Owner in session | OPI-23 — a backup time outside business hours recommended, approved before go-live | BKR §7 |
+| Owner in session | OPI-22 — an off-server backup to be considered (OQ-26) | INF §1, BKR §1 |
+| Owner in session | OPI-01 and OPI-24 — no alternate yet (P9Q-14) | INF §10, BKR §8 |
+| INFRASTRUCTURE §9 | OPI-27 | INF §8, INF §9, BKR §3 |
+| BACKUP_RECOVERY §6 | The tabletop exercise TT-01–TT-12, held in PC-4 (GAP-051) | BKR §6 |
+| Owner in session | P9Q-15 — a disagreement between recovered pre-window Owners | INF §10, BKR §6 |
+| Owner in session | OQ-27 — one APP_KEY rotation after the first Owner, before go-live | INF §7, BKR §6 |
+| Owner in session | OQ-28 — a decision of the Owner before any restore on a trusted state | INF §7, BKR §6 |

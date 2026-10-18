@@ -13,7 +13,7 @@ Authority: P8 — the measured acceptance targets and how each is measured. It a
 - **Counts in CI, times on staging.** Query counts, statement counts and plan shapes are deterministic: they are asserted in CI on every run. Server time per request (AS-06) depends on the hardware, so it is measured on staging, which runs on the VPS's own hardware (DIR-079 CB-04); CI records times for trends only and never passes or fails a time target.
 - **Scales.** The fixtures FX-06 at 1x, 10x and 100x of AS-04 and AS-05, generated and analyzed before measuring. A time budget is met at 1x and at 10x; 100x shows growth, which stays sub-linear for lists and lookups (PERFORMANCE §12 step 4).
 - **Percentile.** A page's or operation's time is the 95th percentile of at least 50 warm requests, the maximum reported beside it; the first, cold request is recorded separately.
-- **Load.** AS-03's peak — 10 page and command requests per second, 2 of them commands, with file requests on top in bursts of one page of thumbnails per list view — on staging at 10x. Staging shares the VPS with production: before go-live the operator runs load freely; after go-live only outside business hours, bounded in duration, and at the operator's decision.
+- **Load.** AS-03's peak — 10 page and command requests per second, 2 of them commands, with file requests on top in bursts of one page of thumbnails per list view — on staging at 10x. Staging shares the VPS with production — the client's second production application already, MULTIPLECORP's once it is live (INFRASTRUCTURE INF-07) —, so the operator runs load only outside both applications' business hours, bounded in duration, watching the host and the other application's health, at the operator's decision.
 - **A miss.** Nothing is measured yet (GAP-017). The target stays; the Task is not DONE until the query, the index or the budget has been corrected through review (AS-07; [DEFINITION_OF_DONE](DEFINITION_OF_DONE.md) DOD-13).
 - **Evidence.** Each measurement records the commit, the scale, the environment, the command and its output, with the plans kept beside the query-count tests (PERFORMANCE §12 step 5; TEST_STRATEGY §16).
 
@@ -72,7 +72,7 @@ Before every release, at Layer 3 on staging (TEST_STRATEGY §3; AICWDF §28): PF
 
 ## 5. What P9 receives
 
-The measured figures feed P9's sizing (PERFORMANCE §13): web and queue worker memory (SZ-01, SZ-02), connections (SZ-03), the memory split (SZ-04), timeouts and retry budgets (SZ-05), the limiter and cap values (SZ-07), disk growth (SZ-08) and the queue store's budget (SZ-09). In staging and production P9 watches statement statistics and slow plans and reports the heaviest statements and the table and index sizes monthly (PERFORMANCE §12 step 6; GT-07).
+The measured figures feed P9's sizing (PERFORMANCE §13), beside the second production application's measured use of the shared VPS (INFRASTRUCTURE OPI-27): web and queue worker memory (SZ-01, SZ-02), connections (SZ-03), the memory split (SZ-04), timeouts and retry budgets (SZ-05), the limiter and cap values (SZ-07), disk growth (SZ-08) and the queue store's budget (SZ-09). In staging and production P9 watches statement statistics and slow plans and reports the heaviest statements and the table and index sizes monthly (PERFORMANCE §12 step 6; GT-07).
 
 ## 6. Coverage
 

@@ -239,7 +239,7 @@ An accepted risk is never tested as if it were removed. P8 proves the controls t
 ## 9. Where each case runs
 
 - **Local and CI** — every case except those below; CI runs them on the production-like stack of [INFRASTRUCTURE §3](../09-operations/INFRASTRUCTURE.md#3-environments) at every pull request, fresh each time.
-- **Staging** — the ephemeral, synthetic stack the operator starts before a release (DIR-079 CB-04): the operator-run commands of SM-07, SM-19 and SM-21, the real Google redirect of SM-20 and the TLS and HSTS configuration of SM-08 on the staging host. The operator runs them; agents never reach the VPS.
+- **Staging** — the ephemeral, synthetic stack the operator starts before a release (DIR-079 CB-04), never touching the second production application on the VPS (INFRASTRUCTURE INF-07): the operator-run commands of SM-07, SM-19 and SM-21, the real Google redirect of SM-20 and the TLS and HSTS configuration of SM-08 on the staging host. The operator runs them; agents never reach the VPS.
 - **Production** — no case. The post-deployment smoke check of [RELEASE_PLAN](../10-release/RELEASE_PLAN.md) is the operator's and reads only.
 
 ## 10. Coverage
