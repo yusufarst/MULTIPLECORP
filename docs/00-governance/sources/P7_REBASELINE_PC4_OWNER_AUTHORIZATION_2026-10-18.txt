@@ -1,0 +1,570 @@
+TRANSCRIBED LOCKED SOURCE RECORD — eightieth source record
+Received: 2026-10-18, in-session Owner message to the repository executor with
+         the branch rebaseline/p7-ux checked out at
+         4b3ee9b0901cb708a92b60d1bede0e0995b7d282, run PC-3's last commit,
+         clean and equal to its live remote, main and amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978 and migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: Owner authorization — run PC-4 only, the fourth of the five
+         planning-completion runs of DIR-074 (DIR-082, with the Planning
+         interpretations SP-78–SP-89), under the seventy-ninth source record's
+         OB-09–OB-11: Part 1 — the pre-flight and the baseline (OBS-032), the
+         memory-status check, source records 79 and 80, OG-2's changes
+         (SP-78–SP-83), gate PC4-A, the Part 1 commit and its push; Part 2 —
+         Stage 5 (SP-84): the approval commit, main fast-forwarded to it and
+         pushed, the publication-record commit, main fast-forwarded again and
+         pushed, the branch planning/p8-p11 created from main and pushed; Part
+         3 — P8 and P10 drafted (SP-85, SP-86), their commit and push; Part 4 —
+         P9 completed with the Owner in session, the operator inputs and the
+         tabletop exercise (SP-87), its commit and push; Part 5 — the one
+         combined review (SP-88), its fixes, gates P8, P9 and P10, the records,
+         the last commit and its push and the STOP report, then STOP before
+         OG-3; one workflow and at most one further sub-agent; every workflow
+         start, commit and push only through the Owner's approval prompt
+Delivery: The message arrived as one of the two text files referenced in the
+         session message, their paths not recorded, the other the Owner's OG-2
+         decision, the seventy-ninth source record; the session message itself,
+         a pasted block, said, each line quoted between « and »: «OWNER
+         AUTHORIZATION — EXECUTE PC-4» — «Attached:» — «1.
+         P7_OG-2_OWNER_DECISION.txt (record 79)» — «2.
+         P7_PC-4_AUTHORIZATION.txt (record 80)» — «Execute PC-4 exactly as
+         authorized.» — «Start with §1.1 confirmation and read-only pre-flight.
+         Do not edit before my confirmation.» — «EDITORIAL CORRECTION FROM PC-3
+         STOP REPORT:» — «In the PC-3 report, item 4 of the APPR-011 summary
+         incorrectly states:» — «"OQ-23 (a) and OQ-25 (b) would each add one"»
+         — «Correct interpretation:» — «"OQ-23 (either option) and OQ-25 (b)
+         would each require a further narrow amendment."» — «OQ-23 requires an
+         amendment under either option because SELF and enrolment-only-session
+         declarations must also be covered. This is strictly an editorial
+         clarification. The canonical OWNER_QUESTIONS and P5 PHASE_STATUS
+         already contain the correct meaning. Do not expand its scope.» —
+         «EXECUTION PRIORITY:» — «Finish PC-4 efficiently. Reuse approved
+         documentation, avoid repeated audits and unnecessary redesign. Perform
+         the single authorized combined review, with convergence review only
+         when its actual trigger applies.» — «Carry forward noncritical issues
+         as permitted. Preserve V1 scope, security, authorization, data
+         integrity and mandatory release checks.» — «Request separate approval
+         for each workflow start, commit, push and main fast-forward as
+         required.» — «Complete Parts 1–5, then STOP before OG-3.» — «Respond
+         concisely in Bahasa Indonesia.» The editorial correction is SP-83's.
+         The file holds 489 lines and 29,833 bytes with LF line endings and no
+         byte-order mark, SHA-256
+         58b9335437fa16ba80ed9774e877a6cb8dab7d6e4ec057ffeadc7df0df14ef2d,
+         checked by script before any edit and again when this record was made.
+         This record transcribes the whole file mechanically, its text
+         normalized to LF without a byte-order mark, which leaves it unchanged.
+         Before any edit the executor ran section 4 read-only, every item
+         passing — the live and local refs, the clean working tree, 78 source
+         records, the gap totals 62 and LOCALIZATION §5.1's 881 keys; the
+         identifiers free; SP-89's memory status —, read the installed version
+         with `claude --version` (2.1.302), computed this record's and the
+         seventy-ninth record's values read-only, and asked the Owner in
+         session, in one message in Bahasa Indonesia, section 1.1's question —
+         the Claude Code version; Claude Opus 5.5 at Max effort; Ultracode,
+         which the session did not show as on, so GF-2 §3.1's fallback (b) with
+         WF-PC4 requested explicitly; the Auto permission mode; the eleven ask
+         rules and two deny rules, which the executor reported from the Owner's
+         user settings it had read, against GF-2 §3.1's "Never read or change
+         my settings yourself", changing nothing (OBS-032); and that no hook or
+         mod answers permission prompts — with both records' values for
+         comparison with Planning's, section 4's refs as found, the editorial
+         correction as read and SP-89's memory status. The Owner answered in
+         one in-session message, in Indonesian — the text of the reply option
+         the executor's question offered, which the Owner sent —, reproduced
+         here verbatim: «Konfirmasi §1.1: Claude Code 2.1.302; Opus 5.5 Max;
+         fallback (b), Ultracode OFF, WF-PC4 saya minta eksplisit sebagai
+         satu-satunya workflow; mode Auto; 11 ask dan 2 deny tetap; tak ada
+         hook/mod penjawab prompt; record 79 dan 80 cocok dengan nilai
+         Planning. Lanjutkan Part 1.» DIR-082 records this answer.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+MULTIPLECORP — P7 PUBLICATION, P8 AND P10 DRAFTED, P9 COMPLETED
+OWNER AUTHORIZATION — RUN PC-4 ONLY: OG-2'S CHANGES; APPR-011 AND THE
+PUBLICATION OF P7; P8 AND P10 DRAFTED; P9 COMPLETED; ONE COMBINED REVIEW;
+THREE GATES; STOP BEFORE OG-3
+
+==================================================
+0. ROLE, AUTHORIZATION AND BOUNDARY
+==================================================
+
+You are the main Execution Agent. You work in C:\Projects\MultipleCorp
+only. The prototype repository and the Golden lab are not part of this run.
+In Git Bash quote Windows paths with forward slashes ("C:/Projects/…").
+
+With this message you receive my OG-2 decision, the file
+P7_OG-2_OWNER_DECISION.txt — OB-01–OB-12, to archive as source record 79 —,
+and this authorization, to archive as source record 80. The session message
+that sends them may also hold the editorial correction that PC-3's STOP
+report named (SP-83). My decision gives the C2 verdict, answers OQ-22–OQ-25,
+validates the copy and grants APPR-011 on its conditions (DIR-081); this
+message authorizes run PC-4 (DIR-082), the fourth planning-completion run
+of DIR-074, under OB-09–OB-11.
+
+I, the Owner, explicitly authorize only the following, as run PC-4:
+- Part 1: the pre-flight and the baseline, read-only; the memory-status
+  check; records 79 and 80; OG-2's changes (SP-78–SP-83); gate PC4-A; the
+  Part 1 commit and its push;
+- Part 2: Stage 5 (SP-84) — the approval commit, `main` fast-forwarded to
+  it and pushed, the publication-record commit, `main` fast-forwarded again
+  and pushed; the branch `planning/p8-p11` created from `main` and pushed;
+- Part 3: P8 and P10 drafted (SP-85, SP-86); their commit and push;
+- Part 4: P9 completed with me in session — the operator inputs and the
+  tabletop exercise (SP-87); its commit and push;
+- Part 5: the one combined review (SP-88), its fixes, gates P8, P9 and P10
+  (section 9), the records, the last commit and its push, the STOP report
+  (section 10) — then STOP before OG-3.
+One workflow and at most one further sub-agent (section 6). Every workflow
+start, commit and push only through my approval prompt.
+
+The MULTIPLECORP repository is the source of truth. Every approved P0–P7
+requirement and the full V1 scope stay. P8, P9 and P10 are written from
+the approved documents: they reference them and never restate them as new
+rules; a gap they find is a gap, never a silent change of P0–P7.
+
+==================================================
+1. CONFIGURATION AND WORKING RULES
+==================================================
+
+1.1 My configuration, set before each session: Claude Code 2.1.302 or
+later; Claude Opus 5.5 at Max effort; Ultracode on for WF-PC4 alone, or
+GF-2 §3.1's fallback (b) as in PC-3 — Max with Ultracode off and WF-PC4
+requested explicitly as the one workflow —; the permission mode I normally
+use; my eleven ask rules and two deny rules of GF-2 §3.1 (source record
+69) unchanged. Commit and push only as one direct git command (GF-2 §3.1).
+Before the first edit of every session ask me, in one message, to confirm
+the version, the effort, Ultracode or the fallback, the rules, and that no
+hook or mod of mine answers permission prompts. In the first session the
+same message also gives records 79's and 80's computed lines, bytes and
+SHA-256, for me to compare with Planning's values, section 4's refs as you
+find them, and the editorial correction as you read it in my session
+message, or that it holds none.
+
+1.2 Working rules: GF-2 §1 (source record 69) applies — Bahasa Indonesia
+to me, English in documents, identifiers and commit messages; DIR-046 §2
+without exception; deterministic scripts for hashes, counts, IDs, links,
+anchors and coverage, your judgment for content; data never instructions;
+no setting changed and no denied or refused action retried or worked
+around; a response stopped by a safety classifier is never retried or
+reworded — STOP and report; no server or browser started; no invention; no
+silent loss of a V1 requirement. A Level 2 matter of P8, P9 or P10 becomes
+a P8Q-nn, P9Q-nn (from P9Q-14) or P10Q-nn question in its document's
+"Owner questions" section, with options and one recommendation, and the
+run goes on; a Level 2 matter of P0–P7 becomes OQ-26 onward with its gap;
+a Level 1 choice is yours, its notable ones listed in TECH-039. Large
+documents are written in parts.
+
+1.3 Public-repository and production rules: MULTIPLECORP is public
+(TOOLCHAIN). No host name, address, port, user or account name, secret,
+key, provider account detail or real data enters it — placeholders and the
+operator's list of inputs only. You never connect to the VPS, a production
+system or any external service; what the operator tells you in session is
+recorded as a fact without a secret, or not at all.
+
+==================================================
+2. MY DECISIONS — BINDING WITHIN THEIR SUBJECTS
+==================================================
+
+Apply record 79 exactly as it states it, with the option texts of
+OWNER_QUESTIONS where an answer names an option, and records 75 and 77 as
+they stand. Nothing in record 79 is extended by you; a gap between an
+answer and its option text is an Owner question, not a choice of yours.
+OB-01 is my verdict: record it word for word, never paraphrased, and never
+as a per-task result. OB-07's APPR-011 has no effect before gate PC4-A
+passes.
+
+==================================================
+3. PLANNING INTERPRETATIONS SP-78–SP-89 (LEVEL 1, WITH DIR-082)
+==================================================
+
+SP-78 OQ-22 (a) (OB-02), Part 1. ROUTE-182, ROUTE-187, ROUTE-202 and
+ROUTE-249 with their INT- rows prepare the draft from the recorded facts
+and open it on PG-036 instead of issuing, as OQ-22 (a)'s impact states;
+ROUTE-222's "Terbitkan PO" already does; ROUTE-221 and INT-221 as Stage 4
+left them. PG-016, PG-022, PG-024, PG-031 and PG-043's pre-payment
+*Kuitansi* follow in INFORMATION_ARCHITECTURE §8 and NAVIGATION_CONTRACTS;
+D-DS-23's page list and INFORMATION_ARCHITECTURE §12 name them; DOC-12's
+floor step on the phone through Edit → Preview → Finalize (DC-11; AN-6);
+NON_LOSS_MATRIX §C as written. No P0–P6 change; OQ-22 DECIDED.
+
+SP-79 OQ-23 (a) (OB-03), Part 1. The narrow amendment, a revision under
+CHANGE_CONTROL of SECURITY EN-03 and H8-02, API_AND_INTEGRATIONS RB-02 and
+ROUTE_CONTRACTS RC-03, within OB-03's words — the change, its reason
+(OB-03), its impact, the before and after SHA-256 in TECH-039 —; the rows
+of the routes OQ-23 lists, each naming its declared requirement; every
+other P0–P6 statement of the same fact, found by a scripted search, changed
+only to keep it consistent and listed. PERMISSIONS_MATRIX unchanged: no
+capability added, no access changed. OQ-23 DECIDED; GAP-061 "BUSINESS
+DECISION RESOLVED by DIR-081 — amendment made in PC-4, approval with
+APPR-011".
+
+SP-80 OQ-24 (a) (OB-04), Part 1. LOCALIZATION §5 gains the rule word for
+word; GAP-037 notes it with its P8 and P11 parts. OQ-24 DECIDED.
+
+SP-81 OQ-25 (a) (OB-05), Part 1. NM-08 and PG-061 as Stage 4 drafted them;
+OQ-25 DECIDED; GAP-062 "BUSINESS DECISION RESOLVED by DIR-081 — no further
+amendment"; GAP-059 noted.
+
+SP-82 The copy validation (OB-06), Part 1. LOCALIZATION §5.1 records the
+pass — 881 keys accepted as proposed, none marked —; each key on the list
+changes, by script, from proposed to validated under APPR-011; the 8 keys
+off the list unchanged. A count other than 881 is a STOP.
+
+SP-83 PC-3's editorial correction, Part 1. Only the correction my session
+message gives, quoted in record 80's header, applied when it changes
+wording without changing meaning — a link, an anchor, a count, a name, a
+reference, a typo —; any other change it would need is an Owner question.
+If my session message holds none, there is none to make: report it.
+Listed in TECH-039.
+
+SP-84 Stage 5 (Part 2), as APPR-010's approval and publication did
+(DIR-052):
+- **The approval commit.** APPR-011's entry in DECISION_LOG: approver,
+  date and evidence — record 79, OB-01 and OB-06–OB-08 quoted —; the
+  reviewed revision `4b3ee9b` and the Part 1 commit; the condition
+  verification — APPR-011's conditions one by one, each with its evidence,
+  gate PC4-A included —; the approved set of OB-07 (a)–(c), found by
+  script from the gate record's Stage 3 row, TECH-037, TECH-038 and
+  TECH-039, with its hash table (Git blob content, LF, lifecycle metadata
+  included). Each approved P7 document's REVIEW lines replaced by its
+  approved lifecycle line, APPR-008 kept as provenance and not edited; each
+  amended P3–P6 document keeping APPROVED status with its amendment
+  approved under APPR-011 and its REVIEW markers removed; the CA, CB and
+  OB-03 marks kept as the amendments' provenance. Stage 2's drafts and
+  the prototype untouched. Each gap whose remaining item was APPR-011
+  alone CLOSED with it; a gap with a later part — GAP-020, GAP-037 among
+  them — stays OPEN with that part's phase.
+- **Publication.** `main` fast-forwarded to the approval commit and pushed;
+  then the publication-record commit on `rebaseline/p7-ux` — PHASE_STATUS
+  P7 DONE and P8 IN_PROGRESS, P10 IN_PROGRESS (OB-09); the gate record's
+  "Stage 5 — approval and publication"; DECISION_INDEX, CURRENT_HANDOFF and
+  CHANGELOG —, `main` fast-forwarded to it and pushed; each push verified
+  on the live remote. Then `planning/p8-p11` created from `main` and
+  pushed; Parts 3–5 work on it. `rebaseline/p7-ux` and every other branch
+  and tag are kept.
+
+SP-85 P8 drafted (Part 3). docs/08-testing/TEST_STRATEGY.md,
+SECURITY_TEST_MATRIX.md, PERFORMANCE_TARGETS.md and DEFINITION_OF_DONE.md,
+the outputs the ownership registry plans, each "Status: REVIEW — Draft of
+P8, not normative before its approval". They cover, with a scripted
+coverage table: AICWDF §19 and §§26–28 as AICWDF_ADOPTION maps them; every
+requirement an approved document hands to P8, found by a scripted search
+for "P8" outside sources and evidence — at least SECURITY's H8- handoffs
+and the route audit with OB-03's declarations; PERFORMANCE's budgets and
+measured checks, CA-06's PF-42 and CB-03's QB-10 bound among them;
+CONCURRENCY_IDEMPOTENCY's proofs and scenarios; DATABASE's integrity
+checks; ACCEPTANCE_CRITERIA; GAP-020's real-device and composer checks
+(CA-02; CD-03; CD-04) and CD-06's screens; GAP-037 with OB-04's per-page
+copy review; GAP-043, GAP-049 and GAP-050 (M-46); WCAG 2.2 AA on the
+application; LOCALIZATION's checks; the INT- contracts' tests —; the
+definition of done that every P11 Task cites; synthetic test data only,
+production data never; the test tooling TOOLCHAIN plans, none installed or
+assumed verified, its verification a P11 Task. Nothing of P8 runs a test.
+
+SP-86 P10 drafted (Part 3). docs/10-release/RELEASE_PLAN.md, "Status:
+REVIEW — Draft of P10, not normative before its approval", covering with a
+scripted coverage table AICWDF §21 and §39 and every requirement an
+approved document or P9's draft hands to P10 — at least: the release
+sequence and the branch and environment model with P9 (AICWDF §32); the
+opening import and migration — CB-01's legacy numbers, OB-05's seeds (HO-32;
+AX-28), GAP-058 — as P10's import design; cutover and rollback; UAT with me
+on the application, the P8 obligations it relies on named; the rehearsal on
+CB-04's ephemeral staging (GAP-012) and the failure drill (GAP-013); the
+go-live checklist, holding every pre-go-live obligation — OB-10's operator
+inputs not recorded in PC-4 and their CB rules, the alert channel's test
+(CB-06), the restore drill (CB-12) —; the operator alone deploying, from
+`main`; and the production-release Tasks P11 must create, listed as
+requirements, not Tasks. No date reduces scope or a required check.
+
+SP-87 P9 completed with me in session (Part 4; OB-10). First, one message
+in Bahasa Indonesia asking me, as operator or through the operator, for
+OPI-01–OPI-25 of INFRASTRUCTURE §9 and BACKUP_RECOVERY §7, each by role or
+as a figure, with what not to give — no secret, host name, address, port or
+account name —; I answer each, or "belum tersedia". You record each answer
+as its document says, apply its CB rule, and list every input not available
+as a pre-go-live obligation in P10 (SP-86). Then the tabletop exercise:
+TT-01–TT-12 of BACKUP_RECOVERY §6, one step per message, my answer to each
+recorded as given, by role, with the exercise's findings and their owners
+(GAP-051); it is a discussion — no system is touched. Then INFRASTRUCTURE
+and BACKUP_RECOVERY completed as REVIEW drafts, P9's coverage table re-run
+— every requirement answered, 0 missing. A question I cannot answer in
+session stays open with its owner, never assumed.
+
+SP-88 The one combined review (Part 5), on P8's, P9's and P10's drafts and
+on Part 1's changes: WF-PC4 (section 6), then your fixes; every finding a
+PC4F-nn row in a section "PC-4 combined review" of the P10 gate record,
+classified CRITICAL, HIGH, MEDIUM or LOW with PC-3's working severity scale
+(the P7 gate record's "Stage 4 — reviews"), fixed at Level 1 or an Owner
+question — never dropped, never recorded as passed. One convergence review
+by one fresh sub-agent only when WF-PC4 finds a CRITICAL or HIGH finding
+whose fix needs checking (DIR-049's rule). Then the three gate records —
+docs/08-testing/evidence/P8_QUALITY_GATE.md,
+docs/09-operations/evidence/P9_QUALITY_GATE.md and
+docs/10-release/evidence/P10_QUALITY_GATE.md —, each with its phase's
+gate items of AICWDF and its coverage, each PASS with its evidence; a
+failing item is a finding.
+
+SP-89 Memory status: as DIR-075 SP-61, before the first edit and at Part
+5's end; recorded in OBS-032 and TECH-039.
+
+==================================================
+4. PRE-FLIGHT AND BASELINE, BEFORE ANY EDIT
+==================================================
+
+Record the result as OBS-032; a mismatch is a STOP.
+1. `git fetch origin`; `git ls-remote origin` shows exactly: HEAD and main
+   a526daf47444d12b4ae5c51e1ae14c9dfe3f4978; amendment/p5-auth a526daf…;
+   migration/aicwdf c26f31e9b053689b07a29877fe1016c6b8103e37;
+   rebaseline/p7-ux 4b3ee9b0901cb708a92b60d1bede0e0995b7d282; the tag
+   pre-aicwdf-migration 2f8875e8b92d64b2db6c8e8dbc5991899f5d92de peeled to
+   c511d7b0d4683e07717c962927c9f113854f227b; no other ref. `main` an
+   ancestor of 4b3ee9b, so the fast-forward is possible. The local branch
+   and HEAD at 4b3ee9b, equal to the remote; a clean working tree and index
+   (CRLF-only differences excepted); no operation in progress; no stale
+   `.lock`; 78 source records; gap totals 62 — 4 CLOSED, 47 OPEN, 2
+   OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK; LOCALIZATION §5.1's list 881
+   keys by script.
+2. Free: DIR-081, DIR-082, OBS-032, TECH-039, SP-78–SP-89, PC4A-nn, PC4-nn,
+   PC4F-nn, OB-nn, WF-PC4, P8Q-nn, P10Q-nn, P9Q-14 onward, OQ-26 onward,
+   GAP-063 onward, OPI-26 onward, the branch `planning/p8-p11`; APPR-011
+   occurring only as reserved, not granted.
+3. SP-89's memory status.
+4. My answer to section 1.1's question, quoted.
+5. Records 79 and 80 equal Planning's values and record 79's OB-11 reads
+   "I authorize run PC-4" — otherwise STOP before any edit.
+
+==================================================
+5. PARTS, SESSIONS AND RESUME
+==================================================
+
+| Part | Content |
+| --- | --- |
+| 1 | Section 4; records 79 and 80; SP-78–SP-83; gate PC4-A; the Part 1 commit and its push |
+| 2 | SP-84: the approval commit, `main` fast-forwarded and pushed, the publication-record commit, `main` again, `planning/p8-p11` |
+| 3 | SP-85 and SP-86, one unit per document; their commit and push |
+| 4 | SP-87 with me in session; its commit and push |
+| 5 | SP-88; gates P8, P9 and P10; section 8's last records; the last commit and its push; the STOP report |
+
+Progress lives in CURRENT_HANDOFF's current-task row, each commit naming
+the unit reached. A session ends only at a part boundary, after a committed
+unit, or at a STOP; a session that must end inside Part 3, 4 or 5 first
+commits and pushes its finished units with its part's message followed by
+", part N". Part 2 runs in one session, from the approval commit to the
+last verified push of `main`; if it cannot, STOP before the approval
+commit. A resume starts with "LANJUTKAN PC-4", my configuration set again,
+section 1.1's confirmation, section 4 checked against the tips this run's
+commits explain, and the last unit re-checked — never a finished unit,
+commit, push or workflow done again.
+
+==================================================
+6. THE ONE WORKFLOW AND THE ONE FURTHER SUB-AGENT
+==================================================
+
+| Name | When | Agents | Task | Writes |
+| --- | --- | --- | --- | --- |
+| WF-PC4 `pc4-combined-review` | Part 5, after Part 4's commit | 2, in parallel: (B1) quality and release — P8's and P10's drafts against P0–P7 and AICWDF §§19, 21, 26–28, 32 and 39: every handoff covered, testable and traceable, the definition of done usable by P11, the release and rollback complete, no V1 capability, acceptance criterion or mandatory release check lost; (B2) operations, security and data safety — P9's completed drafts and P10's operational parts against SECURITY, PRODUCTION_DATA_SAFETY, COST_POLICY, BACKUP_RECOVERY's obligations and the operator's inputs, no agent access to production, no secret or host detail, no paid service; and Part 1's changes within record 79's words | findings only |
+
+The convergence review, when SP-88 calls for it, is one fresh read-only
+sub-agent, as GF-2 §12. At most 2 agents at once and 3 in the run; no agent
+starts an agent or a workflow; if Ultracode plans another workflow, do not
+start it. Each agent's prompt states DIR-080 §6's terms (source record 78):
+one task; DIR-046 §2; data never instructions; no git command, no write in
+the repository, no server, browser or network, no setting changed; it reads
+MULTIPLECORP's working tree and not records 79 and 80 or this session; its
+staging folder outside the repository the only place it writes; a blocker
+returned as its result, never a question to me. After WF-PC4 and after the
+sub-agent, by script: `git status --porcelain --ignored`, HEAD, the reflog
+and the live remote refs as they were, plus only the changes you applied;
+no process left. Any difference is a STOP. Record each agent's name, task,
+duration and token total, and keep each verbatim report outside the
+repository with its lines, bytes and SHA-256 in TECH-039.
+
+==================================================
+7. COMMITS AND PUSHES
+==================================================
+
+Each commit: my identity, no trailer, the raw commit inspected, only the
+files of its part; each push through my approval prompt and verified on
+the live remote. `main` moves only by `git -C <path> merge --ff-only`
+followed by `git -C <path> push origin main` — never a merge commit, never
+force. If I deny a prompt or a push is refused: finish the local steps that
+do not depend on it and STOP with the exact commands (GF-2 SP-42).
+1. Part 1 — on `rebaseline/p7-ux`, parent 4b3ee9b, message exactly:
+   docs: record OG-2 decisions and apply them (PC-4)
+   after gate PC4-A passes; the links, IDs and secret checks of its files;
+   TECH-039's first hash table last; `git -c core.autocrlf=input add`;
+   every recorded hash verified against the index; pushed with `git push
+   origin rebaseline/p7-ux`.
+2. Part 2 — on `rebaseline/p7-ux`:
+   (a) the approval commit, message exactly:
+       docs: approve P7 UX re-baseline (APPR-011)
+       pushed; then `main` fast-forwarded to it and pushed;
+   (b) the publication-record commit, message exactly:
+       docs: record P7 publication (APPR-011)
+       pushed; then `main` fast-forwarded to it and pushed; `main` and
+       `rebaseline/p7-ux` equal on the live remote;
+   (c) `git -C <path> switch -c planning/p8-p11 main`, then
+       `git -C <path> push -u origin planning/p8-p11`.
+3. Part 3 — on `planning/p8-p11`, message exactly:
+   docs: draft P8 and P10 documents (PC-4)
+4. Part 4 — on `planning/p8-p11`, message exactly:
+   docs: complete P9 documents (PC-4)
+5. Part 5 — on `planning/p8-p11`, the last commit, message exactly:
+   docs: record PC-4 review and P8, P9 and P10 gates (PC-4)
+   after the three gates pass, with SP-88's fixes. Items 3–5 as item 1,
+   each pushed with `git push origin planning/p8-p11`; their staged hashes
+   kept outside the repository for TECH-039's later parts.
+
+==================================================
+8. RECORDS
+==================================================
+
+Following GF-2 §11's conventions (source record 69).
+
+Part 1, in its commit:
+1. Source record 79 —
+   docs/00-governance/sources/P7_REBASELINE_OG2_OWNER_DECISION_YYYY-MM-DD.txt,
+   YYYY-MM-DD being the WIB date on which you receive it: the file
+   P7_OG-2_OWNER_DECISION.txt, normalized to LF without a byte-order mark,
+   by script, equal to the values Planning gave me with it; first line
+   "TRANSCRIBED LOCKED SOURCE RECORD — seventy-ninth source record". Source
+   record 80 —
+   docs/00-governance/sources/P7_REBASELINE_PC4_OWNER_AUTHORIZATION_YYYY-MM-DD.txt,
+   the same date: this message, equal to the values Planning gave me with
+   it; my session message — the editorial correction included, or its
+   absence — and my first session's answer to section 1.1 quoted in its
+   header. A mismatch is a STOP. `-text` entries.
+2. DECISION_LOG: index rows and one entry "DIR-081, DIR-082, OBS-032 and
+   TECH-039 — OG-2 decisions, APPR-011, run PC-4, P8 and P10 drafted and P9
+   completed"; DIR-081 quotes OB-01, OB-03, OB-06, OB-07 and OB-10 and
+   states the others by reference to record 79; DIR-082 this authorization
+   with SP-78–SP-89. APPR-011's entry is written in Part 2.
+3. DECISION_INDEX: rows DIR-081, "DIR-081 OB-02–OB-05" (OQ-22–OQ-25),
+   "DIR-081 OB-09" (P8 and P10 authorized) and DIR-082, ACTIVE; every cell
+   that names a next step, that clause alone reading "OG-2 decided
+   (DIR-081); PC-4 authorized and in progress (DIR-082)".
+4. OWNER_QUESTIONS: OQ-22–OQ-25 DECIDED as DIR-081 states. GAP_REGISTER as
+   SP-79–SP-81, the totals recomputed.
+5. The P7 gate record: a section "OG-2 decisions and PC-4 authorization
+   (DIR-081, DIR-082)", "PC-4 verification" (OBS-032) and "Gate PC4-A";
+   the plan's C2 cell gains "; verdict — DIR-081 OB-01".
+6. SOURCE_OF_TRUTH: a subsection "OG-2 decisions and run PC-4" (80
+   records). CONTEXT_INDEX: OB-01–OB-12 (my answers), SP-78–SP-89, PC4A-nn,
+   PC4-nn, PC4F-nn, WF-PC4, P8Q-, P10Q-, records 79–80 and
+   `planning/p8-p11`; the approval-chain sentence counting 80 source
+   records — "the forty-two later records".
+7. PHASE_STATUS, CURRENT_HANDOFF and CHANGELOG for Part 1.
+8. TECH-039, its first part: records 79's and 80's values; SP-78–SP-83's
+   changes with their before and after SHA-256; the Part 1 commit's hash
+   table last.
+
+Part 2: SP-84's records, in its two commits.
+
+Parts 3–5:
+9. The drafts of SP-85–SP-87 in their commits; in the last commit
+   TECH-039's later parts — every changed or new document's before and
+   after SHA-256, the agents' reports' values, the commits of Parts 2–4,
+   the last commit's hash table last —; SOURCE_OF_TRUTH's registry rows of
+   P8's, P9's and P10's documents; CONTEXT_INDEX for the new identifiers.
+10. The three gate records with their items; the P10 gate record's "PC-4
+    combined review" (the PC4F rows) and "PC-4 report", the STOP report in
+    English. DECISION_INDEX: the cells item 3 changed read "PC-4 done
+    (DIR-082); OG-3 next". PHASE_STATUS: P7 DONE; P8, P9 and P10
+    IN_PROGRESS, each drafted and gated, approval at OG-3; P11 TODO; the
+    last commit found by its message, not claimed pushed. CURRENT_HANDOFF.
+    GAP_REGISTER: GAP-012, GAP-013, GAP-051 and every gap P8–P10 answer,
+    continued; a gap for every new Owner question that would change P0–P7;
+    the totals recomputed. CHANGELOG one entry. docs/08-testing,
+    docs/09-operations and docs/10-release READMEs: their phase in
+    progress.
+No other file changes.
+
+==================================================
+9. GATES
+==================================================
+
+Gate PC4-A — all must pass before the Part 1 commit; APPR-011 has no
+effect without it:
+
+| Item | Check |
+| --- | --- |
+| PC4A-01 | Section 4 (OBS-032); section 1.1's confirmation quoted |
+| PC4A-02 | Records 79 and 80 by script, conventions kept, 80 records; records 1–78 unchanged |
+| PC4A-03 | SP-78–SP-83 each within record 79's words; P0–P6 changed against 4b3ee9b only by SP-79's amendment and its listed consistency edits; PERMISSIONS_MATRIX unchanged |
+| PC4A-04 | SP-68's coverage re-run on the changed contracts, every check passing; NON_LOSS_MATRIX 100 %, 0 orphan; LOCALIZATION 0 owed, §5.1's 881 keys validated, 0 marked |
+| PC4A-05 | 0 OWNER_DECISION_REQUIRED; every S4F row fixed or decided by DIR-081; APPR-011's other conditions as PC-3's gate P7 records them |
+| PC4A-06 | Links and anchors resolve; identifiers defined once; no placeholder, secret, binary or production detail |
+
+Before the last commit — gates P8, P9 and P10 (SP-88) and these:
+
+| Item | Check |
+| --- | --- |
+| PC4-01 | Section 1.1's confirmation in every session, quoted; every resume matched section 5 |
+| PC4-02 | Part 2 as SP-84: APPR-011's entry and hash table; lifecycle lines; `main` and `rebaseline/p7-ux` equal on the live remote after the publication record; `planning/p8-p11` from `main` |
+| PC4-03 | SP-85 and SP-86: the drafts present with their status lines; their coverage tables complete, 0 missing |
+| PC4-04 | SP-87: every operator input recorded as given or listed as a pre-go-live obligation in P10; the tabletop's steps and findings recorded as I gave them; P9's coverage 0 missing; nothing assumed |
+| PC4-05 | SP-88 within section 6; every PC4F finding fixed or an Owner question; 0 open CRITICAL, HIGH or MEDIUM finding without an Owner question |
+| PC4-06 | P0–P7 unchanged since Part 2 except through an Owner question's recorded gap; no V1 capability, acceptance criterion or mandatory release check lost |
+| PC4-07 | Links and anchors resolve; identifiers defined once and mapped in CONTEXT_INDEX; no placeholder outside the operator's list, no secret, host detail, binary or temporary path |
+| PC4-08 | Gap totals recomputed with each change named |
+| PC4-09 | The current-state records agree with section 8 item 10; no claim of the last commit's push |
+| PC4-10 | Every commit and push as section 7, verified, or STOPPED under SP-42 |
+| PC4-11 | SP-89: no task state in Claude Code's memory |
+
+==================================================
+10. THE STOP REPORT AND WHAT OG-3 NEEDS
+==================================================
+
+In Bahasa Indonesia, its English equivalent in the P10 gate record: what
+Parts 1–5 did; every commit with its push; APPR-011 and P7's publication as
+verified on the live remote; gates PC4-A, P8, P9 and P10 item by item; the
+PC4F findings by severity and their fixes; and OG-3's package, short, each
+item a link: (1) P8's, P9's and P10's drafts with their gate records; (2)
+every Owner question raised (P8Q, P9Q, P10Q, OQ), with its recommendation;
+(3) the pre-go-live obligations P10 holds; (4) what PC-5 needs — my three
+separate approvals of P8, P9 and P10, and the authorization of P11. Then
+STOP. PC-5 starts only on its own authorization.
+
+==================================================
+11. STOP CONDITIONS
+==================================================
+
+STOP and report, without working around the condition, when: section 4
+fails; my first-session answer does not confirm records 79's and 80's
+values or the configuration; gate PC4-A fails; an answer of record 79 can
+be applied only by changing a canonical rule beyond SP-78–SP-83; a draft
+would change P0–P7 semantics, add a V1 capability or lose one; Part 2
+cannot finish in one session, or the fast-forward is not possible; a step
+would need a payment, an installation or configuration on any machine,
+production access, a VPS connection or any external service; a secret, real
+data, a production detail or a binary would enter MULTIPLECORP; a second
+workflow, a fourth agent or an agent's write would be needed; a check of
+section 6 fails; I deny a prompt, or a push is refused (SP-42); a response
+is stopped by a safety classifier; a resume does not match.
+
+==================================================
+12. NOT AUTHORIZED
+==================================================
+
+The approval of P8, P9 or P10; P11, its TASK_PLAN and Tasks, and run PC-5;
+the planning freeze; application code; any test run, installation,
+deployment or release; any connection to the VPS, a production system or
+an external service; any P0–P7 change beyond SP-78–SP-84; any prototype or
+Golden lab access; a second workflow or any agent beyond section 6;
+changing a permission setting or Claude Code's configuration; editing an
+existing source record; moving `main` other than SP-84's two fast-forwards;
+merge commits, force push, reset, rebase, amend or history rewrite;
+deleting a branch or tag; recovering work from transcripts or logs; AI
+attribution in commits.
+
+==================================================
+13. FOOTER
+==================================================
+
+End the STOP report and every stop report with GF-2 §17's footer (source
+record 69), one concrete value each, addressed "Kirim report ini ke agent:
+Planning". A report that ends a session for a resume uses it with "Kirim
+prompt ini ke agent: Executor", the Model and Effort of my confirmed
+configuration, Session "chat baru", and in Reason: send this file and
+P7_OG-2_OWNER_DECISION.txt with "LANJUTKAN PC-4" once that configuration is
+set again.

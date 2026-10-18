@@ -1,0 +1,151 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventy-ninth source record
+Received: 2026-10-18, in-session Owner message to the repository executor with
+         the branch rebaseline/p7-ux checked out at
+         4b3ee9b0901cb708a92b60d1bede0e0995b7d282, run PC-3's last commit,
+         clean and equal to its live remote, main and amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978 and migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: the Owner's decision at OG-2 (DIR-081): the C2 verdict (OB-01); OQ-22
+         (a), preview first (OB-02); OQ-23 (a), three declared requirements
+         beside a capability, a narrow amendment of SECURITY EN-03 and H8-02,
+         API_AND_INTEGRATIONS RB-02 and ROUTE_CONTRACTS RC-03 made in PC-4
+         (OB-03); OQ-24 (a), by construction and per page at P8 (OB-04); OQ-25
+         (a), NM-03 unchanged, as drafted (OB-05); the single copy-validation
+         pass, the 881 keys of LOCALIZATION §5.1 accepted as proposed, none
+         marked (OB-06); APPR-011, the P7 UX re-baseline approved on its
+         conditions, in effect only in PC-4's approval commit after PC-4's gate
+         passes (OB-07); the noncritical items carried, never recorded as
+         passed (OB-08); P8 and P10 authorized and P9 completed in PC-4, each
+         approved, or not, separately at OG-3 (OB-09); P9's tabletop exercise
+         and operator inputs in session, every input not available becoming a
+         pre-go-live obligation of P10 (OB-10); run PC-4 and Stage 5 authorized
+         (OB-11); and what stays not authorized (OB-12)
+Delivery: The decision arrived as one of the two text files referenced in the
+         session message, their paths not recorded, sent with the authorization
+         of run PC-4, the eightieth source record, whose header quotes the
+         session message and the Owner's confirmation. The file holds 114 lines
+         and 6,484 bytes with LF line endings and no byte-order mark, SHA-256
+         28af21c74d66ab86e2aa42465b76af3d3d77e7b5d8843dd2e98bc7bcf729388e —
+         Planning's values, which the Owner confirmed in session (the eightieth
+         record's section 8 item 1) —, checked by script before any edit and
+         again when this record was made. This record transcribes the whole
+         file mechanically, its text normalized to LF without a byte-order
+         mark, which leaves it unchanged; its first line is the decision's
+         title.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+OWNER DECISION — OG-2: C2 VERDICT, OQ-22–OQ-25, COPY VALIDATION, APPR-011, AUTHORIZATION OF P8, P10 AND RUN PC-4
+
+My decision rests on run PC-3's report and its OG-2 package (the gate
+record's "PC-3 report"), with gate P7 passed 14 of 14, and on the branch
+rebaseline/p7-ux at 4b3ee9b0901cb708a92b60d1bede0e0995b7d282, which I
+verified on GitHub. Each item below is a separate decision of mine.
+
+==================================================
+A. C2 AND THE OWNER QUESTIONS
+==================================================
+
+OB-01 My C2 verdict (DIR-040 F6):
+      «Antarmuka ramah pengguna: ya — 2026-10-18. Dasar: pengujian saya
+      sendiri pada prototipe di desktop dan di ponsel (DIR-079 CD-01) —
+      secara umum baik dan dapat dipahami oleh Admin Operasional — serta
+      perubahan UF-01 sebagaimana D-DS-23 menyatakannya.»
+      The verdict rests on that evidence and on the Owner-accepted
+      dispositions of DIR-079 CD-02 and CD-03. It is not a per-task result,
+      and it records nothing as PASS.
+
+OB-02 OQ-22: option (a), preview first. Each of the five controls prepares
+      the document's draft from the recorded facts and opens it on PG-036,
+      the form beside the live preview on the desktop (D-DS-23) and Edit →
+      Preview → Finalize on the phone, DOC-12's floor step included; IP-08's
+      confirmation issues it there. No P0–P6 change.
+
+OB-03 OQ-23 (GAP-061): option (a). EN-03 and RB-02 accept, beside a
+      capability, three declared requirements: "every active account (S0)"
+      for a route whose content is S0 or whose every other part is gated by
+      its own read class; "SELF" for the account's own row (AU-13; PJ-17);
+      and "the enrolment-only session" for its routes (AU-18). H8-02's
+      route audit checks each declaration — for S0, that nothing above S0
+      leaves the route without its part's capability. No capability is
+      added and no access changes. This is a narrow amendment of SECURITY
+      EN-03 and H8-02 (P5), API_AND_INTEGRATIONS RB-02 (P6) and
+      ROUTE_CONTRACTS RC-03, made in PC-4 within these words and approved
+      with APPR-011 (OB-07).
+
+OB-04 OQ-24: option (a), by construction and per page at P8. A key P11 adds
+      is accepted when its Indonesian is a GL term or a label of an
+      approved source and its English is that term's or label's validated
+      rendering. Any other new copy is marked proposed and listed for me
+      with its page's P8 review, accepted except the keys I mark. LOCALIZATION
+      §5 gains the rule; P11's Task template carries the list.
+
+OB-05 OQ-25 (GAP-062): option (a), NM-03 unchanged, as drafted. A company's
+      PURCHASE seed before go-live is the opening import's seed row — after
+      its last legacy purchase number, or 1 where it has none (HO-32); a
+      company no import seeds starts its PURCHASE numbering on PG-061 once
+      go-live is recorded, as the document types do (NX-01). This is the
+      reading of CB-02 I intended; no further amendment.
+
+==================================================
+B. COPY VALIDATION AND APPR-011
+==================================================
+
+OB-06 The single copy-validation pass (DIR-079 CB-15 and CD-07): the review
+      list of LOCALIZATION §5.1 at 4b3ee9b — 881 keys, Indonesian and
+      English — is accepted as proposed. Keys I mark: none.
+
+OB-07 APPR-011. I approve the P7 UX re-baseline:
+      (a) Stage 3's documents as at 4b3ee9b — INFORMATION_ARCHITECTURE and
+          DESIGN_SYSTEM replaced in place, NAVIGATION_CONTRACTS,
+          LOCALIZATION, DESIGN_REFERENCES, the ADMIN_FLOW alignment, and
+          ROUTE_CONTRACTS and INTERACTION_CONTRACTS as the P3 addition —,
+          with UF-01's change (D-DS-23), the screens DIR-079 CD-06 names
+          and option B for the KPI and context cards (DIR-077 CA-04 item
+          12);
+      (b) the narrow P3–P6 amendments recorded under TECH-037 (DIR-077
+          CA-06–CA-10) and TECH-038 (DIR-079 CB-01–CB-03);
+      (c) the changes OB-02–OB-06 require and the editorial correction
+          that PC-3's report names, each applied by PC-4 within the words of
+          this decision.
+      APPR-011 takes effect in PC-4's approval commit, and only after
+      PC-4's gate on (c) passes. If any check of that gate fails, APPR-011
+      has no effect and PC-4 stops for me. The private prototype and Stage
+      2's drafts are not approved; they stay non-normative provenance.
+
+OB-08 Carried, not passed: every noncritical item stays with its recorded
+      target and is never recorded as passed — DIR-077 CA-05's and DIR-079
+      CD-05's visual differences, D-DS-18's 768 px rule, and the P8
+      obligations of GAP-020 (DIR-077 CA-02; DIR-079 CD-03, CD-04 and
+      CD-06).
+
+==================================================
+C. NEXT PHASES AND RUN PC-4
+==================================================
+
+OB-09 I authorize P8 — testing, quality and definition of done — and P10 —
+      release, migration, cutover, rollback and UAT: each drafted in PC-4
+      and approved, or not, by a separate decision of mine at OG-3. P9
+      stays authorized by DIR-077 CA-14, completed in PC-4 and approved
+      separately at OG-3.
+
+OB-10 P9 in PC-4. I take part in session in P9's tabletop exercise
+      (BACKUP_RECOVERY §6; GAP-051). As operator, or through the operator, I
+      supply in session the operator inputs I can give then — by role and
+      as figures, never a secret, host name, address, port or account
+      name. Every input that is not available in PC-4 — the measured
+      figures of OPI-07, OPI-21 and OPI-25 among them — becomes a
+      pre-go-live obligation of P10's release plan, and its rule of DIR-079
+      CB-05, CB-06, CB-08, CB-09 or CB-11 is applied when it is recorded:
+      for CB-11 the disk-budget check moves there, and a retention the
+      budget cannot hold comes back to me before go-live. Go-live waits for
+      every such input. No agent ever reaches the VPS or production.
+
+OB-11 I authorize run PC-4 under P7_PC-4_AUTHORIZATION.txt, which I send with
+      this decision, and with it Stage 5: the approval commit, the
+      fast-forward of main and its normal push, and the publication record.
+
+OB-12 Not authorized: the approval of P8, P9 or P10; P11 and run PC-5; the
+      planning freeze; application code; any deployment; any agent's access
+      to the VPS or production; any merge commit, force push or history
+      rewrite.
