@@ -1,0 +1,218 @@
+TRANSCRIBED LOCKED SOURCE RECORD — seventy-seventh source record
+Received: 2026-10-18, in-session Owner message to the repository executor with
+         the branch rebaseline/p7-ux checked out at
+         3b45ce88247cc4bc1e35669abd59635f9f935418, clean and equal to its live
+         remote, main and amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978, migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37, and the private prototype
+         repository's main at 70539fec8e40d8fb83b3fde8a8fa808d61b40d7d, run
+         PC-2's commit D
+Subject: the Owner's decision on Checkpoint C2's evidence and dispositions,
+         with the answers CB-01–CB-16 and the authorization of run PC-3
+         (DIR-079): Part A, the Owner's direction to Planning of 2026-10-18,
+         verbatim; the C2 evidence — the Owner's own testing of the prototype
+         at commit D on the desktop and on mobile devices, USABILITY_KIT's
+         sessions not run as its §§4–8 describe and nothing reconstructed or
+         recorded as PASS (CD-01); an Owner-accepted disposition for each
+         critical task UT-01–UT-24 and each role of the kit (CD-02); the C2
+         record's phone fields not recorded, CA-02 item (1) amended for that
+         record and P8's real-device check extended to the journeys of every C2
+         phone task (CD-03); UF-01, the Owner's principal finding — on the
+         desktop the input form on the left and the live preview on the right,
+         for every page that creates or edits a generated business document,
+         made in Stage 3's documents and not re-tested (CD-04); every remaining
+         noncritical visual imperfection accepted and carried to
+         implementation, with no further prototype iteration, re-test round,
+         phone test or visual audit in P7 (CD-05); the screens CA-06–CA-10 and
+         CB-01–CB-03 change, named in the C2 record and judged at APPR-011
+         (CD-06); the proposed Indonesian copy validated in the single pass at
+         APPR-011 with CB-15's English (CD-07); the C2 verdict given at OG-2
+         with APPR-011 (CD-08); OQ-19 (a), OQ-20 (a) and OQ-21 (a), each
+         drafted in PC-3 as a REVIEW amendment and approved, or not, with
+         APPR-011 (CB-01–CB-03); P9's answers to P9Q-01–P9Q-07 and
+         P9Q-10–P9Q-13 (CB-04–CB-14); a proposed English rendering for each of
+         LOCALIZATION's 306 owed keys, validated in one pass at APPR-011
+         (CB-15); run PC-3 authorized (CD-09); and what stays not authorized
+         (CB-16, CD-10)
+Delivery: The decision arrived as one of the two text files referenced in the
+         session message, their paths not recorded, sent with the authorization
+         of run PC-3, the seventy-eighth source record, whose header quotes the
+         session message and the Owner's confirmation. The file holds 167 lines
+         and 9,657 bytes with LF line endings and no byte-order mark, SHA-256
+         821cbfe40983a291d442efe31e5c37caa89cf0420af129299b55eb04fa36a5aa —
+         Planning's values, which the Owner confirmed in session (the
+         seventy-eighth record's section 8 item 1) —, checked by script before
+         any edit and again when this record was made. This record transcribes
+         the whole file mechanically, its text normalized to LF without a
+         byte-order mark, which leaves it unchanged; its first line is the
+         decision's title.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+OWNER DECISION — C2 EVIDENCE AND DISPOSITIONS, ANSWERS CB-01–CB-16, AND AUTHORIZATION OF RUN PC-3
+
+My decision rests on run PC-2's report, the branch rebaseline/p7-ux at
+3b45ce88247cc4bc1e35669abd59635f9f935418, and my own testing of the
+private prototype at its commit D 70539fec8e40d8fb83b3fde8a8fa808d61b40d7d.
+Part A is my direction to Planning of 2026-10-18, verbatim. Each item of
+Parts B–D is a separate decision of mine.
+
+==================================================
+A. MY DIRECTION TO PLANNING, VERBATIM
+==================================================
+
+OWNER FINAL DIRECTION — PROCEED TO PC-3 IMMEDIATELY
+I confirm that I have already tested the prototype on mobile devices. The overall results are similar to desktop: generally good and understandable to the Admin Operasional.
+My principal usability finding is that document creation/editing should use a desktop layout with the input form on the LEFT and live document preview on the RIGHT.
+I accept the remaining noncritical visual imperfections for later implementation.
+Do not request repeated mobile testing, new prototype iterations, or additional visual audits.
+Use my actual feedback as C2 evidence, without inventing individual task results or marking unverified criteria as PASS. Record any permitted Owner dispositions accurately.
+I approve the proposed CB-01–CB-16 decisions.
+Prepare the PC-3 authorization immediately, applying the smallest necessary governance-compliant treatment of any remaining C2 documentation requirements.
+Prioritize completing P7 and proceeding directly to PC-4, PC-5/P11, and real application coding.
+Return the ready-to-send PC-3 authorization and only genuinely unavoidable blockers.
+Respond concisely in Bahasa Indonesia.
+
+==================================================
+B. CHECKPOINT C2
+==================================================
+
+CD-01 The C2 evidence is my own testing of the prototype at commit D, on the
+      desktop and on mobile devices, and my report in Part A: the results on
+      the phone are similar to the desktop's — generally good and
+      understandable to the Admin Operasional. USABILITY_KIT's sessions were
+      not run as its §§4–8 describe: there is no observation sheet and no
+      per-task result, time, error count or record of help, and no phone
+      task's device, browser or CSS width was recorded. None of these is
+      reconstructed, estimated or recorded as PASS. Who besides me used the
+      prototype is recorded only as Part A states it.
+
+CD-02 APPR-011's task condition: for each critical task UT-01–UT-24, for
+      each role of the kit, an Owner-accepted disposition — "not recorded
+      per task; accepted by the Owner on the evidence of CD-01". The C2
+      record (USABILITY_KIT §7.3) holds that disposition in every task cell,
+      never "without help".
+
+CD-03 CA-02's phone fields: not recorded at C2; every phone column of the C2
+      record reads "not recorded (CD-03)". CA-02 item (1) is amended for
+      that record alone. The device, browser and CSS width are recorded by
+      P8's real-device check on the application (CA-02 item (2), GAP-020),
+      which now also covers the journeys of every C2 phone task — UT-06
+      (S2-J02 step 3), UT-12 (S2-J03 step 11) and UT-18–UT-24 (S2-J05 and
+      S2-J01's account menu) — at 390 CSS px, and S2-J05's receiving at 390
+      and 320 CSS px as CA-02 states. No phone test is repeated in P7.
+
+CD-04 UF-01, my principal finding: on the desktop, creating and editing a
+      document uses one layout — the input form on the left and the live
+      preview of the document on the right, side by side, the preview
+      following the allowed inputs as they change. It applies to every page
+      that creates or edits a generated business document. The meaning of
+      DOCUMENT_PREVIEW_PRODUCER's option A, VD-07 and DC-1–DC-12 is
+      unchanged: the draft marked "DRAF — belum terbit", no number before
+      issue, the totals provisional until the server's, the issue explicit.
+      Below the desktop, the tablet and phone behaviour stays as drafted. Its
+      severity is not assigned by me; it is a required change. It is made in
+      Stage 3's documents, not in the prototype, and is not re-tested on the
+      prototype: its status is "fixed in specification — not re-tested",
+      never PASS. It is verified by my review at APPR-011 and, in P8, by a
+      check of the document composer on the application on the desktop,
+      recorded as a P8 obligation under GAP-020.
+
+CD-05 Every remaining noncritical visual imperfection is accepted and
+      carried to implementation, where conformance to the approved
+      DESIGN_SYSTEM is verified as P8 defines it (CA-05); none is recorded
+      as passed. P7 has no further prototype iteration, re-test round,
+      phone test or visual audit.
+
+CD-06 The screens that CA-06–CA-10 and CB-01–CB-03 change were not shown in
+      the prototype. The C2 record names them; I judge them at APPR-011 in
+      Stage 3's documents, and P8 verifies them on the application.
+
+CD-07 The proposed Indonesian copy — D6's punctuation and CA-04 items 8–10
+      included — is validated in the same single pass at APPR-011 as CB-15's
+      English: accepted as proposed except the keys I mark, each marked key
+      corrected before Stage 5.
+
+CD-08 My C2 verdict that the UI is user friendly (DIR-040 F6) is given at
+      OG-2 with APPR-011, after Stage 3 holds UF-01's change; this decision
+      is not that verdict. With this decision C2's documentation needs no
+      further session, round or result. APPR-011's other conditions are
+      unchanged.
+
+==================================================
+C. ANSWERS CB-01–CB-16 — PLANNING'S TEXT, APPROVED UNCHANGED
+==================================================
+
+UX and business (OG-2)
+
+CB-01 OQ-19 (GAP-058): option (a). An imported purchase keeps its legacy
+      number when that number fits its company's PURCHASE scheme, and that
+      sequence is seeded after the last legacy number; any other imported
+      purchase receives a new number when the import commits.
+CB-02 OQ-20 (GAP-059): option (a). PURCHASE sequences are set like the
+      other document types — the scheme in Penomoran Dokumen (PG-061),
+      seeded from the opening import or with a seed of 1 before go-live;
+      NM-03 unchanged.
+CB-03 OQ-21 (GAP-060): option (a). The receivables KPI and ageing chart stay
+      on Beranda within QB-10, as one grouped statement over
+      invoice_balances, QB-10's bound rising by at most one; P6 change
+      control, verified in P8.
+
+      CB-01–CB-03 are drafted in PC-3 as REVIEW amendments of the documents
+      their options name and approved, or not, with APPR-011 at OG-2.
+
+P9 (OG-3)
+
+CB-04 P9Q-01: option (a), an ephemeral staging stack on the existing VPS,
+      run by the operator, with synthetic data only.
+CB-05 P9Q-02: option (a), Docker Compose — unless OPI-03 records that the
+      VPS already runs Coolify; then (b).
+CB-06 P9Q-03: option (b), a zero-cost push channel to the operator's and my
+      own phone, with (c) always kept as the floor. The channel is
+      confirmed by OPI-05 and tested by the staging failure drill before
+      go-live (GAP-013). No paid channel.
+CB-07 P9Q-04: option (a), the framework's logs with a self-hosted viewer.
+CB-08 P9Q-05: option (a), DNS at the current provider with TLS on the VPS —
+      unless OPI-04 records that the domain is already behind an edge
+      proxy; then (b), with WS-11's trusted-proxy configuration.
+CB-09 P9Q-06: decided by OPI-07's measured figures — (b), a self-hosted
+      scanner, if the memory headroom after production sizing holds it;
+      otherwise (a). FL-01–FL-06 apply either way.
+CB-10 P9Q-07: option (a), a free external uptime check.
+CB-11 P9Q-10: option (a), 7 daily, 4 weekly and 3 monthly backups, confirmed
+      against BACKUP_RECOVERY §3's disk budget in PC-4; if the budget does
+      not hold it, PC-4 brings a revised retention to OG-3.
+CB-12 P9Q-11: option (a), a restore drill monthly for the first three
+      months, then quarterly.
+CB-13 P9Q-12: option (a), restricted permissions.
+CB-14 P9Q-13: option (a), a named operator with me as the alternate, recorded
+      by role (OPI-01).
+
+      Where CB-05, CB-06, CB-08, CB-09 or CB-11 depends on an operator input,
+      PC-4 records the input and applies the rule above; no further decision
+      of mine is needed unless the rule cannot be met. P9 stays approved, or
+      not, at OG-3.
+
+English renderings (GAP-037)
+
+CB-15 Indonesian stays the canonical text. PC-3 writes a proposed English
+      rendering for each of LOCALIZATION's 306 owed keys from its canonical
+      or proposed Indonesian, using the GL terms, so that none stays owed. I
+      validate the English in one pass at APPR-011: the table is accepted as
+      proposed except the keys I mark, and each marked key is corrected
+      before Stage 5. This changes how I validate, not that I validate.
+
+CB-16 Not authorized by this decision: C2's verdict; APPR-011; any run other
+      than PC-3 under its own authorization; P8, P10 and P11; PC-4 and PC-5;
+      application code; any production or VPS access; moving main.
+
+==================================================
+D. THE RUN
+==================================================
+
+CD-09 I authorize run PC-3 under P7_PC-3_AUTHORIZATION.txt, which I send with
+      this decision (CA-15).
+
+CD-10 Not authorized: my C2 verdict and APPR-011; Stage 5; any prototype
+      change; P8, P10 and P11; PC-4 and PC-5; application code; any
+      production or VPS access; moving main.

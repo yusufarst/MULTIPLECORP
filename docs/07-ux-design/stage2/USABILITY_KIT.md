@@ -8,6 +8,8 @@ Status: DRAFT | Updated: 2026-10-18 | Owner: Planning
 
 *Note of 2026-10-18 (run PC-2, [DIR-078](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) §7 item 5):* the Owner approved the kit at checkpoint CP-A ([DIR-077](../../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-11); §5's GR-16 sentence now states variant B, the prototype's default from its commit D (CA-04 item 1); §7.3's C2 record gains the device, browser and CSS width of each phone task (CA-02, CA-11); the sessions follow SD-09 unless a warehouse/field user is confirmed before they start (CA-12).
 
+*Note of 2026-10-18 (run PC-3, [DIR-080](../../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7) SP-70):* the Owner's C2 decision ([DIR-079](../../00-governance/DECISION_LOG.md#dir-079-dir-080-obs-031-and-tech-038--p7-ux-re-baseline-c2-evidence-and-owner-decisions-run-pc-3-stage-3-completed-stage-4-and-gate-p7), the seventy-seventh source record) gives C2's evidence — the Owner's own testing of the prototype at commit D, on the desktop and on mobile devices, and the Owner's report (CD-01). The sessions were not run as §§4–8 describe: there is no observation sheet and no per-task result, time, error count or record of help, and no phone task's device, browser or CSS width was recorded (CD-01). §7 is filled as DIR-079 states it and nothing more; §§1–6, 8 and 9 stay as they are.
+
 ## 1. Purpose and C2's criteria
 
 The sessions show whether the people who will use MultipleCorp can do its critical tasks on the prototype without help, in Indonesian, on the devices they use. They feed Checkpoint C2: the usability results and the Owner's verdict, with fixes and re-tests when needed.
@@ -297,12 +299,13 @@ Each session's sheet starts with its header — the role (never a name), the ses
 
 | ID | Task | Role | Severity | What was observed | Evidence (sheet, row) | Proposed fix | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| UF-01 | UT-nn | | 1–4 | | | | open · fixed · accepted by the Owner |
+| UF-01 | the document pages (CD-04) | the Owner | not assigned (CD-04) | "on the desktop, creating and editing a document uses one layout — the input form on the left and the live preview of the document on the right, side by side, the preview following the allowed inputs as they change. It applies to every page that creates or edits a generated business document." (CD-04) | record 77 CD-04 | SP-71 | fixed in specification — not re-tested |
 
 ### 7.2 Fixes and re-tests
 
 | Fix | Findings | The change | Re-test (task, role, round) | Result |
 | --- | --- | --- | --- | --- |
+| SP-71 | UF-01 | the Stage 3 documents SP-71 lists: DESIGN_SYSTEM's "Document composer and paper" and its D-DS entry; INFORMATION_ARCHITECTURE, NAVIGATION_CONTRACTS and the INT- contract of every page that creates or edits a generated business document — the list in TECH-038 | none in P7 (CD-04, CD-05) | P8 obligation under [GAP-020](../../00-governance/GAP_REGISTER.md#gap-020--mobile-first-and-existing-usb-scanners-do-not-prove-device-compatibility) |
 
 ### 7.3 The C2 record
 
@@ -310,11 +313,47 @@ The final round only — each critical task's result per participant and, for ea
 
 | Task | The Owner | The Admin Operasional validator | The warehouse/field user (or the validator, SD-09) | Phone task: device | Phone task: browser | Phone task: CSS width |
 | --- | --- | --- | --- | --- | --- | --- |
-| UT-01 … UT-24 | without help · with help · not completed · Owner-accepted disposition (its reference) | | | the phone's model, by role where participants differ; empty for a desktop task | the browser and its version | the viewport's width in CSS px, as the browser reports it |
+| UT-01 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-02 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-03 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-04 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-05 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-06 | Owner-accepted disposition — DIR-079 CD-02 | — | — | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-07 | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — | — |
+| UT-08 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-09 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-10 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-11 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-12 | — | Owner-accepted disposition — DIR-079 CD-02 | — | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-13 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-14 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-15 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-16 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-17 | — | Owner-accepted disposition — DIR-079 CD-02 | — | — | — | — |
+| UT-18 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-19 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-20 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-21 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-22 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-23 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
+| UT-24 | — | — | Owner-accepted disposition — DIR-079 CD-02 | not recorded (CD-03) | not recorded (CD-03) | not recorded (CD-03) |
 
 APPR-011's condition holds when every critical task is *without help* for every participant of the final round, or carries an Owner-accepted disposition. Then the Owner's verdict (DIR-040 F6):
 
-> Antarmuka ramah pengguna: **ya / tidak** — tanggal; catatan Owner.
+> Antarmuka ramah pengguna: given at OG-2 with APPR-011 (CD-08).
+
+**The screens the Owner's business decisions change (CD-06).** The screens that CA-06–CA-10 and CB-01–CB-03 change were not shown in the prototype; the Owner judges them at APPR-011 in Stage 3's documents, and P8 verifies them on the application (CD-06). Found by script: each page whose own row in INFORMATION_ARCHITECTURE §8, NAVIGATION_CONTRACTS, ROUTE_CONTRACTS or INTERACTION_CONTRACTS carries SP-65's `DIR-077` mark, and the pages that CB-01–CB-03's options name ([OQ-19](OWNER_QUESTIONS.md#oq-19--an-imported-purchases-number)–[OQ-21](OWNER_QUESTIONS.md#oq-21--the-receivables-kpi-and-the-ageing-chart-within-qb-10)), checked again against SP-72's amendments (TECH-038).
+
+| Decision | What changes | Pages |
+| --- | --- | --- |
+| CA-06 | each project row's journey stage, blocker marker and next action | PG-010 *Proyek* |
+| CA-07 | the dispatch-ready lines (QS-24) among the Admin's goods work | PG-007 *Pekerjaan*; PG-024 *Keluarkan Barang* and PG-023 *Barang Keluar*, reached from its rows |
+| CA-08 | the display language kept in `users.locale` | PG-065 *Akun Saya*; the account menu (INFORMATION_ARCHITECTURE §5.4) |
+| CA-09 | every purchase's business number at its save | PG-017 *Buat Pembelian*; PG-016 *Detail Pembelian* |
+| CA-10 | the Owner-only overdue projects (QS-23) in the decision group | PG-006 *Beranda* |
+| CB-01 | an imported purchase's number | PG-058 *Impor Data Awal* |
+| CB-02 | the PURCHASE sequence's scheme and seed | PG-061 *Penomoran Dokumen* |
+| CB-03 | the receivables KPI and the ageing chart within QB-10 | PG-006 *Beranda* |
 
 ## 8. The sessions
 
