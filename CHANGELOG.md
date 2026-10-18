@@ -1,6 +1,6 @@
 # Changelog
 
-Status: REVIEW | Updated: 2026-10-18 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
 
 ## Unreleased — 2026-09-27
 
@@ -383,3 +383,9 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Recorded APPR-011, the Owner's approval at OG-2 (DIR-081 OB-07), in effect in the approval commit `docs: approve P7 UX re-baseline (APPR-011)` after gate PC4-A: Stage 3's documents, the narrow P3–P6 amendments of TECH-037 and TECH-038 and OG-2's changes, 36 files hashed as committed; the approved documents' lifecycle lines moved to APPROVED, APPR-008 kept as provenance, the amendments' marks kept; GAP-052, GAP-055–GAP-057, GAP-059, GAP-061 and GAP-062 closed — 62 findings: 11 CLOSED, 42 OPEN, 0 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK.
 - Published P7: `main` fast-forwarded to the approval commit and pushed with the Owner's separate approval, verified on the live remote; P7 DONE, P8 and P10 IN_PROGRESS (DIR-081 OB-09); the gate record's "Stage 5 — approval and publication", DECISION_INDEX's superseded D-IA and D-DS sets and their Stage 3 rows, PHASE_STATUS and CURRENT_HANDOFF. No merge commit, force push or history rewrite.
+
+## Unreleased — 2026-10-19, P8 and P10 drafted, P9 completed, run PC-4 Parts 3–5
+
+- Drafted P8 — TEST_STRATEGY, SECURITY_TEST_MATRIX, PERFORMANCE_TARGETS and DEFINITION_OF_DONE — and P10 — RELEASE_PLAN — as REVIEW drafts on `planning/p8-p11` (DIR-082 SP-85, SP-86), every requirement P0–P7 hands to them mapped by script, 0 missing.
+- Completed P9 with the Owner in session (SP-87): the facts of the shared VPS and the operator's inputs recorded as given, without a secret; the Owner's six conditions applied — MULTIPLECORP isolated from the second production application, capacity from their combined use —; each input not available a pre-staging or pre-go-live obligation in RELEASE_PLAN §9, never PASS; the tabletop exercise TT-01–TT-12 held as a discussion, its 30 findings with their owners.
+- Ran the one combined review WF-PC4 and one convergence review (SP-88): 74 findings — CRITICAL 0, HIGH 16, MEDIUM 38, LOW 20 —, each fixed at Level 1 or raised as an Owner question; gates P8, P9, P10 and PC-4 PASS in the new gate records; OQ-26, OQ-28 and OQ-29 raised, GAP-063 and GAP-064 opened — 64 findings: 11 CLOSED, 42 OPEN, 2 OWNER_DECISION_REQUIRED, 9 ACCEPTED_RISK; SOURCE_OF_TRUTH, CONTEXT_INDEX, DECISION_INDEX, PHASE_STATUS, CURRENT_HANDOFF, the three READMEs and TECH-039's later parts. `main` unchanged since Part 2; nothing installed, configured or deployed; no server touched.

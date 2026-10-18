@@ -22,10 +22,10 @@ Authority: P8 — how the application is tested: the principles, layers and regr
 | TS-06 | **A valid test is never weakened or deleted to make CI pass.** A failing test is fixed in the code; a test found wrong is corrected through review with its reason recorded | brief §44; ENGINEERING_PRINCIPLES |
 | TS-07 | **Failure paths are tested as much as success.** Missing data, a failed rendition, a queue retry, a network interruption, a stale edit and an expired session each yield a truthful pending, failed or conflict outcome with a safe recovery path — never a reported success that did not occur, a duplicated effect or a leak | ACCEPTANCE_CRITERIA, the coverage and failure gate |
 | TS-08 | **Planned and run are kept apart.** A check is reported as run only with its evidence (§16); a planned check is never written as passed, and a prototype's or a reference's result never stands for the application's | ENGINEERING_PRINCIPLES; DESIGN_SYSTEM Annex A |
-| TS-09 | **Every budget, limit and starting value is an assumption until measured.** P8 measures it; a budget the measurement misses is corrected through review — the query, the index or the budget —, never a reason to cut approved scope | PERFORMANCE AS-07; DESIGN_SYSTEM §1; CONCURRENCY_IDEMPOTENCY §0 |
+| TS-09 | **Every budget, limit and starting value is an assumption until measured.** P8 measures it; a budget the measurement misses is corrected through review — the query, the index or the budget —, never a reason to cut approved scope | PERFORMANCE AS-07; DESIGN_SYSTEM §1; the boundary of CONCURRENCY_IDEMPOTENCY (s00-03) |
 | TS-10 | **Verify locally, then again in fresh CI.** One verification command runs the deterministic checks on the agent's machine, and CI runs them again in a fresh environment; a Task is complete only when the required gates pass in both | brief §43; OS-06 |
 | TS-11 | **The guards are reconciled after every test that writes.** `ReconcileGuards` reports no difference after each scenario, and a seeded drift is found | ARCHITECTURE §7; CONCURRENCY_IDEMPOTENCY §8; HO-12 |
-| TS-12 | **VERIFYING is not DONE.** A Task whose checks are still running, failing or unrun stays VERIFYING or returns to IN_PROGRESS | AICWDF §19; AGENT_OPERATING_MODEL |
+| TS-12 | **VERIFYING is not DONE.** A Task whose required checks are still running, failing or unrun is not DONE: it stays VERIFYING, or BLOCKED when a check cannot run | AICWDF §19; AGENT_OPERATING_MODEL |
 
 ## 2. Test layers
 
@@ -37,7 +37,7 @@ AICWDF §19's sixteen layers, each with what it holds in this project. "Required
 | TL-02 | Typecheck | Larastan/PHPStan on PHP, the TypeScript compiler on the frontend | local, CI | every Task with code |
 | TL-03 | Unit | Pest unit tests: calculators against the numeric annex (FX-01), money and quantity arithmetic, the conversion and split rules; the architecture tests of STM SM-03 | local, CI | every Task with logic |
 | TL-04 | Feature | Pest feature tests over HTTP: validation, policies, commands, rule codes and messages, file controllers, the authentication flows of STM | local, CI | every Task with a route or command |
-| TL-05 | Integration | Pest with real PostgreSQL, workers and the queue store: the concurrency suite `Concurrency/`, the reconciliation suite `Reconciliation/` (ARCHITECTURE §4), jobs, the renderer and exports | local, CI | every Task that writes, races or runs a job |
+| TL-05 | Integration | Pest with real PostgreSQL, workers and the queue store: the concurrency suite `Concurrency/`, the reconciliation suite `Reconciliation/` (ARCHITECTURE §4), jobs, the renderer and exports | CI; locally where the agent's machine has the stack (§17) | every Task that writes, races or runs a job |
 | TL-06 | Authorization | The positive and denial cases of [SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md) | local, CI | every Task with a route, query class or command |
 | TL-07 | Route integrity | STM SM-02's route audit, and the route crawl of §8 — every route answering its contract's method and status | CI | every Task that adds or changes a route; all at Layer 3 |
 | TL-08 | Interaction | Each INT- contract's *Test* written as its test (§8) | local, CI | every Task with an important control |
@@ -155,7 +155,7 @@ A fixture that fails to represent its source — an example whose expected value
 
 **The numeric fixtures** (FX-01) are asserted value by value: the AC-10 baseline, the advance, the overpayment, the reallocation, the void after partial payment and SIPLAH's net settlement (1–6; GAP-004); stock, the reservation bound and shrinkage (7–9; GAP-023); the multi-unit split 41,667 and 58,333 and the ratio change (10–11; GAP-025); inter-company attribution (12; GAP-003); the tax settlement (13; GAP-026); charge allocation (14; GAP-027); loss in transit and the client-damaged return (15–16; GAP-028). The P3 scenarios (FX-03) add refunds and reallocation, contras, cross-company returns, the unknown-company loss, serial substitution, erroneous restorations, charges across receipts, remainder closure, duplicate bills, voids with settlements, replacement invoices, tax and fee on one payment, duplicate evidence, recovery after a write-off, a late correction on a cancelled project and the alternate-unit partial return — scenario 18 among GAP-025's proofs.
 
-**Identities and arguments that are proved, not assumed:** the eight identities by which a unit of cost is never counted twice (DATABASE §6.4; GAP-025, GAP-027, GAP-028); the transportation argument by which an overlap group's bounds can never deadlock a resolution, and the evidence resolution that closes only the identified company's lots (DATABASE §5.8; FX-05; GAP-030); conservation under every correction — Σ allocated = charge, allocated or expensed never both, late charges after consumption (GAP-027); no cost lost or counted twice in a loss or a damaged return (GAP-028); no double recognition of a pre-payment Kuitansi (GAP-029; C-43); net allocation equal to net cross-company consumption, a source company's provenance kept and the consuming project's allocated cost projected in full while the source side stays masked (GAP-003; C-08; C-28; PJ-05; PJ-06).
+**Identities and arguments that are proved, not assumed:** the eight identities by which a unit of cost is never counted twice (DATABASE §6.4; GAP-025, GAP-027, GAP-028); the transportation argument by which an overlap group's bounds can never deadlock a resolution, and the evidence resolution that closes only the identified company's lots (DATABASE §5.8; FX-05; GAP-030); conservation under every correction — Σ allocated = charge, allocated or expensed never both, late charges after consumption (GAP-027); no cost lost or counted twice in a loss or a damaged return (GAP-028); no double recognition of a pre-payment Kuitansi (GAP-029; C-43); receipt and dispatch in one unit converted symmetrically, the migration's conversion snapshots kept and the base quantities of counted and serialized products integral (GAP-025; C-09); net allocation equal to net cross-company consumption, a source company's provenance kept and the consuming project's allocated cost projected in full while the source side stays masked (GAP-003; C-08; C-28; PJ-05; PJ-06).
 
 **Workflows and corrections** (WORKFLOWS §13): a scenario family per workflow WF-ACC-01–WF-MIG-01 and per correction row CM-01–CM-38, each asserting the row's expected end state with the numeric annex; a real concurrent test per indivisible action AX-01–AX-37 (WORKFLOWS §9; BR-XD-07); the denial tests of WORKFLOWS §4 through STM's W4 rows; each CM row also under concurrency (GAP-005), a correction committing with all its dispositions or not at all. A project with no purchase and no warehouse work completes on the paths its scope needs, so no purchase or warehouse step is forced on it (GAP-021).
 
@@ -167,7 +167,7 @@ A fixture that fails to represent its source — an example whose expected value
 | --- | --- | --- |
 | Authorization | a Company-A Admin cannot view a Company-B project, edit a Company-B invoice or download an unauthorized file; a denied request returns the proper failure | STM SM-01, SM-23 |
 | Inventory | stock never negative; concurrent dispatches against stock 1 leave one success; a duplicate dispatch request duplicates no movement; an adjustment needs a reason and an audit event; a reversal keeps the history | C-03, C-04; M-01; M-05 and HO-15's replay of a dispatch command; WF-INV-06's reason and audit event; C-53, C-55 |
-| Payment | partial, full and over-payment; a duplicate idempotency key records one payment; an unauthorized payment is refused; a wrong invoice reassignment is audited | FX-01 2–5; M-08–M-12; STM SM-04; CM-21 |
+| Payment | partial, full and over-payment; a duplicate idempotency key records one payment; an unauthorized payment is refused; a wrong invoice reassignment is audited | FX-01 1–5; M-08–M-12; STM SM-04; CM-21 |
 | Numbering | concurrent issues never produce a duplicate number | C-10; M-15–M-19 |
 | Documents | an issued invoice is immutable; a revision keeps the previous version; a void keeps the history | C-11, C-12, C-53, C-56; the CM rows of revision and void |
 | Validation | negative amounts, invalid quantities, malformed identifiers and a foreign company's key are refused | TL-04; C-09; STM SM-01, SM-03 |
@@ -178,28 +178,28 @@ A fixture that fails to represent its source — an example whose expected value
 | AC | Capability | Where P8 proves it |
 | --- | --- | --- |
 | AC-01 | CAP-01 | CJ-19; §5 |
-| AC-02 | CAP-02, SH-01 | CJ-19 |
+| AC-02 | CAP-02, SH-01 | CJ-19; STM SM-01, SM-12 (TM-13) |
 | AC-03 | CAP-03 | CJ-19, CJ-07; C-01, C-02, C-09 |
 | AC-04 | CAP-04 | CJ-01 |
 | AC-05 | CAP-05 | CJ-02; §5 (FX-04) |
 | AC-06 | CAP-06 | CJ-05, CJ-06, CJ-07; §5 |
 | AC-07 | CAP-07 | CJ-03; C-30 |
-| AC-08 | CAP-08 | CJ-15; §12 (GAP-019) |
-| AC-09 | CAP-09 | CJ-20 |
+| AC-08 | CAP-08 | CJ-15; C-10–C-12; M-15–M-19; M-31; §12 (GAP-019) |
+| AC-09 | CAP-09 | CJ-20; STM SM-04 (W4-24; OD-05; OD-06) |
 | AC-10 | CAP-10 | CJ-04; FX-01 1–6 |
 | AC-11 | CAP-11 | CJ-14; FX-01; §5 |
 | AC-12 | CAP-08, CAP-10, CAP-13 | CJ-06; §5 |
-| AC-13 | CAP-01, CAP-13 | STM; CJ-09, CJ-10 |
+| AC-13 | CAP-01, CAP-13 | STM SM-01–SM-25, SM-25 for the projection within scope; CJ-09, CJ-10 |
 | AC-14 | CAP-14, SH-02 | §§9–12; CJ-18 |
 | AC-15 | CAP-12 | CJ-08; FX-01 6 |
-| AC-16 | CAP-03, CAP-06, CAP-10, CAP-13 | §6 (M-01–M-03, M-08–M-10); CJ-21 |
+| AC-16 | CAP-03, CAP-06, CAP-10, CAP-13 | §6 (M-01–M-05, M-08–M-10, M-38); CJ-21 |
 | AC-17 | CAP-15 | §15; CJ-16 |
-| AC-18 | CAP-16 | §15; BACKUP_RECOVERY §5 |
-| AC-19 | CAP-16 | BACKUP_RECOVERY §§2, 5; §15 |
+| AC-18 | CAP-16 | §15; BACKUP_RECOVERY §5; RELEASE_PLAN §7 |
+| AC-19 | CAP-16 | §15; BACKUP_RECOVERY §§2, 5 |
 | AC-20 | CAP-04, CAP-06, CAP-14 | CJ-01 |
-| AC-21 | CAP-09, CAP-18 | CJ-17; C-39 |
+| AC-21 | CAP-09, CAP-18 | CJ-17; C-38, C-39; STM SM-04 (W4-09; OD-12); M-26, M-27 |
 | AC-22 | CAP-06 | CJ-05, CJ-07; FX-01 7–9 |
-| AC-23 | CAP-17 | CJ-12, CJ-14; PFT |
+| AC-23 | CAP-17 | CJ-12, CJ-14; STM SM-01, SM-11; PFT |
 
 The Owner's final P1 decisions are proved by the same suites: the five financial concepts by FX-01 and CJ-04 (OWN-01); visibility and the denial of manipulated requests by SECURITY_TEST_MATRIX (OWN-02); normal completion, Admin N/A and Force Complete by C-38, C-39, SM-04 and CJ-17 (OWN-03); reservation and usable stock by M-01–M-03 and FX-01 7–9 (OWN-04); the shared pool's provenance and inter-company attribution by FX-01 12, C-08 and C-28 (OWN-05).
 
@@ -440,7 +440,7 @@ Every UI Task answers AICWDF §27's twenty-one items on the built screens, never
 
 **Mandated copy never cut** (D-DS-18; OB-08): a select's value, a form bar's reason, a read-only value and a label wrap under WCAG 2.2 1.4.12's text spacing instead of an ellipsis — tested at 768 px, where the prototype cut the save's reason, and at every band edge.
 
-**The document composer and preview** (DESIGN_SYSTEM §14.3; D-DS-20; D-DS-23; UF-01; `DIR-081` OB-02; GR-10). On every page that creates or edits a generated business document — PG-014, PG-033, PG-036, PG-042 and PG-043, and PG-036 for the drafts that the issuing controls of PG-016, PG-022, PG-024, PG-031 and PG-043 prepare — the tests prove that a draft preview never satisfies a requirement — no completion predicate, checklist item or document requirement counts a draft (GAP-053) —; that it never writes; that it matches the issued layout within P8's tolerance; that its totals are labelled provisional and then equal the server's; that only projected fields reach the browser; that the paper stays Indonesian in both interface languages; the phone's Edit → Preview → Finalize at 390 px, DOC-12's floor step included; the desktop's form beside the live preview at 1,025, 1,279 and 1,280 px and the tablet's toggle at 1,024 px (INT-012; CD-04). **The tolerance:** the same template, paper size, orientation, margins and page count as the issued rendition of the same content; the same blocks in the same order with the same values, except the draft marking "DRAF — belum terbit" and the number line, which an issue fills; each block's position on the page within 1 mm.
+**The document composer and preview** (DESIGN_SYSTEM §14.3; D-DS-20; D-DS-23; UF-01; `DIR-081` OB-02; GR-10). On every page that creates or edits a generated business document — PG-014, PG-033, PG-036, PG-042 and PG-043, and PG-036 for the drafts that the issuing controls of PG-016, PG-022, PG-024, PG-031 and PG-043 prepare — the tests prove that a draft preview never satisfies a requirement — no completion predicate, checklist item or document requirement counts a draft (GAP-053) —; that it never writes; that it matches the issued layout within P8's tolerance; that its totals are labelled provisional and then equal the server's; that only projected fields reach the browser; that the paper stays Indonesian in both interface languages; the phone's Edit → Preview → Finalize at 390 px, DOC-12's floor step included; the desktop's form beside the live preview at 1,025, 1,279 and 1,280 px and the tablet's toggle at 1,024 px (INT-012; CD-04). **The tolerance:** the same template, paper size, orientation, margins and page count as the issued rendition of the same content; the same blocks in the same order with the same values, except the draft marking "DRAF — belum terbit", the number line, which an issue fills, and the draft's text signature block, which stands where the issued rendition has its stamp and signature — the renderer alone uses those files (DESIGN_SYSTEM §14.3; PJ-19) —; each block's position on the page within 1 mm.
 
 **The screens the Owner's business decisions changed** (DIR-079 CD-06), never shown in the prototype, are verified on the application:
 
@@ -450,7 +450,7 @@ Every UI Task answers AICWDF §27's twenty-one items on the built screens, never
 | CA-07 | the dispatch-ready lines (QS-24) among the Admin's goods work | PG-007 *Pekerjaan*; PG-024 *Keluarkan Barang*; PG-023 *Barang Keluar* | CJ-07; PFT PFM-07 |
 | CA-08 | the display language kept in `users.locale` | PG-065 *Akun Saya*; the account menu | CJ-18 |
 | CA-09 | every purchase's business number at its save | PG-017 *Buat Pembelian*; PG-016 *Detail Pembelian* | CJ-02; C-10 |
-| CA-10 | the Owner-only overdue projects (QS-23) in the decision group | PG-006 *Beranda* | CJ-13; STM SM-01 for its Owner-only audience |
+| CA-10 | the Owner-only overdue projects (QS-23) in the decision group | PG-006 *Beranda* | CJ-13; STM SM-04 (OD-14) and SM-25 for its Owner-only audience |
 | CB-01 | an imported purchase's number | PG-058 *Impor Data Awal* | CJ-16; §15 |
 | CB-02 | the PURCHASE sequence's scheme and seed | PG-061 *Penomoran Dokumen* | CJ-16, CJ-19; HO-19 |
 | CB-03 | the receivables KPI and the ageing chart within QB-10 | PG-006 *Beranda* | CJ-14; PFT PFM-05 |
@@ -497,13 +497,13 @@ A UAT record names the validator, the date, the build, the tasks, each result an
 
 ## 13. Security tests
 
-[SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md): SM-01–SM-24 with every data path, W4 row, Owner-only denial and threat; H8-15's CI gates are required checks of every pipeline run.
+[SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md): SM-01–SM-25 with every data path, W4 row, Owner-only denial and threat; H8-15's CI gates are required checks of every pipeline run.
 
 ## 14. Performance
 
 [PERFORMANCE_TARGETS](PERFORMANCE_TARGETS.md): the query budgets as query-count tests, the index verification procedure at 1x, 10x and 100x, the measured checks P6 and P7 leave to P8 and the release-critical set.
 
-## 15. Migration tests
+## 15. Migration, backup and restore tests
 
 **Schema migrations** (TL-16; AICWDF §29.3): each migration runs up on the previous release's schema with the 10x fixture; a release's migrations are expand-only, the contract step coming in a later release (HO-31), and an architecture test refuses a drop, rename or type change in an expand migration; the previous release's code passes its smoke suite against the expanded schema, so that workers and pages of the previous version keep working while the release rolls (GAP-012); a worker of the previous release releases a job payload newer than it understands, and a command posted from a page loaded before the deployment stays valid for one release (CONCURRENCY_IDEMPOTENCY §15); each migration's duration on the 100x fixture is recorded for the release window. A migration is designed, tested and rehearsed outside production; no agent runs one against production.
 
@@ -513,14 +513,17 @@ A UAT record names the validator, the date, the build, the tasks, each result an
 - the dry run on an isolated copy, the batch left DRY_RUN_PASSED; the joint sign-off; the Owner's commit (OD-13);
 - the commit row by row through the ordinary actions with deterministic command identities in resumable chunks — a retried chunk finding its committed rows done, a refused row keeping its refusal and running again once its cause is removed, a lost chunk re-dispatched from the batch's commit request, a resume by another Owner (M-33; JB-07; JB-09; CI-01; CI-08) —, and the abort of a batch that has committed no row (ADMIN_FLOW §13);
 - the numbering at the cutover: the seeds the import writes, the Owner's starts for types no import covers, go-live recorded once, and HO-19's import cases; an imported purchase's number as RELEASE_PLAN's import design states it (DIR-079 CB-01; GAP-058); a company's PURCHASE seed before go-live as `DIR-081` OB-05 reads it;
+- AX-28's refusal of an opening purchase whose kept legacy number lies at or above its period's committed seed (NM-08); opening lots with their conversion snapshots and serials, integral base quantities for counted and serialized products (BR-INV-12; C-09; GAP-025);
 - opening customer credit as an explicit migration fact, never live-period Cash-In (L-50); historical references kept apart from current effects, so that no replayed purchase duplicates opening stock and no fresh invoice duplicates an imported remainder (GAP-010);
-- after the commit, `ReconcileGuards` reports no difference, stock per company equals its opening lots, receivables equal the imported ones, and the hot plans are re-checked on the imported fixture (HO-36's P8 part; GAP-010's reconciliation tests).
+- after the commit, `ReconcileGuards` reports no difference, stock per company equals its opening lots, receivables equal the imported ones, credits equal the signed opening evidence, and the hot plans are re-checked on the imported fixture (GAP-010's reconciliation tests).
+
+**The backup and restore tooling** (AC-18; AC-19; BACKUP_RECOVERY §§2, 5), tested on synthetic data in CI and on staging: a run's manifest and checksums; a corrupt, a missing and an incomplete generation reported failed, never successful (BK-07); a missed or stale run alerting (BK-04; BK-10); rotation across generations and the retention boundary (BK-05; BK-06); a failed cleanup deleting nothing required (BK-12); disk pressure, by a lowered threshold (BK-11); a restore into isolation with the generation's paired key (BKR-08); and each drill's record — the recovery point, the elapsed time, the reconciliation and whether business use was possible — in §16's form. The drills themselves are the operator's ([BACKUP_RECOVERY §5](../09-operations/BACKUP_RECOVERY.md#5-restore-testing); [RELEASE_PLAN §7](../10-release/RELEASE_PLAN.md#7-rehearsal-and-drills)).
 
 ## 16. Evidence
 
 - **Form.** Every check reports `<layer or ID>: PASS | FAIL — Evidence: <commit>, <environment>, <command>, <artefact>`; a journey reports `E2E: PASS — Evidence: …` (AICWDF §26). An artefact is the run's log, its machine-readable test report, the browser trace and screenshots, the console and network capture, the query plans and the measurement output — all of synthetic data.
 - **Where it is kept.** As CI artefacts of the run and summarized in the Task's COMPLETION EVIDENCE (AGENT_OPERATING_MODEL); staging evidence is the operator's record, entered without secrets; nothing holding real data is ever an artefact.
-- **Run and planned apart.** A planned check is never reported as run; a failed check is recorded with its output, never hidden or retried until green, and the Task returns to IN_PROGRESS (TS-06; TS-08; TS-12).
+- **Run and planned apart.** A planned check is never reported as run; a failed check is recorded with its output, never hidden or retried until green, and the Task stays VERIFYING — or is BLOCKED when the check cannot run — until it passes (TS-06; TS-08; TS-12).
 - **Into the release integrity report.** TASKS, ROUTES, INTERACTIONS, CRITICAL JOURNEYS, UI/UX, BROWSER and BUILD of AICWDF §39 are counted from these suites' evidence by [RELEASE_PLAN](../10-release/RELEASE_PLAN.md).
 
 ## 17. Tooling
@@ -540,7 +543,7 @@ Capabilities first, each with its preferred tool (AICWDF §5); **none is install
 | Performance and load | query-count assertions in Pest; `EXPLAIN (ANALYZE, BUFFERS)`; k6 or an equivalent load tool (brief §40); `pg_stat_statements` and `auto_explain` on staging (PERFORMANCE §12) | TL-15 |
 | CI | the public repository's CI at no cost, on the production-like stack of INFRASTRUCTURE §3 | all |
 
-**One verification command** (brief §43): a script such as `scripts/verify.sh` runs the deterministic checks an agent can run locally — TL-01–TL-04, TL-06, the route audit of TL-07, TL-08, TL-13 and the static gates of TL-14 —, and CI runs it again in a fresh environment with the integration, end-to-end and performance suites; the script is P11's to write. TOOLCHAIN's row "Static and automated verification", whose strategy is P8's, is this section.
+**One verification command** (brief §43): a script such as `scripts/verify.sh` runs the deterministic checks an agent can run locally — TL-01–TL-04, TL-06, the route audit of TL-07, TL-08, TL-13 and the static gates of TL-14, and TL-05 where the agent's machine has the stack —, and CI runs it again in a fresh environment with the integration, end-to-end and performance suites; the script is P11's to write. TOOLCHAIN's row "Static and automated verification", whose strategy is P8's, is this section.
 
 ## 18. Owner questions
 
@@ -548,19 +551,19 @@ Each P8 matter that is the Owner's, with its options and one recommendation; not
 
 ### P8Q-01 — The browser E2E capability and TestSprite's role
 
-- **Context.** TOOLCHAIN leaves the browser E2E capability to P8 (AICWDF §5.3, preferred tool Playwright). ENGINEERING_PRINCIPLES records the brief's UI and E2E regression tool, TestSprite, and ACCEPTANCE_CRITERIA's completion obligations name "relevant TestSprite flows" and "TestSprite regression and fresh CI", with no silent TestSprite omission, no vendor tool as the sole proof and any substitution reviewed under governance (DEP-07). TestSprite is an external service whose entitlement, cost and data handling are unverified; it could run only against CI or staging with synthetic data.
+- **Context.** TOOLCHAIN leaves the browser E2E capability to P8 (AICWDF §5.3, preferred tool Playwright). ENGINEERING_PRINCIPLES records the brief's UI and E2E regression tool, TestSprite, and ACCEPTANCE_CRITERIA's completion obligations name "relevant TestSprite flows" and "TestSprite regression and fresh CI", with no silent TestSprite omission, no vendor tool as the sole proof and any substitution reviewed under governance (DEP-07). TestSprite is an external service whose entitlement, cost and data handling are unverified; it could run only against CI with synthetic data — staging runs on the production host and is the operator's alone (INFRASTRUCTURE §3). API behaviour is proved by Pest's feature tests; TestSprite's API checks, where useful, stay inside the same role and are never the proof.
 - **Options.** (a) **Playwright for the deterministic browser suite** — the journeys, the UX scenarios, the navigation paths, the console and network capture and the accessibility engine — **and TestSprite for the UI and E2E regression runs** the completion obligations name, over the same journeys, once a P11 Task has verified its entitlement at no cost or the Owner has approved a cost exception under COST_POLICY; neither is the sole proof, and if TestSprite cannot be used, the Owner is told before the gate that needs it. (b) **TestSprite as the only browser tool**, beside Pest: fewer tools, but the browser evidence — traces, console and network capture, the accessibility engine — would depend on a vendor service and its free tier. (c) **Playwright only**, TestSprite omitted: a change to ACCEPTANCE_CRITERIA under change control, raised then as an Owner question with its gap.
 - **Recommendation.** (a): AICWDF's preferred capability gives deterministic, self-hosted and zero-cost evidence in every CI run, and TestSprite keeps the role the brief and ACCEPTANCE_CRITERIA give it without becoming the sole proof; the cost question stays visible (DEP-07).
 
 ### P8Q-02 — The supported browsers and devices
 
 - **Context.** SECURITY WS-04 and H8-20 speak of "every supported browser", and the end-to-end suite needs a browser matrix, but no approved document lists the supported browsers; DEP-03 leaves phones, browsers and printers to be verified.
-- **Options.** (a) **The current stable Google Chrome and Microsoft Edge on the office PCs, Chrome on Android phones and Safari on iPhones**, the device UAT recording what the users actually hold and correcting the list with that evidence; CI runs the Chromium and WebKit engines, the real devices joining at Layer 3. (b) **Chromium-based browsers only**, on every device: a narrower matrix, an iPhone user unsupported. (c) **No list before the device UAT**, the users' own browsers discovered there: WS-04's origin check and H8-20's redirect test have no target until then.
+- **Options.** (a) **The current stable Google Chrome and Microsoft Edge on the office PCs, Chrome on Android phones and Safari on iPhones**, the device UAT recording what the users actually hold and correcting the list with that evidence; CI runs the Chromium and WebKit engines, the real devices joining at Layer 3. (b) **Chromium-based browsers only**, on every device: a narrower matrix, an iPhone user unsupported — a narrowing of V1_SCOPE's and AC-14's phone support, so choosing it is raised then as an Owner question with its gap. (c) **No list before the device UAT**, the users' own browsers discovered there: WS-04's origin check and H8-20's redirect test have no target until then.
 - **Recommendation.** (a): a list that covers the usual office and phone browsers, keeps Safari's engine in every CI run and lets the device UAT correct it with evidence.
 
 ## 19. Coverage
 
-Every requirement P8 receives, each mapped by script to the sections of this document (TST), of [SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md) (STM), of [PERFORMANCE_TARGETS](PERFORMANCE_TARGETS.md) (PFT) and of [DEFINITION_OF_DONE](DEFINITION_OF_DONE.md) (DOD) that answer it: AICWDF §19, §§25–28 and §4B's proof as AICWDF_ADOPTION maps them; the brief's §§40–44, the ownership registry's inputs for P8; SP-85's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P8", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **334 requirements, 334 answered, 0 missing.**
+Every requirement P8 receives, each mapped by script to the sections of this document (TST), of [SECURITY_TEST_MATRIX](SECURITY_TEST_MATRIX.md) (STM), of [PERFORMANCE_TARGETS](PERFORMANCE_TARGETS.md) (PFT) and of [DEFINITION_OF_DONE](DEFINITION_OF_DONE.md) (DOD) that answer it: AICWDF §19, §§25–28 and §4B's proof as AICWDF_ADOPTION maps them; the brief's §§40–44, the ownership registry's inputs for P8; SP-85's list; and every hit of a scripted search of P0–P7's normative documents and P9's drafts for "P8", sources and evidence excluded, grouped by its identifier or, where a line carries none, by its section. Gate OG-3 checks it. **335 requirements, 335 answered, 0 missing.**
 
 | Source | Requirement | Answered in |
 | --- | --- | --- |
@@ -763,7 +766,7 @@ Every requirement P8 receives, each mapped by script to the sections of this doc
 | ACCEPTANCE_CRITERIA | AC-14 | TST §5, TST §10, TST §12 |
 | ACCEPTANCE_CRITERIA | AC-16 | TST §5, TST §7 |
 | ACCEPTANCE_CRITERIA | AC-23 | TST §5, PFT §3 |
-| ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — numeric examples as fixtures; workloads | TST §5, PFT §3 |
+| ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — numeric examples as fixtures; workloads; recovery measurements | TST §5, TST §15, PFT §3 |
 | ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — P8 establishes measurable workloads and targets | PFT §1, PFT §3 |
 | ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — P8 expands failure tests, never a UI-only pass | TST §1, TST §5 |
 | ACCEPTANCE_CRITERIA | ACCEPTANCE_CRITERIA — P8 owns the definition of done and the test strategy; no silent TestSprite omission | DOD §2, DOD §5, TST §18 |
@@ -894,7 +897,8 @@ Every requirement P8 receives, each mapped by script to the sections of this doc
 | INFRASTRUCTURE | INFRASTRUCTURE — it operates what P0–P8 define | TST §4 |
 | INFRASTRUCTURE §3 | INFRASTRUCTURE §3 — the CI stack for P8's integration and E2E suites | TST §4 |
 | BACKUP_RECOVERY §6 | TT-F30 — the end-of-recovery race tested in P8 | STM §3 |
-| BACKUP_RECOVERY §9 | BACKUP_RECOVERY §9 — the recovery measurements and workloads P8 operationalizes with P9 | PFT §3 |
+| BACKUP_RECOVERY §9 | BACKUP_RECOVERY §9 — the recovery measurements and workloads P8 operationalizes with P9 | TST §15, PFT §3 |
 | INFRASTRUCTURE §6 | INFRASTRUCTURE §6 — the sizes P8 measures at 100x as the first baseline | PFT §3 |
 | INFRASTRUCTURE §11 | INFRASTRUCTURE §11 — the rows P8 shares with P9 | PFT §3, STM §3 |
+| INFRASTRUCTURE §7.3 | INFRASTRUCTURE §7.3 step 8 — the end-of-recovery race P8 tests | STM §3 |
 | Owner in session | The second production application on the VPS untouched by every test and load run | TST §4, PFT §1 |

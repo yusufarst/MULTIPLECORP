@@ -13,11 +13,11 @@ Authority: P8 — the definition of done that **every P11 Task cites**, by its D
 - **Statuses** — TODO, READY, IN_PROGRESS, BLOCKED, VERIFYING, DONE, SUPERSEDED (AICWDF §19). **VERIFYING is not DONE.**
 - **DONE** means: the required implementation is complete, the required tests pass locally and again in fresh CI, and the completion evidence exists (AICWDF §22.2) — every item of §2 answered for the Task, each **PASS** with its evidence or **N/A** with its reason under DOD-03. A working UI alone is not DONE (AGENT_OPERATING_MODEL).
 - **On DONE** the agent sets the status, checks the Task in the Task plan, updates its counters and updates CURRENT_HANDOFF (AGENT_OPERATING_MODEL, the automatic progress update).
-- **Back from VERIFYING.** A failing or unrun required check sends the Task back to IN_PROGRESS, or to BLOCKED when it cannot run; a regression found after DONE is a new defect Task, and the original Task's identifier and history stay as they are.
+- **Not DONE while a check fails.** A Task whose required check fails or has not run stays VERIFYING — or is BLOCKED when the check cannot run — and is never DONE (AGENT_OPERATING_MODEL); a regression found after DONE is a new defect Task, and the original Task's identifier and history stay as they are.
 
 ## 2. The checklist
 
-Each Task's contract lists the items that apply to it and answers every one; an item that applies is never left unanswered.
+Each Task's contract answers every item: PASS with its evidence or N/A with its reason (DOD-03); none is omitted.
 
 **Completion and evidence**
 
@@ -36,11 +36,11 @@ Each Task's contract lists the items that apply to it and answers every one; an 
 | --- | --- | --- |
 | DOD-07 | **1. Business** — the required capabilities, acceptance and material exception paths hold; policy decisions resolved; business correctness | the Task's acceptance tests; the numeric fixtures where its rules have them (FX-01) |
 | DOD-08 | **2. UI/UX** — natural Indonesian, shadcn-based consistency, mobile and desktop usability and accessibility, loading, empty, error and conflict states; AICWDF §27's gate answered item by item | TEST_STRATEGY §9; TL-09–TL-12 |
-| DOD-09 | **3. Backend** — server validation, correct use-case behaviour, meaningful failures and error handling, thin entry points | TL-04; the Task's refusal cases |
-| DOD-10 | **4. Database** — correct migrations, expand-only within a release; the required foreign-key, unique, check and not-null constraints; indexes; safe money and quantity representation; the DATABASE IMPACT ASSESSMENT and the release's DB CHANGE declaration | the C-rows the Task touches (TEST_STRATEGY §5); TL-16 |
+| DOD-09 | **3. Backend** — server validation, correct use-case behaviour, meaningful failures and error handling, maintainable thin entry points | TL-04; the Task's refusal cases |
+| DOD-10 | **4. Database** — correct migrations, expand-only within a release; the required foreign-key, unique, check and not-null constraints; indexes; safe money and data representation; the DATABASE IMPACT ASSESSMENT and the release's DB CHANGE declaration | the C-rows the Task touches (TEST_STRATEGY §5); TL-16 |
 | DOD-11 | **5. Security and authorization** — authentication; capability, company and resource isolation; IDOR and BOLA; CSRF, session and cookie; XSS, SQL injection and clickjacking; private uploads and downloads; the COMPANY SCOPE AND FIELD PROJECTION field | the Task's cases of SECURITY_TEST_MATRIX, positive and denial |
 | DOD-12 | **6. Concurrency, idempotency and integrity** — atomic effects; race, duplicate and retry protection; state preconditions; ledger and balance consistency; corrections and audit; the CONCURRENCY / IDEMPOTENCY field | the Task's M rows and ⚡ C-rows; `ReconcileGuards` clean (TEST_STRATEGY §6) |
-| DOD-13 | **7. Performance and N+1** — query evidence, bounded loading, pagination and search, verified indexes, no N+1 regression, measured targets where defined | PERFORMANCE_TARGETS PFM-01–PFM-03 for the Task's pages and queries |
+| DOD-13 | **7. Performance and N+1** — query evidence, bounded loading, pagination and search, verified indexes, no N+1 regression, measured targets where defined | the CI half of PERFORMANCE_TARGETS PFM-01–PFM-03 for the Task's pages and queries — query counts, N+1 and plans on the scale fixtures —; staging times belong to the release-critical set (PFT §4), a miss there opening a defect Task and AS-07's review |
 | DOD-14 | **8. Automated verification** — Pest backend and integration tests; the relevant TestSprite flows in the role P8Q-01 settles; fresh CI; static analysis and style; frontend typecheck and build; regression — Layer 1, and Layer 2 when the Task closes a group —; business UAT where applicable | TL-01–TL-05, TL-13; TEST_STRATEGY §§3, 12 |
 
 **The project's further items**
@@ -81,7 +81,7 @@ ACCEPTANCE_CRITERIA's minimum examples, each covered by the items and tests name
 
 ## 5. Module and release completion
 
-A **module** is complete only when its Tasks are DONE and its cross-module protections work together — inventory with identity and barcodes, receiving, balances, the ledger, dispatch, locations and minimum stock, adjustment, opname, returns and reversal, drop-ship, allocation and attribution, access, concurrency and regression; billing, payment and documents reconciling together rather than passing as separate screens (ACCEPTANCE_CRITERIA). Its proof is Layer 2's regression over the module's critical journeys (TEST_STRATEGY §3). The aggregation of modules into a release, and the V1 release completion, are [RELEASE_PLAN](../10-release/RELEASE_PLAN.md)'s.
+A **module** is complete only when its Tasks are DONE and its cross-module protections work together — inventory with identity and barcodes, receiving, balances, the ledger, dispatch, locations and minimum stock, adjustment, opname, returns and reversal, drop-ship, allocation and attribution, access, concurrency and idempotency, and regression — a stock page alone does not pass —; billing, payment and documents reconciling together rather than passing as separate screens (ACCEPTANCE_CRITERIA). Its proof is Layer 2's regression over the module's critical journeys (TEST_STRATEGY §3). The aggregation of modules into a release, and the V1 release completion, are [RELEASE_PLAN](../10-release/RELEASE_PLAN.md)'s.
 
 ## 6. Coverage
 

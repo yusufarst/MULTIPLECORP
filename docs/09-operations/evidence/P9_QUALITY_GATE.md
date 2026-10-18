@@ -1,0 +1,41 @@
+# P9 quality gate
+
+Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+
+*Written by run PC-4 under [DIR-082](../../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-88 and §8 item 10, in English, in its last commit. It records gate P9 — AICWDF §20's items, the operator's inputs, the Owner's conditions, the tabletop exercise, its coverage and the combined review — on P9's REVIEW drafts. A PASS says that the drafts state the item, with its evidence; it is not the Owner's approval of P9, a separate decision at OG-3 ([DIR-081](../../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09), and no test, installation or deployment has run: the drafts are the plan that P11's Tasks and P10's releases carry out.*
+
+## The drafts
+
+| Document | Holds | Identifiers |
+| --- | --- | --- |
+| [INFRASTRUCTURE](../INFRASTRUCTURE.md) | The invariants, the topology, the environments, processes, configuration, secrets and database roles, the deployment path, observability, security operations with the runbooks, capacity and cost, the operator's inputs, the Owner questions and the coverage | INF-01–INF-08; OPI-01–OPI-09 and OPI-26–OPI-31; P9Q-01–P9Q-07, P9Q-14–P9Q-16 |
+| [BACKUP_RECOVERY](../BACKUP_RECOVERY.md) | The local-backup decision and its limits, the twelve obligations, the shared-disk budget, the restore procedure, restore testing, the tabletop exercise as held, the operator's inputs and the Owner questions | BKR-01–BKR-08; BK-01–BK-12; OPI-21–OPI-25; TT-01–TT-12, TT-F01–TT-F30; P9Q-10–P9Q-13 |
+
+Drafted in run PC-2, the Owner's answers recorded in PC-3 (DIR-079 CB-04–CB-14), completed in PC-4's Part 4 with the Owner in session (`0e30dc99e660bb9cc1420d2948ad9a7876b14ef4`) and revised in Part 5 with the combined review's fixes; every revision's SHA-256 in [TECH-039](../../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed).
+
+## Gate P9
+
+| Item | Check | Result | Evidence |
+| --- | --- | --- | --- |
+| P9-01 | AICWDF §20 — containers | PASS | INFRASTRUCTURE §2 — Docker Compose, or Coolify only where OPI-03 records that the VPS already runs it (DIR-079 CB-05) —, on a private container network; §4.1, the processes |
+| P9-02 | §20 — Nginx and the proxy | PASS | INFRASTRUCTURE §2: MULTIPLECORP keeps Nginx (ARCHITECTURE §1), its own site file holding the static security headers and the login rate limit (H9-02), as the shared host proxy or behind it; the shared host proxy holds public HTTPS for both applications and is WS-11's trusted proxy, designed pending OPI-03 (INF-07); DNS and CB-08's edge proxy P9Q-05 (DIR-079) |
+| P9-03 | §20 — environment variables | PASS | INFRASTRUCTURE §4.2 |
+| P9-04 | §20 — secrets | PASS | INFRASTRUCTURE §4.3 and §7.4, the rotation and re-encryption runbook; SECURITY SX-01–SX-07; values only as placeholders the operator fills outside the repository |
+| P9-05 | §20 — staging | PASS | INFRASTRUCTURE §3; P9Q-01 (DIR-079 CB-04); resource-capped beside both production applications, never touching the second (INF-07) |
+| P9-06 | §20 — production | PASS | INFRASTRUCTURE §§1, 3 and 5: INF-01–INF-08 — operated only by the named human operator, never by an agent —, the deployment path from `main` |
+| P9-07 | §20 — logs, metrics, uptime, error tracking and security monitoring | PASS | INFRASTRUCTURE §6, with the retention values of §7; P9Q-04 and P9Q-07 (DIR-079) |
+| P9-08 | §20 — incident visibility | PASS | INFRASTRUCTURE §6's alert channel — not chosen (OPI-05), a pre-go-live obligation (RELEASE_PLAN GLC-03) — and §7's runbooks §7.1–§7.4 (H9-07, H9-14, AU-21, AU-25) |
+| P9-09 | §20 — backup | PASS | BACKUP_RECOVERY §§1–3: BKR-01–BKR-08, the twelve obligations BK-01–BK-12, the shared-disk budget from both applications' combined use |
+| P9-10 | §20 — offsite backup | PASS — project exception | DIR-009 keeps V1's backups local, RISK-001 accepted (AICWDF_ADOPTION: "offsite backup is a PROJECT EXCEPTION"); INF-06; the Owner's request in session to consider an off-server copy is OQ-26 (GAP-063), for OG-3 |
+| P9-11 | §20 — restore and restore testing | PASS | BACKUP_RECOVERY §§4–5; RELEASE_PLAN §7: a production recovery point restored and timed before go-live (GLC-04, AC-18's evidence) and H9-14's recovery test, a Scenario B recovery rehearsal on staging (GLC-26) |
+| P9-12 | §20 — the recurring-cost inventory and the paid-service exception registry | PASS | INFRASTRUCTURE §8: no new recurring cost, the registry empty; a free-tier dependency recorded under COST_POLICY §4C.4 before adoption (RELEASE_PLAN GLC-03, GLC-11) |
+| P9-13 | §20 — existing VPS capability and free or open-source components preferred | PASS | INFRASTRUCTURE §§6 and 8 |
+| P9-14 | The operator's inputs recorded as given, nothing assumed; each one not available a pre-staging or pre-go-live obligation, never a PASS | PASS | INFRASTRUCTURE §9 and BACKUP_RECOVERY §7: 20 inputs, OPI-01–OPI-09 and OPI-21–OPI-31, each with its state as the Owner gave it on 2026-10-19 and when it is needed; RELEASE_PLAN §9 carries each as a go-live item; no access, installation or credential requested |
+| P9-15 | The Owner's six conditions in session | PASS | isolation of the two applications (INF-07; BKR-07; RBK-06); capacity from their combined use (INFRASTRUCTURE §8; BACKUP_RECOVERY §3); no backup, restore or rollback of one damaging the other (BKR-07; RBK-06); no provider feature assumed (INF-08; OPI-29; GLC-24); missing inputs obligations, not PASS (§9); no server access, installation or credential request now |
+| P9-16 | The tabletop exercise (GAP-051) held and recorded as given | PASS | [BACKUP_RECOVERY §6](../BACKUP_RECOVERY.md#the-exercise-held-in-pc-4): TT-01–TT-12, one step per message, the Owner's answers by role; TT-F01–TT-F30 with their owners by the division the Owner approved at TT-12, six of them aligned in Part 5 for the Owner's confirmation at OG-3; a discussion — no system touched, not a real recovery test —; GAP-051 exercised within its scope |
+| P9-17 | The runbooks P0–P7 hand to P9 | PASS | INFRASTRUCTURE §4.2 (H9-11's driver change), §7.1 (AU-14, H9-07), §7.2 (AU-21), §7.3 (AU-25, GAP-050's cases), §7.4 (SX-02, H9-14) |
+| P9-18 | Coverage — every requirement handed to P9 answered | PASS | [INFRASTRUCTURE §11](../INFRASTRUCTURE.md#11-coverage): 182 rows, BACKUP_RECOVERY §9's subset 68, from the scripted "P9" search's 127 units and SP-67's list; by script, every unit named by a row, every cited section present, 140 tokens found; 0 missing |
+| P9-19 | The combined review — every finding fixed at Level 1 or an Owner question | PASS | [PC-4 combined review](../../10-release/evidence/P10_QUALITY_GATE.md#pc-4-combined-review): 74 PC4F rows — CRITICAL 0, HIGH 16, MEDIUM 38, LOW 20 —, B2's 28 on P9 and P10's operations among them; none open without an Owner question |
+| P9-20 | No secret, host, address, port, account, provider-account detail or second application's name; no agent access to production | PASS | by script over both drafts; INF-01–INF-03; placeholders only `<OPERATOR>`, `<APP_DOMAIN>` and `<BACKUP_TIME>`, in the operator's list (OPI-01, OPI-30, OPI-23) |
+
+**Result.** Gate P9: 20 of 20 PASS, P9-10 as the project exception DIR-009 records. P9Q-14, P9Q-15 and P9Q-16 go to the Owner at OG-3 with their recommendations ([INFRASTRUCTURE §10](../INFRASTRUCTURE.md#10-owner-questions)), with OQ-26 and OQ-28; P9 stays IN_PROGRESS until the Owner approves it.
