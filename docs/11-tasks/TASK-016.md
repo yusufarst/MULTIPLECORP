@@ -41,6 +41,9 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 **IN SCOPE:**
 
+- ROUTE-281 with INT-005 and INT-281, `Reporting Search` — moved here from TASK-059 in Part 4, the forms built before PG-009 choosing every master by lookup (IP-17; ADMIN_FLOW §6) —: the search request of the shell's type-ahead, of PG-009 (TASK-059) and of every lookup inside a form, with the Reporting search query classes per result type — product, SKU and barcode, client, unit, PIC, supplier, project and invoice (CAP-17; AC-23) —, each reading its tables through the scope resolver and the projection (TASK-012)
+- IP-17's order: a code — barcode or SKU, serial, project number, formatted document number — looked up exactly first, one hit selecting it, several rows sharing the key within scope listed for the user, none MSG-25 (PF-19); a name of at least three consecutive letters or digits by the trigram indexes, names equal to or beginning with the term first, a type-ahead of at most 20 rows (PF-20; PF-21); a term without a trigram by exact and prefix lookups only, with MSG-24 (PF-23); more than 200 candidates cut with MSG-23; at most 100 characters, LIKE wildcards escaped (WS-03)
+- scope first (PF-22; CS-07): a search over company-owned rows carries the company filter in the same statement, S0 master names searched without one, each result under its view capability (PJ-10); no result, count or empty state hinting at an out-of-scope record (DP-06); the term never in the address or history (DP-02); WS-12's search limiter, 60 per minute per account, answered with MSG-20 (TM-43)
 - the shell of DESIGN_SYSTEM PT-01–PT-02 and IA §6, the phone bars and *Lainnya*, the account menu, "Buat" (INT-003, INT-004), GR-02, GR-11, GR-14 and GR-22
 - the navigation entries the account's capabilities allow, sent by the server as hints (H7-03; IA §13), absent without the capability
 - the company context model of IA §7 and WF-ACC-01: the working filter and labels (PT-04), the scope always the server's (CS-01–CS-08)
@@ -69,11 +72,12 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - [PERMISSIONS_MATRIX §6](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)
 - [SECURITY §4](../05-security/SECURITY.md#4-web-and-input-security) WS-07
 - the architecture challenge's sequences 8a, 19a ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (148): BR-ACC-01–BR-ACC-03; WF-ACC-01; L-03; ROUTE-005; RC-01–RC-06; INT-003–INT-004; INT-007; INT-010; C-32; C-54; CS-01–CS-08; AU-07; WS-07; TM-04; TM-10; TM-12; TM-15; TM-17; TM-19; TM-27–TM-28; TM-61; H6-06; H7-02–H7-03; H7-05–H7-08; H7-10–H7-11; H7-13; H7-19; HO-01–HO-03; HO-05–HO-10; HO-38; RB-01; RB-04–RB-06; RB-09; UXN-01–UXN-26; D-IA-01–D-IA-06; D-IA-18–D-IA-19; D-IA-21–D-IA-23; PG-005; SCR-04; UXI-03; UXI-15–UXI-18; UXI-20; D-UX-01–D-UX-10; IP-06; IP-11; IP-21; MSG-33–MSG-34; UXS-04; UXS-22–UXS-23; UXS-25; UXH-11; PT-01–PT-02; PT-04; GR-02; GR-11; GR-14; GR-22; NAV-005; NV-01–NV-08; component Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link; component Phone app bar and bottom bar; *Lainnya*; component Filter toolbar and company view; component Menu and "Tindakan Lain"; account menu
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (159): BR-ACC-01–BR-ACC-03; WF-ACC-01; L-03; ROUTE-005; ROUTE-281; RC-01–RC-06; INT-003–INT-005; INT-007; INT-010; INT-281; C-32; C-54; CS-01–CS-08; AU-07; WS-03; WS-07; TM-04; TM-10; TM-12; TM-15; TM-17; TM-19; TM-27–TM-28; TM-43; TM-61; H6-06; H7-02–H7-03; H7-05–H7-08; H7-10–H7-11; H7-13; H7-19; HO-01–HO-03; HO-05–HO-10; HO-38; PF-19–PF-23; RB-01; RB-04–RB-06; RB-09; UXN-01–UXN-26; D-IA-01–D-IA-06; D-IA-18–D-IA-19; D-IA-21–D-IA-23; PG-005; SCR-04; UXI-03; UXI-15–UXI-18; UXI-20; D-UX-01–D-UX-10; IP-06; IP-11; IP-17; IP-21; MSG-33–MSG-34; UXS-04; UXS-22–UXS-23; UXS-25; UXH-11; PT-01–PT-02; PT-04; GR-02; GR-11; GR-14; GR-22; NAV-005; NV-01–NV-08; component Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link; component Phone app bar and bottom bar; *Lainnya*; component Filter toolbar and company view; component Menu and "Tindakan Lain"; account menu
 
 **EXPECTED MODULES / FILE AREAS:**
 
 - the shell layout components, the navigation provider, the Inertia error and status handlers, the PG-005 page
+- the Reporting search request `Reporting Search` and its query classes per result type, with their trigram and exact-match use of the indexes of DATABASE §21 (IX-17)
 
 **BUSINESS RULES:**
 
@@ -188,10 +192,12 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 **ROUTE IMPACT:**
 
 - ROUTE-005 — PG-005's view; the route conventions RC-01–RC-06 applied by every page Task
+- ROUTE-281 — `Reporting Search`, every active account (S0), each result under its view capability, read-only without `command_id` (RC-04); its page, PG-009, is TASK-059's
 
 **INTERACTION CONTRACTS:**
 
 - INT-003, INT-004, INT-007 (the company filter), INT-010 (the session ended)
+- INT-005 and its pointer INT-281 — the search field of the shell's type-ahead and of every lookup inside a form (PT-27, TASK-015's component)
 
 **NAVIGATION CONTRACT:**
 
@@ -206,12 +212,16 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 **ACCEPTANCE CRITERIA:**
 
-1. Each account sees exactly the entries its capabilities allow, and an absent entry's route still refuses on the server.
-2. The working filter never widens the server's scope, and every record shows its company label (PT-04).
-3. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input and the pending command's `command_id`, so the retry replays rather than runs twice (IP-11; CI-01–CI-09; HO-02; UXH-11; architecture challenge 19a).
-4. A command needing step-up answers a status the client intercepts, never a redirect (IP-10).
-5. PG-005 answers every unopenable address alike, without telling a missing record from a forbidden one (IP-21).
-6. A command refused at its in-command re-authorization after a grant was revoked shows its denial on the open page as IP-21 presents it (SQ-22; architecture challenge 8a).
+1. A code — barcode, SKU, serial, project number or formatted document number — is looked up exactly first: one hit selects it, several rows sharing the key within scope are listed for the user and never chosen by the system, and none answers MSG-25 (IP-17; PF-19).
+2. A name of at least three consecutive letters or digits returns names equal to or beginning with it first, then similar ones, at most 20 in a type-ahead; a shorter term gets exact and prefix matches only with MSG-24; more than 200 candidates are cut with MSG-23; a term over 100 characters is not accepted (PF-20–PF-23; WS-03).
+3. A seeded record outside the actor's scope changes no result, count or empty state of a search or lookup, and each result shows only what its view capability projects; the term never reaches the address or history (PF-22; CS-07; PJ-10; DP-06; DP-02).
+4. The 61st search in a minute is answered MSG-20 by WS-12's search limiter, separate from the scanner's (TM-43).
+5. Each account sees exactly the entries its capabilities allow, and an absent entry's route still refuses on the server.
+6. The working filter never widens the server's scope, and every record shows its company label (PT-04).
+7. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input and the pending command's `command_id`, so the retry replays rather than runs twice (IP-11; CI-01–CI-09; HO-02; UXH-11; architecture challenge 19a).
+8. A command needing step-up answers a status the client intercepts, never a redirect (IP-10).
+9. PG-005 answers every unopenable address alike, without telling a missing record from a forbidden one (IP-21).
+10. A command refused at its in-command re-authorization after a grant was revoked shows its denial on the open page as IP-21 presents it (SQ-22; architecture challenge 8a).
 
 **TEST REQUIREMENTS:**
 
@@ -219,7 +229,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - Typecheck: TL-02
 - Unit: N/A — no PHP logic beyond the handlers covered by TL-04
 - Feature: the 401, 409 and 419 answers and PG-005 (TL-04)
-- Integration: N/A — no data path of its own
+- Integration: ROUTE-281's query classes over seeded rows in and out of scope — exact before trigram, the 200-candidate cut (TL-05; PF-19–PF-23)
 - Authorization: entries by capability and the server's refusal behind an absent entry (TL-06)
 - Route integrity: ROUTE-005 audited (TL-07)
 - Interaction: INT-003, INT-004, INT-007, INT-010 (TL-08)

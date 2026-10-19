@@ -54,6 +54,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 - **What the evidence covers**: production's backups meet BK-01–BK-12 with recorded evidence (CAP-16; AC-19; DEP-02); the timed restore of a production recovery point is GLC-04's, after the import (TASK-087; AC-18); no recovery after total VPS loss is promised, RISK-001 narrowed by the copy (OS-04; REF-060; OWN-06); the operator's failure detection stays distinct from REF-048's in-app alerts; the existing VPS stays the baseline at no new cost (REF-062)
 - **INF-01**: the operator alone works on production; no agent holds a credential, shell, connection, backup or log of it
 - **The record**: each check's result by role, without secrets, in TEST_STRATEGY §16's form
+- **The private records in place** (GLC-16; TT-F03; TT-F12): the private incident record and the private contact record of the Owners, from TASK-076's blank forms, kept outside the repository by the operator and the Owner, in place before go-live — GLC-16's part that no earlier Task holds (placed here in Part 4)
 
 **OUT OF SCOPE:**
 
@@ -75,7 +76,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-063--an-off-server-backup-against-total-vps-loss-awaits-the-owners-decision) GAP-063; [GAP-018](../00-governance/GAP_REGISTER.md#gap-018--owner-accepts-total-vps-or-storage-loss-exposure-with-local-only-backup); [GAP-041](../00-governance/GAP_REGISTER.md#gap-041--operator-abuse-of-the-owner-recovery-command)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-09, OE-13, OE-14; [COST_POLICY](../00-governance/COST_POLICY.md#procedure) §4C.2
 - Architecture challenge — the sequence 13b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (43): CAP-16; DEP-02; DEP-11; BK-01–BK-02; BK-04–BK-07; BK-12; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; WS-10; SX-03; SX-07; TM-27; TM-65; INF-01; INF-06; INF-08; OPI-04; OPI-08; OPI-23; OPI-28–OPI-29; OPI-31–OPI-32; BKR-09; TT-F20; GLC-02; GLC-06–GLC-08; GLC-12; GLC-20; GLC-22; GLC-24; GAP-063
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (45): CAP-16; DEP-02; DEP-11; BK-01–BK-02; BK-04–BK-07; BK-12; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; WS-10; SX-03; SX-07; TM-27; TM-65; INF-01; INF-06; INF-08; OPI-04; OPI-08; OPI-23; OPI-28–OPI-29; OPI-31–OPI-32; BKR-09; TT-F20; GLC-02; GLC-06–GLC-08; GLC-11–GLC-12; GLC-16; GLC-20; GLC-22; GLC-24; GAP-063
 
 **EXPECTED MODULES / FILE AREAS:**
 

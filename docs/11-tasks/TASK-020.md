@@ -25,6 +25,7 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 
 **BLOCKS:**
 
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
 - TASK-085 — Installation, the first Owner, two-step enrolment and the APP_KEY rotation
 
@@ -248,7 +249,7 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 
 **SAFE NEXT TASK:**
 
-- TASK-076 — when its other dependencies are DONE and its READY gate holds
+- TASK-069 — when its other dependencies are DONE and its READY gate holds
 
 **DO NOT DO:**
 

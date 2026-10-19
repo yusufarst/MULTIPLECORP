@@ -1,6 +1,6 @@
 # TASK-059 — Search and scanning
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -12,7 +12,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-0
 
 **OBJECTIVE:**
 
-Build search and scanning: PG-009 *Cari* with the shell's "Cari atau pindai kode" and Ctrl K, the search request `Reporting Search` that also serves every lookup inside a form (ROUTE-281; INT-005; IP-17) — an exact code first, then names and titles from three characters, scope-first, cut at 200 candidates —, and the scanner's exact lookup `INV ScanLookup` behind the scan field of the warehouse pages (ROUTE-282; INT-006; IP-15; SF-SCAN), keyboard-wedge scanners treated as keyboards and a scan never submitting a command.
+Build search and scanning: PG-009 *Cari* with the shell's "Cari atau pindai kode" and Ctrl K, on the search request `Reporting Search`, which TASK-016 builds for it and for every lookup inside a form (ROUTE-281; INT-005; IP-17) — an exact code first, then names and titles from three characters, scope-first, cut at 200 candidates —, and scanning into *Cari* through the scanner's exact lookup `INV ScanLookup`, which TASK-039 builds behind the scan field of the warehouse pages (ROUTE-282; INT-006; IP-15; SF-SCAN), keyboard-wedge scanners treated as keyboards and a scan never submitting a command.
 
 **WHY THIS EXISTS:**
 
@@ -36,19 +36,20 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
 
-**PARALLEL SAFE:** NO — its two lookup routes serve every form picker and warehouse scan field, and its trigram and exact indexes are shared query paths
+**PARALLEL SAFE:** NO — it presents the two lookup routes every form picker and warehouse scan field shares (TASK-016, TASK-039), on their shared trigram and exact indexes
 
 **IN SCOPE:**
 
 - PG-009 with NAV-009 and its view ROUTE-009 (every active account, S0; `DIR-081` OB-03; SCR-08): results by type — products, clients, suppliers, projects, documents —, an exact code match first with "Kode Cocok", at most one page; the full-screen search on the phone (D-IA-04); the term never in the address, the title or the history (IA §11; DP-02; H7-10)
-- ROUTE-281 with INT-005 and INT-281, `Reporting Search`, for PG-009, the shell's type-ahead and every lookup inside a form — product, client, unit, PIC, supplier, project and invoice pickers (PT-27; IA §10): a code — barcode or SKU, serial, project number, formatted document number — looked up exactly first, one hit opening or selecting it, several rows sharing the key within scope listed for the user (PF-19); a name of at least three consecutive letters or digits by the trigram indexes, names equal to or beginning with the term first, a type-ahead of at most 20 rows (PF-20; PF-21); a term without a trigram answered by exact and prefix lookups only with MSG-24 (PF-23); more than 200 candidates cut with MSG-23; at most 100 characters (WS-03)
+- ROUTE-281 with INT-005 and INT-281, `Reporting Search` — built by TASK-016, moved there in Part 4 because the forms built before PG-009 need their lookups (IP-17), and presented here — for PG-009, the shell's type-ahead and every lookup inside a form — product, client, unit, PIC, supplier, project and invoice pickers (PT-27; IA §10): a code — barcode or SKU, serial, project number, formatted document number — looked up exactly first, one hit opening or selecting it, several rows sharing the key within scope listed for the user (PF-19); a name of at least three consecutive letters or digits by the trigram indexes, names equal to or beginning with the term first, a type-ahead of at most 20 rows (PF-20; PF-21); a term without a trigram answered by exact and prefix lookups only with MSG-24 (PF-23); more than 200 candidates cut with MSG-23; at most 100 characters (WS-03)
 - scope first (PF-22; CS-07): a search over company-owned rows carries the company filter in the same statement — the company as the index condition for a scope that is not every company —, S0 master names searched without a filter, a client unit's name only with `projects.view` and a company in scope (PJ-10; CS-06); each result under its view capability (PJ-10); no result, count or empty state hinting at an out-of-scope record (DP-06; IA §10)
-- ROUTE-282 with INT-006 and INT-282, `INV ScanLookup` (`stock.view`, the pool, S1): the exact lookup of a scanned code under the scanner's burst-sized limiter, separate from search (QB-06; WS-12) — the product, lot or serial in place; an unknown code MSG-25 with "Daftarkan Barcode" for `products.edit`, nothing created; an ambiguous code MSG-37 with the candidates for the user's choice; a serial that does not fit the operation MSG-36, its state in words (SF-SCAN; BR-INV-09)
-- the scan field (PT-20) and its behaviour for every page that hosts one — PG-019, PG-022, PG-024, PG-026, PG-027, PG-028, PG-034 (IA §10), each page placing it in its own Task —: one scan target saying "Siap Memindai", focused on entering the step and after each scan; Enter in it only looks up and adds or selects; a burst outside a field that accepts scans discarded with DESIGN_SYSTEM §13.2's notice; a serial scanned twice in one command counted once; quantity items scanned once with their quantity entered; with no scanner the same field taking a typed SKU, "Cari Produk" beside it; feedback in text and by a non-colour cue in a polite live region, errors assertive (IP-15; UXI-34; DESIGN_SYSTEM §13.2); on the phone fixed at the bottom above the action bar (D-DS-08)
+- ROUTE-282 with INT-006 and INT-282, `INV ScanLookup` — built by TASK-039, moved there in Part 4 because the warehouse pages built before this Task scan through it, and used here for scanning into *Cari* — (`stock.view`, the pool, S1): the exact lookup of a scanned code under the scanner's burst-sized limiter, separate from search (QB-06; WS-12) — the product, lot or serial in place; an unknown code MSG-25 with "Daftarkan Barcode" for `products.edit`, nothing created; an ambiguous code MSG-37 with the candidates for the user's choice; a serial that does not fit the operation MSG-36, its state in words (SF-SCAN; BR-INV-09)
+- the scan field (PT-20) and its behaviour, built with ROUTE-282 by TASK-039 for every page that hosts one — PG-019, PG-022, PG-024, PG-026, PG-027, PG-028, PG-034 (IA §10), each page placing it in its own Task — and placed on *Cari* here: one scan target saying "Siap Memindai", focused on entering the step and after each scan; Enter in it only looks up and adds or selects; a burst outside a field that accepts scans discarded with DESIGN_SYSTEM §13.2's notice; a serial scanned twice in one command counted once; quantity items scanned once with their quantity entered; with no scanner the same field taking a typed SKU, "Cari Produk" beside it; feedback in text and by a non-colour cue in a polite live region, errors assertive (IP-15; UXI-34; DESIGN_SYSTEM §13.2); on the phone fixed at the bottom above the action bar (D-DS-08)
 - scanning into *Cari* — the desktop scanner typing into the field with focus, the phone's full-screen *Cari* —, an exact lookup only, the matched product, serial or lot opening its stock detail PG-019 (IA §10; QB-06)
 
 **OUT OF SCOPE:**
 
+- building ROUTE-281's search request with its query classes per result type (TASK-016) and ROUTE-282's scan lookup with the scan field's shared behaviour (TASK-039), both moved in Part 4: this Task presents them on PG-009 and *Cari* and tests them there, the rules below being theirs as this page relies on them
 - each warehouse page's command and its server-side scan checks inside the command (TASK-039, TASK-041–TASK-044, TASK-048); "Daftarkan Barcode" itself (TASK-027); the lists' own exact-number search fields on PG-010, PG-035 and PG-041 (TASK-032, TASK-029, TASK-049)
 - camera barcode scanning — outside V1 (D-UX-09; V1_SCOPE D-05); the real-device checks of scanners and phones at the device UAT (TASK-070, TASK-086)
 - CJ-07 and CJ-12 end to end (TASK-062, TASK-064)
@@ -73,7 +74,7 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the Reporting module's search query classes per result type and `ShowSearch`; INV's exact scan lookup query class; the shared scan-field and search components (PT-20, PT-27) in `resources/js/Components`; PG-009 in `resources/js/Pages/Reporting`; `tests/Feature/Reporting`, `tests/Feature/INV` for ROUTE-282, the browser suite's scanner cases
+- `ShowSearch` and PG-009's presentation of each result type (the search query classes TASK-016's, INV's exact scan lookup query class TASK-039's); the shared scan-field and search components (PT-20, PT-27) in `resources/js/Components`; PG-009 in `resources/js/Pages/Reporting`; `tests/Feature/Reporting`, `tests/Feature/INV` for ROUTE-282, the browser suite's scanner cases
 
 **BUSINESS RULES:**
 
@@ -191,11 +192,11 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 
 **ROUTE IMPACT:**
 
-- ROUTE-009 (PG-009's view); ROUTE-281 (search and in-form lookups); ROUTE-282 (scan lookup)
+- ROUTE-009 (PG-009's view); ROUTE-281 (search and in-form lookups, built by TASK-016) and ROUTE-282 (scan lookup, built by TASK-039), used here
 
 **INTERACTION CONTRACTS:**
 
-- INT-005 and INT-281 (its pointer), INT-006 and INT-282 (its pointer); INT-003's shell entries reaching *Cari* (TASK-016)
+- INT-005 and INT-281 (its pointer), built with ROUTE-281 by TASK-016, and INT-006 and INT-282 (its pointer), built with ROUTE-282 by TASK-039, as PG-009 and *Cari* use them; INT-003's shell entries reaching *Cari* (TASK-016)
 
 **NAVIGATION CONTRACT:**
 

@@ -1,6 +1,6 @@
 # TASK-048 — Client returns (sales return)
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -21,6 +21,7 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 **DEPENDS ON:**
 
 - TASK-042 — Condition, location moves, adjustments and losses
+- TASK-044 — Purchase return to supplier
 - TASK-045 — Deliveries (Pengiriman) and delivery closure
 
 **BLOCKS:**
@@ -41,7 +42,7 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 
 - the other commands that restore through SF-RESTORE — a receiving reversal's dependent restoration (CM-02; TASK-039), the dispatch's reversal and undelivered return (CM-05, CM-06; ROUTE-188; TASK-041), the drop-ship return to the warehouse (CM-14; ROUTE-207; TASK-046) —, whose errors this Task's ROUTE-211 reverses
 - the companions' own commands: re-dispatch (TASK-041), revision and re-confirmation (TASK-033, TASK-034), remaining-scope cancellation (TASK-034), the invoice's revision or void (ROUTE-245; TASK-049), credit and refund (ROUTE-252, ROUTE-256; TASK-051, TASK-053), re-inspection and disposal (ROUTE-195, ROUTE-194; TASK-042), the supplier return (ROUTE-176; TASK-044)
-- the case service and ROUTE-271 (TASK-031); the scan lookup ROUTE-282 (TASK-059); the upload routes ROUTE-228–ROUTE-231 (TASK-030)
+- the case service and ROUTE-271 (TASK-031); the scan lookup ROUTE-282 (TASK-039); the upload routes ROUTE-228–ROUTE-231 (TASK-030)
 
 **REFERENCES:**
 

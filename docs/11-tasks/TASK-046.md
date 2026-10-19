@@ -1,10 +1,10 @@
 # TASK-046 — Direct shipment (drop-ship)
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** BLOCKED — waiting on P11Q-02
 
 **RISK CLASS:** HIGH
 
@@ -23,9 +23,11 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-034 — Commercial confirmation and fulfillment planning
 - TASK-037 — Purchases — project and replenishment purchases
+- the Owner's answer to P11Q-02 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
+- TASK-054 — Expenses, disbursements and other cash
 - TASK-055 — Project completion and Force Complete
 - TASK-056 — Project cancellation
 
@@ -60,7 +62,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - [NAVIGATION_CONTRACTS §2.4](../07-ux-design/NAVIGATION_CONTRACTS.md#24-fulfilment-cases-and-documents) NAV-032; [INFORMATION_ARCHITECTURE §8.4](../07-ux-design/INFORMATION_ARCHITECTURE.md#84-fulfilment-cases-and-documents) PG-032; [§8.7](../07-ux-design/INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages) SCR-30
 - [ADMIN_FLOW J-FUL-03](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#104-fulfilment); [§11](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals) CM-14, CM-15, CM-27; [IP-03](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-03--conflict-and-stale-state); [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command); [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions)
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01's drop-ship branch; [§5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-04's drop-ship reversals; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (15): WF-FUL-03; AX-08; ROUTE-032; ROUTE-205–ROUTE-207; INT-205–INT-207; BD-04; BD-18; PG-032; SCR-30; J-FUL-03; NAV-032
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (16): WF-FUL-03; AX-08; L-40; ROUTE-032; ROUTE-205–ROUTE-207; INT-205–INT-207; BD-04; BD-18; PG-032; SCR-30; J-FUL-03; NAV-032
 
 **EXPECTED MODULES / FILE AREAS:**
 

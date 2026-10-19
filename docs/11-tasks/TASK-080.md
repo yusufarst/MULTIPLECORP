@@ -1,6 +1,6 @@
 # TASK-080 — Alert channel adopted and monitoring live
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -34,7 +34,7 @@ GAP-013 stays open until the channel is set up and the failure drill passes ([GA
 
 - **The channel adopted** (OPI-05; DIR-079 CB-06; DEP-08): the zero-cost push channel TASK-071 recorded, its COST_POLICY §4C.4 record — limits, quota behaviour, lock-in, exit strategy and data portability — written before it is adopted (GLC-03) and entered in COST_POLICY's recurring-cost inventory (INFRASTRUCTURE §8); its token set as a secret in the environment only (SX-01); each message a neutral signal name with no S3 or S4 value (LG-03); the in-app notice at the Owner's next login and the operator's daily look kept as the floor; the optional self-service e-mail reset left off unless the channel is e-mail and P9 confirms it (INFRASTRUCTURE §6; AU-12)
 - **Monitoring live on staging** (GLC-11's staging half): TASK-075's heartbeat and its alerts, HO-25's signals, the backup, copy and disk alerts (BK-10; BK-11), the statement statistics, the log viewer behind the operator's access, and the free external uptime check, its §4C.4 record written before adoption (DIR-079 CB-07, CB-10; INF-04)
-- **The end-to-end tests** (GLC-03; GAP-013; TT-F01): a test alert from staging reaching the operator's and the Owner's own phones — one phone while the Owner is the operator (OPI-05) —; a failed backup and a failed off-server copy simulated on staging — never on the real destination's data — each reaching the named operator (BK-10; BKR-09; architecture challenge 13c); TT-F01's manual alarm retired only when these pass; the failure drill's full signal list is TASK-081's
+- **The end-to-end tests** (GLC-03; GLC-16; GAP-013; TT-F01): a test alert from staging reaching the operator's and the Owner's own phones — one phone while the Owner is the operator (OPI-05) —; a failed backup and a failed off-server copy simulated on staging — never on the real destination's data — each reaching the named operator (BK-10; BKR-09; architecture challenge 13c); TT-F01's manual alarm retired only when these pass; the failure drill's full signal list is TASK-081's
 - **The security alerts** (H9-10; H9-15; LG-07): a seeded security signal on staging reaching the operator and the Owner; the record stating whether the channel is one the operator does not solely control — if it is not, the Owner's floor stays the in-app notice (H9-06; AU-14; GAP-041), and a confirmed independent channel triggers GAP-041's review (RISK-005); the alternate's phone joins in TASK-083 (GLC-21)
 - **Ready for production**: the same configuration, made live on production before any production data in TASK-084 (CUT-02)
 - **The record**: each test's time, signal, recipient by role and result — never the token or a phone number
@@ -57,7 +57,7 @@ GAP-013 stays open until the channel is set up and the failure drill passes ([GA
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-013--successful-http-health-checks-can-hide-stalled-business-processing) GAP-013; [GAP-041](../00-governance/GAP_REGISTER.md#gap-041--operator-abuse-of-the-owner-recovery-command)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-03, OE-14
 - Architecture challenge — the sequence 13c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (9): DEP-08; BK-10; H9-10; H9-15; OPI-05; TT-F01; GLC-03; GLC-11; GAP-013
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (10): DEP-08; BK-10; H9-10; H9-15; OPI-05; TT-F01; GLC-03; GLC-11; GLC-16; GAP-013
 
 **EXPECTED MODULES / FILE AREAS:**
 

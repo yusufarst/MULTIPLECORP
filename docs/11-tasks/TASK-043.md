@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** BLOCKED — waiting on P11Q-02, P11Q-04
 
 **RISK CLASS:** HIGH
 
@@ -21,9 +21,11 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 **DEPENDS ON:**
 
 - TASK-042 — Condition, location moves, adjustments and losses
+- the Owner's answers to P11Q-02 and P11Q-04 recorded and the narrow amendment they authorize approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
+- TASK-055 — Project completion and Force Complete
 - TASK-058 — Home, Work and Review — signals and the action queue
 
 **PARALLEL SAFE:** NO — its count application and resolutions write the product, scope, lot, serial, reservation, lot-cost and consumption guards that TASK-038–TASK-042 also post through `InventoryPosting` and `CostPosting`, and the unattributed-case counters TASK-042 opens
@@ -40,11 +42,12 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - PG-026 with NAV-026 and ROUTE-026 (SCR-24; J-INV-05): the counts with their lines, state and variance, "Terapkan Selisih" with its reason and cut; the page's print view for the count sheet as DESIGN_SYSTEM §17 states a print view (DP-19)
 - PG-029 with NAV-029 and ROUTE-029 (SCR-27): the open findings and the pending cases with their recognition snapshot as PJ-07 projects it, the separate unattributed line of MSG-41 (UXS-39), "Tetapkan Surplus", "Tetapkan Perusahaan", "Tetapkan dengan Bukti" and "Balikkan Penetapan", each with its reason (IP-09)
 - the registration count of L-35 — a count that records a serial for every on-hand unit before a product is switched to serialized (WF-MD-04) — as count lines only; the switch is TASK-027's
+- the pending-case branch of TASK-042's ROUTE-194 and ROUTE-195, extended here (Part 4; TASK-042 hands it to this Task's case service): an unexplained loss across companies recorded through an adjustment, a disposal or a condition change opens its pending case (QS-22; SF-UNATTRIBUTED) — never a named loss —, shown as J-INV-04's *Selisih menunggu penetapan*, and the unit's later disposal converts it
 
 **OUT OF SCOPE:**
 
-- recognizing a pending case from an adjustment, a disposal or a condition change, its conversion by disposal and the exact loss reversal outside a count — TASK-042 (ROUTE-194–ROUTE-196); the linked reversal of a wrong count application or of a pending-case recognition or finding (CM-28; NX-11; ROUTE-212) is TASK-040's command, which this Task's movement rows must admit (C-55)
-- the stock views PG-018–PG-020 and their pending-case line (TASK-040); QS-18 and QS-22 on *Beranda* and *Pekerjaan* (TASK-058); the reports' unattributed lines (TASK-060); the scan field's lookup ROUTE-282 with INT-006, which the matrix maps to TASK-059
+- the exact loss reversal outside a count — TASK-042 (ROUTE-196); the linked reversal of a wrong count application or of a pending-case recognition or finding (CM-28; NX-11; ROUTE-212) is TASK-040's command, which this Task's movement rows must admit (C-55)
+- the stock views PG-018–PG-020 and their pending-case line (TASK-040); QS-18 and QS-22 on *Beranda* and *Pekerjaan* (TASK-058); the reports' unattributed lines (TASK-060); the scan field's lookup ROUTE-282 with INT-006 (TASK-039)
 - the dispatch identity substitution that corrects an unexpected serial (CM-36; TASK-041); the serial-policy switch (TASK-027)
 - the contra of a settlement, expense, disbursement or attribution that the coverage line lists — CM-22, CM-38 and AX-33 (ROUTE-260): SF-CONTRA's users are payments, disbursements, expenses, settlements and purchase cost (WORKFLOWS §6), built by TASK-052 and TASK-054; a count's facts are corrected by CM-28's linked reversal with its exact loss reversal instead
 - the other coverage entries whose source rows concern no count — L-06, an invoice void's dispositions (TASK-049); L-40, a drop-ship confirmation with its delivery (TASK-046); C-47, the opening import's batch and row identity (TASK-057)
@@ -212,7 +215,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - ROUTE-026 (PG-026's view, GET `/gudang/stok-opname`) and ROUTE-029 (PG-029's view, GET `/gudang/selisih-temuan`)
 - ROUTE-191 (POST `/gudang/stok-opname`), ROUTE-192 (POST `/gudang/stok-opname/{id}/baris`), ROUTE-193 (POST `/gudang/stok-opname/{id}/terapkan`)
 - ROUTE-197 (POST `/gudang/selisih-temuan/{id}/surplus`), ROUTE-198 (`…/tetapkan`), ROUTE-199 (`…/tetapkan-bukti`), ROUTE-200 (`…/balikkan`)
-- each answering RC-05's errors; the scan field's lookup is ROUTE-282 (TASK-059's INT-282, as INT-006)
+- each answering RC-05's errors; the scan field's lookup is ROUTE-282 (TASK-039's, with INT-006 and INT-282)
 
 **INTERACTION CONTRACTS:**
 
@@ -243,6 +246,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 10. A non-Owner never sees the number or identity of other candidate companies; a `cost.view` holder sees only its own company's candidate and exposure rows, and its company figures show the pending case only as its own exposure (PJ-07; PJ-22; MSG-41; UXS-39; SM-25).
 11. A repeated scan of one serial in a count counts once, an unexpected serial becomes a finding and is never re-registered, and one `command_id` replayed on any count command returns the recorded outcome (SF-SCAN; L-48; CI-05; AC-16).
 12. After every scenario `ReconcileGuards` reports no difference for the product, scope, lot, consumption, lot-cost and case guards (C-61; HO-12).
+13. An unexplained loss across companies recorded through PG-027's adjustment, disposal or condition change opens its pending case — never a named loss —, shown as *Selisih menunggu penetapan*, and the unit's later disposal converts it; the same `command_id` replayed returns the recorded outcome (QS-22; SF-UNATTRIBUTED; J-INV-04; CI-05).
 
 **TEST REQUIREMENTS:**
 

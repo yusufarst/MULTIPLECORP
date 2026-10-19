@@ -20,6 +20,7 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 
 **DEPENDS ON:**
 
+- TASK-004 — Verification and release tooling check
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - TASK-056 — Project cancellation
@@ -47,6 +48,7 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 
 **OUT OF SCOPE:**
 
+- running TEST_STRATEGY §11's manual Layer-3 checks with real assistive technology — a person the Owner names, in TASK-086's UAT (placed there in Part 4); this Task prepares their scripts
 - each UI Task's own critical checks on its pages (DOD-17); the UI/UX gate's other items (TASK-065); the journeys themselves (TASK-062–TASK-064)
 - changing a token, colour or component to pass a criterion — Planning's change under DESIGN_SYSTEM §1, the defect's owner applying it
 - the real-device checks of TEST_STRATEGY §12 beyond the screen reader on a phone (TASK-070, TASK-086)

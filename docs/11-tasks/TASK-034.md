@@ -1,6 +1,6 @@
 # TASK-034 — Commercial confirmation and fulfillment planning
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -20,6 +20,7 @@ The commercial confirmation is the reservation trigger and the point where a pro
 
 **DEPENDS ON:**
 
+- TASK-030 — Evidence and uploaded documents
 - TASK-033 — Quotations
 
 **BLOCKS:**

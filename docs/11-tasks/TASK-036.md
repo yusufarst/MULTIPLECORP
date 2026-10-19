@@ -22,6 +22,7 @@ Cost/HPP is actual, direct cost attributed once and never Cash-Out (CAP-11; AC-1
 
 - TASK-008 — Schema — INV tables, inventory and lot-cost representations
 - TASK-013 — Command envelope, command identity, idempotency and the lock order
+- TASK-030 — Evidence and uploaded documents
 
 **BLOCKS:**
 

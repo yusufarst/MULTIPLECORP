@@ -23,11 +23,13 @@ Damaged, disposed, shrunk or lost goods must leave usable stock explicitly and n
 - TASK-031 — Correction cases
 - TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
 - TASK-039 — Receiving (Barang Masuk)
+- TASK-040 — Stock views, stock history and movement reversal
 
 **BLOCKS:**
 
 - TASK-043 — Stock count (opname) and discrepancies
 - TASK-048 — Client returns (sales return)
+- TASK-057 — Opening import — preparation, dry run, sign-off and commit
 
 **PARALLEL SAFE:** NO — it writes the stock ledger and its product, scope, lot, serial and consumption guards (LK-13–LK-17, LK-24) and posts losses through the lot-cost guard (LK-23) that every inventory Task shares
 

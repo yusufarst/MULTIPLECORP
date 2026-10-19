@@ -20,6 +20,7 @@ Every budget, limit and starting value of PERFORMANCE is an assumption until mea
 
 **DEPENDS ON:**
 
+- TASK-004 — Verification and release tooling check
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - TASK-056 — Project cancellation

@@ -24,6 +24,9 @@ Staff must know quantities on hand, reserved, unusable and available, where they
 
 **BLOCKS:**
 
+- TASK-042 — Condition, location moves, adjustments and losses
+- TASK-044 — Purchase return to supplier
+- TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-059 — Search and scanning
 
 **PARALLEL SAFE:** NO — ROUTE-212 writes the stock ledger, its reversal guard (LK-16) and the stock guards that every other inventory Task writes
@@ -39,7 +42,7 @@ Staff must know quantities on hand, reserved, unusable and available, where they
 **OUT OF SCOPE:**
 
 - the commands PG-019 hosts — the location move, condition change, adjustment and loss (TASK-042), counts (TASK-043) — and the movements they record; receiving and its reversal (TASK-039); dispatch, restorations and their reversal AX-36 (TASK-041; TASK-048); the opening facts' correction ROUTE-213 (TASK-057)
-- the pending cases' recognition, resolution and PG-029 (TASK-043); QS-17 and QS-22 on the home pages (TASK-058); the stock reports and their exports (TASK-060); search and the scan lookup (TASK-059); rack and minimum-stock masters (TASK-028)
+- the pending cases' recognition, resolution and PG-029 (TASK-043); QS-17 and QS-22 on the home pages (TASK-058); the stock reports and their exports (TASK-060); the search page (TASK-059) and the scan lookup (TASK-039); rack and minimum-stock masters (TASK-028)
 
 **REFERENCES:**
 

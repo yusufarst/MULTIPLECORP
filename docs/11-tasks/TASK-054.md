@@ -23,9 +23,13 @@ O-05, CAP-11 and AC-11 require actual/direct cost to stay apart from actual Cash
 - TASK-030 — Evidence and uploaded documents
 - TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
 - TASK-037 — Purchases — project and replenishment purchases
+- TASK-044 — Purchase return to supplier
+- TASK-046 — Direct shipment (drop-ship)
+- TASK-052 — Deduction settlements and contras
 
 **BLOCKS:**
 
+- TASK-055 — Project completion and Force Complete
 - TASK-058 — Home, Work and Review — signals and the action queue
 - TASK-060 — Reports, the consolidated report and exports
 

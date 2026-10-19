@@ -20,6 +20,8 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 
 **DEPENDS ON:**
 
+- TASK-004 — Verification and release tooling check
+- TASK-020 — Installation step, the first Owner and the Owner-recovery path
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - TASK-056 — Project cancellation

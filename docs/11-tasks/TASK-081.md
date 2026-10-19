@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** BLOCKED — waiting on DEP-05
 
 **RISK CLASS:** HIGH
 
@@ -25,6 +25,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
 - TASK-078 — Staging stack, the two applications' isolation and the provider features
 - TASK-080 — Alert channel adopted and monitoring live
+- DEP-05: the data steward's sanitized structures, counts and reconciled control totals of the legacy data received ([V1_SCOPE](../01-product/V1_SCOPE.md#dependencies-and-evidence-needed)) — BLOCKED until received
 
 **BLOCKS:**
 
@@ -34,7 +35,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 
 **IN SCOPE:**
 
-- **The failure drill** ([RELEASE_PLAN §7](../10-release/RELEASE_PLAN.md#7-rehearsal-and-drills); GLC-03; GAP-013; TT-F01; PRQ-10): a stopped worker, a stuck queue, a failed and a stale backup, the disk's warning level by a lowered threshold — never by filling the shared disk —, a reconciliation difference and a scheduler that missed its run, each signal reaching the operator and the Owner through OPI-05's channel, with the in-app floor and the daily look kept; again after any later change to alerting
+- **The failure drill** ([RELEASE_PLAN §7](../10-release/RELEASE_PLAN.md#7-rehearsal-and-drills); GLC-03; GLC-16; GAP-013; TT-F01; PRQ-10): a stopped worker, a stuck queue, a failed and a stale backup, the disk's warning level by a lowered threshold — never by filling the shared disk —, a reconciliation difference and a scheduler that missed its run, each signal reaching the operator and the Owner through OPI-05's channel, with the in-app floor and the daily look kept; again after any later change to alerting
 - **The restore drill on staging** ([BACKUP_RECOVERY §5](../09-operations/BACKUP_RECOVERY.md#5-restore-testing); BK-09; AC-18; AC-19; GAP-011): TASK-076's restore runbook into isolation on staging's synthetic data with the generation's paired synthetic key (BKR-08), timed against the 4-hour RTO and the recovery point's age against the 24-hour RPO, reconciled, its result recorded usable or not; the cases — an intact backup, a corrupt generation, a missing generation, an incomplete run, a disk-pressure run by a lowered threshold, a failed cleanup — each with its expected truthful status; this is the rehearsal of GLC-04's production drill after the import (TASK-087), and no recovery after total VPS or storage loss is inferred from it (OS-04; REF-060; OWN-06; RISK-001 narrowed)
 - **The off-server copy's drill procedure** (BKR-09; GAP-063; TT-F20): a verified synthetic generation copied off the VPS by TASK-074's tooling, brought back with its keys and restored into isolation by BACKUP_RECOVERY §4 unchanged, its checksums verified, its record kept; GLC-20's own drill — a copied production generation restored from the destination OPI-32 names — runs where that destination is recorded (TASK-084)
 - **H9-14's recovery test** (GLC-26; INFRASTRUCTURE §7.3 step 5; SM-21): Scenario B on staging with synthetic data and synthetic keys by TASK-076's runbook — a verified generation restored onto a clean stack, new keys installed with the leaked key never listed, every SX-01 secret the scenario's leak may have included rotated, the incident command run in full on the restored state, then Scenario A's steps (2)–(4) —; only a backup verified as predating the scenario's window used, a copy proving nothing by existing (TT-F21; TT-F24; architecture challenge 13a); the second application untouched (16a)
@@ -43,6 +44,8 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - **GLC-19's other half**: the backup and the restore drill above shown without touching the second application's database, files, backups or windows (BKR-07), completing TASK-078's record
 - **What the drills prove and what they do not**: the operator's failure detection, distinct from the in-app alerts of REF-048 (TASK-058); readiness on the existing VPS at no cost (CAP-16; REF-062)
 - **The record**: each drill's date, recovery point, elapsed time, result and follow-ups, kept by the operator, its summary without secrets (BACKUP_RECOVERY §5)
+- **The first release's Layer 3 run on staging** (REL-04; TEST_STRATEGY §3, Layer 3): the steps only staging can host, run by the operator from TASK-070's preparation, with this Task's failure and restore drills — each result the operator's record (placed here in Part 4)
+- **CJ-16 on staging** (TEST_STRATEGY §7): the opening import end to end during the import rehearsal, from the script TASK-064 prepares — its pass the operator's record, never counted before it exists (placed here in Part 4)
 
 **OUT OF SCOPE:**
 
@@ -65,7 +68,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-011](../00-governance/GAP_REGISTER.md#gap-011--a-database-restore-alone-cannot-recover-usable-business-documents); [GAP-013](../00-governance/GAP_REGISTER.md#gap-013--successful-http-health-checks-can-hide-stalled-business-processing); [GAP-063](../00-governance/GAP_REGISTER.md#gap-063--an-off-server-backup-against-total-vps-loss-awaits-the-owners-decision)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-09, OE-10, OE-14
 - Architecture challenge — the sequences 13a, 16a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (20): CAP-16; DEP-05; BK-09; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; BKR-09; TT-F01; TT-F20; GLC-03; GLC-20; GLC-26; PRQ-10; GAP-010–GAP-011; GAP-063
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (24): CAP-16; DEP-05; BK-09; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; CJ-16; BKR-09; TT-F01; TT-F20; REL-04; GLC-03; GLC-16; GLC-19–GLC-20; GLC-26; PRQ-10; GAP-010–GAP-011; GAP-063
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -221,7 +224,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - Authorization: N/A — no route; SM-19's and SM-21's operator-run cases instead
 - Route integrity: N/A — no route added or changed
 - Interaction: N/A — no INT- contract in this Task
-- Browser E2E: N/A — no journey is added; CJ-16's import journey is TASK-064's
+- Browser E2E: CJ-16 on staging during the import rehearsal, from TASK-064's script, its pass the operator's record (TL-09)
 - Localization/language switch: N/A — no user-facing copy in this Task
 - Visual breathing room/density: N/A — no page in this Task
 - Responsive: N/A — no page in this Task

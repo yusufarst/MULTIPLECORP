@@ -24,6 +24,14 @@ PRQ-12 asks for the verification of the release tooling and of P8's tooling befo
 
 **BLOCKS:**
 
+- TASK-062 — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
+- TASK-063 — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
+- TASK-064 — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
+- TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-067 — Localization completeness and the per-page copy lists
+- TASK-068 — Performance targets and query budgets in CI
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-073 — Release process — branch protection, release tags, the release record and integrity report
 
 **PARALLEL SAFE:** NO — it writes TOOLCHAIN, which every Task reads
@@ -232,7 +240,7 @@ PRQ-12 asks for the verification of the release tooling and of P8's tooling befo
 
 **SAFE NEXT TASK:**
 
-- TASK-073 — when its other dependencies are DONE and its READY gate holds
+- TASK-062 — when its other dependencies are DONE and its READY gate holds
 
 **DO NOT DO:**
 

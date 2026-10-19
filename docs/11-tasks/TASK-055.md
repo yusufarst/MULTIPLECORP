@@ -22,6 +22,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 
 - TASK-031 — Correction cases
 - TASK-035 — Administrative checklist and document readiness
+- TASK-043 — Stock count (opname) and discrepancies
 - TASK-044 — Purchase return to supplier
 - TASK-045 — Deliveries (Pengiriman) and delivery closure
 - TASK-046 — Direct shipment (drop-ship)
@@ -30,9 +31,11 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - TASK-050 — Billing, receivables, dispute hold and Owner write-off
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
+- TASK-054 — Expenses, disbursements and other cash
 
 **BLOCKS:**
 
+- TASK-056 — Project cancellation
 - TASK-058 — Home, Work and Review — signals and the action queue
 
 **PARALLEL SAFE:** NO — it writes the project's completion transitions under LK-01 and the revalidation every correcting module calls inside its own transaction

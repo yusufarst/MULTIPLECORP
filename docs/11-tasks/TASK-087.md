@@ -65,7 +65,7 @@ Opening stock and receivables counted twice, or a moving baseline, would corrupt
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-011](../00-governance/GAP_REGISTER.md#gap-011--a-database-restore-alone-cannot-recover-usable-business-documents); [GAP-014](../00-governance/GAP_REGISTER.md#gap-014--eighteen-days-is-a-target-not-a-measured-delivery-capacity); [GAP-064](../00-governance/GAP_REGISTER.md#gap-064--numbers-already-used-on-paper-after-a-restores-recovery-point)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-06, OE-08, OE-11, OE-14
 - Architecture challenge — the sequences 12a, 14b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (21): DEP-06; BK-09; INF-01; INF-03; CUT-01–CUT-08; GLC-01; GLC-04; GLC-14; GLC-18; GLC-25; GAP-010–GAP-011; GAP-014; GAP-064
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (23): DEP-06; BK-09; INF-01; INF-03; CUT-01–CUT-08; GLC-01; GLC-04–GLC-05; GLC-14; GLC-16; GLC-18; GLC-25; GAP-010–GAP-011; GAP-014; GAP-064
 
 **EXPECTED MODULES / FILE AREAS:**
 

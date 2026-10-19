@@ -198,7 +198,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | DOC-11 | DOC- | V1_SCOPE · Selectable document catalog | TASK-029, TASK-033 |
 | DOC-12 | DOC- | V1_SCOPE · Selectable document catalog | TASK-029, TASK-039 |
 | DOC-13 | DOC- | V1_SCOPE · Selectable document catalog | TASK-029, TASK-050 |
-| DOC-14 | DOC- | V1_SCOPE · Selectable document catalog | TASK-029, TASK-034 |
+| DOC-14 | DOC- | V1_SCOPE · Selectable document catalog | TASK-029, TASK-034, TASK-037 |
 | DEP-10 | DEP- | V1_SCOPE · Dependencies and evidence needed | TASK-082 |
 | DEP-11 | DEP- | V1_SCOPE · Dependencies and evidence needed | TASK-084, TASK-085 |
 | DEP-02 | DEP- | V1_SCOPE · Dependencies and evidence needed | TASK-074, TASK-084 |
@@ -485,7 +485,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | SF-EVIDENCE | SF- | WORKFLOWS · 6. Reusable subflows | TASK-030 |
 | SF-RESERVE | SF- | WORKFLOWS · 6. Reusable subflows | TASK-038 |
 | SF-RSV-CUT | SF- | WORKFLOWS · 6. Reusable subflows | TASK-038, TASK-042 |
-| SF-SCAN | SF- | WORKFLOWS · 6. Reusable subflows | TASK-059 |
+| SF-SCAN | SF- | WORKFLOWS · 6. Reusable subflows | TASK-039, TASK-059 |
 | SF-CHARGE | SF- | WORKFLOWS · 6. Reusable subflows | TASK-036, TASK-037 |
 | SF-RESTORE | SF- | WORKFLOWS · 6. Reusable subflows | TASK-041, TASK-048 |
 | SF-LOSS | SF- | WORKFLOWS · 6. Reusable subflows | TASK-042 |
@@ -633,7 +633,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | L-15 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-038, TASK-039, TASK-041, TASK-042, TASK-043 |
 | L-08 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-049, TASK-050, TASK-051, TASK-052, TASK-053, TASK-054 |
 | L-39 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-034, TASK-049, TASK-055 |
-| L-40 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-038, TASK-039, TASK-041, TASK-042, TASK-043 |
+| L-40 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-038, TASK-039, TASK-041, TASK-042, TASK-043, TASK-046 |
 | L-26 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-029, TASK-034, TASK-037, TASK-045, TASK-047, TASK-049, TASK-050, TASK-051, TASK-052, TASK-053, TASK-054 |
 | L-41 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-035 |
 | L-27 | L- | WORKFLOWS · 12. Planner-determined Level-1 decisions | TASK-013 |
@@ -859,8 +859,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-273 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-274 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-275 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
-| ROUTE-281 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-059 |
-| ROUTE-282 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-059 |
+| ROUTE-281 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-016, TASK-059 |
+| ROUTE-282 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-039, TASK-059 |
 | ROUTE-283 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
 | ROUTE-284 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
 | RC-03 | RC- | ROUTE_CONTRACTS · 1. Conventions | TASK-011, TASK-016 |
@@ -881,8 +881,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-002 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-014, TASK-023 |
 | INT-003 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-016 |
 | INT-004 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-016 |
-| INT-005 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-015, TASK-059 |
-| INT-006 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-059 |
+| INT-005 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-015, TASK-016, TASK-059 |
+| INT-006 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-039, TASK-059 |
 | INT-007 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-015, TASK-016 |
 | INT-008 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-015 |
 | INT-009 | INT- | INTERACTION_CONTRACTS · 2. Shared interactions — INT-001–INT-020 | TASK-015 |
@@ -1029,8 +1029,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-273 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-274 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-275 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
-| INT-281 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-059 |
-| INT-282 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-059 |
+| INT-281 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-016, TASK-059 |
+| INT-282 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-039, TASK-059 |
 | INT-283 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
 | INT-284 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
 | INT-285 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-022 |
@@ -1305,7 +1305,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | WS-04 | WS- | SECURITY · 4. Web and input security | TASK-001, TASK-017 |
 | WS-01 | WS- | SECURITY · 4. Web and input security | TASK-002, TASK-013 |
 | WS-02 | WS- | SECURITY · 4. Web and input security | TASK-011, TASK-013 |
-| WS-03 | WS- | SECURITY · 4. Web and input security | TASK-013, TASK-059 |
+| WS-03 | WS- | SECURITY · 4. Web and input security | TASK-013, TASK-016, TASK-059 |
 | WS-05 | WS- | SECURITY · 4. Web and input security | TASK-017 |
 | WS-06 | WS- | SECURITY · 4. Web and input security | TASK-001, TASK-072 |
 | WS-09 | WS- | SECURITY · 4. Web and input security | TASK-002, TASK-015 |
@@ -1385,7 +1385,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TM-40 | TM- | SECURITY · 8. Threat model | TASK-022, TASK-030, TASK-069 |
 | TM-41 | TM- | SECURITY · 8. Threat model | TASK-022, TASK-030, TASK-069 |
 | TM-42 | TM- | SECURITY · 8. Threat model | TASK-017, TASK-022, TASK-030, TASK-069 |
-| TM-43 | TM- | SECURITY · 8. Threat model | TASK-013, TASK-017, TASK-059, TASK-069 |
+| TM-43 | TM- | SECURITY · 8. Threat model | TASK-013, TASK-016, TASK-017, TASK-059, TASK-069 |
 | TM-44 | TM- | SECURITY · 8. Threat model | TASK-010, TASK-069 |
 | TM-45 | TM- | SECURITY · 8. Threat model | TASK-011, TASK-017, TASK-024, TASK-069 |
 | TM-46 | TM- | SECURITY · 8. Threat model | TASK-022, TASK-030, TASK-069 |
@@ -1765,7 +1765,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | HO-13 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-069 |
 | HO-25 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-072, TASK-074, TASK-075, TASK-076 |
 | HO-02 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-015, TASK-016 |
-| HO-31 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-077 |
+| HO-31 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-072, TASK-077 |
 | HO-27 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-021, TASK-022 |
 | HO-35 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-069 |
 | HO-01 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-015, TASK-016 |
@@ -1792,7 +1792,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | HO-28 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-072, TASK-074, TASK-075, TASK-076 |
 | HO-30 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-072, TASK-074, TASK-075, TASK-076 |
 | HO-33 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-021, TASK-022 |
-| HO-34 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-077 |
+| HO-34 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-072, TASK-077 |
 | HO-36 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-077 |
 | HO-37 | HO- | CONCURRENCY_IDEMPOTENCY · 19. Handoff obligations | TASK-001, TASK-015 |
 | AS-01 | AS- | PERFORMANCE · 1. Assumptions and workload | TASK-068, TASK-079 |
@@ -1834,11 +1834,11 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | PF-17 | PF- | PERFORMANCE · 4. Pagination | TASK-015 |
 | PF-18 | PF- | PERFORMANCE · 4. Pagination | TASK-015 |
 | PF-41 | PF- | PERFORMANCE · 4. Pagination | TASK-015 |
-| PF-19 | PF- | PERFORMANCE · 5. Search | TASK-059 |
-| PF-22 | PF- | PERFORMANCE · 5. Search | TASK-059 |
-| PF-20 | PF- | PERFORMANCE · 5. Search | TASK-059 |
-| PF-23 | PF- | PERFORMANCE · 5. Search | TASK-059 |
-| PF-21 | PF- | PERFORMANCE · 5. Search | TASK-059 |
+| PF-19 | PF- | PERFORMANCE · 5. Search | TASK-016, TASK-059 |
+| PF-22 | PF- | PERFORMANCE · 5. Search | TASK-016, TASK-059 |
+| PF-20 | PF- | PERFORMANCE · 5. Search | TASK-016, TASK-059 |
+| PF-23 | PF- | PERFORMANCE · 5. Search | TASK-016, TASK-059 |
+| PF-21 | PF- | PERFORMANCE · 5. Search | TASK-016, TASK-059 |
 | PF-26 | PF- | PERFORMANCE · 7. Dashboards, reports and exports | TASK-058, TASK-060 |
 | PF-27 | PF- | PERFORMANCE · 7. Dashboards, reports and exports | TASK-058, TASK-060 |
 | PF-28 | PF- | PERFORMANCE · 7. Dashboards, reports and exports | TASK-058, TASK-060 |
@@ -1857,7 +1857,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | QB-01 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
 | QB-10 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
 | QB-16 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
-| QB-06 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
+| QB-06 | QB- | PERFORMANCE · 6. Query budgets | TASK-039, TASK-068 |
 | QB-03 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
 | QB-02 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
 | QB-04 | QB- | PERFORMANCE · 6. Query budgets | TASK-068 |
@@ -2356,7 +2356,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | UXI-31 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-024, TASK-025 |
 | UXI-32 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-017, TASK-057 |
 | UXI-33 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-022, TASK-030 |
-| UXI-34 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-059 |
+| UXI-34 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-039, TASK-059 |
 | UXI-35 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-038 |
 | UXI-36 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-015 |
 | UXI-37 | UXI- | ADMIN_FLOW · 3. Derived interaction requirements | TASK-015 |
@@ -2393,10 +2393,10 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | IP-08 | IP- | ADMIN_FLOW · IP-08 — Confirming an irreversible command | TASK-015 |
 | IP-09 | IP- | ADMIN_FLOW · IP-09 — Corrections, closures and destructive actions | TASK-015, TASK-031 |
 | IP-16 | IP- | ADMIN_FLOW · IP-16 — Evidence upload | TASK-022, TASK-030 |
-| IP-15 | IP- | ADMIN_FLOW · IP-15 — Scanner | TASK-059 |
+| IP-15 | IP- | ADMIN_FLOW · IP-15 — Scanner | TASK-039, TASK-059 |
 | IP-20 | IP- | ADMIN_FLOW · IP-20 — Choosing a reservation cut | TASK-038 |
 | IP-14 | IP- | ADMIN_FLOW · IP-14 — Validation | TASK-015 |
-| IP-17 | IP- | ADMIN_FLOW · IP-17 — Search and lookup | TASK-015, TASK-059 |
+| IP-17 | IP- | ADMIN_FLOW · IP-17 — Search and lookup | TASK-015, TASK-016, TASK-059 |
 | IP-18 | IP- | ADMIN_FLOW · IP-18 — Continuing a list | TASK-015 |
 | J-ACC-01 | J- | ADMIN_FLOW · 10.1 Access and master data | TASK-017, TASK-023, TASK-058 |
 | J-INV-01 | J- | ADMIN_FLOW · 10.3 Inventory and purchasing | TASK-037, TASK-039 |
@@ -2813,7 +2813,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | CJ-11 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-064 |
 | CJ-04 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-063 |
 | CJ-14 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-063 |
-| CJ-16 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-064 |
+| CJ-16 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-064, TASK-081 |
 | CJ-15 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-063 |
 | CJ-07 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-062 |
 | CJ-02 | CJ- | TEST_STRATEGY · 7. Browser end-to-end tests and critical journeys | TASK-062 |
@@ -2981,7 +2981,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | REL-01 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
 | REL-02 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
 | REL-03 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
-| REL-04 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
+| REL-04 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073, TASK-081 |
 | REL-05 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
 | REL-06 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
 | REL-07 | REL- | RELEASE_PLAN · 3. The release sequence | TASK-072, TASK-073 |
@@ -3025,17 +3025,17 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | GLC-07 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-084 |
 | GLC-20 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-081, TASK-084 |
 | GLC-06 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-084 |
-| GLC-11 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-080 |
+| GLC-11 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-080, TASK-084 |
 | GLC-24 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-078, TASK-084 |
 | GLC-26 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-081 |
-| GLC-16 | GLC- | RELEASE_PLAN · 9. The go-live checklist | disposition SATISFIED — the tabletop exercise was held in run PC-4 on 2026-10-19 (GLC-16; BACKUP_RECOVERY §6) |
+| GLC-16 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-076, TASK-080, TASK-081, TASK-084, TASK-085, TASK-087 |
 | GLC-21 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-083 |
 | GLC-23 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-085 |
 | GLC-01 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-087 |
 | GLC-02 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-071, TASK-084 |
 | GLC-03 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-080, TASK-081 |
 | GLC-04 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-087 |
-| GLC-05 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-079 |
+| GLC-05 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-079, TASK-087 |
 | GLC-08 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-084 |
 | GLC-09 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-082 |
 | GLC-10 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-085 |
@@ -3045,7 +3045,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | GLC-15 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-086 |
 | GLC-17 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-086 |
 | GLC-18 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-087 |
-| GLC-19 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-078 |
+| GLC-19 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-078, TASK-081 |
 | GLC-22 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-084 |
 | GLC-25 | GLC- | RELEASE_PLAN · 9. The go-live checklist | TASK-021, TASK-087 |
 | PRQ-15 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | TASK-076 |
@@ -3394,7 +3394,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | DEFERRED | Deferred out of V1 by V1_SCOPE — no Task builds it; building it would add to V1 (OE-20) | 6 |
 | SUPERSEDED | A design decision its own document marks SUPERSEDED — its successor is mapped in its place; no Task builds it, and nothing derives from it (EXECUTION_CONTEXT) | 2 |
 | FUTURE | The contract of a future external integration — V1 contains none (API_AND_INTEGRATIONS §3); no Task builds it (OE-20) | 13 |
-| SATISFIED | A planning item already satisfied, its reason stated in the row | 4 |
+| SATISFIED | A planning item already satisfied, its reason stated in the row | 3 |
 | DROPPED | Dropped as a requirement by DESIGN_SYSTEM Annex A, its reason recorded there — no requirement to build | 3 |
 | GOVERNANCE | A rule every Task applies — carried by each Task's TEST CHECKLIST and COMPLETION EVIDENCE under DEFINITION_OF_DONE, and by TASK_PLAN's rules | 22 |
 
@@ -3417,7 +3417,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-013 | Command envelope, command identity, idempotency and the lock order | 322 |
 | TASK-014 | Localization — locales, the language switch and the key catalogue | 287 |
 | TASK-015 | Design system — tokens, components, patterns and states | 303 |
-| TASK-016 | Application shell, navigation and the company context | 148 |
+| TASK-016 | Application shell, navigation and the company context | 159 |
 | TASK-017 | Password sign-in, sessions and credential links | 151 |
 | TASK-018 | Two-step verification (TOTP) and recovery codes | 73 |
 | TASK-019 | Google sign-in for existing accounts | 46 |
@@ -3438,16 +3438,16 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-034 | Commercial confirmation and fulfillment planning | 58 |
 | TASK-035 | Administrative checklist and document readiness | 31 |
 | TASK-036 | Costing foundations — lot cost basis, charge allocation and HPP attribution | 21 |
-| TASK-037 | Purchases — project and replenishment purchases | 70 |
+| TASK-037 | Purchases — project and replenishment purchases | 71 |
 | TASK-038 | Reservations | 81 |
-| TASK-039 | Receiving (Barang Masuk) | 96 |
+| TASK-039 | Receiving (Barang Masuk) | 103 |
 | TASK-040 | Stock views, stock history and movement reversal | 40 |
 | TASK-041 | Dispatch (Barang Keluar) and inter-company allocation | 115 |
 | TASK-042 | Condition, location moves, adjustments and losses | 76 |
 | TASK-043 | Stock count (opname) and discrepancies | 83 |
 | TASK-044 | Purchase return to supplier | 25 |
 | TASK-045 | Deliveries (Pengiriman) and delivery closure | 43 |
-| TASK-046 | Direct shipment (drop-ship) | 15 |
+| TASK-046 | Direct shipment (drop-ship) | 16 |
 | TASK-047 | Service fulfillment and handover | 14 |
 | TASK-048 | Client returns (sales return) | 23 |
 | TASK-049 | Invoices and the pre-payment Kuitansi | 132 |
@@ -3473,28 +3473,28 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-069 | Security test matrix, route integrity and zero dead interactions | 145 |
 | TASK-070 | Full release regression and the device UAT's preparation | 20 |
 | TASK-071 | The operator's inputs before staging | 20 |
-| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 48 |
+| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 50 |
 | TASK-073 | Release process — branch protection, release tags, the release record and integrity report | 26 |
 | TASK-074 | Backup tooling, the off-server copy and the drill procedures | 42 |
 | TASK-075 | Monitoring — the business heartbeat, alerts and the uptime check | 15 |
-| TASK-076 | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | 59 |
+| TASK-076 | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | 60 |
 | TASK-077 | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | 33 |
 | TASK-078 | Staging stack, the two applications' isolation and the provider features | 6 |
 | TASK-079 | Staging measurements — capacity, Argon2id, durations and the disk budget | 40 |
-| TASK-080 | Alert channel adopted and monitoring live | 9 |
-| TASK-081 | Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal | 20 |
+| TASK-080 | Alert channel adopted and monitoring live | 10 |
+| TASK-081 | Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal | 24 |
 | TASK-082 | Google OAuth clients for staging and production | 6 |
 | TASK-083 | The alternate operator named and the dispute's governance recorded | 5 |
-| TASK-084 | Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy | 43 |
-| TASK-085 | Installation, the first Owner, two-step enrolment and the APP_KEY rotation | 14 |
+| TASK-084 | Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy | 45 |
+| TASK-085 | Installation, the first Owner, two-step enrolment and the APP_KEY rotation | 15 |
 | TASK-086 | UAT with the Owner and the validators | 22 |
-| TASK-087 | Cutover and go-live | 21 |
+| TASK-087 | Cutover and go-live | 23 |
 
 ## 5. Checks
 
 - **Entries:** 3234, in 125 family-and-document pairs.
-- **Mapped:** 3234 of 3234 — 3184 to one or more Tasks and 50 to a recorded disposition; unmapped: 0.
+- **Mapped:** 3234 of 3234 — 3185 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2088 entries by an explicit rule, 897 derived from the identifiers their own row cites, 199 by their family's default when their row cites none that resolves, 50 by a disposition.
+- **Method:** 2089 entries by an explicit rule, 897 derived from the identifiers their own row cites, 199 by their family's default when their row cites none that resolves, 49 by a disposition.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).

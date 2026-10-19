@@ -20,6 +20,7 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 
 **DEPENDS ON:**
 
+- TASK-004 — Verification and release tooling check
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - TASK-056 — Project cancellation

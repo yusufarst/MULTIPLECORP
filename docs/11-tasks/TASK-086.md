@@ -39,6 +39,7 @@ The validators are confirmed but their review capacity is not (DEP-06; [GAP-014]
 - **GAP-015 exercised**: refresh and back, an expired login, a slow network and a retry with the actual scanners, the outcome shown as committed, pending or failed
 - **The operational outcomes** ([ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md#operational-success-and-go-live-evidence) OS-01–OS-06): each row's evidence named — daily work (OS-01), trustworthy stock and money (OS-02), scoped sensitive information from TASK-069's results (OS-03), recovery from the drills' records (OS-04), cost and capacity from COST_POLICY's inventory and TASK-079's figures (OS-05), deterministic evidence in fresh CI (OS-06) —, the Owner giving the final business decision (RELEASE_PLAN §4)
 - **The record** (TEST_STRATEGY §12): validator, date, build, tasks, each result and its disposition, with an issue log; nothing recorded that did not happen; a defect sent to a defect Task through the executor feedback loop, a scope or date tradeoff to the Owner with its evidence (RL-02; DIR-083 OE-20); ending with the Owner's sign-off (GLC-15)
+- the manual Layer-3 accessibility checks of TEST_STRATEGY §11 — a screen reader on the critical journeys on the desktop and on a phone —, run by a person the Owner names with the scripts TASK-066 prepares, each result in the UAT record (placed here in Part 4; TL-12)
 
 **OUT OF SCOPE:**
 

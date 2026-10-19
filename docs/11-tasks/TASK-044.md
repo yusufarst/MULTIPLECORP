@@ -1,6 +1,6 @@
 # TASK-044 — Purchase return to supplier
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -22,9 +22,12 @@ CAP-06 and AC-06 include purchase returns with reasons and reconciling history, 
 
 - TASK-037 — Purchases — project and replenishment purchases
 - TASK-039 — Receiving (Barang Masuk)
+- TASK-040 — Stock views, stock history and movement reversal
 
 **BLOCKS:**
 
+- TASK-048 — Client returns (sales return)
+- TASK-054 — Expenses, disbursements and other cash
 - TASK-055 — Project completion and Force Complete
 
 **PARALLEL SAFE:** NO — the return writes the purchase-line, lot, lot-cost, consumption and reservation guards that receiving, dispatch and the cost cascade (TASK-037–TASK-042) post, and the return case's counters that the refund, the replacement receipt and the cost correction move
@@ -42,7 +45,7 @@ CAP-06 and AC-06 include purchase returns with reasons and reconciling history, 
 - the supplier refund's money — "Catat Kas Masuk Lain" with its RETURN_REFUNDED adjustment, which moves the case counters under NX-10 (ROUTE-259; TASK-054); the replacement receipt's own command (ROUTE-181; TASK-039)
 - the case service and ROUTE-271 itself (TASK-031); the cost-correction cascade over returned units (AX-34; ROUTE-175; TASK-037)
 - a return recorded in error, reversed by ROUTE-211 with AX-36 (CM-37), which the matrix maps to TASK-048 and whose control sits on PG-028 and PG-034; a drop-ship return to the supplier (CM-15; ROUTE-207; TASK-046)
-- purchase cancellation and remainder closure (AX-12, AX-32; TASK-037); the scan field's lookup ROUTE-282 with INT-006 (TASK-059)
+- purchase cancellation and remainder closure (AX-12, AX-32; TASK-037); the scan field's lookup ROUTE-282 with INT-006 (TASK-039)
 
 **REFERENCES:**
 

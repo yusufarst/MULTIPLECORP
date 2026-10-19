@@ -20,6 +20,7 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 
 **DEPENDS ON:**
 
+- TASK-004 — Verification and release tooling check
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - TASK-056 — Project cancellation
