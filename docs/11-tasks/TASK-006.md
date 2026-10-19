@@ -1,6 +1,6 @@
 # TASK-006 — Schema — ORG, PTY, CAT and DOC tables
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -32,7 +32,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 
 **IN SCOPE:**
 
-- the tables `companies`, `company_bank_accounts`, `numbering_schemes`, `number_sequences`, `retired_numbers`, `tax_types`, `tax_rate_versions`, `company_tax_profiles`, `tax_treatment_rules`; `client_organizations`, `client_units`, `client_addresses`, `client_contacts`, `suppliers`; `products`, `units`, `product_units`, `product_barcodes`, `product_price_history`, `product_images`; `document_types`, `documents`, `document_versions`, `document_renditions`, `file_objects`, `evidence_documents`, `evidence_document_versions`, `bank_statement_lines`, `evidence_balances`, `evidence_links`, with their C- rows and IX- indexes
+- the tables `companies`, `company_bank_accounts`, `numbering_schemes`, `number_sequences`, `retired_numbers`, `tax_types`, `tax_rate_versions`, `company_tax_profiles`, `tax_treatment_rules`; `client_organizations`, `client_units`, `client_addresses`, `client_contacts`, `suppliers`; `products`, `units`, `product_units`, `product_barcodes`, `product_price_history`, `product_images`; `document_types`, `documents`, `document_versions`, `document_renditions`, `file_objects`, `evidence_documents`, `evidence_document_versions`, `bank_statement_lines`, `evidence_balances`, `evidence_links`, with their C- rows — C-10 and C-18–C-20 — and IX- indexes — IX-08 and IX-14
 - the multi-unit representation of DATABASE §7 and the document architecture of §10; the file metadata of §22
 - the migrate-from-empty test extended (TL-16)
 
@@ -54,6 +54,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 - [DATABASE §18–19](../04-architecture/DATABASE/s18-19-constraints-integrity.md#18-constraint-catalogue)
 - [DATABASE §20](../04-architecture/DATABASE/s20-24-index-storage-migration.md#20-index-and-query-design)
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
+- Architecture challenge — the sequence 11a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
 - Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (50): D-DB-01–D-DB-14; C-10; C-18–C-20; IX-08; IX-14; table companies; table company_bank_accounts; table numbering_schemes; table number_sequences; table retired_numbers; table tax_types; table tax_rate_versions; table company_tax_profiles; table tax_treatment_rules; table client_organizations; table client_units; table client_addresses; table client_contacts; table suppliers; table products; table units; table product_units; table product_barcodes; table product_price_history; table product_images; table document_types; table documents; table document_versions; table document_renditions; table file_objects; table evidence_documents; table evidence_document_versions; table bank_statement_lines; table evidence_balances; table evidence_links
 
 **EXPECTED MODULES / FILE AREAS:**
@@ -192,10 +193,10 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 **ACCEPTANCE CRITERIA:**
 
 1. Migrating creates exactly the tables named, with every column, key and constraint DATABASE states.
-2. Each C- row of these tables is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables exists and its query uses it.
+2. Each C- row of these tables — C-10 and C-18–C-20 — is enforced where its row says, proven by a test that violates it.
+3. Each IX- index of these tables — IX-08 and IX-14 — exists and its query uses it.
 4. C-10's numbering uniqueness and monotonicity hold at the database level as its row states.
-5. The migrations are expand-only and run from empty in CI.
+5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 
 **TEST REQUIREMENTS:**
 

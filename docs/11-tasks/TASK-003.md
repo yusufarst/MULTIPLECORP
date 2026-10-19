@@ -1,6 +1,6 @@
 # TASK-003 — CI pipeline, test layers and the synthetic fixture harness
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -76,6 +76,7 @@ Every Task's DONE needs its layers to pass with evidence ([TEST_STRATEGY §2](..
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-48, Secrets in logs, repository or client bundles (LG-03, SX-01, SX-06)
 - synthetic data only (SX-06); no secret in CI except GitHub's own token; third-party actions pinned to a SHA (SM-15)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**

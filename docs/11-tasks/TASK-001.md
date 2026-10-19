@@ -1,6 +1,6 @@
 # TASK-001 — Repository scaffold and module skeleton
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -30,7 +30,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **IN SCOPE:**
 
-- the Laravel application with Inertia and React on TypeScript and Vite, the versions verified and recorded in TOOLCHAIN
+- the Laravel application with Inertia and React on TypeScript and Vite, the versions verified and recorded in TOOLCHAIN — each runtime, library and tool, its supported version and its licence and commercial-use terms checked in its official documentation before it is adopted (DEP-07)
 - Tailwind CSS and shadcn/ui initialized, no component added (TASK-015 adds them)
 - Docker Compose for local development and CI with PostgreSQL and Valkey, and Nginx in front of the application as in production (INFRASTRUCTURE §3)
 - the module namespaces of ARCHITECTURE §3 — IAM, ORG, PTY, CAT, PRJ, PUR, INV, CST, FUL, DOC, ADM, FIN, OPS, Reporting and the import orchestration — empty, each with a short README naming its tier and its DATABASE §4 tables
@@ -77,6 +77,10 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats the skeleton answers first, each by the controls below: TM-08, a forged state change (WS-04, WS-05); TM-28, a page served from a cache after logout or expiry (WS-08's `no-store`); TM-50, clickjacking (WS-08's `frame-ancestors 'none'`); TM-48, a secret in the repository or a client bundle (SX-01, SX-06); TM-65 only so far as the application key stays outside the repository and the database (AU-21, built by TASK-018)
+- HTTPS only (WS-06): the local Nginx redirects plain HTTP; HSTS is staged in production by the deployment definition, never here (TASK-072)
+- HO-37: the CSP starts without `'unsafe-inline'`; whether a vetted UI primitive needs runtime styles is decided with the components in TASK-015 (WS-08); the CSP set here stays unchanged for Google sign-in — no Google script or frame on any page (H8-20, tested in TASK-019)
+- no route exists yet: RB-03 — no GET changes state, every command one request with its `command_id` — and RB-10, the account's own locale route, bind the routes TASK-013, TASK-014 and TASK-016 add
 - CSRF through the framework middleware (WS-04); the response headers and the CSP with a per-request nonce on every HTML and Inertia response (WS-08); React escaping, no raw HTML (WS-09)
 - no secret in the repository: environment configuration outside it, `.env.example` with placeholders only (SX-01, SX-06); every dependency justified and from its official source (SX-05)
 
@@ -222,7 +226,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - Responsive: N/A — no page
 - Accessibility: N/A — no page
 - Production build: the frontend production build and the framework's production caches (TL-13)
-- Security: composer audit and npm audit clean or each finding recorded (TL-14)
+- Security: composer audit and npm audit clean or each finding recorded; SM-08's cases the skeleton can show — CSRF refusing a state-changing request without a valid token, the cookie flags, the CSP nonce and directives, `frame-ancestors`, `nosniff`, Referrer-Policy and `APP_DEBUG=false` in the production configuration check —, its route cases with the Tasks that add routes (TL-14, TL-09)
 - Performance: N/A — no query
 - Migration: N/A — no business migration; the framework defaults removed are listed in the evidence
 - Other: the developer README's commands run as written

@@ -1,6 +1,6 @@
 # TASK-012 — Field projection, read classes and cross-company links
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -68,6 +68,7 @@ Field projection is invariant 3 of EXECUTION_CONTEXT; the pooled stock with pres
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-13, Shared masters as a route to price history or client relationships (PJ-09, PJ-10); TM-14, Pooled stock view → lot → movement history, lot code or cost revealing another company's acquisitions (PJ-01, PJ-04, PJ-23); TM-18, Dashboards and action queues (PJ-13); TM-19, Inertia partial reload, deferred props or shared props (WS-07, DP-15, CS-07); TM-20, Download of an issued PDF, evidence or import file of Company B (DP-05, FL-07, PJ-15, PJ-20); TM-21, Audit timeline of a cross-company event (PJ-11); TM-24, Unattributed-loss snapshot of other candidates (PJ-07); TM-25, Inter-company allocation views leaking source-company data (XL-1, PJ-05, PJ-06); TM-28, Browser history, back-forward cache or client cache after logout, expiry or remote termination (AU-06, WS-07, WS-08); TM-52, Credential link consumed by someone other than its holder — the issuing Owner or anyone who saw the delivery message — to set the password and act as the account (AU-11, AU-12, AU-13, PJ-17, LG-02); TM-53, Allocation probing: dispatching single units from another company's lots to read their allocated cost, then reversing (RG-08, XL-1, LG-07); TM-54, A company's private document uploaded as pool evidence and reaching every company (PJ-08); TM-55, Evidence of an invisible family uploaded, versioned or matched to tamper with it or probe for it (PJ-08, DP-13, FL-10)
 - no oracle: a projected-away field never leaks through counts, sorting, filters or errors (SM-12); WS-07's shared props only
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -190,8 +191,12 @@ Field projection is invariant 3 of EXECUTION_CONTEXT; the pooled stock with pres
 
 1. Every table of DATABASE §4 has its §7.2 class in code, checked against the document by a test.
 2. A field outside the actor's entitlement never appears in a prop, a JSON answer, an export or an error (SM-25 for the families that exist).
-3. XL-1–XL-5 are the only cross-company references a query follows, each authorized as §8 states.
+3. A command's company is its target record's company, and every public identifier of a request resolves through the scope resolver, an out-of-scope reference failing exactly like a nonexistent one; XL-1–XL-5 are the only cross-company references a query follows, each authorized as §8 states (CS-03, CS-04; architecture challenge 1a).
 4. The DP- matrix runs as a test: each path has its projection and its denial.
+5. A list, search, count, total or export applies the scope filter inside its query, before ranking, aggregation and pagination: a seeded out-of-scope row changes no result, count, facet or total (CS-07; architecture challenge 8b).
+6. A pooled record shows the pool's physical view only, its cost only through the cost family's projection (CS-05; PJ-01, PJ-02; architecture challenge 8c).
+7. A payment application naming another company's invoice fails at the scope resolver, and one naming another client's invoice fails on C-14's composite keys: applications stay within one company and one client (BR-FIN-07; C-14; FS-10; architecture challenge 6b, with TASK-051).
+8. Stock of one company allocated to another company's project keeps the source company's cost ownership and gives the consumer its attribution, as the inter-company overlay states (CAP-06; XL-1; architecture challenge 18b, with TASK-036 and TASK-041).
 
 **TEST REQUIREMENTS:**
 
@@ -199,7 +204,7 @@ Field projection is invariant 3 of EXECUTION_CONTEXT; the pooled stock with pres
 - Typecheck: TL-02
 - Unit: the class and entitlement resolution (TL-03)
 - Feature: props of a sample page for each viewer class (TL-04)
-- Integration: the projection applied inside queries before aggregation (TL-05)
+- Integration: the projection and the scope filter applied inside queries before ranking, aggregation and pagination, with seeded out-of-scope rows (TL-05; architecture challenge 8b, 8c)
 - Authorization: SM-12 and SM-25 for the families that exist (TL-06)
 - Route integrity: N/A — no route added or changed
 - Interaction: N/A — no INT- contract in this Task

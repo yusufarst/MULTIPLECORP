@@ -1,6 +1,6 @@
 # TASK-016 — Application shell, navigation and the company context
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -85,6 +85,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-04, Session theft on a shared or unattended device, a previous user's Google session included (AU-06, AU-07, AU-08, WS-05, AU-22); TM-10, Forged reference to another company's record in a payload (CS-04, C-32); TM-12, Nested or related resources of Company B (CS-04, CS-07); TM-15, Search results or counts of Company B (DP-06, CS-07); TM-17, Report filters naming Company B (DP-08, CS-08); TM-19, Inertia partial reload, deferred props or shared props (WS-07, DP-15, CS-07); TM-27, Error messages, validation or unique import keys as an existence oracle (WS-10, AZ-11, CS-04, DP-18, DP-20); TM-28, Browser history, back-forward cache or client cache after logout, expiry or remote termination (AU-06, WS-07, WS-08); TM-61, A previous user's Google session on a shared office PC or floor device used to sign in (AU-22, AU-07, AU-08, AU-05)
 - navigation entries are hints, never authorization (H7-03); WS-07's shared props only; PG-005 answers every unopenable address alike
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -207,9 +208,10 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 1. Each account sees exactly the entries its capabilities allow, and an absent entry's route still refuses on the server.
 2. The working filter never widens the server's scope, and every record shows its company label (PT-04).
-3. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input (IP-11).
+3. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input and the pending command's `command_id`, so the retry replays rather than runs twice (IP-11; CI-01–CI-09; HO-02; UXH-11; architecture challenge 19a).
 4. A command needing step-up answers a status the client intercepts, never a redirect (IP-10).
 5. PG-005 answers every unopenable address alike, without telling a missing record from a forbidden one (IP-21).
+6. A command refused at its in-command re-authorization after a grant was revoked shows its denial on the open page as IP-21 presents it (SQ-22; architecture challenge 8a).
 
 **TEST REQUIREMENTS:**
 

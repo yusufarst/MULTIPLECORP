@@ -1,6 +1,6 @@
 # TASK-013 — Command envelope, command identity, idempotency and the lock order
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -80,6 +80,7 @@ One `command_id` per intent and the canonical lock order are invariants 5–7 of
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-09, Mass assignment of company, authority or state fields (WS-01, WS-02, DP-03); TM-43, Expensive search or report exhaustion (WS-03, WS-12)
 - replay re-authorizes the current actor (CI-); allowed fields only and server-derived fields (WS-01–WS-03)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -200,11 +201,19 @@ One `command_id` per intent and the canonical lock order are invariants 5–7 of
 
 **ACCEPTANCE CRITERIA:**
 
-1. The same `command_id` replayed returns what already ran or runs once, re-authorized, never twice.
+1. The same `command_id` replayed — a second press, or a retry after a lost answer or after signing in again in place on 401 or 419 — returns what already ran or runs once, re-authorized, never twice (CI-01–CI-09; BD-06; HO-02; architecture challenge 15c, 19a).
 2. Two concurrent commands that meet at one lock serialize in the canonical order, without deadlock, as the matching M- scenario states.
 3. Each SQ- outcome maps to its answer — REJECTED, CONFLICT, PENDING or FAILED — as CONCURRENCY_IDEMPOTENCY §12 states.
 4. A business date before the allowed range is refused as BR-DT- states.
 5. `GuardMaintenance` and `ReconcileGuards` run only from the console, audited, and report a difference without repairing silently.
+6. A receipt racing its purchase line's cancellation or remainder closure: under the lock order one commits and the other answers REJECTED or CONFLICT, the line's guards intact (AX-04, AX-12, AX-32; BD-01; architecture challenge 2a — on the envelope's test commands here, on the module's commands in TASK-037 and TASK-039).
+7. Two dispatches or reservations racing for the last unit: one COMMITTED, one REJECTED, AVAILABLE never negative (C-04; M-01, M-02; architecture challenge 3a — here on test commands, in TASK-038 and TASK-041 on theirs).
+8. One payment applied twice at once: Σ applications never above the payment's real money and outstanding never below 0, atomically (BR-FIN-03, BR-FIN-04; C-13, C-15; AX-19; architecture challenge 6a — here on test commands, in TASK-051 on its own).
+9. One real bank line has one identity and Σ Cash-In per line never exceeds it, and a likely duplicate is warned before a second submission (C-19; BD-02, BD-03; IP-05; architecture challenge 6c — here on test commands, in TASK-051 on its own).
+10. Two dispatches drawing one lot at once recognize each unit's HPP exactly once, the lot's cost drawn under the lock order (BR-XD-07; AX-03; architecture challenge 18a — here on test commands, in TASK-036 and TASK-041 on theirs).
+11. A grant revoked after the page opened refuses the command at its in-command re-authorization (SQ-22; the RV- races; architecture challenge 8a).
+12. No command deletes a committed fact: a correction revises, voids, reverses or returns it with its reason and linkage (BR-CR-01; FS-02; CM-01–CM-38; architecture challenge 10a).
+13. The business audit row is written in the command's own transaction (LG-01; architecture challenge 10b, with TASK-010).
 
 **TEST REQUIREMENTS:**
 
@@ -212,7 +221,7 @@ One `command_id` per intent and the canonical lock order are invariants 5–7 of
 - Typecheck: TL-02
 - Unit: the failure mapper and the lock-set planner (TL-03)
 - Feature: replay and outcomes on a sample command (TL-04)
-- Integration: two-connection races of M- scenarios for the envelope (TL-05)
+- Integration: two-connection races of M- scenarios for the envelope — architecture challenge 2a, 3a, 6a, 6c and 18a on test commands — and a replay after a simulated lost answer (TL-05; 15c, 19a)
 - Authorization: re-authorization at replay (TL-06)
 - Route integrity: N/A — no route added or changed
 - Interaction: INT-015–INT-017 server answers (TL-08)

@@ -1,6 +1,6 @@
 # Task plan
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Run PC-5 wrote this plan on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-96 and SP-97, P11 being authorized by the Owner at OG-3 ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-19). It is a REVIEW draft: the Owner approves P11, or not, at OG-4, where the planning freeze and the execution authorization are separate decisions (OE-21). It is the Owner's execution dashboard of AICWDF §35; each Task's contract is its own file `docs/11-tasks/TASK-nnn.md` ([Tasks (P11)](README.md)), and every requirement P1–P10 states is mapped to a Task, or to a recorded disposition, in [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md).
 
@@ -69,38 +69,38 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
 - [ ] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
 - [ ] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
-- [ ] TASK-023 — My account — password, two-step verification, Google link and language
-- [ ] TASK-024 — Users and access — accounts, roles, capabilities and company grants
-- [ ] TASK-025 — Companies, identity assets, bank accounts and tax configuration
-- [ ] TASK-026 — Clients and suppliers
-- [ ] TASK-027 — Catalog — products, services, units, barcodes, prices and images
-- [ ] TASK-028 — Rack locations and minimum stock
-- [ ] TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
-- [ ] TASK-030 — Evidence and uploaded documents
-- [ ] TASK-031 — Correction cases
-- [ ] TASK-032 — Projects — list, form, journey page and amendment
-- [ ] TASK-033 — Quotations
-- [ ] TASK-034 — Commercial confirmation and fulfillment planning
-- [ ] TASK-035 — Administrative checklist and document readiness
-- [ ] TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
-- [ ] TASK-037 — Purchases — project and replenishment purchases
-- [ ] TASK-038 — Reservations
-- [ ] TASK-039 — Receiving (Barang Masuk)
-- [ ] TASK-040 — Stock views, stock history and movement reversal
-- [ ] TASK-041 — Dispatch (Barang Keluar) and inter-company allocation
-- [ ] TASK-042 — Condition, location moves, adjustments and losses
-- [ ] TASK-043 — Stock count (opname) and discrepancies
-- [ ] TASK-044 — Purchase return to supplier
-- [ ] TASK-045 — Deliveries (Pengiriman) and delivery closure
-- [ ] TASK-046 — Direct shipment (drop-ship)
-- [ ] TASK-047 — Service fulfillment and handover
-- [ ] TASK-048 — Client returns (sales return)
-- [ ] TASK-049 — Invoices and the pre-payment Kuitansi
-- [ ] TASK-050 — Billing, receivables, dispute hold and Owner write-off
-- [ ] TASK-051 — Payments, applications and bank statement lines
-- [ ] TASK-052 — Deduction settlements and contras
-- [ ] TASK-053 — Customer credit and refunds
-- [ ] TASK-054 — Expenses, disbursements and other cash
+- [ ] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
+- [ ] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
+- [ ] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
+- [ ] [TASK-026](TASK-026.md) — Clients and suppliers
+- [ ] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
+- [ ] [TASK-028](TASK-028.md) — Rack locations and minimum stock
+- [ ] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
+- [ ] [TASK-030](TASK-030.md) — Evidence and uploaded documents
+- [ ] [TASK-031](TASK-031.md) — Correction cases
+- [ ] [TASK-032](TASK-032.md) — Projects — list, form, journey page and amendment
+- [ ] [TASK-033](TASK-033.md) — Quotations
+- [ ] [TASK-034](TASK-034.md) — Commercial confirmation and fulfillment planning
+- [ ] [TASK-035](TASK-035.md) — Administrative checklist and document readiness
+- [ ] [TASK-036](TASK-036.md) — Costing foundations — lot cost basis, charge allocation and HPP attribution
+- [ ] [TASK-037](TASK-037.md) — Purchases — project and replenishment purchases
+- [ ] [TASK-038](TASK-038.md) — Reservations
+- [ ] [TASK-039](TASK-039.md) — Receiving (Barang Masuk)
+- [ ] [TASK-040](TASK-040.md) — Stock views, stock history and movement reversal
+- [ ] [TASK-041](TASK-041.md) — Dispatch (Barang Keluar) and inter-company allocation
+- [ ] [TASK-042](TASK-042.md) — Condition, location moves, adjustments and losses
+- [ ] [TASK-043](TASK-043.md) — Stock count (opname) and discrepancies
+- [ ] [TASK-044](TASK-044.md) — Purchase return to supplier
+- [ ] [TASK-045](TASK-045.md) — Deliveries (Pengiriman) and delivery closure
+- [ ] [TASK-046](TASK-046.md) — Direct shipment (drop-ship)
+- [ ] [TASK-047](TASK-047.md) — Service fulfillment and handover
+- [ ] [TASK-048](TASK-048.md) — Client returns (sales return)
+- [ ] [TASK-049](TASK-049.md) — Invoices and the pre-payment Kuitansi
+- [ ] [TASK-050](TASK-050.md) — Billing, receivables, dispute hold and Owner write-off
+- [ ] [TASK-051](TASK-051.md) — Payments, applications and bank statement lines
+- [ ] [TASK-052](TASK-052.md) — Deduction settlements and contras
+- [ ] [TASK-053](TASK-053.md) — Customer credit and refunds
+- [ ] [TASK-054](TASK-054.md) — Expenses, disbursements and other cash
 - [ ] TASK-055 — Project completion and Force Complete
 - [ ] TASK-056 — Project cancellation
 - [ ] TASK-057 — Opening import — preparation, dry run, sign-off and commit
@@ -161,38 +161,38 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | TODO | 010, 018 | 076, 085 | NO | AGENT | NONE | NO |
 | [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | TODO | 006, 013, 016 | 029, 032, 077 | NO | AGENT | NONE | YES |
 | [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | TODO | 006, 012, 013 | 025, 027, 029, 030, 057, 060 | NO | AGENT | NONE | NO |
-| TASK-023 | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | TODO | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-024 | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | TODO | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-025 | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
-| TASK-026 | Clients and suppliers | Module · PTY | STANDARD | TODO | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
-| TASK-027 | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | TODO | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
-| TASK-028 | Rack locations and minimum stock | Module · INV | STANDARD | TODO | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
-| TASK-029 | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | TODO | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059 | NO | AGENT | NONE | YES |
-| TASK-030 | Evidence and uploaded documents | Module · DOC | HIGH | TODO | 016, 022 | 035, 051, 054, 057 | NO | AGENT | NONE | YES |
-| TASK-031 | Correction cases | Module · OPS | HIGH | TODO | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
-| TASK-032 | Projects — list, form, journey page and amendment | Module · PRJ | STANDARD | TODO | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
-| TASK-033 | Quotations | Module · PRJ | STANDARD | TODO | 029, 032 | 034 | NO | AGENT | NONE | YES |
-| TASK-034 | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | TODO | 033 | 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
-| TASK-035 | Administrative checklist and document readiness | Module · ADM | STANDARD | TODO | 030, 032 | 055 | NO | AGENT | NONE | YES |
-| TASK-036 | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | TODO | 008, 013 | 037, 042, 054 | NO | AGENT | NONE | YES |
-| TASK-037 | Purchases — project and replenishment purchases | Module · PUR | HIGH | TODO | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
-| TASK-038 | Reservations | Module · INV | HIGH | TODO | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
-| TASK-039 | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
-| TASK-040 | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 059 | NO | AGENT | NONE | YES |
-| TASK-041 | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | TODO | 029, 038, 039 | 045, 056 | NO | AGENT | NONE | YES |
-| TASK-042 | Condition, location moves, adjustments and losses | Module · INV | HIGH | TODO | 031, 036, 039 | 043, 048 | NO | AGENT | NONE | YES |
-| TASK-043 | Stock count (opname) and discrepancies | Module · INV | HIGH | TODO | 042 | 058 | NO | AGENT | NONE | YES |
-| TASK-044 | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039 | 055 | NO | AGENT | NONE | YES |
-| TASK-045 | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
-| TASK-046 | Direct shipment (drop-ship) | Module · FUL | HIGH | TODO | 029, 034, 037 | 055, 056 | NO | AGENT | NONE | YES |
-| TASK-047 | Service fulfillment and handover | Module · FUL | STANDARD | TODO | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
-| TASK-048 | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 045 | 055 | NO | AGENT | NONE | YES |
-| TASK-049 | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | TODO | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
-| TASK-050 | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | TODO | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
-| TASK-051 | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | TODO | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
-| TASK-052 | Deduction settlements and contras | Module · FIN | HIGH | TODO | 051 | 055 | NO | AGENT | NONE | YES |
-| TASK-053 | Customer credit and refunds | Module · FIN | HIGH | TODO | 051 | 055, 057 | NO | AGENT | NONE | YES |
-| TASK-054 | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037 | 058, 060 | NO | AGENT | NONE | YES |
+| [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | TODO | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | TODO | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
+| [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | TODO | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
+| [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | TODO | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | TODO | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
+| [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | TODO | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059 | NO | AGENT | NONE | YES |
+| [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | TODO | 016, 022 | 035, 051, 054, 057 | NO | AGENT | NONE | YES |
+| [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | TODO | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
+| [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | STANDARD | TODO | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | TODO | 029, 032 | 034 | NO | AGENT | NONE | YES |
+| [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | TODO | 033 | 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
+| [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | STANDARD | TODO | 030, 032 | 055 | NO | AGENT | NONE | YES |
+| [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | TODO | 008, 013 | 037, 042, 054 | NO | AGENT | NONE | YES |
+| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | TODO | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
+| [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | TODO | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
+| [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
+| [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 059 | NO | AGENT | NONE | YES |
+| [TASK-041](TASK-041.md) | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | TODO | 029, 038, 039 | 045, 056 | NO | AGENT | NONE | YES |
+| [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | TODO | 031, 036, 039 | 043, 048 | NO | AGENT | NONE | YES |
+| [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | TODO | 042 | 058 | NO | AGENT | NONE | YES |
+| [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039 | 055 | NO | AGENT | NONE | YES |
+| [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
+| [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | TODO | 029, 034, 037 | 055, 056 | NO | AGENT | NONE | YES |
+| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | TODO | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
+| [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 045 | 055 | NO | AGENT | NONE | YES |
+| [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | TODO | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
+| [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | TODO | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
+| [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | TODO | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
+| [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | TODO | 051 | 055 | NO | AGENT | NONE | YES |
+| [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | TODO | 051 | 055, 057 | NO | AGENT | NONE | YES |
+| [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037 | 058, 060 | NO | AGENT | NONE | YES |
 | TASK-055 | Project completion and Force Complete | Module · PRJ | HIGH | TODO | 031, 035, 044, 045, 046, 047, 048, 050, 052, 053 | 058 | NO | AGENT | NONE | YES |
 | TASK-056 | Project cancellation | Module · PRJ | HIGH | TODO | 038, 041, 046, 047, 049 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | TASK-057 | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | TODO | 022, 026, 027, 028, 030, 032, 034, 037, 039, 050, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |

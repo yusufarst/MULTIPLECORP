@@ -1,6 +1,6 @@
 # TASK-007 — Schema — PRJ, CST, PUR and ADM tables
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -30,7 +30,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 
 **IN SCOPE:**
 
-- the tables `projects`, `project_siplah_details`, `project_lines`, `commercial_confirmations`, `confirmation_line_pins`, `quotation_revisions`, `quotation_revision_lines`, `line_scope_cancellations`, `project_line_balances`, `project_commercial_balances`, `project_state_transitions`; `purchases`, `purchase_lines`, `purchase_line_tax_components`, `purchase_charges`, `purchase_charge_line_shares`, `purchase_line_balances`, `purchase_line_closures`, `purchase_line_adjustments`; `lot_cost_entries`, `lot_cost_balances`, `cost_attributions`, `purchase_charge_balances`, `purchase_charge_share_balances`, `expenses`; `admin_requirements`, `admin_requirement_links`, `admin_requirement_waivers`, with their C- rows and IX- indexes
+- the tables `projects`, `project_siplah_details`, `project_lines`, `commercial_confirmations`, `confirmation_line_pins`, `quotation_revisions`, `quotation_revision_lines`, `line_scope_cancellations`, `project_line_balances`, `project_commercial_balances`, `project_state_transitions`; `purchases`, `purchase_lines`, `purchase_line_tax_components`, `purchase_charges`, `purchase_charge_line_shares`, `purchase_line_balances`, `purchase_line_closures`, `purchase_line_adjustments`; `lot_cost_entries`, `lot_cost_balances`, `cost_attributions`, `purchase_charge_balances`, `purchase_charge_share_balances`, `expenses`; `admin_requirements`, `admin_requirement_links`, `admin_requirement_waivers`, with their C- rows — C-05, C-21, C-26, C-29–C-31, C-38 and C-57 — and IX- indexes — IX-11 and IX-14
 - the project and commercial representation of DATABASE §9
 - the migrate-from-empty test extended (TL-16)
 
@@ -50,6 +50,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - [DATABASE §18–19](../04-architecture/DATABASE/s18-19-constraints-integrity.md#18-constraint-catalogue)
 - [DATABASE §20](../04-architecture/DATABASE/s20-24-index-storage-migration.md#20-index-and-query-design)
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
+- Architecture challenge — the sequence 11a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
 - Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (52): D-DB-01–D-DB-14; C-05; C-21; C-26; C-29–C-31; C-38; C-57; IX-11; IX-14; table projects; table project_siplah_details; table project_lines; table commercial_confirmations; table confirmation_line_pins; table quotation_revisions; table quotation_revision_lines; table line_scope_cancellations; table project_line_balances; table project_commercial_balances; table project_state_transitions; table purchases; table purchase_lines; table purchase_line_tax_components; table purchase_charges; table purchase_charge_line_shares; table purchase_line_balances; table purchase_line_closures; table purchase_line_adjustments; table lot_cost_entries; table lot_cost_balances; table cost_attributions; table purchase_charge_balances; table purchase_charge_share_balances; table expenses; table admin_requirements; table admin_requirement_links; table admin_requirement_waivers
 
 **EXPECTED MODULES / FILE AREAS:**
@@ -188,10 +189,10 @@ Projects with their commercial chain, costing, procurement and the administrativ
 **ACCEPTANCE CRITERIA:**
 
 1. Migrating creates exactly the tables named, with every column, key and constraint DATABASE states.
-2. Each C- row of these tables is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables exists and its query uses it.
+2. Each C- row of these tables — C-05, C-21, C-26, C-29–C-31, C-38 and C-57 — is enforced where its row says, proven by a test that violates it.
+3. Each IX- index of these tables — IX-11 and IX-14 — exists and its query uses it.
 4. The per-line conservation and pin rows of the commercial chain hold as their C- rows state.
-5. The migrations are expand-only and run from empty in CI.
+5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 
 **TEST REQUIREMENTS:**
 

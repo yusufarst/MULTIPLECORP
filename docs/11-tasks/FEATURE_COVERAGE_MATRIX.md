@@ -1,6 +1,6 @@
 # Feature coverage matrix
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); it is a REVIEW draft, approved, or not, with P11 at OG-4. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement P1–P10 states, inventoried by script, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. The normative rule stays in its source; this matrix only says where each one is built.
 
@@ -1407,8 +1407,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TM-67 | TM- | SECURITY · 8. Threat model | TASK-010, TASK-017, TASK-018, TASK-023, TASK-024, TASK-069 |
 | TM-68 | TM- | SECURITY · 8. Threat model | TASK-017, TASK-018, TASK-020, TASK-024, TASK-069, TASK-076 |
 | TM-71 | TM- | SECURITY · 8. Threat model | TASK-010, TASK-017, TASK-069 |
-| D-SEC-06 | D-SEC- | SECURITY · 9. Design decisions | TASK-011, TASK-017 |
-| D-SEC-14 | D-SEC- | SECURITY · 9. Design decisions | TASK-011, TASK-017 |
+| D-SEC-06 | D-SEC- | SECURITY · 9. Design decisions | disposition SUPERSEDED — superseded by D-SEC-15, which TASK-017 builds |
+| D-SEC-14 | D-SEC- | SECURITY · 9. Design decisions | disposition SUPERSEDED — superseded by D-SEC-16, which TASK-017, TASK-018 and TASK-023 build |
 | D-SEC-15 | D-SEC- | SECURITY · 9. Design decisions | TASK-017 |
 | D-SEC-16 | D-SEC- | SECURITY · 9. Design decisions | TASK-017, TASK-018, TASK-023 |
 | D-SEC-17 | D-SEC- | SECURITY · 9. Design decisions | TASK-017, TASK-018, TASK-023 |
@@ -3392,6 +3392,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | Disposition | Meaning | Entries |
 | --- | --- | --- |
 | DEFERRED | Deferred out of V1 by V1_SCOPE — no Task builds it; building it would add to V1 (OE-20) | 6 |
+| SUPERSEDED | A design decision its own document marks SUPERSEDED — its successor is mapped in its place; no Task builds it, and nothing derives from it (EXECUTION_CONTEXT) | 2 |
 | FUTURE | The contract of a future external integration — V1 contains none (API_AND_INTEGRATIONS §3); no Task builds it (OE-20) | 13 |
 | SATISFIED | A planning item already satisfied, its reason stated in the row | 4 |
 | DROPPED | Dropped as a requirement by DESIGN_SYSTEM Annex A, its reason recorded there — no requirement to build | 3 |
@@ -3411,13 +3412,13 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-008 | Schema — INV tables, inventory and lot-cost representations | 48 |
 | TASK-009 | Schema — FUL and FIN tables, finance and tax representations | 45 |
 | TASK-010 | Audit and security logging | 31 |
-| TASK-011 | Authorization core — capabilities, roles, grants, company scope and the route audit | 293 |
+| TASK-011 | Authorization core — capabilities, roles, grants, company scope and the route audit | 291 |
 | TASK-012 | Field projection, read classes and cross-company links | 93 |
 | TASK-013 | Command envelope, command identity, idempotency and the lock order | 322 |
 | TASK-014 | Localization — locales, the language switch and the key catalogue | 287 |
 | TASK-015 | Design system — tokens, components, patterns and states | 303 |
 | TASK-016 | Application shell, navigation and the company context | 148 |
-| TASK-017 | Password sign-in, sessions and credential links | 153 |
+| TASK-017 | Password sign-in, sessions and credential links | 151 |
 | TASK-018 | Two-step verification (TOTP) and recovery codes | 73 |
 | TASK-019 | Google sign-in for existing accounts | 46 |
 | TASK-020 | Installation step, the first Owner and the Owner-recovery path | 24 |
@@ -3492,8 +3493,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 ## 5. Checks
 
 - **Entries:** 3234, in 125 family-and-document pairs.
-- **Mapped:** 3234 of 3234 — 3186 to one or more Tasks and 48 to a recorded disposition; unmapped: 0.
+- **Mapped:** 3234 of 3234 — 3184 to one or more Tasks and 50 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2088 entries by an explicit rule, 897 derived from the identifiers their own row cites, 201 by their family's default when their row cites none that resolves, 48 by a disposition.
+- **Method:** 2088 entries by an explicit rule, 897 derived from the identifiers their own row cites, 199 by their family's default when their row cites none that resolves, 50 by a disposition.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).

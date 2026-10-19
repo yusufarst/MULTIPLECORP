@@ -1,6 +1,6 @@
 # TASK-019 — Google sign-in for existing accounts
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -67,6 +67,7 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-02, User enumeration through login, reset, the two-factor step, Google sign-in or timing (AU-04, AU-12, AU-22); TM-03, Session fixation, also across the steps of a two-factor or Google login (AU-06, AU-16, AU-22); TM-04, Session theft on a shared or unattended device, a previous user's Google session included (AU-06, AU-07, AU-08, WS-05, AU-22); TM-59, A forged, replayed or injected Google callback — a stolen authorization code, a sign-in or link started on another site, a replayed ID token (AU-22, AU-23); TM-60, Google link takeover — an attacker's Google identity linked to a victim's account, a victim's identity linked to an attacker's account, or a link derived from a matching e-mail (AU-23, AU-22, AU-24, LG-07); TM-61, A previous user's Google session on a shared office PC or floor device used to sign in (AU-22, AU-07, AU-08, AU-05); TM-62, Google outage or loss of the person's Google account (AU-22, AU-24); TM-70, Real-time phishing that relays the password, or a Google sign-in, together with the TOTP code (AU-16, AU-22, LG-07); TM-72, One phone holding both the person's Google session and the authenticator, so that whoever holds it unlocked can pass both steps (AU-22, AU-20, AU-24, LG-07); TM-73, Anyone who can reach an account's second-factor step — its password holder, a browser still signed in to the person's linked Google account, or an abandoned authenticated session — failing codes on purpose to delay that account's sign-in (AU-05, AU-20, AU-24, AU-10, LG-07)
 - state, nonce and PKCE (AU-22); the generic failure answer; no provider token stored — only the provider, `sub`, the e-mail at link time and the link facts (AU-24); Google never decides roles, capabilities or scope (AZ-13)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**

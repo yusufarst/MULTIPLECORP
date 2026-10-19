@@ -1,6 +1,6 @@
 # TASK-005 — Schema foundations — IAM and OPS tables, history and types
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -56,6 +56,7 @@ Every module writes through identity, audit, the command log and correction case
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
 - [INFRASTRUCTURE §4.4](../09-operations/INFRASTRUCTURE.md#44-database-roles)
 - [SECURITY §2](../05-security/SECURITY.md#2-authentication-sessions-and-credentials) AU-06
+- Architecture challenge — the sequences 11a, 11b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
 - Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (74): BR-SN-01–BR-SN-03; D-DB-01–D-DB-14; C-11; C-17; C-36; C-40; C-46; C-48; C-58–C-60; C-62–C-65; H9-01; IX-01–IX-07; IX-09–IX-10; IX-12–IX-19; TL-16; table users; table roles; table capabilities; table role_capabilities; table user_roles; table user_capability_grants; table user_company_grants; table user_external_identities; table audit_events; table security_events; table command_log; table correction_cases; table import_batches; table import_rows; table legacy_archive_items; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10
 
 **EXPECTED MODULES / FILE AREAS:**
@@ -194,10 +195,11 @@ Every module writes through identity, audit, the command log and correction case
 **ACCEPTANCE CRITERIA:**
 
 1. Migrating an empty database creates exactly the 15 tables of §4.1 and §4.13 with every column, key and constraint DATABASE states, and the session table of AU-06.
-2. Each C- row for these tables is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables exists with the verification PERFORMANCE §12 asks.
+2. Each C- row for these tables — C-11, C-17, C-36, C-40, C-46, C-48, C-58–C-60 and C-62–C-65 — is enforced where its row says, proven by a test that violates it.
+3. Each IX- index of these tables — IX-01–IX-07, IX-09–IX-10 and IX-12–IX-19 — exists with the verification PERFORMANCE §12 asks.
 4. Money, quantity and date columns use exactly the types of DATABASE §17.
-5. The migrations are expand-only and run again from empty in CI (TL-16).
+5. The migrations are expand-only — nothing a running release still reads is dropped or renamed — with the mixed-version safeguards of PRQ-04, job payload versions and one-release command validity among them, and run again from empty in CI (TL-16; architecture challenge 11a).
+6. The import tables `import_batches` and `import_rows` hold the committed import identity on which BD-11's keys rest, so the opening import run again creates no second lot, receivable, credit or project for one legacy row, every created fact carrying its `import_row_id` (DATABASE §24; AX-28; BD-11; architecture challenge 11b, with TASK-057).
 
 **TEST REQUIREMENTS:**
 
@@ -217,7 +219,7 @@ Every module writes through identity, audit, the command log and correction case
 - Production build: TL-13 still passes
 - Security: the runtime role cannot run DDL; the migration role is used only by migrations (H9-01)
 - Performance: each IX- index of these tables present and used by its query in `EXPLAIN` (TL-15; PERFORMANCE §12)
-- Migration: migrate from empty, roll forward again, no destructive step (TL-16)
+- Migration: migrate from empty, roll forward again, no destructive step — nothing a running release reads dropped or renamed (TL-16; PRQ-04; architecture challenge 11a)
 - Other: N/A — nothing further
 
 **TEST CHECKLIST:**

@@ -1,6 +1,6 @@
 # P11 quality gate
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 *Written by run PC-5 under [DIR-084](../../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95–SP-98 and §8 item 10, in English: the inventory's counts and the whole-system architecture challenge in Part 3; the review, gate P11, gate PC-5 and the report in Part 5.* P11 — task planning, dependencies and execution specifications — is authorized by the Owner at OG-3 ([DIR-083](../../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-19); its approval, the planning freeze and the execution authorization are the Owner's separate decisions at OG-4 (OE-21). Nothing here is a test result or evidence that an operational check was done (OE-14).
 
@@ -9,7 +9,7 @@ Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
 By script from the working tree after Part 2's publication — the method, every family with its source and count, and every family left out with its reason are in [FEATURE_COVERAGE_MATRIX §1](../FEATURE_COVERAGE_MATRIX.md#1-the-requirement-inventory-sp-95):
 
 - **3,234 entries** in 124 families of P1–P10, REFERENCE_COVERAGE's identifiers and the 43 OPEN gaps — among them 18 V1 capabilities, 23 acceptance criteria, 83 business rules, 39 workflows, 37 indivisible actions, 65 pages, 210 routes, 165 interaction contracts, 65 navigation contracts, 125 logical tables, 65 constraints, 80 capabilities, 25 security test cases, 20 performance targets, 15 production-release requirements and 26 go-live items.
-- **Mapped:** 3,234 of 3,234 — 3,186 to one or more Tasks, 48 to a recorded disposition (6 deferred items, 13 contracts of a future integration, 22 definition-of-done items applied by every Task, 3 items Annex A dropped and 4 planning items already satisfied); every one of the 87 Tasks maps at least one entry ([FEATURE_COVERAGE_MATRIX §5](../FEATURE_COVERAGE_MATRIX.md#5-checks)).
+- **Mapped:** 3,234 of 3,234 — 3,184 to one or more Tasks, 50 to a recorded disposition (6 deferred items, 13 contracts of a future integration, 22 definition-of-done items applied by every Task, 3 items Annex A dropped, 4 planning items already satisfied and 2 design decisions SECURITY marks superseded, D-SEC-06 and D-SEC-14, corrected in Part 4 from a mapping to TASK-011 and TASK-017 — their successors D-SEC-15 and D-SEC-16 mapped in their place); every one of the 87 Tasks maps at least one entry ([FEATURE_COVERAGE_MATRIX §5](../FEATURE_COVERAGE_MATRIX.md#5-checks)).
 - **The Task plan** ([TASK_PLAN](../TASK_PLAN.md)): 87 Tasks — 4 foundation, 18 platform, 39 module, 9 verification, 6 release and 11 operations Tasks, 63 HIGH and 24 STANDARD, 76 for an agent, 8 for the human operator and 3 for the Owner; at creation 2 READY (TASK-001, TASK-071), 5 BLOCKED on an operator's or the Owner's input (TASK-072, TASK-075, TASK-082, TASK-083, TASK-084) and 80 TODO; every dependency to an earlier Task, the graph acyclic by script.
 
 ## Whole-system architecture challenge (SP-98)

@@ -1,6 +1,6 @@
 # TASK-002 — Coding conventions and architecture guardrails
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -70,6 +70,7 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-09, Mass assignment of company, authority or state fields (WS-01, WS-02, DP-03); TM-37, Stored XSS rendered in React or a PDF (WS-09, FL-08); TM-48, Secrets in logs, repository or client bundles (LG-03, SX-01, SX-06); TM-49, Vulnerable or malicious dependency (SX-05)
 - a secret-like scan of the staged changes (SX-06), wired into CI by TASK-003
 
 **COMPANY SCOPE AND FIELD PROJECTION:**

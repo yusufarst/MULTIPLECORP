@@ -1,6 +1,6 @@
 # TASK-015 — Design system — tokens, components, patterns and states
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -80,6 +80,7 @@ A consistent, accessible, comfortable interface in natural Indonesian is V1's ex
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-28, Browser history, back-forward cache or client cache after logout, expiry or remote termination (AU-06, WS-07, WS-08); TM-37, Stored XSS rendered in React or a PDF (WS-09, FL-08); TM-50, Clickjacking (WS-08)
 - no raw HTML rendering of user text (WS-09); fonts and icons served from the application's origin under the CSP (WS-08); no external script or font host
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -206,6 +207,7 @@ A consistent, accessible, comfortable interface in natural Indonesian is V1's ex
 3. IP-01–IP-21's presentations behave as ADMIN_FLOW states, keyboard included (KB-).
 4. The Base UI or Radix and the Toast or Sonner choices are recorded with versions and licences; no paid component is used.
 5. HO-37 is answered with evidence: no `'unsafe-inline'` style, or a STOP report naming the primitive.
+6. Switching the language on a page built from the components keeps unsent input in every field and holds the layout at TL-11's bands (LOCALIZATION §3.7; CJ-18 in TASK-064; architecture challenge 17b).
 
 **TEST REQUIREMENTS:**
 

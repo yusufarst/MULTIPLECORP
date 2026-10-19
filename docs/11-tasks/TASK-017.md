@@ -1,6 +1,6 @@
 # TASK-017 — Password sign-in, sessions and credential links
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -59,7 +59,8 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md) SM-06–SM-08, SM-14, SM-16, SM-22
 - [PERFORMANCE §10](../06-api-performance/PERFORMANCE.md#10-session-and-authentication-load) PF-37–PF-40
 - [ADMIN_FLOW J-ACC-01](../07-ux-design/ADMIN_FLOW/s10-a-journeys.md#10-journeys)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (153): O-06; CAP-13; DEP-08; AC-12–AC-13; AC-16; OS-03; REF-001; REF-003–REF-004; REF-049; REF-056–REF-057; OWN-02; OWN-04; ROUTE-001; ROUTE-003; ROUTE-101; ROUTE-106; ROUTE-108–ROUTE-109; INT-001; INT-010–INT-011; INT-018; INT-101; INT-106; INT-108–INT-109; AU-01–AU-13; AU-15; AU-17; WS-04–WS-05; WS-12; TM-01–TM-08; TM-28–TM-29; TM-42–TM-43; TM-45; TM-52; TM-58; TM-61; TM-63; TM-66–TM-69; TM-71; TM-73; D-SEC-01–D-SEC-17; H6-06–H6-07; H6-11; H6-15–H6-16; H7-01; H7-04–H7-05; H7-09; H7-12–H7-15; H7-17–H7-19; H8-16–H8-18; H9-04; H9-11; HO-24; HO-40; PF-37–PF-40; RB-03; RB-07–RB-08; RB-10; PG-001; PG-003; SCR-01–SCR-02; UXI-16–UXI-17; UXI-19–UXI-22; UXI-32; D-UX-03; IP-10–IP-11; J-ACC-01; MSG-19–MSG-20; MSG-27–MSG-29; MSG-33–MSG-34; UXS-26; UXH-11; PT-28; GR-12; NAV-001; NAV-003; SM-06; SM-08; SM-16–SM-17; component Sign-in compositions; GAP-043–GAP-044
+- Architecture challenge — the sequence 19a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (151): O-06; CAP-13; DEP-08; AC-12–AC-13; AC-16; OS-03; REF-001; REF-003–REF-004; REF-049; REF-056–REF-057; OWN-02; OWN-04; ROUTE-001; ROUTE-003; ROUTE-101; ROUTE-106; ROUTE-108–ROUTE-109; INT-001; INT-010–INT-011; INT-018; INT-101; INT-106; INT-108–INT-109; AU-01–AU-13; AU-15; AU-17; WS-04–WS-05; WS-12; TM-01–TM-08; TM-28–TM-29; TM-42–TM-43; TM-45; TM-52; TM-58; TM-61; TM-63; TM-66–TM-69; TM-71; TM-73; D-SEC-01–D-SEC-05; D-SEC-07–D-SEC-13; D-SEC-15–D-SEC-17; H6-06–H6-07; H6-11; H6-15–H6-16; H7-01; H7-04–H7-05; H7-09; H7-12–H7-15; H7-17–H7-19; H8-16–H8-18; H9-04; H9-11; HO-24; HO-40; PF-37–PF-40; RB-03; RB-07–RB-08; RB-10; PG-001; PG-003; SCR-01–SCR-02; UXI-16–UXI-17; UXI-19–UXI-22; UXI-32; D-UX-03; IP-10–IP-11; J-ACC-01; MSG-19–MSG-20; MSG-27–MSG-29; MSG-33–MSG-34; UXS-26; UXH-11; PT-28; GR-12; NAV-001; NAV-003; SM-06; SM-08; SM-16–SM-17; component Sign-in compositions; GAP-043–GAP-044
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -75,6 +76,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-01, Brute force and credential stuffing (AU-03, AU-05, AU-16, AU-18, WS-11, LG-07); TM-02, User enumeration through login, reset, the two-factor step, Google sign-in or timing (AU-04, AU-12, AU-22); TM-03, Session fixation, also across the steps of a two-factor or Google login (AU-06, AU-16, AU-22); TM-04, Session theft on a shared or unattended device, a previous user's Google session included (AU-06, AU-07, AU-08, WS-05, AU-22); TM-05, Credential-link interception, replay or leakage in logs, Referer, history or flashed input (AU-11, AU-12, LG-03, LG-04); TM-06, Owner-account takeover (AU-16, AU-18, AU-02, AU-03, AU-05, AU-15, AU-20, LG-07); TM-07, Host-header poisoning of links (WS-11, AU-12); TM-08, CSRF on a state change (WS-04, WS-05); TM-28, Browser history, back-forward cache or client cache after logout, expiry or remote termination (AU-06, WS-07, WS-08); TM-29, Revoked grant or deactivated account with an open session or a queued export (AZ-03, AU-09, DP-09, DP-14); TM-42, Decompression, zip or size bombs (FL-02, FL-03, FL-06, WS-12); TM-43, Expensive search or report exhaustion (WS-03, WS-12); TM-45, Shared accounts or impersonation hiding the actor (AZ-12, AU-01, AU-17); TM-52, Credential link consumed by someone other than its holder — the issuing Owner or anyone who saw the delivery message — to set the password and act as the account (AU-11, AU-12, AU-13, PJ-17, LG-02); TM-58, Password-hashing exhaustion by a distributed login flood (AU-05, WS-12, H6-12, H9-02); TM-61, A previous user's Google session on a shared office PC or floor device used to sign in (AU-22, AU-07, AU-08, AU-05); TM-63, Guessing TOTP or recovery codes from one or many addresses, concurrently or in sequence (AU-16, AU-05, AU-19, LG-07); TM-66, Theft or reuse of recovery codes — viewed on an unattended session, then used to replace the device (AU-19, AU-05, AU-20, LG-07); TM-67, Enrolment bypass or hijack — a high-risk account acting without TOTP, or a password holder enrolling a device before the person (AU-18, AU-16, AU-12, AU-13, LG-07); TM-68, Reset abuse — an Owner persuaded to reset an Admin's TOTP, or a reset or recovery link used to take an account over (AU-20, AU-12, AU-14); TM-69, Offline guessing of 8-character passwords after a database leak (AU-02, AU-03, AU-16); TM-71, The breached-password check unavailable or tampered with (AU-03, LG-07); TM-73, Anyone who can reach an account's second-factor step — its password holder, a browser still signed in to the person's linked Google account, or an abandoned authenticated session — failing codes on purpose to delay that account's sign-in (AU-05, AU-20, AU-24, AU-10, LG-07)
 - the AU- controls above; CSRF and cookies (WS-04, WS-05); rate limits on Valkey (WS-12); security events for sign-in outcomes (LG-; TASK-010)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -201,6 +203,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 4. A credential link works once, expires as AU-11–AU-12 state, and carries its token only in the fragment.
 5. Idle and absolute timeouts end the session; deactivation ends every session (AU-07, AU-09).
 6. Fortify registers no route that the contracts do not list (SM-22).
+7. Signing in again in place after a 401 or 419 lets the pending command be retried with its `command_id`: for the same account it replays rather than runs twice, and for another account it answers CONFLICT without disclosure (CI-01–CI-09; HO-02; UXH-11; UXI-16; architecture challenge 19a, with TASK-013 and TASK-016).
 
 **TEST REQUIREMENTS:**
 
@@ -218,7 +221,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - Responsive: TL-11
 - Accessibility: TL-12 on both pages
 - Production build: TL-13
-- Security: SM-06–SM-08, SM-14, SM-16, SM-22 (TL-14)
+- Security: SM-06–SM-08, SM-14, SM-16, SM-22, and SM-17's path from the login page and the in-place re-login to the two-factor challenge, end to end with TASK-018 (TL-14)
 - Performance: PF-37–PF-40; PFM-19 — authentication adds no business query (TL-15)
 - Migration: N/A — the tables are TASK-005's
 - Other: GAP-043's verification recorded

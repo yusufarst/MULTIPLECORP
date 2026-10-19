@@ -1,6 +1,6 @@
 # TASK-010 — Audit and security logging
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -68,6 +68,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-01, Brute force and credential stuffing (AU-03, AU-05, AU-16, AU-18, WS-11, LG-07); TM-05, Credential-link interception, replay or leakage in logs, Referer, history or flashed input (AU-11, AU-12, LG-03, LG-04); TM-06, Owner-account takeover (AU-16, AU-18, AU-02, AU-03, AU-05, AU-15, AU-20, LG-07); TM-44, Backdating used to evade audit (LG-01); TM-48, Secrets in logs, repository or client bundles (LG-03, SX-01, SX-06); TM-51, Log injection through user input (LG-04); TM-52, Credential link consumed by someone other than its holder — the issuing Owner or anyone who saw the delivery message — to set the password and act as the account (AU-11, AU-12, AU-13, PJ-17, LG-02); TM-53, Allocation probing: dispatching single units from another company's lots to read their allocated cost, then reversing (RG-08, XL-1, LG-07); TM-57, Operator abuse of the Owner-recovery command, which now also resets TOTP and unlinks Google, and of the OWNER-restoration command, whose honest use also reverses a removal of a pre-window Owner made legitimately during the compromise window, as a restored state does for an Owner removed legitimately between its backup and the window's start (AU-14, AU-20, AU-25, LG-07, H9-06, H9-07, H9-14, RV-04); TM-60, Google link takeover — an attacker's Google identity linked to a victim's account, a victim's identity linked to an attacker's account, or a link derived from a matching e-mail (AU-23, AU-22, AU-24, LG-07); TM-63, Guessing TOTP or recovery codes from one or many addresses, concurrently or in sequence (AU-16, AU-05, AU-19, LG-07); TM-66, Theft or reuse of recovery codes — viewed on an unattended session, then used to replace the device (AU-19, AU-05, AU-20, LG-07); TM-67, Enrolment bypass or hijack — a high-risk account acting without TOTP, or a password holder enrolling a device before the person (AU-18, AU-16, AU-12, AU-13, LG-07); TM-70, Real-time phishing that relays the password, or a Google sign-in, together with the TOTP code (AU-16, AU-22, LG-07); TM-71, The breached-password check unavailable or tampered with (AU-03, LG-07); TM-72, One phone holding both the person's Google session and the authenticator, so that whoever holds it unlocked can pass both steps (AU-22, AU-20, AU-24, LG-07); TM-73, Anyone who can reach an account's second-factor step — its password holder, a browser still signed in to the person's linked Google account, or an abandoned authenticated session — failing codes on purpose to delay that account's sign-in (AU-05, AU-20, AU-24, AU-10, LG-07)
 - security events never mixed with business audit; no secret, token, password or TOTP value in either (LG-03–LG-05 as stated); the log files readable only by the operator account (H9-08)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -188,7 +189,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 
 **ACCEPTANCE CRITERIA:**
 
-1. A test command writes its audit row in its own transaction; a rollback leaves no audit row and a commit always has one.
+1. A test command writes its business audit row in its own transaction: a rollback leaves no audit row, and a commit always has one, also when the process ends right after the commit (LG-01; architecture challenge 10b).
 2. Security events are written for the cases LG-02–LG-07 name and never into `audit_events`.
 3. No secret, password, token or code value appears in any audit or security row or log line.
 4. The query classes return rows only through the capabilities `audit.view` and `security_log.view`.

@@ -1,6 +1,6 @@
 # TASK-014 — Localization — locales, the language switch and the key catalogue
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -196,8 +196,8 @@ CAP-14 and AC-14 require natural Indonesian by default with English through a sw
 1. Every one of the 889 keys exists in both languages with the text LOCALIZATION §6 gives.
 2. A component with a hardcoded user-facing string fails the hardcoded-copy check.
 3. A missing key in either language fails TL-10 before release.
-4. Switching the language on a page with unsent input keeps the input and the layout.
-5. Dates, numbers and money render in the formats of §3.3 in both languages; data and documents stay in Indonesian.
+4. Switching the language on a page with unsent input keeps the input and the layout (LOCALIZATION §3.7; CJ-18 in TASK-064; architecture challenge 17b).
+5. Dates, numbers and money render in the formats of §3.3 in both languages; for an account using English, generated and issued documents and business data stay in Indonesian, and data is never translated (DIR-037 D7; LOCALIZATION §3.4; architecture challenge 17a).
 
 **TEST REQUIREMENTS:**
 

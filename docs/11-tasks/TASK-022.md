@@ -1,6 +1,6 @@
 # TASK-022 — Jobs, files and the document renderer
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -80,6 +80,7 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-16, Export of Company B data, including a file generated before a partial revocation (DP-07, FL-09); TM-20, Download of an issued PDF, evidence or import file of Company B (DP-05, FL-07, PJ-15, PJ-20); TM-23, Duplicate-evidence oracle across companies or evidence families (DP-13, FL-10); TM-37, Stored XSS rendered in React or a PDF (WS-09, FL-08); TM-38, SVG, polyglot or active office upload (FL-02, FL-03, FL-05, FL-07); TM-39, Path traversal on storage or download (FL-07); TM-40, SSRF through the renderer (FL-08); TM-41, Command injection, SSRF or file reads through the renderer or image decoders (FL-08, FL-03); TM-42, Decompression, zip or size bombs (FL-02, FL-03, FL-06, WS-12); TM-46, CSV or spreadsheet formula injection into the Owner's workbook (FL-09); TM-55, Evidence of an invisible family uploaded, versioned or matched to tamper with it or probe for it (PJ-08, DP-13, FL-10)
 - private files never under the web root; every download authorized and projected (PJ-08; PJ-15); the upload checks of FL-; the decoders allowlisted (H9-12); the CSP unchanged
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -203,9 +204,10 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 
 1. No private file is reachable by its storage path; each download passes authorization and projection.
 2. An upload outside FL-'s types or sizes, or with mismatched content, is refused; a duplicate is detected (BD-15).
-3. A rendition killed mid-way is completed by the sweeper, once, and the issued version is never reissued.
-4. The status route answers without extending the session (RB-05).
-5. Thumbnails and images follow PF-31–PF-36.
+3. A rendition killed mid-way is completed by the sweeper, once, and the issued version is never reissued; a revision issued while its predecessor's rendition is pending is a new version, and the old rendition stays the old version's (C-11, C-12; SF-RENDER; architecture challenge 7a, with TASK-029).
+4. One template per document layout is read by both the composer's preview and the renderer, and a number is assigned only at issue (D-DS-23; DESIGN_SYSTEM §14.3; SF-ISSUE; architecture challenge 15a, with TASK-029).
+5. The status route answers without extending the session (RB-05).
+6. Thumbnails and images follow PF-31–PF-36.
 
 **TEST REQUIREMENTS:**
 

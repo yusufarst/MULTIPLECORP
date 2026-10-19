@@ -1,6 +1,6 @@
 # TASK-018 — Two-step verification (TOTP) and recovery codes
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -70,6 +70,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 
 **SECURITY / PERMISSION REQUIREMENTS:**
 
+- the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-01, Brute force and credential stuffing (AU-03, AU-05, AU-16, AU-18, WS-11, LG-07); TM-03, Session fixation, also across the steps of a two-factor or Google login (AU-06, AU-16, AU-22); TM-06, Owner-account takeover (AU-16, AU-18, AU-02, AU-03, AU-05, AU-15, AU-20, LG-07); TM-57, Operator abuse of the Owner-recovery command, which now also resets TOTP and unlinks Google, and of the OWNER-restoration command, whose honest use also reverses a removal of a pre-window Owner made legitimately during the compromise window, as a restored state does for an Owner removed legitimately between its backup and the window's start (AU-14, AU-20, AU-25, LG-07, H9-06, H9-07, H9-14, RV-04); TM-63, Guessing TOTP or recovery codes from one or many addresses, concurrently or in sequence (AU-16, AU-05, AU-19, LG-07); TM-64, Replay of an observed TOTP code, concurrently or later (AU-16, H6-13); TM-66, Theft or reuse of recovery codes — viewed on an unattended session, then used to replace the device (AU-19, AU-05, AU-20, LG-07); TM-67, Enrolment bypass or hijack — a high-risk account acting without TOTP, or a password holder enrolling a device before the person (AU-18, AU-16, AU-12, AU-13, LG-07); TM-68, Reset abuse — an Owner persuaded to reset an Admin's TOTP, or a reset or recovery link used to take an account over (AU-20, AU-12, AU-14); TM-69, Offline guessing of 8-character passwords after a database leak (AU-02, AU-03, AU-16); TM-70, Real-time phishing that relays the password, or a Google sign-in, together with the TOTP code (AU-16, AU-22, LG-07); TM-72, One phone holding both the person's Google session and the authenticator, so that whoever holds it unlocked can pass both steps (AU-22, AU-20, AU-24, LG-07); TM-73, Anyone who can reach an account's second-factor step — its password holder, a browser still signed in to the person's linked Google account, or an abandoned authenticated session — failing codes on purpose to delay that account's sign-in (AU-05, AU-20, AU-24, AU-10, LG-07)
 - a confirmed secret never shown again; the QR code rendered locally from non-persisted flash data (AU-16, AU-12's rule); one code accepted once, in sequence and concurrently (M-39; C-65)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -204,7 +205,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 - Feature: SM-17–SM-19 flows (TL-04)
 - Integration: the concurrent double submission of one code (TL-05; M-39)
 - Authorization: the enrolment-only session reaches PG-004 alone (TL-06)
-- Route integrity: ROUTE-002, -004, -104, -105, -107 audited (TL-07)
+- Route integrity: ROUTE-002, -004, -104, -105, -107 audited; SM-02's enrolment-only cases — an enrolment-only route refusing a full session and reaching nothing else — and no Fortify two-factor route registered without the project route that replaces it (TL-07)
 - Interaction: their INT- rows (TL-08)
 - Browser E2E: enrolment, challenge and recovery journeys (TL-09)
 - Localization/language switch: both languages (TL-10)

@@ -1,6 +1,6 @@
 # TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -196,9 +196,10 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 
 1. Two concurrent issues of one type in one period draw two consecutive numbers and never the same one.
 2. A number once drawn is never drawn again, also after a draft is discarded.
-3. The raise sets each affected counter to the next number after the highest paper number, once per recovery, and refuses a lower value or a second raise for the same recovery.
+3. After a restore no numbered type issues again before the Owner's raise; the raise sets each affected counter to the next number after the highest paper number per company, type and period, once per recovery, and refuses a lower value or a second raise for the same recovery (DIR-083 OE-11; NM-03, NM-04, NX-01; RBK-02; GLC-25; architecture challenge 12a, 12b).
 4. The raise moves no seed value or boundary and raises no defect alert, and its audit event names the incident.
 5. Only the Owner reaches PG-061 and its commands.
+6. Sequences seeded by the opening import start after the last legacy number per company, type and period and stay unique and monotonic; an opening purchase whose legacy number does not fit its company's scheme draws its number at the commit, a fitting one keeping its legacy number (DIR-079 CB-01; DATABASE §24; C-10; architecture challenge 14a, with TASK-057).
 
 **TEST REQUIREMENTS:**
 
@@ -206,7 +207,7 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - Typecheck: TL-02
 - Unit: the scheme and period rules (TL-03)
 - Feature: ROUTE-136 and ROUTE-137 with the raise (TL-04)
-- Integration: two-connection draws (M-15, M-17, M-18) and the raise's refusals (TL-05; TEST_STRATEGY §15)
+- Integration: two-connection draws (M-15, M-17, M-18), the halt before the raise and the raise's refusals (TL-05; TEST_STRATEGY §15; architecture challenge 12a, 12b), and a sequence seeded after the last legacy number (14a)
 - Authorization: OWNER_ONLY (TL-06)
 - Route integrity: ROUTE-061, -136, -137 audited (TL-07)
 - Interaction: INT-136, INT-137 (TL-08)
