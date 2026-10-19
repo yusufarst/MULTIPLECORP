@@ -1,8 +1,10 @@
 # Definition of done
 
-Status: REVIEW — Draft of P8, not normative before its approval | Updated: 2026-10-19 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-19 | Owner: Planning
 
-**Draft of P8, not normative before its approval.** Run PC-4 drafted this document on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-85, P8 being authorized by the Owner's [DIR-081](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09; the Owner approves P8, or not, by a separate decision at OG-3. No Task exists yet — Tasks are created in P11 (AICWDF §22) —, so nothing here has been applied.
+Approval: [APPR-012](../00-governance/DECISION_LOG.md#appr-012--p8-testing-quality-and-definition-of-done-approved), explicit Owner approval on 2026-10-19 (DIR-083 OE-15) of this document as committed in run PC-5's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Run PC-4 drafted this document on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-85, P8 being authorized by the Owner's [DIR-081](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09; the Owner approved P8 at OG-3 (DIR-083 OE-15). No Task exists yet — Tasks are created in P11 (AICWDF §22) —, so nothing here has been applied.
 
 **Sources.** AICWDF §19's Task statuses and §§21, 25–28; [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md)'s Task model, Task contract and terminology; [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md)' feature, module and release completion obligations — the eight dimensions, the reasoned N/A rule and the dispatch, payment and invoice examples; the brief's §44, the definition-of-done principle ([source record](../00-governance/sources/OWNER_BRIEF_2026-09-27.txt)); [ENGINEERING_PRINCIPLES](../00-governance/ENGINEERING_PRINCIPLES.md#verification-and-completion); REFERENCE_COVERAGE's REF-G06 and its P8 row; [LOCALIZATION §3.6](../07-ux-design/LOCALIZATION.md#36-both-languages-no-missing-string); GAP-024 and GAP-037 ([GAP_REGISTER](../00-governance/GAP_REGISTER.md)).
 

@@ -1,8 +1,10 @@
 # Security test matrix
 
-Status: REVIEW — Draft of P8, not normative before its approval | Updated: 2026-10-19 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-19 | Owner: Planning
 
-**Draft of P8, not normative before its approval.** Run PC-4 drafted this document on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-85, P8 being authorized by the Owner's [DIR-081](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09; the Owner approves P8, or not, by a separate decision at OG-3. It specifies tests; it is not one. No test, test file or fixture exists, nothing here has run and no result is claimed.
+Approval: [APPR-012](../00-governance/DECISION_LOG.md#appr-012--p8-testing-quality-and-definition-of-done-approved), explicit Owner approval on 2026-10-19 (DIR-083 OE-15) of this document as committed in run PC-5's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Run PC-4 drafted this document on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-85, P8 being authorized by the Owner's [DIR-081](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09; the Owner approved P8 at OG-3 (DIR-083 OE-15). It specifies tests; it is not one. No test, test file or fixture exists, nothing here has run and no result is claimed.
 
 **OG-3 decisions** (note of 2026-10-19, written by run PC-5 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-92). At OG-3 the Owner decided OQ-28 (b) under [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-10 — on a trusted state a recovery halt goes first to the Owner's incident decision outside the application —, so SM-21 gains the halt's path; the supported browsers of WS-04's measurement are TEST_STRATEGY §12's (OE-02). P8's approval is APPR-012, in effect only in PC-5's approval commit after gate PC5-A (OE-15).
 
