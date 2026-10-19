@@ -1,0 +1,271 @@
+# TASK-013 — Command envelope, command identity, idempotency and the lock order
+
+Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+
+Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
+
+**STATUS:** TODO
+
+**RISK CLASS:** HIGH
+
+**EXECUTOR:** AGENT
+
+**OBJECTIVE:**
+
+Build the command envelope every business action uses: one client `command_id` per intent with re-authorized replay, the command log, the canonical lock order LK-00–LK-31 with the data-dependent lock-set protocol, guards and first-use rows, stale-state checks, transactions, failure mapping, retry and timeouts — with the business date and the correction taxonomy's common checks.
+
+**WHY THIS EXISTS:**
+
+One `command_id` per intent and the canonical lock order are invariants 5–7 of EXECUTION_CONTEXT (CI-01–CI-09; LK-00–LK-31; AX-01–AX-37 in one transaction each); the concurrency scenarios M-01–M-46 and GAP-005, GAP-008 depend on one envelope, not one per module.
+
+**DEPENDS ON:**
+
+- TASK-010 — Audit and security logging
+- TASK-011 — Authorization core — capabilities, roles, grants, company scope and the route audit
+
+**BLOCKS:**
+
+- TASK-021 — Numbering, its settings page and the Owner's raise after a restore
+- TASK-022 — Jobs, files and the document renderer
+- TASK-024 — Users and access — accounts, roles, capabilities and company grants
+- TASK-025 — Companies, identity assets, bank accounts and tax configuration
+- TASK-026 — Clients and suppliers
+- TASK-027 — Catalog — products, services, units, barcodes, prices and images
+- TASK-028 — Rack locations and minimum stock
+- TASK-031 — Correction cases
+- TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
+
+**PARALLEL SAFE:** NO — every command Task runs inside the envelope
+
+**IN SCOPE:**
+
+- SF-CMD (WORKFLOWS §2) and ARCHITECTURE §5: the action as the unit of work, authorization re-check and transaction
+- command identity and replay (CI-01–CI-09) with the command log; replay re-authorized; outcomes COMMITTED, REJECTED, CONFLICT, PENDING and FAILED (HO-01–HO-02; IP-01–IP-05)
+- the lock order LK-00–LK-31, lock classes and rules (LR-), and the data-dependent lock-set protocol with its restart budget
+- transactions and isolation (TX-), guards and first-use rows (GU-, FU-), stale state (ST-), statement outcomes (SQ-01–SQ-23), separate duplicates (BD-) as each action's Task applies them, retry and timeouts (RY-)
+- the business date control SF-DATE with the date rules BR-DT-01–BR-DT-06, and the correction taxonomy's common checks BR-CR-01–BR-CR-06 and FS- prohibitions
+- `GuardMaintenance` and `ReconcileGuards` as audited operator console commands (H9-03; PRQ-05; GAP-031)
+- the shared interactions INT-015–INT-017 on the server side
+
+**OUT OF SCOPE:**
+
+- each action's own statement sequence and checks — its module Task (CONCURRENCY_IDEMPOTENCY §7)
+- numbering concurrency (TASK-021) and jobs (TASK-022)
+
+**REFERENCES:**
+
+- [WORKFLOWS §2](../03-workflows/WORKFLOWS/s01-04-foundations.md#2-standard-command-envelope--sf-cmd)
+- [ARCHITECTURE §5](../04-architecture/ARCHITECTURE.md#5-actions--the-command-envelope)
+- [ARCHITECTURE §15](../04-architecture/ARCHITECTURE.md#15-transactions-and-failure-semantics)
+- [CONCURRENCY_IDEMPOTENCY §4–6](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s04-06-locks-envelope.md#4-canonical-lock-order)
+- [CONCURRENCY_IDEMPOTENCY §8–9](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md#8-guards-and-first-use-rows)
+- [CONCURRENCY_IDEMPOTENCY §10–13](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#10-command-identity-and-replay)
+- [CONCURRENCY_IDEMPOTENCY §18](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s18-scenarios.md#18-mandatory-concurrency-and-failure-scenarios)
+- [BUSINESS_RULES §2](../02-domain/BUSINESS_RULES.md#2-correction-taxonomy) BR-CR-01–BR-CR-06
+- [PERFORMANCE §9](../06-api-performance/PERFORMANCE.md#9-cache-policy)
+- the architecture challenge's sequences 2a, 3a, 6a, 6c, 10a–10b, 15c, 18a, 19a ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (322): BR-DT-01–BR-DT-06; BR-CR-01–BR-CR-06; FS-02–FS-12; FS-14; SF-CMD; SF-DATE; L-04; L-06; L-09; L-11; L-14; L-17; L-23–L-24; L-27; L-32–L-34; L-37–L-38; L-46; L-48; INT-015–INT-017; C-16; C-45–C-46; C-48; C-50; C-53; C-55; WS-01–WS-03; TM-09; TM-43; H6-02–H6-05; H6-09–H6-10; H6-12; H6-16; H9-03; TX-01–TX-10; D-CC-01–D-CC-12; LR-01–LR-12; LK-00–LK-31; GU-01–GU-07; FU-01–FU-13; ST-01–ST-09; CI-01–CI-09; BD-16; BD-19; SQ-01–SQ-23; RY-01–RY-09; RV-01–RV-18; M-01–M-46; HO-04; HO-14–HO-15; CP-01–CP-07; UXI-02–UXI-08; UXI-10–UXI-11; UXI-16; UXI-41; IP-01–IP-05; IP-07; MSG-04; MSG-06; MSG-13; MSG-15; MSG-20; UXS-01–UXS-04; UXS-07–UXS-08; UXS-10–UXS-17; PT-25; PRQ-04–PRQ-05; GAP-005; GAP-008; GAP-015–GAP-016; GAP-031
+
+**EXPECTED MODULES / FILE AREAS:**
+
+- the platform command envelope, command log service, lock-set helper, failure mapper; the console commands; `tests/Concurrency/`
+
+**BUSINESS RULES:**
+
+- BR-DT-01–BR-DT-06 (dates and backdating); BR-CR-01–BR-CR-06 (corrections); FS-02–FS-12, FS-14 (forbidden shortcuts) as common checks
+
+**ARCHITECTURE RULES:**
+
+- one action per business command; one transaction per indivisible action; locks only in the canonical order; Valkey never a system of record (CP-; ARCHITECTURE §1)
+
+**SECURITY / PERMISSION REQUIREMENTS:**
+
+- replay re-authorizes the current actor (CI-); allowed fields only and server-derived fields (WS-01–WS-03)
+
+**COMPANY SCOPE AND FIELD PROJECTION:**
+
+- the command's company is its target's (CS-03), resolved through TASK-011's resolver before any lock
+
+**CONCURRENCY / IDEMPOTENCY:**
+
+- this Task is the mechanism: LK-00–LK-31, LR-, TX-, GU-, FU-, ST-, CI-, SQ-, RY-, RV- and the scenarios M-01–M-46 as executable tests where their actions exist, each later Task adding its own
+
+**AUDIT:**
+
+- the command log and the business audit written in the command's transaction (LG-01; TASK-010)
+
+**DATABASE IMPACT ASSESSMENT:**
+
+- Schema change: NONE — uses TASK-005
+- Migration required: NO
+- Existing data transformation: NONE
+- Direct production DB access: FORBIDDEN
+- Data-loss risk: NONE KNOWN
+
+**MODULARITY / EXTENSIBILITY:**
+
+- Module boundary affected: platform application layer
+- Stable core kept provider-neutral: YES
+- External/vendor-specific code isolated: YES — framework facilities or a small interface (ARCHITECTURE §2)
+- Replaceable adapter/contract required: NO
+- Provider lock-in risk: NONE beyond the Owner's baseline stack
+- Future extension impact: LOW
+- Speculative abstraction avoided: YES — no repository class per model, no generic workflow or rules engine (ARCHITECTURE §1)
+
+**AUTH IMPACT:**
+
+- Authentication change: NONE
+- Authentication implementation: LARAVEL_NATIVE — decided once ([EXECUTION_CONTEXT](EXECUTION_CONTEXT.md)), reused, never redesigned
+- Auth profile: N/A — this Task does not touch authentication
+- Google sign-in: N/A — not touched
+- Google registration behavior: N/A — not touched
+- Google credentials owner action required: NO
+- Authorization change: NONE
+- Provider/library-specific leakage into domain: NO
+
+**COST IMPACT:**
+
+- New recurring cost: NONE
+- Paid third-party service: NO
+- Free/open-source alternative: N/A — nothing paid is considered
+- Estimated additional monthly production cost: 0
+- Owner approval required: NO
+
+**MCP SESSION PROFILE:**
+
+- Required MCP servers: none — [TOOLCHAIN](../00-governance/TOOLCHAIN.md#mcp-servers) records none installed
+- MCP servers that should remain OFF: every server not required
+- Native CLI/package preferred over MCP: YES — the framework's and package managers' own commands
+- Post-Task deactivation/cleanup: none
+
+**TOOL REQUIREMENTS:**
+
+- Context7: REQUIRED — PostgreSQL row locks, `lock_timeout`, `statement_timeout` and serialization behaviour; the framework's database transactions
+- Graphify: N/A — the codebase is young
+- Browser E2E: N/A — no page
+- Other: a two-connection test harness (TASK-003)
+- Missing safe tool behavior: AUTO-INSTALL project-locally inside this Task (AICWDF §6.3) and record it in TOOLCHAIN; a paid tier or a privileged installation STOPS for the Owner (COST_POLICY)
+
+**GRAPHIFY / IMPACT ANALYSIS:**
+
+- Graph freshness: N/A — the codebase is too young for a graph to add value; the impact is read from the diff and ARCHITECTURE §3–§4
+- Pre-change questions: which actions each lock class serves
+- Expected affected areas: the IN SCOPE areas only
+
+**CONTEXT7:**
+
+- Topics to verify: PostgreSQL lock modes, `lock_timeout`, `statement_timeout` and serialization failure codes; the framework's transaction retry
+- Version-sensitive assumptions: none from memory
+
+**UI / UX REQUIREMENTS:**
+
+- Follow global design rules: N/A — server side — the presentation of outcomes is TASK-015's
+- Indonesian default: N/A — server side — the presentation of outcomes is TASK-015's
+- English support: N/A — server side — the presentation of outcomes is TASK-015's
+- Plain-language Indonesian: N/A — server side — the presentation of outcomes is TASK-015's
+- Language switch impact: NONE
+- Mobile-first: N/A — server side — the presentation of outcomes is TASK-015's
+- Responsive: N/A — server side — the presentation of outcomes is TASK-015's
+- Adaptive: N/A — server side — the presentation of outcomes is TASK-015's
+- Visual breathing room: N/A — server side — the presentation of outcomes is TASK-015's
+- Comfortable density: N/A — server side — the presentation of outcomes is TASK-015's
+- shadcn/ui reuse: N/A — server side — the presentation of outcomes is TASK-015's
+- Design reference: N/A — server side — the presentation of outcomes is TASK-015's
+- Primary action: N/A — server side — the presentation of outcomes is TASK-015's
+- Secondary actions: N/A — server side — the presentation of outcomes is TASK-015's
+- Destructive actions: N/A — server side — the presentation of outcomes is TASK-015's
+- Redundancy constraints: N/A — server side — the presentation of outcomes is TASK-015's
+- Loading state: N/A — server side — the presentation of outcomes is TASK-015's
+- Empty state: N/A — server side — the presentation of outcomes is TASK-015's
+- Error state: N/A — server side — the presentation of outcomes is TASK-015's
+
+**ROUTE IMPACT:**
+
+- none of its own
+
+**INTERACTION CONTRACTS:**
+
+- INT-015–INT-017 (duplicate warning, CONFLICT, FAILED) on the server side
+
+**NAVIGATION CONTRACT:**
+
+- Parent: N/A — no page
+- Entry: N/A — no page
+- Back action: N/A — no page
+- Cancel: N/A — no page
+- Success destination: N/A — no page
+- Error behavior: N/A — no page
+- State preservation: N/A — no page
+- Mobile behavior: N/A — no page
+
+**ACCEPTANCE CRITERIA:**
+
+1. The same `command_id` replayed returns what already ran or runs once, re-authorized, never twice.
+2. Two concurrent commands that meet at one lock serialize in the canonical order, without deadlock, as the matching M- scenario states.
+3. Each SQ- outcome maps to its answer — REJECTED, CONFLICT, PENDING or FAILED — as CONCURRENCY_IDEMPOTENCY §12 states.
+4. A business date before the allowed range is refused as BR-DT- states.
+5. `GuardMaintenance` and `ReconcileGuards` run only from the console, audited, and report a difference without repairing silently.
+
+**TEST REQUIREMENTS:**
+
+- Lint: TL-01
+- Typecheck: TL-02
+- Unit: the failure mapper and the lock-set planner (TL-03)
+- Feature: replay and outcomes on a sample command (TL-04)
+- Integration: two-connection races of M- scenarios for the envelope (TL-05)
+- Authorization: re-authorization at replay (TL-06)
+- Route integrity: N/A — no route added or changed
+- Interaction: INT-015–INT-017 server answers (TL-08)
+- Browser E2E: N/A — CJ-21 in TASK-064
+- Localization/language switch: N/A — no user-facing copy in this Task
+- Visual breathing room/density: N/A — no page in this Task
+- Responsive: N/A — no page in this Task
+- Accessibility: N/A — no page in this Task
+- Production build: TL-13
+- Security: allowed fields only (WS-01) (TL-14)
+- Performance: lock waits within budget; PFM-20 for commands once they exist (TL-15)
+- Migration: N/A — no migration or import code in this Task
+- Other: GAP-031: `ReconcileGuards` detects a seeded difference
+
+**TEST CHECKLIST:**
+
+- [ ] Lint
+- [ ] Typecheck
+- [ ] Relevant automated tests
+- [ ] Authorization
+- [ ] Route integrity
+- [ ] Interaction behavior
+- [ ] Browser E2E if required
+- [ ] Responsive/adaptive if required
+- [ ] Visual breathing room/density if UI
+- [ ] Production build
+- [ ] Security checks if required
+- [ ] Database safety review
+- [ ] Final diff review
+
+**COMPLETION EVIDENCE:**
+
+- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
+- Build result: the production build of TL-13
+- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
+- Interaction evidence: the INT- tests of this Task, or N/A with its reason
+- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
+- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
+- Files changed: the list, every one inside the IN SCOPE areas
+- Commit SHA: the commit under the Owner's identity, with no AI attribution
+- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+
+**SAFE NEXT TASK:**
+
+- TASK-021 — when its other dependencies are DONE and its READY gate holds
+
+**DO NOT DO:**
+
+- add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
+- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
+- start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
+- weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))
+- take a lock outside the canonical order or retry a command with a new `command_id`
+- use the cache or queue as a source of truth

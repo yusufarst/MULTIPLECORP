@@ -47,28 +47,28 @@ The counters are computed by script from the list in §4 and reconcile with it.
 
 ## 3. Master Task checklist
 
-- [ ] TASK-001 — Repository scaffold and module skeleton
-- [ ] TASK-002 — Coding conventions and architecture guardrails
-- [ ] TASK-003 — CI pipeline, test layers and the synthetic fixture harness
-- [ ] TASK-004 — Verification and release tooling check
-- [ ] TASK-005 — Schema foundations — IAM and OPS tables, history and types
-- [ ] TASK-006 — Schema — ORG, PTY, CAT and DOC tables
-- [ ] TASK-007 — Schema — PRJ, CST, PUR and ADM tables
-- [ ] TASK-008 — Schema — INV tables, inventory and lot-cost representations
-- [ ] TASK-009 — Schema — FUL and FIN tables, finance and tax representations
-- [ ] TASK-010 — Audit and security logging
-- [ ] TASK-011 — Authorization core — capabilities, roles, grants, company scope and the route audit
-- [ ] TASK-012 — Field projection, read classes and cross-company links
-- [ ] TASK-013 — Command envelope, command identity, idempotency and the lock order
-- [ ] TASK-014 — Localization — locales, the language switch and the key catalogue
-- [ ] TASK-015 — Design system — tokens, components, patterns and states
-- [ ] TASK-016 — Application shell, navigation and the company context
-- [ ] TASK-017 — Password sign-in, sessions and credential links
-- [ ] TASK-018 — Two-step verification (TOTP) and recovery codes
-- [ ] TASK-019 — Google sign-in for existing accounts
-- [ ] TASK-020 — Installation step, the first Owner and the Owner-recovery path
-- [ ] TASK-021 — Numbering, its settings page and the Owner's raise after a restore
-- [ ] TASK-022 — Jobs, files and the document renderer
+- [ ] [TASK-001](TASK-001.md) — Repository scaffold and module skeleton
+- [ ] [TASK-002](TASK-002.md) — Coding conventions and architecture guardrails
+- [ ] [TASK-003](TASK-003.md) — CI pipeline, test layers and the synthetic fixture harness
+- [ ] [TASK-004](TASK-004.md) — Verification and release tooling check
+- [ ] [TASK-005](TASK-005.md) — Schema foundations — IAM and OPS tables, history and types
+- [ ] [TASK-006](TASK-006.md) — Schema — ORG, PTY, CAT and DOC tables
+- [ ] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
+- [ ] [TASK-008](TASK-008.md) — Schema — INV tables, inventory and lot-cost representations
+- [ ] [TASK-009](TASK-009.md) — Schema — FUL and FIN tables, finance and tax representations
+- [ ] [TASK-010](TASK-010.md) — Audit and security logging
+- [ ] [TASK-011](TASK-011.md) — Authorization core — capabilities, roles, grants, company scope and the route audit
+- [ ] [TASK-012](TASK-012.md) — Field projection, read classes and cross-company links
+- [ ] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
+- [ ] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
+- [ ] [TASK-015](TASK-015.md) — Design system — tokens, components, patterns and states
+- [ ] [TASK-016](TASK-016.md) — Application shell, navigation and the company context
+- [ ] [TASK-017](TASK-017.md) — Password sign-in, sessions and credential links
+- [ ] [TASK-018](TASK-018.md) — Two-step verification (TOTP) and recovery codes
+- [ ] [TASK-019](TASK-019.md) — Google sign-in for existing accounts
+- [ ] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
+- [ ] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
+- [ ] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
 - [ ] TASK-023 — My account — password, two-step verification, Google link and language
 - [ ] TASK-024 — Users and access — accounts, roles, capabilities and company grants
 - [ ] TASK-025 — Companies, identity assets, bank accounts and tax configuration
@@ -139,28 +139,28 @@ The counters are computed by script from the list in §4 and reconcile with it.
 
 | Task | Title | Stage · module | Risk | Status | Depends on (TASK-) | Blocks (TASK-) | Parallel safe | Executor | DB impact | UI impact |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| TASK-001 | Repository scaffold and module skeleton | Foundation · Foundation | HIGH | READY | — | 002 | NO | AGENT | NONE | NO |
-| TASK-002 | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | TODO | 001 | 003 | NO | AGENT | NONE | NO |
-| TASK-003 | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | TODO | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
-| TASK-004 | Verification and release tooling check | Foundation · Foundation | STANDARD | TODO | 003 | 073 | NO | AGENT | NONE | NO |
-| TASK-005 | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | TODO | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
-| TASK-006 | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | TODO | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
-| TASK-007 | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | TODO | 006 | 008 | NO | AGENT | PROPOSED | NO |
-| TASK-008 | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
-| TASK-009 | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | TODO | 008 | 012 | NO | AGENT | PROPOSED | NO |
-| TASK-010 | Audit and security logging | Platform · OPS · Platform | HIGH | TODO | 005 | 011, 013, 017, 020, 031, 061 | NO | AGENT | NONE | NO |
-| TASK-011 | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
-| TASK-012 | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
-| TASK-013 | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | TODO | 010, 011 | 021, 022, 024, 025, 026, 027, 028, 031, 036 | NO | AGENT | NONE | NO |
-| TASK-014 | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | TODO | 003 | 015, 023 | NO | AGENT | NONE | YES |
-| TASK-015 | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017 | NO | AGENT | NONE | YES |
-| TASK-016 | Application shell, navigation and the company context | Platform · Platform · UI | STANDARD | TODO | 011, 012, 015 | 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
-| TASK-017 | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 015 | 018 | NO | AGENT | NONE | YES |
-| TASK-018 | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | TODO | 017 | 019, 020 | NO | AGENT | NONE | YES |
-| TASK-019 | Google sign-in for existing accounts | Platform · IAM | HIGH | TODO | 018 | 023, 024 | NO | AGENT | NONE | YES |
-| TASK-020 | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | TODO | 010, 018 | 076, 085 | NO | AGENT | NONE | NO |
-| TASK-021 | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | TODO | 006, 013, 016 | 029, 032, 077 | NO | AGENT | NONE | YES |
-| TASK-022 | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | TODO | 006, 012, 013 | 025, 027, 029, 030, 057, 060 | NO | AGENT | NONE | NO |
+| [TASK-001](TASK-001.md) | Repository scaffold and module skeleton | Foundation · Foundation | HIGH | READY | — | 002 | NO | AGENT | NONE | NO |
+| [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | TODO | 001 | 003 | NO | AGENT | NONE | NO |
+| [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | TODO | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
+| [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | TODO | 003 | 073 | NO | AGENT | NONE | NO |
+| [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | TODO | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
+| [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | TODO | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
+| [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | TODO | 006 | 008 | NO | AGENT | PROPOSED | NO |
+| [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
+| [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | TODO | 008 | 012 | NO | AGENT | PROPOSED | NO |
+| [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | TODO | 005 | 011, 013, 017, 020, 031, 061 | NO | AGENT | NONE | NO |
+| [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
+| [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
+| [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | TODO | 010, 011 | 021, 022, 024, 025, 026, 027, 028, 031, 036 | NO | AGENT | NONE | NO |
+| [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | TODO | 003 | 015, 023 | NO | AGENT | NONE | YES |
+| [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017 | NO | AGENT | NONE | YES |
+| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | STANDARD | TODO | 011, 012, 015 | 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
+| [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 015 | 018 | NO | AGENT | NONE | YES |
+| [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | TODO | 017 | 019, 020 | NO | AGENT | NONE | YES |
+| [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | TODO | 018 | 023, 024 | NO | AGENT | NONE | YES |
+| [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | TODO | 010, 018 | 076, 085 | NO | AGENT | NONE | NO |
+| [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | TODO | 006, 013, 016 | 029, 032, 077 | NO | AGENT | NONE | YES |
+| [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | TODO | 006, 012, 013 | 025, 027, 029, 030, 057, 060 | NO | AGENT | NONE | NO |
 | TASK-023 | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | TODO | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | TASK-024 | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | TODO | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | TASK-025 | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
@@ -257,4 +257,10 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 
 ## 8. Owner questions
 
-P11's Owner questions, P11Q-nn, each with its options and one recommendation; nothing waits on an answer to keep planning. None is raised.
+P11's Owner questions, P11Q-nn, each with its options and one recommendation; nothing waits on an answer to keep planning.
+
+### P11Q-01 — The pre-mortem before execution
+
+- **Question.** [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#continuous-adversarial-review) requires a pre-mortem before execution — assume the V1 release failed; for each plausible cause its warning signs, prevention, detection and recovery, with the Tasks, tests, security, release and operations plans updated —, and [RELEASE_PLAN §12](../10-release/RELEASE_PLAN.md#12-architecture-challenge-and-pre-mortem) places it, with the whole-system architecture challenge, "with P11, in PC-5", its evidence kept in that section. [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) authorizes the architecture challenge alone (SP-98), recorded in the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), and no change to P0–P10 beyond SP-90–SP-94: run PC-5 can neither run the pre-mortem nor write RELEASE_PLAN §12, which still names itself as the challenge's place of record.
+- **Options.** (a) One short planning step, authorized with or before the execution authorization at OG-4, runs the pre-mortem in RELEASE_PLAN §12's form, records it with the challenge's place — RELEASE_PLAN §12 by a narrow continuity edit, or the P11 gate record —, and applies its findings to the Tasks before TASK-001 starts; (b) the pre-mortem is the first step of the first execution session, before TASK-001, under the execution authorization; (c) the Owner waives it for V1, with the reason recorded.
+- **Recommendation.** (a) — its findings can change Tasks, tests and the release plan, which is planning work that belongs before the freeze; it needs no tool, cost or access beyond the repository.
