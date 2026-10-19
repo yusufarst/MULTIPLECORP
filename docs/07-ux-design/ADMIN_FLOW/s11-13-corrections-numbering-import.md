@@ -46,7 +46,7 @@ PG-061, Owner only (`companies.manage`; OD-03). It shows, per company and per nu
 - **go-live**: "Go-live tercatat: {tanggal}" or *Go-live belum dicatat*;
 - the **import batches** that cover the company, with their state, those that still hold seed rows marked "masih memuat baris nomor awal".
 
-Counters are shown, never edited: no control raises, lowers or resets one (NM-04).
+Counters are shown, never edited: no control lowers or resets one, and one command alone raises one — the Owner's raise after a restore (`DIR-083` OE-11; NM-03; NX-01): before any numbered type issues again, the Owner enters, per company, type and period, the highest number found on the papers issued after the recovery point, and the numbering command raises each affected counter — or creates the live period's — to the number after it, once in that recovery and never lowering one; its confirmation (IP-08) lists each counter with its new next number, and its audit event names the incident. The lost facts are then recorded again through the ordinary commands under new numbers, the papers' numbers kept beside them in the incident record outside the application (NM-04).
 
 ### 12.2 Start, seed and scheme commands
 

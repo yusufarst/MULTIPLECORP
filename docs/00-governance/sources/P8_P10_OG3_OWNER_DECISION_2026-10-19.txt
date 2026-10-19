@@ -1,0 +1,202 @@
+TRANSCRIBED LOCKED SOURCE RECORD — eighty-first source record
+Received: 2026-10-19, in-session Owner message to the repository executor with
+         the branch planning/p8-p11 checked out at
+         2cff23e8cbe95961566441e016c814f880316dcc, run PC-4's last commit,
+         clean and equal to its live remote, main and rebaseline/p7-ux at
+         1bacdc1f83fddd79cf22ea7170fc59e72da64ba9, amendment/p5-auth at
+         a526daf47444d12b4ae5c51e1ae14c9dfe3f4978 and migration/aicwdf at
+         c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: the Owner's decision at OG-3 (DIR-083): the answers to the eleven
+         Owner questions — P8Q-01 (a), Playwright for the deterministic browser
+         suite and TestSprite for the UI and E2E regression runs, neither the
+         sole proof (OE-01); P8Q-02 (a), the supported browsers and devices
+         (OE-02); P9Q-14 (a), an alternate operator named before go-live
+         (OE-03); P9Q-15 (a), the business's own governance for a disagreement
+         between recovered pre-window Owners (OE-04); P9Q-16 (a), one APP_KEY
+         rotation before go-live and then yearly, OQ-27 not used as an
+         identifier (OE-05); P10Q-01 (a), a short announced cutover freeze
+         (OE-06); P10Q-02 (a), main with release tags (OE-07); P10Q-03 (c),
+         announced windows outside business hours for the first three months
+         (OE-08); OQ-26 (b), an encrypted copy of each daily backup generation
+         outside the VPS and its provider account, amending DIR-009 and
+         V1_SCOPE's local-backup contract for that copy alone (OE-09); OQ-28
+         (b), the Owner's incident decision first on a trusted state, a narrow
+         amendment of SECURITY AU-25 (OE-10); OQ-29 (a), the raise past the
+         papers' numbers after a restore, a narrow amendment of
+         CONCURRENCY_IDEMPOTENCY NM-03, NM-04 and NX-01 and of ADMIN_FLOW §12.1
+         (OE-11) —; the tabletop findings' owners and the infrastructure
+         baseline confirmed (OE-12, OE-13); no approval taken as operational
+         evidence (OE-14); APPR-012 (P8), APPR-013 (P9), APPR-014 (P10) and
+         APPR-015 (the narrow amendments), each separate and in effect only in
+         PC-5's approval commit after PC-5's gate (OE-15–OE-18); P11 and run
+         PC-5 authorized (OE-19); the scope rule (OE-20); and what stays not
+         authorized (OE-21)
+Delivery: The decision arrived as one of the two text files referenced in the
+         session message, their paths not recorded, sent with the authorization
+         of run PC-5, the eighty-second source record, whose header quotes the
+         session message and the Owner's confirmation. The Owner sent both
+         files in place of earlier attachments: by the session message, an
+         earlier session of run PC-5 stopped before any edit because the
+         attachment then sent as record 81 was wrong, and the repository was
+         not changed. The file holds 150 lines and 9,213 bytes with LF line
+         endings and no byte-order mark, SHA-256
+         5c256d9d8f48014dfd8a9faf0745f2c361093991bc2b65bfabed200671419193 — the
+         value the session message gives, which the Owner confirmed in session
+         (the eighty-second record's section 8 item 1) —, checked by script
+         before any edit and again when this record was made. This record
+         transcribes the whole file mechanically, its text normalized to LF
+         without a byte-order mark, which leaves it unchanged; its first line
+         is the decision's title.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+OWNER DECISION — OG-3: ANSWERS TO THE ELEVEN QUESTIONS, APPROVAL OF P8, P9 AND P10, AND AUTHORIZATION OF P11 (RUN PC-5)
+
+My decision rests on run PC-4's STOP report (DIR-082) and its OG-3 package
+(the P10 gate record's "PC-4 report"), with gates P8 16/16, P9 20/20, P10
+15/15 and PC-4 11/11 passed, and on the repository at `main`
+1bacdc1f83fddd79cf22ea7170fc59e72da64ba9 and `planning/p8-p11`
+2cff23e8cbe95961566441e016c814f880316dcc. Each item below is a separate
+decision of mine. A recommendation becomes my decision only where an item
+below states it.
+
+==================================================
+A. THE ELEVEN OWNER QUESTIONS
+==================================================
+
+OE-01 P8Q-01: option (a). Playwright for the deterministic browser suite;
+      TestSprite for the UI and E2E regression runs once a P11 Task has
+      verified its entitlement at no cost, or I have approved a cost
+      exception under COST_POLICY. Neither is the sole proof; if TestSprite
+      cannot be used, I am told before the gate that needs it.
+OE-02 P8Q-02: option (a). Current stable Chrome and Edge on the office PCs,
+      Chrome on Android, Safari on iPhone; CI runs Chromium and WebKit; the
+      device UAT corrects the list with evidence.
+OE-03 P9Q-14: option (a). An alternate operator named before go-live,
+      preferably designated by the client, who receives the alerts, can put
+      MULTIPLECORP into maintenance mode and follows the written runbooks,
+      with host access only while acting; GAP-041's review (RISK-005) is
+      triggered. Naming the alternate is a pre-go-live obligation.
+OE-04 P9Q-15: option (a). A disagreement between recovered pre-window Owners
+      is settled by the business's own governance outside the application,
+      named in advance and recorded in the runbook; AU-25 unchanged.
+OE-05 P9Q-16: option (a). One APP_KEY rotation after the first Owner's
+      set-up and before go-live, then yearly, by INFRASTRUCTURE §7.4. The
+      question I named OQ-27 in session is this question: OQ-27 is not used
+      as an identifier, and no SECURITY amendment is made for it — SX-02
+      already provides the rotation and its re-encryption.
+OE-06 P10Q-01: option (a). A short, announced cutover freeze, its length
+      set from the measured import rehearsal, outside the busiest days, the
+      clients told in advance.
+OE-07 P10Q-02: option (a). `main` with release tags; feature and hotfix
+      branches through pull requests and CI into a protected `main`.
+OE-08 P10Q-03: option (c). Every production deployment in an announced
+      window outside business hours for the first three months after
+      go-live; rolling deployments only after a later decision of mine.
+OE-09 OQ-26 (GAP-063): option (b). Beside the local backups, each daily
+      backup generation is also copied, encrypted, to a destination outside
+      the VPS and outside its provider account, with a key kept apart from
+      the VPS (BKR-08), its retention following DIR-079 CB-11 as far as the
+      destination's space allows; the copy is restored once in a drill
+      before go-live. The destination is a device or storage that I or the
+      client already hold, at no recurring cost; the operator names it
+      before go-live, by role and never by its access details. A paid
+      service is never adopted without a COST_POLICY §4C.2 decision of mine.
+      This amends DIR-009's local-only policy and V1_SCOPE's local-backup
+      contract for this copy alone; RISK-001 is narrowed, not removed.
+OE-10 OQ-28 (GAP-050): option (b). On a trusted state, a recovery halt goes
+      first to my incident decision outside the application, with the
+      client, which may choose Scenario B's restore or keep the trusted
+      state; on a restored state AU-25 is unchanged. This is a narrow
+      amendment of SECURITY AU-25 (P5); INFRASTRUCTURE §7.3 step 6 follows,
+      and P8 tests the halt's path.
+OE-11 OQ-29 (GAP-064): option (a). After a restore, and before any numbered
+      type issues again, I record per company, type and period the highest
+      number on the papers issued after the recovery point; my numbering
+      command, audited with the incident, raises each affected counter — or
+      creates the live period's — to the next number, once per recovery,
+      never lowering one. The lost facts are recorded again through the
+      ordinary commands under new numbers, the papers' numbers kept beside
+      them in the incident record. This is a narrow amendment of
+      CONCURRENCY_IDEMPOTENCY NM-03, NM-04 and NX-01 (P6) and of ADMIN_FLOW
+      §12.1 (P7); DATABASE C-10 is unchanged; RELEASE_PLAN RBK-02 and
+      BACKUP_RECOVERY §4 follow, and P8 tests the raise.
+
+==================================================
+B. CONFIRMATIONS
+==================================================
+
+OE-12 The tabletop findings' owners: I confirm the six rows TT-F02, TT-F06,
+      TT-F14, TT-F16, TT-F18 and TT-F25 as BACKUP_RECOVERY §6 now assigns
+      them, aligned to the division I approved at TT-12. This confirmation
+      neither answers a question nor marks any obligation passed.
+OE-13 The infrastructure baseline: Nginx stays, as ARCHITECTURE §1 and
+      INFRASTRUCTURE §2 state it. One production VPS is shared by
+      MULTIPLECORP and the client's second production application;
+      each stays isolated as INF-07 states — its own containers,
+      PostgreSQL instance, Valkey, storage, backups, secrets, logs,
+      schedules and deployment —, and no change, reload, restore or
+      incident step of MULTIPLECORP touches the second application
+      except where Scenario B stops the whole VPS (TT-F06), with the client.
+OE-14 Operational evidence: approving P8, P9 and P10 approves their design,
+      procedures and obligations — nothing more. No document gate, review,
+      tabletop exercise or approval is evidence that a test, measurement,
+      backup, restore, drill, configuration, isolation or channel exists or
+      works. Every obligation that needs the real VPS — the operator's
+      inputs, the capacity measurements, the backup configuration and its
+      off-server copy, the restore drills, the alert channel and the failure
+      drill, the two applications' isolation shown on staging, the provider
+      features confirmed off, the key rotation — stays a staging or go-live
+      condition of RELEASE_PLAN's go-live checklist, passed only by its
+      recorded evidence. Go-live waits for every one.
+
+==================================================
+C. APPROVALS — EACH SEPARATE
+==================================================
+
+Each approval below covers its documents as at `planning/p8-p11`
+2cff23e, together with the changes items A and B require of them, applied
+by PC-5 within the words of this decision. Each takes effect in PC-5's
+approval commit, and only after PC-5's gate on those changes passes. If any
+check of that gate fails, none takes effect and PC-5 stops for me.
+
+OE-15 APPR-012 — P8: TEST_STRATEGY, SECURITY_TEST_MATRIX, PERFORMANCE_TARGETS
+      and DEFINITION_OF_DONE, with OE-01, OE-02 and the tests OE-09–OE-11
+      add. I approve.
+OE-16 APPR-013 — P9: INFRASTRUCTURE and BACKUP_RECOVERY, with OE-03–OE-05,
+      OE-09–OE-14, DIR-009's project exception narrowed by OE-09, and every
+      operator input not yet available kept as a pre-staging or pre-go-live
+      obligation. I approve.
+OE-17 APPR-014 — P10: RELEASE_PLAN, with OE-06–OE-11 and OE-14, its go-live
+      checklist holding every obligation OE-03, OE-05 and OE-09 add.
+      I approve.
+OE-18 APPR-015 — the narrow amendments of approved phases these answers
+      require, each within its item's words: OE-09 of V1_SCOPE's
+      local-backup contract (P1); OE-10 of SECURITY AU-25 (P5); OE-11 of
+      CONCURRENCY_IDEMPOTENCY NM-03, NM-04 and NX-01 (P6) and ADMIN_FLOW
+      §12.1 (P7). I approve. Nothing else in P0–P7 changes, except a
+      statement that repeats the same fact — AICWDF_ADOPTION's offsite-backup
+      project exception among them —, changed only to stay consistent and
+      listed.
+
+==================================================
+D. P11 AND RUN PC-5
+==================================================
+
+OE-19 I authorize P11 — task planning, dependencies and execution
+      specifications — and run PC-5 under P11_PC-5_AUTHORIZATION.txt, which I
+      send with this decision, with the publication of P8, P9 and P10 that
+      it states: the approval commit, the fast-forward of `main` and its
+      normal push, and the publication record.
+
+OE-20 Scope: no Task may add to V1 — a capability, page, route, field,
+      integration, document type, report or paid service — without my
+      approval, and no Task may drop, defer or narrow a V1_REQUIRED
+      requirement. A Task that would need either raises an Owner question
+      and waits.
+
+OE-21 Not authorized: the approval of P11, the planning freeze and the
+      execution authorization — each my separate decision at OG-4;
+      executing any Task; application code; any deployment; any agent's
+      access to the VPS, production or credentials; any merge commit,
+      force push or history rewrite.

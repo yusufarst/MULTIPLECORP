@@ -1,10 +1,12 @@
 # AICWDF v4.3 adoption
 
-Status: APPROVED | Updated: 2026-10-04 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
 
 Approval: [APPR-009](DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-03, under [DIR-043](DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment), the section-map rows of §4A, §15 and §16 and the two authentication rows of the project exceptions were updated: the authentication amendment that designs the Owner's decisions D5 and D6 ([DIR-037](DECISION_LOG.md#dir-034039-obs-013-and-tech-023--aicwdf-adoption-directives-migration-baseline-and-structural-migration)) and K1–K4 (DIR-042) is written; on 2026-10-04, under [DIR-045](DECISION_LOG.md#dir-044-dir-045-risk-006-risk-007-and-tech-025--p5-authentication-amendment-continuation-after-the-adversarial-review), the password-profile exception row cites the Owner's decisions on the amendment's first adversarial review (DIR-044). [TECH-025](DECISION_LOG.md#dir-042-dir-043-obs-016-and-tech-025--p5-authentication-amendment-directives-baseline-and-amendment) records the SHA-256 of the last approved revision, and the amended revision is approved under [APPR-010](DECISION_LOG.md#appr-010--p5-authentication-amendment-approved).
+
+**Draft of OG-3's consistency edit — not normative before APPR-015; the approved revision stays in force.** On 2026-10-19 run PC-5 changed, under [CHANGE_CONTROL](CHANGE_CONTROL.md#decision-authority) and [DIR-084](DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-91, only the offsite-backup project exception — the §20 row of the section map and its exception row —, which repeats V1_SCOPE's local-backup fact, so that it stays consistent with the Owner's OG-3 answer to OQ-26 ([DIR-083](DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-09, OE-18): the exception narrowed to the backups beyond one encrypted off-server copy of each daily generation. Each changed statement is marked `DIR-083`. Until the Owner's APPR-015, in effect only in PC-5's approval commit after gate PC5-A, the approved revision — APPROVED under APPR-009, with the amended revision its amendment paragraph above records — stays in force; its SHA-256 and the change are recorded in [TECH-040](DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11), and this revision is approved, or not, with APPR-015.
 
 This record maps the AI-First Complex Web Application Delivery Framework to the repository documents that apply it. It owns the mapping, the project exceptions and the terminology rule; it does not restate the framework.
 
@@ -57,7 +59,7 @@ Status values: **ADOPTED** — applied as written; **ADOPTED WITH PROJECT RULE**
 | §18.2 | Visual breathing room and comfortable density | [V1_SCOPE](../01-product/V1_SCOPE.md#language-and-experience-contract) | ADOPTED WITH PROJECT RULE — D4 keeps the anti-slop discipline; the design is PENDING P7 |
 | §18.11 | Localization contract | planned `docs/07-ux-design/LOCALIZATION.md` | PENDING — P7 re-baseline ([GAP-037](GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)) |
 | §19 | P8 — testing, quality and definition of done; Task statuses | [Task model](AGENT_OPERATING_MODEL.md#task-model); [P8 reservation](../08-testing/README.md) | Task statuses ADOPTED; testing PENDING — P8 |
-| §20 | P9 — infrastructure, observability, backup and recovery | [P9 reservation](../09-operations/README.md) | PENDING — P9; offsite backup is a PROJECT EXCEPTION |
+| §20 | P9 — infrastructure, observability, backup and recovery | [P9 reservation](../09-operations/README.md) | PENDING — P9; offsite backup is a PROJECT EXCEPTION, narrowed by `DIR-083` OE-09 to the backups beyond one encrypted off-server copy of each daily generation |
 | §21 | P10 — release, migration, cutover, rollback and UAT | [P10 reservation](../10-release/README.md) | PENDING — P10 |
 | §22 | P11 — Task planning, dependencies and execution specs | [Task model](AGENT_OPERATING_MODEL.md#task-model); [P11 reservation](../11-tasks/README.md) | Model ADOPTED; Task plan and Tasks PENDING — P11 |
 | §23 | Task contract template | [Task contract](AGENT_OPERATING_MODEL.md#task-contract) | ADOPTED WITH PROJECT RULE — three project fields |
@@ -85,7 +87,7 @@ Status values: **ADOPTED** — applied as written; **ADOPTED WITH PROJECT RULE**
 
 | Rule | Framework section | Authority |
 | --- | --- | --- |
-| V1 backups stay only on the production VPS; the offsite backup item does not apply, with the accepted total-host-loss exposure | §20 | DIR-009, RISK-001; [GAP-018](GAP_REGISTER.md#gap-018--owner-accepts-total-vps-or-storage-loss-exposure-with-local-only-backup) |
+| V1 backups stay on the production VPS, each daily generation also copied, encrypted, outside the VPS and its provider account (`DIR-083` OE-09); beyond that copy the offsite backup item does not apply, with the accepted total-host-loss exposure, narrowed | §20 | DIR-009, RISK-001; `DIR-083` OE-09; [GAP-018](GAP_REGISTER.md#gap-018--owner-accepts-total-vps-or-storage-loss-exposure-with-local-only-backup) |
 | Every phase needs its own explicit Owner authorization, quality gate, approval and checkpoint; planning freeze and execution are separate gates | §10, §22 | DIR-001, DIR-003, DIR-039; [CHANGE_CONTROL](CHANGE_CONTROL.md#approval-evidence) |
 | The decision log, gap register and per-phase evidence folders are kept | §33 | DIR-002, DIR-005, DIR-039 |
 | Password AICWDF-COMPAT-8 keeps the common/breached-password blocklist, password-manager and paste support, no forced rotation and the existing throttling, and adds mandatory TOTP at minimum for Owner and high-risk accounts — stronger than the framework's default with 2FA off; not EXTERNAL_COMPLIANCE | §4A.2, §4A.5 | D5 (DIR-037), K1 (DIR-042), DIR-044 R-01, R-05–R-07; designed in SECURITY AU-03, AU-05, AU-16, AU-18–AU-21, approved under APPR-010 (TECH-025; GAP-036, closed) |
