@@ -20,7 +20,9 @@ AU-14, AU-21 and AU-25 leave their human procedures to P9 (H9-07, H9-14), which 
 
 **DEPENDS ON:**
 
+- TASK-013 — Command envelope, command identity, idempotency and the lock order
 - TASK-020 — Installation step, the first Owner and the Owner-recovery path
+- TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 
 **BLOCKS:**
@@ -65,7 +67,7 @@ AU-14, AU-21 and AU-25 leave their human procedures to P9 (H9-07, H9-14), which 
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-050--post-incident-recovery-cases-carried-to-p8-and-p9) GAP-050; [GAP-064](../00-governance/GAP_REGISTER.md#gap-064--numbers-already-used-on-paper-after-a-restores-recovery-point); [GAP-031](../00-governance/GAP_REGISTER.md#gap-031--guard-balances-can-drift-from-the-facts-they-summarize); [GAP-041](../00-governance/GAP_REGISTER.md#gap-041--operator-abuse-of-the-owner-recovery-command)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-03–OE-05, OE-10–OE-13
 - Architecture challenge — the sequences 12a, 13a, 16a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (60): BK-08; AU-14; SX-02; SX-04; TM-57; TM-65; TM-68; H8-19; H8-21; H9-03; H9-07; H9-09; H9-14; HO-21; HO-23; HO-25–HO-26; HO-28–HO-30; UXH-09; SM-19; BKR-08; TT-F02–TT-F19; TT-F21–TT-F25; TT-F27–TT-F28; TT-F30; RBK-01–RBK-06; GLC-16; PRQ-15; GAP-031; GAP-050; GAP-064
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (65): BK-08; AU-14; SX-02; SX-04; TM-57; TM-65; TM-68; H8-19; H8-21; H9-03; H9-07; H9-09; H9-14; M-46; HO-21; HO-23; HO-25–HO-26; HO-28–HO-30; UXH-09; SM-19; BKR-08; TT-F01–TT-F30; RBK-01–RBK-06; GLC-16; PRQ-15; GAP-031; GAP-050; GAP-064
 
 **EXPECTED MODULES / FILE AREAS:**
 

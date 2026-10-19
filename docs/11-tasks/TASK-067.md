@@ -45,7 +45,7 @@ CAP-14 and AC-14 require natural Indonesian by default, English through a switch
 - **copy written after APPR-011** (`DIR-081` OB-04; LOCALIZATION §5): each page's new keys gathered from the DOD-16 localization evidence of the Task that built the page; a key accepted by construction when its Indonesian is a GL term or a label of an approved source and its English that term's or label's validated rendering; any other new key marked proposed and listed for the Owner with its page's P8 review, accepted except the keys the Owner marks; a marked key corrected before its release (TEST_STRATEGY §10)
 - the per-page copy lists — every page's new keys with their Indonesian, English, kind and source — compiled for the Owner's review at the UAT (TEST_STRATEGY §12; RELEASE_PLAN §8), with LOCALIZATION §5.1's 881 validated keys kept validated and each new key's state recorded
 - the tool that finds a missing key, chosen and verified here (LOCALIZATION §3.6; DEP-07)
-- the language items of AICWDF §27 — Indonesian default, plain Indonesian, English available, missing translations 0, language switch — handed to TASK-065's gate record per page
+- the language items of AICWDF §27 — Indonesian default, plain Indonesian, English available, missing translations 0, language switch — per page, recorded as this Task's evidence, which TASK-070 enters in TASK-065's gate record
 - each defect recorded with its page, key, evidence and proposed minimum fix and sent through the executor feedback loop to the Task that owns it — a DONE Task's regression becoming a new defect Task under TASK_PLAN §7 (AGENT_OPERATING_MODEL)
 
 **OUT OF SCOPE:**
@@ -61,7 +61,7 @@ CAP-14 and AC-14 require natural Indonesian by default, English through a switch
 - [V1_SCOPE](../01-product/V1_SCOPE.md#must-ship) CAP-14; [ACCEPTANCE_CRITERIA](../01-product/ACCEPTANCE_CRITERIA.md#product-acceptance-contracts) AC-14; [INFORMATION_ARCHITECTURE §3](../07-ux-design/INFORMATION_ARCHITECTURE.md#3-glossary) the glossary; [§8](../07-ux-design/INFORMATION_ARCHITECTURE.md#8-screen-inventory) the 65 pages
 - [RELEASE_PLAN §8](../10-release/RELEASE_PLAN.md#8-uat); [DEFINITION_OF_DONE §2](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist) DOD-16
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested) GAP-037; [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (4): TL-10; l10n-rule LOCALIZATION §5; l10n-rule LOCALIZATION §5.1; GAP-037
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (8): O-07; CAP-14; AC-14; IMG-09; TL-10; l10n-rule LOCALIZATION §5; l10n-rule LOCALIZATION §5.1; GAP-037
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -63,7 +63,7 @@ CAP-07 and AC-07 require partial and full deliveries with recipient, condition, 
 - [DESIGN_SYSTEM §12.1](../07-ux-design/DESIGN_SYSTEM.md#121-status-system) the delivery family; [§14.3](../07-ux-design/DESIGN_SYSTEM.md#143-document-preview)
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01, CJ-03, CJ-15; [§5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity); [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-09, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - Architecture challenge — the sequences 3b, 3c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (43): CAP-07; DOC-03; DOC-08; DOC-10; AC-07; REF-031; IMG-05; BR-DOC-04; WF-FUL-02; PX-01–PX-08; AX-09; L-19; L-26; ROUTE-030–ROUTE-031; ROUTE-201–ROUTE-204; INT-201–INT-204; C-30; NX-15; BD-13; D-IA-16; PG-030–PG-031; SCR-28–SCR-29; J-FUL-02; J-FUL-05; UXS-15; NAV-030–NAV-031
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (51): O-02; CAP-07; DOC-03; DOC-08; DOC-10; AC-07; REF-031; IMG-05–IMG-06; BR-DOC-04; WF-FUL-02; PX-01–PX-08; CM-06–CM-08; CM-27; CM-36; AX-09; L-19; L-26; ROUTE-030–ROUTE-031; ROUTE-201–ROUTE-204; INT-201–INT-204; C-30; NX-15; BD-13; D-IA-16; PG-030–PG-031; SCR-28–SCR-29; J-INV-06; J-FUL-02; J-FUL-05; UXS-15; NAV-030–NAV-031
 
 **EXPECTED MODULES / FILE AREAS:**
 

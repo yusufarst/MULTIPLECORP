@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on DEP-05
+**STATUS:** BLOCKED — waiting on DEP-05, P11Q-05
 
 **RISK CLASS:** HIGH
 
@@ -20,11 +20,14 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 
 **DEPENDS ON:**
 
+- TASK-064 — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
+- TASK-070 — Full release regression and the device UAT's preparation
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
 - TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
 - TASK-078 — Staging stack, the two applications' isolation and the provider features
 - TASK-080 — Alert channel adopted and monitoring live
+- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 - DEP-05: the data steward's sanitized structures, counts and reconciled control totals of the legacy data received ([V1_SCOPE](../01-product/V1_SCOPE.md#dependencies-and-evidence-needed)) — BLOCKED until received
 
 **BLOCKS:**
@@ -68,7 +71,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-011](../00-governance/GAP_REGISTER.md#gap-011--a-database-restore-alone-cannot-recover-usable-business-documents); [GAP-013](../00-governance/GAP_REGISTER.md#gap-013--successful-http-health-checks-can-hide-stalled-business-processing); [GAP-063](../00-governance/GAP_REGISTER.md#gap-063--an-off-server-backup-against-total-vps-loss-awaits-the-owners-decision)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-09, OE-10, OE-14
 - Architecture challenge — the sequences 13a, 16a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (24): CAP-16; DEP-05; BK-09; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; CJ-16; BKR-09; TT-F01; TT-F20; REL-04; GLC-03; GLC-16; GLC-19–GLC-20; GLC-26; PRQ-10; GAP-010–GAP-011; GAP-063
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (29): O-07; CAP-16; DEP-05; BK-09; AC-18–AC-19; OS-04; REF-060; REF-062; OWN-06; CM-33; M-33; M-46; CJ-16; BKR-09; TT-F01; TT-F20–TT-F21; TT-F24; REL-04; GLC-03; GLC-16; GLC-19–GLC-20; GLC-26; PRQ-10; GAP-010–GAP-011; GAP-063
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -148,7 +151,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 
 - Context7: N/A — the operator follows TASK-074's, TASK-076's and TASK-077's procedures as built
 - Graphify: N/A — no code
-- Browser E2E: N/A — no journey is added; the Admin's and the Owner's PG-058 steps are done in a supported browser on staging
+- Browser E2E: REQUIRED — CJ-16 on staging during the import rehearsal, run from TASK-064's script (TL-09); the Admin's and the Owner's PG-058 steps are done in a supported browser on staging
 - Other: TASK-074's tooling, TASK-076's runbooks, TASK-077's procedure and generator, TASK-080's channel, synthetic keys and the staging stack of TASK-078
 - Missing safe tool behavior: N/A — no agent installs anything; the operator uses only the built tooling, and a paid tier STOPS for the Owner (COST_POLICY §4C.2)
 
@@ -243,7 +246,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - [ ] Authorization — SM-19's and SM-21's operator-run cases recorded on staging; the commands run by the operator alone
 - [ ] Route integrity — N/A: no route added or changed
 - [ ] Interaction behavior — N/A: no interaction built or changed
-- [ ] Browser E2E if required — N/A: no journey is added
+- [ ] Browser E2E if required — CJ-16 on staging during the import rehearsal, from TASK-064's script (TL-09)
 - [ ] Responsive/adaptive if required — N/A: no page
 - [ ] Visual breathing room/density if UI — N/A: no page
 - [ ] Production build — N/A: staging runs the release's tagged commit
@@ -257,7 +260,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 - Build result: N/A — no build in this Task; the drilled commit is named in each record
 - Route evidence: N/A — no route added or changed
 - Interaction evidence: N/A — no INT- contract in this Task
-- Browser evidence: N/A — no journey in this Task
+- Browser evidence: CJ-16's run on staging during the import rehearsal, its pass the operator's record (DOD-18)
 - Localization evidence: N/A — no page in this Task
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
 - Files changed: none in the application; this file's evidence summary only
@@ -271,7 +274,7 @@ A checksum is not restore proof — only a drill proves a recovery point (BKR-03
 **DO NOT DO:**
 
 - add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
-- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- let an agent access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
 - add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
 - start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
 - weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))

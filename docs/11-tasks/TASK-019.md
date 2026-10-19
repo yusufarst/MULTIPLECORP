@@ -24,8 +24,10 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 
 **BLOCKS:**
 
+- TASK-020 — Installation step, the first Owner and the Owner-recovery path
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
+- TASK-082 — Google OAuth clients for staging and production
 
 **PARALLEL SAFE:** NO — it changes the sign-in pipeline
 
@@ -51,7 +53,7 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 - [V1_SCOPE](../01-product/V1_SCOPE.md#dependencies-and-evidence-needed) DEP-10
 - [DESIGN_SYSTEM Annex B](../07-ux-design/DESIGN_SYSTEM.md#annex-b-the-carried-items-gr-01gr-23) GR-13
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-042--the-google-oauth-client-is-not-set-up-for-any-environment) GAP-042
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (46): O-06; CAP-13; AC-12–AC-13; AC-16; OS-03; REF-001; REF-003–REF-004; REF-049; REF-056–REF-057; OWN-02; OWN-04; ROUTE-102–ROUTE-103; INT-102–INT-103; AU-22–AU-24; TM-02–TM-04; TM-59–TM-62; TM-70; TM-72–TM-73; D-SEC-20–D-SEC-21; H6-14–H6-15; H7-16–H7-18; H8-19–H8-20; BD-19; RB-03; GR-13; SM-19–SM-20; GAP-043
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (37): O-06; CAP-13; ROUTE-102–ROUTE-103; INT-102–INT-103; RG-11; AU-22–AU-24; LG-01; TM-02–TM-04; TM-59–TM-62; TM-70; TM-72–TM-73; D-SEC-20–D-SEC-21; H6-14–H6-15; H7-16–H7-18; H8-19–H8-20; CI-09; BD-19; RB-03; GR-13; SM-19–SM-20; GAP-043
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -80,6 +82,7 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 
 **AUDIT:**
 
+- the business audit event of the Google link and its lifecycle — link and unlink — written in the step's own transaction (PERMISSIONS_MATRIX RG-11; CONCURRENCY_IDEMPOTENCY CI-09; LG-01; AU-23, AU-24), its security event following after the commit
 - security events for Google sign-in, link and unlink (LG-07; H9-15)
 
 **DATABASE IMPACT ASSESSMENT:**
@@ -189,10 +192,11 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 
 **ACCEPTANCE CRITERIA:**
 
-1. A Google identity without a linked account, or a linked account without active TOTP, cannot sign in.
+1. An unknown or unlinked subject, an inactive account, an account without active TOTP and an account in recovery (AU-20 b) all get the same generic failure, which reveals nothing about any account, and none signs in (AU-22; H8-20).
 2. Every Google sign-in passes the TOTP challenge before any page.
 3. A subject is linked to at most one active account (BD-19).
 4. With no client configured, the Google button is absent and the routes refuse.
+5. A Google link and unlink write their business audit event in the step's own transaction and their security event after the commit (RG-11; LG-01; AU-23, AU-24).
 
 **TEST REQUIREMENTS:**
 
@@ -200,7 +204,7 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 - Typecheck: TL-02
 - Unit: the claim checks (TL-03)
 - Feature: SM-20 with the provider faked (TL-04)
-- Integration: the link's unique key under two connections (TL-05)
+- Integration: the link's unique key under two connections; the link's and the unlink's audit rows in their own transaction (TL-05)
 - Authorization: no role, capability or scope from Google (TL-06; AZ-13)
 - Route integrity: ROUTE-102 and ROUTE-103 audited (TL-07)
 - Interaction: INT-102, INT-103 (TL-08)
@@ -246,7 +250,7 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 
 **SAFE NEXT TASK:**
 
-- TASK-023 — when its other dependencies are DONE and its READY gate holds
+- TASK-020 — when its other dependencies are DONE and its READY gate holds
 
 **DO NOT DO:**
 

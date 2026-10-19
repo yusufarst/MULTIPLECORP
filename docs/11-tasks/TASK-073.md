@@ -1,6 +1,6 @@
 # TASK-073 — Release process — branch protection, release tags, the release record and integrity report
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -64,7 +64,7 @@ A release passes on evidence only — its integrity report PASS and the Owner's 
 - [COST_POLICY](../00-governance/COST_POLICY.md) — the cost declaration
 - [SECURITY §7](../05-security/SECURITY.md#7-secrets-production-boundary-and-supply-chain) SX-05, SX-06
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-07, OE-14, OE-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (26): BK-03; INF-03; RL-01–RL-08; REL-01–REL-13; PRQ-11; PRQ-14; GAP-017
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (27): BK-03; OS-06; INF-03; RL-01–RL-08; REL-01–REL-13; PRQ-11; PRQ-14; GAP-017
 
 **EXPECTED MODULES / FILE AREAS:**
 

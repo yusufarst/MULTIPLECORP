@@ -30,6 +30,12 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 - TASK-059 — Search and scanning
 - TASK-060 — Reports, the consolidated report and exports
 - TASK-061 — Activity history and security log
+- TASK-062 — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
+- TASK-063 — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
+- TASK-064 — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
+- TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-068 — Performance targets and query budgets in CI
 
 **BLOCKS:**
 
@@ -48,7 +54,7 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 - **AICWDF §25's nine zeros** counted from these suites and the journeys' console and network captures — orphan UI actions, broken routes, dead buttons, unhandled critical actions, unexpected 404, 405 and 500, critical console errors, critical failed network requests — for the release integrity report's ROUTES, INTERACTIONS and BROWSER sections (TEST_STRATEGY §8; RELEASE_PLAN §11)
 - H8-15's CI gates — the secret-like scan, the dependency audits, lockfile-only installs and SHA-pinned actions — as required checks that fail the pipeline, each gate's detection proved on a fixture inside the suite (SM-15)
 - the end-of-recovery race of GAP-050 in SM-21 — the end against a role change and against an activation, both orders, a barrier before LK-02 —: the case written, its expected result the end of recovery atomic under the OWNER role row that TASK-020 builds (BACKUP_RECOVERY TT-F30) once RV-18 adopts it, GAP-050 OPEN until then (SM-21)
-- the P8 handoffs mapped here: HO-17's limiter exactness and store-down behaviour proved by SM-14, UXH-02's security part by SM-13, UXH-03 by SM-23 and UXH-04 by SM-12; the others checked for their evidence where they are answered — HO-11–HO-13 and HO-20 in TEST_STRATEGY §6's suites, HO-16 in TASK-068, HO-19 in TASK-021's numbering tests, UXH-01 in TASK-062–TASK-064, UXH-05 in TASK-066, UXH-07 in TASK-065, UXH-06 in TASK-070, HO-35 and UXH-08 at the UAT (TASK-086) —, a missing one reported, never run a second time here
+- the P8 handoffs mapped here: HO-17's limiter exactness and store-down behaviour proved by SM-14, UXH-02's security part by SM-13, UXH-03 by SM-23 and UXH-04 by SM-12; the others checked for their evidence where they are answered — HO-11 and HO-12 in TEST_STRATEGY §6's module suites, HO-13 in TASK-013 and TASK-068, HO-20 in TASK-013, TASK-017, TASK-022 and TASK-024, HO-16 in TASK-068, HO-19 in TASK-021's numbering tests, UXH-01 in TASK-062–TASK-064, UXH-05 in TASK-066, UXH-07 in TASK-065 —, a missing one reported, never run a second time here; UXH-06, HO-35 and UXH-08, answered after this Task by TASK-070 and at the UAT (TASK-086), are checked there
 - the staging-only cases prepared for the operator — the Owner-recovery procedure of SM-07, the operator's commands of SM-19 and SM-21, the real Google redirect of SM-20 with the staging OAuth client, the TLS and HSTS configuration of SM-08 on the staging host — and recorded as not run until the operator's evidence exists (SECURITY_TEST_MATRIX §9; TASK-078, TASK-081, TASK-082)
 - each defect recorded with its case, evidence and proposed minimum fix and sent through the executor feedback loop to the Task that owns the control — a DONE Task's regression becoming a new defect Task under TASK_PLAN §7 —; a control that looks wrong goes to Planning, never changed here; a test showing an accepted residual larger than accepted is a finding for the Owner (§8; AGENT_OPERATING_MODEL)
 
@@ -70,7 +76,7 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 - [RELEASE_PLAN §11](../10-release/RELEASE_PLAN.md#11-the-release-integrity-report); [BACKUP_RECOVERY §6](../09-operations/BACKUP_RECOVERY.md#the-exercise-held-in-pc-4) TT-F30
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-003--one-stock-pool-must-preserve-source-and-consuming-company-attribution) GAP-003; [GAP-005](../00-governance/GAP_REGISTER.md#gap-005--cancellation-may-encounter-delivered-billed-or-paid-downstream-records); [GAP-006](../00-governance/GAP_REGISTER.md#gap-006--global-masters-can-leak-company-specific-relationships-and-prices); [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet); [GAP-050](../00-governance/GAP_REGISTER.md#gap-050--post-incident-recovery-cases-carried-to-p8-and-p9)
 - Architecture challenge — the sequence 1a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (145): TM-01–TM-73; H8-01–H8-22; HO-11–HO-13; HO-16–HO-17; HO-19–HO-20; HO-35; UXH-01–UXH-08; TL-06–TL-08; TL-14; SM-01–SM-25; GAP-003; GAP-005–GAP-006; GAP-035; GAP-050
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (172): O-06; CAP-13; AC-13; OS-03; REF-001; REF-004; REF-056; OWN-02; OWN-05; TM-01–TM-73; H8-01–H8-22; M-13; M-20–M-25; M-39–M-46; HO-11–HO-13; HO-16–HO-17; HO-19–HO-20; HO-35; HO-38; UXH-01–UXH-08; TL-06–TL-08; TL-14; SM-01–SM-25; TT-F30; GAP-003; GAP-005–GAP-006; GAP-034–GAP-035; GAP-050
 
 **EXPECTED MODULES / FILE AREAS:**
 

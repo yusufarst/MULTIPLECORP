@@ -25,12 +25,14 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 **BLOCKS:**
 
 - TASK-012 — Field projection, read classes and cross-company links
+- TASK-013 — Command envelope, command identity, idempotency and the lock order
 
 **PARALLEL SAFE:** NO — the schema Tasks run their migrations in one order
 
 **IN SCOPE:**
 
-- the tables `dropship_confirmations`, `dropship_confirmation_lines`, `deliveries`, `delivery_lines`, `delivery_closures`, `service_handovers`, `service_handover_lines`; `invoices`, `invoice_versions`, `invoice_version_lines`, `invoice_tax_components`, `invoice_balances`, `invoice_billing_acts`, `payments`, `payment_claimed_deductions`, `application_source_balances`, `payment_applications`, `deduction_settlements`, `receivable_writeoffs`, `receivable_dispute_holds`, `opening_customer_credits`, `prepayment_kuitansi_links`, `disbursements`, `other_cash_receipts`, `financial_contras`, `money_fact_balances`, with their C- rows — C-13, C-15 and C-44–C-45 — and IX- indexes — IX-11
+- the tables `dropship_confirmations`, `dropship_confirmation_lines`, `deliveries`, `delivery_lines`, `delivery_closures`, `service_handovers`, `service_handover_lines`; `invoices`, `invoice_versions`, `invoice_version_lines`, `invoice_tax_components`, `invoice_balances`, `invoice_billing_acts`, `payments`, `payment_claimed_deductions`, `application_source_balances`, `payment_applications`, `deduction_settlements`, `receivable_writeoffs`, `receivable_dispute_holds`, `opening_customer_credits`, `prepayment_kuitansi_links`, `disbursements`, `other_cash_receipts`, `financial_contras`, `money_fact_balances`, with their C- rows — C-09, C-13–C-17, C-22, C-32, C-41–C-45, C-47–C-49, C-53, C-56, C-59 and C-60 — and IX- indexes — IX-01, IX-06, IX-08, IX-11 and IX-14
+- a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the invoice, billing and receivable chain of §11.2, payments and applications of §11.3, settlements and write-offs of §11.4 and other cash of §11.5
 - the migrate-from-empty test extended (TL-16)
 
@@ -49,7 +51,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 - [DATABASE §20](../04-architecture/DATABASE/s20-24-index-storage-migration.md#20-index-and-query-design)
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
 - Architecture challenge — the sequence 11a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (45): D-DB-01–D-DB-14; C-13; C-15; C-44–C-45; IX-11; table dropship_confirmations; table dropship_confirmation_lines; table deliveries; table delivery_lines; table delivery_closures; table service_handovers; table service_handover_lines; table invoices; table invoice_versions; table invoice_version_lines; table invoice_tax_components; table invoice_balances; table invoice_billing_acts; table payments; table payment_claimed_deductions; table application_source_balances; table payment_applications; table deduction_settlements; table receivable_writeoffs; table receivable_dispute_holds; table opening_customer_credits; table prepayment_kuitansi_links; table disbursements; table other_cash_receipts; table financial_contras; table money_fact_balances
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (69): REF-057; D-DB-01–D-DB-14; C-09; C-13–C-17; C-22; C-32; C-41–C-45; C-47–C-49; C-53; C-56; C-59–C-60; IX-01; IX-06; IX-08; IX-11; IX-14; table dropship_confirmations; table dropship_confirmation_lines; table deliveries; table delivery_lines; table delivery_closures; table service_handovers; table service_handover_lines; table invoices; table invoice_versions; table invoice_version_lines; table invoice_tax_components; table invoice_balances; table invoice_billing_acts; table payments; table payment_claimed_deductions; table application_source_balances; table payment_applications; table deduction_settlements; table receivable_writeoffs; table receivable_dispute_holds; table opening_customer_credits; table prepayment_kuitansi_links; table disbursements; table other_cash_receipts; table financial_contras; table money_fact_balances; migration-rule DB24-03; migration-rule DB24-05; migration-rule DB24-06
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -187,8 +189,8 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 **ACCEPTANCE CRITERIA:**
 
 1. Migrating creates exactly the tables named, with every column, key and constraint DATABASE states.
-2. Each C- row of these tables — C-13, C-15 and C-44–C-45 — is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables — IX-11 — exists and its query uses it.
+2. Each C- row the database enforces on these tables — C-09, C-13–C-17, C-22, C-32, C-41–C-45, C-47–C-49, C-53, C-56, C-59 and C-60 — is enforced where its row says, proven by a test that violates it.
+3. Each IX- index of these tables — IX-01, IX-06, IX-08, IX-11 and IX-14 — exists and its query uses it.
 4. The application conservation and outstanding ≥ 0 rules hold where their rows say (C-13, C-15).
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 

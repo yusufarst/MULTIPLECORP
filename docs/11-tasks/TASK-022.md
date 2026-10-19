@@ -23,6 +23,8 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - TASK-006 — Schema — ORG, PTY, CAT and DOC tables
 - TASK-012 — Field projection, read classes and cross-company links
 - TASK-013 — Command envelope, command identity, idempotency and the lock order
+- TASK-015 — Design system — tokens, components, patterns and states
+- TASK-017 — Password sign-in, sessions and credential links
 
 **BLOCKS:**
 
@@ -32,6 +34,9 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - TASK-030 — Evidence and uploaded documents
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-060 — Reports, the consolidated report and exports
+- TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
+- TASK-074 — Backup tooling, the off-server copy and the drill procedures
+- TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
 
 **PARALLEL SAFE:** NO — it owns the queue, the storage and the renderer every document and export Task uses
 
@@ -44,6 +49,7 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - the renderer's pipeline: an issued version rendered in the background, PENDING and FAILED visible, retried by the sweeper, never reissuing (SF-RENDER; C-12; BR-DOC-03)
 - ROUTE-285 and INT-285: the status a page polls for a deferred group — renditions, exports, the import batch — background, never extending the session (RB-05)
 - the optional malware scanner of FL-11 left off unless TASK-079's capacity decision adopts it (H9-05; INFRASTRUCTURE P9Q-06)
+- HO-20's framework behaviours the jobs rely on, each verified by a TL-05 test so that a changed version fails it (TEST_STRATEGY §6): cache locks taken inside a transaction on the configured store, Valkey (INFRASTRUCTURE §2) — no database cache store is configured, so HO-20's database-store case is recorded as not applicable with that reason —; batched jobs — none in V1, JB-07's import commit being a plain queued job and the export request of ARCHITECTURE §11 replacing a job batch, so an architecture test fails if any job uses the framework's batching, and no job-batch table is created —; and the scheduler with its store down
 
 **OUT OF SCOPE:**
 
@@ -63,8 +69,9 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md#documents-files-and-evidence-doc-pg-035-pg-036-pg-038-wf-doc-01-wf-doc-02) ROUTE-226, ROUTE-227, ROUTE-285
 - [ADMIN_FLOW §8](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#8-background-work) IP-12
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md) SM-09, SM-10
+- [TEST_STRATEGY §6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs) HO-20
 - the architecture challenge's sequences 7a, 15a ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (71): SF-RENDER; ROUTE-226–ROUTE-227; ROUTE-285; INT-013–INT-014; INT-226–INT-227; INT-285; FL-01–FL-11; TM-16; TM-20; TM-23; TM-37–TM-42; TM-46; TM-55; H9-05; H9-12; BD-15; JB-01–JB-09; M-31–M-33; HO-18; HO-22; HO-27; HO-33; PF-31–PF-36; UXI-09; UXI-12; UXI-29; UXI-33; IP-12; IP-16; UXS-09; UXS-17–UXS-18; UXS-23; UXS-36; PT-22; SM-09; component Upload; GAP-007
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (75): O-06; CAP-08; CAP-13; OS-03; REF-056; OWN-02; SF-RENDER; ROUTE-226–ROUTE-227; ROUTE-285; INT-013–INT-014; INT-226–INT-227; INT-285; FL-01–FL-11; TM-16; TM-20; TM-23; TM-37–TM-42; TM-46; TM-55; H9-05; H9-12; BD-15; JB-01–JB-09; M-31–M-33; HO-06; HO-20; PF-31–PF-36; UXI-09; UXI-12; UXI-29; UXI-33; IP-12; IP-16; UXS-09; UXS-17–UXS-18; UXS-23; UXS-36; PT-22; SM-09; component Upload; GAP-007
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -208,6 +215,7 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 4. One template per document layout is read by both the composer's preview and the renderer, and a number is assigned only at issue (D-DS-23; DESIGN_SYSTEM §14.3; SF-ISSUE; architecture challenge 15a, with TASK-029).
 5. The status route answers without extending the session (RB-05).
 6. Thumbnails and images follow PF-31–PF-36.
+7. HO-20's job behaviours each pass a TL-05 test that fails on a changed framework version — cache locks inside a transaction on Valkey, no job using the framework's batching (JB-07; ARCHITECTURE §11), the scheduler with its store down —, and the database-store case is recorded as not applicable, no database cache store being configured (TEST_STRATEGY §6; INFRASTRUCTURE §2).
 
 **TEST REQUIREMENTS:**
 
@@ -215,7 +223,7 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - Typecheck: TL-02
 - Unit: the upload checks and the payload versions (TL-03)
 - Feature: ROUTE-226, -227, -285 with denials (TL-04)
-- Integration: workers, retries, the sweeper after a simulated crash (TL-05; M-31–M-33)
+- Integration: workers, retries, the sweeper after a simulated crash (TL-05; M-31–M-33); HO-20's cache locks inside a transaction on Valkey, the architecture test refusing a batched job, and the scheduler with its store down
 - Authorization: downloads by family and scope (TL-06)
 - Route integrity: ROUTE-226, -227, -285 audited (TL-07)
 - Interaction: INT-013, INT-014, INT-285 (TL-08)

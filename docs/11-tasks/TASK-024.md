@@ -1,6 +1,6 @@
 # TASK-024 — Users and access — accounts, roles, capabilities and company grants
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -70,7 +70,7 @@ Accounts, roles, capabilities and company grants are Owner-only authority (WORKF
 - [DATABASE §18](../04-architecture/DATABASE/s18-19-constraints-integrity.md#18-constraint-catalogue) C-32, C-54; [API_AND_INTEGRATIONS §1](../06-api-performance/API_AND_INTEGRATIONS.md#1-route-boundaries) RB-07
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-04, SM-05, SM-07, SM-13, SM-19, SM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-032--capability-grants-apply-to-every-granted-company) GAP-032
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (90): BR-ACC-01–BR-ACC-03; WF-ACC-02; L-03; ROUTE-060; ROUTE-121–ROUTE-128; ROUTE-130; INT-121–INT-128; INT-130; C-32; C-54; RG-01–RG-12; AU-01; AU-09; AU-12; AU-17; AU-20; AU-24; TM-02; TM-05–TM-07; TM-29; TM-45; TM-52; TM-57; TM-60; TM-62; TM-66–TM-68; TM-72–TM-73; D-SEC-19–D-SEC-20; H6-06; H6-15; H7-01; H7-04; H7-14–H7-17; H8-18–H8-20; NX-02; HO-41; RB-07; PG-060; SCR-57; UXI-16; UXI-22; UXI-31; J-ACC-02; MSG-28–MSG-29; UXS-27; D-DS-09; PT-30; NAV-060; SM-19–SM-20; GAP-032
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (109): O-01; O-06; CAP-01; CAP-13; AC-13; REF-002–REF-004; REF-049; IMG-01; OWN-02; OWN-05; BR-ACC-01–BR-ACC-03; WF-ACC-02; L-03; ROUTE-060; ROUTE-121–ROUTE-128; ROUTE-130; INT-121–INT-128; INT-130; C-32; C-54; RG-01–RG-12; AU-01; AU-09; AU-12; AU-17; AU-20; AU-24; TM-02; TM-05–TM-07; TM-29; TM-45; TM-52; TM-57; TM-60; TM-62; TM-66–TM-68; TM-72–TM-73; D-SEC-19–D-SEC-20; H6-06; H6-15; H7-01; H7-04; H7-14–H7-17; H8-18–H8-20; NX-02; M-13; M-20–M-22; M-42; M-45; HO-20; HO-41; RB-07; PG-060; SCR-57; UXI-16; UXI-22; UXI-31; J-ACC-02; MSG-28–MSG-29; UXS-27; D-DS-09; PT-30; NAV-060; SM-19–SM-20; GAP-032
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -230,7 +230,7 @@ Accounts, roles, capabilities and company grants are Owner-only authority (WORKF
 - Typecheck: TL-02
 - Unit: the preview's derivation of *Dapat*, *Baru*, *Dicabut* and of the dependants a removed prerequisite disables (TL-03)
 - Feature: ROUTE-060, ROUTE-121–ROUTE-128 and ROUTE-130 with each refusal — a duplicate e-mail, a stale `lock_version`, RG-09, NX-02's checks, a self-reset (TL-04)
-- Integration: M-13, M-20–M-22, M-42 and M-45, and HO-41's high-risk grant against a login in flight and reset against the target's own requests, with real sessions (TL-05)
+- Integration: M-13, M-20–M-22, M-42 and M-45, and HO-41's high-risk grant against a login in flight and reset against the target's own requests, with real sessions; HO-20's session deletion by account as deactivation uses it, beside TASK-017's tests of the behaviour (TL-05)
 - Authorization: OD-01 and OD-02 on every route and path; SM-04's self-granting and last-Owner elements and RG-07 on the Admin with A and B (TL-06)
 - Route integrity: ROUTE-060, ROUTE-121–ROUTE-128 and ROUTE-130 audited; no ROUTE-129 (TL-07)
 - Interaction: INT-121–INT-128 and INT-130, each with one `command_id` replayed and the step-up expiring (TL-08; IG-05)

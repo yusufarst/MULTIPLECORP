@@ -23,7 +23,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 - TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
-- the Owner's answer to P11Q-04 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-04 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -34,13 +34,14 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 
 **IN SCOPE:**
 
-- **The go-live command** (PRQ-07; HO-32; UXH-10): an operator-only console command, never a web route, that records go-live — the day this database became the system of record (NM-03) — once, as the number allocator's setting kept with the deployment that nobody changes afterwards (INFRASTRUCTURE §4.2), a second recording refused; what it records is what TASK-021's numbering reads as go-live; GLC-07's production check finds the setting unset until CUT-07 (TASK-084); where the setting is kept follows INFRASTRUCTURE §4.2, and a representation that needs a column DATABASE does not define is an executor discovery for Planning, never a silent schema change (TASK_PLAN §4)
+- **The go-live command** (PRQ-07; HO-32; UXH-10): an operator-only console command, never a web route, that records go-live — the day this database became the system of record (NM-03) — once, as the number allocator's setting kept with the deployment that nobody changes afterwards (INFRASTRUCTURE §4.2), a second recording refused; what it records is what TASK-021's numbering reads as go-live; GLC-07's production check finds the setting unset until CUT-07 (TASK-084); where the setting is kept follows INFRASTRUCTURE §4.2 as P11Q-04's answer defines it (below), never a silent schema change (TASK_PLAN §4)
 - **The post-import refresh** (PRQ-08; HO-36; IMP-10): the planner statistics refreshed after the commit, and the registered hot queries of PERFORMANCE §12 explained on the imported data before go-live, read queries only — never a data-changing statement on production — and plans reported without data values (PFM-03), for the operator to judge against the plans recorded at 1x, 10x and 100x
 - **The import rehearsal procedure** (IMP-13; GAP-010): on staging with synthetic batches shaped like the legacy data — FX-09 at the volume the data steward reports, counts only — to measure the commit's duration and size the chunks so that each commits well within its job's timeout (JB-07; IMP-06), and to size the freeze from it with the post-import backup's and the production restore drill's measured durations (OPI-25; RELEASE_PLAN §7) and the off-hours window they wait for (BACKUP_RECOVERY §5); the generator of those batches from counts alone, never from a real row (RL-05; DEP-05)
 - **The cutover runbook** (CUT-01–CUT-08), each step with its people as RELEASE_PLAN §6 names them: the cutover agreed — the cutoff, the freeze window outside the busiest days with its length from IMP-13, its announcement to the clients in advance, the batches' order and the people (CUT-01; DIR-083 OE-06); production set up before any data with GLC-06, GLC-07, GLC-11 and GLC-24 met first, the installation step, then the one `APP_KEY` rotation, before the masters, accounts, roles and grants, tax configuration and the numbering schemes as they were (CUT-02; HO-32); each batch prepared, dry-run, reconciled and signed on the real data through PG-058, repeated until it passes (CUT-03); the freeze, the final snapshot at the cutoff and its batches dry-run, reconciled and jointly signed (CUT-04); a verified backup before the commit, then the Owner's commit in IMP-03's order, a stopped batch resumed (CUT-05); reconciliation, statistics and reservations (CUT-06); the production restore drill of a recovery point taken after CUT-06, with its paired key, timed (GLC-04; RELEASE_PLAN §7); go-live recorded once by the operator after every company's seeds have committed, then the Owner's starts on PG-061 for the types no import covers (CUT-07; architecture challenge 14b); open for business — the first issue per company, the heartbeat and alerts watched, the freeze ended (CUT-08); no delta batch (OE-06)
 - **The import's operational rules as runbook checks** (IMP-01–IMP-13), the import feature itself being TASK-057's: what is imported and what stays archive, the company masters and schemes set up first (IMP-01); one cutoff and snapshot per batch, historical references apart from current effects (IMP-02); the batches' order from their keys (IMP-03); the dry run on production through PG-058 by the Admin and the Owner, never on staging and never by an agent (IMP-04); the two sign-offs and the Owner's commit behind the confirmation and step-up, the validation run again at the commit request (IMP-05); chunks, resume and abort (IMP-06); the seeds at the cutover — kept or drawn purchase numbers, the starts for uncovered types (IMP-07); reservations re-created through the ordinary commands (IMP-08); units and serials (IMP-09); statistics and plans (IMP-10); `ReconcileGuards` clean and the committed facts reconciled to the signed control totals, signed by the validators (IMP-11); raw files private in the application's storage (IMP-12); the rehearsal (IMP-13)
 - **The cutover's rollback decisions** (RBK-01–RBK-06): a failed step stops for the operator's and the Owner's decision (RBK-04); a wrong opening fact corrected on its record by contras and reversals by import identity, a committed batch never imported again (RBK-03; CM-33); data recovery only by TASK-076's restore runbook on the Owner's decision, with the raise before any numbered issue (RBK-02); a code rollback and an interrupted migration by their runbooks (RBK-01; RBK-05); the second application never touched (RBK-06)
 - **A deployment inside the cutover window** follows TASK-072's runbook — expand-only migrations, payload versions and one-release command validity, the drain before it (HO-31; HO-34)
+- **Held for the Owner's answer to P11Q-04, built here once the answer and its definitions are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), where the go-live setting is stored and which actor the go-live command's audit event carries, as the narrow amendment defines them (INFRASTRUCTURE §4.2; HO-32; PRQ-07; RG-11) — the setting kept there, and the command writing that event; under option (b), as the Owner decides each (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
@@ -61,7 +62,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-06, OE-11
 - Architecture challenge — the sequence 14b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (33): HO-31; HO-34; HO-36; IMP-01–IMP-13; CUT-01–CUT-08; RBK-01–RBK-06; PRQ-07–PRQ-08; GAP-010
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (38): CM-33; M-33; HO-31–HO-34; HO-36; UXH-10; IMP-01–IMP-13; CUT-01–CUT-08; RBK-01–RBK-06; PRQ-07–PRQ-08; GAP-010
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -96,7 +97,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 
 **AUDIT:**
 
-- the import's commit and sign-offs are audited by TASK-057's actions (LG-01; L-33); the go-live recording is entered, with its time and the operator by role, in the cutover record and the release record (REL-12); a business audit event for the go-live command, and its actor rule, are not stated by the sources — RG-11's operator rule names AU-14's, AU-21's and AU-25's commands and the installation step — and stay out of this Task's scope
+- the import's commit and sign-offs are audited by TASK-057's actions (LG-01; L-33); the go-live recording is entered, with its time and the operator by role, in the cutover record and the release record (REL-12); a business audit event for the go-live command, and its actor rule, are not stated by the sources — RG-11's operator rule names AU-14's, AU-21's and AU-25's commands and the installation step —; the event is written as P11Q-04's answer defines it, built here once the answer is approved, which comes before this Task is READY (IN SCOPE)
 
 **DATABASE IMPACT ASSESSMENT:**
 
@@ -211,13 +212,14 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 5. The rehearsal generator produces FX-09-shaped synthetic batches from counts alone, and the procedure yields the commit's duration, a chunk size within JB-07's timeout and the freeze's length with OPI-25's durations (IMP-13; IMP-06).
 6. The cutover runbook orders CUT-01–CUT-08 with each step's people, the freeze announced in advance outside the busiest days and no delta batch, and the rollback decisions of RBK-01–RBK-06 — a wrong opening fact corrected by contras and reversals, never imported again (DIR-083 OE-06; RBK-03).
 7. No runbook, procedure or tool holds real legacy data, a secret or a host detail (IMP-12; RL-05).
+8. Once P11Q-04 (a)'s definitions are approved, the go-live command keeps the setting where they define it and writes the audit event with the actor they name, once; a second run is refused and writes nothing (INFRASTRUCTURE §4.2; HO-32; RG-11; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the once-only rule of the go-live command and the generator's shape from counts (TL-03)
-- Feature: the command's refusal of a second run and outside the console; the numbering states before and after go-live (TL-04)
+- Feature: the command's refusal of a second run and outside the console; the numbering states before and after go-live; the setting's store and the audit event's actor as P11Q-04's answer defines them (TL-04)
 - Integration: on real PostgreSQL with TASK-021's numbering and TASK-057's import over FX-09 — seeds committed, go-live recorded after the commit, the first issue per company drawing its seeded number, the refresh on the imported fixture (TL-05; TEST_STRATEGY §15's numbering at the cutover)
 - Authorization: no route reaches the command or the refresh (TL-06)
 - Route integrity: N/A — no route added or changed

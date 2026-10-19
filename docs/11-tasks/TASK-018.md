@@ -26,6 +26,8 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 
 - TASK-019 — Google sign-in for existing accounts
 - TASK-020 — Installation step, the first Owner and the Owner-recovery path
+- TASK-021 — Numbering, its settings page and the Owner's raise after a restore
+- TASK-074 — Backup tooling, the off-server copy and the drill procedures
 
 **PARALLEL SAFE:** NO — it changes the sign-in pipeline of TASK-017
 
@@ -54,7 +56,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md) SM-17–SM-19, SM-21
 - [CONCURRENCY_IDEMPOTENCY §18](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s18-scenarios.md#18-mandatory-concurrency-and-failure-scenarios) M-39
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-033--the-owner-account-has-no-second-authentication-factor-in-v1) GAP-033
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (73): O-06; CAP-13; AC-12–AC-13; AC-16; OS-03; REF-001; REF-003–REF-004; REF-049; REF-056–REF-057; OWN-02; OWN-04; ROUTE-002; ROUTE-004; ROUTE-104–ROUTE-105; ROUTE-107; INT-104–INT-105; INT-107; AU-16; AU-18–AU-21; TM-01; TM-03; TM-06; TM-57; TM-63–TM-70; TM-72–TM-73; D-SEC-16–D-SEC-20; H6-13; H6-15; H7-15; H7-17–H7-18; H8-02; H8-17–H8-19; H8-21–H8-22; PG-002; PG-004; SCR-01–SCR-02; GR-12; NAV-002; NAV-004; SM-02; SM-17–SM-19; SM-21; component Sign-in compositions; GAP-033; GAP-043–GAP-044
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (66): O-06; CAP-13; ROUTE-002; ROUTE-004; ROUTE-104–ROUTE-105; ROUTE-107; INT-104–INT-105; INT-107; C-65; RG-11; AU-16; AU-18–AU-21; LG-01; TM-01; TM-03; TM-06; TM-57; TM-63–TM-70; TM-72–TM-73; D-SEC-16–D-SEC-20; H6-13; H6-15; H7-15; H7-17–H7-18; H8-02; H8-17–H8-19; H8-21–H8-22; CI-09; M-39; PG-002; PG-004; SCR-01–SCR-02; GR-12; NAV-002; NAV-004; SM-02; SM-17–SM-19; SM-21; component Sign-in compositions; GAP-033; GAP-043–GAP-044
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -83,6 +85,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 
 **AUDIT:**
 
+- the business audit event of each account-changing step — TOTP enrolment and replacement, recovery-code use and regeneration — written in the step's own transaction, the account as actor with authority class SYSTEM (PERMISSIONS_MATRIX RG-11; CONCURRENCY_IDEMPOTENCY CI-09; LG-01), its security event following after the commit
 - security events for enrolment, challenge outcomes, recovery-code use and regeneration and the limit (LG-07; H9-15)
 
 **DATABASE IMPACT ASSESSMENT:**
@@ -195,7 +198,8 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 2. A code at or before the last accepted step is refused, and one code submitted twice — in sequence or concurrently — passes once (M-39).
 3. Recovery codes are eight, each usable once, and regenerating them voids the old set (AU-19).
 4. An abandoned enrolment leaves nothing stored; a confirmed secret is never shown again (AU-16).
-5. "Kembali" on PG-002 returns to PG-001 with the e-mail kept, and the pending attempt no longer completes a sign-in.
+5. TOTP enrolment and replacement, and each recovery-code use and regeneration, write their business audit event in the step's own transaction and their security event after the commit; a rolled-back step leaves neither (RG-11; CI-09; LG-01).
+6. "Kembali" on PG-002 returns to PG-001 with the e-mail kept, and the pending attempt no longer completes a sign-in.
 
 **TEST REQUIREMENTS:**
 
@@ -203,7 +207,7 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 - Typecheck: TL-02
 - Unit: period, window and last-step rules with a controlled clock (TL-03)
 - Feature: SM-17–SM-19 flows (TL-04)
-- Integration: the concurrent double submission of one code (TL-05; M-39)
+- Integration: the concurrent double submission of one code (TL-05; M-39); each step's audit row in its own transaction, a rollback leaving neither it nor the security event
 - Authorization: the enrolment-only session reaches PG-004 alone (TL-06)
 - Route integrity: ROUTE-002, -004, -104, -105, -107 audited; SM-02's enrolment-only cases — an enrolment-only route refusing a full session and reaching nothing else — and no Fortify two-factor route registered without the project route that replaces it (TL-07)
 - Interaction: their INT- rows (TL-08)

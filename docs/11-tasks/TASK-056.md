@@ -70,7 +70,7 @@ BR-PRJ-01 allows cancellation at any stage but unwinds nothing silently: deliver
 - [DESIGN_SYSTEM §9.4](../07-ux-design/DESIGN_SYSTEM.md#94-actions-overlays-and-feedback) PT-16, PT-26
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) — the CM-row families, the real concurrent test per AX and FX-03's late correction on a cancelled project; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-17; [SECURITY_TEST_MATRIX §5](../08-testing/SECURITY_TEST_MATRIX.md#5-capability-rows) W4-23
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-005--cancellation-may-encounter-delivered-billed-or-paid-downstream-records) GAP-005
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (18): BR-PRJ-01–BR-PRJ-06; WF-PRJ-04; AX-27; L-10–L-12; L-20–L-21; ROUTE-163; INT-163; C-38–C-39; C-51
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (35): O-01; CAP-04; CAP-18; AC-12; AC-21; IMG-01–IMG-02; IMG-05; IMG-08–IMG-09; OWN-01; OWN-03; BR-PRJ-01–BR-PRJ-06; WF-PRJ-04; CM-29–CM-32; AX-27; L-10–L-12; L-20–L-21; ROUTE-163; INT-163; C-38–C-39; C-51; J-PRJ-04
 
 **EXPECTED MODULES / FILE AREAS:**
 

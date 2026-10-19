@@ -32,6 +32,8 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 
 **BLOCKS:**
 
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
 
 **PARALLEL SAFE:** NO — it renders every page on the shared CI stack and browser harness, and its findings reopen the pages' own Tasks
@@ -47,7 +49,7 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 - **the document composer and preview** on PG-014, PG-033, PG-036, PG-042 and PG-043, and on PG-036 for the drafts that the issuing controls of PG-016, PG-022, PG-024, PG-031 and PG-043 prepare: the draft never satisfying a requirement and never writing, its totals labelled provisional and then equal to the server's, only projected fields in the browser, the paper Indonesian in both interface languages, the issued layout matched within TEST_STRATEGY §9's tolerance — the same template, paper, orientation, margins and page count, the same blocks in the same order, each within 1 mm —, the desktop at 1,025, 1,279 and 1,280 px, the tablet toggle at 1,024 px and the phone's Edit → Preview → Finalize at 390 px with DOC-12's floor step (DESIGN_SYSTEM §14.3; D-DS-20; D-DS-23; INT-012; GAP-053)
 - the screens the Owner's decisions changed, verified on the application with their named checks — CA-06's project rows, CA-07's dispatch-ready lines, CA-08's display language, CA-09's purchase number, CA-10's overdue projects, CB-01's imported purchase number, CB-02's PURCHASE scheme and seed, CB-03's receivables position (TEST_STRATEGY §9; DIR-079 CD-06)
 - **modern visual quality** and the **anti-slop audit**: SLOP-01–SLOP-45 reviewed on the built screens against each preventing rule and GA1 d)'s dispositions, the dashboard's audit by UXS-43 (DESIGN_SYSTEM §18; UXH-07), the reviewer's judgement against the named rule, confirmed by the Owner at UAT (TEST_STRATEGY §9)
-- the gate items owned by the other suites taken from their evidence, never re-judged here: the language items from TASK-067 (TEST_STRATEGY §10) and the accessibility critical checks from TASK-066 (§11)
+- the gate record's places for the items owned by the other suites — the language items of TASK-067 (TEST_STRATEGY §10) and the accessibility critical checks of TASK-066 (§11) —, never judged here: TASK-070, which depends on all three, enters their evidence
 - a starting value tuned by measurement recorded as a Level-1 change with its evidence, its rule unchanged (DESIGN_SYSTEM §1; TEST_STRATEGY §9)
 - each finding recorded with its page, item, evidence and proposed minimum fix and sent through the executor feedback loop to the Task that owns the page — a DONE Task's regression becoming a new defect Task under TASK_PLAN §7 —; a rule that looks wrong goes to Planning (AGENT_OPERATING_MODEL)
 
@@ -65,7 +67,7 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 - [ADMIN_FLOW §5](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command) IP-08; [§15](../07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md#design) UXS-41–UXS-44; [§16](../07-ux-design/ADMIN_FLOW/s16-17-handoff-traceability.md#16-handoff-obligations) UXH-07
 - [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md) — the Golden Frontend Reference, for presentation only (DIR-061 SD-02)
 - [DEFINITION_OF_DONE §2](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist) DOD-08; [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (47): SLOP-01–SLOP-45; DA-05; TL-11
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (55): DOC-12; IMG-06; UXS-41–UXS-44; UXH-07; UXH-11; SLOP-01–SLOP-45; DA-05; TL-11
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -163,9 +165,9 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 **UI / UX REQUIREMENTS:**
 
 - Follow global design rules: YES — the gate judges every built page against them (EXECUTION_CONTEXT, global UI rules)
-- Indonesian default: YES — the gate records TASK-067's evidence for it
-- English support: YES — the gate records TASK-067's evidence for it
-- Plain-language Indonesian: YES — reviewed against the glossary and the copy rules (LOCALIZATION §4), TASK-067's evidence recorded
+- Indonesian default: YES — TASK-070 enters TASK-067's evidence for it in the gate record
+- English support: YES — TASK-070 enters TASK-067's evidence for it in the gate record
+- Plain-language Indonesian: YES — reviewed against the glossary and the copy rules (LOCALIZATION §4), TASK-067's evidence entered by TASK-070
 - Language switch impact: NONE — the switch's behaviour is TASK-067's and CJ-18's; the gate checks the layout in both languages at the band edges
 - Mobile-first: YES — the phone composition judged as the default (TEST_STRATEGY §9)
 - Responsive: YES — every page at the ten band edges of TL-11
@@ -203,7 +205,7 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 
 **ACCEPTANCE CRITERIA:**
 
-1. Every one of the 65 pages has a gate record with AICWDF §27's twenty-one items, each PASS, FAIL or a count, the optional states N/A only with their reason (TEST_STRATEGY §9; DOD-08).
+1. Every one of the 65 pages has a gate record with AICWDF §27's twenty-one items: the items this gate judges each PASS, FAIL or a count, the optional states N/A only with their reason, and the places of the language and accessibility items kept for TASK-070 to fill from TASK-067's and TASK-066's evidence (TEST_STRATEGY §9; DOD-08).
 2. On every page the computed colour, type, spacing, radius, elevation and motion values equal DESIGN_SYSTEM §5's tokens; any other value is recorded as a defect (DA-05; SLOP-33).
 3. Every page has one primary action per page or region, and the count of unnecessary duplicate actions is 0 (DESIGN_SYSTEM §9.4; INTERACTION_CONTRACTS).
 4. Every page renders at 320, 390, 767, 768, 1,024, 1,025, 1,200, 1,279, 1,280 and 1,680 CSS px with its band's composition, no horizontal page scroll outside a table's frame at 320 px, and targets of 44 px for a coarse pointer and 48 px on the floor tasks (TL-11; GR-05; D-DS-19).
@@ -227,7 +229,7 @@ DEFINITION_OF_DONE's UI/UX dimension asks every UI Task to answer AICWDF §27's 
 - Localization/language switch: N/A — TASK-067's suite; the layout in both languages at the band edges checked here
 - Visual breathing room/density: TEST_STRATEGY §9 — measured spacing tokens and the reviewed density
 - Responsive: TL-11 — the ten band edges on every page
-- Accessibility: N/A — TASK-066's audit; the gate records its critical checks' result
+- Accessibility: N/A — TASK-066's audit; TASK-070 enters its critical checks' result in the gate record
 - Production build: TL-13 for the suite's code; the pages from the CI stack's build
 - Security: N/A — TASK-069's matrix; the suite's secret-like scan (SM-15)
 - Performance: N/A — TASK-068's budgets

@@ -21,7 +21,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 **DEPENDS ON:**
 
 - TASK-051 — Payments, applications and bank statement lines
-- the Owner's answer to P11Q-02 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -39,7 +39,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 - the fee: a project-attributed expense exactly once under all of DIR-020's conditions, the fee category closed to manual entry, its expense ≤ the evidence's proven amount however often the settlement is re-recorded (BR-FIN-09; C-23; annex 6); the tax: not a payment, write-off, revenue or automatic expense — an expense only through an explicit configured, evidenced treatment recorded once, its type recorded and reported apart (BR-FIN-16; BR-FIN-17; annex 13)
 - the guards of WF-FIN-04: no settlement without evidence — a claimed but unevidenced deduction stays outstanding and listed as QS-13 = claimed − evidenced; an unexplained short payment cannot be labelled a fee or a tax and the form has no field for it — it stays outstanding, is disputed or is written off by the Owner (QS-14's exception view; J-FIN-04)
 - ROUTE-260 with INT-260 (`FIN RecordContra`; `finance.contra`; AX-33): "Batalkan Potongan (Kontra)" on PG-047 — the settlement contra'd, a fee's expense with it unless it moves exactly once with the re-recorded settlement, then re-recorded with the correct evidence (CM-22; C-60) —; and "Batalkan Catatan (Kontra)" on PG-049 for a disbursement, expense or refund recorded in error or whose transfer came back — its dependent attributions contra'd in the same action, a refund's consumed application released to credit only by its own contra, which resolves any shortfall first (CM-38; L-46; C-44); Σ contras ≤ the original (C-45); both records visible (SF-CONTRA; BR-CR-02)
-- the residual settlement's exit: RESIDUAL → CONTRAED when its evidence resolves it — re-recorded on the invoice that evidence covers by a new ACTIVE settlement citing the same evidence in the same command, or contra'd when the issuer's evidence shows it was refunded or cancelled —, the case's residual falling by its amount (DATABASE §11.4; C-60) — the effects and guards; the route that carries it is held for Planning (see OUT OF SCOPE)
+- the residual settlement's exit: RESIDUAL → CONTRAED when its evidence resolves it — re-recorded on the invoice that evidence covers by a new ACTIVE settlement citing the same evidence in the same command, or contra'd when the issuer's evidence shows it was refunded or cancelled —, the case's residual falling by its amount (DATABASE §11.4; C-60) — the effects and guards; and, under the Owner's answer to P11Q-02 (a), once the narrow amendment adds its row and capability, the route that carries it, built here once the answer and its row are approved, which comes before this Task is READY ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)); under option (b), if the Owner takes it out of V1, the route is not built, as the answer records (DIR-083 OE-20)
 - the settlements' side of an evidence replacement: FIN's `DocumentChangeParticipant` re-evaluates, inside DOC's transaction, the settlements that cite the replaced evidence, under its cap (L-41; C-18; ARCHITECTURE §3; architecture challenge 20a); the replacement itself is TASK-030's ROUTE-231
 - the SIPLAH channel's net settlement as one fee settlement on its evidence, never a formula (CAP-12; AC-15; REF-038; FS-13; annex 6); a SIPLAH order with no external connection (API_AND_INTEGRATIONS IC-14)
 - PG-047 with NAV-047 and ROUTE-047 (SCR-43; J-FIN-04): the settlements by payment and invoice, their evidence and state, the claimed-minus-evidenced figure, "Catat Potongan" and the contra
@@ -48,7 +48,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 
 - the payment, its claimed deductions and their supersession, its contra (CM-19; ROUTE-251, ROUTE-254, ROUTE-262; TASK-051), and the moves of anchored settlements in a reallocation (L-28; TASK-051) — they use this Task's settlement transitions
 - the turning of settlements RESIDUAL by an invoice void or revision (CM-24; TASK-049); refunds (TASK-053); expenses, disbursements and other Cash-In themselves and PG-049 (TASK-054) — ROUTE-260's control on PG-049 and its contra of their facts are exercised when they exist, on synthetic facts until then
-- the route and capability of the residual settlement's resolution: PERMISSIONS_MATRIX §4 gives it to `settlement.record` and ARCHITECTURE §3 names `ResolveResidualSettlement`, while AX-33 lists residual resolutions among its facts and its route ROUTE-260 needs `finance.contra` — held for Planning, never built as an unrouted control (RC-06)
+- the residual settlement's resolution route if the Owner's answer to P11Q-02 takes it out of V1 (option (b)), and, until its row and capability exist, any control for it — never built without its route (RC-06); which capability it needs — `settlement.record` (PERMISSIONS_MATRIX §4; ARCHITECTURE §3's `ResolveResidualSettlement`) or ROUTE-260's `finance.contra` (AX-33) — is the amendment's to state
 - the tax configuration and its SETTLEMENT_TO_EXPENSE rules (`tax.configure`; TASK-025); the evidence upload and versioning (TASK-030)
 
 **REFERENCES:**
@@ -67,7 +67,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-01 6 and 13, FX-03's tax and fee on one payment, voids with settlements and duplicate evidence, FX-04's residual settlements; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-08; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-07, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-026--taxes-withheld-or-collected-at-payment-had-no-settlement-path) GAP-026; [GAP-004](../00-governance/GAP_REGISTER.md#gap-004--exact-arithmetic-does-not-define-managerial-financial-meaning)
 - Architecture challenge — the sequences 6d, 9a, 20a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (80): CAP-12; AC-15; REF-038; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-04; SF-CONTRA; SF-SETTLE; CM-19; CM-22; CM-38; AX-21; AX-33; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-047; ROUTE-255; ROUTE-260; INT-255; INT-260; C-13–C-15; C-18; C-22–C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; BD-02; BD-08; BD-14; PG-047; SCR-43; J-FIN-04; NAV-047; GAP-004; GAP-026
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (92): O-04; CAP-10; CAP-12; AC-10; AC-15; OS-02; REF-016; REF-038; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-04; SF-CONTRA; SF-SETTLE; CM-19; CM-21–CM-22; CM-24; CM-38; AX-21; AX-33; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-047; ROUTE-255; ROUTE-260; INT-255; INT-260; C-13–C-15; C-18; C-22–C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; C-60; BD-02; BD-08; BD-14; M-14; M-37; PG-047; SCR-43; J-FIN-04; NAV-047; GAP-004; GAP-026
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -227,17 +227,18 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 8. A disbursement, expense or refund recorded in error is contra'd once within its net amount with its dependent attributions; a refund's consumed application returns to credit only through that contra, resolving any shortfall first (CM-38; L-46; C-44; C-45).
 9. Replacing the evidence that a settlement cites re-evaluates that settlement inside the replacement's transaction (L-41; architecture challenge 20a).
 10. Settlements and contras are absent without `settlement.record` and `finance.contra`, each asking its reason; the cited evidence is visible only with `evidence.view` and `finance.view` (AZ-01; PJ-08; SM-04).
+11. Once the row of P11Q-02 (a) is approved, a RESIDUAL settlement is resolved through its route under the capability the row names — re-recorded on the invoice its evidence covers, or contra'd —, RESIDUAL → CONTRAED once with the case's residual falling by its amount, and a second resolution is refused (DATABASE §11.4; C-60; AX-33; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the evidence cap across termins and the claimed-gross bound, against FX-01 6 and 13 (TL-03)
-- Feature: ROUTE-255 and ROUTE-260 with each refusal their contracts name (TL-04)
+- Feature: ROUTE-255 and ROUTE-260 with each refusal their contracts name; the residual's resolution once its row exists (TL-04)
 - Integration: two settlements citing one evidence from different payments; a settlement racing the invoice's void (M-37); a refund's contra racing a shortfall-resolving application (M-14) on synthetic refunds until TASK-053 exists; FX-03's tax and fee on one payment, voids with settlements and duplicate evidence; FX-04's residual settlements; the reconciliation suite after each (TL-05; TEST_STRATEGY §5)
 - Authorization: `settlement.record` and `finance.contra` as separately granted ADM_PLUS capabilities (TL-06; SM-04)
-- Route integrity: ROUTE-047, ROUTE-255, ROUTE-260 audited (TL-07; SM-02)
-- Interaction: INT-255 and INT-260 per IG-05, with one `command_id` replayed (TL-08)
+- Route integrity: ROUTE-047, ROUTE-255, ROUTE-260 audited, and the resolution's route once its row exists (TL-07; SM-02)
+- Interaction: INT-255 and INT-260, and the resolution's INT- row once it exists, per IG-05, with one `command_id` replayed (TL-08)
 - Browser E2E: J-FIN-04; CJ-08's SIPLAH net settlement (TL-09)
 - Localization/language switch: both languages on PG-047 (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9

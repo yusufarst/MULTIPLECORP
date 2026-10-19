@@ -25,6 +25,7 @@ The commercial confirmation is the reservation trigger and the point where a pro
 
 **BLOCKS:**
 
+- TASK-035 — Administrative checklist and document readiness
 - TASK-037 — Purchases — project and replenishment purchases
 - TASK-038 — Reservations
 - TASK-046 — Direct shipment (drop-ship)
@@ -69,7 +70,7 @@ The commercial confirmation is the reservation trigger and the point where a pro
 - [ADMIN_FLOW §10.2](../07-ux-design/ADMIN_FLOW/s10-a-journeys.md#102-project-and-commercial) J-PRJ-02, J-FUL-01; [§10.7](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#107-completion-cancellation-and-migration) J-PRJ-04's "Batalkan Sisa"; [§11](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals) CM-29–CM-31; [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command), [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions), [IP-19](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-19--several-commands-on-one-screen), [IP-16](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#ip-16--evidence-upload), [IP-20](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#ip-20--choosing-a-reservation-cut); [§14](../07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue) MSG-39, MSG-40
 - [DESIGN_SYSTEM §14.2](../07-ux-design/DESIGN_SYSTEM.md#142-inventory) PT-17
 - [CONCURRENCY_IDEMPOTENCY §7.1](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#71-lock-sets-of-ax-01ax-37) and [§7.2](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#72-checks-effects-and-outcomes-of-ax-01ax-37) AX-13, AX-14; [§4.2](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s04-06-locks-envelope.md#42-lock-classes) LK-00, LK-01, LK-03, LK-13, LK-18–LK-20, LK-29; [§8](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md#8-guards-and-first-use-rows) FU-09; [§9](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md#9-stale-state) ST-01, ST-06, ST-08; [§10](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#10-command-identity-and-replay) CI-01, CI-05; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-05, BD-13
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (58): CAP-04; DOC-09; DOC-14; AC-04; AC-20; OS-01; REF-017–REF-018; IMG-02; BR-XD-01–BR-XD-07; BR-PRJ-01–BR-PRJ-06; BR-DOC-04; WF-PRJ-02; WF-FUL-01; SF-CANCEL-LINE; PX-01–PX-08; AX-13–AX-14; L-01; L-10–L-12; L-19–L-21; L-26; L-39; L-49–L-50; ROUTE-158–ROUTE-160; INT-158–INT-160; C-38–C-39; C-51; BD-05; BD-13
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (80): O-01; CAP-04; DOC-02–DOC-04; DOC-06; DOC-09; DOC-14; AC-04; AC-16; AC-20; OS-01; REF-017–REF-018; IMG-01–IMG-04; IMG-06; OWN-01; OWN-04; BR-XD-01–BR-XD-07; BR-PRJ-01–BR-PRJ-06; BR-DOC-04; WF-PRJ-02; WF-FUL-01; SF-CANCEL-LINE; PX-01–PX-08; CM-27; CM-29–CM-31; AX-13–AX-14; L-01; L-10–L-12; L-19–L-21; L-26; L-39; L-49–L-50; ROUTE-158–ROUTE-160; INT-158–INT-160; C-38–C-39; C-51; BD-05; BD-13; M-09–M-10; J-PRJ-02; J-PRJ-04; J-INV-02; J-FUL-01
 
 **EXPECTED MODULES / FILE AREAS:**
 

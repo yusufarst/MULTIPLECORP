@@ -32,7 +32,8 @@ One physical pool with separate economic attribution, the ledger with its guard 
 
 **IN SCOPE:**
 
-- the tables `locations`, `inventory_lots`, `serial_units`, `stock_movements`, `stock_movement_entries`, `receiving_lines`, `dispatch_lines`, `stock_consumptions`, `stock_consumption_balances`, `stock_restorations`, `stock_product_balances`, `stock_scope_balances`, `stock_lot_balances`, `stock_reversal_balances`, `reservations`, `reservation_events`, `stock_counts`, `stock_count_scopes`, `stock_count_lines`, `stock_count_findings`, `unattributed_loss_cases`, `unattributed_loss_candidates`, `unattributed_loss_exposures`, `unattributed_loss_group_exposures`, `unattributed_loss_resolutions`, `unattributed_loss_resolution_lines`, with their C- rows — C-03, C-05, C-24, C-27, C-37 and C-55 — and IX- indexes — IX-11 and IX-14
+- the tables `locations`, `inventory_lots`, `serial_units`, `stock_movements`, `stock_movement_entries`, `receiving_lines`, `dispatch_lines`, `stock_consumptions`, `stock_consumption_balances`, `stock_restorations`, `stock_product_balances`, `stock_scope_balances`, `stock_lot_balances`, `stock_reversal_balances`, `reservations`, `reservation_events`, `stock_counts`, `stock_count_scopes`, `stock_count_lines`, `stock_count_findings`, `unattributed_loss_cases`, `unattributed_loss_candidates`, `unattributed_loss_exposures`, `unattributed_loss_group_exposures`, `unattributed_loss_resolutions`, `unattributed_loss_resolution_lines`, with their C- rows — C-02–C-09, C-24, C-27, C-28, C-32–C-37, C-47–C-49, C-53, C-55 and C-59 — and IX- indexes — IX-08, IX-10, IX-11, IX-12, IX-14 and IX-16
+- a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the movement catalogue and sign discipline of §5.3, the lot claims of §5.4, the serial representation of §8 and the conservation identity of §6.2
 - the migrate-from-empty test extended (TL-16)
 
@@ -52,7 +53,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - [DATABASE §20](../04-architecture/DATABASE/s20-24-index-storage-migration.md#20-index-and-query-design)
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
 - Architecture challenge — the sequence 11a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (48): D-DB-01–D-DB-14; C-03; C-05; C-24; C-27; C-37; C-55; IX-11; IX-14; table locations; table inventory_lots; table serial_units; table stock_movements; table stock_movement_entries; table receiving_lines; table dispatch_lines; table stock_consumptions; table stock_consumption_balances; table stock_restorations; table stock_product_balances; table stock_scope_balances; table stock_lot_balances; table stock_reversal_balances; table reservations; table reservation_events; table stock_counts; table stock_count_scopes; table stock_count_lines; table stock_count_findings; table unattributed_loss_cases; table unattributed_loss_candidates; table unattributed_loss_exposures; table unattributed_loss_group_exposures; table unattributed_loss_resolutions; table unattributed_loss_resolution_lines
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (77): O-02; CAP-06; REF-057; IMG-03; OWN-04–OWN-05; D-DB-01–D-DB-14; C-02–C-09; C-24; C-27–C-28; C-32–C-37; C-47–C-49; C-53; C-55; C-59; IX-08; IX-10–IX-12; IX-14; IX-16; table locations; table inventory_lots; table serial_units; table stock_movements; table stock_movement_entries; table receiving_lines; table dispatch_lines; table stock_consumptions; table stock_consumption_balances; table stock_restorations; table stock_product_balances; table stock_scope_balances; table stock_lot_balances; table stock_reversal_balances; table reservations; table reservation_events; table stock_counts; table stock_count_scopes; table stock_count_lines; table stock_count_findings; table unattributed_loss_cases; table unattributed_loss_candidates; table unattributed_loss_exposures; table unattributed_loss_group_exposures; table unattributed_loss_resolutions; table unattributed_loss_resolution_lines; migration-rule DB24-03; migration-rule DB24-04
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -190,8 +191,8 @@ One physical pool with separate economic attribution, the ledger with its guard 
 **ACCEPTANCE CRITERIA:**
 
 1. Migrating creates exactly the tables named, with every column, key and constraint DATABASE states.
-2. Each C- row of these tables — C-03, C-05, C-24, C-27, C-37 and C-55 — is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables — IX-11 and IX-14 — exists and its query uses it.
+2. Each C- row the database enforces on these tables — C-02–C-09, C-24, C-27, C-28, C-32–C-37, C-47–C-49, C-53, C-55 and C-59 — is enforced where its row says, proven by a test that violates it.
+3. Each IX- index of these tables — IX-08, IX-10, IX-11, IX-12, IX-14 and IX-16 — exists and its query uses it.
 4. AVAILABLE = ON HAND − RESERVED − UNUSABLE ≥ 0 holds at the database level (C-04), with the reservation bounds of C-05.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 

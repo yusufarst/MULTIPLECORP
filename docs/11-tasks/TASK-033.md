@@ -1,6 +1,6 @@
 # TASK-033 — Quotations
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -59,7 +59,7 @@ CAP-04 and AC-04 require quotation drafts, sent revisions with their validity, r
 - [DESIGN_SYSTEM §4](../07-ux-design/DESIGN_SYSTEM.md#4-design-decisions) D-DS-23; [§14.3](../07-ux-design/DESIGN_SYSTEM.md#143-document-preview)
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-03; [§7.1](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#71-lock-sets-of-ax-01ax-37) AX-13, AX-15; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-05, BD-06; [§18](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s18-scenarios.md#18-mandatory-concurrency-and-failure-scenarios) M-38
 - Architecture challenge — the sequence 1b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (38): CAP-04; DOC-01; DOC-11; AC-04; AC-20; OS-01; REF-017–REF-018; REF-033; IMG-02; IMG-06; BR-QUO-01–BR-QUO-03; WF-QUO-01; L-20; L-25; ROUTE-014; ROUTE-037; ROUTE-154–ROUTE-157; INT-154–INT-157; NX-03; PG-014; PG-037; SCR-12–SCR-13; J-QUO-01; J-PRJ-02; UXS-11; UXS-41; NAV-014; NAV-037
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (43): O-01; CAP-04; DOC-01; DOC-11; AC-04; AC-20; OS-01; REF-017–REF-018; REF-033; IMG-01–IMG-02; IMG-04; IMG-06; BR-QUO-01–BR-QUO-03; WF-QUO-01; L-20; L-25; ROUTE-014; ROUTE-037; ROUTE-154–ROUTE-157; INT-154–INT-157; NX-03; M-19; M-38; PG-014; PG-037; SCR-12–SCR-13; J-QUO-01; J-PRJ-02; UXS-11; UXS-41; NAV-014; NAV-037
 
 **EXPECTED MODULES / FILE AREAS:**
 

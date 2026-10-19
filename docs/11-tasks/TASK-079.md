@@ -1,10 +1,10 @@
 # TASK-079 — Staging measurements — capacity, Argon2id, durations and the disk budget
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** BLOCKED — waiting on P11Q-05
 
 **RISK CLASS:** HIGH
 
@@ -23,6 +23,7 @@ No measurement exists: PERFORMANCE's workload, sizing and growth figures are ass
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - TASK-078 — Staging stack, the two applications' isolation and the provider features
+- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -63,7 +64,7 @@ No measurement exists: PERFORMANCE's workload, sizing and growth figures are ass
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-014--eighteen-days-is-a-target-not-a-measured-delivery-capacity) GAP-014; [GAP-017](../00-governance/GAP_REGISTER.md#gap-017--green-checks-may-miss-the-actual-concurrency-and-workload-risks)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-13, OE-14
 - Architecture challenge — the sequence 16b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (40): DEP-01; DEP-09; BK-11; REF-062; H9-05; H9-11; AS-01–AS-08; GT-01–GT-07; SZ-01–SZ-09; PFM-01–PFM-02; PFM-12–PFM-13; PFM-17; OPI-07; OPI-21; OPI-25; GLC-05; GAP-014
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (43): DEP-01; DEP-09; BK-04; BK-11; REF-062; H9-05; H9-11; HO-25–HO-26; AS-01–AS-08; GT-01–GT-07; SZ-01–SZ-09; PFM-01–PFM-02; PFM-12–PFM-13; PFM-17; OPI-07; OPI-21; OPI-25; GLC-05; GAP-014
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -267,7 +268,7 @@ No measurement exists: PERFORMANCE's workload, sizing and growth figures are ass
 **DO NOT DO:**
 
 - add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
-- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- let an agent access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
 - add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
 - start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
 - weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))

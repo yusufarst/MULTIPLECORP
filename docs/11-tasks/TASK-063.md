@@ -32,6 +32,8 @@ These journeys carry the money, the corrections and the documents across modules
 
 **BLOCKS:**
 
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
 
 **PARALLEL SAFE:** NO — its suites share the CI stack, the browser harness and the synthetic fixtures with the other verification Tasks, and its defects reopen module work
@@ -66,7 +68,7 @@ These journeys carry the money, the corrections and the documents across modules
 - [WORKFLOWS §9](../03-workflows/WORKFLOWS/s08-09-corrections-indivisible.md#9-indivisible-business-actions) the AX- rows the journeys' steps run
 - [INFORMATION_ARCHITECTURE §13](../07-ux-design/INFORMATION_ARCHITECTURE.md#13-role-based-navigation); [SECURITY_TEST_MATRIX §2](../08-testing/SECURITY_TEST_MATRIX.md#2-fixtures)
 - [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop); [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule), [§5](../08-testing/DEFINITION_OF_DONE.md#5-module-and-release-completion)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (7): TL-09; CJ-04; CJ-06; CJ-14–CJ-15; CJ-17; CJ-20
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (49): CAP-08; AC-08–AC-12; AC-21; AC-23; OS-02; OS-06; IMG-02; IMG-05–IMG-09; OWN-01; OWN-03; OWN-05; J-PRJ-03–J-PRJ-04; J-FIN-01–J-FIN-03; J-FIN-05–J-FIN-08; J-DOC-01–J-DOC-02; J-PUR-03; J-FUL-05; J-ADM-01; UXS-09; UXS-14; UXS-16–UXS-17; UXS-29; UXS-36–UXS-38; UXH-01; TL-09; CJ-04; CJ-06; CJ-14–CJ-15; CJ-17; CJ-20
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -229,7 +231,7 @@ These journeys carry the money, the corrections and the documents across modules
 - Localization/language switch: N/A — TASK-067's suite; the documents' Indonesian is asserted in CJ-15
 - Visual breathing room/density: N/A — TASK-065's gate
 - Responsive: N/A — TASK-065's band-edge matrix; CJ-15 runs the composer's widths
-- Accessibility: the engine of TASK-066 runs on every page state these journeys reach (TEST_STRATEGY §11)
+- Accessibility: N/A — the engine's run on every page state these journeys reach is TASK-066's, which depends on them (TEST_STRATEGY §11)
 - Production build: TL-13 for the suite's code; the journeys run on the CI stack of TEST_STRATEGY §4
 - Security: N/A — TASK-069's matrix; the suite's secret-like scan (SM-15)
 - Performance: N/A — TASK-068's budgets; the journeys' network capture is kept for it

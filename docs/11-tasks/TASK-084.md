@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-04, OPI-08, OPI-23, OPI-28, OPI-31, OPI-32
+**STATUS:** BLOCKED — waiting on OPI-04, OPI-28, OPI-31, OPI-32, P11Q-05
 
 **RISK CLASS:** HIGH
 
@@ -24,7 +24,8 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - TASK-079 — Staging measurements — capacity, Argon2id, durations and the disk budget
 - TASK-081 — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
-- the operator's or the Owner's inputs OPI-04, OPI-08, OPI-23, OPI-28, OPI-31, OPI-32 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
+- the operator's or the Owner's inputs OPI-04, OPI-28, OPI-31, OPI-32 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
+- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -34,7 +35,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 
 **IN SCOPE:**
 
-- **The inputs it waits on**, each recorded in INFRASTRUCTURE §9 or BACKUP_RECOVERY §7 by role or as a fact, never as a secret, host name, address, port or account name — this Task stays BLOCKED until all six are recorded:
+- **Its six inputs**, each recorded in INFRASTRUCTURE §9 or BACKUP_RECOVERY §7 by role or as a fact, never as a secret, host name, address, port or account name — the Task BLOCKED until OPI-04, OPI-28, OPI-31 and OPI-32, which others give first, are recorded, while OPI-08 and OPI-23 it records itself, OPI-08 by GLC-08's test and OPI-23 by the operator's proposal with the Owner's approval (TASK_PLAN §2):
   - OPI-04 — the domain's DNS provider and whether a proxy fronts it, recorded by the operator; DIR-079 CB-08's rule applied — DNS at the current provider with TLS on the VPS, or, where an edge proxy already fronts the domain, that proxy with WS-11's trusted-proxy configuration (P9Q-05)
   - OPI-08 — outbound HTTPS from the VPS to Google and to the breached-password range service, recorded as tested by the operator (GLC-08 below)
   - OPI-23 — the backup time `<BACKUP_TIME>`, proposed by the operator — 03:00 WIB recommended, after `ReconcileGuards`' 02:00 run — checked against the second application's windows (OPI-27) and the measured duration (OPI-25), and approved by the Owner (GLC-22)
@@ -76,7 +77,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-063--an-off-server-backup-against-total-vps-loss-awaits-the-owners-decision) GAP-063; [GAP-018](../00-governance/GAP_REGISTER.md#gap-018--owner-accepts-total-vps-or-storage-loss-exposure-with-local-only-backup); [GAP-041](../00-governance/GAP_REGISTER.md#gap-041--operator-abuse-of-the-owner-recovery-command)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-09, OE-13, OE-14; [COST_POLICY](../00-governance/COST_POLICY.md#procedure) §4C.2
 - Architecture challenge — the sequence 13b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (45): CAP-16; DEP-02; DEP-11; BK-01–BK-02; BK-04–BK-07; BK-12; AC-18–AC-19; OS-04; REF-048; REF-060; REF-062; OWN-06; WS-10; SX-03; SX-07; TM-27; TM-65; INF-01; INF-06; INF-08; OPI-04; OPI-08; OPI-23; OPI-28–OPI-29; OPI-31–OPI-32; BKR-09; TT-F20; GLC-02; GLC-06–GLC-08; GLC-11–GLC-12; GLC-16; GLC-20; GLC-22; GLC-24; GAP-063
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (53): O-07; CAP-16; DEP-02; DEP-11; BK-01–BK-12; AC-18–AC-19; OS-04; REF-060; REF-062; OWN-06; WS-10; SX-03; SX-07; TM-27; TM-65; HO-28; INF-01; INF-06; INF-08; OPI-04; OPI-08; OPI-23; OPI-28–OPI-29; OPI-31–OPI-32; BKR-09; TT-F03; TT-F12; TT-F20; GLC-02; GLC-06–GLC-08; GLC-11–GLC-12; GLC-16; GLC-20; GLC-22; GLC-24; GAP-063
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -94,7 +95,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 **SECURITY / PERMISSION REQUIREMENTS:**
 
 - SX-03's production settings and WS-10's gates hold before any data (TM-27); secrets present with restricted permissions, readable only by the service account (SX-01; H9-09)
-- the copy's decrypting key and each generation's paired key kept apart from the VPS and never with the copy (BKR-09; TM-65)
+- the copy's decrypting key and a copy of each generation's paired key kept apart from the VPS in the operator's secret store, and never with the copy — the latest generation's paired key being also the live `APP_KEY` in the VPS's environment (BKR-08, BKR-09; SX-01; TM-65)
 - the provider account's second factor confirmed and every holder of administrative access recorded by role (GAP-018; GAP-041); no agent holds any production access (INF-01; SX-04)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
@@ -215,7 +216,7 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 
 **ACCEPTANCE CRITERIA:**
 
-1. OPI-04, OPI-08, OPI-23, OPI-28, OPI-31 and OPI-32 are recorded by role or as facts without a secret and their rules applied — DIR-079 CB-08's for OPI-04 —; until all six are, the Task stays BLOCKED (GLC-02).
+1. OPI-04, OPI-08, OPI-23, OPI-28, OPI-31 and OPI-32 are recorded by role or as facts without a secret and their rules applied — DIR-079 CB-08's for OPI-04 —; the Task is BLOCKED until the four others give first are recorded, and DONE only when all six are (GLC-02; TASK_PLAN §2).
 2. The production configuration is validated read-only — SX-03 in full, WS-10's gates, the database roles and privileges, the firewall and bindings, secrets with restricted permissions, TLS and HSTS, the headers SM-08 names, and the go-live setting unset (GLC-07).
 3. Outbound HTTPS from the VPS to Google and to the breached-password range service passes (GLC-08; DEP-11).
 4. The daily backups run at the Owner-approved time, the first verified backup exists, the disk thresholds are set, the backup duty is named, and backup files are readable only by the operator account (GLC-06; GLC-22; SX-07).
@@ -282,11 +283,11 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 **DO NOT DO:**
 
 - add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
-- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- let an agent access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
 - add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
 - start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
 - weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))
 - put business data on production before GLC-06, GLC-07, GLC-11 and GLC-24 hold (CUT-02)
-- keep the copy's decrypting key or a generation's paired key on the VPS or with the copy, or adopt a paid destination (BKR-09; COST_POLICY §4C.2)
+- keep the copy's decrypting key on the VPS, a generation's paired key only on the VPS, or either key with the copy, or adopt a paid destination (BKR-08, BKR-09; COST_POLICY §4C.2)
 - run a test case, a load or a write on production beyond the operator's read-only checks and the copy's drill into isolation (SECURITY_TEST_MATRIX §9; BACKUP_RECOVERY §5)
 - record an input or a go-live item as passed without its evidence, or change a firewall rule of the second application (DIR-083 OE-14; INF-07)

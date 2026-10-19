@@ -26,6 +26,7 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 
 **BLOCKS:**
 
+- TASK-053 — Customer credit and refunds
 - TASK-055 — Project completion and Force Complete
 
 **PARALLEL SAFE:** NO — restorations and their reversals write the product, scope, lot, serial, reservation, project-line, lot-cost and consumption guards and the case counters that dispatch, adjustments, purchase returns and the cost cascade (TASK-037–TASK-046) also post
@@ -59,7 +60,7 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-01 16, FX-03; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs); [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-06; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-028--inventory-loss-and-damaged-return-cost-could-disappear) GAP-028; [GAP-005](../00-governance/GAP_REGISTER.md#gap-005--cancellation-may-encounter-delivered-billed-or-paid-downstream-records)
 - Architecture challenge — the sequences 3b, 4a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (23): WF-FUL-05; SF-RESTORE; CM-02; CM-05–CM-06; CM-10; CM-14; AX-10; AX-36; ROUTE-034; ROUTE-210–ROUTE-211; INT-210–INT-211; C-27–C-28; C-55; BD-13; PG-034; SCR-32; J-FUL-05; NAV-034; GAP-028
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (46): O-02; CAP-06; AC-06; AC-12; AC-21; OS-02; REF-029; IMG-03–IMG-05; IMG-08; OWN-01; OWN-03–OWN-05; WF-FUL-05; SF-RESTORE; CM-02; CM-05–CM-06; CM-10–CM-15; CM-32; CM-36–CM-37; AX-10; AX-36; ROUTE-034; ROUTE-210–ROUTE-211; INT-210–INT-211; C-27–C-28; C-55; BD-13; M-07; PG-034; SCR-32; J-FUL-05; NAV-034; GAP-028
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -23,7 +23,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-034 — Commercial confirmation and fulfillment planning
 - TASK-037 — Purchases — project and replenishment purchases
-- the Owner's answer to P11Q-02 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -40,6 +40,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - ROUTE-206 with INT-206 (`FUL ReverseDropShipConfirmation`; `fulfillment.correct`): a confirmation recorded in error (CM-27) reversed with its reason as a movement-less DROPSHIP_CONFIRMATION_REVERSAL restoration — the HPP contra-attributed, the purchase line's confirmed quantity and posted values lowered, the serial back to NEVER_RECEIVED — capped by the confirmation line's consumption guard, lowering the line's net confirmed quantity (DATABASE §5.7; C-27; C-59)
 - ROUTE-207 with INT-207 (`FUL ReturnDropShipToSupplier`; `sales_return.record`; AX-10), each with its case and reason (SF-CASE; IP-09): **"Retur ke Gudang"** (CM-14) — the HPP contra at the confirmation's current net cost and a new DROPSHIP_RETURN lot carrying exactly that amount, allocated charges and non-creditable tax included, as corrected by any CM-17 (DROPSHIP_RETURN_RECEIPT; C-08); **"Retur ke Pemasok"** (CM-15) — a movement-less DROPSHIP_SUPPLIER_RETURN restoration under a PURCHASE_RETURN case of the purchase's company, the returned units' net HPP moved to SUPPLIER_RETURN, then settled like a warehouse purchase return — refunded, replaced by a replacement confirmation carrying that basis, or unrecovered through a RETURN_SETTLEMENT loss on the causal project —, the case closing only when returned = refunded + replaced + unrecovered (DATABASE §5.7, §6.3; C-46); no warehouse event for CM-15
 - PG-032 with NAV-032 and ROUTE-032 (SCR-30; J-FUL-03): the line's confirmations, their cost with `cost.view`, the reversal and the returns, each by capability; receiving and dispatch never offered for the line (BR-INV-11)
+- **Held for the Owner's answer to P11Q-02, built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), once the narrow amendment adds its row, the company-issued *Surat Jalan* (DOC-03) of a direct shipment, issued from PG-032 through the document engine (WF-FUL-03; WF-DOC-01; TASK-029), as its row states; under option (b), if the Owner takes it out of V1, it is not built, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
@@ -47,7 +48,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - a delivery recorded after the confirmation, its correction CM-08 and its closure (ROUTE-201–ROUTE-204; TASK-045); the delivery rows written here follow the same representation
 - the outcome of a CM-15 case — the declared refund or replacement, a supplier credit, the unrecovered share — through ROUTE-177 (NX-16; TASK-044), the refund's money through ROUTE-259 (TASK-054) and the case's closure through ROUTE-271 (TASK-031)
 - a drop-ship return or confirmation reversal recorded in error, undone once by a DROPSHIP_ERROR_REVERSAL through ROUTE-211 (CM-37; AX-36), which the matrix maps to TASK-048
-- the company-issued DOC-03 for the direct shipment that WF-FUL-03 allows: no route issues it from PG-032 and the matrix maps DOC-03 to TASK-029, TASK-041 and TASK-045 only — held for Planning; the upload routes ROUTE-228–ROUTE-231 (TASK-030)
+- the company-issued DOC-03 of a direct shipment if the Owner's answer to P11Q-02 takes it out of V1 (option (b)), and, until its row exists, any control for it — never built without its route (RC-06); the upload routes ROUTE-228–ROUTE-231 (TASK-030)
 
 **REFERENCES:**
 
@@ -62,7 +63,7 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 - [NAVIGATION_CONTRACTS §2.4](../07-ux-design/NAVIGATION_CONTRACTS.md#24-fulfilment-cases-and-documents) NAV-032; [INFORMATION_ARCHITECTURE §8.4](../07-ux-design/INFORMATION_ARCHITECTURE.md#84-fulfilment-cases-and-documents) PG-032; [§8.7](../07-ux-design/INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages) SCR-30
 - [ADMIN_FLOW J-FUL-03](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#104-fulfilment); [§11](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals) CM-14, CM-15, CM-27; [IP-03](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-03--conflict-and-stale-state); [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command); [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions)
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01's drop-ship branch; [§5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-04's drop-ship reversals; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (16): WF-FUL-03; AX-08; L-40; ROUTE-032; ROUTE-205–ROUTE-207; INT-205–INT-207; BD-04; BD-18; PG-032; SCR-30; J-FUL-03; NAV-032
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (34): O-02; CAP-06; DOC-03; AC-06; AC-20; OS-02; REF-030; IMG-03–IMG-04; OWN-04–OWN-05; WF-FUL-03; CM-08; CM-14–CM-15; CM-17; CM-27; CM-37; AX-08; L-40; ROUTE-032; ROUTE-205–ROUTE-207; INT-205–INT-207; BD-04; BD-18; M-35; PG-032; SCR-30; J-FUL-03; NAV-032
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -219,17 +220,18 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 8. "Retur ke Pemasok" records no warehouse event, moves the returned units' net HPP to the supplier-return class under a purchase-return case, and that case closes only when returned = refunded + replaced + unrecovered (CM-15; C-46).
 9. A confirmation racing the purchase's cancellation leaves either the confirmation or the cancellation, never both (AX-12).
 10. The reversal and the returns are absent without `fulfillment.correct` and `sales_return.record`, each asking its reason (AZ-01; IP-09; SM-04).
+11. Once the row of P11Q-02 (a) is approved, PG-032 issues the company's *Surat Jalan* for a direct shipment through its route, its issuer truthful and its content the shipment's recorded facts, and issuing it changes no stock, cash or obligation (WF-FUL-03; WF-DOC-01; BR-DOC-04; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the cumulative-rounding share of a partial confirmation and the return lot's basis (TL-03; annex 14; BR-FIN-13)
-- Feature: ROUTE-205–ROUTE-207 with each refusal (TL-04)
+- Feature: ROUTE-205–ROUTE-207 with each refusal; the direct shipment's *Surat Jalan* once its row exists (TL-04)
 - Integration: a confirmation racing the purchase's cancellation and a second partial confirmation of one line; FX-04's drop-ship reversals — a confirmation reversal, a return to the warehouse, a return to the supplier settled by refund, replacement and unrecovered share —; the reconciliation suite after each (TL-05; TEST_STRATEGY §5)
 - Authorization: `dropship.confirm`, `fulfillment.correct` and `sales_return.record` by class; the cost absent without `cost.view` (TL-06; SM-04; SM-25)
-- Route integrity: ROUTE-032, ROUTE-205–ROUTE-207 audited (TL-07; SM-02)
-- Interaction: INT-205–INT-207 per IG-05, with one `command_id` replayed (TL-08)
+- Route integrity: ROUTE-032, ROUTE-205–ROUTE-207 audited, and the *Surat Jalan*'s route once its row exists (TL-07; SM-02)
+- Interaction: INT-205–INT-207, and the *Surat Jalan*'s INT- row once it exists, per IG-05, with one `command_id` replayed (TL-08)
 - Browser E2E: J-FUL-03 and CJ-01's drop-ship branch (TL-09)
 - Localization/language switch: both languages on PG-032 (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9

@@ -34,7 +34,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - TASK-050 — Billing, receivables, dispute hold and Owner write-off
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
-- the Owner's answer to P11Q-02 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -63,10 +63,11 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - the numbering seeds: AX-28's seed rows writing each period's counter after every legacy number of that period, or 1 where there is none, under NM-03's period rule, a seed row the rule no longer admits recorded SKIPPED (NM-03; HO-32; DB24-09); an opening purchase keeping its legacy number when it fits its company's PURCHASE scheme, any other drawing its number at the commit from its business date's period after that period's seed row commits, a kept number at or above its period's committed seed REJECTED, and a row whose period may create no counter REJECTED (C-10) (`DIR-079` CB-01; NM-08; IMP-07)
 - after the commit, the control-total report per company against the committed facts — stock per company equal to its opening lots, receivables equal to the imported remainders, credits equal to the signed opening evidence — for the validators' signature, with `ReconcileGuards` clean (IMP-11; PRQ-06)
 - ROUTE-213 with INT-213, "Koreksi Data Awal" on an opening stock fact (`INV ReverseOpeningMovement`; `stock.reverse`), and ROUTE-214 with INT-214 on an opening receivable or credit (`FIN ContraOpeningFact`; `finance.contra`), each with its reason (IP-09): a reversal or contra by import identity, the stock limited to the unconsumed quantity with dependents restored first and SF-RSV-CUT when needed, a receivable or credit only after its applications are disposed; the form saying that a wrong opening fact is never imported again (CM-33; ADMIN_FLOW §11); both reuse the movement reversal of NX-11 (TASK-040), CM-33's stock part (TASK-038, TASK-042) and SF-CONTRA with AX-33 (TASK-031, TASK-052), TASK-040, TASK-042 and TASK-052 not ordered before this Task by the plan — raised to Planning before this Task is READY, never rebuilt here
+- **Held for the Owner's answer to P11Q-02, built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), once the narrow amendment adds its row, the Owner's batch abort, "Batalkan Batch", with its reason, for a batch that committed no row (IMP-06; PRQ-06; ADMIN_FLOW §13), as its row states; under option (b), only the Owner's V1 decision can take it out, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
-- the batch abort that IMP-06, PRQ-06 and ADMIN_FLOW §13 require — "Batalkan Batch" by the Owner with a reason, for a batch that committed no row — has no route or interaction contract in ROUTE_CONTRACTS or INTERACTION_CONTRACTS; it is not dropped: it is raised to Planning, and this Task is not READY until its contract exists (AGENT_OPERATING_MODEL, executor feedback loop)
+- the batch abort's route and interaction until the row of P11Q-02 (a) exists — never built without them (RC-06); the abort is never dropped by this Task (AGENT_OPERATING_MODEL, executor feedback loop)
 - the reservations for open projects, re-created after the import through the ordinary reservation commands before go-live (IMP-08; TASK-038); the statistics refresh and plan check after the commit (IMP-10; PRQ-08; TASK-077); the rehearsal on staging (IMP-13; TASK-077, TASK-081); the real data's dry run, sign-off, commit and reconciliation at the cutover (IMP-04; IMP-11; TASK-087); go-live and the Owner's starts on PG-061 (TASK-021; TASK-077)
 - the upload route ROUTE-228 (TASK-030); the jobs' infrastructure and the sweeper (TASK-022); the Owner review queue's *Impor* tab (TASK-058); CJ-16 end to end (TASK-064)
 
@@ -89,7 +90,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - [TEST_STRATEGY §15](../08-testing/TEST_STRATEGY.md#15-migration-backup-and-restore-tests) the opening import's tests; [§4](../08-testing/TEST_STRATEGY.md#4-environments-and-data) FX-09; [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-04, SM-09, SM-12, SM-23
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-058](../00-governance/GAP_REGISTER.md#gap-058--an-imported-purchases-number-is-undefined)
 - Architecture challenge — the sequences 11b, 11c, 14a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (55): CAP-15; DEP-05; AC-17; REF-051; WF-MIG-01; AX-28; ROUTE-058; ROUTE-213–ROUTE-214; ROUTE-272–ROUTE-275; INT-213–INT-214; INT-272–INT-275; C-47; NX-11; NX-13; BD-11; PG-058; SCR-58; UXI-32; J-MIG-01; UXS-19; NAV-058; IMP-01–IMP-13; PRQ-06; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10; GAP-010; GAP-058
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (66): O-07; CAP-15; DEP-05; AC-17; OS-02; REF-051; WF-MIG-01; CM-33; AX-28; ROUTE-058; ROUTE-213–ROUTE-214; ROUTE-272–ROUTE-275; INT-213–INT-214; INT-272–INT-275; C-47; NX-11; NX-13; BD-11; M-18; M-33–M-34; HO-18–HO-19; HO-32–HO-33; PG-058; SCR-58; UXI-32; J-MIG-01; UXS-19; NAV-058; IMP-01–IMP-13; PRQ-06; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10; GAP-010; GAP-034; GAP-058
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -123,7 +124,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - NX-13 for preparation, the dry-run result, sign-off and the commit request: lock set LK-00, LK-03, LK-06, LK-09; the commit request locks the batch scope's company rows (LK-06), checks the seed rows of the cutoff's periods, records `committed_by/at` on the SIGNED_OFF batch and starts JB-07; a resume is a further commit request that clears the refusal or failure recorded on its row (CONCURRENCY_IDEMPOTENCY §7.3)
 - each row is AX-28: STATIC lock set LK-00, LK-01, LK-03, LK-09, LK-13, LK-14, LK-15, LK-17, LK-31, first-use rows FU-01, FU-02, FU-04, FU-07 and FU-13, LK-01 for an existing project the row refers to; re-read under lock: the batch SIGNED_OFF with its commit request, the row VALID and not COMMITTED, the import identity free, NM-03's period rule for a seed row and a drawing purchase, a kept legacy number below its period's committed seed (NM-08); REJECTED C-10, CONFLICT BD-11; retry class C (§7.1, §7.2; RY-02)
 - the deterministic version-5 `command_id` `import:{batch public id}:{row number}:{import identity}` (CI-01); only a COMMITTED outcome recorded, a refusal rolled back and written on the import row so the row can run again once its cause is removed (CI-08); BD-11's committed import identity and `import_row_id` on every created fact make a rerun find the row done (C-47; M-33); JB-05, JB-07 and JB-09 sweep a lost dispatch or a dead chunk (M-34)
-- ROUTE-213 and ROUTE-214 are NX-11 as ROUTE_CONTRACTS names them — its lock set holds LK-10–LK-24, capped by LK-16 or the case counters, data-dependent for a reversed movement of a pending case, a count or a finding, FU-03 (§7.3); the locks of an opening receivable or credit — LK-25, LK-26 and LK-27, which NX-11's set does not list — are raised to Planning before this Task is READY
+- ROUTE-213 and ROUTE-214 are NX-11 as ROUTE_CONTRACTS names them — its lock set holds LK-10–LK-24, capped by LK-16 or the case counters, data-dependent for a reversed movement of a pending case, a count or a finding, FU-03 (§7.3); ROUTE-214's contra of an opening receivable or credit also takes LK-25, LK-26 and LK-27 in the order of §4 — AX-20's and AX-33's classes for the facts it writes, which NX-11's set does not list —, the stricter reading P11Q-03 asks the Owner to confirm (GAP-067)
 
 **AUDIT:**
 
@@ -249,17 +250,18 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 11. A wrong opening fact is corrected only on its record by "Koreksi Data Awal" with a reason — a stock reversal by import identity within the unconsumed quantity, dependents restored first and SF-RSV-CUT when needed; a receivable or credit contra only after its applications are disposed — and no path re-imports it (CM-33; architecture challenge 11c).
 12. No opening fact reserves stock (IMP-08).
 13. Each NX-13 command replayed with its `command_id` returns its recorded outcome (CI-05; IG-05).
+14. Once the row of P11Q-02 (a) is approved, "Batalkan Batch" aborts with its reason a batch that committed no row, so that none of its rows commits afterwards, and is refused for a batch with a committed row (IMP-06; PRQ-06; ADMIN_FLOW §13; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: each kind's validator and parser on malformed, duplicate and out-of-scope rows; the seed period rule and the legacy-number fit (TL-03)
-- Feature: ROUTE-058, ROUTE-272–ROUTE-275, ROUTE-213 and ROUTE-214 with each refusal (TL-04)
+- Feature: ROUTE-058, ROUTE-272–ROUTE-275, ROUTE-213 and ROUTE-214 with each refusal; the batch abort once its row exists (TL-04)
 - Integration: M-33's cases — a chunk and a whole batch rerun, a refused row fixed and resumed, a resume by another Owner —; M-34 with the store stopped during a commit; M-18's import cases and HO-19 with the controlled clock; JB-05, JB-07 and JB-09 crash and lost-dispatch tests (HO-18); `ReconcileGuards` clean (TL-05)
 - Authorization: `import.prepare` with every batch company in scope, `import.commit` for the Owner after the sign-off, `stock.reverse` and `finance.contra` (TL-06)
-- Route integrity: ROUTE-058, ROUTE-213, ROUTE-214 and ROUTE-272–ROUTE-275 audited (TL-07)
-- Interaction: INT-213, INT-214 and INT-272–INT-275, each with one `command_id` replayed and INT-275's step-up expiring (TL-08; IG-05)
+- Route integrity: ROUTE-058, ROUTE-213, ROUTE-214 and ROUTE-272–ROUTE-275 audited, and the abort's route once its row exists (TL-07)
+- Interaction: INT-213, INT-214 and INT-272–INT-275, and the abort's INT- row once it exists, each with one `command_id` replayed and INT-275's step-up expiring (TL-08; IG-05)
 - Browser E2E: J-MIG-01 and UXS-19 on the CI stack; CJ-16's steps rehearsed on staging by TASK-064 and TASK-081 (TL-09)
 - Localization/language switch: both languages on PG-058 and its dialogs; the report's values unchanged (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9 — CB-01's imported purchase number on PG-058 verified on the application

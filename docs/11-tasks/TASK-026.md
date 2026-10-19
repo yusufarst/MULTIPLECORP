@@ -1,6 +1,6 @@
 # TASK-026 — Clients and suppliers
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -59,7 +59,7 @@ CAP-02 and AC-02 need one generic organization → unit → PIC hierarchy in whi
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-16
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-12, SM-25
 - Architecture challenge — the sequence 1b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (28): CAP-02; AC-02; REF-009–REF-011; WF-MD-02–WF-MD-03; ROUTE-054–ROUTE-055; ROUTE-141–ROUTE-144; INT-141–INT-144; NX-01; UXN-23; D-IA-14; PG-054–PG-055; SCR-50–SCR-51; J-MD-02–J-MD-03; NAV-054–NAV-055
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (30): O-01; CAP-02; AC-02; REF-009–REF-011; IMG-01; WF-MD-02–WF-MD-03; ROUTE-054–ROUTE-055; ROUTE-141–ROUTE-144; INT-141–INT-144; NX-01; UXN-23; D-IA-14; PG-054–PG-055; SCR-50–SCR-51; J-MD-02–J-MD-03; NAV-054–NAV-055
 
 **EXPECTED MODULES / FILE AREAS:**
 

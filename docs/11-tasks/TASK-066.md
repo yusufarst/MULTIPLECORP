@@ -29,21 +29,26 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 - TASK-059 — Search and scanning
 - TASK-060 — Reports, the consolidated report and exports
 - TASK-061 — Activity history and security log
+- TASK-062 — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
+- TASK-063 — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
+- TASK-064 — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
+- TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit
 
 **BLOCKS:**
 
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
 
 **PARALLEL SAFE:** NO — it runs inside the shared browser suite on the CI stack, and its findings reopen the pages' own Tasks
 
 **IN SCOPE:**
 
-- **automated**: an accessibility engine inside the browser suite on every page state the journeys of TASK-062–TASK-064 and the gate of TASK-065 reach — dialogs, sheets, confirmations, deferred groups and outcomes included —, at the phone and desktop widths, failing the run on a violation of an AA criterion it can decide (TEST_STRATEGY §11)
+- **automated**: an accessibility engine inside the browser suite on every page state the journeys of TASK-062–TASK-064 and the gate of TASK-065 reach — dialogs, sheets, confirmations, deferred groups and outcomes included —, at the phone and desktop widths, failing the run on a violation of an AA criterion it can decide (TEST_STRATEGY §11); this Task depends on those four, so their page states and scripts exist when it runs
 - **measured**: the rendered contrast of text (4.5:1), large text and control boundaries (3:1), forced-colors mode keeping system colours; focus visible — the 2 px ring with its offset — and never obscured by a sticky header, action bar, scan dock or toast (2.4.11); targets of 24 px with a fine pointer, 44 px with a coarse pointer at every width and 48 px on the floor tasks (2.5.8; D-DS-19); reflow at 320 CSS px without horizontal page scrolling except inside a table's frame (1.4.10; GR-05); text spacing and 200 % zoom losing nothing, mandated copy wrapping (1.4.12; D-DS-18); reduced motion removing movement (D-DS-17)
 - **keyboard-only**: every critical journey operated by keyboard alone in reading order, with no trap except a dialog's focus loop and no positive tab index — UXS-41's desktop quotation with many lines among them —; no shortcut a single printable key and none active in a scan field (DESIGN_SYSTEM §13; UXI-42)
 - DESIGN_SYSTEM §15's rules checked per page: one `h1`, headings in order, landmarks and the skip link "Langsung ke Konten"; dialogs moving focus in, an inert background, Escape closing except the re-authentication, focus returning to the trigger; visible labels, `autocomplete` on the account's own e-mail and password, errors tied to fields and announced, paste and password managers allowed (3.3.8), data already entered not asked again (3.3.7); outcomes announced through a live region present from load — polite for COMMITTED and PENDING, assertive for REJECTED, CONFLICT and FAILED — and scan feedback with focus kept in the scan field (4.1.3); the idle warning with "Tetap Masuk" (2.2.1); no function needing a drag (2.5.7); consistent help (3.2.6); a different language's content carrying its own `lang`
 - **manual, at Layer 3**: a screen reader on the critical journeys on the desktop and on a phone; status by more than colour, in greyscale and for colour-blind users (UXS-42); the idle warning, the announced status messages and the dialogs' focus and return heard as a user hears them — each prepared here as a per-journey script with its expected announcements, run by a person with the reader and the device recorded, and recorded as not run until it is run (TEST_STRATEGY §11)
-- the AICWDF §27 critical checks' result per page handed to TASK-065's gate record
+- the AICWDF §27 critical checks' result per page, recorded as this Task's evidence, which TASK-070 enters in TASK-065's gate record
 - each defect recorded with its page, criterion, evidence and proposed minimum fix and sent through the executor feedback loop to the Task that owns the page — a DONE Task's regression becoming a new defect Task under TASK_PLAN §7 (AGENT_OPERATING_MODEL)
 
 **OUT OF SCOPE:**
@@ -61,7 +66,7 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 - [ADMIN_FLOW §16](../07-ux-design/ADMIN_FLOW/s16-17-handoff-traceability.md#16-handoff-obligations) UXH-05; [§15](../07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md#design) UXS-41, UXS-42; [§3](../07-ux-design/ADMIN_FLOW/s01-04-foundations.md#3-derived-interaction-requirements) UXI-42
 - [INFORMATION_ARCHITECTURE §8](../07-ux-design/INFORMATION_ARCHITECTURE.md#8-screen-inventory) the 65 pages
 - [DEFINITION_OF_DONE §2](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist) DOD-08, DOD-17; [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (2): GR-05; TL-12
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (9): O-07; CAP-14; AC-14; IMG-09; UXS-41–UXS-42; UXH-05; GR-05; TL-12
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -229,7 +234,7 @@ CAP-14 and AC-14 require an accessible interface on the phone and the desktop, a
 - Security: N/A — TASK-069's matrix; the suite's secret-like scan (SM-15)
 - Performance: N/A — TASK-068's budgets
 - Migration: N/A — no migration or import code in this Task
-- Other: the critical checks' result per page recorded for TASK-065's gate
+- Other: the critical checks' result per page recorded as this Task's evidence, entered in TASK-065's gate record by TASK-070
 
 **TEST CHECKLIST:**
 

@@ -21,7 +21,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 **DEPENDS ON:**
 
 - TASK-042 — Condition, location moves, adjustments and losses
-- the Owner's answers to P11Q-02 and P11Q-04 recorded and the narrow amendment they authorize approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -43,6 +43,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - PG-029 with NAV-029 and ROUTE-029 (SCR-27): the open findings and the pending cases with their recognition snapshot as PJ-07 projects it, the separate unattributed line of MSG-41 (UXS-39), "Tetapkan Surplus", "Tetapkan Perusahaan", "Tetapkan dengan Bukti" and "Balikkan Penetapan", each with its reason (IP-09)
 - the registration count of L-35 — a count that records a serial for every on-hand unit before a product is switched to serialized (WF-MD-04) — as count lines only; the switch is TASK-027's
 - the pending-case branch of TASK-042's ROUTE-194 and ROUTE-195, extended here (Part 4; TASK-042 hands it to this Task's case service): an unexplained loss across companies recorded through an adjustment, a disposal or a condition change opens its pending case (QS-22; SF-UNATTRIBUTED) — never a named loss —, shown as J-INV-04's *Selisih menunggu penetapan*, and the unit's later disposal converts it
+- **Held for the Owner's answers to P11Q-02 and P11Q-04, built here once the answers and their rows or definitions are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under P11Q-02 (a), once the narrow amendment adds their rows, cancelling an open count under `stock.count` (PERMISSIONS_MATRIX §4; DATABASE §4.7) and the count sheet's print control on PG-026 (INFORMATION_ARCHITECTURE §8.3), each as its rows state; under P11Q-04 (a), how a registration count assigns a serial to every unit on hand before a product becomes serialized — its movement, serial transition and posting as the amendment defines them (L-35; WF-MD-04; DATABASE §5.3, §8); under option (b) of either, a behaviour the Owner takes out of V1 is not built, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
@@ -51,9 +52,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - the dispatch identity substitution that corrects an unexpected serial (CM-36; TASK-041); the serial-policy switch (TASK-027)
 - the contra of a settlement, expense, disbursement or attribution that the coverage line lists — CM-22, CM-38 and AX-33 (ROUTE-260): SF-CONTRA's users are payments, disbursements, expenses, settlements and purchase cost (WORKFLOWS §6), built by TASK-052 and TASK-054; a count's facts are corrected by CM-28's linked reversal with its exact loss reversal instead
 - the other coverage entries whose source rows concern no count — L-06, an invoice void's dispositions (TASK-049); L-40, a drop-ship confirmation with its delivery (TASK-046); C-47, the opening import's batch and row identity (TASK-057)
-- cancelling an open count, which `stock.count` covers (PERMISSIONS_MATRIX §4) and `stock_counts` would hold, but for which no route or interaction contract exists (ROUTE_CONTRACTS §3) — held for Planning, never built as an unrouted control (RC-06)
-- how a registration count assigns its serials to lots, which no source states (DATABASE §8 names only the switch's precondition) — held for Planning
-- a visible print control on PG-026: ROUTE_CONTRACTS §4 does not mark one (RC-06) — held for Planning; the print style alone is in scope
+- a held behaviour of P11Q-02 or P11Q-04 that the Owner's answer takes out of V1 (option (b)); and, until the answer and its rows exist, any control of a held behaviour — never built without its route (RC-06); the count sheet's print style is in scope regardless
 
 **REFERENCES:**
 
@@ -72,7 +71,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - [DESIGN_SYSTEM §12.1](../07-ux-design/DESIGN_SYSTEM.md#121-status-system) the count, finding and pending-case families; [§14.2](../07-ux-design/DESIGN_SYSTEM.md#142-inventory); [§13.2](../07-ux-design/DESIGN_SYSTEM.md#132-scanner); [§17](../07-ux-design/DESIGN_SYSTEM.md#17-print-views)
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-05; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs); [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-05; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-05, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-009--dispatch-locks-alone-do-not-protect-stock-counts-and-serial-scans) GAP-009; [GAP-030](../00-governance/GAP_REGISTER.md#gap-030--an-unexplained-fungible-loss-across-companies-needs-an-owner-before-cost-moves)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (83): BR-INV-01–BR-INV-13; CALC-01; CALC-09; CALC-11; FS-01; WF-INV-05; SF-UNATTRIBUTED; CM-09; CM-22; CM-38; AX-06–AX-07; AX-33; AX-37; L-03; L-06–L-07; L-13–L-15; L-31; L-35–L-36; L-40; L-42; L-44; L-48; ROUTE-026; ROUTE-029; ROUTE-191–ROUTE-193; ROUTE-197–ROUTE-200; INT-191–INT-193; INT-197–INT-200; C-01–C-04; C-07–C-09; C-24; C-28; C-33–C-35; C-47; C-61; NX-05; BD-09; BD-12–BD-13; PG-026; PG-029; SCR-24; SCR-27; J-INV-05; UXS-39; NAV-026; NAV-029; GAP-009; GAP-030
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (107): O-02; CAP-06; AC-06; AC-16; AC-22; OS-02; REF-027; IMG-03–IMG-04; OWN-01; OWN-04–OWN-05; BR-INV-01–BR-INV-13; CALC-01; CALC-09; CALC-11; FS-01; WF-MD-04; WF-INV-05; SF-UNATTRIBUTED; CM-09; CM-27–CM-28; CM-34; CM-36; AX-06–AX-07; AX-33; AX-37; L-03; L-06–L-07; L-13–L-15; L-31; L-35–L-36; L-40; L-42; L-44; L-48; ROUTE-026; ROUTE-029; ROUTE-191–ROUTE-195; ROUTE-197–ROUTE-200; INT-191–INT-195; INT-197–INT-200; C-01–C-04; C-07–C-09; C-24; C-28; C-33–C-35; C-47; C-61; NX-05; BD-09; BD-12–BD-13; M-04; M-06; M-30; HO-12; PG-026; PG-029; SCR-24; SCR-27; J-INV-04–J-INV-05; UXS-39; NAV-026; NAV-029; GAP-009; GAP-030
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -247,17 +246,18 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 11. A repeated scan of one serial in a count counts once, an unexpected serial becomes a finding and is never re-registered, and one `command_id` replayed on any count command returns the recorded outcome (SF-SCAN; L-48; CI-05; AC-16).
 12. After every scenario `ReconcileGuards` reports no difference for the product, scope, lot, consumption, lot-cost and case guards (C-61; HO-12).
 13. An unexplained loss across companies recorded through PG-027's adjustment, disposal or condition change opens its pending case — never a named loss —, shown as *Selisih menunggu penetapan*, and the unit's later disposal converts it; the same `command_id` replayed returns the recorded outcome (QS-22; SF-UNATTRIBUTED; J-INV-04; CI-05).
+14. Once the rows of P11Q-02 (a) are approved, an open count is cancelled through its route as its rows state, and PG-026's print control prints the count sheet; once P11Q-04 (a) defines it, a registration count assigns a serial to every unit on hand by the defined movement and serial transition before the product becomes serialized (L-35; WF-MD-04; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the variance splitter — named lots, the L-42 confirmation, the SF-UNATTRIBUTED split, the surplus order —, the exposure and group bounds, against FX-01 7–9 (TL-03)
-- Feature: ROUTE-191–ROUTE-193 and ROUTE-197–ROUTE-200 with each refusal their contracts name (TL-04)
+- Feature: ROUTE-191–ROUTE-193 and ROUTE-197–ROUTE-200 with each refusal their contracts name; once P11Q-02 (a)'s rows and P11Q-04 (a)'s definitions exist, the count's cancellation, the sheet's print control and the registration count's serial assignment (TL-04)
 - Integration: M-04, M-06 and M-30 with real sessions in both orders; FX-05's cases — a pending case with dispatch continuing, an Owner resolution with and without substitution, an evidence resolution, stock found before and after resolution, an error reversal, a condition-change conversion —; FX-03's unknown-company loss; the transportation argument that an overlap group's bounds never deadlock a resolution; the reconciliation suite after each (TL-05; TEST_STRATEGY §5, §6)
 - Authorization: `stock.count` against `stock.count_apply`; the OWNER_ONLY denials OD-08 and OD-09 for an Admin, also through a replayed or forged request; OD-10's conditions one by one; a count loss on another company's lot without a grant on the bearer (AZ-08) (TL-06; SM-04)
-- Route integrity: ROUTE-026, ROUTE-029, ROUTE-191–ROUTE-193, ROUTE-197–ROUTE-200 audited (TL-07; SM-02)
-- Interaction: INT-191–INT-193 and INT-197–INT-200 per IG-05, with one `command_id` replayed; INT-015's fungible confirmation on ROUTE-193 (TL-08)
+- Route integrity: ROUTE-026, ROUTE-029, ROUTE-191–ROUTE-193, ROUTE-197–ROUTE-200 audited, and the held behaviours' routes once their rows exist (TL-07; SM-02)
+- Interaction: INT-191–INT-193 and INT-197–INT-200, and the held behaviours' INT- rows once they exist, per IG-05, with one `command_id` replayed; INT-015's fungible confirmation on ROUTE-193 (TL-08)
 - Browser E2E: J-INV-05 — counting on the phone, applying on the desktop — and CJ-05's pending unattributed loss; PG-029's resolution paths (TL-09)
 - Localization/language switch: both languages on PG-026 and PG-029 (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9

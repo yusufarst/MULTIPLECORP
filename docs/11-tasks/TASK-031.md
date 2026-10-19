@@ -1,6 +1,6 @@
 # TASK-031 — Correction cases
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -62,7 +62,7 @@ Committed history never disappears: every correction revises, voids, reverses or
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-04, SM-25
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-005--cancellation-may-encounter-delivered-billed-or-paid-downstream-records) GAP-005
 - Architecture challenge — the sequences 4a, 10a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (51): BR-CR-01–BR-CR-06; SF-CASE; SF-CONTRA; CM-01–CM-04; CM-08; CM-10; CM-12; CM-19–CM-20; CM-23–CM-26; CM-29–CM-31; CM-36–CM-38; L-06; L-11; L-17; L-30; L-32; L-37; L-46; L-48; ROUTE-040; ROUTE-271; INT-271; C-16; C-45–C-46; C-53; C-55; NX-06; PG-040; SCR-33; UXI-25; IP-09; MSG-40; NAV-040; GAP-005
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (74): O-06; CAP-13; AC-12; REF-057; BR-CR-01–BR-CR-06; SF-CASE; SF-CONTRA; CM-01–CM-38; L-06; L-11; L-17; L-30; L-32; L-37; L-46; L-48; ROUTE-040; ROUTE-271; INT-271; C-16; C-45–C-46; C-53; C-55; NX-06; PG-040; SCR-33; UXI-25; IP-09; MSG-40; NAV-040; GAP-005
 
 **EXPECTED MODULES / FILE AREAS:**
 

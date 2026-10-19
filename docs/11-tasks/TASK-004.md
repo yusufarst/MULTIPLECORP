@@ -133,7 +133,7 @@ PRQ-12 asks for the verification of the release tooling and of P8's tooling befo
 
 **TOOL REQUIREMENTS:**
 
-- Context7: REQUIRED — each tool's current official licence and pricing pages
+- Context7: N/A — each tool's licence and price are read on its official licence and pricing pages and dated; Context7, which serves library documentation, is itself among the tools whose state this Task records (AICWDF §5.1)
 - Graphify: N/A — no code analysis
 - Browser E2E: REQUIRED — Playwright confirmed on both engines
 - Other: TestSprite's free entitlement checked without creating a paid account
@@ -220,20 +220,29 @@ PRQ-12 asks for the verification of the release tooling and of P8's tooling befo
 
 **TEST CHECKLIST:**
 
-- [ ] Each tool verified and recorded
-- [ ] TestSprite's entitlement recorded with evidence
-- [ ] No paid tier adopted
-- [ ] Final diff review
+- [ ] Lint: N/A — no code changes
+- [ ] Typecheck: N/A — no code changes
+- [ ] Relevant automated tests: Playwright's smoke run on Chromium and WebKit, the accessibility engine's run and the load tool's run, as the proof that each tool works
+- [ ] Authorization: N/A — no route, query class or command
+- [ ] Route integrity: N/A — no route added or changed
+- [ ] Interaction behavior: N/A — no INT- contract
+- [ ] Browser E2E if required: Playwright's smoke run on Chromium and WebKit
+- [ ] Responsive/adaptive if required: N/A — no page
+- [ ] Visual breathing room/density if UI: N/A — no page
+- [ ] Production build: N/A — no code change
+- [ ] Security checks if required: the dependency audit of each installed tool (TL-14)
+- [ ] Database safety review: N/A — no schema or data change
+- [ ] Final diff review: TOOLCHAIN's rows against their dated evidence, TestSprite's entitlement with its evidence, and no paid tier adopted
 
 **COMPLETION EVIDENCE:**
 
 - Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
+- Build result: N/A — no code change; the tools' own runs are the test outputs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: Playwright's smoke run on Chromium and WebKit, as the proof of availability
+- Localization evidence: N/A — no page
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20), or TestSprite's COST_POLICY §4C.2 record for the Owner's decision
 - Files changed: the list, every one inside the IN SCOPE areas
 - Commit SHA: the commit under the Owner's identity, with no AI attribution
 - Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)

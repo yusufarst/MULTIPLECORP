@@ -32,7 +32,10 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 
 **BLOCKS:**
 
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
+- TASK-081 — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
 
 **PARALLEL SAFE:** NO — its suites share the CI stack, the browser harness and the synthetic fixtures with the other verification Tasks, and its session and failure injections must not run beside them
 
@@ -72,7 +75,7 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 - [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop); [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule)
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-008--retry-safety-is-undefined-after-a-lost-response-or-key-reuse) GAP-008; [GAP-044](../00-governance/GAP_REGISTER.md#gap-044--admin_flows-login-and-session-journeys-predate-totp-and-google-sign-in)
 - Architecture challenge — the sequences 8a, 17b, 19a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (13): TL-09; CJ-09–CJ-13; CJ-16; CJ-18–CJ-19; CJ-21–CJ-22; GAP-008; GAP-044
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (76): AC-01–AC-03; AC-13–AC-14; AC-16–AC-17; AC-23; OS-02–OS-03; OS-06; IMG-01; IMG-03–IMG-04; IMG-09; OWN-01–OWN-02; OWN-04–OWN-05; M-10; M-38; J-ACC-01–J-ACC-02; J-MD-01–J-MD-05; J-INV-07; J-MIG-01; UXS-01–UXS-08; UXS-11–UXS-13; UXS-18–UXS-28; UXS-30–UXS-33; UXS-40; UXS-42–UXS-43; UXH-01–UXH-02; UXH-07; UXH-10; TL-09; CJ-09–CJ-13; CJ-16; CJ-18–CJ-19; CJ-21–CJ-22; GAP-008; GAP-044
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -237,7 +240,7 @@ These journeys prove the cross-cutting promises no single module owns: isolation
 - Localization/language switch: TL-10's switch case in CJ-18; the full two-language check is TASK-067's
 - Visual breathing room/density: N/A — TASK-065's gate
 - Responsive: N/A — TASK-065's band-edge matrix
-- Accessibility: the engine of TASK-066 runs on every page state these journeys reach; CJ-22's status cues (TEST_STRATEGY §11)
+- Accessibility: CJ-22's status cues; the engine's run on every page state these journeys reach is TASK-066's, which depends on them (TEST_STRATEGY §11)
 - Production build: TL-13 for the suite's code — no failure-injection route in the production build
 - Security: SM-13's browser part — no form data, identifier or S3 or S4 value in any browser storage, history unreadable after every authentication boundary; SM-20's simulated provider; SM-23's identical denial pages — the full cases TASK-069's (TL-14)
 - Performance: N/A — TASK-068's budgets; the journeys' network capture is kept for it

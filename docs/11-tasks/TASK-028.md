@@ -1,6 +1,6 @@
 # TASK-028 — Rack locations and minimum stock
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -54,7 +54,7 @@ Receiving, counts and moves record a location for every unit (WF-MD-05; L-13; L-
 - [ADMIN_FLOW J-MD-05](../07-ux-design/ADMIN_FLOW/s10-a-journeys.md#101-access-and-master-data)
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-16
 - [PERFORMANCE §7](../06-api-performance/PERFORMANCE.md#7-dashboards-reports-and-exports) QS-17's statement
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (9): WF-MD-05; ROUTE-057; ROUTE-148; INT-148; NX-01; PG-057; SCR-53; J-MD-05; NAV-057
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (18): O-02; CAP-06; AC-22; REF-023; REF-028; IMG-03–IMG-04; OWN-04–OWN-05; WF-MD-05; ROUTE-057; ROUTE-148; INT-148; NX-01; PG-057; SCR-53; J-MD-05; NAV-057
 
 **EXPECTED MODULES / FILE AREAS:**
 

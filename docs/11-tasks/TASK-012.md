@@ -52,7 +52,7 @@ Field projection is invariant 3 of EXECUTION_CONTEXT; the pooled stock with pres
 - [PERFORMANCE §8](../06-api-performance/PERFORMANCE.md#8-images-and-inertia-props)
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md) SM-12, SM-25
 - the architecture challenge's sequences 1a, 8b–8c, 18b ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (93): PJ-01–PJ-23; RD-01–RD-10; XL-1–XL-5; DP-01–DP-20; D-PM-01–D-PM-12; WS-07; TM-13–TM-14; TM-18–TM-21; TM-24–TM-25; TM-28; TM-52–TM-55; PF-31–PF-36; SM-25; GAP-003; GAP-006
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (105): O-02; O-06; CAP-06; CAP-13; AC-13; OS-03; REF-004; REF-056; IMG-03; OWN-02; OWN-04–OWN-05; PJ-01–PJ-23; RD-01–RD-10; XL-1–XL-5; DP-01–DP-20; D-PM-01–D-PM-12; WS-07; TM-13–TM-14; TM-18–TM-21; TM-24–TM-25; TM-28; TM-52–TM-55; PF-31–PF-36; SM-25; GAP-003; GAP-006
 
 **EXPECTED MODULES / FILE AREAS:**
 

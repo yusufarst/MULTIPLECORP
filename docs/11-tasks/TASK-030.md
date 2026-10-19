@@ -67,7 +67,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-09, SM-12, SM-23, SM-25; [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-12, QB-16
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-034--two-owner-review-items-have-no-record-to-be-listed-from) GAP-034
 - Architecture challenge — the sequences 6d, 20a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (48): WF-DOC-02; SF-EVIDENCE; ROUTE-038; ROUTE-228–ROUTE-231; INT-013; INT-228–INT-231; FL-01–FL-11; TM-16; TM-20; TM-23; TM-37–TM-42; TM-46; TM-55; NX-07; NX-14; BD-14–BD-15; PG-038; SCR-36; UXI-33; IP-16; J-DOC-02; UXS-17–UXS-18; NAV-038; SM-09; component Upload
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (52): CAP-09; REF-034; IMG-06; WF-DOC-02; SF-EVIDENCE; ROUTE-038; ROUTE-228–ROUTE-231; INT-013; INT-228–INT-231; FL-01–FL-11; TM-16; TM-20; TM-23; TM-37–TM-42; TM-46; TM-55; NX-07; NX-14; BD-14–BD-15; PG-038; SCR-36; UXI-33; IP-16; J-DOC-02; UXS-17–UXS-18; NAV-038; SM-09; component Upload; GAP-034
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -22,11 +22,14 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 
 - TASK-005 — Schema foundations — IAM and OPS tables, history and types
 - TASK-010 — Audit and security logging
+- TASK-013 — Command envelope, command identity, idempotency and the lock order
 - TASK-015 — Design system — tokens, components, patterns and states
+- TASK-016 — Application shell, navigation and the company context
 
 **BLOCKS:**
 
 - TASK-018 — Two-step verification (TOTP) and recovery codes
+- TASK-022 — Jobs, files and the document renderer
 
 **PARALLEL SAFE:** NO — it changes the authentication pipeline every page depends on
 
@@ -40,6 +43,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - the prohibitions of AU-17: no impersonation, no shared identity
 - the pages PG-001 and PG-003 with NAV-001 and NAV-003, ROUTE-001, ROUTE-003, ROUTE-101, ROUTE-106, ROUTE-108 and ROUTE-109 with their INT- rows
 - GAP-043: the Fortify behaviours SECURITY reads in source verified against the installed version (SM-22)
+- HO-20's session behaviours, each verified by a TL-05 test so that a changed version fails it: session deletion by account, the session middleware variant that skips the write for a background request, and how a rehash at login is written (RV-10) — deactivation's use of them tested with TASK-024 (TEST_STRATEGY §6)
 
 **OUT OF SCOPE:**
 
@@ -60,7 +64,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - [PERFORMANCE §10](../06-api-performance/PERFORMANCE.md#10-session-and-authentication-load) PF-37–PF-40
 - [ADMIN_FLOW J-ACC-01](../07-ux-design/ADMIN_FLOW/s10-a-journeys.md#10-journeys)
 - Architecture challenge — the sequence 19a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (151): O-06; CAP-13; DEP-08; AC-12–AC-13; AC-16; OS-03; REF-001; REF-003–REF-004; REF-049; REF-056–REF-057; OWN-02; OWN-04; ROUTE-001; ROUTE-003; ROUTE-101; ROUTE-106; ROUTE-108–ROUTE-109; INT-001; INT-010–INT-011; INT-018; INT-101; INT-106; INT-108–INT-109; AU-01–AU-13; AU-15; AU-17; WS-04–WS-05; WS-12; TM-01–TM-08; TM-28–TM-29; TM-42–TM-43; TM-45; TM-52; TM-58; TM-61; TM-63; TM-66–TM-69; TM-71; TM-73; D-SEC-01–D-SEC-05; D-SEC-07–D-SEC-13; D-SEC-15–D-SEC-17; H6-06–H6-07; H6-11; H6-15–H6-16; H7-01; H7-04–H7-05; H7-09; H7-12–H7-15; H7-17–H7-19; H8-16–H8-18; H9-04; H9-11; HO-24; HO-40; PF-37–PF-40; RB-03; RB-07–RB-08; RB-10; PG-001; PG-003; SCR-01–SCR-02; UXI-16–UXI-17; UXI-19–UXI-22; UXI-32; D-UX-03; IP-10–IP-11; J-ACC-01; MSG-19–MSG-20; MSG-27–MSG-29; MSG-33–MSG-34; UXS-26; UXH-11; PT-28; GR-12; NAV-001; NAV-003; SM-06; SM-08; SM-16–SM-17; component Sign-in compositions; GAP-043–GAP-044
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (146): O-06; CAP-13; DEP-08; REF-001; REF-056; IMG-01; ROUTE-001; ROUTE-003; ROUTE-101; ROUTE-106; ROUTE-108–ROUTE-109; INT-001; INT-010–INT-011; INT-018; INT-101; INT-106; INT-108–INT-109; RG-11; AU-01–AU-13; AU-15; AU-17; WS-04–WS-05; WS-12; LG-01; TM-01–TM-08; TM-28–TM-29; TM-42–TM-43; TM-45; TM-52; TM-58; TM-61; TM-63; TM-66–TM-69; TM-71; TM-73; D-SEC-01–D-SEC-05; D-SEC-07–D-SEC-13; D-SEC-15–D-SEC-17; H6-06–H6-07; H6-11; H6-15–H6-16; H7-01; H7-04–H7-05; H7-09; H7-12–H7-15; H7-17–H7-19; H8-16–H8-18; H9-04; H9-11; CI-09; HO-02; HO-20; HO-40; PF-37–PF-40; RB-03; RB-07–RB-08; RB-10; PG-001; PG-003; SCR-01–SCR-02; UXI-16–UXI-17; UXI-19–UXI-22; UXI-32; D-UX-03; IP-10–IP-11; J-ACC-01; MSG-19–MSG-20; MSG-27–MSG-29; MSG-33–MSG-34; UXS-26; UXH-11; PT-28; GR-12; NAV-001; NAV-003; SM-06; SM-08; SM-16–SM-17; component Sign-in compositions; GAP-043–GAP-044
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -89,6 +93,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 
 **AUDIT:**
 
+- the business audit event of each account-changing identity step — a password set through a credential link, and the use of an OWNER_RECOVERY link — written in the step's own transaction: the account as actor with authority class SYSTEM, or, for an OWNER_RECOVERY link, no actor with the credential link named (PERMISSIONS_MATRIX RG-11; CONCURRENCY_IDEMPOTENCY CI-09; LG-01); its security event follows after the commit
 - security events for sign-in, logout, failures, throttling, credential-link issue and use (LG-); no password or token in any record
 
 **DATABASE IMPACT ASSESSMENT:**
@@ -197,13 +202,15 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 
 **ACCEPTANCE CRITERIA:**
 
-1. A wrong e-mail, a wrong password and an unknown account get the same answer, status and timing (AU-04).
+1. A wrong e-mail, a wrong password, an unknown account and an inactive account get the same answer, status and timing (AU-04).
 2. Repeated failures are throttled per identifier and per address without locking the account (AU-05).
 3. A password outside AICWDF-COMPAT-8 or on the blocklist is refused; an unreachable breached-password service is recorded and skipped (AU-03).
 4. A credential link works once, expires as AU-11–AU-12 state, and carries its token only in the fragment.
 5. Idle and absolute timeouts end the session; deactivation ends every session (AU-07, AU-09).
 6. Fortify registers no route that the contracts do not list (SM-22).
 7. Signing in again in place after a 401 or 419 lets the pending command be retried with its `command_id`: for the same account it replays rather than runs twice, and for another account it answers CONFLICT without disclosure (CI-01–CI-09; HO-02; UXH-11; UXI-16; architecture challenge 19a, with TASK-013 and TASK-016).
+8. Each account-changing identity step writes its business audit event in its own transaction — the account as actor with authority class SYSTEM, or no actor with the link named for an OWNER_RECOVERY link — and its security event after the commit; a rolled-back step leaves neither (RG-11; CI-09; LG-01).
+9. HO-20's session behaviours — session deletion by account, the skipped session write of a background request and how a rehash at login is written (RV-10) — each pass a TL-05 test that fails on a changed framework version, deactivation's use of them tested with TASK-024 (TEST_STRATEGY §6).
 
 **TEST REQUIREMENTS:**
 
@@ -211,7 +218,7 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - Typecheck: TL-02
 - Unit: the password profile and the blocklist (TL-03; SM-16)
 - Feature: every authentication flow of SM-06–SM-07 (TL-04)
-- Integration: sessions in PostgreSQL and the limiter on Valkey (TL-05)
+- Integration: sessions in PostgreSQL and the limiter on Valkey; each identity step's audit row in its own transaction, a rollback leaving neither it nor the security event; HO-20's session deletion by account, skipped background write and rehash at login (TL-05)
 - Authorization: EN-03's unauthenticated exceptions only (TL-06)
 - Route integrity: ROUTE-001, -003, -101, -106, -108, -109 audited (TL-07)
 - Interaction: their INT- rows (TL-08)

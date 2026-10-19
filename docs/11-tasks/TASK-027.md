@@ -61,7 +61,7 @@ CAP-03 and AC-03 require one catalogue in which a known code resolves the intend
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01; [§9](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md#9-stale-state) ST-01, ST-09; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-16
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-09, SM-25
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-025--multi-unit-conversion-and-cost-split-arithmetic-can-silently-break-reconciliation) GAP-025
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (26): CAP-03; AC-03; AC-16; REF-012–REF-015; REF-024; IMG-04; OWN-04; WF-MD-04; ROUTE-056; ROUTE-145–ROUTE-147; INT-145–INT-147; NX-01; UXN-23; D-IA-14; PG-056; SCR-52; J-MD-04; NAV-056; GAP-025
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (31): O-01; CAP-03; AC-03; AC-16; REF-012–REF-015; REF-024; REF-049; IMG-01; IMG-03–IMG-04; OWN-01; OWN-04; WF-MD-04; ROUTE-056; ROUTE-145–ROUTE-147; INT-145–INT-147; NX-01; UXN-23; D-IA-14; PG-056; SCR-52; J-MD-04; NAV-056; GAP-025
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -34,7 +34,7 @@ Every Task's DONE needs its layers to pass with evidence ([TEST_STRATEGY §2](..
 
 **IN SCOPE:**
 
-- the CI workflow in the public repository at no cost: TL-01–TL-08, TL-13, TL-14 and TL-16 on every push and pull request, the browser suite of TL-09–TL-12 on Chromium and WebKit (DIR-083 OE-02)
+- TASK-001's minimal CI workflow, in the public repository at no cost, extended to every deterministic layer: TL-01–TL-08, TL-13, TL-14 and TL-16 on every push and pull request, the browser suite of TL-09–TL-12 on Chromium and WebKit (DIR-083 OE-02)
 - PostgreSQL and Valkey services in CI matching INFRASTRUCTURE §3's production-like stack
 - Pest on PHPUnit with its parallel database strategy; Playwright installed project-locally
 - the synthetic fixture harness: factories and seeders with synthetic data only, the numeric fixtures FX-01–FX-10 as reusable datasets (TEST_STRATEGY §4)
@@ -60,7 +60,7 @@ Every Task's DONE needs its layers to pass with evidence ([TEST_STRATEGY §2](..
 - [SECURITY §7](../05-security/SECURITY.md#7-secrets-production-boundary-and-supply-chain) SX-05, SX-06
 - [INFRASTRUCTURE §3](../09-operations/INFRASTRUCTURE.md#3-environments)
 - [TOOLCHAIN](../00-governance/TOOLCHAIN.md)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (43): REF-061; SX-06; TM-48; TS-01–TS-12; TL-01–TL-16; FX-01–FX-10; INF-05; GAP-004
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (45): OS-06; REF-061; SX-06; TM-48; TS-01–TS-12; TL-01–TL-16; FX-01–FX-10; SM-15; INF-05; GAP-004
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -32,6 +32,8 @@ AICWDF §26 and TEST_STRATEGY §7 make the critical UI journeys a browser proof 
 
 **BLOCKS:**
 
+- TASK-066 — Accessibility — WCAG 2.2 AA across every page
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
 
 **PARALLEL SAFE:** NO — its suites share the CI stack, the browser harness and the synthetic fixtures with the other verification Tasks, and its defects reopen module work
@@ -67,7 +69,7 @@ AICWDF §26 and TEST_STRATEGY §7 make the critical UI journeys a browser proof 
 - [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop) the executor feedback loop; [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule), [§5](../08-testing/DEFINITION_OF_DONE.md#5-module-and-release-completion)
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-015--scannersession-behavior-can-create-false-success-or-duplicate-intent) GAP-015; [GAP-021](../00-governance/GAP_REGISTER.md#gap-021--treating-the-reference-journey-as-mandatory-would-create-dummy-transactions)
 - Architecture challenge — the sequence 9a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (7): TL-09; CJ-01–CJ-03; CJ-05; CJ-07–CJ-08
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (48): AC-03–AC-07; AC-15; AC-20; AC-22; OS-02; OS-06; IMG-01–IMG-05; OWN-04–OWN-05; J-INV-01–J-INV-06; J-PRJ-01–J-PRJ-02; J-QUO-01; J-FUL-01–J-FUL-04; J-PUR-01–J-PUR-02; J-FIN-04; UXS-10; UXS-15; UXS-34–UXS-35; UXS-39; UXS-41; UXS-44; UXH-01; TL-09; CJ-01–CJ-03; CJ-05; CJ-07–CJ-08
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -229,7 +231,7 @@ AICWDF §26 and TEST_STRATEGY §7 make the critical UI journeys a browser proof 
 - Localization/language switch: N/A — TASK-067's suite and CJ-18 (TASK-064)
 - Visual breathing room/density: N/A — TASK-065's gate
 - Responsive: N/A — TASK-065's band-edge matrix; these journeys run at their own phone and desktop widths
-- Accessibility: the engine of TASK-066 runs on every page state these journeys reach (TEST_STRATEGY §11)
+- Accessibility: N/A — the engine's run on every page state these journeys reach is TASK-066's, which depends on them (TEST_STRATEGY §11)
 - Production build: TL-13 for the suite's code; the journeys run on the CI stack of TEST_STRATEGY §4
 - Security: N/A — TASK-069's matrix; the suite's secret-like scan (SM-15)
 - Performance: N/A — TASK-068's budgets; the journeys' network capture is kept for it

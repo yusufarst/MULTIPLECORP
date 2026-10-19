@@ -1,6 +1,6 @@
 # TASK-047 — Service fulfillment and handover
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -59,7 +59,7 @@ A service-only project must complete without fictitious warehouse movements (AC-
 - [ADMIN_FLOW J-FUL-04](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#104-fulfilment); [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command); [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions); [IP-19](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-19--several-commands-on-one-screen); [IP-16](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#ip-16--evidence-upload)
 - [DESIGN_SYSTEM §4](../07-ux-design/DESIGN_SYSTEM.md#4-design-decisions) D-DS-23; [§14.3](../07-ux-design/DESIGN_SYSTEM.md#143-document-preview); [§10](../07-ux-design/DESIGN_SYSTEM.md#10-component-composition) the component Document composer and paper
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01's service-only project, CJ-03, CJ-15; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (14): DOC-08; BR-DOC-04; WF-FUL-04; L-19; L-26; ROUTE-033; ROUTE-208–ROUTE-209; INT-208–INT-209; PG-033; SCR-31; J-FUL-04; NAV-033
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (24): O-02; CAP-07; DOC-08; AC-07–AC-08; AC-20; IMG-02; IMG-04–IMG-06; BR-DOC-04; WF-FUL-04; CM-27; L-19; L-26; ROUTE-033; ROUTE-208–ROUTE-209; INT-208–INT-209; PG-033; SCR-31; J-FUL-04; NAV-033
 
 **EXPECTED MODULES / FILE AREAS:**
 

@@ -58,7 +58,7 @@ Staff must know quantities on hand, reserved, unusable and available, where they
 - [DESIGN_SYSTEM §14.2](../07-ux-design/DESIGN_SYSTEM.md#142-inventory) PT-17; [§9.2](../07-ux-design/DESIGN_SYSTEM.md#92-lists-tables-and-filters) PT-04–PT-08
 - [PERFORMANCE §4](../06-api-performance/PERFORMANCE.md#4-pagination) PF-13, PF-41; [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-05; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01–PFM-03, PFM-20; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-23, SM-25; [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-05, CJ-09
 - Architecture challenge — the sequence 8c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (40): O-02; CAP-06; AC-06; AC-16; AC-20; AC-22; OS-02; REF-021–REF-030; REF-058; OWN-04–OWN-05; ROUTE-018–ROUTE-020; ROUTE-212; INT-212; NX-11; D-IA-17; PG-018–PG-020; SCR-18–SCR-20; J-INV-04; J-MD-05; UXS-20; UXS-39; NAV-018–NAV-020
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (48): O-02; CAP-06; AC-06; AC-12–AC-13; AC-16; AC-20; AC-22; OS-02; REF-021–REF-030; REF-049; REF-058; IMG-03–IMG-04; OWN-01–OWN-02; OWN-04–OWN-05; CM-28; ROUTE-018–ROUTE-020; ROUTE-212; INT-212; NX-11; D-IA-17; PG-018–PG-020; SCR-18–SCR-20; J-INV-04; J-MD-05; UXS-20; UXS-39; NAV-018–NAV-020
 
 **EXPECTED MODULES / FILE AREAS:**
 

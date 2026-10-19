@@ -6,7 +6,7 @@ Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governan
 
 **STATUS:** TODO
 
-**RISK CLASS:** STANDARD
+**RISK CLASS:** HIGH
 
 **EXECUTOR:** AGENT
 
@@ -22,10 +22,12 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 - TASK-011 — Authorization core — capabilities, roles, grants, company scope and the route audit
 - TASK-012 — Field projection, read classes and cross-company links
+- TASK-013 — Command envelope, command identity, idempotency and the lock order
 - TASK-015 — Design system — tokens, components, patterns and states
 
 **BLOCKS:**
 
+- TASK-017 — Password sign-in, sessions and credential links
 - TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 - TASK-023 — My account — password, two-step verification, Google link and language
 - TASK-024 — Users and access — accounts, roles, capabilities and company grants
@@ -50,6 +52,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - the system page PG-005 (ROUTE-005; NAV-005) for any address the account cannot open (AZ-11; IP-21), without an oracle
 - the global states of IA §8.8 and the conventions NV-01–NV-08: back actions, state preservation, the breadcrumbs
 - UXH-11's shell rules: a 401 to an unauthenticated Inertia request intercepted in place (IP-11; INT-010), the step-up answered by a status the client intercepts (IP-10), the absolute-session deadline as a non-sensitive timestamp outside WS-07's page data, background requests marked
+- HO-06: a background request marked and never carrying a command, thumbnail and preview routes background by their route and a download not (H7-13; RV-06); HO-10's search and lookup budgets — a term of three letters or digits, exact before similar, the cut said (CONCURRENCY_IDEMPOTENCY §19)
 - the page addressing of IA §11 and the route conventions RC-01–RC-06 for every page route
 
 **OUT OF SCOPE:**
@@ -72,7 +75,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - [PERMISSIONS_MATRIX §6](../05-security/PERMISSIONS_MATRIX.md#6-company-scope-rules)
 - [SECURITY §4](../05-security/SECURITY.md#4-web-and-input-security) WS-07
 - the architecture challenge's sequences 8a, 19a ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (159): BR-ACC-01–BR-ACC-03; WF-ACC-01; L-03; ROUTE-005; ROUTE-281; RC-01–RC-06; INT-003–INT-005; INT-007; INT-010; INT-281; C-32; C-54; CS-01–CS-08; AU-07; WS-03; WS-07; TM-04; TM-10; TM-12; TM-15; TM-17; TM-19; TM-27–TM-28; TM-43; TM-61; H6-06; H7-02–H7-03; H7-05–H7-08; H7-10–H7-11; H7-13; H7-19; HO-01–HO-03; HO-05–HO-10; HO-38; PF-19–PF-23; RB-01; RB-04–RB-06; RB-09; UXN-01–UXN-26; D-IA-01–D-IA-06; D-IA-18–D-IA-19; D-IA-21–D-IA-23; PG-005; SCR-04; UXI-03; UXI-15–UXI-18; UXI-20; D-UX-01–D-UX-10; IP-06; IP-11; IP-17; IP-21; MSG-33–MSG-34; UXS-04; UXS-22–UXS-23; UXS-25; UXH-11; PT-01–PT-02; PT-04; GR-02; GR-11; GR-14; GR-22; NAV-005; NV-01–NV-08; component Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link; component Phone app bar and bottom bar; *Lainnya*; component Filter toolbar and company view; component Menu and "Tindakan Lain"; account menu
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (160): CAP-17; AC-23; OS-03; REF-050; IMG-09; OWN-02; BR-ACC-01–BR-ACC-03; WF-ACC-01; L-03; ROUTE-005; ROUTE-281; RC-01–RC-06; INT-003–INT-005; INT-007; INT-010; INT-281; C-32; C-54; CS-01–CS-08; AU-07; WS-03; WS-07; TM-04; TM-10; TM-12; TM-15; TM-17; TM-19; TM-27–TM-28; TM-43; TM-61; H6-06; H7-02–H7-03; H7-05–H7-08; H7-10–H7-11; H7-13; H7-19; HO-02–HO-03; HO-06–HO-07; HO-10; PF-19–PF-23; RB-01; RB-04–RB-06; RB-09; UXN-01–UXN-26; D-IA-01–D-IA-06; D-IA-18–D-IA-19; D-IA-21–D-IA-23; PG-005; SCR-04; UXI-03; UXI-15–UXI-18; UXI-20; D-UX-01–D-UX-10; IP-06; IP-11; IP-17; IP-21; MSG-33–MSG-34; UXS-04; UXS-22–UXS-23; UXS-25; UXH-11; PT-01–PT-02; PT-04; GR-02; GR-11; GR-14; GR-22; NAV-005; NV-01–NV-08; component Shell — sidebar, *Menu lengkap*, icon rail, top bar, skip link; component Phone app bar and bottom bar; *Lainnya*; component Filter toolbar and company view; component Menu and "Tindakan Lain"; account menu
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -218,7 +221,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 4. The 61st search in a minute is answered MSG-20 by WS-12's search limiter, separate from the scanner's (TM-43).
 5. Each account sees exactly the entries its capabilities allow, and an absent entry's route still refuses on the server.
 6. The working filter never widens the server's scope, and every record shows its company label (PT-04).
-7. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input and the pending command's `command_id`, so the retry replays rather than runs twice (IP-11; CI-01–CI-09; HO-02; UXH-11; architecture challenge 19a).
+7. An unauthenticated Inertia request answers 401 and the shell re-authenticates in place, keeping unsent input and the pending command's `command_id`, so the retry replays rather than runs twice (IP-11; CI-01–CI-09; HO-02; UXH-11; architecture challenge 19a) — proven here against a stub of the sign-in, and end to end with the real sign-in by TASK-017.
 8. A command needing step-up answers a status the client intercepts, never a redirect (IP-10).
 9. PG-005 answers every unopenable address alike, without telling a missing record from a forbidden one (IP-21).
 10. A command refused at its in-command re-authorization after a grant was revoked shows its denial on the open page as IP-21 presents it (SQ-22; architecture challenge 8a).
@@ -275,7 +278,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 
 **SAFE NEXT TASK:**
 
-- TASK-021 — when its other dependencies are DONE and its READY gate holds
+- TASK-017 — when its other dependencies are DONE and its READY gate holds
 
 **DO NOT DO:**
 

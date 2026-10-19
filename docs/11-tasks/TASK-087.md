@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** BLOCKED — waiting on P11Q-05
 
 **RISK CLASS:** HIGH
 
@@ -25,6 +25,7 @@ Opening stock and receivables counted twice, or a moving baseline, would corrupt
 - TASK-083 — The alternate operator named and the dispute's governance recorded
 - TASK-085 — Installation, the first Owner, two-step enrolment and the APP_KEY rotation
 - TASK-086 — UAT with the Owner and the validators
+- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -65,7 +66,7 @@ Opening stock and receivables counted twice, or a moving baseline, would corrupt
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-011](../00-governance/GAP_REGISTER.md#gap-011--a-database-restore-alone-cannot-recover-usable-business-documents); [GAP-014](../00-governance/GAP_REGISTER.md#gap-014--eighteen-days-is-a-target-not-a-measured-delivery-capacity); [GAP-064](../00-governance/GAP_REGISTER.md#gap-064--numbers-already-used-on-paper-after-a-restores-recovery-point)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-06, OE-08, OE-11, OE-14
 - Architecture challenge — the sequences 12a, 14b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (23): DEP-06; BK-09; INF-01; INF-03; CUT-01–CUT-08; GLC-01; GLC-04–GLC-05; GLC-14; GLC-16; GLC-18; GLC-25; GAP-010–GAP-011; GAP-014; GAP-064
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (38): DEP-06; BK-06; BK-09; AC-17–AC-18; OS-02; OWN-06; CM-33; M-33; HO-32–HO-33; HO-36; UXH-10; INF-01; INF-03; TT-F01; TT-F03–TT-F04; TT-F12; CUT-01–CUT-08; GLC-01; GLC-04–GLC-05; GLC-14; GLC-16; GLC-18; GLC-25; GAP-010–GAP-011; GAP-014; GAP-064
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -271,7 +272,7 @@ Opening stock and receivables counted twice, or a moving baseline, would corrupt
 **DO NOT DO:**
 
 - add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
-- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- let an agent access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
 - add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
 - start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
 - weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))

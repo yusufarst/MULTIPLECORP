@@ -1,6 +1,6 @@
 # TASK-061 — Activity history and security log
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -61,7 +61,7 @@ Every committed business action keeps its individual actor, time, reason, before
 - [INFORMATION_ARCHITECTURE §8.6](../07-ux-design/INFORMATION_ARCHITECTURE.md#86-reports-master-data-settings-and-owner-areas) PG-063, PG-064; [§8.7](../07-ux-design/INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages) SCR-59, SCR-60; [§9](../07-ux-design/INFORMATION_ARCHITECTURE.md#9-dashboards-and-queues) the Owner's security notices; [§11](../07-ux-design/INFORMATION_ARCHITECTURE.md#11-page-addressing)
 - [DESIGN_SYSTEM §9.4](../07-ux-design/DESIGN_SYSTEM.md#94-actions-overlays-and-feedback) PT-18, PT-19; [§9.2](../07-ux-design/DESIGN_SYSTEM.md#92-lists-tables-and-filters) PT-05–PT-08; [§17](../07-ux-design/DESIGN_SYSTEM.md#17-print-views)
 - [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-05; [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-12
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (9): ROUTE-063–ROUTE-064; INT-020; PG-063–PG-064; SCR-59–SCR-60; NAV-063–NAV-064
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (10): REF-049; ROUTE-063–ROUTE-064; INT-020; PG-063–PG-064; SCR-59–SCR-60; NAV-063–NAV-064
 
 **EXPECTED MODULES / FILE AREAS:**
 

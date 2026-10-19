@@ -34,7 +34,7 @@ Every module writes through identity, audit, the command log and correction case
 **IN SCOPE:**
 
 - the eight IAM tables — `users`, `roles`, `capabilities`, `role_capabilities`, `user_roles`, `user_capability_grants`, `user_company_grants`, `user_external_identities` — and the seven OPS tables — `audit_events`, `security_events`, `command_log`, `correction_cases`, `import_batches`, `import_rows`, `legacy_archive_items` — with their C- rows and IX- indexes
-- the framework session table AU-06 places in PostgreSQL, as SECURITY §2 states it
+- the infrastructure stores PostgreSQL holds outside the 125 business tables, each never projected raw and holding identifiers rather than business data (PERMISSIONS_MATRIX §7.2; DP-09): the framework session table AU-06 places in PostgreSQL, as SECURITY §2 states it; the credential-token store of AU-11 — for each link its account, purpose (ONBOARDING, RESET, OWNER_RECOVERY), issuer, none for an OWNER_RECOVERY link, keyed token hash, issue and expiry times and use or revocation — with IX-04's keys, its rows the lock class LK-04; the `export_requests` record of H6-04 — requester, report, whitelisted filters, company set, view-capability set, masking context, state (PENDING, RUNNING, READY, FAILED, WITHHELD), claim time and claim count, file and expiry — with IX-05; and the framework's failed-job table, its payloads identifiers only (H9-04; LG-04); the queue, cache, lock and limiter stores being Valkey (INFRASTRUCTURE §2), no table of theirs is created, nor a job-batch table, V1 dispatching no framework batch (CONCURRENCY_IDEMPOTENCY JB-07; ARCHITECTURE §11)
 - the shared conventions: UUIDv7 public identifiers, the exact numeric types, WIB business dates, the history and correction representation (DATABASE §13), the snapshot matrix (§14), the guard registry (§3.1)
 - the database roles of DATABASE §28 (H9-01) as local and CI definitions
 - the migrate-from-empty test of TL-16
@@ -43,6 +43,7 @@ Every module writes through identity, audit, the command log and correction case
 
 - tables of any other module (TASK-006–TASK-009)
 - any behaviour that writes the tables (TASK-010, TASK-013, TASK-017 onward)
+- the stores' behaviour — credential links and their purge (TASK-017), export requests (TASK-060), job retention (TASK-022)
 
 **REFERENCES:**
 
@@ -55,9 +56,12 @@ Every module writes through identity, audit, the command log and correction case
 - [DATABASE §28](../04-architecture/DATABASE/s25-28-transactions-handoffs.md#28-security-ready-data-design)
 - [PERFORMANCE §12](../06-api-performance/PERFORMANCE.md#12-index-register-and-verification-procedure) IX-
 - [INFRASTRUCTURE §4.4](../09-operations/INFRASTRUCTURE.md#44-database-roles)
-- [SECURITY §2](../05-security/SECURITY.md#2-authentication-sessions-and-credentials) AU-06
+- [SECURITY §2](../05-security/SECURITY.md#2-authentication-sessions-and-credentials) AU-06, AU-11
+- [CONCURRENCY_IDEMPOTENCY §17](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#17-p5-obligations-h6-01h6-12) H6-04
+- [PERMISSIONS_MATRIX §7.2](../05-security/PERMISSIONS_MATRIX.md#72-table-classification) — the infrastructure tables outside the 125
+- [INFRASTRUCTURE §2](../09-operations/INFRASTRUCTURE.md#2-topology)
 - Architecture challenge — the sequences 11a, 11b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (74): BR-SN-01–BR-SN-03; D-DB-01–D-DB-14; C-11; C-17; C-36; C-40; C-46; C-48; C-58–C-60; C-62–C-65; H9-01; IX-01–IX-07; IX-09–IX-10; IX-12–IX-19; TL-16; table users; table roles; table capabilities; table role_capabilities; table user_roles; table user_capability_grants; table user_company_grants; table user_external_identities; table audit_events; table security_events; table command_log; table correction_cases; table import_batches; table import_rows; table legacy_archive_items; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (62): REF-057; BR-SN-01–BR-SN-03; D-DB-01–D-DB-14; C-32; C-40; C-46–C-48; C-53; C-62–C-65; AU-11; H6-04; H9-01; H9-04; IX-03–IX-05; IX-09; IX-13–IX-15; IX-18–IX-19; TL-16; table users; table roles; table capabilities; table role_capabilities; table user_roles; table user_capability_grants; table user_company_grants; table user_external_identities; table audit_events; table security_events; table command_log; table correction_cases; table import_batches; table import_rows; table legacy_archive_items; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-08; migration-rule DB24-10
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -90,7 +94,7 @@ Every module writes through identity, audit, the command log and correction case
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: PROPOSED — DATABASE §4.1 and §4.13 tables, expand-only
+- Schema change: PROPOSED — DATABASE §4.1 and §4.13 tables and the infrastructure stores of PERMISSIONS_MATRIX §7.2, expand-only
 - Migration required: YES — expand-only
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -194,9 +198,9 @@ Every module writes through identity, audit, the command log and correction case
 
 **ACCEPTANCE CRITERIA:**
 
-1. Migrating an empty database creates exactly the 15 tables of §4.1 and §4.13 with every column, key and constraint DATABASE states, and the session table of AU-06.
-2. Each C- row for these tables — C-11, C-17, C-36, C-40, C-46, C-48, C-58–C-60 and C-62–C-65 — is enforced where its row says, proven by a test that violates it.
-3. Each IX- index of these tables — IX-01–IX-07, IX-09–IX-10 and IX-12–IX-19 — exists with the verification PERFORMANCE §12 asks.
+1. Migrating an empty database creates exactly the 15 tables of §4.1 and §4.13 with every column, key and constraint DATABASE states, and the infrastructure stores named in scope — the session table of AU-06, the credential-token store of AU-11, `export_requests` of H6-04 and the failed-job table —, the stores' keys proven by tests that violate them: a second unused, unrevoked link for one account and purpose, a repeated token hash (IX-04) and an export request in an unknown state.
+2. Each C- row the database enforces on these tables — C-32, C-46, C-47, C-48, C-53 and C-62–C-64 — is enforced where its row says, proven by a test that violates it, a row that also spans the tables of later schema Tasks built here for these tables; the schema parts of C-40 — the capabilities and `authority_class` — and of C-65 — the TOTP columns — are created here, their behaviour proven by TASK-011 and by TASK-018 and TASK-023 (DATABASE §18).
+3. Each IX- index of these tables and stores — IX-03, IX-04, IX-05, IX-09, IX-13, IX-18 and IX-19, IX-14's partial `import_rows` and `security_events` indexes and IX-15's partial `import_batches` index — exists with the verification PERFORMANCE §12 asks.
 4. Money, quantity and date columns use exactly the types of DATABASE §17.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed — with the mixed-version safeguards of PRQ-04, job payload versions and one-release command validity among them, and run again from empty in CI (TL-16; architecture challenge 11a).
 6. The import tables `import_batches` and `import_rows` hold the committed import identity on which BD-11's keys rest, so the opening import run again creates no second lot, receivable, credit or project for one legacy row, every created fact carrying its `import_row_id` (DATABASE §24; AX-28; BD-11; architecture challenge 11b, with TASK-057).
@@ -207,7 +211,7 @@ Every module writes through identity, audit, the command log and correction case
 - Typecheck: TL-02
 - Unit: casts and value conventions of DATABASE §16–§17 (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05)
+- Integration: each C- row of these tables violated and refused at its level; the stores' keys violated — a second unused, unrevoked link for one account and purpose, a repeated token hash, an export request in an unknown state (TL-05)
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task

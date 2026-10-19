@@ -30,6 +30,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 - TASK-020 — Installation step, the first Owner and the Owner-recovery path
 - TASK-031 — Correction cases
 - TASK-061 — Activity history and security log
+- TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
 
 **PARALLEL SAFE:** NO — every command Task depends on the audit writer
 
@@ -52,7 +53,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 - [DATABASE §23](../04-architecture/DATABASE/s20-24-index-storage-migration.md#23-audit-persistence)
 - [SECURITY §10](../05-security/SECURITY.md#10-handoff-obligations) H9-08
 - the architecture challenge's sequences 10a–10b ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (31): BR-XC-01–BR-XC-03; C-53; LG-01–LG-07; TM-01; TM-05–TM-06; TM-44; TM-48; TM-51–TM-53; TM-57; TM-60; TM-63; TM-66–TM-67; TM-70–TM-73; H8-20; H9-08; GAP-016
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (35): O-06; CAP-13; REF-049; BR-XC-01–BR-XC-03; C-53; LG-01–LG-07; TM-01; TM-05–TM-06; TM-44; TM-48; TM-51–TM-53; TM-57; TM-60; TM-63; TM-66–TM-67; TM-70–TM-73; H8-20; H9-08; HO-38; GAP-016
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -78,6 +79,8 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 **CONCURRENCY / IDEMPOTENCY:**
 
 - the audit row commits or rolls back with its command — one transaction (TX-; LG-01)
+- security events written outside business transactions, so that a refused or rolled-back command's event persists, and a failed security-event write never rolls a command back or changes its outcome, logged with its correlation id (LG-02, LG-04)
+- the two TECH-022 kinds — EVIDENCE_DUPLICATE_UNDISCLOSED and IMPORT_COLLISION_UNDISCLOSED — written only after the command's outcome is durable, as one insert that references no row and takes no lock, under the partial UNIQUE key (`event_kind`, `command_id`, `related_public_id`) with `ON CONFLICT DO NOTHING`, so that a repeated attempt adds nothing (LG-02)
 
 **AUDIT:**
 
@@ -191,8 +194,9 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 
 1. A test command writes its business audit row in its own transaction: a rollback leaves no audit row, and a commit always has one, also when the process ends right after the commit (LG-01; architecture challenge 10b).
 2. Security events are written for the cases LG-02–LG-07 name and never into `audit_events`.
-3. No secret, password, token or code value appears in any audit or security row or log line.
-4. The query classes return rows only through the capabilities `audit.view` and `security_log.view`.
+3. A refused or rolled-back command's security event persists; a failed security-event write changes no outcome and is logged with its correlation id; the two TECH-022 kinds are written after the outcome is durable, under their partial UNIQUE key, and a repeated attempt adds nothing (LG-02).
+4. No secret, password, token or code value appears in any audit or security row or log line.
+5. The query classes return rows only through the capabilities `audit.view` and `security_log.view`.
 
 **TEST REQUIREMENTS:**
 
@@ -200,7 +204,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 - Typecheck: TL-02
 - Unit: the before/after and linkage builders (TL-03)
 - Feature: N/A — no endpoint
-- Integration: audit in the same transaction: commit and rollback (TL-05)
+- Integration: audit in the same transaction: commit and rollback; a refused and a rolled-back command's security event persisting; a failed security-event write changing no outcome; the TECH-022 kinds written after the outcome, a repeat adding nothing (TL-05; LG-02)
 - Authorization: the query classes refuse without their capability (TL-06)
 - Route integrity: N/A — no route added or changed
 - Interaction: N/A — no INT- contract in this Task

@@ -1,12 +1,12 @@
 # TASK-032 — Projects — list, form, journey page and amendment
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** TODO
 
-**RISK CLASS:** STANDARD
+**RISK CLASS:** HIGH
 
 **EXECUTOR:** AGENT
 
@@ -68,7 +68,7 @@ CAP-04 and AC-04 need one hub where staff find a project's number, company, clie
 - [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-01, QB-02; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-04; [PERFORMANCE §4](../06-api-performance/PERFORMANCE.md#4-pagination) PF-41, PF-42
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-054--the-project-list-cannot-show-each-projects-journey-stage-blocker-and-next-action-within-its-query-budget) GAP-054
 - Architecture challenge — the sequences 1a, 9a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (70): CAP-04; CAP-12; AC-04; AC-15; AC-20; OS-01; REF-017–REF-018; REF-038; IMG-02; BR-PRJ-01–BR-PRJ-06; WF-PRJ-01; L-10–L-12; L-20–L-21; ROUTE-010–ROUTE-011; ROUTE-013; ROUTE-151–ROUTE-153; INT-151–INT-153; C-38–C-39; C-51; NX-03; IC-14; UXN-02; D-IA-09; PG-010–PG-011; PG-013; SCR-09–SCR-11; SCR-14; J-PRJ-01–J-PRJ-04; J-MD-02; J-QUO-01; J-INV-02–J-INV-03; J-FUL-01–J-FUL-05; J-PUR-01; J-FIN-01; J-ADM-01; UXS-28; UXS-44; PT-31; GR-03; NAV-010–NAV-011; NAV-013; PFM-04; GAP-054
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (74): O-01; CAP-04; CAP-12; AC-04; AC-15; AC-20; OS-01; REF-016–REF-018; REF-038; IMG-01–IMG-02; IMG-04; BR-PRJ-01–BR-PRJ-06; WF-PRJ-01; L-10–L-12; L-20–L-21; ROUTE-010–ROUTE-011; ROUTE-013; ROUTE-151–ROUTE-153; INT-151–INT-153; C-38–C-39; C-51; NX-03; IC-14; UXN-02; D-IA-09; PG-010–PG-011; PG-013; SCR-09–SCR-11; SCR-14; J-PRJ-01–J-PRJ-04; J-MD-02; J-QUO-01; J-INV-02–J-INV-03; J-FUL-01–J-FUL-05; J-PUR-01; J-FIN-01; J-ADM-01; UXS-28; UXS-44; PT-31; GR-03; NAV-010–NAV-011; NAV-013; PFM-04; GAP-054
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -218,7 +218,7 @@ CAP-04 and AC-04 need one hub where staff find a project's number, company, clie
 5. After confirmation an amendment of commercial values is refused with the path to a quotation revision or a re-confirmation (L-20).
 6. "Buang Draf" discards only a DRAFT without committed downstream records, after its confirmation, and its number stays retired and is never drawn again (L-37; C-10).
 7. Two Admins editing different lines of one draft: the later save is CONFLICT with the input kept (ST-01; PX-07).
-8. Each PG-010 row shows its company code, number, title, client, state and deadline at once, and its stage, blocker marker and next action when the journey-summary group arrives, within twelve statements and 500 ms; without `finance.view` the group omits QS-15's money items (`DIR-077` CA-06; QB-01; PJ-13; GAP-054).
+8. Each PG-010 row shows its company code, number, title, client, state and deadline at once, and its stage, blocker marker and next action when the journey-summary group arrives, within twelve statements in CI — the group's 500 ms measured on staging by TASK-068's scripts in TASK-079 (PERFORMANCE_TARGETS §1) —; without `finance.view` the group omits QS-15's money items (`DIR-077` CA-06; QB-01; PJ-13; GAP-054).
 9. PG-010 offers no stage filter unless one is shown bounded by PF-42 at 10x and 100x (PFM-04).
 10. PG-011 shows its header, primary action and parts at once and loads at most three deferred groups within QB-02's budgets; a part of a family the viewer lacks is absent, never masked or shown as zero (QB-02; UXS-44; INFORMATION_ARCHITECTURE §8).
 11. The project's confirmed data — client, unit, PIC, lines, prices — reaches the quotation, purchase, delivery, invoice and documents without being typed again (AC-04; OS-01; REF-017).

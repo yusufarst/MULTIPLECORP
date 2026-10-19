@@ -6,7 +6,7 @@ Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-0
 
 **STATUS:** TODO
 
-**RISK CLASS:** STANDARD
+**RISK CLASS:** HIGH
 
 **EXECUTOR:** AGENT
 
@@ -70,7 +70,7 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 - [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-06; [TEST_STRATEGY §4](../08-testing/TEST_STRATEGY.md#4-environments-and-data) FX-07; [§12](../08-testing/TEST_STRATEGY.md#12-devices-and-uat); [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-14
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-009--dispatch-locks-alone-do-not-protect-stock-counts-and-serial-scans) GAP-009; [GAP-015](../00-governance/GAP_REGISTER.md#gap-015--scannersession-behavior-can-create-false-success-or-duplicate-intent); [GAP-020](../00-governance/GAP_REGISTER.md#gap-020--mobile-first-and-existing-usb-scanners-do-not-prove-device-compatibility)
 - Architecture challenge — the sequence 8b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (33): DEP-03; SF-SCAN; ROUTE-009; ROUTE-281–ROUTE-282; INT-005–INT-006; INT-281–INT-282; WS-03; TM-43; PF-19–PF-23; PG-009; SCR-08; UXI-34; UXI-39; IP-15; IP-17; UXS-33–UXS-35; D-DS-08; PT-20; PT-27; NAV-009; component Search and scan; GAP-009; GAP-015; GAP-020
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (44): O-01; CAP-03; CAP-17; DEP-03; AC-03; AC-23; REF-050; IMG-01; IMG-04; IMG-09; SF-SCAN; ROUTE-009; ROUTE-281–ROUTE-282; INT-005–INT-006; INT-281–INT-282; WS-03; TM-43; PF-19–PF-23; PG-009; SCR-08; UXI-34; UXI-39; IP-15; IP-17; UXS-33–UXS-35; D-DS-08; PT-20; PT-27; DA-06–DA-07; NAV-009; component Search and scan; GAP-009; GAP-015; GAP-020
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -219,7 +219,7 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 6. A scanner burst never submits a command: Enter in the scan field only looks up, and a burst arriving while focus is outside a field that accepts scans is discarded with its notice (IP-15; DESIGN_SYSTEM §13.2; GAP-015).
 7. Without a scanner the same field takes a typed SKU and "Cari Produk" sits beside it; on the phone the scan field stays at the bottom above the action bar and a multi-line receipt runs one line at a time, scan-led (UXS-34; UXS-35; D-DS-08).
 8. The search and scanner limiters refuse with MSG-20 at their limits, the scanner's separate from search (WS-12; TM-43).
-9. The type-ahead answers within 200 ms and an exact scan lookup within 150 ms at 1x and 10x on staging, their query counts within QB-03 and QB-06 in CI (PFM-06; QB-03; QB-06).
+9. The type-ahead's and the exact scan lookup's query counts stay within QB-03 and QB-06 in CI; their times — 200 ms and 150 ms at 1x and 10x — are measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI (PFM-06; QB-03; QB-06; PERFORMANCE_TARGETS §1).
 
 **TEST REQUIREMENTS:**
 

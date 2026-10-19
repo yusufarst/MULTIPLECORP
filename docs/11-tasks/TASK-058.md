@@ -1,6 +1,6 @@
 # TASK-058 — Home, Work and Review — signals and the action queue
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -34,6 +34,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 - TASK-067 — Localization completeness and the per-page copy lists
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
+- TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
 
 **PARALLEL SAFE:** NO — its signal statements read the guards and roots of every module and set the shared query budget QB-10
 
@@ -70,7 +71,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 - [DESIGN_SYSTEM §9.5](../07-ux-design/DESIGN_SYSTEM.md#95-dashboard-records-and-media) PT-21; [§10](../07-ux-design/DESIGN_SYSTEM.md#10-component-composition) Chart, KPI tile; [§18](../07-ux-design/DESIGN_SYSTEM.md#18-anti-ai-slop-mapping) SLOP-18, SLOP-28, SLOP-34, SLOP-38; [Annex B](../07-ux-design/DESIGN_SYSTEM.md#annex-b-the-carried-items-gr-01gr-23) GR-23
 - [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-10; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-05, PFM-07, PFM-15; [TEST_STRATEGY §9](../08-testing/TEST_STRATEGY.md#9-the-uiux-consistency-gate) CA-10 and CB-03; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-09, CJ-13, CJ-22
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-034--two-owner-review-items-have-no-record-to-be-listed-from) GAP-034; [GAP-060](../00-governance/GAP_REGISTER.md#gap-060--berandas-receivables-figure-and-ageing-chart-lie-outside-qb-10)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (70): CAP-17; AC-23; REF-007–REF-008; REF-046–REF-048; REF-050; REF-059; IMG-09; QS-01–QS-24; ROUTE-006–ROUTE-008; INT-019–INT-020; PF-24–PF-30; PF-43; D-IA-07–D-IA-08; D-IA-11; D-IA-15; PG-006–PG-008; SCR-05–SCR-07; J-ACC-01; UXS-18–UXS-19; UXS-40; UXS-43; PT-21; GR-23; NAV-006–NAV-008; component Chart; GAP-034; GAP-060
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (72): CAP-17; AC-23; REF-007–REF-008; REF-046–REF-048; REF-050; REF-059; IMG-09; QS-01–QS-24; ROUTE-006–ROUTE-008; INT-019–INT-020; HO-38; PF-24–PF-30; PF-43; D-IA-07–D-IA-08; D-IA-11; D-IA-15; PG-006–PG-008; SCR-05–SCR-07; J-ACC-01; UXS-18–UXS-19; UXS-25; UXS-40; UXS-43; PT-21; GR-23; NAV-006–NAV-008; component Chart; GAP-034; GAP-060
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -219,7 +220,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 3. An Admin's request for `/beranda` or `/tinjauan` answers the not-found page, identical to a nonexistent address, with no entry, badge or count for it anywhere (OD-14; AZ-11; UXS-25).
 4. A committed payment, stock change or correction appears in its signals at the next refresh, without waiting for completion (BR-XD-05; AC-23).
 5. Each row opens the page where its next action happens for an account holding that capability, otherwise the record's view; a record gone out of scope answers MSG-09 (INT-019; IA §9.1).
-6. *Beranda* loads its frame and group headings at once and five deferred groups within QB-10 — at most twelve statements per signal group and seven for G5 with the receivables position, the bound rising by at most one —, its period figures read in one snapshot within 1 s (QB-10; PF-43; PFM-05; GAP-060).
+6. *Beranda* loads its frame and group headings at once and five deferred groups within QB-10's counts — at most twelve statements per signal group and seven for G5 with the receivables position, the bound rising by at most one —, its period figures read in one snapshot; QB-10's 1 s is measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI (QB-10; PF-43; PFM-05; GAP-060; PERFORMANCE_TARGETS §1).
 7. The one-company view shows *Umur piutang* as a chart of defined values with its table, the *migrasi* bucket included; no KPI shows a delta, trend or sparkline (GR-23; SLOP-18; SLOP-34; D-IA-15).
 8. The Owner's security notices list the events since the Owner's previous sign-in as neutral types with time and link, derived by one bounded statement, nothing marked read (IA §9; PFM-15; INT-020).
 9. *Tinjauan* lists every QS-14 source in its four tabs — the hidden evidence duplicate and import collision with both records under the Owner's projection —, newest first within the window, with the previous-sign-in divider and no approve, dismiss or read control (UXS-18; UXS-19; UXS-40; GAP-034).

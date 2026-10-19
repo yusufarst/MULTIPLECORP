@@ -1,6 +1,6 @@
 # TASK-023 — My account — password, two-step verification, Google link and language
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -66,7 +66,7 @@ SECURITY AU-13 gives every authenticated account self-service of its own credent
 - [CONCURRENCY_IDEMPOTENCY §10](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#10-command-identity-and-replay) CI-09; [§11](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#11-separate-duplicates) BD-19; [§16](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#16-authorization-and-revocation-races) RV-10, RV-12, RV-14, RV-16; [§17](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#17-p5-obligations-h6-01h6-12) H6-13–H6-15; [§18](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s18-scenarios.md#18-mandatory-concurrency-and-failure-scenarios) M-39, M-41, M-42; [§19](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s19-20-handoff-traceability.md#19-handoff-obligations) HO-41
 - [ADMIN_FLOW J-ACC-01](../07-ux-design/ADMIN_FLOW/s10-a-journeys.md#101-access-and-master-data); [§14](../07-ux-design/ADMIN_FLOW/s14-15-messages-scenarios.md#14-message-catalogue) MSG-27, MSG-29; [§3](../07-ux-design/ADMIN_FLOW/s01-04-foundations.md#3-derived-interaction-requirements) UXI-22
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-02, SM-18–SM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (59): ROUTE-065; ROUTE-111–ROUTE-118; INT-002; INT-111–INT-118; AU-13; AU-19; AU-23–AU-24; TM-52; TM-59–TM-60; TM-62–TM-63; TM-66–TM-67; TM-72–TM-73; D-SEC-16–D-SEC-17; D-SEC-20–D-SEC-21; H6-13–H6-15; H7-14; H7-16–H7-18; H8-18–H8-20; NX-02; BD-19; HO-41; RB-03; RB-10; PG-065; SCR-03; UXI-22; J-ACC-01; MSG-29; NAV-065; SM-18–SM-20
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (64): CAP-13; ROUTE-065; ROUTE-111–ROUTE-118; INT-002; INT-111–INT-118; C-65; AU-13; AU-19; AU-23–AU-24; TM-52; TM-59–TM-60; TM-62–TM-63; TM-66–TM-67; TM-72–TM-73; D-SEC-16–D-SEC-17; D-SEC-20–D-SEC-21; H6-13–H6-15; H7-14; H7-16–H7-18; H8-18–H8-20; NX-02; BD-19; M-39; M-41–M-42; HO-41; RB-03; RB-10; PG-065; SCR-03; UXI-22; J-ACC-01; MSG-29; NAV-065; SM-18–SM-20
 
 **EXPECTED MODULES / FILE AREAS:**
 

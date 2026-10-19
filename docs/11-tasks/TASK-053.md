@@ -20,9 +20,10 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 
 **DEPENDS ON:**
 
+- TASK-048 — Client returns (sales return)
 - TASK-051 — Payments, applications and bank statement lines
 - TASK-052 — Deduction settlements and contras
-- the Owner's answer to P11Q-02 recorded and the narrow amendment it authorizes approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -40,12 +41,13 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - the unbacked refund: its shortfall shown on its case and on PG-048, blocking the case's closure and normal completion until a later real payment of that client and company is applied to the refund disbursement, resolving it, or the disbursement is contra'd as an entry error (WF-FIN-06; QS-07; QS-14; C-44)
 - money received into the wrong company (CM-20, BR-FIN-07 a): the receiving company's refund through this route, the fresh payment to the right one through TASK-051's ROUTE-251, each its own command (ADMIN_FLOW §11)
 - PG-048 with NAV-048 and ROUTE-048 (SCR-44; J-FIN-06): credit per client and company with its sources, refunds and their state, "Terapkan ke Invoice" and "Kembalikan Dana" by capability
+- **Held for the Owner's answer to P11Q-02, built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), once the narrow amendment adds its row, capability and column, the third disposition of project-originated credit, "hold with reason", recorded on PG-048 with its reason and audit (WF-FIN-06), the disposition completion predicate 9 reads through TASK-055; under option (b), if the Owner takes it out of V1, it is not built, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
 - payments, applications, reallocations and the payment's contra (ROUTE-251–ROUTE-254; TASK-051); the refund's contra and its control (ROUTE-260; TASK-052)
 - opening customer credit's import and its correction (CM-33; ROUTE-214; TASK-057)
-- the third disposition of project-originated credit that WF-FIN-06 and completion predicate 9 name — "hold with reason" —, for which no route, interaction, capability or column exists — held for Planning; apply and refund are in scope
+- the credit hold if the Owner's answer to P11Q-02 takes it out of V1 (option (b)), and, until its row, capability and column exist, any control for it — never built without its route (RC-06); apply and refund are in scope regardless
 - the completion predicate that reads credit dispositions and unbacked refunds (TASK-055); the cashflow reports (CALC-14; TASK-060)
 
 **REFERENCES:**
@@ -62,7 +64,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - [NAVIGATION_CONTRACTS §2.5](../07-ux-design/NAVIGATION_CONTRACTS.md#25-finance) NAV-048; [INFORMATION_ARCHITECTURE §8.5](../07-ux-design/INFORMATION_ARCHITECTURE.md#85-finance) PG-048; [§8.7](../07-ux-design/INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages) SCR-44
 - [ADMIN_FLOW J-FIN-06](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#106-finance); [§11](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals) CM-20, CM-21, CM-38; [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command); [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions); [IP-16](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#ip-16--evidence-upload)
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-01 3, FX-03's refunds and reallocation, FX-04's Rp1 refund-shortfall attack; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs); [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-04; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-07, PFM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (66): BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-06; CM-13; AX-23; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-048; ROUTE-256; INT-256; C-13–C-15; C-18; C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; BD-02; BD-14; PG-048; SCR-44; J-FIN-06; NAV-048
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (81): O-04; CAP-10; AC-10; AC-16; OS-02; REF-041–REF-043; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-06; CM-13; CM-19–CM-21; CM-38; AX-23; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-048; ROUTE-256; INT-256; C-13–C-15; C-18; C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; BD-02; BD-14; M-14; PG-048; SCR-44; J-FIN-06; NAV-048
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -216,17 +218,18 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 5. Credit is applied only to an issued invoice of the same client and company; never to another company's invoice (BR-FIN-07; C-14).
 6. A refund racing a contra or application on the same source leaves the source's capacity never above its real money; one `command_id` replayed refunds once (M-14; CI-05; AC-16).
 7. Credit and refunds show nothing without `finance.view`, and "Kembalikan Dana" is absent without `refund.record` (AZ-01; SM-04; SM-25).
+8. Once the row and column of P11Q-02 (a) are approved, project-originated credit is held with its reason from PG-048, audited, and counts as dispositioned for completion predicate 9; credit neither applied, refunded nor held still blocks it (WF-FIN-06; WF-PRJ-03; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the derived credit per client and company, zero on a source with a shortfall, against FX-01 3 (TL-03)
-- Feature: ROUTE-256 with each refusal; the credit view's figures (TL-04)
+- Feature: ROUTE-256 with each refusal; the credit view's figures; the credit hold once its row and column exist (TL-04)
 - Integration: M-14 with real sessions, both orders; FX-04's Rp1 refund-shortfall attack and its legitimate-shortfall contrast; FX-03's refunds and reallocation; a refund's typed exits each once; the reconciliation suite after each (TL-05; TEST_STRATEGY §5, §6)
 - Authorization: `refund.record` as a separately granted ADM_PLUS capability; `payment.apply` for the application (TL-06; SM-04)
-- Route integrity: ROUTE-048 and ROUTE-256 audited (TL-07; SM-02)
-- Interaction: INT-256 per IG-05, with one `command_id` replayed (TL-08)
+- Route integrity: ROUTE-048 and ROUTE-256 audited, and the hold's route once its row exists (TL-07; SM-02)
+- Interaction: INT-256, and the hold's INT- row once it exists, per IG-05, with one `command_id` replayed (TL-08)
 - Browser E2E: J-FIN-06; CJ-04's credit and refund (TL-09)
 - Localization/language switch: both languages on PG-048 (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9

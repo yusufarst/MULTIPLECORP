@@ -1,6 +1,6 @@
 # TASK-060 — Reports, the consolidated report and exports
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -71,7 +71,7 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 - [DESIGN_SYSTEM §10](../07-ux-design/DESIGN_SYSTEM.md#10-component-composition) Chart; [§17](../07-ux-design/DESIGN_SYSTEM.md#17-print-views); [Annex B](../07-ux-design/DESIGN_SYSTEM.md#annex-b-the-carried-items-gr-01gr-23) GR-19, GR-23
 - [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-11, QB-15; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-03, PFM-16; [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-11, SM-25; [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-14
 - Architecture challenge — the sequence 8b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (52): O-05; CAP-11; AC-11; REF-016; REF-044–REF-045; CALC-02; CALC-04; CALC-10; CALC-12–CALC-14; ROUTE-051–ROUTE-053; ROUTE-283–ROUTE-284; INT-283–INT-284; PF-24–PF-30; PF-43; D-IA-12; D-IA-15; PG-051–PG-053; SCR-47–SCR-49; UXI-09; UXI-12; UXI-29; IP-12; J-INV-07; J-FIN-02; UXS-09; UXS-23; UXS-36; UXS-39; UXH-11; GR-19; GR-23; NAV-051–NAV-053; component Chart
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (67): O-05; CAP-11; CAP-17; AC-11; AC-23; OS-02–OS-03; REF-016; REF-044–REF-047; IMG-07; IMG-09; OWN-01–OWN-02; OWN-05; CALC-02; CALC-04; CALC-10; CALC-12–CALC-14; ROUTE-051–ROUTE-053; ROUTE-283–ROUTE-284; INT-283–INT-284; H6-04; M-23; HO-09; HO-18; PF-24–PF-30; PF-43; D-IA-12; D-IA-15; PG-051–PG-053; SCR-47–SCR-49; UXI-09; UXI-12; UXI-29; IP-12; J-INV-07; J-FIN-02; UXS-09; UXS-23; UXS-36; UXS-39; UXH-11; GR-19; GR-23; NAV-051–NAV-053; component Chart
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -225,7 +225,7 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 8. An export generated before a revocation of one filtered company, of a view capability or of a role, or during generation, is withheld and its download refused exactly like a nonexistent one (M-23; RV-08; UXS-23; SM-11).
 9. A download is an ordinary browser request authorized at request time with the attachment headers of FL-07; no signed link authorizes it alone (PF-29; DP-05).
 10. The allocation report shows each source draw and each consuming project's allocated cost to the Owner, and each side only its own identifiers to an entitled Admin (J-INV-07; PJ-05; PJ-06).
-11. A report on screen answers within QB-11 — at most six statements in one snapshot and 1 s — and an export of 100,000 rows within 60 s at 10x with bounded memory, a rendition never waiting behind two exports (QB-11; QB-15; PFM-16).
+11. A report on screen answers within QB-11's count — at most six statements in one snapshot — and an export of 100,000 rows runs with bounded memory, a rendition never waiting behind two exports; QB-11's 1 s and PFM-16's 60 s at 10x are measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI (QB-11; QB-15; PFM-16; PERFORMANCE_TARGETS §1).
 12. The print view prints the same records, fields and figures as the page with its filters as text (DESIGN_SYSTEM §17; DP-19).
 
 **TEST REQUIREMENTS:**

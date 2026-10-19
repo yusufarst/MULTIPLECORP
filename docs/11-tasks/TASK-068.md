@@ -32,6 +32,7 @@ Every budget, limit and starting value of PERFORMANCE is an assumption until mea
 
 **BLOCKS:**
 
+- TASK-069 — Security test matrix, route integrity and zero dead interactions
 - TASK-070 — Full release regression and the device UAT's preparation
 - TASK-079 — Staging measurements — capacity, Argon2id, durations and the disk budget
 
@@ -62,7 +63,7 @@ Every budget, limit and starting value of PERFORMANCE is an assumption until mea
 - [CONCURRENCY_IDEMPOTENCY §19](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s19-20-handoff-traceability.md#19-handoff-obligations) HO-16, HO-17; [INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) OPI-07
 - [DEFINITION_OF_DONE §2](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist) DOD-13; [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-017--green-checks-may-miss-the-actual-concurrency-and-workload-risks) GAP-017; [GAP-054](../00-governance/GAP_REGISTER.md#gap-054--the-project-list-cannot-show-each-projects-journey-stage-blocker-and-next-action-within-its-query-budget); [GAP-060](../00-governance/GAP_REGISTER.md#gap-060--berandas-receivables-figure-and-ageing-chart-lie-outside-qb-10)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (77): REF-061; AS-01–AS-08; D-PF-01–D-PF-08; PF-01–PF-12; QB-01–QB-17; GT-01–GT-07; TL-15; PFM-01–PFM-20; GAP-017; GAP-054; GAP-060
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (84): AC-23; REF-059; REF-061; IMG-09; HO-13; HO-16–HO-17; HO-30; AS-01–AS-08; D-PF-01–D-PF-08; PF-01–PF-12; QB-01–QB-17; GT-01–GT-07; TL-15; PFM-01–PFM-20; GAP-017; GAP-054; GAP-060
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -205,7 +206,7 @@ Every budget, limit and starting value of PERFORMANCE is an assumption until mea
 3. Every registered hot query has its plan at 1x, 10x and 100x accepted on PERFORMANCE §12's step-4 rules and kept as evidence, the known candidates measured and each miss proposed through change control (PFM-03).
 4. The project list's stage filter is offered only if a plan at 10x and 100x meets PF-42's bound, and the journey summary group stays within twelve statements (PFM-04; GAP-054).
 5. *Beranda*'s period figures with the receivables position stay within QB-10's bound plus at most one statement (PFM-05; GAP-060).
-6. Search meets PFM-06 on FX-07's names and fragments, each signal is one bounded statement with the only-growing sets measured at 10x and 100x, `ReconcileGuards` runs within 10 minutes at 100x, and authentication adds no business query (PFM-06–PFM-08; PFM-19).
+6. Search keeps PFM-06's plans and counts on FX-07's names and fragments, each signal is one bounded statement with the only-growing sets measured at 10x and 100x, `ReconcileGuards` keeps its plan at 100x, and authentication adds no business query; PFM-06's times and `ReconcileGuards`' 10 minutes at 100x are measured on staging by the scripts handed to TASK-079 (PFM-06–PFM-08; PFM-19; PERFORMANCE_TARGETS §1).
 7. A ten-line reference command of retry class A stays within about forty statements, and a class-B command's statements grow with its rows only (PFM-20).
 8. The staging scripts for PFM-01's times, PFM-12, PFM-13 and PFM-16 run as written against a local stack and are handed to TASK-079 with their targets; no time is reported as met from CI (PERFORMANCE_TARGETS §1).
 9. Every miss is recorded with its query, plan and scale and sent through review to its query, index or budget; no target is loosened and no scope cut in this Task (AS-07; TS-09).

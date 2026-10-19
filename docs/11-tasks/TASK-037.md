@@ -25,7 +25,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-034 — Commercial confirmation and fulfillment planning
 - TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
-- the Owner's answers to P11Q-02 and P11Q-04 recorded and the narrow amendment they authorize approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -53,12 +53,13 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - PG-015 with NAV-015 and ROUTE-015 (`cost.view`; SCR-15): purchases one company at a time with the company label, number, supplier, project, state and business date, "Buat Pembelian" and "Muat Lagi" (IP-18; PF-13); and the *Pengadaan* part of PG-011 — the project's purchases with their state and remaining quantities — through PUR's query classes on TASK-032's ROUTE-011
 - PUR's `DocumentSubjectProvider` for the purchase record: DOC-02 and its company-issued Surat Pesanan layout (DOC-14) — two layouts of one record, each with its own type number, the precondition that the purchase exists, the PO optional and never a precondition, a client-issued Surat Pesanan only an upload (BR-DOC-04; BR-PUR-02; L-19; L-26; WF-DOC-01)
 - PUR's part of `CompletionPredicateProvider` — no open project-linked purchase remainder without closure (WF-PRJ-03 predicate 8) — through PUR's query classes, the predicate itself TASK-055's (ARCHITECTURE §3)
+- **Held for the Owner's answers to P11Q-02 and P11Q-04, built here once the answers and their rows or definitions are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under P11Q-02 (a), once the narrow amendment adds their rows, the route and interaction that record an attributable charge on a purchase after its first effect, with its source bill, classification and allocation and the cascade AX-29 and DATABASE §6.1 state (ARCHITECTURE §3's `RecordPurchaseCharge`), and "Koreksi Dasar Alokasi", CM-35's allocation-basis correction, as its own control on PG-016 (ADMIN_FLOW §11), each as its rows state; under P11Q-04 (a), the fact that makes a non-stock line performed, with the column the amendment defines, read by AX-12's cancellation guard; under option (b) of either, a behaviour the Owner takes out of V1 is not built, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
 - the costing services — lot cost, allocation, re-spread and the cascade's costing rows (TASK-036); receiving, its reversal and the receiving projection (TASK-039); purchase returns, their outcomes and PG-028 (TASK-044); drop-ship confirmation (TASK-046); disbursements to suppliers and supplier refunds (TASK-054); opening purchases and their legacy numbers (TASK-057); purchase and cost reports (TASK-060)
 - the supplier master and its price-history page (TASK-026); the catalogue (TASK-027); the document engine, PG-036 and ROUTE-221–ROUTE-222 (TASK-029); numbering (TASK-021); ROUTE-169's supersession route (TASK-035)
-- a route that adds an attributable charge to a purchase after its first effect — none is in ROUTE_CONTRACTS, and none is added (DIR-083 OE-20)
+- a held behaviour of P11Q-02 or P11Q-04 that the Owner's answer takes out of V1 (option (b)); and, until the answer and its rows exist, any control of a held behaviour — never built without its route (RC-06)
 
 **REFERENCES:**
 
@@ -76,7 +77,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01, CJ-02; [§5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-04; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-027--purchase-charges-needed-an-acquisition-cost-rule) GAP-027
 - Architecture challenge — the sequences 1a, 2a, 2b, 2c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (71): CAP-02; CAP-05; SH-01; DOC-02; DOC-14; AC-02; AC-05; REF-009–REF-011; REF-019–REF-020; IMG-03; BR-DOC-04; BR-PUR-01–BR-PUR-05; CALC-03; CALC-09; WF-PUR-01–WF-PUR-02; SF-CHARGE; CM-17–CM-18; CM-35; AX-12; AX-29; AX-32; AX-34; L-19; L-26; L-43; L-47; ROUTE-015–ROUTE-017; ROUTE-171–ROUTE-175; INT-171–INT-175; C-20–C-21; C-57; NX-04; BD-17; M-07; PG-015–PG-017; SCR-15–SCR-17; J-INV-01; J-MD-03; J-MD-05; J-PUR-01–J-PUR-03; UXS-35; NAV-015–NAV-017; GAP-027
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (80): O-01; CAP-02; CAP-05; SH-01; DOC-02; DOC-14; AC-02; AC-05; REF-009–REF-011; REF-016; REF-019–REF-020; IMG-01; IMG-03; IMG-06; BR-DOC-04; BR-PUR-01–BR-PUR-05; CALC-03; CALC-09; WF-PUR-01–WF-PUR-02; SF-CHARGE; CM-17–CM-18; CM-27; CM-30; CM-35; AX-12; AX-29; AX-32; AX-34; L-19; L-26; L-43; L-47; ROUTE-015–ROUTE-017; ROUTE-171–ROUTE-175; INT-171–INT-175; C-20–C-21; C-57; NX-04; BD-17; M-07; M-09; M-15; M-36; PG-015–PG-017; SCR-15–SCR-17; J-INV-01; J-MD-03; J-MD-05; J-PUR-01–J-PUR-03; UXS-35; NAV-015–NAV-017; GAP-027
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -252,17 +253,18 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 17. "Terbitkan PO" opens PG-036 with the PO's draft prepared from the purchase; DOC-02 and the Surat Pesanan layout of one purchase are two layouts of one record, the company-issued one carrying its truthful issuer, and issuing either changes no stock, cash or obligation (BR-DOC-04; L-26; `DIR-081` OB-02).
 18. Each of ROUTE-171–ROUTE-175 replayed with one `command_id` returns the recorded outcome, and with a changed payload is CONFLICT (CI-05; M-09).
 19. "Simpan Pembelian" stays disabled with its reason beside it until a supplier and each line's quantity and price are given, and a thirty-line purchase is entered by keyboard alone on the desktop (ROUTE_CONTRACTS §4; UXS-35).
+20. Once the rows of P11Q-02 (a) are approved, a charge recorded after the purchase's first effect commits through its route with its source bill, its allocation and the cascade AX-29 and DATABASE §6.1 state, and "Koreksi Dasar Alokasi" commits CM-35's correction from its own control on PG-016; once P11Q-04 (a) defines the performed fact, "Batalkan Pembelian" is refused for a purchase with a performed non-stock line, read from that fact (AX-12; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: a line's base quantity from its entered unit and ratio (C-09); the tax treatment chosen for company, context and business date; the line value and the basis values handed to `ChargeAllocator` (TL-03)
-- Feature: ROUTE-015–ROUTE-017 and ROUTE-171–ROUTE-175 with each refusal — C-10 with MSG-17, L-23 after the first effect, AX-12's checks, C-29, C-20, C-21, C-57 — and the saved answer without cash or stock (TL-04)
+- Feature: ROUTE-015–ROUTE-017 and ROUTE-171–ROUTE-175 with each refusal — C-10 with MSG-17, L-23 after the first effect, AX-12's checks, C-29, C-20, C-21, C-57 — and the saved answer without cash or stock; once P11Q-02 (a)'s rows and P11Q-04 (a)'s fact exist, the post-effect charge, the basis correction's control and the performed guard with their refusals (TL-04)
 - Integration: AX-12, AX-32 and AX-34 against synthetic receipts and draws posted through the guards — the cancellation closing every line, a closure racing a receipt both ways (M-36), the cascade's three timings (M-07) —; two saves citing one source bill concurrently against its cap (C-20); concurrent PURCHASE numbers (M-15); `PurchasePosting` as the only writer of the line guard, checked by the reconciliation suite (TL-05)
 - Authorization: `purchase.manage` with its `cost.view` prerequisite, `purchase.cancel`, `purchase.close_remainder` and `purchase.correct_cost` as separately granted ADM_PLUS capabilities, `documents.issue` for the PO, `finance.view` for the disbursements part (TL-06)
-- Route integrity: ROUTE-015–ROUTE-017 and ROUTE-171–ROUTE-175 audited, with ROUTE-011's changed props and ROUTE_CONTRACTS §4's client-only and disabled controls (TL-07)
-- Interaction: INT-171–INT-175, each with one `command_id` replayed (TL-08; IG-05)
+- Route integrity: ROUTE-015–ROUTE-017 and ROUTE-171–ROUTE-175 audited, with ROUTE-011's changed props and ROUTE_CONTRACTS §4's client-only and disabled controls, and the held behaviours' routes once their rows exist (TL-07)
+- Interaction: INT-171–INT-175, and the held behaviours' INT- rows once they exist, each with one `command_id` replayed (TL-08; IG-05)
 - Browser E2E: J-PUR-01 and J-PUR-02 — CJ-02 with and without a PO and two suppliers for one project, CJ-01's purchase step from a shortage — and INT-171's S2-J04 walk at the desktop and phone widths; UXS-35's thirty lines by keyboard (TL-09)
 - Localization/language switch: both languages on PG-015–PG-017; DOC-02's paper Indonesian (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9 for PG-015–PG-017

@@ -1,6 +1,6 @@
 # TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -35,6 +35,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - TASK-047 — Service fulfillment and handover
 - TASK-049 — Invoices and the pre-payment Kuitansi
 - TASK-059 — Search and scanning
+- TASK-074 — Backup tooling, the off-server copy and the drill procedures
 
 **PARALLEL SAFE:** NO — it owns the document chain (LK-30), the issue's draw at LK-31 and the template contract that every issuing Task builds on
 
@@ -79,7 +80,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - [TEST_STRATEGY §9](../08-testing/TEST_STRATEGY.md#9-the-uiux-consistency-gate) the document composer and preview; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-15; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-10, SM-25; [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-12, QB-16, QB-17; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-16
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-007--an-issued-database-document-may-have-no-matching-pdf) GAP-007; [GAP-019](../00-governance/GAP_REGISTER.md#gap-019--complete-selectable-documents-need-bounded-coverage-and-validated-content); [GAP-053](../00-governance/GAP_REGISTER.md#gap-053--a-draft-documents-preview-and-print-have-no-defined-producer)
 - Architecture challenge — the sequences 1b, 4b, 7a, 7b, 15a, 15b, 15c, 17a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (80): O-01; O-03; CAP-08; DOC-01–DOC-14; DEP-04; AC-08; AC-12; REF-032–REF-036; REF-047; REF-049; REF-057–REF-058; IMG-06; BR-SN-01–BR-SN-03; BR-DOC-01–BR-DOC-04; WF-DOC-01; SF-ISSUE; SF-RENDER; AX-15; L-19; L-26; ROUTE-035–ROUTE-036; ROUTE-221–ROUTE-225; INT-012; INT-221–INT-225; C-10–C-12; NX-12; BD-06; PG-035–PG-036; SCR-34–SCR-35; UXI-29; J-FIN-08; J-DOC-01; UXS-09; UXS-38; D-DS-23; PT-22; GR-10; NAV-035–NAV-036; component Document composer and paper; component Print view; GAP-007; GAP-019; GAP-053
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (95): O-01; O-03; CAP-08; DOC-01–DOC-14; DEP-04; AC-08; AC-12; REF-032–REF-036; REF-047; REF-049; REF-057–REF-058; IMG-02; IMG-06; OWN-01; BR-SN-01–BR-SN-03; BR-DOC-01–BR-DOC-04; WF-DOC-01; SF-ISSUE; SF-RENDER; CM-26; AX-15; L-19; L-26; ROUTE-035–ROUTE-036; ROUTE-221–ROUTE-225; INT-012; INT-221–INT-225; C-10–C-12; NX-12; BD-06; M-15–M-19; M-31–M-32; M-38; PG-035–PG-036; SCR-34–SCR-35; UXI-29; J-FIN-08; J-DOC-01; UXS-01–UXS-02; UXS-09; UXS-38; D-DS-23; PT-22; DA-06–DA-07; GR-10; NAV-035–NAV-036; component Document composer and paper; component Print view; GAP-007; GAP-019; GAP-053
 
 **EXPECTED MODULES / FILE AREAS:**
 

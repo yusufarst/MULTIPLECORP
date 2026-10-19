@@ -31,6 +31,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 
 **BLOCKS:**
 
+- TASK-081 — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
 - TASK-086 — UAT with the Owner and the validators
 
 **PARALLEL SAFE:** NO — it runs every suite against one release candidate in fresh CI and its results gate the UAT and the release
@@ -46,6 +47,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 - the UAT's items prepared with their scripts: the message catalogue and glossary and the payment duplicate window's presentation (UXH-08); the seven-day duplicate window against the Owner's practice (HO-35; BD-02); each document type DOC-01–DOC-14 with FX-10 (GAP-019); each high-risk account holder's authenticator phone (DEP-11); representative daily work with data entered once and reused (OS-01); the per-page copy lists of TASK-067 (TEST_STRATEGY §10); RELEASE_PLAN's UAT-01 numbering and go-live at the cutover, UAT-02 the opening import with the validators, UAT-03 daily work with inventory and money trustworthy at opening and after repeated and concurrent work (OS-02), UAT-04 separate Owner and Admin Operasional records
 - the UAT record form — validator, date, build, tasks, each result and its disposition, an issue log —, nothing recorded that did not happen, an unavailable validator a blocker reported to the Owner; the validators' review time scheduled by RELEASE_PLAN (GAP-014)
 - each failure recorded and sent through the executor feedback loop to the Task that owns it — a DONE Task's regression becoming a new defect Task under TASK_PLAN §7 (DEFINITION_OF_DONE §1; AGENT_OPERATING_MODEL)
+- **the suites' joins**, which need TASK-065–TASK-067 all DONE (TASK_PLAN §2's order): in TASK-065's gate record, the language items from TASK-067's evidence and the accessibility critical checks from TASK-066's, so that all twenty-one items of AICWDF §27 are answered for every page (TEST_STRATEGY §9–§11)
 
 **OUT OF SCOPE:**
 
@@ -62,7 +64,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 - [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) §§2–5; [DEFINITION_OF_DONE §5](../08-testing/DEFINITION_OF_DONE.md#5-module-and-release-completion)
 - [ADMIN_FLOW §16](../07-ux-design/ADMIN_FLOW/s16-17-handoff-traceability.md#16-handoff-obligations) UXH-06, UXH-08, UXH-10
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-015--scannersession-behavior-can-create-false-success-or-duplicate-intent) GAP-015; [GAP-020](../00-governance/GAP_REGISTER.md#gap-020--mobile-first-and-existing-usb-scanners-do-not-prove-device-compatibility); [GAP-024](../00-governance/GAP_REGISTER.md#gap-024--broad-capability-groups-can-hide-missing-reference-requirements-before-execution); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#executor-feedback-loop)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (20): DEP-03; TS-01–TS-12; UAT-01–UAT-04; GAP-015; GAP-020; GAP-024
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (88): DOC-01–DOC-14; DEP-03; OS-01–OS-02; OS-06; IMG-06; M-01–M-46; HO-35; UXH-06; UXH-08; UXH-10; TS-01–TS-12; UAT-01–UAT-04; GAP-015; GAP-020; GAP-024
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -208,6 +210,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 6. The device UAT's matrix and scripts cover the supported browsers, the real-device journeys at 390 and 320 CSS px with UT-06, UT-12 and UT-18–UT-24, the desktop composer, the scanners and printing, the users' files and the device times, each script naming what its record must hold (TEST_STRATEGY §12; DEP-03; GAP-015; GAP-020).
 7. The UAT's item scripts exist for UXH-08's copy and duplicate window, HO-35's seven days, DOC-01–DOC-14 with FX-10, DEP-11's authenticator phones, OS-01's daily work, the per-page copy lists and UAT-01–UAT-04, with the record form TEST_STRATEGY §12 states (RELEASE_PLAN §8).
 8. Every failure found is sent to its owning Task, and the Task stays VERIFYING until the re-run passes (TS-12; AGENT_OPERATING_MODEL).
+9. TASK-065's gate record holds for every page the language items from TASK-067's evidence and the accessibility critical checks from TASK-066's, all twenty-one items answered (TEST_STRATEGY §9–§11; AICWDF §27).
 
 **TEST REQUIREMENTS:**
 
@@ -223,7 +226,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 - Localization/language switch: TL-10 in the run (TASK-067's suite)
 - Visual breathing room/density: TEST_STRATEGY §9 re-run (TASK-065's gate)
 - Responsive: TL-11 in the run
-- Accessibility: TL-12 in the run; the manual Layer-3 checks recorded as TASK-066 prepared them
+- Accessibility: TL-12 in the run, TASK-066's engine on every page state the journeys reach; the manual Layer-3 checks recorded as TASK-066 prepared them
 - Production build: TL-13 on the release candidate
 - Security: TL-14 — every SECURITY_TEST_MATRIX case and H8-15's gates
 - Performance: TL-15 — PERFORMANCE_TARGETS §4's release-critical set as far as CI runs it; its staging part prepared for TASK-079

@@ -33,13 +33,14 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 - Larastan/PHPStan at a strict level, Laravel Pint, ESLint and the TypeScript compiler in strict mode, each with its configuration (TEST_STRATEGY §17)
 - architecture tests: presentation → application → domain → infrastructure only; the module tiers of ARCHITECTURE §3 with no write cycle; ARCHITECTURE §19's prohibited patterns; controllers thin (SM-03)
 - the per-surface grey lint rule of DESIGN_SYSTEM Annex B GR-04 as a frontend lint rule, applied once TASK-015 adds the tokens
-- the coding conventions in the repository: naming, one action per business command, money and quantity types (EXECUTION_CONTEXT invariant 1), English identifiers (AICWDF §4B.3)
+- the coding conventions as a section of `DEVELOPMENT.md` (TASK-001): naming, one action per business command, money and quantity types (EXECUTION_CONTEXT invariant 1), English identifiers (AICWDF §4B.3)
 - a commit-message check that refuses AI, model or tool attribution trailers (AGENTS.md; DIR-022)
 - the N+1 prevention and loading rules of PERFORMANCE §3 (PF-01–PF-12) as conventions with their guard — lazy loading refused outside production, eager loading declared per query class
+- this Task's checks — the static tools, the architecture tests, the commit-message check and the secret-like scan — added as jobs of TASK-001's minimal CI workflow, so that they pass locally and again in fresh CI (DEFINITION_OF_DONE §1); TASK-003 extends the workflow to every layer
 
 **OUT OF SCOPE:**
 
-- CI wiring (TASK-003)
+- CI beyond this Task's jobs — the other layers, the browser suite and SM-15's gates (TASK-003)
 - any feature code
 - the query budgets themselves (QB-; TASK-068 and each page's Task)
 
@@ -54,11 +55,12 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 - [DESIGN_SYSTEM Annex B](../07-ux-design/DESIGN_SYSTEM.md#annex-b-the-carried-items-gr-01gr-23) GR-04
 - [AGENTS.md](../../AGENTS.md#git-commit-attribution)
 - [EXECUTION_CONTEXT](EXECUTION_CONTEXT.md)
+- [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule)
 - Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (24): WS-01; WS-09; SX-05–SX-06; TM-09; TM-37; TM-48–TM-49; PF-01–PF-12; GR-04; TL-01–TL-02; INF-05
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the tool configurations at the repository root; `tests/Architecture/`; the conventions document beside the README
+- the tool configurations at the repository root; `tests/Architecture/`; the conventions section of `DEVELOPMENT.md`; this Task's jobs in the CI workflow
 
 **BUSINESS RULES:**
 
@@ -71,7 +73,7 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 **SECURITY / PERMISSION REQUIREMENTS:**
 
 - the threats of [SECURITY §8](../05-security/SECURITY.md#8-threat-model) mapped to this Task, each with the controls its row names: TM-09, Mass assignment of company, authority or state fields (WS-01, WS-02, DP-03); TM-37, Stored XSS rendered in React or a PDF (WS-09, FL-08); TM-48, Secrets in logs, repository or client bundles (LG-03, SX-01, SX-06); TM-49, Vulnerable or malicious dependency (SX-05)
-- a secret-like scan of the staged changes (SX-06), wired into CI by TASK-003
+- a secret-like scan of the changes (SX-06), run locally and as a job of the CI workflow; TASK-003 makes it one of SM-15's gates
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
 
@@ -195,7 +197,8 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 2. Each static tool runs with its committed configuration and passes on the skeleton.
 3. A commit message carrying an AI or tool attribution trailer is refused by the commit check.
 4. A lazy-loaded relation in a test run fails it, as PERFORMANCE §3 requires.
-5. The conventions document states the action, query, money and naming rules with links to their sources.
+5. The conventions section of `DEVELOPMENT.md` states the action, query, money and naming rules with links to their sources.
+6. This Task's checks run as jobs of the CI workflow on a fresh runner and pass there as they do locally (DEFINITION_OF_DONE §1).
 
 **TEST REQUIREMENTS:**
 
@@ -216,7 +219,7 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 - Security: the secret-like scan and the dependency audit (TL-14)
 - Performance: N/A — no query
 - Migration: N/A — no migration
-- Other: the commit-message check on a sample attributed message
+- Other: the commit-message check on a sample attributed message; this Task's jobs green in the CI workflow on a fresh runner
 
 **TEST CHECKLIST:**
 

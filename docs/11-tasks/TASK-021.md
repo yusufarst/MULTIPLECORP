@@ -23,11 +23,14 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - TASK-006 — Schema — ORG, PTY, CAT and DOC tables
 - TASK-013 — Command envelope, command identity, idempotency and the lock order
 - TASK-016 — Application shell, navigation and the company context
+- TASK-018 — Two-step verification (TOTP) and recovery codes
 
 **BLOCKS:**
 
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-032 — Projects — list, form, journey page and amendment
+- TASK-074 — Backup tooling, the off-server copy and the drill procedures
+- TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
 - TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
 
 **PARALLEL SAFE:** NO — it owns the counters every issuing Task draws from
@@ -51,14 +54,15 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 
 - [DATABASE §4.2](../04-architecture/DATABASE/s04-02-org.md#42-org--organization)
 - [CONCURRENCY_IDEMPOTENCY §14](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#14-numbering-concurrency)
-- [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01
+- [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01, NX-13
 - [ADMIN_FLOW §12](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#12-numbering-and-company-onboarding)
 - [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md#companies-and-settings--perusahaan-penomoran-dokumen-pajak-pg-059-pg-061-pg-062-owner_only-j-md-01) ROUTE-136, ROUTE-137
 - [NAVIGATION_CONTRACTS §2.6](../07-ux-design/NAVIGATION_CONTRACTS.md#26-reports-master-data-settings-and-owner-areas) NAV-061
 - [TEST_STRATEGY §15](../08-testing/TEST_STRATEGY.md#15-migration-backup-and-restore-tests) — the raise's tests
 - [RELEASE_PLAN §6](../10-release/RELEASE_PLAN.md#6-cutover-and-rollback) RBK-02; GLC-25
+- [BACKUP_RECOVERY §4](../09-operations/BACKUP_RECOVERY.md#4-the-restore-procedure) step 7 — the users resume only after the raise
 - the architecture challenge's sequences 12a–12b, 14a ([P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98))
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (41): ROUTE-061; ROUTE-136–ROUTE-137; INT-136–INT-137; LK-31; NX-01; NM-01–NM-10; M-15; M-17–M-18; M-31; HO-27; HO-32–HO-33; HO-39; D-IA-13; PG-061; SCR-55; J-MD-01; UXS-28–UXS-32; UXH-10; NAV-061; GLC-25; PRQ-07; GAP-016; GAP-058; GAP-064
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (44): CAP-08; REF-036; ROUTE-061; ROUTE-136–ROUTE-137; INT-136–INT-137; LK-31; NX-01; NX-13; NM-01–NM-10; M-15; M-17–M-18; M-31; HO-19; HO-32; HO-39; D-IA-13; PG-061; SCR-55; J-MD-01; UXS-28–UXS-32; UXH-10; NAV-061; GLC-25; PRQ-07; migration-rule DB24-09; GAP-016; GAP-058; GAP-064
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -83,6 +87,7 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 **CONCURRENCY / IDEMPOTENCY:**
 
 - NM-01–NM-10 under LK-31; two issues never draw one number (M-15, M-17); the raise refused if it would lower a counter or if the same recovery already raised it (NX-01)
+- NX-01's company-row lock: the numbering command — the start, the seeds, the scheme changes and the raise — locks its company row (LK-06) before LK-31, reads schemes, counters and the import batch rows under it and writes at LK-31; the Owner's commit request of a batch (NX-13) takes the same LK-06, so that the start and a scheme change are refused while a batch that is not ABORTED holds a VALID seed row of the type, serialized with that request (NM-03; M-18)
 
 **AUDIT:**
 
@@ -196,10 +201,11 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 
 1. Two concurrent issues of one type in one period draw two consecutive numbers and never the same one.
 2. A number once drawn is never drawn again, also after a draft is discarded.
-3. After a restore no numbered type issues again before the Owner's raise; the raise sets each affected counter to the next number after the highest paper number per company, type and period, once per recovery, and refuses a lower value or a second raise for the same recovery (DIR-083 OE-11; NM-03, NM-04, NX-01; RBK-02; GLC-25; architecture challenge 12a, 12b).
+3. After a restore no numbered type issues again before the Owner's raise — the restore runbook's procedural stop, the users resuming only after the raise (BACKUP_RECOVERY §4 step 7; RBK-02), carried by TASK-074 and TASK-076 with no application mechanism added —; the raise sets each affected counter to the next number after the highest paper number per company, type and period, once per recovery, and refuses a lower value or a second raise for the same recovery (DIR-083 OE-11; NM-03, NM-04, NX-01; GLC-25; architecture challenge 12a, 12b).
 4. The raise moves no seed value or boundary and raises no defect alert, and its audit event names the incident.
 5. Only the Owner reaches PG-061 and its commands.
-6. Sequences seeded by the opening import start after the last legacy number per company, type and period and stay unique and monotonic; an opening purchase whose legacy number does not fit its company's scheme draws its number at the commit, a fitting one keeping its legacy number (DIR-079 CB-01; DATABASE §24; C-10; architecture challenge 14a, with TASK-057).
+6. The start and a scheme change are refused while a batch that is not ABORTED holds a VALID seed row of the type, and the numbering command and the Owner's batch commit request serialize under LK-06 (NX-01; NX-13; M-18).
+7. Sequences seeded by the opening import start after the last legacy number per company, type and period and stay unique and monotonic; an opening purchase whose legacy number does not fit its company's scheme draws its number at the commit, a fitting one keeping its legacy number (DIR-079 CB-01; DATABASE §24; C-10; architecture challenge 14a, with TASK-057).
 
 **TEST REQUIREMENTS:**
 
@@ -207,7 +213,7 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - Typecheck: TL-02
 - Unit: the scheme and period rules (TL-03)
 - Feature: ROUTE-136 and ROUTE-137 with the raise (TL-04)
-- Integration: two-connection draws (M-15, M-17, M-18), the halt before the raise and the raise's refusals (TL-05; TEST_STRATEGY §15; architecture challenge 12a, 12b), and a sequence seeded after the last legacy number (14a)
+- Integration: two-connection draws (M-15, M-17, M-18); TEST_STRATEGY §15's raise cases on real PostgreSQL with a restored fixture and the controlled clock (FX-08) — each affected counter lifted, or a live period's counter created, to the number after the highest recorded, and the next issue drawing it; a lowering raise and a second raise in the same recovery refused without writing; the audit event naming the incident; no seed moved and no defect alert; an Admin refused; no number drawn twice (C-10) — (TL-05; architecture challenge 12a, 12b); the start and scheme refusals against a batch's VALID seed rows under LK-06, serialized with NX-13's commit request (M-18); and a sequence seeded after the last legacy number (14a)
 - Authorization: OWNER_ONLY (TL-06)
 - Route integrity: ROUTE-061, -136, -137 audited (TL-07)
 - Interaction: INT-136, INT-137 (TL-08)

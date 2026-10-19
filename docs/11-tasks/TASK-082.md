@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-06
+**STATUS:** BLOCKED — waiting on P11Q-05
 
 **RISK CLASS:** HIGH
 
@@ -20,8 +20,10 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 
 **DEPENDS ON:**
 
+- TASK-019 — Google sign-in for existing accounts
 - TASK-071 — The operator's inputs before staging
-- the operator's or the Owner's input OPI-06 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
+- TASK-078 — Staging stack, the two applications' isolation and the provider features
+- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -31,7 +33,7 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 
 **IN SCOPE:**
 
-- **The input it waits on.** OPI-06 — the Owner's Google Cloud access for the OAuth clients — is recorded as confirmed in INFRASTRUCTURE §9's row, the access itself used with the Owner and never recorded; this Task stays BLOCKED until it is recorded, and while it is not, Google sign-in stays off in every environment and GLC-09 holds by that (GAP-042)
+- **The input it waits on.** OPI-06 — the Owner's Google Cloud access for the OAuth clients — is recorded as confirmed in INFRASTRUCTURE §9's row, the access itself used with the Owner and never recorded; this Task records it first — if it cannot be obtained, the Task becomes BLOCKED (DEFINITION_OF_DONE §1) —, and while it is not recorded, Google sign-in stays off in every environment and GLC-09 holds by that (GAP-042)
 - **The two clients** (H9-13; DEP-10; INFRASTRUCTURE §4.3): created by the Owner under the Owner's own Google Cloud access, one for staging and one for production — the consent screen, the scopes `openid email` and no other, each environment's exact redirect URI built from the domain and staging's name OPI-30 keeps outside the repository (TASK-071)
 - **The secrets' custody** (SX-01; SX-02): each client's ID and secret handed to the operator and stored in that environment's configuration only, readable only by the service account, never in the repository, a log, an issue or a document; a rotation done in Google Cloud and in the environment, leaving every Google link unchanged (AU-22)
 - **The free-tier record** (COST_POLICY §4C.4): the limits, quotas and consent-screen rules confirmed against Google's current terms at set-up, with no cost or quota that applies — the inventory's Rp0 row for sign-in only, no Google API beyond it; a cost or a quota found STOPS for the Owner's COST_POLICY §4C.2 decision
@@ -58,7 +60,7 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 - [PERMISSIONS_MATRIX §2](../05-security/PERMISSIONS_MATRIX.md#2-authorization-model) AZ-13
 - [EXECUTION_CONTEXT](EXECUTION_CONTEXT.md#auth-profile--in-force-under-appr-010) — the auth profile
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-042--the-google-oauth-client-is-not-set-up-for-any-environment) GAP-042
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (6): DEP-10; H9-13; GR-13; OPI-06; GLC-09; GAP-042
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (9): DEP-10; H9-13; M-41–M-43; GR-13; OPI-06; GLC-09; GAP-042
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -197,7 +199,7 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 
 **ACCEPTANCE CRITERIA:**
 
-1. OPI-06 is recorded as confirmed before any client is created; until then the Task stays BLOCKED and Google sign-in stays off in every environment (GLC-09; GAP-042).
+1. OPI-06 is recorded as confirmed before any client is created; until then no client is created and Google sign-in stays off in every environment (GLC-09; GAP-042).
 2. The staging and the production client each exist under the Owner's own access, with the consent screen, the scopes `openid email` and that environment's exact redirect URI (H9-13; DEP-10).
 3. Each client's ID and secret sit only in their environment's configuration, readable only by the service account, and none appears in the repository, a log or an issue (SX-01; SM-15).
 4. The free-tier record is confirmed against Google's current terms with no cost or quota that applies; a cost found has stopped for the Owner (COST_POLICY §4C.2, §4C.4).
@@ -252,7 +254,7 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 - Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20); the Google client's COST_POLICY §4C.4 record confirmed
 - Files changed: OPI-06's row of INFRASTRUCTURE §9 and the free-tier record of COST_POLICY — nothing else
 - Commit SHA: the commit that records them, under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); while OPI-06 is not confirmed the Task stays BLOCKED and GLC-09 holds by Google sign-in staying off; the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3), made on the Owner's record and never on an agent's claim (TASK_PLAN §2)
+- Notes: each non-applicable item with its reason (DOD-03); while OPI-06 is not confirmed no client is created and GLC-09 holds by Google sign-in staying off; the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3), made on the Owner's record and never on an agent's claim (TASK_PLAN §2)
 
 **SAFE NEXT TASK:**
 
@@ -261,7 +263,7 @@ The Owner decided Google sign-in for existing accounts only (DIR-037 D6), and it
 **DO NOT DO:**
 
 - add to V1 — a capability, page, route, field, integration, document type, report or paid service — or drop, defer or narrow a V1_REQUIRED requirement; a Task that would need either raises an Owner question and waits ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-20)
-- access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
+- let an agent access the VPS, production, its data or a credential, or put a secret, real data, a host detail or production configuration in the repository ([INFRASTRUCTURE](../09-operations/INFRASTRUCTURE.md) INF-01, INF-05; SECURITY SX-01, SX-04, SX-06; [PRODUCTION_DATA_SAFETY](../00-governance/PRODUCTION_DATA_SAFETY.md))
 - add AI, model or tool attribution to a commit — the Owner's configured identity only ([AGENTS.md](../../AGENTS.md#git-commit-attribution); DIR-022)
 - start before the Owner's execution authorization at OG-4, or mark DONE without the required tests passing and the completion evidence ([TASK_PLAN](TASK_PLAN.md#2-rules-of-the-plan); [DEFINITION_OF_DONE](../08-testing/DEFINITION_OF_DONE.md#2-the-checklist))
 - weaken, skip or delete a valid test to obtain a green run, or adopt a paid tier without the Owner's COST_POLICY decision (DOD-05; [COST_POLICY](../00-governance/COST_POLICY.md))

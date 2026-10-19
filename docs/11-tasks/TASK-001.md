@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** BLOCKED — waiting on P11Q-01
 
 **RISK CLASS:** HIGH
 
@@ -20,7 +20,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **DEPENDS ON:**
 
-- none
+- the Owner's answer to P11Q-01 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -36,13 +36,15 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - the module namespaces of ARCHITECTURE §3 — IAM, ORG, PTY, CAT, PRJ, PUR, INV, CST, FUL, DOC, ADM, FIN, OPS, Reporting and the import orchestration — empty, each with a short README naming its tier and its DATABASE §4 tables
 - `.env.example` with placeholder values only; the security headers of WS-08 with the framework's per-request CSP nonce and the CSRF middleware of WS-04
 - the framework's default migrations, models, routes and welcome page that conflict with the contracts removed, so the schema belongs to TASK-005–TASK-009 alone
-- the developer README: how to start, test and build locally
+- `DEVELOPMENT.md`, a new file beside the approved README.md: how to start, test and build locally — README.md itself is not edited by this Task
+- a minimal CI workflow in the public repository's CI at no cost (TEST_STRATEGY §17; DIR-083 OE-02), running this Task's own checks — TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14 — on a fresh runner on every push and pull request, so that this Task's DONE has its fresh-CI half (DEFINITION_OF_DONE §1; TS-10); TASK-003 extends it to every layer
 
 **OUT OF SCOPE:**
 
 - any business table, model or migration (TASK-005–TASK-009)
 - authentication, Fortify and Socialite (TASK-017–TASK-019)
-- CI (TASK-003) and coding guardrails (TASK-002)
+- CI beyond the minimal workflow — the other layers, the browser suite, the fixture harness and the rest of SM-15's gates (TASK-003) — and coding guardrails (TASK-002)
+- README.md, APPROVED under APPR-009: its sentence that application development has not started is recorded as an open item in CURRENT_HANDOFF when this Task is DONE, and corrected by Planning, its owner, as a Level 1 continuity update with its amendment line and DECISION_LOG record (CHANGE_CONTROL)
 - the deployment definition and any production configuration (TASK-072)
 
 **REFERENCES:**
@@ -59,11 +61,14 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - [INFRASTRUCTURE §3](../09-operations/INFRASTRUCTURE.md#3-environments) — the environments this local stack mirrors
 - [TOOLCHAIN](../00-governance/TOOLCHAIN.md)
 - [DESIGN_SYSTEM §10](../07-ux-design/DESIGN_SYSTEM.md#10-component-composition) — shadcn/ui copied into the codebase
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (15): DEP-07; WS-04; WS-06; WS-08; SX-01; TM-08; TM-28; TM-48; TM-50; TM-65; H8-20; HO-37; RB-03; RB-10; SM-08
+- [TEST_STRATEGY §17](../08-testing/TEST_STRATEGY.md#17-tooling) — the public repository's CI at no cost
+- [DEFINITION_OF_DONE §1](../08-testing/DEFINITION_OF_DONE.md#1-statuses-and-the-done-rule) — DONE needs the required tests to pass locally and again in fresh CI
+- [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md) SM-15
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (21): O-07; CAP-16; DEP-07; REF-056; OWN-06; WS-04; WS-06; WS-08; SX-01; TM-08; TM-28; TM-48; TM-50; TM-65; H8-20; HO-37; RB-03; RB-10; TS-10; SM-08; SM-15
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the application root, `app/` with one namespace per module (ARCHITECTURE §4), `resources/js/` for React and TypeScript, `docker-compose.yml`, `.env.example`, the README
+- the application root, `app/` with one namespace per module (ARCHITECTURE §4), `resources/js/` for React and TypeScript, `docker-compose.yml`, `.env.example`, `DEVELOPMENT.md`, the minimal CI workflow file
 
 **BUSINESS RULES:**
 
@@ -83,6 +88,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - no route exists yet: RB-03 — no GET changes state, every command one request with its `command_id` — and RB-10, the account's own locale route, bind the routes TASK-013, TASK-014 and TASK-016 add
 - CSRF through the framework middleware (WS-04); the response headers and the CSP with a per-request nonce on every HTML and Inertia response (WS-08); React escaping, no raw HTML (WS-09)
 - no secret in the repository: environment configuration outside it, `.env.example` with placeholders only (SX-01, SX-06); every dependency justified and from its official source (SX-05)
+- the minimal CI workflow holds no secret but the CI's own token, pins its third-party actions to a SHA and installs from the lockfiles only (SM-15; SX-05, SX-06)
 
 **COMPANY SCOPE AND FIELD PROJECTION:**
 
@@ -127,7 +133,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **COST IMPACT:**
 
-- New recurring cost: NONE
+- New recurring cost: NONE — the public repository's CI at no cost (TEST_STRATEGY §17)
 - Paid third-party service: NO
 - Free/open-source alternative: N/A — nothing paid is considered
 - Estimated additional monthly production cost: 0
@@ -145,7 +151,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - Context7: REQUIRED — the current official installation documentation of Laravel, Inertia, React, Vite, Tailwind CSS and shadcn/ui for the versions chosen
 - Graphify: N/A — no code exists before this Task
 - Browser E2E: N/A — no page exists after this Task
-- Other: Docker Compose, PHP, Composer and Node.js, each verified and recorded in TOOLCHAIN (AICWDF §6.8)
+- Other: Docker Compose, PHP, Composer and Node.js on the development machine — a precondition of this Task's READY gate (AICWDF §22.8): TOOLCHAIN records Git and Node.js but not the others, so each is verified available before the Task starts, or its installation approved by the Owner where it is privileged, as installing Docker on the recorded workstation is; the CI runner of the minimal workflow; each verified and recorded in TOOLCHAIN (AICWDF §6.8)
 - Missing safe tool behavior: AUTO-INSTALL project-locally inside this Task (AICWDF §6.3) and record it in TOOLCHAIN; a paid tier or a privileged installation STOPS for the Owner (COST_POLICY)
 
 **GRAPHIFY / IMPACT ANALYSIS:**
@@ -209,6 +215,8 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 4. Every HTML response carries WS-08's headers with a nonce-based CSP, and a state-changing request without its CSRF token is refused (WS-04).
 5. The repository holds no secret, real data or host detail; `.env.example` holds placeholders only.
 6. The verified versions are recorded in TOOLCHAIN.
+7. The minimal CI workflow runs TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14 on a fresh runner on every push and pull request and fails on any failing check; its green run on the tested commit is the fresh-CI half of this Task's DONE (DEFINITION_OF_DONE §1).
+8. `DEVELOPMENT.md` states how to start, test and build locally and its commands run as written; README.md is unchanged.
 
 **TEST REQUIREMENTS:**
 
@@ -226,10 +234,10 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - Responsive: N/A — no page
 - Accessibility: N/A — no page
 - Production build: the frontend production build and the framework's production caches (TL-13)
-- Security: composer audit and npm audit clean or each finding recorded; SM-08's cases the skeleton can show — CSRF refusing a state-changing request without a valid token, the cookie flags, the CSP nonce and directives, `frame-ancestors`, `nosniff`, Referrer-Policy and `APP_DEBUG=false` in the production configuration check —, its route cases with the Tasks that add routes (TL-14, TL-09)
+- Security: composer audit and npm audit clean or each finding recorded; SM-08's cases the skeleton can show — CSRF refusing a state-changing request without a valid token, the cookie flags, the CSP nonce and directives, `frame-ancestors`, `nosniff`, Referrer-Policy and `APP_DEBUG=false` in the production configuration check —, its route cases with the Tasks that add routes; SM-15's gates the minimal CI workflow already has — SHA-pinned actions, lockfile-only installs and no secret but the CI's own token (TL-14, TL-09)
 - Performance: N/A — no query
 - Migration: N/A — no business migration; the framework defaults removed are listed in the evidence
-- Other: the developer README's commands run as written
+- Other: `DEVELOPMENT.md`'s commands run as written; the minimal CI workflow green on a fresh runner for TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14
 
 **TEST CHECKLIST:**
 

@@ -1,6 +1,6 @@
 # TASK-025 — Companies, identity assets, bank accounts and tax configuration
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -65,7 +65,7 @@ Every document, project, purchase and invoice carries a legal company's identity
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-01; [§4.2](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s04-06-locks-envelope.md#42-lock-classes) LK-06–LK-08
 - [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-09, SM-25
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-026--taxes-withheld-or-collected-at-payment-had-no-settlement-path) GAP-026
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (40): O-01; CAP-01; AC-01; AC-13; OS-03; REF-001–REF-006; REF-032; REF-056; IMG-01; OWN-02; WF-MD-01; ROUTE-059; ROUTE-062; ROUTE-131–ROUTE-135; ROUTE-138; INT-131–INT-135; INT-138; NX-01; PG-059; PG-062; SCR-54; SCR-56; UXI-31; J-MD-01; NAV-059; NAV-062; GAP-026
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (41): O-01; CAP-01; CAP-11; AC-01; AC-13; REF-002–REF-006; REF-016; REF-032; REF-034; IMG-01; OWN-02; OWN-05; WF-MD-01; ROUTE-059; ROUTE-062; ROUTE-131–ROUTE-135; ROUTE-138; INT-131–INT-135; INT-138; NX-01; PG-059; PG-062; SCR-54; SCR-56; UXI-31; J-MD-01; NAV-059; NAV-062; GAP-026
 
 **EXPECTED MODULES / FILE AREAS:**
 

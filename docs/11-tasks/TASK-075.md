@@ -1,6 +1,6 @@
 # TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -20,8 +20,13 @@ A successful HTTP health check can hide stalled business processing — missing 
 
 **DEPENDS ON:**
 
+- TASK-010 — Audit and security logging
+- TASK-013 — Command envelope, command identity, idempotency and the lock order
+- TASK-022 — Jobs, files and the document renderer
+- TASK-058 — Home, Work and Review — signals and the action queue
 - TASK-071 — The operator's inputs before staging
 - TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
+- TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - the operator's or the Owner's input OPI-05 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
 
 **BLOCKS:**
@@ -63,7 +68,7 @@ A successful HTTP health check can hide stalled business processing — missing 
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-013--successful-http-health-checks-can-hide-stalled-business-processing) GAP-013; [GAP-007](../00-governance/GAP_REGISTER.md#gap-007--an-issued-database-document-may-have-no-matching-pdf); [GAP-041](../00-governance/GAP_REGISTER.md#gap-041--operator-abuse-of-the-owner-recovery-command)
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-03, OE-14
 - Architecture challenge — the sequence 13c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (15): BK-10–BK-11; H9-10; H9-15; HO-21; HO-23; HO-25–HO-26; HO-28–HO-30; INF-04; PRQ-03; GAP-007; GAP-013
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (18): CAP-16; BK-04; BK-10–BK-11; H9-10; H9-15; HO-21; HO-23–HO-26; HO-28–HO-30; INF-04; PRQ-03; GAP-007; GAP-013
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -207,7 +212,7 @@ A successful HTTP health check can hide stalled business processing — missing 
 2. A failed, stale or skipped backup, a failed cleanup and a failed or missing off-server copy each alert the named operator (BK-10; BKR-09; architecture challenge 13c).
 3. A deadlock, a FAILED access change, a guard-missing alert and a reconciliation difference each alert, and statements slower than 500 ms are logged (HO-25; SZ-06).
 4. LG-07's and H9-15's signals reach the operator, the alternate once named and the Owner — or the Owner's in-app floor while no channel outside the operator's sole control is confirmed —, each as a neutral signal name without an S3 or S4 value (H9-10; LG-03).
-5. The uptime check sees the VPS from outside through the minimal health check, and its COST_POLICY §4C.4 record exists before it is adopted (P9Q-07; GLC-11; INF-04).
+5. The uptime check's configuration and set-up notes exist — what it calls from outside through the minimal health check, and which alert its failure raises —, for the operator to make it live and record its COST_POLICY §4C.4 entry in TASK-080 before it is adopted (P9Q-07; GLC-11; INF-04).
 6. No component sends error data or logs off the VPS, and the log viewer has no application route and is reached through the operator's access only (P9Q-04; LG-05).
 7. The monthly report lists the heaviest statements and the table and index sizes, and crossing half of a threshold opens a review, never an automatic change (GT-07; PFM-18).
 

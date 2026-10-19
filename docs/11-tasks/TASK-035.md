@@ -1,12 +1,12 @@
 # TASK-035 — Administrative checklist and document readiness
 
-Status: REVIEW | Updated: 2026-10-19 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** TODO
 
-**RISK CLASS:** STANDARD
+**RISK CLASS:** HIGH
 
 **EXECUTOR:** AGENT
 
@@ -22,6 +22,7 @@ CAP-09 and AC-09 need a checklist per project — per client and unit, never one
 
 - TASK-030 — Evidence and uploaded documents
 - TASK-032 — Projects — list, form, journey page and amendment
+- TASK-034 — Commercial confirmation and fulfillment planning
 
 **BLOCKS:**
 
@@ -61,7 +62,7 @@ CAP-09 and AC-09 need a checklist per project — per client and unit, never one
 - [DESIGN_SYSTEM §9.3](../07-ux-design/DESIGN_SYSTEM.md#93-forms-and-entry) PT-29; [§12.1](../07-ux-design/DESIGN_SYSTEM.md#121-status-system) the administrative requirement's statuses
 - [CONCURRENCY_IDEMPOTENCY §7.3](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#73-command-families-outside-ax-0137) NX-03, NX-12, NX-14; [§7.1](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s07-statement-sequences.md#71-lock-sets-of-ax-01ax-37) notes, AX-13, AX-15; [§9](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s08-09-guards-stale-state.md#9-stale-state) ST-01; [§10](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s10-13-identity-failure-retry.md#10-command-identity-and-replay) CI-01, CI-05
 - Architecture challenge — the sequences 7b, 15b, 20a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (31): CAP-09; AC-09; AC-21; REF-037; IMG-08; OWN-03; BR-ADM-01–BR-ADM-03; WF-ADM-01; L-41; ROUTE-039; ROUTE-164–ROUTE-169; INT-164–INT-169; NX-03; D-IA-10; PG-039; SCR-37; J-ADM-01; PT-29; NAV-039
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (36): O-03; CAP-09; AC-09; AC-21; REF-034; REF-037; IMG-05–IMG-06; IMG-08; OWN-03; BR-ADM-01–BR-ADM-03; WF-ADM-01; CM-27; L-41; ROUTE-039; ROUTE-164–ROUTE-169; INT-164–INT-169; NX-03; D-IA-10; PG-039; SCR-37; J-ADM-01; PT-29; NAV-039
 
 **EXPECTED MODULES / FILE AREAS:**
 
