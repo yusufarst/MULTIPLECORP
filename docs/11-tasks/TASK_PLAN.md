@@ -101,39 +101,39 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-052](TASK-052.md) — Deduction settlements and contras
 - [ ] [TASK-053](TASK-053.md) — Customer credit and refunds
 - [ ] [TASK-054](TASK-054.md) — Expenses, disbursements and other cash
-- [ ] TASK-055 — Project completion and Force Complete
-- [ ] TASK-056 — Project cancellation
-- [ ] TASK-057 — Opening import — preparation, dry run, sign-off and commit
-- [ ] TASK-058 — Home, Work and Review — signals and the action queue
-- [ ] TASK-059 — Search and scanning
-- [ ] TASK-060 — Reports, the consolidated report and exports
-- [ ] TASK-061 — Activity history and security log
-- [ ] TASK-062 — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
-- [ ] TASK-063 — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
-- [ ] TASK-064 — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
-- [ ] TASK-065 — UI/UX consistency gate, the responsive matrix and the anti-slop audit
-- [ ] TASK-066 — Accessibility — WCAG 2.2 AA across every page
-- [ ] TASK-067 — Localization completeness and the per-page copy lists
-- [ ] TASK-068 — Performance targets and query budgets in CI
-- [ ] TASK-069 — Security test matrix, route integrity and zero dead interactions
-- [ ] TASK-070 — Full release regression and the device UAT's preparation
-- [ ] TASK-071 — The operator's inputs before staging
-- [ ] TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
-- [ ] TASK-073 — Release process — branch protection, release tags, the release record and integrity report
-- [ ] TASK-074 — Backup tooling, the off-server copy and the drill procedures
-- [ ] TASK-075 — Monitoring — the business heartbeat, alerts and the uptime check
-- [ ] TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
-- [ ] TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
-- [ ] TASK-078 — Staging stack, the two applications' isolation and the provider features
-- [ ] TASK-079 — Staging measurements — capacity, Argon2id, durations and the disk budget
-- [ ] TASK-080 — Alert channel adopted and monitoring live
-- [ ] TASK-081 — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
-- [ ] TASK-082 — Google OAuth clients for staging and production
-- [ ] TASK-083 — The alternate operator named and the dispute's governance recorded
-- [ ] TASK-084 — Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy
-- [ ] TASK-085 — Installation, the first Owner, two-step enrolment and the APP_KEY rotation
-- [ ] TASK-086 — UAT with the Owner and the validators
-- [ ] TASK-087 — Cutover and go-live
+- [ ] [TASK-055](TASK-055.md) — Project completion and Force Complete
+- [ ] [TASK-056](TASK-056.md) — Project cancellation
+- [ ] [TASK-057](TASK-057.md) — Opening import — preparation, dry run, sign-off and commit
+- [ ] [TASK-058](TASK-058.md) — Home, Work and Review — signals and the action queue
+- [ ] [TASK-059](TASK-059.md) — Search and scanning
+- [ ] [TASK-060](TASK-060.md) — Reports, the consolidated report and exports
+- [ ] [TASK-061](TASK-061.md) — Activity history and security log
+- [ ] [TASK-062](TASK-062.md) — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
+- [ ] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
+- [ ] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
+- [ ] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
+- [ ] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
+- [ ] [TASK-067](TASK-067.md) — Localization completeness and the per-page copy lists
+- [ ] [TASK-068](TASK-068.md) — Performance targets and query budgets in CI
+- [ ] [TASK-069](TASK-069.md) — Security test matrix, route integrity and zero dead interactions
+- [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
+- [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
+- [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
+- [ ] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
+- [ ] [TASK-074](TASK-074.md) — Backup tooling, the off-server copy and the drill procedures
+- [ ] [TASK-075](TASK-075.md) — Monitoring — the business heartbeat, alerts and the uptime check
+- [ ] [TASK-076](TASK-076.md) — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
+- [ ] [TASK-077](TASK-077.md) — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
+- [ ] [TASK-078](TASK-078.md) — Staging stack, the two applications' isolation and the provider features
+- [ ] [TASK-079](TASK-079.md) — Staging measurements — capacity, Argon2id, durations and the disk budget
+- [ ] [TASK-080](TASK-080.md) — Alert channel adopted and monitoring live
+- [ ] [TASK-081](TASK-081.md) — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
+- [ ] [TASK-082](TASK-082.md) — Google OAuth clients for staging and production
+- [ ] [TASK-083](TASK-083.md) — The alternate operator named and the dispute's governance recorded
+- [ ] [TASK-084](TASK-084.md) — Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy
+- [ ] [TASK-085](TASK-085.md) — Installation, the first Owner, two-step enrolment and the APP_KEY rotation
+- [ ] [TASK-086](TASK-086.md) — UAT with the Owner and the validators
+- [ ] [TASK-087](TASK-087.md) — Cutover and go-live
 
 ## 4. The Task list
 
@@ -193,39 +193,39 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | TODO | 051 | 055 | NO | AGENT | NONE | YES |
 | [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | TODO | 051 | 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037 | 058, 060 | NO | AGENT | NONE | YES |
-| TASK-055 | Project completion and Force Complete | Module · PRJ | HIGH | TODO | 031, 035, 044, 045, 046, 047, 048, 050, 052, 053 | 058 | NO | AGENT | NONE | YES |
-| TASK-056 | Project cancellation | Module · PRJ | HIGH | TODO | 038, 041, 046, 047, 049 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-057 | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | TODO | 022, 026, 027, 028, 030, 032, 034, 037, 039, 050, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
-| TASK-058 | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | TODO | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-059 | Search and scanning | Module · Reporting · INV | STANDARD | TODO | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-060 | Reports, the consolidated report and exports | Module · Reporting | HIGH | TODO | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-061 | Activity history and security log | Module · OPS | HIGH | TODO | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| TASK-062 | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-063 | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-064 | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-065 | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-066 | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-067 | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-068 | Performance targets and query budgets in CI | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070, 079 | NO | AGENT | NONE | YES |
-| TASK-069 | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
-| TASK-070 | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 086 | NO | AGENT | NONE | YES |
-| TASK-071 | The operator's inputs before staging | Operations · Operations | HIGH | READY | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
-| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | BLOCKED — OPI-03 | 003, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
-| TASK-073 | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | TODO | 003, 004 | 084 | NO | AGENT | NONE | NO |
-| TASK-074 | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 072 | 076, 079, 081, 084 | NO | AGENT | NONE | NO |
-| TASK-075 | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 071, 072 | 080 | NO | AGENT | NONE | NO |
-| TASK-076 | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 020, 074 | 081, 083 | NO | AGENT | NONE | NO |
-| TASK-077 | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | TODO | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
-| TASK-078 | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | TODO | 071, 072 | 079, 080, 081, 086 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-079 | Staging measurements — capacity, Argon2id, durations and the disk budget | Operations · Operations | HIGH | TODO | 068, 074, 078 | 084 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-080 | Alert channel adopted and monitoring live | Operations · Operations | HIGH | TODO | 075, 078 | 081, 083 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-081 | Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal | Operations · Operations | HIGH | TODO | 074, 076, 077, 078, 080 | 084 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-082 | Google OAuth clients for staging and production | Operations · Operations | HIGH | BLOCKED — OPI-06 | 071 | — | YES | OWNER | NONE | NO |
-| TASK-083 | The alternate operator named and the dispute's governance recorded | Operations · Operations | HIGH | BLOCKED — OPI-01 | 076, 080 | 087 | YES | OWNER | NONE | NO |
-| TASK-084 | Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy | Operations · Operations | HIGH | BLOCKED — OPI-04, OPI-08, OPI-23, OPI-28, OPI-31, OPI-32 | 073, 074, 079, 081 | 085 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-085 | Installation, the first Owner, two-step enrolment and the APP_KEY rotation | Operations · Operations | HIGH | TODO | 020, 084 | 087 | NO | HUMAN OPERATOR | NONE | NO |
-| TASK-086 | UAT with the Owner and the validators | Operations · Operations | STANDARD | TODO | 070, 078 | 087 | NO | OWNER | NONE | NO |
-| TASK-087 | Cutover and go-live | Operations · Operations | HIGH | TODO | 057, 077, 083, 085, 086 | — | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | TODO | 031, 035, 044, 045, 046, 047, 048, 050, 052, 053 | 058 | NO | AGENT | NONE | YES |
+| [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | TODO | 038, 041, 046, 047, 049 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | TODO | 022, 026, 027, 028, 030, 032, 034, 037, 039, 050, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
+| [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | TODO | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | STANDARD | TODO | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | TODO | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | TODO | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070, 079 | NO | AGENT | NONE | YES |
+| [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 086 | NO | AGENT | NONE | YES |
+| [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | READY | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
+| [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | BLOCKED — OPI-03 | 003, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
+| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | TODO | 003, 004 | 084 | NO | AGENT | NONE | NO |
+| [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 072 | 076, 079, 081, 084 | NO | AGENT | NONE | NO |
+| [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 071, 072 | 080 | NO | AGENT | NONE | NO |
+| [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 020, 074 | 081, 083 | NO | AGENT | NONE | NO |
+| [TASK-077](TASK-077.md) | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | TODO | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
+| [TASK-078](TASK-078.md) | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | TODO | 071, 072 | 079, 080, 081, 086 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-079](TASK-079.md) | Staging measurements — capacity, Argon2id, durations and the disk budget | Operations · Operations | HIGH | TODO | 068, 074, 078 | 084 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-080](TASK-080.md) | Alert channel adopted and monitoring live | Operations · Operations | HIGH | TODO | 075, 078 | 081, 083 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-081](TASK-081.md) | Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal | Operations · Operations | HIGH | TODO | 074, 076, 077, 078, 080 | 084 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-082](TASK-082.md) | Google OAuth clients for staging and production | Operations · Operations | HIGH | BLOCKED — OPI-06 | 071 | — | YES | OWNER | NONE | NO |
+| [TASK-083](TASK-083.md) | The alternate operator named and the dispute's governance recorded | Operations · Operations | HIGH | BLOCKED — OPI-01 | 076, 080 | 087 | YES | OWNER | NONE | NO |
+| [TASK-084](TASK-084.md) | Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy | Operations · Operations | HIGH | BLOCKED — OPI-04, OPI-08, OPI-23, OPI-28, OPI-31, OPI-32 | 073, 074, 079, 081 | 085 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-085](TASK-085.md) | Installation, the first Owner, two-step enrolment and the APP_KEY rotation | Operations · Operations | HIGH | TODO | 020, 084 | 087 | NO | HUMAN OPERATOR | NONE | NO |
+| [TASK-086](TASK-086.md) | UAT with the Owner and the validators | Operations · Operations | STANDARD | TODO | 070, 078 | 087 | NO | OWNER | NONE | NO |
+| [TASK-087](TASK-087.md) | Cutover and go-live | Operations · Operations | HIGH | TODO | 057, 077, 083, 085, 086 | — | NO | HUMAN OPERATOR | NONE | NO |
 
 Stage: Foundation, Platform, Module (the modules in their workflows' order), Verification, Release, Operations. Executor: AGENT, an Execution Agent under this plan's rules; HUMAN OPERATOR, the named operator; OWNER, the Owner — with the client where the Task says so. DB impact: PROPOSED for the five schema Tasks, which create every table of DATABASE §4 expand-only; NONE for every other Task, which uses those tables — a missing column is an executor discovery for Planning, never a silent schema change. A BLOCKED status names the operator's inputs it waits on ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)).
 

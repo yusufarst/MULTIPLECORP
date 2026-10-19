@@ -1,6 +1,6 @@
 # Execution context
 
-Status: APPROVED | Updated: 2026-10-14 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-009](../00-governance/DECISION_LOG.md#appr-009--aicwdf-structural-migration-approved), explicit Owner approval on 2026-10-03 (DIR-040) of this document as committed in the AICWDF migration finalization commit; the approved file hash is recorded there. Approval changes lifecycle only, not implementation authorization.
 
@@ -10,13 +10,15 @@ Amendment: on 2026-10-13 the "visual direction" line of "Global UI rules" names 
 
 Amendment: on 2026-10-14 the "visual direction" line states that the Golden Frontend Reference v1.0.0 governs presentation only, behaviour following the canonical specifications (DIR-061 SD-02), and that it stays non-normative until Stage 3 replaces the normative documents and Stage 5 grants APPR-011 (DIR-059 GD-01); no other line changes. It is a narrow continuity record authorized by [DIR-064](../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents) ([TECH-032](../00-governance/DECISION_LOG.md#dir-063-dir-064-obs-024-and-tech-032--p7-ux-re-baseline-s2-0-acceptance-s2-1-authorization-baseline-and-stage-2-documents), where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
 
+Amendment: on 2026-10-20 the "CURRENT PHASE" line names the Task plan, the "visual direction" and contracts lines name the documents approved under APPR-011 that the Tasks build from, and the execution entry names the Task plan, the scope rule of DIR-083 OE-20 and the operator's and the Owner's Tasks — what an executor needs before its first Task, which P11's existence requires; no other line changes. It is a narrow continuity record authorized by [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 (TECH-040, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
+
 The stable minimum context for execution agents (AICWDF §34A). Every line points to its owning document; where a line and its owner differ, the owner wins.
 
 ## Project
 
 - PROJECT: MultipleCorp — Company Management System — [PROJECT_CHARTER](../00-governance/PROJECT_CHARTER.md#identity-and-outcome)
 - CURRENT RELEASE: operational production V1, no fixed delivery date (DIR-035 D1) — [PROJECT_CHARTER](../00-governance/PROJECT_CHARTER.md#identity-and-outcome)
-- CURRENT PHASE: [PHASE_STATUS](../PHASE_STATUS.md); no Task exists before P11
+- CURRENT PHASE: [PHASE_STATUS](../PHASE_STATUS.md); the Tasks: [TASK_PLAN](TASK_PLAN.md), none started before the Owner's execution authorization at OG-4
 - DEFAULT STACK: Laravel, Inertia, React with TypeScript, shadcn/ui on Tailwind CSS, PostgreSQL and Nginx, a Valkey/Redis-compatible queue and cache that is never a system of record, a modular monolith — [ARCHITECTURE §1](../04-architecture/ARCHITECTURE.md#1-baseline-and-constraints)
 
 <a id="auth-profile--decided-security-amendment-pending"></a>
@@ -33,8 +35,8 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 
 - language: Indonesian default, English secondary, a language switch, no uncontrolled hardcoded copy; generated or issued documents and business data in Indonesian (DIR-037 D7) — [V1_SCOPE CAP-14](../01-product/V1_SCOPE.md#must-ship), [GAP-037](../00-governance/GAP_REGISTER.md#gap-037--bilingual-ui-obligations-are-not-yet-designed-or-tested)
 - mobile-first operation with desktop productivity; comfortable density and visual breathing room under AICWDF §18.2 with the retained anti-slop discipline (DIR-035 D4) — [V1_SCOPE](../01-product/V1_SCOPE.md#language-and-experience-contract)
-- visual direction: the Golden Frontend Reference v1.0.0, for presentation only — behaviour follows the canonical specifications and the reference adapts to them (DIR-061 SD-02) —, applied to the R1 structure and adapted to shadcn/ui (DIR-059), non-normative until Stage 3 replaces the normative documents and Stage 5 grants APPR-011; interaction rules in force — [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md), [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md), [PHASE_STATUS](../PHASE_STATUS.md)
-- route and interaction contracts: pending — [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet)
+- visual direction: [DESIGN_SYSTEM](../07-ux-design/DESIGN_SYSTEM.md), normative under APPR-011, with the Golden Frontend Reference v1.0.0 for presentation only — behaviour follows the canonical specifications and the reference adapts to them (DIR-061 SD-02) —, adapted to shadcn/ui (DIR-059); interaction rules in force — [DESIGN_REFERENCES](../07-ux-design/DESIGN_REFERENCES.md), [ADMIN_FLOW](../07-ux-design/ADMIN_FLOW/README.md)
+- route, interaction and navigation contracts: [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md), [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) and [NAVIGATION_CONTRACTS](../07-ux-design/NAVIGATION_CONTRACTS.md), approved under APPR-011, each Task citing its rows — [GAP-035](../00-governance/GAP_REGISTER.md#gap-035--route-and-interaction-contracts-do-not-exist-yet) open for their tests
 
 ## Cost, safety and toolchain
 
@@ -44,7 +46,7 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 
 ## Execution entry
 
-- read the active Task, then only the exact sections it references, in the reading order of [AGENTS.md](../../AGENTS.md#read-in-this-order); the [Task model](../00-governance/AGENT_OPERATING_MODEL.md#task-model) governs status and completion
+- read the [Task plan](TASK_PLAN.md) and the active Task, then only the exact sections it references, in the reading order of [AGENTS.md](../../AGENTS.md#read-in-this-order); the [Task model](../00-governance/AGENT_OPERATING_MODEL.md#task-model) governs status and completion; no Task adds to V1 or drops, defers or narrows a V1_REQUIRED requirement (DIR-083 OE-20), and a Task whose EXECUTOR is HUMAN OPERATOR or OWNER is never run by an agent ([TASK_PLAN §2](TASK_PLAN.md#2-rules-of-the-plan))
 
 ## Project invariants
 
