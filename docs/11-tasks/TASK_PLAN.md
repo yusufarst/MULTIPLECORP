@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 2
-READY: 0
+DONE: 3
+READY: 3
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 1
-TODO: 71
+VERIFYING: 0
+TODO: 68
 SUPERSEDED: 0
 
 Progress:
-2 / 87
-Percentage: 2.3 %
+3 / 87
+Percentage: 3.4 %
 
-CURRENT TASK: TASK-003 — CI pipeline, test layers and the synthetic fixture harness, VERIFYING: built on its branch `task/TASK-003-ci-pipeline` from `main` after TASK-002's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
-NEXT READY TASK: none yet — TASK-004, TASK-005 and TASK-014 become READY when TASK-003 is DONE and their READY gates hold, TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none — TASK-003 DONE on its branch `task/TASK-003-ci-pipeline`, its pull request #3 into `main` waiting on the Owner's merge (record 84 ER-07)
+NEXT READY TASK: TASK-004 — Verification and release tooling check, taken after the Owner merges TASK-003's pull request (ER-07), then TASK-005 and TASK-014, also READY; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 3 of 2026-10-20 — the pre-mortem's additions to TASK-001, TASK-002 and TASK-070, DIR-085 OF-06's edit of TASK-020 and TASK-085, and the answered P11Q-01, P11Q-05 and P11Q-06 removed from the Tasks they blocked; totals unchanged (§7)
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -51,7 +51,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 
 - [x] [TASK-001](TASK-001.md) — Repository scaffold and module skeleton
 - [x] [TASK-002](TASK-002.md) — Coding conventions and architecture guardrails
-- [ ] [TASK-003](TASK-003.md) — CI pipeline, test layers and the synthetic fixture harness
+- [x] [TASK-003](TASK-003.md) — CI pipeline, test layers and the synthetic fixture harness
 - [ ] [TASK-004](TASK-004.md) — Verification and release tooling check
 - [ ] [TASK-005](TASK-005.md) — Schema foundations — IAM and OPS tables, history and types
 - [ ] [TASK-006](TASK-006.md) — Schema — ORG, PTY, CAT and DOC tables
@@ -143,9 +143,9 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [TASK-001](TASK-001.md) | Repository scaffold and module skeleton | Foundation · Foundation | HIGH | DONE | — | 002 | NO | AGENT | NONE | NO |
 | [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | DONE | 001 | 003 | NO | AGENT | NONE | NO |
-| [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | VERIFYING | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
-| [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | TODO | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
-| [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | TODO | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
+| [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | DONE | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
+| [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | READY | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
+| [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | READY | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | TODO | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
 | [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | TODO | 006 | 008 | NO | AGENT | PROPOSED | NO |
 | [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
@@ -154,7 +154,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | TODO | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
-| [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | TODO | 003 | 015, 023 | NO | AGENT | NONE | YES |
+| [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | READY | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
 | [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | TODO | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
 | [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
