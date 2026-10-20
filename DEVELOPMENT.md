@@ -44,7 +44,7 @@ sh scripts/verify.sh
 sh scripts/verify.sh browser performance migration
 ```
 
-The second line runs the browser suite (TL-09–TL-12) on Chromium and WebKit in the pinned Playwright image, the performance layer (TL-15) and the migrations from an empty database (TL-16, on a CI runner only). A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs as soon as one exists; any FAIL or NOT RUN fails the command. The production check removes the development packages, which a local run then reinstalls. `VERIFY_PHP`, `VERIFY_NODE` and `VERIFY_E2E` replace the commands that run PHP, Node.js and Playwright on a machine that cannot build the application image.
+The second line runs the browser suite (TL-09–TL-12) on Chromium and WebKit in the pinned Playwright image, the performance layer (TL-15) with the load tool's smoke run and the migrations from an empty database (TL-16, on a CI runner only). A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs as soon as one exists; any FAIL or NOT RUN fails the command. The production check removes the development packages, which a local run then reinstalls. `VERIFY_PHP`, `VERIFY_NODE` and `VERIFY_E2E` replace the commands that run PHP, Node.js and Playwright on a machine that cannot build the application image.
 
 Each check alone, with the stack started:
 
