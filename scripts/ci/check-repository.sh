@@ -1,7 +1,8 @@
 #!/bin/sh
 # The repository gates of the minimal CI (TASK-001): every action of a workflow pinned to a
 # commit SHA, no secret but the CI's own token, lockfile-only installs (SECURITY_TEST_MATRIX
-# SM-15; SECURITY SX-05) and no committed text file with CRLF line endings.
+# SM-15; SECURITY SX-05) in the workflows and the verification command, and no committed text file
+# with CRLF line endings.
 # `--self-test` proves that each gate detects its failure on a generated fixture.
 set -eu
 
@@ -19,7 +20,7 @@ foreign_secrets() {
 }
 
 unlocked_installs() {
-    grep -RnE 'composer[[:space:]]+(update|upgrade|require)|npm[[:space:]]+(install|i|update|add)([[:space:]]|$)' "$1" || true
+    grep -RnE 'composer[[:space:]]+(update|upgrade|require)|npm[[:space:]]+(install|i|update|add)([[:space:]]|$)' "$@" || true
 }
 
 crlf_text_files() {
@@ -57,6 +58,6 @@ fi
 status=0
 report 'every workflow action pinned to a commit SHA' "$(unpinned_actions "$workflows")" || status=1
 report 'no secret but the CI token' "$(foreign_secrets "$workflows")" || status=1
-report 'lockfile-only installs' "$(unlocked_installs "$workflows")" || status=1
+report 'lockfile-only installs' "$(unlocked_installs "$workflows" scripts/verify.sh)" || status=1
 report 'no committed text file with CRLF line endings' "$(git ls-files --eol | crlf_text_files)" || status=1
 exit $status

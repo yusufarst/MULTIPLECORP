@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -228,32 +228,32 @@ Every Task's DONE needs its layers to pass with evidence ([TEST_STRATEGY §2](..
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — Pint and ESLint, PASS
+- [x] Typecheck — Larastan/PHPStan at level `max` (CI) and the TypeScript compiler, PASS
+- [x] Relevant automated tests — the harness's unit tests, the fixture sets against their sources, a feature test against the stack, the integration tests with the race harness, PASS
+- [x] Authorization — N/A: no route; TL-06's slot EMPTY until TASK-011
+- [x] Route integrity — N/A: no route; TL-07's slot EMPTY until TASK-011
+- [x] Interaction behavior — N/A: no control; TL-08's slot EMPTY until the first INT- contract
+- [x] Browser E2E if required — the smoke run on Chromium and WebKit, PASS
+- [x] Responsive/adaptive if required — N/A: no page; TL-11's slot EMPTY
+- [x] Visual breathing room/density if UI — N/A: no page
+- [x] Production build — TL-13 PASS
+- [x] Security checks if required — SM-15's gates, each detection proved on its fixture, PASS
+- [x] Database safety review — no schema or data; test databases only, and a database test refused outside its per-process test database
+- [x] Final diff review — the project's review list answered on the diff (ER-05); no ER-06 area touched: no application code changes, the race harness being test code
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `0f3811359a5e8d377d4817e27a6e6d0d76e8720c`: fresh CI on GitHub's `ubuntu-24.04` runner, run 39423375614 (push, `0f38113`) and run 39423398059 (pull request #3, its merge commit `051871c3cd7317f1ba261b1a9e032802e4ca59e3`), the three jobs PASS in each. Job "Verify", `scripts/verify.sh`: the stack, the repository gates with their self-test, the commit-message check over `a802511..0f38113`, the plan integrity check, TL-01 Pint and ESLint, TL-02 Larastan/PHPStan at level `max` and the TypeScript compiler, TL-03 the unit and architecture suites and the project's ESLint rules, TL-04 the feature suite, TL-05 the integration suite — PostgreSQL and Valkey reached, the race harness —, TL-13 the Vite build and the production caches and configuration check, TL-14 the secret-like scan and both dependency audits, each with its detection proof: PASS; TL-06 Authorization and TL-07 Route integrity EMPTY until TASK-011, TL-08 Interaction EMPTY until the first Task with an INT- contract. Job "Browser": TL-09 PASS, the smoke run on Chromium and WebKit; TL-10–TL-12 EMPTY until their pages. Job "Performance and migration": TL-15 EMPTY until the first Task with a budget, TL-16 EMPTY until TASK-005. Each run keeps its logs and JUnit reports as the artifacts `verify-evidence` and `browser-evidence`. Locally, in the cloud session of 2026-10-20, `scripts/verify.sh` with PHP on the host against the stack's containers: every check PASS — 31 unit, 45 architecture, 18 feature and 8 integration tests in parallel, the race harness's tests alike in six runs — but Larastan/PHPStan and the production check, not run there (GitHub refuses the Larastan download; TASK-002, the Owner's option B); `scripts/verify.sh browser performance migration`: the smoke run's 4 tests PASS on Chromium and WebKit in the Playwright image, the other layers EMPTY
+- Build result: TL-13 PASS in CI — the Vite build and the production check —, and the build locally
+- Route evidence: N/A — no route is added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: `E2E: PASS — Evidence: 0f38113, CI ubuntu-24.04 run 39423398059, docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts tests/Browser/E2E, browser-evidence` — the smoke run on Chromium and WebKit; the journeys are TASK-062–TASK-064's
+- Localization evidence: N/A — no page
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the public repository's CI at no cost; Playwright and its image free
+- Files changed: the 49 files of `0f38113` — `scripts/verify.sh`, `scripts/ci/audit-dependencies.sh`, `scripts/ci/check-repository.sh`, `.github/workflows/ci.yml`, `phpunit.xml`, `tests/Pest.php`, `tests/TestCase.php`, `tests/Support/`, `tests/Fixtures/`, `tests/Unit/`, `tests/Feature/DatabaseIsolationTest.php`, `tests/Integration/ConcurrencyHarnessTest.php`, the empty layers' folders with their READMEs, `tests/Browser/`, `docker-compose.yml`, `package.json`, `package-lock.json`, `.gitignore`, `DEVELOPMENT.md`, TOOLCHAIN, this file, TASK_PLAN and CURRENT_HANDOFF —, each inside the IN SCOPE areas; this record's commit adds this evidence, TOOLCHAIN's CI result, TASK_PLAN's DONE update, the statuses of TASK-004, TASK-005 and TASK-014, CURRENT_HANDOFF and CHANGELOG; the commit after it, `scripts/ci/check-plan.mjs`'s self-test
+- Commit SHA: `0f3811359a5e8d377d4817e27a6e6d0d76e8720c`, the Owner's identity, no signature and no AI attribution; this record's commit follows it on `task/TASK-003-ci-pipeline`
+- Notes: N/A with its reason — Authorization, Route integrity, Interaction, Localization, visual, responsive and accessibility checks (no route and no page), Performance (no query), Migration (no migration): their layers' slots run in CI and report EMPTY, never PASS, until their Tasks write the first test. Factories and seeders arrive with their models and tables (TASK-005–TASK-009), on the harness's synthetic values; FX-02–FX-05 and FX-09 are data until those tables exist, and each binding example of FX-01 is asserted by the Task that lands its rule. Context7 is not available in the cloud session (TOOLCHAIN, "Current documentation"): Pest's parallel testing and its per-process databases, the framework's process concurrency driver and Playwright's browser builds were read from the installed packages' own sources, the Playwright image from the Microsoft Container Registry's tag index. This record's own CI run found that the plan integrity check's self-test (TASK-002) faked a disagreement by setting TASK-003's contract to DONE, which this record made true; the self-test now sets a status the contract does not hold, in the commit that follows this record. The automated review of pull request #3 named a commit `4f41d4e` carrying AI attribution that is not in the repository; the pull request carries only the Owner's commit, so nothing changed. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

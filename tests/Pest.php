@@ -1,8 +1,12 @@
 <?php
 
+use Tests\Support\GuardReconciliation;
 use Tests\TestCase;
 
-pest()->extend(TestCase::class)->in('Feature', 'Integration', 'Architecture');
+pest()->extend(TestCase::class)->in('Unit', 'Architecture', 'Feature', 'Authorization', 'Routes', 'Interaction', 'Performance');
+
+// TEST_STRATEGY TS-11: the guards are reconciled after every integration test.
+pest()->extend(TestCase::class)->afterEach(fn () => GuardReconciliation::assertNone())->in('Integration');
 
 /**
  * The Content-Security-Policy of SECURITY WS-08 for the given nonce.

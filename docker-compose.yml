@@ -92,6 +92,21 @@ services:
         environment:
             npm_config_cache: /tmp/npm-cache
 
+    # Playwright with Chromium and WebKit for the browser suite (TASK-003): `docker compose run --rm e2e`.
+    e2e:
+        image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:7852dc5a7d72f5fe458a597d690f6c42fbc8e9e26ddfa95f8e6ef552558d9bbf
+        profiles: ["tools"]
+        user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+        working_dir: /var/www/html
+        shm_size: 1gb
+        volumes:
+            - .:/var/www/html
+        environment:
+            HOME: /tmp
+            E2E_BASE_URL: https://web:8443
+            E2E_HTTP_URL: http://web:8080
+        command: ["npx", "--no-install", "playwright", "test", "-c", "tests/Browser/playwright.config.ts"]
+
 volumes:
     db-data:
     dev-certs:
