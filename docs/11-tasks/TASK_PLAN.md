@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 4
-READY: 3
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 67
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 4 / 87
 Percentage: 4.6 %
 
-CURRENT TASK: none — TASK-004 DONE on its branch `task/TASK-004-tooling-check`, its pull request #4 into `main` waiting on the Owner's merge (record 84 ER-07)
-NEXT READY TASK: TASK-005 — Schema foundations — IAM and OPS tables, history and types, taken after the Owner merges TASK-004's pull request (ER-07), then TASK-014 and TASK-073, also READY; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-005 — Schema foundations — IAM and OPS tables, history and types, VERIFYING: built on its branch `task/TASK-005-schema-foundations` from `main` after TASK-004's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-014 — Localization — locales, the language switch and the key catalogue, and TASK-073, READY; TASK-005's DONE makes TASK-006 and TASK-010 READY, and after the Owner merges TASK-005's pull request (ER-07) the plan's order takes TASK-006 first; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 3 of 2026-10-20 — the pre-mortem's additions to TASK-001, TASK-002 and TASK-070, DIR-085 OF-06's edit of TASK-020 and TASK-085, and the answered P11Q-01, P11Q-05 and P11Q-06 removed from the Tasks they blocked; totals unchanged (§7)
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -145,7 +145,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | DONE | 001 | 003 | NO | AGENT | NONE | NO |
 | [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | DONE | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
 | [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | DONE | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
-| [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | READY | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
+| [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | VERIFYING | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | TODO | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
 | [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | TODO | 006 | 008 | NO | AGENT | PROPOSED | NO |
 | [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |

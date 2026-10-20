@@ -77,11 +77,14 @@ final class SourceScan
     ];
 
     /**
-     * The places AZ-02 allows a role name, added by the Tasks that build them; none yet.
+     * The places AZ-02 allows a role name's spelling, added by the Tasks that build them.
      *
      * @var list<string>
      */
-    public const ROLE_NAME_ALLOWED = [];
+    public const ROLE_NAME_ALLOWED = [
+        // TASK-005: OWNER is also an unlink reason of C-63 — the CHECK lists the code, no role is checked.
+        '/database/migrations/2026_10_20_000008_iam_create_user_external_identities_table.php',
+    ];
 
     /**
      * The violations of a rule in the given folders or files, as "path:line: text".

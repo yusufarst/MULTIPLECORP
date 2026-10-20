@@ -1,28 +1,31 @@
 <?php
 
+use App\Support\Database\DatabaseRole;
 use Illuminate\Database\QueryException;
-use Illuminate\Foundation\Testing\DatabaseTruncation;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Tests\Support\Concurrency\Barrier;
 use Tests\Support\Concurrency\Sessions;
+use Tests\Support\DatabaseTruncation;
 
 // TEST_STRATEGY §6 (TASK-003): real PostgreSQL sessions in parallel, held by a barrier at a named point
-// and ordered by a lock, proved on a scratch table that each session sees committed.
+// and ordered by a lock, proved on a scratch table that each session sees committed. The scratch table is
+// created by the migration role and granted to the runtime, as a migration would (TASK-005).
 
 uses(DatabaseTruncation::class);
 
 beforeEach(function () {
-    Schema::create('harness_counters', function ($table) {
+    Schema::connection(DatabaseRole::MIGRATION_CONNECTION)->create('harness_counters', function ($table) {
         $table->integer('id')->primary();
         $table->integer('value');
     });
+    DB::connection(DatabaseRole::MIGRATION_CONNECTION)->statement('grant select, insert, update on harness_counters to '.DatabaseRole::RUNTIME);
 
     DB::table('harness_counters')->insert(['id' => 1, 'value' => 0]);
 });
 
 afterEach(function () {
-    Schema::dropIfExists('harness_counters');
+    Schema::connection(DatabaseRole::MIGRATION_CONNECTION)->dropIfExists('harness_counters');
 });
 
 it('runs each task in a PostgreSQL session of its own on the test database', function () {

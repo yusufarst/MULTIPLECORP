@@ -123,7 +123,8 @@ migration_layers() {
     case $environment in
         CI*)
             check 'Stack' docker compose up -d --wait
-            check 'TL-16 Migration up, down and up from empty' $php_run sh -c 'php artisan migrate --force && php artisan migrate:rollback --force && php artisan migrate --force'
+            # As the migration/owner role, the only one that runs DDL (DATABASE §28; TASK-005).
+            check 'TL-16 Migration up, down and up from empty' $php_run sh -c 'php artisan migrate --database=migration --force && php artisan migrate:rollback --database=migration --force && php artisan migrate --database=migration --force'
             ;;
         *) report 'TL-16 Migration' 'NOT RUN — it needs the fresh database of a CI runner' 'none' 'none' ;;
     esac
