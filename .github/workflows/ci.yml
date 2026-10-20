@@ -1,6 +1,6 @@
-# The minimal CI of TASK-001: TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14 on a fresh runner,
-# in the Docker Compose stack of DEVELOPMENT.md, on every push and pull request. No
-# third-party action; no secret but the CI's own token, read-only, for Composer's
+# The minimal CI of TASK-001 — TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14 in the Docker Compose
+# stack of DEVELOPMENT.md — and TASK-002's guardrails, on a fresh runner, on every push and pull
+# request. No third-party action; no secret but the CI's own token, read-only, for Composer's
 # downloads from GitHub (SECURITY SX-05; SECURITY_TEST_MATRIX SM-15). TASK-003 extends it.
 name: CI
 
@@ -92,3 +92,71 @@ jobs:
       - name: Stop the stack
         if: always()
         run: docker compose down -v
+
+  guardrails:
+    name: TASK-002 guardrails
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BEFORE_SHA: ${{ github.event.before }}
+      BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+    steps:
+      - name: Check out the tested commit with its recent history
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags --depth=100 origin "${GITHUB_SHA}" ${BASE_SHA:+"$BASE_SHA"} ${HEAD_SHA:+"$HEAD_SHA"}
+          git checkout -q --detach "${GITHUB_SHA}"
+          git log -1 --format='Tested commit: %H'
+
+      - name: Commit messages without AI attribution (AGENTS.md)
+        run: |
+          sh scripts/ci/check-commit-messages.sh --self-test
+          if [ -n "${BASE_SHA}" ]; then
+            range="${BASE_SHA}..${HEAD_SHA}"
+          elif [ -n "${BEFORE_SHA}" ] && git cat-file -e "${BEFORE_SHA}^{commit}" 2>/dev/null; then
+            range="${BEFORE_SHA}..${GITHUB_SHA}"
+          else
+            range="${GITHUB_SHA}~1..${GITHUB_SHA}"
+          fi
+          sh scripts/ci/check-commit-messages.sh "${range}"
+
+      - name: Prepare the environment
+        run: |
+          cp .env.example .env
+          echo "HOST_UID=$(id -u)" >> "$GITHUB_ENV"
+          echo "HOST_GID=$(id -g)" >> "$GITHUB_ENV"
+
+      - name: Build the application image
+        run: docker compose build app
+
+      - name: Install the dependencies from the lockfiles
+        env:
+          COMPOSER_AUTH: '{"github-oauth": {"github.com": "${{ github.token }}"}}'
+        run: |
+          docker compose run --rm --no-deps -e COMPOSER_AUTH app composer install --no-interaction --prefer-dist --no-progress
+          docker compose run --rm --no-deps app php artisan key:generate --no-interaction
+          docker compose run --rm node npm ci
+
+      - name: TL-01 ESLint
+        run: docker compose run --rm node npm run lint
+
+      - name: TL-02 Larastan/PHPStan
+        run: docker compose run --rm --no-deps app vendor/bin/phpstan analyse --no-progress --memory-limit=1G
+
+      - name: Architecture tests (SM-03), each rule proven on its fixture
+        run: docker compose run --rm --no-deps app php artisan test --testsuite=Architecture
+
+      - name: The project's ESLint rules on their fixtures
+        run: docker compose run --rm node npm run test:lint-rules
+
+      - name: Secret-like scan (SX-06)
+        run: |
+          docker compose run --rm node sh scripts/ci/scan-secrets.sh --self-test
+          docker compose run --rm node sh scripts/ci/scan-secrets.sh
+
+      - name: Task plan integrity (PMC-15)
+        run: |
+          docker compose run --rm node node scripts/ci/check-plan.mjs --self-test
+          docker compose run --rm node node scripts/ci/check-plan.mjs

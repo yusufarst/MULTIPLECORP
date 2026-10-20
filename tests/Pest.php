@@ -2,7 +2,7 @@
 
 use Tests\TestCase;
 
-pest()->extend(TestCase::class)->in('Feature', 'Integration');
+pest()->extend(TestCase::class)->in('Feature', 'Integration', 'Architecture');
 
 /**
  * The Content-Security-Policy of SECURITY WS-08 for the given nonce.

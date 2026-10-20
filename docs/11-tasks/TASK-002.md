@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -226,32 +226,32 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — Pint and ESLint, PASS
+- [x] Typecheck — Larastan/PHPStan at level `max` (CI) and the TypeScript compiler, PASS
+- [x] Relevant automated tests — the architecture tests, each rule failing on its fixture, and the project's ESLint rules, PASS
+- [x] Authorization — N/A: no route
+- [x] Route integrity — N/A: no route
+- [x] Interaction behavior — N/A: no interaction
+- [x] Browser E2E if required — N/A: no page
+- [x] Responsive/adaptive if required — N/A: no page
+- [x] Visual breathing room/density if UI — N/A: no page
+- [x] Production build — TL-13 still PASS
+- [x] Security checks if required — the secret-like scan and the dependency audits, PASS
+- [x] Database safety review — no schema, migration or data; the strict-model checks only outside production
+- [x] Final diff review — the project's review list answered on the diff (ER-05); no ER-06 area touched
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `888f91a5005935802a4df7c08c73c5770bb9f896`: fresh CI on GitHub's `ubuntu-24.04` runner, run 39415963830 (push, `888f91a`) and run 39415973350 (pull request #2, its merge commit `cc282af056e938306e79bf20309ab591c5d65e26`), both jobs PASS in each. Job "TASK-002 guardrails": the commit-message check PASS — its self-test refusing every attributed sample, then no attribution in `d2e3430..888f91a` —; the lockfile installs, Larastan 3.13.0, PHPStan 2.3.1 and `iamcal/sql-parser` 0.7 among them; ESLint PASS; Larastan/PHPStan at level `max` with `phpstan.neon`, `[OK] No errors`; the architecture tests 45 tests and 13,539 assertions PASS, each rule also failing on its fixture; the project's ESLint rules 11 tests PASS; the secret-like scan PASS, its self-test detecting a generated token; the plan integrity check PASS, its self-test detecting a changed counter, a changed contract status, a broken anchor and a missing file. Job "TASK-001 checks" PASS on the same commits — Pint, the TypeScript compiler 6.0.3, the Vite build, 17 feature and 4 integration tests, the audits, the production check. The first commit `087f55e` passed the same in runs 39414102909 and 39414146105, with the 40 architecture tests it had before the review fix. Locally, in the cloud session of 2026-10-20, the same checks PASS but Larastan/PHPStan, which GitHub's refusal of its packages' downloads keeps from installing there: on `087f55e` 61 PHP tests — 17 feature, 4 integration against the stack, 40 architecture —, ESLint, `tsc`, the rules' 11 tests, the build and the three scripts with their self-tests; on `888f91a` Pint, ESLint, the 17 feature and 45 architecture tests, the plan check and the secret-like scan
+- Build result: TL-13 PASS in CI and locally — the Vite build unchanged in size, and the production check
+- Route evidence: N/A — no route is added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page
+- Localization evidence: N/A — no copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: the 54 files of `087f55e` — `phpstan.neon`, `pint.json`, `eslint.config.js`, `eslint/`, `.secretlintrc.json`, `.secretlintignore`, `tests/Architecture/` with its fixtures, `phpunit.xml`, `tests/Pest.php`, `app/Providers/AppServiceProvider.php`, `app/Http/Middleware/SecurityHeaders.php`, `resources/js/app.tsx`, `scripts/ci/`, `.github/workflows/ci.yml`, `DEVELOPMENT.md`, the manifests and lockfiles, TOOLCHAIN, this file, TASK_PLAN and CURRENT_HANDOFF —, and the 10 of `888f91a` — the rules `Rules.php` and `SourceScan.php`, their tests `DependencyRulesTest.php` and `ProhibitedPatternsTest.php`, four new fixtures and one changed, and `DEVELOPMENT.md` —, each inside the IN SCOPE areas or the guard their checks need; this record's commit adds this evidence, TOOLCHAIN's CI result, TASK_PLAN's DONE update, TASK-003's status, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `087f55edc9a0ddf7456e3868b0088e4e88871e17` and the review fix `888f91a5005935802a4df7c08c73c5770bb9f896`, each under the Owner's identity, with no signature and no AI attribution; this record's commit follows them on `task/TASK-002-guardrails`
+- Notes: N/A with its reason — Feature, Integration, Authorization, Route integrity (no endpoint or route), Interaction, Browser E2E, Localization, visual, responsive and accessibility checks (no page), Performance (no query), Migration (no migration). Changes beside the guardrails, each needed by them: TypeScript 7.0.2 → 6.0.3, the newest release `typescript-eslint` supports; `app.tsx`'s app promise marked handled for ESLint; a type on the middleware's `$next` for PHPStan; TASK-001's secret-reference gate narrowed to GitHub expressions after it mistook `scan-secrets.sh` for a secret. The automated review of pull request #2 on `087f55e` raised three findings: two applied in `888f91a` — the cross-module model rule now covers every folder of a module but its own Models, whose relationships stay allowed (ARCHITECTURE §3), and a direct balance write is refused in a posting service too, the shared `GuardUpdate` helper excepted (§7, §19) —; the third does not apply — the commit `00a879d` it names is not in the repository, and the pull request carries only the Owner's commits. Larastan/PHPStan's local half: the Owner chose on 2026-10-20 to verify it in CI (option B), as the cloud session cannot install its packages; it runs locally when a session first runs on the Owner's workstation (ER-13). The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
