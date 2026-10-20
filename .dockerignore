@@ -1,0 +1,2 @@
+# The application image copies nothing from the build context (docker/php/Dockerfile).
+*

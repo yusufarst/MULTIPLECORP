@@ -1,0 +1,5 @@
+/* Tailwind scans only the application's views and frontend code, not the repository's documents. */
+@import 'tailwindcss' source(none);
+
+@source '../views';
+@source '../js';
