@@ -12,13 +12,15 @@ Amendment: on 2026-10-14 the "visual direction" line states that the Golden Fron
 
 Amendment: on 2026-10-20 the "CURRENT PHASE" line names the Task plan, the "visual direction" and contracts lines name the documents approved under APPR-011 that the Tasks build from, and the execution entry names the Task plan, the scope rule of DIR-083 OE-20 and the operator's and the Owner's Tasks — what an executor needs before its first Task, which P11's existence requires; no other line changes. It is a narrow continuity record authorized by [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 (TECH-040, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
 
+Amendment: on 2026-10-20 the execution entry names the execution authorization in force from the freeze record and the standing rules ER-01–ER-13 of record 84 (DIR-085 OF-09; DIR-086), and the CURRENT PHASE line the approved Task plan; no other line changes. It is a narrow continuity record authorized by [DIR-086](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) §3.5 item 3 (TECH-041, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-010).
+
 The stable minimum context for execution agents (AICWDF §34A). Every line points to its owning document; where a line and its owner differ, the owner wins.
 
 ## Project
 
 - PROJECT: MultipleCorp — Company Management System — [PROJECT_CHARTER](../00-governance/PROJECT_CHARTER.md#identity-and-outcome)
 - CURRENT RELEASE: operational production V1, no fixed delivery date (DIR-035 D1) — [PROJECT_CHARTER](../00-governance/PROJECT_CHARTER.md#identity-and-outcome)
-- CURRENT PHASE: [PHASE_STATUS](../PHASE_STATUS.md); the Tasks: [TASK_PLAN](TASK_PLAN.md), none started before the Owner's execution authorization at OG-4
+- CURRENT PHASE: [PHASE_STATUS](../PHASE_STATUS.md); the Tasks: [TASK_PLAN](TASK_PLAN.md), approved under APPR-016 and executed under the execution authorization in force from the freeze record (DIR-085 OF-09)
 - DEFAULT STACK: Laravel, Inertia, React with TypeScript, shadcn/ui on Tailwind CSS, PostgreSQL and Nginx, a Valkey/Redis-compatible queue and cache that is never a system of record, a modular monolith — [ARCHITECTURE §1](../04-architecture/ARCHITECTURE.md#1-baseline-and-constraints)
 
 <a id="auth-profile--decided-security-amendment-pending"></a>
@@ -47,6 +49,7 @@ The stable minimum context for execution agents (AICWDF §34A). Every line point
 ## Execution entry
 
 - read the [Task plan](TASK_PLAN.md) and the active Task, then only the exact sections it references, in the reading order of [AGENTS.md](../../AGENTS.md#read-in-this-order); the [Task model](../00-governance/AGENT_OPERATING_MODEL.md#task-model) governs status and completion; no Task adds to V1 or drops, defers or narrows a V1_REQUIRED requirement (DIR-083 OE-20), and a Task whose EXECUTOR is HUMAN OPERATOR or OWNER is never run by an agent ([TASK_PLAN §2](TASK_PLAN.md#2-rules-of-the-plan))
+- the execution authorization is given and in force from the freeze record ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-09): one Execution Agent, one READY Task at a time in TASK_PLAN's dependency order, under the standing rules ER-01–ER-13 of [record 84](../00-governance/sources/EXECUTION_AUTHORIZATION_2026-10-20.txt) §4 (DIR-086) — the start, the branch, the build, the verification, the independent review, the pull request and DONE, discovery, Change 4, the operator's and the Owner's records, production, the session's end and a change of environment
 
 ## Project invariants
 

@@ -10,6 +10,8 @@ Amendment: on 2026-10-14 rule 10 states that the Golden Frontend Reference v1.0.
 
 Amendment: on 2026-10-20 the reading order's items 4 and 5 and rules 5, 7, 10, 12 and 17 name the Task plan, the active Task, the scope rule of DIR-083 OE-20, the operator's and the Owner's Tasks, the Task plan's progress rule and the approved design system and contracts the Tasks build from, which P11's existence requires; no other rule changes. It is a narrow continuity record authorized by [DIR-084](docs/00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 and SP-100 (TECH-040, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-009).
 
+Amendment: on 2026-10-20 the reading order's item 5 states that the Owner's execution authorization is given, in force from the freeze record under the standing rules of record 84 (DIR-085 OF-09; DIR-086); no other rule changes. It is a narrow continuity record authorized by [DIR-086](docs/00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) §3.5 item 3 (TECH-041, where its hashes are recorded), and the document keeps the APPROVED status of the last approved revision (APPR-009).
+
 This file routes every planning, execution, review and release agent to the same repository context. The repository is the source of truth; chat, memory and generated output are not.
 
 ## Read in this order
@@ -18,7 +20,7 @@ This file routes every planning, execution, review and release agent to the same
 2. [EXECUTION_CONTEXT](docs/11-tasks/EXECUTION_CONTEXT.md) — the stable minimum context.
 3. [CURRENT_HANDOFF](docs/handoff/CURRENT_HANDOFF.md) — the current operational state and the safe next action.
 4. [PHASE_STATUS](docs/PHASE_STATUS.md) — phase progress — and the [Task plan](docs/11-tasks/TASK_PLAN.md), P11's execution dashboard.
-5. The active Task — its contract `docs/11-tasks/TASK-nnn.md`, once the Owner's execution authorization at OG-4 is given; until then the Owner's current authorization — and then only the exact sections it references, found through the [context index](docs/CONTEXT_INDEX.md).
+5. The active Task — its contract `docs/11-tasks/TASK-nnn.md`; the Owner's execution authorization is given ([DIR-085](docs/00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-09), in force from the freeze record under the standing rules of [record 84](docs/00-governance/sources/EXECUTION_AUTHORIZATION_2026-10-20.txt) (DIR-086) — and then only the exact sections it references, found through the [context index](docs/CONTEXT_INDEX.md).
 
 Check the actual branch, commit and working tree before acting; preserve existing changes and report any difference from the handoff.
 
