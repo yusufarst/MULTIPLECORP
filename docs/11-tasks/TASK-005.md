@@ -8,7 +8,7 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -238,32 +238,32 @@ Every module writes through identity, audit, the command log and correction case
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` PASS in CI — not run in the cloud session (TASK-002, option B) — and the TypeScript compiler PASS (TL-02)
+- [x] Relevant automated tests: Unit — the casts and value conventions of DATABASE §16–§17 —, Integration — every C- row of these tables violated and refused at its level, the stores' keys violated, the runtime's privileges —, Architecture, TL-15's index register and TL-16, PASS locally and in CI
+- [x] Authorization: N/A — no route, query class or command; TL-06 EMPTY until TASK-011
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS in CI
+- [x] Security checks if required: H9-01 — the runtime role owns nothing, runs no DDL and holds only its table class's privileges; the migration role is reached only through the migration connection, never from `app/` or `routes/`; the append-only tables refuse an update or a delete at the database and at the model (C-53) —; the secret-like scan and both dependency audits PASS
+- [x] Database safety review: the 19 migrations only create — nothing dropped, renamed or retyped, no store flushed, no data migration —, each `down()` reverses its migration (TL-16); local and CI databases only, no production connection
+- [x] Final diff review: each table, column, key and constraint against DATABASE as written, the gaps raised as discoveries and decided by the Owner (DIR-088), nothing invented; the automated review's one finding — the runtime could not change an account's one launch role — fixed in `d290ff6` with its test
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `d290ff6082526a795cae71f4efd8824ac7131d30`: fresh CI on GitHub's `ubuntu-24.04` runner, run 39450716389 (push, `d290ff6`) and run 39450727732 (pull request #5, its merge commit `6590b5b`), the three jobs PASS in each. "Verify": every check of `scripts/verify.sh` PASS — Larastan/PHPStan at level `max`, TL-03 Unit, TL-05 Integration with this Task's database tests, the Composer and npm audits, the secret-like scan and the production check among them —, TL-06–TL-08 EMPTY. "Browser": TL-09 and TL-12 PASS, TL-10 and TL-11 EMPTY. "Performance and migration": `TL-15 Performance: PASS` — the index register's 20 index uses, each chosen by its query in `EXPLAIN` —, the load run PASS, and `TL-16 Migration up, down and up from empty: PASS — Evidence: d290ff6, CI ubuntu-24.04 run 39450716389, docker compose exec -T app sh -c php artisan migrate --database=migration --force && php artisan migrate:rollback --database=migration --force && php artisan migrate --database=migration --force`. The first push, `7d891cd`, passed the same (runs 39446628126 and 39446690280); the automated review then found that the runtime could not change an account's one launch role, which `d290ff6` grants on `role_id`, `granted_by` and `granted_at` only, with its test. Locally, in the cloud session, PHP on the host against the stack: `scripts/verify.sh` — every check PASS but Larastan/PHPStan and the production check, not run there (TASK-002, option B) —, `scripts/verify.sh browser performance` and TL-16's sequence PASS; after `d290ff6` the PHP suites PASS again — Unit 59, Architecture 48, Feature 19, Integration 121 and Performance 1 tests
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: d290ff6, CI ubuntu-24.04 run 39450716389, docker compose exec -T app sh scripts/ci/production-check.sh`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: d290ff6, CI ubuntu-24.04 run 39450716389`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted; PostgreSQL 18.6's native `uuidv7()`, no extension
+- Files changed: the build `44279a1` — `database/migrations/` (19 migrations), `app/Support/Database/` and `app/Support/BusinessDate.php`, `app/Modules/IAM/` and `app/Modules/OPS/` (the models and the READMEs), `database/factories/IAM/` and `database/factories/OPS/`, `config/database.php`, `config/auth.php`, `composer.json`, `docker-compose.yml`, `docker/postgres/provision-roles.sh`, `.env.example`, `scripts/verify.sh`, the tests — `tests/Integration/Schema/`, `tests/Performance/IndexRegisterTest.php`, `tests/Unit/Support/`, `tests/Architecture/DatabaseRolesTest.php`, `tests/Support/` and the harness tests the role split changes —, `DEVELOPMENT.md`, TOOLCHAIN's row, this file, TASK_PLAN and CURRENT_HANDOFF; DIR-088's `1437910` — the export requests' key, the migrations' comments and the inventory test — and `7d891cd` — DECISION_LOG, DECISION_INDEX, the eighty-sixth source record, `.gitattributes`, this file's dispositions, TASK-006–TASK-008, TASK-058, TASK-060, TASK_PLAN's Change 5, FEATURE_COVERAGE_MATRIX and CURRENT_HANDOFF —; `d290ff6` — the `user_roles` grant and its test; this record's commit adds this evidence, TASK_PLAN's DONE update, TASK-006's and TASK-010's statuses, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `44279a1`, `1437910`, `7d891cd` and `d290ff6082526a795cae71f4efd8824ac7131d30`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-005-schema-foundations`
+- Notes: the criteria, each as its tests prove it, the dispositions above applied. (1) The 19 tables exactly, by the schema inventory; the stores' keys violated — a second unused, unrevoked link for one account and purpose, a repeated token hash (IX-04) and an export request in an unknown state; every column, key and constraint DATABASE states but the foreign keys to later tables, which DIR-088 gives TASK-006–TASK-008. (2) C-32's company keys, each by a composite reference that refuses another company's row, and C-46, C-47, C-48, C-53 and C-62–C-64, each violated and refused at its level; C-40's capabilities and `authority_class` and C-65's TOTP columns created, their behaviour TASK-011's, TASK-018's and TASK-023's; the forward foreign keys not claimed. (3) IX-03, IX-04, IX-05, IX-09, IX-13's built indexes, IX-14's partial `import_rows` and `security_events` indexes, IX-15's partial `import_batches` index, IX-18 and IX-19, with DATABASE §20's actor history and open cases and C-47's committed identity, each chosen by its query in `EXPLAIN` on a synthetic seed, as this Task's performance test requires; PERFORMANCE §12's procedure at 1x, 10x and 100x with `EXPLAIN (ANALYZE, BUFFERS)` and step 4's acceptance rules is TASK-068's (PFM-03, IX-01–IX-19) and not claimed here; IX-13's partial indexes over the acknowledged and the routed action codes and the routed codes' `(command_id)` index are TASK-058's, open until it is DONE. (4) Money `numeric(18,2)`, the business date `date`, every instant `timestamptz`, no floating type; these tables hold no quantity. (5) The migrations only create tables, so nothing a running release reads is dropped, renamed or retyped and no store is flushed, and TL-16 runs from empty in CI as the migration role; the command log keeps a row until its expiry and deletes it only after it (DATABASE §19); the behaviour of job payload versions and one-release command validity is TASK-022's and TASK-013's, proven by TASK-072's criterion 7 — PRQ-04 is mapped to TASK-013 and TASK-072 — and not claimed here. (6) The committed import identity unique per import kind — a second commit of one legacy identity refused (C-47; AX-28) —, a committed row frozen and one batch per source and import kind; each created fact's UNIQUE `import_row_id` is in the later schema Tasks' tables and the rerun's proof TASK-057's, as the criterion states. Other discoveries, resolved within the approved text: `import_batches.company_scope` as `bigint[]`; command identity on the command-written tables `users`, `user_roles`, `user_capability_grants`, `user_company_grants`, `correction_cases`, `import_batches` and `legacy_archive_items`; `legacy_archive_items`' replay protection C-48's; the stores' DELETE as their lifecycles state; the runtime's UPDATE columns this Task's reading of DATABASE §28, a later Task extending them by its own grant only; the role and capability rows TASK-011's; money carried by the framework's exact decimal cast until DEP-07's decimal library (TASK-049); the group roles `multiplecorp_runtime` and `multiplecorp_administration` created in production by TASK-072. Context7 is not available in the cloud session: PostgreSQL's and Laravel's features were verified on the installed versions (TOOLCHAIN's row "Database roles and schema foundations (TASK-005)"); Graphify N/A. N/A items with their reasons as the checklist states. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
