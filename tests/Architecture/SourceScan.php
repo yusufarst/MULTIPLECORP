@@ -55,9 +55,14 @@ final class SourceScan
             'source' => 'SECURITY AZ-02; SM-03',
             'patterns' => ['/[\'"](OWNER|ADMIN_OPERASIONAL)[\'"]/', '/->hasRole\(/'],
         ],
-        'balance-write' => [
-            'source' => 'ARCHITECTURE §7, §19',
-            'patterns' => ['/DB::table\(\s*[\'"]\w+_balances[\'"]/', '/\\\\Models\\\\\w+Balance\b/'],
+        'balance-table-write' => [
+            'source' => 'ARCHITECTURE §7, §19: every guard update goes through the shared GuardUpdate helper',
+            'patterns' => ['/DB::table\(\s*[\'"]\w+_balances[\'"]/'],
+            'skip' => ['/Queries/', '/Support/GuardUpdate'],
+        ],
+        'balance-model-outside-posting' => [
+            'source' => 'ARCHITECTURE §7, §19: a balance belongs to its posting service and is read by queries',
+            'patterns' => ['/\\\\Models\\\\\w+Balance\b/'],
             'skip' => ['/Services/', '/Queries/', '/Models/'],
         ],
         'automatic-eager-loading' => [

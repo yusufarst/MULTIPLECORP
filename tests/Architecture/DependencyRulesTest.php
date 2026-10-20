@@ -36,8 +36,17 @@ it('fails on a lower tier writing through a higher one', function () {
 });
 
 it('fails on an action writing another module\'s model', function () {
-    expect(fn () => Rules::check(Rules::tiers(FIXTURES), FIXTURES.'\Modules\FIN\Actions'))
+    expect(fn () => Rules::check(Rules::tiers(FIXTURES), FIXTURES.'\Modules\FIN'))
         ->toThrow(AssertionFailedError::class);
+});
+
+it('fails on a query reading another module\'s model instead of its query class', function () {
+    expect(fn () => Rules::check(Rules::tiers(FIXTURES), FIXTURES.'\Modules\PRJ'))
+        ->toThrow(AssertionFailedError::class);
+});
+
+it('accepts a relationship between two modules\' models', function () {
+    Rules::check(Rules::tiers(FIXTURES), FIXTURES.'\Modules\FUL');
 });
 
 it('fails on Reporting writing through an action', function () {

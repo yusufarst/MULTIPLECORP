@@ -20,6 +20,10 @@ it('detects each prohibited pattern on its fixture', function (string $rule) {
     expect(SourceScan::violations($rule, [base_path('tests/Architecture/Fixtures/Scan')]))->not->toBe([]);
 })->with(array_keys(SourceScan::RULES));
 
+it('detects a direct balance write inside a posting service', function () {
+    expect(SourceScan::violations('balance-table-write', [base_path('tests/Architecture/Fixtures/Scan/Services')]))->not->toBe([]);
+});
+
 it('has no repository class per model', function () {
     expect('App')->classes()->not->toHaveSuffix('Repository');
 });

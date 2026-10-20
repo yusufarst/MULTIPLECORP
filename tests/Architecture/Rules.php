@@ -78,10 +78,12 @@ final class Rules
     }
 
     /**
-     * A module writes only through the actions and posting services of a lower tier, never in a cycle,
-     * and never through another module's models; Reporting only reads (ARCHITECTURE §3, §19).
+     * A module writes only through the actions and posting services of a lower tier, never in a cycle;
+     * it reads another module only through that module's query classes, so no folder but its own
+     * Models — their relationships — uses another module's models; Reporting only reads
+     * (ARCHITECTURE §3, §19).
      *
-     * @return list<array{string, list<string>}>
+     * @return list<array{0: string, 1: list<string>, 2?: list<string>}>
      */
     public static function tiers(string $root): array
     {
@@ -108,9 +110,7 @@ final class Rules
                 fn (string $namespace): bool => $namespace !== "{$root}\\Modules\\{$module}\\Models",
             ));
 
-            foreach (['Actions', 'Services'] as $writer) {
-                $rules[] = ["{$root}\\Modules\\{$module}\\{$writer}", $otherModels];
-            }
+            $rules[] = ["{$root}\\Modules\\{$module}", $otherModels, ["{$root}\\Modules\\{$module}\\Models"]];
         }
 
         return $rules;
@@ -143,16 +143,28 @@ final class Rules
     }
 
     /**
-     * Runs the rules, or only those of the given target; a failing rule throws.
+     * Runs the rules, or only those of the given target, each skipping the namespaces of its third
+     * element; a failing rule throws.
      *
-     * @param  list<array{string, list<string>}>  $rules
+     * @param  list<array{0: string, 1: list<string>, 2?: list<string>}>  $rules
      */
     public static function check(array $rules, ?string $only = null): void
     {
-        foreach ($rules as [$target, $forbidden]) {
-            if ($forbidden !== [] && ($only === null || $target === $only)) {
-                expect($target)->not->toUse($forbidden);
+        foreach ($rules as $rule) {
+            [$target, $forbidden] = $rule;
+
+            if ($forbidden === [] || ($only !== null && $target !== $only)) {
+                continue;
             }
+
+            $expectation = expect($target)->not->toUse($forbidden);
+
+            if (($rule[2] ?? []) !== []) {
+                $expectation->ignoring($rule[2]);
+            }
+
+            // The expectation is verified when it is released.
+            unset($expectation);
         }
     }
 
