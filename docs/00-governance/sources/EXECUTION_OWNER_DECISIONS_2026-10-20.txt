@@ -1,0 +1,57 @@
+Owner decisions received in session during execution, 2026-10-20 (WIB), Claude Code cloud session, transcribed as received.
+
+--- 1. Adaptive effort (after TASK-003's CI final run) ---
+
+OWNER DECISION — ADAPTIVE EFFORT MULTIPLECORP
+Saya mengotorisasi optimasi effort untuk Task berikutnya mulai TASK-004.
+Tetap gunakan Claude Opus 5.5 dengan ketentuan:
+
+* Task sederhana: Medium.
+* Task kompleksitas menengah: High.
+* Task kompleks: XHigh.
+* Task sangat kompleks, sensitif, atau berisiko tinggi: Max.
+* Jika sulit menentukan effort yang tepat, naikkan satu level dari perkiraan awal.
+
+Jangan menggunakan Max secara default untuk seluruh Task.
+Sebelum setiap Task, tentukan effort yang paling sesuai berdasarkan kontrak Task, kompleksitas, dependensi, dan risiko. Informasikan level yang dipilih secara singkat agar saya bisa menyesuaikan pengaturan sesi bila diperlukan.
+Keputusan ini menggantikan ketentuan effort tetap pada Record 84 §1.1 untuk eksekusi berikutnya. Catat sebagai keputusan operasional Owner tanpa mengubah arsip historis atau membuka fase planning baru.
+Pertahankan seluruh aturan keamanan, pengujian, CI, PR, dan approval yang sudah berjalan.
+Setelah PR #3 saya merge, lanjutkan otomatis ke Task READY berikutnya. Tidak perlu otorisasi per Task atau audit tambahan.
+
+--- 2. TestSprite optional (during TASK-004) ---
+
+OWNER DECISION — TESTSPRITE OPTIONAL
+Untuk MULTIPLECORP, jangan memaksakan penggunaan TestSprite apabila aksesnya diblokir, tidak tersedia, atau memerlukan biaya tambahan.
+Keputusan saya:
+
+1. TestSprite bersifat opsional, bukan persyaratan wajib penyelesaian Task.
+2. Jika akses TestSprite gagal karena pembatasan jaringan (403), cukup catat status dan keterbatasannya di TOOLCHAIN.
+3. Jangan mencoba berulang kali, mencari jalur bypass, membuat akun berbayar, atau mengaktifkan langganan.
+4. Gunakan Claude Code untuk menganalisis bug, membuat dan menjalankan pengujian, memperbaiki masalah, serta melakukan regresi.
+5. Pertahankan seluruh pengujian otomatis yang sudah tersedia, termasuk Pest/PHPUnit, PHPStan, Playwright, pengujian integrasi, keamanan, dan CI.
+6. Jangan menganggap analisis Claude saja sebagai pengganti bukti hasil pengujian.
+7. Jika dokumen kanonik secara eksplisit mewajibkan TestSprite, catat konflik tersebut dan ajukan hanya keputusan atau amandemen sempit yang diperlukan. Jangan mengubah persyaratan diam-diam.
+
+Catat keputusan Owner ini dalam pekerjaan TASK-004 sesuai aturan perubahan yang berlaku.
+Lanjutkan TASK-004 tanpa menunggu akses TestSprite. Jangan membuka audit atau fase planning tambahan.
+Prioritaskan penyelesaian 87 Task dan implementasi aplikasi.
+Jawab singkat dalam Bahasa Indonesia.
+
+--- 3. Approval of TASK-004's commit and of the narrow amendment ---
+
+Ya, saya menyetujui commit TASK-004.
+Commit message:
+feat(TASK-004): record the verified tooling with the accessibility engine and the load tool
+Saya juga menyetujui amandemen sempit DOD-14 dan ACCEPTANCE_CRITERIA §8:
+
+* TestSprite bersifat opsional jika tersedia dan bisa digunakan tanpa biaya.
+* Jika tidak tersedia, gunakan pengujian Playwright dan alat pengujian relevan lainnya sebagai bukti alternatif.
+* Jangan mengurangi cakupan pengujian wajib, keamanan, aksesibilitas, atau acceptance criteria V1.
+* Pengujian pada halaman 404 hanya dianggap verifikasi ketersediaan alat, bukan bukti kualitas seluruh aplikasi.
+* Terapkan dan catat amandemen sesuai CHANGE_CONTROL yang berlaku, tanpa membuka fase planning atau audit tambahan.
+
+Jalankan commit TASK-004 dan verifikasi identitas Owner tanpa signature atau atribusi AI.
+Minta persetujuan push secara terpisah.
+Setelah push, jalankan seluruh CI wajib. Jangan nyatakan DONE sebelum semua pemeriksaan yang diwajibkan lulus.
+Prioritaskan penyelesaian TASK-004 dan kelanjutan Task READY berikutnya.
+Jawab ringkas dalam Bahasa Indonesia.

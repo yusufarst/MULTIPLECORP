@@ -1,8 +1,10 @@
 # Definition of done
 
-Status: APPROVED | Updated: 2026-10-19 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-012](../00-governance/DECISION_LOG.md#appr-012--p8-testing-quality-and-definition-of-done-approved), explicit Owner approval on 2026-10-19 (DIR-083 OE-15) of this document as committed in run PC-5's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-20 DOD-14 requires the relevant TestSprite flows only where TestSprite is available at no cost — otherwise Playwright's suite and the other relevant tests are the proof —, no required test, security or accessibility coverage reduced; a check on the stack's "not found" page verifies only a tool's availability. It is the narrow amendment the Owner approved ([APPR-017](../00-governance/DECISION_LOG.md#dir-087-and-appr-017--execution-time-owner-decisions-and-the-testsprite-amendment)) for the Owner's decision that TestSprite is optional (DIR-087), and the document keeps the APPROVED status of APPR-012.
 
 Run PC-4 drafted this document on 2026-10-19 under [DIR-082](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) SP-85, P8 being authorized by the Owner's [DIR-081](../00-governance/DECISION_LOG.md#dir-081-dir-082-obs-032-and-tech-039--og-2-decisions-appr-011-run-pc-4-p8-and-p10-drafted-and-p9-completed) OB-09; the Owner approved P8 at OG-3 (DIR-083 OE-15). No Task exists yet — Tasks are created in P11 (AICWDF §22) —, so nothing here has been applied.
 
@@ -43,7 +45,7 @@ Each Task's contract answers every item: PASS with its evidence or N/A with its 
 | DOD-11 | **5. Security and authorization** — authentication; capability, company and resource isolation; IDOR and BOLA; CSRF, session and cookie; XSS, SQL injection and clickjacking; private uploads and downloads; the COMPANY SCOPE AND FIELD PROJECTION field | the Task's cases of SECURITY_TEST_MATRIX, positive and denial |
 | DOD-12 | **6. Concurrency, idempotency and integrity** — atomic effects; race, duplicate and retry protection; state preconditions; ledger and balance consistency; corrections and audit; the CONCURRENCY / IDEMPOTENCY field | the Task's M rows and ⚡ C-rows; `ReconcileGuards` clean (TEST_STRATEGY §6) |
 | DOD-13 | **7. Performance and N+1** — query evidence, bounded loading, pagination and search, verified indexes, no N+1 regression, measured targets where defined | the CI half of PERFORMANCE_TARGETS PFM-01–PFM-03 for the Task's pages and queries — query counts, N+1 and plans on the scale fixtures —; staging times belong to the release-critical set (PFT §4), a miss there opening a defect Task and AS-07's review |
-| DOD-14 | **8. Automated verification** — Pest backend and integration tests; the relevant TestSprite flows in the role P8Q-01 settles; fresh CI; static analysis and style; frontend typecheck and build; regression — Layer 1, and Layer 2 when the Task closes a group —; business UAT where applicable | TL-01–TL-05, TL-13; TEST_STRATEGY §§3, 12 |
+| DOD-14 | **8. Automated verification** — Pest backend and integration tests; the relevant TestSprite flows in the role P8Q-01 settles where TestSprite is available at no cost, otherwise Playwright's suite and the other relevant tests (APPR-017); fresh CI; static analysis and style; frontend typecheck and build; regression — Layer 1, and Layer 2 when the Task closes a group —; business UAT where applicable | TL-01–TL-05, TL-13; TEST_STRATEGY §§3, 12 |
 
 **The project's further items**
 
