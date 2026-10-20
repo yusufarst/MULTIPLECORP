@@ -1,3 +1,13 @@
+# Text files are committed and checked out with LF line endings on every system (TASK-001).
+# The source-record rules below come later, so their -text wins.
+* text=auto eol=lf
+
+*.blade.php diff=html
+*.css diff=css
+*.html diff=html
+*.md diff=markdown
+*.php diff=php
+
 # Preserve source bytes and recognize their original CRLF line endings.
 # Keep whitespace checks active; CR at the line ending is intentional here.
 docs/00-governance/sources/OWNER_BRIEF_2026-09-27.txt -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
