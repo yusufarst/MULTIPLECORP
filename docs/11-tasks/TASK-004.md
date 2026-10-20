@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -222,32 +222,32 @@ PRQ-12 asks for the verification of the release tooling and of P8's tooling befo
 
 **TEST CHECKLIST:**
 
-- [ ] Lint: N/A — no code changes
-- [ ] Typecheck: N/A — no code changes
-- [ ] Relevant automated tests: Playwright's smoke run on Chromium and WebKit, the accessibility engine's run and the load tool's run, as the proof that each tool works
-- [ ] Authorization: N/A — no route, query class or command
-- [ ] Route integrity: N/A — no route added or changed
-- [ ] Interaction behavior: N/A — no INT- contract
-- [ ] Browser E2E if required: Playwright's smoke run on Chromium and WebKit
-- [ ] Responsive/adaptive if required: N/A — no page
-- [ ] Visual breathing room/density if UI: N/A — no page
-- [ ] Production build: N/A — no code change
-- [ ] Security checks if required: the dependency audit of each installed tool (TL-14)
-- [ ] Database safety review: N/A — no schema or data change
-- [ ] Final diff review: TOOLCHAIN's rows against their dated evidence, TestSprite's entitlement with its evidence, and no paid tier adopted
+- [x] Lint: N/A — no application code; the new test and load files pass ESLint
+- [x] Typecheck: N/A — no application code; the new spec passes the TypeScript compiler
+- [x] Relevant automated tests: Playwright's smoke run on Chromium and WebKit, the accessibility engine's run and the load tool's run, PASS locally and in CI
+- [x] Authorization: N/A — no route, query class or command
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: Playwright's smoke run on Chromium and WebKit, PASS
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: N/A — no code change; TL-13 still PASS in CI
+- [x] Security checks if required: the dependency audits with the new packages, PASS in CI
+- [x] Database safety review: N/A — no schema or data change
+- [x] Final diff review: TOOLCHAIN's rows against their dated evidence, TestSprite's state with its evidence under the Owner's decision, and no paid tier adopted
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
+- Test outputs (TEST_STRATEGY §16), tested commit `a430f15160046181831192f741b21d9319edd5f3`: fresh CI on GitHub's `ubuntu-24.04` runner, run 39431436154 (push, `a430f15`) and run 39431448325 (pull request #4, its merge commit `15f2328`), the three jobs PASS in each. "Verify": every check of `scripts/verify.sh` PASS — the Composer and npm audits with the new packages, Larastan/PHPStan at level `max` and the production check among them —, TL-06–TL-08 EMPTY. "Browser": TL-09 PASS and TL-12 PASS — axe-core 4.14.0 finds no WCAG 2.2 AA violation on the stack's "not found" page on Chromium and WebKit, a proof of the engine's availability only (APPR-017) —, TL-10 and TL-11 EMPTY. "Performance and migration": `TL-15 Load tool smoke run (k6): PASS`, TL-15's PHP suite and TL-16 EMPTY. The first push `0a8c82e` passed the same but the load run, which the automated review found missing from CI and `a430f15` adds (runs 39430303553 and 39430316641). Locally, in the cloud session: the browser section PASS on both engines, k6 85,846 requests with none failed, ESLint, `tsc` and `npm audit` PASS; the Composer audit timed out reaching Packagist twice there, and Larastan/PHPStan and the production check are not run there (TASK-002, option B)
 - Build result: N/A — no code change; the tools' own runs are the test outputs
 - Route evidence: N/A — no route added or changed
 - Interaction evidence: N/A — no INT- contract
-- Browser evidence: Playwright's smoke run on Chromium and WebKit, as the proof of availability
+- Browser evidence: `E2E: PASS — Evidence: a430f15, CI ubuntu-24.04 run 39431448325, docker compose run --rm e2e npx --no-install playwright test -c tests/Browser/playwright.config.ts tests/Browser/E2E, browser-evidence` — the proof of availability on both engines
 - Localization evidence: N/A — no page
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20), or TestSprite's COST_POLICY §4C.2 record for the Owner's decision
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — every installed tool open source at no cost; TestSprite not adopted, optional by the Owner's decision (DIR-087), its site refused in the cloud session (HTTP 403, 2026-10-20), no account and no plan
+- Files changed: TOOLCHAIN, `package.json`, `package-lock.json`, `tests/Browser/Accessibility/`, `tests/Performance/load/smoke.js`, `docker-compose.yml`, `scripts/verify.sh`, `DEVELOPMENT.md`, this file, TASK_PLAN and CURRENT_HANDOFF; APPR-017's amendment — DEFINITION_OF_DONE, ACCEPTANCE_CRITERIA, DECISION_LOG, DECISION_INDEX, the eighty-fifth source record and `.gitattributes`; this record's commit adds this evidence, TASK_PLAN's DONE update, TASK-073's status, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `e7cc0bf`, `0a8c82e` and `a430f15160046181831192f741b21d9319edd5f3`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-004-tooling-check`
+- Notes: N/A with its reason as the checklist states. TestSprite: the canonical DOD-14 and ACCEPTANCE_CRITERIA §8 required its flows; the conflict was recorded and the Owner approved the narrow amendment (APPR-017) — TestSprite where available at no cost, otherwise Playwright's suite and the other relevant tests, no required coverage reduced. GitHub's billing page and the vendors' sites are refused in the cloud session; licences come from the packages' metadata and licence files, read 2026-10-20. Context7 not available; Graphify not installed and not needed yet. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
