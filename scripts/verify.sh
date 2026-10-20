@@ -5,17 +5,18 @@
 #
 #   sh scripts/verify.sh               the repository gates, TL-01–TL-08, TL-13 and TL-14
 #   sh scripts/verify.sh browser       TL-09–TL-12 on Chromium and WebKit
-#   sh scripts/verify.sh performance   TL-15
+#   sh scripts/verify.sh performance   TL-15, with the load tool's smoke run
 #   sh scripts/verify.sh migration     TL-16, on a fresh database only
 #
 # A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs once
-# it exists; any FAIL or NOT RUN fails the command. VERIFY_PHP, VERIFY_NODE and VERIFY_E2E replace the
-# commands that run PHP, Node.js and Playwright on a machine that cannot build the application image.
+# it exists; any FAIL or NOT RUN fails the command. VERIFY_PHP, VERIFY_NODE, VERIFY_E2E and VERIFY_K6 replace
+# the commands that run PHP, Node.js, Playwright and k6 on a machine that cannot build the application image.
 set -u
 
 php_run=${VERIFY_PHP-docker compose exec -T app}
 node_run=${VERIFY_NODE-docker compose run --rm node}
 e2e_run=${VERIFY_E2E-docker compose run --rm e2e}
+k6_run=${VERIFY_K6-docker compose run --rm k6}
 environment=${VERIFY_ENVIRONMENT:-local}
 commit=$(git rev-parse --short HEAD 2>/dev/null || echo unknown)
 logs=storage/logs/verify
@@ -111,6 +112,7 @@ browser_layers() {
 performance_layers() {
     check 'Stack' docker compose up -d --wait
     slot 'TL-15 Performance' tests/Performance '*Test.php' 'the first Task with a budget' $(suite Performance)
+    check 'TL-15 Load tool smoke run (k6)' $k6_run run --quiet tests/Performance/load/smoke.js
 }
 
 migration_layers() {

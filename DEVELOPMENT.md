@@ -44,7 +44,7 @@ sh scripts/verify.sh
 sh scripts/verify.sh browser performance migration
 ```
 
-The second line runs the browser suite (TL-09–TL-12) on Chromium and WebKit in the pinned Playwright image, the performance layer (TL-15) and the migrations from an empty database (TL-16, on a CI runner only). A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs as soon as one exists; any FAIL or NOT RUN fails the command. The production check removes the development packages, which a local run then reinstalls. `VERIFY_PHP`, `VERIFY_NODE` and `VERIFY_E2E` replace the commands that run PHP, Node.js and Playwright on a machine that cannot build the application image.
+The second line runs the browser suite (TL-09–TL-12) on Chromium and WebKit in the pinned Playwright image, the performance layer (TL-15) with the load tool's smoke run and the migrations from an empty database (TL-16, on a CI runner only). A layer whose first test is not written yet reports EMPTY with the Task that writes it, and runs as soon as one exists; any FAIL or NOT RUN fails the command. The production check removes the development packages, which a local run then reinstalls. `VERIFY_PHP`, `VERIFY_NODE` and `VERIFY_E2E` replace the commands that run PHP, Node.js and Playwright on a machine that cannot build the application image.
 
 Each check alone, with the stack started:
 
@@ -56,6 +56,7 @@ docker compose run --rm node npm run typecheck
 docker compose exec app php artisan test --parallel
 docker compose run --rm node npm run test:lint-rules
 docker compose run --rm e2e
+docker compose run --rm k6 run tests/Performance/load/smoke.js
 docker compose run --rm node npm run scan:secrets
 docker compose run --rm node node scripts/ci/check-plan.mjs
 docker compose exec app sh scripts/ci/audit-dependencies.sh php
@@ -63,7 +64,7 @@ docker compose run --rm node sh scripts/ci/audit-dependencies.sh js
 sh scripts/ci/check-commit-messages.sh origin/main..HEAD
 ```
 
-They are the lint (TL-01: Pint, ESLint), the static analysis and typecheck (TL-02: Larastan/PHPStan, the TypeScript compiler), the PHP suites of `phpunit.xml` — one per layer, in `tests/<Layer>/` —, the tests of the project's ESLint rules, the browser suite, the secret-like scan (SX-06), the Task plan's integrity check, the dependency audits (TL-14) and the commit-message check; the last one runs on the machine.
+They are the lint (TL-01: Pint, ESLint), the static analysis and typecheck (TL-02: Larastan/PHPStan, the TypeScript compiler), the PHP suites of `phpunit.xml` — one per layer, in `tests/<Layer>/` —, the tests of the project's ESLint rules, the browser suite with its accessibility engine, the load tool's smoke run against the stack, the secret-like scan (SX-06), the Task plan's integrity check, the dependency audits (TL-14) and the commit-message check; the last one runs on the machine.
 
 **Test data.** A test that migrates, refreshes, truncates or wraps the database runs on PostgreSQL in the database parallel testing creates for its process, `<database>_test_<n>`, and never in the development database, so the suites run with `--parallel` (TEST_STRATEGY TS-03). Fixtures are synthetic (TS-04): the sets FX-01–FX-10 of [TEST_STRATEGY §4](docs/08-testing/TEST_STRATEGY.md#4-environments-and-data) in `tests/Fixtures/`, loaded by `Tests\Support\FixtureSets` and checked against the documents they come from; invented values from a fixed seed by `Tests\Support\Synthetic`; the controlled clock of FX-08 by `Tests\Support\Clock`; and the parallel PostgreSQL sessions of §6's race tests, held at a named point by a barrier, by `Tests\Support\Concurrency` — a race test commits its data, so it uses `DatabaseTruncation`. After every integration test the guards are reconciled (TS-11). Factories and seeders arrive with their models and tables (TASK-005–TASK-009), on the same synthetic values.
 

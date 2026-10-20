@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 3
+DONE: 4
 READY: 3
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 68
+TODO: 67
 SUPERSEDED: 0
 
 Progress:
-3 / 87
-Percentage: 3.4 %
+4 / 87
+Percentage: 4.6 %
 
-CURRENT TASK: none — TASK-003 DONE on its branch `task/TASK-003-ci-pipeline`, its pull request #3 into `main` waiting on the Owner's merge (record 84 ER-07)
-NEXT READY TASK: TASK-004 — Verification and release tooling check, taken after the Owner merges TASK-003's pull request (ER-07), then TASK-005 and TASK-014, also READY; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none — TASK-004 DONE on its branch `task/TASK-004-tooling-check`, its pull request #4 into `main` waiting on the Owner's merge (record 84 ER-07)
+NEXT READY TASK: TASK-005 — Schema foundations — IAM and OPS tables, history and types, taken after the Owner merges TASK-004's pull request (ER-07), then TASK-014 and TASK-073, also READY; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 3 of 2026-10-20 — the pre-mortem's additions to TASK-001, TASK-002 and TASK-070, DIR-085 OF-06's edit of TASK-020 and TASK-085, and the answered P11Q-01, P11Q-05 and P11Q-06 removed from the Tasks they blocked; totals unchanged (§7)
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -52,7 +52,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-001](TASK-001.md) — Repository scaffold and module skeleton
 - [x] [TASK-002](TASK-002.md) — Coding conventions and architecture guardrails
 - [x] [TASK-003](TASK-003.md) — CI pipeline, test layers and the synthetic fixture harness
-- [ ] [TASK-004](TASK-004.md) — Verification and release tooling check
+- [x] [TASK-004](TASK-004.md) — Verification and release tooling check
 - [ ] [TASK-005](TASK-005.md) — Schema foundations — IAM and OPS tables, history and types
 - [ ] [TASK-006](TASK-006.md) — Schema — ORG, PTY, CAT and DOC tables
 - [ ] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
@@ -144,7 +144,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-001](TASK-001.md) | Repository scaffold and module skeleton | Foundation · Foundation | HIGH | DONE | — | 002 | NO | AGENT | NONE | NO |
 | [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | DONE | 001 | 003 | NO | AGENT | NONE | NO |
 | [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | DONE | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
-| [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | READY | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
+| [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | DONE | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
 | [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | READY | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | TODO | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
 | [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | TODO | 006 | 008 | NO | AGENT | PROPOSED | NO |
@@ -213,7 +213,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | BLOCKED — OPI-03, P11Q-02 | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
-| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | TODO | 003, 004 | 084 | NO | AGENT | NONE | NO |
+| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | READY | 003, 004 | 084 | NO | AGENT | NONE | NO |
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
 | [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
