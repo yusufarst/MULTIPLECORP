@@ -4,21 +4,23 @@ use PHPUnit\Framework\AssertionFailedError;
 use Tests\Support\GuardReconciliation;
 use Tests\Support\TestDatabase;
 
-// TEST_STRATEGY TS-03 and TS-11: a database test runs on PostgreSQL in its own test database, and a
-// seeded drift between a guard and its facts fails the reconciliation that follows each integration test.
+// TEST_STRATEGY TS-03 and TS-11: a database test runs on PostgreSQL in its own test database, migrated
+// there through the migration role's connection (TASK-005), and a seeded drift between a guard and its
+// facts fails the reconciliation that follows each integration test.
 
 it('accepts PostgreSQL in a per-process test database', function () {
-    TestDatabase::assertIsolated('pgsql', 'multiplecorp_test_3');
+    TestDatabase::assertIsolated('pgsql', 'multiplecorp_test_3', 'multiplecorp_test_3');
 
     expect(true)->toBeTrue();
 });
 
-it('refuses an in-memory substitute and the development database', function (string $driver, string $database) {
-    expect(fn () => TestDatabase::assertIsolated($driver, $database))->toThrow(LogicException::class);
+it('refuses an in-memory substitute, the development database and migrations aimed elsewhere', function (string $driver, string $database, string $migrationDatabase) {
+    expect(fn () => TestDatabase::assertIsolated($driver, $database, $migrationDatabase))->toThrow(LogicException::class);
 })->with([
-    'SQLite in memory' => ['sqlite', ':memory:'],
-    'the development database' => ['pgsql', 'multiplecorp'],
-    'a look-alike name' => ['pgsql', 'multiplecorp_test'],
+    'SQLite in memory' => ['sqlite', ':memory:', ':memory:'],
+    'the development database' => ['pgsql', 'multiplecorp', 'multiplecorp'],
+    'a look-alike name' => ['pgsql', 'multiplecorp_test', 'multiplecorp_test'],
+    'migrations aimed at the development database' => ['pgsql', 'multiplecorp_test_3', 'multiplecorp'],
 ]);
 
 it('reports a seeded drift and nothing once the guards agree', function () {

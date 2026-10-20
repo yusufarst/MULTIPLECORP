@@ -18,8 +18,8 @@ services:
             STACK_HTTP_URL: http://web:8080
             STACK_CA_FILE: /certs/ca.crt
         depends_on:
-            db:
-                condition: service_healthy
+            db-roles:
+                condition: service_completed_successfully
             cache:
                 condition: service_healthy
             certs:
@@ -49,8 +49,8 @@ services:
         image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
         environment:
             POSTGRES_DB: ${DB_DATABASE:?set DB_DATABASE in .env}
-            POSTGRES_USER: ${DB_USERNAME:?set DB_USERNAME in .env}
-            POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+            POSTGRES_USER: ${DB_SUPERUSER:?set DB_SUPERUSER in .env}
+            POSTGRES_PASSWORD: ${DB_SUPERUSER_PASSWORD:?set DB_SUPERUSER_PASSWORD in .env}
         volumes:
             - db-data:/var/lib/postgresql
         healthcheck:
@@ -58,6 +58,29 @@ services:
             interval: 2s
             timeout: 5s
             retries: 30
+
+    # The database roles of DATABASE §28 (TASK-005), created by the bootstrap superuser on every start.
+    db-roles:
+        image: postgres:18.6-alpine3.24@sha256:77f585114c32fbca283dc835b0596f4e52b51b4c6662d7810b2f4084f60a1873
+        volumes:
+            - ./docker/postgres:/opt/postgres:ro
+        environment:
+            PGHOST: db
+            PGDATABASE: ${DB_DATABASE}
+            PGUSER: ${DB_SUPERUSER}
+            PGPASSWORD: ${DB_SUPERUSER_PASSWORD}
+            DB_DATABASE: ${DB_DATABASE}
+            DB_SUPERUSER: ${DB_SUPERUSER}
+            DB_USERNAME: ${DB_USERNAME:?set DB_USERNAME in .env}
+            DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+            DB_MIGRATION_USERNAME: ${DB_MIGRATION_USERNAME:?set DB_MIGRATION_USERNAME in .env}
+            DB_MIGRATION_PASSWORD: ${DB_MIGRATION_PASSWORD:?set DB_MIGRATION_PASSWORD in .env}
+            DB_ADMIN_USERNAME: ${DB_ADMIN_USERNAME:?set DB_ADMIN_USERNAME in .env}
+            DB_ADMIN_PASSWORD: ${DB_ADMIN_PASSWORD:?set DB_ADMIN_PASSWORD in .env}
+        command: ["sh", "/opt/postgres/provision-roles.sh"]
+        depends_on:
+            db:
+                condition: service_healthy
 
     cache:
         image: valkey/valkey:9.1.2-alpine3.24@sha256:48332870af354a799964c0012ae1194a0bf2bf894eb508f945810596dc2d8d11

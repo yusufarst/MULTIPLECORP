@@ -1,0 +1,21 @@
+Owner decision received in session during execution, 2026-10-20 (WIB), Claude Code cloud session, transcribed as received.
+
+--- TASK-005's commit and its three discoveries (after TASK-005's build was staged) ---
+
+OWNER DECISION — TASK-005
+Saya menyetujui commit:
+feat(TASK-005): create the IAM and OPS schema with the database roles and shared conventions
+Saya juga menetapkan keputusan untuk ketiga temuan:
+
+1. FOREIGN KEY
+Setujui pendekatan expand-only. Foreign key ke tabel yang belum tersedia ditambahkan oleh TASK-006–008 sesuai kepemilikan tabel dan urutan dependensi. Wajib ada pengujian integritas referensial sebelum fitur terkait dinyatakan DONE.
+2. INDEX IX-13
+Jangan menambahkan kolom action_variant sekarang. Tunda implementasi indeks sampai daftar kode aksi acknowledged dan routed didefinisikan oleh Task pemiliknya. Catat dependensi, Task penanggung jawab, dan kewajiban penyelesaian secara eksplisit. Jangan mengarang kode aksi.
+3. EXPORT REQUESTS
+Gunakan primary key id UUIDv7 yang sudah ada sebagai identifier publik apabila sesuai skema. Jangan menambahkan kolom identifier baru tanpa kebutuhan. Pastikan TASK-060 menerapkan authorization dan scoped lookup untuk mencegah IDOR.
+
+Untuk perubahan dokumen kanonik, ikuti CHANGE_CONTROL dengan amandemen sesempit mungkin. Jangan menganggap kewajiban yang ditunda sudah terpenuhi. Jika ada acceptance criterion TASK-005 yang terdampak, catat disposisinya secara eksplisit sebelum DONE.
+Jalankan commit TASK-005 yang sudah di-stage, lalu verifikasi identitas Owner, tanpa signature atau atribusi AI.
+Minta persetujuan push secara terpisah. Setelah push, buka PR dan jalankan CI wajib, termasuk PHPStan level max dan pengujian database.
+Jangan membuka fase planning baru, memperluas V1, atau mengulang audit yang sudah lulus.
+Jawab ringkas dalam Bahasa Indonesia.

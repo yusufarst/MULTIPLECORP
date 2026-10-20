@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) gives this Task the two IX-13 indexes TASK-005 could not build — a scope line, the database impact of those indexes only, the migrations' file area, criterion 13, its performance test and the coverage entry IX-13; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** TODO
@@ -43,6 +45,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 **IN SCOPE:**
 
 - the signal register of PERFORMANCE §7: QS-01–QS-24, each a read-only query class in the Reporting module — one bounded statement, QS-15 one set query per predicate (TASK-055's predicates) —, reading its source rows by the index or open root the register names, one branch per company in scope, a pool signal (QS-17, QS-18, QS-22) read once (PF-24; ARCHITECTURE §14); each row's destination and empty sentence as INFORMATION_ARCHITECTURE §9.1 places them, and its audience as its read class (PJ-13; RD-02–RD-09)
+- IX-13's partial (`company_id`, `occurred_at`, `id`) indexes on `audit_events` over the acknowledged and over the routed action codes, and the partial (`command_id`) index over the routed codes, deferred from TASK-005 ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): expand-only, each predicate the literal list of the codes the Tasks this one depends on have registered — the same list QS-14, QS-20 and QS-21's queries write (PF-10) —, never an invented code; a code registered after this Task extends both lists in its own Task
 - PG-006 *Beranda* with NAV-006 and its view ROUTE-006 (`review.view`, OWNER_ONLY; *Gabungan* `reports.consolidated`; SCR-05; D-IA-07): its five deferred groups — G1 *Perlu Perhatian Owner* (the Owner's security notices, QS-14's new items since the previous sign-in, QS-16, QS-18's attribution, QS-20, QS-22 and the Owner-only overdue projects QS-23), G2 *Operasional* folded into *Antrean operasional* with "Buka Pekerjaan", G3 *Penagihan & Kas*, G4 *Penyelesaian Proyek* and G5 *Angka Periode* —; *Perlu keputusan Anda*, two rows on the phone, then "Lihat semua keputusan"; the four KPIs — *Nilai penjualan (invoice terbit)*, *Kas masuk (uang diterima)*, *Piutang aktif*, *Laba manajerial* — as KPI tiles without delta or sparkline (SLOP-18); *Proyek yang perlu perhatian*; the view switch *Gabungan* · one company filtering the groups and figures (IA §9)
 - G5's period figures CALC-08–CALC-14 per company and *Gabungan*, "Angka per {waktu} WIB", read in one snapshot (TX-10; PF-43), with the receivables position — one grouped statement over `invoice_balances` per company in scope, CALC-05's outstanding total and CALC-07's due-date buckets, the *migrasi* bucket included and a disputed amount kept with its indicator (`DIR-079` CB-03; GAP-060) —; in the one-company view the chart *Umur piutang* with its table (Chart; GR-23; D-IA-15); "Rincian angka" → PG-052 (NAV-052)
 - the Owner's security notices heading G1: a credential link the Owner issued being used (MSG-29's Owner variant) and LG-07's single-event alerts — OWNER_RECOVERY_LINK_ISSUED, AUTHORIZATION_ANOMALY, an Owner sign-in from an address not seen in 30 days —, each its neutral type, its time and a link to PG-064 or PG-060, derived by one bounded statement over the security events since the Owner's previous sign-in, nothing marked read (IA §9; INT-020; DP-11)
@@ -73,11 +76,12 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 - [DESIGN_SYSTEM §9.5](../07-ux-design/DESIGN_SYSTEM.md#95-dashboard-records-and-media) PT-21; [§10](../07-ux-design/DESIGN_SYSTEM.md#10-component-composition) Chart, KPI tile; [§18](../07-ux-design/DESIGN_SYSTEM.md#18-anti-ai-slop-mapping) SLOP-18, SLOP-28, SLOP-34, SLOP-38; [Annex B](../07-ux-design/DESIGN_SYSTEM.md#annex-b-the-carried-items-gr-01gr-23) GR-23
 - [PERFORMANCE_TARGETS §2](../08-testing/PERFORMANCE_TARGETS.md#2-the-query-budgets) QB-10; [§3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-05, PFM-07, PFM-15; [TEST_STRATEGY §9](../08-testing/TEST_STRATEGY.md#9-the-uiux-consistency-gate) CA-10 and CB-03; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-09, CJ-13, CJ-22
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-034--two-owner-review-items-have-no-record-to-be-listed-from) GAP-034; [GAP-060](../00-governance/GAP_REGISTER.md#gap-060--berandas-receivables-figure-and-ageing-chart-lie-outside-qb-10)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (72): CAP-17; AC-23; REF-007–REF-008; REF-046–REF-048; REF-050; REF-059; IMG-09; QS-01–QS-24; ROUTE-006–ROUTE-008; INT-019–INT-020; HO-38; PF-24–PF-30; PF-43; D-IA-07–D-IA-08; D-IA-11; D-IA-15; PG-006–PG-008; SCR-05–SCR-07; J-ACC-01; UXS-18–UXS-19; UXS-25; UXS-40; UXS-43; PT-21; GR-23; NAV-006–NAV-008; component Chart; GAP-034; GAP-060
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (73): CAP-17; AC-23; REF-007–REF-008; REF-046–REF-048; REF-050; REF-059; IMG-09; QS-01–QS-24; ROUTE-006–ROUTE-008; INT-019–INT-020; HO-38; PF-24–PF-30; PF-43; IX-13; D-IA-07–D-IA-08; D-IA-11; D-IA-15; PG-006–PG-008; SCR-05–SCR-07; J-ACC-01; UXS-18–UXS-19; UXS-25; UXS-40; UXS-43; PT-21; GR-23; NAV-006–NAV-008; component Chart; GAP-034; GAP-060
 
 **EXPECTED MODULES / FILE AREAS:**
 
 - the Reporting module's query classes — one per signal, the period figures and the receivables position, the security notices — and `ShowBeranda`, `ShowWorkQueue`; OPS's `ShowReviewQueue` with its four sources (RC-02; ARCHITECTURE §3, §14); `resources/js/Pages/Reporting` and `resources/js/Pages/OPS` for PG-006–PG-008; `tests/Feature/Reporting`, the query-count tests of TL-15
+- `database/migrations/`, an OPS migration for the two IX-13 indexes deferred by DIR-088
 
 **BUSINESS RULES:**
 
@@ -113,8 +117,8 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
-- Migration required: NO
+- Schema change: PROPOSED — only IX-13's two deferred partial indexes on `audit_events` (DIR-088); otherwise the tables of TASK-005–TASK-009, a missing column an executor discovery (AGENT_OPERATING_MODEL)
+- Migration required: YES — expand-only, those indexes
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
 - Data-loss risk: NONE KNOWN
@@ -229,6 +233,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 10. The anti-slop audit of *Beranda* and *Pekerjaan* finds row lists and one figures table, no KPI-card wall, decorative chart, banner or greeting (UXS-43; SLOP-18; SLOP-28; SLOP-38).
 11. A poll runs no faster than once a minute as a background request that names its props and never extends the session (PF-26; PF-36; H7-13).
 12. A new Admin without any company grant sees MSG-38 on *Pekerjaan* and nothing above S0 (RG-04; J-ACC-01).
+13. IX-13's partial indexes over the acknowledged and the routed action codes, and the routed codes' `(command_id)` index, exist with the literal lists QS-14, QS-20 and QS-21's queries write, and each query uses its index in `EXPLAIN`; no code is invented (DIR-088; PERFORMANCE §12).
 
 **TEST REQUIREMENTS:**
 
@@ -247,7 +252,7 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 - Accessibility: TL-12 — the chart's table alternative and status not by colour alone
 - Production build: TL-13
 - Security: SM-01 for the dashboard signals; SM-04 for OD-14; SM-25 for the money items and the Owner-only signals; SM-23 for counts and empty states that never hint at an out-of-scope record (TL-14)
-- Performance: QB-10 through PFM-01 and PFM-02; PFM-05; PFM-07 with the five only-growing sets at 10x and 100x; PFM-15 (TL-15)
+- Performance: QB-10 through PFM-01 and PFM-02; PFM-05; PFM-07 with the five only-growing sets at 10x and 100x; PFM-15; IX-13's deferred indexes present and used by QS-14, QS-20 and QS-21's queries in `EXPLAIN` (TL-15; PERFORMANCE §12)
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-034's two kinds listed from their security events; GAP-060's bound
 
