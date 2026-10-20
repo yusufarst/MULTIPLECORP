@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-05, P11Q-06
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -22,7 +22,6 @@ The audit trail can establish every pre-window Owner only if the installation st
 
 - TASK-020 — Installation step, the first Owner and the Owner-recovery path
 - TASK-084 — Production preparation — configuration, outbound HTTPS, branch protection, backups and the off-server copy
-- the Owner's answers to P11Q-05 and P11Q-06 recorded, with what they call for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -33,7 +32,7 @@ The audit trail can establish every pre-window Owner only if the installation st
 **IN SCOPE:**
 
 - **The installation step** (PRQ-09; [INFRASTRUCTURE §5](../09-operations/INFRASTRUCTURE.md#5-the-deployment-path); GLC-13; GAP-049; SM-24): TASK-020's step run by the operator on production, under the runtime role, operator-only and audited, never through a web route; it creates exactly one first Owner and writes the audit event of the OWNER assignment with the operator's identity — the host account and the stated name, never a user row —, OPI-09's identity being recorded in that event and not in the repository; refused when run again on the installed workspace, so every later OWNER account comes only through `permissions.manage` (RG-05; OD-01)
-- **The first Owner's credentials**, set by the Owner through the path the Owner's answer to P11Q-06 decides and TASK-020 builds — under option (a), recommended, the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command right after the installation step, with the Owner present, who opens it on the Owner's own device ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) —, never set, read or revealed by the operator (AU-14's rule for the operator's commands)
+- **The first Owner's credentials** ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-06; P11Q-06 (a); GAP-069): right after the installation step, with the Owner present, the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command — TASK-020's command —, stating why, which the issue's audit event records; the Owner opens the link on the Owner's own device and sets the password, and AU-14's alerts follow; no other mechanism; the password is never set, read or revealed by the operator (AU-14's rule for the operator's commands)
 - **The key register started** (TT-F04; GLC-16; INFRASTRUCTURE §7.2 step 2, §7.4 step 1): the installation's `APP_KEY` entered with its creation time as the register's first entry, in the operator's secret store, never in the repository
 - **Two-step enrolment** (GLC-10; DEP-11; AU-16; AU-18; GAP-033): the Owner enrols TOTP at once with an authenticator app on the Owner's own phone, before any business data; every other high-risk account holder's phone with an authenticator app is confirmed in UAT (DEP-11; TASK-086) and enrolled at that account's first sign-in (AU-18), those accounts being created at the cutover (CUT-02; TASK-087), where GLC-10 is read in full
 - **The one `APP_KEY` rotation** ([INFRASTRUCTURE §7.4](../09-operations/INFRASTRUCTURE.md#74-the-key-rotation-and-re-encryption-runbook); GLC-23; DIR-083 OE-05; SX-02; H9-14; TT-F26; CUT-02): after the first Owner's set-up and before any business data, by TASK-076's rotation runbook — the new key current and the old one in `APP_PREVIOUS_KEYS`; AU-21's re-encryption command run, touching only the first Owner's TOTP data; the old key retired only when the re-encrypted count equals the enrolled accounts; the register's entries for the new key and the old key's retirement; the HMAC keys left unchanged unless the rotation's reason requires them (SX-02)
@@ -206,6 +205,7 @@ The audit trail can establish every pre-window Owner only if the installation st
 5. Every generation taken before the rotation stays paired with the old key, kept while the generation is retained (BKR-08).
 6. The working post-incident runbook carries AU-25's halt as DIR-083 OE-10 amends it (GLC-23; TT-F29).
 7. No password, TOTP secret or key was set, read or revealed by the operator, and none entered a record or the repository (AU-14; SX-01; TM-65).
+8. Right after the installation step, with the Owner present, the operator issues the first Owner's OWNER_RECOVERY link through TASK-020's AU-14 command, its audit event recording the operator's stated reason; the Owner sets the password through the link on the Owner's own device, and AU-14's alerts are delivered (DIR-085 OF-06; GAP-069).
 
 **TEST REQUIREMENTS:**
 
@@ -226,7 +226,7 @@ The audit trail can establish every pre-window Owner only if the installation st
 - Security: no SECURITY_TEST_MATRIX case runs on production (§9) — SM-24 is proven in CI by TASK-020; the operator checks the installation event, TOTP_ENROLLED and TOTP_SECRETS_REENCRYPTED read-only in the security log
 - Performance: N/A — no target in this Task
 - Migration: N/A — no migration or import code in this Task
-- Other: the re-encryption count compared with the enrolled accounts before the retirement; the register's entries checked against INFRASTRUCTURE §7.4 step 1
+- Other: the OWNER_RECOVERY issue's audit event, with the operator's reason, and AU-14's alert checked read-only after the Owner's first sign-in (DIR-085 OF-06); the re-encryption count compared with the enrolled accounts before the retirement; the register's entries checked against INFRASTRUCTURE §7.4 step 1
 
 **TEST CHECKLIST:**
 

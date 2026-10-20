@@ -136,7 +136,7 @@ Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISI
 | component (DESIGN_SYSTEM §10) | [DESIGN_SYSTEM](../07-ux-design/DESIGN_SYSTEM.md) | 44 |
 | localization rule | [LOCALIZATION](../07-ux-design/LOCALIZATION.md) | 14 |
 | localization key group | [LOCALIZATION](../07-ux-design/LOCALIZATION.md) | 7 |
-| GAP- (OPEN) | [GAP_REGISTER](../00-governance/GAP_REGISTER.md) | 43 |
+| GAP- (OPEN) | [GAP_REGISTER](../00-governance/GAP_REGISTER.md) | 46 |
 
 ### 1.2 Families left out, with their reason
 
@@ -3386,6 +3386,9 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | GAP-060 | GAP- | GAP_REGISTER · *Beranda*'s receivables figure and ageing chart outside QB-10 | TASK-058, TASK-068 |
 | GAP-063 | GAP- | GAP_REGISTER · Off-server backup against total VPS loss | TASK-074, TASK-081, TASK-084 |
 | GAP-064 | GAP- | GAP_REGISTER · Numbers used on paper after a restore's recovery point | TASK-021, TASK-076, TASK-087 |
+| GAP-066 | GAP- | GAP_REGISTER · Route and interaction rows the specifications require | TASK-037, TASK-043, TASK-046, TASK-052, TASK-053, TASK-055, TASK-057, TASK-072 |
+| GAP-067 | GAP- | GAP_REGISTER · Approved statements that disagree | TASK-020, TASK-039, TASK-043, TASK-045, TASK-046, TASK-053, TASK-054, TASK-057, TASK-069 |
+| GAP-068 | GAP- | GAP_REGISTER · Facts the specifications use but do not define | TASK-037, TASK-043, TASK-077 |
 
 ## 3. Non-Task dispositions
 
@@ -3422,7 +3425,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-017 | Password sign-in, sessions and credential links | 146 |
 | TASK-018 | Two-step verification (TOTP) and recovery codes | 66 |
 | TASK-019 | Google sign-in for existing accounts | 37 |
-| TASK-020 | Installation step, the first Owner and the Owner-recovery path | 29 |
+| TASK-020 | Installation step, the first Owner and the Owner-recovery path | 30 |
 | TASK-021 | Numbering, its settings page and the Owner's raise after a restore | 44 |
 | TASK-022 | Jobs, files and the document renderer | 75 |
 | TASK-023 | My account — password, two-step verification, Google link and language | 64 |
@@ -3439,27 +3442,27 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-034 | Commercial confirmation and fulfillment planning | 80 |
 | TASK-035 | Administrative checklist and document readiness | 36 |
 | TASK-036 | Costing foundations — lot cost basis, charge allocation and HPP attribution | 25 |
-| TASK-037 | Purchases — project and replenishment purchases | 80 |
+| TASK-037 | Purchases — project and replenishment purchases | 82 |
 | TASK-038 | Reservations | 98 |
-| TASK-039 | Receiving (Barang Masuk) | 117 |
+| TASK-039 | Receiving (Barang Masuk) | 118 |
 | TASK-040 | Stock views, stock history and movement reversal | 48 |
 | TASK-041 | Dispatch (Barang Keluar) and inter-company allocation | 129 |
 | TASK-042 | Condition, location moves, adjustments and losses | 86 |
-| TASK-043 | Stock count (opname) and discrepancies | 107 |
+| TASK-043 | Stock count (opname) and discrepancies | 110 |
 | TASK-044 | Purchase return to supplier | 40 |
-| TASK-045 | Deliveries (Pengiriman) and delivery closure | 51 |
-| TASK-046 | Direct shipment (drop-ship) | 34 |
+| TASK-045 | Deliveries (Pengiriman) and delivery closure | 52 |
+| TASK-046 | Direct shipment (drop-ship) | 36 |
 | TASK-047 | Service fulfillment and handover | 24 |
 | TASK-048 | Client returns (sales return) | 46 |
 | TASK-049 | Invoices and the pre-payment Kuitansi | 148 |
 | TASK-050 | Billing, receivables, dispute hold and Owner write-off | 101 |
 | TASK-051 | Payments, applications and bank statement lines | 142 |
-| TASK-052 | Deduction settlements and contras | 92 |
-| TASK-053 | Customer credit and refunds | 81 |
-| TASK-054 | Expenses, disbursements and other cash | 85 |
-| TASK-055 | Project completion and Force Complete | 55 |
+| TASK-052 | Deduction settlements and contras | 93 |
+| TASK-053 | Customer credit and refunds | 83 |
+| TASK-054 | Expenses, disbursements and other cash | 86 |
+| TASK-055 | Project completion and Force Complete | 56 |
 | TASK-056 | Project cancellation | 35 |
-| TASK-057 | Opening import — preparation, dry run, sign-off and commit | 66 |
+| TASK-057 | Opening import — preparation, dry run, sign-off and commit | 68 |
 | TASK-058 | Home, Work and Review — signals and the action queue | 72 |
 | TASK-059 | Search and scanning | 44 |
 | TASK-060 | Reports, the consolidated report and exports | 67 |
@@ -3471,15 +3474,15 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-066 | Accessibility — WCAG 2.2 AA across every page | 9 |
 | TASK-067 | Localization completeness and the per-page copy lists | 8 |
 | TASK-068 | Performance targets and query budgets in CI | 84 |
-| TASK-069 | Security test matrix, route integrity and zero dead interactions | 172 |
+| TASK-069 | Security test matrix, route integrity and zero dead interactions | 173 |
 | TASK-070 | Full release regression and the device UAT's preparation | 88 |
 | TASK-071 | The operator's inputs before staging | 20 |
-| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 55 |
+| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 56 |
 | TASK-073 | Release process — branch protection, release tags, the release record and integrity report | 27 |
 | TASK-074 | Backup tooling, the off-server copy and the drill procedures | 46 |
 | TASK-075 | Monitoring — the business heartbeat, alerts and the uptime check | 18 |
 | TASK-076 | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | 65 |
-| TASK-077 | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | 38 |
+| TASK-077 | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | 39 |
 | TASK-078 | Staging stack, the two applications' isolation and the provider features | 7 |
 | TASK-079 | Staging measurements — capacity, Argon2id, durations and the disk budget | 43 |
 | TASK-080 | Alert channel adopted and monitoring live | 13 |
@@ -3493,9 +3496,10 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 
 ## 5. Checks
 
-- **Entries:** 3234, in 125 family-and-document pairs.
-- **Mapped:** 3234 of 3234 — 3185 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
+- **Entries:** 3237, in 125 family-and-document pairs.
+- **Mapped:** 3237 of 3237 — 3188 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2113 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
+- **Method:** 2116 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
+- **After OG-4:** GAP-066, GAP-067 and GAP-068, OPEN since the Owner's answers to P11Q-02–P11Q-04 ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization)), entered by the explicit rule for the OPEN gaps with the Tasks their register entries name — TASK_PLAN's Change 3, which re-checked this section by script.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).

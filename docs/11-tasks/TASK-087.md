@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-05
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -25,7 +25,6 @@ Opening stock and receivables counted twice, or a moving baseline, would corrupt
 - TASK-083 — The alternate operator named and the dispute's governance recorded
 - TASK-085 — Installation, the first Owner, two-step enrolment and the APP_KEY rotation
 - TASK-086 — UAT with the Owner and the validators
-- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 

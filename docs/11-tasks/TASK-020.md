@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-06
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -23,7 +23,6 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 - TASK-010 — Audit and security logging
 - TASK-018 — Two-step verification (TOTP) and recovery codes
 - TASK-019 — Google sign-in for existing accounts
-- the Owner's answer to P11Q-06 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -36,7 +35,7 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 **IN SCOPE:**
 
 - the installation step creating the first Owner with its audit event recording the operator's identity — the host account and the stated name, never a user row (PRQ-09; GAP-049; SM-24)
-- the first Owner's password path as the Owner's answer to P11Q-06 decides (TASK_PLAN §8): under option (a), recommended, the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command right after the installation step, with the Owner present, the operator's statement of why recorded in the issue's audit event, and nothing beyond this Task's commands is built; under option (b), the one-time onboarding link (AU-11) that the installation step issues, built here once its narrow amendment is approved
+- the first Owner's password path as [DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-06 decides (P11Q-06 (a); TASK_PLAN §8): the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command right after the installation step, with the Owner present, who opens it on the Owner's own device; the operator's statement of why is recorded in the issue's audit event and AU-14's alerts follow; no new mechanism — nothing beyond this Task's commands is built
 - AU-14: the command issuing an OWNER_RECOVERY link for an active OWNER-role account only, its effects on use (TOTP cleared, sessions ended, links revoked, Google unlinked with reason OWNER_RECOVERY), its audit and security events and alerts (LG-07; H9-06); and its run guard: until a recovery run's recovery ends, a link without a named confirmer only for an account that the audit trail shows held the OWNER role and was active at the run's recorded window start, that run and its window start recorded in the issue's audit event, and every other OWNER-role account refused unless the operator names the recovered pre-window Owner who confirmed it in the review — checked under the row locks of the account and the confirmer, taken in id order (LK-03): the confirmer an active Owner at the window start, its OWNER_RECOVERY link used after the window, and an active Owner now —, the confirmer named in the issue's events and alerted (LG-07)
 - AU-21: the re-encryption command for rotation through the previous-keys list, and the key-compromise incident command with the compromise window recorded once as its input, running protocol (a)–(d): an opening sweep that deletes every session and revokes every unused credential token, the application kept in maintenance mode without a bypass while the run lasts, every account processed — one created after the run started included —, and a closing sweep; it refuses to start, or to continue, unless the maintenance mode is active, each sweep runs one identity transaction per account under its row (RV-17), and a stopped run is restarted only with the same window start, skipping the accounts already voided
 - AU-25: the OWNER-restoration command for pre-window Owners only, refusing every other account, once per account per run (M-46), refusing to run before the incident command has completed — the audit events of its closing sweep show it — or once the run's recovery has ended, and refusing an account touched since the closing sweep, the run's own writes excepted (RV-18); the end of the run's recovery recorded only when every active account holding the OWNER role is a pre-window Owner of the run or has an Owner-recovery issue in the run naming a confirmer, refused otherwise with the accounts that block it (AU-14; RV-18); with its halt conditions — on a trusted state the halt goes first to the Owner's incident decision outside the application with the client (DIR-083 OE-10), on a restored state ending in that decision as the scenarios state
@@ -58,8 +57,8 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 - [BACKUP_RECOVERY §6](../09-operations/BACKUP_RECOVERY.md#6-the-tabletop-incident-recovery-exercise) TT-F25, TT-F30
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md) GAP-049, GAP-050
 - [CONCURRENCY_IDEMPOTENCY §16](../06-api-performance/CONCURRENCY_IDEMPOTENCY/s14-17-numbering-jobs-revocation.md#16-authorization-and-revocation-races) RV-17, RV-18
-- [TASK_PLAN §8](TASK_PLAN.md#8-owner-questions) P11Q-06
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (29): CAP-13; AU-14; AU-20–AU-21; AU-25; SX-04; TM-06; TM-57; TM-66; TM-68; TM-72–TM-73; D-SEC-19; H6-15; H7-15; H7-17; H8-18–H8-19; H8-21; H9-07; M-46; SM-19; SM-21; SM-24; TT-F25; TT-F30; PRQ-09; GAP-049–GAP-050
+- [TASK_PLAN §8](TASK_PLAN.md#8-owner-questions) P11Q-06, decided by DIR-085 OF-06
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (30): CAP-13; AU-14; AU-20–AU-21; AU-25; SX-04; TM-06; TM-57; TM-66; TM-68; TM-72–TM-73; D-SEC-19; H6-15; H7-15; H7-17; H8-18–H8-19; H8-21; H9-07; M-46; SM-19; SM-21; SM-24; TT-F25; TT-F30; PRQ-09; GAP-049–GAP-050; GAP-067
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -201,7 +200,7 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 3. The incident command records the compromise window once; every later step reads it and refuses another value; it refuses to start or to continue outside maintenance mode, runs the opening sweep, every account — one created after the run started included — and the closing sweep, and voids each account exactly once across a restart (AU-21 (a)–(d); RV-17).
 4. The OWNER-restoration command restores pre-window Owners only, once per account per run, and refuses an account that first became Owner during the window (M-46); it refuses to run before the incident command has completed or once the run's recovery has ended, and refuses an account touched since the closing sweep; the end of the run's recovery is recorded only when no unreviewed OWNER-role account remains, and is refused otherwise with the accounts that block it (AU-25; RV-18).
 5. Each halt condition stops the path and names the Owner's incident decision outside the application, first on a trusted state (DIR-083 OE-10).
-6. The first Owner sets a password only through the path P11Q-06's answer decides — under option (a), an OWNER_RECOVERY link issued by AU-14's command right after the installation step, with the Owner present —, and no other path exists (TASK_PLAN §8).
+6. The first Owner sets a password only through the path DIR-085 OF-06 decides — an OWNER_RECOVERY link issued by AU-14's command right after the installation step, with the Owner present —, and no other path exists (P11Q-06 (a); TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 

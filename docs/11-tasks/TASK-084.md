@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-04, OPI-28, OPI-31, OPI-32, P11Q-05
+**STATUS:** BLOCKED — waiting on OPI-04, OPI-28, OPI-31, OPI-32
 
 **RISK CLASS:** HIGH
 
@@ -25,7 +25,6 @@ The cutover sets production up before any data, GLC-06, GLC-07, GLC-11 and GLC-2
 - TASK-079 — Staging measurements — capacity, Argon2id, durations and the disk budget
 - TASK-081 — Staging drills and rehearsals — failure, restore, Scenario B and the import rehearsal
 - the operator's or the Owner's inputs OPI-04, OPI-28, OPI-31, OPI-32 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
-- the Owner's answer to P11Q-05 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 

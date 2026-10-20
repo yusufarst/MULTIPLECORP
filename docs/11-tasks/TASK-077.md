@@ -62,7 +62,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-06, OE-11
 - Architecture challenge — the sequence 14b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (38): CM-33; M-33; HO-31–HO-34; HO-36; UXH-10; IMP-01–IMP-13; CUT-01–CUT-08; RBK-01–RBK-06; PRQ-07–PRQ-08; GAP-010
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (39): CM-33; M-33; HO-31–HO-34; HO-36; UXH-10; IMP-01–IMP-13; CUT-01–CUT-08; RBK-01–RBK-06; PRQ-07–PRQ-08; GAP-010; GAP-068
 
 **EXPECTED MODULES / FILE AREAS:**
 

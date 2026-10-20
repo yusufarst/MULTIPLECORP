@@ -199,6 +199,7 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 4. A lazy-loaded relation in a test run fails it, as PERFORMANCE §3 requires.
 5. The conventions section of `DEVELOPMENT.md` states the action, query, money and naming rules with links to their sources.
 6. This Task's checks run as jobs of the CI workflow on a fresh runner and pass there as they do locally (DEFINITION_OF_DONE §1).
+7. A CI job checks the Task plan's integrity on every push and pull request — TASK_PLAN §1's counters equal to its §4 list, §3's checked boxes equal to the DONE Tasks, each contract's STATUS, DEPENDS ON and BLOCKS equal to its §4 row, every dependency mirrored and the graph acyclic, and the relative links and anchors under `docs/` resolving —, and a disagreement fails the job (RELEASE_PLAN §12.2; PMC-15).
 
 **TEST REQUIREMENTS:**
 
@@ -219,7 +220,7 @@ Layer and tier violations, prohibited patterns and AI attribution are cheapest t
 - Security: the secret-like scan and the dependency audit (TL-14)
 - Performance: N/A — no query
 - Migration: N/A — no migration
-- Other: the commit-message check on a sample attributed message; this Task's jobs green in the CI workflow on a fresh runner
+- Other: the commit-message check on a sample attributed message; the plan-integrity job on the committed plan and on a fixture copy with a deliberate mismatch, which it fails; this Task's jobs green in the CI workflow on a fresh runner
 
 **TEST CHECKLIST:**
 

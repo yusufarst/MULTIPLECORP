@@ -1,0 +1,163 @@
+TRANSCRIBED LOCKED SOURCE RECORD — eighty-third source record
+Received: 2026-10-20, in-session Owner message to the repository executor in a
+         Claude Code cloud session, its clone with the branch planning/p8-p11
+         checked out at cb669eeb037de2b01f90d2433e4388564bcc0a50, run PC-5's
+         last commit, clean and equal to its live remote, main at
+         33416215947db9bf77ea2d7cf46fcf85a2c067bc, an ancestor of it,
+         rebaseline/p7-ux at 1bacdc1f83fddd79cf22ea7170fc59e72da64ba9,
+         amendment/p5-auth at a526daf47444d12b4ae5c51e1ae14c9dfe3f4978 and
+         migration/aicwdf at c26f31e9b053689b07a29877fe1016c6b8103e37
+Subject: the Owner's decision at OG-4 (DIR-085): the answers to the six P11
+         questions — P11Q-01 (a), the pre-mortem as one short step of the first
+         execution session, before the approval commit and TASK-001 (OF-01);
+         P11Q-02 (a), one narrow amendment adding to ROUTE_CONTRACTS and
+         INTERACTION_CONTRACTS the rows of the nine behaviours P11Q-02 lists,
+         approved within its words and made before the first Task it blocks
+         becomes READY (OF-02); P11Q-03 (a), the readings the contracts apply
+         confirmed and one narrow consistency edit made with OF-02's change
+         (OF-03); P11Q-04 (a), the executor's draft defining the three facts, in
+         effect only on the Owner's separate approval of its text (OF-04);
+         P11Q-05 (a), each fact an operator's or the Owner's Task records in an
+         approved document a Level 1 continuity record (OF-05); P11Q-06 (a), the
+         first Owner's OWNER_RECOVERY link issued through AU-14's command right
+         after the installation step, with the Owner present (OF-06) —;
+         APPR-016, P11 approved (OF-07), the planning freeze (OF-08) and the
+         execution authorization (OF-09), three separate decisions; what still
+         needs the Owner (OF-10); the first execution session authorized
+         (OF-11); and what stays not authorized (OF-12)
+Delivery: The decision arrived as one of the two text files attached to the
+         session message, their paths not recorded, sent with the execution
+         authorization, the eighty-fourth source record, whose header quotes the
+         session message and the Owner's confirmation. The file holds 122 lines
+         and 7,591 bytes with LF line endings and no byte-order mark, SHA-256
+         18aada3f4ef2d5b98c5600173c7ca5c6bd82b2dcce4e75e9d53470afaffc01e5 —
+         computed by script before any edit and given to the Owner in session,
+         who confirmed it equal to Planning's value —, checked by script again
+         when this record was made. This record transcribes the whole file
+         mechanically, its text normalized to LF without a byte-order mark,
+         which leaves it unchanged; its first line is the decision's title.
+This is a transcript of the attached file, not a byte-copy claim about any other file.
+====================================================================
+
+OWNER DECISION — OG-4: ANSWERS TO P11Q-01–P11Q-06, APPROVAL OF P11, THE PLANNING FREEZE AND THE EXECUTION AUTHORIZATION
+
+My decision rests on run PC-5's STOP report (DIR-084), with gate PC5-A 6/6,
+gate P11 11/11 and gate PC-5 6/6 passed, and on the repository at `main`
+33416215947db9bf77ea2d7cf46fcf85a2c067bc and `planning/p8-p11`
+cb669eeb037de2b01f90d2433e4388564bcc0a50. Each item below is a separate
+decision of mine. Items OF-07, OF-08 and OF-09 are three separate decisions,
+each standing on its own.
+
+==================================================
+A. THE SIX P11 QUESTIONS
+==================================================
+
+OF-01 P11Q-01 (GAP-065): option (a), as one short step of the first
+      execution session, before the approval commit and TASK-001 — not a
+      review cycle. The executor alone, in one pass, without an agent or a
+      workflow, assumes that V1 failed and names at most fifteen of the most
+      plausible and most damaging causes — across business rules, money and
+      stock, security and authorization, data and migration, cutover and
+      release, operations and recovery, the users' adoption of the UI, and
+      the continuity of the agents —, each with its warning signs,
+      prevention, detection and recovery, mapped to the existing Tasks,
+      tests, release and operations items. What the mapping shows missing is
+      applied at Level 1 to the Tasks' criteria, tests or dependencies as one
+      controlled Task-plan change; anything that would change P0–P10 or V1
+      becomes an Owner question with its gap and blocks only its Tasks. The
+      result is recorded in RELEASE_PLAN §12 by a narrow continuity edit.
+OF-02 P11Q-02 (GAP-066): option (a). One narrow amendment adds to
+      ROUTE_CONTRACTS and INTERACTION_CONTRACTS the rows of the nine
+      behaviours P11Q-02 lists, with their LOCALIZATION keys and, for the
+      credit hold, the one column WF-FIN-06's rule needs — each row derived
+      from the approved rule P11Q-02 cites for it, adding no capability, page
+      or V1 behaviour (OE-20). I approve it within these words. It is made as
+      a controlled change before the first Task it blocks becomes READY; a
+      row that needs a choice its cited rule does not make becomes an Owner
+      question, and its Task stays BLOCKED.
+OF-03 P11Q-03 (GAP-067): option (a). I confirm the readings the contracts
+      apply: AZ-08's capability with ROUTE-193; each lock set covering every
+      guard its command writes (AX-30's, AX-10's, AX-20's and AX-33's
+      classes); no duplicate warning on PG-022 (BD-13); a refund's contra on
+      ROUTE-260's pages; and the atomic end of a recovery of TT-F30. One
+      narrow consistency edit of the subordinate statements is approved
+      within these words and made with OF-02's change.
+OF-04 P11Q-04 (GAP-068): option (a). The executor drafts, with OF-02's
+      change, one narrow REVIEW amendment defining the three facts — the
+      performed fact of a non-stock purchase line and its column, the
+      registration count's movement and serial transition, and the go-live
+      setting's store and its event's actor —, each the minimum its cited
+      rules need. It takes effect only on my separate approval of its text,
+      given before TASK-037, TASK-043 or TASK-077 starts; those three Tasks
+      stay BLOCKED until then, and nothing else waits on it.
+OF-05 P11Q-05: option (a). Each fact the operator's or my Task records in an
+      approved document is a Level 1 continuity record under CHANGE_CONTROL,
+      written by the executor from that person's own record in an execution
+      session where the record is given to it, without a secret or host
+      detail, its hash in the decision log. This decision authorizes it for
+      every such session.
+OF-06 P11Q-06 (GAP-069): option (a). The operator issues the first Owner's
+      OWNER_RECOVERY link through AU-14's command right after the installation
+      step, with the Owner present, who opens it on the Owner's own device;
+      the operator's reason is recorded in the issue's audit event and AU-14's
+      alerts follow. No new mechanism; TASK-085 states the step with
+      TASK-020's command, edited with OF-02's change.
+
+==================================================
+B. THE THREE DECISIONS
+==================================================
+
+OF-07 APPR-016 — P11 approved. I approve P11 — TASK_PLAN, TASK-001–TASK-087,
+      FEATURE_COVERAGE_MATRIX, which satisfies PRQ-13, and the P11 gate
+      record — as at `planning/p8-p11` cb669ee, together with the changes the
+      first execution session makes under OF-01 and the Level 1 continuity
+      corrections it records. APPR-016 takes effect in that session's
+      approval commit, and only after its gate on those changes passes; if
+      any check fails, it has no effect and the session stops for me.
+
+OF-08 The planning freeze. From the freeze record that the first execution
+      session commits after APPR-016, P0–P11 are frozen: they change only
+      under CHANGE_CONTROL — the executor's Level 1 corrections, recorded;
+      the controlled Task-plan changes of TASK_PLAN §7 (AICWDF §22.6); and my
+      approval for anything that changes a rule or the scope (OE-20;
+      RELEASE_PLAN RL-07). The changes of OF-02–OF-04 and OF-06 are
+      controlled changes this decision authorizes under the freeze.
+
+OF-09 The execution authorization. From the freeze record, I authorize the
+      implementation of MULTIPLECORP by the approved Tasks, under the
+      standing rules of MULTIPLECORP_EXECUTION_AUTHORIZATION.txt:
+      - one Execution Agent, one Task at a time, in TASK_PLAN's dependency
+        order — no parallel coding, even where a Task is PARALLEL SAFE, and
+        no workflow;
+      - each Task on its own branch, through a pull request and CI into the
+        protected `main`, my merge being my approval of the pull request
+        (RELEASE_PLAN §2);
+      - DONE only as DEFINITION_OF_DONE states it, every mandatory test,
+        security check, data-integrity proof and the full V1 scope kept;
+      - a Task whose executor is the human operator or the Owner never run
+        by an agent; no agent access to the VPS, production or credentials;
+        no deployment or release without the operator and my release
+        approval (RELEASE_PLAN RL-06).
+
+==================================================
+C. SIMPLIFICATION AND THE FIRST SESSION
+==================================================
+
+OF-10 After this decision no further planning run, checkpoint or approval of
+      mine is needed except: my merge of each Task's pull request; my answer
+      to an Owner question that an execution discovery raises at Level 2 or
+      3; my approval of OF-04's text; the operator's and my own Tasks and
+      inputs; and the release and go-live decisions RELEASE_PLAN requires. No
+      Task needs its own authorization message, and no completed audit or
+      review is repeated.
+
+OF-11 I authorize the first execution session under
+      MULTIPLECORP_EXECUTION_AUTHORIZATION.txt, which I send with this
+      decision: the pre-mortem, APPR-016, the freeze record and the
+      publication of P11 to `main`, then TASK-001 when its READY gate holds.
+
+OF-12 Not authorized: any deployment or release; any agent's access to the
+      VPS, production or credentials; a paid service without a COST_POLICY
+      decision of mine; any change to V1's scope; any merge commit on `main`
+      outside a pull request, force push or history rewrite; AI attribution in
+      commits.

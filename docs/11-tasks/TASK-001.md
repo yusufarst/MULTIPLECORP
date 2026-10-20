@@ -4,7 +4,7 @@ Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99 — a REVIEW draft of P11, approved, or not, with the [Task plan](TASK_PLAN.md) at OG-4. **No Task starts before the Owner's execution authorization at OG-4.** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-01
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -20,7 +20,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **DEPENDS ON:**
 
-- the Owner's answer to P11Q-01 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- none — the plan's first Task; READY once the tools of its TOOL REQUIREMENTS are verified in the environment it runs in ([TASK_PLAN §2](TASK_PLAN.md#2-rules-of-the-plan); [record 84](../00-governance/sources/EXECUTION_AUTHORIZATION_2026-10-20.txt) §3.6)
 
 **BLOCKS:**
 
@@ -214,9 +214,9 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 3. No route, migration or model of the framework's defaults remains that a contract does not name; the schema is left to TASK-005–TASK-009.
 4. Every HTML response carries WS-08's headers with a nonce-based CSP, and a state-changing request without its CSRF token is refused (WS-04).
 5. The repository holds no secret, real data or host detail; `.env.example` holds placeholders only.
-6. The verified versions are recorded in TOOLCHAIN.
+6. The verified versions are recorded in TOOLCHAIN for each environment the Task runs in — the cloud session's machine or the Owner's workstation —, and every runtime, image and package version is pinned (record 84 §1.4; RELEASE_PLAN §12.2).
 7. The minimal CI workflow runs TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14 on a fresh runner on every push and pull request and fails on any failing check; its green run on the tested commit is the fresh-CI half of this Task's DONE (DEFINITION_OF_DONE §1).
-8. `DEVELOPMENT.md` states how to start, test and build locally and its commands run as written; README.md is unchanged.
+8. `DEVELOPMENT.md` states how to start, test and build locally on Linux and on the Owner's Windows workstation, its commands running as written in the environment the Task runs in and re-run in the other when a session first runs there (record 84 §3.6, ER-13); text files keep LF line endings through `.gitattributes`; README.md is unchanged (record 84 §1.4; RELEASE_PLAN §12.2).
 
 **TEST REQUIREMENTS:**
 
@@ -237,7 +237,7 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 - Security: composer audit and npm audit clean or each finding recorded; SM-08's cases the skeleton can show — CSRF refusing a state-changing request without a valid token, the cookie flags, the CSP nonce and directives, `frame-ancestors`, `nosniff`, Referrer-Policy and `APP_DEBUG=false` in the production configuration check —, its route cases with the Tasks that add routes; SM-15's gates the minimal CI workflow already has — SHA-pinned actions, lockfile-only installs and no secret but the CI's own token (TL-14, TL-09)
 - Performance: N/A — no query
 - Migration: N/A — no business migration; the framework defaults removed are listed in the evidence
-- Other: `DEVELOPMENT.md`'s commands run as written; the minimal CI workflow green on a fresh runner for TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14
+- Other: `DEVELOPMENT.md`'s commands run as written in the environment the Task runs in, the environment recorded in the evidence (record 84 ER-13); no committed text file with CRLF line endings; the minimal CI workflow green on a fresh runner for TL-01, TL-02, TL-04, TL-05, TL-13 and TL-14
 
 **TEST CHECKLIST:**
 

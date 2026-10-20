@@ -211,6 +211,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 7. The UAT's item scripts exist for UXH-08's copy and duplicate window, HO-35's seven days, DOC-01–DOC-14 with FX-10, DEP-11's authenticator phones, OS-01's daily work, the per-page copy lists and UAT-01–UAT-04, with the record form TEST_STRATEGY §12 states (RELEASE_PLAN §8).
 8. Every failure found is sent to its owning Task, and the Task stays VERIFYING until the re-run passes (TS-12; AGENT_OPERATING_MODEL).
 9. TASK-065's gate record holds for every page the language items from TASK-067's evidence and the accessibility critical checks from TASK-066's, all twenty-one items answered (TEST_STRATEGY §9–§11; AICWDF §27).
+10. The traceability report shows each cause PMC-01–PMC-15 of RELEASE_PLAN §12.1 answered on the release candidate — the agent Tasks it names DONE and the tests that detect it passed —, and lists the operator's and the Owner's items it names for the go-live checklist; a cause without its detecting test fails this Task (DIR-085 OF-01; RELEASE_PLAN §12.2).
 
 **TEST REQUIREMENTS:**
 
@@ -231,7 +232,7 @@ AICWDF §28 and TEST_STRATEGY §3 require a full regression before production wh
 - Security: TL-14 — every SECURITY_TEST_MATRIX case and H8-15's gates
 - Performance: TL-15 — PERFORMANCE_TARGETS §4's release-critical set as far as CI runs it; its staging part prepared for TASK-079
 - Migration: TL-16 — the release's migrations up on the previous schema with the previous release's smoke suite, and the opening import's suite (TEST_STRATEGY §15)
-- Other: the traceability report (GAP-024); the UAT materials for TASK-086
+- Other: the traceability report (GAP-024), with the pre-mortem's causes PMC-01–PMC-15 (RELEASE_PLAN §12.1); the UAT materials for TASK-086
 
 **TEST CHECKLIST:**
 
