@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) on this Task's three execution discoveries records the dispositions of criteria 2 and 3 below the acceptance criteria; the criteria are unchanged and no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** VERIFYING
@@ -206,6 +208,12 @@ Every module writes through identity, audit, the command log and correction case
 4. Money, quantity and date columns use exactly the types of DATABASE §17.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed — with the mixed-version safeguards of PRQ-04, job payload versions and one-release command validity among them, and run again from empty in CI (TL-16; architecture challenge 11a).
 6. The import tables `import_batches` and `import_rows` hold the committed import identity on which BD-11's keys rest, so the opening import run again creates no second lot, receivable, credit or project for one legacy row, every created fact carrying its `import_row_id` (DATABASE §24; AX-28; BD-11; architecture challenge 11b, with TASK-057).
+
+**CRITERIA DISPOSITIONS (DIR-088):**
+
+- Criterion 2, C-32: this Task builds C-32's part on its tables — the company keys `correction_cases` (`company_id`, `id`), `legacy_archive_items` (`company_id`, `id`) and `import_rows` (`id`, `company_id`) that later references carry their company in, each proven by a composite reference that refuses another company's row. The foreign keys of its columns that reference later tables are added, expand-only, by the Task that creates each referenced table, each proven by a referential-integrity test before that Task is DONE: TASK-006 (`companies`, `file_objects`), TASK-007 (`projects`), TASK-008 (`inventory_lots`). Those keys are not met by this Task and are not claimed.
+- Criterion 3, IX-13: built here — the company and the entity history with the tiebreaker `id`, the actor's history, and the Owner review's partial index over the authority classes ADM_PLUS and OWNER_ONLY. Deferred to TASK-058 — the partial indexes over the acknowledged and over the routed action codes and the routed codes' `(command_id)` index — until the Tasks it depends on define those codes; no code is invented, and the obligation stays open until TASK-058 is DONE.
+- Criteria 1, 4, 5 and 6 are unaffected. The export requests' key, a UUIDv7 that is their public identifier (DIR-088 (3)), is part of criterion 1's store.
 
 **TEST REQUIREMENTS:**
 

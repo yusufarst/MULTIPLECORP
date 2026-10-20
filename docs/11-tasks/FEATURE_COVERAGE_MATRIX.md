@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) maps IX-13 also to TASK-058, which builds its two partial indexes TASK-005 could not; no other row changes and the entry count is unchanged. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); the Owner approved it with P11 at OG-4 (DIR-085 OF-07), which satisfies PRQ-13. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
 
 ## 1. The requirement inventory (SP-95)
@@ -1890,7 +1892,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | IX-14 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-005, TASK-006, TASK-007, TASK-008, TASK-009 |
 | IX-18 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-005 |
 | IX-19 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-005 |
-| IX-13 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-005 |
+| IX-13 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-005, TASK-058 |
 | IX-11 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-006, TASK-007, TASK-008, TASK-009 |
 | IX-17 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-006, TASK-007 |
 | IX-07 | IX- | PERFORMANCE · 12. Index register and verification procedure | TASK-006 |

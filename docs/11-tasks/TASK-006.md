@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) adds the foreign keys of TASK-005's columns that reference this Task's tables — a scope line, criterion 6 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** TODO
@@ -37,6 +39,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 - the tables `companies`, `company_bank_accounts`, `numbering_schemes`, `number_sequences`, `retired_numbers`, `tax_types`, `tax_rate_versions`, `company_tax_profiles`, `tax_treatment_rules`; `client_organizations`, `client_units`, `client_addresses`, `client_contacts`, `suppliers`; `products`, `units`, `product_units`, `product_barcodes`, `product_price_history`, `product_images`; `document_types`, `documents`, `document_versions`, `document_renditions`, `file_objects`, `evidence_documents`, `evidence_document_versions`, `bank_statement_lines`, `evidence_balances`, `evidence_links`, with their C- rows — C-01, C-10–C-12, C-18–C-20, C-23, C-32, C-48, C-49, C-52, C-53, C-58 and C-59 — and IX- indexes — IX-02, IX-07, IX-08, IX-11, IX-14, IX-15 and IX-17
 - a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the multi-unit representation of DATABASE §7 and the document architecture of §10; the file metadata of §22
+- the foreign keys of TASK-005's columns that reference `companies` and `file_objects`, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): `user_company_grants.company_id`, `correction_cases.company_id`, `import_rows.company_id`, `legacy_archive_items.company_id` and `audit_events.company_id` to `companies`; `legacy_archive_items.file_object_id` in the company-scoped form DATABASE §15 states, `import_batches.source_file_id` and `export_requests.file_object_id` to `file_objects`
 - the migrate-from-empty test extended (TL-16)
 
 **OUT OF SCOPE:**
@@ -200,6 +203,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 3. Each IX- index of these tables — IX-02, IX-07, IX-08, IX-11, IX-14, IX-15 and IX-17 — exists and its query uses it.
 4. C-10's numbering uniqueness and monotonicity hold at the database level as its row states.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
+6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `companies` or `file_objects` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 
 **TEST REQUIREMENTS:**
 
@@ -207,7 +211,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-10 and C-11 under two connections
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-10 and C-11 under two connections; each foreign key DIR-088 adds from TASK-005's columns violated and refused
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
