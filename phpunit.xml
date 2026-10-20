@@ -4,15 +4,31 @@
          bootstrap="vendor/autoload.php"
          colors="true"
 >
+    <!-- One suite per layer of TEST_STRATEGY §2; scripts/verify.sh runs them (TASK-003). -->
     <testsuites>
+        <testsuite name="Unit">
+            <directory>tests/Unit</directory>
+        </testsuite>
+        <testsuite name="Architecture">
+            <directory>tests/Architecture</directory>
+        </testsuite>
         <testsuite name="Feature">
             <directory>tests/Feature</directory>
         </testsuite>
         <testsuite name="Integration">
             <directory>tests/Integration</directory>
         </testsuite>
-        <testsuite name="Architecture">
-            <directory>tests/Architecture</directory>
+        <testsuite name="Authorization">
+            <directory>tests/Authorization</directory>
+        </testsuite>
+        <testsuite name="Routes">
+            <directory>tests/Routes</directory>
+        </testsuite>
+        <testsuite name="Interaction">
+            <directory>tests/Interaction</directory>
+        </testsuite>
+        <testsuite name="Performance">
+            <directory>tests/Performance</directory>
         </testsuite>
     </testsuites>
     <source>

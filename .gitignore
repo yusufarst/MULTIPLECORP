@@ -36,3 +36,6 @@ Thumbs.db
 /.phpunit.cache/
 .phpunit.result.cache
 /auth.json
+
+# The browser suite's reports, traces and screenshots (TASK-003).
+/storage/test-results/
