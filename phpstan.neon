@@ -1,0 +1,12 @@
+# Larastan/PHPStan at the strictest level (TEST_STRATEGY TL-02; TASK-002). The level is never lowered
+# to make code pass.
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - app/
+        - bootstrap/app.php
+        - database/
+        - routes/

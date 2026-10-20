@@ -14,7 +14,8 @@ unpinned_actions() {
 }
 
 foreign_secrets() {
-    grep -RnoE 'secrets\.[A-Za-z0-9_]+' "$1" | grep -vE 'secrets\.GITHUB_TOKEN$' || true
+    # Only GitHub expressions, ${{ … secrets.NAME … }}, name a secret.
+    grep -RnoE '\$\{\{[^}]*secrets\.[A-Za-z0-9_]+' "$1" | grep -vE 'secrets\.GITHUB_TOKEN$' || true
 }
 
 unlocked_installs() {

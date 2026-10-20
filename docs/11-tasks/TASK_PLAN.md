@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 1
-READY: 1
+READY: 0
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 72
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 1 / 87
 Percentage: 1.1 %
 
-CURRENT TASK: none — TASK-001 DONE on its branch `task/TASK-001-scaffold`, its pull request #1 into `main` waiting on the Owner's merge (record 84 ER-07)
-NEXT READY TASK: TASK-002 — Coding conventions and architecture guardrails, taken after the Owner merges TASK-001's pull request (ER-07); TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-002 — Coding conventions and architecture guardrails, VERIFYING: built on its branch `task/TASK-002-guardrails` from `main` after TASK-001's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: none yet — TASK-003 becomes READY when TASK-002 is DONE and its READY gate holds, TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 3 of 2026-10-20 — the pre-mortem's additions to TASK-001, TASK-002 and TASK-070, DIR-085 OF-06's edit of TASK-020 and TASK-085, and the answered P11Q-01, P11Q-05 and P11Q-06 removed from the Tasks they blocked; totals unchanged (§7)
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -142,7 +142,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | Task | Title | Stage · module | Risk | Status | Depends on (TASK-) | Blocks (TASK-) | Parallel safe | Executor | DB impact | UI impact |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | [TASK-001](TASK-001.md) | Repository scaffold and module skeleton | Foundation · Foundation | HIGH | DONE | — | 002 | NO | AGENT | NONE | NO |
-| [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | READY | 001 | 003 | NO | AGENT | NONE | NO |
+| [TASK-002](TASK-002.md) | Coding conventions and architecture guardrails | Foundation · Foundation | STANDARD | VERIFYING | 001 | 003 | NO | AGENT | NONE | NO |
 | [TASK-003](TASK-003.md) | CI pipeline, test layers and the synthetic fixture harness | Foundation · Foundation | STANDARD | TODO | 002 | 004, 005, 014, 072, 073 | NO | AGENT | NONE | NO |
 | [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | TODO | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
 | [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | TODO | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
