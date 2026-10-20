@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -243,32 +243,32 @@ Every later Task builds on one stack decided once — Laravel, Inertia, React wi
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint — TL-01 Pint, PASS
+- [x] Typecheck — TL-02 the TypeScript compiler, PASS
+- [x] Relevant automated tests — TL-04 17 feature tests and TL-05 4 integration tests, PASS
+- [x] Authorization — N/A: no route
+- [x] Route integrity — N/A: no route registered; the route list asserted empty
+- [x] Interaction behavior — N/A: no interaction
+- [x] Browser E2E if required — N/A: no page
+- [x] Responsive/adaptive if required — N/A: no page
+- [x] Visual breathing room/density if UI — N/A: no page
+- [x] Production build — TL-13, PASS
+- [x] Security checks if required — TL-14 and SM-08's skeleton cases, PASS
+- [x] Database safety review — no schema, migration or data; the framework's default migrations removed
+- [x] Final diff review — the project's review list answered on the diff (ER-05); no ER-06 area touched
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `6a275b9a60f65f074a763ff384254443fcfa313d`: fresh CI on GitHub's `ubuntu-24.04` runner — Docker Engine 28.0.4, Compose v2.38.2 —, run 39406400423 (push, `6a275b9`) and run 39406464158 (pull request #1, its merge commit `727b49b3dcf95bbcebd672312c2ee6d4ff81d897`), every step PASS: the application image's first real build — PHP 8.5.11 with `pdo_pgsql` compiled and checked by `php -m` —, the lockfile installs (125 PHP and 50 JavaScript packages), TL-01 Pint PASS, TL-02 `tsc --noEmit` PASS, TL-04 17 tests and 43 assertions PASS, TL-05 4 tests and 20 assertions PASS — PostgreSQL 18.6, Valkey 9.1.2, every WS-08 header once through Nginx, the redirect of plain HTTP —, TL-14 `composer audit` (no advisory) and `npm audit` (0 vulnerabilities) PASS, the repository gates and their fixtures PASS — actions pinned by SHA, no secret but the CI's token, lockfile-only installs, no CRLF text file. Locally, in the cloud session of 2026-10-20 (Ubuntu 24.04.5, PHP 8.3.6, Composer 2.8.12, Node.js 24.22.0 in its image, Docker Engine 29.9.1, Compose v5.6.0), the same layers PASS, TL-05 with the official `php:8.4.26` images standing in for the application image, which the session's network policy (`dl-cdn.alpinelinux.org` refused) cannot build — a stand-in run, not evidence of the image's build, which the CI runs above give
+- Build result: TL-13 PASS in CI — the Vite 8.3.4 production build, and `scripts/ci/production-check.sh`: Composer's authoritative class map without the development packages, the framework's production caches, then debug off, the configuration cached, no test route and no development dependency; its negative case (debug on) detected locally
+- Route evidence: N/A — no route is added; the framework's `/up`, the local disk's file route and Inertia DevTools' routes removed, the route list asserted empty (`BootTest`)
+- Interaction evidence: N/A — no interaction exists
+- Browser evidence: N/A — no page exists
+- Localization evidence: N/A — no copy and no page; localization is TASK-014's
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the public repository's CI at no cost
+- Files changed: the 88 files of `6a275b9` — the application skeleton at the repository root (`app/` with the module namespaces of `app/Modules/`, `bootstrap/`, `config/`, `database/`, `public/`, `resources/`, `routes/`, `storage/`, `tests/`), `docker-compose.yml` and `docker/`, `.env.example`, `DEVELOPMENT.md`, `.github/workflows/ci.yml` and `scripts/ci/`, the lockfiles, `.gitattributes`, `.gitignore`, `.editorconfig`, `.npmrc` and `.dockerignore`; TOOLCHAIN, this file, TASK_PLAN and CURRENT_HANDOFF —, each inside the IN SCOPE areas; this record's commit adds TOOLCHAIN's CI row values, this evidence, TASK_PLAN's DONE update, TASK-002's status, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `6a275b9a60f65f074a763ff384254443fcfa313d`, the Owner's identity, no signature and no AI attribution; this record's commit follows it on `task/TASK-001-scaffold`
+- Notes: the framework defaults removed — the migrations `0001_01_01_000000_create_users_table`, `0001_01_01_000001_create_cache_table` and `0001_01_01_000002_create_jobs_table`, the `User` model, `UserFactory`, `DatabaseSeeder`, `welcome.blade.php`, `routes/console.php`, the `/up` route, the local disk's file route (`serve` off) and Inertia DevTools (off by default), and the skeleton's `laravel/tinker`, `laravel/pail`, `laravel/pao` and `fakerphp/faker`. N/A with its reason: Unit (no domain code), Authorization and Route integrity (no route), Interaction, Browser E2E, Localization, visual, responsive and accessibility checks (no page), Performance (no query), Migration (no migration). `DEVELOPMENT.md`'s commands: in the cloud session each ran as written but `docker compose build app` and the commands that run in the application image, which the network policy blocks there — `npm` there with the session's proxy certificate authority —; the CI runner runs them in the same order and built the image; the Owner's Windows workstation re-runs them when a session first runs there (ER-13). An automated reviewer's two findings on pull request #1 do not reproduce: the image lacks no extension the lockfile needs (CI installed and ran all 125 packages in it), and a request reaches no session middleware while no route exists (CI's request through Nginx answered 404 with the `database` driver set; the session table is TASK-005's, before any route). Open items: README.md's sentence that application development has not started, for Planning (OUT OF SCOPE); the framework's default error pages render unstyled under the CSP until later Tasks design them. The DONE update of TASK_PLAN, this file and CURRENT_HANDOFF is in this record's commit (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
