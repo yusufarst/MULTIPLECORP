@@ -1,10 +1,12 @@
 # Task plan
 
-Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
-Run PC-5 wrote this plan on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-96 and SP-97, P11 being authorized by the Owner at OG-3 ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-19). It is a REVIEW draft: the Owner approves P11, or not, at OG-4, where the planning freeze and the execution authorization are separate decisions (OE-21). It is the Owner's execution dashboard of AICWDF §35; each Task's contract is its own file `docs/11-tasks/TASK-nnn.md` ([Tasks (P11)](README.md)), and every requirement P1–P10 defines by an identifier is mapped to a Task, or to a recorded disposition, in [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md).
+Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
-**No Task starts before the Owner's execution authorization at OG-4.**
+Run PC-5 wrote this plan on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-96 and SP-97, P11 being authorized by the Owner at OG-3 ([DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-19). The Owner approved P11 at OG-4 (DIR-085 OF-07); the planning freeze and the execution authorization, separate decisions, are in force from the freeze record (OF-08, OF-09). It is the Owner's execution dashboard of AICWDF §35; each Task's contract is its own file `docs/11-tasks/TASK-nnn.md` ([Tasks (P11)](README.md)), and every requirement P1–P10 defines by an identifier is mapped to a Task, or to a recorded disposition, in [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md).
+
+**No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).**
 
 ## 1. Project task status
 

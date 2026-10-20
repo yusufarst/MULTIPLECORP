@@ -1,8 +1,10 @@
 # Feature coverage matrix
 
-Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
-Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); it is a REVIEW draft, approved, or not, with P11 at OG-4. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
+Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); the Owner approved it with P11 at OG-4 (DIR-085 OF-07), which satisfies PRQ-13. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
 
 ## 1. The requirement inventory (SP-95)
 
@@ -3061,7 +3063,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | PRQ-10 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | TASK-074, TASK-081 |
 | PRQ-11 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | TASK-073 |
 | PRQ-12 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | TASK-004 |
-| PRQ-13 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | disposition OWNER_GATE — met only when the Owner approves P11 with this matrix at OG-4, gate P11-02 checking it first |
+| PRQ-13 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | disposition SATISFIED — met by the Owner's approval of P11 with this matrix at OG-4 (APPR-016; DIR-085 OF-07), gate P11-02 having checked it first |
 | PRQ-14 | PRQ- | RELEASE_PLAN · 10. Production-release requirements for P11 | TASK-073 |
 | table:users | table | DATABASE · 4.1 IAM — Identity & Access | TASK-005 |
 | table:roles | table | DATABASE · 4.1 IAM — Identity & Access | TASK-005 |
@@ -3397,10 +3399,9 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | DEFERRED | Deferred out of V1 by V1_SCOPE — no Task builds it; building it would add to V1 (OE-20) | 6 |
 | SUPERSEDED | A design decision its own document marks SUPERSEDED — its successor is mapped in its place; no Task builds it, and nothing derives from it (EXECUTION_CONTEXT) | 2 |
 | FUTURE | The contract of a future external integration — V1 contains none (API_AND_INTEGRATIONS §3); no Task builds it (OE-20) | 13 |
-| SATISFIED | A planning item already satisfied, its reason stated in the row | 2 |
+| SATISFIED | A planning item already satisfied, its reason stated in the row — PRQ-13 by the Owner's approval of P11 (APPR-016) | 3 |
 | DROPPED | Dropped as a requirement by DESIGN_SYSTEM Annex A, its reason recorded there — no requirement to build | 3 |
 | GOVERNANCE | A rule every Task applies — carried by each Task's TEST CHECKLIST and COMPLETION EVIDENCE under DEFINITION_OF_DONE, and by TASK_PLAN's rules | 22 |
-| OWNER_GATE | Met only by the Owner's decision at OG-4, as the row's reason states — the P11 gate checks it first; no Task builds it | 1 |
 
 ## 4. Entries per Task
 
