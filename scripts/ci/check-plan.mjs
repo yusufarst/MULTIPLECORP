@@ -247,8 +247,11 @@ function selfTest(root) {
         }
 
         writeFileSync(planFile, plan);
+        // A status the contract does not hold, whatever the plan's progress.
         const contract = join(scratch, 'docs', '11-tasks', 'TASK-003.md');
-        writeFileSync(contract, readFileSync(contract, 'utf8').replace(/^\*\*STATUS:\*\* .*$/m, '**STATUS:** DONE'));
+        const text = readFileSync(contract, 'utf8');
+        const status = /^\*\*STATUS:\*\* (.*)$/m.exec(text)?.[1];
+        writeFileSync(contract, text.replace(/^\*\*STATUS:\*\* .*$/m, `**STATUS:** ${status === 'TODO' ? 'DONE' : 'TODO'}`));
 
         if (checkPlan(scratch).length === 0) {
             throw new Error('a contract STATUS that disagrees with §4 was not detected');
