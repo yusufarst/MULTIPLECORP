@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
 // with its stable legacy identity, validation result and created record. The committed identity is
 // unique per import kind and every created fact carries a UNIQUE `import_row_id`, so running the
 // opening import again creates no second lot, receivable, credit or project for one legacy row
-// (AX-28; BD-11; C-47). `company_id` references `companies`, which TASK-006 creates.
+// (AX-28; BD-11; C-47). `company_id` references `companies`, whose foreign key TASK-006 adds with the
+// table (DIR-088).
 return new class extends Migration
 {
     public function up(): void

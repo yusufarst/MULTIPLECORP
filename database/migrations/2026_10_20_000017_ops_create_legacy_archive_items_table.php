@@ -7,7 +7,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.13 `legacy_archive_items` (AF) and §24 (DB24-08): identified legacy archive, never a
-// current effect (BR-XD-06; D-06). `company_id` and `file_object_id` reference the tables TASK-006 creates.
+// current effect (BR-XD-06; D-06). `company_id` and `file_object_id` reference the tables TASK-006
+// creates, which adds their foreign keys (DIR-088).
 return new class extends Migration
 {
     public function up(): void

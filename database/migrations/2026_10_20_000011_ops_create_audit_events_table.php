@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.13 `audit_events` (AE): the business audit, written in the transaction of the change it
 // records (§23; SECURITY LG-01) and never changed by an application role (C-53). The entity is an
-// explicit type and id, never a morph link; `company_id` is the company context (§15).
+// explicit type and id, never a morph link; `company_id` is the company context (§15), whose foreign key
+// TASK-006 adds with `companies` (DIR-088).
 return new class extends Migration
 {
     public function up(): void
@@ -37,7 +38,8 @@ return new class extends Migration
             ->codes('audit_events_authority_class', 'authority_class', ['ADM', 'ADM_PLUS', 'OWNER_ONLY', 'SYSTEM'])
             // §20 and IX-13: company and entity history in keyset order, the actor's history, and the
             // Owner review queue of ADM+ and Owner-only events (QS-14). The partial indexes over the
-            // acknowledged and the routed action codes wait for those codes' registration.
+            // acknowledged and the routed action codes are TASK-058's, on the literal lists of the codes
+            // the Tasks it depends on register (DIR-088).
             ->index('audit_events_ix13_company', 'company_id, occurred_at, id')
             ->index('audit_events_ix13_entity', 'entity_type, entity_id, occurred_at, id')
             ->index('audit_events_actor', 'actor_user_id, occurred_at')

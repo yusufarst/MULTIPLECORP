@@ -3,20 +3,23 @@
 use App\Support\Database\Columns;
 use App\Support\Database\TableRules;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // The `export_requests` record of CONCURRENCY_IDEMPOTENCY H6-04: an operational record outside the 125
 // business tables, holding the context PERMISSIONS_MATRIX DP-07 requires of each export, so the export
 // is re-authorized when it starts and at delivery. Never projected raw: only its requester sees its
-// status. Admission, the job's claims and the cleanup are TASK-060's; `file_object_id` references
-// `file_objects`, which TASK-006 creates.
+// status. Its key is a UUIDv7, the request's public identifier on its routes (ROUTE_CONTRACTS RC-01;
+// DIR-088), never enumerable; TASK-060 looks it up only within its requester's own requests. Admission,
+// the job's claims and the cleanup are TASK-060's; `file_object_id` references `file_objects`, whose
+// foreign key TASK-006 adds (DIR-088).
 return new class extends Migration
 {
     public function up(): void
     {
         Schema::create('export_requests', function (Blueprint $table) {
-            Columns::id($table);
+            $table->uuid('id')->default(new Expression('uuidv7()'))->primary();
             Columns::user($table, 'requested_by');
             $table->text('report_code');
             // The whitelisted filters, as requested.

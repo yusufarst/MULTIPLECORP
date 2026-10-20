@@ -7,7 +7,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.1 `user_company_grants` (SR): default deny — no active row, no access to the company
-// (BR-ACC-01). `company_id` references `companies`, which TASK-006 creates.
+// (BR-ACC-01). `company_id` references `companies`, whose foreign key TASK-006 adds with the table (DIR-088).
 return new class extends Migration
 {
     public function up(): void

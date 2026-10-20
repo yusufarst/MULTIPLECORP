@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\Schema;
 // transactions of the case's facts, never by users, and rebuildable; its closure CHECKs refuse a closed
 // case with a residual or an unbalanced purchase-return equation, so a correction reopens it in the
 // same transaction (C-46). `company_id`, `project_id` and the informational cross-company links
-// `causal_project_id` and `source_lot_id` (§15) reference the tables of TASK-006–TASK-008.
+// `causal_project_id` and `source_lot_id` (§15) reference the tables of TASK-006–TASK-008, which add
+// their foreign keys with those tables (DIR-088).
 return new class extends Migration
 {
     private const COUNTERS = [

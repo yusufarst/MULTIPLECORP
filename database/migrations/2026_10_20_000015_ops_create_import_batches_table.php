@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.13 `import_batches` (SR) and §24 (DB24-01): one opening-data source file per import kind,
 // prepared, dry-run, signed off by the Admin and the Owner and committed by the Owner (WF-MIG-01; L-33).
-// `source_file_id` references `file_objects`, which TASK-006 creates; the import kinds are TASK-057's.
+// `source_file_id` references `file_objects`, whose foreign key TASK-006 adds with the table (DIR-088);
+// the import kinds are TASK-057's.
 return new class extends Migration
 {
     public function up(): void

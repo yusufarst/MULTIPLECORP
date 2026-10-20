@@ -47,11 +47,12 @@ it('creates exactly the IAM and OPS tables and the infrastructure stores (criter
 });
 
 it('keys every table it creates by an identity column, never a sequence the runtime would need (§16)', function () {
+    // The framework's session ids and the export requests' UUIDv7 keys are the two stores' own identifiers.
     $keys = DB::select("select table_name, column_name, is_identity, identity_generation from information_schema.columns
-        where table_schema = 'public' and column_name = 'id' and table_name <> 'sessions' order by table_name");
+        where table_schema = 'public' and column_name = 'id' and table_name not in ('sessions', 'export_requests') order by table_name");
 
     expect(collect($keys)->every(fn (object $key): bool => $key->is_identity === 'YES' && $key->identity_generation === 'ALWAYS'))->toBeTrue()
-        ->and(count($keys))->toBe(15)
+        ->and(count($keys))->toBe(14)
         ->and(DB::scalar("select count(*) from pg_class s where s.relkind = 'S' and s.relname <> 'migrations_id_seq' and not exists (select from pg_depend d where d.objid = s.oid and d.deptype = 'i')"))->toBe(0);
 });
 
@@ -62,6 +63,19 @@ it('stores money as numeric(18,2), business dates as date and instants as timest
         ->and(columnTypes("data_type = 'date'"))->toBe(['import_batches.cutoff_date' => 'date'])
         ->and(array_values(array_unique(columnTypes("data_type like 'timestamp%'"))))->toBe(['timestamp with time zone'])
         ->and(columnTypes("data_type in ('real', 'double precision')"))->toBe([]);
+});
+
+it('keys the export requests by a UUIDv7, their public identifier (RC-01; DIR-088)', function () {
+    $id = DB::table('export_requests')->insertGetId([
+        'requested_by' => User::factory()->create()->id,
+        'report_code' => 'contoh.laporan',
+        'company_ids' => '{1001}',
+        'capability_codes' => '{contoh.lihat}',
+        'masking_context' => '{}',
+    ]);
+
+    expect(columnTypes("table_name = 'export_requests' and column_name = 'id'"))->toBe(['export_requests.id' => 'uuid'])
+        ->and(Str::isUuid($id, 7))->toBeTrue();
 });
 
 it('gives the routable roots a UUIDv7 public identifier, from the model or from the database (§16)', function () {
