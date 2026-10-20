@@ -2,6 +2,7 @@
 
 namespace App\Modules\OPS\Models;
 
+use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
 use App\Support\Database\IntegerList;
 use Carbon\CarbonImmutable;
@@ -15,8 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * An opening-data import batch (DATABASE §4.13 `import_batches`, SR; §24; WF-MIG-01): one source file per
- * import kind, signed off by the Admin and the Owner and committed by the Owner (L-33). The source file's
- * relation arrives with DOC's model (TASK-006).
+ * import kind, signed off by the Admin and the Owner and committed by the Owner (L-33).
  *
  * @property int $id
  * @property string $public_id
@@ -61,6 +61,12 @@ class ImportBatch extends Model
     public function rows(): HasMany
     {
         return $this->hasMany(ImportRow::class);
+    }
+
+    /** @return BelongsTo<FileObject, $this> */
+    public function sourceFile(): BelongsTo
+    {
+        return $this->belongsTo(FileObject::class, 'source_file_id');
     }
 
     /** @return BelongsTo<User, $this> */

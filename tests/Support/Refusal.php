@@ -10,14 +10,17 @@ use PHPUnit\Framework\Assert;
 /**
  * Proves that PostgreSQL refuses a write (TASK-005): the write runs in a savepoint of the test's
  * transaction, so the refusal leaves the transaction usable, and the refusal must carry the expected
- * SQLSTATE — 23514 a CHECK or a guard trigger, 23505 a unique key, 23503 a foreign key, 42501 a missing
- * privilege — and name the expected constraint, trigger or table in its message.
+ * SQLSTATE — 23514 a CHECK or a guard trigger, 23505 a unique key, 23P01 an exclusion constraint, 23503 a
+ * foreign key, 42501 a missing privilege — and name the expected constraint, trigger or table in its
+ * message.
  */
 final class Refusal
 {
     public const CHECK = '23514';
 
     public const UNIQUE = '23505';
+
+    public const EXCLUSION = '23P01';
 
     public const FOREIGN_KEY = '23503';
 

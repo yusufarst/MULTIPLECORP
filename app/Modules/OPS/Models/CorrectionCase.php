@@ -3,6 +3,7 @@
 namespace App\Modules\OPS\Models;
 
 use App\Modules\IAM\Models\User;
+use App\Modules\ORG\Models\Company;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -60,6 +61,12 @@ class CorrectionCase extends Model
     public function uniqueIds(): array
     {
         return ['public_id'];
+    }
+
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     /** @return BelongsTo<User, $this> */

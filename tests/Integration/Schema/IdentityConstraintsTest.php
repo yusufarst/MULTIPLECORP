@@ -5,6 +5,7 @@ use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\UserCapabilityGrant;
 use App\Modules\IAM\Models\UserCompanyGrant;
 use App\Modules\IAM\Models\UserExternalIdentity;
+use App\Modules\ORG\Models\Company;
 use App\Support\Database\DatabaseRole;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
@@ -146,12 +147,13 @@ it('keeps one active grant per account and capability, and per account and compa
     $grant->forceFill(['revoked_at' => now()])->save();
     UserCapabilityGrant::factory()->for($user)->for($capability)->create();
 
-    $companyGrant = UserCompanyGrant::factory()->for($user)->create(['company_id' => 1001]);
+    $company = Company::factory()->create();
+    $companyGrant = UserCompanyGrant::factory()->for($user)->for($company)->create();
 
-    Refusal::assert(Refusal::UNIQUE, 'user_company_grants_active_unique', fn () => UserCompanyGrant::factory()->for($user)->create(['company_id' => 1001]));
+    Refusal::assert(Refusal::UNIQUE, 'user_company_grants_active_unique', fn () => UserCompanyGrant::factory()->for($user)->for($company)->create());
 
     $companyGrant->forceFill(['revoked_at' => now()])->save();
 
-    expect(UserCompanyGrant::factory()->for($user)->create(['company_id' => 1001])->exists)->toBeTrue()
+    expect(UserCompanyGrant::factory()->for($user)->for($company)->create()->exists)->toBeTrue()
         ->and(UserCapabilityGrant::query()->where('user_id', $user->id)->count())->toBe(2);
 });

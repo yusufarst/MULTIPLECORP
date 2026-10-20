@@ -43,13 +43,31 @@ final class Columns
         return self::timestamp($table, 'recorded_at')->useCurrent();
     }
 
+    /** A plain foreign key to another table's `id`, restricting the delete as every key does (§19). */
+    public static function reference(Blueprint $table, string $column, string $on): ColumnDefinition
+    {
+        $definition = $table->foreignId($column);
+        $table->foreign($column)->references('id')->on($on)->restrictOnDelete();
+
+        return $definition;
+    }
+
     /** A reference to the user who did something; users are never deleted, so the key restricts (§19). */
     public static function user(Blueprint $table, string $column): ColumnDefinition
     {
-        $definition = $table->foreignId($column);
-        $table->foreign($column)->references('id')->on('users')->restrictOnDelete();
+        return self::reference($table, $column, 'users');
+    }
 
-        return $definition;
+    /**
+     * A master's archive state: `is_active` false with `deactivated_at/by/reason`, instead of a delete once
+     * referenced (§13 ARCHIVE / INACTIVE; §19).
+     */
+    public static function deactivation(Blueprint $table): void
+    {
+        $table->boolean('is_active')->default(true);
+        self::timestamp($table, 'deactivated_at')->nullable();
+        self::user($table, 'deactivated_by')->nullable();
+        $table->text('deactivated_reason')->nullable();
     }
 
     /** `recorded_by`, the person who created the row, where one did (§1). */

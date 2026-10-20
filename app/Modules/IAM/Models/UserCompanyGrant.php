@@ -2,6 +2,7 @@
 
 namespace App\Modules\IAM\Models;
 
+use App\Modules\ORG\Models\Company;
 use Carbon\CarbonImmutable;
 use Database\Factories\IAM\UserCompanyGrantFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -38,6 +39,12 @@ class UserCompanyGrant extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     /** @return BelongsTo<User, $this> */

@@ -3,11 +3,11 @@
 namespace Database\Factories\OPS;
 
 use App\Modules\OPS\Models\CorrectionCase;
+use App\Modules\ORG\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * An open case with its counters at zero. Until ORG's companies exist (TASK-006), the company is a
- * synthetic key.
+ * An open case of an invented company with its counters at zero.
  *
  * @extends Factory<CorrectionCase>
  */
@@ -19,7 +19,7 @@ final class CorrectionCaseFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => 1001,
+            'company_id' => Company::factory(),
             'case_kind' => 'OTHER',
             'reason' => 'Kasus koreksi contoh',
         ];

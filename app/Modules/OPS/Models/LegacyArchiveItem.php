@@ -2,7 +2,9 @@
 
 namespace App\Modules\OPS\Models;
 
+use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
+use App\Modules\ORG\Models\Company;
 use App\Support\Database\AppendOnly;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\LegacyArchiveItemFactory;
@@ -44,6 +46,18 @@ class LegacyArchiveItem extends Model
     public function importBatch(): BelongsTo
     {
         return $this->belongsTo(ImportBatch::class);
+    }
+
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    /** @return BelongsTo<FileObject, $this> */
+    public function file(): BelongsTo
+    {
+        return $this->belongsTo(FileObject::class, 'file_object_id');
     }
 
     /** @return BelongsTo<User, $this> */
