@@ -6,7 +6,10 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-// DATABASE §4.1 `user_roles` (SR): the account's launch role, one per user in V1 (an application rule).
+// DATABASE §4.1 `user_roles` (SR): the account's launch role, one per user in V1 (an application rule). A
+// role change — an Owner's demotion (TASK-024; L-34) or the OWNER-restoration command (RV-18) — updates
+// the account's one row in place, its before and after in the audit event (DATABASE §13); no row is
+// deleted and no other column changes.
 return new class extends Migration
 {
     public function up(): void
@@ -27,7 +30,8 @@ return new class extends Migration
 
         TableRules::for('user_roles')
             ->commandIdentity()
-            ->grant('select, insert');
+            ->grant('select, insert')
+            ->grantUpdate(['role_id', 'granted_by', 'granted_at']);
     }
 
     public function down(): void

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Models\User;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\LegacyArchiveItem;
@@ -21,7 +22,7 @@ const RUNTIME_PRIVILEGES = [
     'roles' => ['SELECT, INSERT', []],
     'capabilities' => ['SELECT, INSERT', []],
     'role_capabilities' => ['SELECT, INSERT', []],
-    'user_roles' => ['SELECT, INSERT', []],
+    'user_roles' => ['SELECT, INSERT', ['role_id', 'granted_by', 'granted_at']],
     'user_capability_grants' => ['SELECT, INSERT', ['revoked_by', 'revoked_at']],
     'user_company_grants' => ['SELECT, INSERT', ['revoked_by', 'revoked_at']],
     'user_external_identities' => ['SELECT, INSERT', ['unlinked_at', 'unlinked_by', 'unlink_reason']],
@@ -98,6 +99,21 @@ it('refuses the runtime an update or a delete of append-only rows, at the databa
     'security events' => [SecurityEvent::class, 'security_events'],
     'legacy archive items' => [LegacyArchiveItem::class, 'legacy_archive_items'],
 ]);
+
+it('changes an account\'s one launch role in place, as a demotion or the OWNER restoration does (TASK-024; RV-18)', function () {
+    $user = User::factory()->create();
+    $owner = User::factory()->create();
+    [$from, $to] = [Role::factory()->create(), Role::factory()->create()];
+    DB::table('user_roles')->insert(['user_id' => $user->id, 'role_id' => $from->id, 'granted_at' => now()->subMonth()]);
+
+    DB::table('user_roles')->where('user_id', $user->id)->update(['role_id' => $to->id, 'granted_by' => $owner->id, 'granted_at' => now()]);
+
+    expect(DB::table('user_roles')->where('user_id', $user->id)->pluck('role_id')->all())->toBe([$to->id]);
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'user_roles_role_id_foreign', fn () => DB::table('user_roles')->where('user_id', $user->id)->update(['role_id' => $to->id + 1000]));
+    Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table user_roles', fn () => DB::table('user_roles')->where('user_id', $user->id)->update(['user_id' => $owner->id]));
+    Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table user_roles', fn () => DB::table('user_roles')->where('user_id', $user->id)->delete());
+});
 
 it('refuses the runtime a change to the columns its table class keeps as inserted', function () {
     $user = User::factory()->create();
