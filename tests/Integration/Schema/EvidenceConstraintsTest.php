@@ -7,6 +7,8 @@ use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\EvidenceLink;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
+use App\Modules\INV\Models\StockMovement;
+use App\Modules\INV\Models\UnattributedLossCase;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\CompanyBankAccount;
@@ -211,17 +213,19 @@ it('links company evidence within its company and pool evidence only to pool rec
     $pool = EvidenceDocument::factory()->pool()->create();
     // A project of each company, the target TASK-007 keys in the company (DIR-089 (1)).
     [$project, $theirs] = [Project::factory()->create(['company_id' => $own->id])->id, Project::factory()->create(['company_id' => $other->id])->id];
+    // A pool movement and a pending case, the pool targets TASK-008 keys (DIR-089 (1)).
+    [$movement, $case] = [StockMovement::factory()->create()->id, UnattributedLossCase::factory()->create()->id];
 
     linkEvidence($evidence, ['project_id' => $project]);
     linkEvidence($evidence, ['correction_case_id' => CorrectionCase::factory()->create(['company_id' => $own->id])->id]);
-    linkEvidence($pool, ['stock_movement_id' => 7]);
-    linkEvidence($pool, ['unattributed_loss_case_id' => 7]);
+    linkEvidence($pool, ['stock_movement_id' => $movement]);
+    linkEvidence($pool, ['unattributed_loss_case_id' => $case]);
     EvidenceLink::factory()->create(['evidence_document_id' => $pool->id]);
 
     Refusal::assert(Refusal::CHECK, 'evidence_links_c58_pool_targets', fn () => linkEvidence($pool, ['project_id' => $project]));
-    Refusal::assert(Refusal::CHECK, 'evidence_links_c58_company_when_company_scoped', fn () => linkEvidence($pool, ['company_id' => $own->id, 'stock_movement_id' => 7]));
+    Refusal::assert(Refusal::CHECK, 'evidence_links_c58_company_when_company_scoped', fn () => linkEvidence($pool, ['company_id' => $own->id, 'stock_movement_id' => $movement]));
     Refusal::assert(Refusal::CHECK, 'evidence_links_c58_company_when_company_scoped', fn () => linkEvidence($evidence, ['company_id' => null, 'project_id' => $project]));
-    Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_c58_scope_foreign', fn () => linkEvidence($evidence, ['evidence_scope' => 'POOL', 'company_id' => null, 'stock_movement_id' => 7]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_c58_scope_foreign', fn () => linkEvidence($evidence, ['evidence_scope' => 'POOL', 'company_id' => null, 'stock_movement_id' => $movement]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_c32_evidence_foreign', fn () => linkEvidence($evidence, ['company_id' => $other->id, 'project_id' => $theirs]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_c32_correction_case_foreign', fn () => linkEvidence($evidence, ['correction_case_id' => CorrectionCase::factory()->create(['company_id' => $other->id])->id]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_import_batch_foreign', fn () => linkEvidence($pool, ['import_batch_id' => 999_999]));

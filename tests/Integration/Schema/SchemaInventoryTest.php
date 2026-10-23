@@ -28,6 +28,24 @@ use App\Modules\IAM\Models\UserCapabilityGrant;
 use App\Modules\IAM\Models\UserCompanyGrant;
 use App\Modules\IAM\Models\UserExternalIdentity;
 use App\Modules\IAM\Models\UserRole;
+use App\Modules\INV\Models\DispatchLine;
+use App\Modules\INV\Models\InventoryLot;
+use App\Modules\INV\Models\Location;
+use App\Modules\INV\Models\ReceivingLine;
+use App\Modules\INV\Models\Reservation;
+use App\Modules\INV\Models\ReservationEvent;
+use App\Modules\INV\Models\SerialUnit;
+use App\Modules\INV\Models\StockConsumption;
+use App\Modules\INV\Models\StockCount;
+use App\Modules\INV\Models\StockCountFinding;
+use App\Modules\INV\Models\StockCountLine;
+use App\Modules\INV\Models\StockMovement;
+use App\Modules\INV\Models\StockMovementEntry;
+use App\Modules\INV\Models\StockRestoration;
+use App\Modules\INV\Models\UnattributedLossCandidate;
+use App\Modules\INV\Models\UnattributedLossCase;
+use App\Modules\INV\Models\UnattributedLossResolution;
+use App\Modules\INV\Models\UnattributedLossResolutionLine;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\CommandLog;
 use App\Modules\OPS\Models\CorrectionCase;
@@ -69,11 +87,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\RefreshDatabase;
 
-// TL-05 (TASK-005–TASK-007), criteria 1 and 4 of each and TASK-007's criterion 1: migrating an empty
+// TL-05 (TASK-005–TASK-008), criteria 1 and 4 of each and TASK-007's and TASK-008's criterion 1: migrating an empty
 // database creates exactly DATABASE §4.1's eight IAM tables, §4.13's seven OPS tables and the four
 // infrastructure stores of TASK-005 — no queue, cache or job-batch table, those stores being Valkey —, the
 // nine ORG, five PTY, six CAT and ten DOC tables of §4.2–§4.4 and §4.10, and the eleven PRJ, eight PUR, six
-// CST and three ADM tables of §4.5, §4.6, §4.8 and §4.11, with the identifiers of §16 and the types of §17.
+// CST and three ADM tables of §4.5, §4.6, §4.8 and §4.11, and the 26 INV tables of §4.7, with the identifiers of §16
+// and the types of §17.
 
 uses(RefreshDatabase::class);
 
@@ -93,13 +112,20 @@ const SCHEMA_TABLES = [
     'purchases', 'purchase_lines', 'purchase_line_tax_components', 'purchase_charges', 'purchase_charge_line_shares', 'purchase_line_balances', 'purchase_line_closures', 'purchase_line_adjustments',
     'lot_cost_entries', 'lot_cost_balances', 'cost_attributions', 'purchase_charge_balances', 'purchase_charge_share_balances', 'expenses',
     'admin_requirements', 'admin_requirement_links', 'admin_requirement_waivers',
+    // TASK-008
+    'locations', 'inventory_lots', 'serial_units', 'stock_movements', 'stock_movement_entries', 'receiving_lines', 'dispatch_lines', 'stock_consumptions',
+    'stock_consumption_balances', 'stock_restorations', 'stock_product_balances', 'stock_scope_balances', 'stock_lot_balances', 'stock_reversal_balances',
+    'reservations', 'reservation_events', 'stock_counts', 'stock_count_scopes', 'stock_count_lines', 'stock_count_findings', 'unattributed_loss_cases',
+    'unattributed_loss_candidates', 'unattributed_loss_exposures', 'unattributed_loss_group_exposures', 'unattributed_loss_resolutions',
+    'unattributed_loss_resolution_lines',
 ];
 
 /** The tables keyed otherwise than by an identity `id`: the stores' own identifiers, the link tables' pairs and the keys DATABASE §4 states. */
 const OTHERWISE_KEYED = [
     'sessions', 'export_requests', 'command_log', 'role_capabilities', 'user_roles', 'document_types', 'number_sequences',
     'project_siplah_details', 'project_line_balances', 'project_commercial_balances', 'purchase_line_balances', 'lot_cost_balances', 'purchase_charge_balances',
-    'purchase_charge_share_balances',
+    'purchase_charge_share_balances', 'stock_product_balances', 'stock_scope_balances', 'stock_lot_balances', 'stock_reversal_balances', 'stock_count_scopes',
+    'unattributed_loss_exposures', 'unattributed_loss_group_exposures',
 ];
 
 function columnTypes(string $where, array $bindings = []): array
@@ -146,6 +172,10 @@ it('keys each guard and the SIPLAH details by the record they belong to, as DATA
     ['project_siplah_details', ['project_id']], ['project_line_balances', ['project_line_id']], ['project_commercial_balances', ['project_id']],
     ['purchase_line_balances', ['purchase_line_id']], ['lot_cost_balances', ['lot_id']], ['purchase_charge_balances', ['purchase_charge_id']],
     ['purchase_charge_share_balances', ['purchase_charge_id', 'purchase_line_id']],
+    ['stock_product_balances', ['product_id']], ['stock_scope_balances', ['product_id', 'location_id', 'condition']],
+    ['stock_lot_balances', ['lot_id', 'location_id', 'condition']], ['stock_reversal_balances', ['reversed_movement_id', 'lot_id', 'location_id', 'condition']],
+    ['stock_count_scopes', ['stock_count_id', 'product_id', 'location_id', 'condition']], ['unattributed_loss_exposures', ['unattributed_loss_case_id', 'company_id']],
+    ['unattributed_loss_group_exposures', ['exposure_group_case_id', 'company_id']],
 ]);
 
 it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric(9,6), dates as date and instants as timestamptz (criterion 4)', function () {
@@ -164,6 +194,8 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'purchase_charges.amount', 'purchase_line_adjustments.amount_delta', 'purchase_line_balances.goods_value', 'purchase_line_balances.noncreditable_tax_value',
         'purchase_line_balances.posted_goods_value', 'purchase_line_balances.posted_noncreditable_tax_value', 'purchase_line_tax_components.base_amount',
         'purchase_line_tax_components.amount', 'purchase_lines.unit_price', 'purchase_lines.line_value', 'quotation_revision_lines.unit_price', 'quotation_revision_lines.sales_value',
+        // TASK-008
+        'stock_count_findings.flagged_cost_basis', 'unattributed_loss_candidates.net_unit_cost_at_recognition',
     ];
     $quantities = [
         'products.min_stock_qty_base',
@@ -175,6 +207,21 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'purchase_line_balances.ordered_qty_base', 'purchase_line_balances.normal_received_net_qty_base', 'purchase_line_balances.closed_qty_base',
         'purchase_line_balances.dropship_confirmed_net_qty_base', 'purchase_line_balances.replacement_expected_qty_base', 'purchase_line_balances.replacement_received_net_qty_base',
         'purchase_line_closures.closed_qty_base', 'purchase_lines.entered_qty', 'purchase_lines.qty_base', 'quotation_revision_lines.entered_qty', 'quotation_revision_lines.qty_base',
+        // TASK-008
+        'dispatch_lines.entered_qty', 'dispatch_lines.qty_base', 'dispatch_lines.reserved_qty_base', 'dispatch_lines.unreserved_qty_base', 'inventory_lots.entered_qty',
+        'inventory_lots.acquired_qty_base', 'receiving_lines.entered_qty', 'receiving_lines.qty_base', 'receiving_lines.usable_qty_base', 'receiving_lines.damaged_qty_base',
+        'receiving_lines.rejected_qty_base', 'reservation_events.qty_delta_base', 'reservations.remaining_qty_base', 'stock_consumption_balances.qty_base',
+        'stock_consumption_balances.restored_qty_base', 'stock_consumption_balances.reclassified_qty_base', 'stock_consumption_balances.substituted_qty_base',
+        'stock_consumptions.qty_base', 'stock_count_findings.surplus_qty_base', 'stock_count_lines.counted_qty', 'stock_count_scopes.system_qty_at_start',
+        'stock_lot_balances.qty', 'stock_movement_entries.qty_delta_base', 'stock_product_balances.on_hand_qty', 'stock_product_balances.unusable_qty',
+        'stock_product_balances.reserved_qty', 'stock_restorations.entered_qty', 'stock_restorations.qty_base', 'stock_reversal_balances.original_qty_base',
+        'stock_reversal_balances.reversed_qty_base', 'stock_scope_balances.claims_qty', 'stock_scope_balances.pending_reduction_qty',
+        'stock_scope_balances.pending_addition_qty', 'stock_scope_balances.qty', 'unattributed_loss_candidates.qty_in_scope_at_recognition',
+        'unattributed_loss_cases.recognized_qty_base', 'unattributed_loss_cases.exposure_qty_base', 'unattributed_loss_cases.prior_pending_qty_base',
+        'unattributed_loss_cases.found_qty_base', 'unattributed_loss_cases.resolved_qty_base', 'unattributed_loss_cases.reversed_qty_base',
+        'unattributed_loss_cases.converted_qty_base', 'unattributed_loss_cases.pending_qty_base', 'unattributed_loss_exposures.exposure_qty_base',
+        'unattributed_loss_exposures.assigned_net_qty_base', 'unattributed_loss_group_exposures.bound_qty_base', 'unattributed_loss_group_exposures.assigned_net_qty_base',
+        'unattributed_loss_resolution_lines.assigned_qty_base',
     ];
     $dates = [
         'import_batches.cutoff_date', 'numbering_schemes.effective_from', 'product_price_history.effective_from', 'document_versions.business_date',
@@ -182,6 +229,8 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         // TASK-007
         'commercial_confirmations.business_date', 'cost_attributions.business_date', 'expenses.business_date', 'line_scope_cancellations.business_date',
         'lot_cost_entries.business_date', 'projects.deadline', 'purchase_line_closures.business_date', 'purchases.business_date', 'quotation_revisions.valid_until',
+        // TASK-008
+        'inventory_lots.business_date', 'stock_movements.business_date', 'unattributed_loss_cases.business_date', 'unattributed_loss_resolutions.business_date',
     ];
 
     expect(columnTypes("data_type = 'numeric'"))->toEqual([
@@ -214,6 +263,7 @@ it('gives the routable roots a UUIDv7 public identifier, from the model or from 
         'client_organizations.public_id', 'companies.public_id', 'correction_cases.public_id', 'document_versions.public_id',
         'documents.public_id', 'evidence_documents.public_id', 'file_objects.public_id', 'import_batches.public_id',
         'products.public_id', 'suppliers.public_id', 'users.public_id', 'projects.public_id', 'quotation_revisions.public_id', 'purchases.public_id',
+        'stock_counts.public_id', 'stock_movements.public_id', 'unattributed_loss_cases.public_id',
     ], 'uuid'));
 
     $user = User::factory()->create();
@@ -244,6 +294,11 @@ it('creates every model from its synthetic factory under the runtime\'s privileg
     ConfirmationLinePin::class, LineScopeCancellation::class, ProjectStateTransition::class, Purchase::class, PurchaseLine::class, PurchaseLineTaxComponent::class,
     PurchaseCharge::class, PurchaseChargeLineShare::class, PurchaseLineClosure::class, PurchaseLineAdjustment::class, LotCostEntry::class, CostAttribution::class,
     Expense::class, AdminRequirement::class, AdminRequirementLink::class, AdminRequirementWaiver::class,
+    // TASK-008; nor have its guards, and the tables keyed by several columns have no model.
+    Location::class, InventoryLot::class, SerialUnit::class, StockMovement::class, StockMovementEntry::class, ReceivingLine::class, DispatchLine::class,
+    StockConsumption::class, StockRestoration::class, Reservation::class, ReservationEvent::class, StockCount::class, StockCountLine::class,
+    StockCountFinding::class, UnattributedLossCase::class, UnattributedLossCandidate::class, UnattributedLossResolution::class,
+    UnattributedLossResolutionLine::class,
 ]);
 
 it('loads the PRJ, PUR, CST and ADM models\' relations through their keys', function () {

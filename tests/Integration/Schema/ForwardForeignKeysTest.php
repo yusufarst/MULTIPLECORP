@@ -1,7 +1,9 @@
 <?php
 
 use App\Modules\ADM\Models\AdminRequirement;
+use App\Modules\CST\Models\CostAttribution;
 use App\Modules\CST\Models\Expense;
+use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\EvidenceDocument;
@@ -9,6 +11,9 @@ use App\Modules\DOC\Models\EvidenceLink;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\UserCompanyGrant;
+use App\Modules\INV\Models\InventoryLot;
+use App\Modules\INV\Models\StockConsumption;
+use App\Modules\INV\Models\StockMovement;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\OPS\Models\ImportBatch;
@@ -35,6 +40,12 @@ use Tests\Support\Refusal;
 // expenses and requirements exist, exactly those, each restricting a delete, and each refuses a row that
 // references no record, or another company's where the key carries the company; the causal project of a
 // correction case is an intentional cross-company link (§15).
+//
+// TL-05 (TASK-008), criteria 6–8, DIR-088, DIR-089 (1) and DIR-090 (1): the foreign keys and triggers
+// TASK-008 adds from TASK-005's, TASK-006's and TASK-007's columns to its lots, movements, cases,
+// consumptions and restorations exist, exactly those, each refusing a row that references no record, or
+// another company's; pool evidence links only to a pool movement; a lot's basis is its acquisition's and a
+// lot draw's bearer its consumption's, a return settlement aside.
 
 uses(RefreshDatabase::class);
 
@@ -182,4 +193,73 @@ it('keys a version\'s rendered revision in its company, and a case\'s causal pro
 
     expect($row()->value('quotation_revision_id'))->toBe($own->id)
         ->and($case->causal_project_id)->not->toBeNull();
+});
+
+it('adds exactly the foreign keys DIR-088, DIR-089 (1) and DIR-090 (1) assign to TASK-008, each restricting a delete', function () {
+    $keys = DB::select("select conname, pg_get_constraintdef(oid) as definition from pg_constraint
+        where contype = 'f' and conrelid::regclass::text in ('correction_cases', 'documents', 'evidence_links', 'lot_cost_entries', 'lot_cost_balances', 'cost_attributions')
+            and confrelid::regclass::text in ('inventory_lots', 'stock_movements', 'unattributed_loss_cases', 'stock_consumptions', 'stock_restorations')
+        order by conname");
+
+    expect(array_column($keys, 'definition', 'conname'))->toBe([
+        'correction_cases_source_lot_foreign' => 'FOREIGN KEY (source_lot_id) REFERENCES inventory_lots(id) ON DELETE RESTRICT',
+        'cost_attributions_c28_consumption_foreign' => 'FOREIGN KEY (stock_consumption_id, lot_id, source_company_id) REFERENCES stock_consumptions(id, lot_id, source_company_id) ON DELETE RESTRICT',
+        'cost_attributions_restoration_foreign' => 'FOREIGN KEY (stock_restoration_id) REFERENCES stock_restorations(id) ON DELETE RESTRICT',
+        'documents_c32_dispatch_movement_foreign' => 'FOREIGN KEY (company_id, dispatch_movement_id) REFERENCES stock_movements(company_id, id) ON DELETE RESTRICT',
+        'documents_c32_receiving_movement_foreign' => 'FOREIGN KEY (company_id, receiving_movement_id) REFERENCES stock_movements(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_stock_movement_foreign' => 'FOREIGN KEY (company_id, stock_movement_id) REFERENCES stock_movements(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_stock_movement_foreign' => 'FOREIGN KEY (stock_movement_id) REFERENCES stock_movements(id) ON DELETE RESTRICT',
+        'evidence_links_unattributed_loss_case_foreign' => 'FOREIGN KEY (unattributed_loss_case_id) REFERENCES unattributed_loss_cases(id) ON DELETE RESTRICT',
+        'lot_cost_balances_lot_foreign' => 'FOREIGN KEY (lot_id) REFERENCES inventory_lots(id) ON DELETE RESTRICT',
+        'lot_cost_entries_c28_lot_foreign' => 'FOREIGN KEY (lot_id, source_company_id) REFERENCES inventory_lots(id, source_company_id) ON DELETE RESTRICT',
+        'lot_cost_entries_restoration_foreign' => 'FOREIGN KEY (stock_restoration_id) REFERENCES stock_restorations(id) ON DELETE RESTRICT',
+    ]);
+});
+
+it('refuses an earlier Task\'s row that references no INV record, or another company\'s, and pool evidence on a company\'s movement (DIR-088; DIR-089 (1); DIR-090 (1); C-32; C-58)', function () {
+    $company = Company::factory()->create();
+    $evidence = EvidenceDocument::factory()->create(['company_id' => $company->id]);
+    $pool = EvidenceDocument::factory()->pool()->create();
+    $theirs = StockMovement::factory()->create(['company_id' => Company::factory()->create()->id, 'movement_type' => 'DISPATCH'])->id;
+    $link = fn (EvidenceDocument $evidence, int $movement) => EvidenceLink::factory()->create(['evidence_document_id' => $evidence->id, 'stock_movement_id' => $movement]);
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'correction_cases_source_lot_foreign', fn () => CorrectionCase::factory()->create(['source_lot_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'documents_c32_dispatch_movement_foreign', fn () => Document::factory()->create([
+        'company_id' => $company->id, 'document_type_code' => DocumentTypeFactory::ensure('DOC-03'), 'project_id' => null, 'dispatch_movement_id' => $theirs,
+    ]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'documents_c32_receiving_movement_foreign', fn () => Document::factory()->create([
+        'company_id' => $company->id, 'document_type_code' => DocumentTypeFactory::ensure('DOC-12'), 'project_id' => null, 'receiving_movement_id' => $theirs,
+    ]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_stock_movement_foreign', fn () => $link($pool, 999_999));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_c32_stock_movement_foreign', fn () => $link($evidence, $theirs));
+    Refusal::assert(Refusal::CHECK, 'evidence_links_c58_pool_movement', fn () => $link($pool, $theirs));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'evidence_links_unattributed_loss_case_foreign', fn () => EvidenceLink::factory()->create(['evidence_document_id' => $pool->id, 'unattributed_loss_case_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'lot_cost_entries_c28_lot_foreign', fn () => LotCostEntry::factory()->create(['lot_id' => InventoryLot::factory()->create()->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'lot_cost_entries_restoration_foreign', fn () => LotCostEntry::factory()->create(['entry_kind' => 'COST_CORRECTION', 'stock_restoration_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_restoration_foreign', fn () => CostAttribution::factory()->create(['stock_restoration_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'lot_cost_balances_lot_foreign', fn () => DB::table('lot_cost_balances')->insert(['lot_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_c28_consumption_foreign', function (): void {
+        $consumption = StockConsumption::factory()->create();
+        CostAttribution::factory()->create(['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => $consumption->id,
+            'lot_id' => InventoryLot::factory()->create(['source_company_id' => $consumption->source_company_id])->id, 'source_company_id' => $consumption->source_company_id,
+            'bearer_company_id' => $consumption->bearer_company_id]);
+    });
+
+    expect($link($pool, StockMovement::factory()->create()->id)->exists)->toBeTrue()
+        ->and($link($evidence, StockMovement::factory()->create(['company_id' => $company->id, 'movement_type' => 'RECEIPT'])->id)->exists)->toBeTrue();
+});
+
+it('holds a lot\'s basis to its acquisition and a lot draw\'s bearer to its consumption\'s, a return settlement aside (DIR-090 (1); §4.8; §6.5)', function () {
+    $opening = InventoryLot::factory()->create();
+    $consumption = StockConsumption::factory()->create();
+    $draw = ['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => $consumption->id, 'lot_id' => $consumption->lot_id, 'source_company_id' => $consumption->source_company_id];
+    $other = Company::factory()->create()->id;
+
+    Refusal::assert(Refusal::CHECK, 'lot_cost_entries_basis_of_acquisition', fn () => LotCostEntry::factory()->create(['lot_id' => $opening->id, 'source_company_id' => $opening->source_company_id, 'entry_kind' => 'SURPLUS_FLAGGED_BASIS']));
+    Refusal::assert(Refusal::CHECK, 'cost_attributions_c28_bearer_of_consumption', fn () => CostAttribution::factory()->create([...$draw, 'bearer_company_id' => $other, 'allocation_reason' => 'Dibebankan ke PT lain']));
+
+    expect(LotCostEntry::factory()->create(['lot_id' => $opening->id, 'source_company_id' => $opening->source_company_id])->entry_kind)->toBe('OPENING_COST')
+        ->and(CostAttribution::factory()->create([...$draw, 'bearer_company_id' => $consumption->bearer_company_id])->exists)->toBeTrue()
+        // The unrecovered share of a supplier return is borne by its case's causal project (§6.5).
+        ->and(CostAttribution::factory()->create([...$draw, 'cost_class' => 'LOSS', 'cause' => 'RETURN_SETTLEMENT', 'bearer_company_id' => $other, 'allocation_reason' => 'Bagian tak terpulihkan'])->exists)->toBeTrue();
 });
