@@ -10,7 +10,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -237,32 +237,32 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02); its 17 errors on `2d5e19c` fixed in `4c6fc59`
+- [x] Relevant automated tests: Unit, Architecture, Integration — every C- row of these tables, C-10 and C-11 under two connections, the forward keys, the runtime's privileges and DIR-089 (5)'s guard —, TL-15's index register and TL-16, PASS locally and in CI
+- [x] Authorization: N/A — no route; TL-06 EMPTY until TASK-011; an actor's right to a file is TASK-030's, TASK-057's and TASK-060's (DIR-089 (5))
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: the runtime role's privileges on the new tables (DATABASE §28); every file held to its owning record's company and purpose, one owner per import source, export and evidence file (DIR-089 (5); C-32); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: the 33 migrations only add — nothing dropped, renamed or retyped, no data migration —, each `down()` reverses its migration (TL-16, 52 migrations up, down and up); local and CI databases only, no production connection
+- [x] Final diff review: each table, column, key and constraint against DATABASE as written, the gaps raised as discoveries and decided by the Owner (DIR-089), nothing invented; ER-06's independent review of the build in the cloud session, its findings fixed or raised; the review of DIR-089 (5)'s delta stopped by the Owner's directive (DIR-089 part 2), CI the final proof
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `62d9945`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 39942415352 (push) and 39942461153 (pull request #6), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, Larastan/PHPStan at level `max`, the database tests, the audits, the secret-like scan and the production check among them), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15's index register and the k6 smoke run, TL-16 from empty). The Owner's workstation, 2026-10-23: `scripts/verify.sh` and `scripts/verify.sh browser performance` PASS on `4c6fc59` (CI run 39925682508 PASS), and for DIR-089 (5)'s delta Pint, Larastan/PHPStan, `FileOwnershipTest` (27 tests) and TL-16 PASS
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: 62d9945, CI ubuntu-24.04 run 39942415352`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: 62d9945, CI ubuntu-24.04 run 39942415352`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted; PostgreSQL 18.6's `pg_trgm` and `btree_gist`, shipped with it
+- Files changed: `database/migrations/` (`2026_10_20_000020`–`000051` and `2026_10_23_000052`), `app/Support/Database/`, `app/Modules/ORG/`, `PTY/`, `CAT/` and `DOC/` (models and READMEs), the TASK-005 models' relations, `database/factories/`, the tests of `tests/Integration/Schema/`, `tests/Performance/IndexRegisterTest.php`, `tests/Unit/Support/` and `tests/Support/Refusal.php`; DIR-089's records — the eighty-seventh source record, DECISION_LOG, DECISION_INDEX, DATABASE (APPR-018), the contracts it amends, TASK_PLAN —, TOOLCHAIN's rows, this file, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `2d5e19c`, `4c6fc59` and `62d9945`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-006-schema-org-pty-cat-doc`
+- Notes: criteria 2–7 as their tests prove them; criterion 1 met but for the three parts DIR-089 gives to TASK-007–TASK-009, TASK-029 and TASK-030, not claimed (CRITERIA DISPOSITIONS). Environments: the cloud session of 2026-10-20 and the Owner's Windows workstation of 2026-10-23 (TOOLCHAIN, "Execution environments (TASK-001)"). Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

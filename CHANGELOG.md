@@ -1,6 +1,6 @@
 # Changelog
 
-Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-23 | Owner: Planning
 
 ## Unreleased — 2026-09-27
 
@@ -451,3 +451,11 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-005 on its branch `task/TASK-005-schema-foundations`: the first 19 migrations, expand-only — DATABASE §4.1's eight IAM tables, §4.13's seven OPS tables and the infrastructure stores `sessions`, `credential_tokens`, `export_requests` and `failed_jobs` —, with their CHECKs, keys, triggers and IX- indexes, constraints named after their rows; the roles of DATABASE §28 locally and in CI, the runtime holding only its table class's privileges and the migration role running every migration; UUIDv7 public identifiers, identity keys, exact money and instant types and WIB business dates as shared conventions; the models and synthetic factories; a test refusing each C- row, store key and role privilege, and each index chosen by its query in `EXPLAIN`.
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
+
+## Unreleased — 2026-10-23, TASK-006 — schema: ORG, PTY, CAT and DOC tables
+
+- TASK-005 merged by the Owner into `main` as `ee68537` (pull request #5).
+- Built TASK-006 on its branch `task/TASK-006-schema-org-pty-cat-doc`: 33 expand-only migrations — DATABASE §4.2's nine ORG, §4.3's five PTY, §4.4's six CAT and §4.10's ten DOC tables with their CHECKs, keys, exclusion constraints, triggers, IX- indexes and the runtime's privileges, and DIR-088's eight foreign keys of TASK-005's columns.
+- Continued on the Owner's workstation (ER-13): the checks run again, Larastan/PHPStan's 17 factory errors fixed, a working tree's CRLF files checked out again as LF.
+- The Owner's decision DIR-089 on five discoveries, with APPR-018's DATABASE text: 26 forward keys to TASK-007–TASK-009, the type-free evidence index to TASK-030, the document types' rows to TASK-029, no product-image removal in V1, and every file held by the database to its owning record's company and purpose, one owner per import source, export and evidence file — TASK_PLAN's Change 6; the actor's own file proven by TASK-030, TASK-057 and TASK-060.
+- Every check passed in fresh CI on `62d9945`. TASK-006 DONE; TASK-007 READY beside TASK-010, TASK-014 and TASK-073 — progress 6 / 87 —; pull request #6 waits on the Owner's merge.
