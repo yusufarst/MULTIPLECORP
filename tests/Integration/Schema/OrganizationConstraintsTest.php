@@ -59,6 +59,25 @@ it('draws a number by one statement and never lowers the counter or its seed, wh
     expect((array) $counter()->first(['next_value', 'seed_value']))->toBe(['next_value' => 42, 'seed_value' => 42]);
 });
 
+it('keeps a seeded counter at or above its positive seed, at insert and at update (C-10; NM-03)', function () {
+    $company = Company::factory()->create();
+    $counter = fn () => DB::table('number_sequences')->where(['company_id' => $company->id, 'sequence_type' => 'DOC-06', 'period_key' => '2026']);
+
+    Refusal::assert(Refusal::CHECK, 'number_sequences_c10_seed_floor', fn () => insertCounter($company, ['seed_value' => 100]));
+    Refusal::assert(Refusal::CHECK, 'number_sequences_c10_seed_floor', fn () => insertCounter($company, ['seed_value' => 0, 'next_value' => 1]));
+    Refusal::assert(Refusal::CHECK, 'number_sequences_c10_seed_floor', fn () => insertCounter($company, ['seed_value' => -5, 'next_value' => 1]));
+
+    insertCounter($company, ['seed_value' => 100, 'next_value' => 100]);
+
+    Refusal::assert(Refusal::CHECK, 'number_sequences_c10_seed_floor', fn () => $counter()->update(['seed_value' => 150]));
+
+    // A seed raised with its counter, and a draw above it, are accepted.
+    $counter()->update(['seed_value' => 150, 'next_value' => 150]);
+    $counter()->update(['next_value' => 151]);
+
+    expect((array) $counter()->first(['next_value', 'seed_value']))->toBe(['next_value' => 151, 'seed_value' => 150]);
+});
+
 it('refuses a counter outside a year or month period, below 1, or a migration seed without its first number (C-10; NM-03)', function (array $columns, string $constraint) {
     $company = Company::factory()->create();
 
