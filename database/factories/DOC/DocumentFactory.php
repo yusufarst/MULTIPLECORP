@@ -4,11 +4,12 @@ namespace Database\Factories\DOC;
 
 use App\Modules\DOC\Models\Document;
 use App\Modules\ORG\Models\Company;
+use Database\Factories\PRJ\ProjectFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * A quotation chain (DOC-01) on a project. Until PRJ's projects exist (TASK-007), the project is a
- * synthetic key, as every subject of a later module is.
+ * A quotation chain (DOC-01) on a project of the document's company (C-32). The subjects of the modules
+ * after TASK-007 are synthetic keys until their Tasks.
  *
  * @extends Factory<Document>
  */
@@ -24,7 +25,7 @@ final class DocumentFactory extends Factory
         return [
             'company_id' => Company::factory(),
             'document_type_code' => static fn (): string => DocumentTypeFactory::ensure('DOC-01'),
-            'project_id' => 3000 + ++self::$sequence,
+            'project_id' => static fn (array $row): int => ProjectFactory::new()->createOne(['company_id' => $row['company_id']])->id,
         ];
     }
 

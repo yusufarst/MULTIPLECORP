@@ -5,7 +5,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 
-// TL-15 (TASK-005, TASK-006): each index PERFORMANCE §12 registers on these tables and stores exists and
+// TL-15 (TASK-005, TASK-006, TASK-007): each index PERFORMANCE §12 registers on these tables and stores exists and
 // is chosen by the query it serves in `EXPLAIN`, a partial index's predicate written as the same literal
 // (PF-10). The tables hold synthetic rows, analysed, inside a transaction of the migration role that is
 // rolled back; sequential scans are disabled so a plan shows whether an index can serve the query at all.
@@ -56,6 +56,28 @@ const INDEX_REGISTER = [
     '§20 the exact SKU' => ['products_sku_unique', "select id from products where lower(sku) = 'brg-123'"],
     '§20 a project\'s documents' => ['documents_project_type', 'select id from documents where project_id = 123'],
     '§20 a document\'s versions' => ['document_versions_document_version', 'select id from document_versions where document_id = (select min(id) from documents) order by version_no'],
+    // TASK-007
+    'IX-11 a company\'s projects by state' => ['projects_ix11_company_state', "select id from projects where company_id = {company} and state = 'ACTIVE' order by id desc limit 25"],
+    // The open projects of QS-01 and QS-24 are served by the smaller open-deadline index too.
+    'IX-14 a company\'s force-completed and cancelled projects (QS-16)' => ['projects_ix11_company_state', "select id from projects where company_id = (select min(id) from companies) and state in ('COMPLETED_FORCED', 'CANCELLED')"],
+    'IX-14 a company\'s active projects (QS-01, QS-24)' => ['projects_ix11_open_deadline', "select id from projects where company_id = (select min(id) from companies) and state = 'ACTIVE'"],
+    'IX-11 a client\'s projects' => ['projects_ix11_company_client', 'select id from projects where company_id = {company} and client_organization_id = (select min(id) from client_organizations) order by id desc limit 25'],
+    'IX-11 the open projects by deadline' => ['projects_ix11_open_deadline', "select id from projects where company_id = {company} and state in ('DRAFT', 'ACTIVE') order by deadline, id limit 25"],
+    'IX-16 a numbering period\'s first project' => ['projects_ix16_company_period', "select exists (select from projects where company_id = {company} and period_key = '2025')"],
+    'IX-17 a project title\'s prefix' => ['projects_ix17_title_prefix', "select id from projects where company_id = {company} and lower(title) like 'pengadaan contoh 12%'"],
+    '§21 a project title\'s fragment' => ['projects_title_trigram', "select id from projects where title ilike '%contoh 123%'"],
+    'IX-14 the lines with an open remainder (QS-01, QS-06)' => ['project_line_balances_ix14_open', 'select project_line_id from project_line_balances where demand_qty_base > reserved_qty_base + dispatched_net_qty_base + dropship_confirmed_net_qty_base + handed_over_qty_base + cancelled_qty_base or delivered_net_qty_base < dispatched_net_qty_base + dropship_confirmed_net_qty_base'],
+    'IX-14 the confirmed value not yet invoiced (QS-15)' => ['project_commercial_balances_ix14_uninvoiced', 'select project_id from project_commercial_balances where confirmed_sales_value > invoiced_sales_value'],
+    'IX-11 a company\'s purchases' => ['purchases_ix11_company_business_date', 'select id from purchases where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-14 a company\'s open purchases (QS-05)' => ['purchases_ix14_company_state', "select id from purchases where company_id = (select min(id) from companies) and state = 'OPEN'"],
+    '§20 the purchase lines with an open remainder (QS-05)' => ['purchase_line_balances_open_remainder', 'select purchase_line_id from purchase_line_balances where normal_received_net_qty_base + closed_qty_base + dropship_confirmed_net_qty_base < ordered_qty_base'],
+    'IX-11 a company\'s expenses' => ['expenses_ix11_company_business_date', 'select id from expenses where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-08 a purchase line\'s lot cost' => ['lot_cost_entries_ix08_purchase_line', "select id from lot_cost_entries where purchase_line_id = (select min(id) from purchase_lines) and cost_component = 'GOODS'"],
+    'IX-08 a consumption\'s cost' => ['cost_attributions_ix08_consumption', 'select id from cost_attributions where stock_consumption_id = 123'],
+    'IX-08 a lot\'s draws' => ['cost_attributions_ix08_lot', 'select id from cost_attributions where lot_id = 123'],
+    'IX-16 a share\'s lot postings' => ['lot_cost_entries_share', 'select exists (select from lot_cost_entries where purchase_charge_line_share_id = 123)'],
+    'IX-16 a share\'s direct postings' => ['cost_attributions_share', 'select exists (select from cost_attributions where purchase_charge_line_share_id = 123)'],
+    '§20 a bearer\'s cost by date' => ['cost_attributions_bearer_business_date', "select id from cost_attributions where bearer_company_id = {company} and business_date >= '2026-09-25'"],
 ];
 
 function seedIndexRegister(Connection $owner): void
@@ -126,15 +148,52 @@ function seedIndexRegister(Connection $owner): void
         insert into client_organizations (name) select 'SMA Contoh ' || g from generate_series(1, 20000) g;
         insert into client_units (client_organization_id, name) select o.id, 'Bagian Contoh ' || o.id from client_organizations o;
         insert into suppliers (name) select 'Pemasok Contoh ' || g from generate_series(1, 20000) g;
+        create temporary table seed_masters on commit drop as select
+            (select array_agg(id order by id) from client_organizations) as clients,
+            (select array_agg(id order by id) from suppliers) as suppliers,
+            (select array_agg(id order by id) from products) as products;
+
+        -- The first company holds one row in a hundred, as one company among many does (PF-13, PF-41).
+        insert into projects (company_id, project_number, period_key, sequence_no, client_organization_id, channel, state, title, deadline)
+            select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'CTH/PRJ/' || g, case when g % 2 = 0 then '2025' else '2026' end, g,
+                m.clients[1 + g % 20000], 'REGULAR', (array['ACTIVE', 'ACTIVE', 'ACTIVE', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'COMPLETED_NORMAL', 'CANCELLED', 'DRAFT', 'COMPLETED_FORCED'])[1 + g % 10],
+                'Pengadaan Contoh ' || g, date '2026-11-01' + g % 60
+            from generate_series(1, 20000) g, seed_companies c, seed_masters m;
+        insert into project_lines (project_id, company_id, line_no, kind, product_id, quantity_scale, description, entered_qty, entered_unit_id, ratio_to_base, qty_base, fulfillment_mode)
+            select p.id, p.company_id, 1, 'GOODS', pr.id, 0, 'Barang contoh', 10, pr.base_unit_id, 1, 10, 'WAREHOUSE'
+            from projects p, seed_masters m, lateral (select id, base_unit_id from products where id = m.products[1 + p.sequence_no % 20000]) pr;
+        -- One line in fifty is still open: half dispatched and delivered.
+        insert into project_line_balances (project_line_id, fulfillment_mode, demand_qty_base, dispatched_net_qty_base, delivered_net_qty_base)
+            select l.id, 'WAREHOUSE', 10, case when l.id % 50 = 0 then 5 else 10 end, case when l.id % 50 = 0 then 5 else 10 end from project_lines l;
+        insert into project_commercial_balances (project_id, confirmed_sales_value, invoiced_sales_value)
+            select p.id, 1500000, case when p.id % 50 = 0 then 0 else 1500000 end from projects p;
+        insert into purchases (company_id, purchase_number, period_key, sequence_no, supplier_id, supplier_snapshot, business_date, state)
+            select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'CTH/PO/' || g, '2026', g, m.suppliers[1 + g % 20000], '{}',
+                date '2026-10-01' - g % 300, case when g % 25 = 0 then 'OPEN' else 'CLOSED' end
+            from generate_series(1, 20000) g, seed_companies c, seed_masters m;
+        insert into purchase_lines (purchase_id, company_id, line_no, kind, product_id, quantity_scale, delivery_mode, entered_qty, entered_unit_id, ratio_to_base, qty_base, unit_price, line_value, description)
+            select p.id, p.company_id, 1, 'GOODS', pr.id, 0, 'WAREHOUSE', 10, pr.base_unit_id, 1, 10, 100000, 1000000, 'Barang contoh dibeli'
+            from purchases p, seed_masters m, lateral (select id, base_unit_id from products where id = m.products[1 + p.sequence_no % 20000]) pr;
+        insert into purchase_line_balances (purchase_line_id, ordered_qty_base, normal_received_net_qty_base, goods_value, posted_goods_value)
+            select l.id, 10, case when l.id % 50 = 0 then 0 else 10 end, 1000000, case when l.id % 50 = 0 then 0 else 1000000 end from purchase_lines l;
+        -- Until INV's lots exist (TASK-008), a lot and a consumption are synthetic keys.
+        insert into lot_cost_entries (lot_id, source_company_id, entry_kind, cost_component, amount, purchase_line_id, business_date)
+            select l.id, l.company_id, 'GOODS', 'GOODS', 1000000, l.id, '2026-10-01' from purchase_lines l where l.id % 50 <> 0;
+        insert into cost_attributions (cost_class, cause, amount, stock_consumption_id, lot_id, source_company_id, bearer_company_id, business_date)
+            select 'HPP', 'INITIAL', 100000, g, g, c.ids[1 + g % 10], c.ids[1 + g % 10], date '2026-10-01' - g % 300
+            from generate_series(1, 20000) g, seed_companies c;
+        insert into expenses (company_id, kind, category, amount, business_date)
+            select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'MANUAL', 'Operasional', 250000, date '2026-10-01' - g % 300
+            from generate_series(1, 20000) g, seed_companies c;
 
         insert into document_types (code, name, subject_kind, is_numbered, allowed_modes)
             values ('DOC-01', 'Penawaran', 'CONTOH', true, '{STANDARD}'), ('DOC-05', 'Kuitansi', 'CONTOH', true, '{RECEIPT,PRE_PAYMENT}');
-        -- The first company holds one row in a hundred, as one company among many does (PF-13, PF-41).
+        -- A quotation chain per project, its company the project's (C-32), and a pre-payment Kuitansi in fifty.
         insert into documents (company_id, document_type_code, mode, project_id, invoice_id)
-            select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end],
-                case when g % 50 = 0 then 'DOC-05' else 'DOC-01' end, case when g % 50 = 0 then 'PRE_PAYMENT' else 'STANDARD' end,
-                case when g % 50 = 0 then null else g end, case when g % 50 = 0 then g end
-            from generate_series(1, 20000) g, seed_companies c;
+            select p.company_id, case when p.sequence_no % 50 = 0 then 'DOC-05' else 'DOC-01' end,
+                case when p.sequence_no % 50 = 0 then 'PRE_PAYMENT' else 'STANDARD' end,
+                case when p.sequence_no % 50 = 0 then null else p.id end, case when p.sequence_no % 50 = 0 then p.sequence_no end
+            from projects p;
         insert into document_versions (document_id, company_id, document_type_code, version_no, state, business_date, period_key, sequence_no,
                 formatted_number, kuitansi_amount, payload, payload_sha256)
             select d.id, d.company_id, d.document_type_code, 1, 'ISSUED', '2026-10-01', '2026', d.id, 'CTH/' || d.id,

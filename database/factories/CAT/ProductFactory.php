@@ -30,4 +30,16 @@ final class ProductFactory extends Factory
             'quantity_scale' => 0,
         ];
     }
+
+    /**
+     * The scale and base unit an invented quantity-bearing row takes from its product (DATABASE §1, §7; C-09).
+     *
+     * @return array{quantity_scale: int, base_unit_id: int}
+     */
+    public static function keyOf(mixed $product): array
+    {
+        $row = Product::query()->whereKey($product)->firstOrFail(['quantity_scale', 'base_unit_id']);
+
+        return ['quantity_scale' => $row->quantity_scale, 'base_unit_id' => $row->base_unit_id];
+    }
 }

@@ -3,6 +3,7 @@
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PRJ\Models\Project;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
@@ -189,8 +190,9 @@ it('refuses the second of two concurrent writes that would break C-10 or C-11, t
     }],
     'two quotation chains of one project (C-11)' => [function () {
         $company = Company::factory()->create()->id;
+        $project = Project::factory()->create(['company_id' => $company])->id;
         DocumentTypeFactory::ensure('DOC-01');
 
-        return ["insert into documents (company_id, document_type_code, project_id) values (?, 'DOC-01', 7)", [$company], [$company], Refusal::UNIQUE, 'documents_c11_quotation_chain'];
+        return ["insert into documents (company_id, document_type_code, project_id) values (?, 'DOC-01', ?)", [$company, $project], [$company, $project], Refusal::UNIQUE, 'documents_c11_quotation_chain'];
     }],
 ]);

@@ -18,6 +18,13 @@ final class EvidenceLinkFactory extends Factory
 {
     protected $model = EvidenceLink::class;
 
+    /** The link's record kinds, an exclusive arc (DATABASE §4.10). */
+    private const TARGETS = [
+        'project_id', 'commercial_confirmation_id', 'purchase_id', 'stock_movement_id', 'delivery_id', 'dropship_confirmation_id',
+        'service_handover_id', 'payment_id', 'other_cash_receipt_id', 'disbursement_id', 'expense_id', 'deduction_settlement_id',
+        'receivable_writeoff_id', 'correction_case_id', 'admin_requirement_id', 'unattributed_loss_case_id', 'import_batch_id',
+    ];
+
     /** @return array<string, mixed> */
     public function definition(): array
     {
@@ -37,7 +44,7 @@ final class EvidenceLinkFactory extends Factory
                 $link->company_id = $evidence->company_id;
             }
 
-            if ($link->getAttribute('correction_case_id') === null && $link->getAttribute('import_batch_id') === null) {
+            if (array_filter($link->only(self::TARGETS), static fn (mixed $target): bool => $target !== null) === []) {
                 if ($link->company_id === null) {
                     $link->import_batch_id = ImportBatchFactory::new()->createOne()->id;
                 } else {
