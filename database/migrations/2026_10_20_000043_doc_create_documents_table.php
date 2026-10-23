@@ -11,8 +11,8 @@ use Illuminate\Support\Facades\Schema;
 // subject, an exclusive arc whose column the type decides; the per-type partial UNIQUE indexes give each
 // subject one chain per type (C-11), the subject columns never entering a key while empty. DOC-05 alone
 // has two modes: RECEIPT on a payment and its invoice, PRE_PAYMENT on the invoice (AX-31); DOC-07 follows
-// its parent Kuitansi. The subjects are the records of TASK-007–TASK-009, whose keys to this table no
-// contract assigns yet (TASK-006's discovery (1); §15; C-32); the parent document is keyed here.
+// its parent Kuitansi. The subjects are the records of TASK-007–TASK-009, which key them to this table,
+// composite with the company (DIR-089 (1); §15; C-32); the parent document is keyed here.
 return new class extends Migration
 {
     private const SUBJECTS = [

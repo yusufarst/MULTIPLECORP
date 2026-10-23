@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\Schema;
 // rendition references its version and has no number or payload of its own, so a retry adds an attempt
 // and never reissues or renumbers (BR-DOC-03; GAP-007; C-12). The PENDING row committed with the issue is
 // the durable record of work owed; the sweeper JB-02 re-queues PENDING, RENDERING and FAILED attempts on
-// IX-07, which also serves QS-08. `error_summary` holds no secret. The rendered file is a plain key, this
-// table having no company column for §15's company-scoped form (TASK-006's discovery (5)).
+// IX-07, which also serves QS-08. `error_summary` holds no secret. The rendered file is a plain key, held
+// to a rendition of its version's company by 2026_10_23_000052 (DIR-089 (5)).
 return new class extends Migration
 {
     public function up(): void

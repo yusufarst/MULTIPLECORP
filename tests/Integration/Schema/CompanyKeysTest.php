@@ -27,7 +27,7 @@ it('lets a composite reference reach its own company\'s row and refuses another 
         if ($table === 'import_rows') {
             $file = $owner->table('file_objects')->insertGetId([
                 'storage_disk' => 'local', 'storage_key' => 'berkas/kunci', 'mime_type' => 'text/csv', 'size_bytes' => 1,
-                'sha256' => hash('sha256', 'kunci'), 'company_id' => $own, 'sensitivity' => 'S4', 'purpose' => 'IMPORT_SOURCE',
+                'sha256' => hash('sha256', 'kunci'), 'company_id' => null, 'sensitivity' => 'S4', 'purpose' => 'IMPORT_SOURCE',
             ]);
             $row['import_batch_id'] = $owner->table('import_batches')->insertGetId(['import_kind' => 'CONTOH', 'source_file_id' => $file, 'source_sha256' => hash('sha256', 'kunci'), 'cutoff_date' => '2026-09-30', 'company_scope' => "{{$own}}"]);
         }

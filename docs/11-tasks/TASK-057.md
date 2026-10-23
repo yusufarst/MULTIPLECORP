@@ -1,8 +1,10 @@
 # TASK-057 — Opening import — preparation, dry run, sign-off and commit
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (5) adds criterion 15 and its authorization test — the batch's source file its preparer's own upload; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -253,6 +255,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 12. No opening fact reserves stock (IMP-08).
 13. Each NX-13 command replayed with its `command_id` returns its recorded outcome (CI-05; IG-05).
 14. Once the row of P11Q-02 (a) is approved, "Batalkan Batch" aborts with its reason a batch that committed no row, so that none of its rows commits afterwards, and is refused for a batch with a committed row (IMP-06; PRQ-06; ADMIN_FLOW §13; TASK_PLAN §8).
+15. A batch takes as its source only an import-source upload its own preparer made; another account's upload answers as not found, proven by an authorization test — the database holds a source file to one batch, not to its preparer (DIR-089 (5); FL-01; PJ-20; IDOR).
 
 **TEST REQUIREMENTS:**
 
@@ -261,7 +264,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - Unit: each kind's validator and parser on malformed, duplicate and out-of-scope rows; the seed period rule and the legacy-number fit (TL-03)
 - Feature: ROUTE-058, ROUTE-272–ROUTE-275, ROUTE-213 and ROUTE-214 with each refusal; the batch abort once its row exists (TL-04)
 - Integration: M-33's cases — a chunk and a whole batch rerun, a refused row fixed and resumed, a resume by another Owner —; M-34 with the store stopped during a commit; M-18's import cases and HO-19 with the controlled clock; JB-05, JB-07 and JB-09 crash and lost-dispatch tests (HO-18); `ReconcileGuards` clean (TL-05)
-- Authorization: `import.prepare` with every batch company in scope, `import.commit` for the Owner after the sign-off, `stock.reverse` and `finance.contra` (TL-06)
+- Authorization: `import.prepare` with every batch company in scope, `import.commit` for the Owner after the sign-off, `stock.reverse` and `finance.contra` (TL-06); criterion 15's source file of another preparer (DIR-089 (5))
 - Route integrity: ROUTE-058, ROUTE-213, ROUTE-214 and ROUTE-272–ROUTE-275 audited, and the abort's route once its row exists (TL-07)
 - Interaction: INT-213, INT-214 and INT-272–INT-275, and the abort's INT- row once it exists, each with one `command_id` replayed and INT-275's step-up expiring (TL-08; IG-05)
 - Browser E2E: J-MIG-01 and UXS-19 on the CI stack; CJ-16's steps rehearsed on staging by TASK-064 and TASK-081 (TL-09)

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.10 `evidence_document_versions` (AF): a replacement is a new version over a new immutable
 // file, keeping the history (L-41; §22). An evidence's current version is one of its own versions, keyed
-// here once both tables exist. The file is a plain key, this table having no company column for §15's
-// company-scoped form (TASK-006's discovery (5)).
+// here once both tables exist. The file is a plain key, held to an upload of the evidence's company — of
+// none for pool evidence — by 2026_10_23_000052 (DIR-089 (5)).
 return new class extends Migration
 {
     public function up(): void

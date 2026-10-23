@@ -35,7 +35,7 @@ Layers: **DB** — a PostgreSQL constraint, key, trigger or privilege guarantees
 | C-29 | Normal receipts + closures + drop-ship confirmations ≤ ordered; replacement receipts ≤ replacement expected, separately ⚡ | PX-03; AX-04/08/12 | DB+APP+DQ, P6 | `purchase_line_balances` CHECKs — two separate caps; a cancellation closes the whole line |
 | C-30 | Delivered ≤ shipped; handed over ≤ demand; reversal lines exact and once ⚡ | AX-09; PX-08 | DB+APP+DQ, P6 | `project_line_balances` CHECK; partial UNIQUE and quantity key on reversal lines |
 | C-31 | Project invoice cap ⚡ | L-16; AX-16 | DB+APP+DQ, P6 | `project_commercial_balances` CHECK |
-| C-32 | Company-scope references, including document bank destinations and invoice clients | BR-ACC-01/02; GAP-006 | DB + P5 | composite foreign keys (§15) with all-or-none nullable members; the audited inventory of intentional cross-company links; P5 default deny |
+| C-32 | Company-scope references, including document bank destinations, invoice clients and files | BR-ACC-01/02; GAP-006 | DB + P5 | composite foreign keys (§15) with all-or-none nullable members; each reference to `file_objects` held to its owning record's company and its file's purpose by a trigger after the foreign keys, one owner for an import source, an export and an evidence file by a UNIQUE key, and `file_objects`' company by purpose by a CHECK (§22; `DIR-089`); an actor's right to a file is the commands' check, not this row's; the audited inventory of intentional cross-company links; P5 default deny |
 | C-33 | Stale counts are never applied ⚡ | BR-INV-07; L-14 | APP+DB, P6 | typed `stock_count_scopes.basis_version` compared with the scope guard's `version` |
 | C-34 | One open count finding per scope and product | AX-07 | DB | partial UNIQUE |
 | C-35 | Pending unattributed quantity ≥ 0; no double found/resolved/reversed; only loss cases can be found ⚡ | DIR-026/027; AX-37 | DB+APP+DQ, P6 | generated `pending_qty_base` CHECK; kind CHECK; one reversal per resolution |
@@ -83,6 +83,7 @@ All foreign keys are `ON DELETE RESTRICT` and keys are never updated. `ON DELETE
 | Client organization, unit, address, PIC | never once referenced | inactive: not selectable for new projects | outputs keep the as-used snapshot |
 | Supplier | never once referenced | inactive: blocks new purchases | open purchases continue |
 | Product, product unit, barcode | never once referenced | inactive: no new demand/purchases; stock stays countable | barcode rows deactivate, freeing the code |
+| Product image | never | none in V1: an image stays with its product, only its order and primary flag changing (`DIR-089`) | the Owner kept V1's scope, no command removing an image; its file stays linked |
 | Unit, location | never once referenced | inactive | location moves remain valid history |
 | Project | only a DRAFT without committed records (L-37) | CANCELLED / COMPLETED states; never deleted after activation | number never reused |
 | Project line | draft only | cancellation or re-plan split | pins are immutable |

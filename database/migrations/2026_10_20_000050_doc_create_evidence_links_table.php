@@ -13,8 +13,7 @@ use Illuminate\Support\Facades\Schema;
 // movement, an unattributed-loss case, an import batch — so evidence on a pending case invents no owner
 // (DIR-027; C-58). A link is unlinked once, with reason and actor (§19). Each target column is indexed
 // for the cascade derivations (IX-08). The correction case and the import batch are keyed here; the
-// other targets are the records of TASK-007–TASK-009, whose keys no contract assigns yet (TASK-006's
-// discovery (1)).
+// other targets are the records of TASK-007–TASK-009, which add their keys (DIR-089 (1)).
 return new class extends Migration
 {
     private const TARGETS = [

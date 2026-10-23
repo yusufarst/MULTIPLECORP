@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Schema;
 // Only a draft is deleted (§13, §19). The UNIQUE keys on the number backstop the allocator (C-10; NM-09). The bank
 // account is the company's own (§14–§15; C-32) and the DOC-05 amount is typed, never read from the
 // payload. The rendered quotation revision and invoice version are the tables of TASK-007 and TASK-009,
-// whose keys no contract assigns yet (TASK-006's discovery (1)).
+// which add their keys (DIR-089 (1)).
 return new class extends Migration
 {
     public function up(): void

@@ -48,12 +48,13 @@ final class FileObjectFactory extends Factory
         ]);
     }
 
-    /** A private import source (SECURITY FL-06). */
+    /** A private import source (SECURITY FL-06), which belongs to no company: its batch names them (DIR-089). */
     public function importSource(): self
     {
         return $this->state([
             'original_filename' => 'impor-contoh.csv',
             'mime_type' => 'text/csv',
+            'company_id' => null,
             'sensitivity' => 'S4',
             'purpose' => 'IMPORT_SOURCE',
         ]);

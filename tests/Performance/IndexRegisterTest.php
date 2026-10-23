@@ -70,7 +70,12 @@ function seedIndexRegister(Connection $owner): void
             select 'local', 'berkas/' || g, 'application/pdf', 1024, md5(g::text) || md5(g::text), c.ids[1 + g % 10], 'S3', 'UPLOAD',
                 s.ids[1 + g % 200], now() - (g || ' minutes')::interval
             from generate_series(1, 20000) g, seed_users s, seed_companies c;
-        create temporary table seed_files on commit drop as select array_agg(id order by id) as ids from file_objects;
+        -- The import batches' sources, of no company as their purpose takes (DIR-089 (5)).
+        insert into file_objects (storage_disk, storage_key, mime_type, size_bytes, sha256, company_id, sensitivity, purpose, uploaded_by, recorded_at)
+            select 'local', 'impor/' || g, 'text/csv', 1024, md5('impor' || g) || md5('impor' || g), null, 'S4', 'IMPORT_SOURCE',
+                s.ids[1 + g % 200], now() - (g || ' minutes')::interval
+            from generate_series(1, 2000) g, seed_users s;
+        create temporary table seed_files on commit drop as select array_agg(id order by id) as ids from file_objects where purpose = 'IMPORT_SOURCE';
 
         insert into audit_events (occurred_at, actor_user_id, company_id, action, entity_type, entity_id, authority_class)
             select now() - (g || ' minutes')::interval, s.ids[1 + g % 200], c.ids[1 + g % 10], 'contoh.tindakan', 'user', g % 500,

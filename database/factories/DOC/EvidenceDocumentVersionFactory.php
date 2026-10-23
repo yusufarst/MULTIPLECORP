@@ -4,7 +4,6 @@ namespace Database\Factories\DOC;
 
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
-use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -23,8 +22,18 @@ final class EvidenceDocumentVersionFactory extends Factory
         return [
             'evidence_document_id' => EvidenceDocument::factory(),
             'version_no' => 1,
-            'file_object_id' => FileObject::factory(),
             'uploaded_by' => User::factory(),
         ];
+    }
+
+    /** The file is an upload of the evidence's company, or of no company for pool evidence (C-32; DIR-089). */
+    public function configure(): static
+    {
+        return $this->afterMaking(function (EvidenceDocumentVersion $version): void {
+            if ($version->getAttribute('file_object_id') === null) {
+                $evidence = EvidenceDocument::query()->findOrFail($version->evidence_document_id);
+                $version->file_object_id = FileObjectFactory::new()->createOne(['company_id' => $evidence->company_id])->id;
+            }
+        });
     }
 }

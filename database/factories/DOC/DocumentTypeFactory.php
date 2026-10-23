@@ -6,8 +6,8 @@ use App\Modules\DOC\Models\DocumentType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * A catalogue row for the tests. The catalogue's own rows are not seeded yet — the codes of
- * `subject_kind` are not stated —, so the subject kind here is a placeholder.
+ * A catalogue row for the tests. The catalogue's own rows are TASK-029's, seeded from the approved text
+ * only (DIR-089 (3)), so the subject kind here is a placeholder.
  *
  * @extends Factory<DocumentType>
  */

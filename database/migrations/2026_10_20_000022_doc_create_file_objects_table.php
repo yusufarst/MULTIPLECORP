@@ -9,10 +9,9 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.10 `file_objects` (AF) and §22: the metadata of a private file whose bytes never change —
 // a replacement is a new object (L-41). The row is written by the upload pipeline in its own short
-// transaction, outside every command (SECURITY FL-01), so it carries no command identity. §4.10 leaves
-// `company_id` empty only for S0 product images and the files of pool-scope evidence; no CHECK holds it,
-// as the company of a multi-company import source or export is an open question for Planning (TASK-006's
-// discovery (5)). `scan_state` records the optional scanner's result (FL-11), whose codes no document
+// transaction, outside every command (SECURITY FL-01), so it carries no command identity. `company_id`
+// follows the file's purpose (DIR-089 (5)), held with each reference's company by 2026_10_23_000052.
+// `scan_state` records the optional scanner's result (FL-11), whose codes no document
 // lists yet. The companies' identity assets are keyed to the company's own files here, once both tables
 // exist.
 return new class extends Migration

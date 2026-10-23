@@ -7,8 +7,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.10 `document_types` (CF): the bounded catalogue of the fourteen documents, keyed by their
-// code (V1_SCOPE; CAP-08). Its rows are not written here: the codes of `subject_kind` and each type's
-// numbering and modes are not yet stated (TASK-006's discovery (3)).
+// code (V1_SCOPE; CAP-08). Its rows are not written here: TASK-029 seeds them from the approved text only
+// (DIR-089 (3)).
 return new class extends Migration
 {
     public function up(): void

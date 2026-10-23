@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.4 `product_images` (MD): the thumbnails of the product lists (OB §30), each an immutable S0
 // file; at most one primary image per product. Images are live references, never snapshotted (§14). The
-// file is a plain key, so the database does not yet hold it to an S0 file of no company (TASK-006's
-// discovery (5)); how an image leaves its product is TASK-006's discovery (4).
+// file is a plain key, held to a product-image file of no company by 2026_10_23_000052 (DIR-089 (5)); an
+// image has no end of life in V1 (DIR-089 (4); §19).
 return new class extends Migration
 {
     public function up(): void

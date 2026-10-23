@@ -1,0 +1,80 @@
+Owner decisions received in session during execution, 2026-10-23 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: TASK-006's five discoveries (after the executor's checkpoint) ---
+
+KEPUTUSAN OWNER — TASK-006, LIMA DISCOVERY
+Saya menetapkan keputusan berikut:
+
+1. Foreign key: SETUJU. Delegasikan 26 foreign key ke TASK-007 (8), TASK-008 (4), dan TASK-009 (14). Gunakan composite FK bila diperlukan untuk isolasi company, serta wajibkan pengujian integritas referensial.
+2. Index evidence: SETUJU dikerjakan TASK-030. Pastikan desain indeks sesuai query sebenarnya, termasuk pencarian lintas-company FL-10, dan buktikan menggunakan EXPLAIN.
+3. Document types: SETUJU dikerjakan TASK-029. Gunakan 14 tipe dan nilai yang sudah dapat diturunkan dari spesifikasi V1 yang disetujui. Jangan mengarang nilai yang belum ditentukan.
+4. Product images: PILIH OPSI B. Pertahankan cakupan V1 yang sudah disetujui. Jangan menambah perintah DetachProductImage pada tahap ini. Catat keterbatasannya secara eksplisit.
+5. Isolasi company pada file: SETUJU rekomendasi keamanan untuk TASK-006. Implementasikan validasi kepemilikan company dan purpose pada level database. File dengan company_id NULL hanya boleh digunakan dalam konteks yang secara eksplisit diizinkan. Terapkan pemeriksaan yang menolak akses atau referensi lintas-company, beserta tes negatifnya. Jangan membuat jalur bypass keamanan.
+
+Catat keputusan ini melalui DIR-089 dan CHANGE_CONTROL. Siapkan amandemen sesempit mungkin tanpa memperluas fitur V1. Untuk perubahan teks kanonik yang memerlukan APPR-018, tunjukkan teks finalnya sebelum persetujuan.
+Setelah implementasi yang disetujui, jalankan pengujian relevan, pertahankan TASK-006 sebagai VERIFYING hingga semua gate wajib lulus, kemudian lanjutkan alur PR, CI dan DONE.
+Commit dan push tetap membutuhkan persetujuan saya secara terpisah. Hindari audit berulang yang tidak diperlukan dan jangan memulai TASK-007 sebelum TASK-006 selesai.
+Model: Opus 5.5
+Effort: Max untuk perubahan skema dan keamanan TASK-006; turunkan secara adaptif untuk pekerjaan administratif ringan.
+
+--- Part 2: the Owner's directive on token use (during TASK-006's guard verification) ---
+
+OWNER DIRECTIVE — STOP TOKEN WASTE
+Penggunaan limit mingguan terlalu boros. Prioritaskan penghematan token mulai sekarang.
+
+1. Hentikan pekerjaan AI background dan jangan menjalankan sub-agent atau review tambahan.
+2. Jangan mengulang pengujian yang sudah PASS tanpa perubahan relevan.
+3. Jangan melakukan audit atau analisis ulang dari awal.
+4. Jangan memperluas scope TASK-006 atau memulai task lain.
+5. Pertahankan seluruh perubahan yang sudah dibuat. Jangan reset atau menghapus pekerjaan.
+6. Periksa git status dan ringkas progres yang sudah selesai serta yang masih tertunda.
+7. Siapkan checkpoint aman dan minta persetujuan saya sebelum commit atau push.
+8. Setelah checkpoint, STOP.
+
+ATURAN EFISIENSI UNTUK SELANJUTNYA:
+
+* Medium: dokumentasi, pencatatan status, administrasi Git.
+* High: coding biasa, pengujian, perbaikan bug, dan pemeriksaan teknis.
+* Max: hanya analisis/perubahan yang benar-benar berisiko tinggi dan tidak cukup ditangani High.
+* Jangan memakai Max sepanjang siklus sebuah Task hanya karena risk class-nya HIGH. Catat ini sebagai pengecualian operasional Owner terhadap pemilihan effort, untuk diselaraskan dengan DIR-087.
+* Maksimal satu review yang benar-benar diwajibkan dan relevan.
+* Hindari sub-agent paralel yang mengulangi pembacaan dokumen besar.
+* CI GitHub menjadi bukti verifikasi akhir; jangan mengulang full suite tanpa alasan.
+* Berikan laporan singkat, bukan narasi setiap langkah.
+
+Jangan menurunkan kualitas keamanan, integritas database, atau acceptance criteria.
+Saya lebih mengutamakan implementasi yang benar, efisien, dan progres menuju production daripada proses review berulang yang menghabiskan kuota.
+Model: Opus 5.5
+Effort: High untuk checkpoint ini.
+
+--- Part 3: the corrections of APPR-018's text (after the Owner's review of the eight statements) ---
+
+OWNER DECISION — TASK-006, APPR-018 CORRECTIONS
+Saya menyetujui kedua koreksi yang Anda usulkan.
+
+1. SETUJU memperbaiki status APPR-018 menjadi PENDING pada dokumen kanonik dan DECISION_LOG. Jangan mencatatnya sebagai APPROVED sebelum persetujuan final saya.
+2. SETUJU menambahkan tiga UNIQUE constraint:
+   * import_batches.source_file_id
+   * export_requests.file_object_id
+   * evidence_document_versions.file_object_id
+
+Tambahkan tiga test negatif yang membuktikan penggunaan ulang file oleh record lain ditolak dengan SQLSTATE 23505.
+Setujui juga penambahan teks sempit di DATABASE §22 dan C-32.
+CATATAN KEAMANAN:
+UNIQUE hanya memastikan satu file tidak digunakan oleh beberapa record pemilik dalam tabel yang bersangkutan. Ini bukan pengganti validasi hak akses aktor terhadap file.
+Pastikan kewajiban validasi kepemilikan uploader/requester tetap tercatat pada TASK-030, TASK-057, dan TASK-060 sesuai cakupannya. Jangan mengklaim perlindungan IDOR sudah selesai pada TASK-006.
+BATASAN EKSEKUSI:
+
+* Terapkan hanya kedua koreksi tersebut.
+* Jalankan test terkait, bukan full verify.sh.
+* Jangan menjalankan sub-agent atau review tambahan pada tahap koreksi ini.
+* Jangan mengulang analisis yang sudah selesai.
+* Setelah perubahan selesai, tampilkan teks final APPR-018 untuk persetujuan terpisah.
+* Jangan commit atau push sebelum persetujuan saya.
+* Pertahankan TASK-006 sebagai VERIFYING.
+
+Gunakan Opus 5.5 effort High. Prioritaskan efisiensi token dan penyelesaian TASK-006.
+
+--- Part 4: the approval of APPR-018's final text (after the corrected text was shown) ---
+
+Saya setujui teks final APPR-018. Catat persetujuan sebagai bagian 4, perbarui CURRENT_HANDOFF, lalu minta persetujuan commit.

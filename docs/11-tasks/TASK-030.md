@@ -1,8 +1,10 @@
 # TASK-030 — Evidence and uploaded documents
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (2) gives this Task the type-free evidence identity index of DATABASE §4.10 — a scope line, the database impact for that index alone, criterion 11 and its performance test; and DIR-089 (5) criterion 12 and its authorization test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -45,6 +47,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - the evidence guard: an amount-bearing evidence's proven amount capping every settlement, expense and charge citing it, and its type bound to the roles that may cite it, so re-registering a document under another type gains no capacity (C-18; C-58; DATABASE §4.10; architecture challenge 6d)
 - a reproduction of a company document — an upload whose checksum equals a stored rendition — always recorded as one and never satisfying a client original, its flag shown only to a viewer who may see that rendition (FL-05; FS-12; IP-16 step 5; GAP-034)
 - PG-038 with NAV-038 and its view ROUTE-038 (`evidence.view` with the family's view capability; SCR-36): evidence by branch and pool evidence, its versions and links; an uploaded file opened only as a download, an image through its re-encoded preview (FL-03; FL-04; FL-07; DESIGN_SYSTEM §14.3; UXI-33)
+- the type-free evidence identity index of DATABASE §4.10 ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (2)): the issuer's normalization defined once (L-45) and used alike by `identity_key` and by the index; the index designed for the queries that read it — FL-10's cross-type warning among them, whose matching runs across the workspace, across companies —, any column order other than §4.10's recorded there as a Level 1 amendment; added expand-only
 
 **OUT OF SCOPE:**
 
@@ -109,8 +112,8 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
-- Migration required: NO
+- Schema change: PROPOSED — the type-free evidence identity index of DATABASE §4.10 alone (DIR-089 (2)), expand-only; otherwise the tables of TASK-005–TASK-009, a missing column an executor discovery (AGENT_OPERATING_MODEL)
+- Migration required: YES — expand-only, that index alone
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
 - Data-loss risk: NONE KNOWN
@@ -223,6 +226,8 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 8. Pool evidence needs MSG-32's tick, links only to pool records, is visible with `stock.view` and `evidence.view`, and every pool upload reaches the Owner (PJ-08; H7-11).
 9. An uploaded file is served only as an attachment under FL-07's headers, authorized through its record at request time; an image shows its re-encoded preview; another company's file answers as not found (FL-07; DP-05; TM-20; TM-39).
 10. Uploads stop at 60 per hour and the daily byte budget, and an account can neither upload, version nor link evidence of a family it may not view (WS-12; PJ-08; TM-55).
+11. The type-free evidence identity index exists, built on the one issuer normalization `identity_key` also uses, and each query that reads it — FL-10's cross-type warning across the workspace among them — uses it in `EXPLAIN` (DIR-089 (2); TL-15).
+12. A registration, a new version or a link references only an upload its own actor made for that purpose; another account's upload answers as not found, proven by an authorization test — the database holds a file to one owner and one company, not to its actor (DIR-089 (5); FL-01; IDOR).
 
 **TEST REQUIREMENTS:**
 
@@ -231,7 +236,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - Unit: the identity key's normalization (TL-03)
 - Feature: ROUTE-038 and ROUTE-228–ROUTE-231, each purpose's allowlist and limit (TL-04)
 - Integration: concurrent registrations of one identity and of one content (BD-14, BD-15); a replacement re-evaluating a requirement and a settlement in one transaction (TL-05)
-- Authorization: each upload purpose's capability; PJ-08's families for upload, version, link and view; pool evidence's audience (TL-06)
+- Authorization: each upload purpose's capability; PJ-08's families for upload, version, link and view; pool evidence's audience (TL-06); criterion 12's upload of another account (DIR-089 (5))
 - Route integrity: ROUTE-038 and ROUTE-228–ROUTE-231 audited (TL-07)
 - Interaction: INT-013 and INT-228–INT-231, each command with one `command_id` replayed (TL-08; IG-05)
 - Browser E2E: J-DOC-02 — a photo from the phone's camera and the desktop's picker with drag and drop — and CJ-20's in-scope duplicate warning (TL-09)
@@ -241,7 +246,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - Accessibility: TL-12 — the upload's states announced (component Upload)
 - Production build: TL-13
 - Security: SM-09 for every purpose (TM-38, TM-39, TM-42); SM-10 for the decoders (TM-37, TM-40, TM-41); SM-12 and SM-23 for the hidden matches (TM-23, TM-55; GAP-034); SM-25 and SM-01 for foreign and invisible files (TM-20); TM-16 and TM-46 stay with the exports of TASK-060 under FL-09 (TL-14)
-- Performance: QB-12 for PG-038; QB-16 for downloads; the cross-company identity probe once per company and once for pool evidence (BD-15; AS-08) (TL-15)
+- Performance: QB-12 for PG-038; QB-16 for downloads; the cross-company identity probe once per company and once for pool evidence (BD-15; AS-08); the type-free identity index used in `EXPLAIN` by each query that reads it, FL-10's across companies (DIR-089 (2)) (TL-15)
 - Migration: N/A — no migration or import code in this Task
 - Other: FL-11 — a file marked infected by the scanner, where TASK-079 adopted one, is never served
 

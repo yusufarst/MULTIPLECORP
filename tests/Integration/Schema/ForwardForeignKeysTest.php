@@ -75,7 +75,8 @@ it('refuses a reference to no file, and a legacy archive item holding a file not
 it('accepts the rows that reference their own company and file', function () {
     $company = Company::factory()->create();
     $file = FileObject::factory()->create(['company_id' => $company->id, 'purpose' => 'ARCHIVE']);
-    $export = FileObject::factory()->create(['company_id' => $company->id, 'sensitivity' => 'S4', 'purpose' => 'EXPORT']);
+    // An export belongs to no company: its request names them (DIR-089 (5)).
+    $export = FileObject::factory()->create(['company_id' => null, 'sensitivity' => 'S4', 'purpose' => 'EXPORT']);
     $request = DB::table('export_requests')->insertGetId([
         'requested_by' => User::factory()->create()->id,
         'report_code' => 'contoh.laporan',

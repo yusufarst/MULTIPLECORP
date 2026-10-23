@@ -12,8 +12,7 @@ use Illuminate\Support\Facades\Schema;
 // stock belongs to no company and is one of three types, fabricating no ownership (DIR-027; C-58). The
 // type and the scope are keyed with the id, so an amount-bearing citation carries the type its role
 // accepts and a link carries the scope (C-58). The type-free identity index of the cross-type duplicate
-// warning keys on the issuer as TASK-030 normalizes it, which no document states yet (TASK-006's
-// discovery (2)).
+// warning is TASK-030's, on the issuer as it normalizes it (DIR-089 (2)).
 return new class extends Migration
 {
     private const TYPES = [

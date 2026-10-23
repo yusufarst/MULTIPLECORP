@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 // now that both tables exist (DIR-088 (1)): each company column to its company and the legacy archive
 // item's file in the company-scoped form of §15, so an archive item can only hold its own company's file
 // (C-32). The import source and the export file belong to a multi-company batch or request and are plain
-// keys. The file references are indexed for the restricted delete of a never-linked upload (§19–§20).
+// keys, held to a file of no company of their purpose by 2026_10_23_000052 (DIR-089 (5)). The file
+// references are indexed for the restricted delete of a never-linked upload (§19–§20).
 return new class extends Migration
 {
     private const COMPANY_KEYS = ['user_company_grants', 'correction_cases', 'import_rows', 'legacy_archive_items', 'audit_events'];

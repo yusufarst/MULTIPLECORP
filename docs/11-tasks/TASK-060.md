@@ -1,10 +1,12 @@
 # TASK-060 — Reports, the consolidated report and exports
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) states the export identifier and its scoped lookup — a scope line, criterion 13 and its authorization test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (5) adds criterion 14 and its authorization test — the export file its own request's alone; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -233,6 +235,7 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 11. A report on screen answers within QB-11's count — at most six statements in one snapshot — and an export of 100,000 rows runs with bounded memory, a rendition never waiting behind two exports; QB-11's 1 s and PFM-16's 60 s at 10x are measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI (QB-11; QB-15; PFM-16; PERFORMANCE_TARGETS §1).
 12. The print view prints the same records, fields and figures as the page with its filters as text (DESIGN_SYSTEM §17; DP-19).
 13. An export request is found by its UUIDv7 identifier only within its requester's own requests: another account's identifier, on ROUTE-284 and on ROUTE-285's export status, answers as not found and reveals no state, file or context (IDOR; DIR-088; H6-04; DP-07).
+14. The export job writes its file to its own request only, and the file is served only through that request to its requester; another account's request or file answers as not found, proven by an authorization test — the database holds an export file to one request, not to its requester (DIR-089 (5); FL-09; IDOR).
 
 **TEST REQUIREMENTS:**
 
@@ -241,7 +244,7 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 - Unit: each report's CALC- figures on FX-01; FL-09's cell neutralization (TL-03)
 - Feature: ROUTE-051–ROUTE-053, ROUTE-283 and ROUTE-284 per persona and read class (TL-04)
 - Integration: the export job end to end — admission, the overlap lock, a stale claim swept, the row bound, a revocation during generation (M-23; HO-18); the snapshot's agreement of totals (TL-05)
-- Authorization: each report's read class; `reports.consolidated`; `reports.export` with the report's view capabilities; the requester-only download; another account's export identifier on ROUTE-284 and ROUTE-285 answering as not found (TL-06; DIR-088)
+- Authorization: each report's read class; `reports.consolidated`; `reports.export` with the report's view capabilities; the requester-only download; another account's export identifier on ROUTE-284 and ROUTE-285 answering as not found (TL-06; DIR-088); criterion 14's export file of another requester (DIR-089 (5))
 - Route integrity: ROUTE-051–ROUTE-053, ROUTE-283 and ROUTE-284 audited (TL-07)
 - Interaction: INT-283 and INT-284 with their *Test* — authorization at request time, the denied and unknown cases alike (TL-08)
 - Browser E2E: CJ-14's reports with company and date filters, an export, its row bound and a third concurrent export; UXS-36 (TL-09)
