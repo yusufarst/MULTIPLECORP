@@ -1,7 +1,13 @@
 <?php
 
+use App\Modules\ADM\Models\AdminRequirementWaiver;
 use App\Modules\CAT\Models\Product;
 use App\Modules\CAT\Models\ProductPriceHistory;
+use App\Modules\CST\Models\CostAttribution;
+use App\Modules\CST\Models\Expense;
+use App\Modules\CST\Models\LotCostBalance;
+use App\Modules\CST\Models\LotCostEntry;
+use App\Modules\CST\Models\PurchaseChargeBalance;
 use App\Modules\DOC\Models\BankStatementLine;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
@@ -18,15 +24,33 @@ use App\Modules\OPS\Models\SecurityEvent;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\RetiredNumber;
 use App\Modules\ORG\Models\TaxRateVersion;
+use App\Modules\PRJ\Models\CommercialConfirmation;
+use App\Modules\PRJ\Models\ConfirmationLinePin;
+use App\Modules\PRJ\Models\LineScopeCancellation;
+use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Models\ProjectCommercialBalance;
+use App\Modules\PRJ\Models\ProjectLineBalance;
+use App\Modules\PRJ\Models\ProjectSiplahDetail;
+use App\Modules\PRJ\Models\ProjectStateTransition;
+use App\Modules\PRJ\Models\QuotationRevision;
+use App\Modules\PRJ\Models\QuotationRevisionLine;
 use App\Modules\PTY\Models\ClientOrganization;
 use App\Modules\PTY\Models\Supplier;
+use App\Modules\PUR\Models\Purchase;
+use App\Modules\PUR\Models\PurchaseCharge;
+use App\Modules\PUR\Models\PurchaseChargeLineShare;
+use App\Modules\PUR\Models\PurchaseLine;
+use App\Modules\PUR\Models\PurchaseLineAdjustment;
+use App\Modules\PUR\Models\PurchaseLineBalance;
+use App\Modules\PUR\Models\PurchaseLineClosure;
+use App\Modules\PUR\Models\PurchaseLineTaxComponent;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-// TL-03 (TASK-005, TASK-006): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
-// PTY, CAT and DOC models — UUIDv7 public identifiers beside the internal key, money, quantities and
-// rates as exact decimal strings never a float, a one-way password hash, and append-only models that
-// refuse a change (C-53).
+// TL-03 (TASK-005–TASK-007): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
+// PTY, CAT, DOC, PRJ, PUR, CST and ADM models — UUIDv7 public identifiers beside the internal key, money,
+// quantities and rates as exact decimal strings never a float, a one-way password hash, append-only
+// models that refuse a change (C-53), and the guards keyed by the record they guard.
 
 it('generates a UUIDv7 public identifier beside the internal key', function (string $model) {
     $instance = new $model;
@@ -37,7 +61,7 @@ it('generates a UUIDv7 public identifier beside the internal key', function (str
         ->and($instance->getIncrementing())->toBeTrue();
 })->with([
     User::class, CorrectionCase::class, ImportBatch::class, Company::class, ClientOrganization::class, Supplier::class, Product::class,
-    Document::class, DocumentVersion::class, EvidenceDocument::class, FileObject::class,
+    Document::class, DocumentVersion::class, EvidenceDocument::class, FileObject::class, Project::class, QuotationRevision::class, Purchase::class,
 ]);
 
 it('carries money as an exact decimal string with two places', function (string $given, string $carried) {
@@ -64,6 +88,26 @@ it('carries each money, quantity and rate attribute as an exact decimal string a
     'a cited amount' => [EvidenceBalance::class, 'cited_amount', '1', '1.00'],
     'a minimum stock quantity' => [Product::class, 'min_stock_qty_base', '1.5', '1.500'],
     'a tax rate' => [TaxRateVersion::class, 'rate_percent', '11', '11.000000'],
+    'a pinned base quantity' => [ConfirmationLinePin::class, 'qty_base', '2.25', '2.250'],
+    'a quoted sales value' => [QuotationRevisionLine::class, 'sales_value', '1500000', '1500000.00'],
+    'a line\'s demand' => [ProjectLineBalance::class, 'demand_qty_base', '10', '10.000'],
+    'a purchase line\'s value' => [PurchaseLine::class, 'line_value', '9999999999999999.99', '9999999999999999.99'],
+    'a purchase line\'s tax rate' => [PurchaseLineTaxComponent::class, 'rate_percent', '11', '11.000000'],
+    'a charge share\'s basis' => [PurchaseChargeLineShare::class, 'basis_value', '12.5', '12.500'],
+    'a posted goods value' => [PurchaseLineBalance::class, 'posted_goods_value', '0.5', '0.50'],
+    'a signed lot cost' => [LotCostEntry::class, 'amount', '-1500.5', '-1500.50'],
+    'a lot\'s remaining quantity' => [LotCostBalance::class, 'remaining_qty_base', '3', '3.000'],
+    'an expense' => [Expense::class, 'amount', '250000', '250000.00'],
+]);
+
+it('keys each guard by the record it guards, never an identity of its own (DATABASE §4.5–§4.8)', function (string $model, string $key) {
+    $instance = new $model;
+
+    expect($instance->getKeyName())->toBe($key)
+        ->and($instance->getIncrementing())->toBeFalse();
+})->with([
+    [ProjectLineBalance::class, 'project_line_id'], [ProjectCommercialBalance::class, 'project_id'], [PurchaseLineBalance::class, 'purchase_line_id'],
+    [LotCostBalance::class, 'lot_id'], [PurchaseChargeBalance::class, 'purchase_charge_id'], [ProjectSiplahDetail::class, 'project_id'],
 ]);
 
 it('stores the password only as a one-way hash and never serializes a credential', function () {
@@ -87,5 +131,7 @@ it('refuses to update or delete a saved append-only row at the model (C-53)', fu
         ->and(fn () => $row->increment('id'))->toThrow(LogicException::class, 'append-only');
 })->with([
     AuditEvent::class, SecurityEvent::class, LegacyArchiveItem::class, RetiredNumber::class, ProductPriceHistory::class, FileObject::class,
-    EvidenceDocumentVersion::class,
+    EvidenceDocumentVersion::class, CommercialConfirmation::class, ConfirmationLinePin::class, LineScopeCancellation::class,
+    ProjectStateTransition::class, PurchaseCharge::class, PurchaseChargeLineShare::class, PurchaseLineClosure::class, PurchaseLineAdjustment::class,
+    LotCostEntry::class, CostAttribution::class, Expense::class, AdminRequirementWaiver::class,
 ]);

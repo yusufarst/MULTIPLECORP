@@ -1,11 +1,17 @@
 <?php
 
+use App\Modules\ADM\Models\AdminRequirement;
+use App\Modules\ADM\Models\AdminRequirementLink;
+use App\Modules\ADM\Models\AdminRequirementWaiver;
 use App\Modules\CAT\Models\Product;
 use App\Modules\CAT\Models\ProductBarcode;
 use App\Modules\CAT\Models\ProductImage;
 use App\Modules\CAT\Models\ProductPriceHistory;
 use App\Modules\CAT\Models\ProductUnit;
 use App\Modules\CAT\Models\Unit;
+use App\Modules\CST\Models\CostAttribution;
+use App\Modules\CST\Models\Expense;
+use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\DOC\Models\BankStatementLine;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentRendition;
@@ -37,20 +43,37 @@ use App\Modules\ORG\Models\RetiredNumber;
 use App\Modules\ORG\Models\TaxRateVersion;
 use App\Modules\ORG\Models\TaxTreatmentRule;
 use App\Modules\ORG\Models\TaxType;
+use App\Modules\PRJ\Models\CommercialConfirmation;
+use App\Modules\PRJ\Models\ConfirmationLinePin;
+use App\Modules\PRJ\Models\LineScopeCancellation;
+use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Models\ProjectLine;
+use App\Modules\PRJ\Models\ProjectSiplahDetail;
+use App\Modules\PRJ\Models\ProjectStateTransition;
+use App\Modules\PRJ\Models\QuotationRevision;
+use App\Modules\PRJ\Models\QuotationRevisionLine;
 use App\Modules\PTY\Models\ClientAddress;
 use App\Modules\PTY\Models\ClientContact;
 use App\Modules\PTY\Models\ClientOrganization;
 use App\Modules\PTY\Models\ClientUnit;
 use App\Modules\PTY\Models\Supplier;
+use App\Modules\PUR\Models\Purchase;
+use App\Modules\PUR\Models\PurchaseCharge;
+use App\Modules\PUR\Models\PurchaseChargeLineShare;
+use App\Modules\PUR\Models\PurchaseLine;
+use App\Modules\PUR\Models\PurchaseLineAdjustment;
+use App\Modules\PUR\Models\PurchaseLineClosure;
+use App\Modules\PUR\Models\PurchaseLineTaxComponent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\RefreshDatabase;
 
-// TL-05 (TASK-005, TASK-006), criteria 1 and 4 of each: migrating an empty database creates exactly
-// DATABASE §4.1's eight IAM tables, §4.13's seven OPS tables and the four infrastructure stores of
-// TASK-005 — no queue, cache or job-batch table, those stores being Valkey —, and the nine ORG, five PTY,
-// six CAT and ten DOC tables of §4.2–§4.4 and §4.10, with the identifiers of §16 and the types of §17.
+// TL-05 (TASK-005–TASK-007), criteria 1 and 4 of each and TASK-007's criterion 1: migrating an empty
+// database creates exactly DATABASE §4.1's eight IAM tables, §4.13's seven OPS tables and the four
+// infrastructure stores of TASK-005 — no queue, cache or job-batch table, those stores being Valkey —, the
+// nine ORG, five PTY, six CAT and ten DOC tables of §4.2–§4.4 and §4.10, and the eleven PRJ, eight PUR, six
+// CST and three ADM tables of §4.5, §4.6, §4.8 and §4.11, with the identifiers of §16 and the types of §17.
 
 uses(RefreshDatabase::class);
 
@@ -64,10 +87,20 @@ const SCHEMA_TABLES = [
     'client_organizations', 'client_units', 'client_addresses', 'client_contacts', 'suppliers',
     'products', 'units', 'product_units', 'product_barcodes', 'product_price_history', 'product_images',
     'document_types', 'documents', 'document_versions', 'document_renditions', 'file_objects', 'evidence_documents', 'evidence_document_versions', 'bank_statement_lines', 'evidence_balances', 'evidence_links',
+    // TASK-007
+    'projects', 'project_siplah_details', 'project_lines', 'commercial_confirmations', 'confirmation_line_pins', 'quotation_revisions', 'quotation_revision_lines',
+    'line_scope_cancellations', 'project_line_balances', 'project_commercial_balances', 'project_state_transitions',
+    'purchases', 'purchase_lines', 'purchase_line_tax_components', 'purchase_charges', 'purchase_charge_line_shares', 'purchase_line_balances', 'purchase_line_closures', 'purchase_line_adjustments',
+    'lot_cost_entries', 'lot_cost_balances', 'cost_attributions', 'purchase_charge_balances', 'purchase_charge_share_balances', 'expenses',
+    'admin_requirements', 'admin_requirement_links', 'admin_requirement_waivers',
 ];
 
 /** The tables keyed otherwise than by an identity `id`: the stores' own identifiers, the link tables' pairs and the keys DATABASE §4 states. */
-const OTHERWISE_KEYED = ['sessions', 'export_requests', 'command_log', 'role_capabilities', 'user_roles', 'document_types', 'number_sequences'];
+const OTHERWISE_KEYED = [
+    'sessions', 'export_requests', 'command_log', 'role_capabilities', 'user_roles', 'document_types', 'number_sequences',
+    'project_siplah_details', 'project_line_balances', 'project_commercial_balances', 'purchase_line_balances', 'lot_cost_balances', 'purchase_charge_balances',
+    'purchase_charge_share_balances',
+];
 
 function columnTypes(string $where, array $bindings = []): array
 {
@@ -105,22 +138,57 @@ it('keys the counters and the document catalogue as DATABASE §4.2 and §4.10 st
         ->and($primaryKey('document_types'))->toBe(['code']);
 });
 
+it('keys each guard and the SIPLAH details by the record they belong to, as DATABASE §4.5–§4.8 state', function (string $table, array $key) {
+    expect(array_column(DB::select('select a.attname from pg_index i
+        join pg_attribute a on a.attrelid = i.indrelid and a.attnum = any (i.indkey)
+        where i.indrelid = ?::regclass and i.indisprimary order by array_position(i.indkey::smallint[], a.attnum)', [$table]), 'attname'))->toBe($key);
+})->with([
+    ['project_siplah_details', ['project_id']], ['project_line_balances', ['project_line_id']], ['project_commercial_balances', ['project_id']],
+    ['purchase_line_balances', ['purchase_line_id']], ['lot_cost_balances', ['lot_id']], ['purchase_charge_balances', ['purchase_charge_id']],
+    ['purchase_charge_share_balances', ['purchase_charge_id', 'purchase_line_id']],
+]);
+
 it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric(9,6), dates as date and instants as timestamptz (criterion 4)', function () {
     $money = [
         'correction_cases.unbacked_refund_amount', 'correction_cases.residual_settlement_amount', 'correction_cases.returned_cost',
         'correction_cases.refunded_value', 'correction_cases.replaced_value', 'correction_cases.unrecovered_value',
         'product_price_history.amount', 'document_versions.kuitansi_amount', 'evidence_documents.proven_amount',
         'bank_statement_lines.amount', 'evidence_balances.proven_amount', 'evidence_balances.cited_amount', 'evidence_balances.expensed_amount',
+        // TASK-007
+        'confirmation_line_pins.unit_price', 'confirmation_line_pins.sales_value', 'cost_attributions.amount', 'expenses.amount', 'lot_cost_balances.remaining_cost',
+        'lot_cost_entries.amount', 'project_commercial_balances.confirmed_sales_value', 'project_commercial_balances.invoiced_sales_value', 'project_lines.unit_price',
+        'project_siplah_details.siplah_value', 'project_siplah_details.real_purchase_value', 'project_siplah_details.fee_amount', 'project_siplah_details.va_fee_amount',
+        'project_siplah_details.cashback_amount', 'project_siplah_details.refund_amount', 'purchase_charge_balances.amount', 'purchase_charge_balances.allocated_amount',
+        'purchase_charge_balances.expensed_amount', 'purchase_charge_line_shares.share_amount', 'purchase_charge_share_balances.share_amount',
+        'purchase_charge_share_balances.posted_amount', 'purchase_charge_share_balances.respread_out_amount', 'purchase_charge_share_balances.expensed_out_amount',
+        'purchase_charges.amount', 'purchase_line_adjustments.amount_delta', 'purchase_line_balances.goods_value', 'purchase_line_balances.noncreditable_tax_value',
+        'purchase_line_balances.posted_goods_value', 'purchase_line_balances.posted_noncreditable_tax_value', 'purchase_line_tax_components.base_amount',
+        'purchase_line_tax_components.amount', 'purchase_lines.unit_price', 'purchase_lines.line_value', 'quotation_revision_lines.unit_price', 'quotation_revision_lines.sales_value',
+    ];
+    $quantities = [
+        'products.min_stock_qty_base',
+        // TASK-007; a charge share's basis is a value, a quantity or a weight, exact at three places.
+        'confirmation_line_pins.entered_qty', 'confirmation_line_pins.qty_base', 'line_scope_cancellations.qty_base', 'lot_cost_balances.remaining_qty_base',
+        'project_line_balances.demand_qty_base', 'project_line_balances.reserved_qty_base', 'project_line_balances.dispatched_net_qty_base',
+        'project_line_balances.dropship_confirmed_net_qty_base', 'project_line_balances.handed_over_qty_base', 'project_line_balances.delivered_net_qty_base',
+        'project_line_balances.cancelled_qty_base', 'project_lines.entered_qty', 'project_lines.qty_base', 'purchase_charge_line_shares.basis_value',
+        'purchase_line_balances.ordered_qty_base', 'purchase_line_balances.normal_received_net_qty_base', 'purchase_line_balances.closed_qty_base',
+        'purchase_line_balances.dropship_confirmed_net_qty_base', 'purchase_line_balances.replacement_expected_qty_base', 'purchase_line_balances.replacement_received_net_qty_base',
+        'purchase_line_closures.closed_qty_base', 'purchase_lines.entered_qty', 'purchase_lines.qty_base', 'quotation_revision_lines.entered_qty', 'quotation_revision_lines.qty_base',
     ];
     $dates = [
         'import_batches.cutoff_date', 'numbering_schemes.effective_from', 'product_price_history.effective_from', 'document_versions.business_date',
         'evidence_documents.document_date', 'evidence_documents.received_date', 'bank_statement_lines.business_date',
+        // TASK-007
+        'commercial_confirmations.business_date', 'cost_attributions.business_date', 'expenses.business_date', 'line_scope_cancellations.business_date',
+        'lot_cost_entries.business_date', 'projects.deadline', 'purchase_line_closures.business_date', 'purchases.business_date', 'quotation_revisions.valid_until',
     ];
 
     expect(columnTypes("data_type = 'numeric'"))->toEqual([
         ...array_fill_keys($money, 'numeric(18,2)'),
-        'products.min_stock_qty_base' => 'numeric(18,3)',
+        ...array_fill_keys($quantities, 'numeric(18,3)'),
         'tax_rate_versions.rate_percent' => 'numeric(9,6)',
+        'purchase_line_tax_components.rate_percent' => 'numeric(9,6)',
     ])
         ->and(columnTypes("data_type = 'date'"))->toEqual(array_fill_keys($dates, 'date'))
         ->and(columnTypes("udt_name = 'daterange'"))->toEqual(array_fill_keys(['company_tax_profiles.effective', 'tax_rate_versions.effective', 'tax_treatment_rules.effective'], 'daterange'))
@@ -145,7 +213,7 @@ it('gives the routable roots a UUIDv7 public identifier, from the model or from 
     expect(columnTypes("column_name = 'public_id'"))->toEqual(array_fill_keys([
         'client_organizations.public_id', 'companies.public_id', 'correction_cases.public_id', 'document_versions.public_id',
         'documents.public_id', 'evidence_documents.public_id', 'file_objects.public_id', 'import_batches.public_id',
-        'products.public_id', 'suppliers.public_id', 'users.public_id',
+        'products.public_id', 'suppliers.public_id', 'users.public_id', 'projects.public_id', 'quotation_revisions.public_id', 'purchases.public_id',
     ], 'uuid'));
 
     $user = User::factory()->create();
@@ -171,7 +239,32 @@ it('creates every model from its synthetic factory under the runtime\'s privileg
     DocumentType::class, Document::class, DocumentVersion::class, DocumentRendition::class, FileObject::class, EvidenceDocument::class,
     // EvidenceBalance has none: a balance belongs to its posting service (ARCHITECTURE §7, §19).
     EvidenceDocumentVersion::class, BankStatementLine::class, EvidenceLink::class,
+    // TASK-007; nor have its guards.
+    Project::class, ProjectSiplahDetail::class, ProjectLine::class, QuotationRevision::class, QuotationRevisionLine::class, CommercialConfirmation::class,
+    ConfirmationLinePin::class, LineScopeCancellation::class, ProjectStateTransition::class, Purchase::class, PurchaseLine::class, PurchaseLineTaxComponent::class,
+    PurchaseCharge::class, PurchaseChargeLineShare::class, PurchaseLineClosure::class, PurchaseLineAdjustment::class, LotCostEntry::class, CostAttribution::class,
+    Expense::class, AdminRequirement::class, AdminRequirementLink::class, AdminRequirementWaiver::class,
 ]);
+
+it('loads the PRJ, PUR, CST and ADM models\' relations through their keys', function () {
+    $line = ProjectLine::factory()->create();
+    $pin = ConfirmationLinePin::factory()->create(['project_line_id' => $line->id, 'commercial_confirmation_id' => CommercialConfirmation::factory()->create(['project_id' => $line->project_id])->id]);
+    DB::table('project_lines')->where('id', $line->id)->update(['current_pin_id' => $pin->id]);
+    $share = PurchaseChargeLineShare::factory()->create();
+    $requirement = AdminRequirementLink::factory()->create()->requirement;
+
+    $line->refresh()->load('project.company', 'project.client', 'product', 'currentPin.confirmation', 'pins');
+    $share->load('charge.purchase.supplier', 'charge.sourceBill', 'purchaseLine.purchase');
+    $requirement?->load('project', 'links.evidence');
+
+    expect($line->currentPin?->is($pin))->toBeTrue()
+        ->and($line->pins->sole()->is($pin))->toBeTrue()
+        ->and($line->project->company->id)->toBe($line->company_id)
+        ->and($line->currentPin?->confirmation->project_id)->toBe($line->project_id)
+        ->and($share->charge->sourceBill->evidence_type)->toBe('SUPPLIER_BILL')
+        ->and($share->purchaseLine->purchase->is($share->charge->purchase))->toBeTrue()
+        ->and($requirement?->links->sole()->evidence?->company_id)->toBe($requirement?->company_id);
+});
 
 it('loads the ORG, PTY, CAT and DOC models\' relations through their keys', function () {
     $company = Company::factory()->create();

@@ -47,6 +47,19 @@ final class EvidenceDocumentFactory extends Factory
         ]);
     }
 
+    /** A supplier's bill, the source bill of charges and expenses (L-43). */
+    public function supplierBill(): self
+    {
+        $number = ++self::$sequence;
+
+        return $this->state([
+            'evidence_type' => 'SUPPLIER_BILL',
+            'declared_issuer' => 'Pemasok Contoh',
+            'issuer_reference' => "INV/PMS/{$number}",
+            'identity_key' => "pemasok contoh|SUPPLIER_BILL|inv/pms/{$number}|2026-10-01",
+        ]);
+    }
+
     /** Pool evidence of shared stock, which belongs to no company (DIR-027). */
     public function pool(): self
     {

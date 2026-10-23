@@ -1,5 +1,11 @@
 <?php
 
+use App\Modules\ADM\Models\AdminRequirement;
+use App\Modules\CST\Models\Expense;
+use App\Modules\DOC\Models\Document;
+use App\Modules\DOC\Models\DocumentVersion;
+use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\DOC\Models\EvidenceLink;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\UserCompanyGrant;
@@ -9,15 +15,26 @@ use App\Modules\OPS\Models\ImportBatch;
 use App\Modules\OPS\Models\ImportRow;
 use App\Modules\OPS\Models\LegacyArchiveItem;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PRJ\Models\CommercialConfirmation;
+use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Models\QuotationRevision;
+use App\Modules\PUR\Models\Purchase;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\Refusal;
 
-// TL-05 (TASK-006), criterion 6 and DIR-088 (1): the foreign keys this Task adds from TASK-005's columns
+// TL-05 (TASK-006), criterion 6 and DIR-088 (1): the foreign keys TASK-006 adds from TASK-005's columns
 // to `companies` and `file_objects` exist, exactly those, each restricting a delete, and each refuses a
 // row that references no company or file — the legacy archive item's file also another company's, its
 // key carrying the company (C-32; DATABASE §15). `command_log`'s and `security_events`' company columns
 // stay plain values (DATABASE §4.13).
+//
+// TL-05 (TASK-007), criteria 6 and 7, DIR-088 and DIR-089 (1): the foreign keys TASK-007 adds from
+// TASK-005's and TASK-006's columns to its projects, purchases, quotation revisions, confirmations,
+// expenses and requirements exist, exactly those, each restricting a delete, and each refuses a row that
+// references no record, or another company's where the key carries the company; the causal project of a
+// correction case is an intentional cross-company link (§15).
 
 uses(RefreshDatabase::class);
 
@@ -96,4 +113,73 @@ it('accepts the rows that reference their own company and file', function () {
         // The company context of an audit event and of an import row is optional (DATABASE §4.13).
         ->and(AuditEvent::factory()->create()->company_id)->toBeNull()
         ->and(ImportRow::factory()->create()->company_id)->toBeNull();
+});
+
+it('adds exactly the foreign keys DIR-088 and DIR-089 (1) assign to TASK-007, each restricting a delete', function () {
+    $keys = DB::select("select conname, pg_get_constraintdef(oid) as definition from pg_constraint
+        where contype = 'f' and conrelid::regclass::text in ('correction_cases', 'documents', 'document_versions', 'evidence_links')
+            and confrelid::regclass::text in ('projects', 'purchases', 'quotation_revisions', 'commercial_confirmations', 'expenses', 'admin_requirements')
+        order by conname");
+
+    expect(array_column($keys, 'definition', 'conname'))->toBe([
+        'correction_cases_c32_project_foreign' => 'FOREIGN KEY (company_id, project_id) REFERENCES projects(company_id, id) ON DELETE RESTRICT',
+        'correction_cases_causal_project_foreign' => 'FOREIGN KEY (causal_project_id) REFERENCES projects(id) ON DELETE RESTRICT',
+        'document_versions_c32_quotation_revision_foreign' => 'FOREIGN KEY (company_id, quotation_revision_id) REFERENCES quotation_revisions(company_id, id) ON DELETE RESTRICT',
+        'documents_c32_project_foreign' => 'FOREIGN KEY (company_id, project_id) REFERENCES projects(company_id, id) ON DELETE RESTRICT',
+        'documents_c32_purchase_foreign' => 'FOREIGN KEY (company_id, purchase_id) REFERENCES purchases(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_admin_requirement_foreign' => 'FOREIGN KEY (company_id, admin_requirement_id) REFERENCES admin_requirements(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_commercial_confirmation_foreign' => 'FOREIGN KEY (company_id, commercial_confirmation_id) REFERENCES commercial_confirmations(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_expense_foreign' => 'FOREIGN KEY (company_id, expense_id) REFERENCES expenses(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_project_foreign' => 'FOREIGN KEY (company_id, project_id) REFERENCES projects(company_id, id) ON DELETE RESTRICT',
+        'evidence_links_c32_purchase_foreign' => 'FOREIGN KEY (company_id, purchase_id) REFERENCES purchases(company_id, id) ON DELETE RESTRICT',
+    ]);
+});
+
+it('refuses a TASK-005 or TASK-006 row that references no record of TASK-007, or another company\'s (DIR-088; DIR-089 (1); C-32)', function (Closure $target, string $column, Closure $write, string $constraint) {
+    $company = Company::factory()->create()->id;
+
+    Refusal::assert(Refusal::FOREIGN_KEY, $constraint, fn () => $write($company, $column, 999_999));
+    Refusal::assert(Refusal::FOREIGN_KEY, $constraint, fn () => $write($company, $column, $target(Company::factory()->create()->id)));
+
+    expect($write($company, $column, $target($company)))->toBeTrue();
+})->with(function () {
+    $project = static fn (int $company): int => Project::factory()->create(['company_id' => $company])->id;
+    $purchase = static fn (int $company): int => Purchase::factory()->create(['company_id' => $company])->id;
+    $confirmation = static fn (int $company): int => CommercialConfirmation::factory()->create(['project_id' => $project($company)])->id;
+    $expense = static fn (int $company): int => Expense::factory()->create(['company_id' => $company])->id;
+    $requirement = static fn (int $company): int => AdminRequirement::factory()->create(['project_id' => $project($company)])->id;
+    $case = static fn (int $company, string $column, int $id): bool => CorrectionCase::factory()->create(['company_id' => $company, $column => $id])->exists;
+    $document = static fn (int $company, string $column, int $id): bool => Document::factory()->create([
+        'company_id' => $company, 'document_type_code' => DocumentTypeFactory::ensure($column === 'project_id' ? 'DOC-01' : 'DOC-02'), 'project_id' => null, $column => $id,
+    ])->exists;
+    $link = static fn (int $company, string $column, int $id): bool => EvidenceLink::factory()->create([
+        'evidence_document_id' => EvidenceDocument::factory()->create(['company_id' => $company])->id, 'evidence_scope' => 'COMPANY', 'company_id' => $company, $column => $id,
+    ])->exists;
+
+    return [
+        'a correction case\'s project' => [$project, 'project_id', $case, 'correction_cases_c32_project_foreign'],
+        'a document\'s project' => [$project, 'project_id', $document, 'documents_c32_project_foreign'],
+        'a document\'s purchase' => [$purchase, 'purchase_id', $document, 'documents_c32_purchase_foreign'],
+        'an evidence link\'s project' => [$project, 'project_id', $link, 'evidence_links_c32_project_foreign'],
+        'an evidence link\'s confirmation' => [$confirmation, 'commercial_confirmation_id', $link, 'evidence_links_c32_commercial_confirmation_foreign'],
+        'an evidence link\'s purchase' => [$purchase, 'purchase_id', $link, 'evidence_links_c32_purchase_foreign'],
+        'an evidence link\'s expense' => [$expense, 'expense_id', $link, 'evidence_links_c32_expense_foreign'],
+        'an evidence link\'s requirement' => [$requirement, 'admin_requirement_id', $link, 'evidence_links_c32_admin_requirement_foreign'],
+    ];
+});
+
+it('keys a version\'s rendered revision in its company, and a case\'s causal project in any company (DIR-089 (1); §15)', function () {
+    $version = DocumentVersion::factory()->create();
+    $own = QuotationRevision::factory()->create(['project_id' => Project::factory()->create(['company_id' => $version->company_id])->id]);
+    $row = fn () => DB::table('document_versions')->where('id', $version->id);
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'document_versions_c32_quotation_revision_foreign', fn () => $row()->update(['quotation_revision_id' => QuotationRevision::factory()->create()->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'document_versions_c32_quotation_revision_foreign', fn () => $row()->update(['quotation_revision_id' => 999_999]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'correction_cases_causal_project_foreign', fn () => CorrectionCase::factory()->create(['causal_project_id' => 999_999]));
+
+    $row()->update(['quotation_revision_id' => $own->id]);
+    $case = CorrectionCase::factory()->create(['case_kind' => 'PURCHASE_RETURN', 'causal_project_id' => Project::factory()->create()->id]);
+
+    expect($row()->value('quotation_revision_id'))->toBe($own->id)
+        ->and($case->causal_project_id)->not->toBeNull();
 });

@@ -9,6 +9,8 @@ use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\CompanyBankAccount;
 use App\Modules\ORG\Models\NumberingScheme;
+use App\Modules\PRJ\Models\Project;
+use App\Modules\PUR\Models\Purchase;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
@@ -24,9 +26,28 @@ use Tests\Support\Refusal;
 
 uses(RefreshDatabase::class);
 
-/** @param  array<string, mixed>  $attributes */
+/**
+ * A document of the type on its subjects; a project or purchase is named by a label, one real record of
+ * the document's company per label, since TASK-007 keys them in the company (DIR-089 (1); C-32).
+ *
+ * @param  array<string, mixed>  $attributes
+ */
 function documentOf(string $type, array $attributes = []): Document
 {
+    $company = $attributes['company_id'] ??= Company::factory()->create()->id;
+
+    if (isset($attributes['project_id'])) {
+        $number = "CTH/PRJ/LABEL/{$attributes['project_id']}";
+        $attributes['project_id'] = Project::query()->where('company_id', $company)->where('project_number', $number)->value('id')
+            ?? Project::factory()->create(['company_id' => $company, 'project_number' => $number])->id;
+    }
+
+    if (isset($attributes['purchase_id'])) {
+        $number = "CTH/PO/LABEL/{$attributes['purchase_id']}";
+        $attributes['purchase_id'] = Purchase::query()->where('company_id', $company)->where('purchase_number', $number)->value('id')
+            ?? Purchase::factory()->create(['company_id' => $company, 'purchase_number' => $number])->id;
+    }
+
     return Document::factory()->create(['document_type_code' => DocumentTypeFactory::ensure($type), 'project_id' => null, ...$attributes]);
 }
 

@@ -59,14 +59,15 @@ final class TableRules
 
     /**
      * A foreign key added after the Blueprint, where it references a key added the same way — a composite
-     * key carrying the company (§1, §15; C-32) —, restricting the delete as every key does (§19).
+     * key carrying the company (§1, §15; C-32) —, restricting the delete as every key does (§19), but from
+     * a draft parent to its draft-only children, which cascade (§19; L-37).
      *
      * @param  list<string>  $columns
      * @param  list<string>  $references
      */
-    public function foreign(string $name, array $columns, string $table, array $references): self
+    public function foreign(string $name, array $columns, string $table, array $references, bool $cascadeDraftDelete = false): self
     {
-        DB::statement("alter table {$this->table} add constraint {$name} foreign key (".implode(', ', $columns).") references {$table} (".implode(', ', $references).') on delete restrict');
+        DB::statement("alter table {$this->table} add constraint {$name} foreign key (".implode(', ', $columns).") references {$table} (".implode(', ', $references).') on delete '.($cascadeDraftDelete ? 'cascade' : 'restrict'));
 
         return $this;
     }

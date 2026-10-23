@@ -1,18 +1,21 @@
 <?php
 
+use App\Modules\CST\Models\CostAttribution;
+use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Models\User;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\LegacyArchiveItem;
 use App\Modules\OPS\Models\SecurityEvent;
+use App\Modules\PRJ\Models\CommercialConfirmation;
 use App\Support\Database\DatabaseRole;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\Refusal;
 
-// TL-05 and the security requirement of TASK-005 (SECURITY H9-01; DATABASE §28; C-53): the application
-// runtime runs no DDL and holds, table by table, only the privileges of its table's class; the
-// append-only tables refuse its updates and deletes at the database and at the model.
+// TL-05 and the security requirement of TASK-005–TASK-007 (SECURITY H9-01; DATABASE §28; C-53): the
+// application runtime runs no DDL and holds, table by table, only the privileges of its table's class;
+// the append-only tables refuse its updates and deletes at the database and at the model.
 
 uses(RefreshDatabase::class);
 
@@ -75,6 +78,38 @@ const RUNTIME_PRIVILEGES = [
     'bank_statement_lines' => ['SELECT, INSERT', ['state', 'voided_by', 'voided_at', 'voided_reason']],
     'evidence_balances' => ['SELECT, INSERT', ['proven_amount', 'cited_amount', 'expensed_amount']],
     'evidence_links' => ['SELECT, INSERT', ['unlinked_at', 'unlinked_by', 'unlink_reason']],
+    // TASK-007: DELETE on the draft tables only, through their draft triggers (§19)
+    'projects' => ['SELECT, INSERT, DELETE', ['client_organization_id', 'client_unit_id', 'client_contact_id', 'client_address_id', 'channel', 'state', 'title', 'deadline', 'linked_project_id', 'link_reason', 'lock_version', 'updated_at']],
+    'project_siplah_details' => ['SELECT, INSERT', ['external_reference', 'program_code', 'account_code', 'siplah_value', 'real_purchase_value', 'fee_amount', 'va_fee_amount', 'cashback_amount', 'refund_amount', 'notes', 'locked_at', 'lock_version', 'updated_at']],
+    'project_lines' => ['SELECT, INSERT, DELETE', ['kind', 'product_id', 'quantity_scale', 'description', 'entered_qty', 'entered_unit_id', 'ratio_to_base', 'qty_base', 'unit_price', 'fulfillment_mode', 'current_pin_id', 'lock_version', 'updated_at']],
+    'quotation_revisions' => ['SELECT, INSERT, DELETE', ['state', 'valid_until', 'decided_by', 'decided_at', 'decision_reason', 'lock_version', 'updated_at']],
+    'quotation_revision_lines' => ['SELECT, INSERT, DELETE', ['description', 'entered_qty', 'entered_unit_id', 'ratio_to_base', 'qty_base', 'unit_price', 'sales_value', 'tax_components', 'lock_version', 'updated_at']],
+    'commercial_confirmations' => ['SELECT, INSERT', []],
+    'confirmation_line_pins' => ['SELECT, INSERT', []],
+    'line_scope_cancellations' => ['SELECT, INSERT', []],
+    'project_line_balances' => ['SELECT, INSERT', ['demand_qty_base', 'reserved_qty_base', 'dispatched_net_qty_base', 'dropship_confirmed_net_qty_base', 'handed_over_qty_base', 'delivered_net_qty_base', 'cancelled_qty_base']],
+    'project_commercial_balances' => ['SELECT, INSERT', ['confirmed_sales_value', 'invoiced_sales_value']],
+    'project_state_transitions' => ['SELECT, INSERT', []],
+    'purchases' => ['SELECT, INSERT', ['state', 'cancelled_by', 'cancelled_at', 'cancelled_reason', 'lock_version', 'updated_at']],
+    'purchase_lines' => ['SELECT, INSERT', ['kind', 'product_id', 'quantity_scale', 'project_line_id', 'delivery_mode', 'entered_qty', 'entered_unit_id', 'ratio_to_base', 'qty_base', 'unit_price', 'line_value', 'description', 'lock_version', 'updated_at']],
+    'purchase_line_tax_components' => ['SELECT, INSERT, DELETE', ['tax_type_id', 'treatment_rule_id', 'treatment', 'rate_percent', 'base_amount', 'amount']],
+    'purchase_charges' => ['SELECT, INSERT', []],
+    'purchase_charge_line_shares' => ['SELECT, INSERT', []],
+    'purchase_line_balances' => ['SELECT, INSERT', [
+        'ordered_qty_base', 'normal_received_net_qty_base', 'closed_qty_base', 'dropship_confirmed_net_qty_base', 'replacement_expected_qty_base',
+        'replacement_received_net_qty_base', 'goods_value', 'noncreditable_tax_value', 'posted_goods_value', 'posted_noncreditable_tax_value',
+    ]],
+    'purchase_line_closures' => ['SELECT, INSERT', []],
+    'purchase_line_adjustments' => ['SELECT, INSERT', []],
+    'lot_cost_entries' => ['SELECT, INSERT', []],
+    'lot_cost_balances' => ['SELECT, INSERT', ['remaining_qty_base', 'remaining_cost']],
+    'cost_attributions' => ['SELECT, INSERT', []],
+    'purchase_charge_balances' => ['SELECT, INSERT', ['amount', 'allocated_amount', 'expensed_amount']],
+    'purchase_charge_share_balances' => ['SELECT, INSERT', ['allocation_version', 'share_amount', 'posted_amount', 'respread_out_amount', 'expensed_out_amount']],
+    'expenses' => ['SELECT, INSERT', []],
+    'admin_requirements' => ['SELECT, INSERT', ['description', 'is_required', 'satisfaction_mode', 'requires_client_original', 'waiver_eligible', 'is_default_invoice_item', 'state', 'removed_by', 'removed_at', 'removed_reason', 'lock_version', 'updated_at']],
+    'admin_requirement_links' => ['SELECT, INSERT', ['unlinked_at', 'unlinked_by', 'unlink_reason']],
+    'admin_requirement_waivers' => ['SELECT, INSERT', []],
 ];
 
 it('connects the application as the runtime role, which owns nothing and runs no DDL (H9-01)', function (string $statement, string $refusal) {
@@ -139,7 +174,7 @@ it('grants the runtime no TRUNCATE, REFERENCES or TRIGGER anywhere, and the migr
 });
 
 it('refuses the runtime an update or a delete of append-only rows, at the database and at the model (C-53)', function (string $model, string $table) {
-    /** @var AuditEvent|SecurityEvent|LegacyArchiveItem $row */
+    /** @var AuditEvent|SecurityEvent|LegacyArchiveItem|CommercialConfirmation|LotCostEntry|CostAttribution $row */
     $row = $model::factory()->create();
 
     Refusal::assert(Refusal::PRIVILEGE, "permission denied for table {$table}", fn () => DB::table($table)->where('id', $row->id)->update(['recorded_at' => now()]));
@@ -151,6 +186,9 @@ it('refuses the runtime an update or a delete of append-only rows, at the databa
     'audit events' => [AuditEvent::class, 'audit_events'],
     'security events' => [SecurityEvent::class, 'security_events'],
     'legacy archive items' => [LegacyArchiveItem::class, 'legacy_archive_items'],
+    'commercial confirmations' => [CommercialConfirmation::class, 'commercial_confirmations'],
+    'lot cost entries' => [LotCostEntry::class, 'lot_cost_entries'],
+    'cost attributions' => [CostAttribution::class, 'cost_attributions'],
 ]);
 
 it('changes an account\'s one launch role in place, as a demotion or the OWNER restoration does (TASK-024; RV-18)', function () {

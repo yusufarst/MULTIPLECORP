@@ -8,9 +8,11 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) adds the foreign keys of TASK-006's columns that reference this Task's tables — a scope line, criterion 7 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-23 the Owner's decision [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (2), (3), (4) and (6), with APPR-019's canonical text, adds the guards that hold this Task's references within their parent and a direct cost attribution within the purchase's company, and the SIPLAH details' draft cascade — a scope line, its database impact, criterion 8 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -42,6 +44,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - the foreign keys of TASK-005's columns that reference `projects`, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): `correction_cases` (`company_id`, `project_id`) to `projects` (`company_id`, `id`), C-32's composite key, and `correction_cases.causal_project_id`, an intentional cross-company link (DATABASE §15)
 - the foreign keys of TASK-006's columns that reference these tables, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (1)), composite with `company_id` where DATABASE §4.10 and §15 state it: `documents.project_id` and `purchase_id`; `document_versions.quotation_revision_id`; `evidence_links.project_id`, `commercial_confirmation_id`, `purchase_id`, `expense_id` and `admin_requirement_id`
 - the migrate-from-empty test extended (TL-16)
+- APPR-019's guards ([DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (2)–(4)), no column added: a pin's and a quotation line's project line within their confirmation's or revision's project, a charge share's line within its charge's purchase, a share-schedule row's share of its own charge and version, a direct cost attribution's purchase records within the purchase's company that bears it, a fallback expense's line within its charge's purchase, and `project_siplah_details` in a DRAFT project's cascade
 
 **OUT OF SCOPE:**
 
@@ -93,7 +96,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: PROPOSED — DATABASE §4.5, §4.6, §4.8 and §4.11 tables, expand-only
+- Schema change: PROPOSED — DATABASE §4.5, §4.6, §4.8 and §4.11 tables, expand-only; APPR-019's triggers, keys and draft cascade on them (DIR-090)
 - Migration required: YES — expand-only
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -204,6 +207,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `projects` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 7. Each of the eight foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
+8. Each guard APPR-019 adds (DIR-090 (2)–(4)) refuses a reference outside its parent or a direct cost attribution outside the purchase's company, and a DRAFT project's deletion takes its SIPLAH details with it, proven by a negative test before this Task is DONE.
 
 **TEST REQUIREMENTS:**
 
@@ -211,7 +215,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-05 and the pins' rows; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-05 and the pins' rows; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each guard of APPR-019 violated and refused, and the SIPLAH details' draft cascade (DIR-090)
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
@@ -226,34 +230,39 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - Migration: migrate from empty after TASK-005 and the earlier schema Tasks; no destructive step (TL-16)
 - Other: N/A — nothing further
 
+**CRITERIA DISPOSITIONS (DIR-090):**
+
+- Criterion 1 is met for every column, key and constraint DATABASE states that this Task's tables can hold now; the keys and triggers of its columns on TASK-008's and TASK-009's tables — the lots, restorations, consumptions, drop-ship lines and deduction settlements, and §4.8's basis-kind and bearer triggers — are TASK-008's and TASK-009's (DIR-090 (1)), not claimed here.
+- Criteria 2–8 as their tests prove them; criterion 8 adds APPR-019's guards (DIR-090 (2)–(4)).
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit, Architecture, Integration — every C- row of these tables, the forward keys of DIR-088 and DIR-089 (1), APPR-019's guards, the runtime's privileges —, TL-15's index register and TL-16, PASS locally and in CI
+- [x] Authorization: N/A — no route; TL-06 EMPTY until TASK-011
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: the runtime role's privileges on the new tables (DATABASE §28); every reference within its company (C-32), within its parent and a direct cost within the purchase's company (APPR-019); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: the 30 migrations only add — nothing dropped, renamed or retyped, no data migration; the SIPLAH details' key re-created with the draft cascade inside this Task's unreleased migrations —, each `down()` reverses its migration (TL-16, 83 migrations up, down and up); local and CI databases only, no production connection
+- [x] Final diff review: each table, column, key and constraint against DATABASE as written, the gaps raised as discoveries and decided by the Owner (DIR-090, APPR-019), nothing invented; ER-06's independent review, its findings fixed or raised
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `e494bce`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 39972736029 (push) and 39972742496 (pull request #7), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15's index register and load run, TL-16 from empty); before it, the build commit `793307a`, runs 39968247763 and 39968303179, PASS. On the Owner's workstation, 2026-10-23: `scripts/verify.sh` PASS, `tests/Integration/Schema` 552 tests, Unit 126, Performance and the k6 smoke run (4,102 checks) PASS, TL-16 PASS on a new empty database
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: e494bce, CI ubuntu-24.04 run 39972736029`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: e494bce, CI ubuntu-24.04 run 39972736029`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `database/migrations/` (`2026_10_23_000054`–`000083`), `app/Support/Database/TableRules.php`, `app/Modules/PRJ/`, `PUR/`, `CST/` and `ADM/` (models and READMEs), `database/factories/`, the tests of `tests/Integration/Schema/`, `tests/Performance/IndexRegisterTest.php` and `tests/Unit/Support/ModelConventionsTest.php`; TOOLCHAIN's row; DIR-090's and APPR-019's records — the source record, DECISION_LOG, DECISION_INDEX, DATABASE §4.5, §4.6, §4.8 and §19, TASK-008, TASK-009 —; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `793307a` and `e494bce`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-007-schema-prj-cst-pur-adm`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-23 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each database feature verified on the running server (TOOLCHAIN's TASK-007 row). Readings within the approved text are listed in CURRENT_HANDOFF. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

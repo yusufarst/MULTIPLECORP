@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 6
+DONE: 7
 READY: 4
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 64
+TODO: 63
 SUPERSEDED: 0
 
 Progress:
-6 / 87
-Percentage: 6.9 %
+7 / 87
+Percentage: 8.0 %
 
-CURRENT TASK: none in progress — TASK-006 — Schema — ORG, PTY, CAT and DOC tables DONE on its branch `task/TASK-006-schema-org-pty-cat-doc`, CI PASS on `9bd807b`, its pull request #6 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-007 — Schema — PRJ, CST, PUR and ADM tables, READY, taken first once the Owner merges TASK-006's pull request #6 (ER-07); TASK-010, TASK-014 and TASK-073 also READY; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 6 of 2026-10-23 — DIR-089's dispositions of TASK-006's discoveries: the 26 foreign keys of TASK-006's columns to TASK-007–TASK-009, the type-free evidence identity index to TASK-030, the fourteen document types' rows to TASK-029, no command removing a product image in V1, and TASK-006's guard of the files' company and purpose; totals unchanged (§7)
+CURRENT TASK: none in progress — TASK-007 — Schema — PRJ, CST, PUR and ADM tables DONE on its branch `task/TASK-007-schema-prj-cst-pur-adm`, CI PASS on `e494bce`, its pull request #7 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-008 — Schema — INV tables, inventory and lot-cost representations, READY, taken first once the Owner merges TASK-007's pull request #7 (ER-07); TASK-010, TASK-014 and TASK-073 also READY; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+LAST TASK PLAN CHANGE: Change 7 of 2026-10-23 — DIR-090's dispositions of TASK-007's discoveries: the forward keys, triggers and first-effect facts of TASK-007's columns to TASK-008 and TASK-009; APPR-019's guards of (2), (3), (4) and (6) built by TASK-007
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -55,7 +55,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-004](TASK-004.md) — Verification and release tooling check
 - [x] [TASK-005](TASK-005.md) — Schema foundations — IAM and OPS tables, history and types
 - [x] [TASK-006](TASK-006.md) — Schema — ORG, PTY, CAT and DOC tables
-- [ ] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
+- [x] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
 - [ ] [TASK-008](TASK-008.md) — Schema — INV tables, inventory and lot-cost representations
 - [ ] [TASK-009](TASK-009.md) — Schema — FUL and FIN tables, finance and tax representations
 - [ ] [TASK-010](TASK-010.md) — Audit and security logging
@@ -147,8 +147,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | DONE | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
 | [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | DONE | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | DONE | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
-| [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | READY | 006 | 008 | NO | AGENT | PROPOSED | NO |
-| [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
+| [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | DONE | 006 | 008 | NO | AGENT | PROPOSED | NO |
+| [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | READY | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
 | [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | TODO | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | READY | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
@@ -265,6 +265,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 5, 2026-10-20 (TASK-005's execution discoveries; [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)).** *Reason:* TASK-005 found three gaps it could not close without inventing — foreign keys to tables later schema Tasks create, IX-13's partial indexes over action codes no document lists yet, and no public identifier for the export requests the routes address — and the Owner decided each (DIR-088). Change 4 stays reserved for DIR-085 OF-02's rows (record 84 ER-09). *Affected Tasks:* TASK-005, TASK-006, TASK-007, TASK-008, TASK-058, TASK-060. *New Tasks:* none. *Totals:* baseline 87, previous current 87, new current 87. *Dependencies updated:* none — TASK-006–TASK-008 already follow TASK-005, and every Task that defines an acknowledged or a routed action code comes before TASK-058. *Work moved:* the foreign keys of TASK-005's columns to the Task that creates each referenced table — `companies` and `file_objects` TASK-006, `projects` TASK-007, `inventory_lots` TASK-008 —, each with a referential-integrity test before that Task is DONE; IX-13's partial indexes over the acknowledged and the routed codes and the routed codes' `(command_id)` index to TASK-058, which writes the queries they serve, its database impact PROPOSED for those indexes only. *Acceptance criteria and tests (Level 1):* TASK-005's dispositions of its criteria 2 and 3; criterion 6 and its integration test in TASK-006, TASK-007 and TASK-008; TASK-058's criterion 13 and its performance test; TASK-060's criterion 13 and its authorization test — the export identifier, TASK-005's UUIDv7 key, found only within its requester's requests (IDOR). *Statuses:* unchanged. *Matrix:* IX-13 mapped also to TASK-058; the entry count unchanged. *Scope change:* none (DIR-083 OE-20). *Owner approval required:* none beyond DIR-088, which directs this change.
 
 **Change 6, 2026-10-23 (TASK-006's execution discoveries; [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose)).** *Reason:* TASK-006 found five gaps it could not close without inventing — foreign keys of its columns to tables later schema Tasks create, the issuer normalization the type-free evidence identity index needs, the rows of `document_types`, a product image's end of life, and the company of a multi-company file with three file references unguarded — and the Owner decided each (DIR-089), with APPR-018's narrow amendment of DATABASE. Change 4 stays reserved for DIR-085 OF-02's rows (record 84 ER-09). *Affected Tasks:* TASK-006, TASK-007, TASK-008, TASK-009, TASK-027, TASK-029, TASK-030, TASK-057, TASK-060. *New Tasks:* none. *Totals:* baseline 87, previous current 87, new current 87. *Dependencies updated:* none — TASK-007–TASK-009 already follow TASK-006, as does every Task that writes a file reference. *Work moved:* the 26 foreign keys of TASK-006's columns to the Task that creates each referenced table — eight TASK-007, four TASK-008, fourteen TASK-009 —, each with a referential-integrity test before that Task is DONE; the type-free evidence identity index to TASK-030 and the fourteen rows of `document_types` to TASK-029, each Task's DB impact PROPOSED for that part alone. *Work added (Level 1):* TASK-006's guard of the files' company and purpose — a CHECK on `file_objects` and a trigger on each table that references it —, within its database impact. *Acceptance criteria and tests (Level 1):* TASK-006's criterion 7 and its integration test, and the disposition of its criterion 1; criterion 7 and its integration test in TASK-007 and TASK-008, and criterion 6 in TASK-009; TASK-029's criterion 16 and its integration test; TASK-030's criterion 11 and its performance test; the actor's own file — TASK-030's criterion 12, TASK-057's criterion 15 and TASK-060's criterion 14, each with its authorization test; TASK-027's OUT OF SCOPE line — no command removes a product image in V1 (option B). *Statuses:* unchanged — TASK-006 VERIFYING. *Matrix:* unchanged — C-32, FL-10 and DOC-01–DOC-14 already map to the Tasks that now build these parts; the entry count unchanged. *Scope change:* none (DIR-083 OE-20). *Owner approval required:* none beyond DIR-089 and APPR-018, which direct this change.
+
+**Change 7, 2026-10-23 (TASK-007's execution discoveries; [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries)).** *Reason:* TASK-007 found six gaps, decided by the Owner at one checkpoint. *Change:* TASK-008 and TASK-009 each gain two scope lines — the forward keys and triggers of TASK-007's columns on their tables (DIR-088's rule) and the facts of a purchase line's first effect they create —, a criterion and its integration test; TASK-007 gains a scope line, its database impact, criterion 8 and its integration test for (2), (3), (4) and (6), on its own tables; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-090 and APPR-019's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 

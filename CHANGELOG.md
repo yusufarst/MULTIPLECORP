@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-23, TASK-007 — schema: PRJ, CST, PUR and ADM tables
+
+- TASK-006 merged by the Owner into `main` as `0e92134` (pull request #6).
+- Built TASK-007 on its branch `task/TASK-007-schema-prj-cst-pur-adm` in the Owner's local Desktop session: 29 expand-only migrations — DATABASE §4.5's eleven PRJ, §4.6's eight PUR, §4.8's six CST and §4.11's three ADM tables with their CHECKs, keys, triggers, IX- indexes and the runtime's privileges, and the ten foreign keys DIR-088 and DIR-089 (1) give it.
+- The Owner's decision DIR-090 on six discoveries, at one checkpoint, with APPR-019's DATABASE text: the forward keys, triggers and first-effect facts of TASK-007's columns to TASK-008 and TASK-009; references held within their parent and a direct cost within the purchase's company, and the SIPLAH details in a DRAFT project's cascade, built by TASK-007; a DRAFT's company change a new project — TASK_PLAN's Change 7.
+- Every check passed in fresh CI on `e494bce`. TASK-007 DONE; TASK-008 READY beside TASK-010, TASK-014 and TASK-073 — progress 7 / 87 —; pull request #7 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-23, TASK-006 — schema: ORG, PTY, CAT and DOC tables
 
 - TASK-005 merged by the Owner into `main` as `ee68537` (pull request #5).
