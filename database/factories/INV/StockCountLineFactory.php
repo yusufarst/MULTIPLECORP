@@ -25,8 +25,8 @@ final class StockCountLineFactory extends Factory
             'stock_count_id' => StockCount::factory(),
             'product_id' => Product::factory(),
             'quantity_scale' => static fn (array $row): int => ProductFactory::keyOf($row['product_id'])['quantity_scale'],
-            'location_id' => static fn (array $row): ?int => StockCount::query()->whereKey($row['stock_count_id'])->firstOrFail()->location_id,
-            'condition' => static fn (array $row): ?string => StockCount::query()->whereKey($row['stock_count_id'])->firstOrFail()->condition,
+            'location_id' => static fn (array $row): int => StockCount::query()->whereKey($row['stock_count_id'])->firstOrFail()->location_id,
+            'condition' => static fn (array $row): string => StockCount::query()->whereKey($row['stock_count_id'])->firstOrFail()->condition,
             'counted_qty' => '3.000',
             'counted_by' => User::factory(),
         ];

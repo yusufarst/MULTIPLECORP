@@ -18,8 +18,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @property int $id
  * @property string $public_id
- * @property int|null $location_id
- * @property string|null $condition
+ * @property int $location_id
+ * @property string $condition
  * @property list<int>|null $product_ids
  * @property string $state
  * @property CarbonImmutable $started_at

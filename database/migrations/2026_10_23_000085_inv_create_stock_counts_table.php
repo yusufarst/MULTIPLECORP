@@ -16,9 +16,9 @@ return new class extends Migration
         Schema::create('stock_counts', function (Blueprint $table) {
             Columns::id($table);
             Columns::publicId($table);
-            Columns::reference($table, 'location_id', 'locations')->nullable();
-            $table->text('condition')->nullable();
-            // The product set of the scope; empty for every product of the location and condition.
+            Columns::reference($table, 'location_id', 'locations');
+            $table->text('condition');
+            // The product set of the scope; NULL or empty for every product of the location and condition (DIR-091 (4)).
             $table->rawColumn('product_ids', 'bigint[]')->nullable();
             $table->text('state')->default('OPEN');
             Columns::timestamp($table, 'started_at')->useCurrent();
@@ -29,7 +29,7 @@ return new class extends Migration
         });
 
         TableRules::for('stock_counts')
-            ->codes('stock_counts_condition_code', 'condition', ['USABLE', 'UNUSABLE'], nullable: true)
+            ->codes('stock_counts_condition_code', 'condition', ['USABLE', 'UNUSABLE'])
             ->codes('stock_counts_state_code', 'state', ['OPEN', 'APPLIED', 'STALE', 'CANCELLED'])
             // IX-14: the STALE counts (QS-18).
             ->index('stock_counts_ix14_stale', 'id', "state = 'STALE'")

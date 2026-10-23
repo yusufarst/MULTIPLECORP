@@ -1,0 +1,23 @@
+Owner decisions received in session during execution, 2026-10-24 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: TASK-008's four discoveries (after the executor's consolidated checkpoint) ---
+
+OWNER DECISION — DIR-091
+
+Saya menyetujui rekomendasi poin 1, 2, dan 3.
+
+Untuk poin 4, saya setuju bahwa NULL atau array kosong pada stock_counts.product_ids berarti seluruh produk dalam cakupan lokasi dan kondisi terkait.
+
+Namun, pastikan setiap ID dalam array yang tidak kosong benar-benar merujuk produk yang valid dan sesuai batas perusahaan. FK pada baris scope saja belum tentu menjamin seluruh elemen array valid.
+
+Jika pengamanan tersebut sudah ada, cukup tunjukkan bukti tesnya. Jika belum, masukkan pengamanan dan tes negatif yang relevan ke migrasi 000111.
+
+Setelah itu siapkan teks kanonik APPR-020 untuk persetujuan saya.
+
+Jangan membuka review tambahan atau mengulang full suite tanpa kebutuhan. Prioritaskan penyelesaian TASK-008.
+
+Commit, push, dan merge tetap mengikuti persetujuan Owner yang berlaku. Gunakan Opus 5.5 High.
+
+--- Part 2: the approval of the canonical text (APPR-020), after the executor showed T1-T11 ---
+
+Saya menyetujui teks kanonik T1–T11 sebagai APPR-020. Terapkan, lalu minta izin commit.

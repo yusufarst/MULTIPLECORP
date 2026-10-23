@@ -8,8 +8,10 @@ use App\Modules\INV\Models\ReceivingLine;
 use App\Modules\INV\Models\Reservation;
 use App\Modules\INV\Models\ReservationEvent;
 use App\Modules\INV\Models\SerialUnit;
+use App\Modules\INV\Models\StockConsumption;
 use App\Modules\INV\Models\StockMovement;
 use App\Modules\INV\Models\StockMovementEntry;
+use App\Modules\INV\Models\StockRestoration;
 use App\Modules\INV\Models\UnattributedLossCase;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\OPS\Models\ImportRow;
@@ -204,7 +206,7 @@ it('creates one lot per acquisition, its source company keyed to the acquisition
     Refusal::assert(Refusal::CHECK, 'inventory_lots_c09_scale', fn () => InventoryLot::factory()->create(['entered_qty' => '0.500', 'acquired_qty_base' => '0.500']));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table inventory_lots', fn () => DB::table('inventory_lots')->where('import_row_id', $row->id)->update(['source_company_id' => $receipt->company_id]));
 
-    expect(InventoryLot::factory()->create(['acquisition_kind' => 'RECEIPT', 'import_row_id' => null, 'receiving_line_id' => $receipt->id, 'source_company_id' => $receipt->company_id])->receivingLine?->is($receipt))->toBeTrue();
+    expect(InventoryLot::factory()->create(['acquisition_kind' => 'RECEIPT', 'import_row_id' => null, 'receiving_line_id' => $receipt->id, 'source_company_id' => $receipt->company_id, 'product_id' => $receipt->product_id])->receivingLine?->is($receipt))->toBeTrue();
 });
 
 it('keeps one identity per serial, in stock only with its lot, location and condition, moved one at a time and once per sign (C-02; §8)', function () {
@@ -315,4 +317,21 @@ it('reserves a line once at a time, never below zero, and never reactivates an e
 
     // An ended reservation frees its line for a new one.
     expect(Reservation::factory()->create(['project_line_id' => $reservation->project_line_id])->exists)->toBeTrue();
+});
+
+it('holds an entry, a restoration, a lot and a reservation event to their parent\'s product (DIR-091 (3); §4.7)', function () {
+    $consumption = StockConsumption::factory()->create();
+    $restoration = StockRestoration::factory()->create();
+    $other = InventoryLot::factory()->create();
+    $receipt = ReceivingLine::factory()->create();
+    $fromReceipt = ['acquisition_kind' => 'RECEIPT', 'import_row_id' => null, 'receiving_line_id' => $receipt->id, 'source_company_id' => $receipt->company_id];
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_movement_entries_consumption_product_foreign', fn () => StockMovementEntry::factory()->create(['lot_id' => $other->id, 'stock_consumption_id' => $consumption->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_movement_entries_restoration_product_foreign', fn () => StockMovementEntry::factory()->create(['lot_id' => $other->id, 'stock_restoration_id' => $restoration->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_restorations_consumption_product_foreign', fn () => StockRestoration::factory()->create(['stock_consumption_id' => $consumption->id, 'product_id' => $other->product_id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'inventory_lots_receiving_product_foreign', fn () => InventoryLot::factory()->create($fromReceipt));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'reservation_events_reservation_product_foreign', fn () => ReservationEvent::factory()->create(['product_id' => $other->product_id]));
+
+    expect(StockMovementEntry::factory()->create(['lot_id' => $consumption->lot_id, 'stock_consumption_id' => $consumption->id])->exists)->toBeTrue()
+        ->and(InventoryLot::factory()->create([...$fromReceipt, 'product_id' => $receipt->product_id])->exists)->toBeTrue();
 });

@@ -17,6 +17,7 @@ use App\Modules\INV\Models\UnattributedLossResolutionLine;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
+use Database\Factories\INV\StockCountFactory;
 use Database\Factories\INV\StockMovementFactory;
 use Database\Factories\INV\UnattributedLossCaseFactory;
 use Illuminate\Support\Facades\DB;
@@ -140,6 +141,39 @@ it('writes a count\'s basis only when it opens, one open finding per scope and p
     DB::table('stock_count_findings')->where('id', $finding->id)->update(['state' => 'ATTRIBUTED', 'attributed_company_id' => Company::factory()->create()->id]);
 
     expect(StockCountFinding::factory()->create(['stock_count_id' => $count->id, 'product_id' => $finding->product_id])->exists)->toBeTrue();
+});
+
+it('holds a count\'s product set to distinct goods products of the shared catalogue, and its scope within it (DIR-091 (3), (4); §4.4)', function () {
+    [$goods, $service] = [Product::factory()->create(), Product::factory()->create(['kind' => 'SERVICE'])];
+    $set = fn (array $products): StockCount => StockCount::factory()->create(['product_ids' => $products]);
+
+    Refusal::assert(Refusal::CHECK, 'stock_counts_product_set', fn () => $set([$goods->id, 999_999]));
+    Refusal::assert(Refusal::CHECK, 'stock_counts_product_set', fn () => $set([$goods->id, $goods->id]));
+    Refusal::assert(Refusal::CHECK, 'stock_counts_product_set', fn () => $set([$service->id]));
+    Refusal::assert(Refusal::CHECK, 'stock_counts_product_set', fn () => DB::table('stock_counts')->insert([...StockCount::factory()->raw(), 'product_ids' => "{{$goods->id},NULL}"]));
+
+    $count = $set([$goods->id]);
+
+    Refusal::assert(Refusal::CHECK, 'stock_count_scopes_within_count', fn () => StockCountFactory::openScope($count->id, Product::factory()->create()->id));
+
+    StockCountFactory::openScope($count->id, $goods->id);
+    // An empty set, as no set, counts every product of the location and condition.
+    StockCountFactory::openScope($set([])->id, $service->id);
+
+    expect(DB::table('stock_count_scopes')->count())->toBe(2);
+});
+
+it('cites a restoration\'s correction case of its source or of its consumption\'s bearer, as a consumption does (DIR-091 (2); §17)', function () {
+    $bearer = Company::factory()->create()->id;
+    $consumption = StockConsumption::factory()->create(['bearer_company_id' => $bearer, 'allocation_reason' => 'Stok PT lain dipakai']);
+    $restore = fn (int $company): StockRestoration => StockRestoration::factory()->create([
+        'stock_consumption_id' => $consumption->id, 'correction_case_id' => CorrectionCase::factory()->create(['company_id' => $company])->id, 'case_company_id' => $company,
+    ]);
+
+    Refusal::assert(Refusal::CHECK, 'stock_restorations_case_side', fn () => $restore(Company::factory()->create()->id));
+
+    expect($restore($bearer)->exists)->toBeTrue()
+        ->and($restore($consumption->source_company_id)->exists)->toBeTrue();
 });
 
 it('recognizes a pending case within the claims not already missing, its counters never overrunning it (C-35; C-36; DIR-027)', function () {

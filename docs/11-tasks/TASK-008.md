@@ -10,6 +10,8 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Amendment: on 2026-10-23 the Owner's decision [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (1) and (5) adds the foreign keys and triggers of TASK-007's columns on this Task's tables and the facts of a purchase line's first effect this Task creates — two scope lines, criterion 8 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-24 the Owner's decision [DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (2)–(4) on this Task's discoveries adds a restoration's case side, the same parent's product, a count's scope within its set and the product set's members, built on this Task's tables before it is DONE, and (1) assigns the drop-ship forward keys of its columns to TASK-009 — a scope line, criterion 9 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** VERIFYING
@@ -48,6 +50,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - the migrate-from-empty test extended (TL-16)
 - the foreign keys and triggers of TASK-007's columns on these tables, added expand-only ([DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (1); DIR-088's rule): `lot_cost_entries.lot_id` and `stock_restoration_id`, `lot_cost_balances.lot_id`, `cost_attributions` (`stock_consumption_id`, `lot_id`, `source_company_id`) to `stock_consumptions` and `cost_attributions.stock_restoration_id`; the triggers of DATABASE §4.8 holding a lot's basis kind to its `acquisition_kind` and an attribution's bearer to its consumption's
 - `purchase_line_has_effect` extended with this Task's receipts of a purchase line, an all-rejected receipt included (DIR-090 (5); L-23)
+- a restoration's correction case of its source or of its consumption's bearer; a restoration, an entry, a lot and a reservation event keyed to their parent's product; a count's scope rows within its location, condition and product set, and the set `product_ids bigint[]` — NULL or empty for every product, otherwise distinct goods products —, by composite keys over existing columns and triggers ([DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (2)–(4); APPR-020); the drop-ship forward keys of its columns are TASK-009's (DIR-091 (1))
 
 **OUT OF SCOPE:**
 
@@ -210,6 +213,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `inventory_lots` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 7. Each of the four foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and pool evidence linked to a company's movement, proven by a referential-integrity test before this Task is DONE (C-32).
 8. Each foreign key and trigger DIR-090 (1) assigns to this Task from TASK-007's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and `purchase_line_has_effect` refuses the edit of a purchase line after each fact DIR-090 (5) names, proven by tests before this Task is DONE (C-32; L-23).
+9. Each key and trigger DIR-091 (2)–(4) assigns to this Task exists and refuses a restoration's case of neither its source nor its consumption's bearer, a row of another product than its parent's, a count's scope row outside its location, condition or product set, and a product set with a member that is no distinct goods product, proven by tests before this Task is DONE.
 
 **TEST REQUIREMENTS:**
 
@@ -217,7 +221,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused; each key and trigger of DIR-091 (2)–(4) violated and refused
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
