@@ -3,10 +3,11 @@
 namespace Database\Factories\OPS;
 
 use App\Modules\OPS\Models\LegacyArchiveItem;
+use App\Modules\ORG\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * Until ORG's companies exist (TASK-006), the company is a synthetic key.
+ * An identified archive item of an invented company, without its file.
  *
  * @extends Factory<LegacyArchiveItem>
  */
@@ -20,7 +21,7 @@ final class LegacyArchiveItemFactory extends Factory
     public function definition(): array
     {
         return [
-            'company_id' => 1001,
+            'company_id' => Company::factory(),
             'archive_kind' => 'CONTOH',
             'legacy_reference' => 'ARSIP-'.++self::$sequence,
         ];

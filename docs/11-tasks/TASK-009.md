@@ -1,8 +1,10 @@
 # TASK-009 — Schema — FUL and FIN tables, finance and tax representations
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) adds the foreign keys of TASK-006's columns that reference this Task's tables — a scope line, criterion 6 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -36,6 +38,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 - the tables `dropship_confirmations`, `dropship_confirmation_lines`, `deliveries`, `delivery_lines`, `delivery_closures`, `service_handovers`, `service_handover_lines`; `invoices`, `invoice_versions`, `invoice_version_lines`, `invoice_tax_components`, `invoice_balances`, `invoice_billing_acts`, `payments`, `payment_claimed_deductions`, `application_source_balances`, `payment_applications`, `deduction_settlements`, `receivable_writeoffs`, `receivable_dispute_holds`, `opening_customer_credits`, `prepayment_kuitansi_links`, `disbursements`, `other_cash_receipts`, `financial_contras`, `money_fact_balances`, with their C- rows — C-09, C-13–C-17, C-22, C-32, C-41–C-45, C-47–C-49, C-53, C-56, C-59 and C-60 — and IX- indexes — IX-01, IX-06, IX-08, IX-11 and IX-14
 - a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the invoice, billing and receivable chain of §11.2, payments and applications of §11.3, settlements and write-offs of §11.4 and other cash of §11.5
+- the foreign keys of TASK-006's columns that reference these tables, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (1)), composite with `company_id` where DATABASE §4.10 and §15 state it: `documents.dropship_confirmation_id`, `invoice_id`, `payment_id`, `delivery_id` and `service_handover_id`; `document_versions.invoice_version_id`; `evidence_links.delivery_id`, `dropship_confirmation_id`, `service_handover_id`, `payment_id`, `other_cash_receipt_id`, `disbursement_id`, `deduction_settlement_id` and `receivable_writeoff_id`
 - the migrate-from-empty test extended (TL-16)
 
 **OUT OF SCOPE:**
@@ -195,6 +198,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 3. Each IX- index of these tables — IX-01, IX-06, IX-08, IX-11 and IX-14 — exists and its query uses it.
 4. The application conservation and outstanding ≥ 0 rules hold where their rows say (C-13, C-15).
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
+6. Each of the fourteen foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 
 **TEST REQUIREMENTS:**
 
@@ -202,7 +206,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-13 and C-15 under two connections
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-13 and C-15 under two connections; each foreign key DIR-089 (1) adds from TASK-006's columns violated and refused
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task

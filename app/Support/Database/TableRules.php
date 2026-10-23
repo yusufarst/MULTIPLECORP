@@ -57,10 +57,35 @@ final class TableRules
         return $this;
     }
 
-    /** A unique index over columns or expressions, partial when $where is given (§18). */
-    public function uniqueIndex(string $name, string $keys, ?string $where = null): self
+    /**
+     * A foreign key added after the Blueprint, where it references a key added the same way — a composite
+     * key carrying the company (§1, §15; C-32) —, restricting the delete as every key does (§19).
+     *
+     * @param  list<string>  $columns
+     * @param  list<string>  $references
+     */
+    public function foreign(string $name, array $columns, string $table, array $references): self
     {
-        DB::statement("create unique index {$name} on {$this->table} ({$keys})".($where === null ? '' : " where {$where}"));
+        DB::statement("alter table {$this->table} add constraint {$name} foreign key (".implode(', ', $columns).") references {$table} (".implode(', ', $references).') on delete restrict');
+
+        return $this;
+    }
+
+    /** An exclusion constraint over a GiST index, such as non-overlapping effective ranges (§12, §17; C-52). */
+    public function exclude(string $name, string $definition): self
+    {
+        DB::statement("alter table {$this->table} add constraint {$name} exclude using gist ({$definition})");
+
+        return $this;
+    }
+
+    /**
+     * A unique index over columns or expressions, partial when $where is given (§18); NULLs are distinct
+     * unless the key treats an empty member as one value of its own, such as pool evidence's company.
+     */
+    public function uniqueIndex(string $name, string $keys, ?string $where = null, bool $nullsDistinct = true): self
+    {
+        DB::statement("create unique index {$name} on {$this->table} ({$keys})".($nullsDistinct ? '' : ' nulls not distinct').($where === null ? '' : " where {$where}"));
 
         return $this;
     }
@@ -72,6 +97,14 @@ final class TableRules
     public function index(string $name, string $keys, ?string $where = null): self
     {
         DB::statement("create index {$name} on {$this->table} ({$keys})".($where === null ? '' : " where {$where}"));
+
+        return $this;
+    }
+
+    /** The GIN trigram index of a name's substring and similarity search (DATABASE §20–§21; PF-20). */
+    public function trigramIndex(string $name, string $column): self
+    {
+        DB::statement("create index {$name} on {$this->table} using gin ({$column} gin_trgm_ops)");
 
         return $this;
     }

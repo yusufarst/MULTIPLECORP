@@ -3,11 +3,12 @@
 namespace Database\Factories\OPS;
 
 use App\Modules\OPS\Models\ImportBatch;
+use Database\Factories\DOC\FileObjectFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * A prepared batch over an invented source. Until DOC's file objects and ORG's companies exist
- * (TASK-006), the file and the company are synthetic keys.
+ * A prepared batch over an invented source file. Its company scope is a list of invented keys, an array
+ * no foreign key checks (DATABASE §24).
  *
  * @extends Factory<ImportBatch>
  */
@@ -24,7 +25,7 @@ final class ImportBatchFactory extends Factory
 
         return [
             'import_kind' => 'CONTOH',
-            'source_file_id' => 2000 + $number,
+            'source_file_id' => FileObjectFactory::new()->importSource(),
             'source_sha256' => hash('sha256', "sumber-contoh-{$number}"),
             'cutoff_date' => '2026-09-30',
             'company_scope' => [1001],

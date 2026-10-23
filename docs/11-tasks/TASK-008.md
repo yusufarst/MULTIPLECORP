@@ -1,10 +1,12 @@
 # TASK-008 — Schema — INV tables, inventory and lot-cost representations
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) adds the foreign keys of TASK-005's columns that reference this Task's tables — a scope line, criterion 6 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) adds the foreign keys of TASK-006's columns that reference this Task's tables — a scope line, criterion 7 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -40,6 +42,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the movement catalogue and sign discipline of §5.3, the lot claims of §5.4, the serial representation of §8 and the conservation identity of §6.2
 - the foreign keys of TASK-005's columns that reference `inventory_lots`, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): `correction_cases.source_lot_id`, an intentional cross-company link (DATABASE §15)
+- the foreign keys of TASK-006's columns that reference these tables, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (1)), composite with `company_id` where DATABASE §4.10 and §15 state it: `documents.dispatch_movement_id` and `receiving_movement_id`; `evidence_links.stock_movement_id` and `unattributed_loss_case_id`, pool evidence linking only to pool records (DATABASE §4.10)
 - the migrate-from-empty test extended (TL-16)
 
 **OUT OF SCOPE:**
@@ -201,6 +204,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 4. AVAILABLE = ON HAND − RESERVED − UNUSABLE ≥ 0 holds at the database level (C-04), with the reservation bounds of C-05.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `inventory_lots` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
+7. Each of the four foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and pool evidence linked to a company's movement, proven by a referential-integrity test before this Task is DONE (C-32).
 
 **TEST REQUIREMENTS:**
 
@@ -208,7 +212,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns violated and refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task

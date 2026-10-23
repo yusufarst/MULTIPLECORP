@@ -1,14 +1,16 @@
 # TASK-006 — Schema — ORG, PTY, CAT and DOC tables
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) adds the foreign keys of TASK-005's columns that reference this Task's tables — a scope line, criterion 6 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) on this Task's five execution discoveries adds the files' company and purpose guard of DIR-089 (5) — a scope line, the database impact's words, criterion 7 and its integration test — and records the disposition of criterion 1 below the acceptance criteria, its other parts given to TASK-007–TASK-009, TASK-029 and TASK-030; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs; the DATABASE text it builds is approved under APPR-018.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -40,6 +42,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 - a constraint or index that spans the tables of several schema Tasks — C-05, C-09, C-23, C-28, C-32, C-47–C-49, C-53, C-59, IX-08, IX-11 and IX-14–IX-17 among them — built here for these tables, the other schema Tasks building their own parts (DATABASE §18; PERFORMANCE §12)
 - the multi-unit representation of DATABASE §7 and the document architecture of §10; the file metadata of §22
 - the foreign keys of TASK-005's columns that reference `companies` and `file_objects`, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): `user_company_grants.company_id`, `correction_cases.company_id`, `import_rows.company_id`, `legacy_archive_items.company_id` and `audit_events.company_id` to `companies`; `legacy_archive_items.file_object_id` in the company-scoped form DATABASE §15 states, `import_batches.source_file_id` and `export_requests.file_object_id` to `file_objects`
+- the files' company and purpose, as DATABASE §4.10 and §22 state them ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (5); C-32): `file_objects`' company by purpose, a CHECK; and a trigger on each table that references `file_objects` — `evidence_document_versions`, `document_renditions`, `product_images`, `companies`' identity assets, `legacy_archive_items`, `import_batches` and `export_requests` —, at every insert and update of the reference, refusing another company's file, a file of no company outside the purposes DATABASE allows it and a file of another purpose; no column added
 - the migrate-from-empty test extended (TL-16)
 
 **OUT OF SCOPE:**
@@ -94,7 +97,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: PROPOSED — DATABASE §4.2–§4.4 and §4.10 tables, expand-only
+- Schema change: PROPOSED — DATABASE §4.2–§4.4 and §4.10 tables, and DIR-089 (5)'s guard of the files' company and purpose, expand-only
 - Migration required: YES — expand-only
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -204,6 +207,12 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 4. C-10's numbering uniqueness and monotonicity hold at the database level as its row states.
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `companies` or `file_objects` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
+7. The database holds every file to its owning record's company and to its purpose, as DATABASE §4.10 and §22 state under DIR-089 (5): `file_objects` refuses a company its purpose does not take, and each reference to `file_objects` refuses another company's file, a file of no company outside the purposes DATABASE allows it and a file of another purpose, at insert and at update, and an import source, an export or an evidence file taken by a second record of its table, each refusal proven by a negative test; a test proves every reference to `file_objects` guarded (C-32). An actor's right to a file — its uploader or requester — is not this Task's and is not claimed (TASK-030, TASK-057, TASK-060).
+
+**CRITERIA DISPOSITIONS (DIR-089):**
+
+- Criterion 1: every table, column, key and constraint DATABASE states for these tables exists but three parts, which DIR-089 gives to the Tasks that can build them: the foreign keys of `documents`' nine subjects, of `document_versions.quotation_revision_id` and `invoice_version_id` and of fifteen of `evidence_links`' seventeen targets, added by TASK-007 (8), TASK-008 (4) and TASK-009 (14) when they create the referenced tables, each with its referential-integrity test (DIR-089 (1)); the type-free evidence identity index, designed for its queries, built and proven in `EXPLAIN` by TASK-030 (DIR-089 (2)); the fourteen rows of `document_types`, data that TASK-029 seeds (DIR-089 (3)). Those parts are not met by this Task and are not claimed.
+- Criteria 2–6 are unaffected; criterion 7 is DIR-089 (5)'s. A product image has no end of life in V1 (DIR-089 (4); DATABASE §19), so this Task adds no column for it.
 
 **TEST REQUIREMENTS:**
 
@@ -211,7 +220,7 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-10 and C-11 under two connections; each foreign key DIR-088 adds from TASK-005's columns violated and refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-10 and C-11 under two connections; each foreign key DIR-088 adds from TASK-005's columns violated and refused; DIR-089 (5)'s CHECK and each file reference's guard violated and refused, and every reference to `file_objects` found guarded
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
@@ -228,32 +237,32 @@ Companies, numbering and tax, parties, the catalogue and documents are tier 1 (A
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02); its 17 errors on `2d5e19c` fixed in `4c6fc59`
+- [x] Relevant automated tests: Unit, Architecture, Integration — every C- row of these tables, C-10 and C-11 under two connections, the forward keys, the runtime's privileges and DIR-089 (5)'s guard —, TL-15's index register and TL-16, PASS locally and in CI
+- [x] Authorization: N/A — no route; TL-06 EMPTY until TASK-011; an actor's right to a file is TASK-030's, TASK-057's and TASK-060's (DIR-089 (5))
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: the runtime role's privileges on the new tables (DATABASE §28); every file held to its owning record's company and purpose, one owner per import source, export and evidence file (DIR-089 (5); C-32); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: the 34 migrations only add — nothing dropped, renamed or retyped, no data migration —, each `down()` reverses its migration (TL-16, 53 migrations up, down and up); local and CI databases only, no production connection
+- [x] Final diff review: each table, column, key and constraint against DATABASE as written, the gaps raised as discoveries and decided by the Owner (DIR-089), nothing invented; ER-06's independent review of the build in the cloud session, its findings fixed or raised; the review of DIR-089 (5)'s delta stopped by the Owner's directive (DIR-089 part 2), CI the final proof
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `9bd807b`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 39946466968 (push) and 39946472209 (pull request #6), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, Larastan/PHPStan at level `max`, the database tests, the audits, the secret-like scan and the production check among them), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15's index register and the k6 smoke run, TL-16 from empty). The Owner's workstation, 2026-10-23: `scripts/verify.sh` and `scripts/verify.sh browser performance` PASS on `4c6fc59` (CI run 39925682508 PASS), and for DIR-089 (5)'s delta Pint, Larastan/PHPStan, `FileOwnershipTest` (27 tests) and TL-16 PASS
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: 9bd807b, CI ubuntu-24.04 run 39946466968`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: 9bd807b, CI ubuntu-24.04 run 39946466968`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted; PostgreSQL 18.6's `pg_trgm` and `btree_gist`, shipped with it
+- Files changed: `database/migrations/` (`2026_10_20_000020`–`000051`, `2026_10_23_000052` and `000053`), `app/Support/Database/`, `app/Modules/ORG/`, `PTY/`, `CAT/` and `DOC/` (models and READMEs), the TASK-005 models' relations, `database/factories/`, the tests of `tests/Integration/Schema/`, `tests/Performance/IndexRegisterTest.php`, `tests/Unit/Support/` and `tests/Support/Refusal.php`; DIR-089's records — the eighty-seventh source record, DECISION_LOG, DECISION_INDEX, DATABASE (APPR-018), the contracts it amends, TASK_PLAN —, TOOLCHAIN's rows, this file, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `2d5e19c`, `4c6fc59`, `62d9945` and `9bd807b` — the last the fix of the automated review's P1 finding on pull request #6: a seeded counter could stand below its seed, now refused by the CHECK `number_sequences_c10_seed_floor` (seed positive, `next_value` ≥ seed, at insert and update; C-10; NM-03) with its regression test, `OrganizationConstraintsTest` and `NumberingConcurrencyTest` PASS —, the Owner's identity, no signature and no AI attribution; this record's update follows them; earlier the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-006-schema-org-pty-cat-doc`
+- Notes: criteria 2–7 as their tests prove them; criterion 1 met but for the three parts DIR-089 gives to TASK-007–TASK-009, TASK-029 and TASK-030, not claimed (CRITERIA DISPOSITIONS). Environments: the cloud session of 2026-10-20 and the Owner's Windows workstation of 2026-10-23 (TOOLCHAIN, "Execution environments (TASK-001)"). Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

@@ -4,10 +4,11 @@ namespace Database\Factories\IAM;
 
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\UserCompanyGrant;
+use App\Modules\ORG\Models\Company;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * Until ORG's companies exist (TASK-006), the company is a synthetic key.
+ * An active grant of an invented company.
  *
  * @extends Factory<UserCompanyGrant>
  */
@@ -20,7 +21,7 @@ final class UserCompanyGrantFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'company_id' => 1001,
+            'company_id' => Company::factory(),
             'granted_at' => now(),
         ];
     }

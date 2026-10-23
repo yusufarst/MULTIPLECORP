@@ -2,6 +2,7 @@
 
 namespace App\Modules\OPS\Models;
 
+use App\Modules\ORG\Models\Company;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\ImportRowFactory;
 use Illuminate\Database\Eloquent\Attributes\UseFactory;
@@ -39,6 +40,12 @@ class ImportRow extends Model
     public function batch(): BelongsTo
     {
         return $this->belongsTo(ImportBatch::class, 'import_batch_id');
+    }
+
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     /** @return array<string, string> */

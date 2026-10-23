@@ -1,8 +1,10 @@
 # TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-23 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
+
+Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (3) gives this Task the fourteen rows of `document_types` — a scope line, the database impact's migration, criterion 16 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
@@ -53,6 +55,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - the baseline layout of each of DOC-01–DOC-14 as one template on that mechanism, with the company's identity applied (V1_SCOPE selectable document catalog; DEP-04), each layout placed in its payload family — an operational layout that prints a price or cost belonging to the finance or cost family (PJ-15); the record each type renders as WF-DOC-01's table states, supplied by its issuing Task through `DocumentSubjectProvider`, so the record's verified data is reused and never typed again (O-01; O-03; REF-032; REF-033); two layouts of one record never a second transaction (BR-DOC-04; L-19; L-26); external originals stay uploads, never generated (REF-034; IMG-06)
 - PG-035 with NAV-035 and ROUTE-035, and PG-036 with NAV-036 and ROUTE-036 (SCR-34, SCR-35): the generated documents by branch with the exact number lookup (PF-19), metadata with `projects.view` and payload by family; a document's draft composer, its versions, rendition state, issue, revision and void; the pre-payment Kuitansi's own state *Menunggu Pembayaran* with "untuk proses pembayaran" until it is linked or voided (UXS-38; J-FIN-08)
 - the paper Indonesian whatever the interface language (DIR-037 D7; LOCALIZATION §3.4; architecture challenge 17a); an issued document printed or downloaded from its rendition, never from a screen, a draft printed by the browser as a marked draft (component Print view; DESIGN_SYSTEM §17; REF-047)
+- the fourteen rows of `document_types`, DOC-01–DOC-14, seeded by a migration from the approved V1 text only ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (3)): each `name` from V1_SCOPE's catalogue; `is_numbered` true for every type, each issue drawing its type's next number (WORKFLOWS WF-DOC-01); `allowed_modes` RECEIPT and PRE_PAYMENT for DOC-05 and STANDARD for the others (DATABASE §4.10); `subject_kind` the subject DATABASE §4.10's arc and WF-DOC-01's table give each type; a value those texts do not determine raised as an Owner question, never invented
 
 **OUT OF SCOPE:**
 
@@ -125,7 +128,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 **DATABASE IMPACT ASSESSMENT:**
 
 - Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
-- Migration required: NO
+- Migration required: YES — a data migration seeding the fourteen rows of `document_types` (DIR-089 (3)), expand-only
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
 - Data-loss risk: NONE KNOWN
@@ -243,6 +246,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 13. An issue in a period whose numbering has not started is REJECTED — MSG-17 for an Admin, the numbering link for the Owner —, and so is an issue that starts a new chain of a non-collection document of a deactivated company (C-10; C-54; BR-ACC-03).
 14. A payload or rendition reaches only its family's view capability within the document's company, and PG-035's list and number lookup never show a document outside scope (PJ-15; CS-07).
 15. Each issue, revision and void commits all its effects or none and writes its audit event in the same transaction (REF-049; REF-057; LG-01).
+16. The fourteen rows of `document_types` exist with only the values DIR-089 (3) states — each name, numbering flag, mode set and subject as the approved V1 text determines it —, each type's subject agreeing with the subject arc `documents` enforces, proven by an integration test.
 
 **TEST REQUIREMENTS:**
 
@@ -250,7 +254,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - Typecheck: TL-02
 - Unit: the period key and number format per scheme; the provisional totals against the server's (TL-03)
 - Feature: ROUTE-035, ROUTE-036 and ROUTE-221–ROUTE-225 with each refusal — C-10, C-43, C-54, a stale `lock_version`, BD-06 (TL-04)
-- Integration: M-15–M-19 and M-38 on real PostgreSQL; a crash after the issue's commit and before dispatch, and a render retry, never reissuing (GAP-007, with TASK-022's M-31 and M-32); `DocumentChangeParticipant` inside a void's transaction (TL-05)
+- Integration: M-15–M-19 and M-38 on real PostgreSQL; a crash after the issue's commit and before dispatch, and a render retry, never reissuing (GAP-007, with TASK-022's M-31 and M-32); `DocumentChangeParticipant` inside a void's transaction; the fourteen `document_types` rows against V1_SCOPE's catalogue and each type's subject arc (DIR-089 (3)) (TL-05)
 - Authorization: `documents.issue` and `documents.correct` with and without each family's view capability; DOC-01 by `quotation.manage` (TL-06)
 - Route integrity: ROUTE-035, ROUTE-036 and ROUTE-221–ROUTE-225 audited (TL-07)
 - Interaction: INT-012 and INT-221–INT-225, each command with one `command_id` replayed (TL-08; IG-05)

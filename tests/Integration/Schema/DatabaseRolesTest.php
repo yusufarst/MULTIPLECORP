@@ -16,6 +16,9 @@ use Tests\Support\Refusal;
 
 uses(RefreshDatabase::class);
 
+/** A master's archive columns (DATABASE §13, §19). */
+const DEACTIVATION = ['is_active', 'deactivated_at', 'deactivated_by', 'deactivated_reason'];
+
 /** DATABASE §28 for these tables: the runtime's table privileges and the only columns it may update. */
 const RUNTIME_PRIVILEGES = [
     'users' => ['SELECT, INSERT', ['name', 'email', 'password', 'is_active', 'deactivated_at', 'deactivated_by', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at', 'two_factor_last_step', 'locale', 'lock_version', 'updated_at']],
@@ -37,6 +40,41 @@ const RUNTIME_PRIVILEGES = [
     'legacy_archive_items' => ['SELECT, INSERT', []],
     'export_requests' => ['SELECT, INSERT, DELETE', ['state', 'claimed_at', 'claim_count', 'file_object_id', 'expires_at']],
     'failed_jobs' => ['SELECT, INSERT, DELETE', []],
+    // TASK-006
+    'companies' => ['SELECT, INSERT', ['legal_name', 'legal_form', 'npwp', 'address_lines', 'city', 'phone', 'email', 'director_name', 'logo_file_id', 'stamp_file_id', 'signature_file_id', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'company_bank_accounts' => ['SELECT, INSERT', ['bank_name', 'account_number', 'account_holder', 'branch', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'numbering_schemes' => ['SELECT, INSERT', ['period_granularity', 'format_template', 'revision_format', 'effective_from', 'lock_version', 'updated_at']],
+    'number_sequences' => ['SELECT, INSERT', ['next_value', 'seed_value', 'seeded_by_import_row_id']],
+    'retired_numbers' => ['SELECT, INSERT', []],
+    'tax_types' => ['SELECT, INSERT', ['name', 'category', 'is_active', 'lock_version', 'updated_at']],
+    'tax_rate_versions' => ['SELECT, INSERT', ['rate_percent', 'base_numerator', 'base_denominator', 'rounding_mode', 'effective', 'lock_version', 'updated_at']],
+    'company_tax_profiles' => ['SELECT, INSERT', ['registration_status', 'effective', 'lock_version', 'updated_at']],
+    'tax_treatment_rules' => ['SELECT, INSERT', ['treatment', 'evidence_required', 'effective', 'lock_version', 'updated_at']],
+    'client_organizations' => ['SELECT, INSERT', ['name', 'npwp', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'client_units' => ['SELECT, INSERT', ['name', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'client_addresses' => ['SELECT, INSERT', ['label', 'address_lines', 'city', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'client_contacts' => ['SELECT, INSERT', ['name', 'position', 'phone', 'email', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'suppliers' => ['SELECT, INSERT', ['name', 'npwp', 'address_lines', 'city', 'phone', 'email', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'units' => ['SELECT, INSERT', ['name', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'products' => ['SELECT, INSERT', ['sku', 'name', 'quantity_scale', 'is_serialized', 'min_stock_qty_base', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'product_units' => ['SELECT, INSERT', ['ratio_to_base', ...DEACTIVATION, 'lock_version', 'updated_at']],
+    'product_barcodes' => ['SELECT, INSERT', [...DEACTIVATION, 'lock_version', 'updated_at']],
+    'product_price_history' => ['SELECT, INSERT', []],
+    'product_images' => ['SELECT, INSERT', ['sort_order', 'is_primary', 'lock_version', 'updated_at']],
+    'document_types' => ['SELECT, INSERT', []],
+    'documents' => ['SELECT, INSERT', []],
+    'document_versions' => ['SELECT, INSERT, DELETE', [
+        'state', 'business_date', 'numbering_scheme_id', 'period_key', 'sequence_no', 'revision_suffix', 'formatted_number',
+        'quotation_revision_id', 'invoice_version_id', 'kuitansi_amount', 'company_bank_account_id', 'payload', 'payload_sha256',
+        'issued_by', 'issue_command_id', 'voided_by', 'voided_at', 'voided_reason', 'lock_version', 'updated_at',
+    ]],
+    'document_renditions' => ['SELECT, INSERT', ['state', 'file_object_id', 'renderer_version', 'error_summary', 'updated_at']],
+    'file_objects' => ['SELECT, INSERT', []],
+    'evidence_documents' => ['SELECT, INSERT', ['current_version_id', 'lock_version', 'updated_at']],
+    'evidence_document_versions' => ['SELECT, INSERT', []],
+    'bank_statement_lines' => ['SELECT, INSERT', ['state', 'voided_by', 'voided_at', 'voided_reason']],
+    'evidence_balances' => ['SELECT, INSERT', ['proven_amount', 'cited_amount', 'expensed_amount']],
+    'evidence_links' => ['SELECT, INSERT', ['unlinked_at', 'unlinked_by', 'unlink_reason']],
 ];
 
 it('connects the application as the runtime role, which owns nothing and runs no DDL (H9-01)', function (string $statement, string $refusal) {
@@ -78,6 +116,21 @@ it('grants the runtime exactly its table class\'s privileges (DATABASE §28)', f
     expect($granted)->toBe($privileges)
         ->and($columns)->toBe($expectedColumns);
 })->with(array_map(fn (array $expected, string $table) => [$table, ...$expected], RUNTIME_PRIVILEGES, array_keys(RUNTIME_PRIVILEGES)));
+
+it('states the runtime\'s privileges for every table the migrations create', function () {
+    $tables = DB::table('pg_tables')->where('schemaname', 'public')->where('tablename', '<>', 'migrations')->orderBy('tablename')->pluck('tablename')->all();
+
+    expect($tables)->toBe(collect(RUNTIME_PRIVILEGES)->keys()->sort()->values()->all());
+});
+
+it('lets the runtime draw the internal barcodes\' codes from their sequence, and nothing more of it (DATABASE §4.4)', function () {
+    $first = (int) DB::scalar("select nextval('product_barcode_internal_codes')");
+
+    expect((int) DB::scalar("select nextval('product_barcode_internal_codes')"))->toBeGreaterThan($first)
+        ->and(DB::scalar("select has_sequence_privilege(current_user, 'product_barcode_internal_codes', 'UPDATE')"))->toBeFalse();
+
+    Refusal::assert(Refusal::PRIVILEGE, 'must be owner of sequence', fn () => DB::statement('alter sequence product_barcode_internal_codes restart'));
+});
 
 it('grants the runtime no TRUNCATE, REFERENCES or TRIGGER anywhere, and the migration table nothing', function () {
     expect(DB::table('information_schema.table_privileges')->where('table_schema', 'public')->where('grantee', DatabaseRole::RUNTIME)

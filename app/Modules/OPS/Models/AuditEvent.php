@@ -3,6 +3,7 @@
 namespace App\Modules\OPS\Models;
 
 use App\Modules\IAM\Models\User;
+use App\Modules\ORG\Models\Company;
 use App\Support\Database\AppendOnly;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\AuditEventFactory;
@@ -48,6 +49,12 @@ class AuditEvent extends Model
     public function actor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'actor_user_id');
+    }
+
+    /** @return BelongsTo<Company, $this> */
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
     }
 
     /** @return array<string, string> */
