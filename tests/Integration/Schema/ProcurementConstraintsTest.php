@@ -194,3 +194,12 @@ it('corrects a charge by its own adjustment, within its company (CM-17)', functi
 
     expect(PurchaseLineAdjustment::factory()->create(['purchase_line_id' => null, 'purchase_charge_id' => $charge->id, 'kind' => 'CHARGE_CORRECTION', 'company_id' => $charge->company_id, 'amount_delta' => '5000.00'])->charge?->is($charge))->toBeTrue();
 });
+
+it('holds a charge share\'s line within the charge\'s purchase, not only its company (DIR-090 (3); APPR-019)', function () {
+    $charge = PurchaseCharge::factory()->create();
+    $sibling = PurchaseLine::factory()->create(['purchase_id' => Purchase::factory()->create(['company_id' => $charge->company_id])->id]);
+
+    Refusal::assert(Refusal::CHECK, 'purchase_charge_line_shares_line_of_charge_purchase', fn () => PurchaseChargeLineShare::factory()->create(['purchase_charge_id' => $charge->id, 'purchase_line_id' => $sibling->id]));
+
+    expect(PurchaseChargeLineShare::factory()->create(['purchase_charge_id' => $charge->id])->exists)->toBeTrue();
+});

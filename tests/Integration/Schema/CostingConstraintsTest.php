@@ -7,6 +7,7 @@ use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseCharge;
 use App\Modules\PUR\Models\PurchaseChargeLineShare;
 use App\Modules\PUR\Models\PurchaseLine;
@@ -206,4 +207,40 @@ it('cites a supplier\'s bill once, by its charge or by the expense, within the c
 
     expect($expensed->charge?->is($charge))->toBeTrue()
         ->and($direct->sourceBill?->is($bill))->toBeTrue();
+});
+
+it('posts a share only under its own charge and version (DIR-090 (3); APPR-019)', function () {
+    $share = PurchaseChargeLineShare::factory()->create();
+    $other = PurchaseCharge::factory()->create(['purchase_id' => $share->charge->purchase_id]);
+    $row = ['entry_kind' => 'CHARGE_SHARE', 'source_company_id' => $share->company_id, 'cost_component' => 'CHARGE', 'purchase_charge_line_share_id' => $share->id];
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'lot_cost_entries_share_of_charge_version_foreign', fn () => LotCostEntry::factory()->create([...$row, 'purchase_charge_id' => $other->id, 'allocation_version' => 1]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'lot_cost_entries_share_of_charge_version_foreign', fn () => LotCostEntry::factory()->create([...$row, 'purchase_charge_id' => $share->purchase_charge_id, 'allocation_version' => 2]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_share_of_charge_version_foreign', fn () => CostAttribution::factory()->create([
+        'cost_component' => 'CHARGE', 'purchase_line_id' => $share->purchase_line_id, 'bearer_company_id' => $share->company_id,
+        'purchase_charge_id' => $other->id, 'purchase_charge_line_share_id' => $share->id, 'allocation_version' => 1,
+    ]));
+
+    expect(LotCostEntry::factory()->create([...$row, 'purchase_charge_id' => $share->purchase_charge_id, 'allocation_version' => 1])->exists)->toBeTrue();
+});
+
+it('bears a direct cost in the purchase\'s company, a return settlement aside (DIR-090 (2); APPR-019; §15)', function () {
+    $line = PurchaseLine::factory()->create(['kind' => 'NONSTOCK']);
+    $other = Company::factory()->create()->id;
+
+    Refusal::assert(Refusal::CHECK, 'cost_attributions_direct_within_bearer_company', fn () => CostAttribution::factory()->create(['purchase_line_id' => $line->id, 'bearer_company_id' => $other]));
+
+    // A RETURN_SETTLEMENT loss is borne by its case's causal project, of another company (§4.8; §15).
+    expect(CostAttribution::factory()->create(['purchase_line_id' => $line->id, 'bearer_company_id' => $other, 'cost_class' => 'LOSS', 'cause' => 'RETURN_SETTLEMENT'])->exists)->toBeTrue()
+        ->and(CostAttribution::factory()->create(['purchase_line_id' => $line->id])->bearer_company_id)->toBe($line->company_id);
+});
+
+it('expenses a fallback share only for a line of its charge\'s purchase (DIR-090 (3); APPR-019)', function () {
+    $charge = PurchaseCharge::factory()->create(['classification' => 'NON_ATTRIBUTABLE', 'allocation_basis' => null]);
+    $fallback = ['company_id' => $charge->company_id, 'kind' => 'PURCHASE_CHARGE', 'purchase_charge_id' => $charge->id];
+    $sibling = PurchaseLine::factory()->create(['purchase_id' => Purchase::factory()->create(['company_id' => $charge->company_id])->id]);
+
+    Refusal::assert(Refusal::CHECK, 'expenses_fallback_line_of_charge_purchase', fn () => Expense::factory()->create([...$fallback, 'purchase_line_id' => $sibling->id]));
+
+    expect(Expense::factory()->create([...$fallback, 'purchase_line_id' => PurchaseLine::factory()->create(['purchase_id' => $charge->purchase_id])->id])->exists)->toBeTrue();
 });

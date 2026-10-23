@@ -303,3 +303,28 @@ it('locks SIPLAH details after the first channel-dependent commit (C-51; BR-PRJ-
 
     expect($row()->value('fee_amount'))->toBe('350000.00');
 });
+
+it('holds a pin\'s and a quotation line\'s project line within their parent\'s project, not only its company (DIR-090 (3); APPR-019)', function () {
+    $confirmation = CommercialConfirmation::factory()->create();
+    $revision = QuotationRevision::factory()->create(['project_id' => $confirmation->project_id]);
+    // A line of another project of the same company.
+    $sibling = ProjectLine::factory()->create(['project_id' => Project::factory()->create(['company_id' => $confirmation->company_id])->id]);
+
+    Refusal::assert(Refusal::CHECK, 'confirmation_line_pins_line_of_confirmation_project', fn () => ConfirmationLinePin::factory()->create(['commercial_confirmation_id' => $confirmation->id, 'project_line_id' => $sibling->id]));
+    Refusal::assert(Refusal::CHECK, 'quotation_revision_lines_line_of_revision_project', fn () => QuotationRevisionLine::factory()->create(['quotation_revision_id' => $revision->id, 'project_line_id' => $sibling->id]));
+
+    expect(ConfirmationLinePin::factory()->create(['commercial_confirmation_id' => $confirmation->id])->exists)->toBeTrue()
+        ->and(QuotationRevisionLine::factory()->create(['quotation_revision_id' => $revision->id])->exists)->toBeTrue();
+});
+
+it('discards a DRAFT SIPLAH project with its details, and never an active one\'s (DIR-090 (4); §19; L-37)', function () {
+    $draft = ProjectSiplahDetail::factory()->create()->project_id;
+    $active = ProjectSiplahDetail::factory()->create(['project_id' => Project::factory()->active()->create(['channel' => 'SIPLAH'])->id])->project_id;
+
+    Refusal::assert(Refusal::CHECK, 'projects_draft_delete_only', fn () => DB::table('projects')->where('id', $active)->delete());
+
+    DB::table('projects')->where('id', $draft)->delete();
+
+    expect(DB::table('project_siplah_details')->where('project_id', $draft)->exists())->toBeFalse()
+        ->and(DB::table('project_siplah_details')->where('project_id', $active)->exists())->toBeTrue();
+});

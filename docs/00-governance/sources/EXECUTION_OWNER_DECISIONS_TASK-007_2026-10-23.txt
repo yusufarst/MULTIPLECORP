@@ -1,0 +1,29 @@
+Owner decisions received in session during execution, 2026-10-23 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: TASK-007's six discoveries (after the executor's consolidated checkpoint) ---
+
+OWNER DECISION — TASK-007 DISCOVERY CHECKPOINT
+Saya menyetujui disposisi enam temuan TASK-007 sesuai rekomendasi berikut:
+
+1. Terapkan DIR-088 untuk FK dan trigger yang menjadi tanggung jawab TASK-008/009.
+2. Planning menetapkan pengamanan atribusi biaya agar tidak melintasi perusahaan. Jangan menambah kolom tanpa dasar spesifikasi.
+3. Jaga integritas referensi dalam induk yang sama. Planning menetapkan constraint database yang tepat dan task penanggung jawabnya.
+4. Setujui cascade project_siplah_details hanya untuk penghapusan proyek DRAFT yang sah menurut L-37.
+5. TASK-008/009 memperluas purchase_line_has_effect sesuai fakta baru yang mereka buat.
+6. Pindah perusahaan ditafsirkan sebagai proyek baru di perusahaan tujuan, bukan perubahan company_id langsung. Planning memastikan aturan pensiun nomor konsisten dengan L-21.
+
+Catat semuanya dalam satu checkpoint keputusan melalui CHANGE_CONTROL. Untuk poin yang memerlukan perubahan spesifikasi kanonik, jangan mengklaim persetujuan teks yang belum saya berikan. Siapkan amandemen sempit dan kumpulkan persetujuannya sekaligus.
+Prioritas:
+
+* Selesaikan PR TASK-007 dan CI terlebih dahulu.
+* Jangan menjalankan review tambahan atau full test ulang tanpa perubahan kode yang memerlukannya.
+* Gunakan watcher untuk CI tanpa polling AI.
+* Pertahankan persetujuan Owner untuk setiap commit dan push.
+* Jangan merge otomatis.
+* Jangan mulai TASK-008 sebelum checkpoint keputusan selesai dan PR TASK-007 di-merge.
+
+Gunakan Opus 5.5 High. Hemat token dan hindari perluasan scope.
+
+--- Part 2: the approval of the canonical text (APPR-019), after the executor showed T1-T8 ---
+
+Saya menyetujui teks kanonik T1–T8 sebagai APPR-019, dibangun oleh TASK-007 sebelum DONE. Terapkan, uji yang relevan saja, lalu minta izin commit.

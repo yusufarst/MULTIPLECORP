@@ -8,6 +8,8 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) adds the foreign keys of TASK-006's columns that reference this Task's tables — a scope line, criterion 7 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-23 the Owner's decision [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (2), (3), (4) and (6), with APPR-019's canonical text, adds the guards that hold this Task's references within their parent and a direct cost attribution within the purchase's company, and the SIPLAH details' draft cascade — a scope line, its database impact, criterion 8 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** VERIFYING
@@ -42,6 +44,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - the foreign keys of TASK-005's columns that reference `projects`, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier)): `correction_cases` (`company_id`, `project_id`) to `projects` (`company_id`, `id`), C-32's composite key, and `correction_cases.causal_project_id`, an intentional cross-company link (DATABASE §15)
 - the foreign keys of TASK-006's columns that reference these tables, added expand-only with `ALTER TABLE … ADD CONSTRAINT` ([DIR-089](../00-governance/DECISION_LOG.md#dir-089-and-appr-018--task-006s-discoveries-and-the-files-company-and-purpose) (1)), composite with `company_id` where DATABASE §4.10 and §15 state it: `documents.project_id` and `purchase_id`; `document_versions.quotation_revision_id`; `evidence_links.project_id`, `commercial_confirmation_id`, `purchase_id`, `expense_id` and `admin_requirement_id`
 - the migrate-from-empty test extended (TL-16)
+- APPR-019's guards ([DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (2)–(4)), no column added: a pin's and a quotation line's project line within their confirmation's or revision's project, a charge share's line within its charge's purchase, a share-schedule row's share of its own charge and version, a direct cost attribution's purchase records within the purchase's company that bears it, a fallback expense's line within its charge's purchase, and `project_siplah_details` in a DRAFT project's cascade
 
 **OUT OF SCOPE:**
 
@@ -93,7 +96,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: PROPOSED — DATABASE §4.5, §4.6, §4.8 and §4.11 tables, expand-only
+- Schema change: PROPOSED — DATABASE §4.5, §4.6, §4.8 and §4.11 tables, expand-only; APPR-019's triggers, keys and draft cascade on them (DIR-090)
 - Migration required: YES — expand-only
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -204,6 +207,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 5. The migrations are expand-only — nothing a running release still reads is dropped or renamed, the mixed-version safeguards of PRQ-04 kept — and run from empty in CI (architecture challenge 11a).
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `projects` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 7. Each of the eight foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
+8. Each guard APPR-019 adds (DIR-090 (2)–(4)) refuses a reference outside its parent or a direct cost attribution outside the purchase's company, and a DRAFT project's deletion takes its SIPLAH details with it, proven by a negative test before this Task is DONE.
 
 **TEST REQUIREMENTS:**
 
@@ -211,7 +215,7 @@ Projects with their commercial chain, costing, procurement and the administrativ
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-05 and the pins' rows; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-05 and the pins' rows; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each guard of APPR-019 violated and refused, and the SIPLAH details' draft cascade (DIR-090)
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
