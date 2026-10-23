@@ -10,9 +10,11 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Amendment: on 2026-10-23 the Owner's decision [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (1) and (5) adds the foreign keys and triggers of TASK-007's columns on this Task's tables and the facts of a purchase line's first effect this Task creates — two scope lines, criterion 8 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-24 the Owner's decision [DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (2)–(4) on this Task's discoveries adds a restoration's case side, the same parent's product, a count's scope within its set and the product set's members, built on this Task's tables before it is DONE, and (1) assigns the drop-ship forward keys of its columns to TASK-009 — a scope line, criterion 9 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -48,6 +50,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - the migrate-from-empty test extended (TL-16)
 - the foreign keys and triggers of TASK-007's columns on these tables, added expand-only ([DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (1); DIR-088's rule): `lot_cost_entries.lot_id` and `stock_restoration_id`, `lot_cost_balances.lot_id`, `cost_attributions` (`stock_consumption_id`, `lot_id`, `source_company_id`) to `stock_consumptions` and `cost_attributions.stock_restoration_id`; the triggers of DATABASE §4.8 holding a lot's basis kind to its `acquisition_kind` and an attribution's bearer to its consumption's
 - `purchase_line_has_effect` extended with this Task's receipts of a purchase line, an all-rejected receipt included (DIR-090 (5); L-23)
+- a restoration's correction case of its source or of its consumption's bearer; a restoration, an entry, a lot and a reservation event keyed to their parent's product; a count's scope rows within its location, condition and product set, and the set `product_ids bigint[]` — NULL or empty for every product, otherwise distinct goods products —, by composite keys over existing columns and triggers ([DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (2)–(4); APPR-020); the drop-ship forward keys of its columns are TASK-009's (DIR-091 (1))
 
 **OUT OF SCOPE:**
 
@@ -210,6 +213,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 6. Each foreign key DIR-088 assigns to this Task from TASK-005's columns exists and refuses a row that references no `inventory_lots` row, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 7. Each of the four foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and pool evidence linked to a company's movement, proven by a referential-integrity test before this Task is DONE (C-32).
 8. Each foreign key and trigger DIR-090 (1) assigns to this Task from TASK-007's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and `purchase_line_has_effect` refuses the edit of a purchase line after each fact DIR-090 (5) names, proven by tests before this Task is DONE (C-32; L-23).
+9. Each key and trigger DIR-091 (2)–(4) assigns to this Task exists and refuses a restoration's case of neither its source nor its consumption's bearer, a row of another product than its parent's, a count's scope row outside its location, condition or product set, and a product set with a member that is no distinct goods product, proven by tests before this Task is DONE.
 
 **TEST REQUIREMENTS:**
 
@@ -217,7 +221,7 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-04 and C-05 under two connections; each foreign key DIR-088 adds from TASK-005's columns and DIR-089 (1) from TASK-006's violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused; each key and trigger of DIR-091 (2)–(4) violated and refused
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task
@@ -232,34 +236,39 @@ One physical pool with separate economic attribution, the ledger with its guard 
 - Migration: migrate from empty after TASK-005 and the earlier schema Tasks; no destructive step (TL-16)
 - Other: N/A — nothing further
 
+**CRITERIA DISPOSITIONS (DIR-091):**
+
+- Criterion 1 is met for every column, key and constraint DATABASE states that this Task's tables can hold now; the foreign keys of its own columns on TASK-009's drop-ship tables — `stock_consumption_balances.dropship_confirmation_line_id`, and `stock_restorations.dropship_confirmation_line_id` with its unit-snapshot, company and product keys — are TASK-009's (DIR-091 (1); DIR-088's rule), not claimed here.
+- Criteria 2–9 as their tests prove them; criterion 9 adds DIR-091 (2)–(4)'s guards with APPR-020's text.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit, Architecture, Integration — every C- row of these tables, the ledger's signs and balances, C-04 and C-05 under two connections, the forward keys and triggers of DIR-088, DIR-089 (1) and DIR-090 (1) and (5), DIR-091's guards, the runtime's privileges —, TL-15's index register and TL-16, PASS locally and in CI
+- [x] Authorization: N/A — no route; TL-06 EMPTY until TASK-011
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: the runtime role's privileges on the new tables (DATABASE §28); every reference within its company (C-32) and its parent's product (DIR-091); pool evidence never on a company's movement (C-58); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: the 28 migrations only add — nothing dropped, renamed or retyped, no data migration; `purchase_line_has_effect` redefined with receipts and restored by `down()`; a count's location and condition required inside this Task's unreleased migration —, each `down()` reverses its migration (TL-16 up, down and up); the local and CI database's lock table raised for the parallel suite; local and CI databases only, no production connection
+- [x] Final diff review: each table, column, key and constraint against DATABASE as written, the gaps raised as discoveries and decided by the Owner (DIR-091, APPR-020), nothing invented; ER-06's independent review, its findings fixed
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `aa9a2e0`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40008446969 (push) and 40008451707 (pull request #8), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15's index register and load run, TL-16 from empty); before it, the build commit `2b9a044`, runs 40000734809 and 40000803448, PASS. On the Owner's workstation, 2026-10-24: `scripts/verify.sh` PASS, Integration 654 tests; after ER-06's fixes and DIR-091's guards `tests/Integration/Schema` 650 tests, Pint and Larastan/PHPStan PASS; Performance PASS; TL-16 PASS on a new empty database, and migration `000111` up, down and up
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: aa9a2e0, CI ubuntu-24.04 run 40008446969`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: aa9a2e0, CI ubuntu-24.04 run 40008446969`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `database/migrations/` (`2026_10_23_000084`–`000110`, `2026_10_24_000111`), `app/Modules/INV/` (models and README), `database/factories/INV/` and `CST/LotCostEntryFactory.php`, the tests of `tests/Integration/Schema/`, `tests/Performance/IndexRegisterTest.php` and `tests/Unit/Support/ModelConventionsTest.php`; `docker-compose.yml`'s database lock setting; TOOLCHAIN's row; DIR-091's and APPR-020's records — the source record, DECISION_LOG, DECISION_INDEX, DATABASE §4.7, §4.9 and its header, TASK-009 —; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `2b9a044` and `aa9a2e0`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-008-schema-inv`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-24 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each database feature verified on the running server (TOOLCHAIN's TASK-008 row). Readings within the approved text are listed in CURRENT_HANDOFF. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

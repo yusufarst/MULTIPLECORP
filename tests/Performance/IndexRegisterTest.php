@@ -5,7 +5,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 
-// TL-15 (TASK-005, TASK-006, TASK-007): each index PERFORMANCE §12 registers on these tables and stores exists and
+// TL-15 (TASK-005–TASK-008): each index PERFORMANCE §12 registers on these tables and stores exists and
 // is chosen by the query it serves in `EXPLAIN`, a partial index's predicate written as the same literal
 // (PF-10). The tables hold synthetic rows, analysed, inside a transaction of the migration role that is
 // rolled back; sequential scans are disabled so a plan shows whether an index can serve the query at all.
@@ -78,6 +78,20 @@ const INDEX_REGISTER = [
     'IX-16 a share\'s lot postings' => ['lot_cost_entries_share', 'select exists (select from lot_cost_entries where purchase_charge_line_share_id = 123)'],
     'IX-16 a share\'s direct postings' => ['cost_attributions_share', 'select exists (select from cost_attributions where purchase_charge_line_share_id = 123)'],
     '§20 a bearer\'s cost by date' => ['cost_attributions_bearer_business_date', "select id from cost_attributions where bearer_company_id = {company} and business_date >= '2026-09-25'"],
+    // TASK-008
+    'IX-08 a lot\'s consumptions' => ['stock_consumptions_ix08_lot', 'select id from stock_consumptions where lot_id = 123'],
+    'IX-08 a consumption\'s restorations' => ['stock_restorations_ix08_consumption', 'select id from stock_restorations where stock_consumption_id = 123'],
+    'IX-08 a project line\'s dispatches' => ['dispatch_lines_ix08_project_line', 'select id from dispatch_lines where project_line_id = 123'],
+    'IX-10 a scope\'s pending cases' => ['unattributed_loss_cases_ix10_pending', "select id from unattributed_loss_cases where product_id = (select min(id) from products) and location_id = (select min(id) from locations) and condition = 'USABLE' and pending_qty_base > 0"],
+    'IX-11 a company\'s movements' => ['stock_movements_ix11_company_business_date', 'select id from stock_movements where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-11 the pool\'s movements' => ['stock_movements_ix11_business_date', 'select id from stock_movements order by business_date desc, id desc limit 25'],
+    'IX-12 stock by location' => ['stock_scope_balances_ix12_location', 'select product_id from stock_scope_balances where location_id = (select min(id) from locations)'],
+    'IX-14 the STALE counts (QS-18)' => ['stock_counts_ix14_stale', "select id from stock_counts where state = 'STALE'"],
+    'IX-16 a scope\'s first entry' => ['stock_movement_entries_ix16_scope', "select exists (select from stock_movement_entries where product_id = 123 and location_id = (select min(id) from locations) and condition = 'USABLE')"],
+    '§20 a lot\'s entries' => ['stock_movement_entries_lot', 'select id from stock_movement_entries where lot_id = 123 order by id'],
+    '§20 the oldest-first picking aid' => ['stock_lot_balances_picking', 'select lot_id from stock_lot_balances where product_id = 123 and location_id = (select min(id) from locations) and qty > 0'],
+    '§20 a product\'s active reservations' => ['reservations_active_product', "select id from reservations where product_id = 123 and state = 'ACTIVE'"],
+    '§20 a product\'s lots by date' => ['inventory_lots_product_business_date', 'select id from inventory_lots where product_id = 123 order by business_date'],
 ];
 
 function seedIndexRegister(Connection $owner): void
@@ -176,12 +190,66 @@ function seedIndexRegister(Connection $owner): void
             from purchases p, seed_masters m, lateral (select id, base_unit_id from products where id = m.products[1 + p.sequence_no % 20000]) pr;
         insert into purchase_line_balances (purchase_line_id, ordered_qty_base, normal_received_net_qty_base, goods_value, posted_goods_value)
             select l.id, 10, case when l.id % 50 = 0 then 0 else 10 end, 1000000, case when l.id % 50 = 0 then 0 else 1000000 end from purchase_lines l;
-        -- Until INV's lots exist (TASK-008), a lot and a consumption are synthetic keys.
+        insert into locations (code, name) select 'RAK-' || g, 'Rak ' || g from generate_series(1, 50) g;
+        create temporary table seed_locations on commit drop as select array_agg(id order by id) as ids from locations;
+        -- A receipt, its lot and its ledger entry per purchase line, and one loss per lot.
+        with m as (
+            insert into stock_movements (movement_type, business_date, company_id, supplier_delivery_reference)
+                select 'RECEIPT', '2026-10-01', l.company_id, 'SJ-' || l.id from purchase_lines l returning id, supplier_delivery_reference
+        )
+        insert into receiving_lines (stock_movement_id, company_id, purchase_line_id, product_id, quantity_scale, entered_qty, entered_unit_id, ratio_to_base, qty_base,
+                usable_qty_base, damaged_qty_base, rejected_qty_base, receipt_kind, supplier_delivery_reference)
+            select m.id, l.company_id, l.id, l.product_id, l.quantity_scale, 10, l.entered_unit_id, 1, 10, 10, 0, 0, 'ORIGINAL', m.supplier_delivery_reference
+            from m join purchase_lines l on 'SJ-' || l.id = m.supplier_delivery_reference;
+        insert into inventory_lots (lot_code, product_id, quantity_scale, source_company_id, acquisition_kind, receiving_line_id, entered_qty, entered_unit_id, ratio_to_base,
+                acquired_qty_base, business_date)
+            select 'LOT-' || r.id, r.product_id, r.quantity_scale, r.company_id, 'RECEIPT', r.id, 10, r.entered_unit_id, 1, 10, date '2026-10-01' - (r.id % 300)::int
+            from receiving_lines r;
+        insert into stock_movement_entries (stock_movement_id, movement_type, product_id, quantity_scale, location_id, condition, lot_id, qty_delta_base)
+            select r.stock_movement_id, 'RECEIPT', l.product_id, l.quantity_scale, s.ids[1 + l.id % 50], 'USABLE', l.id, 10
+            from inventory_lots l join receiving_lines r on r.id = l.receiving_line_id, seed_locations s;
+        insert into stock_lot_balances (lot_id, location_id, condition, product_id, qty)
+            select l.id, s.ids[1 + l.id % 50], 'USABLE', l.product_id, case when l.id % 50 = 0 then 5 else 0 end from inventory_lots l, seed_locations s;
         insert into lot_cost_entries (lot_id, source_company_id, entry_kind, cost_component, amount, purchase_line_id, business_date)
-            select l.id, l.company_id, 'GOODS', 'GOODS', 1000000, l.id, '2026-10-01' from purchase_lines l where l.id % 50 <> 0;
+            select l.id, l.source_company_id, 'GOODS', 'GOODS', 1000000, r.purchase_line_id, '2026-10-01'
+            from inventory_lots l join receiving_lines r on r.id = l.receiving_line_id where r.purchase_line_id % 50 <> 0;
+        insert into stock_movements (movement_type, business_date, company_id) select 'LOSS', '2026-10-01', c from unnest((select ids from seed_companies)) c;
+        insert into stock_consumptions (stock_movement_id, lot_id, source_company_id, product_id, quantity_scale, qty_base, kind, bearer_company_id)
+            select (select m.id from stock_movements m where m.movement_type = 'LOSS' and m.company_id = l.source_company_id), l.id, l.source_company_id, l.product_id,
+                l.quantity_scale, 1, 'LOSS', l.source_company_id
+            from inventory_lots l;
         insert into cost_attributions (cost_class, cause, amount, stock_consumption_id, lot_id, source_company_id, bearer_company_id, business_date)
-            select 'HPP', 'INITIAL', 100000, g, g, c.ids[1 + g % 10], c.ids[1 + g % 10], date '2026-10-01' - g % 300
-            from generate_series(1, 20000) g, seed_companies c;
+            select 'LOSS', 'INITIAL', 100000, c.id, c.lot_id, c.source_company_id, c.bearer_company_id, date '2026-10-01' - (c.id % 300)::int from stock_consumptions c;
+        insert into stock_movements (movement_type, business_date, company_id) select 'RESTORATION', '2026-10-02', c from unnest((select ids from seed_companies)) c;
+        insert into stock_restorations (stock_movement_id, stock_consumption_id, source_company_id, product_id, quantity_scale, entered_qty, entered_unit_id, ratio_to_base,
+                qty_base, kind, returned_condition)
+            select (select m.id from stock_movements m where m.movement_type = 'RESTORATION' and m.company_id = c.source_company_id), c.id, c.source_company_id,
+                c.product_id, c.quantity_scale, 1, p.base_unit_id, 1, 1, 'LOSS_REVERSAL', 'USABLE'
+            from stock_consumptions c join products p on p.id = c.product_id where c.id % 50 = 0;
+        -- The pool: stock per scope, counts, and pending cases recognized by pool movements.
+        insert into stock_scope_balances (product_id, location_id, condition, claims_qty)
+            select p.id, s.ids[1 + p.id % 50], 'USABLE', 10 from products p, seed_locations s;
+        insert into stock_counts (location_id, condition, state, started_at)
+            select s.ids[1 + g % 50], 'USABLE', case when g % 100 = 0 then 'STALE' else 'APPLIED' end, now() - (g || ' minutes')::interval
+            from generate_series(1, 2000) g, seed_locations s;
+        with m as (
+            insert into stock_movements (movement_type, business_date, reason)
+                select 'UNATTRIBUTED_RECOGNITION', '2026-10-01', 'KASUS-' || g from generate_series(1, 2000) g returning id, reason
+        )
+        insert into unattributed_loss_cases (case_kind, product_id, quantity_scale, location_id, condition, recognized_qty_base, exposure_qty_base, resolved_qty_base,
+                recognition_movement_id, business_date, recognized_by, reason)
+            select 'LOSS', ms.products[1 + n % 20000], 0, s.ids[1 + n % 50], 'USABLE', 1, 2, case when n % 50 = 0 then 0 else 1 end, m.id, '2026-10-01', u.ids[1], 'Selisih'
+            from m, lateral (select substr(m.reason, 7)::int as n) k, seed_masters ms, seed_locations s, seed_users u;
+        -- The demand side: a dispatch of one line in ten, and the active reservations of one line in fifty.
+        insert into stock_movements (movement_type, business_date, company_id) select 'DISPATCH', '2026-10-02', c from unnest((select ids from seed_companies)) c;
+        insert into dispatch_lines (stock_movement_id, project_line_id, project_id, company_id, product_id, quantity_scale, entered_qty, entered_unit_id, ratio_to_base,
+                qty_base, reserved_qty_base, unreserved_qty_base)
+            select (select m.id from stock_movements m where m.movement_type = 'DISPATCH' and m.company_id = l.company_id), l.id, l.project_id, l.company_id, l.product_id,
+                l.quantity_scale, 1, l.entered_unit_id, 1, 1, 0, 1
+            from project_lines l where l.id % 10 = 0;
+        insert into reservations (project_line_id, company_id, product_id, quantity_scale, state, remaining_qty_base)
+            select l.id, l.company_id, l.product_id, l.quantity_scale, case when l.id % 50 = 0 then 'ACTIVE' else 'RELEASED' end, case when l.id % 50 = 0 then 5 else 0 end
+            from project_lines l where l.id % 10 = 0;
         insert into expenses (company_id, kind, category, amount, business_date)
             select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'MANUAL', 'Operasional', 250000, date '2026-10-01' - g % 300
             from generate_series(1, 20000) g, seed_companies c;

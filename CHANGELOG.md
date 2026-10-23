@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-24, TASK-008 — schema: INV tables, inventory and lot-cost representations
+
+- TASK-007 merged by the Owner into `main` as `3cd30d3` (pull request #7).
+- Built TASK-008 on its branch `task/TASK-008-schema-inv` in the Owner's local Desktop session: 28 expand-only migrations — DATABASE §4.7's 26 INV tables with their CHECKs, keys, the ledger's deferred balance, reversal and case-sign trigger, the guards of §5.2, the recognition snapshot's deferred sums, the IX- indexes and the runtime's privileges, and the foreign keys and triggers DIR-088, DIR-089 (1) and DIR-090 (1) give it, receipts in a purchase line's first effect (DIR-090 (5)). The local and CI database starts with `max_locks_per_transaction=1024` for the parallel suite.
+- The Owner's decision DIR-091 on four discoveries, at one checkpoint, with APPR-020's DATABASE text: the drop-ship forward keys of TASK-008's columns to TASK-009; each row held to its parent's product, a count's scope within its location, condition and product set `product_ids bigint[]` of distinct goods products, and a restoration's case of its source or its consumption's bearer, built by TASK-008 — TASK_PLAN's Change 8.
+- Every check passed in fresh CI on `aa9a2e0`. TASK-008 DONE; TASK-009 READY beside TASK-010, TASK-014 and TASK-073 — progress 8 / 87 —; pull request #8 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-23, TASK-007 — schema: PRJ, CST, PUR and ADM tables
 
 - TASK-006 merged by the Owner into `main` as `0e92134` (pull request #6).

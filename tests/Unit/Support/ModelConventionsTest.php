@@ -16,6 +16,21 @@ use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
+use App\Modules\INV\Models\DispatchLine;
+use App\Modules\INV\Models\InventoryLot;
+use App\Modules\INV\Models\ReceivingLine;
+use App\Modules\INV\Models\ReservationEvent;
+use App\Modules\INV\Models\StockConsumption;
+use App\Modules\INV\Models\StockCount;
+use App\Modules\INV\Models\StockCountLine;
+use App\Modules\INV\Models\StockMovement;
+use App\Modules\INV\Models\StockMovementEntry;
+use App\Modules\INV\Models\StockProductBalance;
+use App\Modules\INV\Models\StockRestoration;
+use App\Modules\INV\Models\UnattributedLossCandidate;
+use App\Modules\INV\Models\UnattributedLossCase;
+use App\Modules\INV\Models\UnattributedLossResolution;
+use App\Modules\INV\Models\UnattributedLossResolutionLine;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\OPS\Models\ImportBatch;
@@ -47,8 +62,8 @@ use App\Modules\PUR\Models\PurchaseLineTaxComponent;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-// TL-03 (TASK-005–TASK-007): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
-// PTY, CAT, DOC, PRJ, PUR, CST and ADM models — UUIDv7 public identifiers beside the internal key, money,
+// TL-03 (TASK-005–TASK-008): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
+// PTY, CAT, DOC, PRJ, PUR, CST, ADM and INV models — UUIDv7 public identifiers beside the internal key, money,
 // quantities and rates as exact decimal strings never a float, a one-way password hash, append-only
 // models that refuse a change (C-53), and the guards keyed by the record they guard.
 
@@ -62,6 +77,7 @@ it('generates a UUIDv7 public identifier beside the internal key', function (str
 })->with([
     User::class, CorrectionCase::class, ImportBatch::class, Company::class, ClientOrganization::class, Supplier::class, Product::class,
     Document::class, DocumentVersion::class, EvidenceDocument::class, FileObject::class, Project::class, QuotationRevision::class, Purchase::class,
+    StockMovement::class, StockCount::class, UnattributedLossCase::class,
 ]);
 
 it('carries money as an exact decimal string with two places', function (string $given, string $carried) {
@@ -98,6 +114,9 @@ it('carries each money, quantity and rate attribute as an exact decimal string a
     'a signed lot cost' => [LotCostEntry::class, 'amount', '-1500.5', '-1500.50'],
     'a lot\'s remaining quantity' => [LotCostBalance::class, 'remaining_qty_base', '3', '3.000'],
     'an expense' => [Expense::class, 'amount', '250000', '250000.00'],
+    'a ledger delta' => [StockMovementEntry::class, 'qty_delta_base', '-1.25', '-1.250'],
+    'a product\'s on-hand quantity' => [StockProductBalance::class, 'on_hand_qty', '7', '7.000'],
+    'a candidate\'s unit cost' => [UnattributedLossCandidate::class, 'net_unit_cost_at_recognition', '12000', '12000.00'],
 ]);
 
 it('keys each guard by the record it guards, never an identity of its own (DATABASE §4.5–§4.8)', function (string $model, string $key) {
@@ -108,6 +127,7 @@ it('keys each guard by the record it guards, never an identity of its own (DATAB
 })->with([
     [ProjectLineBalance::class, 'project_line_id'], [ProjectCommercialBalance::class, 'project_id'], [PurchaseLineBalance::class, 'purchase_line_id'],
     [LotCostBalance::class, 'lot_id'], [PurchaseChargeBalance::class, 'purchase_charge_id'], [ProjectSiplahDetail::class, 'project_id'],
+    [StockProductBalance::class, 'product_id'],
 ]);
 
 it('stores the password only as a one-way hash and never serializes a credential', function () {
@@ -133,5 +153,7 @@ it('refuses to update or delete a saved append-only row at the model (C-53)', fu
     AuditEvent::class, SecurityEvent::class, LegacyArchiveItem::class, RetiredNumber::class, ProductPriceHistory::class, FileObject::class,
     EvidenceDocumentVersion::class, CommercialConfirmation::class, ConfirmationLinePin::class, LineScopeCancellation::class,
     ProjectStateTransition::class, PurchaseCharge::class, PurchaseChargeLineShare::class, PurchaseLineClosure::class, PurchaseLineAdjustment::class,
-    LotCostEntry::class, CostAttribution::class, Expense::class, AdminRequirementWaiver::class,
+    LotCostEntry::class, CostAttribution::class, Expense::class, AdminRequirementWaiver::class, InventoryLot::class, StockMovement::class,
+    StockMovementEntry::class, ReceivingLine::class, DispatchLine::class, StockConsumption::class, StockRestoration::class, ReservationEvent::class,
+    StockCountLine::class, UnattributedLossCandidate::class, UnattributedLossResolution::class, UnattributedLossResolutionLine::class,
 ]);

@@ -4,6 +4,9 @@ use App\Modules\CST\Models\CostAttribution;
 use App\Modules\CST\Models\Expense;
 use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\INV\Models\InventoryLot;
+use App\Modules\INV\Models\ReceivingLine;
+use App\Modules\INV\Models\StockConsumption;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
@@ -55,7 +58,12 @@ it('keys a charge row to its charge, share or re-spread line within the lot\'s s
 it('posts one basis and one non-creditable tax row per lot, never twice (BR-INV-04; BR-FIN-17)', function () {
     $line = PurchaseLine::factory()->create();
     $goods = ['source_company_id' => $line->company_id, 'purchase_line_id' => $line->id];
-    $lot = LotCostEntry::factory()->create(['entry_kind' => 'GOODS', 'cost_component' => 'GOODS', ...$goods])->lot_id;
+    // A receipt's lot, whose basis is GOODS (§4.8's basis trigger, DIR-090 (1)).
+    $receipt = ReceivingLine::factory()->create(['purchase_line_id' => $line->id]);
+    $lot = InventoryLot::factory()->create([
+        'acquisition_kind' => 'RECEIPT', 'import_row_id' => null, 'receiving_line_id' => $receipt->id, 'source_company_id' => $line->company_id, 'product_id' => $line->product_id,
+    ])->id;
+    LotCostEntry::factory()->create(['lot_id' => $lot, 'entry_kind' => 'GOODS', 'cost_component' => 'GOODS', ...$goods]);
     LotCostEntry::factory()->create(['lot_id' => $lot, 'entry_kind' => 'NONCREDITABLE_TAX', 'cost_component' => 'NONCREDITABLE_TAX', ...$goods]);
 
     Refusal::assert(Refusal::UNIQUE, 'lot_cost_entries_one_basis', fn () => LotCostEntry::factory()->create(['lot_id' => $lot, 'entry_kind' => 'OPENING_COST', 'cost_component' => 'BASIS']));
@@ -70,8 +78,9 @@ it('posts one basis and one non-creditable tax row per lot, never twice (BR-INV-
 });
 
 it('conserves a lot\'s cost: never negative, none left once no quantity is (C-26; BR-FIN-13)', function () {
-    DB::table('lot_cost_balances')->insert(['lot_id' => 7001, 'remaining_qty_base' => 10, 'remaining_cost' => '500000.00']);
-    $guard = fn () => DB::table('lot_cost_balances')->where('lot_id', 7001);
+    $lot = InventoryLot::factory()->create()->id;
+    DB::table('lot_cost_balances')->insert(['lot_id' => $lot, 'remaining_qty_base' => 10, 'remaining_cost' => '500000.00']);
+    $guard = fn () => DB::table('lot_cost_balances')->where('lot_id', $lot);
 
     Refusal::assert(Refusal::CHECK, 'lot_cost_balances_c26_conservation', fn () => $guard()->update(['remaining_qty_base' => 0]));
     Refusal::assert(Refusal::CHECK, 'lot_cost_balances_c26_conservation', fn () => $guard()->update(['remaining_cost' => '-0.01']));
@@ -95,8 +104,9 @@ it('attributes from exactly one source, a lot draw with its lot and no component
 ]);
 
 it('attributes HPP once per consumption, and per component and charge of a direct line (C-25; L-18)', function () {
-    $company = Company::factory()->create()->id;
-    $draw = ['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => 9001, 'lot_id' => 7001, 'source_company_id' => $company, 'bearer_company_id' => $company];
+    $consumption = StockConsumption::factory()->create();
+    $company = $consumption->bearer_company_id;
+    $draw = ['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => $consumption->id, 'lot_id' => $consumption->lot_id, 'source_company_id' => $company, 'bearer_company_id' => $company];
     CostAttribution::factory()->create($draw);
     $direct = CostAttribution::factory()->create();
     $line = ['purchase_line_id' => $direct->purchase_line_id, 'bearer_company_id' => $direct->bearer_company_id];
@@ -119,7 +129,11 @@ it('attributes HPP once per consumption, and per component and charge of a direc
 
 it('bears a cost in another company than the lot\'s only with its reason, its project and case within their companies (C-28; L-44; §15)', function () {
     [$source, $bearer] = [Company::factory()->create()->id, Company::factory()->create()->id];
-    $draw = ['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => 9101, 'lot_id' => 7101, 'source_company_id' => $source, 'bearer_company_id' => $bearer];
+    $project = Project::factory()->create(['company_id' => $bearer])->id;
+    // The consumption carries the same overlay, the cost row its bearer (C-28; §6.5).
+    $consumption = StockConsumption::factory()->create(['lot_id' => InventoryLot::factory()->create(['source_company_id' => $source])->id, 'bearer_company_id' => $bearer,
+        'bearer_project_id' => $project, 'allocation_reason' => 'Barang PT A dipakai proyek PT B']);
+    $draw = ['purchase_line_id' => null, 'cost_component' => null, 'stock_consumption_id' => $consumption->id, 'lot_id' => $consumption->lot_id, 'source_company_id' => $source, 'bearer_company_id' => $bearer];
 
     Refusal::assert(Refusal::CHECK, 'cost_attributions_c28_allocation_reason', fn () => CostAttribution::factory()->create($draw));
     Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_c32_bearer_project_foreign', fn () => CostAttribution::factory()->create([...$draw, 'allocation_reason' => 'Barang PT A dipakai proyek PT B', 'bearer_project_id' => Project::factory()->create(['company_id' => $source])->id]));
@@ -127,7 +141,7 @@ it('bears a cost in another company than the lot\'s only with its reason, its pr
     Refusal::assert(Refusal::CHECK, 'cost_attributions_case_pair', fn () => CostAttribution::factory()->create([...$draw, 'allocation_reason' => 'Barang PT A dipakai proyek PT B', 'case_company_id' => $source]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_c32_correction_case_foreign', fn () => CostAttribution::factory()->create([...$draw, 'allocation_reason' => 'Barang PT A dipakai proyek PT B', 'correction_case_id' => CorrectionCase::factory()->create(['company_id' => $bearer])->id, 'case_company_id' => $source]));
 
-    $allocated = CostAttribution::factory()->create([...$draw, 'allocation_reason' => 'Barang PT A dipakai proyek PT B', 'bearer_project_id' => Project::factory()->create(['company_id' => $bearer])->id,
+    $allocated = CostAttribution::factory()->create([...$draw, 'allocation_reason' => 'Barang PT A dipakai proyek PT B', 'bearer_project_id' => $project,
         'correction_case_id' => CorrectionCase::factory()->create(['company_id' => $source])->id, 'case_company_id' => $source]);
 
     expect($allocated->bearerProject?->company_id)->toBe($bearer);

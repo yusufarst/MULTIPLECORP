@@ -6,6 +6,7 @@ use App\Modules\DOC\Models\DocumentType;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
+use App\Modules\INV\Models\StockMovement;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\CompanyBankAccount;
 use App\Modules\ORG\Models\NumberingScheme;
@@ -46,6 +47,15 @@ function documentOf(string $type, array $attributes = []): Document
         $number = "CTH/PO/LABEL/{$attributes['purchase_id']}";
         $attributes['purchase_id'] = Purchase::query()->where('company_id', $company)->where('purchase_number', $number)->value('id')
             ?? Purchase::factory()->create(['company_id' => $company, 'purchase_number' => $number])->id;
+    }
+
+    // A dispatch or receipt movement of the company per label, keyed by TASK-008 (DIR-089 (1)).
+    foreach (['dispatch_movement_id' => 'DISPATCH', 'receiving_movement_id' => 'RECEIPT'] as $column => $movementType) {
+        if (isset($attributes[$column])) {
+            $label = "LABEL-{$attributes[$column]}";
+            $attributes[$column] = StockMovement::query()->where('company_id', $company)->where('movement_type', $movementType)->where('reason', $label)->value('id')
+                ?? StockMovement::factory()->create(['company_id' => $company, 'movement_type' => $movementType, 'reason' => $label])->id;
+        }
     }
 
     return Document::factory()->create(['document_type_code' => DocumentTypeFactory::ensure($type), 'project_id' => null, ...$attributes]);
