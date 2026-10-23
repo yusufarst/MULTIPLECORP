@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 6
-READY: 3
+DONE: 7
+READY: 4
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 1
-TODO: 64
+VERIFYING: 0
+TODO: 63
 SUPERSEDED: 0
 
 Progress:
-6 / 87
-Percentage: 6.9 %
+7 / 87
+Percentage: 8.0 %
 
-CURRENT TASK: TASK-007 — Schema — PRJ, CST, PUR and ADM tables, VERIFYING: built on its branch `task/TASK-007-schema-prj-cst-pur-adm` from `main` after TASK-006's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
-NEXT READY TASK: TASK-010 — Audit and security logging, TASK-014 and TASK-073, READY; TASK-007's DONE makes TASK-008 READY once its READY gate holds, and after the Owner merges TASK-007's pull request (ER-07) the plan's order takes TASK-008 first; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-007 — Schema — PRJ, CST, PUR and ADM tables DONE on its branch `task/TASK-007-schema-prj-cst-pur-adm`, CI PASS on `e494bce`, its pull request #7 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-008 — Schema — INV tables, inventory and lot-cost representations, READY, taken first once the Owner merges TASK-007's pull request #7 (ER-07); TASK-010, TASK-014 and TASK-073 also READY; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 7 of 2026-10-23 — DIR-090's dispositions of TASK-007's discoveries: the forward keys, triggers and first-effect facts of TASK-007's columns to TASK-008 and TASK-009; APPR-019's guards of (2), (3), (4) and (6) built by TASK-007
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -55,7 +55,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-004](TASK-004.md) — Verification and release tooling check
 - [x] [TASK-005](TASK-005.md) — Schema foundations — IAM and OPS tables, history and types
 - [x] [TASK-006](TASK-006.md) — Schema — ORG, PTY, CAT and DOC tables
-- [ ] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
+- [x] [TASK-007](TASK-007.md) — Schema — PRJ, CST, PUR and ADM tables
 - [ ] [TASK-008](TASK-008.md) — Schema — INV tables, inventory and lot-cost representations
 - [ ] [TASK-009](TASK-009.md) — Schema — FUL and FIN tables, finance and tax representations
 - [ ] [TASK-010](TASK-010.md) — Audit and security logging
@@ -147,8 +147,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-004](TASK-004.md) | Verification and release tooling check | Foundation · Foundation | STANDARD | DONE | 003 | 062, 063, 064, 065, 066, 067, 068, 069, 073 | NO | AGENT | NONE | NO |
 | [TASK-005](TASK-005.md) | Schema foundations — IAM and OPS tables, history and types | Platform · Platform · IAM · OPS | HIGH | DONE | 003 | 006, 010, 011, 017 | NO | AGENT | PROPOSED | NO |
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | DONE | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
-| [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | VERIFYING | 006 | 008 | NO | AGENT | PROPOSED | NO |
-| [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | TODO | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
+| [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | DONE | 006 | 008 | NO | AGENT | PROPOSED | NO |
+| [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | READY | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
 | [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | TODO | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | READY | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
