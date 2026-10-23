@@ -28,7 +28,7 @@ Progress:
 6 / 87
 Percentage: 6.9 %
 
-CURRENT TASK: none in progress — TASK-006 — Schema — ORG, PTY, CAT and DOC tables DONE on its branch `task/TASK-006-schema-org-pty-cat-doc`, CI PASS on `62d9945`, its pull request #6 waiting on the Owner's merge (ER-07)
+CURRENT TASK: none in progress — TASK-006 — Schema — ORG, PTY, CAT and DOC tables DONE on its branch `task/TASK-006-schema-org-pty-cat-doc`, CI PASS on `9bd807b`, its pull request #6 waiting on the Owner's merge (ER-07)
 NEXT READY TASK: TASK-007 — Schema — PRJ, CST, PUR and ADM tables, READY, taken first once the Owner merges TASK-006's pull request #6 (ER-07); TASK-010, TASK-014 and TASK-073 also READY; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 6 of 2026-10-23 — DIR-089's dispositions of TASK-006's discoveries: the 26 foreign keys of TASK-006's columns to TASK-007–TASK-009, the type-free evidence identity index to TASK-030, the fourteen document types' rows to TASK-029, no command removing a product image in V1, and TASK-006's guard of the files' company and purpose; totals unchanged (§7)
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
