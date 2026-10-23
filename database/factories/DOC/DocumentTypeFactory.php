@@ -31,7 +31,7 @@ final class DocumentTypeFactory extends Factory
     public static function ensure(string $code): string
     {
         if (DocumentType::query()->whereKey($code)->doesntExist()) {
-            DocumentType::factory()->create([
+            self::new()->create([
                 'code' => $code,
                 'name' => "Dokumen {$code}",
                 'allowed_modes' => $code === 'DOC-05' ? ['RECEIPT', 'PRE_PAYMENT'] : ['STANDARD'],

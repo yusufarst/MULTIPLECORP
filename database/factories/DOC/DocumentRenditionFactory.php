@@ -3,7 +3,6 @@
 namespace Database\Factories\DOC;
 
 use App\Modules\DOC\Models\DocumentRendition;
-use App\Modules\DOC\Models\DocumentVersion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -19,7 +18,7 @@ final class DocumentRenditionFactory extends Factory
     public function definition(): array
     {
         return [
-            'document_version_id' => DocumentVersion::factory()->issued(),
+            'document_version_id' => DocumentVersionFactory::new()->issued(),
             'attempt_no' => 1,
         ];
     }

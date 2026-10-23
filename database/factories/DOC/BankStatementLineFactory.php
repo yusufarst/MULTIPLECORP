@@ -3,9 +3,8 @@
 namespace Database\Factories\DOC;
 
 use App\Modules\DOC\Models\BankStatementLine;
-use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\ORG\Models\Company;
-use App\Modules\ORG\Models\CompanyBankAccount;
+use Database\Factories\ORG\CompanyBankAccountFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -36,11 +35,11 @@ final class BankStatementLineFactory extends Factory
     {
         return $this->afterMaking(function (BankStatementLine $line): void {
             if ($line->getAttribute('company_bank_account_id') === null) {
-                $line->company_bank_account_id = CompanyBankAccount::factory()->create(['company_id' => $line->company_id])->id;
+                $line->company_bank_account_id = CompanyBankAccountFactory::new()->createOne(['company_id' => $line->company_id])->id;
             }
 
             if ($line->getAttribute('statement_evidence_id') === null) {
-                $line->statement_evidence_id = EvidenceDocument::factory()->bankStatement()->create(['company_id' => $line->company_id])->id;
+                $line->statement_evidence_id = EvidenceDocumentFactory::new()->bankStatement()->createOne(['company_id' => $line->company_id])->id;
             }
         });
     }

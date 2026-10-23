@@ -4,8 +4,8 @@ namespace Database\Factories\DOC;
 
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceLink;
-use App\Modules\OPS\Models\CorrectionCase;
-use App\Modules\OPS\Models\ImportBatch;
+use Database\Factories\OPS\CorrectionCaseFactory;
+use Database\Factories\OPS\ImportBatchFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -39,9 +39,9 @@ final class EvidenceLinkFactory extends Factory
 
             if ($link->getAttribute('correction_case_id') === null && $link->getAttribute('import_batch_id') === null) {
                 if ($link->company_id === null) {
-                    $link->import_batch_id = ImportBatch::factory()->create()->id;
+                    $link->import_batch_id = ImportBatchFactory::new()->createOne()->id;
                 } else {
-                    $link->correction_case_id = CorrectionCase::factory()->create(['company_id' => $link->company_id])->id;
+                    $link->correction_case_id = CorrectionCaseFactory::new()->createOne(['company_id' => $link->company_id])->id;
                 }
             }
         });

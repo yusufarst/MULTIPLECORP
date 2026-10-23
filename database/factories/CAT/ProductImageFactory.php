@@ -4,7 +4,7 @@ namespace Database\Factories\CAT;
 
 use App\Modules\CAT\Models\Product;
 use App\Modules\CAT\Models\ProductImage;
-use App\Modules\DOC\Models\FileObject;
+use Database\Factories\DOC\FileObjectFactory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +21,7 @@ final class ProductImageFactory extends Factory
     {
         return [
             'product_id' => Product::factory(),
-            'file_object_id' => FileObject::factory()->productImage(),
+            'file_object_id' => FileObjectFactory::new()->productImage(),
         ];
     }
 }
