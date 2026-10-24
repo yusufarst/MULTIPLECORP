@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\Refusal;
 
-// TL-05 and the security requirement of TASK-005–TASK-007 (SECURITY H9-01; DATABASE §28; C-53): the
+// TL-05 and the security requirement of TASK-005–TASK-009 (SECURITY H9-01; DATABASE §28; C-53): the
 // application runtime runs no DDL and holds, table by table, only the privileges of its table's class;
 // the append-only tables refuse its updates and deletes at the database and at the model.
 
@@ -137,6 +137,33 @@ const RUNTIME_PRIVILEGES = [
     'unattributed_loss_group_exposures' => ['SELECT, INSERT', ['bound_qty_base', 'assigned_net_qty_base']],
     'unattributed_loss_resolutions' => ['SELECT, INSERT', []],
     'unattributed_loss_resolution_lines' => ['SELECT, INSERT', []],
+    // TASK-009
+    'dropship_confirmations' => ['SELECT, INSERT', []],
+    'dropship_confirmation_lines' => ['SELECT, INSERT', []],
+    'deliveries' => ['SELECT, INSERT', []],
+    'delivery_lines' => ['SELECT, INSERT', []],
+    'delivery_closures' => ['SELECT, INSERT', []],
+    'service_handovers' => ['SELECT, INSERT', []],
+    'service_handover_lines' => ['SELECT, INSERT', []],
+    'invoices' => ['SELECT, INSERT', ['state', 'current_version_id', 'voided_by', 'voided_at', 'voided_reason', 'void_basis', 'void_correction_case_id', 'void_confirmation_id', 'void_cancellation_id', 'void_project_transition_id', 'lock_version', 'updated_at']],
+    'invoice_versions' => ['SELECT, INSERT, DELETE', ['state', 'kind', 'business_date', 'sales_value', 'output_tax_value', 'client_snapshot', 'revision_reason', 'revision_basis', 'basis_correction_case_id', 'basis_confirmation_id', 'basis_cancellation_id', 'basis_project_transition_id', 'lock_version', 'updated_at']],
+    'invoice_version_lines' => ['SELECT, INSERT, DELETE', ['project_line_id', 'product_id', 'quantity_scale', 'description', 'entered_qty', 'entered_unit_id', 'ratio_to_base', 'qty_base', 'unit_price', 'line_sales_value', 'lock_version', 'updated_at']],
+    'invoice_tax_components' => ['SELECT, INSERT, DELETE', ['tax_type_id', 'treatment_rule_id', 'treatment', 'rate_percent', 'base_amount', 'amount']],
+    'invoice_balances' => ['SELECT, INSERT', ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount', 'collected_tax_settled_amount', 'written_off_amount', 'current_billing_act_id', 'current_due_date']],
+    'invoice_billing_acts' => ['SELECT, INSERT', []],
+    'payments' => ['SELECT, INSERT', ['bank_statement_line_id', 'bank_citation_corrected_at', 'bank_citation_corrected_by', 'bank_citation_corrected_reason']],
+    'payment_claimed_deductions' => ['SELECT, INSERT', []],
+    'application_source_balances' => ['SELECT, INSERT', ['contra_amount', 'invoice_applied_amount', 'refund_backed_amount', 'refund_released_amount', 'refund_shortfall_amount', 'settled_amount', 'claimed_deductions_amount']],
+    'payment_applications' => ['SELECT, INSERT', ['state', 'end_reason', 'end_contra_id', 'end_command_id']],
+    'deduction_settlements' => ['SELECT, INSERT', ['state', 'correction_case_id']],
+    'receivable_writeoffs' => ['SELECT, INSERT', []],
+    'receivable_dispute_holds' => ['SELECT, INSERT', ['cleared_by', 'cleared_at', 'clear_reason']],
+    'opening_customer_credits' => ['SELECT, INSERT', []],
+    'prepayment_kuitansi_links' => ['SELECT, INSERT', ['state', 'unlink_reason']],
+    'disbursements' => ['SELECT, INSERT', []],
+    'other_cash_receipts' => ['SELECT, INSERT', ['bank_statement_line_id', 'bank_citation_corrected_at', 'bank_citation_corrected_by', 'bank_citation_corrected_reason']],
+    'financial_contras' => ['SELECT, INSERT', []],
+    'money_fact_balances' => ['SELECT, INSERT', ['contra_amount', 'backed_amount', 'shortfall_amount', 'released_amount', 'residual_case_id', 'transfer_cited_amount']],
 ];
 
 it('connects the application as the runtime role, which owns nothing and runs no DDL (H9-01)', function (string $statement, string $refusal) {

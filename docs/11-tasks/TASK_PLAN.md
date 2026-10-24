@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 8
-READY: 4
+READY: 3
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 62
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 8 / 87
 Percentage: 9.2 %
 
-CURRENT TASK: none in progress — TASK-008 — Schema — INV tables, inventory and lot-cost representations DONE on its branch `task/TASK-008-schema-inv`, CI PASS on `aa9a2e0`, its pull request #8 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-009 — Schema — FUL and FIN tables, finance and tax representations, READY, taken first once the Owner merges TASK-008's pull request #8 (ER-07); TASK-010, TASK-014 and TASK-073 also READY; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-009 — Schema — FUL and FIN tables, finance and tax representations, VERIFYING: built on its branch `task/TASK-009-schema-ful-fin` from `main` after TASK-008's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-010 — Audit and security logging, TASK-014 and TASK-073, READY; TASK-009's DONE makes TASK-012 and TASK-013 READY once their other dependencies are DONE and their READY gates hold; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 8 of 2026-10-24 — DIR-091's dispositions of TASK-008's discoveries: the drop-ship forward keys of TASK-008's columns to TASK-009; APPR-020's guards of (2), (3) and (4) built by TASK-008
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -149,7 +149,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-006](TASK-006.md) | Schema — ORG, PTY, CAT and DOC tables | Platform · Platform · ORG · PTY · CAT · DOC | HIGH | DONE | 005 | 007, 021, 022 | NO | AGENT | PROPOSED | NO |
 | [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | DONE | 006 | 008 | NO | AGENT | PROPOSED | NO |
 | [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | DONE | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
-| [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | READY | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
+| [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | VERIFYING | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | READY | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |

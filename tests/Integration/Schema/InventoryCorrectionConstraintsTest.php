@@ -2,6 +2,7 @@
 
 use App\Modules\CAT\Models\Product;
 use App\Modules\CAT\Models\Unit;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
 use App\Modules\INV\Models\DispatchLine;
 use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\SerialUnit;
@@ -104,12 +105,13 @@ it('returns dispatched units in the dispatch\'s own unit at its ratio or in the 
 });
 
 it('records a drop-ship return without a movement, its error reversal exact, of its kind and once (C-55; C-59; CM-15/37)', function () {
-    $unit = Unit::factory()->create()->id;
-    $product = Product::factory()->create(['base_unit_id' => $unit])->id;
+    // A drop-ship line of TASK-009, its unit snapshot, company and product the restoration's (DIR-091 (1)).
+    $line = DropshipConfirmationLine::factory()->create();
     $dropship = [
-        'stock_consumption_id' => null, 'dropship_confirmation_line_id' => 9_001, 'stock_movement_id' => null, 'returned_condition' => null,
-        'source_company_id' => Company::factory()->create()->id, 'product_id' => $product, 'quantity_scale' => 0, 'cited_unit_id' => $unit, 'cited_ratio_to_base' => 1,
-        'entered_unit_id' => $unit, 'ratio_to_base' => 1, 'entered_qty' => '1.000', 'qty_base' => '1.000',
+        'stock_consumption_id' => null, 'dropship_confirmation_line_id' => $line->id, 'stock_movement_id' => null, 'returned_condition' => null,
+        'source_company_id' => $line->company_id, 'product_id' => $line->product_id, 'quantity_scale' => $line->quantity_scale,
+        'cited_unit_id' => $line->entered_unit_id, 'cited_ratio_to_base' => $line->ratio_to_base,
+        'entered_unit_id' => $line->entered_unit_id, 'ratio_to_base' => 1, 'entered_qty' => '1.000', 'qty_base' => '1.000',
     ];
     $return = StockRestoration::factory()->create([...$dropship, 'kind' => 'DROPSHIP_SUPPLIER_RETURN', 'after_delivery' => true]);
     $undo = [...$dropship, 'kind' => 'DROPSHIP_ERROR_REVERSAL', 'reverses_restoration_id' => $return->id, 'reverses_restoration_kind' => 'DROPSHIP_SUPPLIER_RETURN'];

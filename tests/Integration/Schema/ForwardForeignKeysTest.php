@@ -9,11 +9,23 @@ use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceLink;
 use App\Modules\DOC\Models\FileObject;
+use App\Modules\FIN\Models\DeductionSettlement;
+use App\Modules\FIN\Models\Disbursement;
+use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Models\InvoiceVersion;
+use App\Modules\FIN\Models\OtherCashReceipt;
+use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Models\ReceivableWriteoff;
+use App\Modules\FUL\Models\Delivery;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
+use App\Modules\FUL\Models\ServiceHandover;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Models\UserCompanyGrant;
 use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\StockConsumption;
 use App\Modules\INV\Models\StockMovement;
+use App\Modules\INV\Models\StockRestoration;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\OPS\Models\ImportBatch;
@@ -46,6 +58,12 @@ use Tests\Support\Refusal;
 // consumptions and restorations exist, exactly those, each refusing a row that references no record, or
 // another company's; pool evidence links only to a pool movement; a lot's basis is its acquisition's and a
 // lot draw's bearer its consumption's, a return settlement aside.
+//
+// TL-05 (TASK-009), criteria 6–8, DIR-089 (1), DIR-090 (1) and (5) and DIR-091 (1): the foreign keys TASK-009
+// adds from TASK-006's, TASK-007's and TASK-008's columns to its FUL and FIN records exist, exactly those,
+// each refusing a row that references no record, or another company's; a drop-ship line's direct cost is
+// borne in its company and its confirmation is a purchase line's first effect; a drop-ship restoration cites
+// its line's unit snapshot, company and product.
 
 uses(RefreshDatabase::class);
 
@@ -262,4 +280,130 @@ it('holds a lot\'s basis to its acquisition and a lot draw\'s bearer to its cons
         ->and(CostAttribution::factory()->create([...$draw, 'bearer_company_id' => $consumption->bearer_company_id])->exists)->toBeTrue()
         // The unrecovered share of a supplier return is borne by its case's causal project (§6.5).
         ->and(CostAttribution::factory()->create([...$draw, 'cost_class' => 'LOSS', 'cause' => 'RETURN_SETTLEMENT', 'bearer_company_id' => $other, 'allocation_reason' => 'Bagian tak terpulihkan'])->exists)->toBeTrue();
+});
+
+it('adds exactly the foreign keys DIR-089 (1), DIR-090 (1) and DIR-091 (1) assign to TASK-009, each restricting a delete', function () {
+    $keys = DB::select("select conname, pg_get_constraintdef(oid) as definition from pg_constraint
+        where contype = 'f' and conrelid::regclass::text in ('documents', 'document_versions', 'evidence_links', 'cost_attributions', 'expenses', 'stock_consumption_balances', 'stock_restorations')
+            and confrelid::regclass::text in ('dropship_confirmations', 'dropship_confirmation_lines', 'deliveries', 'service_handovers', 'invoices', 'invoice_versions',
+                'payments', 'other_cash_receipts', 'disbursements', 'deduction_settlements', 'receivable_writeoffs')
+        order by conname");
+    $company = fn (string $column, string $table): string => "FOREIGN KEY (company_id, {$column}) REFERENCES {$table}(company_id, id) ON DELETE RESTRICT";
+
+    expect(array_column($keys, 'definition', 'conname'))->toBe([
+        'cost_attributions_dropship_line_foreign' => 'FOREIGN KEY (dropship_confirmation_line_id) REFERENCES dropship_confirmation_lines(id) ON DELETE RESTRICT',
+        'document_versions_c32_invoice_version_foreign' => $company('invoice_version_id', 'invoice_versions'),
+        'documents_c32_delivery_foreign' => $company('delivery_id', 'deliveries'),
+        'documents_c32_dropship_confirmation_foreign' => $company('dropship_confirmation_id', 'dropship_confirmations'),
+        'documents_c32_invoice_foreign' => $company('invoice_id', 'invoices'),
+        'documents_c32_payment_foreign' => $company('payment_id', 'payments'),
+        'documents_c32_service_handover_foreign' => $company('service_handover_id', 'service_handovers'),
+        'evidence_links_c32_deduction_settlement_foreign' => $company('deduction_settlement_id', 'deduction_settlements'),
+        'evidence_links_c32_delivery_foreign' => $company('delivery_id', 'deliveries'),
+        'evidence_links_c32_disbursement_foreign' => $company('disbursement_id', 'disbursements'),
+        'evidence_links_c32_dropship_confirmation_foreign' => $company('dropship_confirmation_id', 'dropship_confirmations'),
+        'evidence_links_c32_other_cash_receipt_foreign' => $company('other_cash_receipt_id', 'other_cash_receipts'),
+        'evidence_links_c32_payment_foreign' => $company('payment_id', 'payments'),
+        'evidence_links_c32_receivable_writeoff_foreign' => $company('receivable_writeoff_id', 'receivable_writeoffs'),
+        'evidence_links_c32_service_handover_foreign' => $company('service_handover_id', 'service_handovers'),
+        'expenses_c32_deduction_settlement_foreign' => $company('deduction_settlement_id', 'deduction_settlements'),
+        'stock_consumption_balances_dropship_line_foreign' => 'FOREIGN KEY (dropship_confirmation_line_id) REFERENCES dropship_confirmation_lines(id) ON DELETE RESTRICT',
+        'stock_restorations_c08_dropship_source_foreign' => 'FOREIGN KEY (dropship_confirmation_line_id, source_company_id) REFERENCES dropship_confirmation_lines(id, company_id) ON DELETE RESTRICT',
+        'stock_restorations_dropship_product_foreign' => 'FOREIGN KEY (dropship_confirmation_line_id, product_id) REFERENCES dropship_confirmation_lines(id, product_id) ON DELETE RESTRICT',
+        'stock_restorations_l31_dropship_unit_foreign' => 'FOREIGN KEY (dropship_confirmation_line_id, cited_unit_id, cited_ratio_to_base) REFERENCES dropship_confirmation_lines(id, entered_unit_id, ratio_to_base) ON DELETE RESTRICT',
+    ]);
+});
+
+it('refuses a document or an evidence link that references no FUL or FIN record, or another company\'s (DIR-089 (1); C-32)', function (Closure $target, string $column, Closure $write, string $constraint) {
+    $company = Company::factory()->create()->id;
+
+    Refusal::assert(Refusal::FOREIGN_KEY, $constraint, fn () => $write($company, $column, 999_999));
+    Refusal::assert(Refusal::FOREIGN_KEY, $constraint, fn () => $write($company, $column, $target(Company::factory()->create()->id)));
+
+    expect($write($company, $column, $target($company)))->toBeTrue();
+})->with(function () {
+    $of = static fn (string $model): Closure => static fn (int $company): int => $model::factory()->create(['company_id' => $company])->id;
+    $invoice = static fn (int $company): int => Invoice::factory()->create(['company_id' => $company])->id;
+    $settlement = static fn (int $company): int => DeductionSettlement::factory()->create(['payment_id' => Payment::factory()->create(['company_id' => $company])->id])->id;
+    $writeoff = static fn (int $company): int => ReceivableWriteoff::factory()->create(['invoice_id' => $invoice($company)])->id;
+    // Each subject in the type that renders it; a receipt Kuitansi on its company's own invoice beside the payment.
+    $document = static fn (int $company, string $column, int $id): bool => Document::factory()->create([
+        'company_id' => $company, 'project_id' => null, $column => $id, ...match ($column) {
+            'dropship_confirmation_id' => ['document_type_code' => DocumentTypeFactory::ensure('DOC-03')],
+            'invoice_id' => ['document_type_code' => DocumentTypeFactory::ensure('DOC-06')],
+            'payment_id' => ['document_type_code' => DocumentTypeFactory::ensure('DOC-05'), 'mode' => 'RECEIPT', 'invoice_id' => $invoice($company)],
+            'delivery_id' => ['document_type_code' => DocumentTypeFactory::ensure('DOC-10')],
+            default => ['document_type_code' => DocumentTypeFactory::ensure('DOC-08')],
+        },
+    ])->exists;
+    $link = static fn (int $company, string $column, int $id): bool => EvidenceLink::factory()->create([
+        'evidence_document_id' => EvidenceDocument::factory()->create(['company_id' => $company])->id, 'evidence_scope' => 'COMPANY', 'company_id' => $company, $column => $id,
+    ])->exists;
+
+    return [
+        'a document\'s drop-ship confirmation' => [$of(DropshipConfirmation::class), 'dropship_confirmation_id', $document, 'documents_c32_dropship_confirmation_foreign'],
+        'a document\'s invoice' => [$invoice, 'invoice_id', $document, 'documents_c32_invoice_foreign'],
+        'a document\'s payment' => [$of(Payment::class), 'payment_id', $document, 'documents_c32_payment_foreign'],
+        'a document\'s delivery' => [$of(Delivery::class), 'delivery_id', $document, 'documents_c32_delivery_foreign'],
+        'a document\'s handover' => [$of(ServiceHandover::class), 'service_handover_id', $document, 'documents_c32_service_handover_foreign'],
+        'an evidence link\'s delivery' => [$of(Delivery::class), 'delivery_id', $link, 'evidence_links_c32_delivery_foreign'],
+        'an evidence link\'s drop-ship confirmation' => [$of(DropshipConfirmation::class), 'dropship_confirmation_id', $link, 'evidence_links_c32_dropship_confirmation_foreign'],
+        'an evidence link\'s handover' => [$of(ServiceHandover::class), 'service_handover_id', $link, 'evidence_links_c32_service_handover_foreign'],
+        'an evidence link\'s payment' => [$of(Payment::class), 'payment_id', $link, 'evidence_links_c32_payment_foreign'],
+        'an evidence link\'s other Cash-In' => [$of(OtherCashReceipt::class), 'other_cash_receipt_id', $link, 'evidence_links_c32_other_cash_receipt_foreign'],
+        'an evidence link\'s disbursement' => [$of(Disbursement::class), 'disbursement_id', $link, 'evidence_links_c32_disbursement_foreign'],
+        'an evidence link\'s settlement' => [$settlement, 'deduction_settlement_id', $link, 'evidence_links_c32_deduction_settlement_foreign'],
+        'an evidence link\'s write-off' => [$writeoff, 'receivable_writeoff_id', $link, 'evidence_links_c32_receivable_writeoff_foreign'],
+    ];
+});
+
+it('keys a version\'s rendered invoice version in its company (DIR-089 (1); C-32)', function () {
+    $version = DocumentVersion::factory()->create();
+    $own = InvoiceVersion::factory()->create(['invoice_id' => Invoice::factory()->create(['company_id' => $version->company_id])->id]);
+    $row = fn () => DB::table('document_versions')->where('id', $version->id);
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'document_versions_c32_invoice_version_foreign', fn () => $row()->update(['invoice_version_id' => InvoiceVersion::factory()->create()->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'document_versions_c32_invoice_version_foreign', fn () => $row()->update(['invoice_version_id' => 999_999]));
+
+    $row()->update(['invoice_version_id' => $own->id]);
+
+    expect($row()->value('invoice_version_id'))->toBe($own->id);
+});
+
+it('bears a drop-ship line\'s direct cost in its company, a fee expense\'s settlement in its own, and a drop-ship confirmation as a purchase line\'s first effect (DIR-090 (1), (5); C-32; L-23)', function () {
+    $line = DropshipConfirmationLine::factory()->create();
+    $direct = ['purchase_line_id' => null, 'dropship_confirmation_line_id' => $line->id, 'cost_component' => 'GOODS'];
+    $settlement = DeductionSettlement::factory()->create();
+    $fee = ['kind' => 'FEE_DEDUCTION', 'company_id' => $settlement->company_id, 'evidence_document_id' => $settlement->evidence_document_id, 'evidence_type' => 'FEE_ADVICE'];
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'cost_attributions_dropship_line_foreign', fn () => CostAttribution::factory()->create([...$direct, 'dropship_confirmation_line_id' => 999_999, 'bearer_company_id' => $line->company_id]));
+    Refusal::assert(Refusal::CHECK, 'cost_attributions_dropship_line_within_bearer_company', fn () => CostAttribution::factory()->create([...$direct, 'bearer_company_id' => Company::factory()->create()->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'expenses_c32_deduction_settlement_foreign', fn () => Expense::factory()->create([...$fee, 'deduction_settlement_id' => DeductionSettlement::factory()->create()->id]));
+    Refusal::assert(Refusal::CHECK, 'purchase_lines_draft_until_first_effect', fn () => DB::table('purchase_lines')->where('id', $line->purchase_line_id)->update(['unit_price' => '1.00']));
+
+    expect(CostAttribution::factory()->create([...$direct, 'bearer_company_id' => $line->company_id])->exists)->toBeTrue()
+        // A return's unrecovered share is borne by its case's causal project, in any company (§6.5; §15).
+        ->and(CostAttribution::factory()->create([...$direct, 'cost_class' => 'LOSS', 'cause' => 'RETURN_SETTLEMENT', 'cost_component' => 'BASIS',
+            'bearer_company_id' => Company::factory()->create()->id, 'allocation_reason' => 'Bagian tak terpulihkan'])->exists)->toBeTrue()
+        ->and(Expense::factory()->create([...$fee, 'deduction_settlement_id' => $settlement->id])->exists)->toBeTrue();
+});
+
+it('caps a drop-ship line\'s restorations, a restoration citing its line\'s unit snapshot, company and product (DIR-091 (1), (3); C-27; L-31)', function () {
+    $line = DropshipConfirmationLine::factory()->create();
+    $other = DropshipConfirmationLine::factory()->create();
+    $restore = fn (array $attributes = []): StockRestoration => StockRestoration::factory()->create([
+        'stock_consumption_id' => null, 'dropship_confirmation_line_id' => $line->id, 'kind' => 'DROPSHIP_SUPPLIER_RETURN', 'stock_movement_id' => null,
+        'returned_condition' => null, 'after_delivery' => false, 'source_company_id' => $line->company_id, 'product_id' => $line->product_id,
+        'quantity_scale' => $line->quantity_scale, 'entered_unit_id' => $line->entered_unit_id, 'cited_unit_id' => $line->entered_unit_id,
+        'cited_ratio_to_base' => $line->ratio_to_base, ...$attributes,
+    ]);
+
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_consumption_balances_dropship_line_foreign', fn () => DB::table('stock_consumption_balances')->insert(['dropship_confirmation_line_id' => 999_999, 'qty_base' => 1]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_restorations_l31_dropship_unit_foreign', fn () => $restore(['cited_ratio_to_base' => 12]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_restorations_c08_dropship_source_foreign', fn () => $restore(['source_company_id' => $other->company_id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'stock_restorations_dropship_product_foreign', fn () => $restore(['product_id' => $other->product_id, 'quantity_scale' => $other->quantity_scale]));
+
+    DB::table('stock_consumption_balances')->insert(['dropship_confirmation_line_id' => $line->id, 'qty_base' => 2]);
+
+    expect($restore()->exists)->toBeTrue();
 });

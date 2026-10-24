@@ -5,6 +5,11 @@ use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentType;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\FileObject;
+use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Models\Payment;
+use App\Modules\FUL\Models\Delivery;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\ServiceHandover;
 use App\Modules\IAM\Models\User;
 use App\Modules\INV\Models\StockMovement;
 use App\Modules\ORG\Models\Company;
@@ -28,8 +33,8 @@ use Tests\Support\Refusal;
 uses(RefreshDatabase::class);
 
 /**
- * A document of the type on its subjects; a project or purchase is named by a label, one real record of
- * the document's company per label, since TASK-007 keys them in the company (DIR-089 (1); C-32).
+ * A document of the type on its subjects; each subject is named by a label, one real record of the
+ * document's company per label, since TASK-007–TASK-009 key them in the company (DIR-089 (1); C-32).
  *
  * @param  array<string, mixed>  $attributes
  */
@@ -55,6 +60,17 @@ function documentOf(string $type, array $attributes = []): Document
             $label = "LABEL-{$attributes[$column]}";
             $attributes[$column] = StockMovement::query()->where('company_id', $company)->where('movement_type', $movementType)->where('reason', $label)->value('id')
                 ?? StockMovement::factory()->create(['company_id' => $company, 'movement_type' => $movementType, 'reason' => $label])->id;
+        }
+    }
+
+    // An invoice, payment, drop-ship confirmation, delivery or handover of the company per label, keyed by TASK-009 (DIR-089 (1)).
+    static $subjects = [];
+    $models = ['invoice_id' => Invoice::class, 'payment_id' => Payment::class, 'dropship_confirmation_id' => DropshipConfirmation::class,
+        'delivery_id' => Delivery::class, 'service_handover_id' => ServiceHandover::class];
+
+    foreach ($models as $column => $model) {
+        if (isset($attributes[$column])) {
+            $attributes[$column] = $subjects["{$company}/{$column}/{$attributes[$column]}"] ??= $model::factory()->create(['company_id' => $company])->id;
         }
     }
 
