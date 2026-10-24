@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-011 — authorization core
+
+- TASK-010 merged by the Owner into `main` as `bedbfca` (pull request #11).
+- Built TASK-011 on its branch `task/TASK-011-authorization-core` in the Owner's local Desktop session: the 80-capability catalogue with its classes, prerequisites and WORKFLOWS §4 mapping and its rows' sync command; the effective-capability and company-scope resolver of EN-02, per request, OWNER_ONLY only through the built-in OWNER role; one gate per capability; RV-01's in-command re-authorization; public identifiers resolved through the scope; the route declarations and the route audit (SM-02); the capability hints of IG-01; the role-name and scope-bypass scans (SM-03).
+- The Owner's decision DIR-094, at one checkpoint, with APPR-023's text: the catalogue sync run after the migrations on every deployment and first in the installation step (INFRASTRUCTURE §5; TASK-020); two readings — TASK_PLAN's Change 11.
+- Every check passed in fresh CI on `dcabec2`. TASK-011 DONE — progress 11 / 87 —; TASK-012 and TASK-013 READY; pull request #12 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-24, TASK-010 — audit and security logging
 
 - TASK-009's reversal-key fix merged by the Owner into `main` as `9ecafb1` (pull request #10).

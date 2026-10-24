@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
@@ -31,6 +32,11 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
+            // The account's own effective capabilities, a hint for which controls are present (IG-01): the
+            // server decides every request (AZ-01; WS-07).
+            'auth' => fn (): array => [
+                'capabilities' => $request->user() === null ? [] : app(EffectiveCapabilities::class)->for($request->user())->capabilities,
+            ],
         ];
     }
 }

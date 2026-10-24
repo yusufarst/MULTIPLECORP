@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 10
-READY: 2
+DONE: 11
+READY: 4
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 62
+TODO: 59
 SUPERSEDED: 0
 
 Progress:
-10 / 87
-Percentage: 11.5 %
+11 / 87
+Percentage: 12.6 %
 
-CURRENT TASK: none in progress — TASK-010 — Audit and security logging DONE on its branch `task/TASK-010-audit-security-logging`, CI PASS on `6572563`, its pull request #11 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-011 — Authorization core, whose dependencies TASK-005 and TASK-010 are DONE, once its READY gate is checked after the Owner merges TASK-010's pull request #11 (ER-07); TASK-014 and TASK-073 READY; TASK-012 and TASK-013, whose schema dependency TASK-009 is DONE, wait on TASK-011 (and TASK-013 on TASK-010); TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-011 — Authorization core — capabilities, roles, grants, company scope and the route audit DONE on its branch `task/TASK-011-authorization-core`, CI PASS on `dcabec2`, its pull request #12 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-012 — Field projection, read classes and cross-company links, and TASK-013 — Command envelope, command identity, idempotency and the lock order, READY — their dependencies DONE and their READY gates checked at TASK-011's DONE —, TASK-012 taken first once the Owner merges TASK-011's pull request #12 (ER-07); TASK-014 and TASK-073 READY; TASK-016 waits on TASK-012, TASK-013 and TASK-015; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -59,7 +59,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-008](TASK-008.md) — Schema — INV tables, inventory and lot-cost representations
 - [x] [TASK-009](TASK-009.md) — Schema — FUL and FIN tables, finance and tax representations
 - [x] [TASK-010](TASK-010.md) — Audit and security logging
-- [ ] [TASK-011](TASK-011.md) — Authorization core — capabilities, roles, grants, company scope and the route audit
+- [x] [TASK-011](TASK-011.md) — Authorization core — capabilities, roles, grants, company scope and the route audit
 - [ ] [TASK-012](TASK-012.md) — Field projection, read classes and cross-company links
 - [ ] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
 - [ ] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
@@ -151,9 +151,9 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | DONE | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
 | [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | DONE | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | DONE | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
-| [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
-| [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
-| [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | TODO | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
+| [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | DONE | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
+| [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | READY | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
+| [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | READY | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | READY | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
 | [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | TODO | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
@@ -273,6 +273,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 9, 2026-10-24 (TASK-009's execution discoveries; [DIR-092](../00-governance/DECISION_LOG.md#dir-092--task-009s-discoveries)).** *Reason:* TASK-009 found four gaps, decided by the Owner at one checkpoint. *Change:* TASK-009 gains a scope line, criterion 9 and its integration test for (1), (3) and (4), on its own tables; TASK-049 gains a scope line, criterion 13 and its feature test for (2); no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-092 and APPR-021's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 **Change 10, 2026-10-24 (TASK-010's execution discoveries; [DIR-093](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries)).** *Reason:* TASK-010 found that ARCHITECTURE §3's tiers bar IAM's identity steps from writers in OPS, and that the TECH-022 insert's account reference keeps a key-share lock, decided by the Owner at one checkpoint. *Change:* TASK-010's EXPECTED MODULES line places its two writers in Support, with its amendment line; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-093 and APPR-022's canonical text, a Level 1 record under CHANGE_CONTROL.
+
+**Change 11, 2026-10-25 (TASK-011's execution discoveries; [DIR-094](../00-governance/DECISION_LOG.md#dir-094--task-011s-discoveries)).** *Reason:* TASK-011 found that no contract or operations step ran the authorization catalogue sync its rows need on the server, decided by the Owner at one checkpoint with two readings. *Change:* TASK-020's installation line runs the sync first, with its amendment line, and INFRASTRUCTURE §5 runs it on every deployment; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-094 and APPR-023's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 

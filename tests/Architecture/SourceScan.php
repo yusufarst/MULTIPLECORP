@@ -53,7 +53,11 @@ final class SourceScan
         ],
         'role-name-check' => [
             'source' => 'SECURITY AZ-02; SM-03',
-            'patterns' => ['/[\'"](OWNER|ADMIN_OPERASIONAL)[\'"]/', '/->hasRole\(/'],
+            'patterns' => ['/[\'"](OWNER|ADMIN_OPERASIONAL)[\'"]/', '/->hasRole\(/', '/\bBuiltinRole::/'],
+        ],
+        'scope-bypass' => [
+            'source' => 'SECURITY EN-04; SM-03',
+            'patterns' => ['/->withoutGlobalScopes?\(/', '/::withoutGlobalScopes?\(/'],
         ],
         'balance-table-write' => [
             'source' => 'ARCHITECTURE §7, §19: every guard update goes through the shared GuardUpdate helper',
@@ -84,6 +88,11 @@ final class SourceScan
     public const ROLE_NAME_ALLOWED = [
         // TASK-005: OWNER is also an unlink reason of C-63 — the CHECK lists the code, no role is checked.
         '/database/migrations/2026_10_20_000008_iam_create_user_external_identities_table.php',
+        // TASK-011: the built-in roles' enumeration, the effective-capability resolver (RG-02) and the
+        // catalogue's rows (RG-01) — the resolver is the one reader AZ-02 names for authorization.
+        '/app/Modules/IAM/Enums/BuiltinRole.php',
+        '/app/Modules/IAM/Services/EffectiveCapabilities.php',
+        '/app/Modules/IAM/Services/CatalogueSync.php',
     ];
 
     /**

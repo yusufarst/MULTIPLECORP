@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -226,34 +226,38 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 - Migration: N/A — no migration or import code in this Task
 - Other: the RV- races as two-connection tests
 
+**CRITERIA DISPOSITIONS (DIR-094):**
+
+- Criteria 1–3 and 5 as their tests prove them, for the routes and data paths that exist. Criterion 4's in-command re-authorization (RV-01–RV-03) is proven under two connections; the command envelope that calls it is TASK-013's and the page that shows the denial TASK-016's, as the criterion names them. A contextual prerequisite is its action's check and a command's company an Admin's need (DIR-094 (E2), (E3)); the catalogue's rows reach the server through the sync INFRASTRUCTURE §5 and TASK-020 now run (DIR-094 (E1); APPR-023).
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the catalogue's counts, classes, prerequisites and WORKFLOWS §4 rows (TL-03) —; Integration — the catalogue's rows, the resolver (Owner, default deny, prerequisites, a command's company, OWNER_ONLY anomalies, deactivation, per-request reads), the scope inside the query and around its or-conditions, CS-04's one answer, RV-03 under two connections (TL-05) —; Feature — denials on sample routes (TL-04) —; Architecture; PASS locally and in CI
+- [x] Authorization: SM-04 for each of the 80 capabilities by class, RG-08, default deny and SM-05's reconciliation of OWNER_ONLY grants (TL-06); SM-01 on the data paths that exist
+- [x] Route integrity: SM-02's route audit over every registered route, and each refused declaration on fixture routes (TL-07)
+- [x] Interaction behavior: IG-01's presence rule on a sample control through the shared capabilities (TL-08)
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: SM-03's scans — no role-name check outside the resolver and the catalogue sync, no global-scope bypass —; default deny; an out-of-scope record answering exactly as a missing one, the capability checked before any route binding; denials and anomalies as security events (LG-02); the secret-like scan and both dependency audits PASS (TL-14)
+- [x] Database safety review: no migration and no schema change; the catalogue sync only inserts, under the runtime's SELECT and INSERT on the catalogue tables, refusing a stored row it does not list; the re-authorization's row lock under the runtime's column UPDATE grant on `users`; local and CI databases only, no production connection
+- [x] Final diff review: each capability, class, prerequisite and mapping against PERMISSIONS_MATRIX as written, the gap raised as a discovery and decided by the Owner (DIR-094, APPR-023), nothing invented; ER-06's independent review, six of its seven points fixed and tested, the seventh DIR-094 (E2)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `dcabec2`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40129706787 (push) and 40129715438 (pull request #12), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration suite, the route audit and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). On the Owner's workstation, 2026-10-25: Unit 206, `tests/Integration/Authorization/` 19, Authorization 88, Routes 11, Feature 29, Interaction 1, Architecture 50 and `tests/Integration/Audit/` 29, Pint, Larastan/PHPStan and the repository gates PASS, after ER-06's fixes
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: dcabec2, CI ubuntu-24.04 run 40129706787`
+- Route evidence: no business route added; the route audit (SM-02) runs over every registered route — none today — and fails a route without its declaration
+- Interaction evidence: N/A — no INT- contract; IG-01's sample control proven by `tests/Interaction/CapabilityHintsTest.php`
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: dcabec2, CI ubuntu-24.04 run 40129706787`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Modules/IAM/` (`Data/`, `Enums/`, `Services/`, `Policies/`, `Queries/` and the README), `app/Console/Commands/SyncAuthorizationCatalogue.php`, `app/Http/Middleware/RequireCapability.php`, `DeclareAccess.php` and `HandleInertiaRequests.php`, `app/Providers/AppServiceProvider.php`, `bootstrap/app.php`, the security events' detail whitelist; the tests of `tests/Unit/IAM/`, `tests/Integration/Authorization/`, `tests/Authorization/`, `tests/Routes/`, `tests/Feature/` and `tests/Interaction/`, `tests/Support/Authorization.php` and `RouteAudit.php`, the architecture scan and its fixture; TOOLCHAIN's row; DIR-094's and APPR-023's records — the source record, DECISION_LOG, DECISION_INDEX, INFRASTRUCTURE §5, TASK-020 —; TASK-012's and TASK-013's READY status; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `dcabec2`, the Owner's identity, no signature and no AI attribution; this record's commit, with DIR-094's records, follows it on `task/TASK-011-authorization-core`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-25 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each framework facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-011 row); the local runs used a container-local copy of the working tree, synchronized before each run, the bind mount from the Windows disk costing about five times the time, CI the final proof. The READY gates of TASK-012 and TASK-013 were re-checked at this DONE, and TASK-011's own at its start, TASK-010's DONE record having left it TODO. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

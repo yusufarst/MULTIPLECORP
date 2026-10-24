@@ -1,0 +1,9 @@
+Owner decisions received in session during execution, 2026-10-25 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: TASK-011's discovery and readings (after the executor's consolidated checkpoint, recommendation E1(a) and readings E2-E3) ---
+
+Saya menyetujui E1(a) serta pembacaan E2–E3 sebagai DIR-094. Siapkan teks kanoniknya untuk saya setujui, lalu lanjutkan TASK-011 sebelum DONE.
+
+--- Part 2: the approval of the canonical text (APPR-023), after the executor showed U1-U5 ---
+
+Saya menyetujui teks kanonik U1–U5 sebagai APPR-023. Terapkan, catat DIR-094, siapkan record DONE TASK-011, lalu minta izin commit.

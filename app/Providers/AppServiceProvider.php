@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Modules\IAM\Policies\CapabilityGates;
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 
@@ -12,7 +14,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Memoized for one request or job only, never across them (PERMISSIONS_MATRIX AZ-03; SECURITY EN-02).
+        $this->app->scoped(EffectiveCapabilities::class);
     }
 
     /**
@@ -25,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
         // an unlisted field is caught by the tests.
         Model::preventLazyLoading(! $this->app->isProduction());
         Model::preventSilentlyDiscardingAttributes(! $this->app->isProduction());
+
+        CapabilityGates::register();
     }
 }
