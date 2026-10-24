@@ -452,6 +452,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-012 — post-merge fix: the pooled physical read without a company grant
+
+- TASK-012 merged by the Owner into `main` as `e70463d` (pull request #14).
+- At the Owner's direction after a P2 review finding, on its branch `fix/TASK-012-pooled-read-class`: RD-02's pooled physical read admits `stock.view` without any company grant, through the pool audience as S1 does (§7.1, §7.4; CS-05), and RD-07, RD-09 and RD-10 the Owner through their OWNER_ONLY capabilities; the company-held read classes keep needing a company in scope, with a regression test.
+
 ## Unreleased — 2026-10-25, TASK-012 — field projection, read classes and cross-company links
 
 - TASK-011's public-identifier fix merged by the Owner into `main` as `90657f5` (pull request #13).
