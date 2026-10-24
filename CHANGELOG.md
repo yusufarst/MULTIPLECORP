@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-24, TASK-010 — audit and security logging
+
+- TASK-009's reversal-key fix merged by the Owner into `main` as `9ecafb1` (pull request #10).
+- Built TASK-010 on its branch `task/TASK-010-audit-security-logging` in the Owner's local Desktop session: the business audit writer, inside its command's transaction, with the before/after and linkage builders (LG-01; DATABASE §23); the security event writer on a connection of its own, outside business transactions, keyed hashes under a dedicated key, whitelisted details and the TECH-022 kinds once after the commit (LG-02, LG-03); the correlation id per request; the file logs as redacted JSON lines, mode 0600, a daily rotation of 14 files (LG-04, LG-06; H9-08); the read models of PG-063 and PG-064 under `audit.view` and `security_log.view` (LG-05).
+- The Owner's decision DIR-093 on two discoveries, at one checkpoint, with APPR-022's ARCHITECTURE text: the two writers shared in Support so that IAM's identity steps call them, built by TASK-010; the TECH-022 insert's account reference read within the approved text — TASK_PLAN's Change 10.
+- Every check passed in fresh CI on `6572563`. TASK-010 DONE — progress 10 / 87 —; TASK-011 next once its READY gate holds; pull request #11 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-24, TASK-009 — post-merge fix: reversals within their company
 
 - TASK-009 merged by the Owner into `main` as `96f92b4` (pull request #9).
