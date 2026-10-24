@@ -46,15 +46,15 @@ enum ReadClass: string
      */
     public function admits(Authority $viewer, ?int $companyId = null): bool
     {
-        if ($this->capabilities() === []) {
-            return Audience::all()->admits($viewer);
-        }
+        // RD-01 is every active account's; RD-02 the pool's, with no company needed (§7.1; CS-05); RD-07, RD-09
+        // and RD-10 the Owner's, through their OWNER_ONLY capabilities; the others a company-held family's.
+        $audiences = match ($this) {
+            self::MasterLookup => [Audience::all()],
+            self::PooledPhysical => [Audience::pool()],
+            self::Consolidated, self::OwnerReview, self::AuditSecurity => array_map(Audience::owner(...), $this->capabilities()),
+            default => array_map(fn (string $capability): Audience => Audience::family($capability, $companyId), $this->capabilities()),
+        };
 
-        $pooled = in_array($this, [self::PooledPhysical, self::Consolidated, self::OwnerReview, self::AuditSecurity], true);
-
-        return Audience::anyOf(...array_map(
-            fn (string $capability): Audience => Audience::family($capability, $pooled ? null : $companyId),
-            $this->capabilities(),
-        ))->admits($viewer);
+        return Audience::anyOf(...$audiences)->admits($viewer);
     }
 }

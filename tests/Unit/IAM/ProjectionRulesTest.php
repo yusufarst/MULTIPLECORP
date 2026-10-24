@@ -145,6 +145,20 @@ it('opens each read class by its capabilities, a company-scoped one within scope
         ->and(ReadClass::AuditSecurity->admits(viewer(['security_log.view', 'scope.all_companies'], all: true)))->toBeTrue();
 });
 
+it('opens the pooled physical read to stock.view without any company grant, and no company-held read with it (RD-02; CS-05)', function () {
+    $pool = viewer(['stock.view']);
+
+    expect(ReadClass::PooledPhysical->admits($pool))->toBeTrue()
+        ->and(ReadClass::PooledPhysical->admits($pool, 10))->toBeTrue()
+        ->and(ReadClass::PooledPhysical->admits(viewer(['finance.view'], [10])))->toBeFalse()
+        ->and(ReadClass::PooledPhysical->admits(viewer(['stock.view'], active: false)))->toBeFalse()
+        ->and(ReadClass::ProjectOperations->admits($pool))->toBeFalse()
+        ->and(ReadClass::ProcurementCost->admits($pool))->toBeFalse()
+        // A company-held family without a named company still needs one in scope.
+        ->and(ReadClass::SalesReceivablesCash->admits(viewer(['finance.view'])))->toBeFalse()
+        ->and(ReadClass::SalesReceivablesCash->admits(viewer(['finance.view'], [10])))->toBeTrue();
+});
+
 it('authorizes each cross-company link as §8 states', function () {
     $admin = viewer(['stock.view', 'stock.allocate_intercompany', 'projects.view', 'projects.manage', 'finance.view', 'cashin.record'], [10, 20]);
     $one = viewer(['stock.view', 'stock.allocate_intercompany', 'projects.view', 'projects.manage', 'finance.view', 'cashin.record'], [10]);
