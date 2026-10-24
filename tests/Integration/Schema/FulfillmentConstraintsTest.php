@@ -70,7 +70,7 @@ it('delivers from one shipment of its company, a reversal exact and once (C-09; 
     Refusal::assert(Refusal::CHECK, 'delivery_lines_one_shipment', fn () => DeliveryLine::factory()->create([...$own, 'dropship_confirmation_line_id' => DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => DropshipConfirmation::factory()->create(['company_id' => $line->company_id])->id])->id]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_lines_c32_dispatch_line_foreign', fn () => DeliveryLine::factory()->create([...$own, 'dispatch_line_id' => DispatchLine::factory()->create()->id]));
     Refusal::assert(Refusal::CHECK, 'delivery_lines_c09_conversion', fn () => DeliveryLine::factory()->create([...$own, 'qty_base' => '3.000']));
-    Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_lines_c30_reverses_foreign', fn () => DeliveryLine::factory()->create([...$own, 'reverses_delivery_line_id' => $line->id, 'entered_qty' => '1.000', 'qty_base' => '1.000']));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_lines_c32_reverses_foreign', fn () => DeliveryLine::factory()->create([...$own, 'reverses_delivery_line_id' => $line->id, 'entered_qty' => '1.000', 'qty_base' => '1.000']));
 
     DeliveryLine::factory()->create([...$own, 'reverses_delivery_line_id' => $line->id]);
 
@@ -104,7 +104,7 @@ it('hands a service over within its company, a reversal exact and once (C-09; C-
     Refusal::assert(Refusal::FOREIGN_KEY, 'service_handover_lines_c09_project_line_foreign', fn () => ServiceHandoverLine::factory()->create([...$own, 'project_line_id' => ProjectLineFactory::newOn(Project::factory()->create()->id)]));
     Refusal::assert(Refusal::FOREIGN_KEY, 'service_handover_lines_c32_handover_foreign', fn () => ServiceHandoverLine::factory()->create([...$own, 'service_handover_id' => 999_999, 'company_id' => $line->company_id]));
     Refusal::assert(Refusal::CHECK, 'service_handover_lines_c09_scale', fn () => ServiceHandoverLine::factory()->create([...$own, 'entered_qty' => '0.000', 'qty_base' => '0.000']));
-    Refusal::assert(Refusal::FOREIGN_KEY, 'service_handover_lines_c30_reverses_foreign', fn () => ServiceHandoverLine::factory()->create([...$own, 'reverses_line_id' => $line->id, 'entered_qty' => '2.000', 'qty_base' => '2.000']));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'service_handover_lines_c32_reverses_foreign', fn () => ServiceHandoverLine::factory()->create([...$own, 'reverses_line_id' => $line->id, 'entered_qty' => '2.000', 'qty_base' => '2.000']));
 
     ServiceHandoverLine::factory()->create([...$own, 'reverses_line_id' => $line->id]);
 
@@ -147,4 +147,21 @@ it('holds each line within its parent beyond its company: a confirmation\'s purc
     ]));
 
     expect(DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => $confirmed->dropship_confirmation_id])->company_id)->toBe($confirmed->company_id);
+});
+
+it('reverses a delivery line or a handover line only of its own company, at the original\'s exact quantity (C-30; C-32; §15)', function () {
+    $delivered = DeliveryLine::factory()->create();
+    $deliveredElsewhere = DeliveryLine::factory()->create();
+    $delivery = ['delivery_id' => $delivered->delivery_id, 'project_line_id' => $delivered->project_line_id, 'dispatch_line_id' => $delivered->dispatch_line_id];
+    $handed = ServiceHandoverLine::factory()->create();
+    $handedElsewhere = ServiceHandoverLine::factory()->create();
+    $handover = ['service_handover_id' => $handed->service_handover_id, 'project_line_id' => $handed->project_line_id];
+
+    // Another company's line of the same quantity.
+    Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_lines_c32_reverses_foreign', fn () => DeliveryLine::factory()->create([...$delivery, 'reverses_delivery_line_id' => $deliveredElsewhere->id]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'service_handover_lines_c32_reverses_foreign', fn () => ServiceHandoverLine::factory()->create([...$handover, 'reverses_line_id' => $handedElsewhere->id]));
+
+    expect(DeliveryLine::factory()->create([...$delivery, 'reverses_delivery_line_id' => $delivered->id])->company_id)->toBe($delivered->company_id)
+        ->and(ServiceHandoverLine::factory()->create([...$handover, 'reverses_line_id' => $handed->id])->company_id)->toBe($handed->company_id)
+        ->and($deliveredElsewhere->company_id)->not->toBe($delivered->company_id);
 });
