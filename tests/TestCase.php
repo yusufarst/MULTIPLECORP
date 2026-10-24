@@ -3,6 +3,7 @@
 namespace Tests;
 
 use App\Support\Database\DatabaseRole;
+use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\DatabaseTruncation;
@@ -33,7 +34,8 @@ abstract class TestCase extends BaseTestCase
 
     /**
      * A test using a database trait is checked before the trait migrates or wipes anything, and its
-     * migrations reach the same test database through the migration/owner role's connection.
+     * migrations and its security events reach the same test database through the migration/owner role's
+     * connection and the security-event connection.
      *
      * @return array<class-string, class-string>
      */
@@ -45,6 +47,9 @@ abstract class TestCase extends BaseTestCase
 
             config(["{$migration}.database" => config("{$connection}.database")]);
             DB::purge(DatabaseRole::MIGRATION_CONNECTION);
+
+            config(['database.connections.'.SecurityEventRecorder::CONNECTION.'.database' => config("{$connection}.database")]);
+            DB::purge(SecurityEventRecorder::CONNECTION);
 
             TestDatabase::assertIsolated((string) config("{$connection}.driver"), (string) config("{$connection}.database"), (string) config("{$migration}.database"));
         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
@@ -13,6 +14,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         // Global, so that error pages carry the policy too (SECURITY WS-08).
         $middleware->prepend(SecurityHeaders::class);
+
+        // First of all, so that every later log line of the request carries it (ARCHITECTURE §17).
+        $middleware->prepend(AssignCorrelationId::class);
 
         $middleware->web(append: [
             HandleInertiaRequests::class,
