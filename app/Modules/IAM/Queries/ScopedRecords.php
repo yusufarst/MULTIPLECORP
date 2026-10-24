@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Queries;
 
 use App\Modules\IAM\Data\Authority;
+use App\Modules\IAM\Data\CompanyScope;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Database\Eloquent\Builder;
@@ -34,8 +35,10 @@ final class ScopedRecords
         $valid = preg_match('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i', $publicId) === 1;
         $publicId = strtolower($publicId);
 
+        // The caller's conditions grouped before the identifier, so an `orWhere` among them can never return a
+        // record other than the one the identifier names.
         $record = $valid
-            ? $authority->scope->apply((clone $query)->where("{$table}.public_id", $publicId), "{$table}.{$companyColumn}")->first()
+            ? $authority->scope->apply(CompanyScope::grouped(clone $query)->where("{$table}.public_id", $publicId), "{$table}.{$companyColumn}")->first()
             : null;
 
         if ($record !== null) {
@@ -44,7 +47,7 @@ final class ScopedRecords
 
         // Both failures run this query — the caller's own conditions without the scope —, so a probe cannot
         // tell them apart by time, and a record the caller's conditions exclude is not taken for a probe.
-        $exists = $valid && (clone $query)->where("{$table}.public_id", $publicId)->exists();
+        $exists = $valid && CompanyScope::grouped(clone $query)->where("{$table}.public_id", $publicId)->exists();
 
         if ($exists) {
             defer(fn () => $this->events->record(SecurityEventKind::AccessDenied, userId: $authority->userId, reasonCode: 'OUT_OF_SCOPE', targetPublicId: $publicId))->always();

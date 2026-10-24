@@ -452,6 +452,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-011 — post-merge fix: a public identifier bound to the whole query
+
+- TASK-011 merged by the Owner into `main` as `fc13e4f` (pull request #12).
+- At the Owner's direction after a P2 review finding, on its branch `fix/TASK-011-scoped-public-id-grouping`: the public-identifier resolver groups the caller's own conditions before the identifier and the scope, in its lookup and its existence probe, so an `orWhere` among them can never return another record for a foreign or missing identifier (CS-04; AZ-11), with regression tests for an Admin and the Owner.
+
 ## Unreleased — 2026-10-25, TASK-011 — authorization core
 
 - TASK-010 merged by the Owner into `main` as `bedbfca` (pull request #11).

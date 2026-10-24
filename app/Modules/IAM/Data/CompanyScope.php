@@ -70,6 +70,25 @@ final class CompanyScope
             return $query;
         }
 
+        self::grouped($query);
+        $base = $query instanceof EloquentBuilder ? $query->getQuery() : $query;
+
+        $this->companyIds === [] ? $base->whereRaw('false') : $base->whereIn($column, $this->companyIds);
+
+        return $query;
+    }
+
+    /**
+     * The query with its own conditions wrapped in one group, so a condition added after them — the scope, a
+     * public identifier — binds the whole of them, an `orWhere` among them included.
+     *
+     * @template TBuilder of EloquentBuilder<covariant Model>|QueryBuilder
+     *
+     * @param  TBuilder  $query
+     * @return TBuilder
+     */
+    public static function grouped(EloquentBuilder|QueryBuilder $query): EloquentBuilder|QueryBuilder
+    {
         $base = $query instanceof EloquentBuilder ? $query->getQuery() : $query;
 
         if ($base->wheres !== []) {
@@ -80,8 +99,6 @@ final class CompanyScope
             $base->bindings['where'] = [];
             $base->addNestedWhereQuery($own);
         }
-
-        $this->companyIds === [] ? $base->whereRaw('false') : $base->whereIn($column, $this->companyIds);
 
         return $query;
     }
