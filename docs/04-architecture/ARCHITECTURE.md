@@ -10,6 +10,8 @@ Amendment: on 2026-10-03, under [DIR-043](../00-governance/DECISION_LOG.md#dir-0
 
 Amendment: on 2026-10-18 run PC-2 drafted this revision under [CHANGE_CONTROL](../00-governance/CHANGE_CONTROL.md#decision-authority) and [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-65, with only the narrow amendments the Owner's CP-A decisions require ([DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-07, CA-08 and CA-10): §16's locale sentence states the default, Indonesian, English available and the account's preference in `users.locale` (CA-08); the Reporting module's signal range reads QS-01–24 in §3 and §14 (CA-07, CA-10). Each changed statement is marked `DIR-077`. The revision before it — APPROVED under APPR-005, with the amended revisions its approval and amendment paragraphs above record — stayed in force until APPR-011; its SHA-256, each change with its reason and impact, and the statements a scripted search examined are recorded in [TECH-037](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts), and the amended revision is approved under [APPR-011](../00-governance/DECISION_LOG.md#appr-011--p7-ux-re-baseline-approved).
 
+Amendment: on 2026-10-24, under [DIR-093](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries), the narrow amendment the Owner's decision on TASK-010's discovery (1) requires: the business audit and security-event writers are shared in Support — §3's OPS row and tier note, §4's Support line and §7's writer table, each changed statement marked `DIR-093` —, so that IAM's identity steps, which SECURITY LG-01 and LG-02 require to write both, call them without a same-tier dependency on OPS; OPS keeps the two tables and their read models. No module, tier, table, behaviour, visibility or V1 requirement changes; the amended revision is approved under [APPR-022](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries).
+
 Authority: P4 — Database Architecture, authorized by [DIR-027](../00-governance/DECISION_LOG.md#dir-027-obs-007-and-tech-017--p4-authorization-unattributed-loss-clarification-and-p4-documentation), red-teamed under DIR-028 and corrected under DIR-029 ([TECH-018](../00-governance/DECISION_LOG.md#dir-028-obs-008-dir-029-and-tech-018--p4-targeted-review-corrections-and-finalization)). This document owns the **application structure**: the modular-monolith boundaries, dependency direction, layers, the action (use-case) pattern, posting services, the authorization boundary handed to P5, the Inertia web layer, the React boundary, background jobs, file storage, integration seams and the reporting layer. The logical data model, constraints and transaction map are owned by [DATABASE](DATABASE/README.md); phase evidence by [P4_QUALITY_GATE](evidence/P4_QUALITY_GATE.md).
 
 **Anti-duplication contract:** business rules are owned by [BUSINESS_RULES](../02-domain/BUSINESS_RULES.md) and orchestration by [WORKFLOWS](../03-workflows/WORKFLOWS/README.md); this document places them in code structure and never restates or changes them. Engineering guardrails remain owned by [ENGINEERING_PRINCIPLES](../00-governance/ENGINEERING_PRINCIPLES.md).
@@ -53,7 +55,7 @@ Thirteen modules own the tables of [DATABASE §4](DATABASE/s04-00-module-map.md#
 | Documents (DOC) | document types, generated documents, versions, renditions, files, evidence | §4.10 | IssueDocument, ReviseDocument, VoidDocument, UploadEvidence, RecordBankStatementLine, VoidBankStatementLine |
 | Administration (ADM) | per-project requirements, links, waivers | §4.11 | AddRequirement, LinkRequirementEvidence, WaiveRequirement, RemoveRequirement |
 | Finance (FIN) | invoices, billing, receivables, payments, applications, settlements, write-offs, disputes, credit, refunds, disbursements, other Cash-In, contras | §4.12 | IssueInvoice, BillInvoice, RecordPayment, CorrectBankCitation, SupersedeClaimedDeduction, ApplyPayment, ReallocateApplication, RecordDeductionSettlement, ResolveResidualSettlement, WriteOffReceivable, RefundCredit, RecordDisbursement, RecordContra |
-| Operations (OPS) | audit, security events, command log, correction cases, import batches and rows, archive | §4.13 | OpenCorrectionCase, CloseCorrectionCase; the audited `GuardMaintenance` console command (§7) (import actions live in the tier-7 import orchestration, below) |
+| Operations (OPS) | audit, security events (their tables and read models; `DIR-093`: their two writers shared in Support, §4), command log, correction cases, import batches and rows, archive | §4.13 | OpenCorrectionCase, CloseCorrectionCase; the audited `GuardMaintenance` console command (§7) (import actions live in the tier-7 import orchestration, below) |
 | Reporting | dashboards, action queue (QS-01–24, `DIR-077`), reports, exports | — | read-only queries |
 | Import orchestration (tier 7) | opening-data pipeline: validation, dry run, sign-off and commit through each module's actions with deterministic command ids | — (uses OPS import tables) | PrepareImport, DryRunImport, CommitImport |
 
@@ -78,7 +80,7 @@ flowchart BT
   T7 --> T6
 ```
 
-(An arrow means "may depend on". Within a tier the only dependencies are OPS → IAM and DOC → ORG (numbering), both acyclic. Placing Expenses in CST keeps Procurement and Finance acyclic; placing Inventory above Procurement lets receiving update purchase-line guards while purchases never call Inventory.)
+(An arrow means "may depend on". Within a tier the only dependencies are OPS → IAM and DOC → ORG (numbering), both acyclic. `DIR-093`: the business audit and security-event writers are shared in Support (§4), which every module may use, so IAM's identity steps write their audit and security events without depending on OPS. Placing Expenses in CST keeps Procurement and Finance acyclic; placing Inventory above Procurement lets receiving update purchase-line guards while purchases never call Inventory.)
 
 **Dependency inversion where a lower tier must trigger higher-tier behavior** — four small contracts only:
 
@@ -109,7 +111,8 @@ app/
     Authentication/ Identity only — the authentication boundary (§8): Fortify and
                     Socialite hooks, the Google provider and the breached-password check
   Support/          Money, Quantity, UnitConversion, BusinessDate, CommandContext,
-                    GuardUpdate, AuditRecorder, OutcomeMapper (shared, business-neutral)
+                    GuardUpdate, AuditRecorder, SecurityEventRecorder, OutcomeMapper
+                    (shared, business-neutral; the two writers DIR-093)
   Integrations/     adapters behind module contracts (none for business data in V1; §13)
 resources/js/
   Pages/<Module>/   Inertia pages
@@ -160,7 +163,8 @@ Each guard balance of DATABASE §3.1 has **exactly one normal writer** (per colu
 | `MoneyPosting` (FIN) | `application_source_balances` (capacity, refund backing, released and shortfall), `money_fact_balances` (contras, refund backing and shortfall, transfer citation), application and settlement states, refund and settlement residual counters of correction cases |
 | `EvidencePosting` (DOC) | `evidence_balances` |
 | `NumberAllocator` (ORG) | `number_sequences` (authoritative counters; created only for seeded or post-go-live periods, never lowered) and `retired_numbers` tombstones |
-| `AuditRecorder` (OPS) | `audit_events` |
+| `AuditRecorder` (Support; `DIR-093`) | `audit_events` |
+| `SecurityEventRecorder` (Support; `DIR-093`) | `security_events`, outside business transactions (SECURITY LG-02) |
 
 All guard updates go through one shared `GuardUpdate` helper: a conditional in-transaction update of the net signed delta of all columns of a guard row in **one statement** per command (PostgreSQL checks CHECK constraints per statement, so a command never writes an intermediate state; deltas that several services contribute to one row are combined before the statement), returning the new values, treating an update that matches no row as a failure, and mapping a CHECK violation — or a deferred constraint trigger's failure at commit — to a REJECTED outcome carrying the rule identifier. **What this guarantees:** PostgreSQL enforces each guard's CHECK against every application role; the single posting path is what keeps each guard moving with its facts; reconciliation proves it (the DB+APP+DQ layer of DATABASE §18). The runtime role technically holds INSERT on facts and UPDATE on guards independently, so "only this service writes this table" is an architectural rule enforced by code review, tests and reconciliation, not by PostgreSQL.
 

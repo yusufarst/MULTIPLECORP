@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\Logging\StructuredLog;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -54,23 +55,31 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'daily')),
             'ignore_exceptions' => false,
         ],
 
+        // The file channels (SECURITY LG-04, LG-06; H9-08): structured JSON lines with the correlation id,
+        // sensitive keys redacted and line breaks neutralized, each file readable by its owner only; the
+        // daily channel, the default, keeps a bounded rotation of LOG_DAILY_DAYS files.
         'single' => [
             'driver' => 'single',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
+            'permission' => 0600,
+            'tap' => [StructuredLog::class],
         ],
 
         'daily' => [
             'driver' => 'daily',
             'path' => storage_path('logs/laravel.log'),
             'level' => env('LOG_LEVEL', 'debug'),
-            'max_files' => env('LOG_DAILY_DAYS', 14),
+            // At least one: Monolog keeps every file when given 0 (LG-06).
+            'max_files' => max(1, (int) env('LOG_DAILY_DAYS', 14)),
             'replace_placeholders' => true,
+            'permission' => 0600,
+            'tap' => [StructuredLog::class],
         ],
 
         'monthly' => [
@@ -79,6 +88,8 @@ return [
             'level' => env('LOG_LEVEL', 'debug'),
             'max_files' => 3,
             'replace_placeholders' => true,
+            'permission' => 0600,
+            'tap' => [StructuredLog::class],
         ],
 
         'slack' => [

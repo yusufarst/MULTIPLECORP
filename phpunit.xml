@@ -45,5 +45,6 @@
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
+        <env name="SECURITY_LOG_HMAC_KEY" value="testing-only-security-log-hmac-key"/>
     </php>
 </phpunit>

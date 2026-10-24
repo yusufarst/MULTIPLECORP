@@ -4,9 +4,11 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-24 the Owner's decision [DIR-093](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries) (1) places this Task's two writers in Support, so every module's commands — IAM's identity steps among them — call them: the EXPECTED MODULES line; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -59,7 +61,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the OPS module's audit and security-event services; their query classes
+- the audit and security-event writers shared in `app/Support` (ARCHITECTURE §4; DIR-093); the OPS module's query classes
 
 **BUSINESS RULES:**
 
@@ -221,34 +223,38 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 - Migration: N/A — the tables are TASK-005's
 - Other: GAP-016's audit ordering checked across a midnight boundary
 
+**CRITERIA DISPOSITIONS (DIR-093):**
+
+- Criteria 1–5 as their tests prove them, the two writers shared in `app/Support` (DIR-093 (1); APPR-022) and the query classes in OPS. Criterion 3's TECH-022 insert references no row of the matched records; its `user_id` keeps TASK-005's foreign key, read within the approved text (DIR-093 (2)). Writing the TECH-022 events after the response is sent is their callers' step (LG-02), not claimed here.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the before/after and linkage builders, redaction, keyed hashes, user-agent summary (TL-03) —; Integration — the audit's commit, rollback, refused write and process end right after the commit (10b); the security events after a rollback, a refusal, a savepoint and a held account lock; a failed write logged with the correlation id; the TECH-022 kinds once after the commit, none on a rollback; the 39 kinds apart from the audit; GAP-016's order across a WIB midnight, the keyset cursor and the backdated gap (TL-05) —; Architecture; PASS locally and in CI
+- [x] Authorization: the two query classes refuse without `audit.view` and `security_log.view`, and one capability does not open the other read (TL-06)
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: no secret, token, password or code value in an audit row, a security event or a log line — redacted keys, keyed HMACs under a dedicated key refused when it is APP_KEY, short or a repository placeholder in production, a logged exception without bound values —; line breaks neutralized (TM-51); the log file mode 0600 and a bounded rotation (H9-08); the secret-like scan and both dependency audits PASS (TL-14)
+- [x] Database safety review: no migration and no schema change; the writers insert only into TASK-005's `audit_events` and `security_events` under the runtime's INSERT and SELECT; a second runtime connection, `security`, for the events; local and CI databases only, no production connection
+- [x] Final diff review: each writer and read against SECURITY §6 and DATABASE §23 as written, the gaps raised as discoveries and decided by the Owner (DIR-093, APPR-022), nothing invented; ER-06's independent review, five of its six findings fixed and tested, the sixth decided as DIR-093 (1)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `6572563`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40103084563 (push) and 40103088282 (pull request #11), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration suite and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty); before it, the build commit `49cf1a5`, runs 40091988863 and 40092011893, PASS. On the Owner's workstation, 2026-10-24: Unit 201, `tests/Integration/Audit/` 29, Authorization 5, Feature 25 and Architecture 48, Pint, Larastan/PHPStan and the repository gates PASS, after ER-06's fixes and after DIR-093's move
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: 6572563, CI ubuntu-24.04 run 40103084563`
+- Route evidence: N/A — no route added or changed; the correlation-id middleware is global and adds no route
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: 6572563, CI ubuntu-24.04 run 40103084563`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Support/Audit/` and `app/Support/SecurityLog/` (the writers, builders, enumerations and keyed hashes), `app/Support/CorrelationId.php`, `app/Support/Redaction.php`, `app/Support/Database/Transactions.php`, `app/Support/Logging/StructuredLog.php`, `app/Http/Middleware/AssignCorrelationId.php`, `bootstrap/app.php`, `app/Modules/OPS/Queries/` and its README, `config/database.php`, `config/logging.php`, `config/security.php`, `.env.example`, `phpunit.xml`; tests — `tests/Unit/Support/`, `tests/Integration/Audit/`, `tests/Authorization/LogQueriesTest.php`, `tests/Feature/TechnicalLogTest.php`, `tests/TestCase.php`, `tests/Support/RefreshDatabase.php`, `tests/Support/Concurrency/Sessions.php` —; TOOLCHAIN's row; DIR-093's and APPR-022's records — the source record, DECISION_LOG, DECISION_INDEX, ARCHITECTURE §3, §4 and §7 —; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `49cf1a5` and `6572563`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-010-audit-security-logging`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-24 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each framework facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-010 row). Readings within the approved text are listed in CURRENT_HANDOFF. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

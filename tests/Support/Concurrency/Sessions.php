@@ -2,6 +2,7 @@
 
 namespace Tests\Support\Concurrency;
 
+use App\Support\SecurityLog\SecurityEventRecorder;
 use Closure;
 use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,8 @@ final class Sessions
                 $sessions[$name] = static function () use ($task, $connection, $database, $run): mixed {
                     config(["database.connections.{$connection}.database" => $database]);
                     DB::purge($connection);
+                    config(['database.connections.'.SecurityEventRecorder::CONNECTION.'.database' => $database]);
+                    DB::purge(SecurityEventRecorder::CONNECTION);
                     Barrier::join($run);
 
                     return $task();
