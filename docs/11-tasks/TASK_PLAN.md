@@ -28,8 +28,8 @@ Progress:
 9 / 87
 Percentage: 10.3 %
 
-CURRENT TASK: none in progress — TASK-009 — Schema — FUL and FIN tables, finance and tax representations DONE on its branch `task/TASK-009-schema-ful-fin`, CI PASS on `63ac747`, its pull request #9 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-010 — Audit and security logging, READY, taken first once the Owner merges TASK-009's pull request #9 (ER-07); TASK-014 and TASK-073 also READY; TASK-012 and TASK-013, whose schema dependency TASK-009 is DONE, wait on TASK-011 (and TASK-013 on TASK-010); TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-009 — Schema — FUL and FIN tables, finance and tax representations DONE and merged by the Owner as `96f92b4` (pull request #9); its post-merge fix of the reversal keys' company on `fix/TASK-009-reversal-company-keys`, its pull request waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-010 — Audit and security logging, READY, taken first once the Owner merges the reversal-key fix (ER-07); TASK-014 and TASK-073 also READY; TASK-012 and TASK-013, whose schema dependency TASK-009 is DONE, wait on TASK-011 (and TASK-013 on TASK-010); TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)

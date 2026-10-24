@@ -452,6 +452,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-24, TASK-009 — post-merge fix: reversals within their company
+
+- TASK-009 merged by the Owner into `main` as `96f92b4` (pull request #9).
+- At the Owner's directive after the merge, on its branch `fix/TASK-009-reversal-company-keys`: a delivery line's and a handover line's reversal held within the original's company — each composite key `(company_id, …, qty_base)` by the expand-only migration `2026_10_24_000140`, its company-free key replaced —, with a negative test of another company's line of the same quantity (C-30; C-32; §15).
+
 ## Unreleased — 2026-10-24, TASK-009 — schema: FUL and FIN tables, finance and tax representations
 
 - TASK-008 merged by the Owner into `main` as `903cb38` (pull request #8).
