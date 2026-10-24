@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 11
+DONE: 12
 READY: 3
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 1
+VERIFYING: 0
 TODO: 59
 SUPERSEDED: 0
 
 Progress:
-11 / 87
-Percentage: 12.6 %
+12 / 87
+Percentage: 13.8 %
 
-CURRENT TASK: TASK-012 — Field projection, read classes and cross-company links, VERIFYING: built on its branch `task/TASK-012-projection-read-classes` from `main` after TASK-011's merge and its public-identifier fix as `90657f5` (pull requests #12, #13), its pull request into `main` waiting on its fresh CI run (ER-07)
-NEXT READY TASK: TASK-013 — Command envelope, command identity, idempotency and the lock order, READY, taken first once the Owner merges TASK-012's pull request (ER-07); TASK-014 and TASK-073 READY; TASK-012's DONE leaves TASK-016 waiting on TASK-013 and TASK-015, and makes TASK-022 READY once its other dependencies are DONE; TASK-021 waits on its other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-012 — Field projection, read classes and cross-company links DONE on its branch `task/TASK-012-projection-read-classes`, CI PASS on `c539181`, its pull request #14 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-013 — Command envelope, command identity, idempotency and the lock order, READY, taken first once the Owner merges TASK-012's pull request #14 (ER-07); TASK-014 and TASK-073 READY; TASK-016 waits on TASK-013 and TASK-015, TASK-022 on TASK-013, TASK-015 and TASK-017; TASK-021 waits on its other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -60,7 +60,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-009](TASK-009.md) — Schema — FUL and FIN tables, finance and tax representations
 - [x] [TASK-010](TASK-010.md) — Audit and security logging
 - [x] [TASK-011](TASK-011.md) — Authorization core — capabilities, roles, grants, company scope and the route audit
-- [ ] [TASK-012](TASK-012.md) — Field projection, read classes and cross-company links
+- [x] [TASK-012](TASK-012.md) — Field projection, read classes and cross-company links
 - [ ] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
 - [ ] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
 - [ ] [TASK-015](TASK-015.md) — Design system — tokens, components, patterns and states
@@ -152,7 +152,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | DONE | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | DONE | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | DONE | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
-| [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | VERIFYING | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
+| [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | DONE | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | READY | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | READY | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |

@@ -452,6 +452,12 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-012 — field projection, read classes and cross-company links
+
+- TASK-011's public-identifier fix merged by the Owner into `main` as `90657f5` (pull request #13).
+- Built TASK-012 on its branch `task/TASK-012-projection-read-classes` in the Owner's local Desktop session: §7.2's 125-table classification held to the document and the schema; §7.1's entitlements, §7.2's audiences, §7.4's read classes and §8's five link families; the relation marker, the allocation sides and the derived-figure rule; the base prop resource and gated page props (WS-07), the lot's pooled view the first resource; §11's data paths as an executable register.
+- Every check passed in fresh CI on `c539181`. TASK-012 DONE — progress 12 / 87 —; TASK-013 READY; pull request #14 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-25, TASK-011 — post-merge fix: a public identifier bound to the whole query
 
 - TASK-011 merged by the Owner into `main` as `fc13e4f` (pull request #12).

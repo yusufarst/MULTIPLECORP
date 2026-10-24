@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -221,34 +221,38 @@ Field projection is invariant 3 of EXECUTION_CONTEXT; the pooled stock with pres
 - Migration: N/A — no migration or import code in this Task
 - Other: N/A — nothing further
 
+**CRITERIA DISPOSITIONS:**
+
+- Criteria 1–6 as their tests prove them, for the tables, families and data paths that exist: the field exceptions of §7.2's split tables are applied by each table's prop resource on `ProjectedResource` as its page Task builds it, the lot's the first. Criterion 7: another company's invoice fails at the scope resolver (this Task), another client's on C-14's composite keys (`MoneyConstraintsTest`, TASK-009); the application command is TASK-051's. Criterion 8: the source company's cost ownership is the schema's (TASK-008) and the posting Tasks' (TASK-036, TASK-041), this Task giving each side's projection (PJ-05, PJ-06; XL-1).
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit — §7.2's 125 tables, §7.4's read classes, §8's links and §11's data paths held to the document; each audience, class, read class and link rule; the relation marker, allocation sides and derived figures (TL-03) —; Integration — every schema table classified, §8's columns present, seeded out-of-scope rows changing no count, facet, page, ranking or search, another company's invoice refused at the resolver (TL-05) —; Feature — a sample page's props for each viewer class and a partial reload (TL-04) —; Architecture; PASS locally and in CI
+- [x] Authorization: SM-25 for the lot's families and SM-12's no-oracle rule — a projected-away field absent, the source company neither named nor read outside scope (TL-06)
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract
+- [x] Browser E2E if required: N/A — no page; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS on the workstation and in CI
+- [x] Security checks if required: no oracle through counts, sort, filters or search (TL-14); a field computed and sent only for a viewer it admits; page props gated before evaluation, a partial reload obtaining none it may not see (WS-07; DP-15); PF-33 and PF-36 by the gated closures; the secret-like scan and both dependency audits PASS
+- [x] Database safety review: no migration and no schema change; the classification reads the schema only; local and CI databases only, no production connection
+- [x] Final diff review: each class, audience, read class and link against PERMISSIONS_MATRIX as written, nothing invented; ER-06's independent review, its four points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `c539181`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40137575260 (push) and 40137580209 (pull request #14), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration and Authorization suites and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). On the Owner's workstation, 2026-10-25: Unit `tests/Unit/IAM/` 17, Integration `tests/Integration/Projection/` 6, Feature `ProjectedPropsTest` 4, Authorization `FieldProjectionTest` 7 and Architecture 50, Pint, Larastan/PHPStan and the repository gates PASS, after ER-06's fixes
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: c539181, CI ubuntu-24.04 run 40137575260`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: c539181, CI ubuntu-24.04 run 40137575260`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Modules/IAM/Data/` (`TableClassification`, `Sensitivity`, `Audience`, `ReadClass`, `CrossCompanyLink`, `Projection`) and the IAM README, `app/Http/Resources/ProjectedResource.php`, `app/Modules/INV/Http/Resources/InventoryLotResource.php`; the tests of `tests/Unit/IAM/ProjectionRulesTest.php`, `tests/Integration/Projection/`, `tests/Feature/ProjectedPropsTest.php`, `tests/Authorization/FieldProjectionTest.php` and `tests/Support/DataPaths.php`; TOOLCHAIN's row; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `c539181`, the Owner's identity, no signature and no AI attribution; this record's commit follows it on `task/TASK-012-projection-read-classes`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-25 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-012 row); the local runs used a container-local copy of the working tree, CI the final proof. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of TASK-016 and TASK-022 were re-checked at this DONE: each still waits on other dependencies. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 
