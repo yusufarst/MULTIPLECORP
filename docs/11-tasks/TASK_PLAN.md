@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 9
-READY: 3
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 62
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 9 / 87
 Percentage: 10.3 %
 
-CURRENT TASK: none in progress — TASK-009 — Schema — FUL and FIN tables, finance and tax representations DONE and merged by the Owner as `96f92b4` (pull request #9); its post-merge fix of the reversal keys' company on `fix/TASK-009-reversal-company-keys`, its pull request waiting on its fresh CI run (ER-07)
-NEXT READY TASK: TASK-010 — Audit and security logging, READY, taken first once the Owner merges the reversal-key fix (ER-07); TASK-014 and TASK-073 also READY; TASK-012 and TASK-013, whose schema dependency TASK-009 is DONE, wait on TASK-011 (and TASK-013 on TASK-010); TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-010 — Audit and security logging, VERIFYING: built on its branch `task/TASK-010-audit-security-logging` from `main` after the merge of TASK-009's reversal-key fix as `9ecafb1` (pull request #10), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-014 and TASK-073, READY; TASK-010's DONE makes TASK-011 READY once its READY gate holds; TASK-012 and TASK-013, whose schema dependency TASK-009 is DONE, wait on TASK-011 (and TASK-013 on TASK-010); TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -150,7 +150,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-007](TASK-007.md) | Schema — PRJ, CST, PUR and ADM tables | Platform · Platform · PRJ · CST · PUR · ADM | HIGH | DONE | 006 | 008 | NO | AGENT | PROPOSED | NO |
 | [TASK-008](TASK-008.md) | Schema — INV tables, inventory and lot-cost representations | Platform · Platform · INV | HIGH | DONE | 007 | 009, 028, 036 | NO | AGENT | PROPOSED | NO |
 | [TASK-009](TASK-009.md) | Schema — FUL and FIN tables, finance and tax representations | Platform · Platform · FUL · FIN | HIGH | DONE | 008 | 012, 013 | NO | AGENT | PROPOSED | NO |
-| [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | READY | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
+| [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | VERIFYING | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | TODO | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | TODO | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | TODO | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
