@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Services;
+namespace App\Support\SecurityLog;
 
 use RuntimeException;
 

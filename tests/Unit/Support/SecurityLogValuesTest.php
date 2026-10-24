@@ -1,8 +1,8 @@
 <?php
 
-use App\Modules\OPS\Data\UserAgentSummary;
-use App\Modules\OPS\Services\SecurityLogHash;
 use App\Support\Redaction;
+use App\Support\SecurityLog\SecurityLogHash;
+use App\Support\SecurityLog\UserAgentSummary;
 use Illuminate\Database\QueryException;
 
 // TL-03 (TASK-010): the values a security event and a log line may hold (SECURITY LG-02–LG-04; D-SEC-13).

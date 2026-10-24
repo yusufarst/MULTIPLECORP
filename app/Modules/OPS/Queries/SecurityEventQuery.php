@@ -2,9 +2,9 @@
 
 namespace App\Modules\OPS\Queries;
 
-use App\Modules\OPS\Enums\SecurityEventKind;
 use App\Modules\OPS\Models\SecurityEvent;
-use App\Modules\OPS\Services\SecurityLogHash;
+use App\Support\SecurityLog\SecurityEventKind;
+use App\Support\SecurityLog\SecurityLogHash;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;

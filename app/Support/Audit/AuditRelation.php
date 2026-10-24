@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Enums;
+namespace App\Support\Audit;
 
 /**
  * How an audited change relates to a record it names (BR-XC-01; BR-CR-01): the records it affects, and

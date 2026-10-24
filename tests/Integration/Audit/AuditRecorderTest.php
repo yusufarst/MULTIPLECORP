@@ -1,12 +1,12 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Modules\OPS\Data\AuditChange;
-use App\Modules\OPS\Data\AuditLinkage;
-use App\Modules\OPS\Enums\AuditRelation;
-use App\Modules\OPS\Enums\AuthorityClass;
 use App\Modules\OPS\Models\AuditEvent;
-use App\Modules\OPS\Services\AuditRecorder;
+use App\Support\Audit\AuditChange;
+use App\Support\Audit\AuditLinkage;
+use App\Support\Audit\AuditRecorder;
+use App\Support\Audit\AuditRelation;
+use App\Support\Audit\AuthorityClass;
 use App\Support\CorrelationId;
 use App\Support\Redaction;
 use Illuminate\Database\QueryException;

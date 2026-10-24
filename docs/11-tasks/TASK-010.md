@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-24 the Owner's decision [DIR-093](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries) (1) places this Task's two writers in Support, so every module's commands — IAM's identity steps among them — call them: the EXPECTED MODULES line; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** VERIFYING
@@ -59,7 +61,7 @@ Every sensitive action keeps its individual actor, time, reason, before/after an
 
 **EXPECTED MODULES / FILE AREAS:**
 
-- the OPS module's audit and security-event services; their query classes
+- the audit and security-event writers shared in `app/Support` (ARCHITECTURE §4; DIR-093); the OPS module's query classes
 
 **BUSINESS RULES:**
 

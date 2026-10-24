@@ -1,9 +1,7 @@
 <?php
 
-namespace App\Modules\OPS\Services;
+namespace App\Support\SecurityLog;
 
-use App\Modules\OPS\Data\UserAgentSummary;
-use App\Modules\OPS\Enums\SecurityEventKind;
 use App\Support\CorrelationId;
 use App\Support\Database\Transactions;
 use App\Support\Redaction;
@@ -23,7 +21,8 @@ use Throwable;
  * still open around a rolled-back savepoint, and a short lock timeout bounds any wait. A failed write never
  * throws, never changes the command's outcome, and is logged with the correlation id instead. A submitted
  * identifier, an address and a provider subject are stored only as keyed hashes, a user agent only as its
- * summary, and the details only under the keys LG-02 names (LG-03).
+ * summary, and the details only under the keys LG-02 names (LG-03). It is shared in Support, so every
+ * module's commands and requests — IAM's identity steps among them — call it (ARCHITECTURE §4; DIR-093).
  */
 final class SecurityEventRecorder
 {

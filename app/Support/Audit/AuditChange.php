@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Data;
+namespace App\Support\Audit;
 
 use App\Support\Redaction;
 use BackedEnum;

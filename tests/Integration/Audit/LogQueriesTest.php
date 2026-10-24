@@ -1,12 +1,12 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Modules\OPS\Enums\AuthorityClass;
-use App\Modules\OPS\Enums\SecurityEventKind;
 use App\Modules\OPS\Queries\AuditEventQuery;
 use App\Modules\OPS\Queries\SecurityEventQuery;
-use App\Modules\OPS\Services\AuditRecorder;
-use App\Modules\OPS\Services\SecurityEventRecorder;
+use App\Support\Audit\AuditRecorder;
+use App\Support\Audit\AuthorityClass;
+use App\Support\SecurityLog\SecurityEventKind;
+use App\Support\SecurityLog\SecurityEventRecorder;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;

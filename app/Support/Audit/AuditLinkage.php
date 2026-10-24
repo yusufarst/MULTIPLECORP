@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Modules\OPS\Data;
+namespace App\Support\Audit;
 
-use App\Modules\OPS\Enums\AuditRelation;
 use InvalidArgumentException;
 
 /**

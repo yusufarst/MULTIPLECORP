@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Data;
+namespace App\Support\SecurityLog;
 
 /**
  * The user-agent summary of a security event (SECURITY LG-02, LG-03): the browser family with its major

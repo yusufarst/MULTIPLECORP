@@ -2,7 +2,7 @@
 
 namespace Tests\Support\Concurrency;
 
-use App\Modules\OPS\Services\SecurityEventRecorder;
+use App\Support\SecurityLog\SecurityEventRecorder;
 use Closure;
 use Illuminate\Support\Facades\Concurrency;
 use Illuminate\Support\Facades\DB;

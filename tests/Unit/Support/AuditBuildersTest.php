@@ -1,9 +1,9 @@
 <?php
 
-use App\Modules\OPS\Data\AuditChange;
-use App\Modules\OPS\Data\AuditLinkage;
-use App\Modules\OPS\Enums\AuditRelation;
-use App\Modules\OPS\Enums\AuthorityClass;
+use App\Support\Audit\AuditChange;
+use App\Support\Audit\AuditLinkage;
+use App\Support\Audit\AuditRelation;
+use App\Support\Audit\AuthorityClass;
 use App\Support\Redaction;
 use Carbon\CarbonImmutable;
 

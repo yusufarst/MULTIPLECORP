@@ -1,12 +1,12 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Modules\OPS\Enums\SecurityEventKind;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\SecurityEvent;
-use App\Modules\OPS\Services\SecurityEventRecorder;
-use App\Modules\OPS\Services\SecurityLogHash;
 use App\Support\CorrelationId;
+use App\Support\SecurityLog\SecurityEventKind;
+use App\Support\SecurityLog\SecurityEventRecorder;
+use App\Support\SecurityLog\SecurityLogHash;
 use Illuminate\Log\Events\MessageLogged;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;

@@ -2,8 +2,8 @@
 
 namespace Tests;
 
-use App\Modules\OPS\Services\SecurityEventRecorder;
 use App\Support\Database\DatabaseRole;
+use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Foundation\Testing\DatabaseTruncation;

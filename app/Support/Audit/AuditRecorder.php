@@ -1,10 +1,7 @@
 <?php
 
-namespace App\Modules\OPS\Services;
+namespace App\Support\Audit;
 
-use App\Modules\OPS\Data\AuditChange;
-use App\Modules\OPS\Data\AuditLinkage;
-use App\Modules\OPS\Enums\AuthorityClass;
 use App\Support\CorrelationId;
 use App\Support\Database\Transactions;
 use App\Support\Redaction;
@@ -18,7 +15,8 @@ use LogicException;
  * an action calls it inside its own transaction, so the audit row commits or rolls back with the change it
  * records, and an audit failure rolls the command back. It refuses to write outside a transaction. The
  * actor is the individual account (BR-XC-02) — NULL with authority SYSTEM for the operator's commands —
- * and a backdated command keeps its business date beside the recorded instant (DIR-018).
+ * and a backdated command keeps its business date beside the recorded instant (DIR-018). It is shared in
+ * Support, so every module's commands — IAM's identity steps among them — call it (ARCHITECTURE §4; DIR-093).
  */
 final class AuditRecorder
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Enums;
+namespace App\Support\SecurityLog;
 
 /**
  * The 39 security-event kinds of SECURITY LG-02, those of the `security_events_kind` CHECK (DATABASE §4.13).

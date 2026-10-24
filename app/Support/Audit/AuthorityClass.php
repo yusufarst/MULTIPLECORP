@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\OPS\Enums;
+namespace App\Support\Audit;
 
 /**
  * The authority an audited change exercised (DATABASE §4.13 `audit_events.authority_class`; WORKFLOWS §4;

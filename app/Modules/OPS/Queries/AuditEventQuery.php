@@ -2,8 +2,8 @@
 
 namespace App\Modules\OPS\Queries;
 
-use App\Modules\OPS\Enums\AuthorityClass;
 use App\Modules\OPS\Models\AuditEvent;
+use App\Support\Audit\AuthorityClass;
 use App\Support\BusinessDate;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Builder;
