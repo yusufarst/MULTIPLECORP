@@ -81,6 +81,38 @@ it('answers a request for another company\'s and a missing record with the same 
     $this->actingAs($this->admin)->getJson("/__test/perusahaan/{$this->a->public_id}")->assertOk()->assertSee($this->a->public_id);
 });
 
+it('never returns another record for a foreign or missing identifier when the query has or-conditions (CS-04)', function (string $who, Closure $publicId, ?string $expected, bool $logged) {
+    $authority = $who === 'owner' ? app(EffectiveCapabilities::class)->for(Authorization::owner()) : $this->authority;
+    $query = Company::query()->where('companies.id', $this->a->id)->orWhere('companies.id', $this->c->id);
+    $found = null;
+
+    try {
+        $found = app(ScopedRecords::class)->find($query, $publicId->call($this), $authority, 'id');
+    } catch (ModelNotFoundException) {
+    }
+
+    app(DeferredCallbackCollection::class)->invoke();
+
+    expect($found?->public_id)->toBe($expected === null ? null : $this->{$expected}->public_id)
+        ->and(SecurityEvent::query()->where('event_kind', 'ACCESS_DENIED')->count())->toBe($logged ? 1 : 0);
+})->with([
+    'an Admin asking for another company\'s record' => ['admin', fn () => $this->b->public_id, null, false],
+    'an Admin asking for a missing record' => ['admin', fn () => '0192a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b', null, false],
+    'an Admin asking for a record the conditions hold' => ['admin', fn () => $this->c->public_id, 'c', false],
+    'the Owner asking for a record outside the conditions' => ['owner', fn () => $this->b->public_id, null, false],
+    'the Owner asking for a missing record' => ['owner', fn () => '0192a1b2-c3d4-7e5f-8a9b-0c1d2e3f4a5b', null, false],
+]);
+
+it('takes a record the or-conditions hold but the scope excludes for a probe, and only that (CS-04; LG-07)', function () {
+    $query = Company::query()->where('companies.id', $this->a->id)->orWhere('companies.id', $this->b->id);
+
+    expect(fn () => app(ScopedRecords::class)->find($query, $this->b->public_id, $this->authority, 'id'))->toThrow(ModelNotFoundException::class);
+
+    app(DeferredCallbackCollection::class)->invoke();
+
+    expect(SecurityEvent::query()->where('event_kind', 'ACCESS_DENIED')->where('target_public_id', $this->b->public_id)->count())->toBe(1);
+});
+
 it('keeps the scope around a query\'s own or-conditions (CS-07)', function () {
     $query = Company::query()->where('companies.id', $this->a->id)->orWhere('companies.id', $this->b->id);
 
