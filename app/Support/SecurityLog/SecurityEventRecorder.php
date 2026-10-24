@@ -41,6 +41,8 @@ final class SecurityEventRecorder
         'incident_run', 'window_start', 'confirmer_public_id',
         // IMPORT_COLLISION_UNDISCLOSED, for display only (TECH-022).
         'declared_kind', 'cutoff_date', 'company_scope',
+        // AUTHORIZATION_ANOMALY and ACCESS_DENIED: the capability concerned, a catalogue code (OD-16; TASK-011).
+        'capability',
     ];
 
     private const MAXIMUM_DETAIL_LENGTH = 200;
