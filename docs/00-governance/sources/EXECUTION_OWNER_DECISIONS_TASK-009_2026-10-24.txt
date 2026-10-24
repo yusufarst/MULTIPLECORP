@@ -1,0 +1,9 @@
+Owner decisions received in session during execution, 2026-10-24 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: TASK-009's four discoveries (after the executor's consolidated checkpoint and recommendations (1)-(4)) ---
+
+Saya menyetujui rekomendasi (1)–(4) sebagai DIR-092. Catat lewat CHANGE_CONTROL, siapkan teks kanonik untuk saya setujui sebagai APPR-021, lalu bangun bagian TASK-009 sebelum DONE.
+
+--- Part 2: the approval of the canonical text (APPR-021), after the executor showed T1-T9 ---
+
+Saya menyetujui teks kanonik T1–T9 sebagai APPR-021. Terapkan, lalu minta izin commit.

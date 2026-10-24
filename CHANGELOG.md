@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-24, TASK-009 — schema: FUL and FIN tables, finance and tax representations
+
+- TASK-008 merged by the Owner into `main` as `903cb38` (pull request #8).
+- Built TASK-009 on its branch `task/TASK-009-schema-ful-fin` in the Owner's local Desktop session: 28 expand-only migrations — DATABASE §4.9's seven FUL and §4.12's nineteen FIN tables with their CHECKs, keys, the receivable, source and money-fact guards, the typed void and revision bases, the entry-error replacement inheriting the current billing act, the typed application exits, the IX- indexes and the runtime's privileges, and the forward keys DIR-089 (1), DIR-090 (1) and DIR-091 (1) give it, drop-ship lines in a purchase line's first effect (DIR-090 (5)). The local and CI database's lock table raised to 2048 for the parallel suite.
+- The Owner's decision DIR-092 on four discoveries, at one checkpoint, with APPR-021's DATABASE text: each FUL and FIN row held within its parent, a money-fact guard to its disbursement's kind and a replaced MIGRASI receivable's inherited act undated, built by TASK-009; the entry-error evidence check to TASK-049 — TASK_PLAN's Change 9.
+- Every check passed in fresh CI on `63ac747`. TASK-009 DONE — progress 9 / 87 —; TASK-010, TASK-014 and TASK-073 READY; pull request #9 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-24, TASK-008 — schema: INV tables, inventory and lot-cost representations
 
 - TASK-007 merged by the Owner into `main` as `3cd30d3` (pull request #7).

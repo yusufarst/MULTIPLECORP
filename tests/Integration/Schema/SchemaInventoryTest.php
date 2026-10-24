@@ -21,6 +21,29 @@ use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\EvidenceLink;
 use App\Modules\DOC\Models\FileObject;
+use App\Modules\FIN\Models\DeductionSettlement;
+use App\Modules\FIN\Models\Disbursement;
+use App\Modules\FIN\Models\FinancialContra;
+use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Models\InvoiceBillingAct;
+use App\Modules\FIN\Models\InvoiceTaxComponent;
+use App\Modules\FIN\Models\InvoiceVersion;
+use App\Modules\FIN\Models\InvoiceVersionLine;
+use App\Modules\FIN\Models\OpeningCustomerCredit;
+use App\Modules\FIN\Models\OtherCashReceipt;
+use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Models\PaymentApplication;
+use App\Modules\FIN\Models\PaymentClaimedDeduction;
+use App\Modules\FIN\Models\PrepaymentKuitansiLink;
+use App\Modules\FIN\Models\ReceivableDisputeHold;
+use App\Modules\FIN\Models\ReceivableWriteoff;
+use App\Modules\FUL\Models\Delivery;
+use App\Modules\FUL\Models\DeliveryClosure;
+use App\Modules\FUL\Models\DeliveryLine;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
+use App\Modules\FUL\Models\ServiceHandover;
+use App\Modules\FUL\Models\ServiceHandoverLine;
 use App\Modules\IAM\Models\Capability;
 use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Models\User;
@@ -87,11 +110,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\RefreshDatabase;
 
-// TL-05 (TASK-005–TASK-008), criteria 1 and 4 of each and TASK-007's and TASK-008's criterion 1: migrating an empty
+// TL-05 (TASK-005–TASK-009), criteria 1 and 4 of each and TASK-007's–TASK-009's criterion 1: migrating an empty
 // database creates exactly DATABASE §4.1's eight IAM tables, §4.13's seven OPS tables and the four
 // infrastructure stores of TASK-005 — no queue, cache or job-batch table, those stores being Valkey —, the
 // nine ORG, five PTY, six CAT and ten DOC tables of §4.2–§4.4 and §4.10, and the eleven PRJ, eight PUR, six
-// CST and three ADM tables of §4.5, §4.6, §4.8 and §4.11, and the 26 INV tables of §4.7, with the identifiers of §16
+// CST and three ADM tables of §4.5, §4.6, §4.8 and §4.11, the 26 INV tables of §4.7, and the seven FUL and nineteen FIN tables of
+// §4.9 and §4.12, with the identifiers of §16
 // and the types of §17.
 
 uses(RefreshDatabase::class);
@@ -118,6 +142,12 @@ const SCHEMA_TABLES = [
     'reservations', 'reservation_events', 'stock_counts', 'stock_count_scopes', 'stock_count_lines', 'stock_count_findings', 'unattributed_loss_cases',
     'unattributed_loss_candidates', 'unattributed_loss_exposures', 'unattributed_loss_group_exposures', 'unattributed_loss_resolutions',
     'unattributed_loss_resolution_lines',
+    // TASK-009
+    'dropship_confirmations', 'dropship_confirmation_lines', 'deliveries', 'delivery_lines', 'delivery_closures', 'service_handovers', 'service_handover_lines',
+    'invoices', 'invoice_versions', 'invoice_version_lines', 'invoice_tax_components', 'invoice_balances', 'invoice_billing_acts', 'payments',
+    'payment_claimed_deductions', 'application_source_balances', 'payment_applications', 'deduction_settlements', 'receivable_writeoffs',
+    'receivable_dispute_holds', 'opening_customer_credits', 'prepayment_kuitansi_links', 'disbursements', 'other_cash_receipts', 'financial_contras',
+    'money_fact_balances',
 ];
 
 /** The tables keyed otherwise than by an identity `id`: the stores' own identifiers, the link tables' pairs and the keys DATABASE §4 states. */
@@ -125,7 +155,7 @@ const OTHERWISE_KEYED = [
     'sessions', 'export_requests', 'command_log', 'role_capabilities', 'user_roles', 'document_types', 'number_sequences',
     'project_siplah_details', 'project_line_balances', 'project_commercial_balances', 'purchase_line_balances', 'lot_cost_balances', 'purchase_charge_balances',
     'purchase_charge_share_balances', 'stock_product_balances', 'stock_scope_balances', 'stock_lot_balances', 'stock_reversal_balances', 'stock_count_scopes',
-    'unattributed_loss_exposures', 'unattributed_loss_group_exposures',
+    'unattributed_loss_exposures', 'unattributed_loss_group_exposures', 'invoice_balances',
 ];
 
 function columnTypes(string $where, array $bindings = []): array
@@ -175,7 +205,7 @@ it('keys each guard and the SIPLAH details by the record they belong to, as DATA
     ['stock_product_balances', ['product_id']], ['stock_scope_balances', ['product_id', 'location_id', 'condition']],
     ['stock_lot_balances', ['lot_id', 'location_id', 'condition']], ['stock_reversal_balances', ['reversed_movement_id', 'lot_id', 'location_id', 'condition']],
     ['stock_count_scopes', ['stock_count_id', 'product_id', 'location_id', 'condition']], ['unattributed_loss_exposures', ['unattributed_loss_case_id', 'company_id']],
-    ['unattributed_loss_group_exposures', ['exposure_group_case_id', 'company_id']],
+    ['unattributed_loss_group_exposures', ['exposure_group_case_id', 'company_id']], ['invoice_balances', ['invoice_id']],
 ]);
 
 it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric(9,6), dates as date and instants as timestamptz (criterion 4)', function () {
@@ -196,6 +226,19 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'purchase_line_tax_components.amount', 'purchase_lines.unit_price', 'purchase_lines.line_value', 'quotation_revision_lines.unit_price', 'quotation_revision_lines.sales_value',
         // TASK-008
         'stock_count_findings.flagged_cost_basis', 'unattributed_loss_candidates.net_unit_cost_at_recognition',
+        // TASK-009
+        'application_source_balances.capacity_amount', 'application_source_balances.claimed_deductions_amount', 'application_source_balances.contra_amount',
+        'application_source_balances.gross_amount', 'application_source_balances.invoice_applied_amount', 'application_source_balances.net_amount',
+        'application_source_balances.refund_backed_amount', 'application_source_balances.refund_released_amount', 'application_source_balances.refund_shortfall_amount',
+        'application_source_balances.settled_amount', 'deduction_settlements.amount', 'disbursements.amount', 'financial_contras.amount',
+        'invoice_balances.applied_amount', 'invoice_balances.collected_tax_settled_amount', 'invoice_balances.fee_settled_amount', 'invoice_balances.gross_value',
+        'invoice_balances.output_tax_value', 'invoice_balances.outstanding', 'invoice_balances.sales_value', 'invoice_balances.tax_settled_amount',
+        'invoice_balances.written_off_amount', 'invoice_tax_components.amount', 'invoice_tax_components.base_amount', 'invoice_version_lines.line_sales_value',
+        'invoice_version_lines.unit_price', 'invoice_versions.gross_value', 'invoice_versions.output_tax_value', 'invoice_versions.sales_value',
+        'money_fact_balances.amount', 'money_fact_balances.backed_amount', 'money_fact_balances.contra_amount', 'money_fact_balances.released_amount',
+        'money_fact_balances.shortfall_amount', 'money_fact_balances.transfer_cited_amount', 'opening_customer_credits.amount', 'other_cash_receipts.amount',
+        'payment_applications.amount', 'payment_claimed_deductions.claimed_amount', 'payments.amount', 'receivable_writeoffs.amount',
+        'receivable_writeoffs.outstanding_after', 'receivable_writeoffs.outstanding_before',
     ];
     $quantities = [
         'products.min_stock_qty_base',
@@ -222,6 +265,10 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'unattributed_loss_cases.converted_qty_base', 'unattributed_loss_cases.pending_qty_base', 'unattributed_loss_exposures.exposure_qty_base',
         'unattributed_loss_exposures.assigned_net_qty_base', 'unattributed_loss_group_exposures.bound_qty_base', 'unattributed_loss_group_exposures.assigned_net_qty_base',
         'unattributed_loss_resolution_lines.assigned_qty_base',
+        // TASK-009
+        'delivery_closures.closed_qty_base', 'delivery_lines.entered_qty', 'delivery_lines.qty_base', 'dropship_confirmation_lines.entered_qty',
+        'dropship_confirmation_lines.qty_base', 'invoice_version_lines.entered_qty', 'invoice_version_lines.qty_base', 'service_handover_lines.entered_qty',
+        'service_handover_lines.qty_base',
     ];
     $dates = [
         'import_batches.cutoff_date', 'numbering_schemes.effective_from', 'product_price_history.effective_from', 'document_versions.business_date',
@@ -231,6 +278,11 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'lot_cost_entries.business_date', 'projects.deadline', 'purchase_line_closures.business_date', 'purchases.business_date', 'quotation_revisions.valid_until',
         // TASK-008
         'inventory_lots.business_date', 'stock_movements.business_date', 'unattributed_loss_cases.business_date', 'unattributed_loss_resolutions.business_date',
+        // TASK-009; a billing act's and the receivable guard's due dates are dates too.
+        'deduction_settlements.business_date', 'deliveries.business_date', 'delivery_closures.business_date', 'disbursements.business_date',
+        'dropship_confirmations.business_date', 'financial_contras.business_date', 'invoice_balances.current_due_date', 'invoice_billing_acts.billed_at',
+        'invoice_billing_acts.due_date', 'invoice_versions.business_date', 'opening_customer_credits.business_date', 'other_cash_receipts.business_date',
+        'payment_applications.business_date', 'payments.business_date', 'receivable_writeoffs.business_date', 'service_handovers.business_date',
     ];
 
     expect(columnTypes("data_type = 'numeric'"))->toEqual([
@@ -238,6 +290,7 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         ...array_fill_keys($quantities, 'numeric(18,3)'),
         'tax_rate_versions.rate_percent' => 'numeric(9,6)',
         'purchase_line_tax_components.rate_percent' => 'numeric(9,6)',
+        'invoice_tax_components.rate_percent' => 'numeric(9,6)',
     ])
         ->and(columnTypes("data_type = 'date'"))->toEqual(array_fill_keys($dates, 'date'))
         ->and(columnTypes("udt_name = 'daterange'"))->toEqual(array_fill_keys(['company_tax_profiles.effective', 'tax_rate_versions.effective', 'tax_treatment_rules.effective'], 'daterange'))
@@ -264,6 +317,7 @@ it('gives the routable roots a UUIDv7 public identifier, from the model or from 
         'documents.public_id', 'evidence_documents.public_id', 'file_objects.public_id', 'import_batches.public_id',
         'products.public_id', 'suppliers.public_id', 'users.public_id', 'projects.public_id', 'quotation_revisions.public_id', 'purchases.public_id',
         'stock_counts.public_id', 'stock_movements.public_id', 'unattributed_loss_cases.public_id',
+        'dropship_confirmations.public_id', 'deliveries.public_id', 'service_handovers.public_id', 'invoices.public_id', 'payments.public_id', 'disbursements.public_id',
     ], 'uuid'));
 
     $user = User::factory()->create();
@@ -299,6 +353,10 @@ it('creates every model from its synthetic factory under the runtime\'s privileg
     StockConsumption::class, StockRestoration::class, Reservation::class, ReservationEvent::class, StockCount::class, StockCountLine::class,
     StockCountFinding::class, UnattributedLossCase::class, UnattributedLossCandidate::class, UnattributedLossResolution::class,
     UnattributedLossResolutionLine::class,
+    // TASK-009; nor have its guards.
+    DropshipConfirmation::class, DropshipConfirmationLine::class, Delivery::class, DeliveryLine::class, DeliveryClosure::class, ServiceHandover::class, ServiceHandoverLine::class,
+    Invoice::class, InvoiceVersion::class, InvoiceVersionLine::class, InvoiceTaxComponent::class, InvoiceBillingAct::class, Payment::class, PaymentClaimedDeduction::class, PaymentApplication::class,
+    DeductionSettlement::class, ReceivableWriteoff::class, ReceivableDisputeHold::class, OpeningCustomerCredit::class, PrepaymentKuitansiLink::class, Disbursement::class, OtherCashReceipt::class, FinancialContra::class,
 ]);
 
 it('loads the PRJ, PUR, CST and ADM models\' relations through their keys', function () {

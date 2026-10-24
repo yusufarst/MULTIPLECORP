@@ -4,6 +4,8 @@ use App\Modules\CST\Models\CostAttribution;
 use App\Modules\CST\Models\Expense;
 use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
 use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\ReceivingLine;
 use App\Modules\INV\Models\StockConsumption;
@@ -115,7 +117,8 @@ it('attributes HPP once per consumption, and per component and charge of a direc
     // A NULL charge counts as one value, so a goods row cannot repeat.
     Refusal::assert(Refusal::UNIQUE, 'cost_attributions_c25_one_initial_per_purchase_line', fn () => CostAttribution::factory()->create($line));
     Refusal::assert(Refusal::UNIQUE, 'cost_attributions_c25_one_initial_per_dropship_line', function () use ($company): void {
-        $once = ['purchase_line_id' => null, 'dropship_confirmation_line_id' => 9002, 'cost_component' => 'GOODS', 'bearer_company_id' => $company];
+        $line = DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => DropshipConfirmation::factory()->create(['company_id' => $company])->id]);
+        $once = ['purchase_line_id' => null, 'dropship_confirmation_line_id' => $line->id, 'cost_component' => 'GOODS', 'bearer_company_id' => $company];
         CostAttribution::factory()->create($once);
         CostAttribution::factory()->create($once);
     });

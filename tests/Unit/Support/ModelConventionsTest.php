@@ -15,6 +15,27 @@ use App\Modules\DOC\Models\EvidenceBalance;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\FileObject;
+use App\Modules\FIN\Models\ApplicationSourceBalance;
+use App\Modules\FIN\Models\Disbursement;
+use App\Modules\FIN\Models\FinancialContra;
+use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Models\InvoiceBalance;
+use App\Modules\FIN\Models\InvoiceBillingAct;
+use App\Modules\FIN\Models\InvoiceTaxComponent;
+use App\Modules\FIN\Models\InvoiceVersion;
+use App\Modules\FIN\Models\InvoiceVersionLine;
+use App\Modules\FIN\Models\OpeningCustomerCredit;
+use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Models\PaymentApplication;
+use App\Modules\FIN\Models\PaymentClaimedDeduction;
+use App\Modules\FIN\Models\ReceivableWriteoff;
+use App\Modules\FUL\Models\Delivery;
+use App\Modules\FUL\Models\DeliveryClosure;
+use App\Modules\FUL\Models\DeliveryLine;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
+use App\Modules\FUL\Models\ServiceHandover;
+use App\Modules\FUL\Models\ServiceHandoverLine;
 use App\Modules\IAM\Models\User;
 use App\Modules\INV\Models\DispatchLine;
 use App\Modules\INV\Models\InventoryLot;
@@ -62,8 +83,8 @@ use App\Modules\PUR\Models\PurchaseLineTaxComponent;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
-// TL-03 (TASK-005–TASK-008): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
-// PTY, CAT, DOC, PRJ, PUR, CST, ADM and INV models — UUIDv7 public identifiers beside the internal key, money,
+// TL-03 (TASK-005–TASK-009): the casts and value conventions of DATABASE §16–§17 on the IAM, OPS, ORG,
+// PTY, CAT, DOC, PRJ, PUR, CST, ADM, INV, FUL and FIN models — UUIDv7 public identifiers beside the internal key, money,
 // quantities and rates as exact decimal strings never a float, a one-way password hash, append-only
 // models that refuse a change (C-53), and the guards keyed by the record they guard.
 
@@ -77,7 +98,8 @@ it('generates a UUIDv7 public identifier beside the internal key', function (str
 })->with([
     User::class, CorrectionCase::class, ImportBatch::class, Company::class, ClientOrganization::class, Supplier::class, Product::class,
     Document::class, DocumentVersion::class, EvidenceDocument::class, FileObject::class, Project::class, QuotationRevision::class, Purchase::class,
-    StockMovement::class, StockCount::class, UnattributedLossCase::class,
+    StockMovement::class, StockCount::class, UnattributedLossCase::class, DropshipConfirmation::class, Delivery::class, ServiceHandover::class,
+    Invoice::class, Payment::class, Disbursement::class,
 ]);
 
 it('carries money as an exact decimal string with two places', function (string $given, string $carried) {
@@ -117,6 +139,15 @@ it('carries each money, quantity and rate attribute as an exact decimal string a
     'a ledger delta' => [StockMovementEntry::class, 'qty_delta_base', '-1.25', '-1.250'],
     'a product\'s on-hand quantity' => [StockProductBalance::class, 'on_hand_qty', '7', '7.000'],
     'a candidate\'s unit cost' => [UnattributedLossCandidate::class, 'net_unit_cost_at_recognition', '12000', '12000.00'],
+    'a confirmed drop-ship quantity' => [DropshipConfirmationLine::class, 'qty_base', '2', '2.000'],
+    'a delivered quantity' => [DeliveryLine::class, 'qty_base', '0.5', '0.500'],
+    'an invoice\'s sales value' => [InvoiceVersion::class, 'sales_value', '9999999999999999.99', '9999999999999999.99'],
+    'an invoice line\'s price' => [InvoiceVersionLine::class, 'unit_price', '100000', '100000.00'],
+    'an output-tax rate' => [InvoiceTaxComponent::class, 'rate_percent', '11', '11.000000'],
+    'an outstanding receivable' => [InvoiceBalance::class, 'outstanding', '1110000', '1110000.00'],
+    'a payment' => [Payment::class, 'amount', '1500000.5', '1500000.50'],
+    'an application' => [PaymentApplication::class, 'amount', '500000', '500000.00'],
+    'a source\'s capacity' => [ApplicationSourceBalance::class, 'capacity_amount', '0.5', '0.50'],
 ]);
 
 it('keys each guard by the record it guards, never an identity of its own (DATABASE §4.5–§4.8)', function (string $model, string $key) {
@@ -127,7 +158,7 @@ it('keys each guard by the record it guards, never an identity of its own (DATAB
 })->with([
     [ProjectLineBalance::class, 'project_line_id'], [ProjectCommercialBalance::class, 'project_id'], [PurchaseLineBalance::class, 'purchase_line_id'],
     [LotCostBalance::class, 'lot_id'], [PurchaseChargeBalance::class, 'purchase_charge_id'], [ProjectSiplahDetail::class, 'project_id'],
-    [StockProductBalance::class, 'product_id'],
+    [StockProductBalance::class, 'product_id'], [InvoiceBalance::class, 'invoice_id'],
 ]);
 
 it('stores the password only as a one-way hash and never serializes a credential', function () {
@@ -156,4 +187,7 @@ it('refuses to update or delete a saved append-only row at the model (C-53)', fu
     LotCostEntry::class, CostAttribution::class, Expense::class, AdminRequirementWaiver::class, InventoryLot::class, StockMovement::class,
     StockMovementEntry::class, ReceivingLine::class, DispatchLine::class, StockConsumption::class, StockRestoration::class, ReservationEvent::class,
     StockCountLine::class, UnattributedLossCandidate::class, UnattributedLossResolution::class, UnattributedLossResolutionLine::class,
+    DropshipConfirmation::class, DropshipConfirmationLine::class, Delivery::class, DeliveryLine::class, DeliveryClosure::class, ServiceHandover::class,
+    ServiceHandoverLine::class, InvoiceBillingAct::class, PaymentClaimedDeduction::class, ReceivableWriteoff::class, OpeningCustomerCredit::class,
+    Disbursement::class, FinancialContra::class,
 ]);

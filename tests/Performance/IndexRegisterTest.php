@@ -5,7 +5,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\RefreshDatabase;
 
-// TL-15 (TASK-005–TASK-008): each index PERFORMANCE §12 registers on these tables and stores exists and
+// TL-15 (TASK-005–TASK-009): each index PERFORMANCE §12 registers on these tables and stores exists and
 // is chosen by the query it serves in `EXPLAIN`, a partial index's predicate written as the same literal
 // (PF-10). The tables hold synthetic rows, analysed, inside a transaction of the migration role that is
 // rolled back; sequential scans are disabled so a plan shows whether an index can serve the query at all.
@@ -92,6 +92,20 @@ const INDEX_REGISTER = [
     '§20 the oldest-first picking aid' => ['stock_lot_balances_picking', 'select lot_id from stock_lot_balances where product_id = 123 and location_id = (select min(id) from locations) and qty > 0'],
     '§20 a product\'s active reservations' => ['reservations_active_product', "select id from reservations where product_id = 123 and state = 'ACTIVE'"],
     '§20 a product\'s lots by date' => ['inventory_lots_product_business_date', 'select id from inventory_lots where product_id = 123 order by business_date'],
+    // TASK-009
+    'IX-01 the duplicate payment (BD-02)' => ['payments_ix01_duplicate', "select id from payments where company_bank_account_id = (select min(id) from company_bank_accounts) and amount = 1500000 and business_date = '2026-10-01'"],
+    'IX-06 a payment\'s applications' => ['payment_applications_ix06_payment', 'select id from payment_applications where payment_id = 123'],
+    'IX-06 an opening credit\'s applications' => ['payment_applications_ix06_credit', 'select id from payment_applications where opening_customer_credit_id = 123'],
+    'IX-08 a project line\'s deliveries' => ['delivery_lines_ix08_project_line', 'select id from delivery_lines where project_line_id = 123'],
+    'IX-11 a company\'s payments' => ['payments_ix11_business_date', 'select id from payments where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-11 a company\'s disbursements' => ['disbursements_ix11_business_date', 'select id from disbursements where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-11 a company\'s other Cash-In' => ['other_cash_receipts_ix11_business_date', 'select id from other_cash_receipts where company_id = {company} order by business_date desc, id desc limit 25'],
+    'IX-11 the receivables by due date' => ['invoice_balances_ix11_due', 'select invoice_id from invoice_balances where company_id = {company} and outstanding > 0 order by current_due_date, invoice_id limit 25'],
+    'IX-14 the sources with capacity or unsettled deductions (QS-13)' => ['application_source_balances_ix14_open', 'select id from application_source_balances where company_id = (select min(id) from companies) and (capacity_amount > 0 or settled_amount < claimed_deductions_amount)'],
+    'IX-14 the bank payments citing no statement line (QS-12)' => ['payments_ix14_uncited', 'select id from payments where company_id = (select min(id) from companies) and company_bank_account_id is not null and bank_statement_line_id is null'],
+    'IX-14 the payments without proof' => ['payments_ix14_unevidenced', 'select id from payments where company_id = (select min(id) from companies) and unevidenced_reason is not null'],
+    '§20 an invoice\'s active applications' => ['payment_applications_active_invoice', "select id from payment_applications where invoice_id = 123 and state = 'ACTIVE'"],
+    '§20 a client\'s invoices' => ['invoices_client', 'select id from invoices where company_id = {company} and client_organization_id = (select min(id) from client_organizations)'],
 ];
 
 function seedIndexRegister(Connection $owner): void
@@ -254,13 +268,21 @@ function seedIndexRegister(Connection $owner): void
             select c.ids[case when g % 100 = 0 then 1 else 2 + g % 9 end], 'MANUAL', 'Operasional', 250000, date '2026-10-01' - g % 300
             from generate_series(1, 20000) g, seed_companies c;
 
+        -- An issued invoice per project to its client, billed once and partly settled in ten (C-15; C-41).
+        insert into invoices (company_id, project_id, client_organization_id, state) select p.company_id, p.id, p.client_organization_id, 'ISSUED' from projects p;
+        insert into invoice_billing_acts (invoice_id, billed_at, due_date, kind, decided_by)
+            select i.id, date '2026-10-01' - (i.id % 300)::int, date '2026-11-01' - (i.id % 300)::int, 'BILLING', s.ids[1 + i.id % 200] from invoices i, seed_users s;
+        insert into invoice_balances (invoice_id, company_id, gross_value, sales_value, output_tax_value, applied_amount, current_billing_act_id, current_due_date)
+            select i.id, i.company_id, 1110000, 1000000, 110000, case when i.id % 10 = 0 then 1110000 else 0 end, a.id, a.due_date
+            from invoices i join invoice_billing_acts a on a.invoice_id = i.id;
+
         insert into document_types (code, name, subject_kind, is_numbered, allowed_modes)
             values ('DOC-01', 'Penawaran', 'CONTOH', true, '{STANDARD}'), ('DOC-05', 'Kuitansi', 'CONTOH', true, '{RECEIPT,PRE_PAYMENT}');
         -- A quotation chain per project, its company the project's (C-32), and a pre-payment Kuitansi in fifty.
         insert into documents (company_id, document_type_code, mode, project_id, invoice_id)
             select p.company_id, case when p.sequence_no % 50 = 0 then 'DOC-05' else 'DOC-01' end,
                 case when p.sequence_no % 50 = 0 then 'PRE_PAYMENT' else 'STANDARD' end,
-                case when p.sequence_no % 50 = 0 then null else p.id end, case when p.sequence_no % 50 = 0 then p.sequence_no end
+                case when p.sequence_no % 50 = 0 then null else p.id end, case when p.sequence_no % 50 = 0 then (select i.id from invoices i where i.project_id = p.id) end
             from projects p;
         insert into document_versions (document_id, company_id, document_type_code, version_no, state, business_date, period_key, sequence_no,
                 formatted_number, kuitansi_amount, payload, payload_sha256)
@@ -283,6 +305,31 @@ function seedIndexRegister(Connection $owner): void
             where e.evidence_type = 'BANK_STATEMENT';
         insert into evidence_balances (bank_statement_line_id, proven_amount, cited_amount)
             select l.id, l.amount, case when l.id % 50 = 0 then 0 else l.amount end from bank_statement_lines l;
+        -- A payment per invoice from its client, cited by a statement line but in fifty, without proof in a hundred, applied to
+        -- its invoice — reallocated in five —, each with its source guard (C-13; C-14).
+        insert into payments (company_id, client_organization_id, business_date, amount, method, company_bank_account_id, bank_statement_line_id, unevidenced_reason, reference)
+            select i.company_id, i.client_organization_id, date '2026-10-01' - (i.id % 300)::int, 1500000, 'TRANSFER', a.id,
+                case when i.id % 50 = 0 then null else (select min(l.id) from bank_statement_lines l where l.company_id = i.company_id) end,
+                case when i.id % 100 = 0 then 'Bukti transfer belum diterima' end, 'INV-' || i.id
+            from invoices i join company_bank_accounts a on a.company_id = i.company_id;
+        insert into application_source_balances (payment_id, company_id, client_organization_id, gross_amount, invoice_applied_amount, claimed_deductions_amount)
+            select p.id, p.company_id, p.client_organization_id, p.amount, case when p.id % 10 = 0 then 0 else 500000 end, case when p.id % 20 = 0 then 15000 else 0 end
+            from payments p;
+        insert into payment_applications (company_id, client_organization_id, payment_id, invoice_id, target_kind, amount, state, end_reason, end_command_id, business_date)
+            select p.company_id, p.client_organization_id, p.id, substr(p.reference, 5)::bigint, 'INVOICE', 500000,
+                case when p.id % 5 = 0 then 'SUPERSEDED' else 'ACTIVE' end, case when p.id % 5 = 0 then 'REALLOCATED' end, case when p.id % 5 = 0 then gen_random_uuid() end, p.business_date
+            from payments p;
+        insert into disbursements (company_id, business_date, amount, kind, company_bank_account_id)
+            select c.ids[1 + g % 10], date '2026-10-01' - g % 300, 200000, 'INTERCOMPANY_TRANSFER_OUT', (select a.id from company_bank_accounts a where a.company_id = c.ids[1 + g % 10])
+            from generate_series(1, 20000) g, seed_companies c;
+        insert into other_cash_receipts (company_id, business_date, amount, category, income_class, company_bank_account_id)
+            select c.ids[1 + g % 10], date '2026-10-01' - g % 300, 300000, 'OTHER_INCOME', 'INCOME', (select a.id from company_bank_accounts a where a.company_id = c.ids[1 + g % 10])
+            from generate_series(1, 20000) g, seed_companies c;
+        -- A delivery of each dispatched line, on its project (C-30).
+        insert into deliveries (company_id, project_id, business_date, recipient_name) select distinct d.company_id, d.project_id, date '2026-10-03', 'Penerima Contoh' from dispatch_lines d;
+        insert into delivery_lines (delivery_id, company_id, project_line_id, product_id, quantity_scale, dispatch_line_id, entered_qty, entered_unit_id, ratio_to_base, qty_base)
+            select v.id, d.company_id, d.project_line_id, d.product_id, d.quantity_scale, d.id, d.entered_qty, d.entered_unit_id, d.ratio_to_base, d.qty_base
+            from dispatch_lines d join deliveries v on v.project_id = d.project_id;
         insert into evidence_links (evidence_document_id, evidence_scope, company_id, role, correction_case_id)
             select e.id, 'COMPANY', e.company_id, 'PRIMARY_PROOF', k.id
             from evidence_documents e, lateral (select id from correction_cases where company_id = e.company_id order by id limit 1 offset (e.id % 100)) k;
