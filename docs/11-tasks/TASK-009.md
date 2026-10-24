@@ -10,6 +10,8 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-090](../00-governance/DECISIO
 
 Amendment: on 2026-10-24 the Owner's decision [DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (1) adds the foreign keys of TASK-008's columns on this Task's drop-ship tables (DIR-088's rule) — a scope line, criterion 8 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
 
+Amendment: on 2026-10-24 the Owner's decision [DIR-092](../00-governance/DECISION_LOG.md#dir-092--task-009s-discoveries) (1), (3) and (4) on this Task's discoveries holds its rows within their parents, a money-fact guard to its disbursement's kind and a replaced MIGRASI receivable's inherited act undated, built on this Task's tables before it is DONE — a scope line, criterion 9 and its integration test; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** VERIFYING
@@ -47,6 +49,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 - the foreign keys of TASK-007's columns on these tables, added expand-only ([DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries) (1); DIR-088's rule): `cost_attributions.dropship_confirmation_line_id` and `expenses.deduction_settlement_id`
 - `purchase_line_has_effect` extended with this Task's drop-ship confirmation lines and any disbursement that cites a purchase line (DIR-090 (5); L-23)
 - the foreign keys of TASK-008's columns on these tables, added expand-only ([DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries) (1); DIR-088's rule): `stock_consumption_balances.dropship_confirmation_line_id`; `stock_restorations.dropship_confirmation_line_id` with DATABASE §4.7's composite keys to the drop-ship line's unit snapshot and to the confirmation's company, and the restoration held to its drop-ship line's product (DIR-091 (3))
+- each row held within its parent beyond its company — a drop-ship line's purchase and demand line, a delivery line's, a closure's, a handover line's and an invoice line's demand line and shipment —, a money-fact guard to its disbursement's kind and an inherited act copying an undated OPENING act undated, by composite keys over existing columns and triggers ([DIR-092](../00-governance/DECISION_LOG.md#dir-092--task-009s-discoveries) (1), (3), (4); APPR-021)
 
 **OUT OF SCOPE:**
 
@@ -208,6 +211,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 6. Each of the fourteen foreign keys DIR-089 (1) assigns to this Task from TASK-006's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, proven by a referential-integrity test before this Task is DONE (C-32).
 7. Each foreign key and trigger DIR-090 (1) assigns to this Task from TASK-007's columns exists and refuses a row that references no row of its table, or another company's where the key carries the company, and `purchase_line_has_effect` refuses the edit of a purchase line after each fact DIR-090 (5) names, proven by tests before this Task is DONE (C-32; L-23).
 8. Each foreign key DIR-091 (1) assigns to this Task from TASK-008's columns exists and refuses a row that references no drop-ship line, another line's unit snapshot, another company's confirmation or another product, proven by a referential-integrity test before this Task is DONE (C-32).
+9. Each key and trigger DIR-092 (1), (3) and (4) assigns to this Task exists and refuses a row outside its parent's purchase, project or demand line and a money fact of another disbursement kind, and admits a replaced MIGRASI receivable's undated inherited act, proven by tests before this Task is DONE.
 
 **TEST REQUIREMENTS:**
 
@@ -215,7 +219,7 @@ Fulfilment and finance are tier 6; the five financial concepts never share a row
 - Typecheck: TL-02
 - Unit: casts and derived-value conventions (TL-03)
 - Feature: N/A — no endpoint
-- Integration: each C- row of these tables violated and refused at its level (TL-05); C-13 and C-15 under two connections; each foreign key DIR-089 (1) adds from TASK-006's columns violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused; each foreign key DIR-091 (1) adds from TASK-008's columns violated and refused
+- Integration: each C- row of these tables violated and refused at its level (TL-05); C-13 and C-15 under two connections; each foreign key DIR-089 (1) adds from TASK-006's columns violated and refused; each foreign key and trigger DIR-090 (1) adds from TASK-007's columns violated and refused, and a purchase line's edit after each fact of DIR-090 (5) refused; each foreign key DIR-091 (1) adds from TASK-008's columns violated and refused; each key and trigger of DIR-092 (1), (3) and (4) violated and refused, and the MIGRASI replacement admitted
 - Authorization: N/A — no route
 - Route integrity: N/A — no route
 - Interaction: N/A — no INT- contract in this Task

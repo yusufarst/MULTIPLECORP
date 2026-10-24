@@ -309,3 +309,27 @@ it('writes off within the outstanding it states, once per invoice per command, o
 
     expect(ReceivableWriteoff::factory()->create(['invoice_id' => $writeoff->invoice_id])->outstanding_after)->toBe('1010000.00');
 });
+
+it('holds an invoice line\'s demand line within its invoice\'s project, and replaces a billed MIGRASI receivable, its inherited act undated as the act it copies (DIR-092 (1), (4); L-30)', function () {
+    $line = InvoiceVersionLine::factory()->create();
+
+    Refusal::assert(Refusal::CHECK, 'invoice_version_lines_within_project', fn () => InvoiceVersionLine::factory()->create([
+        'invoice_version_id' => $line->invoice_version_id, 'project_line_id' => ProjectLineFactory::newOn(Project::factory()->create(['company_id' => $line->company_id])->id),
+    ]));
+
+    $company = Company::factory()->create()->id;
+    $opening = fn (array $attributes = []): Invoice => Invoice::factory()->create([
+        'company_id' => $company, 'origin' => 'OPENING', 'project_id' => null, 'aging_basis' => 'MIGRASI', 'import_row_id' => ImportRowFactory::new()->createOne(['company_id' => $company])->id, ...$attributes,
+    ]);
+    $replaced = $opening();
+    issueInvoice($replaced);
+    $act = InvoiceBillingAct::factory()->create(['invoice_id' => $replaced->id, 'kind' => 'OPENING', 'due_date' => null, 'import_row_id' => ImportRowFactory::new()->createOne(['company_id' => $company])->id]);
+    $replacement = $opening(['client_organization_id' => $replaced->client_organization_id, 'replaces_invoice_id' => $replaced->id]);
+    InvoiceBillingAct::factory()->create([
+        'invoice_id' => $replacement->id, 'kind' => 'INHERITED', 'inherited_from_act_id' => $act->id, 'inherited_from_invoice_id' => $replaced->id, 'billed_at' => $act->billed_at, 'due_date' => null,
+    ]);
+    voidInvoice($replaced, 'ENTRY_ERROR_REPLACED');
+    DB::statement('set constraints invoices_c56_replaced_with_replacement, invoices_c17_inherits_current_act, invoice_billing_acts_c17_inherits_current_act immediate');
+
+    expect(InvoiceBillingAct::query()->where('invoice_id', $replacement->id)->sole()->due_date)->toBeNull();
+});

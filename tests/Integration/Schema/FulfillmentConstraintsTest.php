@@ -113,3 +113,38 @@ it('hands a service over within its company, a reversal exact and once (C-09; C-
 
     expect(DB::table('service_handover_lines')->where('reverses_line_id', $line->id)->count())->toBe(1);
 });
+
+it('holds each line within its parent beyond its company: a confirmation\'s purchase and project, a delivery\'s and a handover\'s project, a shipment of its own demand line (DIR-092 (1))', function () {
+    $confirmed = DropshipConfirmationLine::factory()->create();
+    $sameCompany = fn (): int => Project::factory()->create(['company_id' => $confirmed->company_id])->id;
+    $delivered = DeliveryLine::factory()->create();
+    $closure = DeliveryClosure::factory()->create();
+    $handed = ServiceHandoverLine::factory()->create();
+    $otherLineOf = fn (int $company, int $product): int => ProjectLineFactory::new()->createOne(['project_id' => Project::factory()->create(['company_id' => $company])->id, 'product_id' => $product])->id;
+
+    Refusal::assert(Refusal::CHECK, 'dropship_confirmation_lines_within_confirmation', fn () => DropshipConfirmationLine::factory()->create([
+        'dropship_confirmation_id' => $confirmed->dropship_confirmation_id, 'product_id' => $confirmed->product_id, 'project_line_id' => $confirmed->project_line_id,
+        'purchase_line_id' => PurchaseLine::factory()->create(['purchase_id' => Purchase::factory()->create(['company_id' => $confirmed->company_id])->id, 'product_id' => $confirmed->product_id])->id,
+    ]));
+    Refusal::assert(Refusal::CHECK, 'dropship_confirmation_lines_within_confirmation', fn () => DropshipConfirmationLine::factory()->create([
+        'dropship_confirmation_id' => $confirmed->dropship_confirmation_id, 'product_id' => $confirmed->product_id, 'purchase_line_id' => $confirmed->purchase_line_id,
+        'project_line_id' => ProjectLineFactory::new()->createOne(['project_id' => $sameCompany(), 'product_id' => $confirmed->product_id])->id,
+    ]));
+    Refusal::assert(Refusal::CHECK, 'delivery_lines_within_project', fn () => DeliveryLine::factory()->create([
+        'delivery_id' => $delivered->delivery_id, 'project_line_id' => $otherLineOf($delivered->company_id, $delivered->product_id),
+    ]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_lines_dispatch_of_line_foreign', fn () => DeliveryLine::factory()->create([
+        'delivery_id' => $delivered->delivery_id, 'project_line_id' => ProjectLineFactory::newOn(Delivery::query()->whereKey($delivered->delivery_id)->firstOrFail()->project_id),
+        'dispatch_line_id' => $delivered->dispatch_line_id,
+    ]));
+    Refusal::assert(Refusal::FOREIGN_KEY, 'delivery_closures_dispatch_of_line_foreign', fn () => DeliveryClosure::factory()->create([
+        'dispatch_line_id' => $closure->dispatch_line_id, 'project_line_id' => ProjectLineFactory::new()->createOne([
+            'project_id' => DispatchLine::query()->whereKey($closure->dispatch_line_id)->firstOrFail()->project_id, 'product_id' => $closure->product_id,
+        ])->id,
+    ]));
+    Refusal::assert(Refusal::CHECK, 'service_handover_lines_within_project', fn () => ServiceHandoverLine::factory()->create([
+        'service_handover_id' => $handed->service_handover_id, 'project_line_id' => $otherLineOf($handed->company_id, $handed->product_id),
+    ]));
+
+    expect(DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => $confirmed->dropship_confirmation_id])->company_id)->toBe($confirmed->company_id);
+});

@@ -320,3 +320,16 @@ it('carries an opening credit once per import row of its company, signed off by 
 
     expect($credit->signedEvidence?->company_id)->toBe($credit->company_id);
 });
+
+it('guards a money fact of its disbursement\'s own kind (DIR-092 (3); C-44; C-45)', function () {
+    $purchasePayment = Disbursement::factory()->create();
+    $fact = fn (Disbursement $disbursement, string $kind, array $amounts = []): bool => DB::table('money_fact_balances')->insert([
+        'company_id' => $disbursement->company_id, 'disbursement_id' => $disbursement->id, 'fact_kind' => $kind, 'amount' => $disbursement->amount, ...$amounts,
+    ]);
+
+    Refusal::assert(Refusal::CHECK, 'money_fact_balances_kind_of_disbursement', fn () => $fact($purchasePayment, 'REFUND', ['backed_amount' => $purchasePayment->amount]));
+    Refusal::assert(Refusal::CHECK, 'money_fact_balances_kind_of_disbursement', fn () => $fact($purchasePayment, 'TRANSFER_OUT'));
+    Refusal::assert(Refusal::CHECK, 'money_fact_balances_kind_of_disbursement', fn () => $fact(DisbursementFactory::refund($purchasePayment->company_id, ClientOrganization::factory()->create()->id), 'OTHER_DISBURSEMENT'));
+
+    expect($fact($purchasePayment, 'OTHER_DISBURSEMENT'))->toBeTrue();
+});

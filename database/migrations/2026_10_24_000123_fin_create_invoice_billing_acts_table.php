@@ -9,7 +9,8 @@ use Illuminate\Support\Facades\Schema;
 
 // DATABASE §4.12 `invoice_billing_acts` (AD) and §11.2: the billing of an invoice, once — one root act and a
 // linear correction chain (AX-17; CM-25; C-41). An opening receivable carries an OPENING act with its legacy
-// dates and import row, without a due date only when aged MIGRASI (BR-FIN-14). A replacement inherits the
+// dates and import row, without a due date only when aged MIGRASI (BR-FIN-14), as is the INHERITED act that
+// copies it (DIR-092 (4)). A replacement inherits the
 // replaced invoice's current act: the inherited act cites only the invoice its own replaces, copies its
 // dates exactly, and a deferred trigger refuses at commit a replacement of a billed invoice whose root act is
 // missing, fresh or cites a superseded act — so aging never resets (L-30; C-17).
@@ -45,7 +46,7 @@ return new class extends Migration
             ->check('invoice_billing_acts_c17_inherited', "(kind = 'INHERITED') = (inherited_from_act_id is not null) and num_nonnulls(inherited_from_act_id, inherited_from_invoice_id) in (0, 2)")
             ->check('invoice_billing_acts_c41_correction_supersedes', "(kind = 'CORRECTION') = (supersedes_act_id is not null)")
             ->check('invoice_billing_acts_c47_opening_import_row', "(kind = 'OPENING') = (import_row_id is not null)")
-            ->check('invoice_billing_acts_due_date', "due_date is not null or kind = 'OPENING'")
+            ->check('invoice_billing_acts_due_date', "due_date is not null or kind in ('OPENING', 'INHERITED')")
             ->uniqueIndex('invoice_billing_acts_c41_one_root', 'invoice_id', 'supersedes_act_id is null')
             ->commandIdentity()
             ->grant('select, insert');

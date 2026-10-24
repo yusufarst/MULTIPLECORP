@@ -30,7 +30,7 @@ Percentage: 9.2 %
 
 CURRENT TASK: TASK-009 — Schema — FUL and FIN tables, finance and tax representations, VERIFYING: built on its branch `task/TASK-009-schema-ful-fin` from `main` after TASK-008's merge (record 84 ER-03), its pull request into `main` waiting on its fresh CI run (ER-07)
 NEXT READY TASK: TASK-010 — Audit and security logging, TASK-014 and TASK-073, READY; TASK-009's DONE makes TASK-012 and TASK-013 READY once their other dependencies are DONE and their READY gates hold; TASK-021 and TASK-022 wait on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 8 of 2026-10-24 — DIR-091's dispositions of TASK-008's discoveries: the drop-ship forward keys of TASK-008's columns to TASK-009; APPR-020's guards of (2), (3) and (4) built by TASK-008
+LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -269,6 +269,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 7, 2026-10-23 (TASK-007's execution discoveries; [DIR-090](../00-governance/DECISION_LOG.md#dir-090--task-007s-discoveries)).** *Reason:* TASK-007 found six gaps, decided by the Owner at one checkpoint. *Change:* TASK-008 and TASK-009 each gain two scope lines — the forward keys and triggers of TASK-007's columns on their tables (DIR-088's rule) and the facts of a purchase line's first effect they create —, a criterion and its integration test; TASK-007 gains a scope line, its database impact, criterion 8 and its integration test for (2), (3), (4) and (6), on its own tables; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-090 and APPR-019's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 **Change 8, 2026-10-24 (TASK-008's execution discoveries; [DIR-091](../00-governance/DECISION_LOG.md#dir-091--task-008s-discoveries)).** *Reason:* TASK-008 found four gaps, decided by the Owner at one checkpoint. *Change:* TASK-009 gains a scope line — the foreign keys of TASK-008's columns on its drop-ship tables (DIR-088's rule) —, criterion 8 and its integration test; TASK-008 gains a scope line, criterion 9 and its integration test for (2), (3) and (4), on its own tables; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-091 and APPR-020's canonical text, a Level 1 record under CHANGE_CONTROL.
+
+**Change 9, 2026-10-24 (TASK-009's execution discoveries; [DIR-092](../00-governance/DECISION_LOG.md#dir-092--task-009s-discoveries)).** *Reason:* TASK-009 found four gaps, decided by the Owner at one checkpoint. *Change:* TASK-009 gains a scope line, criterion 9 and its integration test for (1), (3) and (4), on its own tables; TASK-049 gains a scope line, criterion 13 and its feature test for (2); no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-092 and APPR-021's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 
