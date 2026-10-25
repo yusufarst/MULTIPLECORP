@@ -8,6 +8,15 @@ export type SearchAnswer = { exact: SearchResult[]; groups: { type: string; rows
 
 export type SearchOutcome = { kind: 'answer'; answer: SearchAnswer } | { kind: 'limited'; message: string } | { kind: 'failed' };
 
+/** An outcome kept with the term it answers. */
+export type Settled = { term: string; outcome: SearchOutcome };
+
+/** The outcome for the field's term as it is now: none while a changed term waits for its own answer — through
+    the debounce and the request —, so a previous term's rows are never shown or chosen, by Enter or otherwise. */
+export function outcomeFor(settled: Settled | null, term: string): SearchOutcome | null {
+    return settled !== null && settled.term === term.trim() ? settled.outcome : null;
+}
+
 export async function search(term: string, types: string[] = [], signal?: AbortSignal): Promise<SearchOutcome> {
     try {
         const response = await fetch('/cari', {

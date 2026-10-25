@@ -88,7 +88,21 @@ export function Lookup({
             isItemEqualToValue={(item, other) => item.id === other.id}
             autoHighlight
         >
-            <ComboboxInput ref={inputRef} aria-label={label} placeholder={placeholder} maxLength={LOOKUP_MAX_TERM} {...{ [SCAN_TARGET]: 'lookup' }}>
+            <ComboboxInput
+                ref={inputRef}
+                aria-label={label}
+                placeholder={placeholder}
+                maxLength={LOOKUP_MAX_TERM}
+                {...{ [SCAN_TARGET]: 'lookup' }}
+                onKeyDown={(event) => {
+                    // Enter with no row to choose — a changed term before its answer — chooses and clears nothing:
+                    // the field keeps the term, a scanned code's Enter included (IP-15, IP-17).
+                    if (event.key === 'Enter' && shown.every((group) => group.items.length === 0)) {
+                        event.preventDefault();
+                        event.preventBaseUIHandler();
+                    }
+                }}
+            >
                 <InputGroupAddon>
                     <Icon icon={Search} size="sm" />
                 </InputGroupAddon>

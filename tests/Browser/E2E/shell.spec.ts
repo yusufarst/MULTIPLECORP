@@ -144,6 +144,70 @@ test('signs in again in place after the session ends: the input kept, the comman
     await expect(page.getByLabel('Alasan')).toHaveValue('Termin pertama');
 });
 
+test('never offers the previous term\'s results once the term changes — not by Enter, in the debounce or the new request (IP-17)', async ({ page }) => {
+    const held: { release?: () => void } = {};
+    await page.route('**/cari', async (route) => {
+        const { q } = JSON.parse(route.request().postData() ?? '{}') as { q?: string };
+
+        if (q === 'ARJ/PRJ/2026/0007') {
+            await route.fulfill({ json: { exact: [{ type: 'project', id: '01a1', code: 'ARJ/PRJ/2026/0007', label: 'Pengadaan meja', company: 'ARJ' }], groups: [], notice: null } });
+
+            return;
+        }
+
+        // The new term's answer is held until Enter has been pressed while it is on its way.
+        await new Promise<void>((resolve) => {
+            held.release = resolve;
+        });
+        await route.fulfill({ json: { exact: [], groups: [{ type: 'client', rows: [{ type: 'client', id: '01a2', code: null, label: 'SMAN 1 Bantul' }] }], notice: null } });
+    });
+    await open(page, 'owner');
+    const visits: string[] = [];
+    page.on('request', (request) => {
+        if (request.headers()['x-inertia'] === 'true') {
+            visits.push(request.url());
+        }
+    });
+
+    await page.keyboard.press('Control+k');
+    await page.keyboard.type('ARJ/PRJ/2026/0007');
+    await expect(page.getByRole('option').first()).toContainText('Pengadaan meja');
+
+    // In the debounce: the previous term's row is gone at once, and Enter opens nothing.
+    await page.keyboard.type('8');
+    await expect(page.getByRole('option', { name: /Pengadaan meja/ })).toHaveCount(0);
+    await page.keyboard.press('Enter');
+
+    // With the new term's request on its way: still nothing to choose.
+    await expect.poll(() => held.release !== undefined, { timeout: VISIT }).toBe(true);
+    await expect(page.getByRole('option', { name: /Pengadaan meja/ })).toHaveCount(0);
+    await page.keyboard.press('Enter');
+
+    held.release?.();
+    await expect(page.getByRole('option').first()).toContainText('SMAN 1 Bantul');
+    await expect(page.getByRole('combobox', { name: 'Cari atau pindai kode' })).toHaveValue('ARJ/PRJ/2026/00078');
+    expect(visits.filter((url) => url.endsWith('/proyek/01a1'))).toEqual([]);
+});
+
+test('extends the session by a foreground request when "Tetap Masuk" is pressed (IP-11; MSG-33; AU-07)', async ({ page }) => {
+    await page.clock.install();
+    await open(page, 'owner');
+
+    // Five minutes before the idle limit the warning opens.
+    await page.clock.fastForward('55:30');
+    const warning = page.getByRole('alertdialog', { name: 'Sesi Akan Berakhir' });
+    await expect(warning).toBeVisible();
+
+    const stay = page.waitForRequest((request) => request.method() === 'GET' && request.headers()['x-inertia'] === 'true');
+    await warning.getByRole('button', { name: 'Tetap Masuk' }).click();
+    expect((await stay).headers()['x-background-request']).toBeUndefined();
+    await expect(warning).toBeHidden();
+
+    // The visit counts as activity: the next checks find a full hour ahead, no warning.
+    await page.clock.fastForward('01:00');
+    await expect(warning).toBeHidden();
+});
+
 test('replays a command whose answer was lost, after signing in again, with the recorded outcome (IP-11; HO-02; criterion 7)', async ({ page }) => {
     await open(page, 'admin');
     await page.getByLabel('Alasan').fill('Termin kedua');

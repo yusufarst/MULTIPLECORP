@@ -13,6 +13,7 @@
         "../../resources/js/lib/navigation.ts",
         "../../resources/js/lib/number-entry.ts",
         "../../resources/js/lib/scanner.ts",
+        "../../resources/js/lib/search-client.ts",
         "../../resources/js/lib/session-core.ts"
     ]
 }
