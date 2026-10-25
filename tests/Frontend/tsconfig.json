@@ -4,5 +4,13 @@
         "types": ["node"],
         "allowImportingTsExtensions": true
     },
-    "include": ["**/*.ts", "../../resources/js/lib/format.ts", "../../resources/js/lib/i18n-core.ts"]
+    "include": [
+        "**/*.ts",
+        "../../resources/js/lib/command-intent.ts",
+        "../../resources/js/lib/decimal.ts",
+        "../../resources/js/lib/format.ts",
+        "../../resources/js/lib/i18n-core.ts",
+        "../../resources/js/lib/number-entry.ts",
+        "../../resources/js/lib/scanner.ts"
+    ]
 }

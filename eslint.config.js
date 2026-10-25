@@ -23,6 +23,8 @@ export default defineConfig([
             'multiplecorp/surface-grey': ['error', surfaceGreys],
             // LOCALIZATION §3.6: every user-facing string is a key of the catalogue (TASK-014).
             'multiplecorp/hardcoded-copy': 'error',
+            // DESIGN_SYSTEM §5: the tokens are the only values (TASK-015).
+            'multiplecorp/token-values': 'error',
         },
     },
     {

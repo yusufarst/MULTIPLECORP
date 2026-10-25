@@ -4,6 +4,9 @@
 import { useState } from 'react';
 
 import LanguageSwitch from '@/components/LanguageSwitch';
+import { Button } from '@/components/ui/button';
+import { Field, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/lib/i18n';
 
 export default function LanguageSwitchFixture() {
@@ -11,26 +14,26 @@ export default function LanguageSwitchFixture() {
     const [email, setEmail] = useState('');
 
     return (
-        <main className="mx-auto flex max-w-md flex-col gap-6 px-4 py-8">
+        <main className="mx-auto flex w-full max-w-sheet-sm flex-col gap-6 px-m-gutter py-8">
             <div className="flex justify-end">
                 <LanguageSwitch />
             </div>
-            <h1 className="text-2xl font-semibold">{t('pages.pg_001.heading')}</h1>
-            <label className="flex flex-col gap-2">
-                <span>{t('pages.pg_001.email')}</span>
-                <input
+            <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_001.heading')}</h1>
+            <Field>
+                <FieldLabel htmlFor="email">{t('pages.pg_001.email')}</FieldLabel>
+                <Input
+                    id="email"
                     type="email"
                     name="email"
                     value={email}
                     onChange={(event) => {
                         setEmail(event.target.value);
                     }}
-                    className="min-h-11 rounded border px-3"
                 />
-            </label>
-            <button type="button" className="min-h-11 rounded border px-4 font-medium">
+            </Field>
+            <Button variant="primary" size="lg">
                 {t('pages.pg_001.submit')}
-            </button>
+            </Button>
         </main>
     );
 }

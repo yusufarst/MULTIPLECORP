@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -234,34 +234,38 @@ A consistent, accessible, comfortable interface in natural Indonesian is V1's ex
 - Migration: N/A — no migration or import code in this Task
 - Other: the anti-slop audit of §18 on the component set
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Frontend/tokens.test.ts` reads §5 and holds `resources/css/tokens.css` to it — every ADOPT and ADAPT token present with §5's colour, no EXCLUDE token —; Tailwind's default namespaces are cleared, so a utility names only a token, and `multiplecorp/token-values` fails a class carrying its own value or a spacing step off §5.3's scale, with GR-04's per-surface greys, in TL-01. Criterion 2: PT-03–PT-31 built in `resources/js/components/` with their loading, empty, error and denied states (PT-19's region states and system page), checked by TL-12's axe runs at 390 and 1,280 px in both languages and with the dialog open, and by TL-11's bands; PT-01 and PT-02 — the shell and the phone navigation — are TASK-016's (OUT OF SCOPE). Criterion 3: IP-01–IP-21's presentations — the outcome faces and the action region, one `command_id` per intent, the business date, the confirmation and step-up, IP-13's entry and IP-14's validation, the lookup, the scan field's burst guard, the list continuation, the duplicate warning, the stale comparison, the reservation cut, the upload, several commands — with KB-04–KB-11, held by `tests/Frontend/entry.test.ts` and TL-09's `components.spec.ts` on Chromium and WebKit. Criterion 4: Base UI 1.9.0 (MIT) and its Toast chosen, recorded with every package's version and licence in TOOLCHAIN's row "Design system facilities (TASK-015)"; no paid component. Criterion 5: HO-37 answered with evidence — no `'unsafe-inline'` style: `CSPProvider` turns Base UI's style elements off, and TL-14's `components-csp.spec.ts` opens every overlay under the real header with no violation; WebKit's report of its native `<select>`'s internal styling is the engine's, reproduced by a bare `<select>` with no library, and the CSP is unchanged. Criterion 6: TL-10's `components.spec.ts` switches the language on the gallery with unsent input in every kind of field — text, number, money, lookup, select, textarea, code, checkbox, radio, switch, scan — and keeps it, and TL-11 holds the layout at every band in both languages; CJ-18 is TASK-064's
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint with the hardcoded-copy, GR-04 and new token-values rules, and Pint on the changed PHP, PASS locally and in CI (TL-01)
+- [x] Typecheck: the TypeScript compiler over the app, the browser specs and the frontend tests PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: the ESLint rules' fixtures (42) and `tests/Frontend/` (17 — §5's tokens, IP-13's entry, the provisional decimals, IP-02's intent, §13.2's burst) (TL-03); `KeyCatalogueTest` with the 90 added keys held to their registry (TL-03); `LocaleTest` (TL-04); PASS locally and in CI
+- [x] Authorization: N/A — components receive the server's decisions as data; no route
+- [x] Route integrity: N/A — no application route added or changed; the gallery is the `local` environment's fixture route only, never in testing, staging or production
+- [x] Interaction behavior: the patterns' behaviour — IP-02, IP-13, IP-14, the confirmation's focus and KB-10, the step-up and re-authentication, the scan guard, the list keys and continuation, the line editor's KB-05–KB-08 — (TL-08 with TL-09)
+- [x] Browser E2E if required: the components on the gallery on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: TL-11's band edges from 320 to 1,680 px in both languages — no page-level horizontal scroll, no clipped button, the table from 768 px and the rows below
+- [x] Visual breathing room/density if UI: §5.3's density and spacing scale enforced by the token rule; English strings held at every band (TEST_STRATEGY §9)
+- [x] Production build: TL-13 — the production build without `VITE_FIXTURE_PAGES` contains no fixture page — PASS on the workstation and in CI
+- [x] Security checks if required: TL-14 and HO-37 — the CSP unchanged, no `'unsafe-inline'`, no violation from a component; no raw HTML (WS-09); fonts and icons from the application's origin (WS-08); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: no migration and no schema change; local and CI databases only, no production connection
+- [x] Final diff review: each component against DESIGN_SYSTEM and ADMIN_FLOW, the anti-slop mapping of §18 kept — no card per section, no gradient, glow, illustration, KPI delta, progress percentage, avatar in the timeline or celebratory motion; STANDARD and outside ER-06's areas, no reviewer
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `63fbfec`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40214973032 (push) and 40214976186 (pull request #18), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the ESLint rules and the frontend tests included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). The first run, on `aef790a`, failed one WebKit test: Alt+N reached the line editor before "Urungkan" had put focus back into the restored line; `63fbfec` binds KB-06 and KB-07 to the whole editor and the test waits for that focus. On the Owner's workstation, 2026-10-25: TypeScript, ESLint, the rules' fixtures 42, `tests/Frontend/` 17, Unit `tests/Unit/Localization/` 12, Feature `LocaleTest` 12, Routes and Architecture 61, Pint, the browser suite on Chromium and WebKit (61 PASS, one WebKit-only test skipped on Chromium), the production build and the repository gates PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: 63fbfec, CI ubuntu-24.04 run 40214973032`; the production build without `VITE_FIXTURE_PAGES` has no fixture page; its application chunk 432.8 kB, 136.4 kB gzipped — PERFORMANCE §8 states no bundle budget
+- Route evidence: N/A — no application route; the gallery's fixture route is the `local` environment's only
+- Interaction evidence: N/A for INT- tests of this Task's own — the presentation side of INT-005, INT-007–INT-009 and INT-011 is held by TL-09's component specs; their INT- tests come with the pages that send those commands
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 63fbfec, CI ubuntu-24.04 run 40214973032`; TL-10, TL-11 and TL-12 PASS in the same run
+- Localization evidence: every component in both languages on the gallery, the switch keeping unsent input in every field (DOD-16); 90 keys added through `lang/registry/added-keys.json` for the Owner's review
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the installed packages are free and open-source, nothing hosted
+- Files changed: `resources/css/tokens.css`, `resources/css/app.css`; `resources/js/components/ui/`, `resources/js/components/`, `resources/js/lib/`, `resources/js/app.tsx`, `resources/js/Pages/Fixtures/`; `lang/id.json`, `lang/en.json`, `lang/registry/added-keys.json`; `eslint/`, `eslint.config.js`; `routes/fixtures.php`, `.env.example`, `package.json`, `package-lock.json`; `tests/Unit/Localization/KeyCatalogueTest.php`, `tests/Frontend/`, `tests/Browser/`; TOOLCHAIN's row; this file, TASK-016's status, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `aef790a` and `63fbfec`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-015-design-system`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-25 (TOOLCHAIN, "Execution environments (TASK-001)"); the session resumed after the workstation's unexpected restart with the uncommitted work intact; Context7 not available, each facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-015 row); the local runs used a container-local copy of the working tree and two browser workers, CI the final proof. `aef790a` carried a stale CURRENT TASK and NEXT READY TASK in TASK_PLAN, corrected by this record. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-015 blocks were re-checked at this DONE: TASK-016 READY — TASK-011, TASK-012, TASK-013 and TASK-015 DONE —, TASK-017 waiting on TASK-016, TASK-022 on TASK-017. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

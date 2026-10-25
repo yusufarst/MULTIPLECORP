@@ -50,8 +50,21 @@ it('holds every key of §6 in both languages with the text §6 gives (criterion 
     $inventory = inventory();
 
     expect($inventory)->toHaveCount(889)
-        ->and(catalogue('id'))->toBe(array_map(fn (array $row): string => $row['id'], $inventory))
-        ->and(catalogue('en'))->toBe(array_map(fn (array $row): string => $row['en'], $inventory));
+        ->and(array_intersect_key(catalogue('id'), $inventory))->toBe(array_map(fn (array $row): string => $row['id'], $inventory))
+        ->and(array_intersect_key(catalogue('en'), $inventory))->toBe(array_map(fn (array $row): string => $row['en'], $inventory));
+});
+
+it('adds a key after §6 only through the registry, with its Task, source and kind (§3.2; DIR-081 OB-04; OQ-24 (a))', function () {
+    $registry = json_decode((string) file_get_contents(lang_path('registry/added-keys.json')), true, flags: JSON_THROW_ON_ERROR)['keys'];
+    $added = array_keys(array_diff_key(catalogue('id'), inventory()));
+
+    expect($added)->toBe(array_keys($registry));
+
+    foreach ($registry as $key => $entry) {
+        expect($entry)->toHaveKeys(['task', 'source', 'indonesian', 'english'])
+            ->and($entry['indonesian'])->toBeIn(['canonical', 'proposed'], $key)
+            ->and($entry['english'])->toBe('proposed', $key);
+    }
 });
 
 it('misses no string and no placeholder in either language (§3.6; criterion 3)', function () {

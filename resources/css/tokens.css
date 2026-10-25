@@ -1,0 +1,733 @@
+/* =============================================================================
+   The design tokens of DESIGN_SYSTEM §5 (TASK-015) — the Golden Frontend Reference v1.0.0's names and
+   values as DESIGN_SYSTEM transcribes and dispositions them (GD-05, GD-08): ADOPT and ADAPT kept, EXCLUDE
+   absent. Three layers, one source (§5): a token that already is a Tailwind key is declared once in
+   `@theme` with its value and is both; a key that points to another variable sits in `@theme inline`;
+   every default namespace the tokens replace is cleared with `initial`, so no utility carries a value
+   outside them (SLOP-; DA-05). Sizes are rem at a 16 px root (GR-06); the desktop text unit `--tu` is
+   fixed at one reference px — GR-16's variant B (D-DS-10).
+   ============================================================================= */
+
+@theme {
+    --color-*: initial;
+    --font-*: initial;
+    --font-weight-*: initial;
+    --text-*: initial;
+    --tracking-*: initial;
+    --leading-*: initial;
+    --radius-*: initial;
+    --shadow-*: initial;
+    --inset-shadow-*: initial;
+    --drop-shadow-*: initial;
+    --text-shadow-*: initial;
+    --blur-*: initial;
+    --ease-*: initial;
+    --animate-*: initial;
+    --breakpoint-*: initial;
+    --container-*: initial;
+    --aspect-*: initial;
+    --perspective-*: initial;
+
+    /* §6: the bands — phone the default, mobile-first. */
+    --breakpoint-md: 48rem;
+    --breakpoint-lg: 64.0625rem;
+    --breakpoint-xl: 75rem;
+    --breakpoint-composer: 80rem;
+
+    /* §5.3: the 4 px scale with its 2 px step (SLOP-33); the steps a component may use are the
+       `--space-*` tokens below, held by the token lint (eslint/rules/token-values.js). */
+    --spacing: 0.25rem;
+
+    /* §5.1 — neutrals, surfaces and rows. */
+    --color-canvas: #f7f8f3;
+    --color-surface: #ffffff;
+    --color-surface-sunken: #f2f3ee;
+    --color-surface-warm: #fdfcf4;
+    --color-row-hover: #f8f9f4;
+    --color-row-press: #f2f3ec;
+    --color-sunken-hover: #e9eae4;
+    --color-avatar: #dfe1e3;
+
+    /* §5.1 — dividers and edges; decorative, never a control's identifying edge. */
+    --color-border-subtle: #f0f1ef;
+    --color-border: #e4e4e2;
+    --color-border-strong: #d8d8d6;
+    --color-border-hover: #d6d6d4;
+    --color-header-divider: #ecedec;
+    --color-addon-divider: #efefef;
+    --color-separator: #c6c6c4;
+    --color-divider-label: #dcdcdb;
+    --color-border-dashed: #e7e7e7;
+    --color-card-hover-border: #e3e4df;
+    --color-card-press-border: #dcddd7;
+    --color-link-underline: #c9cacd;
+
+    /* §5.1 — control edges (ADAPT): the edge that identifies an input, select, date field, checkbox or radio
+       is `--color-border-input`, 3:1 on every surface a field sits on (GR-01). */
+    --color-border-control: #e0e0de;
+    --color-border-field: #dededc;
+    --color-border-field-dense: #d7d7d5;
+    --color-border-field-xl: #d9d9d7;
+    --color-border-icon-btn: #e3e3e2;
+    --color-border-toggle: #e8e8e8;
+    --color-border-kbd: #e7e7e7;
+    --color-border-field-hover: #c8c8c6;
+    --color-border-control-hover: #cfcfcd;
+    --color-border-input: #898982;
+    --color-border-outline-xl: #cdcec9;
+    --color-border-outline-xl-hover: #bebfba;
+
+    /* §5.1 — the ink tiers; each muted grey only on its own surface, where it meets 4.5:1 (GR-04). */
+    --color-text-primary: #0f1014;
+    --color-text-strong: #3a3b42;
+    --color-text-secondary: #55565c;
+    --color-text-tertiary: #6b6d73;
+    --color-text-muted: #75767a;
+    --color-text-muted-canvas: #717276;
+    --color-text-muted-tint: #6d6e72;
+    --color-text-tertiary-lime: #696b71;
+    --color-text-placeholder: #75767a;
+    --color-text-disabled: #9b9da1;
+    --color-text-on-primary: #ffffff;
+    --color-text-on-lime: #0d0e00;
+    --color-icon-field: #262626;
+
+    /* §5.1 — the six status tones, a word with its icon, never colour alone (D-DS-04; WCAG 1.4.1). */
+    --color-success-bg: #e3f4e9;
+    --color-success-fg: #236b49;
+    --color-success-dot: #319664;
+    --color-warning-bg: #fff1e2;
+    --color-warning-fg: #8a4a0e;
+    --color-warning-dot: #d98a3d;
+    --color-pending-bg: #fef1d8;
+    --color-pending-fg: #7a5a22;
+    --color-pending-dot: #cb9d4e;
+    --color-danger-bg: #fde7e8;
+    --color-danger-fg: #b4373f;
+    --color-danger-icon: #9b2e30;
+    --color-danger-dot: #d0454c;
+    --color-info-bg: #e2ecf4;
+    --color-info-fg: #0f2b4f;
+    --color-info-dot: #5b8db5;
+    --color-neutral-bg: #f2f3ee;
+    --color-neutral-fg: #3a3b42;
+    --color-neutral-dot: #9b9da1;
+
+    /* §5.1 — the destructive button and the required mark, decorative beside "(wajib)" (PT-09). */
+    --color-danger-solid: #b4373f;
+    --color-danger-solid-hover: #9e2f36;
+    --color-danger-rim: #9b2e30;
+    --color-required: #cf4747;
+
+    /* §5.1 — the category discs, identity wells only (VD-02). */
+    --color-tint-olive: #eaf0d9;
+    --color-tint-olive-ink: #1a2e0d;
+    --color-tint-blue: #e1ecf4;
+    --color-tint-blue-ink: #0f2b4f;
+    --color-tint-peach: #f6ede1;
+    --color-tint-peach-ink: #432817;
+    --color-tint-mint: #deefe9;
+    --color-tint-mint-ink: #032f11;
+    --color-tint-red: #fce8e6;
+    --color-tint-red-ink: #9b2e30;
+    --color-tint-lavender: #ede5fc;
+    --color-tint-lavender-ink: #341d5d;
+    --color-tint-tan: #f1e6dc;
+    --color-tint-tan-ink: #432817;
+    --color-tint-lime: #f5f9df;
+    --color-tint-lime-ink: #556a08;
+    --color-tint-neutral: #f2f3ee;
+    --color-tint-neutral-ink: #0f1014;
+    --color-tint-blue-strong: #d5e7f3;
+    --color-tint-peach-strong: #faece0;
+
+    /* §5.1 — the receivable-ageing ramp, by severity, always with labels and a table (VP-6; GR-23). */
+    --color-chart-age-1: #99b1a0;
+    --color-chart-age-2: #edd798;
+    --color-chart-age-3: #cbac8d;
+    --color-chart-age-4: #d56e5b;
+    --color-chart-age-5: #a9322e;
+
+    /* §5.2 — one typeface, self-hosted (WS-08's `font-src 'self'`), with its cap-height-matched fallback. */
+    --font-sans: 'Inter Variable', 'Inter', 'Inter Fallback', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', Menlo, monospace;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+
+    /* §5.2 — the desktop scale at the canvas, each size × `--tu`; one key per role with its line height and
+       tracking (Tailwind's form). */
+    --text-display: calc(44 * var(--tu));
+    --text-display--line-height: calc(50 * var(--tu));
+    --text-display--letter-spacing: -0.02em;
+    --text-title: calc(32 * var(--tu));
+    --text-title--line-height: calc(40 * var(--tu));
+    --text-title--letter-spacing: -0.02em;
+    --text-figure-xl: calc(28 * var(--tu));
+    --text-figure-xl--line-height: calc(36 * var(--tu));
+    --text-figure-xl--letter-spacing: -0.02em;
+    --text-figure-lg: calc(22 * var(--tu));
+    --text-figure-lg--line-height: calc(28 * var(--tu));
+    --text-figure-lg--letter-spacing: -0.01em;
+    --text-heading: calc(20 * var(--tu));
+    --text-heading--line-height: calc(28 * var(--tu));
+    --text-heading--letter-spacing: -0.01em;
+    --text-heading-md: calc(20 * var(--tu));
+    --text-heading-md--line-height: calc(26 * var(--tu));
+    --text-heading-md--letter-spacing: -0.04em;
+    --text-heading-lg: calc(21 * var(--tu));
+    --text-heading-lg--line-height: calc(28 * var(--tu));
+    --text-heading-lg--letter-spacing: -0.01em;
+    --text-heading-sm: calc(16.5 * var(--tu));
+    --text-heading-sm--line-height: calc(20 * var(--tu));
+    --text-heading-sm--letter-spacing: -0.03em;
+    --text-lead: calc(17 * var(--tu));
+    --text-lead--line-height: calc(26 * var(--tu));
+    --text-body-lg: calc(15 * var(--tu));
+    --text-body-lg--line-height: calc(22 * var(--tu));
+    --text-body: calc(14 * var(--tu));
+    --text-body--line-height: calc(20 * var(--tu));
+    --text-label: calc(13 * var(--tu));
+    --text-label--line-height: calc(18 * var(--tu));
+
+    /* §5.2 — fixed small sizes, never shrunk; nothing below 11 px, the 10.5 px pill excluded (GR-16). */
+    --text-caption: 0.75rem;
+    --text-caption--line-height: 1rem;
+    --text-micro: 0.6875rem;
+    --text-micro--line-height: 1rem;
+    --text-pill: 0.75rem;
+    --text-pill--line-height: 1rem;
+    --text-pill-sm: 0.6875rem;
+    --text-pill-sm--line-height: 1rem;
+
+    /* §5.2 — the phone scale; text fields 16 px on touch (D-DS-02). */
+    --text-m-title: var(--m-text-title);
+    --text-m-title--line-height: var(--m-text-title-lh);
+    --text-m-heading: var(--m-text-heading);
+    --text-m-heading--line-height: var(--m-text-heading-lh);
+    --text-m-row: var(--m-text-row);
+    --text-m-row--line-height: var(--m-text-row-lh);
+    --text-m-body: var(--m-text-body);
+    --text-m-body--line-height: var(--m-text-body-lh);
+    --text-m-meta: var(--m-text-meta);
+    --text-m-meta--line-height: var(--m-text-meta-lh);
+    --text-m-figure: var(--m-text-figure);
+    --text-m-figure--line-height: var(--m-text-figure-lh);
+    --text-m-total: var(--m-text-total);
+    --text-touch: 1rem;
+
+    /* §5.3 — the radius family; cards 10, dialogs 12, sheets' top corners 16; nothing else above 12 (§8). */
+    --radius-xs: 0.25rem;
+    --radius-sm: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.625rem;
+    --radius-xl: 0.75rem;
+    --radius-sheet: 1rem;
+    --radius-full: 9999px;
+
+    /* §5.3 — elevation (SLOP-14). */
+    --shadow-xs: 0 1px 1px rgb(16 24 8 / 0.04);
+    --shadow-card: 0 1px 3px rgb(20 24 16 / 0.04);
+    --shadow-card-hover: 0 2px 8px rgb(20 24 16 / 0.05);
+    --shadow-pop: 0 4px 12px rgb(16 20 10 / 0.085);
+    --shadow-raised: 0 -1px 0 rgb(40 48 20 / 0.012), 0 1px 0 rgb(40 48 20 / 0.012), 0 2px 26px 0 rgb(40 48 20 / 0.068);
+    --shadow-menu: 0 2px 8px rgb(0 0 0 / 0.05), 0 12px 32px rgb(20 24 16 / 0.08);
+    --shadow-toast: 0 8px 24px rgb(15 16 20 / 0.1), 0 1px 2px rgb(15 16 20 / 0.05);
+    --shadow-modal: 0 0 0 1px rgb(15 16 20 / 0.05), 0 24px 48px rgb(15 16 20 / 0.14), 0 2px 6px rgb(15 16 20 / 0.05);
+    --shadow-drawer: -1px 0 0 rgb(15 16 20 / 0.06), -24px 0 48px rgb(15 16 20 / 0.12);
+    --shadow-footer: 0 -1px 0 #f5f5f5;
+    --shadow-cta: 0 5px 14px var(--brand-cta-glow);
+    --drop-shadow-palette: drop-shadow(0 18px 28px rgb(15 16 20 / 0.16)) drop-shadow(0 2px 4px rgb(15 16 20 / 0.06));
+
+    /* §5.4 — the curves; the emphasis overshoot excluded (VP-8). */
+    --ease-standard: cubic-bezier(0.42, 0, 0.58, 1);
+    --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+    --ease-reveal: cubic-bezier(0.25, 1, 0.5, 1);
+    --ease-exit: cubic-bezier(0.37, 0, 0.63, 1);
+    --ease-linear: linear;
+
+    /* §5.4 — the scrim and its blur. */
+    --blur-backdrop: 4px;
+}
+
+/* The keys that point to another variable (§5.1): the brand aliases, the progress tokens and shadcn/ui's
+   theme variables, which the primitives read (shadcn/ui, Theming). */
+@theme inline {
+    --color-primary: var(--brand-primary);
+    --color-primary-rim: var(--brand-primary-rim);
+    --color-primary-hover: var(--brand-primary-hover);
+    --color-primary-press: var(--brand-primary-press);
+    --color-primary-deep: var(--brand-primary-deep);
+    --color-accent-olive: var(--brand-accent);
+    --color-accent-ink: var(--brand-accent-strong);
+    --color-accent-link: var(--brand-accent-link);
+    --color-accent-underline: var(--brand-accent-soft);
+    --color-link-soft: var(--brand-link-soft);
+    --color-link-strong: var(--brand-link-strong);
+    --color-link-rule: var(--brand-link-rule);
+    --color-lime-50: var(--brand-tint-50);
+    --color-lime-100: var(--brand-tint-100);
+    --color-lime-100-hover: var(--brand-tint-100-hover);
+    --color-lime-150: var(--brand-tint-150);
+    --color-lime-200: var(--brand-tint-200);
+    --color-lime-700: var(--brand-on-tint);
+    --color-lime-signal: var(--brand-signal);
+    --color-nav-hover: var(--brand-nav-hover);
+    --color-nav-press: var(--brand-nav-press);
+    --color-fill-rule: var(--brand-fill-rule);
+    --color-fill-wash: var(--brand-fill-wash);
+    --color-lime-cta: var(--brand-cta);
+    --color-lime-cta-band: var(--brand-cta-band);
+    --color-lime-cta-hover: var(--brand-cta-hover);
+    --color-lime-cta-ink: var(--brand-cta-ink);
+    --color-lime-cta-rim: var(--brand-cta-rim);
+    --color-progress: var(--brand-progress);
+    --color-step-done-line: var(--brand-step-done-line);
+    --color-step-done-dot: var(--brand-step-done-dot);
+    --color-chart-track: var(--chart-track);
+    --color-stepper-disc: var(--stepper-disc-bg);
+    --color-stepper-ring: var(--stepper-ring);
+    --color-stepper-line: var(--stepper-line);
+    --color-focus: var(--brand-accent);
+    --color-scrim: var(--mc-scrim);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-success: var(--color-success-fg);
+    --color-success-foreground: var(--color-success-bg);
+
+    /* Named geometry the components read as utilities — `h-control-md`, `size-touch` — each a §5.3 token. */
+    --spacing-control-xs: var(--control-xs);
+    --spacing-control-sm: var(--control-sm);
+    --spacing-control-md: var(--control-md);
+    --spacing-control-lg: var(--control-lg);
+    --spacing-control-header: var(--control-header);
+    --spacing-control-xl: var(--control-xl);
+    --spacing-control-add-row: var(--control-add-row);
+    --spacing-touch: var(--touch-min);
+    --spacing-floor: var(--m-control-h);
+    --spacing-badge: var(--badge-height);
+    --spacing-badge-lg: var(--badge-height-lg);
+    --spacing-badge-sm: var(--badge-height-sm);
+    --spacing-keycap: var(--keycap-height);
+    --spacing-keycap-min: var(--keycap-min-width);
+    --spacing-icon-lg: var(--icon-lg);
+    --spacing-icon-md: var(--icon-md);
+    --spacing-icon-sm: var(--icon-sm);
+    --spacing-icon-xs: var(--icon-xs);
+    --spacing-icon-status: 0.875rem;
+    --spacing-disc-lg: var(--icon-disc-lg);
+    --spacing-disc-kpi: var(--icon-disc-kpi);
+    --spacing-disc-row: var(--icon-disc-row);
+    --spacing-disc-md: var(--icon-disc-md);
+    --spacing-disc-sm: var(--icon-disc-sm);
+    --spacing-stepper: var(--stepper-disc);
+    --spacing-row: var(--m-row-min);
+    --spacing-select-row: var(--select-row-h);
+    --spacing-sheet-row: var(--select-sheet-row-h);
+    --spacing-gutter: var(--page-gutter);
+    --spacing-m-gutter: var(--m-gutter);
+    --spacing-card: var(--card-padding);
+    --spacing-m-card: var(--m-card-pad);
+    --spacing-grid: var(--grid-gap);
+    --spacing-m-card-gap: var(--m-card-gap);
+    --spacing-m-section: var(--m-section-gap);
+    --spacing-header: var(--header-height);
+    --spacing-footer: var(--footer-height);
+    --spacing-appbar: var(--m-appbar-h);
+    --spacing-bottom-nav: var(--m-bottom-nav-h);
+    --spacing-action-bar: var(--m-action-bar-h);
+    --spacing-progress: var(--progress-height);
+    --spacing-search: var(--search-max-width);
+    --spacing-dialog: 25rem;
+    --spacing-sheet-sm: 30rem;
+    --spacing-sheet-lg: 40rem;
+    --spacing-select-menu: var(--select-menu-max-h);
+    --spacing-page-data: 105rem;
+    --spacing-page-standard: 90rem;
+    --spacing-page-settings: 80rem;
+    --spacing-page-form: 70rem;
+    --spacing-page-focused: 60rem;
+}
+
+:root {
+    /* §5.1 — the brand set, the only colours a project re-tints. */
+    --brand-primary: #1a5035;
+    --brand-primary-rim: #12452b;
+    --brand-primary-hover: #154530;
+    --brand-primary-press: #113c29;
+    --brand-primary-deep: #0e3b25;
+    --brand-accent: #545e21;
+    --brand-accent-strong: #353e1c;
+    --brand-accent-link: #4c572c;
+    --brand-accent-soft: #8b936d;
+    --brand-link-soft: #5a643c;
+    --brand-link-strong: #3d4624;
+    --brand-link-rule: #969c71;
+    --brand-tint-50: #f5f9df;
+    --brand-tint-100: #f0f5ca;
+    --brand-tint-100-hover: #e9f0b9;
+    --brand-tint-150: #ecf1d2;
+    --brand-tint-200: #e4ebc2;
+    --brand-on-tint: #556a08;
+    --brand-nav-hover: #f6f9eb;
+    --brand-nav-press: #f0f4dc;
+    --brand-fill-rule: #cfd6ad;
+    --brand-fill-wash: #fbfcf6;
+    --brand-signal: #bbdf06;
+    --brand-cta: #bdca88;
+    --brand-cta-band: #b0ba7d;
+    --brand-cta-hover: #b5c37e;
+    --brand-cta-ink: #0b1005;
+    --brand-cta-rim: #a9b676;
+    --brand-cta-glow: rgb(120 140 40 / 0.28);
+    --brand-cta-shadow: rgb(108 122 52 / 0.22);
+    --brand-focus-halo: rgb(84 94 33 / 0.35);
+    --brand-progress: #a3b26a;
+    --brand-step-done-line: #e4e9cb;
+    --brand-step-done-dot: #dde7a6;
+
+    /* §5.1 — shadcn/ui's theme variables, each a token. */
+    --background: var(--color-canvas);
+    --foreground: var(--color-text-primary);
+    --card: var(--color-surface);
+    --card-foreground: var(--color-text-primary);
+    --popover: var(--color-surface);
+    --popover-foreground: var(--color-text-primary);
+    --primary: var(--brand-primary);
+    --primary-foreground: var(--color-text-on-primary);
+    --secondary: var(--color-surface-sunken);
+    --secondary-foreground: var(--color-text-primary);
+    --muted: var(--color-surface-sunken);
+    --muted-foreground: var(--color-text-tertiary);
+    --accent: var(--color-row-press);
+    --accent-foreground: var(--color-text-primary);
+    --destructive: var(--color-danger-solid);
+    --border: var(--color-border-subtle);
+    --input: var(--color-border-input);
+    --ring: var(--brand-accent);
+    --chart-1: var(--color-chart-age-1);
+    --chart-2: var(--color-chart-age-2);
+    --chart-3: var(--color-chart-age-3);
+    --chart-4: var(--color-chart-age-4);
+    --chart-5: var(--color-chart-age-5);
+    --sidebar: var(--color-surface);
+    --sidebar-foreground: var(--color-text-primary);
+    --sidebar-primary: var(--brand-accent);
+    --sidebar-primary-foreground: var(--color-text-on-primary);
+    --sidebar-accent: var(--brand-tint-150);
+    --sidebar-accent-foreground: var(--color-text-primary);
+    --sidebar-border: var(--color-border-subtle);
+    --sidebar-ring: var(--brand-accent);
+    --radius: var(--radius-lg);
+
+    /* §5.2 — the type tokens CSS reads; Inter's text cut at every size, tabular figures for numbers. */
+    --font-variation-text: 'opsz' 14;
+    --numeric-figures: tabular-nums;
+    --weight-regular: 400;
+    --weight-medium: 500;
+    --weight-semibold: 600;
+    --weight-bold: 700;
+    --text-btn-sm-size: calc(13 * var(--tu));
+    --text-btn-md-size: calc(14 * var(--tu));
+    --text-btn-lg-size: calc(14 * var(--tu));
+    --text-btn-header-size: calc(14 * var(--tu));
+    --text-btn-secondary-size: calc(12.5 * var(--tu));
+    --text-btn-outline-xl-size: calc(17 * var(--tu));
+    --text-input-size: calc(14 * var(--tu));
+    --text-input-sm-size: 0.75rem;
+    --text-field-label-size: calc(13 * var(--tu));
+    --text-pill-lg-size: calc(13 * var(--tu));
+    --text-kbd-size: calc(12.5 * var(--tu));
+    --text-toggle-size: calc(15 * var(--tu));
+    --text-auth-title-size: calc(35 * var(--tu));
+    --text-auth-title-lh: calc(42 * var(--tu));
+    --text-auth-lead-size: calc(17.5 * var(--tu));
+    --text-auth-lead-lh: calc(26.5 * var(--tu));
+    --text-auth-label-size: calc(16 * var(--tu));
+    --text-auth-label-lh: calc(22 * var(--tu));
+    --text-auth-input-size: calc(15.5 * var(--tu));
+    --text-auth-button-size: calc(18 * var(--tu));
+    --text-auth-helper-size: calc(15 * var(--tu));
+    --text-auth-helper-lh: calc(24 * var(--tu));
+    --text-body-lg-lh-para: calc(24 * var(--tu));
+    --m-text-title: 1.5625rem;
+    --m-text-title-lh: 1.9375rem;
+    --m-text-heading: 1.125rem;
+    --m-text-heading-lh: 1.5rem;
+    --m-text-row: 0.9375rem;
+    --m-text-row-lh: 1.25rem;
+    --m-text-body: 0.9375rem;
+    --m-text-body-lh: 1.375rem;
+    --m-text-meta: 0.78125rem;
+    --m-text-meta-lh: 1.0625rem;
+    --m-text-button: 0.9375rem;
+    --m-text-figure: 1.0625rem;
+    --m-text-figure-lh: 1.375rem;
+    --m-text-total: 1.375rem;
+
+    /* §5.3 — the spacing scale. */
+    --space-0-5: 0.125rem;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-14: 3.5rem;
+    --space-16: 4rem;
+    --space-18: 4.5rem;
+
+    /* §5.3 — layout. */
+    --page-gutter: 1rem;
+    --grid-gap: 0.75rem;
+    --card-padding: 1.25rem;
+    --card-header-icon-gap: 0.75rem;
+    --search-max-width: 37rem;
+    --header-height: 4.75rem;
+    --header-control-top: 1.125rem;
+    --footer-height: 4rem;
+    --sidebar-width: 16.5rem;
+    --sidebar-inset-x: 1rem;
+    --nav-item-height: 2.75rem;
+    --nav-item-gap: 0.375rem;
+    --nav-icon-inset: 0.75rem;
+    --nav-icon-label-gap: 1.25rem;
+    --nav-indicator-width: 3px;
+    --nav-indicator-inset-y: 0.5rem;
+    --auth-card-width: 83.5rem;
+    --auth-split: 13fr 11fr;
+    --auth-form-width: 30.4375rem;
+    --auth-visual-inset: 3rem;
+
+    /* §5.3 — control heights, with the density floors of the desktop layer below. */
+    --control-xs: 1.5rem;
+    --control-sm: 2rem;
+    --control-md: 2.25rem;
+    --control-lg: 2.5rem;
+    --control-header: 2.625rem;
+    --control-xl: 3.5rem;
+    --control-xl-field: 3.4375rem;
+    --control-add-row: 1.75rem;
+    --badge-height: 1.5rem;
+    --badge-height-lg: 1.75rem;
+    --badge-height-sm: 1.375rem;
+    --badge-dot: 0.5rem;
+    --badge-dot-lg: 0.5625rem;
+    --keycap-height: 1.375rem;
+    --keycap-min-width: 1.4375rem;
+    --stepper-disc: 1.875rem;
+    --stepper-disc-bg: #f3f4f5;
+    --stepper-ring: #d0d0d2;
+    --stepper-line: #d9d9db;
+
+    /* §5.3 — icons, Lucide drawn at these strokes (GR-18). */
+    --icon-lg: 1.5rem;
+    --icon-md: 1.25rem;
+    --icon-sm: 1rem;
+    --icon-xs: 0.75rem;
+    --icon-stroke: 1.75;
+    --icon-stroke-sm: 1.5;
+    --icon-stroke-xs: 1.25;
+    --icon-stroke-lg: 2;
+    --icon-button-round: 1.5rem;
+    --icon-disc-lg: 3.5rem;
+    --icon-disc-kpi: 3.25rem;
+    --icon-disc-row: 2.625rem;
+    --icon-disc-md: 2.5rem;
+    --icon-disc-sm: 2rem;
+
+    /* §5.3 — focus: the 2 px olive outline with its 2 px offset, a field's 3 px halo. */
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+    --focus-ring: 0 0 0 3px var(--brand-focus-halo);
+    --focus-ring-danger: 0 0 0 3px rgb(180 55 63 / 0.22);
+
+    /* §5.3 — the layer scale up to the skip link. */
+    --z-raised: 2;
+    --z-bar: 30;
+    --z-popover: 80;
+    --z-sheet: 90;
+    --z-drawer: 95;
+    --z-modal: 100;
+    --z-toast: 110;
+    --z-skip: 120;
+
+    /* §5.3 — the phone composition; the bars opaque (GR-22). */
+    --safe-top: env(safe-area-inset-top, 0px);
+    --safe-right: env(safe-area-inset-right, 0px);
+    --safe-bottom: env(safe-area-inset-bottom, 0px);
+    --safe-left: env(safe-area-inset-left, 0px);
+    --touch-min: 2.75rem;
+    --m-gutter: 1.125rem;
+    --m-section-gap: 1.75rem;
+    --m-card-gap: 0.875rem;
+    --m-card-pad: 1.125rem;
+    --m-row-min: 3.75rem;
+    --m-control-h: 3rem;
+    --m-control-r: var(--radius-md);
+    --m-appbar-h: 3.5rem;
+    --m-bottom-nav-h: 3.75rem;
+    --m-action-bar-h: 4.5rem;
+    /* D-DS-06: the action region grows to hold its answer up to a third of the viewport, then scrolls inside. */
+    --action-region-max: 33vh;
+
+    /* §5.3 — the custom select's popover and its phone sheet. */
+    --select-menu-pad: 0.5rem;
+    --select-row-h: 2.625rem;
+    --select-row-px: 0.875rem;
+    --select-row-r: var(--radius-sm);
+    --select-menu-r: var(--radius-lg);
+    --select-menu-max-h: 20rem;
+    --select-sheet-row-h: 3.25rem;
+    --upload-success: var(--color-success-fg);
+    --upload-success-dot: var(--color-success-dot);
+    --upload-success-bg: var(--color-success-bg);
+
+    /* §5.1 — the ageing bar's track and gaps; a process's progress bar. */
+    --chart-track: #e6e8eb;
+    --chart-segment-gap: 2px;
+    --chart-line-width: 1.5px;
+    --progress-height: 0.625rem;
+
+    /* §5.4 — motion: durations, staggers and transforms; none of the transforms under reduced motion. */
+    --mc-dur-instant: 80ms;
+    --mc-dur-hover: 140ms;
+    --mc-dur-fast: 160ms;
+    --mc-dur-state: 200ms;
+    --mc-dur-base: 240ms;
+    --mc-dur-moderate: 320ms;
+    --mc-dur-sheet: 320ms;
+    --mc-dur-check: 360ms;
+    --mc-dur-slow: 400ms;
+    --mc-dur-auth-compact: 480ms;
+    --mc-dur-auth-step: 600ms;
+    --mc-dur-auth-signature: 600ms;
+    --mc-dur-reduced: 150ms;
+    --mc-dur-spin: 900ms;
+    --mc-ease-standard: cubic-bezier(0.42, 0, 0.58, 1);
+    --mc-ease-enter: cubic-bezier(0, 0, 0.2, 1);
+    --mc-ease-reveal: cubic-bezier(0.25, 1, 0.5, 1);
+    --mc-ease-exit: cubic-bezier(0.37, 0, 0.63, 1);
+    --mc-ease-linear: linear;
+    --mc-stagger-tight: 30ms;
+    --mc-stagger-row: 40ms;
+    --mc-stagger-card: 60ms;
+    --mc-stagger-max-steps: 8;
+    --mc-stagger-window: 300ms;
+    --mc-content-offset: 120ms;
+    --mc-page-budget: 900ms;
+    --mc-enter-scale: 0.97;
+    --mc-exit-scale: 0.98;
+    --mc-enter-rise: 8px;
+    --mc-title-rise: 6px;
+    --mc-item-rise: 4px;
+    --mc-item-blur: 3px;
+    --mc-validation-rise: -4px;
+    --mc-press-scale: 0.97;
+    --mc-pop-scale: 0.8;
+    --mc-auth-shift: 24px;
+    --mc-auth-parallax: 48px;
+    --mc-auth-swap-at: 0.5;
+    --mc-auth-exit-end: 0.45;
+    --mc-auth-enter-start: 0.55;
+    --mc-panel-start: 3%;
+    --mc-scrim: rgb(15 16 20 / 0.32);
+    --mc-backdrop-blur: 4px;
+
+    /* §5.3 — the runtime units, one reference px on phones and by default, in rem (GR-06). */
+    --du: 0.0625rem;
+    --dt: 0.0625rem;
+    --tu: 0.0625rem;
+    --iu: 0.0625rem;
+    --density-scale: 1;
+}
+
+@media (min-width: 375px) {
+    :root {
+        --m-gutter: 1.25rem;
+    }
+}
+
+@media (min-width: 400px) {
+    :root {
+        --m-text-title: 1.625rem;
+        --m-text-title-lh: 2rem;
+    }
+}
+
+/* Tablets, 768–1,024 px: `--du` .86–.94 from the height. */
+@media (min-width: 768px) and (max-width: 1024px) {
+    :root {
+        --du: clamp(0.86px, calc(0.86px + (100vh - 768px) * 0.00047), 0.94px);
+        --dt: calc(0.5px + var(--du) * 0.5);
+    }
+}
+
+/* The desktop density layer from 1,025 px: `--du` follows the viewport × .9, `--dt` half its compression;
+   `--tu` fixed at one px — GR-16's variant B (D-DS-10) —, so 14 px body text stays 14 px. The control floors
+   keep every target at least 24 px (2.5.8; §5.3). */
+@media (min-width: 1025px) {
+    :root {
+        --density-scale: 0.9;
+        --du: calc(clamp(0.86px, min(calc(0.86px + (100vh - 768px) * 0.00047), calc(0.93px + (100vw - 1366px) * 0.0009)), 1px) * var(--density-scale));
+        --dt: calc(0.5px + var(--du) * 0.5);
+        --control-header: max(34px, calc(42 * var(--du)));
+        --control-sm: max(28px, calc(32 * var(--du)));
+        --control-md: max(30px, calc(36 * var(--du)));
+        --control-lg: max(32px, calc(40 * var(--du)));
+        --header-height: calc(76 * var(--du));
+        --header-control-top: calc(18 * var(--du));
+        --nav-item-height: calc(44 * var(--du));
+        --nav-item-gap: calc(6 * var(--du));
+        --nav-indicator-inset-y: calc(8 * var(--du));
+        --sidebar-width: max(220px, calc(264 * var(--du)));
+        --page-gutter: calc(16 * var(--du));
+        --card-padding: calc(20 * var(--du));
+        --grid-gap: calc(12 * var(--du));
+        --footer-height: calc(64 * var(--du));
+    }
+}
+
+/* Input, not only width (GR-07; D-DS-19): a coarse pointer gets targets of at least 44 px at every width. */
+@media (pointer: coarse) {
+    :root {
+        --control-xs: max(var(--touch-min), 1.5rem);
+        --control-sm: var(--touch-min);
+        --control-md: var(--touch-min);
+        --control-lg: max(var(--touch-min), 2.5rem);
+        --control-header: max(var(--touch-min), 2.625rem);
+        --control-add-row: var(--touch-min);
+    }
+}
