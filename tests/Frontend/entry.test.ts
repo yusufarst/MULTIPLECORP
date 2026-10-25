@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { idle, isFrozen, reduceIntent, type IntentEvent } from '../../resources/js/lib/command-intent.ts';
+import { idle, IntentTracker, isFrozen, reduceIntent, type IntentEvent } from '../../resources/js/lib/command-intent.ts';
 import { add, multiply, round } from '../../resources/js/lib/decimal.ts';
 import { parseDecimal } from '../../resources/js/lib/number-entry.ts';
 import { BURST_GAP_MS, BurstDetector } from '../../resources/js/lib/scanner.ts';
@@ -94,4 +94,44 @@ void test('§13.2: a fast burst ending in Enter is one scan; typing is not', () 
     assert.equal(scan('ARJ-001', BURST_GAP_MS + 60), null, 'typing at human speed');
     assert.equal(scan('ab', 5), null, 'too short to be a scan');
     assert.equal(scanner.feed('Shift', (at += 5)), null);
+});
+
+void test('IP-02: two triggers in the same moment yield one command_id, the second dropped (CI-01)', () => {
+    let minted = 0;
+    const mint = () => `cmd-${String((minted += 1))}`;
+    const same = (a: string, b: string) => a === b;
+
+    // The defect: two handlers reading the same rendered state each mint an identifier of their own.
+    const rendered = idle<string>();
+    const first = reduceIntent(rendered, { type: 'trigger', payload: 'a', mint, same });
+    const second = reduceIntent(rendered, { type: 'trigger', payload: 'a', mint, same });
+    assert.notEqual(first.commandId, second.commandId);
+
+    // The guard: the tracker applies each trigger at once, so the second sees the intent in flight.
+    minted = 0;
+    const seen: string[] = [];
+    const tracker = new IntentTracker<string>(same, mint, (state) => seen.push(state.phase));
+    assert.deepEqual(tracker.trigger('a'), { commandId: 'cmd-1', payload: 'a' });
+    assert.equal(tracker.trigger('a'), null);
+    assert.equal(tracker.trigger('b'), null);
+    assert.equal(minted, 1, 'no second identifier is ever minted');
+    assert.deepEqual(seen, ['in_flight']);
+});
+
+void test('IP-02: a retry sends the same command_id, and a second retry in the same moment is dropped (HO-07)', () => {
+    let minted = 0;
+    const tracker = new IntentTracker<string>((a, b) => a === b, () => `cmd-${String((minted += 1))}`);
+
+    assert.equal(tracker.retry(), null, 'nothing to retry before an attempt');
+    tracker.trigger('a');
+    assert.equal(tracker.retry(), null, 'no retry while the attempt is in flight');
+    tracker.apply({ type: 'failed' });
+
+    assert.deepEqual(tracker.retry(), { commandId: 'cmd-1', payload: 'a' });
+    assert.equal(tracker.retry(), null);
+    assert.equal(tracker.trigger('a'), null, 'a new trigger cannot start beside the retry');
+
+    tracker.apply({ type: 'outcome', outcome: 'COMMITTED' });
+    assert.deepEqual(tracker.trigger('b'), { commandId: 'cmd-2', payload: 'b' });
+    assert.equal(minted, 2);
 });

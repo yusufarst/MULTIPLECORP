@@ -72,3 +72,56 @@ export function reduceIntent<P>(state: IntentState<P>, event: IntentEvent<P>): I
 export function isFrozen<P>(state: IntentState<P>): boolean {
     return state.phase === 'in_flight' || state.phase === 'unknown';
 }
+
+/**
+ * The intent as the form's own handlers see it: every transition is applied to the current state at once, before
+ * React renders, so a second trigger or retry in the same moment — a double click, Enter beside a click, KB-10 —
+ * sees the intent already in flight and gets null instead of a second identifier (IP-02; CI-01).
+ */
+export class IntentTracker<P> {
+    private current: IntentState<P> = idle<P>();
+    private readonly same: (a: P, b: P) => boolean;
+    private readonly mint: () => string;
+    private readonly changed: (state: IntentState<P>) => void;
+
+    constructor(same: (a: P, b: P) => boolean, mint: () => string, changed: (state: IntentState<P>) => void = () => undefined) {
+        this.same = same;
+        this.mint = mint;
+        this.changed = changed;
+    }
+
+    get state(): IntentState<P> {
+        return this.current;
+    }
+
+    /** The identifier and payload to send, or null when the trigger is dropped. */
+    trigger(payload: P): { commandId: string; payload: P } | null {
+        const before = this.current;
+        const next = this.apply({ type: 'trigger', payload, mint: this.mint, same: this.same });
+
+        return next === before || next.phase !== 'in_flight' ? null : { commandId: next.commandId, payload: next.payload };
+    }
+
+    /** The same identifier and payload again after FAILED or a lost answer, or null when no retry is open. */
+    retry(): { commandId: string; payload: P } | null {
+        if (this.current.phase !== 'unknown') {
+            return null;
+        }
+
+        const next = this.apply({ type: 'retry' });
+
+        return next.phase === 'in_flight' ? { commandId: next.commandId, payload: next.payload } : null;
+    }
+
+    /** Applies an answer or any other event to the current state at once; the trigger and retry go through above. */
+    apply(event: IntentEvent<P>): IntentState<P> {
+        const before = this.current;
+        this.current = reduceIntent(before, event);
+
+        if (this.current !== before) {
+            this.changed(this.current);
+        }
+
+        return this.current;
+    }
+}
