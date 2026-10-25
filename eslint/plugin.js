@@ -1,4 +1,5 @@
 // The project's own ESLint rules and shared settings (TASK-002).
+import hardcodedCopy from './rules/hardcoded-copy.js';
 import surfaceGrey from './rules/surface-grey.js';
 
 // SECURITY WS-09: React escapes all text; raw HTML is never rendered.
@@ -14,6 +15,7 @@ export const surfaceGreys = { greys: { 'text-muted': ['surface'], 'text-muted-ca
 export default {
     meta: { name: 'multiplecorp' },
     rules: {
+        'hardcoded-copy': hardcodedCopy,
         'surface-grey': surfaceGrey,
     },
 };

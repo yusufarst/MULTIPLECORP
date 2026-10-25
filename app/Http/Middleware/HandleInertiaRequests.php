@@ -34,6 +34,8 @@ class HandleInertiaRequests extends Middleware
             ...parent::share($request),
             // The account's own effective capabilities, a hint for which controls are present (IG-01): the
             // server decides every request (AZ-01; WS-07).
+            // The interface language, so that the page loads its language's strings (LOCALIZATION §3.8; WS-07).
+            'locale' => app()->getLocale(),
             'auth' => fn (): array => [
                 'capabilities' => $request->user() === null ? [] : app(EffectiveCapabilities::class)->for($request->user())->capabilities,
             ],
