@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -222,34 +222,38 @@ CAP-14 and AC-14 require natural Indonesian by default with English through a sw
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-037's localization tests start here
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `KeyCatalogueTest` holds both files to §6 key by key. Criterion 2: the `multiplecorp/hardcoded-copy` rule, its fixtures failing each kind of hardcoded string, in TL-01. Criterion 3: `KeyCatalogueTest` (no key missing or empty, the same keys and placeholders in both languages, each resolved never as itself) and TL-10's browser spec. Criterion 4: the switch keeping the typed input and the page through a state-keeping visit, on a fixture page before the sign-in pages exist (TASK-017), CJ-18 TASK-064's. Criterion 5: §3.3's formats in both languages (`FormatsTest`, `tests/Frontend/`), and documents and data in Indonesian whatever the interface (`LocaleTest`, `Locales::forDocuments`); the documents themselves are their Tasks'.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint with the hardcoded-copy rule PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler — the catalogue's keys typed — PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the 889 keys against §6, both languages complete, the counted forms, §3.3's formats (TL-03) —; the frontend's formats and counted forms under Node (TL-03); Feature — the locale middleware, the shared locale, documents and data in Indonesian, the fixture page with no session and no query (TL-04) —; PASS locally and in CI
+- [x] Authorization: N/A — no route
+- [x] Route integrity: N/A — no route added or changed; the fixture page is the `local` environment's only, never in testing, staging or production
+- [x] Interaction behavior: INT-001's switch — the address key, the page's state kept, nothing stored —; INT-002's `onSelect` for TASK-023's command (TL-08 with TL-09)
+- [x] Browser E2E if required: the switch on a sample page with unsent input, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the page at every band edge of TL-11 in both languages, the switch's targets at 44 px
+- [x] Visual breathing room/density if UI: English strings within the layout at every band — no horizontal scroll, no clipped label (TEST_STRATEGY §9)
+- [x] Production build: TL-13 — one chunk per language — PASS on the workstation and in CI
+- [x] Security checks if required: N/A — no data path; the locale the only shared prop added (WS-07), the address key whitelisted, no user input a key; the secret-like scan and both dependency audits PASS
+- [x] Database safety review: no migration and no schema change; `users.locale` read only; local and CI databases only, no production connection
+- [x] Final diff review: each key and text against §6 by test, nothing invented; STANDARD and outside ER-06's areas, no reviewer
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `5de872d`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40195497025 (push) and 40195499432 (pull request #17), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the ESLint rules, the frontend tests and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). The first run, on `9777a43`, failed the browser job: the fixture page started the web group's session on the browser stack's unmigrated database; `5de872d` serves it without a session, a Feature test holding it to no query. On the Owner's workstation, 2026-10-25: `tests/Unit/Localization/`, `LocaleTest`, the ESLint rule's fixtures, `tests/Frontend/` and the browser specs PASS; the suites Unit 253, Feature 50, Interaction 4, Authorization 95, Architecture 50, Routes 11 and Integration 873; ESLint, TypeScript, Pint, Larastan/PHPStan, the frontend build and the repository gates PASS
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: 5de872d, CI ubuntu-24.04 run 40195497025`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: INT-001 by `tests/Browser/E2E/language-switch.spec.ts` and `LocaleTest`; INT-002's switch takes TASK-023's `onSelect`
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 5de872d, CI ubuntu-24.04 run 40195497025`; TL-10, TL-11 and TL-12 PASS in the same run
+- Localization evidence: both languages on the fixture page, the only page this Task adds (DOD-16)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `lang/id.json`, `lang/en.json`; `app/Support/Localization/`, `app/Http/Middleware/SetLocale.php` and `HandleInertiaRequests.php`, `app/Providers/AppServiceProvider.php`, `bootstrap/app.php`, `config/app.php`, `.env.example`, `routes/fixtures.php`; `resources/js/lib/` (`i18n.ts`, `i18n-core.ts`, `format.ts`), `resources/js/components/LanguageSwitch.tsx`, `resources/js/Pages/Fixtures/LanguageSwitch.tsx`, `resources/js/app.tsx`; `eslint/`, `eslint.config.js`, `tsconfig.json`, `package.json`, `scripts/verify.sh`; the tests of `tests/Unit/Localization/`, `tests/Feature/LocaleTest.php`, `tests/Frontend/`, `tests/Fixtures/Localization/` and `tests/Browser/`; TOOLCHAIN's row; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `9777a43` and `5de872d`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-014-localization`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-25 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-014 row); the local runs used a container-local copy of the working tree and two browser workers, CI the final proof. Readings within the approved text are listed in CURRENT_HANDOFF. GAP-037 stays open until TASK-067's per-page checks. The READY gates of TASK-015 and TASK-023 were re-checked at this DONE: TASK-015 READY, TASK-023 waiting on TASK-016 and TASK-019. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-014 — localization: locales, the language switch and the key catalogue
+
+- TASK-013 merged by the Owner into `main` as `ab7a2e5` (pull request #16).
+- Built TASK-014 on its branch `task/TASK-014-localization` in the Owner's local Desktop session: LOCALIZATION §6's 889 keys in both languages; the request's language — the session's, the account's or the address key before sign-in, nothing stored —; the locale as WS-07's shared prop and one bundle per language loaded before the page renders; INT-001's switch keeping the page's state; §3.3's formats on the server and in the interface; documents in Indonesian whatever the interface; the hardcoded-copy ESLint rule.
+- The first CI run failed the browser job: the fixture page started a session on the browser stack's unmigrated database; it now runs without one, held to no query by a test.
+- Every check passed in fresh CI on `5de872d`. TASK-014 DONE — progress 14 / 87 —; TASK-015 READY; pull request #17 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-25, TASK-013 — command envelope, command identity, idempotency and the lock order
 
 - TASK-012's pooled-read fix merged by the Owner into `main` as `ae4ee84` (pull request #15).
