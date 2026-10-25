@@ -452,6 +452,14 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-26, TASK-016 — application shell, navigation and the company context
+
+- TASK-015 merged by the Owner into `main` as `6e652a3` (pull request #18), and its command-identity fix as `e7ef1d5` (pull request #19).
+- Built TASK-016 on its branch `task/TASK-016-shell` in the Owner's local Desktop session, resumed after the workstation's unexpected restart with the uncommitted work intact: ROUTE-281's search — a code exactly first, names by prefix then by trigram within 200 candidates, the scope in the same statement, 60 a minute per account —; the shell, its phone bars and *Lainnya*, the entries from the server's hints; the working company filter within the scope; PG-005 for every unopenable address; the 401 and 419 re-authentication in place, the 423 step-up, the absolute-session deadline and the background requests; 16 catalogue keys through the registry.
+- ER-06's independent review found 13 points, each fixed and tested; the scan into *Cari* and lot codes recorded as TASK-039's (ROUTE-282).
+- The first CI run failed: the stack's database had never been migrated, which a page of the web group now needs for its session — `scripts/verify.sh` now migrates it as DEVELOPMENT.md states —, and TL-12 measured the phone sheet's contrast mid fade-in — the spec now waits for it at rest.
+- Every check passed in fresh CI on `f18683f`. TASK-016 DONE — progress 16 / 87 —; TASK-017, TASK-026, TASK-028, TASK-031 and TASK-061 READY; pull request #20 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-25, TASK-015 — design system: tokens, components, patterns and states
 
 - TASK-014 merged by the Owner into `main` as `b431f5b` (pull request #17).
