@@ -84,6 +84,7 @@ local_layers() {
     check 'TL-03 Unit' $(suite Unit)
     check 'TL-03 Architecture (SM-03)' $(suite Architecture)
     check 'TL-03 ESLint rules' $node_run npm run test:lint-rules
+    check 'TL-03 Frontend formats and counted forms' $node_run npm run test:frontend
     check 'TL-04 Feature' $(suite Feature)
     check 'TL-05 Integration' $(suite Integration)
     slot 'TL-06 Authorization' tests/Authorization '*Test.php' TASK-011 $(suite Authorization)

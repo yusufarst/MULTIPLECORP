@@ -4,9 +4,10 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "typecheck": "tsc --noEmit && tsc --noEmit -p tests/Browser",
+        "typecheck": "tsc --noEmit && tsc --noEmit -p tests/Browser && tsc --noEmit -p tests/Frontend",
         "lint": "eslint .",
         "test:lint-rules": "node --test \"eslint/**/*.test.js\"",
+        "test:frontend": "node --test \"tests/Frontend/**/*.test.ts\"",
         "test:browser": "playwright test -c tests/Browser/playwright.config.ts",
         "scan:secrets": "sh scripts/ci/scan-secrets.sh"
     },

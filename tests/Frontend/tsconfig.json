@@ -1,0 +1,8 @@
+{
+    "extends": "../../tsconfig.json",
+    "compilerOptions": {
+        "types": ["node"],
+        "allowImportingTsExtensions": true
+    },
+    "include": ["**/*.ts", "../../resources/js/lib/format.ts", "../../resources/js/lib/i18n-core.ts"]
+}

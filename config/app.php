@@ -78,9 +78,11 @@ return [
     |
     */
 
-    'locale' => env('APP_LOCALE', 'en'),
+    // LOCALIZATION §1–§2 fixes them, not the environment: Indonesian by default and as the canonical text a
+    // missing English string falls back to; the request's language is SetLocale's (TASK-014).
+    'locale' => 'id',
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+    'fallback_locale' => 'id',
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 

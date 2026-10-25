@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 13
-READY: 2
+READY: 1
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 59
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 13 / 87
 Percentage: 14.9 %
 
-CURRENT TASK: none in progress — TASK-013 — Command envelope, command identity, idempotency and the lock order DONE on its branch `task/TASK-013-command-envelope`, CI PASS on `7e0886f`, its pull request #16 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-014 — Localization — locales, the language switch and the key catalogue, and TASK-073, READY — the READY gates of TASK-013's dependents re-checked at its DONE, each still waiting on other dependencies: TASK-016 on TASK-015, TASK-017 on TASK-015 and TASK-016, TASK-021 on TASK-016 and TASK-018, TASK-022 on TASK-015 and TASK-017, TASK-036 on TASK-030, the others on TASK-016 or later Tasks —; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-014 — Localization — locales, the language switch and the key catalogue, VERIFYING: built on its branch `task/TASK-014-localization` from `main` after TASK-013's merge as `ab7a2e5` (pull request #16), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-073, READY; TASK-014's DONE leaves TASK-015 READY once its READY gate holds — its one dependency —, and TASK-023 waiting on its other dependencies; TASK-016 waits on TASK-015; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -154,7 +154,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | DONE | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | DONE | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | DONE | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
-| [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | READY | 003 | 015, 023 | NO | AGENT | NONE | YES |
+| [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | VERIFYING | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
 | [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | TODO | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
 | [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |

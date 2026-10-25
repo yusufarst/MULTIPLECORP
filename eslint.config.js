@@ -21,6 +21,8 @@ export default defineConfig([
         rules: {
             'no-restricted-syntax': ['error', rawHtml],
             'multiplecorp/surface-grey': ['error', surfaceGreys],
+            // LOCALIZATION §3.6: every user-facing string is a key of the catalogue (TASK-014).
+            'multiplecorp/hardcoded-copy': 'error',
         },
     },
     {

@@ -1,0 +1,28 @@
+{
+    "_": "LOCALIZATION §3.3 and DESIGN_SYSTEM §16's formats, one way in both languages (OQ-04 (a)): each case's function, arguments and text, held by the PHP formatter (tests/Unit/Localization/FormatsTest.php) and the interface's (resources/js/lib/format.test.ts) alike (TASK-014).",
+    "cases": [
+        ["money", ["1250000"], "Rp1.250.000"],
+        ["money", ["1250000.50"], "Rp1.250.000,50"],
+        ["money", ["1250000.00"], "Rp1.250.000"],
+        ["money", ["1250000", true], "Rp1.250.000,00"],
+        ["money", ["-250000"], "−Rp250.000"],
+        ["money", ["-0.00"], "Rp0"],
+        ["money", ["999"], "Rp999"],
+        ["money", ["0.5"], "Rp0,50"],
+        ["quantity", ["12", "rim"], "12 rim"],
+        ["quantity", ["3.500", "kg"], "3,5 kg"],
+        ["quantity", ["120", "rim", "24", "dus"], "120 rim (24 dus)"],
+        ["quantity", ["1200.125", "m"], "1.200,125 m"],
+        ["percent", ["11.00"], "11%"],
+        ["percent", ["0.25"], "0,25%"],
+        ["date", ["2026-10-02"], "02 Okt 2026"],
+        ["date", ["2026-05-31"], "31 Mei 2026"],
+        ["dateLong", ["2026-10-02"], "2 Oktober 2026"],
+        ["dateLong", ["2026-08-17"], "17 Agustus 2026"],
+        ["time", ["2026-10-02T07:05:00Z"], "14.05 WIB"],
+        ["dateTime", ["2026-10-02T07:05:00Z"], "02 Okt 2026 14.05 WIB"],
+        ["dateTime", ["2026-10-01T17:30:00Z"], "02 Okt 2026 00.30 WIB"],
+        ["period", ["2026-10"], "Okt 2026"],
+        ["period", ["2026"], "2026"]
+    ]
+}
