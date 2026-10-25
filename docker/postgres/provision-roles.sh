@@ -59,3 +59,13 @@ SELECT format('ALTER DATABASE %I OWNER TO %I', :'database', :'migration_login') 
 SQL
 
 echo "provision-roles: the roles of DATABASE §28 are in place"
+
+# HO-13's lock-order tests read the row locks a command actually holds through the contrib extension
+# pgrowlocks, which only a superuser installs (TASK-013): in template1, which every test database is created
+# from, and in each test database already created. Local and CI only — never the application's own database
+# here, never production.
+for test_database in template1 $(psql -At -c "SELECT datname FROM pg_database WHERE datname LIKE '${DB_DATABASE}\_test\_%'"); do
+    psql -v ON_ERROR_STOP=1 -q -d "$test_database" -c 'CREATE EXTENSION IF NOT EXISTS pgrowlocks'
+done
+
+echo "provision-roles: pgrowlocks is in place for the test databases"

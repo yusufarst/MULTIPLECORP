@@ -4,9 +4,11 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-25 the Owner's decision [DIR-095](../00-governance/DECISION_LOG.md#dir-095--task-013s-discoveries) (1), (2) states what `ReconcileGuards` covers here: the CONCURRENCY / IDEMPOTENCY line; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -101,7 +103,7 @@ One `command_id` per intent and the canonical lock order are invariants 5–7 of
 
 **CONCURRENCY / IDEMPOTENCY:**
 
-- this Task is the mechanism: LK-00–LK-31, LR-, TX-, GU-, FU-, ST-, CI-, SQ-, RY-, RV- and the scenarios M-01–M-46 as executable tests on real PostgreSQL where their actions exist, each later Task adding its own (HO-11), with `ReconcileGuards` clean after each and its guard-missing and drift fixtures (HO-12)
+- this Task is the mechanism: LK-00–LK-31, LR-, TX-, GU-, FU-, ST-, CI-, SQ-, RY-, RV- and the scenarios M-01–M-46 as executable tests on real PostgreSQL where their actions exist, each later Task adding its own (HO-11), with `ReconcileGuards` and its guard-missing and drift fixtures (HO-12) — `DIR-095`: over the families whose formula the schema fixes, the others registered by their posting Tasks; the envelope's races on test commands prove the lock order and the CHECKs, and each is clean after it once its module Task runs it on its own commands
 
 **AUDIT:**
 
@@ -249,34 +251,38 @@ One `command_id` per intent and the canonical lock order are invariants 5–7 of
 - Migration: C-50's trigger migration from empty and over the schema of TASK-005–TASK-009, expand-only (TL-16)
 - Other: GAP-031: `ReconcileGuards` detects a seeded difference
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: replay by `EnvelopeTest` (commit and replay, another actor or content, a revoked capability, an out-of-scope company) and `CommandReplayTest` (a second press, a re-sign-in in place, a revoked grant, another account, a driven identity refused). Criterion 2: `EnvelopeRacesTest` under two real sessions. Criterion 3: the mapper's SQLSTATEs (`EnvelopePartsTest`) and the envelope's REJECTED, CONFLICT and FAILED paths; PENDING is the answer of background work, built with the jobs (TASK-022). Criterion 4: SF-DATE at the command and C-50's trigger on insert and change; the date rule takes no actor, so an earlier real date commits for the Owner and an Admin alike, its audit carrying the business date beside `recorded_at` (TASK-010's writer). Criterion 5: `GuardReconciliationTest`. Criteria 6–10: on the envelope's test commands, as each states, their module Tasks proving them on their own commands. Criterion 11: a grant revoked while the command waits on the actor's row, and before the first lock. Criterion 12: C-53's append-only privileges, proven by `DatabaseRolesTest` (DIR-095 R5). Criterion 13: the audit row committed with the command and gone with its refusal. Criterion 14: `FrameworkBehaviourTest` and `ReconnectionTest`.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS, locally and in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and the TypeScript compiler PASS on the workstation and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the failure mapper, the lock-set planner with its key kinds, the forward-only position, the fingerprint and INT-015 (TL-03) —; Feature — replay and outcomes on a sample command (TL-04) —; Integration — the envelope on sample commands, the M-01, M-02, 2a, 6a, 6c and 18a races, a duplicate identity in flight and a revoked grant under two sessions, C-50's trigger, HO-13's held locks, HO-20's behaviours, FU-10's reconnection and SQ-16's rerun, GAP-031's seeded differences (TL-05) —; PASS locally and in CI
+- [x] Authorization: re-authorization at replay and in the command — a revoked capability, an out-of-scope company, a grant revoked while waiting (TL-06)
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: INT-015–INT-017's server answers (TL-08)
+- [x] Browser E2E if required: N/A — CJ-21 in TASK-064; the smoke run still PASS on Chromium and WebKit in CI
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 — the frontend build and the production caches and configuration — PASS in CI
+- [x] Security checks if required: allowed fields only — the fingerprint over the canonical payload, the company and authority server-derived (WS-01–WS-03; TL-14); the secret-like scan and both dependency audits PASS
+- [x] Database safety review: one expand-only migration, C-50's function and trigger, run up, down and up locally and from empty in CI (TL-16); `pgrowlocks` in the test databases only; local and CI databases only, no production connection
+- [x] Final diff review: each rule against CONCURRENCY_IDEMPOTENCY as written, nothing invented; ER-06's independent review, its points fixed and tested or decided by the Owner (DIR-095)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `7e0886f`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40183982444 (push) and 40184014001 (pull request #16), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration and Authorization suites and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). On the Owner's workstation, 2026-10-25: Unit `tests/Unit/Command/` 23, Integration `tests/Integration/Command/` 36 and `tests/Integration/Guards/` 6, Feature `CommandReplayTest` 5, Interaction `CommandAnswersTest` 3; the suites Integration 869, Unit 242, Feature 38, Interaction 4, Authorization 95, Architecture 50 and Routes 11; Pint, Larastan/PHPStan and the repository gates PASS, after ER-06's fixes
+- Build result: `TL-13 Frontend build: PASS` and `TL-13 Production caches and configuration: PASS — Evidence: 7e0886f, CI ubuntu-24.04 run 40183982444`
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `tests/Interaction/CommandAnswersTest.php` — INT-015's warning, INT-016's CONFLICT and INT-017's FAILED on the server side
+- Browser evidence: N/A — no page or journey; the smoke run still passes on both engines (`TL-09 E2E/browser: PASS — Evidence: 7e0886f, CI ubuntu-24.04 run 40183982444`)
+- Localization evidence: N/A — no page or copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Support/Command/`, `app/Support/GuardUpdate.php`, `app/Support/GuardMissing.php`, `app/Support/Guards/`, `app/Console/Commands/ReconcileGuards.php` and `GuardMaintenance.php`, `app/Modules/IAM/Services/CommandAuthorization.php`, `app/Support/Audit/AuditRecorder.php`, `app/Support/Database/DatabaseRole.php`, `config/database.php`, `docker/postgres/provision-roles.sh`, the migration `2026_10_25_000141_ops_add_business_date_not_future`; the tests of `tests/Unit/Command/`, `tests/Integration/Command/`, `tests/Integration/Guards/`, `tests/Feature/CommandReplayTest.php`, `tests/Interaction/CommandAnswersTest.php`, `tests/Support/Commands/`, `tests/Support/GuardReconciliation.php`, `tests/Pest.php` and `tests/TestCase.php`; TOOLCHAIN's row; DIR-095's records and APPR-024's text; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `7e0886f`, the Owner's identity, no signature and no AI attribution; this record's commit follows it on `task/TASK-013-command-envelope`
+- Notes: criteria as CRITERIA DISPOSITIONS states; the discoveries decided by the Owner as DIR-095 (F1–F4) with its readings R1–R6. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-25 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-013 row); the local runs used a container-local copy of the working tree, CI the final proof. The READY gates of TASK-013's dependents were re-checked at this DONE: each still waits on other dependencies. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

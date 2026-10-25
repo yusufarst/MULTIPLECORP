@@ -48,8 +48,10 @@ abstract class TestCase extends BaseTestCase
             config(["{$migration}.database" => config("{$connection}.database")]);
             DB::purge(DatabaseRole::MIGRATION_CONNECTION);
 
-            config(['database.connections.'.SecurityEventRecorder::CONNECTION.'.database' => config("{$connection}.database")]);
-            DB::purge(SecurityEventRecorder::CONNECTION);
+            foreach ([SecurityEventRecorder::CONNECTION, DatabaseRole::ADMINISTRATION_CONNECTION] as $other) {
+                config(["database.connections.{$other}.database" => config("{$connection}.database")]);
+                DB::purge($other);
+            }
 
             TestDatabase::assertIsolated((string) config("{$connection}.driver"), (string) config("{$connection}.database"), (string) config("{$migration}.database"));
         }

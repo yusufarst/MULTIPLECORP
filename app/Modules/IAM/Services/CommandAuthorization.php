@@ -42,7 +42,21 @@ final class CommandAuthorization
             throw new LogicException('A command re-authorizes inside its own transaction (RV-01).');
         }
 
-        DB::table('users')->where('id', $actorUserId)->lockForUpdate()->value('id');
+        // LR-03's one requested mode; an access change takes the same row in the same mode (RV-02).
+        DB::table('users')->where('id', $actorUserId)->lock('for no key update')->value('id');
+
+        return $this->reauthorizeLocked($actorUserId, $capability, $companyId);
+    }
+
+    /**
+     * The re-check of RV-01 for a command whose envelope already holds the actor's row in its lock order
+     * (CONCURRENCY_IDEMPOTENCY §6 phase B).
+     */
+    public function reauthorizeLocked(int $actorUserId, string $capability, ?int $companyId = null): Authority
+    {
+        if (! CapabilityCatalogue::has($capability)) {
+            throw new InvalidArgumentException("{$capability} is not a capability of PERMISSIONS_MATRIX §4.");
+        }
 
         $authority = $this->capabilities->fresh($actorUserId);
 

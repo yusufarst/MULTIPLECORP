@@ -452,6 +452,14 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-013 — command envelope, command identity, idempotency and the lock order
+
+- TASK-012's pooled-read fix merged by the Owner into `main` as `ae4ee84` (pull request #15).
+- Built TASK-013 on its branch `task/TASK-013-command-envelope` in the Owner's local Desktop session: the envelope of SF-CMD with command identity, replay re-authorized and the command log (CI-01–CI-09); the lock order LK-00–LK-31 with its sub-orders, the forward-only planner and §5's restarts; the class timeouts, the failure mapping SQ-01–SQ-23 and the retries, a lost session run again; `GuardUpdate`; SF-DATE with C-50's trigger, one expand-only migration; INT-015's warning; `guards:reconcile` and `guards:maintain`, audited console commands (GAP-031); TS-11's reconciliation; HO-13 and HO-20 pinned.
+- The Owner's decision DIR-095 on its four discoveries and six readings, with APPR-024's canonical text: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021, `pgrowlocks` in the test databases only — TASK_PLAN's Change 12.
+- At the Owner's direction, the Codex review's three P2 points on pull request #16 fixed on this branch before the merge, each with its regression tests: the command's clock read once its locks are granted, never before its first lock and with no new lock after it (phase C; §9); a replay's current in-scope state resolved after CI-05's checks — a duplicate warning's current matches — and left out when it no longer resolves; an integer guard key given as its decimal string bound as the integer, as the lock set reads it (GU-01).
+- Every check passed in fresh CI on `7e0886f`. TASK-013 DONE — progress 13 / 87 —; pull request #16 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-25, TASK-012 — post-merge fix: the pooled physical read without a company grant
 
 - TASK-012 merged by the Owner into `main` as `e70463d` (pull request #14).

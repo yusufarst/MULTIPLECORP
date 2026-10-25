@@ -5,8 +5,10 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)->in('Unit', 'Architecture', 'Feature', 'Authorization', 'Routes', 'Interaction', 'Performance');
 
-// TEST_STRATEGY TS-11: the guards are reconciled after every integration test.
-pest()->extend(TestCase::class)->afterEach(fn () => GuardReconciliation::assertNone())->in('Integration');
+// TEST_STRATEGY TS-11: the guards are reconciled after every integration test (ReconcileGuards' families).
+pest()->extend(TestCase::class)->afterEach(function () {
+    GuardReconciliation::assertNone(self::$__filename, $this);
+})->in('Integration');
 
 /**
  * The Content-Security-Policy of SECURITY WS-08 for the given nonce.

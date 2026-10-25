@@ -6,6 +6,7 @@ use App\Support\CorrelationId;
 use App\Support\Database\Transactions;
 use App\Support\Redaction;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use LogicException;
@@ -25,6 +26,8 @@ final class AuditRecorder
      * @param  string|null  $commandId  the command identity of CONCURRENCY_IDEMPOTENCY, a UUID
      * @param  string|null  $businessDate  the command's business date, `Y-m-d`, kept in the metadata beside `recorded_at`
      * @param  array<string, mixed>  $metadata  further non-sensitive context, such as an operator's identity
+     * @param  ConnectionInterface|null  $connection  the command's connection where it is not the default — the
+     *                                                administration role's for `GuardMaintenance` (TX-08)
      */
     public function record(
         string $action,
@@ -40,8 +43,9 @@ final class AuditRecorder
         ?AuditLinkage $linkage = null,
         ?string $businessDate = null,
         array $metadata = [],
+        ?ConnectionInterface $connection = null,
     ): void {
-        if (! Transactions::applicationOpen()) {
+        if ($connection !== null ? $connection->transactionLevel() === 0 : ! Transactions::applicationOpen()) {
             throw new LogicException('The business audit is written inside its command\'s transaction (LG-01; DATABASE §23).');
         }
 
@@ -66,7 +70,7 @@ final class AuditRecorder
         // The application clock at microsecond precision: the instant is UTC, its business day WIB (GAP-016).
         $now = CarbonImmutable::now()->utc()->format('Y-m-d H:i:s.uP');
 
-        DB::table('audit_events')->insert([
+        ($connection ?? DB::connection())->table('audit_events')->insert([
             'occurred_at' => $now,
             'actor_user_id' => $actorUserId,
             'company_id' => $companyId,

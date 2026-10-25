@@ -18,4 +18,7 @@ final class DatabaseRole
 
     /** The connection of the migration/owner role, used only by migrations: `migrate --database=migration`. */
     public const MIGRATION_CONNECTION = 'migration';
+
+    /** The connection of the administration role, used only by the operator's `GuardMaintenance` (TX-08). */
+    public const ADMINISTRATION_CONNECTION = 'administration';
 }
