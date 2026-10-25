@@ -4,6 +4,10 @@ import { expect, type Page, test } from '@playwright/test';
 // the document's language set —, an unknown choice ignored for Indonesian, and each language's strings loaded
 // once as one bundle, never per key (LOCALIZATION §3.6, §3.8; TL-15).
 
+// A switch is a visit and, the first time, its language's bundle: on a loaded runner it may take longer than
+// the default five seconds of an assertion.
+const SWITCHED = 15_000;
+
 const KEY_SHOWN = /\b(messages|glossary|status|auth|documents|pages|shell|actions|forms)\.[a-z0-9_]+/;
 
 async function expectComplete(page: Page, lang: 'id' | 'en'): Promise<void> {
@@ -37,11 +41,11 @@ test('loads each language once, as one bundle (§3.8; TL-15)', async ({ page }) 
 
     await page.goto('/__fixtures/bahasa');
     await page.getByRole('button', { name: 'EN' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp', { timeout: SWITCHED });
     await page.getByRole('button', { name: 'ID' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Masuk ke MultipleCorp');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Masuk ke MultipleCorp', { timeout: SWITCHED });
     await page.getByRole('button', { name: 'EN' }).click();
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Sign in to MultipleCorp', { timeout: SWITCHED });
 
     expect(bundles.sort()).toEqual(['en', 'id']);
 });

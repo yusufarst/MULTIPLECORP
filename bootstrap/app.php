@@ -18,10 +18,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7): never in testing, staging or
-        // production, where only ROUTE_CONTRACTS' routes exist.
+        // production, where only ROUTE_CONTRACTS' routes exist. They keep no session — nothing is stored before
+        // sign-in (INT-001) — so they need no database, which the browser job's stack does not migrate.
         then: function (): void {
             if (app()->environment('local')) {
-                Route::middleware('web')->group(base_path('routes/fixtures.php'));
+                Route::group([], base_path('routes/fixtures.php'));
             }
         },
     )

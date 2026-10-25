@@ -80,6 +80,21 @@ it('shares the locale and no string table; writes the page\'s message in its lan
     $this->get('/__test/bahasa')->assertInertia(fn (AssertableInertia $page) => $page->where('message', 'E-mail atau kata sandi salah.'));
 });
 
+it('serves the browser suite\'s fixture page in either language with no session and no query (routes/fixtures.php)', function () {
+    require base_path('routes/fixtures.php');
+    $queries = 0;
+    DB::listen(function () use (&$queries) {
+        $queries++;
+    });
+
+    $this->get('/__fixtures/bahasa?bahasa=en')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('Fixtures/LanguageSwitch', false)->where('locale', 'en'));
+
+    expect($queries)->toBe(0)
+        ->and(app('router')->getRoutes()->match(request()->create('/__fixtures/bahasa'))->gatherMiddleware())->not->toContain('web');
+});
+
 it('keeps documents and business data in Indonesian whatever the interface language (§3.4; criterion 5)', function () {
     App::setLocale('en');
 
