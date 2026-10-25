@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-25 the Owner's decision [DIR-095](../00-governance/DECISION_LOG.md#dir-095--task-013s-discoveries) (3) adds one IN SCOPE line: the `number_sequences` guard family registered with `ReconcileGuards`; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** TODO
@@ -45,6 +47,7 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - go-live as a state of numbering; the operator's one-time go-live command itself is TASK-077's (PRQ-07; HO-32; UXH-10)
 - the Owner's raise after a restore (DIR-083 OE-11): through the numbering command (NX-01, locked at LK-31; ROUTE-137 as amended), recording per company, type and period the highest paper number; raising each affected counter, or creating the live period's, to the next number; once per recovery, never lowering one; no seed — no seed value or boundary moved and no defect alert —; audited with the incident (NM-03, NM-04; ADMIN_FLOW §12.1)
 - the issuing types' draw at issue only (SF-ISSUE), the draw itself called by TASK-029 and the other issuing Tasks
+- `DIR-095`: the `number_sequences` guard family of DATABASE §3.1 registered with `ReconcileGuards` with its formula, verified with the numbering concurrency of LK-31 (TASK-013's registry)
 
 **OUT OF SCOPE:**
 

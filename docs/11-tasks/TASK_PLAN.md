@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 12
+DONE: 13
 READY: 2
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 1
+VERIFYING: 0
 TODO: 59
 SUPERSEDED: 0
 
 Progress:
-12 / 87
-Percentage: 13.8 %
+13 / 87
+Percentage: 14.9 %
 
-CURRENT TASK: TASK-013 — Command envelope, command identity, idempotency and the lock order, VERIFYING: built on its branch `task/TASK-013-command-envelope` from `main` after TASK-012's merge and its pooled-read fix as `ae4ee84` (pull requests #14, #15), its pull request into `main` waiting on its fresh CI run (ER-07)
-NEXT READY TASK: TASK-014 — Localization — locales, the language switch and the key catalogue, and TASK-073, READY; TASK-013's DONE leaves TASK-016 waiting on TASK-015, TASK-022 on TASK-015 and TASK-017, and TASK-021 on its other dependencies; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 9 of 2026-10-24 — DIR-092's dispositions of TASK-009's discoveries: APPR-021's guards of (1), (3) and (4) built by TASK-009; the entry-error evidence check to TASK-049
+CURRENT TASK: none in progress — TASK-013 — Command envelope, command identity, idempotency and the lock order DONE on its branch `task/TASK-013-command-envelope`, CI PASS on `7e0886f`, its pull request #16 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-014 — Localization — locales, the language switch and the key catalogue, and TASK-073, READY — the READY gates of TASK-013's dependents re-checked at its DONE, each still waiting on other dependencies: TASK-016 on TASK-015, TASK-017 on TASK-015 and TASK-016, TASK-021 on TASK-016 and TASK-018, TASK-022 on TASK-015 and TASK-017, TASK-036 on TASK-030, the others on TASK-016 or later Tasks —; TASK-071 once the client's access OPI-26 is recorded
+LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -61,7 +61,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-010](TASK-010.md) — Audit and security logging
 - [x] [TASK-011](TASK-011.md) — Authorization core — capabilities, roles, grants, company scope and the route audit
 - [x] [TASK-012](TASK-012.md) — Field projection, read classes and cross-company links
-- [ ] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
+- [x] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
 - [ ] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
 - [ ] [TASK-015](TASK-015.md) — Design system — tokens, components, patterns and states
 - [ ] [TASK-016](TASK-016.md) — Application shell, navigation and the company context
@@ -153,7 +153,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-010](TASK-010.md) | Audit and security logging | Platform · OPS · Platform | HIGH | DONE | 005 | 011, 013, 017, 020, 031, 061, 075 | NO | AGENT | NONE | NO |
 | [TASK-011](TASK-011.md) | Authorization core — capabilities, roles, grants, company scope and the route audit | Platform · IAM · Platform | HIGH | DONE | 005, 010 | 012, 013, 016 | NO | AGENT | NONE | NO |
 | [TASK-012](TASK-012.md) | Field projection, read classes and cross-company links | Platform · Platform | HIGH | DONE | 009, 011 | 016, 022 | NO | AGENT | NONE | NO |
-| [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | VERIFYING | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
+| [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | DONE | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | READY | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | TODO | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
 | [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | TODO | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
@@ -275,6 +275,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 10, 2026-10-24 (TASK-010's execution discoveries; [DIR-093](../00-governance/DECISION_LOG.md#dir-093--task-010s-discoveries)).** *Reason:* TASK-010 found that ARCHITECTURE §3's tiers bar IAM's identity steps from writers in OPS, and that the TECH-022 insert's account reference keeps a key-share lock, decided by the Owner at one checkpoint. *Change:* TASK-010's EXPECTED MODULES line places its two writers in Support, with its amendment line; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-093 and APPR-022's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 **Change 11, 2026-10-25 (TASK-011's execution discoveries; [DIR-094](../00-governance/DECISION_LOG.md#dir-094--task-011s-discoveries)).** *Reason:* TASK-011 found that no contract or operations step ran the authorization catalogue sync its rows need on the server, decided by the Owner at one checkpoint with two readings. *Change:* TASK-020's installation line runs the sync first, with its amendment line, and INFRASTRUCTURE §5 runs it on every deployment; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-094 and APPR-023's canonical text, a Level 1 record under CHANGE_CONTROL.
+
+**Change 12, 2026-10-25 (TASK-013's execution discoveries; [DIR-095](../00-governance/DECISION_LOG.md#dir-095--task-013s-discoveries)).** *Reason:* TASK-013 found that the guard registry's twenty-two formulas belong to the posting Tasks that build their semantics, and that two kinds of integration tests write guards with no facts by design, decided by the Owner at one checkpoint with six readings. *Change:* CONCURRENCY_IDEMPOTENCY §9 and TEST_STRATEGY TS-11 state the registry's growth and the two unreconciled directories; TASK-013's CONCURRENCY line and TASK-021's new IN SCOPE line say so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-095 and APPR-024's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 
