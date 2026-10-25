@@ -18,6 +18,10 @@ for (const width of [390, 1280]) {
         if (width < 768) {
             await page.getByRole('button', { name: 'Lainnya' }).click();
             await expect(page.getByRole('dialog')).toBeVisible();
+            // The sheet fades in over --mc-dur-sheet: its colours are measured at rest, never blended mid-motion.
+            const sheet = page.locator('[data-slot="sheet-content"]');
+            await expect(sheet).not.toHaveAttribute('data-starting-style');
+            await expect(sheet).toHaveCSS('opacity', '1');
             expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
         }
     });

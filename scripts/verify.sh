@@ -74,6 +74,7 @@ local_layers() {
     fi
 
     check 'Stack' docker compose up -d --wait
+    check 'Stack database (DEVELOPMENT.md)' $php_run php artisan migrate --database=migration --force
     check 'Repository gates (SM-15; LF)' sh -c 'sh scripts/ci/check-repository.sh --self-test && sh scripts/ci/check-repository.sh'
     check 'Commit messages (AGENTS.md)' sh -c "sh scripts/ci/check-commit-messages.sh --self-test && sh scripts/ci/check-commit-messages.sh $range"
     check 'Task plan integrity (PMC-15)' $node_run sh -c 'node scripts/ci/check-plan.mjs --self-test && node scripts/ci/check-plan.mjs'
@@ -104,6 +105,8 @@ local_layers() {
 
 browser_layers() {
     check 'Stack' docker compose up -d --wait
+    # The stack of DEVELOPMENT.md is migrated: a page of the web group keeps its session in the database.
+    check 'Stack database (DEVELOPMENT.md)' $php_run php artisan migrate --database=migration --force
     slot 'TL-09 E2E/browser' tests/Browser/E2E '*.spec.ts' TASK-062 $(browser E2E)
     slot 'TL-10 Localization' tests/Browser/Localization '*.spec.ts' 'the first page with copy' $(browser Localization)
     slot 'TL-11 Responsive' tests/Browser/Responsive '*.spec.ts' 'the first page' $(browser Responsive)
