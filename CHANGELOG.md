@@ -457,6 +457,7 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-013 merged by the Owner into `main` as `ab7a2e5` (pull request #16).
 - Built TASK-014 on its branch `task/TASK-014-localization` in the Owner's local Desktop session: LOCALIZATION §6's 889 keys in both languages; the request's language — the session's, the account's or the address key before sign-in, nothing stored —; the locale as WS-07's shared prop and one bundle per language loaded before the page renders; INT-001's switch keeping the page's state; §3.3's formats on the server and in the interface; documents in Indonesian whatever the interface; the hardcoded-copy ESLint rule.
 - The first CI run failed the browser job: the fixture page started a session on the browser stack's unmigrated database; it now runs without one, held to no query by a test.
+- At the Owner's direction, the Codex review's P2 point on pull request #17 fixed before the merge, with its regression tests: the interface's placeholders replaced in one pass over the template, the longest name first, as Laravel's `strtr` does, each value inserted literally — never read as replacement syntax such as `$&` nor for another placeholder (LOCALIZATION §3.1, §3.4).
 - Every check passed in fresh CI on `5de872d`. TASK-014 DONE — progress 14 / 87 —; TASK-015 READY; pull request #17 waits on the Owner's merge.
 
 ## Unreleased — 2026-10-25, TASK-013 — command envelope, command identity, idempotency and the lock order
