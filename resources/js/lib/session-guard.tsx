@@ -313,7 +313,9 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
                 minutes={idleMinutes}
                 onStay={() => {
                     setIdleOpen(false);
-                    router.reload({ only: ['auth'] });
+                    // One user-initiated request, which extends the session (IP-11): a foreground visit, since the
+                    // router's reload is always async and so a background request that extends nothing (RB-05).
+                    router.visit(window.location.href, { only: ['auth'], preserveState: true, preserveScroll: true, replace: true });
                 }}
             />
         </>

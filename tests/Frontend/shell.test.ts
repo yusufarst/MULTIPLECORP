@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
 import { bottomEntries, CREATE, currentKey, MODULES, present, primaryEntries, targetOf, workEntries, type AccountHints } from '../../resources/js/lib/navigation.ts';
+import { outcomeFor, type SearchOutcome } from '../../resources/js/lib/search-client.ts';
 import { BACKGROUND_HEADER, deadlineNoticeDue, interruption, isBackground, minutesUntil, replayOf, sameAccount, sessionOver } from '../../resources/js/lib/session-core.ts';
 
 const ALL = new Set(['PG-006', 'PG-007', 'PG-008', 'PG-010', 'PG-011', 'PG-013', 'PG-015', 'PG-017', 'PG-018', 'PG-019', 'PG-021', 'PG-035', 'PG-038', 'PG-041', 'PG-043', 'PG-046', 'PG-051', 'PG-054', 'PG-055', 'PG-056', 'PG-059', 'PG-063', 'PG-065']);
@@ -54,6 +55,17 @@ void test('§6.1: the current entry by the address\'s first segment', () => {
     assert.equal(currentKey(present(MODULES, owner, ALL), '/gudang/barang-masuk/01a1'), 'gudang');
     assert.equal(currentKey(primaryEntries(owner, ALL), '/proyek/01a1/penyelesaian'), 'proyek');
     assert.equal(currentKey(primaryEntries(owner, ALL), '/data-master/klien'), null);
+});
+
+void test('IP-17: an answer belongs to its term — a changed term has none until its own arrives', () => {
+    const outcome: SearchOutcome = { kind: 'answer', answer: { exact: [], groups: [], notice: null } };
+    const settled = { term: 'ARJ/PRJ/2026/0007', outcome };
+
+    assert.equal(outcomeFor(settled, 'ARJ/PRJ/2026/0007'), outcome);
+    assert.equal(outcomeFor(settled, '  ARJ/PRJ/2026/0007 '), outcome);
+    assert.equal(outcomeFor(settled, 'ARJ/PRJ/2026/00078'), null);
+    assert.equal(outcomeFor(settled, ''), null);
+    assert.equal(outcomeFor(null, 'ARJ/PRJ/2026/0007'), null);
 });
 
 void test('§10: a result opens its page, only once built, products by `stock.view`', () => {

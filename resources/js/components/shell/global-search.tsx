@@ -4,12 +4,13 @@ import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Lookup, type LookupGroup, type LookupResult } from '@/components/lookup';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints, BUILT, type SearchResult, targetOf } from '@/lib/navigation';
-import { search, type SearchAnswer } from '@/lib/search-client';
+import { outcomeFor, search, type Settled } from '@/lib/search-client';
 
 // The shell's *Cari* (INFORMATION_ARCHITECTURE §10; PT-27; IP-17; INT-005): the field "Cari atau pindai kode" in
 // the top bar, Ctrl K (KB-01) and the phone's full-screen search; a scanner's code typed into it is an exact
 // lookup (IP-15). An exact code match comes first with "Kode Cocok"; one hit opens its record; several sharing
-// the key are listed for the user. Only results whose page exists are offered (RC-06). The term travels in the
+// the key are listed for the user. Only results whose page exists are offered (RC-06), and only the answer to the
+// term in the field: a changed term shows nothing to choose until its own answer arrives. The term travels in the
 // request body and never enters the address or history (DP-02).
 
 const TYPE_LABELS: Record<string, TranslationKey> = {
@@ -29,9 +30,7 @@ const DEBOUNCE_MS = 250;
 export function GlobalSearch({ account, built = BUILT, inputRef }: { account: AccountHints; built?: ReadonlySet<string>; inputRef?: RefObject<HTMLInputElement | null> }) {
     const { t } = useTranslation();
     const [term, setTerm] = useState('');
-    const [answer, setAnswer] = useState<SearchAnswer | null>(null);
-    const [limited, setLimited] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [settled, setSettled] = useState<Settled | null>(null);
     const latest = useRef(0);
 
     useEffect(() => {
@@ -44,15 +43,10 @@ export function GlobalSearch({ account, built = BUILT, inputRef }: { account: Ac
         const request = ++latest.current;
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
-            setLoading(true);
             void search(text, [], controller.signal).then((outcome) => {
-                if (request !== latest.current) {
-                    return;
+                if (request === latest.current) {
+                    setSettled({ term: text, outcome });
                 }
-
-                setLoading(false);
-                setLimited(outcome.kind === 'limited' ? outcome.message : null);
-                setAnswer(outcome.kind === 'answer' ? outcome.answer : null);
             });
         }, DEBOUNCE_MS);
 
@@ -71,10 +65,14 @@ export function GlobalSearch({ account, built = BUILT, inputRef }: { account: Ac
         exact,
     });
 
+    const current = outcomeFor(settled, term);
+    const answer = current?.kind === 'answer' ? current.answer : null;
+    const limited = current?.kind === 'limited' ? current.message : null;
+    const loading = term.trim() !== '' && current === null;
     const rows = new Map<string, SearchResult>();
     const groups: LookupGroup[] = [];
 
-    if (answer !== null && term.trim() !== '') {
+    if (answer !== null) {
         const exact = answer.exact.filter(openable);
 
         if (exact.length > 0) {
@@ -99,13 +97,7 @@ export function GlobalSearch({ account, built = BUILT, inputRef }: { account: Ac
             label={t('shell.search')}
             placeholder={t('shell.search')}
             term={term}
-            onTermChange={(next) => {
-                setTerm(next);
-
-                if (next.trim() === '') {
-                    setAnswer(null);
-                }
-            }}
+            onTermChange={setTerm}
             groups={groups}
             cut={answer?.notice === 'cut'}
             short={answer === null ? undefined : answer.notice === 'short'}
@@ -119,7 +111,7 @@ export function GlobalSearch({ account, built = BUILT, inputRef }: { account: Ac
 
                 if (target !== null) {
                     setTerm('');
-                    setAnswer(null);
+                    setSettled(null);
                     router.visit(target);
                 }
             }}
