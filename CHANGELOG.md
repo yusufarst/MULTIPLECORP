@@ -452,6 +452,13 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-25, TASK-015 — design system: tokens, components, patterns and states
+
+- TASK-014 merged by the Owner into `main` as `b431f5b` (pull request #17).
+- Built TASK-015 on its branch `task/TASK-015-design-system` in the Owner's local Desktop session, resumed after the workstation's unexpected restart with the uncommitted work intact: DESIGN_SYSTEM §5's tokens as the only values; Base UI's primitives and Toast, Lucide and Inter self-hosted; the feature components of PT-03–PT-31 and the presentations of IP-01–IP-21 with their keys; 90 catalogue keys through the registry; the token-values ESLint rule; HO-37 answered — no `'unsafe-inline'` style, the CSP unchanged —; a local-only component gallery for the browser suite.
+- The first CI run failed one WebKit test: the line editor's Alt+N came before "Urungkan" had put focus back; the editor's keys now act in the whole editor.
+- Every check passed in fresh CI on `63fbfec`. TASK-015 DONE — progress 15 / 87 —; TASK-016 READY; pull request #18 waits on the Owner's merge.
+
 ## Unreleased — 2026-10-25, TASK-014 — localization: locales, the language switch and the key catalogue
 
 - TASK-013 merged by the Owner into `main` as `ab7a2e5` (pull request #16).
