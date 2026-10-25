@@ -977,5 +977,21 @@
     "actions.reapply_latest": "Terapkan Ulang pada Versi Terbaru",
     "actions.discard_mine": "Buang Isian Saya",
     "forms.value_taken": ":nilai sudah dipakai",
-    "prerequisite.needs": "Perlu kewenangan :nama"
+    "prerequisite.needs": "Perlu kewenangan :nama",
+    "shell.nav.aktivitas_keamanan": "Aktivitas & Keamanan",
+    "shell.create.upload": "Unggah Dokumen",
+    "shell.nav.label": "Navigasi utama",
+    "shell.notice.label": "Pemberitahuan",
+    "shortcuts.kb_01": "Buka pencarian",
+    "shortcuts.kb_02": "Buka bantuan Pintasan",
+    "shortcuts.kb_03": "Ciutkan atau perluas navigasi",
+    "shortcuts.kb_04": "Tutup menu, popover, panel atau dialog yang terbuka",
+    "shortcuts.kb_05": "Buka baris yang difokus; di baris formulir, pindah ke kolom berikutnya",
+    "shortcuts.kb_06": "Tambah baris",
+    "shortcuts.kb_07": "Hapus baris yang difokus",
+    "shortcuts.kb_08": "Pindahkan baris ke atas atau ke bawah",
+    "shortcuts.kb_09": "Simpan draf",
+    "shortcuts.kb_10": "Buka konfirmasi perintah utama formulir",
+    "shortcuts.kb_11": "Pilih dari daftar hasil",
+    "pages.pg_005.error": "Halaman ini tidak dapat ditampilkan. Coba lagi nanti; sebutkan kode referensi bila melapor."
 }

@@ -977,5 +977,21 @@
     "actions.reapply_latest": "Reapply to the Latest Version",
     "actions.discard_mine": "Discard My Input",
     "forms.value_taken": ":nilai is already in use",
-    "prerequisite.needs": "Requires the :nama permission"
+    "prerequisite.needs": "Requires the :nama permission",
+    "shell.nav.aktivitas_keamanan": "Activity & Security",
+    "shell.create.upload": "Upload Document",
+    "shell.nav.label": "Main navigation",
+    "shell.notice.label": "Notice",
+    "shortcuts.kb_01": "Open search",
+    "shortcuts.kb_02": "Open the Shortcuts help",
+    "shortcuts.kb_03": "Collapse or expand the navigation",
+    "shortcuts.kb_04": "Close the open menu, popover, sheet or dialog",
+    "shortcuts.kb_05": "Open the focused row; in a form row, move to the next field",
+    "shortcuts.kb_06": "Add a line",
+    "shortcuts.kb_07": "Remove the focused line",
+    "shortcuts.kb_08": "Move the line up or down",
+    "shortcuts.kb_09": "Save the draft",
+    "shortcuts.kb_10": "Open the confirmation of the form's primary command",
+    "shortcuts.kb_11": "Choose from a result list",
+    "pages.pg_005.error": "This page cannot be shown. Try again later; quote the reference code if you report it."
 }

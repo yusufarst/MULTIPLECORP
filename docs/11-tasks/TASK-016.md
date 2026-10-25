@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -249,34 +249,38 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - Migration: N/A — no migration or import code in this Task
 - Other: N/A — nothing further
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Reporting/SearchTest.php` — a barcode or SKU exactly first, one product; a project number, a document's and an invoice's formatted number and a serial each listing every row sharing the key within scope, none chosen; an unknown code MSG-25. Criterion 2: `SearchTest.php` — names equal to or beginning with the term before similar ones, 20 rows a type, a term without a trigram by prefix only with MSG-24, the 200-candidate cut and an exact list past 20 rows with MSG-23, LIKE wildcards literal —; `tests/Feature/SearchRouteTest.php` refuses a term over 100 characters. Criterion 3: `SearchTest.php` — an out-of-scope project, document or invoice changes no row, cut or notice; units and PICs under `projects.view` only; an inactive account finds nothing —; `SearchRouteTest.php` and the E2E search keep the term in the request body only (DP-02). Criterion 4: `SearchRouteTest.php` — the 61st search answers MSG-20, another account unaffected. Criterion 5: `tests/Frontend/shell.test.ts` — each persona's entries, *Menu lengkap* and "Buat", a company-owned module only with a company in scope (CS-05) —, `tests/Interaction/ShellTest.php` (INT-003, INT-004), `tests/Browser/E2E/shell.spec.ts` and the route audit behind every absent entry. Criterion 6: `tests/Authorization/CompanyViewTest.php` — the working filter narrows within the scope, never widens it, and names no company outside it. Criterion 7: `tests/Feature/SystemAnswersTest.php` (401 and 419 in place, never a redirect), `ShellTest.php` (INT-010) and `shell.spec.ts` — the input and the `command_id` kept, the command recorded once; a lost answer replayed after signing in again, `replayed` with one execution; another person's sign-in the full document load, nothing resent; "Keluar" with MSG-35 — against the fixture's stub of the sign-in, end to end with the real sign-in by TASK-017. Criterion 8: `SystemAnswersTest.php` and `shell.spec.ts` — 423 with MSG-27, never a redirect, the same command sent after the confirmation. Criterion 9: `SystemAnswersTest.php` — an unknown, an out-of-scope and an Owner-only address answer the same not-found page. Criterion 10: `ShellTest.php` — the command's company grant alone revoked, its in-command re-authorization refuses and the open page shows IP-21's not-found page, nothing committed.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Feature — the 401, 409, 419 and 423 answers and PG-005 (`SystemAnswersTest`), ROUTE-281's route (`SearchRouteTest`) (TL-04); Integration — ROUTE-281's query classes over rows in and out of scope (`tests/Integration/Reporting/SearchTest.php`, 13) (TL-05); `tests/Frontend/shell.test.ts` (TL-03); PASS locally and in CI
+- [x] Authorization: the working filter within scope (`CompanyViewTest`), the entries by capability and the server's refusal behind an absent entry (TL-06)
+- [x] Route integrity: ROUTE-005's fallback and ROUTE-281 in the route audit over every registered route (TL-07)
+- [x] Interaction behavior: INT-003, INT-004, INT-007, INT-010 and criterion 10 (TL-08)
+- [x] Browser E2E if required: the shell's paths on desktop and phone, the re-authentication in place and the step-up on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: TL-11's bands (`tests/Browser/Responsive/shell.spec.ts`)
+- [x] Visual breathing room/density if UI: the shell on DESIGN_SYSTEM's tokens and density, English strings held at every band (TEST_STRATEGY §9)
+- [x] Production build: TL-13 — no fixture page in a production build — PASS locally and in CI
+- [x] Security checks if required: no oracle on PG-005 and WS-07's props only (`SystemAnswersTest`, `ShellTest`); TL-12's axe runs at 390 and 1,280 px with *Lainnya* open; the secret-like scan and both dependency audits PASS (TL-14)
+- [x] Database safety review: no migration and no schema change; reads through the existing indexes (IX-17; DATABASE §21); local and CI databases only — CI's stack database migrated by `scripts/verify.sh` as DEVELOPMENT.md states —, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its 13 points fixed and tested or, for the scanner's part of one, handed to TASK-039
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `f18683f`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40235878870 (push) and 40235880608 (pull request #20), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration and Authorization suites and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). The first run, on `60c781a`, failed: the stack's database had never been migrated, which a page of the web group now needs for its session (`relation "sessions" does not exist` — `StackTest` and the engine's axe page met a 500), and TL-12 measured the phone sheet's contrast mid fade-in; `f18683f` migrates the stack's database in `scripts/verify.sh` as DEVELOPMENT.md states and measures the sheet at rest. On the Owner's workstation, 2026-10-26, after ER-06's fixes: the suites Unit 254, Feature 65, Integration 886, Authorization 98, Interaction 7, Routes 11, Architecture 50 and Performance 3; TypeScript, ESLint, `tests/Frontend/` 29, Pint, Larastan/PHPStan, the production build, the browser suite on Chromium and WebKit (89 PASS, one WebKit-only test skipped on Chromium; the shell's E2E spec 20) and the repository gates PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: f18683f, CI ubuntu-24.04 run 40235878870`; the production build without `VITE_FIXTURE_PAGES` has no fixture page
+- Route evidence: TL-07's route audit over every registered route PASS — ROUTE-281 `POST /cari` (`access:s0`, the search limiter) and ROUTE-005's fallback (`access:s0`) —; `tests/Routes/RouteAuditTest.php`
+- Interaction evidence: INT-003, INT-004 and INT-010 in `tests/Interaction/ShellTest.php`; INT-005 and INT-281 in `tests/Feature/SearchRouteTest.php` and the E2E search; INT-007 in `tests/Authorization/CompanyViewTest.php`
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: f18683f, CI ubuntu-24.04 run 40235878870`; TL-10, TL-11 and TL-12 PASS in the same run
+- Localization evidence: the shell in both languages (`tests/Browser/Localization/shell.spec.ts`) (DOD-16); 16 keys added through `lang/registry/added-keys.json` for the Owner's review
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Support/Search/`, the query classes `app/Modules/{CAT,PTY,PRJ,DOC,FIN,INV,ORG,Reporting}/Queries/`, `app/Modules/Reporting/Http/`; `app/Http/` — `BackgroundRequest`, `CompanyView`, `Controllers/SystemPageController`, `Responses/SystemAnswer`, the middleware `RequireStepUp`, `SessionDeadline`, `StartSessionUnlessBackground`, `HandleInertiaRequests` and `RequireCapability` —, `app/Modules/IAM/Data/CompanyScope.php`, `app/Providers/AppServiceProvider.php`, `bootstrap/app.php`, `config/auth.php`, `routes/web.php`, `routes/fixtures.php`, `resources/views/app.blade.php`; `resources/js/app.tsx`, `resources/js/layouts/`, `resources/js/components/shell/`, `resources/js/components/lookup.tsx`, `resources/js/lib/`, `resources/js/Pages/System/`, `resources/js/Pages/Fixtures/Shell.tsx`; `lang/id.json`, `lang/en.json`, `lang/registry/added-keys.json`; `tests/Integration/Reporting/`, `tests/Integration/StackTest.php`, `tests/Feature/`, `tests/Authorization/CompanyViewTest.php`, `tests/Interaction/ShellTest.php`, `tests/Performance/ShellQueriesTest.php`, `tests/Frontend/`, `tests/Browser/`, `tests/Support/Fixtures/`, `tests/Support/DataPaths.php`; `scripts/verify.sh`; TOOLCHAIN's row; this file, the statuses of TASK-017, TASK-026, TASK-028, TASK-031 and TASK-061, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `60c781a` and `f18683f`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-016-shell`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26 (TOOLCHAIN, "Execution environments (TASK-001)"); the session resumed after the workstation's unexpected restart with the uncommitted work intact; Context7 not available, each facility verified from the installed sources and by the tests (TOOLCHAIN's TASK-016 row); the local runs used a container-local copy of the working tree and one or two browser workers, CI the final proof. ER-06's one review found 13 points, each fixed and tested; of the sixth, the scan into *Cari* and lot codes are ROUTE-282's, TASK-039's obligation in CURRENT_HANDOFF. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-016 blocks were re-checked at this DONE: TASK-017, TASK-026, TASK-028, TASK-031 and TASK-061 READY — every dependency DONE —; TASK-021 waits on TASK-018, TASK-023 and TASK-024 on TASK-019, TASK-025, TASK-027 and TASK-030 on TASK-022. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

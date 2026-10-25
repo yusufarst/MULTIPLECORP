@@ -4,14 +4,22 @@ use App\Http\Middleware\AssignCorrelationId;
 use App\Http\Middleware\DeclareAccess;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RequireCapability;
+use App\Http\Middleware\RequireStepUp;
 use App\Http\Middleware\SecurityHeaders;
+use App\Http\Middleware\SessionDeadline;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\StartSessionUnlessBackground;
+use App\Http\Responses\SystemAnswer;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\SubstituteBindings;
+use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -37,12 +45,20 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             SetLocale::class,
             HandleInertiaRequests::class,
+            SessionDeadline::class,
         ]);
+
+        // A guest's document request goes to sign-in, PG-001 (TASK-017); an Inertia or JSON one answers 401 instead.
+        $middleware->redirectGuestsTo('/masuk');
+
+        // A background request reads the session and never writes it, so it extends no session (RV-06; RB-05).
+        $middleware->web(replace: [StartSession::class => StartSessionUnlessBackground::class]);
 
         // Each route's declaration of what admits it, after `auth` (SECURITY EN-01, EN-03; the route audit, SM-02).
         $middleware->alias([
             'capability' => RequireCapability::class,
             'access' => DeclareAccess::class,
+            'step-up' => RequireStepUp::class,
         ]);
 
         // The capability is checked before any route binding reads a record, so a missing and an existing
@@ -52,4 +68,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).
         $exceptions->map(ModelNotFoundException::class, fn () => new NotFoundHttpException);
+
+        // UXH-11: an unauthenticated Inertia or JSON request answers 401 — never a redirect —, so the open page
+        // signs in again in place (IP-11); PG-005 answers an address the account cannot open (IP-21; TASK-016).
+        $exceptions->render(fn (AuthenticationException $exception, Request $request) => SystemAnswer::unauthenticated($exception, $request));
+        $exceptions->respond(fn (Response $response, Throwable $exception, Request $request): Response => SystemAnswer::respond($response, $exception, $request));
     })->create();

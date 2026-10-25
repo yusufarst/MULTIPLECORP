@@ -540,6 +540,102 @@
             "source": "DESIGN_SYSTEM §10 \"Checks, result, next step and prerequisite\" (\"Perlu kewenangan …\")",
             "indonesian": "canonical",
             "english": "proposed"
+        },
+        "shell.nav.aktivitas_keamanan": {
+            "task": "TASK-016",
+            "source": "INFORMATION_ARCHITECTURE §5.3 (the Owner's module *Aktivitas & Keamanan*)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "shell.create.upload": {
+            "task": "TASK-016",
+            "source": "INFORMATION_ARCHITECTURE §10 (\"Buat\" — *Unggah Dokumen*)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "shell.nav.label": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §15 (landmarks for navigation, main content and the action bar)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shell.notice.label": {
+            "task": "TASK-016",
+            "source": "INFORMATION_ARCHITECTURE §6.1 (the notice strip)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_01": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_02": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_03": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_04": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_05": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_06": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_07": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_08": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_09": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_10": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "shortcuts.kb_11": {
+            "task": "TASK-016",
+            "source": "DESIGN_SYSTEM §13.1 (the *Pintasan* help, KB-02; INFORMATION_ARCHITECTURE §8.8)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_005.error": {
+            "task": "TASK-016",
+            "source": "ADMIN_FLOW IP-21 (the error state: a generic message with the reference code); WS-10",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

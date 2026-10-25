@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 15
-READY: 2
+DONE: 16
+READY: 6
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 57
+TODO: 52
 SUPERSEDED: 0
 
 Progress:
-15 / 87
-Percentage: 17.2 %
+16 / 87
+Percentage: 18.4 %
 
-CURRENT TASK: none in progress — TASK-015 — Design system — tokens, components, patterns and states DONE on its branch `task/TASK-015-design-system`, CI PASS on `63fbfec`, its pull request #18 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-016 — Application shell, navigation and the company context, READY — its dependencies TASK-011, TASK-012, TASK-013 and TASK-015 DONE and its READY gate checked at TASK-015's DONE —, taken first once the Owner merges TASK-015's pull request #18 (ER-07); TASK-073 READY; TASK-017 waits on TASK-016, TASK-022 on TASK-017, TASK-023 on TASK-016 and TASK-019; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-016 — Application shell, navigation and the company context DONE on its branch `task/TASK-016-shell`, CI PASS on `f18683f`, its pull request #20 waiting on the Owner's merge (ER-07)
+NEXT READY TASK: TASK-017 — Password sign-in, sessions and credential links, READY — its dependencies TASK-005, TASK-010, TASK-013, TASK-015 and TASK-016 DONE and its READY gate checked at TASK-016's DONE —, taken first once the Owner merges TASK-016's pull request #20 (ER-07); TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-021 waits on TASK-018, TASK-022 on TASK-017, TASK-023 and TASK-024 on TASK-019, TASK-025, TASK-027 and TASK-030 on TASK-022; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -64,7 +64,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-013](TASK-013.md) — Command envelope, command identity, idempotency and the lock order
 - [x] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
 - [x] [TASK-015](TASK-015.md) — Design system — tokens, components, patterns and states
-- [ ] [TASK-016](TASK-016.md) — Application shell, navigation and the company context
+- [x] [TASK-016](TASK-016.md) — Application shell, navigation and the company context
 - [ ] [TASK-017](TASK-017.md) — Password sign-in, sessions and credential links
 - [ ] [TASK-018](TASK-018.md) — Two-step verification (TOTP) and recovery codes
 - [ ] [TASK-019](TASK-019.md) — Google sign-in for existing accounts
@@ -156,8 +156,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | DONE | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | DONE | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | DONE | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
-| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | READY | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
-| [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
+| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | DONE | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
+| [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | READY | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
 | [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | TODO | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | TODO | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | TODO | 010, 018, 019 | 069, 076, 085 | NO | AGENT | NONE | NO |
@@ -166,12 +166,12 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | TODO | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | TODO | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
-| [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | TODO | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
+| [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | READY | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
 | [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | TODO | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
-| [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | TODO | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
+| [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | READY | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | TODO | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
 | [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | TODO | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
-| [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | TODO | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
+| [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | READY | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
 | [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | TODO | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | TODO | 029, 032 | 034 | NO | AGENT | NONE | YES |
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | TODO | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
@@ -201,7 +201,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | TODO | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 075 | NO | AGENT | PROPOSED | YES |
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | TODO | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | TODO | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | TODO | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | READY | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
