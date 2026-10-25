@@ -50,6 +50,26 @@ final class TestCommands
         }, $statementObserver);
     }
 
+    /**
+     * Takes one unit of the product under its lock and answers the instant the command read after its locks
+     * (phase C; §9), for a session to return.
+     */
+    public static function stamped(string $commandId, int $actorUserId, int $productId): string
+    {
+        $stamp = '';
+        $type = 'test.stamped';
+
+        app(CommandEnvelope::class)->run(new CommandRequest($commandId, $type, $actorUserId, null, 'stock.dispatch', Fingerprint::of($type, null, [])), function ($context) use ($productId, &$stamp) {
+            $context->lock((new LockSet)->add('stock_product_balances', ['product_id' => $productId]));
+            GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $productId], 'deltas' => ['on_hand_qty' => -1]]]);
+            $stamp = $context->now()->format('Y-m-d H:i:s.u');
+
+            return new CommandResult('test', null);
+        });
+
+        return $stamp;
+    }
+
     /** The outcome as `KIND` or `KIND code`, for a session to return. */
     public static function text(Outcome $outcome): string
     {

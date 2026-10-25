@@ -5,7 +5,6 @@ namespace App\Support\Command;
 use App\Modules\IAM\Services\CommandAuthorization;
 use App\Support\CorrelationId;
 use App\Support\GuardMissing;
-use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Database\Connection;
 use Illuminate\Database\ConnectionInterface;
@@ -43,12 +42,20 @@ final class CommandEnvelope
         private readonly CommandAuthorization $authorization,
     ) {}
 
+    /** @var (Closure(Outcome): (array<string, mixed>|null))|null */
+    private ?Closure $replayState = null;
+
     /**
      * @param  Closure(CommandContext): CommandResult  $action  phases C and D: locks, decides, writes
      * @param  Closure(string, array<string, int|string>): void|null  $observer  told of each lock statement (HO-13)
+     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState  a replayed outcome's current in-scope state, null when it no longer resolves (CI-05)
+     *
+     * The replay state is the action's: a result's current projection, the current state its rule concerns, a
+     * duplicate warning's current matches.
      */
-    public function run(CommandRequest $request, Closure $action, ?Closure $observer = null): Outcome
+    public function run(CommandRequest $request, Closure $action, ?Closure $observer = null, ?Closure $replayState = null): Outcome
     {
+        $this->replayState = $replayState;
         $started = hrtime(true);
         $executions = 0;
         $restarts = 0;
@@ -115,7 +122,7 @@ final class CommandEnvelope
                 return $recorded === null ? FailureMapper::RETRY : $this->replay($request, $recorded);
             }
 
-            $context = new CommandContext($request, $connection, CarbonImmutable::now(), $derived, $this->authorization, $observer);
+            $context = new CommandContext($request, $connection, $derived, $this->authorization, $observer);
             $connection->beginTransaction();
 
             try {
@@ -225,8 +232,9 @@ final class CommandEnvelope
      * The replay table of CI-05, in a transaction of the command's class that holds the actor's row while it
      * re-authorizes; it commits nothing new. Another actor's identity is a CONFLICT that discloses nothing
      * (DP-16); a denial is the one a fresh command would get; other content is a CONFLICT; the same intent
-     * returns its recorded outcome. A command type names its capability, so the request's is the recorded one's
-     * whenever the types agree; when they differ the answer is the CONFLICT.
+     * returns its recorded outcome with the current in-scope state, resolved only after those checks and left
+     * out when it no longer resolves. A command type names its capability, so the request's is the recorded
+     * one's whenever the types agree; when they differ the answer is the CONFLICT.
      */
     private function replay(CommandRequest $request, RecordedCommand $recorded): Outcome
     {
@@ -234,16 +242,19 @@ final class CommandEnvelope
             return Outcome::conflict('CI-05', replayed: true);
         }
 
-        DB::transaction(function () use ($request, $recorded): void {
+        return DB::transaction(function () use ($request, $recorded): Outcome {
             $this->setTimeouts(self::connection(), $request->transactionClass);
             $this->authorization->reauthorize($request->actorUserId, $request->capability, $recorded->companyId);
+
+            if ($recorded->commandType !== $request->commandType || $recorded->fingerprint !== $request->fingerprint || $recorded->companyId !== $request->companyId) {
+                return Outcome::conflict('CI-05', replayed: true);
+            }
+
+            $outcome = $recorded->outcome();
+            $state = $this->replayState === null ? null : ($this->replayState)($outcome);
+
+            return $state === null ? $outcome : $outcome->withState($state);
         });
-
-        if ($recorded->commandType !== $request->commandType || $recorded->fingerprint !== $request->fingerprint || $recorded->companyId !== $request->companyId) {
-            return Outcome::conflict('CI-05', replayed: true);
-        }
-
-        return $recorded->outcome();
     }
 
     private static function connection(): Connection

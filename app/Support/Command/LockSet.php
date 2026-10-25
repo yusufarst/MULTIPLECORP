@@ -154,7 +154,7 @@ final class LockSet
      * @param  array<string, int|string>  $key
      * @return array<string, int|string>
      */
-    private static function normalized(array $key): array
+    public static function normalized(array $key): array
     {
         return array_map(
             static fn (int|string $value): int|string => is_string($value) && preg_match('/^(0|-?[1-9][0-9]{0,17})$/', $value) === 1 ? (int) $value : $value,

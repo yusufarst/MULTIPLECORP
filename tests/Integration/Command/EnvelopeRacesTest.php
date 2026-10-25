@@ -192,3 +192,46 @@ it('refuses a command whose grant is revoked while it waits on the actor\'s row:
         ->and((string) DB::table('stock_product_balances')->where('product_id', $product)->value('on_hand_qty'))->toBe('1.000')
         ->and(DB::table('command_log')->where('command_id', $id)->exists())->toBeFalse();
 });
+
+it('stamps a command once its locks are granted: one that waited is stamped after the one that committed before it (phase C; §9)', function () {
+    $product = Product::factory()->create()->id;
+    DB::table('stock_product_balances')->insert(['product_id' => $product, 'on_hand_qty' => 2]);
+    // The earlier command's actor is held by an access change, so a later command takes the product first.
+    $waiting = Authorization::owner()->id;
+    $later = $this->owner;
+    $laterId = (string) Str::uuid7();
+
+    $stamps = Sessions::run([
+        'access change' => static function () use ($waiting, $laterId): string {
+            DB::transaction(function () use ($waiting, $laterId): void {
+                DB::table('users')->where('id', $waiting)->lockForUpdate()->first();
+                Barrier::await('the actor is held');
+                Sessions::awaitBlocked();
+
+                for ($deadline = hrtime(true) + 30_000_000_000; ! DB::table('command_log')->where('command_id', $laterId)->where('state', 'COMMITTED')->exists(); usleep(10_000)) {
+                    if (hrtime(true) > $deadline) {
+                        throw new RuntimeException('The later command never committed.');
+                    }
+                }
+            });
+
+            return 'COMMITTED';
+        },
+        'earlier' => static function () use ($waiting, $product): string {
+            Barrier::await('the actor is held');
+
+            return TestCommands::stamped((string) Str::uuid7(), $waiting, $product);
+        },
+        'later' => static function () use ($later, $laterId, $product): string {
+            Barrier::await('the actor is held');
+            Sessions::awaitBlocked();
+
+            return TestCommands::stamped($laterId, $later, $product);
+        },
+    ]);
+
+    expect($stamps['access change'])->toBe('COMMITTED')
+        ->and($stamps['later'])->not->toBe('')
+        ->and(strcmp($stamps['earlier'], $stamps['later']))->toBeGreaterThan(0)
+        ->and((string) DB::table('stock_product_balances')->where('product_id', $product)->value('on_hand_qty'))->toBe('0.000');
+});

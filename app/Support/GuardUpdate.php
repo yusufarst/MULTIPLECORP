@@ -2,6 +2,7 @@
 
 namespace App\Support;
 
+use App\Support\Command\LockSet;
 use Illuminate\Database\ConnectionInterface;
 use InvalidArgumentException;
 
@@ -51,7 +52,9 @@ final class GuardUpdate
 
             $cells = [];
 
-            foreach ($row['key'] as $value) {
+            // An integer key given as its decimal string is the integer, as the lock set reads it, so it binds as
+            // bigint and a textual key stays text.
+            foreach (LockSet::normalized($row['key']) as $value) {
                 $cells[] = is_int($value) ? 'cast(? as bigint)' : 'cast(? as text)';
                 $bindings[] = $value;
             }

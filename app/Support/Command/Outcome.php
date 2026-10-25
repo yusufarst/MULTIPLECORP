@@ -64,6 +64,16 @@ final class Outcome
         return new self(self::PENDING, null, $resultType, $resultId);
     }
 
+    /**
+     * The same answer with the current in-scope state a replay resolves (CI-05).
+     *
+     * @param  array<string, mixed>  $state
+     */
+    public function withState(array $state): self
+    {
+        return new self($this->kind, $this->code, $this->resultType, $this->resultId, $state, $this->replayed);
+    }
+
     /** Whether the outcome is a terminal one `command_log` records (CI-06). */
     public function isTerminal(): bool
     {

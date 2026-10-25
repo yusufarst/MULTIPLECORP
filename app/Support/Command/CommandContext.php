@@ -7,10 +7,13 @@ use App\Modules\IAM\Services\CommandAuthorization;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Database\ConnectionInterface;
+use LogicException;
 
 /**
  * What a command's action sees inside the envelope (ARCHITECTURE §5; CONCURRENCY_IDEMPOTENCY §6): its request,
- * its connection, the clock read once — `recorded_at` for every row it writes —, and its locks. The first
+ * its connection, its locks, and the clock read once after them — `recorded_at` for every row it writes, stamped
+ * once its locks are granted (phase C), so facts replayed in recorded order keep the order the locks serialized
+ * (§9): read before the first lock it is a defect, and no new lock is taken after it. The first
  * `lock()` takes the rows up to LK-03, the actor's row among them, and re-authorizes there, before any
  * precondition is read (RV-01); every later one only moves forward (LR-01). `require()` is §5's re-derivation:
  * a required row that is not held restarts the action with the union of the sets derived so far.
@@ -18,6 +21,8 @@ use Illuminate\Database\ConnectionInterface;
 final class CommandContext
 {
     private ?Authority $authority = null;
+
+    private ?CarbonImmutable $stamp = null;
 
     private readonly LockPosition $held;
 
@@ -27,7 +32,6 @@ final class CommandContext
     public function __construct(
         public readonly CommandRequest $request,
         public readonly ConnectionInterface $connection,
-        public readonly CarbonImmutable $now,
         private LockSet $derived,
         private readonly CommandAuthorization $authorization,
         private readonly ?Closure $observer = null,
@@ -43,6 +47,10 @@ final class CommandContext
      */
     public function lock(LockSet $set): array
     {
+        if ($this->stamp !== null && ! $this->derived->covers($set)) {
+            throw new LogicException('Every lock is taken before the command reads its clock (phase C; CONCURRENCY_IDEMPOTENCY §9).');
+        }
+
         $this->derived = $this->derived->union($set)->add('users', ['id' => $this->request->actorUserId]);
         $missing = [];
 
@@ -52,6 +60,16 @@ final class CommandContext
         }
 
         return [...$missing, ...$this->derived->acquire($this->connection, $this->held, null, $this->observer)];
+    }
+
+    /** The command's instant, read once its locks are granted (phase C; §9): every row it writes carries it. */
+    public function now(): CarbonImmutable
+    {
+        if ($this->authority === null) {
+            throw new LogicException('A command reads its clock once its locks are granted (phase C; CONCURRENCY_IDEMPOTENCY §9).');
+        }
+
+        return $this->stamp ??= CarbonImmutable::now();
     }
 
     /** §5 step 3–4: the set re-derived under the locks must be held, or the action restarts with the union. */

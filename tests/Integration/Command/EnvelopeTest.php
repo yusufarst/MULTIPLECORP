@@ -3,6 +3,8 @@
 use App\Modules\CAT\Models\Product;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\FIN\Models\Payment;
+use App\Modules\INV\Models\InventoryLot;
+use App\Modules\INV\Models\Location;
 use App\Modules\ORG\Models\Company;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -11,6 +13,7 @@ use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandId;
 use App\Support\Command\CommandRequest;
 use App\Support\Command\CommandResult;
+use App\Support\Command\DuplicateWarning;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
@@ -288,4 +291,81 @@ it('answers a driven identity whose fact already exists "already done", COMMITTE
 
     expect([$outcome->kind, $outcome->replayed])->toBe([Outcome::COMMITTED, true])
         ->and(DB::table('command_log')->count())->toBe(0);
+});
+
+it('reads its clock only once its locks are granted, and takes no new lock after it (phase C; §9)', function () {
+    $type = 'test.clock';
+    $run = fn (Closure $action) => app(CommandEnvelope::class)->run(new CommandRequest((string) Str::uuid7(), $type, $this->owner, null, 'stock.dispatch', Fingerprint::of($type, null, [])), $action);
+    $product = new LockSet;
+    $product->add('stock_product_balances', ['product_id' => $this->product]);
+
+    expect(fn () => $run(function ($context) {
+        $context->now();
+
+        return new CommandResult;
+    }))->toThrow(LogicException::class, 'phase C');
+
+    expect(fn () => $run(function ($context) use ($product) {
+        $context->lock(new LockSet);
+        $context->now();
+        $context->lock($product);
+
+        return new CommandResult;
+    }))->toThrow(LogicException::class, 'phase C');
+
+    $stamps = [];
+    $outcome = $run(function ($context) use ($product, &$stamps) {
+        $context->lock($product);
+        $stamps = [$context->now(), $context->now()];
+        // A lock already held after the clock is no new lock.
+        $context->lock($product);
+
+        return new CommandResult;
+    });
+
+    expect($outcome->kind)->toBe(Outcome::COMMITTED)
+        ->and($stamps[0])->toBe($stamps[1])
+        ->and(DB::table('command_log')->where('command_type', $type)->count())->toBe(1);
+});
+
+it('replays a refusal with the current state its rule concerns, resolved after the checks, left out when it no longer resolves (CI-05)', function () {
+    $type = 'test.duplicate';
+    $id = (string) Str::uuid7();
+    $current = ['P-1', 'P-2'];
+    $run = fn (?Closure $replayState) => app(CommandEnvelope::class)->run(new CommandRequest($id, $type, $this->owner, null, 'stock.dispatch', Fingerprint::of($type, null, ['acknowledged' => []])), function ($context) {
+        $context->lock(new LockSet);
+        DuplicateWarning::check('BD-02', ['P-1'], [], null);
+
+        return new CommandResult;
+    }, replayState: $replayState);
+
+    $first = $run(null);
+    $resolved = $run(fn (Outcome $outcome) => $outcome->code === 'BD-02' ? ['matches' => $current] : null);
+    $gone = $run(fn () => null);
+    $unresolved = $run(null);
+
+    expect([$first->kind, $first->code, $first->state, $first->replayed])->toBe([Outcome::REJECTED, 'BD-02', ['matches' => ['P-1']], false])
+        ->and([$resolved->kind, $resolved->code, $resolved->state, $resolved->replayed])->toBe([Outcome::REJECTED, 'BD-02', ['matches' => ['P-1', 'P-2']], true])
+        ->and($gone->state)->toBe([])
+        ->and($unresolved->state)->toBe([]);
+
+    // Another actor's identity resolves nothing (DP-16).
+    $other = app(CommandEnvelope::class)->run(new CommandRequest($id, $type, Authorization::owner()->id, null, 'stock.dispatch', Fingerprint::of($type, null, ['acknowledged' => []])), fn () => new CommandResult, replayState: fn () => throw new LogicException('resolved for another actor'));
+
+    expect([$other->kind, $other->code, $other->state])->toBe([Outcome::CONFLICT, 'CI-05', []]);
+});
+
+it('binds an integer guard key given as its decimal string as the integer, a textual key as text (GU-01)', function () {
+    $lot = InventoryLot::factory()->create();
+    $location = Location::factory()->create()->id;
+    DB::table('stock_lot_balances')->insert(['lot_id' => $lot->id, 'location_id' => $location, 'condition' => 'USABLE', 'product_id' => $lot->product_id, 'qty' => 2]);
+
+    DB::transaction(function () use ($lot, $location) {
+        GuardUpdate::apply(DB::connection(), 'stock_product_balances', [['key' => ['product_id' => (string) $this->product], 'deltas' => ['on_hand_qty' => -1]]]);
+        GuardUpdate::apply(DB::connection(), 'stock_lot_balances', [['key' => ['lot_id' => (string) $lot->id, 'location_id' => $location, 'condition' => 'USABLE'], 'deltas' => ['qty' => -1]]]);
+    });
+
+    expect(($this->onHand)())->toBe('2.000')
+        ->and((string) DB::table('stock_lot_balances')->where('lot_id', $lot->id)->value('qty'))->toBe('1.000')
+        ->and(fn () => GuardUpdate::apply(DB::connection(), 'stock_product_balances', [['key' => ['product_id' => (string) $this->product], 'deltas' => ['on_hand_qty' => -1]], ['key' => ['product_id' => $this->product], 'deltas' => ['on_hand_qty' => -1]]]))->toThrow(InvalidArgumentException::class, 'once');
 });
