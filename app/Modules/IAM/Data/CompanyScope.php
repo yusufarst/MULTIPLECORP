@@ -56,6 +56,26 @@ final class CompanyScope
     }
 
     /**
+     * The working filter of INFORMATION_ARCHITECTURE §7 (WF-ACC-01; DP-02; TASK-016): the companies asked for,
+     * intersected with this scope, so a filter narrows and never widens — a company outside the scope is
+     * ignored, and a filter left with none of the scope's companies shows the whole scope, as no filter does.
+     *
+     * @param  iterable<int>  $companyIds
+     */
+    public function narrowedTo(iterable $companyIds): self
+    {
+        $kept = [];
+
+        foreach ($companyIds as $id) {
+            if ($this->includes((int) $id)) {
+                $kept[] = (int) $id;
+            }
+        }
+
+        return $kept === [] ? $this : self::of($kept);
+    }
+
+    /**
      * The query restricted to the scope on its company column; an empty scope matches no row. The query's
      * own conditions are grouped first, so an `orWhere` among them can never reach past the scope.
      *

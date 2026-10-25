@@ -42,9 +42,11 @@ it('reaches Valkey for the cache', function () {
 });
 
 it('serves the application through Nginx with every WS-08 header once', function () {
+    // A guest's address goes to sign-in (TASK-016's fallback, EN-03); the redirect carries the headers too.
     $response = stackHttp()->get(stackSetting('STACK_HTTPS_URL').'/no-such-page');
 
-    expect($response->status())->toBe(404);
+    expect($response->status())->toBe(302)
+        ->and($response->header('Location'))->toEndWith('/masuk');
 
     $headers = array_change_key_case($response->headers(), CASE_LOWER);
     $expected = [

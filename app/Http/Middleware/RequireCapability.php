@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use LogicException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use function Illuminate\Support\defer;
 
@@ -53,7 +54,9 @@ class RequireCapability
                 details: ['capability' => $capability],
             ))->always();
 
-            throw new AuthorizationException;
+            // An Owner-only address answers an Admin as the not-found page, identical to an unknown one; any other
+            // missing capability is forbidden (INFORMATION_ARCHITECTURE §6.3; UXN-18; IP-21; TASK-016).
+            throw CapabilityCatalogue::isOwnerOnly($capability) ? new NotFoundHttpException : new AuthorizationException;
         }
 
         return $next($request);

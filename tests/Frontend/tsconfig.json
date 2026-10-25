@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.json",
     "compilerOptions": {
-        "types": ["node"],
+        "types": ["node", "vite/client"],
         "allowImportingTsExtensions": true
     },
     "include": [
@@ -10,7 +10,9 @@
         "../../resources/js/lib/decimal.ts",
         "../../resources/js/lib/format.ts",
         "../../resources/js/lib/i18n-core.ts",
+        "../../resources/js/lib/navigation.ts",
         "../../resources/js/lib/number-entry.ts",
-        "../../resources/js/lib/scanner.ts"
+        "../../resources/js/lib/scanner.ts",
+        "../../resources/js/lib/session-core.ts"
     ]
 }

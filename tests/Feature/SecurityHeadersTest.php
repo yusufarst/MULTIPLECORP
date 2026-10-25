@@ -15,6 +15,7 @@ beforeEach(function () {
     config(['inertia.testing.ensure_pages_exist' => false]);
 
     Route::middleware('web')->get('/__test/page', fn () => Inertia::render('Test'));
+    Route::middleware('web')->get('/__test/hilang', fn () => abort(404));
 });
 
 afterEach(function () {
@@ -63,7 +64,8 @@ it('sends the policy on Inertia responses', function () {
 });
 
 it('sends the policy and no-store on error pages', function () {
-    $response = $this->get('/no-such-page')->assertNotFound();
+    // A guest's unknown address goes to sign-in (TASK-016); an error answered inside a route is the error page.
+    $response = $this->get('/__test/hilang')->assertNotFound();
 
     expect($response->headers->get('Content-Security-Policy'))->toContain("frame-ancestors 'none'")
         ->and($response->headers->get('Cache-Control'))->toContain('no-store');

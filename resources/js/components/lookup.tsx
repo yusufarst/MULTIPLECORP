@@ -1,5 +1,5 @@
 import { Plus, Search } from 'lucide-react';
-import { type ReactNode, useMemo } from 'react';
+import { type ReactNode, type RefObject, useMemo } from 'react';
 
 import { Mark } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -44,6 +44,9 @@ export function Lookup({
     onChoose,
     create,
     placeholder,
+    notice,
+    short: answered,
+    inputRef,
 }: {
     label: string;
     term: string;
@@ -58,11 +61,16 @@ export function Lookup({
     /** "Buat {Objek}", offered only where the account may create (AZ-01 as a hint). */
     create?: { object: string; onCreate: () => void };
     placeholder?: string;
+    /** A notice the server's answer carries beside the rows — MSG-25's unknown code, MSG-20's limit. */
+    notice?: string | null;
+    /** The server's word that the term has no trigram (MSG-24; PF-23); the field's own rule until it answers. */
+    short?: boolean;
+    inputRef?: RefObject<HTMLInputElement | null>;
 }) {
     const { t } = useTranslation();
     // A stable list while the server's answer is unchanged: the primitive resynchronizes on a new `items`.
     const shown = useMemo(() => (groups.length === 0 ? NO_GROUPS : limit(groups)), [groups]);
-    const short = term.trim() !== '' && !/\d/.test(term) && term.trim().replace(/[^\p{L}\p{N}]/gu, '').length < LOOKUP_MIN_NAME;
+    const short = answered ?? (term.trim() !== '' && !/\d/.test(term) && term.trim().replace(/[^\p{L}\p{N}]/gu, '').length < LOOKUP_MIN_NAME);
 
     return (
         <Combobox<LookupResult>
@@ -80,13 +88,18 @@ export function Lookup({
             isItemEqualToValue={(item, other) => item.id === other.id}
             autoHighlight
         >
-            <ComboboxInput aria-label={label} placeholder={placeholder} maxLength={LOOKUP_MAX_TERM} {...{ [SCAN_TARGET]: 'lookup' }}>
+            <ComboboxInput ref={inputRef} aria-label={label} placeholder={placeholder} maxLength={LOOKUP_MAX_TERM} {...{ [SCAN_TARGET]: 'lookup' }}>
                 <InputGroupAddon>
                     <Icon icon={Search} size="sm" />
                 </InputGroupAddon>
             </ComboboxInput>
             <ComboboxContent aria-busy={loading || undefined}>
                 {short && <p className="px-3 pt-3 text-caption text-text-secondary">{t('messages.msg_24')}</p>}
+                {notice !== undefined && notice !== null && (
+                    <p role="status" className="px-3 pt-3 text-caption text-text-primary">
+                        {notice}
+                    </p>
+                )}
                 <ComboboxEmpty>
                     {!short && !loading && term.trim() !== '' && (
                         <div className="flex flex-col items-start gap-2 py-1">

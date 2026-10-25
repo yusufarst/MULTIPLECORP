@@ -17,10 +17,10 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 15
-READY: 2
+READY: 1
 IN_PROGRESS: 0
 BLOCKED: 13
-VERIFYING: 0
+VERIFYING: 1
 TODO: 57
 SUPERSEDED: 0
 
@@ -28,8 +28,8 @@ Progress:
 15 / 87
 Percentage: 17.2 %
 
-CURRENT TASK: none in progress — TASK-015 — Design system — tokens, components, patterns and states DONE on its branch `task/TASK-015-design-system`, CI PASS on `63fbfec`, its pull request #18 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-016 — Application shell, navigation and the company context, READY — its dependencies TASK-011, TASK-012, TASK-013 and TASK-015 DONE and its READY gate checked at TASK-015's DONE —, taken first once the Owner merges TASK-015's pull request #18 (ER-07); TASK-073 READY; TASK-017 waits on TASK-016, TASK-022 on TASK-017, TASK-023 on TASK-016 and TASK-019; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-016 — Application shell, navigation and the company context, VERIFYING: built on its branch `task/TASK-016-shell` from `main` after TASK-015's merge `6e652a3` and its command-identity fix `e7ef1d5` (pull requests #18, #19), its pull request into `main` waiting on its fresh CI run (ER-07)
+NEXT READY TASK: TASK-073 READY; TASK-016's DONE leaves TASK-017, TASK-026, TASK-028, TASK-031 and TASK-061 with every dependency DONE, their READY gate checked at that DONE — TASK-017 first —; TASK-021 then waits on TASK-018, TASK-022 on TASK-017, TASK-023 and TASK-024 on TASK-019, TASK-025, TASK-027 and TASK-030 on TASK-022; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -156,7 +156,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-013](TASK-013.md) | Command envelope, command identity, idempotency and the lock order | Platform · Platform | HIGH | DONE | 009, 010, 011 | 016, 017, 021, 022, 024, 025, 026, 027, 028, 031, 036, 072, 074, 075, 076 | NO | AGENT | PROPOSED | NO |
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | DONE | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | DONE | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
-| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | READY | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
+| [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | VERIFYING | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
 | [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | TODO | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
 | [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | TODO | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | TODO | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |

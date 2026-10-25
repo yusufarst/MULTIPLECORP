@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ToastProvider } from './components/ui/toast';
 import { TooltipProvider } from './components/ui/tooltip';
 import { loadLocale } from './lib/i18n';
+import { trackPages } from './lib/previous-page';
 
 // TL-13: the component gallery under Pages/Fixtures is local-only — its route exists in the local environment
 // alone (routes/fixtures.php) and its pages enter the bundle only when VITE_FIXTURE_PAGES is set for a local build.
@@ -15,6 +16,9 @@ const pages =
     import.meta.env.VITE_FIXTURE_PAGES === 'true'
         ? import.meta.glob<{ default: ResolvedComponent }>('./Pages/**/*.tsx')
         : import.meta.glob<{ default: ResolvedComponent }>(['./Pages/**/*.tsx', '!./Pages/Fixtures/**']);
+
+// PG-005's "Kembali" returns to the application's previous page, known from the router (NV-01; NAV-005).
+trackPages();
 
 void createInertiaApp({
     // The page's language strings are loaded before it renders, once per language (LOCALIZATION §3.8).

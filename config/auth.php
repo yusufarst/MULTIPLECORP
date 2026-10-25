@@ -112,6 +112,7 @@ return [
     |
     */
 
-    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
+    // SECURITY AU-15: the step-up's window is 15 minutes, the framework's three-hour default shortened.
+    'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 900),
 
 ];
