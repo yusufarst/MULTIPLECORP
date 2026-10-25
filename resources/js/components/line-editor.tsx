@@ -52,6 +52,8 @@ export function LineEditor<L extends { key: string }>({
 }) {
     const { t } = useTranslation();
     const frame = useRef<HTMLDivElement>(null);
+    // KB-06 and KB-07 act anywhere in the editor — its lines and its "Urungkan" status line alike.
+    const editor = useRef<HTMLElement>(null);
     const mint = () => `new-${crypto.randomUUID()}`;
     const [trailing, setTrailing] = useState(() => blank(mint()));
     const [removed, setRemoved] = useState<{ line: L; at: number } | null>(null);
@@ -121,9 +123,13 @@ export function LineEditor<L extends { key: string }>({
 
     const focused = (): string | null => (document.activeElement?.closest('[data-line]') as HTMLElement | null)?.dataset.line ?? null;
 
-    useShortcut({ key: 'n', alt: true }, () => {
-        focusLine(trailing.key);
-    }, frame);
+    useShortcut(
+        { key: 'n', alt: true },
+        () => {
+            focusLine(trailing.key);
+        },
+        editor,
+    );
     useShortcut(
         { key: 'Delete', alt: true },
         () => {
@@ -133,7 +139,7 @@ export function LineEditor<L extends { key: string }>({
                 remove(key);
             }
         },
-        frame,
+        editor,
     );
 
     const onRowKey = (event: KeyboardEvent<HTMLTableRowElement>, key: string) => {
@@ -155,7 +161,7 @@ export function LineEditor<L extends { key: string }>({
     };
 
     return (
-        <section aria-label={label} data-slot="line-editor" className="flex min-w-0 flex-col gap-2">
+        <section ref={editor} aria-label={label} data-slot="line-editor" className="flex min-w-0 flex-col gap-2">
             <div ref={frame} className="max-md:hidden">
                 <Table frameClassName="[scroll-padding-inline:var(--control-md)]">
                     <TableHeader>

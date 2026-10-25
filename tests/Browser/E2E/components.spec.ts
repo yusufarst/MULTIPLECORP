@@ -170,6 +170,8 @@ test('PT-10 and KB-06–KB-07: one empty last line, Alt+N to it, Alt+Delete remo
     await editor.getByRole('button', { name: 'Urungkan' }).click();
     await expect(quantity).toHaveCount(2);
     await expect(quantity.first()).toHaveValue('3');
+    // KB-07: "Urungkan" puts the line back and focus into it, so the keys go on from there.
+    await expect(editor.getByRole('combobox', { name: 'Produk/Jasa' }).first()).toBeFocused();
 
     await page.keyboard.press('Alt+n');
     await expect(editor.getByRole('combobox', { name: 'Produk/Jasa' }).last()).toBeFocused();
