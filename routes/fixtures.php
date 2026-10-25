@@ -15,4 +15,8 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
     // TL-09–TL-12 (TASK-014): INT-001's switch on a page with a field, before sign-in, so the switch is shown to
     // keep the unsent input and the layout (LOCALIZATION §3.7).
     Route::get('__fixtures/bahasa', fn () => Inertia::render('Fixtures/LanguageSwitch'));
+
+    // TL-09–TL-12 and TL-14 (TASK-015): the design system's component gallery in both languages, before the
+    // pages that compose it exist; its pages enter only a local build (VITE_FIXTURE_PAGES; TL-13).
+    Route::get('__fixtures/komponen', fn () => Inertia::render('Fixtures/Components'));
 });

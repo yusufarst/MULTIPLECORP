@@ -1,0 +1,545 @@
+{
+    "_": "The keys added to the catalogue after APPR-011 (LOCALIZATION §3.2, §5; DIR-081 OB-04; OQ-24 (a)), each with the Task that added it, its source and its kind: \"canonical\" — the Indonesian quotes a GL term or a label of an approved source and is accepted —, \"proposed\" — the Indonesian is proposed copy —; every English text is proposed. The list is the Owner's, reviewed with each page's P8 review and accepted except the keys the Owner marks.",
+    "keys": {
+        "outcome.committed": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.rejected": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.conflict_stale": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.conflict_recorded": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.pending": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.failed_not_processed": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.failed_unknown": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.not_found": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.forbidden": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.error": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.session_ended": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.validation": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.offline": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "outcome.reference": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2–§12.3 (the reference code)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "states.group_error": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.3",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "states.frozen": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.3",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "states.loading": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-19 (the spinner's announced text)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "states.all_shown": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-08",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "states.partial_page": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-08",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "states.no_match": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §15 FA-22; PT-19 (a search empty state names the term)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.try_again": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW MSG-07; DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.leave": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.3",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.open_record": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.cancel": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-09; GF-15",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.continue": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-28",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.reset": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-07",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.filter": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-07",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.filter_count": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-07 (\"Filter (n)\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.see_all": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-21",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.fix": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-09 (\"Pemeriksaan\" with \"Perbaiki\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.close": {
+            "task": "TASK-015",
+            "source": "LOCALIZATION `composer.close_full`; the close control of PT-16",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.undo": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM KB-07",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.stay_signed_in": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §15 (the idle-session warning)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.remove_filter": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-07 (applied filters as removable tags)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.create_object": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-27 (\"Buat {Objek}\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.split_more": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 \"Split action\"",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.row_menu": {
+            "task": "TASK-015",
+            "source": "LOCALIZATION `purchase.col_actions`",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "forms.required": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-09",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "forms.choose": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 \"Select and lookup\" (the trigger before a choice)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "forms.depends_on": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §9.3 GF-12 (a dependent field's reason)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "search.code_match": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §12.1 (the mark)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "search.not_found": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-27",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "date.backdated": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-25; §12.1 (the mark)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "date.chosen": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-25",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "date.number_period": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-25",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "date.previous_month": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 (the calendar's navigation)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "date.next_month": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 (the calendar's navigation)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "scan.into_field": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §13.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "scan.ignored_with_field": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §13.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "scan.ignored": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §13.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "timeline.system": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-18",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "timeline.corrects": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-18",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "timeline.corrected_by": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-18",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "timeline.dates": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-18",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "timeline.change": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-18 (\"field: lama → baru\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.kept": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-30; D-DS-09",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.added": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-30; D-DS-09",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.removed": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-30; D-DS-09",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.inactive": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-30; D-DS-09",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.preview": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-30",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "company.show": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-04; §10 \"Filter toolbar and company view\"",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "company.all": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-04 (\"Tampilkan: Semua perusahaan\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "company.other": {
+            "task": "TASK-015",
+            "source": "INFORMATION_ARCHITECTURE UXN-08 (the relation marker)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "stage.step_of": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 \"Stage track\"; §15 FA-20",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "nav.breadcrumb": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-03 (the breadcrumb landmark's name)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "nav.pagination_free": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §17",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "toast.close": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-15 (the toast's close control)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "finance.paid": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "finance.proven_deduction": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "finance.cash_out": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "finance.estimate": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §16 GF-05",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "inventory.available_formula": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "inventory.below_minimum": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "inventory.condition": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §14.2 (a lot's condition)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "readiness.missing": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-29 (\"what is missing\")",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dialogs.unsent_input": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW MSG-35 (its dialog's title)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dialogs.reauth_title": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-28; ADMIN_FLOW IP-11 (the re-login dialog's title)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dialogs.step_up_title": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-28; ADMIN_FLOW IP-10 (\"Konfirmasi Kata Sandi\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "dialogs.idle_title": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-11 (the idle warning's title)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "duplicates.acknowledge": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-05 (the second submission names the matches it acknowledges)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "date.today": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-07 (\"Hari ini, {tanggal}\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "date.format_hint": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-09 (a placeholder shows a format); §10 \"Date field\" (the typed fallback)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "list.position": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 \"Data table and row list\" (a position number on every record list; GR-08)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.add_line": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-10 (\"Tambah Baris\" at the end of the list)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "forms.line_number": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM PT-10 (the line number, KB-08)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "forms.line_removed": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM KB-07 (\"Urungkan\" offered after removing a line)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.reapply_latest": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-03 (a stale edit); UXS-11",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "actions.discard_mine": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-03 (a stale edit)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "forms.value_taken": {
+            "task": "TASK-015",
+            "source": "ADMIN_FLOW IP-03 (a master key already used; SQ-08)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "prerequisite.needs": {
+            "task": "TASK-015",
+            "source": "DESIGN_SYSTEM §10 \"Checks, result, next step and prerequisite\" (\"Perlu kewenangan …\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        }
+    }
+}

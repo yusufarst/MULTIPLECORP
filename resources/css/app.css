@@ -1,5 +1,237 @@
 /* Tailwind scans only the application's views and frontend code, not the repository's documents. */
 @import 'tailwindcss' source(none);
+@import './tokens.css';
 
 @source '../views';
 @source '../js';
+
+/* The primitives' state variants (shadcn/ui's), on Base UI's data attributes. */
+@custom-variant data-open {
+    &:where([data-state='open']),
+    &:where([data-open]:not([data-open='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-closed {
+    &:where([data-state='closed']),
+    &:where([data-closed]:not([data-closed='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-checked {
+    &:where([data-state='checked']),
+    &:where([data-checked]:not([data-checked='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-unchecked {
+    &:where([data-state='unchecked']),
+    &:where([data-unchecked]:not([data-unchecked='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-selected {
+    &:where([data-selected='true']),
+    &:where([data-selected]:not([data-selected='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-highlighted {
+    &:where([data-highlighted]:not([data-highlighted='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-disabled {
+    &:where([data-disabled='true']),
+    &:where([data-disabled]:not([data-disabled='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-pressed {
+    &:where([data-pressed]:not([data-pressed='false'])) {
+        @slot;
+    }
+}
+@custom-variant data-starting-style {
+    &:where([data-starting-style]) {
+        @slot;
+    }
+}
+@custom-variant data-ending-style {
+    &:where([data-ending-style]) {
+        @slot;
+    }
+}
+
+/* The cap-height-matched local fallback, one face per weight band (DESIGN_SYSTEM §5.2). */
+@font-face {
+    font-family: 'Inter Fallback';
+    font-style: normal;
+    font-weight: 100 450;
+    src: local('Segoe UI'), local('SegoeUI');
+    size-adjust: 104%;
+    ascent-override: 93.1%;
+    descent-override: 23.3%;
+    line-gap-override: 0%;
+}
+@font-face {
+    font-family: 'Inter Fallback';
+    font-style: normal;
+    font-weight: 451 650;
+    src: local('Segoe UI Semibold'), local('SegoeUI-Semibold');
+    size-adjust: 104%;
+    ascent-override: 93.1%;
+    descent-override: 23.3%;
+    line-gap-override: 0%;
+}
+@font-face {
+    font-family: 'Inter Fallback';
+    font-style: normal;
+    font-weight: 651 900;
+    src: local('Segoe UI Bold'), local('SegoeUI-Bold');
+    size-adjust: 104%;
+    ascent-override: 93.1%;
+    descent-override: 23.3%;
+    line-gap-override: 0%;
+}
+
+@layer base {
+    * {
+        border-color: var(--color-border-subtle);
+    }
+
+    /* Document defaults (§7): Inter's text cut at every size, the body role, the canvas. */
+    html {
+        background: var(--color-canvas);
+        color: var(--color-text-primary);
+        font-family: var(--font-sans);
+        font-size: 100%;
+        font-optical-sizing: none;
+        font-variation-settings: var(--font-variation-text);
+        font-synthesis: none;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        scrollbar-width: thin;
+        scrollbar-color: var(--color-border-strong) transparent;
+    }
+
+    body {
+        background: var(--color-canvas);
+        font-size: var(--text-body);
+        line-height: var(--text-body--line-height);
+        min-height: 100vh;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+        font: inherit;
+        font-optical-sizing: none;
+        font-variation-settings: var(--font-variation-text);
+    }
+
+    /* Text fields at 16 px on touch devices (D-DS-02), so no browser zooms into them. */
+    @media (pointer: coarse) {
+        input,
+        select,
+        textarea {
+            font-size: var(--text-touch);
+        }
+    }
+
+    ::placeholder {
+        color: var(--color-text-placeholder);
+        opacity: 1;
+    }
+
+    ::selection {
+        background: var(--color-lime-200);
+        color: var(--color-text-primary);
+    }
+
+    /* Focus (§15): the 2 px olive outline with its 2 px offset on every focusable element, instant, never
+       removed. */
+    :focus-visible {
+        outline: var(--focus-ring-width) solid var(--color-focus);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    /* Numbers in inputs, cells and summaries use tabular figures (OC-09). */
+    input[inputmode='decimal'],
+    input[inputmode='numeric'],
+    td,
+    data,
+    [data-figure] {
+        font-variant-numeric: var(--numeric-figures);
+    }
+
+    /* Business numbers and codes in tabular figures with a slashed zero (§16). */
+    [data-code] {
+        font-variant-numeric: tabular-nums slashed-zero;
+        font-feature-settings: 'tnum', 'zero';
+    }
+
+    /* Under forced colours the system colours are kept (§15). */
+    @media (forced-colors: active) {
+        :focus-visible {
+            outline-color: Highlight;
+        }
+    }
+}
+
+/* Reduced motion (D-DS-17; §8): no translate, scale, rotation, height rise or chevron turn — the
+   reference's own included —; a 150 ms crossfade at most; indicators jump. */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 1ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-property: opacity, color, background-color, border-color, outline-color !important;
+        transition-duration: var(--mc-dur-reduced) !important;
+        transition-timing-function: linear !important;
+        transition-delay: 0ms !important;
+    }
+
+    [data-motion] {
+        transform: none !important;
+        translate: none !important;
+        scale: none !important;
+        rotate: none !important;
+    }
+}
+
+/* Print views (§17): the page prepared for paper, black on white, no navigation or actions. */
+@media print {
+    html,
+    body {
+        background: #ffffff;
+        color: #000000;
+    }
+
+    [data-print='hide'] {
+        display: none !important;
+    }
+
+    thead {
+        display: table-header-group;
+    }
+
+    tr,
+    td,
+    th {
+        break-inside: avoid;
+    }
+}
+
+/* The scrollbar rule Base UI would otherwise inject as a `<style>` element: the application renders Base UI
+   under `CSPProvider disableStyleElements`, so WS-08's policy needs no `'unsafe-inline'` style (HO-37). */
+.base-ui-disable-scrollbar {
+    scrollbar-width: none;
+}
+.base-ui-disable-scrollbar::-webkit-scrollbar {
+    display: none;
+}
