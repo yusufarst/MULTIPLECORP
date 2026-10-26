@@ -1,0 +1,14 @@
+Owner decisions received in session during execution, 2026-10-26 (WIB), Claude Code Desktop on the Owner's workstation, given as answers to the executor's structured questions and transcribed as received: each question as the executor asked it, then the option the Owner selected.
+
+--- Part 1: TASK-020's discovery and readings (the executor's consolidated checkpoint) ---
+
+Question: TASK-020 menemukan kontradiksi teknis: LK-02 (CONCURRENCY_IDEMPOTENCY) mengunci baris `roles` OWNER dengan FOR NO KEY UPDATE, tetapi PostgreSQL mensyaratkan hak UPDATE pada tabel itu, sedangkan DATABASE §28 hanya memberi role runtime SELECT dan INSERT atas `roles`. Akibatnya, perintah restorasi Owner (RV-18), akhir pemulihan (TT-F30), dan nanti perubahan role TASK-024 (RV-04, LockSet OwnerSet) gagal dengan 'permission denied' di production. Bagaimana menyelesaikannya?
+Answer: (a) Grant + trigger (Rekomendasi)
+
+Question: Selain itu ada dua bacaan dalam teks yang sudah disetujui. R1: jejak audit dibaca dari before/after event akun dengan kunci `role`, `role_granted_by`, `role_granted_at`, `is_active`, dan TASK-024 wajib menulis perubahan role/aktivasinya dengan kunci yang sama. R2: akhir pemulihan dicatat secara atomik di bawah LK-02, sesuai rekomendasi GAP-050 dan TT-F30. Setujui keduanya?
+Answer: Setujui R1 dan R2 (Rekomendasi)
+
+--- Part 2: the approval of the canonical text (APPR-025), after the executor showed W1-W5 ---
+
+Question: Teks kanonik untuk DIR-097 sudah siap (belum di-commit). W1: baris Amendment di header DATABASE (s01-03). W2: kalimat §28, yaitu runtime hanya mendapat UPDATE `roles.is_builtin` untuk row lock LK-02, dan trigger `roles_rg01_unchanged` menolak setiap update baris role. W3: baris Amendment TASK-020, ditambah DATABASE IMPACT 'privilege only, migration 2026_10_26_000142, expand-only'. W4: baris Amendment TASK-024 dan satu baris AUDIT baru (R1: kunci image `role`, `role_granted_by`, `role_granted_at`, `is_active`; setiap perubahan grant, kredensial atau sesi dicatat sebagai event entity `user`). W5: Change 13 di TASK_PLAN. Tidak ada tabel, kolom, perilaku bisnis atau scope V1 yang berubah. Setujui W1–W5 sebagai APPR-025?
+Answer: Setujui W1–W5 (Rekomendasi)

@@ -564,3 +564,11 @@ This is a change summary; current state and approval authority live in their [ow
 - Continued on the Owner's workstation (ER-13): the checks run again, Larastan/PHPStan's 17 factory errors fixed, a working tree's CRLF files checked out again as LF.
 - The Owner's decision DIR-089 on five discoveries, with APPR-018's DATABASE text: 26 forward keys to TASK-007–TASK-009, the type-free evidence index to TASK-030, the document types' rows to TASK-029, no product-image removal in V1, and every file held by the database to its owning record's company and purpose, one owner per import source, export and evidence file — TASK_PLAN's Change 6; the actor's own file proven by TASK-030, TASK-057 and TASK-060.
 - The automated review's P1 finding on pull request #6 fixed: a seeded number counter can no longer stand below its positive seed (`number_sequences_c10_seed_floor`, the 34th migration). Every check passed in fresh CI on `9bd807b`. TASK-006 DONE; TASK-007 READY beside TASK-010, TASK-014 and TASK-073 — progress 6 / 87 —; pull request #6 waits on the Owner's merge.
+
+## Unreleased — 2026-10-26, TASK-020 — Installation step, the first Owner and the Owner-recovery path
+
+- TASK-019 squash-merged by the executor into `main` as `b1c4b80` (pull request #24); TASK-020 started in the same turn.
+- Built TASK-020 on its branch `task/TASK-020-installation`: the operator's console commands — the installation step creating the first Owner with the operator's identity audited, AU-14's OWNER_RECOVERY link with its run guard and its use clearing TOTP and unlinking Google, AU-21's key-compromise incident command (protocol (a)–(d)) and re-encryption, AU-25's OWNER restoration and the end of recovery atomic under LK-02 —, each console only, the halts naming the Owner's incident decision.
+- The Owner's decision DIR-097 on one discovery, with APPR-025's text: LK-02's row lock on the OWNER role made available to the runtime role by `UPDATE` of `roles.is_builtin` alone, a trigger refusing every update of a role row; TASK-024's account image and the atomic end of recovery as readings — TASK_PLAN's Change 13.
+- ER-06's independent review found no HIGH point; its others fixed and tested.
+- Every check passed in fresh CI on `485a452`. TASK-020 DONE — progress 20 / 87 —; TASK-021 next; pull request #25 squash-merged once eligible.

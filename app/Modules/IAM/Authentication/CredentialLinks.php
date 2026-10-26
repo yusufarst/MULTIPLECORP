@@ -11,6 +11,7 @@ use App\Support\SecurityLog\SecurityEventRecorder;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
 
 /**
@@ -20,22 +21,37 @@ use InvalidArgumentException;
  * 30 minutes (OWNER_RECOVERY), voided on reissue and on any password change. Consuming a link sets the password in
  * one transaction with its business audit event — the account as actor under SYSTEM, or no actor with the link
  * named for OWNER_RECOVERY (RG-11; CI-09) —, then ends the account's sessions and records the security event after
- * the commit (LG-01); a link never signs anyone in (AU-11). Issuing is TASK-024's and TASK-020's command, its step-up
+ * the commit (LG-01); a link never signs anyone in (AU-11). An OWNER_RECOVERY link's use also clears the TOTP fields
+ * and unlinks Google in that transaction (AU-14; AU-20 e). Issuing is TASK-024's and TASK-020's command, its step-up
  * and audit theirs; `issue` is the store's half they call.
  */
 final class CredentialLinks
 {
     public const LIFETIMES = ['ONBOARDING' => 24 * 60, 'RESET' => 60, 'OWNER_RECOVERY' => 30];
 
+    /** The four TOTP fields, cleared together (C-62). */
+    public const CLEARED_TOTP = ['two_factor_secret' => null, 'two_factor_recovery_codes' => null, 'two_factor_confirmed_at' => null, 'two_factor_last_step' => null];
+
     public function __construct(
         private readonly SessionTerminator $sessions,
         private readonly SecurityEventRecorder $events,
         private readonly AuditRecorder $audit,
         private readonly VerificationSlots $slots,
+        private readonly GoogleIdentities $identities,
     ) {}
 
     /** A new link's token, shown once; the account's open link of the same purpose is revoked first (AU-11). */
     public function issue(User $account, string $purpose, ?int $issuedBy): string
+    {
+        return $this->issueLink($account, $purpose, $issuedBy)['token'];
+    }
+
+    /**
+     * A new link's token with its store identifier, which the issue's audit and security events name (AU-14).
+     *
+     * @return array{token: string, id: int}
+     */
+    public function issueLink(User $account, string $purpose, ?int $issuedBy): array
     {
         if (! isset(self::LIFETIMES[$purpose])) {
             throw new InvalidArgumentException("{$purpose} is not a credential-link purpose (AU-11).");
@@ -44,10 +60,11 @@ final class CredentialLinks
         $token = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '=');
         $now = CarbonImmutable::now();
 
-        DB::transaction(function () use ($account, $purpose, $issuedBy, $token, $now) {
+        $id = DB::transaction(function () use ($account, $purpose, $issuedBy, $token, $now): int {
             DB::table('credential_tokens')->where('user_id', $account->id)->where('purpose', $purpose)
                 ->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => $now]);
-            DB::table('credential_tokens')->insert([
+
+            return DB::table('credential_tokens')->insertGetId([
                 'user_id' => $account->id,
                 'purpose' => $purpose,
                 'issued_by' => $purpose === 'OWNER_RECOVERY' ? null : $issuedBy,
@@ -57,7 +74,7 @@ final class CredentialLinks
             ]);
         });
 
-        return $token;
+        return ['token' => $token, 'id' => $id];
     }
 
     /**
@@ -94,9 +111,11 @@ final class CredentialLinks
             DB::table('credential_tokens')->where('user_id', $account->id)->where('id', '!=', $link->id)
                 ->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => $now]);
             $before = $account->password;
-            $account->forceFill(['password' => $hash])->save();
-
             $recovery = $link->purpose === 'OWNER_RECOVERY';
+            $hadTotp = $account->two_factor_confirmed_at !== null;
+            // Only an OWNER_RECOVERY link resets TOTP: its four fields cleared with the password (AU-11; AU-20 e; C-62).
+            $account->forceFill(['password' => $hash, ...($recovery ? self::CLEARED_TOTP : [])])->save();
+
             $this->audit->record(
                 action: 'IAM.CredentialLinkConsumed',
                 authorityClass: AuthorityClass::System,
@@ -110,7 +129,11 @@ final class CredentialLinks
                 metadata: ['purpose' => $link->purpose, 'credential_link' => $link->id],
             );
 
-            return [$account, $link->purpose];
+            if ($recovery) {
+                $this->recovered($account, $link->id, $hadTotp);
+            }
+
+            return [$account, $link->purpose, $hadTotp];
         });
 
         if ($used === null) {
@@ -119,12 +142,46 @@ final class CredentialLinks
             return null;
         }
 
-        [$account, $purpose] = $used;
+        [$account, $purpose, $hadTotp] = $used;
         $this->sessions->endAll($account->id);
         $kind = $purpose === 'ONBOARDING' ? SecurityEventKind::AccountSetupCompleted : SecurityEventKind::PasswordResetCompleted;
         $this->events->record($kind, userId: $account->id, reasonCode: $purpose, routeName: 'password.set', ipAddress: $ipAddress, userAgent: $userAgent);
 
+        if ($purpose === 'OWNER_RECOVERY') {
+            if ($hadTotp) {
+                $this->events->record(SecurityEventKind::TotpReset, userId: $account->id, reasonCode: $purpose, routeName: 'password.set');
+            }
+
+            // Every AU-20 event of an OWNER-role account alerts, the PASSWORD_RESET_COMPLETED of path (e) among them (LG-07).
+            Log::alert('An OWNER_RECOVERY link was used: password set, TOTP cleared, sessions ended, Google unlinked (AU-14; AU-20 e; LG-07).', ['user_id' => $account->id]);
+        }
+
         return $account;
+    }
+
+    /**
+     * The rest of AU-20 e's use, in the link's transaction: the TOTP reset's audit event naming the link, no actor, and
+     * the Google identity unlinked with reason OWNER_RECOVERY and `unlinked_by` NULL, its event naming the same link
+     * (AU-14; AU-24). The sessions end after the commit, with every other link already revoked above.
+     */
+    private function recovered(User $account, int $linkId, bool $hadTotp): void
+    {
+        if ($hadTotp) {
+            $this->audit->record(
+                action: 'IAM.TotpReset',
+                authorityClass: AuthorityClass::System,
+                actorUserId: null,
+                companyId: null,
+                entityType: 'user',
+                entityId: $account->id,
+                entityPublicId: $account->public_id,
+                reason: 'OWNER_RECOVERY',
+                change: AuditChange::updated(['second_factor_active' => true], ['second_factor_active' => false]),
+                metadata: ['credential_link' => $linkId],
+            );
+        }
+
+        $this->identities->unlink($account, 'OWNER_RECOVERY', null, credentialLink: $linkId);
     }
 
     /**
