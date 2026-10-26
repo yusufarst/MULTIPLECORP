@@ -4,9 +4,9 @@ namespace App\Modules\IAM\Http\Controllers;
 
 use App\Modules\IAM\Authentication\AttemptLogin;
 use App\Modules\IAM\Authentication\CredentialLinks;
+use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\PasswordProfile;
 use App\Modules\IAM\Authentication\VerificationRefused;
-use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -52,7 +52,7 @@ final class SetPasswordController
         try {
             $account = $links->consume($token, AttemptLogin::password($request->input('password')), $request->ip(), $request->userAgent());
         } catch (VerificationRefused) {
-            throw new ThrottleRequestsException(headers: ['Retry-After' => '1']);
+            return CredentialPageHeaders::throttled(1);
         }
 
         if ($account === null) {

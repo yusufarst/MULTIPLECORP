@@ -7,6 +7,7 @@ use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Validation\UncompromisedVerifier;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
@@ -45,10 +46,12 @@ final class AuthenticationServiceProvider extends ServiceProvider
             EstablishSession::class,
         ]);
 
-        // AU-12: consumption limited per address and per token hash — a raw token is never a limiter key.
+        // AU-12: consumption limited per address and per token hash — a raw token is never a limiter key —, its
+        // answer PG-003's MSG-20 rather than a bare 429.
+        $throttled = fn (Request $request, array $headers): RedirectResponse => CredentialPageHeaders::throttled(is_numeric($headers['Retry-After'] ?? null) ? (int) $headers['Retry-After'] : 60);
         RateLimiter::for('credential-link', fn (Request $request): array => [
-            Limit::perMinute(10)->by('credential-link:address:'.$request->ip()),
-            Limit::perMinute(5)->by('credential-link:token:'.CredentialLinks::hash(is_string($request->input('token')) ? $request->input('token') : '')),
+            Limit::perMinute(10)->by('credential-link:address:'.$request->ip())->response($throttled),
+            Limit::perMinute(5)->by('credential-link:token:'.CredentialLinks::hash(is_string($request->input('token')) ? $request->input('token') : ''))->response($throttled),
         ]);
 
         Event::listen(Logout::class, function (Logout $event): void {

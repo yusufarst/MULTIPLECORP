@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Authentication;
 
 use Closure;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -22,5 +23,17 @@ final class CredentialPageHeaders
         $response->headers->set('Cache-Control', 'no-store');
 
         return $response;
+    }
+
+    /**
+     * MSG-20 with the minutes left, on PG-003's link alert as a form error — the route's limiter and H6-12's cap
+     * alike —, so the page keeps its token in memory and the person tries again from the same link (AU-12).
+     */
+    public static function throttled(int $seconds): RedirectResponse
+    {
+        $minutes = max(1, (int) ceil($seconds / 60));
+
+        return back()->withErrors(['token' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])])
+            ->withHeaders(['Retry-After' => (string) $seconds, 'Referrer-Policy' => 'no-referrer', 'Cache-Control' => 'no-store']);
     }
 }

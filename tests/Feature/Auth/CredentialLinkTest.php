@@ -3,11 +3,13 @@
 use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Authentication\BreachedPasswordCheck;
 use App\Modules\IAM\Authentication\CredentialLinks;
+use App\Modules\IAM\Authentication\VerificationSlots;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -158,7 +160,7 @@ it('limits a link\'s use per token hash and per address (AU-12; WS-12)', functio
         setPassword($token, 'pendek')->assertSessionHasErrors('password');
     }
 
-    setPassword($token, 'Rapat-Gudang-24!')->assertStatus(429);
+    setPassword($token, 'Rapat-Gudang-24!')->assertRedirect()->assertSessionHasErrors(['token' => trans_choice('messages.msg_20', 1, ['count' => 1])])->assertHeader('Cache-Control', 'no-store, private');
     expect(Hash::check('Rapat-Gudang-24!', (string) $this->account->fresh()?->password))->toBeFalse();
 
     // Five more from the same address with a fresh token each fill the address's ten a minute.
@@ -166,7 +168,20 @@ it('limits a link\'s use per token hash and per address (AU-12; WS-12)', functio
         setPassword($this->links->issue(User::factory()->create(), 'RESET', $this->owner->id), 'pendek')->assertSessionHasErrors('password');
     }
 
-    setPassword($this->links->issue(User::factory()->create(), 'RESET', $this->owner->id), 'Rapat-Gudang-24!')->assertStatus(429);
+    setPassword($this->links->issue(User::factory()->create(), 'RESET', $this->owner->id), 'Rapat-Gudang-24!')->assertSessionHasErrors(['token' => trans_choice('messages.msg_20', 1, ['count' => 1])]);
+});
+
+it('answers PG-003 with MSG-20 on its link alert when no verification slot is free, nothing set (H6-12; AU-12)', function () {
+    $token = $this->links->issue($this->account, 'RESET', $this->owner->id);
+    $store = Cache::store('array')->getStore();
+    $held = collect(range(1, VerificationSlots::UNAUTHENTICATED_SLOTS))
+        ->map(fn (int $slot) => tap($store->lock("verification-slot:unauthenticated:{$slot}", 5, 'banjir'))->get());
+
+    setPassword($token, 'Rapat-Gudang-24!')->assertRedirect()->assertSessionHasErrors(['token' => trans_choice('messages.msg_20', 1, ['count' => 1])]);
+
+    expect(Hash::check('Rapat-Gudang-24!', (string) $this->account->fresh()?->password))->toBeFalse()
+        ->and(DB::table('credential_tokens')->whereNull('used_at')->count())->toBe(1);
+    $held->each(fn ($lock) => $lock->forceRelease());
 });
 
 it('answers a used, expired or revoked link with MSG-28 before any password rule or range check (AU-12)', function () {
