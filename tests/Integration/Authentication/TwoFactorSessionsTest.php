@@ -32,19 +32,21 @@ beforeEach(function () {
 
 it('passes one code once when two sessions submit it together (M-39; RV-12)', function () {
     $userId = $this->user->id;
-    $code = TwoFactor::code();
+    // The step fixed first: the processes run on the real clock, which may cross a step boundary meanwhile.
+    $step = Totp::currentStep();
+    $code = app(Totp::class)->codeAt(TwoFactor::SECRET, $step);
     $submit = static function () use ($userId, $code): string {
         $user = User::query()->findOrFail($userId);
-        $step = app(Totp::class)->stepOf(TwoFactor::SECRET, $code, (int) $user->getRawOriginal('two_factor_last_step'));
+        $found = app(Totp::class)->stepOf(TwoFactor::SECRET, $code, (int) $user->getRawOriginal('two_factor_last_step'));
         Barrier::await('both found the step');
 
-        return $step === null ? 'NO_STEP' : app(TwoFactorSteps::class)->acceptCode($user, TwoFactorChallenge::digest($user), $step);
+        return $found === null ? 'NO_STEP' : app(TwoFactorSteps::class)->acceptCode($user, TwoFactorChallenge::digest($user), $found);
     };
 
     $results = Sessions::run(['first' => $submit, 'second' => $submit]);
 
     expect(collect($results)->sort()->values()->all())->toBe([TwoFactorSteps::ACCEPTED, TwoFactorSteps::STALE])
-        ->and((int) DB::table('users')->where('id', $userId)->value('two_factor_last_step'))->toBe(Totp::currentStep());
+        ->and((int) DB::table('users')->where('id', $userId)->value('two_factor_last_step'))->toBe($step);
 });
 
 it('removes one recovery code once when two pending challenges submit it together, and refuses it later (M-40; RV-13)', function () {
