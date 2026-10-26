@@ -59,7 +59,7 @@ final class AuthenticationServiceProvider extends ServiceProvider
         ]);
 
         // AU-05: the Google redirect and callback throttled per client address, answered on PG-001 with MSG-20.
-        RateLimiter::for('google', fn (Request $request): Limit => Limit::perMinute(10)->by('google:'.LoginThrottle::addressKey($request->ip()))
+        RateLimiter::for('google', fn (Request $request): Limit => Limit::perMinute(30)->by('google:'.LoginThrottle::addressKey($request->ip()))
             ->response(fn (Request $request, array $headers): RedirectResponse => redirect('/masuk')->withErrors(['email' => trans_choice('messages.msg_20', 1, ['count' => 1])])));
 
         // H6-15: a pending challenge's session row carries its account (FactorAwareSessionHandler).

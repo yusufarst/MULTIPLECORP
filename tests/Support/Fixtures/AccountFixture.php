@@ -47,6 +47,11 @@ final class AccountFixture
             $answer += ['secret' => $secret, 'recovery_codes' => $codes];
         }
 
+        // TASK-019: the account's Google identity, linked by its holder, for the Google journey.
+        if (is_string($request->input('google'))) {
+            DB::table('user_external_identities')->insert(['user_id' => $account->id, 'provider' => 'google', 'provider_subject' => $request->input('google'), 'email_at_link' => 'akun@contoh.test', 'linked_at' => now(), 'linked_by' => $account->id]);
+        }
+
         if ($request->input('kind') === 'owner') {
             if (! DB::table('roles')->where('code', 'OWNER')->exists()) {
                 app(CatalogueSync::class)->run();

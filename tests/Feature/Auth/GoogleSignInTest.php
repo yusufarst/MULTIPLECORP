@@ -167,7 +167,7 @@ it('turns Google sign-in off with no client configured: no button, and both rout
 });
 
 it('throttles the redirect and the callback per client address (AU-05)', function () {
-    foreach (range(1, 10) as $attempt) {
+    foreach (range(1, 30) as $attempt) {
         $this->get('/masuk/google')->assertRedirect();
     }
 
