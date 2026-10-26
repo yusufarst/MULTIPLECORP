@@ -95,6 +95,9 @@ final class SourceScan
         '/app/Modules/IAM/Enums/BuiltinRole.php',
         '/app/Modules/IAM/Services/EffectiveCapabilities.php',
         '/app/Modules/IAM/Services/CatalogueSync.php',
+        // TASK-020: AU-25's audit-trail reading of who held the OWNER role at the window start, for the operator's
+        // recovery commands only (RG-11) — no capability or access decision reads it.
+        '/app/Modules/IAM/Recovery/AccountHistory.php',
     ];
 
     /**

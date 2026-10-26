@@ -4,6 +4,7 @@ use App\Modules\CST\Models\CostAttribution;
 use App\Modules\CST\Models\LotCostEntry;
 use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Services\CatalogueSync;
 use App\Modules\OPS\Models\AuditEvent;
 use App\Modules\OPS\Models\LegacyArchiveItem;
 use App\Modules\OPS\Models\SecurityEvent;
@@ -25,7 +26,7 @@ const DEACTIVATION = ['is_active', 'deactivated_at', 'deactivated_by', 'deactiva
 /** DATABASE §28 for these tables: the runtime's table privileges and the only columns it may update. */
 const RUNTIME_PRIVILEGES = [
     'users' => ['SELECT, INSERT', ['name', 'email', 'password', 'is_active', 'deactivated_at', 'deactivated_by', 'two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at', 'two_factor_last_step', 'locale', 'lock_version', 'updated_at']],
-    'roles' => ['SELECT, INSERT', []],
+    'roles' => ['SELECT, INSERT', ['is_builtin']],
     'capabilities' => ['SELECT, INSERT', []],
     'role_capabilities' => ['SELECT, INSERT', []],
     'user_roles' => ['SELECT, INSERT', ['role_id', 'granted_by', 'granted_at']],
@@ -266,4 +267,13 @@ it('refuses the runtime a change to the columns its table class keeps as inserte
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table users', fn () => DB::table('users')->where('id', $user->id)->update(['public_id' => DB::raw('uuidv7()')]));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table users', fn () => DB::table('users')->where('id', $user->id)->update(['recorded_at' => now()]));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table users', fn () => DB::table('users')->where('id', $user->id)->delete());
+});
+
+it('lets the runtime role lock the OWNER role row for LK-02, never change a role row (TASK-020; LK-02; RG-01)', function () {
+    app(CatalogueSync::class)->run();
+    $owner = DB::table('roles')->where('code', 'OWNER')->value('id');
+
+    expect(DB::transaction(fn () => DB::table('roles')->where('id', $owner)->lock('for no key update')->value('code')))->toBe('OWNER');
+    Refusal::assert(Refusal::CHECK, 'roles_rg01_unchanged', fn () => DB::table('roles')->where('id', $owner)->update(['is_builtin' => false]));
+    Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table roles', fn () => DB::table('roles')->where('id', $owner)->update(['code' => 'PEMILIK']));
 });
