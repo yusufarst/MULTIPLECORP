@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\ADM\Models\AdminRequirement;
+use App\Modules\ADM\Models\AdminRequirementLink;
 use App\Modules\DOC\Contracts\RenderFailed;
 use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Jobs\RenderDocument;
@@ -8,6 +10,7 @@ use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\DOC\Services\Renditions;
+use App\Modules\PRJ\Models\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
@@ -197,9 +200,9 @@ it('locks the subject\'s project and the projects of the requirements linked to 
     $attempt = pendingAttempt();
     $version = DocumentVersion::query()->findOrFail($attempt->document_version_id);
     $project = (int) DB::table('documents')->where('id', $version->document_id)->value('project_id');
-    $other = App\Modules\PRJ\Models\Project::factory()->create(['company_id' => $version->company_id]);
-    $requirement = App\Modules\ADM\Models\AdminRequirement::factory()->create(['project_id' => $other->id, 'company_id' => $version->company_id]);
-    App\Modules\ADM\Models\AdminRequirementLink::factory()->create(['admin_requirement_id' => $requirement->id, 'company_id' => $version->company_id, 'evidence_document_id' => null, 'document_version_id' => $version->id]);
+    $other = Project::factory()->create(['company_id' => $version->company_id]);
+    $requirement = AdminRequirement::factory()->create(['project_id' => $other->id, 'company_id' => $version->company_id]);
+    AdminRequirementLink::factory()->create(['admin_requirement_id' => $requirement->id, 'company_id' => $version->company_id, 'evidence_document_id' => null, 'document_version_id' => $version->id]);
 
     expect(app(Renditions::class)->projectsOf($version->id))->toBe(collect([$project, $other->id])->sort()->values()->all());
 
