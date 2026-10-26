@@ -42,7 +42,7 @@ final class EnforceSessionLimits
 
         if ($user instanceof User) {
             $signedIn = $request->session()->get(SessionDeadline::SIGNED_IN_AT);
-            $expired = is_numeric($signedIn) && time() >= (int) $signedIn + SessionDeadline::ABSOLUTE_HOURS * 3600;
+            $expired = is_numeric($signedIn) && now()->getTimestamp() >= (int) $signedIn + SessionDeadline::ABSOLUTE_HOURS * 3600;
             $digest = self::digest($user);
             $stored = $request->session()->get(self::DIGEST);
             $sameAccount = is_array($stored) && ($stored['user'] ?? null) === $user->id;

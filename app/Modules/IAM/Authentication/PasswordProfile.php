@@ -4,7 +4,6 @@ namespace App\Modules\IAM\Authentication;
 
 use App\Modules\IAM\Models\User;
 use Closure;
-use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Support\Facades\DB;
 
@@ -55,7 +54,8 @@ final class PasswordProfile implements ValidationRule
             return;
         }
 
-        if (! app(UncompromisedVerifier::class)->verify(['value' => $password, 'threshold' => 0])) {
+        // IAM's own check, never the framework's deferred default, which skips a failure without recording it.
+        if (! app(BreachedPasswordCheck::class)->verify(['value' => $password, 'threshold' => 0])) {
             $fail(__('auth_rules.password_breached'));
         }
     }

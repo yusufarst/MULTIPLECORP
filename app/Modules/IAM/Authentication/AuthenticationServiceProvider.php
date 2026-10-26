@@ -29,13 +29,15 @@ final class AuthenticationServiceProvider extends ServiceProvider
     {
         Fortify::ignoreRoutes();
         $this->app->singleton(LoginResponse::class, SignInResponses::class);
-        $this->app->singleton(LogoutResponse::class, SignInResponses::class);
+        $this->app->singleton(LogoutResponse::class, SignOutResponse::class);
         $this->app->bind(LoginRequest::class, SignInRequest::class);
-        $this->app->bind(UncompromisedVerifier::class, BreachedPasswordCheck::class);
     }
 
     public function boot(): void
     {
+        // In boot: the framework's validation provider is deferred and would replace a binding made in register.
+        $this->app->bind(UncompromisedVerifier::class, BreachedPasswordCheck::class);
+
         Fortify::authenticateThrough(fn () => [
             EnsureSignInAllowed::class,
             AttemptLogin::class,

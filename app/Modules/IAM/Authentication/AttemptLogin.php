@@ -43,10 +43,11 @@ final class AttemptLogin
         $user = User::query()->whereRaw('lower(email) = ?', [$identifier])->first();
 
         if (! self::verifies($password, $user?->password) || $user === null || ! $user->is_active) {
-            $cooldown = $this->throttle->failed($request, $identifier);
+            // The failure itself gets AU-04's answer; a cooldown it starts holds back the next attempt.
+            $this->throttle->failed($request, $identifier);
             $this->events->record(SecurityEventKind::LoginFailed, routeName: 'login.store', identifier: $identifier, ipAddress: $request->ip(), userAgent: $request->userAgent());
 
-            throw $cooldown > 0 ? EnsureSignInAllowed::throttled($cooldown) : ValidationException::withMessages(['email' => __('messages.msg_19')]);
+            throw ValidationException::withMessages(['email' => __('messages.msg_19')]);
         }
 
         Auth::getProvider()->rehashPasswordIfRequired($user, ['password' => $password]);

@@ -12,6 +12,7 @@ use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -70,6 +71,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // The capability is checked before any route binding reads a record, so a missing and an existing
         // record answer an account without it alike (AZ-11).
         $middleware->prependToPriorityList(before: SubstituteBindings::class, prepend: RequireCapability::class);
+
+        // The session's limits are judged before the authentication middleware admits the request, so a session past
+        // its absolute limit, of an inactive account or of a changed password is a guest's at once (AU-07, AU-09).
+        $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: EnforceSessionLimits::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).

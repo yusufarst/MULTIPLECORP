@@ -35,7 +35,7 @@ final class LoginThrottle
     public function blockedFor(Request $request, string $identifier): int
     {
         try {
-            $now = time();
+            $now = now()->getTimestamp();
             $until = max(
                 self::integer($this->store()->get($this->key('until', $identifier, $request))),
                 self::integer($this->store()->get($this->key('address-until', null, $request))),
@@ -54,7 +54,7 @@ final class LoginThrottle
     {
         try {
             $store = $this->store();
-            $now = time();
+            $now = now()->getTimestamp();
             $cooldown = 0;
 
             $failures = $this->hit($store, $this->key('minute', $identifier, $request), 60);
