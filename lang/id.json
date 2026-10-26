@@ -993,5 +993,14 @@
     "shortcuts.kb_09": "Simpan draf",
     "shortcuts.kb_10": "Buka konfirmasi perintah utama formulir",
     "shortcuts.kb_11": "Pilih dari daftar hasil",
-    "pages.pg_005.error": "Halaman ini tidak dapat ditampilkan. Coba lagi nanti; sebutkan kode referensi bila melapor."
+    "pages.pg_005.error": "Halaman ini tidak dapat ditampilkan. Coba lagi nanti; sebutkan kode referensi bila melapor.",
+    "auth_rules.password_profile": "Gunakan 8–128 karakter dengan huruf kecil, huruf besar, angka dan simbol.",
+    "auth_rules.password_common": "Kata sandi ini terlalu umum. Pilih yang lain.",
+    "auth_rules.password_personal": "Kata sandi tidak boleh memuat nama atau e-mail Anda, nama produk atau nama perusahaan.",
+    "auth_rules.password_breached": "Kata sandi ini pernah bocor di layanan lain. Pilih yang lain.",
+    "auth_rules.password_mismatch": "Kedua kata sandi tidak sama.",
+    "pages.pg_003.heading": "Atur kata sandi Anda",
+    "pages.pg_003.password": "Kata sandi baru",
+    "pages.pg_003.confirm": "Ulangi kata sandi baru",
+    "pages.pg_003.submit": "Simpan Kata Sandi"
 }

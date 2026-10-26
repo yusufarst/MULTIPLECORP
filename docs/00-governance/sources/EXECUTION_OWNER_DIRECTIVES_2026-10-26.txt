@@ -1,0 +1,476 @@
+Owner directives received in session during execution, 2026-10-26 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+--- Part 1: the CI watcher and Codex review (during TASK-016's hotfix) ---
+
+OWNER DIRECTIVE — OPTIMASI WATCHER CI + CODEX REVIEW
+Saya ingin memperbaiki alur eksekusi MULTIPLECORP agar tidak terus-menerus terjadi hotfix setelah merge akibat temuan Codex Review yang sebenarnya sudah muncul sebelumnya.
+Mulai sekarang, satu watcher yang sudah ada harus memantau GitHub Actions CI dan Codex Code Review secara bersamaan, termasuk untuk PR hotfix dan TASK berikutnya.
+ATURAN WAJIB:
+
+1. Pertahankan watcher lokal yang sudah ada. Jangan membuat watcher kedua atau sistem baru yang rumit.
+2. Setiap polling GitHub API (interval 60 detik), periksa:
+   * Status CI untuk commit HEAD PR terbaru.
+   * Hasil Codex Code Review.
+   * Review comments, inline comments, dan komentar PR dari Codex.
+   * Temuan P1/P2 yang belum diperbaiki.
+   * Perubahan SHA dan status merge PR.
+3. Begitu Codex mengeluarkan temuan P1/P2, segera bangunkan sesi Executor dan laporkan temuan tersebut. Jangan menunggu CI hijau, jangan menunggu merge, dan jangan melakukan polling AI.
+4. Perbaiki temuan P1/P2 yang valid langsung pada branch PR yang sama, dengan tes regresi terarah. Commit dan push tetap membutuhkan izin Owner secara terpisah.
+5. Ketika CI hijau, JANGAN langsung menyatakan PR siap merge jika Codex Review masih berjalan atau ada P1/P2 yang belum ditangani.
+6. Bedakan status secara jelas:
+   * CI PENDING / FAILED / PASSED.
+   * CODEX PENDING / COMPLETED / FAILED / UNAVAILABLE.
+   * P1/P2 OPEN / RESOLVED.
+   * READY TO MERGE hanya jika CI hijau dan hasil review sudah diperiksa tanpa temuan kritis yang tersisa.
+7. Jangan menganggap tidak adanya komentar Codex sebagai bukti bahwa review sudah selesai. Pastikan hasil yang dibaca berlaku untuk perubahan PR terbaru. Jika hasil review belum tersedia, laporkan statusnya, jangan menunggu tanpa batas atau mengulang review otomatis.
+8. Jangan mengulang ER-06, audit besar, atau seluruh pengujian karena satu temuan P2. Cukup perbaikan minimal, tes regresi terkait, dan CI final.
+9. Pertahankan satu watcher per PR, deduplikasi event, retry/backoff aman, serta mekanisme membangunkan sesi yang sudah terbukti bekerja. Jangan melakukan polling menggunakan token Claude.
+10. Jika hasil Codex datang setelah merge, laporkan sebagai temuan terlambat dan tangani melalui hotfix sempit bila valid.
+11. Merge tetap hanya dilakukan oleh saya melalui GitHub. Jangan aktifkan auto-merge.
+12. Jangan mengubah kontrak fitur V1 atau memperkenalkan tahapan approval/review tambahan yang tidak diperlukan.
+
+PRIORITAS EKSEKUSI:
+
+* Selesaikan hotfix TASK-016 yang sedang berjalan sesuai workflow.
+* Terapkan optimalisasi ini ke watcher yang digunakan TASK-017 dan seterusnya.
+* Jangan mengulang TASK yang sudah DONE.
+* Jangan menunda coding TASK berikutnya hanya untuk merancang sistem watcher yang kompleks.
+* Gunakan perubahan seminimal mungkin pada mekanisme existing.
+* Jika diperlukan perubahan file repository atau konfigurasi yang memerlukan approval, minta izin sesuai aturan yang sudah berlaku.
+
+HASIL YANG SAYA INGINKAN:
+Setelah satu TASK selesai coding → PR dibuka → CI dan Codex dipantau bersamaan → temuan valid langsung diperbaiki sebelum merge → CI final hijau dan review selesai → saya merge → Executor otomatis melanjutkan TASK READY berikutnya dari main terbaru.
+Jangan lagi membiarkan komentar P1/P2 yang sudah tersedia terlewat sampai PR terlanjur di-merge.
+Implementasikan secara efisien, verifikasi mekanismenya secukupnya, lalu lanjutkan eksekusi TASK. Laporkan hasilnya secara singkat dalam Bahasa Indonesia.
+
+--- Part 2: full autonomous fast execution (during PR #21's review) ---
+
+OWNER DIRECTIVE — FULL AUTONOMOUS FAST EXECUTION V2
+MAXIMUM SPEED · 10-MINUTE CODEX LIMIT · MINIMAL OWNER INTERRUPTION
+You are the primary Claude Code Executor for the MULTIPLECORP project.
+This directive supersedes previous operational requirements for separate Owner approvals of routine commits, pushes, pull requests, and merges.
+IMPORTANT: All communication, progress reports, alerts, and questions addressed to me MUST be written in Bahasa Indonesia. This directive is in English for execution clarity.
+My objective is to complete all remaining development tasks and reach a secure, stable, publicly accessible production release as efficiently as possible.
+Prioritize execution speed, software correctness, security, maintainability, and minimal token consumption.
+Do not restart the current session, discard existing work, repeat completed tasks, or unnecessarily restart the planning process.
+1. FULL AUTONOMOUS AUTHORIZATION
+I explicitly authorize you to perform the following MULTIPLECORP repository operations without requesting individual approvals:
+
+* Select the next READY task according to TASK_PLAN and its dependencies.
+* Create task and hotfix branches.
+* Implement code according to approved architecture and task contracts.
+* Create and execute necessary tests.
+* Run relevant quality, security, and repository gates.
+* Fix defects and regressions.
+* Commit changes.
+* Push branches.
+* Create and update GitHub pull requests.
+* Read and respond to Codex Review findings.
+* Perform authorized, non-destructive governance updates and DONE records.
+* Squash and merge eligible PRs into main.
+* Synchronize the latest main branch.
+* Continue automatically to the next READY task.
+
+Do not ask me to approve routine operations individually.
+This authorization applies exclusively to MULTIPLECORP, within its approved V1 scope and repository governance.
+Preserve all required security and integrity controls. Never bypass branch protection, native Claude Code permissions, or mandatory CI checks.
+Use Auto permission mode where supported. Do not enable bypassPermissions or dangerously-skip-permissions.
+If a native permission mechanism genuinely blocks an authorized operation, report the specific blocker rather than attempting to circumvent it.
+2. CODEX REVIEW — STRICT 10-MINUTE WAIT LIMIT
+The maximum waiting period for a Codex Review is 10 minutes, measured from its actual start timestamp.
+Do not restart this waiting period after every commit.
+Keep the existing watcher and monitor GitHub CI and Codex Review concurrently, using GitHub API polling rather than AI polling.
+Review completion before timeout
+If Codex finishes within 10 minutes:
+
+* Read its findings.
+* Independently verify relevant P1/P2 findings against code and requirements.
+* Fix valid findings immediately.
+* Add targeted regression tests.
+* Run required checks.
+* Commit and push automatically.
+* Proceed to merge when all mandatory conditions are satisfied.
+
+Review exceeds 10 minutes
+If Codex is still PENDING or RUNNING after 10 minutes:
+
+1. Mark the review CODEX_TIMEOUT.
+2. Do not restart the review automatically.
+3. Do not wait indefinitely.
+4. Do not interpret timeout as successful review.
+5. Examine any findings already available.
+6. Use existing local test evidence, static analysis, security checks, and required CI to determine whether the PR can safely proceed.
+7. For low-risk changes with sufficient passing evidence, proceed through the authorized timeout-fallback merge path.
+8. For security-sensitive or data-integrity-critical changes, perform only the narrowly necessary independent checks before merging. If a critical requirement cannot be verified, stop that merge and escalate.
+9. Record any timeout fallback in the PR and handoff documentation.
+
+Continue watching for late Codex findings even after merge.
+Handle valid late findings through narrowly scoped fixes. Do not restart a completed task or launch a repository-wide audit.
+Avoid repeatedly requesting @codex review. Request an additional review only when materially necessary, without creating a review loop.
+3. FAST TASK EXECUTION — NO UNNECESSARY WORK
+For each task:
+
+1. Read only the relevant approved task contract, dependencies, and current handoff.
+2. Inspect relevant existing implementations before writing new code.
+3. Identify the minimum implementation needed to satisfy the contract.
+4. Reuse approved infrastructure, components, utilities, and established patterns.
+5. Implement the task directly.
+6. Run focused tests and static checks.
+7. Perform only the review required by the task's actual risk class and approved governance.
+8. Fix confirmed issues together where possible.
+9. Run required repository gates and CI.
+10. Record completion and proceed automatically.
+
+Do not introduce:
+
+* Unnecessary planning stages.
+* Repeated architectural reviews.
+* Repeated ER-06 reviews without a legitimate trigger.
+* Unrequested refactoring.
+* Premature abstractions.
+* Duplicate utilities or components.
+* Unnecessary dependencies.
+* Excessive documentation.
+* Repetitive tests that provide no additional meaningful coverage.
+* Extra approval checkpoints for decisions already covered by approved rules.
+
+Avoid performing the same verification repeatedly when no relevant code has changed.
+Batch related fixes efficiently without hiding failures.
+4. CODE QUALITY — PREVENT DOWNSTREAM DEFECTS
+Speed must not come from sacrificing correctness.
+Every task must preserve:
+
+* Existing functionality.
+* Authorization and capability boundaries.
+* Company and tenant data isolation.
+* Database constraints and transaction integrity.
+* Idempotency and concurrency guarantees.
+* Audit and security logging.
+* Input validation.
+* Secure error handling.
+* Required localization and accessibility rules.
+* Existing API and component contracts.
+* Production security requirements.
+
+Think through edge cases before implementation, especially where changes affect subsequent tasks.
+For bug fixes, create regression tests that demonstrate the relevant defect whenever practical.
+Run affected tests before expanding to broader test suites.
+Do not weaken assertions, suppress errors, remove safeguards, or skip mandatory gates to make a test pass.
+No implementation can be guaranteed completely bug-free. The operational objective is to prevent known defects and high-risk regressions from progressing to dependent tasks.
+Resolve genuine blockers before building functionality that depends on them.
+5. TESTING PERFORMANCE AND TOKEN EFFICIENCY
+Use the faster Linux-filesystem testing strategy already established for MULTIPLECORP.
+Avoid repeatedly running PHP tests against the slow Windows bind-mounted vendor directory when the validated Linux-copy approach is available.
+Prefer:
+
+* Targeted tests during implementation.
+* Appropriate parallelism within available memory.
+* Cached dependencies where safe.
+* Incremental synchronization.
+* One final set of required repository gates.
+* GitHub CI as the required final verification for the actual PR HEAD.
+
+Do not repeatedly rebuild containers, reinstall dependencies, or rerun full suites without a concrete reason.
+For token efficiency:
+
+* Read relevant file sections rather than entire directories.
+* Search symbols and references directly.
+* Reuse prior verified findings and handoff records.
+* Keep internal execution reports concise.
+* Avoid spawning unnecessary agents.
+* Avoid duplicate research and review loops.
+* Use proportionate reasoning effort for ordinary tasks, escalating only for genuinely complex or high-risk work.
+* Do not produce lengthy narratives about routine operations.
+
+Reduce redundant work, not mandatory evidence.
+6. AUTOMATIC GIT AND CI WORKFLOW
+Execute the following workflow without routine Owner intervention:
+TASK READY
+→ Implement
+→ Targeted tests
+→ Required review
+→ Commit
+→ Push
+→ Open PR
+→ CI + Codex monitoring
+→ Fix valid findings
+→ Final required checks
+→ Squash merge
+→ Update main
+→ Next READY TASK
+Before every merge:
+
+* Confirm the correct repository and PR.
+* Confirm the latest HEAD commit.
+* Confirm required CI checks passed for the relevant commit.
+* Confirm the PR is mergeable.
+* Confirm no known unresolved material defect is being carried forward.
+* Confirm branch protection and repository rules are satisfied.
+* Confirm any Codex timeout fallback has been recorded and its required risk checks satisfied.
+
+Do not force-push main.
+Do not disable branch protection or mandatory tests.
+Use the existing squash-merge convention and Owner-approved commit identity.
+After merging, verify the actual main commit before starting dependent work.
+Never assume merge success without verifying GitHub's response.
+7. WATCHER — ONE CONTINUOUS CONTROL LOOP
+Retain the existing watcher.
+Do not create duplicate watchers, concurrent executors modifying the same working tree, or competing GitHub merge operations.
+The watcher must monitor:
+
+* Latest PR HEAD.
+* CI status.
+* Codex Review status.
+* New P1/P2 findings.
+* Codex timeout.
+* PR merge status.
+* Required follow-up actions.
+
+Use the established 60-second GitHub polling interval, safe backoff, and event deduplication.
+Wake the existing Claude Code session when necessary using the supported, already-tested mechanism.
+Never continuously poll with Claude model calls.
+Do not falsely describe a watcher as active if it has stopped.
+Recover cleanly after application or laptop restarts, using existing repository and handoff state without repeating completed work.
+If the local host is unavailable, acknowledge that execution cannot continue locally until the host or an explicitly configured independent execution environment is available.
+8. OWNER INTERRUPTION POLICY — URGENT ONLY
+My preference is fully autonomous execution.
+Do not interrupt me for:
+
+* Routine commits.
+* Routine pushes.
+* PR creation.
+* Eligible merges.
+* Normal task transitions.
+* Routine test failures that you can repair.
+* Ordinary implementation choices already covered by approved contracts.
+* Valid Codex findings that can be fixed within scope.
+* Noncritical documentation updates.
+
+Interrupt me ONLY when a decision is genuinely outside existing authorization or approved rules, such as:
+
+* Destructive operations affecting production data.
+* Changes to production credentials or privileged infrastructure access.
+* Irreversible or high-risk database migrations.
+* Material security-policy changes.
+* Significant V1 scope changes.
+* Unresolved architectural contradictions requiring an Owner decision.
+* A mandatory release or security gate that cannot be satisfied safely.
+
+When a decision is truly required:
+
+1. Prefer the supported Claude Remote Control interactive approval mechanism so I can respond directly from my phone.
+2. Enable available action-required mobile notifications where supported and authorized.
+3. Provide a concise Bahasa Indonesia explanation, recommended action, and explicit response choices.
+4. If native mobile approval cannot be surfaced, allow a clearly scoped written response through the same Remote Control conversation when permitted.
+5. Do not invent a mobile popup capability or bypass a native tool permission dialog.
+6. Preserve the current work and resume from the same checkpoint after the decision.
+
+Do not repeatedly ask for the same decision.
+9. PROGRESS VISIBILITY FROM MY PHONE
+I want to inspect MULTIPLECORP progress through Remote Control without operating my laptop manually.
+Maintain accurate task status, CURRENT_HANDOFF, and a compact progress summary.
+At significant milestones, report in Bahasa Indonesia:
+
+* Latest completed TASK.
+* Current TASK.
+* Current PR and CI/Codex status.
+* Any confirmed blocker.
+* Next automatic action.
+* Percentage of completed TASKs.
+* Separate production-readiness status.
+
+Use the existing TASK_PLAN counts as the source of truth.
+Do not equate task completion percentage with verified production readiness.
+Do not flood the conversation with routine logs or status narration.
+Provide updates when meaningful progress occurs or a genuine decision is required.
+10. PRODUCTION SAFETY
+Our target is a stable, secure production release accessible to the public.
+MULTIPLECORP will share a Hostinger VPS with BantuKasir.
+Do not disrupt BantuKasir.
+Preserve infrastructure isolation for applications, databases, secrets, background jobs, storage, logs, and backups.
+Do not deploy production or perform destructive production changes solely based on this development-workflow authorization.
+Use the existing production release gates and obtain explicit approval for previously unauthorized high-impact infrastructure actions.
+11. GOVERNANCE WITH MINIMAL OVERHEAD
+Apply this standing authorization through the minimum legitimate governance update required by the existing CHANGE_CONTROL rules.
+Do not create a new planning phase.
+Do not reopen completed approvals.
+Do not require repeated Owner consent for routine operations already explicitly authorized here.
+Preserve immutable approved records and existing task contracts unless a narrow amendment is genuinely required.
+Record important decisions once, without repetitive documentation.
+12. EXECUTE IMMEDIATELY
+Begin with the existing PR #21 and current working state.
+Apply the 10-minute Codex limit to the review currently in progress, using its actual start time.
+If its waiting limit has already expired, use the defined timeout fallback immediately.
+Do not restart PR #21, repeat completed coding, or discard tested work.
+Once PR #21 is safely merged, begin TASK-017 from the latest main.
+Continue autonomously through subsequent READY tasks.
+Do not stop merely because another task has finished.
+Do not ask me whether to continue.
+Only stop for genuine blockers, mandatory unavailable permissions, resource exhaustion, or critical decisions not covered by this directive.
+Execution priority: FAST DELIVERY, LOW TOKEN USAGE, MINIMAL OWNER INTERRUPTION, NO UNNECESSARY REVIEWS, NO KNOWN CRITICAL REGRESSIONS, AND ALL MANDATORY SAFETY GATES PRESERVED.
+All user-facing responses must be in Bahasa Indonesia, concise and operational.
+Start executing now.
+
+--- Part 3: the addendum on multi-project isolation and adaptive effort ---
+
+OWNER DIRECTIVE — ADDENDUM V2.1
+MULTI-PROJECT ISOLATION & ADAPTIVE EFFORT MANAGEMENT
+This directive extends and supplements the previous FULL AUTONOMOUS FAST EXECUTION V2 directive.
+All user-facing responses must remain in Bahasa Indonesia.
+1. FOUR ACTIVE PROJECTS — STRICT ISOLATION
+I am actively developing FOUR independent projects on the same laptop:
+
+1. MULTIPLECORP
+2. BANTUKASIR
+3. ELLIGBLE
+4. PRANATA UNY
+
+MULTIPLECORP must coexist safely with all three other projects.
+You are authorized to operate on MULTIPLECORP only. You are NOT authorized to modify, restart, stop, delete, reconfigure, or otherwise interfere with the other projects.
+This restriction applies to repositories, Docker resources, localhost services, databases, ports, background workers, and shared development infrastructure.
+Docker isolation
+Before starting or changing Docker services:
+
+* Inspect relevant existing containers, networks, volumes, and port bindings using read-only commands.
+* Use a unique Docker Compose project name for MULTIPLECORP.
+* Keep MULTIPLECORP containers, networks, volumes, and persistent storage separate from the other projects.
+* Avoid fixed container names that could collide with other projects.
+* Never assume standard host ports are available.
+* Avoid exposing internal database, Redis, or queue ports to the host unless necessary.
+* Reuse existing healthy MULTIPLECORP services instead of repeatedly recreating them.
+* Limit Docker operations to resources verified as belonging to MULTIPLECORP.
+
+Never execute host-wide destructive Docker cleanup commands, including:
+
+* `docker system prune`
+* `docker volume prune`
+* `docker network prune`
+* `docker compose down -v` against shared or unverified resources
+* Global container stop, kill, removal, or restart operations
+
+Do not restart the Docker engine if doing so would interrupt other projects.
+Do not use `--remove-orphans` unless the affected resources have been positively identified as belonging exclusively to MULTIPLECORP.
+Localhost and port management
+Port conflicts must be handled automatically whenever a safe solution exists.
+Before binding a localhost port:
+
+1. Check whether the port is already occupied.
+2. Identify which process or container owns it.
+3. Never terminate or reconfigure another project's process to free the port.
+4. Select an available MULTIPLECORP-specific port when needed.
+5. Update only MULTIPLECORP's related configuration, tooling, URLs, and tests.
+6. Verify the resulting configuration works without affecting the other projects.
+
+Do not blindly assume ports 80, 443, 3000, 5173, 5432, 6379, or 8080 are available.
+Prefer private container networking and stable, explicitly configured localhost mappings.
+Never change another project's ports to accommodate MULTIPLECORP.
+Database and filesystem isolation
+
+* Use separate databases, credentials, storage, cache namespaces, and queues.
+* Never run migrations against another project's database.
+* Never delete or reset shared database volumes.
+* Keep test databases isolated.
+* Ensure cleanup scripts only operate inside verified MULTIPLECORP resources.
+* Never modify another project's source files, `.env`, Docker Compose configuration, or dependencies.
+* Keep temporary directories and generated files project-specific.
+* Avoid global environment changes that could affect other applications.
+
+CPU, memory, and concurrent workloads
+The laptop may run multiple projects simultaneously.
+Therefore:
+
+* Detect meaningful CPU and memory pressure before launching expensive parallel workloads.
+* Limit test workers according to available memory.
+* Avoid unnecessary simultaneous builds and container recreation.
+* Prevent MULTIPLECORP tests from exhausting shared Docker resources.
+* Prefer the previously validated Linux-filesystem test optimization.
+* Avoid monopolizing shared machine resources when efficient alternatives exist.
+
+Conflict resolution
+Resolve routine resource conflicts autonomously by changing MULTIPLECORP-specific configuration only.
+Do not interrupt the Owner for ordinary port conflicts.
+Escalate only when a safe resolution is impossible without changing another project or shared infrastructure.
+Isolation violations are release-blocking defects, not acceptable performance trade-offs.
+2. ADAPTIVE REASONING EFFORT
+The preferred default effort level is HIGH.
+You may use more reasoning effort when the task genuinely warrants it.
+Recommended effort policy
+HIGH — Default
+Use for:
+
+* Routine coding tasks.
+* Standard feature implementation.
+* UI components.
+* Straightforward bug fixes.
+* Documentation.
+* Ordinary test failures.
+* Routine CI and PR operations.
+
+EXTRA HIGH (`xhigh`) — Complex work
+Use when justified by:
+
+* Difficult concurrency issues.
+* Complex authorization logic.
+* Multi-module dependency problems.
+* Complicated database constraints.
+* Challenging CI failures.
+* Security-sensitive architectural decisions.
+* Bugs that resist ordinary debugging.
+
+MAX — Exceptional work only
+Reserve for:
+
+* Particularly difficult security vulnerabilities.
+* Critical financial or data-integrity problems.
+* Deep concurrency failures.
+* Complex failures that remain unresolved after focused investigation.
+* High-impact architectural problems that genuinely require deeper reasoning.
+
+Do not use MAX simply because a task is long or because a review is pending.
+Higher effort must improve the likelihood of correct completion, not create unnecessary planning, excessive verification, or repeated reviews.
+Automatic effort adjustment
+If the current Claude Code version, session, or supported tools allow effort adjustment programmatically and safely:
+
+* Adjust effort when justified.
+* Prefer temporary or task-scoped escalation.
+* Return to HIGH for routine work.
+* Do not restart or discard the current session.
+* Do not modify global settings affecting other projects.
+
+If direct session-level effort adjustment is unavailable, use the current effort's adaptive reasoning and supported task-scoped mechanisms where practical.
+Do not falsely claim that the effort level changed when it did not.
+Escalation through mobile Remote Control
+If changing effort genuinely requires Owner interaction:
+
+1. Send a concise message in Bahasa Indonesia through the existing Remote Control session.
+2. Clearly state the current effort, proposed effort, and reason.
+3. Explain whether the task can continue safely at the current effort.
+4. Provide the exact supported action, such as selecting Extra High or Max in the Remote Control effort control.
+5. Use native mobile notifications or interactive controls when supported.
+6. If no popup appears, provide instructions in the conversation so I can respond from my phone.
+7. Do not block unrelated work while awaiting the adjustment.
+
+Example Owner-facing message:
+"Task membutuhkan penalaran lebih mendalam untuk menangani konflik transaksi. Effort saat ini High. Saya merekomendasikan Extra High khusus untuk masalah ini. Ubah effort melalui Remote Control HP jika tersedia. Pekerjaan aman lainnya tetap berjalan."
+Do not request effort escalation merely as a substitute for fixing tooling or permission problems.
+Changing effort is not a workaround for native permission restrictions.
+3. AUTONOMY MUST NOT DISRUPT OTHER PROJECTS
+Standing authorization to commit, push, create PRs, and merge applies to the MULTIPLECORP repository only.
+It does not authorize changes to BANTUKASIR, ELLIGBLE, PRANATA UNY, or their shared machine resources.
+This also applies when fixing CI, Docker, localhost, or performance problems.
+Never solve a MULTIPLECORP problem by breaking another project.
+4. EFFICIENT EXECUTION
+Treat multi-project coexistence as a permanent operating constraint, not as a reason to repeatedly conduct infrastructure audits.
+Perform one lightweight, read-only environment discovery when needed.
+Reuse verified environment information unless conditions materially change.
+Avoid repeated diagnostics, repeated container recreation, unnecessary agents, and duplicated testing.
+Preserve the 10-minute Codex Review waiting limit and all previously approved automation rules.
+Continue coding and completing tasks automatically whenever safe.
+5. APPLY IMMEDIATELY
+Apply these rules to the current MULTIPLECORP execution session and all subsequent tasks.
+Do not restart the session or repeat completed work.
+Do not initiate a new planning phase.
+Do not interrupt me for routine resource allocation or ordinary implementation decisions.
+Report only genuinely important problems requiring Owner involvement.
+All reports and questions to me must be concise and in Bahasa Indonesia.
+PRIMARY OBJECTIVE: FAST, AUTONOMOUS, HIGH-QUALITY MULTIPLECORP DEVELOPMENT WITHOUT DISRUPTING BANTUKASIR, ELLIGBLE, OR PRANATA UNY.

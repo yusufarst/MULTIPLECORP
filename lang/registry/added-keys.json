@@ -636,6 +636,60 @@
             "source": "ADMIN_FLOW IP-21 (the error state: a generic message with the reference code); WS-10",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "auth_rules.password_profile": {
+            "task": "TASK-017",
+            "source": "SECURITY AU-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "auth_rules.password_common": {
+            "task": "TASK-017",
+            "source": "SECURITY AU-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "auth_rules.password_personal": {
+            "task": "TASK-017",
+            "source": "SECURITY AU-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "auth_rules.password_breached": {
+            "task": "TASK-017",
+            "source": "SECURITY AU-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "auth_rules.password_mismatch": {
+            "task": "TASK-017",
+            "source": "SECURITY AU-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_003.heading": {
+            "task": "TASK-017",
+            "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_003.password": {
+            "task": "TASK-017",
+            "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_003.confirm": {
+            "task": "TASK-017",
+            "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_003.submit": {
+            "task": "TASK-017",
+            "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

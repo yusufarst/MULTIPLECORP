@@ -11,8 +11,12 @@ it('boots and answers a request: a guest goes to sign-in (TASK-016)', function (
 it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', function () {
     $routes = array_map(fn ($route): string => implode('|', $route->methods()).' '.$route->uri(), Route::getRoutes()->getRoutes());
 
-    // ROUTE-281 `Reporting Search` and ROUTE-005's fallback to PG-005 (TASK-016).
-    expect($routes)->toBe(['POST cari', 'GET|HEAD {fallbackPlaceholder}']);
+    // The sign-in routes ROUTE-001, -101, -108, -109, -003 and -106 (TASK-017) — Fortify registers none of its own
+    // (SM-22) —, ROUTE-281 `Reporting Search` and ROUTE-005's fallback to PG-005 (TASK-016).
+    expect($routes)->toBe([
+        'GET|HEAD masuk', 'POST masuk', 'POST keluar', 'POST konfirmasi-kata-sandi', 'GET|HEAD atur-kata-sandi', 'POST atur-kata-sandi',
+        'POST cari', 'GET|HEAD {fallbackPlaceholder}',
+    ]);
 });
 
 it('keeps the framework default migrations out: every migration is the project\'s, named by its module', function () {

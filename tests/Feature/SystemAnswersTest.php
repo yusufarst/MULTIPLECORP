@@ -62,8 +62,8 @@ it('sends a guest\'s document request to sign-in', function () {
     $this->get('/__test/halaman')->assertRedirect('/masuk');
     $this->get('/tidak-ada')->assertRedirect('/masuk');
 
-    // Until TASK-017 serves the sign-in, its address answers not found instead of sending the guest round.
-    $this->get('/masuk')->assertNotFound()->assertInertia(fn (AssertableInertia $page) => $page->component(SystemAnswer::PAGE)->where('kind', 'not_found'));
+    // The sign-in address is PG-001's (TASK-017), never the system page.
+    $this->get('/masuk')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->component('Auth/SignIn', false));
 });
 
 it('answers an expired session\'s token 419 in place, for the shell to sign in again (IP-11)', function () {
