@@ -142,7 +142,8 @@ it('writes no session for a marked background GET, and every other request write
 });
 
 it('sends the absolute deadline in a header outside the page data (AU-08; UXH-11)', function () {
-    $signedIn = 1_793_000_000;
+    // An hour ago: a fixed instant would pass AU-07's 12 hours as the calendar moves on.
+    $signedIn = time() - 3600;
 
     $response = $this->actingAs($this->admin)->withSession([SessionDeadline::SIGNED_IN_AT => $signedIn])->get('/tidak-ada', inertiaVisit());
 
