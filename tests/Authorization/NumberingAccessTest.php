@@ -4,6 +4,7 @@ use App\Modules\IAM\Data\CapabilityCatalogue;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\RefreshDatabase;
@@ -13,6 +14,17 @@ use Tests\Support\RefreshDatabase;
 // is answered by the not-found page, identical to an unknown address, and changes nothing; a guest goes to sign-in.
 
 uses(RefreshDatabase::class);
+
+// The not-found page renders through the shell's layout: a hot file stands in for the build, which this suite precedes.
+beforeEach(function () {
+    $this->hotFile = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($this->hotFile, 'http://localhost:5173');
+    Vite::useHotFile($this->hotFile);
+});
+
+afterEach(function () {
+    @unlink($this->hotFile);
+});
 
 it('declares companies.manage, OWNER_ONLY, on ROUTE-061, ROUTE-136 and ROUTE-137', function () {
     $routes = collect(Route::getRoutes()->getRoutes())->filter(fn ($route) => str_starts_with($route->uri(), 'pengaturan/penomoran'));
