@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class SecurityHeaders
 {
+    /** The internal marker of a response carrying FL-07's own header profile, removed before it leaves. */
+    public const FILE_PROFILE = 'X-Internal-File-Profile';
+
     /**
      * @param  Closure(Request): Response  $next
      */
@@ -22,6 +25,13 @@ class SecurityHeaders
         $nonce = Vite::useCspNonce();
 
         $response = $next($request);
+
+        // A private file keeps the stricter header profile its controller set (SECURITY FL-07; TASK-022).
+        if ($response->headers->get(self::FILE_PROFILE) !== null) {
+            $response->headers->remove(self::FILE_PROFILE);
+
+            return $response;
+        }
 
         $response->headers->set('Content-Security-Policy', self::policy($nonce));
         $response->headers->set('Cache-Control', 'no-store');

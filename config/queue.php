@@ -68,9 +68,12 @@ return [
             'driver' => 'redis',
             'connection' => env('REDIS_QUEUE_CONNECTION', 'default'),
             'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 90),
+            // TASK-022: above the longest job's timeout — JB-03's 10 minutes —, so a live job is never redelivered;
+            // a dead worker's job is redelivered after it, and the sweeps find its durable row sooner (JB-02, JB-09).
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 720),
             'block_for' => null,
-            'after_commit' => false,
+            // Every job leaves only after its transaction commits (CONCURRENCY_IDEMPOTENCY §15).
+            'after_commit' => true,
         ],
 
         'deferred' => [

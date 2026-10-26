@@ -19,6 +19,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD masuk/verifikasi', 'POST masuk/verifikasi', 'POST masuk/verifikasi/pemulihan', 'GET|HEAD verifikasi-dua-langkah', 'POST verifikasi-dua-langkah',
         'GET|HEAD masuk/google', 'GET|HEAD masuk/google/callback',
         'GET|HEAD pengaturan/penomoran', 'PUT pengaturan/penomoran/{type}', 'POST pengaturan/penomoran/{type}/mulai',
+        'GET|HEAD berkas/{id}/unduh', 'GET|HEAD berkas/{id}/gambar-kecil', 'GET|HEAD status/{kind}/{id}',
         'POST cari', 'GET|HEAD {fallbackPlaceholder}',
     ]);
 });

@@ -1,0 +1,44 @@
+Owner decisions received in session during execution, 2026-10-27 (WIB), Claude Code Desktop on the Owner's workstation, given as answers to the executor's structured questions and transcribed as received: each question as the executor asked it, the options shown, then the option the Owner selected.
+
+--- Part 1: TASK-022's choices under DEP-07 and one reading (the executor's consolidated checkpoint) ---
+
+Question: Renderer PDF mana yang dipakai untuk rendition dokumen terbit (FL-08: tanpa JavaScript, tanpa jaringan, hanya aset lokal yang diizinkan, gratis)?
+Options shown:
+- WeasyPrint (Rekomendasi) — WeasyPrint 68.1 (BSD-3, paket Alpine), tanpa mesin JavaScript sama sekali; url_fetcher sendiri menolak jaringan & file di luar direktori aset; dukungan halaman cetak (@page A4, header berulang, nomor halaman) paling lengkap; image lebih kecil. Kelemahan: flex/grid terbatas sehingga template TASK-029 memakai CSS yang didukungnya; selisih vs pratinjau browser diukur P8.
+- Chromium headless — Chromium 155 (BSD-3); tata letak paling mirip pratinjau browser; JS dimatikan lewat flag, tetapi isolasi jaringan/file lebih sulit dijamin, image ~300 MB+, memori lebih besar di VPS bersama.
+- Dompdf (PHP murni) — LGPL-2.1, tanpa proses eksternal; hanya CSS 2.1 (tanpa flex/grid), sulit berbagi satu template dengan komposer browser.
+Answer: WeasyPrint (Rekomendasi)
+
+Question: Pustaka gambar untuk validasi, re-encode, dan thumbnail (FL-03/H9-12: hanya JPEG/PNG/WebP, tanpa delegate/coder lain, batas piksel/memori)?
+Options shown:
+- GD (Rekomendasi) — Ekstensi bawaan PHP; hanya decoder yang dipanggil eksplisit, tanpa delegate/coder/URL tidak langsung secara konstruksi; re-encode otomatis membuang EXIF; cukup untuk thumbnail.
+- ImageMagick (Imagick) — Lebih kaya fitur, tetapi permukaan serangan besar; aman hanya dengan policy.xml ketat yang harus dijaga.
+Answer: GD (Rekomendasi)
+
+Question: Job JB-03 (ekspor), JB-05 dan JB-07 (impor) dimiliki TASK-060/TASK-057. Bagaimana TASK-022 menangani JB-09 (OwedWorkSweeper) dan M-32 untuk ekspor/impor?
+Options shown:
+- Mekanisme + render (Rekomendasi) — TASK-022 membangun mekanisme bersama (versi payload, dispatch after-commit, unique/overlap lock, scheduler) beserta JB-01, JB-02, JB-04, JB-06 (jadwal), JB-08, dan sweeper JB-09 dengan titik pendaftaran; TASK-060/057 mendaftarkan job ekspor/impor dan menguji cabang M-32-nya. Dicatat sebagai reading.
+- Semua di TASK-022 — TASK-022 juga menulis kerangka GenerateExport/ValidateImportBatch/CommitImportRows tanpa isinya; berisiko abstraksi spekulatif dan tumpang tindih dengan kontrak TASK-057/060.
+Answer: Mekanisme + render (Rekomendasi)
+
+--- Part 2: the lock-order rows the runtime role cannot lock (the executor's question on a discovery) ---
+
+Question: Temuan TASK-022: LK-30 mengunci baris `documents` (FOR NO KEY UPDATE), tetapi DATABASE §28 hanya memberi runtime role SELECT/INSERT pada `documents`. PostgreSQL hanya mengizinkan row lock bagi role yang punya UPDATE pada suatu kolom, jadi JB-01 (dan nanti issue/void TASK-029) ditolak. Usul (pola DIR-097): runtime role diberi UPDATE pada satu kolom `documents.mode` khusus untuk row lock LK-30, dengan trigger `documents_unchanged` yang menolak setiap update baris dokumen. Migration expand-only, tanpa mengubah baris. Setuju?
+Options shown:
+- Setuju (Rekomendasi) — Kunci tersedia, tidak ada nilai yang bisa diubah; teks DATABASE §28, TASK-022 (DATABASE IMPACT) dan TASK_PLAN diamandemen secara sempit, teksnya ditunjukkan untuk disetujui terpisah seperti APPR-025.
+- Kunci lewat versi saja — JB-01 mengunci `document_versions` lalu rendition tanpa baris `documents`; menyimpang dari urutan LK-30 kanonis dan butuh amandemen CONCURRENCY_IDEMPOTENCY.
+Answer: Setuju (Rekomendasi)
+
+Question: Pemeriksaan yang sama menemukan dua tabel lain di urutan kunci yang juga tidak bisa dikunci runtime role: `document_types` (LK-08) dan `opening_customer_credits` (LK-26). Keduanya belum dipakai TASK-022. Bagaimana penanganannya?
+Options shown:
+- Sekaligus sekarang (Rekomendasi) — Satu amandemen dan satu migration untuk ketiga tabel (pola yang sama: UPDATE satu kolom untuk row lock + trigger penolak), supaya TASK-029/TASK-057 tidak tersandung lagi.
+- Catat untuk Task-nya — TASK-022 hanya memperbaiki `documents`; dua tabel lain dicatat di CURRENT_HANDOFF sebagai temuan untuk TASK-029 dan TASK-057.
+Answer: Sekaligus sekarang (Rekomendasi)
+
+--- Part 3: the approval of the canonical text (APPR-026), after the executor showed W1–W4 in full ---
+
+Question: Setujui teks kanonis W1–W4 di atas sebagai APPR-026 (amandemen sempit Level 1 untuk DIR-099: DATABASE §28 dan header-nya, TASK-022, TASK_PLAN Change 14)?
+Options shown:
+- Setujui W1–W4 (Rekomendasi) — Teks diterapkan persis seperti ditampilkan dan dicatat sebagai APPR-026 di DECISION_LOG beserta transkripnya (part 3).
+- Perlu perubahan — Sebutkan bagian yang perlu diubah; teks direvisi dan ditunjukkan lagi sebelum disetujui.
+Answer: Setujui W1–W4 (Rekomendasi)

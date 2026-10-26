@@ -16,21 +16,21 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 21
-READY: 8
+DONE: 22
+READY: 10
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 45
+TODO: 42
 SUPERSEDED: 0
 
 Progress:
-21 / 87
-Percentage: 24.1 %
+22 / 87
+Percentage: 25.3 %
 
-CURRENT TASK: none in progress — TASK-021 — Numbering, its settings page and the Owner's raise after a restore DONE on its branch `task/TASK-021-numbering`, CI PASS on `3af812a`, its pull request #26 squash-merged by the executor once eligible (DIR-096); execution paused after it at the Owner's SHUTDOWN_AFTER_CURRENT_TASK, until the Owner resumes it
-NEXT READY TASK: TASK-022 — Jobs, files and the document renderer, READY, not started — taken first from the merged `main` once the Owner resumes execution (DIR-096); TASK-023, TASK-024, TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-025, TASK-027 and TASK-030 wait on TASK-022, TASK-029 on TASK-022 and TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 13 of 2026-10-26 — DIR-097's disposition of TASK-020's discovery: the runtime role's lock on the OWNER role row, and TASK-024's account image
+CURRENT TASK: none in progress — TASK-022 — Jobs, files and the document renderer DONE on its branch `task/TASK-022-jobs-files-renderer`, CI PASS on `70f3ba6`, its pull request #27 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-023 — My account — password, two-step verification, Google link and language, READY, taken first from the merged `main` (DIR-096); TASK-024, TASK-025, TASK-026, TASK-027, TASK-028, TASK-030, TASK-031, TASK-061 and TASK-073 READY; TASK-029 waits on TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -70,7 +70,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-019](TASK-019.md) — Google sign-in for existing accounts
 - [x] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
 - [x] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
-- [ ] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
+- [x] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
 - [ ] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
 - [ ] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
 - [ ] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
@@ -162,15 +162,15 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | DONE | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | DONE | 010, 018, 019 | 069, 076, 085 | NO | AGENT | NONE | NO |
 | [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | DONE | 006, 013, 016, 018 | 029, 032, 074, 076, 077 | NO | AGENT | NONE | YES |
-| [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | READY | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
+| [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | DONE | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
 | [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | READY | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | READY | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
+| [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | READY | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
 | [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | READY | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
-| [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | TODO | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | READY | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | READY | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | TODO | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
-| [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | TODO | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
+| [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | READY | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
 | [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | READY | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
 | [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | TODO | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | TODO | 029, 032 | 034 | NO | AGENT | NONE | YES |
@@ -279,6 +279,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 12, 2026-10-25 (TASK-013's execution discoveries; [DIR-095](../00-governance/DECISION_LOG.md#dir-095--task-013s-discoveries)).** *Reason:* TASK-013 found that the guard registry's twenty-two formulas belong to the posting Tasks that build their semantics, and that two kinds of integration tests write guards with no facts by design, decided by the Owner at one checkpoint with six readings. *Change:* CONCURRENCY_IDEMPOTENCY §9 and TEST_STRATEGY TS-11 state the registry's growth and the two unreconciled directories; TASK-013's CONCURRENCY line and TASK-021's new IN SCOPE line say so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-095 and APPR-024's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 **Change 13, 2026-10-26 (TASK-020's execution discovery; [DIR-097](../00-governance/DECISION_LOG.md#dir-097--task-020s-discoveries)).** *Reason:* TASK-020 found that LK-02's row lock on the built-in OWNER role cannot be taken by the runtime role, which §28 gives no `UPDATE` on `roles`, decided by the Owner at one checkpoint with two readings. *Change:* DATABASE §28 gives the runtime role `UPDATE` of `roles.is_builtin` for that lock alone, a trigger refusing every update of a role row; TASK-020's DATABASE IMPACT ASSESSMENT and TASK-024's new AUDIT line say so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-097 and APPR-025's canonical text, a Level 1 record under CHANGE_CONTROL.
+
+**Change 14, 2026-10-27 (TASK-022's execution discovery; [DIR-099](../00-governance/DECISION_LOG.md#dir-099--task-022s-choices)).** *Reason:* TASK-022 found that the row locks of LK-30 on `documents`, of LK-08 on `document_types` and of LK-26 on `opening_customer_credits` cannot be taken by the runtime role, which §28 gives no `UPDATE` on those tables, decided by the Owner at one checkpoint with TASK-022's choices under DEP-07 and one reading. *Change:* DATABASE §28 gives the runtime role `UPDATE` of one column of each for its lock alone, a trigger on each refusing every update of its rows; TASK-022's DATABASE IMPACT ASSESSMENT says so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-099 and APPR-026's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 

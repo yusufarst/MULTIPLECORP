@@ -2,10 +2,12 @@
 
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\SetLocale;
+use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ShellFixture;
@@ -55,3 +57,12 @@ if (! app()->runningInConsole()) {
     NumberingFixture::apply();
 }
 Route::post('__fixtures/penomoran', [NumberingFixture::class, 'arm']);
+
+// TL-09–TL-12 (TASK-022): a sample page for an upload through the pipeline, its download by ROUTE-226 and a
+// rendition's state by ROUTE-285, for a signed-in account; the upload route and the evidence registration are TASK-030's.
+Route::middleware(['web', 'auth'])->group(function (): void {
+    Route::get('__fixtures/berkas', [FilesFixture::class, 'page']);
+    // The run's own requests carry no form token; the application's routes keep the check (RequestForgeryTest).
+    Route::post('__fixtures/berkas', [FilesFixture::class, 'upload'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/berkas/rendisi', [FilesFixture::class, 'rendition'])->withoutMiddleware(PreventRequestForgery::class);
+});

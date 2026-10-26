@@ -43,6 +43,8 @@ final class SecurityEventRecorder
         'declared_kind', 'cutoff_date', 'company_scope',
         // AUTHORIZATION_ANOMALY and ACCESS_DENIED: the capability concerned, a catalogue code (OD-16; TASK-011).
         'capability',
+        // UPLOAD_REJECTED: the purpose the upload was refused for (SECURITY FL-01–FL-06; TASK-022).
+        'purpose',
     ];
 
     private const MAXIMUM_DETAIL_LENGTH = 200;

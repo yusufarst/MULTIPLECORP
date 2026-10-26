@@ -2,6 +2,7 @@
 
 use App\Modules\CST\Models\CostAttribution;
 use App\Modules\CST\Models\LotCostEntry;
+use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\IAM\Models\Role;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\CatalogueSync;
@@ -65,8 +66,8 @@ const RUNTIME_PRIVILEGES = [
     'product_barcodes' => ['SELECT, INSERT', [...DEACTIVATION, 'lock_version', 'updated_at']],
     'product_price_history' => ['SELECT, INSERT', []],
     'product_images' => ['SELECT, INSERT', ['sort_order', 'is_primary', 'lock_version', 'updated_at']],
-    'document_types' => ['SELECT, INSERT', []],
-    'documents' => ['SELECT, INSERT', []],
+    'document_types' => ['SELECT, INSERT', ['is_numbered']],
+    'documents' => ['SELECT, INSERT', ['mode']],
     'document_versions' => ['SELECT, INSERT, DELETE', [
         'state', 'business_date', 'numbering_scheme_id', 'period_key', 'sequence_no', 'revision_suffix', 'formatted_number',
         'quotation_revision_id', 'invoice_version_id', 'kuitansi_amount', 'company_bank_account_id', 'payload', 'payload_sha256',
@@ -159,7 +160,7 @@ const RUNTIME_PRIVILEGES = [
     'deduction_settlements' => ['SELECT, INSERT', ['state', 'correction_case_id']],
     'receivable_writeoffs' => ['SELECT, INSERT', []],
     'receivable_dispute_holds' => ['SELECT, INSERT', ['cleared_by', 'cleared_at', 'clear_reason']],
-    'opening_customer_credits' => ['SELECT, INSERT', []],
+    'opening_customer_credits' => ['SELECT, INSERT', ['import_row_id']],
     'prepayment_kuitansi_links' => ['SELECT, INSERT', ['state', 'unlink_reason']],
     'disbursements' => ['SELECT, INSERT', []],
     'other_cash_receipts' => ['SELECT, INSERT', ['bank_statement_line_id', 'bank_citation_corrected_at', 'bank_citation_corrected_by', 'bank_citation_corrected_reason']],
@@ -276,4 +277,17 @@ it('lets the runtime role lock the OWNER role row for LK-02, never change a role
     expect(DB::transaction(fn () => DB::table('roles')->where('id', $owner)->lock('for no key update')->value('code')))->toBe('OWNER');
     Refusal::assert(Refusal::CHECK, 'roles_rg01_unchanged', fn () => DB::table('roles')->where('id', $owner)->update(['is_builtin' => false]));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table roles', fn () => DB::table('roles')->where('id', $owner)->update(['code' => 'PEMILIK']));
+});
+
+it('lets the runtime role lock a document, a document type and an opening credit for their lock classes, never change one (TASK-022; LK-30, LK-08, LK-26; DIR-099)', function () {
+    $version = DocumentVersion::factory()->create();
+    $document = DB::table('documents')->where('id', $version->document_id)->first(['id', 'document_type_code']);
+
+    expect(DB::transaction(fn () => DB::table('documents')->where('id', $document->id)->lock('for no key update')->value('mode')))->toBe('STANDARD')
+        ->and(DB::transaction(fn () => DB::table('document_types')->where('code', $document->document_type_code)->lock('for no key update')->value('code')))->toBe($document->document_type_code);
+    Refusal::assert(Refusal::CHECK, 'documents_unchanged', fn () => DB::table('documents')->where('id', $document->id)->update(['mode' => 'STANDARD']));
+    Refusal::assert(Refusal::CHECK, 'document_types_unchanged', fn () => DB::table('document_types')->where('code', $document->document_type_code)->update(['is_numbered' => true]));
+    Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table documents', fn () => DB::table('documents')->where('id', $document->id)->update(['company_id' => 1]));
+    Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table opening_customer_credits', fn () => DB::table('opening_customer_credits')->update(['amount' => 1]));
+    expect(DB::selectOne("select count(*) as n from information_schema.triggers where trigger_name = 'opening_customer_credits_unchanged'")->n)->toBeGreaterThan(0);
 });

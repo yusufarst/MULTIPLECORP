@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\BackgroundRequest;
+use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
+use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
 use App\Modules\IAM\Http\Controllers\ConfirmPasswordController;
@@ -45,6 +48,17 @@ Route::get('/pengaturan/penomoran', [NumberingController::class, 'show'])->middl
 Route::put('/pengaturan/penomoran/{type}', [NumberingController::class, 'configure'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.configure');
 Route::post('/pengaturan/penomoran/{type}/mulai', [NumberingController::class, 'start'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.start');
 
+// Private files and polled states (TASK-022; ROUTE-226, ROUTE-227, ROUTE-285): every active account reaches the
+// route, and the owning record or the page's query class decides at request time (DP-05; FL-07; PJ-08; PJ-15); a
+// denied and an unknown record answer alike (AZ-11). The download is the user's own request (RB-04); the thumbnail
+// and the status are background by their routes, reading the session and never extending it (RB-05; RV-06).
+Route::get('/berkas/{id}/unduh', [FileController::class, 'download'])->middleware(['auth', 'access:s0'])->name('doc.files.download');
+Route::get('/berkas/{id}/gambar-kecil', ['uses' => FileController::class.'@thumbnail', BackgroundRequest::ROUTE_FLAG => true])
+    ->middleware(['auth', 'access:s0'])
+    ->name('doc.files.thumbnail');
+Route::get('/status/{kind}/{id}', ['uses' => StatusController::class, BackgroundRequest::ROUTE_FLAG => true])
+    ->middleware(['auth', 'access:s0'])
+    ->name('status.show');
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's
 // search limiter.
