@@ -84,6 +84,12 @@ final class GuardReconciliation
             }
         }
 
+        foreach (Families::verifications() as $verification) {
+            foreach ((new Reconciler)->violations(DB::connection(), $verification) as $violation) {
+                $found[] = 'ReconcileGuards: '.json_encode($violation, JSON_THROW_ON_ERROR);
+            }
+        }
+
         return $found;
     }
 

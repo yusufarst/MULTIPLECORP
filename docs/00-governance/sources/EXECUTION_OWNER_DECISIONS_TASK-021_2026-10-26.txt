@@ -1,0 +1,13 @@
+Owner decisions received in session during execution, 2026-10-26 (WIB), Claude Code Desktop on the Owner's workstation, given as answers to the executor's structured questions and transcribed as received: each question as the executor asked it, then the option the Owner selected.
+
+--- Part 1: TASK-021's discoveries and readings (the executor's consolidated checkpoint) ---
+
+Question: TASK-021: format nomor dokumen (`format_template`) belum didefinisikan di dokumen mana pun (GAP-019 masih terbuka, contoh `ARJ/INV/2026/0141` hanya ilustrasi). Karena nomor adalah identitas legal dokumen, token apa yang boleh dipakai di template skema penomoran?
+Option shown and selected: Token lengkap (Rekomendasi) — Teks bebas ditambah token: {nomor} dengan padding opsional {nomor:4}, {tahun} (4 digit), {tahun2} (2 digit), {bulan} (01–12), {bulan_romawi} (I–XII). Template wajib memuat {nomor} tepat satu kali, dan token bulan hanya untuk skema bulanan. Contoh: `ARJ/INV/{tahun}/{nomor:4}` atau `{nomor:3}/SJ/{bulan_romawi}/{tahun}`.
+Answer: Token lengkap (Rekomendasi)
+
+Question: Raise setelah restore (DIR-083 OE-11): sumber tidak menetapkan bagaimana insiden diidentifikasi dan apa arti 'sekali per pemulihan'. Usul: Owner mengisi referensi restore (teks) dan recovery point (waktu). 'Pemulihan yang sama' berarti recovery point yang sama, dan raise kedua untuk counter yang sama di recovery point itu ditolak. Baris yang angkanya tidak menaikkan counter ditolak tanpa menulis apa pun. Counter periode live yang belum ada dibuat. Setuju?
+Answer: Setuju (Rekomendasi)
+
+Question: Bacaan lain dalam teks yang sudah disetujui, untuk TASK-021: (1) ROUTE-136/137 tanpa step-up (rute dan AU-15 tidak menyebutnya). (2) Go-live dibaca lewat satu antarmuka; nilainya 'belum dicatat' sampai TASK-077 menetapkan tempat simpannya (OF-04), jadi start dan seed ditolak sampai saat itu. (3) Perusahaan dikirim di payload, `{type}` ditulis seperti `doc-01`, `project`, `purchase`, dan ROUTE-137 membawa start, seed dan raise. (4) PURCHASE ikut ditampilkan di PG-061. (5) Kode audit start `ORG.NumberingStarted.DOC_01` dan seterusnya. (6) Family `number_sequences` didaftarkan sebagai verifikasi yang tidak pernah di-rebuild. (7) Pelanggaran backstop UNIQUE dipetakan ke SQ-19. (8) Teks pesan baru diusulkan lewat registry untuk review Owner. Setujui?
+Answer: Setujui semua (Rekomendasi)

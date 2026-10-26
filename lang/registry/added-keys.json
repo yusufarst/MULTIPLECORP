@@ -744,6 +744,516 @@
             "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "pages.pg_061.company": {
+            "task": "TASK-021",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-061",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.type": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.yearly": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.monthly": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.effective_from": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.granularity": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.template": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.template_hint": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.revision": {
+            "task": "TASK-021",
+            "source": "DATABASE §10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.revision_new_number": {
+            "task": "TASK-021",
+            "source": "DATABASE §10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.revision_base_suffix": {
+            "task": "TASK-021",
+            "source": "DATABASE §10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.example": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.no_scheme": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.add_scheme": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.change_scheme": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.save_scheme": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.backward": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.today_notice": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.counters": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.no_counters": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.period": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.next_number": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.boundary": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.go_live": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.go_live_missing": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.go_live_explained": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.batches": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.holds_seed_rows": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.batch_line": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.recording_day": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.first_number_of": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.statement_a": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2 (a)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.statement_b": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2 (b)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.statement_c": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2 (c)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.statement_d": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2 (d)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.acknowledge": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_061.start_title": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.start_consequence": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.seed_title": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.seed_consequence": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.seed_period": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.raise": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1; DIR-083 OE-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.raise_intro": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1; DIR-083 OE-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.restore_reference": {
+            "task": "TASK-021",
+            "source": "DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.recovery_point": {
+            "task": "TASK-021",
+            "source": "DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.highest_paper": {
+            "task": "TASK-021",
+            "source": "DIR-083 OE-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.add_period": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.raise_title": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.raise_consequence": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1; NM-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.raise_line": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_061.first_line": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.answer.configured": {
+            "task": "TASK-021",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.answer.started": {
+            "task": "TASK-021",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.answer.seeded": {
+            "task": "TASK-021",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.answer.raised": {
+            "task": "TASK-021",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.go_live": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "numbering.refusal.batch": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "numbering.refusal.before_go_live": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "numbering.refusal.past": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "numbering.refusal.batch_cutoff": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW §12.2",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "numbering.refusal.started": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.no_scheme": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.not_started": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.not_governed": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.live": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.has_counter": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.first_period": {
+            "task": "TASK-021",
+            "source": "NM-03; HO-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.in_force": {
+            "task": "TASK-021",
+            "source": "DATABASE §1 CF",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.same_date": {
+            "task": "TASK-021",
+            "source": "DATABASE §4.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.format": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.period": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.periods": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.raise_not_higher": {
+            "task": "TASK-021",
+            "source": "NX-01; DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.raise_not_live": {
+            "task": "TASK-021",
+            "source": "NX-01; DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.refusal.raise_repeated": {
+            "task": "TASK-021",
+            "source": "NX-01; DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.format.length": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.format.brace": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.format.month_in_year": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.format.token": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.format.number": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.validation.first_number": {
+            "task": "TASK-021",
+            "source": "NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.validation.required": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.validation.date": {
+            "task": "TASK-021",
+            "source": "ADMIN_FLOW IP-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.validation.instant": {
+            "task": "TASK-021",
+            "source": "DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "numbering.validation.reference": {
+            "task": "TASK-021",
+            "source": "DIR-098 D2",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

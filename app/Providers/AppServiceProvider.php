@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Services\NumberingGoLive;
+use App\Modules\ORG\Services\UnrecordedGoLive;
 use App\Support\Localization\Locales;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
     {
         // Memoized for one request or job only, never across them (PERMISSIONS_MATRIX AZ-03; SECURITY EN-02).
         $this->app->scoped(EffectiveCapabilities::class);
+
+        // Go-live is not recorded until TASK-077 binds the store P11Q-04 defines (NM-03; DIR-085 OF-04; TASK-021).
+        $this->app->bindIf(NumberingGoLive::class, UnrecordedGoLive::class);
     }
 
     private static function scalar(mixed $value): string
