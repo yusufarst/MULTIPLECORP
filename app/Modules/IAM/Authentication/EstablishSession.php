@@ -10,6 +10,7 @@ use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Closure;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 /**
  * The last step of ROUTE-101, after Fortify regenerated the session identifier (AU-06; H8-17), and of the
@@ -53,6 +54,14 @@ final class EstablishSession
 
         if (TwoFactorChallenge::enrolmentOnly($request)) {
             $session->put(RequireStepUp::CONFIRMED_AT, now()->getTimestamp());
+        }
+
+        // MSG-29 at the first sign-in after a credential or factor event of the account, read before this sign-in is
+        // recorded, shown once on the page it lands on (AU-13; H7-14; H7-18).
+        $notice = app(AccountEvents::class)->noticeSince($user);
+
+        if ($notice !== null) {
+            Inertia::flash(AccountEvents::NOTICE, $notice);
         }
 
         $this->events->record(SecurityEventKind::LoginSucceeded, userId: $user->id, routeName: $request->route()?->getName() ?? 'login.store', ipAddress: $request->ip(), userAgent: $request->userAgent(), details: ['session_method' => $detail ?? strtolower($method)]);
