@@ -3,12 +3,14 @@
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\RequireStepUp;
 use App\Http\Middleware\SessionDeadline;
+use App\Modules\IAM\Authentication\AttemptLogin;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use App\Modules\IAM\Authentication\LoginThrottle;
 use App\Modules\IAM\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
+use Tests\Support\HashProbe;
 use Tests\Support\RefreshDatabase;
 
 // TL-04 and TL-14 (TASK-017; SM-06–SM-08): ROUTE-101's sign-in without enumeration (AU-04) and its throttling
@@ -49,6 +51,55 @@ it('answers a wrong password, an unknown account and an inactive one alike, reco
     expect(events('LOGIN_FAILED'))->toBe(3)
         ->and(DB::table('security_events')->pluck('identifier_hash')->filter(fn ($hash) => str_contains((string) $hash, '@')))->toBeEmpty()
         ->and(auth()->check())->toBeFalse();
+});
+
+it('does the same hashing work for every failed case — one verification, no hash made, a hash of another algorithm included (AU-04; H9-11; criterion 1)', function () {
+    User::factory()->deactivated()->create(['email' => 'bayu@contoh.test', 'password' => 'Kata-Sandi-Uji-9']);
+    $old = User::factory()->create(['email' => 'lama@contoh.test']);
+    DB::table('users')->where('id', $old->id)->update(['password' => password_hash('Kata-Sandi-Uji-9', PASSWORD_BCRYPT)]);
+    $work = [];
+    // As the framework's verifier does, a hash of another algorithm is refused with an exception.
+    HashProbe::install(make: fn () => throw new LogicException('A failed sign-in makes no hash.'), check: function (string $value, ?string $hash) use (&$work) {
+        $algorithm = password_get_info((string) $hash)['algoName'];
+        $work[] = $algorithm;
+
+        if ($algorithm !== 'argon2id') {
+            throw new RuntimeException('This password does not use the Argon2id algorithm.');
+        }
+
+        return password_verify($value, (string) $hash);
+    });
+
+    foreach (['laras@contoh.test' => 'salah-sekali', 'tidak-ada@contoh.test' => 'Kata-Sandi-Uji-9', 'bayu@contoh.test' => 'Kata-Sandi-Uji-9'] as $email => $password) {
+        $work = [];
+        $this->postJson('/masuk', ['email' => $email, 'password' => $password])->assertStatus(422);
+        expect($work)->toBe(['argon2id']);
+    }
+
+    // The dummy verification still runs after the refused hash.
+    $work = [];
+    $this->postJson('/masuk', ['email' => 'lama@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertStatus(422);
+    expect($work)->toBe(['bcrypt', 'argon2id']);
+});
+
+it('generates the dummy hash from the configured driver and parameters, with no hashing of its own (AU-04; H9-11)', function () {
+    config(['hashing.argon.memory' => 19456, 'hashing.argon.time' => 2, 'hashing.argon.threads' => 1]);
+
+    $dummy = AttemptLogin::dummyHash();
+    expect(password_get_info($dummy))->toBe(['algo' => PASSWORD_ARGON2ID, 'algoName' => 'argon2id', 'options' => ['memory_cost' => 19456, 'time_cost' => 2, 'threads' => 1]])
+        ->and(password_verify('apa saja', $dummy))->toBeFalse()
+        ->and(AttemptLogin::dummyHash())->not->toBe($dummy);
+
+    config(['hashing.driver' => 'bcrypt', 'hashing.bcrypt.rounds' => 12]);
+    expect(password_get_info(AttemptLogin::dummyHash()))->toMatchArray(['algoName' => 'bcrypt', 'options' => ['cost' => 12]]);
+});
+
+it('bounds a signed-in session that has no sign-in time by the absolute limit from its next request (AU-07)', function () {
+    $this->actingAs($this->user)->getJson('/__test/halaman')->assertOk();
+    expect(session(SessionDeadline::SIGNED_IN_AT))->toBeInt();
+
+    $this->travel(SessionDeadline::ABSOLUTE_HOURS * 60 + 1)->minutes();
+    $this->getJson('/__test/halaman')->assertStatus(401);
 });
 
 it('signs in with the normalized e-mail, a new session identifier, the sign-in time and no remembering (AU-01, AU-06, AU-08)', function () {

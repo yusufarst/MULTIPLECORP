@@ -52,7 +52,9 @@ it('keeps each session as a PostgreSQL row with its account, ended by deleting t
 
 it('writes nothing to the session row for a background request (RV-06; HO-20)', function () {
     $this->postJson('/masuk', ['email' => 'laras@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertOk();
-    $id = (string) DB::table('sessions')->value('id');
+    // The store's garbage collection, a 2 % lottery, would delete a row this old; it is not what is tested.
+    config(['session.lottery' => [0, 100]]);
+    $id = (string) DB::table('sessions')->where('user_id', $this->user->id)->value('id');
     DB::table('sessions')->update(['last_activity' => 1_000]);
     $cookie = [(string) config('session.cookie') => $id];
 

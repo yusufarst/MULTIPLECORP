@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Authentication\BreachedPasswordCheck;
 use App\Modules\IAM\Authentication\CredentialLinks;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Models\Company;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\DB;
@@ -149,7 +151,7 @@ it('leaves neither the audit event nor the security event, nor the password, whe
         ->and(DB::table('credential_tokens')->whereNull('used_at')->count())->toBe(1);
 });
 
-it('limits a link\'s use per token hash and per address, never by the raw token (AU-12)', function () {
+it('limits a link\'s use per token hash and per address (AU-12; WS-12)', function () {
     $token = $this->links->issue($this->account, 'RESET', $this->owner->id);
 
     foreach (range(1, 5) as $attempt) {
@@ -158,4 +160,54 @@ it('limits a link\'s use per token hash and per address, never by the raw token 
 
     setPassword($token, 'Rapat-Gudang-24!')->assertStatus(429);
     expect(Hash::check('Rapat-Gudang-24!', (string) $this->account->fresh()?->password))->toBeFalse();
+
+    // Five more from the same address with a fresh token each fill the address's ten a minute.
+    foreach (range(1, 5) as $attempt) {
+        setPassword($this->links->issue(User::factory()->create(), 'RESET', $this->owner->id), 'pendek')->assertSessionHasErrors('password');
+    }
+
+    setPassword($this->links->issue(User::factory()->create(), 'RESET', $this->owner->id), 'Rapat-Gudang-24!')->assertStatus(429);
+});
+
+it('answers a used, expired or revoked link with MSG-28 before any password rule or range check (AU-12)', function () {
+    $token = $this->links->issue($this->account, 'RESET', $this->owner->id);
+    setPassword($token, 'Rapat-Gudang-24!')->assertSessionHasNoErrors();
+    Http::assertSentCount(1);
+
+    // A password with the account's name would tell a live link from a dead one; the dead one answers first.
+    setPassword($token, 'Pratama-Gudang-9')->assertSessionHasErrors(['token' => __('messages.msg_28')])->assertSessionDoesntHaveErrors('password');
+    Http::assertSentCount(1);
+});
+
+it('ends the session the browser held when its link sets a password — new identifier, no step-up kept (AU-06, AU-15)', function () {
+    $token = $this->links->issue($this->account, 'RESET', $this->owner->id);
+    $this->actingAs($this->owner)->withSession([RequireStepUp::CONFIRMED_AT => time()]);
+    $before = session()->getId();
+
+    setPassword($token, 'Rapat-Gudang-24!')->assertRedirect('/masuk')->assertSessionHas('auth.notice', 'password_saved');
+
+    expect(auth()->check())->toBeFalse()
+        ->and(session(RequireStepUp::CONFIRMED_AT))->toBeNull()
+        ->and(session()->getId())->not->toBe($before);
+});
+
+it('records the password\'s place in the audit event\'s before and after, its values redacted (RG-11; LG-03)', function () {
+    $token = $this->links->issue($this->account, 'RESET', $this->owner->id);
+
+    setPassword($token, 'Rapat-Gudang-24!')->assertSessionHasNoErrors();
+
+    $audit = DB::table('audit_events')->where('action', 'IAM.CredentialLinkConsumed')->first();
+    expect(json_decode((string) $audit?->before, true))->toBe(['password' => '[REDACTED]'])
+        ->and(json_decode((string) $audit?->after, true))->toBe(['password' => '[REDACTED]']);
+});
+
+it('purges the links past their expiry daily, keeping those still usable (AU-11; H9-04)', function () {
+    $this->links->issue($this->account, 'RESET', $this->owner->id);
+    $this->links->issue($this->owner, 'ONBOARDING', $this->account->id);
+    $this->travel(61)->minutes();
+
+    $this->artisan('credential-links:purge')->assertSuccessful();
+
+    expect(DB::table('credential_tokens')->pluck('purpose')->all())->toBe(['ONBOARDING'])
+        ->and(collect(app(Schedule::class)->events())->contains(fn ($event) => str_contains((string) $event->command, 'credential-links:purge') && $event->expression === '0 0 * * *'))->toBeTrue();
 });

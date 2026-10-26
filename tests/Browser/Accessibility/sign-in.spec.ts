@@ -11,7 +11,7 @@ for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 900 });
 
         await page.goto('/masuk');
-        await page.getByLabel('E-mail').fill('tidak-ada@contoh.test');
+        await page.getByLabel('E-mail').fill(`tidak-ada-${String(Date.now())}@contoh.test`);
         await page.getByLabel('Kata sandi', { exact: true }).fill('salah-sekali');
         await page.getByRole('button', { name: 'Masuk', exact: true }).click();
         await expect(page.getByText('E-mail atau kata sandi salah.')).toBeVisible();

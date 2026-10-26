@@ -12,6 +12,7 @@ use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -75,6 +76,10 @@ return Application::configure(basePath: dirname(__DIR__))
         // The session's limits are judged before the authentication middleware admits the request, so a session past
         // its absolute limit, of an inactive account or of a changed password is a guest's at once (AU-07, AU-09).
         $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: EnforceSessionLimits::class);
+    })
+    ->withSchedule(function (Schedule $schedule): void {
+        // The credential-link store's own purge (SECURITY AU-11; H9-04); the cron entry is TASK-072's.
+        $schedule->command('credential-links:purge')->daily();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).

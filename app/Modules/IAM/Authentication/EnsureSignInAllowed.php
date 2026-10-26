@@ -7,8 +7,9 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\Request;
 
 /**
- * The first step of ROUTE-101: an attempt inside a cooldown of SECURITY AU-05 is refused before any password is
- * checked, with MSG-20 and the minutes left — the throttled answer, which says nothing about the account.
+ * The first step of ROUTE-101: the attempt takes its place in AU-05's counts, and one inside a cooldown or past a
+ * full count is refused before any password is checked, with MSG-20 and the minutes left — the throttled answer,
+ * which says nothing about the account.
  */
 final class EnsureSignInAllowed
 {
@@ -19,7 +20,7 @@ final class EnsureSignInAllowed
      */
     public function handle(Request $request, Closure $next): mixed
     {
-        $seconds = $this->throttle->blockedFor($request, AttemptLogin::identifier($request->input('email')));
+        $seconds = $this->throttle->reserve($request, AttemptLogin::identifier($request->input('email')));
 
         if ($seconds > 0) {
             throw self::throttled($seconds);

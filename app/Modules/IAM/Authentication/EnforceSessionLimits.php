@@ -42,7 +42,14 @@ final class EnforceSessionLimits
 
         if ($user instanceof User) {
             $signedIn = $request->session()->get(SessionDeadline::SIGNED_IN_AT);
-            $expired = is_numeric($signedIn) && now()->getTimestamp() >= (int) $signedIn + SessionDeadline::ABSOLUTE_HOURS * 3600;
+
+            if (! is_numeric($signedIn)) {
+                // A session that missed its sign-in time is never unbounded: the limit counts from now (AU-07).
+                $signedIn = now()->getTimestamp();
+                $request->session()->put(SessionDeadline::SIGNED_IN_AT, $signedIn);
+            }
+
+            $expired = now()->getTimestamp() >= (int) $signedIn + SessionDeadline::ABSOLUTE_HOURS * 3600;
             $digest = self::digest($user);
             $stored = $request->session()->get(self::DIGEST);
             $sameAccount = is_array($stored) && ($stored['user'] ?? null) === $user->id;

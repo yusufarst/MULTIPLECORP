@@ -32,3 +32,8 @@ it('counts an IPv6 address by its /64 and an IPv4 address whole (AU-05)', functi
         ->and(LoginThrottle::addressKey('10.0.0.9'))->toBe('10.0.0.9')
         ->and(LoginThrottle::addressKey(null))->toBe('none');
 });
+
+it('counts an IPv4-mapped IPv6 address as its IPv4 address, not as one shared /64 (AU-05)', function () {
+    expect(LoginThrottle::addressKey('::ffff:10.0.0.9'))->toBe('10.0.0.9')
+        ->and(LoginThrottle::addressKey('::ffff:10.0.0.10'))->not->toBe(LoginThrottle::addressKey('::ffff:10.0.0.9'));
+});

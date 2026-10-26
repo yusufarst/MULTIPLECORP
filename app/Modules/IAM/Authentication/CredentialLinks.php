@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Authentication;
 
 use App\Modules\IAM\Models\User;
+use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
 use App\Support\SecurityLog\SecurityEventKind;
@@ -30,6 +31,7 @@ final class CredentialLinks
         private readonly SessionTerminator $sessions,
         private readonly SecurityEventRecorder $events,
         private readonly AuditRecorder $audit,
+        private readonly VerificationSlots $slots,
     ) {}
 
     /** A new link's token, shown once; the account's open link of the same purpose is revoked first (AU-11). */
@@ -60,19 +62,19 @@ final class CredentialLinks
 
     /**
      * Sets the password from a link, or answers null for an unknown, expired, used or revoked one alike (AU-12).
-     * The password passed the profile already — its range check outside this transaction (H6-15).
+     * The password passed the profile already — its range check outside this transaction (H6-15). As H6-11 orders
+     * it: the link looked up without a lock, the new hash computed within a slot of H6-12 outside any transaction,
+     * then one transaction — the account's row locked before the link's (D-CC-03), the link marked used only while
+     * it is unused, unrevoked and unexpired, so two concurrent submissions cannot both set a password.
+     *
+     * @throws VerificationRefused
      */
     public function consume(string $token, string $password, ?string $ipAddress, ?string $userAgent): ?User
     {
-        $used = DB::transaction(function () use ($token, $password) {
-            $link = DB::table('credential_tokens')->where('token_hash', self::hash($token))
-                ->whereNull('used_at')->whereNull('revoked_at')->where('expires_at', '>', now())
-                ->lockForUpdate()->first(['id', 'user_id', 'purpose']);
+        $link = $this->live($token);
+        $hash = $link === null ? null : $this->slots->unauthenticated('password.set', fn (): string => Hash::make($password));
 
-            if ($link === null) {
-                return null;
-            }
-
+        $used = $link === null || $hash === null ? null : DB::transaction(function () use ($link, $hash) {
             $account = User::query()->lockForUpdate()->find($link->user_id);
 
             if (! $account instanceof User || ! $account->is_active) {
@@ -80,11 +82,19 @@ final class CredentialLinks
             }
 
             $now = now();
-            DB::table('credential_tokens')->where('id', $link->id)->update(['used_at' => $now]);
+            $marked = DB::table('credential_tokens')->where('id', $link->id)
+                ->whereNull('used_at')->whereNull('revoked_at')->where('expires_at', '>', $now)
+                ->update(['used_at' => $now]);
+
+            if ($marked !== 1) {
+                return null;
+            }
+
             // Any password change voids every other open link of the account (AU-11).
             DB::table('credential_tokens')->where('user_id', $account->id)->where('id', '!=', $link->id)
                 ->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => $now]);
-            $account->forceFill(['password' => Hash::make($password)])->save();
+            $before = $account->password;
+            $account->forceFill(['password' => $hash])->save();
 
             $recovery = $link->purpose === 'OWNER_RECOVERY';
             $this->audit->record(
@@ -95,14 +105,16 @@ final class CredentialLinks
                 entityType: 'user',
                 entityId: $account->id,
                 entityPublicId: $account->public_id,
+                // The password's place in the before/after, its values redacted (RG-11; LG-03).
+                change: AuditChange::updated(['password' => $before], ['password' => $hash]),
                 metadata: ['purpose' => $link->purpose, 'credential_link' => $link->id],
             );
 
-            return [$account, is_string($link->purpose) ? $link->purpose : ''];
+            return [$account, $link->purpose];
         });
 
         if ($used === null) {
-            $this->events->record(SecurityEventKind::CredentialLinkRejected, routeName: 'password.set', ipAddress: $ipAddress, userAgent: $userAgent);
+            $this->rejected($ipAddress, $userAgent);
 
             return null;
         }
@@ -115,12 +127,41 @@ final class CredentialLinks
         return $account;
     }
 
-    /** The link's account for AU-03's personal-text rule; none for an unknown link, whose answer comes after. */
+    /**
+     * The account of a link that can still be used, for AU-03's personal-text rule; none for an unknown, expired,
+     * used or revoked link, which gets MSG-28 before any rule is checked (AU-12).
+     */
     public function accountFor(string $token): ?User
     {
-        $userId = DB::table('credential_tokens')->where('token_hash', self::hash($token))->value('user_id');
+        $link = $this->live($token);
 
-        return is_numeric($userId) ? User::query()->find((int) $userId) : null;
+        return $link === null ? null : User::query()->find($link->user_id);
+    }
+
+    /** CREDENTIAL_LINK_REJECTED for a link that sets no password, with nothing that tells its cases apart (AU-12; LG-02). */
+    public function rejected(?string $ipAddress, ?string $userAgent): void
+    {
+        $this->events->record(SecurityEventKind::CredentialLinkRejected, routeName: 'password.set', ipAddress: $ipAddress, userAgent: $userAgent);
+    }
+
+    /** Purges the links past their expiry — used, revoked or never used alike (AU-11; H9-04); answers how many. */
+    public function purgeExpired(): int
+    {
+        return DB::table('credential_tokens')->where('expires_at', '<=', now())->delete();
+    }
+
+    /** @return object{id: int, user_id: int, purpose: string}|null */
+    private function live(string $token): ?object
+    {
+        $link = DB::table('credential_tokens')->where('token_hash', self::hash($token))
+            ->whereNull('used_at')->whereNull('revoked_at')->where('expires_at', '>', now())
+            ->first(['id', 'user_id', 'purpose']);
+
+        if ($link === null || ! is_numeric($link->id) || ! is_numeric($link->user_id) || ! is_string($link->purpose)) {
+            return null;
+        }
+
+        return (object) ['id' => (int) $link->id, 'user_id' => (int) $link->user_id, 'purpose' => $link->purpose];
     }
 
     /** The keyed hash a token is kept and limited by — never the raw token (AU-11, AU-12). */
