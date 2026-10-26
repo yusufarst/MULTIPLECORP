@@ -1,0 +1,22 @@
+Owner decisions received in session during execution, 2026-10-27 (WIB), Claude Code Desktop on the Owner's workstation, given as answers to the executor's structured questions and transcribed as received: each question as the executor asked it, the options shown, then the option the Owner selected.
+
+--- Part 1: TASK-022's choices under DEP-07 and one reading (the executor's consolidated checkpoint) ---
+
+Question: Renderer PDF mana yang dipakai untuk rendition dokumen terbit (FL-08: tanpa JavaScript, tanpa jaringan, hanya aset lokal yang diizinkan, gratis)?
+Options shown:
+- WeasyPrint (Rekomendasi) — WeasyPrint 68.1 (BSD-3, paket Alpine), tanpa mesin JavaScript sama sekali; url_fetcher sendiri menolak jaringan & file di luar direktori aset; dukungan halaman cetak (@page A4, header berulang, nomor halaman) paling lengkap; image lebih kecil. Kelemahan: flex/grid terbatas sehingga template TASK-029 memakai CSS yang didukungnya; selisih vs pratinjau browser diukur P8.
+- Chromium headless — Chromium 155 (BSD-3); tata letak paling mirip pratinjau browser; JS dimatikan lewat flag, tetapi isolasi jaringan/file lebih sulit dijamin, image ~300 MB+, memori lebih besar di VPS bersama.
+- Dompdf (PHP murni) — LGPL-2.1, tanpa proses eksternal; hanya CSS 2.1 (tanpa flex/grid), sulit berbagi satu template dengan komposer browser.
+Answer: WeasyPrint (Rekomendasi)
+
+Question: Pustaka gambar untuk validasi, re-encode, dan thumbnail (FL-03/H9-12: hanya JPEG/PNG/WebP, tanpa delegate/coder lain, batas piksel/memori)?
+Options shown:
+- GD (Rekomendasi) — Ekstensi bawaan PHP; hanya decoder yang dipanggil eksplisit, tanpa delegate/coder/URL tidak langsung secara konstruksi; re-encode otomatis membuang EXIF; cukup untuk thumbnail.
+- ImageMagick (Imagick) — Lebih kaya fitur, tetapi permukaan serangan besar; aman hanya dengan policy.xml ketat yang harus dijaga.
+Answer: GD (Rekomendasi)
+
+Question: Job JB-03 (ekspor), JB-05 dan JB-07 (impor) dimiliki TASK-060/TASK-057. Bagaimana TASK-022 menangani JB-09 (OwedWorkSweeper) dan M-32 untuk ekspor/impor?
+Options shown:
+- Mekanisme + render (Rekomendasi) — TASK-022 membangun mekanisme bersama (versi payload, dispatch after-commit, unique/overlap lock, scheduler) beserta JB-01, JB-02, JB-04, JB-06 (jadwal), JB-08, dan sweeper JB-09 dengan titik pendaftaran; TASK-060/057 mendaftarkan job ekspor/impor dan menguji cabang M-32-nya. Dicatat sebagai reading.
+- Semua di TASK-022 — TASK-022 juga menulis kerangka GenerateExport/ValidateImportBatch/CommitImportRows tanpa isinya; berisiko abstraksi spekulatif dan tumpang tindih dengan kontrak TASK-057/060.
+Answer: Mekanisme + render (Rekomendasi)
