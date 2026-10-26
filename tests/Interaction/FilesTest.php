@@ -3,6 +3,7 @@
 use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentVersion;
+use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\DOC\Queries\ContentMatches;
@@ -12,6 +13,7 @@ use App\Modules\ORG\Models\Company;
 use Database\Factories\DOC\FileObjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\Files;
@@ -25,7 +27,12 @@ use Tests\Support\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+// A denial renders the not-found page through the shell's layout: a hot file stands in for the build, which these
+// suites precede in CI.
 beforeEach(function () {
+    $this->hotFile = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($this->hotFile, 'http://localhost:5173');
+    Vite::useHotFile($this->hotFile);
     Storage::fake('files');
     Authorization::catalogue();
     $this->company = Company::factory()->create();
@@ -62,7 +69,7 @@ it('authorizes each download at request time, so a capability revoked meanwhile 
     $company = Company::factory()->create();
     $file = FileObjectFactory::new()->create(['company_id' => $company->id, 'storage_disk' => 'files']);
     EvidenceDocumentVersion::factory()->create([
-        'evidence_document_id' => App\Modules\DOC\Models\EvidenceDocument::factory()->create(['company_id' => $company->id])->id,
+        'evidence_document_id' => EvidenceDocument::factory()->create(['company_id' => $company->id])->id,
         'file_object_id' => $file->id,
     ]);
     $companyId = $company->id;
@@ -91,4 +98,8 @@ it('answers the polled status as it changes, and a denied and an unknown version
     $denied->assertNotFound();
     $unknown->assertNotFound();
     expect($denied->json('message'))->toBe($unknown->json('message'));
+});
+
+afterEach(function () {
+    @unlink($this->hotFile);
 });

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\Files;
@@ -30,7 +31,12 @@ use Tests\Support\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
+// A denial renders the not-found page through the shell's layout: a hot file stands in for the build, which these
+// suites precede in CI.
 beforeEach(function () {
+    $this->hotFile = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($this->hotFile, 'http://localhost:5173');
+    Vite::useHotFile($this->hotFile);
     Storage::fake('files');
     Authorization::catalogue();
     $this->company = Company::factory()->create();
@@ -153,4 +159,8 @@ it('answers the status a page polls for a rendition, the file only to the family
         ->assertOk()->assertJsonPath('file', renditionFile($rendition)->public_id);
     $this->actingAs($family)->getJson("/status/tidak-ada/{$version->public_id}")->assertNotFound();
     $this->actingAs(Authorization::admin([Company::factory()->create()->id], ['projects.view']))->getJson("/status/rendisi/{$version->public_id}")->assertNotFound();
+});
+
+afterEach(function () {
+    @unlink($this->hotFile);
 });
