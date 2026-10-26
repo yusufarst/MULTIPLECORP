@@ -14,10 +14,11 @@ import { Input } from '@/components/ui/input';
 import { useTranslation } from '@/lib/i18n';
 import { documentTitle } from '@/lib/title';
 
-export default function SignIn({ notice }: { notice: string | null }) {
+export default function SignIn({ notice, email = null }: { notice: string | null; email?: string | null }) {
     const { locale, t } = useTranslation();
     const id = useId();
-    const form = useForm({ email: '', password: '' });
+    // The e-mail of a second-factor attempt left with "Kembali", or expired, is kept (NAV-002).
+    const form = useForm({ email: email ?? '', password: '' });
     const [forgot, setForgot] = useState(false);
 
     useEffect(() => {

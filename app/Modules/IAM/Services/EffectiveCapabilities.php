@@ -6,6 +6,7 @@ use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Data\CapabilityCatalogue;
 use App\Modules\IAM\Data\CompanyScope;
 use App\Modules\IAM\Enums\BuiltinRole;
+use App\Support\Audit\AuthorityClass;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -24,6 +25,9 @@ use LogicException;
  */
 final class EffectiveCapabilities
 {
+    /** K1's third criterion: the four views of money, cost, profit and evidence (AU-18). */
+    private const HIGH_RISK_VIEWS = ['finance.view', 'cost.view', 'profit.view', 'evidence.view'];
+
     /** @var array<int, Authority> */
     private array $memo = [];
 
@@ -47,6 +51,31 @@ final class EffectiveCapabilities
     public function fresh(int $userId): Authority
     {
         return $this->memo[$userId] = $this->read($userId);
+    }
+
+    /**
+     * SECURITY AU-18's high-risk test (K1), on the inputs this resolver reads for every request: an active
+     * account holding the OWNER role, or an effective ADM_PLUS capability, or one of `finance.view`,
+     * `cost.view`, `profit.view` and `evidence.view`. It decides which factor the account needs, never what it
+     * may do (AZ-13).
+     */
+    public function requiresTotp(int $userId): bool
+    {
+        $authority = $this->for($userId);
+
+        if (! $authority->active) {
+            return false;
+        }
+
+        foreach ($authority->capabilities as $code) {
+            if (in_array($code, self::HIGH_RISK_VIEWS, true) || CapabilityCatalogue::classOf($code) === AuthorityClass::AdmPlus) {
+                return true;
+            }
+        }
+
+        return DB::table('user_roles')->join('roles', 'roles.id', '=', 'user_roles.role_id')
+            ->where('user_roles.user_id', $userId)->where('roles.is_builtin', true)->where('roles.code', BuiltinRole::Owner->value)
+            ->exists();
     }
 
     /** Forgets every memoized authority. */

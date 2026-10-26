@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Modules\IAM\Authentication\TwoFactorChallenge;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Queries\CompanyDirectory;
@@ -68,6 +69,11 @@ class HandleInertiaRequests extends Middleware
 
         if (! $user instanceof User) {
             return ['name' => null, 'capabilities' => [], 'companies' => []];
+        }
+
+        // AU-18's enrolment-only session receives the display name alone, with the locale (WS-07).
+        if (TwoFactorChallenge::enrolmentOnly($request)) {
+            return ['name' => $user->name, 'capabilities' => [], 'companies' => []];
         }
 
         $authority = app(EffectiveCapabilities::class)->for($user);

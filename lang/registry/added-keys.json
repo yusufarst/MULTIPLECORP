@@ -690,6 +690,54 @@
             "source": "INFORMATION_ARCHITECTURE §8.1 PG-003",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "pages.pg_002.use_code": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.scan": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.key_label": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.submit": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.confirm_submit": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 6; AU-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_heading": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_line": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.continue": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

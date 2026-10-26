@@ -108,6 +108,30 @@ final class SecurityEventRecorder
     }
 
     /**
+     * Writes an event now, before the step answers, and throws when it cannot be written: the second-factor
+     * limit's TWO_FACTOR_FAILED and TWO_FACTOR_COOLDOWN_STARTED, which the limit's durable floor is read from,
+     * so a step whose event is lost is refused (SECURITY AU-05; fail closed). Called outside any transaction.
+     *
+     * @param  array<string, mixed>  $details
+     *
+     * @throws SecurityEventNotWritten
+     */
+    public function recordDurably(SecurityEventKind $kind, int $userId, ?string $reasonCode = null, ?string $routeName = null, ?string $ipAddress = null, ?string $userAgent = null, array $details = []): void
+    {
+        if (Transactions::applicationOpen()) {
+            throw new LogicException("{$kind->value} is written before the step answers, outside its transaction (AU-05).");
+        }
+
+        $occurredAt = CarbonImmutable::now();
+        $this->write($kind, fn (): array => [
+            ...$this->common($occurredAt, $kind, $userId, $reasonCode, null, $ipAddress, $userAgent, $details),
+            'actor_user_id' => null,
+            'route_name' => $routeName === null ? null : Redaction::neutralize($routeName),
+            'identifier_hash' => null,
+        ], strict: true);
+    }
+
+    /**
      * Writes one of the two TECH-022 kinds once its command's outcome is durable: after the open
      * transaction commits — never if it rolls back — or at once when none is open, as one insert under
      * the partial UNIQUE key (`event_kind`, `command_id`, `related_public_id`) with ON CONFLICT DO NOTHING,
@@ -208,7 +232,7 @@ final class SecurityEventRecorder
     /**
      * @param  callable(): array<string, mixed>  $row
      */
-    private function write(SecurityEventKind $kind, callable $row, bool $ignoreConflict = false): void
+    private function write(SecurityEventKind $kind, callable $row, bool $ignoreConflict = false, bool $strict = false): void
     {
         try {
             $values = $row();
@@ -224,6 +248,10 @@ final class SecurityEventRecorder
                 $ignoreConflict ? $table->insertOrIgnore($values) : $table->insert($values);
             });
         } catch (Throwable $e) {
+            if ($strict) {
+                throw new SecurityEventNotWritten($kind->value, previous: $e);
+            }
+
             Log::error('A security event could not be written (LG-02).', [
                 'event_kind' => $kind->value,
                 'correlation_id' => CorrelationId::current(),
