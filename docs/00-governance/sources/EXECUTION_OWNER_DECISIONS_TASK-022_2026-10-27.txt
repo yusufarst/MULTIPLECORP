@@ -20,3 +20,25 @@ Options shown:
 - Mekanisme + render (Rekomendasi) — TASK-022 membangun mekanisme bersama (versi payload, dispatch after-commit, unique/overlap lock, scheduler) beserta JB-01, JB-02, JB-04, JB-06 (jadwal), JB-08, dan sweeper JB-09 dengan titik pendaftaran; TASK-060/057 mendaftarkan job ekspor/impor dan menguji cabang M-32-nya. Dicatat sebagai reading.
 - Semua di TASK-022 — TASK-022 juga menulis kerangka GenerateExport/ValidateImportBatch/CommitImportRows tanpa isinya; berisiko abstraksi spekulatif dan tumpang tindih dengan kontrak TASK-057/060.
 Answer: Mekanisme + render (Rekomendasi)
+
+--- Part 2: the lock-order rows the runtime role cannot lock (the executor's question on a discovery) ---
+
+Question: Temuan TASK-022: LK-30 mengunci baris `documents` (FOR NO KEY UPDATE), tetapi DATABASE §28 hanya memberi runtime role SELECT/INSERT pada `documents`. PostgreSQL hanya mengizinkan row lock bagi role yang punya UPDATE pada suatu kolom, jadi JB-01 (dan nanti issue/void TASK-029) ditolak. Usul (pola DIR-097): runtime role diberi UPDATE pada satu kolom `documents.mode` khusus untuk row lock LK-30, dengan trigger `documents_unchanged` yang menolak setiap update baris dokumen. Migration expand-only, tanpa mengubah baris. Setuju?
+Options shown:
+- Setuju (Rekomendasi) — Kunci tersedia, tidak ada nilai yang bisa diubah; teks DATABASE §28, TASK-022 (DATABASE IMPACT) dan TASK_PLAN diamandemen secara sempit, teksnya ditunjukkan untuk disetujui terpisah seperti APPR-025.
+- Kunci lewat versi saja — JB-01 mengunci `document_versions` lalu rendition tanpa baris `documents`; menyimpang dari urutan LK-30 kanonis dan butuh amandemen CONCURRENCY_IDEMPOTENCY.
+Answer: Setuju (Rekomendasi)
+
+Question: Pemeriksaan yang sama menemukan dua tabel lain di urutan kunci yang juga tidak bisa dikunci runtime role: `document_types` (LK-08) dan `opening_customer_credits` (LK-26). Keduanya belum dipakai TASK-022. Bagaimana penanganannya?
+Options shown:
+- Sekaligus sekarang (Rekomendasi) — Satu amandemen dan satu migration untuk ketiga tabel (pola yang sama: UPDATE satu kolom untuk row lock + trigger penolak), supaya TASK-029/TASK-057 tidak tersandung lagi.
+- Catat untuk Task-nya — TASK-022 hanya memperbaiki `documents`; dua tabel lain dicatat di CURRENT_HANDOFF sebagai temuan untuk TASK-029 dan TASK-057.
+Answer: Sekaligus sekarang (Rekomendasi)
+
+--- Part 3: the approval of the canonical text (APPR-026), after the executor showed W1–W4 in full ---
+
+Question: Setujui teks kanonis W1–W4 di atas sebagai APPR-026 (amandemen sempit Level 1 untuk DIR-099: DATABASE §28 dan header-nya, TASK-022, TASK_PLAN Change 14)?
+Options shown:
+- Setujui W1–W4 (Rekomendasi) — Teks diterapkan persis seperti ditampilkan dan dicatat sebagai APPR-026 di DECISION_LOG beserta transkripnya (part 3).
+- Perlu perubahan — Sebutkan bagian yang perlu diubah; teks direvisi dan ditunjukkan lagi sebelum disetujui.
+Answer: Setujui W1–W4 (Rekomendasi)

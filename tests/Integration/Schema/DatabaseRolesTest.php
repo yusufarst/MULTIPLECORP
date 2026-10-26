@@ -285,9 +285,9 @@ it('lets the runtime role lock a document, a document type and an opening credit
 
     expect(DB::transaction(fn () => DB::table('documents')->where('id', $document->id)->lock('for no key update')->value('mode')))->toBe('STANDARD')
         ->and(DB::transaction(fn () => DB::table('document_types')->where('code', $document->document_type_code)->lock('for no key update')->value('code')))->toBe($document->document_type_code);
-    Refusal::assert(Refusal::CHECK, 'documents_lock_only', fn () => DB::table('documents')->where('id', $document->id)->update(['mode' => 'STANDARD']));
-    Refusal::assert(Refusal::CHECK, 'document_types_lock_only', fn () => DB::table('document_types')->where('code', $document->document_type_code)->update(['is_numbered' => true]));
+    Refusal::assert(Refusal::CHECK, 'documents_unchanged', fn () => DB::table('documents')->where('id', $document->id)->update(['mode' => 'STANDARD']));
+    Refusal::assert(Refusal::CHECK, 'document_types_unchanged', fn () => DB::table('document_types')->where('code', $document->document_type_code)->update(['is_numbered' => true]));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table documents', fn () => DB::table('documents')->where('id', $document->id)->update(['company_id' => 1]));
     Refusal::assert(Refusal::PRIVILEGE, 'permission denied for table opening_customer_credits', fn () => DB::table('opening_customer_credits')->update(['amount' => 1]));
-    expect(DB::selectOne("select count(*) as n from information_schema.triggers where trigger_name = 'opening_customer_credits_lock_only'")->n)->toBeGreaterThan(0);
+    expect(DB::selectOne("select count(*) as n from information_schema.triggers where trigger_name = 'opening_customer_credits_unchanged'")->n)->toBeGreaterThan(0);
 });

@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-27 the Owner's decision [DIR-099](../00-governance/DECISION_LOG.md#dir-099--task-022s-choices) changes two lines of the DATABASE IMPACT ASSESSMENT: the runtime role's `UPDATE` of `documents.mode`, `document_types.is_numbered` and `opening_customer_credits.import_row_id`, for the row locks of LK-30, LK-08 and LK-26 alone, and a trigger on each refusing every update of its rows, by the migration `2026_10_27_000143`; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** READY
@@ -106,8 +108,8 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses TASK-005 and TASK-006
-- Migration required: NO
+- Schema change: a privilege only — the runtime role's `UPDATE` of `documents.mode`, `document_types.is_numbered` and `opening_customer_credits.import_row_id`, so that it can take the row locks of LK-30, LK-08 and LK-26, and a trigger on each refusing every update of its rows (DIR-099); no table or column — otherwise uses TASK-005 and TASK-006
+- Migration required: YES — one expand-only, privilege-only migration, `2026_10_27_000143`, touching no row (DIR-099)
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
 - Data-loss risk: NONE KNOWN

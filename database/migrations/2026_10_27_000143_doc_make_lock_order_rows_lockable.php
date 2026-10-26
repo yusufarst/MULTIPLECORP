@@ -23,7 +23,7 @@ return new class extends Migration
     {
         foreach (self::TABLES as $table => [$column, $lock]) {
             TableRules::for($table)->grantUpdate([$column]);
-            $name = "{$table}_lock_only";
+            $name = "{$table}_unchanged";
 
             DB::unprepared(<<<SQL
                 create or replace function {$name}() returns trigger
@@ -44,8 +44,8 @@ return new class extends Migration
     public function down(): void
     {
         foreach (self::TABLES as $table => [$column]) {
-            DB::statement("drop trigger {$table}_lock_only on {$table}");
-            DB::statement("drop function {$table}_lock_only()");
+            DB::statement("drop trigger {$table}_unchanged on {$table}");
+            DB::statement("drop function {$table}_unchanged()");
             DB::statement("revoke update ({$column}) on table {$table} from ".DatabaseRole::RUNTIME);
         }
     }
