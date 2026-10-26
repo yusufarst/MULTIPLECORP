@@ -24,7 +24,16 @@ final class GoogleFixture
     /** Called as the fixture routes load: arms the fake for the requests of an armed run. */
     public static function apply(): void
     {
-        $armed = Cache::get(self::KEY);
+        // Routes also load in the console — package discovery among them, where no store may be up yet.
+        if (app()->runningInConsole()) {
+            return;
+        }
+
+        try {
+            $armed = Cache::get(self::KEY);
+        } catch (\Throwable) {
+            return;
+        }
 
         if (! is_array($armed)) {
             return;
