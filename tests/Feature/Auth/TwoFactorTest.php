@@ -9,6 +9,7 @@ use App\Modules\IAM\Authentication\TwoFactorChallenge;
 use App\Modules\IAM\Authentication\TwoFactorSteps;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Models\Company;
+use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
@@ -191,7 +192,27 @@ it('doubles the cooldown at the next breach within 24 hours, and a success reset
     expect(DB::table('security_events')->where('event_kind', 'TWO_FACTOR_COOLDOWN_STARTED')->orderBy('id')->pluck('details')->map(fn ($d) => json_decode((string) $d, true)['cooldown_seconds'])->all())->toBe([60, 120]);
 });
 
-it('keeps the count and the cooldown through a loss of the limiter store, from the durable floor (AU-05; IX-19)', function () {
+it('keeps the count through a loss of the limiter store, from the durable floor: two more failures breach (AU-05; IX-19)', function () {
+    $fail = function (int $attempt) {
+        signInWithPassword();
+        $this->withServerVariables(['REMOTE_ADDR' => "10.9.0.{$attempt}"])->postJson('/masuk/verifikasi', ['code' => '000000'])->assertStatus(422);
+        $this->get('/masuk');
+    };
+
+    foreach (range(1, 3) as $attempt) {
+        $fail($attempt);
+    }
+
+    Cache::store('array')->flush();
+
+    foreach (range(4, 5) as $attempt) {
+        $fail($attempt);
+    }
+
+    expect(securityEvents('TWO_FACTOR_COOLDOWN_STARTED'))->toBe(1);
+});
+
+it('keeps the cooldown through a loss of the limiter store, from the durable floor (AU-05; IX-19)', function () {
     foreach (range(1, SecondFactorLimit::THRESHOLD) as $attempt) {
         signInWithPassword();
         $this->postJson('/masuk/verifikasi', ['code' => '000000']);
@@ -240,7 +261,7 @@ it('confirms the enrolment with one code: the four fields together, eight codes 
     $key = str_replace(' ', '', (string) $page->viewData('page')['flash']['key']);
     expect($key)->toMatch('/^[A-Z2-7]{32}$/')
         ->and(DB::table('users')->where('id', $owner->id)->value('two_factor_secret'))->toBeNull()
-        ->and(json_encode(session()->all()))->not->toContain($key);
+        ->and(json_encode(session()->all()))->not->toContain($key)->not->toContain((string) $page->viewData('page')['flash']['key']);
 
     $this->post('/verifikasi-dua-langkah', ['code' => '000000'])->assertSessionHasErrors(['code' => __('auth.code_mismatch')]);
     $answer = $this->post('/verifikasi-dua-langkah', ['code' => TwoFactor::code($key)])->assertOk();
@@ -340,4 +361,48 @@ it('counts failed codes alone toward the address\'s throttle, so successes from 
     }
 
     expect(DB::table('security_events')->where('event_kind', 'LOGIN_SUCCEEDED')->count())->toBe(7);
+});
+
+it('ends a session established under an enrolment that has since been replaced (AU-06; TOTP_CHANGED)', function () {
+    signInWithPassword();
+    $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+    $this->getJson('/__test/halaman')->assertOk();
+
+    // Another session of the account replaces the device: a new confirmation time.
+    DB::table('users')->where('id', $this->user->id)->update(['two_factor_confirmed_at' => now()]);
+    auth()->forgetGuards();
+
+    $this->getJson('/__test/halaman')->assertUnauthorized();
+    expect(DB::table('security_events')->where('event_kind', 'SESSION_INVALIDATED')->value('reason_code'))->toBe('TOTP_CHANGED');
+});
+
+it('leaves neither the audit event nor the security event, nor the code\'s removal, when a recovery-code use rolls back (CI-09; LG-01; criterion 5)', function () {
+    signInWithPassword();
+    DB::listen(function ($query) {
+        if (str_contains($query->sql, 'insert into "audit_events"')) {
+            throw new RuntimeException('the step fails after its audit row');
+        }
+    });
+
+    expect(fn () => $this->withoutExceptionHandling()->postJson('/masuk/verifikasi/pemulihan', ['recovery_code' => TwoFactor::CODES[5]]))->toThrow(RuntimeException::class);
+
+    expect(DB::table('audit_events')->where('action', 'IAM.RecoveryCodeUsed')->count())->toBe(0)
+        ->and(securityEvents('RECOVERY_CODE_USED'))->toBe(0)
+        ->and(TwoFactor::storedCodes($this->user))->toHaveCount(8);
+});
+
+it('reads secrets encrypted under a retired key from APP_PREVIOUS_KEYS, and encrypts new ones under the current key (AU-21; SM-21)', function () {
+    $old = config('app.key');
+    $new = 'base64:'.base64_encode(random_bytes(32));
+    config(['app.key' => $new, 'app.previous_keys' => [$old]]);
+    app()->forgetInstance('encrypter');
+    Crypt::clearResolvedInstance('encrypter');
+
+    signInWithPassword();
+    $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+
+    // The new enrolment's ciphertext is the current key's: readable without the retired one.
+    $fresh = new Encrypter(base64_decode(substr($new, 7)), config('app.cipher'));
+    $ciphertext = Crypt::encryptString(TwoFactor::SECRET);
+    expect($fresh->decryptString($ciphertext))->toBe(TwoFactor::SECRET);
 });

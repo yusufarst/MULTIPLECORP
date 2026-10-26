@@ -23,5 +23,5 @@ it('signs in reading only the account, its authority, the session and the securi
     $tables = collect($queries)->flatMap(fn (array $query): array => preg_match_all('/(?:from|into|update|join)\s+"?([a-z_]+)"?/i', $query['query'], $match) > 0 ? $match[1] : [])->unique()->sort()->values()->all();
 
     expect($tables)->toBe(['capabilities', 'role_capabilities', 'roles', 'security_events', 'sessions', 'user_capability_grants', 'user_company_grants', 'user_roles', 'users'])
-        ->and(count($queries))->toBeLessThanOrEqual(12);
+        ->and(count($queries))->toBeLessThanOrEqual(9);
 });

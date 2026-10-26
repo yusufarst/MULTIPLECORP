@@ -145,6 +145,10 @@ final class SecondFactorLimit
     public function failed(SecondFactorPlace $place, string $path, Request $request): bool
     {
         try {
+            $route = $request->route();
+            $common = ['userId' => $place->userId, 'routeName' => $route instanceof Route ? $route->getName() : null, 'ipAddress' => $request->ip(), 'userAgent' => $request->userAgent()];
+            // Written first: the durable floor holds every evaluated failure, whatever the store does next.
+            $this->events->recordDurably(SecurityEventKind::TwoFactorFailed, ...$common, details: ['path' => $path, 'submission_id' => $place->submission, 'place_time' => $place->placeTime]);
             $now = self::nowMs();
             $breach = $this->atomically($place->userId, function (array $entry) use ($place, $now): array {
                 $entry = self::trim($entry, $now);
@@ -170,10 +174,6 @@ final class SecondFactorLimit
 
                 return [$entry, ['level' => $level, 'seconds' => $seconds]];
             });
-
-            $route = $request->route();
-            $common = ['userId' => $place->userId, 'routeName' => $route instanceof Route ? $route->getName() : null, 'ipAddress' => $request->ip(), 'userAgent' => $request->userAgent()];
-            $this->events->recordDurably(SecurityEventKind::TwoFactorFailed, ...$common, details: ['path' => $path, 'submission_id' => $place->submission, 'place_time' => $place->placeTime]);
 
             if ($breach === []) {
                 return false;

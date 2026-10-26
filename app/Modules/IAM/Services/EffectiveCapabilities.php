@@ -73,9 +73,7 @@ final class EffectiveCapabilities
             }
         }
 
-        return DB::table('user_roles')->join('roles', 'roles.id', '=', 'user_roles.role_id')
-            ->where('user_roles.user_id', $userId)->where('roles.is_builtin', true)->where('roles.code', BuiltinRole::Owner->value)
-            ->exists();
+        return $authority->ownerRole;
     }
 
     /** Forgets every memoized authority. */
@@ -150,7 +148,7 @@ final class EffectiveCapabilities
 
         sort($effective);
 
-        return new Authority($userId, true, $effective, $scope);
+        return new Authority($userId, true, $effective, $scope, $rows->contains(fn (object $row): bool => $row->owner_role === true));
     }
 
     /**

@@ -2,11 +2,11 @@
 // the enrolment-only session's single path. The QR code and the text key come as flash data — never a page prop kept
 // in history — and only during the enrolment; one code confirms; past 15 minutes the password is confirmed again
 // first (AU-15; H7-15); the eight recovery codes are then shown once, as flash data, and "Lanjutkan" loads the
-// landing page as a full document. "Keluar" ends the session. The history is cleared here (H7-12).
+// landing page as a full document. "Keluar" ends the session. The history is cleared here (H7-12). Inside the
+// session the account's own language applies, so the page has no language switch (AU-13).
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useId, useState } from 'react';
 
-import LanguageSwitch from '@/components/LanguageSwitch';
 import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
@@ -93,9 +93,6 @@ export default function TotpEnrolment({ stage, replacing }: { stage: 'enrol' | '
     return (
         <main id="konten" className="mx-auto flex min-h-dvh w-full max-w-sheet-sm flex-col gap-6 bg-canvas px-m-gutter py-8">
             <Head title={documentTitle(t('pages.pg_004.title'))} />
-            <div className="flex justify-end">
-                <LanguageSwitch />
-            </div>
             <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_004.heading')}</h1>
             {replacing && <p className="text-body text-text-primary">{t('pages.pg_004.reset_line')}</p>}
             <p className="text-body text-text-secondary">{t('pages.pg_004.scan')}</p>

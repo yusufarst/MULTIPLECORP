@@ -27,6 +27,12 @@ final class EnforceSessionLimits
     /** RV-10's password digest of the session's account, so a password changed elsewhere ends this session. */
     public const DIGEST = 'auth.password_digest';
 
+    /**
+     * AU-06's keyed digest of the account's enrolment, its `two_factor_confirmed_at`, so a session established under
+     * an enrolment since confirmed anew, replaced, reset, disabled or voided ends.
+     */
+    public const FACTOR = 'auth.factor_digest';
+
     /** The routes AU-18's enrolment-only session reaches. */
     public const ENROLMENT_ROUTES = ['two-factor.enrolment', 'two-factor.enrolment.confirm', 'password.confirm', 'logout'];
 
@@ -43,12 +49,28 @@ final class EnforceSessionLimits
         return hash_hmac('sha256', $user->getAuthPassword(), is_string($key) ? $key : '');
     }
 
+    /** A keyed digest of the account's enrolment state — its confirmation time, or none (AU-06). */
+    public static function factorDigest(User $user): string
+    {
+        $key = config('app.key');
+        $confirmed = $user->getRawOriginal('two_factor_confirmed_at');
+
+        return hash_hmac('sha256', 'factor|'.(is_string($confirmed) ? $confirmed : ''), is_string($key) ? $key : '');
+    }
+
     /**
      * @param  Closure(Request): Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
         $user = $request->hasSession() ? Auth::guard('web')->user() : null;
+
+        // AU-16: an enrolment's secret is held for 15 minutes at most, then dropped from the session.
+        $enrolment = $request->hasSession() ? $request->session()->get(TwoFactorSteps::ENROLMENT) : null;
+
+        if (is_array($enrolment) && (! is_int($enrolment['expires_at'] ?? null) || $enrolment['expires_at'] <= now()->getTimestamp())) {
+            $request->session()->forget(TwoFactorSteps::ENROLMENT);
+        }
 
         if ($user instanceof User) {
             $signedIn = $request->session()->get(SessionDeadline::SIGNED_IN_AT);
@@ -64,12 +86,17 @@ final class EnforceSessionLimits
             $stored = $request->session()->get(self::DIGEST);
             $sameAccount = is_array($stored) && ($stored['user'] ?? null) === $user->id;
             $passwordChanged = $sameAccount && ! hash_equals(is_string($stored['digest'] ?? null) ? $stored['digest'] : '', $digest);
+            $factor = self::factorDigest($user);
+            $storedFactor = $request->session()->get(self::FACTOR);
+            $sameFactorAccount = is_array($storedFactor) && ($storedFactor['user'] ?? null) === $user->id;
+            $factorChanged = $sameFactorAccount && ! hash_equals(is_string($storedFactor['digest'] ?? null) ? $storedFactor['digest'] : '', $factor);
 
             // The account as stored: a session's user is read from the database, so `false` is a deactivation.
             $reason = match (true) {
                 $expired => 'ABSOLUTE_LIMIT',
                 $user->getAttribute('is_active') === false => 'INACTIVE_ACCOUNT',
                 $passwordChanged => 'PASSWORD_CHANGED',
+                $factorChanged => 'TOTP_CHANGED',
                 $this->needsTotp($request, $user) => 'TOTP_REQUIRED',
                 default => null,
             };
@@ -82,6 +109,10 @@ final class EnforceSessionLimits
             } else {
                 if (! $sameAccount) {
                     $request->session()->put(self::DIGEST, ['user' => $user->id, 'digest' => $digest]);
+                }
+
+                if (! $sameFactorAccount) {
+                    $request->session()->put(self::FACTOR, ['user' => $user->id, 'digest' => $factor]);
                 }
 
                 if (TwoFactorChallenge::enrolmentOnly($request) && ! in_array($request->route()?->getName(), self::ENROLMENT_ROUTES, true)) {

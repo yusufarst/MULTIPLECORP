@@ -14,7 +14,7 @@ use Illuminate\Http\Request;
 /**
  * The last step of ROUTE-101, after Fortify regenerated the session identifier (AU-06; H8-17), and of the
  * second-factor steps that establish a session (ROUTE-104, ROUTE-105): the sign-in time the absolute limit
- * counts from (AU-07; UXH-11), RV-10's password digest, how the session was established — PASSWORD or TOTP
+ * counts from (AU-07; UXH-11), RV-10's password digest and AU-06's digest of the enrolment, how the session was established — PASSWORD or TOTP
  * (AU-18) —, the account's language read into the session (AU-13; RB-10), and LOGIN_SUCCEEDED recorded (AU-04;
  * LG-02). An enrolment-only session counts the password step that opened it as the password confirmation for
  * 15 minutes (AU-15, AU-18; H7-15).
@@ -47,6 +47,7 @@ final class EstablishSession
         $session = $request->session();
         $session->put(SessionDeadline::SIGNED_IN_AT, now()->getTimestamp());
         $session->put(EnforceSessionLimits::DIGEST, ['user' => $user->id, 'digest' => EnforceSessionLimits::digest($user)]);
+        $session->put(EnforceSessionLimits::FACTOR, ['user' => $user->id, 'digest' => EnforceSessionLimits::factorDigest($user)]);
         $session->put(TwoFactorChallenge::METHOD, $method);
         $session->put(Locales::SESSION_KEY, Locales::supported($user->locale) ?? Locales::DEFAULT);
 

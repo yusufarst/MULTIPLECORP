@@ -2,6 +2,7 @@
 
 namespace App\Modules\IAM\Authentication;
 
+use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Audit\AuditChange;
@@ -44,6 +45,13 @@ final class TwoFactorSteps
 
     public const ENROLMENT_SECONDS = 900;
 
+    /** A code step's transaction: the code accepted, the step void by a state changed meanwhile, or the code stale. */
+    public const ACCEPTED = 'ACCEPTED';
+
+    public const VOID = 'VOID';
+
+    public const STALE = 'STALE';
+
     public function __construct(
         private readonly Totp $totp,
         private readonly SecondFactorLimit $limit,
@@ -81,18 +89,13 @@ final class TwoFactorSteps
 
         $path = $challenge['purpose'] === TwoFactorChallenge::PURPOSE_GOOGLE ? SecondFactorLimit::PATH_GOOGLE : SecondFactorLimit::PATH_PASSWORD;
         $step = $this->totp->stepOf(self::secretOf($user), $code, self::lastStepOf($user));
-        $accepted = $step !== null && DB::transaction(function () use ($user, $challenge, $step): bool {
-            $row = User::query()->lockForUpdate()->find($user->id);
+        $result = $step === null ? self::STALE : $this->acceptCode($user, $challenge['digest'], $step);
 
-            if (! $row instanceof User || $row->getAttribute('is_active') !== true || ! self::sameSecret($row, $user)
-                || ! hash_equals($challenge['digest'], TwoFactorChallenge::digest($row))) {
-                return false;
-            }
+        if ($result === self::VOID) {
+            return $this->voided($request, $place);
+        }
 
-            return DB::table('users')->where('id', $row->id)->where('two_factor_last_step', '<', $step)->update(['two_factor_last_step' => $step]) === 1;
-        });
-
-        if (! $accepted) {
+        if ($result !== self::ACCEPTED) {
             return $this->failure($request, $place, $path);
         }
 
@@ -101,6 +104,28 @@ final class TwoFactorSteps
         $this->signIn($request, $user, EstablishSession::TOTP);
 
         return app(LoginResponse::class)->toResponse($request);
+    }
+
+    /**
+     * RV-12's acceptance of a code's step, in one transaction under the account row lock: the account active, its
+     * secret the one the code was checked against — its confirmation time unchanged — and its factor state the
+     * challenge's, else VOID; then one conditional update of `two_factor_last_step` to the later step, so one code
+     * passes once, in sequence and concurrently (M-39) — no row matched is STALE.
+     */
+    public function acceptCode(User $seen, string $challengeDigest, int $step): string
+    {
+        return DB::transaction(function () use ($seen, $challengeDigest, $step): string {
+            $row = User::query()->lockForUpdate()->find($seen->id);
+
+            if (! $row instanceof User || $row->getAttribute('is_active') !== true || ! self::sameSecret($row, $seen)
+                || ! hash_equals($challengeDigest, TwoFactorChallenge::digest($row))) {
+                return self::VOID;
+            }
+
+            return DB::table('users')->where('id', $row->id)->where('two_factor_last_step', '<', $step)->update(['two_factor_last_step' => $step]) === 1
+                ? self::ACCEPTED
+                : self::STALE;
+        });
     }
 
     /** ROUTE-105: a recovery code at a challenge after a password (AU-19; AU-20 b). */
@@ -128,12 +153,41 @@ final class TwoFactorSteps
         }
 
         $submitted = trim($code);
-        $sessionId = $request->session()->getId();
-        $used = $submitted !== '' && DB::transaction(function () use ($user, $challenge, $submitted, $sessionId): bool {
-            $row = User::query()->lockForUpdate()->find($user->id);
+        $result = $submitted === '' ? self::STALE : $this->consumeRecoveryCode($user, $challenge['digest'], $submitted, $request->session()->getId());
 
-            if (! $row instanceof User || $row->getAttribute('is_active') !== true || ! hash_equals($challenge['digest'], TwoFactorChallenge::digest($row))) {
-                return false;
+        if ($result === self::VOID) {
+            return $this->voided($request, $place, 'recovery_code');
+        }
+
+        if ($result !== self::ACCEPTED) {
+            return $this->failure($request, $place, SecondFactorLimit::PATH_PASSWORD, 'recovery_code');
+        }
+
+        $this->events->record(SecurityEventKind::RecoveryCodeUsed, userId: $user->id, routeName: 'two-factor.recovery', ipAddress: $request->ip(), userAgent: $request->userAgent());
+        $this->alertIfHighRisk($user, 'A recovery code was used (AU-19; LG-07).');
+        $this->passed($request, $place);
+        TwoFactorChallenge::void($request);
+        $request->session()->put(TwoFactorChallenge::ENROLMENT_ONLY, true);
+        $request->session()->put(TwoFactorChallenge::RECOVERY_MARK, true);
+        $this->signIn($request, $user, EstablishSession::PASSWORD, 'recovery_code');
+
+        return app(LoginResponse::class)->toResponse($request);
+    }
+
+    /**
+     * RV-13's consumption of a recovery code, in one transaction under the account row lock: the account active
+     * and its factor state the challenge's, else VOID; the code found by constant-time comparison — none is STALE —
+     * and removed by an update that matches only the set read under the lock, else VOID, so a second use of one
+     * code, concurrent or later, finds its challenge void or the code gone (M-40); the account's unused links
+     * revoked and its other sessions ended last, with RECOVERY_CODE_USED's audit event (AU-20).
+     */
+    public function consumeRecoveryCode(User $seen, string $challengeDigest, string $submitted, string $sessionId): string
+    {
+        return DB::transaction(function () use ($seen, $challengeDigest, $submitted, $sessionId): string {
+            $row = User::query()->lockForUpdate()->find($seen->id);
+
+            if (! $row instanceof User || $row->getAttribute('is_active') !== true || ! hash_equals($challengeDigest, TwoFactorChallenge::digest($row))) {
+                return self::VOID;
             }
 
             $stored = $row->getRawOriginal('two_factor_recovery_codes');
@@ -147,7 +201,7 @@ final class TwoFactorSteps
             }
 
             if ($match === null) {
-                return false;
+                return self::STALE;
             }
 
             unset($codes[$match]);
@@ -155,7 +209,7 @@ final class TwoFactorSteps
             $left = Crypt::encryptString(json_encode(array_values($codes), JSON_THROW_ON_ERROR));
 
             if (DB::table('users')->where('id', $row->id)->where('two_factor_recovery_codes', $stored)->update(['two_factor_recovery_codes' => $left]) !== 1) {
-                return false;
+                return self::VOID;
             }
 
             $this->audit->record(
@@ -173,22 +227,8 @@ final class TwoFactorSteps
             DB::table('credential_tokens')->where('user_id', $row->id)->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => now()]);
             DB::table('sessions')->where('user_id', $row->id)->where('id', '!=', $sessionId)->delete();
 
-            return true;
+            return self::ACCEPTED;
         });
-
-        if (! $used) {
-            return $this->failure($request, $place, SecondFactorLimit::PATH_PASSWORD, 'recovery_code');
-        }
-
-        $this->events->record(SecurityEventKind::RecoveryCodeUsed, userId: $user->id, routeName: 'two-factor.recovery', ipAddress: $request->ip(), userAgent: $request->userAgent());
-        $this->alertIfHighRisk($user, 'A recovery code was used (AU-19; LG-07).');
-        $this->passed($request, $place);
-        TwoFactorChallenge::void($request);
-        $request->session()->put(TwoFactorChallenge::ENROLMENT_ONLY, true);
-        $request->session()->put(TwoFactorChallenge::RECOVERY_MARK, true);
-        $this->signIn($request, $user, EstablishSession::PASSWORD, 'recovery_code');
-
-        return app(LoginResponse::class)->toResponse($request);
     }
 
     /**
@@ -247,7 +287,15 @@ final class TwoFactorSteps
             throw new SecondFactorRefused($wait);
         }
 
-        $secret = Crypt::decryptString($held['secret']);
+        try {
+            $secret = Crypt::decryptString($held['secret']);
+        } catch (Throwable) {
+            $this->throttle->release($request, self::throttleKey($user->id));
+            $request->session()->forget(self::ENROLMENT);
+
+            return null;
+        }
+
         $step = $this->totp->stepOf($secret, $code, null);
         $replacing = $user->getAttribute('two_factor_confirmed_at') !== null;
 
@@ -305,13 +353,15 @@ final class TwoFactorSteps
         $this->alertIfHighRisk($user, $replacing ? 'A TOTP device was replaced (AU-20; LG-07).' : 'A TOTP device was enrolled (AU-18; LG-07).');
 
         // The enrolment's change ends every other session and restamps this one, under a new identifier (AU-16; AU-06).
-        $request->session()->forget([self::ENROLMENT, TwoFactorChallenge::ENROLMENT_ONLY, TwoFactorChallenge::RECOVERY_MARK]);
+        // AU-20's every path: the password confirmation this session held is cleared with the enrolment-only state.
+        $request->session()->forget([self::ENROLMENT, TwoFactorChallenge::ENROLMENT_ONLY, TwoFactorChallenge::RECOVERY_MARK, RequireStepUp::CONFIRMED_AT]);
         $request->session()->regenerate(true);
         $this->terminator->endAll($user->id, $request->session()->getId());
         $fresh = User::query()->findOrFail($user->id);
         $this->guard->setUser($fresh);
         $request->session()->put(TwoFactorChallenge::METHOD, EstablishSession::TOTP);
         $request->session()->put(EnforceSessionLimits::DIGEST, ['user' => $fresh->id, 'digest' => EnforceSessionLimits::digest($fresh)]);
+        $request->session()->put(EnforceSessionLimits::FACTOR, ['user' => $fresh->id, 'digest' => EnforceSessionLimits::factorDigest($fresh)]);
 
         return $codes;
     }
@@ -372,6 +422,19 @@ final class TwoFactorSteps
         return "two-factor|{$userId}";
     }
 
+    /**
+     * A state changed meanwhile voids the step with the generic answer and is not a failed code: its places are
+     * given back (RV-12, RV-13).
+     */
+    private function voided(Request $request, SecondFactorPlace $place, string $field = 'code'): Response
+    {
+        $this->limit->accepted($place);
+        $this->throttle->release($request, self::throttleKey($place->userId));
+        TwoFactorChallenge::void($request);
+
+        return TwoFactorAnswers::mismatch($request, $field);
+    }
+
     /** A failing code keeps its place and is recorded; a breach voids the challenge (AU-05). */
     private function failure(Request $request, SecondFactorPlace $place, string $path, string $field = 'code'): Response
     {
@@ -382,6 +445,9 @@ final class TwoFactorSteps
                 TwoFactorChallenge::void($request);
             }
         } catch (SecondFactorRefused $refused) {
+            // A failure that cannot be counted or recorded voids the challenge too: it never outlives a breach.
+            TwoFactorChallenge::void($request);
+
             return TwoFactorAnswers::throttled($request, $refused->seconds, $field);
         }
 
