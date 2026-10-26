@@ -30,7 +30,7 @@ Percentage: 21.8 %
 
 CURRENT TASK: none in progress — TASK-019 — Google sign-in for existing accounts DONE on its branch `task/TASK-019-google`, CI PASS on `b39fdfc`, its pull request #24 squash-merged by the executor once eligible (DIR-096)
 NEXT READY TASK: TASK-020 — Installation step, the first Owner and the Owner-recovery path, READY — its dependencies TASK-010, TASK-018 and TASK-019 DONE and its READY gate checked at TASK-019's DONE —, taken first from the merged `main` (DIR-096); TASK-021, TASK-022, TASK-023, TASK-024, TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-025, TASK-027 and TASK-030 wait on TASK-022, TASK-082 on TASK-071 and TASK-078; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
+LAST TASK PLAN CHANGE: Change 13 of 2026-10-26 — DIR-097's disposition of TASK-020's discovery: the runtime role's lock on the OWNER role row, and TASK-024's account image
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -277,6 +277,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 **Change 11, 2026-10-25 (TASK-011's execution discoveries; [DIR-094](../00-governance/DECISION_LOG.md#dir-094--task-011s-discoveries)).** *Reason:* TASK-011 found that no contract or operations step ran the authorization catalogue sync its rows need on the server, decided by the Owner at one checkpoint with two readings. *Change:* TASK-020's installation line runs the sync first, with its amendment line, and INFRASTRUCTURE §5 runs it on every deployment; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-094 and APPR-023's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 **Change 12, 2026-10-25 (TASK-013's execution discoveries; [DIR-095](../00-governance/DECISION_LOG.md#dir-095--task-013s-discoveries)).** *Reason:* TASK-013 found that the guard registry's twenty-two formulas belong to the posting Tasks that build their semantics, and that two kinds of integration tests write guards with no facts by design, decided by the Owner at one checkpoint with six readings. *Change:* CONCURRENCY_IDEMPOTENCY §9 and TEST_STRATEGY TS-11 state the registry's growth and the two unreconciled directories; TASK-013's CONCURRENCY line and TASK-021's new IN SCOPE line say so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-095 and APPR-024's canonical text, a Level 1 record under CHANGE_CONTROL.
+
+**Change 13, 2026-10-26 (TASK-020's execution discovery; [DIR-097](../00-governance/DECISION_LOG.md#dir-097--task-020s-discoveries)).** *Reason:* TASK-020 found that LK-02's row lock on the built-in OWNER role cannot be taken by the runtime role, which §28 gives no `UPDATE` on `roles`, decided by the Owner at one checkpoint with two readings. *Change:* DATABASE §28 gives the runtime role `UPDATE` of `roles.is_builtin` for that lock alone, a trigger refusing every update of a role row; TASK-020's DATABASE IMPACT ASSESSMENT and TASK-024's new AUDIT line say so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-097 and APPR-025's canonical text, a Level 1 record under CHANGE_CONTROL.
 
 ## 8. Owner questions
 

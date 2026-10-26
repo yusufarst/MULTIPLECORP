@@ -4,6 +4,8 @@ Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
+Amendment: on 2026-10-26 the Owner's decision [DIR-097](../00-governance/DECISION_LOG.md#dir-097--task-020s-discoveries) (R1) adds one AUDIT line: the account image AU-25's reading of the audit trail needs; no other line changes. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
 **STATUS:** READY
@@ -107,6 +109,7 @@ Accounts, roles, capabilities and company grants are Owner-only authority (WORKF
 
 **AUDIT:**
 
+- every creation of an account and every change of its role or active flag carries, in its audit event's before/after, the account's image under the keys `role`, `role_granted_by`, `role_granted_at` and `is_active` that TASK-020's reading of the audit trail uses, and every change of an account's grants, credentials or sessions is an audit event of the account (`entity_type` `user`), so the trail establishes every pre-window Owner and every touch since an incident's closing sweep (AU-25; RV-18; DIR-097 R1)
 - every account, role, grant and credential-link change a business audit event in its command's transaction with before/after, actor, reason and authority class OWNER_ONLY (RG-11; LG-01; AZ-10), the security events after the commit — ACCOUNT_SETUP_LINK_ISSUED, PASSWORD_RESET_REQUESTED, TOTP_RESET, GOOGLE_UNLINKED, SESSION_INVALIDATED among them (LG-02) — and LG-07's alert for every Owner reset of an account; the reason mandatory on a reset and an unlink (AU-20 c; AU-24); no token or link in clear in any record (LG-03); the OD-16 reconciliation finds no anomaly (SM-05)
 
 **DATABASE IMPACT ASSESSMENT:**
