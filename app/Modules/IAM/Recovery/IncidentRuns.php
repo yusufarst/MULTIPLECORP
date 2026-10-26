@@ -3,7 +3,6 @@
 namespace App\Modules\IAM\Recovery;
 
 use Carbon\CarbonImmutable;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -37,15 +36,16 @@ final class IncidentRuns
         return $started === null ? null : $this->run($started);
     }
 
-    /** The latest run whose recovery has not ended, which every recovery step reads (AU-14, AU-25). */
+    /**
+     * The latest run whose recovery has not ended, which every recovery step reads (AU-14, AU-25). A later run
+     * supersedes every earlier one — a corrected window start is a new run with AU-25's recovery again
+     * (INFRASTRUCTURE §7.3 step 7) —, so once the latest run's recovery has ended no earlier run reopens.
+     */
     public function latestOpen(): ?IncidentRun
     {
-        $started = DB::table('audit_events as started')->where('started.action', self::STARTED)
-            ->whereNotExists(fn (Builder $query) => $query->from('audit_events as ended')->where('ended.action', self::ENDED)
-                ->whereRaw("ended.metadata->>'incident_run' = started.metadata->>'incident_run'"))
-            ->orderByDesc('started.id')->first(['started.occurred_at', 'started.metadata']);
+        $run = $this->latest();
 
-        return $started === null ? null : $this->run($started);
+        return $run === null || $run->ended ? null : $run;
     }
 
     /**

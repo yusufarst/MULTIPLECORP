@@ -112,6 +112,25 @@ final class AccountHistory
         return ['known' => $known, 'value' => $value];
     }
 
+    /**
+     * An attribute's value at the window start, for a restoration: the before-image of the first change after the start
+     * that carries the attribute — an image keeps only the keys a change touched, so each attribute is read from its
+     * own first change —, otherwise its last value set at or before the start, otherwise the row's current value,
+     * which no change has touched since.
+     */
+    public function windowStartValue(int $userId, string $key, CarbonImmutable $windowStart, mixed $current): mixed
+    {
+        foreach ($this->events($userId) as $event) {
+            if ($event->occurredAt->greaterThan($windowStart) && array_key_exists($key, $event->before)) {
+                return $event->before[$key];
+            }
+        }
+
+        $atStart = $this->valueAt($userId, $key, $windowStart);
+
+        return $atStart['known'] ? $atStart['value'] : $current;
+    }
+
     /** Whether the trail shows the account holding the OWNER role and active at the instant. */
     public function wasOwnerAt(int $userId, CarbonImmutable $at): bool
     {
@@ -150,7 +169,7 @@ final class AccountHistory
         }
 
         if ($owners === []) {
-            throw RecoveryHalted::because('the window starts before every audited OWNER assignment, so no account is a pre-window Owner');
+            throw RecoveryHalted::because('the audit trail shows no account holding the OWNER role while active at the window start — the window reaching back before every OWNER assignment —, so no account is a pre-window Owner');
         }
 
         return $owners;

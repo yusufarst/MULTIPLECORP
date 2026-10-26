@@ -83,11 +83,9 @@ final class OwnerRestoration
             $after = $before;
 
             if ($role) {
-                $first = $this->history->changes($account->id, AccountHistory::ROLE, $run->windowStart)['firstAfter'];
-                // A key the change left as it was is absent from its image: the row still holds its window-start value.
-                $image = $first === null ? [] : $first->before;
-                $grantedBy = array_key_exists(AccountHistory::ROLE_GRANTED_BY, $image) ? $image[AccountHistory::ROLE_GRANTED_BY] : $now['granted_by'];
-                $grantedAt = array_key_exists(AccountHistory::ROLE_GRANTED_AT, $image) ? $image[AccountHistory::ROLE_GRANTED_AT] : $now['granted_at'];
+                // Each column's window-start value: the before-image of its first change in the window (RV-18).
+                $grantedBy = $this->history->windowStartValue($account->id, AccountHistory::ROLE_GRANTED_BY, $run->windowStart, $now['granted_by']);
+                $grantedAt = $this->history->windowStartValue($account->id, AccountHistory::ROLE_GRANTED_AT, $run->windowStart, $now['granted_at']);
                 $values = ['role_id' => $this->history->ownerRoleId(), 'granted_by' => is_numeric($grantedBy) ? (int) $grantedBy : null, 'granted_at' => $grantedAt ?? now()];
 
                 // The role given in the window's place replaced by the statement a role change uses (RV-04).

@@ -136,6 +136,24 @@ final class OwnerTrail
         });
     }
 
+    /** An activation as RV-05's command makes it: LK-02 first, held across a barrier when given, then the account's row. */
+    public static function racingActivation(int $userId, int $by, ?string $holdAt = null): string
+    {
+        return DB::transaction(function () use ($userId, $by, $holdAt): string {
+            app(AccountHistory::class)->lockOwnerRole();
+
+            if ($holdAt !== null) {
+                Barrier::await($holdAt);
+                usleep(400_000);
+            }
+
+            $user = User::query()->lock('for no key update')->findOrFail($userId);
+            self::setActive($user, true, CarbonImmutable::now(), $by);
+
+            return 'activated';
+        });
+    }
+
     public static function roleId(string $role): int
     {
         $id = DB::table('roles')->where('code', $role)->value('id');

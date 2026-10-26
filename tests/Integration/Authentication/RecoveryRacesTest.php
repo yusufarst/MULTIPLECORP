@@ -58,6 +58,7 @@ it('restores one account once when two restorations race, a barrier before LK-02
 it('lets a role change racing a restoration wait at LK-02 and meet the restored state (M-46; RV-04)', function () {
     $window = $this->window;
     $owner = $this->owner->id;
+    $other = $this->other->id;
     $results = Sessions::run([
         'restoration' => static function () use ($window): string {
             return DB::transaction(function () use ($window): string {
@@ -68,19 +69,20 @@ it('lets a role change racing a restoration wait at LK-02 and meet the restored 
                 return OwnerTrail::attempt(fn () => app(OwnerRestoration::class)->restore('ratna@contoh.test', $window, OwnerTrail::operator()));
             });
         },
-        'role change' => static function () use ($owner): string {
+        'role change' => static function () use ($owner, $other): string {
             Barrier::await('the restoration holds LK-02');
-            $seen = DB::transaction(function () use ($owner): ?string {
-                app(AccountHistory::class)->lockOwnerRole();
 
-                return app(AccountHistory::class)->current($owner)['role'];
-            });
-
-            return "saw {$seen}";
+            return OwnerTrail::racingRoleChange($owner, 'ADMIN_OPERASIONAL', $other);
         },
     ]);
 
-    expect($results)->toBe(['restoration' => 'done', 'role change' => 'saw OWNER']);
+    $restored = DB::table('audit_events')->where('action', IncidentRuns::RESTORED)->value('id');
+    $changed = DB::table('audit_events')->where('action', 'Test.RoleChanged')->where('entity_id', $this->owner->id)->orderByDesc('id')->value('id');
+    $before = json_decode((string) DB::table('audit_events')->where('id', $changed)->value('before'), true);
+    expect($results)->toBe(['restoration' => 'done', 'role change' => 'changed'])
+        ->and($changed)->toBeGreaterThan($restored)
+        // The change met the restored state: its before-image is the OWNER role the restoration set back.
+        ->and($before['role'])->toBe('OWNER');
 });
 
 it('refuses the end of recovery when a role change made an unreviewed Owner first (TT-F30; GAP-050)', function () {
@@ -128,3 +130,49 @@ it('records the end first when it holds LK-02, the role change following as an o
     expect($results)->toBe(['end' => 'done', 'role change' => 'changed'])
         ->and($changed)->toBeGreaterThan($ended);
 });
+
+it('refuses the end of recovery when an activation made an unreviewed active Owner first, and records it first otherwise (TT-F30; GAP-050)', function (bool $activationFirst) {
+    $former = OwnerTrail::account('OWNER', $this->now->subDays(30), email: 'eko@contoh.test');
+    OwnerTrail::setActive($former, false, $this->now->subDays(20), $this->other->id);
+    $window = $this->window;
+    $formerId = $former->id;
+    $other = $this->other->id;
+    $hold = $activationFirst ? 'the activation holds LK-02' : 'the end holds LK-02';
+    $results = Sessions::run([
+        'activation' => static function () use ($formerId, $other, $hold, $activationFirst): string {
+            if ($activationFirst) {
+                return OwnerTrail::racingActivation($formerId, $other, $hold);
+            }
+
+            Barrier::await($hold);
+
+            return OwnerTrail::racingActivation($formerId, $other);
+        },
+        'end' => static function () use ($window, $activationFirst, $hold): string {
+            if ($activationFirst) {
+                Barrier::await($hold);
+
+                return OwnerTrail::attempt(fn () => app(OwnerRestoration::class)->endRecovery($window, OwnerTrail::operator()));
+            }
+
+            return DB::transaction(function () use ($window, $hold): string {
+                app(AccountHistory::class)->lockOwnerRole();
+                Barrier::await($hold);
+                usleep(400_000);
+
+                return OwnerTrail::attempt(fn () => app(OwnerRestoration::class)->endRecovery($window, OwnerTrail::operator()));
+            });
+        },
+    ]);
+
+    expect($results['activation'])->toBe('activated');
+
+    if ($activationFirst) {
+        expect($results['end'])->toContain('refused')->toContain('eko@contoh.test')
+            ->and(DB::table('audit_events')->where('action', IncidentRuns::ENDED)->count())->toBe(0);
+    } else {
+        $activated = DB::table('audit_events')->where('action', 'Test.Activated')->orderByDesc('id')->value('id');
+        expect($results['end'])->toBe('done')
+            ->and($activated)->toBeGreaterThan(DB::table('audit_events')->where('action', IncidentRuns::ENDED)->value('id'));
+    }
+})->with(['the activation first' => [true], 'the end first' => [false]]);

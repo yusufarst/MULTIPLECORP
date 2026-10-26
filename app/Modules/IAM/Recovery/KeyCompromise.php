@@ -61,6 +61,7 @@ final class KeyCompromise
 
             $run = $latest;
             $progress("Restarting incident run {$run->id}, window start {$run->windowStartText()}.");
+            $this->unreported($run, $operator);
         } else {
             $run = $this->start($given, $operator);
             $progress("Started incident run {$run->id}, window start {$run->windowStartText()}.");
@@ -128,27 +129,56 @@ final class KeyCompromise
         $id = (string) Str::uuid();
         $previous = config('app.previous_keys');
 
-        DB::transaction(fn () => $this->audit->record(
-            action: IncidentRuns::STARTED,
-            authorityClass: AuthorityClass::System,
-            actorUserId: null,
-            companyId: null,
-            metadata: [
-                'operator' => $operator->toArray(),
-                'incident_run' => $id,
-                'window_start' => IncidentRuns::format($windowStart),
-                // The previous-keys list's state, never a key: the leaked key is listed only when ciphertext must survive (AU-21).
-                'previous_keys_listed' => is_array($previous) ? count(array_filter($previous)) : 0,
-            ],
-        ));
+        // Two starts at once are serialized under the Owner set's row, so only one run starts and no other is left behind.
+        return DB::transaction(function () use ($windowStart, $operator, $id, $previous): IncidentRun {
+            $this->history->lockOwnerRole();
+            $latest = $this->runs->latest();
 
-        $run = $this->runs->latest();
+            if ($latest !== null && ! $latest->completed()) {
+                throw new RecoveryRefused("Incident run {$latest->id} started at the same time and has not completed; run the command once (RV-17).");
+            }
 
-        if ($run === null || $run->id !== $id) {
-            throw new RecoveryRefused('Another incident run started at the same time; run the command once (RV-17).');
+            $this->audit->record(
+                action: IncidentRuns::STARTED,
+                authorityClass: AuthorityClass::System,
+                actorUserId: null,
+                companyId: null,
+                metadata: [
+                    'operator' => $operator->toArray(),
+                    'incident_run' => $id,
+                    'window_start' => IncidentRuns::format($windowStart),
+                    // The previous-keys list's state, never a key: the leaked key is listed only when ciphertext must survive (AU-21).
+                    'previous_keys_listed' => is_array($previous) ? count(array_filter($previous)) : 0,
+                ],
+            );
+
+            return $this->runs->latest() ?? throw new RecoveryRefused('The incident run was not recorded (RV-17).');
+        });
+    }
+
+    /**
+     * On a restart, CREDENTIALS_VOIDED and its alert for each account voided before the stop whose event the stop
+     * lost — the process ending between the account's commit and its security event (LG-02, LG-07).
+     */
+    private function unreported(IncidentRun $run, OperatorIdentity $operator): void
+    {
+        $voided = AccountHistory::ids(DB::table('audit_events')->where('action', IncidentRuns::VOIDED)->where('entity_type', 'user')
+            ->whereRaw("metadata->>'incident_run' = ?", [$run->id])->orderBy('entity_id')->pluck('entity_id')->all());
+
+        foreach ($voided as $userId) {
+            $reported = DB::table('security_events')->where('event_kind', SecurityEventKind::CredentialsVoided->value)->where('user_id', $userId)
+                ->whereRaw("details->>'incident_run' = ?", [$run->id])->exists();
+
+            if (! $reported) {
+                $this->reportVoided($run, $operator, $userId);
+            }
         }
+    }
 
-        return $run;
+    private function reportVoided(IncidentRun $run, OperatorIdentity $operator, int $userId): void
+    {
+        $this->events->record(SecurityEventKind::CredentialsVoided, userId: $userId, reasonCode: 'KEY_COMPROMISE', details: $run->reference());
+        Log::alert('An account\'s credentials were voided by the key-compromise incident command (AU-21; LG-07).', ['user_id' => $userId, ...$run->reference(), 'operator' => $operator->describe()]);
     }
 
     /** @return list<int> the accounts the run has not voided, in id order */
@@ -197,8 +227,7 @@ final class KeyCompromise
         });
 
         if ($voided) {
-            $this->events->record(SecurityEventKind::CredentialsVoided, userId: $userId, reasonCode: 'KEY_COMPROMISE', details: $run->reference());
-            Log::alert('An account\'s credentials were voided by the key-compromise incident command (AU-21; LG-07).', ['user_id' => $userId, ...$run->reference(), 'operator' => $operator->describe()]);
+            $this->reportVoided($run, $operator, $userId);
         }
 
         return $voided;

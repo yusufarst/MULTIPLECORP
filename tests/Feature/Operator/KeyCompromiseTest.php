@@ -125,6 +125,34 @@ it('refuses to continue once the maintenance mode is lifted, and a restart voids
         ->and(DB::table('audit_events')->where('action', IncidentRuns::STARTED)->count())->toBe(1);
 });
 
+it('reads the accounts again after the last one, voiding one created while the voiding runs (AU-21 c; RV-17)', function () {
+    $created = null;
+    DB::listen(function ($query) use (&$created) {
+        if ($created === null && str_contains($query->sql, 'insert into "audit_events"') && in_array(IncidentRuns::VOIDED, $query->bindings, true)) {
+            $created = false;
+            $created = User::factory()->create();
+        }
+    });
+
+    $result = $this->incident->run($this->window, OwnerTrail::operator());
+
+    expect($created)->toBeInstanceOf(User::class)
+        ->and(voidedIds($result['run']->id))->toBe([$this->owner->id, $this->admin->id, $created->id]);
+});
+
+it('writes on a restart the CREDENTIALS_VOIDED a stop lost, voiding no account twice (LG-02; RV-17)', function () {
+    $run = OwnerTrail::run(IncidentRuns::parse($this->window), $this->now->subMinutes(10), null);
+    OwnerTrail::event($this->owner, IncidentRuns::VOIDED, $this->now->subMinutes(9), null, null, null, ['incident_run' => $run, 'window_start' => $this->window]);
+
+    $result = $this->incident->run($this->window, OwnerTrail::operator());
+
+    expect($result['restarted'])->toBeTrue()
+        ->and($result['voided'])->toBe(1)
+        ->and(voidedIds($run))->toBe([$this->owner->id, $this->admin->id])
+        ->and(DB::table('security_events')->where('event_kind', 'CREDENTIALS_VOIDED')->where('user_id', $this->owner->id)->count())->toBe(1)
+        ->and(DB::table('security_events')->where('event_kind', 'CREDENTIALS_VOIDED')->count())->toBe(2);
+});
+
 it('reports the halt after the run when no pre-window Owner is certain (AU-25; criterion 5)', function () {
     $result = $this->incident->run(IncidentRuns::format($this->now->subDays(40)), OwnerTrail::operator());
 
