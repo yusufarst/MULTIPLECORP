@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -224,34 +224,38 @@ The Owner and every account with an ADM+ grant or `finance.view`, `cost.view`, `
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-043 and GAP-044 for these flows
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Auth/TwoFactorTest.php` — an Owner without TOTP signs in to an enrolment-only session that reaches PG-004, ROUTE-109 and logout and nothing else, a GET redirected to PG-004 and anything else refused, sharing the display name alone; a high-risk account's session not established with TOTP ended (TOTP_REQUIRED) —, `tests/Authorization/TwoFactorRequirementTest.php` — K1 on the resolver's inputs: the OWNER role, an effective ADM_PLUS capability and again once its revoked prerequisite is granted again, each of the four views, a company in scope, never an inactive account —, `tests/Interaction/TwoFactorTest.php` (SM-02's enrolment-only cases) and `tests/Browser/E2E/two-factor.spec.ts`. Criterion 2: `tests/Unit/IAM/TotpTest.php` — six digits, 30 seconds, one step either side, a step later than the last only, with a controlled clock —; `TwoFactorTest.php` — the same code again, an older one and a wrong one answered alike —; `tests/Integration/Authentication/TwoFactorSessionsTest.php` — two real PostgreSQL sessions with a barrier before the update, one ACCEPTED and one STALE (M-39) —; `TwoFactorRacesTest.php` — the race at the row lock. Criterion 3: `TwoFactorTest.php` — eight codes, each once, after a password only, an emptied set an encrypted empty list —, `TwoFactorSessionsTest.php` — one code from two pending challenges removed once, then refused (M-40) —, and the enrolment's confirmation writing eight new codes over the old in path b. Criterion 4: `TwoFactorTest.php` — the secret held encrypted in the session and nothing stored before the confirmation, a lapsed enrolment's secret replaced, the QR code, the text key and the codes as flash data and never a prop, PG-004 never shown after the confirmation. Criterion 5: `TwoFactorTest.php` — TOTP_ENROLLED, TOTP_REPLACED and RECOVERY_CODE_USED with their audit events in the step's transaction, the account as actor under SYSTEM; a rollback of the enrolment's confirmation and of a recovery-code use leaving neither. Criterion 6: `TwoFactorTest.php` and `two-factor.spec.ts` — "Kembali" to PG-001 with the e-mail kept, the attempt discarded by ROUTE-001's view and completing nothing
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the period, the window and the last-step rule with a controlled clock (TL-03); Feature — SM-17–SM-19's flows and the second-factor limit with its cooldown, escalation and durable floor (TL-04); Integration — M-39 and M-40 under real sessions, the limit's count on Valkey under concurrent processes, the session row of a pending challenge (TL-05); PASS locally and in CI
+- [x] Authorization: the enrolment-only session reaches PG-004 alone; K1's high-risk test (TL-06)
+- [x] Route integrity: ROUTE-002, -004, -104, -105 and -107 in the route audit, which refuses any route of Fortify's controllers; SM-02's enrolment-only cases (TL-07)
+- [x] Interaction behavior: INT-104, INT-105, INT-107 and the in-place re-login's code step (TL-08)
+- [x] Browser E2E if required: the challenge, recovery and enrolment journeys on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-002 and PG-004 at every band edge (`tests/Browser/Responsive/two-factor.spec.ts`, TL-11)
+- [x] Visual breathing room/density if UI: both pages on DESIGN_SYSTEM's tokens and density, one narrow column (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS locally and in CI
+- [x] Security checks if required: SM-17–SM-19 and SM-21's key case — secrets read through `APP_PREVIOUS_KEYS` —; TL-12's axe on PG-002 with its answer and PG-004 with its QR code at 390 and 1,280 px; the secret-like scan and both dependency audits PASS (TL-14)
+- [x] Database safety review: no migration and no schema change — TASK-005's four TOTP fields written together (C-62) —; every code step one transaction under the account row (LK-03); local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its eight points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `1a0e557`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40294350383 (push) and 40294356575 (pull request #23), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration and Authorization suites and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). On the Owner's workstation, 2026-10-26, after ER-06's fixes: the suites Unit, Feature, Integration, Authorization, Interaction, Routes, Architecture and Performance, TypeScript, ESLint, `tests/Frontend/` 30, Pint, Larastan/PHPStan, the production build and the browser suite PASS — Unit 270, Feature 116, Integration 906, Authorization 105, Interaction 15, Routes 11, Architecture 50 and Performance 4, IndexRegisterTest's one QueryException under the workstation's load passing on its rerun; the two-factor, sign-in and shell browser specs 82 on Chromium and WebKit
+- Build result: `TL-13 Frontend build: PASS — Evidence: 1a0e557, CI ubuntu-24.04 run 40294350383`
+- Route evidence: TL-07's route audit PASS — ROUTE-002 `GET /masuk/verifikasi`, ROUTE-104 `POST /masuk/verifikasi` and ROUTE-105 `POST /masuk/verifikasi/pemulihan` (`access:none,two_factor_challenge`), ROUTE-004 `GET /verifikasi-dua-langkah` and ROUTE-107 `POST /verifikasi-dua-langkah` (`access:enrolment`) —; no route of Fortify's controllers; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/TwoFactorTest.php` (INT-104, INT-105, INT-107; IP-11's code step)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 1a0e557, CI ubuntu-24.04 run 40294350383`; TL-10, TL-11 and TL-12 PASS in the same run
+- Localization evidence: PG-002 in both languages from PG-001's `bahasa` (NV-07), PG-004 in the account's own language (AU-13) (`tests/Browser/Localization/two-factor.spec.ts`) (DOD-16); 8 keys added through `lang/registry/added-keys.json` for the Owner's review
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed or hosted
+- Files changed: `app/Modules/IAM/Authentication/` — the steps, the challenge, the limit, TOTP, the session handler, the pipeline's second-factor step and the session guard —, `app/Modules/IAM/Http/Controllers/`, `app/Modules/IAM/Services/EffectiveCapabilities.php`, `app/Modules/IAM/Data/Authority.php`, `app/Http/Middleware/HandleInertiaRequests.php`, `app/Http/Middleware/RequireStepUp.php`, `app/Support/SecurityLog/`; `routes/web.php`; `resources/js/Pages/Auth/`, `resources/js/lib/session-guard.tsx`, `resources/js/lib/i18n.ts`, `resources/js/components/session-dialogs.tsx`; `lang/id.json`, `lang/en.json`, `lang/registry/added-keys.json`; `phpunit.xml`; `tests/`; TOOLCHAIN's row; this file, the statuses of TASK-019 and TASK-021, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `dc9f3fb`, `bd21192`, `bddcb22` and `1a0e557`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-018-totp`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each Fortify, TOTP-library, QR and framework behaviour re-read in the installed source and pinned by a test (GAP-043; TOOLCHAIN's TASK-018 row); the local runs used a container-local copy of the working tree, CI the final proof. The second-factor limit's atomic operation is one read and write of the account's entry under the limiter store's lock, rather than a script of the store, with the same counts, seeding and decay (AU-05). The code steps' throttles per account and address and per address are AU-05's login throttles, counting failures alone: a first version on the framework's route limiter counted successes too, which a shared office address would have filled — found by the browser suite and replaced. ER-06's one review found no HIGH point and eight others: the session's digest of the enrolment (AU-06), the tests' real sessions and their gaps (M-39, M-40, K1, SM-21, the floor's partial count), the failure recorded before the count and a breach that cannot be recorded voiding the challenge, a state changed under the lock voiding rather than counting, the step-up cleared after path b, a lapsed enrolment secret dropped, the OWNER role read once with the resolver's query, PG-004's language switch removed — each fixed and tested. Codex's review of `bddcb22` found one P2 — a breach rebuilt from the durable floor to the second, so its own failures of that second were seeded into the next window and kept a correct code refused after the cooldown —, fixed in `1a0e557` with its test. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-018 blocks were re-checked at this DONE: TASK-019 and TASK-021 READY — every dependency DONE —; TASK-020 waits on TASK-019, TASK-074 on TASK-021, TASK-022, TASK-029 and TASK-072. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 
