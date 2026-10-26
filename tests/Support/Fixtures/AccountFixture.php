@@ -35,7 +35,8 @@ final class AccountFixture
         $account->save();
         $answer = ['email' => $account->email, 'password' => self::PASSWORD, 'token' => $links->issue($account, 'RESET', $owner->id)];
 
-        if ($request->input('kind') === 'totp') {
+        // TASK-021: an Owner with a confirmed TOTP (`kind=owner`, `totp=1`), for PG-061.
+        if ($request->input('kind') === 'totp' || $request->boolean('totp')) {
             $secret = $totp->newSecret();
             $codes = $totp->newRecoveryCodes();
             DB::table('users')->where('id', $account->id)->update([

@@ -117,12 +117,15 @@ function useNumberingCommand<P extends Record<string, FormDataConvertible>>(url:
                 }
 
                 intent.outcome(given.kind);
+                // A COMMITTED answer is the page's own, above the type's facts, which the visit has refreshed.
                 setAnswer(
-                    given.kind === 'CONFLICT'
-                        ? { kind: 'CONFLICT', cause: given.cause === 'stale' ? 'stale' : 'recorded', text: given.text }
-                        : given.kind === 'PENDING'
-                          ? { kind: 'PENDING', text: given.text }
-                          : { kind: given.kind, text: given.text },
+                    given.kind === 'COMMITTED'
+                        ? null
+                        : given.kind === 'CONFLICT'
+                          ? { kind: 'CONFLICT', cause: given.cause === 'stale' ? 'stale' : 'recorded', text: given.text }
+                          : given.kind === 'PENDING'
+                            ? { kind: 'PENDING', text: given.text }
+                            : { kind: given.kind, text: given.text },
                 );
 
                 if (given.kind === 'COMMITTED') {
