@@ -10,7 +10,7 @@ use Illuminate\Routing\Route;
  * The route audit of SECURITY_TEST_MATRIX SM-02 (H8-02; SECURITY EN-03; `DIR-081` OB-03): every registered
  * route declares exactly one of a catalogue capability, "every active account (S0)", "SELF", "the
  * enrolment-only session" — each behind authentication — or EN-03's "none" for one of its unauthenticated
- * routes, outside authentication; no Fortify two-factor route is registered (AU-16). A violation fails the
+ * routes, outside authentication; no route of Fortify's controllers is registered (AU-16). A violation fails the
  * route-integrity layer of the build (TL-07).
  */
 final class RouteAudit
@@ -35,8 +35,11 @@ final class RouteAudit
                 $violations[] = "{$name}: excludes middleware, so its declaration may not run";
             }
 
-            if (str_starts_with((string) $route->getName(), 'two-factor.')) {
-                $violations[] = "{$name}: a Fortify two-factor route is registered (AU-16)";
+            // By its controller, not its name: IAM's own two-factor routes replace Fortify's (AU-16; TM-65).
+            $uses = $route->getAction('uses');
+
+            if (str_starts_with(is_string($uses) ? $uses : $route->getActionName(), 'Laravel\\Fortify\\')) {
+                $violations[] = "{$name}: a Fortify route is registered (AU-16; SM-22)";
             }
 
             if (count($declarations) !== 1) {

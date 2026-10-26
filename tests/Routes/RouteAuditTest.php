@@ -40,5 +40,14 @@ it('refuses a route that declares nothing, too much or what EN-03 does not list'
     'an unlisted unauthenticated route' => [['access:none,backdoor'], 'an unauthenticated route EN-03 does not list'],
     'an EN-03 exception behind authentication' => [['auth', 'access:none,login'], 'an EN-03 exception behind authentication'],
     'an excluded authentication' => [['auth', 'access:s0'], 'excludes middleware', null, ['auth']],
-    'a Fortify two-factor route' => [['access:none,two_factor_challenge'], 'a Fortify two-factor route', 'two-factor.login'],
 ]);
+
+it('refuses a route of Fortify\'s own controllers, IAM\'s two-factor routes accepted in their place (AU-16; TM-65; SM-22)', function () {
+    $fortify = (new RouteDefinition(['POST'], 'two-factor-challenge', 'Laravel\Fortify\Http\Controllers\TwoFactorAuthenticatedSessionController@store'))
+        ->setRouter(app('router'))->setContainer(app())->middleware(['access:none,two_factor_challenge'])->name('two-factor.login.store');
+    $own = (new RouteDefinition(['POST'], 'masuk/verifikasi', 'App\Modules\IAM\Http\Controllers\TwoFactorChallengeController@verify'))
+        ->setRouter(app('router'))->setContainer(app())->middleware(['guest', 'access:none,two_factor_challenge'])->name('two-factor.verify');
+
+    expect(implode("\n", RouteAudit::violations([$fortify])))->toContain('a Fortify route is registered')
+        ->and(RouteAudit::violations([$own]))->toBe([]);
+});

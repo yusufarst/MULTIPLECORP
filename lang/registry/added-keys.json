@@ -1,6 +1,54 @@
 {
     "_": "The keys added to the catalogue after APPR-011 (LOCALIZATION §3.2, §5; DIR-081 OB-04; OQ-24 (a)), each with the Task that added it, its source and its kind: \"canonical\" — the Indonesian quotes a GL term or a label of an approved source and is accepted —, \"proposed\" — the Indonesian is proposed copy —; every English text is proposed. The list is the Owner's, reviewed with each page's P8 review and accepted except the keys the Owner marks.",
     "keys": {
+        "pages.pg_002.use_code": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.scan": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.key_label": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.submit": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.confirm_submit": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 6; AU-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_heading": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.codes_line": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_004.continue": {
+            "task": "TASK-018",
+            "source": "AUTH_JOURNEYS §2.4 step 7",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "outcome.committed": {
             "task": "TASK-015",
             "source": "DESIGN_SYSTEM §12.2",

@@ -1,5 +1,5 @@
 import { Eye, EyeOff } from 'lucide-react';
-import { type ComponentProps, type ReactNode, useId, useRef, useState } from 'react';
+import { type ComponentProps, useId, useRef, useState } from 'react';
 
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
@@ -115,21 +115,26 @@ export function ReauthDialog({
     email: initialEmail,
     error,
     pending = false,
-    secondFactor,
+    codeStep = false,
     onSubmit,
+    onCode,
     onSignOut,
 }: {
     open: boolean;
     email: string;
     error?: string | null;
     pending?: boolean;
-    secondFactor?: ReactNode;
+    /** AU-16's code step in the same dialog, after the password (AUTH_JOURNEYS §2.5 step 3). */
+    codeStep?: boolean;
     onSubmit: (credentials: { email: string; password: string }) => void;
+    onCode?: (code: string, recovery: boolean) => void;
     onSignOut: () => void;
 }) {
     const { t } = useTranslation();
     const [email, setEmail] = useState(initialEmail);
     const [password, setPassword] = useState('');
+    const [code, setCode] = useState('');
+    const [recovery, setRecovery] = useState(false);
     const first = useRef<HTMLInputElement>(null);
     const id = useId();
 
@@ -140,14 +145,50 @@ export function ReauthDialog({
                     className="flex flex-1 flex-col gap-4"
                     onSubmit={(event) => {
                         event.preventDefault();
-                        onSubmit({ email, password });
+
+                        if (codeStep) {
+                            onCode?.(code, recovery);
+                            setCode('');
+                        } else {
+                            onSubmit({ email, password });
+                            setPassword('');
+                        }
                     }}
                 >
                     <AlertDialogHeader>
                         <AlertDialogTitle>{t('dialogs.reauth_title')}</AlertDialogTitle>
                         <AlertDialogDescription>{t('messages.msg_11')}</AlertDialogDescription>
                     </AlertDialogHeader>
-                    {secondFactor ?? (
+                    {codeStep ? (
+                        <Field>
+                            <FieldLabel htmlFor={`${id}-code`}>{t(recovery ? 'pages.pg_002.recovery_label' : 'pages.pg_002.code_label')}</FieldLabel>
+                            <Input
+                                id={`${id}-code`}
+                                key={recovery ? 'recovery' : 'code'}
+                                autoComplete={recovery ? 'off' : 'one-time-code'}
+                                inputMode={recovery ? 'text' : 'numeric'}
+                                maxLength={recovery ? 64 : 6}
+                                value={code}
+                                aria-invalid={error !== undefined && error !== null ? true : undefined}
+                                aria-describedby={`${id}-error`}
+                                onChange={(event) => {
+                                    setCode(event.target.value);
+                                }}
+                            />
+                            <FieldError id={`${id}-error`}>{error}</FieldError>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="self-start"
+                                onClick={() => {
+                                    setRecovery(!recovery);
+                                    setCode('');
+                                }}
+                            >
+                                {t(recovery ? 'pages.pg_002.use_code' : 'pages.pg_002.use_recovery')}
+                            </Button>
+                        </Field>
+                    ) : (
                         <>
                             <Field>
                                 <FieldLabel htmlFor={`${id}-email`}>{t('pages.pg_001.email')}</FieldLabel>

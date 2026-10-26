@@ -34,12 +34,21 @@ import { receiveDeadline, sessionDeadline } from './session-deadline';
 export type Credentials = { email: string; password: string };
 
 /** A sign-in's or confirmation's answer: accepted, refused (MSG-19), or throttled with MSG-20 (AU-05; WS-12). */
-export type GatewayAnswer = { outcome: 'ok' } | { outcome: 'failed' } | { outcome: 'limited'; message: string | null; minutes: number };
+export type GatewayAnswer =
+    | { outcome: 'ok' }
+    | { outcome: 'failed' }
+    | { outcome: 'limited'; message: string | null; minutes: number }
+    // TASK-018: the password accepted with the code step next; an enrolment-only session; an attempt that expired.
+    | { outcome: 'two_factor' }
+    | { outcome: 'enrolment'; location: string }
+    | { outcome: 'expired' };
 
 /** The sign-in behind the in-place dialog: ROUTE-101 and its second factor, TASK-017's. */
 export type ReauthGateway = {
     signIn: (credentials: Credentials) => Promise<GatewayAnswer>;
     confirmPassword: (password: string) => Promise<GatewayAnswer>;
+    /** AU-16's code step after the password, a TOTP code or a recovery code (ROUTE-104, ROUTE-105). */
+    verifyCode?: (code: string, recovery: boolean) => Promise<GatewayAnswer>;
 };
 
 /** A JSON POST of the dialog, its answer read in place. */
@@ -59,7 +68,17 @@ export async function postAnswer(url: string, body: unknown): Promise<GatewayAns
             return { outcome: 'limited', message: typeof answer.message === 'string' ? answer.message : null, minutes: Math.max(1, Math.ceil((Number.isNaN(retry) ? 60 : retry) / 60)) };
         }
 
-        return { outcome: response.ok ? 'ok' : 'failed' };
+        const reply = (await response.json().catch(() => ({}))) as { two_factor?: unknown; enrolment_only?: unknown; location?: unknown; expired?: unknown };
+
+        if (!response.ok) {
+            return { outcome: reply.expired === true ? 'expired' : 'failed' };
+        }
+
+        if (reply.two_factor === true) {
+            return { outcome: 'two_factor' };
+        }
+
+        return reply.enrolment_only === true && typeof reply.location === 'string' ? { outcome: 'enrolment', location: reply.location } : { outcome: 'ok' };
     } catch {
         return { outcome: 'failed' };
     }
@@ -69,6 +88,7 @@ export async function postAnswer(url: string, body: unknown): Promise<GatewayAns
 export const applicationGateway: ReauthGateway = {
     signIn: (credentials) => postAnswer('/masuk', credentials),
     confirmPassword: (password) => postAnswer('/konfirmasi-kata-sandi', { password }),
+    verifyCode: (code, recovery) => postAnswer(recovery ? '/masuk/verifikasi/pemulihan' : '/masuk/verifikasi', recovery ? { recovery_code: code } : { code }),
 };
 
 /** The new session's account hints for the open address — a background partial read of `auth` that sends
@@ -109,6 +129,8 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
     const [pending, setPending] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [leaving, setLeaving] = useState(false);
+    const [codeStep, setCodeStep] = useState(false);
+    const [enrolment, setEnrolment] = useState<string | null>(null);
     const [idleOpen, setIdleOpen] = useState(false);
     const [idleMinutes, setIdleMinutes] = useState(IDLE_WARNING_MINUTES);
     const current = useRef<VisitLike | null>(null);
@@ -234,17 +256,39 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
     const failure = (answer: GatewayAnswer): string =>
         answer.outcome === 'limited' ? (answer.message ?? tc('messages.msg_20', answer.minutes)) : t('messages.msg_19');
 
-    const signIn = async (credentials: Credentials) => {
-        setPending(true);
-        const answer = await gateway.signIn(credentials);
-
-        if (answer.outcome !== 'ok') {
+    // After the password, or after the code: the same account resumes; an enrolment-only session cannot (AU-18).
+    const signedInAs = async (answer: GatewayAnswer, codeAnswer: boolean) => {
+        if (answer.outcome === 'two_factor') {
             setPending(false);
-            setError(failure(answer));
+            setError(null);
+            setCodeStep(true);
 
             return;
         }
 
+        if (answer.outcome === 'enrolment') {
+            setPending(false);
+            setEnrolment(answer.location);
+
+            return;
+        }
+
+        if (answer.outcome === 'expired') {
+            setPending(false);
+            setCodeStep(false);
+            setError(t('auth.code_mismatch'));
+
+            return;
+        }
+
+        if (answer.outcome !== 'ok') {
+            setPending(false);
+            setError(answer.outcome === 'failed' && codeAnswer ? t('auth.code_mismatch') : failure(answer));
+
+            return;
+        }
+
+        setCodeStep(false);
         // UXH-02: the covered page's account, or the full document load before anything is uncovered or resent.
         const signedIn = await sessionAccount(pageRef.current);
 
@@ -258,6 +302,22 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
         setPending(false);
         router.clearHistory();
         resend();
+    };
+
+    const signIn = async (credentials: Credentials) => {
+        setPending(true);
+        await signedInAs(await gateway.signIn(credentials), false);
+    };
+
+    const verifyCode = async (code: string, recovery: boolean) => {
+        const verify = gateway.verifyCode ?? applicationGateway.verifyCode;
+
+        if (verify === undefined) {
+            return;
+        }
+
+        setPending(true);
+        await signedInAs(await verify(code, recovery), true);
     };
 
     const confirm = async (password: string) => {
@@ -280,11 +340,26 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
                 email=""
                 error={error}
                 pending={pending}
+                codeStep={codeStep}
                 onSubmit={(credentials) => {
                     void signIn(credentials);
                 }}
+                onCode={(code, recovery) => {
+                    void verifyCode(code, recovery);
+                }}
                 onSignOut={() => {
                     setLeaving(true);
+                }}
+            />
+            <UnsentInputDialog
+                open={enrolment !== null}
+                kind="leave"
+                onStay={() => {
+                    setEnrolment(null);
+                }}
+                onLeave={() => {
+                    router.clearHistory();
+                    window.location.assign(enrolment ?? '/verifikasi-dua-langkah');
                 }}
             />
             <UnsentInputDialog

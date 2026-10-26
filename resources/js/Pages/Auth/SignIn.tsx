@@ -11,13 +11,14 @@ import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useTranslation } from '@/lib/i18n';
+import { languageQuery, useTranslation } from '@/lib/i18n';
 import { documentTitle } from '@/lib/title';
 
-export default function SignIn({ notice }: { notice: string | null }) {
+export default function SignIn({ notice, email = null }: { notice: string | null; email?: string | null }) {
     const { locale, t } = useTranslation();
     const id = useId();
-    const form = useForm({ email: '', password: '' });
+    // The e-mail of a second-factor attempt left with "Kembali", or expired, is kept (NAV-002).
+    const form = useForm({ email: email ?? '', password: '' });
     const [forgot, setForgot] = useState(false);
 
     useEffect(() => {
@@ -48,7 +49,8 @@ export default function SignIn({ notice }: { notice: string | null }) {
                 className="flex flex-col gap-4"
                 onSubmit={(event) => {
                     event.preventDefault();
-                    form.post('/masuk', {
+                    // The language before sign-in travels as `bahasa` to the next sign-in page (NV-07).
+                    form.post(`/masuk${languageQuery()}`, {
                         onFinish: () => {
                             form.reset('password');
                         },

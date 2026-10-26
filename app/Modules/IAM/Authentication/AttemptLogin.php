@@ -6,7 +6,6 @@ use App\Modules\IAM\Models\User;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Closure;
-use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -19,14 +18,16 @@ use RuntimeException;
  * against a dummy hash of the configured driver and parameters —; each failure counted by AU-05's limiter and
  * recorded with only a keyed hash of the identifier (LG-03). The verification, and a rehash's new hash, run within
  * a slot of H6-12. A correct password for an active account rehashes a stale hash with RV-10's conditional update
- * (AU-02) and signs the account in, never remembered (AU-08). Every way of establishing a session runs this
- * sequence — the sign-in page and the in-place re-login of IP-11 (H7-19); the second factor and the enrolment-only
- * session follow this step in TASK-018 (AU-16, AU-18).
+ * (AU-02) and hands the account to RouteSecondFactor — its challenge, its enrolment-only session or its login,
+ * never remembered (AU-08; AU-16, AU-18). Every way of establishing a session runs this sequence — the sign-in
+ * page and the in-place re-login of IP-11 (H7-19).
  */
 final class AttemptLogin
 {
+    /** The request attribute that carries the account whose password was verified to the next step. */
+    public const VERIFIED = 'iam.verified_account';
+
     public function __construct(
-        private readonly StatefulGuard $guard,
         private readonly LoginThrottle $throttle,
         private readonly SecurityEventRecorder $events,
         private readonly VerificationSlots $slots,
@@ -76,7 +77,8 @@ final class AttemptLogin
         }
 
         $this->throttle->succeeded($request, $identifier);
-        $this->guard->login($user);
+        // The second factor, or the session, follows in RouteSecondFactor (AU-16, AU-18).
+        $request->attributes->set(self::VERIFIED, $user);
 
         return $next($request);
     }

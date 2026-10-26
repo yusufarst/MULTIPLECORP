@@ -6,11 +6,14 @@ use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Validation\UncompromisedVerifier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Fortify\Actions\PrepareAuthenticatedSession;
 use Laravel\Fortify\Contracts\LoginResponse;
@@ -42,6 +45,7 @@ final class AuthenticationServiceProvider extends ServiceProvider
         Fortify::authenticateThrough(fn () => [
             EnsureSignInAllowed::class,
             AttemptLogin::class,
+            RouteSecondFactor::class,
             PrepareAuthenticatedSession::class,
             EstablishSession::class,
         ]);
@@ -53,6 +57,14 @@ final class AuthenticationServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by('credential-link:address:'.$request->ip())->response($throttled),
             Limit::perMinute(5)->by('credential-link:token:'.CredentialLinks::hash(is_string($request->input('token')) ? $request->input('token') : ''))->response($throttled),
         ]);
+
+        // H6-15: a pending challenge's session row carries its account (FactorAwareSessionHandler).
+        Session::extend('database', fn (Container $app): FactorAwareSessionHandler => new FactorAwareSessionHandler(
+            DB::connection(is_string(config('session.connection')) ? config('session.connection') : null),
+            config()->string('session.table', 'sessions'),
+            config()->integer('session.lifetime', 120),
+            $app,
+        ));
 
         Event::listen(Logout::class, function (Logout $event): void {
             if (request()->routeIs('logout')) {

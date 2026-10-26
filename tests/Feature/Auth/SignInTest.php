@@ -125,6 +125,9 @@ it('loads the next page as a full document after the sign-in page\'s request (AU
 });
 
 it('throttles five failures a minute per identifier and address, without locking the account (AU-05; criterion 2)', function () {
+    // The clock held, so the cooldown's seconds do not cross a second boundary between the requests.
+    $this->freezeTime();
+
     foreach (range(1, LoginThrottle::FAILURES_PER_MINUTE) as $attempt) {
         $this->postJson('/masuk', ['email' => 'laras@contoh.test', 'password' => 'salah'])->assertStatus(422);
     }

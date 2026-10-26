@@ -11,12 +11,14 @@ final class Authority
 {
     /**
      * @param  list<string>  $capabilities  sorted
+     * @param  bool  $ownerRole  whether the account holds the built-in OWNER role — for SECURITY AU-18's factor test only (AZ-13)
      */
     public function __construct(
         public readonly int $userId,
         public readonly bool $active,
         public readonly array $capabilities,
         public readonly CompanyScope $scope,
+        public readonly bool $ownerRole = false,
     ) {}
 
     public static function none(int $userId): self

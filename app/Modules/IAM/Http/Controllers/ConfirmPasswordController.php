@@ -54,7 +54,7 @@ final class ConfirmPasswordController
         }
 
         RateLimiter::clear($key);
-        $request->session()->put(RequireStepUp::CONFIRMED_AT, time());
+        $request->session()->put(RequireStepUp::CONFIRMED_AT, now()->getTimestamp());
 
         return response()->json(['confirmed' => true]);
     }
