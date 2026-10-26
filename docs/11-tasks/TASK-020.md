@@ -10,7 +10,7 @@ Amendment: on 2026-10-25 the Owner's decision [DIR-094](../00-governance/DECISIO
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -229,34 +229,38 @@ An Owner who loses access, a leaked key and a compromised window need a designed
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-050's M-46 case
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Operator/InstallationTest.php` — the catalogue synced first, one first Owner, active, holding the OWNER role, its OWNER assignment's audit event with the operator's host account and stated name, `actor_user_id` NULL and authority class SYSTEM, the account a pre-window Owner of any later window; a second run refused, writing nothing; no operator name, no name or e-mail, and a run outside a console refused (SM-24). Criterion 2: `tests/Feature/Operator/OwnerRecoveryLinkTest.php` — an Admin, an inactive Owner and an unknown address refused, the issue changing nothing else, its audit event naming the link, the operator and the reason and OWNER_RECOVERY_LINK_ISSUED with no actor; the link's use clearing the four TOTP fields, ending every session, revoking the other links and unlinking Google with reason OWNER_RECOVERY and no actor, IAM.TotpReset and IAM.GoogleUnlinked naming the link; a RESET link keeping TOTP; during a run's recovery a pre-window Owner — one whose role was removed and given back included — issued without a confirmer and its events naming the run and the window start, a reactivated former Owner refused without a confirmer and issued with a recovered pre-window Owner named, a confirmer that was not a pre-window Owner, one not recovered after the window, one no longer an active Owner and the account itself refused, a deactivated pre-window Owner and any issue before the incident command completes refused (AU-14; SM-19; SM-21). Criterion 3: `tests/Feature/Operator/KeyCompromiseTest.php` — refused without the maintenance mode, with a bypass and with a malformed window start; both sweeps, every account voided once, one created after the start and one created while the voiding runs included, Google links kept, every event naming the run, the window start and the operator; refused when the maintenance mode is lifted mid-run; a restart with another window start refused, a restart voiding the rest once and writing the CREDENTIALS_VOIDED a stop lost (RV-17; HO-41). Criterion 4: `tests/Feature/Operator/OwnerRestorationTest.php` — the role row back to its window-start values, each column from its own first change, and an active flag with its deactivation's columns cleared, once per run; an account that first became Owner during the window, one inactive at the window start, one removed before it, one whose role was given back and one never removed refused, writing nothing; another window start, a run not completed, a run whose recovery ended and a superseded run refused; an account touched since the closing sweep by an audited change, a link or a session refused; the end of recovery refused with the blocking accounts and recorded once a confirmer is named —; `tests/Integration/Authentication/RecoveryRacesTest.php` — two restorations racing, a role change racing a restoration and meeting the restored state, and the end against a role change and against an activation in both orders, each under real sessions with a barrier before LK-02 (M-46; RV-18; TT-F30). Criterion 5: `OwnerRestorationTest.php` — a window before every OWNER assignment and an OWNER assignment without an audit event halt the restoration, the issue and the end, nothing created or promoted —, `KeyCompromiseTest.php` — the halt reported after the run — and `tests/Unit/IAM/RecoveryRulesTest.php` — the halt names the Owner's incident decision outside the application, first on a trusted state (DIR-083 OE-10). Criterion 6: `InstallationTest.php` — the installation's password unusable, set only through the OWNER_RECOVERY link issued right after it (DIR-085 OF-06)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the window and halt rules (TL-03); Feature — each command's refusals and effects (TL-04); Integration — the commands under real PostgreSQL sessions and the atomic end of recovery (TL-05); PASS locally and in CI
+- [x] Authorization: no route reaches a command, every recovery service refused outside a console, no capability added — OWNER_ONLY unchanged (TL-06)
+- [x] Route integrity: N/A — no route; TL-07's route audit PASS unchanged
+- [x] Interaction behavior: N/A — no INT- contract in this Task
+- [x] Browser E2E if required: N/A — the link's page is TASK-017's
+- [x] Responsive/adaptive if required: N/A — no page
+- [x] Visual breathing room/density if UI: N/A — no page
+- [x] Production build: TL-13 PASS locally and in CI
+- [x] Security checks if required: SM-19, SM-21 and SM-24 (TL-14); the secret-like scan and both dependency audits PASS in CI
+- [x] Database safety review: one expand-only, privilege-only migration under DIR-097 — the runtime role's `UPDATE` of `roles.is_builtin` for LK-02's lock alone, a trigger refusing every update of a role row —, touching no row; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `485a452`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40317484929 (push) and 40317490995 (pull request #25), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". On the Owner's workstation, 2026-10-26: the suites Unit 285, Architecture 50, Feature 177, Integration 913, Authorization 108, Routes 11 and Interaction 17 before ER-06's fixes, and the operator, race and role-privilege tests again after them; Pint and Larastan/PHPStan PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: 485a452, CI ubuntu-24.04 run 40317484929`
+- Route evidence: N/A — no route added or changed; `tests/Authorization/OperatorCommandsTest.php` proves no route reaches a command
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page; the OWNER_RECOVERY link opens TASK-017's PG-003, whose journeys stand
+- Localization evidence: N/A — console output in English for the operator; no catalogue key added
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed
+- Files changed: `app/Modules/IAM/Recovery/`; `app/Console/Commands/` — `InstallFirstOwner`, `IssueOwnerRecoveryLink`, `KeyCompromiseIncident`, `ReencryptTwoFactorSecrets`, `RestoreOwner`, `EndIncidentRecovery` and `ReadsOperatorInput` —; `app/Modules/IAM/Authentication/CredentialLinks.php`; `database/migrations/2026_10_26_000142_iam_make_owner_role_row_lockable.php`; `tests/`; DIR-097's records — DECISION_LOG, DECISION_INDEX, the ninety-fifth source record, DATABASE §28 and its header, TASK-024 and TASK_PLAN's Change 13 —; TOOLCHAIN's row; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `0cd0acf`, `326eb6a`, `754d042` and `485a452`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-020-installation`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26; Context7 consulted for the framework's previous-keys rotation and its maintenance mode (TOOLCHAIN's TASK-020 row); CI the final proof. The discovery: LK-02's row lock on the OWNER role, which RV-04, RV-18 and TT-F30 take, was refused under the runtime role — PostgreSQL grants a row lock only to a role holding `UPDATE` on a column — and decided by the Owner as DIR-097 with APPR-025's text, readings R1 and R2 approved with it. ER-06's one review found no HIGH point; its MEDIUM points — the role row's `granted_by` and `granted_at` restored from each column's own first change in the window, a later run superseding an earlier one so that none reopens, the migration recorded under the Owner's decision — and its LOW points — two starts serialized under LK-02 so that no run is left behind, a lost CREDENTIALS_VOIDED written on restart, the halt's wording, the races against an activation and a writing role change, an account created while the voiding runs — each fixed and tested; a role row of another account per user (the PK `(user_id, role_id)`) is V1's one-row design, kept. Codex's review of `754d042` found one P2: an account created during the closing sweep, after the last read of the accounts, was never voided — fixed in `485a452`, the run completing only once no account is left unvoided after its closing sweep, read again in the completion's transaction, and tested. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-020 blocks were re-checked at this DONE: TASK-069 waits on TASK-023, TASK-024 and its other dependencies, TASK-076 on TASK-021 and TASK-074, TASK-085 on TASK-084. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 
