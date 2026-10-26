@@ -4,6 +4,7 @@ use App\Http\Controllers\SystemPageController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
 use App\Modules\IAM\Http\Controllers\ConfirmPasswordController;
+use App\Modules\IAM\Http\Controllers\GoogleSignInController;
 use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
@@ -30,6 +31,11 @@ Route::post('/masuk/verifikasi', [TwoFactorChallengeController::class, 'verify']
 Route::post('/masuk/verifikasi/pemulihan', [TwoFactorChallengeController::class, 'recovery'])->middleware(['guest', 'access:none,two_factor_challenge'])->name('two-factor.recovery');
 Route::get('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'show'])->middleware(['auth', 'access:enrolment', CredentialPageHeaders::class])->name('two-factor.enrolment');
 Route::post('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'confirm'])->middleware(['auth', 'access:enrolment', CredentialPageHeaders::class])->name('two-factor.enrolment.confirm');
+
+// Google sign-in (TASK-019; SECURITY AU-22): existing accounts only, always followed by PG-002's challenge;
+// throttled per client address (AU-05); off with no client configured (GLC-09).
+Route::get('/masuk/google', [GoogleSignInController::class, 'redirect'])->middleware(['guest', 'access:none,google_redirect', 'throttle:google'])->name('google.redirect');
+Route::get('/masuk/google/callback', [GoogleSignInController::class, 'callback'])->middleware(['access:none,google_callback', 'throttle:google'])->name('google.callback');
 
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's

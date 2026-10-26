@@ -379,6 +379,7 @@
     "status.task_line.not_recorded": "Not yet recorded",
     "status.task_line.recorded": "Recorded",
     "auth.code_mismatch": "The code does not match or has expired. Enter the latest code from the authenticator app.",
+    "auth.google_failed": "Could not sign in with Google. Sign in with your e-mail and password.",
     "auth.shared_device_advice": "On a shared device, sign out of Google when you finish; lock your phone when it is not in use.",
     "documents.doc_01": "Penawaran",
     "documents.doc_02": "Purchase Order / PO",

@@ -379,6 +379,7 @@
     "status.task_line.not_recorded": "Belum Dicatat",
     "status.task_line.recorded": "Tercatat",
     "auth.code_mismatch": "Kode tidak cocok atau sudah tidak berlaku. Masukkan kode terbaru dari aplikasi autentikator.",
+    "auth.google_failed": "Tidak dapat masuk dengan Google. Masuk dengan e-mail dan kata sandi.",
     "auth.shared_device_advice": "Di perangkat bersama, keluar dari Google setelah selesai; kunci ponsel saat tidak dipakai.",
     "documents.doc_01": "Penawaran",
     "documents.doc_02": "Purchase Order / PO",

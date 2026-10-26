@@ -2,6 +2,7 @@
 
 namespace App\Modules\IAM\Http\Controllers;
 
+use App\Modules\IAM\Authentication\GoogleSignIn;
 use App\Modules\IAM\Authentication\TwoFactorAnswers;
 use App\Modules\IAM\Authentication\TwoFactorChallenge;
 use Illuminate\Http\Request;
@@ -23,6 +24,9 @@ final class SignInController
         return Inertia::render('Auth/SignIn', [
             'notice' => $request->session()->get('auth.notice') === 'password_saved' ? __('pages.pg_001.password_saved') : null,
             'email' => is_string($email) ? $email : null,
+            // Google sign-in only with a client configured (GLC-09), and its one generic failure (AU-22).
+            'google' => GoogleSignIn::enabled(),
+            'googleFailed' => $request->session()->get(GoogleSignIn::FAILED) === true ? __('auth.google_failed') : null,
         ]);
     }
 }

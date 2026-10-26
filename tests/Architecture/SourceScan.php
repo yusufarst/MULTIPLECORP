@@ -88,6 +88,8 @@ final class SourceScan
     public const ROLE_NAME_ALLOWED = [
         // TASK-005: OWNER is also an unlink reason of C-63 — the CHECK lists the code, no role is checked.
         '/database/migrations/2026_10_20_000008_iam_create_user_external_identities_table.php',
+        // TASK-019: the same unlink reason in the identities' lifecycle (AU-24) — a reason code, no role checked.
+        '/app/Modules/IAM/Authentication/GoogleIdentities.php',
         // TASK-011: the built-in roles' enumeration, the effective-capability resolver (RG-02) and the
         // catalogue's rows (RG-01) — the resolver is the one reader AZ-02 names for authorization.
         '/app/Modules/IAM/Enums/BuiltinRole.php',

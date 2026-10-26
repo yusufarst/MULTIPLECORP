@@ -9,6 +9,7 @@
         "inertiajs/inertia-laravel": "^3.5",
         "laravel/fortify": "^1.41",
         "laravel/framework": "^13.17",
+        "laravel/socialite": "^5.31",
         "predis/predis": "^3.7"
     },
     "require-dev": {

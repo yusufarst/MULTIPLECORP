@@ -1,6 +1,12 @@
 {
     "_": "The keys added to the catalogue after APPR-011 (LOCALIZATION §3.2, §5; DIR-081 OB-04; OQ-24 (a)), each with the Task that added it, its source and its kind: \"canonical\" — the Indonesian quotes a GL term or a label of an approved source and is accepted —, \"proposed\" — the Indonesian is proposed copy —; every English text is proposed. The list is the Owner's, reviewed with each page's P8 review and accepted except the keys the Owner marks.",
     "keys": {
+        "auth.google_failed": {
+            "task": "TASK-019",
+            "source": "AUTH_JOURNEYS §2.2 step 3 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "pages.pg_002.use_code": {
             "task": "TASK-018",
             "source": "AUTH_JOURNEYS §2.1",
