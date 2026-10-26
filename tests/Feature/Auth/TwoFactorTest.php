@@ -406,3 +406,20 @@ it('reads secrets encrypted under a retired key from APP_PREVIOUS_KEYS, and encr
     $ciphertext = Crypt::encryptString(TwoFactor::SECRET);
     expect($fresh->decryptString($ciphertext))->toBe(TwoFactor::SECRET);
 });
+
+it('rebuilds a breach from the floor to the millisecond, so its own failures never count again after the cooldown (AU-05; IX-19)', function () {
+    // Five failures within one second, after its start: a breach read to the second would sit before them.
+    $this->travelTo(now()->setTimestamp(1_800_000_015)->addMilliseconds(250));
+
+    foreach (range(1, SecondFactorLimit::THRESHOLD) as $attempt) {
+        signInWithPassword();
+        $this->withServerVariables(['REMOTE_ADDR' => "10.7.0.{$attempt}"])->postJson('/masuk/verifikasi', ['code' => '000000'])->assertStatus(422);
+        $this->get('/masuk');
+    }
+
+    Cache::store('array')->flush();
+    $this->travel(61)->seconds();
+
+    signInWithPassword();
+    $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+});

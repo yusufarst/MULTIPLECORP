@@ -4,6 +4,7 @@ namespace App\Modules\IAM\Authentication;
 
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
+use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Contracts\Cache\LockProvider;
 use Illuminate\Contracts\Cache\Repository;
@@ -218,7 +219,8 @@ final class SecondFactorLimit
             }
 
             if ($row->event_kind === SecurityEventKind::TwoFactorCooldownStarted->value) {
-                $at = (int) ((is_string($row->occurred_at) ? (int) strtotime($row->occurred_at) : 0) * 1000);
+                // To the millisecond, as the places are: the breached window's own failures stay before it.
+                $at = is_string($row->occurred_at) ? (int) CarbonImmutable::parse($row->occurred_at)->getPreciseTimestamp(3) : 0;
                 $breaches[$id] = [$at, is_int($details['cooldown_seconds'] ?? null) ? $details['cooldown_seconds'] : self::COOLDOWNS[0]];
             } elseif (is_int($details['place_time'] ?? null)) {
                 $failures[$id] = $details['place_time'];
