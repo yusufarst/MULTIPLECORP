@@ -60,3 +60,46 @@ test('runs PG-061: no start before go-live, a scheme, the start with its stateme
     await expect(page.getByText('Penghitung Proyek dinaikkan.')).toBeVisible();
     await expect(page.getByRole('cell', { name: '161' })).toBeVisible();
 });
+
+test('keeps a lost answer open for "Coba Lagi" under its identifier, and asks before unsent input is lost (IP-04; INT-009)', async ({ page }) => {
+    const run = `pen-${String(Date.now())}`;
+    await ownerSignedIn(page, run);
+    const company = await numberingCompany(page, null);
+
+    await page.goto(`/pengaturan/penomoran?perusahaan=${company}&jenis=project`);
+    await page.getByRole('button', { name: 'Tambah Format Nomor' }).click();
+    await page.getByLabel('Templat nomor').fill('UJI/PRJ/{tahun}/{nomor:4}');
+
+    // INT-009: another type with unsent input asks MSG-35 first; "Kembali" keeps the input and the page.
+    await page.getByLabel('Jenis nomor').selectOption('doc-01');
+    const unsent = page.getByRole('alertdialog');
+    await expect(unsent.getByText('Isian yang belum dikirim akan hilang. Tetap tinggalkan halaman?')).toBeVisible();
+    await unsent.getByRole('button', { name: 'Kembali' }).click();
+    await expect(page).toHaveURL(/jenis=project/);
+    await expect(page.getByLabel('Templat nomor')).toHaveValue('UJI/PRJ/{tahun}/{nomor:4}');
+
+    // IP-04: the answer lost on the way leaves MSG-07 with "Coba Lagi", which sends the same `command_id`.
+    const sent: string[] = [];
+    const saving = (url: URL) => url.pathname === '/pengaturan/penomoran/project';
+    await page.route(saving, async (route) => {
+        sent.push((route.request().postDataJSON() as { command_id: string }).command_id);
+        await route.abort('failed');
+    });
+    await page.getByRole('button', { name: 'Simpan Format Nomor' }).click();
+    await expect(page.getByText('Belum dapat dipastikan apakah tindakan ini tersimpan. Tekan Coba Lagi — sistem tidak akan mencatat dua kali.')).toBeVisible();
+    await page.unroute(saving);
+    const retried = page.waitForRequest((request) => saving(new URL(request.url())));
+    await page.getByRole('button', { name: 'Coba Lagi' }).click();
+    expect(((await retried).postDataJSON() as { command_id: string }).command_id).toBe(sent[0]);
+    await expect(page.getByText('Format nomor Proyek disimpan.')).toBeVisible();
+
+    // Sent input is not unsent: the type changes at once. Unsent input left through "Tinggalkan Halaman" goes.
+    await page.getByLabel('Jenis nomor').selectOption('doc-01');
+    await expect(page).toHaveURL(/jenis=doc-01/);
+    await page.getByRole('button', { name: 'Tambah Format Nomor' }).click();
+    await page.getByLabel('Templat nomor').fill('UJI/PNW/{tahun}/{nomor:4}');
+    await page.getByLabel('Jenis nomor').selectOption('project');
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Tinggalkan Halaman' }).click();
+    await expect(page).toHaveURL(/jenis=project/);
+    await expect(page.getByText('UJI/PRJ/{tahun}/{nomor:4}')).toBeVisible();
+});

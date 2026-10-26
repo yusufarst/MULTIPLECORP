@@ -7,7 +7,7 @@
 // date is the day of recording, a fixed fact (IP-07). Readable on the phone, the commands on the desktop (`[desk]`).
 import { router, usePage } from '@inertiajs/react';
 import { Plus, Trash2 } from 'lucide-react';
-import { type ReactNode, useState } from 'react';
+import { createContext, type ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import type { FormDataConvertible } from '@inertiajs/core';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -15,6 +15,7 @@ import { FormField, FormSection } from '@/components/form';
 import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -24,6 +25,7 @@ import { Code, DateText } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
 import { type Outcome } from '@/lib/command-intent';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
+import { isBackground } from '@/lib/session-core';
 import { useCommandIntent } from '@/lib/use-command-intent';
 
 type Granularity = 'YEAR' | 'MONTH';
@@ -89,9 +91,15 @@ function isLive(period: string, boundary: string | null, goLive: string | null):
 
 /** One command form's sending and answering: one `command_id` per intent (IP-02), the answer in place (IP-01). */
 function useNumberingCommand<P extends Record<string, FormDataConvertible>>(url: () => string, method: 'put' | 'post') {
+    const { t } = useTranslation();
     const intent = useCommandIntent<P>();
     const [answer, setAnswer] = useState<Answer | null>(null);
     const [errors, setErrors] = useState<Errors>({});
+    const finished = useRef<(() => void) | undefined>(undefined);
+    const unknown = (): void => {
+        intent.failed();
+        setAnswer({ kind: 'FAILED', cause: 'unknown', text: t('messages.msg_07') });
+    };
 
     const send = (sent: { commandId: string; payload: P } | null, done?: () => void) => {
         if (sent === null) return;
@@ -104,7 +112,7 @@ function useNumberingCommand<P extends Record<string, FormDataConvertible>>(url:
                 const given = flash.answer;
 
                 if (given === undefined) {
-                    intent.failed();
+                    unknown();
 
                     return;
                 }
@@ -136,8 +144,9 @@ function useNumberingCommand<P extends Record<string, FormDataConvertible>>(url:
                 intent.notAnOutcome('VALIDATION');
                 setErrors(bag);
             },
+            // The answer lost on the way: the outcome is unknown, and "Coba Lagi" sends the same identifier (IP-04; HO-02).
             onNetworkError: () => {
-                intent.failed();
+                unknown();
 
                 return false;
             },
@@ -148,16 +157,70 @@ function useNumberingCommand<P extends Record<string, FormDataConvertible>>(url:
         intent,
         answer,
         errors,
+        pending: intent.state.phase === 'in_flight',
+        unknown: intent.state.phase === 'unknown',
         clear: () => {
             setAnswer(null);
         },
+        /** Sends the payload as a new intent — or, while an earlier one's outcome is unknown, retries it unchanged (IP-02). */
         submit: (payload: P, done?: () => void) => {
+            if (intent.state.phase === 'unknown') {
+                send(intent.retry(), finished.current);
+
+                return;
+            }
+
+            finished.current = done;
             send(intent.trigger(payload), done);
         },
         retry: () => {
-            send(intent.retry());
+            send(intent.retry(), finished.current);
         },
     };
+}
+
+/** A form's answer in place (IP-01), with "Coba Lagi" while an earlier attempt's outcome is unknown (IP-04; IG-02). */
+function CommandAnswer({ command, hidden = false }: { command: { answer: Answer | null; unknown: boolean; retry: () => void }; hidden?: boolean }) {
+    const { t } = useTranslation();
+
+    if (hidden || command.answer === null) {
+        return null;
+    }
+
+    return (
+        <OutcomeMessage
+            answer={command.answer}
+            action={
+                command.unknown ? (
+                    <Button variant="outline" size="md" onClick={command.retry}>
+                        {t('actions.try_again')}
+                    </Button>
+                ) : undefined
+            }
+        />
+    );
+}
+
+/** INT-009: the page's forms report their unsent input, and a visit away asks MSG-35 first. */
+const Unsent = createContext<{ mark: (form: string, dirty: boolean) => void; leave: (action: () => void) => void }>({
+    mark: () => undefined,
+    leave: (action) => {
+        action();
+    },
+});
+
+function useUnsent(form: string, dirty: boolean) {
+    const unsent = useContext(Unsent);
+
+    useEffect(() => {
+        unsent.mark(form, dirty);
+
+        return () => {
+            unsent.mark(form, false);
+        };
+    }, [unsent, form, dirty]);
+
+    return unsent;
 }
 
 function Fact({ children }: { children: ReactNode }) {
@@ -174,8 +237,57 @@ export default function Numbering({ companies, company, types, type, detail }: P
         router.get('/pengaturan/penomoran', { perusahaan: company ?? '', jenis: type, ...query }, { preserveScroll: true });
     };
     const flashAnswer = (page.flash as Flash).answer;
+    const dirty = useRef(new Set<string>());
+    const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    const [unsent] = useState(() => ({
+        mark: (form: string, isDirty: boolean) => {
+            if (isDirty) {
+                dirty.current.add(form);
+            } else {
+                dirty.current.delete(form);
+            }
+        },
+        leave: (action: () => void) => {
+            if (dirty.current.size > 0) {
+                setLeaving(() => action);
+            } else {
+                action();
+            }
+        },
+    }));
+
+    // Any other visit away — a shell entry, the back action — asks first too, never a background one (RB-05); the
+    // browser's own leave for a tab.
+    useEffect(() => {
+        const off = router.on('before', (event) => {
+            const visit = event.detail.visit;
+
+            if (dirty.current.size === 0 || visit.method !== 'get' || isBackground(visit)) {
+                return;
+            }
+
+            const href = visit.url.href;
+            setLeaving(() => () => {
+                router.visit(href);
+            });
+
+            return false;
+        });
+        const unload = (event: BeforeUnloadEvent) => {
+            if (dirty.current.size > 0) {
+                event.preventDefault();
+            }
+        };
+        window.addEventListener('beforeunload', unload);
+
+        return () => {
+            off();
+            window.removeEventListener('beforeunload', unload);
+        };
+    }, []);
 
     return (
+        <Unsent.Provider value={unsent}>
         <AppShell title={t('pages.pg_061.title')}>
             <PageHeader title={t('pages.pg_061.title')} />
             <div className="flex min-w-0 flex-col gap-6 md:max-w-page-form">
@@ -186,7 +298,10 @@ export default function Numbering({ companies, company, types, type, detail }: P
                                 {...control}
                                 value={company ?? ''}
                                 onChange={(event) => {
-                                    visit({ perusahaan: event.target.value });
+                                    const chosen = event.target.value;
+                                    unsent.leave(() => {
+                                        visit({ perusahaan: chosen });
+                                    });
                                 }}
                             >
                                 {companies.map((entry) => (
@@ -203,7 +318,10 @@ export default function Numbering({ companies, company, types, type, detail }: P
                                 {...control}
                                 value={type}
                                 onChange={(event) => {
-                                    visit({ jenis: event.target.value });
+                                    const chosen = event.target.value;
+                                    unsent.leave(() => {
+                                        visit({ jenis: chosen });
+                                    });
                                 }}
                             >
                                 {types.map((entry) => (
@@ -221,7 +339,21 @@ export default function Numbering({ companies, company, types, type, detail }: P
                     <TypeArea key={`${company}-${type}`} detail={detail} company={company} jenis={jenis} base={base} flashAnswer={flashAnswer} />
                 )}
             </div>
+            <UnsentInputDialog
+                open={leaving !== null}
+                kind="leave"
+                onStay={() => {
+                    setLeaving(null);
+                }}
+                onLeave={() => {
+                    const action = leaving;
+                    dirty.current.clear();
+                    setLeaving(null);
+                    action?.();
+                }}
+            />
         </AppShell>
+        </Unsent.Provider>
     );
 }
 
@@ -323,14 +455,20 @@ function SchemeArea({ detail, company, jenis, base }: { detail: Detail; company:
     const period = periodOf(effective, granularity);
     const hasCounter = detail.counters.some((counter) => counter.period_key === period);
     const needsSeed = started && !backward && !hasCounter && !isLive(period, detail.boundary, detail.go_live);
+    const [opened, setOpened] = useState('');
+    const values = JSON.stringify([granularity, template, revision, effective, backward, first]);
+    const unsent = useUnsent('scheme', editing !== null && values !== opened);
 
     const open = (scheme: Scheme | 'new') => {
+        const start: [Granularity, string, 'NEW_NUMBER' | 'BASE_SUFFIX', string] =
+            scheme === 'new' ? ['YEAR', '', 'NEW_NUMBER', detail.today] : [scheme.granularity, scheme.template, scheme.revision_format, scheme.effective_from];
+        setOpened(JSON.stringify([...start, false, '']));
         command.clear();
         setEditing(scheme);
-        setGranularity(scheme === 'new' ? 'YEAR' : scheme.granularity);
-        setTemplate(scheme === 'new' ? '' : scheme.template);
-        setRevision(scheme === 'new' ? 'NEW_NUMBER' : scheme.revision_format);
-        setEffective(scheme === 'new' ? detail.today : scheme.effective_from);
+        setGranularity(start[0]);
+        setTemplate(start[1]);
+        setRevision(start[2]);
+        setEffective(start[3]);
         setBackward(false);
         setFirst('');
     };
@@ -510,9 +648,9 @@ function SchemeArea({ detail, company, jenis, base }: { detail: Detail; company:
                         </FormField>
                     )}
                     <Recording today={detail.today} />
-                    {command.answer !== null && !confirming && <OutcomeMessage answer={command.answer} />}
+                    <CommandAnswer command={command} hidden={confirming} />
                     <div className="flex flex-wrap gap-2">
-                        <Button type="submit" variant="primary" size="lg" pending={command.intent.frozen} pendingLabel={t('pages.pg_061.save_scheme')}>
+                        <Button type="submit" variant="primary" size="lg" pending={command.pending} pendingLabel={t('pages.pg_061.save_scheme')}>
                             {t('pages.pg_061.save_scheme')}
                         </Button>
                         <Button
@@ -521,8 +659,10 @@ function SchemeArea({ detail, company, jenis, base }: { detail: Detail; company:
                             size="lg"
                             disabled={command.intent.frozen}
                             onClick={() => {
-                                setEditing(null);
-                                command.intent.leave();
+                                unsent.leave(() => {
+                                    setEditing(null);
+                                    command.intent.leave();
+                                });
                             }}
                         >
                             {t('dialogs.back')}
@@ -530,7 +670,7 @@ function SchemeArea({ detail, company, jenis, base }: { detail: Detail; company:
                     </div>
                 </form>
             )}
-            {editing === null && command.answer !== null && <OutcomeMessage answer={command.answer} />}
+            {editing === null && <CommandAnswer command={command} />}
             <ConfirmCommand
                 open={confirming}
                 onOpenChange={setConfirming}
@@ -542,7 +682,7 @@ function SchemeArea({ detail, company, jenis, base }: { detail: Detail; company:
                     setVouched(checked);
                 }}
                 confirmLabel={t('pages.pg_061.save_scheme')}
-                pending={command.intent.frozen}
+                pending={command.pending}
                 answer={command.answer}
                 onConfirm={submit}
             />
@@ -572,6 +712,7 @@ function StartArea({ detail, company, jenis, base }: { detail: Detail; company: 
     const [numbers, setNumbers] = useState<Record<string, string>>({});
     const [confirming, setConfirming] = useState(false);
     const [vouched, setVouched] = useState(false);
+    useUnsent('start', Object.values(numbers).some((value) => value !== ''));
 
     if (detail.pending_batches.length > 0) {
         const batch = detail.pending_batches[0];
@@ -623,7 +764,7 @@ function StartArea({ detail, company, jenis, base }: { detail: Detail; company: 
                     </FormField>
                 ))}
                 <Recording today={detail.today} />
-                {command.answer !== null && !confirming && <OutcomeMessage answer={command.answer} />}
+                <CommandAnswer command={command} hidden={confirming} />
                 <div>
                     <Button type="submit" variant="primary" size="lg" disabled={!filled}>
                         {t('glossary.gl_177')}
@@ -647,7 +788,7 @@ function StartArea({ detail, company, jenis, base }: { detail: Detail; company: 
                     setVouched(checked);
                 }}
                 confirmLabel={t('glossary.gl_177')}
-                pending={command.intent.frozen}
+                pending={command.pending}
                 answer={command.answer}
                 onConfirm={() => {
                     command.submit(payload(), () => {
@@ -692,6 +833,7 @@ function SeedArea({ detail, company, jenis, base }: { detail: Detail; company: s
     const [first, setFirst] = useState('');
     const [confirming, setConfirming] = useState(false);
     const [vouched, setVouched] = useState(false);
+    useUnsent('seed', period !== '' || first !== '');
 
     return (
         <FormSection title={t('actions.set_first_number')}>
@@ -735,7 +877,7 @@ function SeedArea({ detail, company, jenis, base }: { detail: Detail; company: s
                     )}
                 </FormField>
                 <Recording today={detail.today} />
-                {command.answer !== null && !confirming && <OutcomeMessage answer={command.answer} />}
+                <CommandAnswer command={command} hidden={confirming} />
                 <div>
                     <Button type="submit" variant="primary" size="lg" disabled={period === '' || first === ''}>
                         {t('actions.set_first_number')}
@@ -753,13 +895,15 @@ function SeedArea({ detail, company, jenis, base }: { detail: Detail; company: s
                     setVouched(checked);
                 }}
                 confirmLabel={t('actions.set_first_number')}
-                pending={command.intent.frozen}
+                pending={command.pending}
                 answer={command.answer}
                 onConfirm={() => {
                     command.submit(
                         { company, mode: 'seed', period_key: period, first_number: Number(first), business_date: detail.today, business_date_prefilled: true },
                         () => {
                             setConfirming(false);
+                            setPeriod('');
+                            setFirst('');
                         },
                     );
                 }}
@@ -787,6 +931,7 @@ function RaiseArea({ detail, company, jenis, base }: { detail: Detail; company: 
     const [lines, setLines] = useState<{ period: string; highest: string }[]>([{ period: '', highest: '' }]);
     const [confirming, setConfirming] = useState(false);
     const filled = reference.trim() !== '' && point !== '' && lines.every((line) => line.period !== '' && line.highest !== '');
+    useUnsent('raise', open && (reference !== '' || point !== '' || lines.some((line) => line.period !== '' || line.highest !== '')));
 
     if (!open) {
         return (
@@ -905,7 +1050,7 @@ function RaiseArea({ detail, company, jenis, base }: { detail: Detail; company: 
                     </Button>
                 </div>
                 <Recording today={detail.today} />
-                {command.answer !== null && !confirming && <OutcomeMessage answer={command.answer} />}
+                <CommandAnswer command={command} hidden={confirming} />
                 <div>
                     <Button type="submit" variant="primary" size="lg" disabled={!filled}>
                         {t('pages.pg_061.raise')}
@@ -925,7 +1070,7 @@ function RaiseArea({ detail, company, jenis, base }: { detail: Detail; company: 
                     </ul>
                 }
                 confirmLabel={t('pages.pg_061.raise')}
-                pending={command.intent.frozen}
+                pending={command.pending}
                 answer={command.answer}
                 onConfirm={() => {
                     command.submit(
@@ -942,6 +1087,9 @@ function RaiseArea({ detail, company, jenis, base }: { detail: Detail; company: 
                         () => {
                             setConfirming(false);
                             setOpen(false);
+                            setReference('');
+                            setPoint('');
+                            setLines([{ period: '', highest: '' }]);
                         },
                     );
                 }}

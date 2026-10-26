@@ -31,6 +31,10 @@ for (const width of [390, 1280]) {
             await page.getByLabel(`Nomor pertama periode ${year}`).fill('5');
             await page.getByRole('button', { name: 'Mulai Penomoran' }).click();
             await expect(page.getByRole('alertdialog')).toBeVisible();
+            // The confirmation fades in over --mc-dur-moderate: its colours are measured at rest, never blended mid-motion.
+            const confirmation = page.locator('[data-slot="alert-dialog-content"]');
+            await expect(confirmation).not.toHaveAttribute('data-starting-style');
+            await expect(confirmation).toHaveCSS('opacity', '1');
             expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
         }
     });
