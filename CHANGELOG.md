@@ -580,3 +580,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-098 at one checkpoint: the number format's tokens (and, on ER-06's finding, the period's tokens required), the raise's incident and once per recovery point, eight readings.
 - ER-06's independent review found two HIGH points; every point fixed and tested. Codex's two P2 points on pull request #26 — the retry of a lost answer, MSG-35 before unsent input is lost — fixed and tested.
 - Every check passed in fresh CI on `3af812a`. TASK-021 DONE — progress 21 / 87 —; TASK-022 next, not started: execution paused at the Owner's SHUTDOWN_AFTER_CURRENT_TASK; pull request #26 squash-merged once eligible.
+
+## Unreleased — 2026-10-27, TASK-022 — Jobs, files and the document renderer
+
+- TASK-021 squash-merged by the executor into `main` as `509079b` (pull request #26); execution resumed by the Owner and TASK-022 started.
+- Built TASK-022 on its branch `task/TASK-022-jobs-files-renderer`: the jobs' shared mechanics — payload versions, after-commit dispatch, unique and overlap locks, the schedule —, the private files with FL-01's upload pipeline on GD, the WeasyPrint renderer refusing the network and every file outside its assets, the rendition attempts and their sweeper, the image derivatives, the command-log purge and the owed-work sweep's registration point, ROUTE-226, ROUTE-227 and ROUTE-285 with their frontend.
+- The Owner's decision DIR-099: WeasyPrint, GD and the jobs' ownership; and, on the lock discovery, the runtime role's row locks on `documents`, `document_types` and `opening_customer_credits`, with APPR-026's amendments.
+- ER-06's independent review found no HIGH point; its points and Codex's P2 on pull request #27 fixed and tested.
+- Every check passed in fresh CI on `70f3ba6`. TASK-022 DONE — progress 22 / 87 —; TASK-025, TASK-027 and TASK-030 READY; TASK-023 next; pull request #27 squash-merged once eligible.

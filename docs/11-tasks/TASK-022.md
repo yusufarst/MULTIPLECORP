@@ -8,7 +8,7 @@ Amendment: on 2026-10-27 the Owner's decision [DIR-099](../00-governance/DECISIO
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -242,34 +242,39 @@ Renditions, exports, imports and thumbnails run in the background (ARCHITECTURE 
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-007's crash-after-commit case
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Files/FileRoutesTest.php` — a rendition downloaded by its family's viewer with FL-07's attachment profile; a denied, an unknown, a malformed and a storage-path address answered alike, the denial security-logged; no export or unowned upload served —; `tests/Authorization/FileAccessTest.php` — every purpose by family and scope (PJ-08, PJ-15, PJ-19, PJ-20, rows 27 and 124) —; `tests/Interaction/FilesTest.php` — authorization at request time. Criterion 2: `tests/Unit/DOC/UploadInspectionTest.php` — FL-01–FL-06's refusals, SM-09's elements of H8-09 —; `tests/Interaction/FilesTest.php` — a duplicate of evidence content and a reproduction of a rendition found by their checksum (BD-15; FL-10; FL-05), their disclosure TASK-030's (DP-13). Criterion 3: `tests/Integration/Jobs/RenditionPipelineTest.php` — a rendition rendered once, the version untouched; a worker's abandoned attempt taken over and one READY in the end; an abandoned RENDERING attempt re-dispatched by the sweeper after 10 minutes and a crash before dispatch after 2 (M-31, M-32, GAP-007); five attempts with their backoff; a revision issued while the predecessor's rendition is pending leaving it the predecessor's; LK-01's projects locked before LK-30 —, with TASK-029. Criterion 4: with TASK-029 — the renderer reads the one template TASK-029 writes (`RenditionTemplate`), and TASK-022 issues no number. Criterion 5: `tests/Feature/Files/FileRoutesTest.php` — the status and the thumbnail write no session, a download does (RB-05; RV-06). Criterion 6: `tests/Integration/Jobs/ScheduledWorkTest.php` and `FileRoutesTest.php` — JB-04's 80 px thumbnail and preview written once, a missing one owed and answered absent (PF-31, PF-32; PT-22) —; `tests/Performance/FileRequestsTest.php`. Criterion 7: `tests/Integration/Jobs/FrameworkBehavioursTest.php` — a cache lock inside a transaction on Valkey, the scheduler with its store down —; `tests/Architecture/JobsTest.php` and the scan rule `job-batching` — no batched job, no job-batch table —; the database-store case not applicable, no database cache store being configured
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the upload checks, the families and the payload versions (TL-03); Feature — ROUTE-226, ROUTE-227 and ROUTE-285 with their denials (TL-04); Integration — the rendition attempts on real PostgreSQL with the real renderer, HO-20 on Valkey, the upload pipeline, JB-04, JB-08 and JB-09 (TL-05); PASS locally and in CI
+- [x] Authorization: downloads by family and scope for every purpose (TL-06)
+- [x] Route integrity: ROUTE-226, ROUTE-227 and ROUTE-285 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-013, INT-014, INT-226, INT-227 and INT-285 (TL-08)
+- [x] Browser E2E if required: an upload and a download on the sample page, MSG-31's refusal and the rendition's states, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the upload field at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: N/A — TASK-015's upload, status and preview components, nothing hand-styled
+- [x] Production build: TL-13 PASS locally and in CI; the sample page local-only
+- [x] Security checks if required: SM-09's upload elements and SM-10's renderer and decoder elements — network and file reads refused, a missing asset stopping the render, crafted decoder inputs (TL-14; TL-05)
+- [x] Database safety review: one expand-only, privilege-only migration under DIR-099 (L) with APPR-026 — the runtime role's `UPDATE` of one column of `documents`, `document_types` and `opening_customer_credits` for their row locks alone, a trigger on each refusing every update —, touching no row; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `70f3ba6`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40411469632 (push) and 40411475362 (pull request #27), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". On the Owner's workstation, 2026-10-27: the suites Unit 314, Architecture 54, Feature 200, Integration 948, Authorization 120, Routes 11, Interaction 24 and Performance 7; TypeScript, ESLint, the frontend tests, Pint, Larastan/PHPStan, the production build, and the sample page's E2E, Localization, Responsive and Accessibility specs on Chromium and WebKit PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: 70f3ba6, CI ubuntu-24.04 run 40411469632`
+- Route evidence: TL-07's route audit PASS — ROUTE-226 `GET /berkas/{id}/unduh`, ROUTE-227 `GET /berkas/{id}/gambar-kecil` and ROUTE-285 `GET /status/{kind}/{id}`, each `access:s0` with the owning record or the page's query class deciding —; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/FilesTest.php` (INT-013, INT-014, INT-226, INT-227, INT-285)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 70f3ba6, CI ubuntu-24.04 run 40411469632`; TL-10, TL-11 and TL-12 for the sample page in the same run
+- Localization evidence: the upload field and the rendition's states in both languages (`tests/Browser/Localization/files.spec.ts`) (DOD-16); no key added — the catalogue's own
+- Performance evidence: PFM-09 — an uncached thumbnail answered with 2 statements in about 19 ms, measured, no write —; PFM-16 — an issued version to READY in about 3.4 s on the real renderer, within 30 s (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — WeasyPrint, GD, zip, DejaVu and Inter at no cost (DIR-099)
+- Files changed: `app/Modules/DOC/` — `Contracts/` (the renderer and the template), `Data/`, `Enums/`, `Http/` (FileController, FileResponses), `Jobs/` (`RenderDocument`, `RenditionSweeper`, `ProcessImage`), `Queries/` (`FileAccess`, `FileDownloads`, `RenditionStatus`, `ContentMatches`), `Services/` (the upload pipeline, the image codec, the office inspection, the store, the renditions, the WeasyPrint renderer) —; `app/Support/Jobs/`, `app/Support/Status/`; `app/Console/Commands/` (`SweepRenditions`, `PurgeCommandLog`, `SweepOwedWork`); `app/Http/Controllers/StatusController.php`, `app/Http/Middleware/SecurityHeaders.php`; `bootstrap/app.php` (the schedule); `config/`; `routes/`; `database/migrations/2026_10_27_000143_doc_make_lock_order_rows_lockable.php`; `docker/php/Dockerfile`; `resources/renderer/`; `resources/js/` (the upload client, the status poll, the rendition status, the thumbnail, the sample page); `tests/`; DIR-099's records, APPR-026's amendments and TOOLCHAIN's row; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `4cd802b`, `2df9194`, `dc1ccf6`, `adb34ef`, `30eeeaf`, `c5b761c`, `c68cad7`, `fbf90f4`, `04aa984`, `d41aa6c`, `79550b7` and `70f3ba6`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-022-jobs-files-renderer`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-27; Context7 consulted for WeasyPrint's URL fetcher and Laravel's queues and scheduler (TOOLCHAIN's TASK-022 row); CI the final proof. The Owner decided at one checkpoint DIR-099 — C1 WeasyPrint, C2 GD, reading (1) the jobs' ownership — and, on the discovery that the runtime role could not lock `documents`, `document_types` and `opening_customer_credits`, DIR-099 (L) with APPR-026's text. Readings within the approved text: the export, import-validation and import-commit jobs and their branches of M-32, and M-33, are TASK-060's and TASK-057's, registering their sweeps at JB-09's point and their states at ROUTE-285's; the upload route ROUTE-228, its limiter of WS-12 and the duplicate warnings' disclosure (DP-13) are TASK-030's, which calls the pipeline and owes an image's derivatives to JB-04; the renderer's inline profile and ROUTE-225 are TASK-029's, with the templates; an evidence photo's re-encoded preview is ROUTE-227's `varian=pratinjau`; no download of private evidence is a security event, SECURITY §6 naming none beside the exports'; a pool OPENING_SIGNOFF opens to the Owner and to `import.prepare` over every company; the failed jobs are kept 14 days, within CI-07's horizon; the optional scanner stays off (H9-05). ER-06's one review found no HIGH point; its MEDIUM points — a DDE field hidden by joining field codes, a relocated part unscanned, a decode's memory — and its LOW points — a failed finish's bytes, the renderer's own CPU bound, a DTD in UTF-16, a newer payload's attempts, an unused inline profile, the sweep's spent attempts, a file's own disk — fixed and tested, a pool sign-off's stricter rule kept. Codex's one P2 on pull request #27 — the DDE field boundaries — fixed and tested. A TASK-017 test whose fixed instant passed AU-07's 12 hours on 2026-10-26 now reads an hour ago. The READY gates of the Tasks TASK-022 blocks were re-checked at this DONE: TASK-025, TASK-027 and TASK-030 READY; TASK-029 waits on TASK-025, TASK-060 on TASK-037, TASK-051 and TASK-054, TASK-074 on TASK-029 and TASK-072; TASK-057, TASK-072 and TASK-075 stay BLOCKED on their inputs. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 
