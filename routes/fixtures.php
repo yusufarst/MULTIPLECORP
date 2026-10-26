@@ -5,13 +5,14 @@ use App\Http\Middleware\SetLocale;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Tests\Support\Fixtures\AccountFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
 // environment (bootstrap/app.php): no ROUTE_CONTRACTS row, never in testing, staging or production. Each serves
 // a layer's check before the pages that will carry it exist. They run without the web group's session, cookies
-// and CSRF token — a page before sign-in stores nothing (INT-001) —, so they touch no database: the browser
-// job's stack is not migrated.
+// and CSRF token — a page before sign-in stores nothing (INT-001) —, so they touch no database — but for the
+// sign-in journeys' account, which the migrated stack keeps (scripts/verify.sh).
 
 Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(function (): void {
     // TL-09–TL-12 (TASK-014): INT-001's switch on a page with a field, before sign-in, so the switch is shown to
@@ -33,3 +34,7 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
     Route::post('__fixtures/shell/perintah', fn (Request $request) => ShellFixture::command($request, stepUp: false));
     Route::post('__fixtures/shell/akses', fn (Request $request) => ShellFixture::command($request, stepUp: true));
 });
+
+// TL-09–TL-12 (TASK-017): a synthetic account and its reset link for one run, so the sign-in, reset and logout
+// journeys run against the real routes of PG-001 and PG-003.
+Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
