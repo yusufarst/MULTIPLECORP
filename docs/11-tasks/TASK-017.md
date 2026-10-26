@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -235,34 +235,38 @@ CAP-13 and AC-13 require secure sign-in, sessions and resets; SECURITY AU-01–A
 - Migration: N/A — the tables are TASK-005's
 - Other: GAP-043's verification recorded
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Auth/SignInTest.php` — a wrong password, an unknown account and an inactive one answer MSG-19 alike, with 422 and no identifier recorded; each does one Argon2id verification and makes no hash, a hash of another algorithm followed by the dummy verification; the dummy hash generated from the configured driver and parameters (H9-11). Criterion 2: `SignInTest.php` — five failures a minute per identifier and address, the doubling cooldown, the address's thirty in fifteen minutes, no account locked —; `tests/Integration/Authentication/SignInRacesTest.php` — a burst of seven gets five, the cooldown started once, the places of a success and of an unverified attempt given back —; `SessionBehaviourTest.php` — the counts on Valkey under keyed hashes, the store down refusing. Criterion 3: `tests/Feature/Auth/CredentialLinkTest.php` and `tests/Unit/IAM/PasswordRulesTest.php` — AICWDF-COMPAT-8, the local list, the personal-text rule, the breached range refused and, unreachable, skipped with PASSWORD_CHECK_SKIPPED. Criterion 4: `CredentialLinkTest.php` — once, expired, revoked and unknown alike, a dead link answered before any rule, per token hash and per address —, `SignInRacesTest.php` — two submissions of one link set one password, the account locked before the link — and `tests/Browser/E2E/sign-in.spec.ts` — the token out of the address and the history. Criterion 5: `SignInTest.php` — the absolute limit, a session without its sign-in time bounded, deactivation and a password changed elsewhere end the session; the idle limit the store's lifetime (`config/session.php`). Criterion 6: `tests/Feature/BootTest.php`'s exact route list — no route of Fortify or of passkeys. Criterion 7: `tests/Interaction/SignInTest.php` — the real sign-in in place, the same account's command replayed once, another account's CONFLICT without disclosure. Criterion 8: `CredentialLinkTest.php` — the audit event in the consumption's transaction, SYSTEM, the account as actor or none with the link named for OWNER_RECOVERY, before/after with the password redacted, the security event after the commit, a rollback leaving neither. Criterion 9: `tests/Integration/Authentication/SessionBehaviourTest.php` — the session rows by account, the skipped background write, the rehash at login —, `SignInRacesTest.php` — RV-10's conditional rehash racing a reset, the session stamped with the digest of the hash it wrote —; deactivation's use of them TASK-024's
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the password profile, the blocklist, the address keys (TL-03); Feature — every flow of SM-06–SM-07 (`tests/Feature/Auth/`, TL-04); Integration — sessions in PostgreSQL, the limiter on Valkey, the races of SM-14, HO-20's behaviours (`tests/Integration/Authentication/`, TL-05); PASS locally and in CI
+- [x] Authorization: EN-03's unauthenticated exceptions only — ROUTE-001, -003, -101 and -106 `access:none`, ROUTE-108 and -109 authenticated (TL-06; the route audit)
+- [x] Route integrity: ROUTE-001, -003, -101, -106, -108 and -109 in the route audit over every registered route (TL-07)
+- [x] Interaction behavior: INT-001, INT-010, INT-011, INT-018, INT-101, INT-106, INT-108, INT-109 (`tests/Interaction/SignInTest.php`, the browser suite) (TL-08)
+- [x] Browser E2E if required: the sign-in, reset and logout journeys on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-001 and PG-003 at every band edge in both languages (`tests/Browser/Responsive/sign-in.spec.ts`, TL-11)
+- [x] Visual breathing room/density if UI: both pages on DESIGN_SYSTEM's tokens and density, the English strings unclipped at every band (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS locally and in CI
+- [x] Security checks if required: SM-06–SM-08, SM-14, SM-16 and SM-22 by the tests above; TL-12's axe on both pages at 390 and 1,280 px with AU-04's answer shown; the secret-like scan and both dependency audits PASS (TL-14); SM-17's path to the two-factor challenge end to end with TASK-018
+- [x] Database safety review: no migration and no schema change — the tables are TASK-005's —; the consumption's lock order users before credential_tokens (D-CC-03); local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its 13 points dispositioned as COMPLETION EVIDENCE's notes state
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `6ed3216`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40260163938 (push) and 40260167074 (pull request #22), the three jobs PASS in each — "Verify" (every check of `scripts/verify.sh`, the Integration and Authorization suites and Larastan/PHPStan included), "Browser" (TL-09–TL-12 on Chromium and WebKit) and "Performance and migration" (TL-15, TL-16 from empty). On the Owner's workstation, 2026-10-26, after ER-06's fixes: the suites Unit 264, Feature 91, Integration 898, Authorization 98, Interaction 12, Routes 11, Architecture 50 and Performance 4; TypeScript, ESLint, Pint, Larastan/PHPStan and the browser suite PASS — the sign-in specs 26 on Chromium and WebKit; WebKit's timeouts under two workers against the single-threaded local server passed with one, CI the proof
+- Build result: `TL-13 Frontend build: PASS — Evidence: 6ed3216, CI ubuntu-24.04 run 40260163938`
+- Route evidence: TL-07's route audit PASS — ROUTE-001 `GET /masuk`, ROUTE-101 `POST /masuk` (`access:none,login`), ROUTE-003 `GET /atur-kata-sandi` and ROUTE-106 `POST /atur-kata-sandi` (`access:none,credential_link`, the credential-link limiter), ROUTE-108 `POST /keluar` and ROUTE-109 `POST /konfirmasi-kata-sandi` (`access:self`) —; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/SignInTest.php` (INT-010, INT-011, INT-101, INT-109; criterion 7), `tests/Feature/Auth/` (INT-106, INT-108), the browser suite (INT-001, INT-018)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 6ed3216, CI ubuntu-24.04 run 40260163938`; TL-10, TL-11 and TL-12 PASS in the same run
+- Localization evidence: PG-001 and PG-003 in both languages, the switch keeping the e-mail and never the password, and PG-003's token in memory (`tests/Browser/Localization/sign-in.spec.ts`) (DOD-16); 9 keys added through `lang/registry/added-keys.json` for the Owner's review
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — `laravel/fortify` 1.41.0 and its dependencies MIT, project-local; nothing hosted
+- Files changed: `composer.json`, `composer.lock`; `config/hashing.php`, `config/fortify.php`, `config/session.php`, `.env.example`, `phpunit.xml`; `bootstrap/app.php`, `bootstrap/providers.php`; `routes/web.php`, `routes/fixtures.php`; `docker/nginx/default.conf`; `app/Http/Responses/SystemAnswer.php`; `app/Modules/IAM/Authentication/`, `app/Modules/IAM/Http/Controllers/`; `app/Console/Commands/PurgeCredentialLinks.php`; `resources/js/Pages/Auth/`, `resources/js/lib/navigation.ts`; `lang/id.json`, `lang/en.json`, `lang/registry/added-keys.json`; `tests/Feature/`, `tests/Integration/Authentication/`, `tests/Interaction/SignInTest.php`, `tests/Performance/SignInQueriesTest.php`, `tests/Unit/IAM/`, `tests/Browser/`, `tests/Support/HashProbe.php`, `tests/Support/Fixtures/AccountFixture.php`; TOOLCHAIN's row; this file, the statuses of TASK-018 and TASK-022, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `7343a1b`, `e7190d7`, `9b3cfd5`, `d744aba` and `6ed3216`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-017-sign-in`, after DIR-096's two governance commits `7be00eb` and `6c3f328`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26 (TOOLCHAIN, "Execution environments (TASK-001)"); Context7 not available, each Fortify and framework behaviour re-read in the installed source and pinned by a test (GAP-043; TOOLCHAIN's TASK-017 row); the local runs used a container-local copy of the working tree, CI the final proof. ER-06's one review found 13 points: the dummy hash made per request, an existence oracle in timing (AU-04; H9-11); the rehash not RV-10's conditional update; AU-05's counts checked before they were taken (H6-07); the consumption's lock order inverted (D-CC-03); no verification cap (H6-12; PF-39); a dead link told from an unknown one by the personal-text rule (AU-12); a session without its sign-in time unbounded (AU-07); the browser's own session kept by a set password (AU-06, AU-15); no purge (H9-04); a hash of another algorithm failing fast; no before/after in the consumption's audit (RG-11); the hour's key an unkeyed hash and an IPv4-mapped address one bucket; and tests short of their claims — each fixed and tested; the step-up throttle, the eleventh, now counted atomically within its own slot, AU-15 asking only for throttling and logging, so no escalating cooldown is added. Codex's review of `d744aba` found one P2 — PG-003's throttled submissions answered a bare 429, which the form cannot show —, fixed in `6ed3216`: the route's limiter and the verification cap answer MSG-20 on the link alert, the token kept in memory, with its tests. The purge's cron entry is TASK-072's. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-017 blocks were re-checked at this DONE: TASK-018 and TASK-022 READY — every dependency DONE. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

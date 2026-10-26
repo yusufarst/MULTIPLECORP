@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 16
-READY: 6
+DONE: 17
+READY: 7
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 52
+TODO: 50
 SUPERSEDED: 0
 
 Progress:
-16 / 87
-Percentage: 18.4 %
+17 / 87
+Percentage: 19.5 %
 
-CURRENT TASK: none in progress — TASK-016 — Application shell, navigation and the company context DONE on its branch `task/TASK-016-shell`, CI PASS on `f18683f`, its pull request #20 waiting on the Owner's merge (ER-07)
-NEXT READY TASK: TASK-017 — Password sign-in, sessions and credential links, READY — its dependencies TASK-005, TASK-010, TASK-013, TASK-015 and TASK-016 DONE and its READY gate checked at TASK-016's DONE —, taken first once the Owner merges TASK-016's pull request #20 (ER-07); TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-021 waits on TASK-018, TASK-022 on TASK-017, TASK-023 and TASK-024 on TASK-019, TASK-025, TASK-027 and TASK-030 on TASK-022; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-017 — Password sign-in, sessions and credential links DONE on its branch `task/TASK-017-sign-in`, CI PASS on `6ed3216`, its pull request #22 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-018 — Two-step verification (TOTP) and recovery codes, READY — its dependency TASK-017 DONE and its READY gate checked at TASK-017's DONE —, taken first from the merged `main` (DIR-096); TASK-022, TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-019 and TASK-021 wait on TASK-018, TASK-023 and TASK-024 on TASK-019, TASK-025, TASK-027 and TASK-030 on TASK-022; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 12 of 2026-10-25 — DIR-095's dispositions of TASK-013's discoveries: the guard registry grown by the posting Tasks, TS-11's two unreconciled directories, `number_sequences` with TASK-021
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -65,7 +65,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-014](TASK-014.md) — Localization — locales, the language switch and the key catalogue
 - [x] [TASK-015](TASK-015.md) — Design system — tokens, components, patterns and states
 - [x] [TASK-016](TASK-016.md) — Application shell, navigation and the company context
-- [ ] [TASK-017](TASK-017.md) — Password sign-in, sessions and credential links
+- [x] [TASK-017](TASK-017.md) — Password sign-in, sessions and credential links
 - [ ] [TASK-018](TASK-018.md) — Two-step verification (TOTP) and recovery codes
 - [ ] [TASK-019](TASK-019.md) — Google sign-in for existing accounts
 - [ ] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
@@ -157,12 +157,12 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-014](TASK-014.md) | Localization — locales, the language switch and the key catalogue | Platform · Platform | STANDARD | DONE | 003 | 015, 023 | NO | AGENT | NONE | YES |
 | [TASK-015](TASK-015.md) | Design system — tokens, components, patterns and states | Platform · Platform · UI | STANDARD | DONE | 014 | 016, 017, 022 | NO | AGENT | NONE | YES |
 | [TASK-016](TASK-016.md) | Application shell, navigation and the company context | Platform · Platform · UI | HIGH | DONE | 011, 012, 013, 015 | 017, 021, 023, 024, 025, 026, 027, 028, 030, 031, 061 | NO | AGENT | NONE | YES |
-| [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | READY | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
-| [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | TODO | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
+| [TASK-017](TASK-017.md) | Password sign-in, sessions and credential links | Platform · IAM | HIGH | DONE | 005, 010, 013, 015, 016 | 018, 022 | NO | AGENT | NONE | YES |
+| [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | READY | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | TODO | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | TODO | 010, 018, 019 | 069, 076, 085 | NO | AGENT | NONE | NO |
 | [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | TODO | 006, 013, 016, 018 | 029, 032, 074, 076, 077 | NO | AGENT | NONE | YES |
-| [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | TODO | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
+| [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | READY | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
 | [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | TODO | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | TODO | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | TODO | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |

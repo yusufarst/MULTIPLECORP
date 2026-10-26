@@ -452,6 +452,12 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-088 on its three discoveries: the foreign keys of its columns to later tables added by TASK-006–TASK-008 with their tests, IX-13's two partial indexes over the acknowledged and the routed action codes TASK-058's, no code invented, and the export requests keyed by a UUIDv7, their public identifier, with TASK-060's scoped lookup — TASK_PLAN's Change 5. The automated review found that the runtime could not change an account's one launch role; the grant on `user_roles`' role columns added with its test.
 - Every check passed in fresh CI, Larastan/PHPStan at level `max`, the database tests, the production check and TL-16 included. TASK-005 DONE; TASK-006 and TASK-010 READY beside TASK-014 and TASK-073 — progress 5 / 87 —; pull request #5 waits on the Owner's merge.
 
+## Unreleased — 2026-10-26, TASK-017 — password sign-in, sessions and credential links
+
+- TASK-016 merged by the Owner into `main` as `ae0e577` (pull request #20); its Codex P1 and P2 fixed in hotfix pull request #21, merged as `b3c4c97` by the executor under DIR-096, the Owner's standing execution directives.
+- Built TASK-017 on its branch `task/TASK-017-sign-in`: Fortify 1.41.0 behind IAM's boundary, no route or feature of its own; ROUTE-101's sign-in with one answer and one verification for every failed case, AU-05's throttling without lockout, H6-12's verification cap; the `__Host-` session with its idle and absolute limits and RV-10's digest; ROUTE-108's logout and ROUTE-109's step-up; the credential links of AU-11–AU-12 and their daily purge; 9 catalogue keys through the registry.
+- ER-06's independent review found 13 points, each dispositioned and tested.
+- Every check passed in fresh CI on `6ed3216`. TASK-017 DONE — progress 17 / 87 —; TASK-018 and TASK-022 READY; pull request #22 squash-merged once eligible.
 ## Unreleased — 2026-10-26, TASK-016 — application shell, navigation and the company context
 
 - TASK-015 merged by the Owner into `main` as `6e652a3` (pull request #18), and its command-identity fix as `e7ef1d5` (pull request #19).
