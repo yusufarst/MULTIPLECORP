@@ -47,6 +47,7 @@ final class TwoFactorSteps
     public function __construct(
         private readonly Totp $totp,
         private readonly SecondFactorLimit $limit,
+        private readonly LoginThrottle $throttle,
         private readonly StatefulGuard $guard,
         private readonly EstablishSession $sessions,
         private readonly SessionTerminator $terminator,
@@ -73,7 +74,7 @@ final class TwoFactorSteps
         }
 
         try {
-            $place = $this->limit->take($user->id, $request);
+            $place = $this->admit($request, $user->id);
         } catch (SecondFactorRefused $refused) {
             return TwoFactorAnswers::throttled($request, $refused->seconds);
         }
@@ -95,7 +96,7 @@ final class TwoFactorSteps
             return $this->failure($request, $place, $path);
         }
 
-        $this->limit->accepted($place);
+        $this->passed($request, $place);
         TwoFactorChallenge::void($request);
         $this->signIn($request, $user, EstablishSession::TOTP);
 
@@ -121,7 +122,7 @@ final class TwoFactorSteps
         }
 
         try {
-            $place = $this->limit->take($user->id, $request);
+            $place = $this->admit($request, $user->id);
         } catch (SecondFactorRefused $refused) {
             return TwoFactorAnswers::throttled($request, $refused->seconds, 'recovery_code');
         }
@@ -181,7 +182,7 @@ final class TwoFactorSteps
 
         $this->events->record(SecurityEventKind::RecoveryCodeUsed, userId: $user->id, routeName: 'two-factor.recovery', ipAddress: $request->ip(), userAgent: $request->userAgent());
         $this->alertIfHighRisk($user, 'A recovery code was used (AU-19; LG-07).');
-        $this->limit->accepted($place);
+        $this->passed($request, $place);
         TwoFactorChallenge::void($request);
         $request->session()->put(TwoFactorChallenge::ENROLMENT_ONLY, true);
         $request->session()->put(TwoFactorChallenge::RECOVERY_MARK, true);
@@ -224,9 +225,12 @@ final class TwoFactorSteps
 
     /**
      * ROUTE-107: confirms the enrolment with one code for the new secret; answers the eight recovery codes, or
-     * null for a code that matches nothing, an enrolment lapsed or a state changed meanwhile.
+     * null for a code that matches nothing, an enrolment lapsed or a state changed meanwhile. Under AU-05's
+     * per-account-and-address and per-address throttles only, outside the second-factor count.
      *
      * @return list<string>|null
+     *
+     * @throws SecondFactorRefused
      */
     public function confirmEnrolment(Request $request, string $code): ?array
     {
@@ -237,12 +241,20 @@ final class TwoFactorSteps
             return null;
         }
 
+        $wait = $this->throttle->reserve($request, self::throttleKey($user->id));
+
+        if ($wait > 0) {
+            throw new SecondFactorRefused($wait);
+        }
+
         $secret = Crypt::decryptString($held['secret']);
         $step = $this->totp->stepOf($secret, $code, null);
         $replacing = $user->getAttribute('two_factor_confirmed_at') !== null;
 
         // A device is replaced here only by AU-20 b's recovery-code session; any other replacement is path (a).
         if ($step === null || ($replacing && $request->session()->get(TwoFactorChallenge::RECOVERY_MARK) !== true)) {
+            $this->throttle->failed($request, self::throttleKey($user->id));
+
             return null;
         }
 
@@ -282,8 +294,12 @@ final class TwoFactorSteps
         });
 
         if (! $confirmed) {
+            $this->throttle->failed($request, self::throttleKey($user->id));
+
             return null;
         }
+
+        $this->throttle->succeeded($request, self::throttleKey($user->id));
 
         $this->events->record($replacing ? SecurityEventKind::TotpReplaced : SecurityEventKind::TotpEnrolled, userId: $user->id, routeName: 'two-factor.enrolment.confirm', ipAddress: $request->ip(), userAgent: $request->userAgent());
         $this->alertIfHighRisk($user, $replacing ? 'A TOTP device was replaced (AU-20; LG-07).' : 'A TOTP device was enrolled (AU-18; LG-07).');
@@ -320,9 +336,47 @@ final class TwoFactorSteps
             && hash_equals($challenge['digest'], TwoFactorChallenge::digest($user)) ? $user : null;
     }
 
+    /**
+     * A code step's admission: AU-05's per-account-and-address and per-address throttles, like the login's and
+     * counting failures alone, then the account's second-factor count (RV-12).
+     *
+     * @throws SecondFactorRefused
+     */
+    private function admit(Request $request, int $userId): SecondFactorPlace
+    {
+        $wait = $this->throttle->reserve($request, self::throttleKey($userId));
+
+        if ($wait > 0) {
+            throw new SecondFactorRefused($wait);
+        }
+
+        try {
+            return $this->limit->take($userId, $request);
+        } catch (SecondFactorRefused $refused) {
+            $this->throttle->release($request, self::throttleKey($userId));
+
+            throw $refused;
+        }
+    }
+
+    /** An accepted code gives its places back; the account's count is reset by nothing (AU-05). */
+    private function passed(Request $request, SecondFactorPlace $place): void
+    {
+        $this->limit->accepted($place);
+        $this->throttle->succeeded($request, self::throttleKey($place->userId));
+    }
+
+    /** The throttles' key of an account's code steps, apart from its sign-in identifier's. */
+    private static function throttleKey(int $userId): string
+    {
+        return "two-factor|{$userId}";
+    }
+
     /** A failing code keeps its place and is recorded; a breach voids the challenge (AU-05). */
     private function failure(Request $request, SecondFactorPlace $place, string $path, string $field = 'code'): Response
     {
+        $this->throttle->failed($request, self::throttleKey($place->userId));
+
         try {
             if ($this->limit->failed($place, $path, $request)) {
                 TwoFactorChallenge::void($request);

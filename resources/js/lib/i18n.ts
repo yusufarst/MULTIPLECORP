@@ -22,6 +22,13 @@ export function isLocale(value: unknown): value is Locale {
     return value === 'id' || value === 'en';
 }
 
+/** The address key the sign-in pages carry between them before sign-in — `?bahasa=en` —, or nothing (NV-07). */
+export function languageQuery(): string {
+    const locale = new URLSearchParams(window.location.search).get('bahasa');
+
+    return isLocale(locale) ? `?bahasa=${locale}` : '';
+}
+
 /** Loads a language's strings once, before the page that needs them renders; an unknown value is Indonesian. */
 export async function loadLocale(value: unknown): Promise<Locale> {
     const locale = isLocale(value) ? value : DEFAULT_LOCALE;

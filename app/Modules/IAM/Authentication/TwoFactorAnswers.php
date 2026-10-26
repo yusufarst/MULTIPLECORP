@@ -51,6 +51,8 @@ final class TwoFactorAnswers
             $request->session()->flash(self::KEPT_EMAIL, $email);
         }
 
-        return $request->header('X-Inertia') ? Inertia::location('/masuk') : redirect('/masuk');
+        $target = '/masuk'.TwoFactorChallenge::addressQuery($request);
+
+        return $request->header('X-Inertia') ? Inertia::location($target) : redirect($target);
     }
 }

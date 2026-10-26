@@ -20,7 +20,6 @@ use Laravel\Fortify\Contracts\LoginResponse;
 use Laravel\Fortify\Contracts\LogoutResponse;
 use Laravel\Fortify\Fortify;
 use Laravel\Fortify\Http\Requests\LoginRequest;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * IAM's authentication boundary (ARCHITECTURE §8; D-SEC-17; TASK-017): Fortify behind it, its own routes ignored —
@@ -58,20 +57,6 @@ final class AuthenticationServiceProvider extends ServiceProvider
             Limit::perMinute(10)->by('credential-link:address:'.$request->ip())->response($throttled),
             Limit::perMinute(5)->by('credential-link:token:'.CredentialLinks::hash(is_string($request->input('token')) ? $request->input('token') : ''))->response($throttled),
         ]);
-
-        // AU-05's defence in depth for the code steps and the enrolment's confirmation: per account and address,
-        // and per address, like the login; never a lock. The account is the challenge's, or the signed-in one's.
-        $codeThrottled = fn (Request $request, array $headers): Response => TwoFactorAnswers::throttled($request, is_numeric($headers['Retry-After'] ?? null) ? (int) $headers['Retry-After'] : 60);
-        RateLimiter::for('two-factor', function (Request $request) use ($codeThrottled): array {
-            $account = TwoFactorChallenge::current($request)['user'] ?? $request->user()?->getAuthIdentifier();
-            $account = is_int($account) || is_string($account) ? (string) $account : 'none';
-            $address = LoginThrottle::addressKey($request->ip());
-
-            return [
-                Limit::perMinute(5)->by("two-factor:{$account}|{$address}")->response($codeThrottled),
-                Limit::perMinutes(15, 30)->by("two-factor:{$address}")->response($codeThrottled),
-            ];
-        });
 
         // H6-15: a pending challenge's session row carries its account (FactorAwareSessionHandler).
         Session::extend('database', fn (Container $app): FactorAwareSessionHandler => new FactorAwareSessionHandler(

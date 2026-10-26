@@ -10,7 +10,7 @@ import LanguageSwitch from '@/components/LanguageSwitch';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { useTranslation } from '@/lib/i18n';
+import { languageQuery, useTranslation } from '@/lib/i18n';
 import { documentTitle } from '@/lib/title';
 
 export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) {
@@ -38,7 +38,7 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                 className="flex flex-col gap-4"
                 onSubmit={(event) => {
                     event.preventDefault();
-                    form.post(useRecovery ? '/masuk/verifikasi/pemulihan' : '/masuk/verifikasi', {
+                    form.post(`${useRecovery ? '/masuk/verifikasi/pemulihan' : '/masuk/verifikasi'}${languageQuery()}`, {
                         onFinish: () => {
                             form.reset(field);
                         },
@@ -100,7 +100,7 @@ export default function TwoFactorChallenge({ recovery }: { recovery: boolean }) 
                     variant="ghost"
                     size="sm"
                     onClick={() => {
-                        window.location.assign(`/masuk${window.location.search}`);
+                        window.location.assign(`/masuk${languageQuery()}`);
                     }}
                 >
                     {t('pages.pg_002.back')}

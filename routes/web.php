@@ -23,13 +23,13 @@ Route::get('/atur-kata-sandi', [SetPasswordController::class, 'show'])->middlewa
 Route::post('/atur-kata-sandi', [SetPasswordController::class, 'store'])->middleware(['access:none,credential_link', 'throttle:credential-link', CredentialPageHeaders::class])->name('password.set');
 
 // The second factor (TASK-018; SECURITY AU-16, AU-18, AU-19): PG-002 for the pending attempt's account, before any
-// login (EN-03), and PG-004 for the enrolment-only session alone; the code steps throttled per account and address
-// beside AU-05's second-factor limit. Fortify's own two-factor routes stay unregistered (TM-65).
+// login (EN-03), and PG-004 for the enrolment-only session alone; AU-05's throttles and its second-factor limit are
+// applied by the steps themselves, counting failures alone. Fortify's own two-factor routes stay unregistered (TM-65).
 Route::get('/masuk/verifikasi', [TwoFactorChallengeController::class, 'show'])->middleware(['guest', 'access:none,two_factor_challenge'])->name('two-factor.challenge');
-Route::post('/masuk/verifikasi', [TwoFactorChallengeController::class, 'verify'])->middleware(['guest', 'access:none,two_factor_challenge', 'throttle:two-factor'])->name('two-factor.verify');
-Route::post('/masuk/verifikasi/pemulihan', [TwoFactorChallengeController::class, 'recovery'])->middleware(['guest', 'access:none,two_factor_challenge', 'throttle:two-factor'])->name('two-factor.recovery');
+Route::post('/masuk/verifikasi', [TwoFactorChallengeController::class, 'verify'])->middleware(['guest', 'access:none,two_factor_challenge'])->name('two-factor.verify');
+Route::post('/masuk/verifikasi/pemulihan', [TwoFactorChallengeController::class, 'recovery'])->middleware(['guest', 'access:none,two_factor_challenge'])->name('two-factor.recovery');
 Route::get('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'show'])->middleware(['auth', 'access:enrolment', CredentialPageHeaders::class])->name('two-factor.enrolment');
-Route::post('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'confirm'])->middleware(['auth', 'access:enrolment', 'throttle:two-factor', CredentialPageHeaders::class])->name('two-factor.enrolment.confirm');
+Route::post('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'confirm'])->middleware(['auth', 'access:enrolment', CredentialPageHeaders::class])->name('two-factor.enrolment.confirm');
 
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's

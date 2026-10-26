@@ -61,7 +61,8 @@ final class Totp
         }
 
         try {
-            $step = $this->library->verifyKeyNewer($secret, $code, $lastStep, self::WINDOW, self::currentStep());
+            // Always a lower bound: without one the library answers `true` rather than the matching step.
+            $step = $this->library->verifyKeyNewer($secret, $code, $lastStep ?? -1, self::WINDOW, self::currentStep());
         } catch (Throwable) {
             return null;
         }

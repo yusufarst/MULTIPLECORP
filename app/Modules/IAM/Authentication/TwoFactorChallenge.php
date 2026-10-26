@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Authentication;
 
 use App\Modules\IAM\Models\User;
+use App\Support\Localization\Locales;
 use Illuminate\Http\Request;
 
 /**
@@ -93,6 +94,14 @@ final class TwoFactorChallenge
         ]);
 
         return hash_hmac('sha256', $state, is_string($key) ? $key : '');
+    }
+
+    /** The address key carried between the sign-in pages before sign-in — `?bahasa=en` —, or nothing (NV-07). */
+    public static function addressQuery(Request $request): string
+    {
+        $locale = Locales::supported($request->query(Locales::ADDRESS_KEY));
+
+        return $locale === null ? '' : '?'.Locales::ADDRESS_KEY.'='.$locale;
     }
 
     /** Whether the session is AU-18's enrolment-only session. */

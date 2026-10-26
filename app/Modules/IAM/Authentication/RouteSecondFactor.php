@@ -55,10 +55,12 @@ final class RouteSecondFactor
     /** PG-002: a full document load from the sign-in page, the dialog's code step for the in-place re-login. */
     public static function toChallenge(Request $request): Response
     {
+        $target = '/masuk/verifikasi'.TwoFactorChallenge::addressQuery($request);
+
         if ($request->header('X-Inertia')) {
-            return Inertia::location('/masuk/verifikasi');
+            return Inertia::location($target);
         }
 
-        return $request->wantsJson() ? new JsonResponse(['two_factor' => true]) : redirect('/masuk/verifikasi');
+        return $request->wantsJson() ? new JsonResponse(['two_factor' => true]) : redirect($target);
     }
 }

@@ -26,7 +26,7 @@ class RequireStepUp
         $confirmedAt = $request->session()->get(self::CONFIRMED_AT, 0);
         $timeout = config('auth.password_timeout');
 
-        if (time() - (is_numeric($confirmedAt) ? (int) $confirmedAt : 0) > (is_numeric($timeout) ? (int) $timeout : 0)) {
+        if (now()->getTimestamp() - (is_numeric($confirmedAt) ? (int) $confirmedAt : 0) > (is_numeric($timeout) ? (int) $timeout : 0)) {
             return response()->json(['message' => __('messages.msg_27')], Response::HTTP_LOCKED);
         }
 

@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Http\Controllers;
 
 use App\Http\Middleware\RequireStepUp;
+use App\Modules\IAM\Authentication\SecondFactorRefused;
 use App\Modules\IAM\Authentication\TwoFactorAnswers;
 use App\Modules\IAM\Authentication\TwoFactorChallenge;
 use App\Modules\IAM\Authentication\TwoFactorSteps;
@@ -48,7 +49,11 @@ final class TotpEnrolmentController
             return back()->withErrors(['password' => __('messages.msg_27')]);
         }
 
-        $codes = $steps->confirmEnrolment($request, preg_replace('/\s+/', '', $request->string('code')->toString()) ?? '');
+        try {
+            $codes = $steps->confirmEnrolment($request, preg_replace('/\s+/', '', $request->string('code')->toString()) ?? '');
+        } catch (SecondFactorRefused $refused) {
+            return TwoFactorAnswers::throttled($request, $refused->seconds);
+        }
 
         if ($codes === null) {
             return TwoFactorAnswers::mismatch($request);
