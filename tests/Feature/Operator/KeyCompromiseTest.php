@@ -140,6 +140,23 @@ it('reads the accounts again after the last one, voiding one created while the v
         ->and(voidedIds($result['run']->id))->toBe([$this->owner->id, $this->admin->id, $created->id]);
 });
 
+it('voids an account created during the closing sweep before the run completes (AU-21 c, d; RV-17)', function () {
+    $created = null;
+
+    $result = $this->incident->run($this->window, OwnerTrail::operator(), function (string $line) use (&$created) {
+        // The last read of the accounts is over; the account appears while the closing sweep runs.
+        if ($created === null && str_starts_with($line, 'Accounts voided (c)')) {
+            $created = User::factory()->create();
+            DB::table('sessions')->insert(['id' => 'sesi-penutup', 'user_id' => $created->id, 'payload' => '', 'last_activity' => time()]);
+        }
+    });
+
+    expect(voidedIds($result['run']->id))->toBe([$this->owner->id, $this->admin->id, $created?->id])
+        ->and(DB::table('users')->where('id', $created?->id)->value('password'))->not->toBe($created?->password)
+        ->and(DB::table('sessions')->count())->toBe(0)
+        ->and(DB::table('audit_events')->where('action', IncidentRuns::COMPLETED)->count())->toBe(1);
+});
+
 it('writes on a restart the CREDENTIALS_VOIDED a stop lost, voiding no account twice (LG-02; RV-17)', function () {
     $run = OwnerTrail::run(IncidentRuns::parse($this->window), $this->now->subMinutes(10), null);
     OwnerTrail::event($this->owner, IncidentRuns::VOIDED, $this->now->subMinutes(9), null, null, null, ['incident_run' => $run, 'window_start' => $this->window]);

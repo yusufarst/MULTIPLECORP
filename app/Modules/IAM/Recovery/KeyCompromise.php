@@ -71,27 +71,38 @@ final class KeyCompromise
 
         $voided = 0;
 
+        // An account created while the voiding or the closing sweep runs is voided too: the run completes only once no
+        // account is left unvoided after its closing sweep, read again in the completion's transaction (AU-21 c, d).
         do {
-            $pending = $this->unvoided($run);
+            do {
+                $pending = $this->unvoided($run);
 
-            foreach ($pending as $userId) {
-                $voided += $this->void($run, $operator, $userId) ? 1 : 0;
-            }
-        } while ($pending !== []);
+                foreach ($pending as $userId) {
+                    $voided += $this->void($run, $operator, $userId) ? 1 : 0;
+                }
+            } while ($pending !== []);
 
-        $progress("Accounts voided (c): {$voided}.");
-        $progress('Closing sweep (d): '.$this->sweep($run, $operator, 'closing').' accounts swept.');
+            $progress("Accounts voided (c): {$voided}.");
+            $progress('Closing sweep (d): '.$this->sweep($run, $operator, 'closing').' accounts swept.');
 
-        DB::transaction(function () use ($run, $operator, $voided) {
-            $this->ensureMaintenance();
-            $this->audit->record(
-                action: IncidentRuns::COMPLETED,
-                authorityClass: AuthorityClass::System,
-                actorUserId: null,
-                companyId: null,
-                metadata: ['operator' => $operator->toArray(), ...$run->reference(), 'voided_by_this_invocation' => $voided],
-            );
-        });
+            $completed = DB::transaction(function () use ($run, $operator, $voided): bool {
+                $this->ensureMaintenance();
+
+                if ($this->unvoided($run) !== []) {
+                    return false;
+                }
+
+                $this->audit->record(
+                    action: IncidentRuns::COMPLETED,
+                    authorityClass: AuthorityClass::System,
+                    actorUserId: null,
+                    companyId: null,
+                    metadata: ['operator' => $operator->toArray(), ...$run->reference(), 'voided_by_this_invocation' => $voided],
+                );
+
+                return true;
+            });
+        } while (! $completed);
         Log::alert('The key-compromise incident command completed (AU-21; LG-07).', [...$run->reference(), 'operator' => $operator->describe()]);
 
         $completed = $this->runs->latest() ?? $run;
