@@ -25,7 +25,7 @@ class PurgeCommandLog extends Command
         $total = 0;
 
         do {
-            $deleted = DB::delete('delete from command_log where id in (select id from command_log where expires_at < now() order by expires_at limit ?)', [self::BATCH]);
+            $deleted = DB::delete('delete from command_log where command_id in (select command_id from command_log where expires_at < now() order by expires_at limit ?)', [self::BATCH]);
             $total += $deleted;
         } while ($deleted === self::BATCH);
 

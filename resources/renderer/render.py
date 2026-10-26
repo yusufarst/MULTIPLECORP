@@ -38,11 +38,13 @@ def main() -> int:
                 return super().fetch(url, headers)
             if scheme != 'file':
                 raise Refused(f'refused: {scheme or "relative"} resource')
-            path = Path(unquote(urlsplit(url).path)).resolve(strict=True)
+            # Resolved before the check, so neither `..` nor a symbolic link leads out of the assets; a missing
+            # asset stops the rendering too, never skipped silently.
+            path = Path(unquote(urlsplit(url).path)).resolve(strict=False)
             if not any(path == root or root in path.parents for root in allowed):
                 raise Refused('refused: a file outside the allowlisted assets')
             if not path.is_file():
-                raise Refused('refused: not a regular file')
+                raise Refused('refused: no such asset')
             return URLFetcherResponse(url, path.read_bytes(), {})
 
     document = sys.stdin.buffer.read().decode('utf-8')
