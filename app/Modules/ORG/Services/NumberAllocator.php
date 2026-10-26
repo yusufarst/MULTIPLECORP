@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Log;
  * The period comes from the business date and the scheme in force on it; the counter is created on first use only
  * for a live period, once FU-07's proof shows no number of the period issued here; an issue that finds no counter
  * for a period that is not live is REJECTED (C-10) — or SQ-18 when a number of the period exists, a counter lost —;
- * then one statement increments the counter and returns the pre-increment value. Never `MAX(number) + 1`, never a
+ * then one statement increments the counter and returns the pre-increment value. Never the highest number plus one, never a
  * PostgreSQL sequence, no gapless promise (NM-10).
  */
 final class NumberAllocator

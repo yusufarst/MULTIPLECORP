@@ -3,20 +3,17 @@
 namespace App\Modules\ORG\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\IAM\Models\User;
-use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Actions\ConfigureNumbering;
 use App\Modules\ORG\Actions\StartNumbering;
 use App\Modules\ORG\Data\NumberFormat;
 use App\Modules\ORG\Data\NumberingPeriod;
 use App\Modules\ORG\Enums\SequenceType;
-use App\Modules\ORG\Models\Company;
-use App\Modules\ORG\Models\NumberingScheme;
-use App\Modules\ORG\Queries\CompanyDirectory;
-use App\Modules\ORG\Services\NumberingState;
+use App\Modules\ORG\Queries\NumberingArea;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
 use Carbon\CarbonImmutable;
+use Closure;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -36,30 +33,15 @@ use Throwable;
  */
 final class NumberingController extends Controller
 {
-    public function __construct(
-        private readonly NumberingState $state,
-        private readonly CompanyDirectory $companies,
-        private readonly EffectiveCapabilities $capabilities,
-    ) {}
+    public function __construct(private readonly NumberingArea $area) {}
 
     /** `ORG ShowNumbering` (ROUTE-061). */
     public function show(Request $request): Response
     {
-        $user = $this->user($request);
-        $companies = $this->companies->inScope($this->capabilities->for($user)->scope);
-        $companyId = $request->query('perusahaan');
-        $selected = collect($companies)->firstWhere('id', is_string($companyId) ? strtolower($companyId) : null) ?? ($companies[0] ?? null);
-        $slug = $request->query('jenis');
-        $type = (is_string($slug) ? SequenceType::fromSlug($slug) : null) ?? SequenceType::Doc01;
-        $company = $selected === null ? null : Company::query()->where('public_id', $selected['id'])->first();
+        $company = $request->query('perusahaan');
+        $type = $request->query('jenis');
 
-        return Inertia::render('Settings/Numbering', [
-            'companies' => $companies,
-            'company' => $selected['id'] ?? null,
-            'types' => array_map(fn (SequenceType $case): array => ['slug' => $case->slug(), 'code' => $case->value, 'label' => $case->labelKey()], SequenceType::cases()),
-            'type' => $type->slug(),
-            'detail' => $company === null ? null : $this->detail($company, $type),
-        ]);
+        return Inertia::render('Settings/Numbering', $this->area->page($this->user($request), is_string($company) ? $company : null, is_string($type) ? $type : null));
     }
 
     /** `ORG ConfigureNumbering` (ROUTE-136). */
@@ -84,11 +66,11 @@ final class NumberingController extends Controller
             $problem = is_string($template) && is_string($granularity) ? NumberFormat::problem($template, $granularity) : null;
 
             if ($problem !== null) {
-                $validator->errors()->add('format_template', __($problem));
+                $validator->errors()->add('format_template', self::say($problem));
             }
         });
-        $company = $this->company($request, self::text($input['company']));
-        $outcome = $action->run(self::text($input['command_id']), $this->user($request)->id, $company, $sequence, [
+        $company = $this->area->company($this->user($request), self::text($input['company'])) ?? throw new NotFoundHttpException;
+        $outcome = $action->run(self::text($input['command_id']), $this->actor($request), $company, $sequence, [
             'scheme_id' => self::integer($input['scheme_id'] ?? null),
             'lock_version' => self::integer($input['lock_version'] ?? null),
             'period_granularity' => self::text($input['period_granularity']),
@@ -100,7 +82,7 @@ final class NumberingController extends Controller
             'business_date_prefilled' => (bool) $input['business_date_prefilled'],
         ]);
 
-        return $this->answer($outcome, $company, $sequence, 'configured', self::text($input['business_date']));
+        return $this->answer($outcome, $company->public_id, $sequence, 'configured', self::text($input['business_date']));
     }
 
     /** `ORG StartNumbering` (ROUTE-137): the start, the Owner's seed and the raise after a restore. */
@@ -122,7 +104,7 @@ final class NumberingController extends Controller
             if ($mode === 'start') {
                 foreach (array_keys((array) $request->input('first_numbers', [])) as $period) {
                     if (! NumberingPeriod::isKey((string) $period)) {
-                        $validator->errors()->add('first_numbers', __('numbering.refusal.period', ['periode' => (string) $period]));
+                        $validator->errors()->add('first_numbers', self::say('numbering.refusal.period', ['periode' => (string) $period]));
                     }
                 }
             }
@@ -135,15 +117,15 @@ final class NumberingController extends Controller
                 }
 
                 if ($point === null || $point->greaterThan(CarbonImmutable::now())) {
-                    $validator->errors()->add('recovery_point', __('numbering.validation.instant'));
+                    $validator->errors()->add('recovery_point', self::say('numbering.validation.instant'));
                 }
             }
         });
-        $company = $this->company($request, self::text($input['company']));
+        $company = $this->area->company($this->user($request), self::text($input['company'])) ?? throw new NotFoundHttpException;
         $date = self::text($input['business_date']);
         $prefilled = (bool) $input['business_date_prefilled'];
         $commandId = self::text($input['command_id']);
-        $actor = $this->user($request)->id;
+        $actor = $this->actor($request);
 
         $outcome = match ($mode) {
             'start' => $action->start($commandId, $actor, $company, $sequence, self::numbers((array) $input['first_numbers']), $date, $prefilled),
@@ -152,63 +134,32 @@ final class NumberingController extends Controller
                 CarbonImmutable::parse(self::text($input['recovery_point']))->utc()->format('Y-m-d\TH:i:s.u\Z'), self::lines((array) $input['lines']), $date, $prefilled),
         };
 
-        return $this->answer($outcome, $company, $sequence, match ($mode) {
+        return $this->answer($outcome, $company->public_id, $sequence, match ($mode) {
             'start' => 'started', 'seed' => 'seeded', default => 'raised'
         }, $date);
     }
 
-    /** @return array<string, mixed> */
-    private function detail(Company $company, SequenceType $type): array
+    private function answer(Outcome $outcome, string $company, SequenceType $type, string $done, string $sent): RedirectResponse
     {
-        $today = BusinessDate::today();
-        $schemes = $this->state->schemes($company->id, $type);
-        $boundary = $this->state->boundary($company->id, $type);
-        $goLive = $this->state->goLive();
-        $pending = $this->state->pendingSeedBatches($company->id, $type);
-
-        return [
-            'today' => $today,
-            'schemes' => array_map(fn (NumberingScheme $scheme): array => [
-                'id' => $scheme->id,
-                'granularity' => $scheme->period_granularity,
-                'template' => $scheme->format_template,
-                'revision_format' => $scheme->revision_format,
-                'effective_from' => $scheme->effective_from->toDateString(),
-                'lock_version' => $scheme->lock_version,
-                'in_force' => $scheme->effective_from->toDateString() <= $today,
-                'example' => NumberFormat::format($scheme->format_template, NumberingPeriod::of(max($today, $scheme->effective_from->toDateString()), $scheme->period_granularity)->key, 1),
-            ], $schemes),
-            'counters' => $this->state->counters($company->id, $type),
-            'boundary' => $boundary,
-            'go_live' => $goLive,
-            'start_periods' => $goLive !== null && $boundary === null && $pending === []
-                ? array_map(fn (NumberingPeriod $period): string => $period->key, NumberingState::periodsOf($schemes, $today)) : [],
-            'pending_batches' => $pending,
-            'batches' => $this->state->batchesCovering($company->id),
-        ];
-    }
-
-    private function answer(Outcome $outcome, Company $company, SequenceType $type, string $done, string $sent): RedirectResponse
-    {
-        $name = __($type->labelKey());
+        $name = self::say($type->labelKey());
         $state = $outcome->state;
         $periode = is_scalar($state['periode'] ?? null) ? (string) $state['periode'] : '';
 
         [$cause, $text] = match ($outcome->kind) {
-            Outcome::COMMITTED => [null, __("numbering.answer.{$done}", ['jenis' => $name])],
+            Outcome::COMMITTED => [null, self::say("numbering.answer.{$done}", ['jenis' => $name])],
             Outcome::REJECTED => [null, $this->refusal($outcome, $name, $periode)],
             Outcome::CONFLICT => match (true) {
-                $outcome->code === 'ST-08' => ['stale', __('messages.msg_16', ['tanggal_lama' => $sent, 'tanggal' => self::text($state['today'] ?? BusinessDate::today())])],
-                ($state['reason'] ?? null) === 'periods' => ['stale', __('numbering.refusal.periods')],
-                $outcome->code === 'ST-01' => ['stale', __('messages.msg_03')],
-                default => ['recorded', __('messages.msg_04')],
+                $outcome->code === 'ST-08' => ['stale', self::say('messages.msg_16', ['tanggal_lama' => $sent, 'tanggal' => self::text($state['today'] ?? BusinessDate::today())])],
+                ($state['reason'] ?? null) === 'periods' => ['stale', self::say('numbering.refusal.periods')],
+                $outcome->code === 'ST-01' => ['stale', self::say('messages.msg_03')],
+                default => ['recorded', self::say('messages.msg_04')],
             },
-            default => ['not_processed', __('messages.msg_06')],
+            default => ['not_processed', self::say('messages.msg_06')],
         };
 
         Inertia::flash('answer', ['kind' => $outcome->kind, 'cause' => $cause, 'text' => $text]);
 
-        return redirect()->to('/pengaturan/penomoran?'.http_build_query(['perusahaan' => $company->public_id, 'jenis' => $type->slug()]), 303);
+        return redirect()->to('/pengaturan/penomoran?'.http_build_query(['perusahaan' => $company, 'jenis' => $type->slug()]), 303);
     }
 
     private function refusal(Outcome $outcome, string $name, string $periode): string
@@ -224,26 +175,30 @@ final class NumberingController extends Controller
         ];
 
         return match (true) {
-            $reason !== null && __("numbering.refusal.{$reason}") !== "numbering.refusal.{$reason}" => __("numbering.refusal.{$reason}", $parameters),
-            $outcome->code === 'C-10' => __('numbering.refusal.not_started', $parameters),
-            default => __('messages.msg_04'),
+            $reason !== null && self::say("numbering.refusal.{$reason}") !== "numbering.refusal.{$reason}" => self::say("numbering.refusal.{$reason}", $parameters),
+            $outcome->code === 'C-10' => self::say('numbering.refusal.not_started', $parameters),
+            default => self::say('messages.msg_04'),
         };
     }
 
     /**
+     * Validates the named fields only — never the whole request (WS-01) —, each message from the catalogue.
+     *
      * @param  array<string, mixed>  $rules
+     * @param  Closure(ValidatorInstance): void  $after
      * @return array<string, mixed>
      */
-    private function validated(Request $request, array $rules, \Closure $after): array
+    private function validated(Request $request, array $rules, Closure $after): array
     {
-        $validator = Validator::make($request->all(), $rules, [
-            'required' => __('numbering.validation.required'),
-            'date_format' => __('numbering.validation.date'),
-            'date' => __('numbering.validation.instant'),
-            'integer' => __('numbering.validation.first_number'),
-            'min' => __('numbering.validation.first_number'),
-            'max' => __('numbering.validation.first_number'),
-            'restore_reference.max' => __('numbering.validation.reference'),
+        $fields = array_values(array_unique(array_map(fn (string $rule): string => explode('.', $rule)[0], array_keys($rules))));
+        $validator = Validator::make($request->only($fields), $rules, [
+            'required' => self::say('numbering.validation.required'),
+            'date_format' => self::say('numbering.validation.date'),
+            'date' => self::say('numbering.validation.instant'),
+            'integer' => self::say('numbering.validation.first_number'),
+            'min' => self::say('numbering.validation.first_number'),
+            'max' => self::say('numbering.validation.first_number'),
+            'restore_reference.max' => self::say('numbering.validation.reference'),
         ]);
         $validator->after($after);
 
@@ -256,20 +211,24 @@ final class NumberingController extends Controller
         return SequenceType::fromSlug($slug) ?? throw new NotFoundHttpException;
     }
 
-    /** The payload's company, in the Owner's scope — every company (CS-01) —, or the not-found answer (IP-21). */
-    private function company(Request $request, string $publicId): Company
+    private function user(Request $request): Authenticatable
     {
-        $ids = $this->companies->idsOf($this->capabilities->for($this->user($request))->scope, [$publicId]);
-        $company = $ids === [] ? null : Company::query()->find($ids[0]);
-
-        return $company instanceof Company ? $company : throw new NotFoundHttpException;
+        return $request->user() ?? throw new NotFoundHttpException;
     }
 
-    private function user(Request $request): User
+    private function actor(Request $request): int
     {
-        $user = $request->user();
+        $id = $this->user($request)->getAuthIdentifier();
 
-        return $user instanceof User ? $user : throw new NotFoundHttpException;
+        return is_int($id) ? $id : throw new NotFoundHttpException;
+    }
+
+    /** @param  array<string, string>  $replace */
+    private static function say(string $key, array $replace = []): string
+    {
+        $text = __($key, $replace);
+
+        return is_string($text) ? $text : $key;
     }
 
     /**
