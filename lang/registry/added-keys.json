@@ -1254,6 +1254,12 @@
             "source": "DIR-098 D2",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "numbering.format.period": {
+            "task": "TASK-021",
+            "source": "DIR-098 D1a",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

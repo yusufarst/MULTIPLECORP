@@ -1019,7 +1019,7 @@
     "pages.pg_061.effective_from": "Berlaku mulai",
     "pages.pg_061.granularity": "Periode nomor",
     "pages.pg_061.template": "Templat nomor",
-    "pages.pg_061.template_hint": "Wajib memuat {nomor} tepat sekali, misalnya {nomor:4} untuk empat digit. Token lain: {tahun}, {tahun2}, dan untuk format bulanan {bulan} atau {bulan_romawi}.",
+    "pages.pg_061.template_hint": "Wajib memuat {nomor} tepat sekali, misalnya {nomor:4} untuk empat digit, dan token tahun {tahun} atau {tahun2}; format bulanan juga token bulan {bulan} atau {bulan_romawi}.",
     "pages.pg_061.revision": "Nomor revisi",
     "pages.pg_061.revision_new_number": "Nomor baru",
     "pages.pg_061.revision_base_suffix": "Nomor dasar dengan akhiran revisi",
@@ -1096,5 +1096,6 @@
     "numbering.validation.required": "Wajib diisi.",
     "numbering.validation.date": "Isi tanggal yang sah.",
     "numbering.validation.instant": "Isi tanggal dan jam yang sudah lewat.",
-    "numbering.validation.reference": "Isi referensi pemulihan, paling banyak 120 karakter."
+    "numbering.validation.reference": "Isi referensi pemulihan, paling banyak 120 karakter.",
+    "numbering.format.period": "Templat wajib memuat token tahun ({tahun} atau {tahun2}), dan format bulanan juga token bulan ({bulan} atau {bulan_romawi})."
 }

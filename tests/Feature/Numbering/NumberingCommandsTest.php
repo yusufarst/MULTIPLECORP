@@ -3,6 +3,7 @@
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\NumberingScheme;
+use App\Modules\ORG\Models\RetiredNumber;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\ImportBatchFactory;
 use Illuminate\Support\Facades\DB;
@@ -98,8 +99,8 @@ it('changes a scheme before it takes effect, refuses a stale version and a schem
     $later = Numbering::scheme($this->company, SequenceType::Doc06, from: CarbonImmutable::parse($this->today)->addMonth()->toDateString())->fresh() ?? throw new RuntimeException;
     $inForce = Numbering::scheme($this->company, SequenceType::Doc01, from: $this->today);
 
-    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['scheme_id' => $later->id, 'lock_version' => $later->lock_version, 'effective_from' => $later->effective_from->toDateString(), 'format_template' => 'B/{nomor}']));
-    expect(answerOf($this)['kind'])->toBe('COMMITTED')->and($later->fresh()?->format_template)->toBe('B/{nomor}');
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['scheme_id' => $later->id, 'lock_version' => $later->lock_version, 'effective_from' => $later->effective_from->toDateString(), 'format_template' => 'B/{tahun}/{nomor}']));
+    expect(answerOf($this)['kind'])->toBe('COMMITTED')->and($later->fresh()?->format_template)->toBe('B/{tahun}/{nomor}');
 
     owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['scheme_id' => $later->id, 'lock_version' => 0, 'effective_from' => $later->effective_from->toDateString()]));
     expect(answerOf($this)['kind'])->toBe('CONFLICT');
@@ -172,15 +173,15 @@ it('refuses, once the type has its boundary, a scheme in the past and one whose 
     owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['effective_from' => $past]));
     expect(answerOf($this))->toMatchArray(['kind' => 'REJECTED', 'text' => __('numbering.refusal.past', ['tanggal' => $this->today])]);
 
-    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['period_granularity' => 'MONTH', 'format_template' => 'B/{bulan}/{nomor}']));
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['period_granularity' => 'MONTH', 'format_template' => 'B/{bulan}/{tahun}/{nomor}']));
     expect(answerOf($this))->toMatchArray(['kind' => 'REJECTED', 'text' => __('numbering.refusal.first_period', ['periode' => $month])]);
 
-    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['period_granularity' => 'MONTH', 'format_template' => 'B/{bulan}/{nomor}', 'first_number' => 12]));
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['period_granularity' => 'MONTH', 'format_template' => 'B/{bulan}/{tahun}/{nomor}', 'first_number' => 12]));
     expect(answerOf($this)['kind'])->toBe('COMMITTED')->and(Numbering::next($this->company, SequenceType::Doc06, $month))->toBe(12)
         ->and(DB::table('number_sequences')->value('seed_value'))->toBe(12);
 
     // The backward extension over dates no scheme covered is admitted without a seed.
-    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['effective_from' => '2024-01-01', 'format_template' => 'OLD/{nomor}']));
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['effective_from' => '2024-01-01', 'format_template' => 'OLD/{tahun}/{nomor}']));
     expect(answerOf($this)['kind'])->toBe('COMMITTED');
 });
 
@@ -210,6 +211,36 @@ it('raises each affected counter after a restore to the number after the highest
         ->and(Numbering::next($this->company, SequenceType::Doc06, $this->year))->toBe(32);
 
     expect(Numbering::draw($this->owner->id, $this->company, SequenceType::Doc06, $this->today))->toBe("COMMITTED 32 CTH/{$this->year}/0032");
+});
+
+it('takes the recording day from its own clock: a chosen earlier day is refused, so no scheme or start lands in the past (IP-07; NM-03)', function () {
+    Numbering::scheme($this->company, SequenceType::Doc06, from: '2025-01-01');
+    Numbering::goLive('2025-01-01');
+    Numbering::started($this->company, SequenceType::Doc06, CarbonImmutable::now());
+    $inForce = NumberingScheme::query()->sole();
+    $yesterday = CarbonImmutable::parse($this->today)->subDay()->toDateString();
+
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['business_date' => $yesterday, 'business_date_prefilled' => false, 'effective_from' => $yesterday]));
+    expect(answerOf($this)['kind'])->toBe('CONFLICT');
+
+    owner($this)->put('/pengaturan/penomoran/doc-06', scheme($this, ['scheme_id' => $inForce->id, 'lock_version' => 0, 'business_date' => '2024-12-31', 'business_date_prefilled' => false, 'effective_from' => '2025-01-01']));
+    expect(answerOf($this)['kind'])->toBe('CONFLICT')
+        ->and(NumberingScheme::query()->count())->toBe(1);
+});
+
+it('refuses a start before the go-live day, and a raise that would create a counter over numbers issued here (NM-03; SQ-18)', function () {
+    Numbering::scheme($this->company, SequenceType::Project);
+    Numbering::goLive(CarbonImmutable::parse($this->today)->addDay()->toDateString());
+
+    owner($this)->post('/pengaturan/penomoran/project/mulai', numbering($this, 'start', ['first_numbers' => [$this->year => 1]]));
+    expect(answerOf($this))->toMatchArray(['kind' => 'REJECTED', 'text' => __('numbering.refusal.go_live')]);
+
+    Numbering::goLive('2025-01-01');
+    Numbering::started($this->company, SequenceType::Project, CarbonImmutable::parse("{$this->year}-01-01 01:00", 'UTC')->subYear());
+    RetiredNumber::factory()->create(['company_id' => $this->company->id, 'sequence_type' => 'PROJECT', 'period_key' => $this->year, 'sequence_no' => 4, 'formatted_number' => "X/{$this->year}/4"]);
+    owner($this)->post('/pengaturan/penomoran/project/mulai', numbering($this, 'raise', ['restore_reference' => 'Uji', 'recovery_point' => '2026-10-01T00:00:00Z', 'lines' => [['period_key' => $this->year, 'highest' => 9]]]));
+    expect(answerOf($this)['kind'])->toBe('FAILED')
+        ->and(Numbering::next($this->company, SequenceType::Project, $this->year))->toBeNull();
 });
 
 it('answers a stale prefilled date with MSG-16 and a replayed command_id with its recorded outcome (ST-08; CI-05)', function () {

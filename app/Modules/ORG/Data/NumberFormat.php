@@ -8,7 +8,8 @@ use InvalidArgumentException;
  * A numbering scheme's `format_template` (DATABASE §4.2; GAP-019), as the Owner decided its tokens (DIR-098 D1):
  * free text with `{nomor}` exactly once — `{nomor:N}` padding the number to N digits —, `{tahun}` (four digits),
  * `{tahun2}` (two digits), and, in a monthly scheme only, `{bulan}` (01–12) and `{bulan_romawi}` (I–XII); no other
- * brace. A number is formatted once, at its draw, and stored (NM-07).
+ * brace; a year token always, and a month token too in a monthly scheme (DIR-098 D1a). A number is formatted once,
+ * at its draw, and stored (NM-07).
  */
 final class NumberFormat
 {
@@ -31,6 +32,8 @@ final class NumberFormat
         }
 
         $numbers = 0;
+        $year = false;
+        $month = false;
 
         foreach ($tokens > 0 ? $matches[1] : [] as $token) {
             if (preg_match('/^nomor(:[1-9])?$/', $token) === 1) {
@@ -39,12 +42,22 @@ final class NumberFormat
                 if ($granularity !== 'MONTH') {
                     return 'numbering.format.month_in_year';
                 }
-            } elseif (! in_array($token, ['tahun', 'tahun2'], true)) {
+
+                $month = true;
+            } elseif (in_array($token, ['tahun', 'tahun2'], true)) {
+                $year = true;
+            } else {
                 return 'numbering.format.token';
             }
         }
 
-        return $numbers === 1 ? null : 'numbering.format.number';
+        // DIR-098 D1a: each period's numbers differ from every other's — the counter restarts per period, so a format
+        // without the period's tokens would repeat a number C-10 holds unique (NM-09).
+        return match (true) {
+            $numbers !== 1 => 'numbering.format.number',
+            ! $year || ($granularity === 'MONTH' && ! $month) => 'numbering.format.period',
+            default => null,
+        };
     }
 
     /** The formatted number of a sequence number in its period. */

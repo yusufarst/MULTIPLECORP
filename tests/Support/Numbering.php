@@ -13,7 +13,6 @@ use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
-use App\Support\Command\LockSet;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Support\Facades\DB;
@@ -71,7 +70,6 @@ final class Numbering
         $drawn = null;
         $request = new CommandRequest($commandId ?? (string) Str::uuid(), 'test.issue', $actorUserId, $company->id, 'companies.manage', Fingerprint::of('test.issue', $company->public_id, ['type' => $type->value, 'date' => $businessDate]));
         $outcome = app(CommandEnvelope::class)->run($request, function ($context) use ($company, $type, $businessDate, $after, &$drawn) {
-            $context->lock((new LockSet)->add('companies', ['id' => $company->id]));
             $drawn = app(NumberAllocator::class)->draw($context, $company->id, $type, $businessDate);
             $after?->__invoke($drawn);
 

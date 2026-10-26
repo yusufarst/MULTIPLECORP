@@ -6,6 +6,9 @@ use App\Modules\ORG\Data\NumberingPeriod;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\NumberingScheme;
 use App\Support\BusinessDate;
+use App\Support\Command\BusinessDateRule;
+use App\Support\Command\CommandContext;
+use App\Support\Command\Refused;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -23,6 +26,23 @@ final class NumberingState
     public const START_ACTION = 'ORG.NumberingStarted.';
 
     public function __construct(private readonly NumberingGoLive $goLive) {}
+
+    /**
+     * The numbering command's date (IP-07; NM-03): the day of recording, read from the command's own clock once its
+     * locks are held — never a date the request chose. SF-DATE refuses a future date (C-50) and a stale prefilled one
+     * (ST-08); any other day than the recording day is a CONFLICT carrying it (ST-08).
+     */
+    public static function recordingDay(CommandContext $context, string $businessDate, bool $prefilled): string
+    {
+        BusinessDateRule::check($businessDate, $prefilled);
+        $day = BusinessDate::of($context->now());
+
+        if ($businessDate !== $day) {
+            throw Refused::conflict('ST-08', ['today' => $day]);
+        }
+
+        return $day;
+    }
 
     /** The go-live day, `Y-m-d`, or null while it is not recorded (DIR-098 reading 2). */
     public function goLive(): ?string

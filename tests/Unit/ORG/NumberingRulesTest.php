@@ -27,15 +27,23 @@ it('formats a number with the decided tokens, padding the number and writing the
 
 it('refuses a template without exactly one number token, an unknown token, a stray brace or a month in a yearly format', function () {
     expect(NumberFormat::problem('ARJ/{tahun}/{nomor:4}', 'YEAR'))->toBeNull()
-        ->and(NumberFormat::problem('{nomor}/{bulan_romawi}', 'MONTH'))->toBeNull()
+        ->and(NumberFormat::problem('{nomor}/{bulan_romawi}/{tahun2}', 'MONTH'))->toBeNull()
         ->and(NumberFormat::problem('ARJ/{tahun}', 'YEAR'))->toBe('numbering.format.number')
-        ->and(NumberFormat::problem('{nomor}/{nomor}', 'YEAR'))->toBe('numbering.format.number')
-        ->and(NumberFormat::problem('{nomor:0}', 'YEAR'))->toBe('numbering.format.token')
+        ->and(NumberFormat::problem('{nomor}/{nomor}/{tahun}', 'YEAR'))->toBe('numbering.format.number')
+        ->and(NumberFormat::problem('{nomor:0}/{tahun}', 'YEAR'))->toBe('numbering.format.token')
         ->and(NumberFormat::problem('{nomor}/{hari}', 'YEAR'))->toBe('numbering.format.token')
         ->and(NumberFormat::problem('{nomor}/}', 'YEAR'))->toBe('numbering.format.brace')
         ->and(NumberFormat::problem('{nomor}/{bulan}', 'YEAR'))->toBe('numbering.format.month_in_year')
         ->and(NumberFormat::problem('', 'YEAR'))->toBe('numbering.format.length')
         ->and(NumberFormat::problem(str_repeat('a', 57).'{nomor}', 'YEAR'))->toBe('numbering.format.length');
+});
+
+it('refuses a template without its period\'s tokens, which would repeat a number across periods (DIR-098 D1a; C-10; NM-09)', function () {
+    expect(NumberFormat::problem('SJ-{nomor:4}', 'YEAR'))->toBe('numbering.format.period')
+        ->and(NumberFormat::problem('SJ/{tahun}/{nomor}', 'MONTH'))->toBe('numbering.format.period')
+        ->and(NumberFormat::problem('SJ/{bulan}/{nomor}', 'MONTH'))->toBe('numbering.format.period')
+        ->and(NumberFormat::problem('SJ/{tahun2}{bulan}/{nomor}', 'MONTH'))->toBeNull()
+        ->and(NumberFormat::problem('SJ/{tahun2}/{nomor}', 'YEAR'))->toBeNull();
 });
 
 it('takes a period from the WIB business day, a YEAR key and a MONTH key never coinciding (NM-03; BR-DT-06; GAP-016)', function () {

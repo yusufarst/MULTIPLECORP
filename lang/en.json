@@ -1019,7 +1019,7 @@
     "pages.pg_061.effective_from": "Effective from",
     "pages.pg_061.granularity": "Numbering period",
     "pages.pg_061.template": "Number template",
-    "pages.pg_061.template_hint": "Must contain {nomor} exactly once, for example {nomor:4} for four digits. Other tokens: {tahun}, {tahun2}, and for a monthly format {bulan} or {bulan_romawi}.",
+    "pages.pg_061.template_hint": "Must contain {nomor} exactly once, for example {nomor:4} for four digits, and a year token {tahun} or {tahun2}; a monthly format also a month token {bulan} or {bulan_romawi}.",
     "pages.pg_061.revision": "Revision number",
     "pages.pg_061.revision_new_number": "A new number",
     "pages.pg_061.revision_base_suffix": "The base number with a revision suffix",
@@ -1096,5 +1096,6 @@
     "numbering.validation.required": "Required.",
     "numbering.validation.date": "Enter a valid date.",
     "numbering.validation.instant": "Enter a past date and time.",
-    "numbering.validation.reference": "Enter a restore reference of at most 120 characters."
+    "numbering.validation.reference": "Enter a restore reference of at most 120 characters.",
+    "numbering.format.period": "The template must contain a year token ({tahun} or {tahun2}), and a monthly format a month token too ({bulan} or {bulan_romawi})."
 }

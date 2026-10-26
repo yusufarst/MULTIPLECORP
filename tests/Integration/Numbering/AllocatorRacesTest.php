@@ -11,6 +11,7 @@ use Tests\Support\Authorization;
 use Tests\Support\Concurrency\Barrier;
 use Tests\Support\Concurrency\Sessions;
 use Tests\Support\DatabaseTruncation;
+use Tests\Support\GuardReconciliation;
 use Tests\Support\Numbering;
 use Tests\Support\TwoFactor;
 
@@ -22,6 +23,8 @@ use Tests\Support\TwoFactor;
 uses(DatabaseTruncation::class);
 
 afterEach(function () {
+    // The counters' verification of DATABASE §3.1 holds after every numbering test (DIR-098 reading 6).
+    expect(GuardReconciliation::verificationDifferences())->toBe([]);
     $this->truncateTablesForAllConnections();
 });
 
@@ -36,17 +39,31 @@ beforeEach(function () {
     $this->today = CarbonImmutable::now('Asia/Jakarta')->toDateString();
 });
 
-it('draws N distinct consecutive numbers for N concurrent issues of one counter (M-15; NM-02; criterion 1)', function () {
+it('draws N distinct consecutive numbers for N concurrent issues of one counter by N actors (M-15; NM-02; criterion 1)', function () {
     Numbering::seed(Company::query()->findOrFail($this->company), SequenceType::Doc06, $this->year, 41);
-    [$owner, $company, $today] = [$this->owner, $this->company, $this->today];
-    $issue = static function () use ($owner, $company, $today): string {
-        Numbering::goLive('2025-06-01');
-        Barrier::await('every issue is ready');
+    [$company, $today] = [$this->company, $this->today];
+    $actors = [TwoFactor::enrol(Authorization::owner())->id, TwoFactor::enrol(Authorization::owner())->id, TwoFactor::enrol(Authorization::owner())->id];
+    [$a, $b, $c] = $actors;
+    $results = Sessions::run([
+        'a' => static function () use ($a, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+            Barrier::await('every issue is ready');
 
-        return Numbering::draw($owner, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
-    };
+            return Numbering::draw($a, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
+        },
+        'b' => static function () use ($b, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+            Barrier::await('every issue is ready');
 
-    $results = Sessions::run(['a' => $issue, 'b' => $issue, 'c' => $issue]);
+            return Numbering::draw($b, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
+        },
+        'c' => static function () use ($c, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+            Barrier::await('every issue is ready');
+
+            return Numbering::draw($c, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
+        },
+    ]);
     $numbers = array_map(fn (string $result): int => (int) explode(' ', $result)[1], $results);
     sort($numbers);
 
@@ -54,20 +71,54 @@ it('draws N distinct consecutive numbers for N concurrent issues of one counter 
         ->and(Numbering::next(Company::query()->findOrFail($this->company), SequenceType::Doc06, $this->year))->toBe(44);
 });
 
-it('creates one counter for two first issues of a new live period, numbers 1 and 2 (M-16; FU-07)', function () {
-    [$owner, $company, $today] = [$this->owner, $this->company, $this->today];
-    $issue = static function () use ($owner, $company, $today): string {
-        Numbering::goLive('2025-06-01');
-        Barrier::await('both issues are ready');
+it('holds a second issuer at the counter row until the first commits, then gives it the next number (NM-01; NM-02; LK-31)', function () {
+    Numbering::seed(Company::query()->findOrFail($this->company), SequenceType::Doc06, $this->year, 7);
+    [$company, $today] = [$this->company, $this->today];
+    [$first, $second] = [TwoFactor::enrol(Authorization::owner())->id, TwoFactor::enrol(Authorization::owner())->id];
 
-        return Numbering::draw($owner, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
-    };
+    $results = Sessions::run([
+        'first' => static function () use ($first, $company, $today): string {
+            Numbering::goLive('2025-06-01');
 
-    $results = Sessions::run(['a' => $issue, 'b' => $issue]);
-    $numbers = array_map(fn (string $result): int => (int) explode(' ', $result)[1], $results);
-    sort($numbers);
+            return Numbering::draw($first, Company::query()->findOrFail($company), SequenceType::Doc06, $today, static function (): void {
+                Barrier::await('the first holds the counter');
+                // The second issuer waits on the counter row itself, the actors and company being different.
+                Sessions::awaitBlocked(1);
+            });
+        },
+        'second' => static function () use ($second, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+            Barrier::await('the first holds the counter');
 
-    expect($numbers)->toBe([1, 2])
+            return Numbering::draw($second, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
+        },
+    ]);
+
+    expect($results)->toBe(['first' => "COMMITTED 7 CTH/{$this->year}/0007", 'second' => "COMMITTED 8 CTH/{$this->year}/0008"]);
+});
+
+it('creates one counter for two first issues of a new live period, the second waiting in the insert, numbers 1 and 2 (M-16; FU-07)', function () {
+    [$company, $today] = [$this->company, $this->today];
+    [$first, $second] = [TwoFactor::enrol(Authorization::owner())->id, TwoFactor::enrol(Authorization::owner())->id];
+
+    $results = Sessions::run([
+        'first' => static function () use ($first, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+
+            return Numbering::draw($first, Company::query()->findOrFail($company), SequenceType::Doc06, $today, static function (): void {
+                Barrier::await('the first created the counter');
+                Sessions::awaitBlocked(1);
+            });
+        },
+        'second' => static function () use ($second, $company, $today): string {
+            Numbering::goLive('2025-06-01');
+            Barrier::await('the first created the counter');
+
+            return Numbering::draw($second, Company::query()->findOrFail($company), SequenceType::Doc06, $today);
+        },
+    ]);
+
+    expect($results)->toBe(['first' => "COMMITTED 1 CTH/{$this->year}/0001", 'second' => "COMMITTED 2 CTH/{$this->year}/0002"])
         ->and(DB::table('number_sequences')->where('period_key', $this->year)->count())->toBe(1)
         ->and(DB::table('number_sequences')->where('period_key', $this->year)->value('seed_value'))->toBeNull();
 });

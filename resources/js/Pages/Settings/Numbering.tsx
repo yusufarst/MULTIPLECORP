@@ -933,7 +933,8 @@ function RaiseArea({ detail, company, jenis, base }: { detail: Detail; company: 
                             company,
                             mode: 'raise',
                             restore_reference: reference.trim(),
-                            recovery_point: new Date(point).toISOString(),
+                            // The recovery point is a WIB instant, whatever the browser's own time zone (BR-DT-06).
+                            recovery_point: `${point}:00+07:00`,
                             lines: lines.map((line) => ({ period_key: line.period, highest: Number(line.highest) })),
                             business_date: detail.today,
                             business_date_prefilled: true,

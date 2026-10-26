@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\Clock;
+use Tests\Support\GuardReconciliation;
 use Tests\Support\Numbering;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\TwoFactor;
@@ -27,6 +28,11 @@ use Tests\Support\TwoFactor;
 // drawing it and no number drawn twice.
 
 uses(RefreshDatabase::class);
+
+// The counters' verification of DATABASE §3.1 holds after every numbering test (DIR-098 reading 6).
+afterEach(function () {
+    expect(GuardReconciliation::verificationDifferences())->toBe([]);
+});
 
 /** A fixed instant outside FX-08's named ones, for a test that needs only a known today. */
 function at(string $instant): void

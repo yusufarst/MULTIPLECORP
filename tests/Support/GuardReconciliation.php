@@ -84,6 +84,20 @@ final class GuardReconciliation
             }
         }
 
+        return $found;
+    }
+
+    /**
+     * The verified families' violations (DATABASE §3.1; DIR-098 reading 6): run by `ReconcileGuards` and by the numbering
+     * tests, not after every integration test — until the issuing Tasks draw their numbers through the allocator, the
+     * other suites' factories write numbered projects, documents and purchases with no counter by design (TASK-021).
+     *
+     * @return list<string>
+     */
+    public static function verificationDifferences(): array
+    {
+        $found = [];
+
         foreach (Families::verifications() as $verification) {
             foreach ((new Reconciler)->violations(DB::connection(), $verification) as $violation) {
                 $found[] = 'ReconcileGuards: '.json_encode($violation, JSON_THROW_ON_ERROR);

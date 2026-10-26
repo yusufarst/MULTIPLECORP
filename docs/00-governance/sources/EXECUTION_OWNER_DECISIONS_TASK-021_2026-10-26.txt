@@ -11,3 +11,8 @@ Answer: Setuju (Rekomendasi)
 
 Question: Bacaan lain dalam teks yang sudah disetujui, untuk TASK-021: (1) ROUTE-136/137 tanpa step-up (rute dan AU-15 tidak menyebutnya). (2) Go-live dibaca lewat satu antarmuka; nilainya 'belum dicatat' sampai TASK-077 menetapkan tempat simpannya (OF-04), jadi start dan seed ditolak sampai saat itu. (3) Perusahaan dikirim di payload, `{type}` ditulis seperti `doc-01`, `project`, `purchase`, dan ROUTE-137 membawa start, seed dan raise. (4) PURCHASE ikut ditampilkan di PG-061. (5) Kode audit start `ORG.NumberingStarted.DOC_01` dan seterusnya. (6) Family `number_sequences` didaftarkan sebagai verifikasi yang tidak pernah di-rebuild. (7) Pelanggaran backstop UNIQUE dipetakan ke SQ-19. (8) Teks pesan baru diusulkan lewat registry untuk review Owner. Setujui?
 Answer: Setujui semua (Rekomendasi)
+
+--- Part 2: ER-06's finding on the number format (after the executor's question) ---
+
+Question: Review ER-06 TASK-021 menemukan masalah pada format nomor (D1). Template tanpa token periode, misalnya `SJ-{nomor:4}` pada skema tahunan, menghasilkan `SJ-0001` lagi di tahun berikutnya karena counter direset per periode. Akibatnya nomor bertabrakan dengan UNIQUE C-10 dan jenis dokumen itu macet. Perketat validasinya: skema tahunan wajib memuat {tahun} atau {tahun2}, dan skema bulanan wajib memuat token tahun dan {bulan} atau {bulan_romawi}?
+Answer: Wajib token periode (Rekomendasi)

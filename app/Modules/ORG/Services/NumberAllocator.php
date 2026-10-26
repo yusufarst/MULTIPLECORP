@@ -40,24 +40,28 @@ final class NumberAllocator
 
         $period = NumberingPeriod::of($businessDate, $scheme->period_granularity);
         $key = ['company_id' => $companyId, 'sequence_type' => $type->value, 'period_key' => $period->key];
-        $missing = $context->lock((new LockSet)->add('number_sequences', $key));
+        $context->lock((new LockSet)->add('number_sequences', $key));
+        // Whether the counter exists is the increment's own answer, never the lock's: a lock set re-derived after a
+        // restart holds the key already, whether or not its row exists.
+        $number = $this->increment($context, $companyId, $type, $period);
 
-        if ($missing !== []) {
+        if ($number === null) {
             $this->firstUse($context, $companyId, $type, $period);
+            $number = $this->increment($context, $companyId, $type, $period) ?? throw new GuardMissing('number_sequences', 1, 0);
         }
 
+        return new DrawnNumber($scheme->id, $period->key, $number, NumberFormat::format($scheme->format_template, $period->key, $number));
+    }
+
+    /** NM-02's one statement: the counter incremented, its pre-increment value returned; null when no counter exists. */
+    private function increment(CommandContext $context, int $companyId, SequenceType $type, NumberingPeriod $period): ?int
+    {
         $drawn = $context->connection->selectOne(
             'update number_sequences set next_value = next_value + 1 where company_id = ? and sequence_type = ? and period_key = ? returning next_value - 1 as allocated',
             [$companyId, $type->value, $period->key],
         );
 
-        if (! is_object($drawn) || ! is_numeric($drawn->allocated ?? null)) {
-            throw new GuardMissing('number_sequences', 1, 0);
-        }
-
-        $number = (int) $drawn->allocated;
-
-        return new DrawnNumber($scheme->id, $period->key, $number, NumberFormat::format($scheme->format_template, $period->key, $number));
+        return is_object($drawn) && is_numeric($drawn->allocated ?? null) ? (int) $drawn->allocated : null;
     }
 
     /**
@@ -69,8 +73,8 @@ final class NumberAllocator
     private function firstUse(CommandContext $context, int $companyId, SequenceType $type, NumberingPeriod $period): void
     {
         $created = $context->connection->affectingStatement(
-            'insert into number_sequences (company_id, sequence_type, period_key, next_value, seed_value) values (?, ?, ?, 1, null) on conflict (company_id, sequence_type, period_key) do nothing',
-            [$companyId, $type->value, $period->key],
+            'insert into number_sequences (company_id, sequence_type, period_key, next_value, seed_value, recorded_at, recorded_by) values (?, ?, ?, 1, null, ?, ?) on conflict (company_id, sequence_type, period_key) do nothing',
+            [$companyId, $type->value, $period->key, $context->now(), $context->request->actorUserId],
         );
         $context->connection->table('number_sequences')->where('company_id', $companyId)->where('sequence_type', $type->value)
             ->where('period_key', $period->key)->lock('for no key update')->first(['next_value']);

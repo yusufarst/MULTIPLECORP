@@ -34,17 +34,19 @@ final class NumberingSeeds
                 throw new GuardMissing('number_sequences', 1, 0);
             }
 
-            $context->connection->table('number_sequences')->insert([
-                'company_id' => $companyId,
-                'sequence_type' => $type->value,
-                'period_key' => $period->key,
-                'next_value' => $first,
-                'seed_value' => $first,
-                'recorded_at' => $context->now(),
-                'recorded_by' => $context->request->actorUserId,
-            ]);
+            // FU-07's insert-or-lock: a counter a first use created meanwhile is met, never a unique-key failure.
+            $created = $context->connection->affectingStatement(
+                'insert into number_sequences (company_id, sequence_type, period_key, next_value, seed_value, recorded_at, recorded_by) values (?, ?, ?, ?, ?, ?, ?) on conflict (company_id, sequence_type, period_key) do nothing',
+                [$companyId, $type->value, $period->key, $first, $first, $context->now(), $context->request->actorUserId],
+            );
 
-            return ['period_key' => $period->key, 'first_number' => $first, 'created' => true];
+            if ($created === 1) {
+                return ['period_key' => $period->key, 'first_number' => $first, 'created' => true];
+            }
+
+            $counter = $context->connection->table('number_sequences')->where('company_id', $companyId)->where('sequence_type', $type->value)
+                ->where('period_key', $period->key)->lock('for no key update')->first(['next_value', 'seed_value'])
+                ?? throw new GuardMissing('number_sequences', 1, 0);
         }
 
         $next = is_numeric($counter->next_value) ? (int) $counter->next_value : 1;

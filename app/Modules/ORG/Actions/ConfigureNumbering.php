@@ -12,7 +12,6 @@ use App\Modules\ORG\Services\NumberingState;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
-use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -71,8 +70,7 @@ final class ConfigureNumbering
         }
 
         $context->lock($locks);
-        BusinessDateRule::check($input['business_date'], $input['business_date_prefilled']);
-        $today = $input['business_date'];
+        $today = NumberingState::recordingDay($context, $input['business_date'], $input['business_date_prefilled']);
 
         if (NumberFormat::problem($input['format_template'], $input['period_granularity']) !== null) {
             throw Refused::rejected('GAP-019', ['reason' => 'format']);

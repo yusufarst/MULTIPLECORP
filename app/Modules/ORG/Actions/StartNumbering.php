@@ -9,7 +9,6 @@ use App\Modules\ORG\Services\NumberingSeeds;
 use App\Modules\ORG\Services\NumberingState;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
-use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -18,7 +17,9 @@ use App\Support\Command\Fingerprint;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use App\Support\GuardMissing;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * `ORG StartNumbering` (ROUTE-137; INT-137; NX-01; NM-03; HO-39), the numbering command's writes at LK-31 under the
@@ -61,10 +62,11 @@ final class StartNumbering
         return $this->run($commandId, $actorUserId, $company, ['mode' => 'start', 'type' => $type->value, 'first_numbers' => $firstNumbers, 'business_date' => $businessDate, 'prefilled' => $prefilled],
             function (CommandContext $context) use ($company, $type, $firstNumbers, $businessDate, $prefilled): CommandResult {
                 $context->lock($this->locks($company, $type, array_map('strval', array_keys($firstNumbers))));
-                BusinessDateRule::check($businessDate, $prefilled);
+                $businessDate = NumberingState::recordingDay($context, $businessDate, $prefilled);
                 $goLive = $this->state->goLive();
 
-                if ($goLive === null) {
+                // NM-03: the start is refused before go-live — until it is recorded, and before its day.
+                if ($goLive === null || $businessDate < $goLive) {
                     throw Refused::rejected('NM-03', ['reason' => 'go_live']);
                 }
 
@@ -110,7 +112,7 @@ final class StartNumbering
         return $this->run($commandId, $actorUserId, $company, ['mode' => 'seed', 'type' => $type->value, 'period_key' => $periodKey, 'first_number' => $first, 'business_date' => $businessDate, 'prefilled' => $prefilled],
             function (CommandContext $context) use ($company, $type, $periodKey, $first, $businessDate, $prefilled): CommandResult {
                 $context->lock($this->locks($company, $type, [$periodKey]));
-                BusinessDateRule::check($businessDate, $prefilled);
+                $businessDate = NumberingState::recordingDay($context, $businessDate, $prefilled);
                 $goLive = $this->state->goLive();
                 $boundary = $this->state->boundary($company->id, $type);
                 $period = NumberingPeriod::fromKey($periodKey);
@@ -161,7 +163,7 @@ final class StartNumbering
         return $this->run($commandId, $actorUserId, $company, ['mode' => 'raise', 'type' => $type->value, 'restore' => $restore, 'recovery_point' => $recoveryPoint, 'highest' => $highest, 'business_date' => $businessDate, 'prefilled' => $prefilled],
             function (CommandContext $context) use ($company, $type, $restore, $recoveryPoint, $highest, $businessDate, $prefilled): CommandResult {
                 $context->lock($this->locks($company, $type, array_map('strval', array_keys($highest))));
-                BusinessDateRule::check($businessDate, $prefilled);
+                $businessDate = NumberingState::recordingDay($context, $businessDate, $prefilled);
                 $boundary = $this->state->boundary($company->id, $type);
                 $goLive = $this->state->goLive();
                 $schemes = $this->state->schemes($company->id, $type);
@@ -183,6 +185,13 @@ final class StartNumbering
 
                     if ($reason !== null) {
                         throw Refused::rejected('NX-01', ['reason' => $reason, 'periode' => $periodKey, 'next' => $current]);
+                    }
+
+                    // A live period's new counter needs FU-07's proof: a number of the period issued here means a lost counter (SQ-18).
+                    if ($current === null && $this->state->highestIssued($company->id, $type, $periodKey) !== null) {
+                        Log::critical('A number counter is missing under numbers issued here (NM-03; SQ-18).', ['company_id' => $company->id, 'sequence_type' => $type->value, 'period_key' => $periodKey]);
+
+                        throw new GuardMissing('number_sequences', 1, 0);
                     }
 
                     $raises[] = ['period_key' => $periodKey, 'from' => $current, 'to' => $paper + 1];
