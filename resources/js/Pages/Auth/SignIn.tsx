@@ -2,10 +2,12 @@
 // submit, AU-04's one generic answer and AU-05's throttled one, never which part was wrong. The language switch keeps
 // the typed e-mail and never the password (INT-001). An authentication boundary: the history is cleared here, and a
 // success loads the next page as a full document (AU-06; H7-12). "Lupa kata sandi?" answers that the Owner issues a
-// reset link (DEP-08) — no reset request exists.
+// reset link (DEP-08) — no reset request exists. With a Google client configured, "Lanjutkan dengan Google" leads
+// to ROUTE-102 and its one generic failure shows here (AU-22; GLC-09; TASK-019), with H7-16's shared-device advice.
 import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect, useId, useState } from 'react';
 
+import GoogleButton from '@/components/GoogleButton';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
@@ -14,7 +16,17 @@ import { Input } from '@/components/ui/input';
 import { languageQuery, useTranslation } from '@/lib/i18n';
 import { documentTitle } from '@/lib/title';
 
-export default function SignIn({ notice, email = null }: { notice: string | null; email?: string | null }) {
+export default function SignIn({
+    notice,
+    email = null,
+    google = false,
+    googleFailed = null,
+}: {
+    notice: string | null;
+    email?: string | null;
+    google?: boolean;
+    googleFailed?: string | null;
+}) {
     const { locale, t } = useTranslation();
     const id = useId();
     // The e-mail of a second-factor attempt left with "Kembali", or expired, is kept (NAV-002).
@@ -40,6 +52,11 @@ export default function SignIn({ notice, email = null }: { notice: string | null
                 <LanguageSwitch />
             </div>
             <h1 className="text-m-title font-semibold text-text-primary md:text-title">{t('pages.pg_001.heading')}</h1>
+            {googleFailed !== null && (
+                <p role="alert" className="text-body font-medium text-danger-fg">
+                    {googleFailed}
+                </p>
+            )}
             {notice !== null && (
                 <p role="status" className="text-body text-text-primary">
                     {notice}
@@ -92,6 +109,13 @@ export default function SignIn({ notice, email = null }: { notice: string | null
                     {t('pages.pg_001.submit')}
                 </Button>
             </form>
+            {google && (
+                <div className="flex flex-col gap-3">
+                    <p className="text-center text-body text-text-secondary">{t('pages.pg_001.or')}</p>
+                    <GoogleButton href={`/masuk/google${languageQuery()}`} label={t('pages.pg_001.google')} />
+                    <p className="text-body text-text-secondary">{t('auth.shared_device_advice')}</p>
+                </div>
+            )}
             <div className="flex flex-col items-start gap-1">
                 <Button
                     variant="ghost"

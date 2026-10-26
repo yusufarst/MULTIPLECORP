@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -221,34 +221,38 @@ D6 and K2 make Google a convenience for existing accounts with active TOTP (AU-2
 - Migration: N/A — no migration or import code in this Task
 - Other: the button's absence without a client
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Auth/GoogleSignInTest.php` — an unknown and an unlinked subject, an inactive account, one without active TOTP and one in recovery, another nonce, audience and issuer, an expired token, a mismatched or malformed state, Google's cancel, a failed exchange and a missing or aged marker each answered by the one generic failure on PG-001 with GOOGLE_SIGNIN_FAILED and its reason, nothing signed in —, `tests/Interaction/GoogleSignInTest.php` — the denied and unknown callbacks alike, nothing created or linked — and `tests/Browser/E2E/google.spec.ts` — an unlinked Google account. Criterion 2: `GoogleSignInTest.php` — PG-002's challenge with the GOOGLE purpose and no session, a TOTP code only after Google, the session established by the code, LOGIN_SUCCEEDED naming `google_totp` —; `google.spec.ts` — nothing reachable before the code. Criterion 3: `tests/Feature/Auth/GoogleIdentitiesTest.php` — the no-op relink, the conflict, one identity per account —; `tests/Integration/Authentication/GoogleLinkRaceTest.php` — two accounts racing for one subject under real sessions, by the re-read and by the unique key's refusal (C-64). Criterion 4: `GoogleSignInTest.php` — with no client, no button on PG-001 and both routes refusing (GLC-09). Criterion 5: `GoogleIdentitiesTest.php` — IAM.GoogleLinked and IAM.GoogleUnlinked in the step's transaction, GOOGLE_LINKED and GOOGLE_UNLINKED after the outermost commit, a rollback of the step or of its caller leaving neither; AU-24's reasons and actors
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the ID token's claim checks (TL-03); Feature — SM-20 with the provider faked (TL-04); Integration — the link's unique key under two real sessions (TL-05); PASS locally and in CI
+- [x] Authorization: no role, capability or scope from a Google identity (AZ-13; TL-06)
+- [x] Route integrity: ROUTE-102 and ROUTE-103 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-102, INT-103 (TL-08)
+- [x] Browser E2E if required: the faked Google journey to the code step, and the generic failure, on Chromium and WebKit, Google never reached (TL-09; SM-20)
+- [x] Responsive/adaptive if required: PG-001 with the Google button at the sign-in specs' band edges (TL-11)
+- [x] Visual breathing room/density if UI: GR-13's button in Google's light theme through the design system's tokens (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS locally and in CI; the Google fixture local-only
+- [x] Security checks if required: SM-20 and M-41–M-43; TL-12's axe on PG-001 with the button; the secret-like scan and both dependency audits PASS (TL-14)
+- [x] Database safety review: no migration and no schema change — TASK-005's `user_external_identities`, its C-63 and C-64 —; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `b39fdfc`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40306778592 (push) and 40306782063 (pull request #24), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". On the Owner's workstation, 2026-10-26: the suites Unit 280, Feature 139, Integration 907, Authorization 105, Interaction 17, Routes 11, Architecture 50 and Performance 4 before ER-06's fixes and the authentication suites again after them; TypeScript, ESLint, `tests/Frontend/` 30, Pint, Larastan/PHPStan, the production build and the Google, sign-in and two-factor browser specs PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: b39fdfc, CI ubuntu-24.04 run 40306778592`
+- Route evidence: TL-07's route audit PASS — ROUTE-102 `GET /masuk/google` (`access:none,google_redirect`) and ROUTE-103 `GET /masuk/google/callback` (`access:none,google_callback`), each under the per-address Google limiter —; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/GoogleSignInTest.php` (INT-102, INT-103)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: b39fdfc, CI ubuntu-24.04 run 40306778592`; TL-10 and TL-12 for the button in the same run
+- Localization evidence: the button in both languages (`google.spec.ts`) and the failure text in both (`GoogleSignInTest.php`) (DOD-16); 1 key added through `lang/registry/added-keys.json` for the Owner's review
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — Socialite, its dependencies and Roboto free and open-source, project-local; no Google client exists yet (GAP-042)
+- Files changed: `composer.json`, `composer.lock`, `package.json`, `package-lock.json`; `config/services.php`, `.env.example`; `app/Modules/IAM/Authentication/` — the provider, the ID token's checks, the sign-in steps and the identities —, `app/Modules/IAM/Http/Controllers/`, `app/Modules/IAM/Authentication/TwoFactorSteps.php`'s LOGIN_SUCCEEDED detail; `routes/web.php`, `routes/fixtures.php`; `resources/js/components/GoogleButton.tsx`, `resources/js/Pages/Auth/SignIn.tsx`, `resources/css/tokens.css`; `lang/`; `tests/`; TOOLCHAIN's row; this file, the statuses of TASK-020, TASK-023 and TASK-024, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `3ebd525`, `5cf862a`, `aded785`, `80e4d22` and `b39fdfc`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-019-google`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26; Context7 not available, each Socialite behaviour re-read in the installed source and pinned by a test (GAP-043; TOOLCHAIN's TASK-019 row); CI the final proof; its first run, on `aded785`, failed in every job: package discovery loads the routes in the console, where the local Google fixture read the cache before any store was up — fixed in `80e4d22`, the fixture kept out of the console — Codex's review of `aded785` found the same as its one P1, answered by that fix; the run on `80e4d22` failed TL-13 alone: after its `--no-dev` install, package discovery still loaded the fixture routes and the test class was gone — fixed in `b39fdfc`, the class loaded only for a request. A first version of the browser journey let Chromium follow ROUTE-102's redirect to Google's real authorization page, which answered `invalid_client` for the fixture's synthetic client ID — no secret, token or account was involved; Playwright does not route redirect hops, so the spec now reads ROUTE-102's answer without following it and fails any request to Google (SM-20). ER-06's one review found no HIGH point and ten others: the identities' events after the outermost commit so TASK-023 and TASK-024 can run them inside their commands (RV-16), a Google sign-in named in LOGIN_SUCCEEDED (LG-02), the failure text in both languages, Google's cancel and a malformed state, the race's unique-key path made deterministic, the tests H8-20, M-43 and the fail-closed limiter ask for, the state dropped at every failure, the token's `azp` and verified e-mail, AU-24's actors and the recovery link named — each fixed and tested; a start from a signed-in session answered by the guest middleware's landing page (NAV-001) rather than PG-001. Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-019 blocks were re-checked at this DONE: TASK-020, TASK-023 and TASK-024 READY — every dependency DONE —; TASK-082 waits on TASK-071 and TASK-078. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 

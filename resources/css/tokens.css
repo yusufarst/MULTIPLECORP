@@ -76,6 +76,11 @@
     --color-border-input: #898982;
     --color-border-outline-xl: #cdcec9;
     --color-border-outline-xl-hover: #bebfba;
+    /* GR-13 — the Google button in Google's own light theme, not the system's palette (TASK-019). */
+    --color-google-border: #747775;
+    --color-google-ink: #1f1f1f;
+    --color-google-surface: #ffffff;
+    --color-google-hover: #f8f9fa;
 
     /* §5.1 — the ink tiers; each muted grey only on its own surface, where it meets 4.5:1 (GR-04). */
     --color-text-primary: #0f1014;
@@ -150,6 +155,8 @@
 
     /* §5.2 — one typeface, self-hosted (WS-08's `font-src 'self'`), with its cap-height-matched fallback. */
     --font-sans: 'Inter Variable', 'Inter', 'Inter Fallback', 'Segoe UI Variable Text', 'Segoe UI', system-ui, sans-serif;
+    /* GR-13 — Google's button face, Roboto Medium, self-hosted for that button alone (TASK-019). */
+    --font-google: 'Roboto', 'Inter Variable', system-ui, sans-serif;
     --font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Consolas, 'Liberation Mono', Menlo, monospace;
     --font-weight-regular: 400;
     --font-weight-medium: 500;

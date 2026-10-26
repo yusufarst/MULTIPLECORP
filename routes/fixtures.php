@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
@@ -38,3 +39,11 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
 // TL-09–TL-12 (TASK-017): a synthetic account and its reset link for one run, so the sign-in, reset and logout
 // journeys run against the real routes of PG-001 and PG-003.
 Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
+
+// TL-09–TL-12 (TASK-019): the faked Google — sign-in on with a synthetic client and the token exchange answered
+// locally — for the Google journey, armed and disarmed by the run.
+// Never in the console: package discovery loads these routes, after a `--no-dev` install too, without the fixture classes.
+if (! app()->runningInConsole()) {
+    GoogleFixture::apply();
+}
+Route::post('__fixtures/google', [GoogleFixture::class, 'arm']);
