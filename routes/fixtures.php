@@ -42,5 +42,8 @@ Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
 
 // TL-09–TL-12 (TASK-019): the faked Google — sign-in on with a synthetic client and the token exchange answered
 // locally — for the Google journey, armed and disarmed by the run.
-GoogleFixture::apply();
+// Never in the console: package discovery loads these routes, after a `--no-dev` install too, without the fixture classes.
+if (! app()->runningInConsole()) {
+    GoogleFixture::apply();
+}
 Route::post('__fixtures/google', [GoogleFixture::class, 'arm']);
