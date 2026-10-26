@@ -993,5 +993,14 @@
     "shortcuts.kb_09": "Save the draft",
     "shortcuts.kb_10": "Open the confirmation of the form's primary command",
     "shortcuts.kb_11": "Choose from a result list",
-    "pages.pg_005.error": "This page cannot be shown. Try again later; quote the reference code if you report it."
+    "pages.pg_005.error": "This page cannot be shown. Try again later; quote the reference code if you report it.",
+    "auth_rules.password_profile": "Use 8–128 characters with a lowercase letter, an uppercase letter, a digit and a symbol.",
+    "auth_rules.password_common": "This password is too common. Choose another one.",
+    "auth_rules.password_personal": "The password must not contain your name or e-mail, the product name or a company name.",
+    "auth_rules.password_breached": "This password has appeared in a breach elsewhere. Choose another one.",
+    "auth_rules.password_mismatch": "The two passwords do not match.",
+    "pages.pg_003.heading": "Set your password",
+    "pages.pg_003.password": "New password",
+    "pages.pg_003.confirm": "Repeat the new password",
+    "pages.pg_003.submit": "Save Password"
 }

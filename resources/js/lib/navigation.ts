@@ -13,7 +13,8 @@ export type AccountHints = { name: string | null; capabilities: string[]; compan
 export type Entry = { key: string; pg: string; label: TranslationKey; href: string; icon: LucideIcon; allowed: (account: AccountHints) => boolean };
 
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
-export const BUILT: ReadonlySet<string> = new Set<string>([]);
+// ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108']);
 
 const has =
     (...capabilities: string[]) =>

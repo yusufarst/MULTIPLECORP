@@ -28,12 +28,7 @@ final class SystemAnswer
             return response()->json(['message' => __('messages.msg_11')], Response::HTTP_UNAUTHORIZED);
         }
 
-        // A document request — an address typed or opened from outside — goes to sign-in (PG-001; TASK-017); the
-        // sign-in address itself, while no route serves it, answers not found rather than sending a guest round.
-        if ($request->is('masuk')) {
-            return self::page('not_found', 404, $request);
-        }
-
+        // A document request — an address typed or opened from outside — goes to sign-in (PG-001; TASK-017).
         return redirect()->guest('/masuk');
     }
 

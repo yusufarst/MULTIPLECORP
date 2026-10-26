@@ -10,6 +10,7 @@ use App\Http\Middleware\SessionDeadline;
 use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
+use App\Modules\IAM\Authentication\EnforceSessionLimits;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
@@ -41,8 +42,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // First of all, so that every later log line of the request carries it (ARCHITECTURE §17).
         $middleware->prepend(AssignCorrelationId::class);
 
-        // The interface language before the shared props that carry it (LOCALIZATION §2; WS-07).
+        // The session's limits first — the absolute 12 hours, an inactive account and RV-10's password digest, which
+        // ends a session whose account's password changed (AU-07, AU-09) —; then the interface language
+        // before the shared props that carry it (LOCALIZATION §2; WS-07).
         $middleware->web(append: [
+            EnforceSessionLimits::class,
             SetLocale::class,
             HandleInertiaRequests::class,
             SessionDeadline::class,
@@ -50,6 +54,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // A guest's document request goes to sign-in, PG-001 (TASK-017); an Inertia or JSON one answers 401 instead.
         $middleware->redirectGuestsTo('/masuk');
+        // A signed-in account opening a sign-in page goes to its landing page (NAV-001).
+        $middleware->redirectUsersTo('/');
 
         // A background request reads the session and never writes it, so it extends no session (RV-06; RB-05).
         $middleware->web(replace: [StartSession::class => StartSessionUnlessBackground::class]);
@@ -68,6 +74,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         // One answer for a missing and an out-of-scope record, naming neither (AZ-11; CS-04; WS-10).
         $exceptions->map(ModelNotFoundException::class, fn () => new NotFoundHttpException);
+
+        // No secret and no credential-link token is flashed back after a validation error (AU-12; WS-10).
+        $exceptions->dontFlash(['token', 'password', 'password_confirmation', 'current_password']);
 
         // UXH-11: an unauthenticated Inertia or JSON request answers 401 — never a redirect —, so the open page
         // signs in again in place (IP-11); PG-005 answers an address the account cannot open (IP-21; TASK-016).

@@ -1,0 +1,49 @@
+<?php
+
+namespace App\Modules\IAM\Http\Controllers;
+
+use App\Modules\IAM\Authentication\AttemptLogin;
+use App\Modules\IAM\Authentication\CredentialLinks;
+use App\Modules\IAM\Authentication\PasswordProfile;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Inertia\Inertia;
+use Inertia\Response;
+
+/**
+ * PG-003 *Atur Kata Sandi* (NAV-003; AU-12): ROUTE-003 shows the form — the token stays in the address's fragment,
+ * which no request carries, and the page moves it into memory —; ROUTE-106 `IAM ConsumeCredentialLink` takes it
+ * from the request body, checks the new password under AU-03 before any transaction, and sets it, or answers an
+ * unknown, expired, used or revoked link alike with MSG-28. The token is never flashed back (WS-10) and the pages
+ * send `Referrer-Policy: no-referrer` and `no-store` (CredentialPageHeaders).
+ */
+final class SetPasswordController
+{
+    public function show(): Response
+    {
+        return Inertia::render('Auth/SetPassword');
+    }
+
+    public function store(Request $request, CredentialLinks $links): RedirectResponse
+    {
+        $token = $request->input('token');
+
+        if (! is_string($token) || preg_match('/^[A-Za-z0-9_-]{43}$/', $token) !== 1) {
+            throw ValidationException::withMessages(['token' => __('messages.msg_28')]);
+        }
+
+        $request->validate(
+            ['password' => ['required', 'string', 'confirmed', new PasswordProfile($links->accountFor($token))]],
+            ['password.required' => __('forms.required'), 'password.confirmed' => __('auth_rules.password_mismatch')],
+        );
+
+        $account = $links->consume($token, AttemptLogin::password($request->input('password')), $request->ip(), $request->userAgent());
+
+        if ($account === null) {
+            throw ValidationException::withMessages(['token' => __('messages.msg_28')]);
+        }
+
+        return redirect('/masuk')->with('auth.notice', 'password_saved');
+    }
+}

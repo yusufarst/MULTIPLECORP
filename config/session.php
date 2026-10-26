@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Str;
-
 return [
 
     /*
@@ -32,9 +30,11 @@ return [
     |
     */
 
-    'lifetime' => (int) env('SESSION_LIFETIME', 120),
+    // SECURITY AU-07: 60 idle minutes, sliding on user-initiated requests only (H7-13); the absolute
+    // 12 hours are EnforceSessionLimits'. AU-08: no "remember me", the cookie ends with the browser.
+    'lifetime' => (int) env('SESSION_LIFETIME', 60),
 
-    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', false),
+    'expire_on_close' => env('SESSION_EXPIRE_ON_CLOSE', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -47,7 +47,8 @@ return [
     |
     */
 
-    'encrypt' => env('SESSION_ENCRYPT', false),
+    // AU-06: the payload encrypted in PostgreSQL.
+    'encrypt' => env('SESSION_ENCRYPT', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -127,10 +128,8 @@ return [
     |
     */
 
-    'cookie' => env(
-        'SESSION_COOKIE',
-        Str::slug((string) env('APP_NAME', 'laravel')).'-session'
-    ),
+    // AU-06: the `__Host-` prefix — Secure, path `/`, no domain.
+    'cookie' => env('SESSION_COOKIE', '__Host-multiplecorp_session'),
 
     /*
     |--------------------------------------------------------------------------
