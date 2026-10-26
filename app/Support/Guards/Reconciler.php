@@ -67,6 +67,29 @@ final class Reconciler
         return $differences;
     }
 
+    /**
+     * The rows that break a verified family's rule, each with its key, the stored counter and the highest number
+     * the facts hold at or above it (DATABASE §3.1).
+     *
+     * @return list<array{family: string, key: array<string, mixed>, stored: array{next_value: string}|null, expected: array{above: string}}>
+     */
+    public function violations(ConnectionInterface $connection, Verification $verification): array
+    {
+        $violations = [];
+
+        foreach ($connection->select($verification->violations) as $row) {
+            $values = (array) $row;
+            $violations[] = [
+                'family' => $verification->table,
+                'key' => array_intersect_key($values, array_flip($verification->key)),
+                'stored' => $values['next_value'] === null ? null : ['next_value' => self::text($values['next_value'])],
+                'expected' => ['above' => self::text($values['highest'] ?? null)],
+            ];
+        }
+
+        return $violations;
+    }
+
     private static function text(mixed $value): string
     {
         return is_scalar($value) ? (string) $value : '';

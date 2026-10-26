@@ -9,6 +9,7 @@ use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
+use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -36,6 +37,13 @@ Route::post('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'confirm
 // throttled per client address (AU-05); off with no client configured (GLC-09).
 Route::get('/masuk/google', [GoogleSignInController::class, 'redirect'])->middleware(['guest', 'access:none,google_redirect', 'throttle:google'])->name('google.redirect');
 Route::get('/masuk/google/callback', [GoogleSignInController::class, 'callback'])->middleware(['access:none,google_callback', 'throttle:google'])->name('google.callback');
+
+// PG-061 *Penomoran Dokumen* (TASK-021; ROUTE-061, ROUTE-136, ROUTE-137; NAV-061): the Owner's numbering area and its
+// command family NX-01, `companies.manage` (OWNER_ONLY; OD-03) — no step-up, which neither ROUTE-136 nor ROUTE-137 names
+// (SECURITY AU-15; DIR-098 reading 1).
+Route::get('/pengaturan/penomoran', [NumberingController::class, 'show'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering');
+Route::put('/pengaturan/penomoran/{type}', [NumberingController::class, 'configure'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.configure');
+Route::post('/pengaturan/penomoran/{type}/mulai', [NumberingController::class, 'start'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.start');
 
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's

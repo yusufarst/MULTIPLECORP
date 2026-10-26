@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
 use Tests\Support\Fixtures\GoogleFixture;
+use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
@@ -47,3 +48,10 @@ if (! app()->runningInConsole()) {
     GoogleFixture::apply();
 }
 Route::post('__fixtures/google', [GoogleFixture::class, 'arm']);
+
+// TL-09–TL-12 (TASK-021): PG-061's company for the run and go-live, whose store is TASK-077's, recorded for the
+// requests while the run has armed it.
+if (! app()->runningInConsole()) {
+    NumberingFixture::apply();
+}
+Route::post('__fixtures/penomoran', [NumberingFixture::class, 'arm']);

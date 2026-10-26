@@ -55,13 +55,29 @@ class ReconcileGuards extends Command
             }
         }
 
+        // The verified families (DATABASE §3.1: authoritative, never rebuilt), each in its own TX-05 snapshot.
+        foreach (Families::verifications() as $verification) {
+            try {
+                $differences = [...$differences, ...DB::transaction(function () use ($reconciler, $verification): array {
+                    DB::statement('set transaction isolation level repeatable read read only');
+                    DB::statement("set local statement_timeout = '300s'");
+
+                    return $reconciler->violations(DB::connection(), $verification);
+                })];
+            } catch (QueryException $error) {
+                $unverified[] = $verification->table;
+                Log::error('A guard family could not be verified (ReconcileGuards; JB-06).', ['family' => $verification->table, 'state' => (string) $error->getCode(), 'correlation_id' => CorrelationId::current()]);
+                $this->error("{$verification->table}: not verified");
+            }
+        }
+
         foreach ($differences as $difference) {
             Log::warning('A guard differs from its facts (ReconcileGuards; GAP-031).', [...$difference, 'correlation_id' => CorrelationId::current()]);
             $this->line(json_encode($difference, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES));
         }
 
         DB::transaction(fn () => $audit->record('guards.reconcile', AuthorityClass::System, null, null, metadata: [
-            'families' => array_map(fn ($family) => $family->table(), Families::all()),
+            'families' => [...array_map(fn ($family) => $family->table(), Families::all()), ...array_map(fn ($verification) => $verification->table, Families::verifications())],
             'differences' => count($differences),
             'unverified' => $unverified,
             'operator' => self::operator($this->option('operator')),

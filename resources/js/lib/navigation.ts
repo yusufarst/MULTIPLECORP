@@ -10,11 +10,21 @@ import type { TranslationKey } from './i18n';
 /** The account's hints the shell reads (WS-07): its display name, effective capabilities and companies in scope. */
 export type AccountHints = { name: string | null; capabilities: string[]; companies: { id: string; code: string; name: string }[] };
 
-export type Entry = { key: string; pg: string; label: TranslationKey; href: string; icon: LucideIcon; allowed: (account: AccountHints) => boolean };
+export type Entry = {
+    key: string;
+    pg: string;
+    label: TranslationKey;
+    href: string;
+    icon: LucideIcon;
+    allowed: (account: AccountHints) => boolean;
+    /** A module's later sub-pages: while its first page is not built, the entry opens on the first one that is (§5.3). */
+    subpages?: { pg: string; href: string }[];
+};
 
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108']);
+// PG-061 *Penomoran Dokumen* is TASK-021's.
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-061']);
 
 const has =
     (...capabilities: string[]) =>
@@ -64,6 +74,7 @@ export const MODULES: Entry[] = [
         href: '/pengaturan/perusahaan',
         icon: Settings,
         allowed: has('companies.manage', 'users.manage', 'permissions.manage', 'tax.configure'),
+        subpages: [{ pg: 'PG-061', href: '/pengaturan/penomoran' }],
     },
 ];
 
@@ -102,7 +113,19 @@ export function targetOf(result: SearchResult, account: AccountHints, built: Rea
 }
 
 export function present(entries: Entry[], account: AccountHints, built: ReadonlySet<string> = BUILT): Entry[] {
-    return entries.filter((entry) => built.has(entry.pg) && entry.allowed(account));
+    return entries.flatMap((entry) => {
+        if (!entry.allowed(account)) {
+            return [];
+        }
+
+        if (built.has(entry.pg)) {
+            return [entry];
+        }
+
+        const page = entry.subpages?.find((subpage) => built.has(subpage.pg));
+
+        return page === undefined ? [] : [{ ...entry, pg: page.pg, href: page.href }];
+    });
 }
 
 /** §5.2: the Owner's *Beranda* · *Proyek* · *Pekerjaan* · *Tinjauan*; an Admin's *Pekerjaan* · *Proyek*. */

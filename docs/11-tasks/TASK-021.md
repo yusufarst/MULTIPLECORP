@@ -8,7 +8,7 @@ Amendment: on 2026-10-25 the Owner's decision [DIR-095](../00-governance/DECISIO
 
 Written by the executor of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -233,34 +233,38 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-016's period boundary at midnight WIB
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Numbering/AllocatorRacesTest.php` — three issues by three actors drawing 41, 42 and 43 from one counter (M-15); a second issuer held at the counter row until the first commits, then drawing the next number (NM-01; LK-31); two first issues of a new live period sharing one counter, the second waiting in the insert, numbers 1 and 2 (M-16; FU-07). Criterion 2: `AllocatorRacesTest.php` — an issue rolled back after its draw consuming nothing, the next issue taking that number (M-17) —; `tests/Integration/Numbering/NumberingPeriodsTest.php` — a lost counter answered SQ-18, never re-created below the numbers issued under it. Criterion 3: `NumberingPeriodsTest.php` — the raise over a restored fixture lifting September's counter and creating October's live counter to the number after the paper's highest, a lowering raise and a second raise for one recovery point refused writing nothing, another recovery point raising again, the next issues drawing the raised numbers —; `tests/Feature/Numbering/NumberingCommandsTest.php` — the same over HTTP, and a raise over numbers issued here answered SQ-18; the restore's procedural stop is TASK-074's and TASK-076's (BACKUP_RECOVERY §4 step 7). Criterion 4: `NumberingPeriodsTest.php` and `NumberingCommandsTest.php` — no seed value or boundary moved, no defect alert, the audit events naming the restore's reference and recovery point. Criterion 5: `tests/Authorization/NumberingAccessTest.php` — ROUTE-061, ROUTE-136 and ROUTE-137 under `companies.manage` (OWNER_ONLY), an Admin with every other capability answered by the not-found page writing nothing, a guest sent to sign-in —; `tests/Interaction/NumberingTest.php`. Criterion 6: `AllocatorRacesTest.php` — the start waiting at the company row held by a batch's commit request and then refused by the batch's VALID seed row (LK-06; NX-13; M-18) —; `NumberingCommandsTest.php` — a start refused while a batch holds seed rows. Criterion 7: `NumberingPeriodsTest.php` — a PURCHASE sequence seeded by the opening import after the last legacy number, its boundary the batch's cutoff, unique and monotonic (DB24-09; 14a); the opening purchase's kept legacy number is AX-28's, TASK-057's
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the format, period, governs and live rules (TL-03); Feature — ROUTE-136 and ROUTE-137 with the raise (TL-04); Integration — the draws under real sessions, HO-19's periods with FX-08's clock, TEST_STRATEGY §15's raise (TL-05); PASS locally and in CI
+- [x] Authorization: OWNER_ONLY on PG-061 and both commands (TL-06)
+- [x] Route integrity: ROUTE-061, ROUTE-136 and ROUTE-137 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-136, INT-137 with the replay of one `command_id` (TL-08)
+- [x] Browser E2E if required: PG-061's path — no start before go-live, a scheme, the start through its statements and tick, the raise —, and a lost answer's "Coba Lagi" under its `command_id` with MSG-35 before unsent input is lost (IP-04; INT-009), on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-061 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll, its commands on the desktop (TL-11)
+- [x] Visual breathing room/density if UI: the design system's forms, tables and confirmation dialog, nothing hand-styled (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS locally and in CI; the numbering fixture local-only
+- [x] Security checks if required: no step-up on ROUTE-136/137 (DIR-098 reading 1); OD-03's denials; the secret-like scan and both dependency audits PASS in CI (TL-14)
+- [x] Database safety review: no migration and no schema change — TASK-006's tables, their C-10 trigger and seed floor —; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources, nothing invented; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3af812a`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40344048010 (push) and 40344052536 (pull request #26), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". On the Owner's workstation, 2026-10-26: the suites Unit 292, Architecture 50, Feature 193, Integration 925, Authorization 110, Routes 11, Interaction 20 and Performance 5; TypeScript, ESLint, `tests/Frontend/` 30, Pint, Larastan/PHPStan, the production build, and PG-061's E2E, Localization, Responsive and Accessibility specs with the shell's on Chromium and WebKit PASS
+- Build result: `TL-13 Frontend build: PASS — Evidence: 3af812a, CI ubuntu-24.04 run 40344048010`
+- Route evidence: TL-07's route audit PASS — ROUTE-061 `GET /pengaturan/penomoran`, ROUTE-136 `PUT /pengaturan/penomoran/{type}` and ROUTE-137 `POST /pengaturan/penomoran/{type}/mulai`, each `capability:companies.manage` —; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/NumberingTest.php` (INT-136, INT-137)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 3af812a, CI ubuntu-24.04 run 40344048010`; TL-10, TL-11 and TL-12 for PG-061 in the same run
+- Localization evidence: PG-061 in both languages (`tests/Browser/Localization/numbering.spec.ts`) (DOD-16); 86 keys added through `lang/registry/added-keys.json` for the Owner's review, 21 quoting ADMIN_FLOW §12's canonical Indonesian
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — nothing installed
+- Files changed: `app/Modules/ORG/` — `Services/` (the allocator, the state NM-03 reads, the seeds, go-live's interface), `Actions/` (`ConfigureNumbering`, `StartNumbering`), `Data/`, `Enums/SequenceType.php`, `Queries/NumberingArea.php`, `Http/Controllers/NumberingController.php` —; `app/Support/Guards/` and `app/Console/Commands/ReconcileGuards.php` (the verified family); `app/Providers/AppServiceProvider.php` (go-live's binding); `routes/web.php`, `routes/fixtures.php`; `resources/js/Pages/Settings/Numbering.tsx`, `resources/js/lib/navigation.ts`; `lang/`; `tests/`; DIR-098's records and TOOLCHAIN's row; this file, TASK_PLAN, CURRENT_HANDOFF and CHANGELOG
+- Commit SHA: `197a472`, `018c9e3`, `85e32a6`, `156b258`, `e3f9263`, `b657d5d` and `3af812a`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-021-numbering`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-26; Context7 consulted for PostgreSQL's row locks, READ COMMITTED re-evaluation and sequences (TOOLCHAIN's TASK-021 row); CI the final proof. The Owner decided at one checkpoint DIR-098 — D1 the format's tokens, D2 the raise's incident and once per recovery point, readings (1)–(8) — and, on ER-06's finding, D1a, a format holding its period's tokens. ER-06's one review found two HIGH points — formatted numbers repeating across periods, answered by D1a; first use read from the lock's answer, which a restart's re-derived lock set hides, now read from the increment —, and MEDIUM and LOW points — the recording day from the command's own clock, the races with distinct actors proving the wait at the counter row, the start before the go-live day, the raise's proof before it creates a counter, the seed's insert-or-lock, the recovery point in WIB, a first use's own time and actor —, each fixed and tested. Codex's review of pull request #26 found two P2 points on PG-061 — no "Coba Lagi" for a lost answer, which left a form frozen; no MSG-35 before unsent input was lost to a change of company or type or a visit away —, both fixed and tested in the E2E spec. A seed meeting a counter the raise moved may alert a defect it cannot tell from a draw, kept for TASK-057, which seeds; the start's boundary day and its periods' day are read a moment apart, a midnight between them leaving the next period to be seeded. The counters' verification runs in `guards:reconcile` and after the numbering tests, not after every integration test, the other suites' factories writing numbered rows with no counter until the issuing Tasks draw through the allocator. UXS-28 and UXS-29 run once PG-013 and PG-043 exist (TASK-032, TASK-049); the allocator's issue path is called by TASK-029, TASK-032, TASK-037 and the other issuing Tasks; go-live is unrecorded until TASK-077 (DIR-085 OF-04). Readings within the approved text are listed in CURRENT_HANDOFF. The READY gates of the Tasks TASK-021 blocks were re-checked at this DONE: TASK-029 waits on TASK-022 and TASK-025, TASK-032 on TASK-025 and TASK-027, TASK-074 on TASK-022, TASK-029 and TASK-072, TASK-076 on TASK-074, TASK-077 on P11Q-04. Each non-applicable item above carries its reason; TASK_PLAN, this file and CURRENT_HANDOFF updated for DONE
 
 **SAFE NEXT TASK:**
 
