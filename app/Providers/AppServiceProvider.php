@@ -2,11 +2,17 @@
 
 namespace App\Providers;
 
+use App\Modules\DOC\Contracts\DocumentRenderer;
+use App\Modules\DOC\Contracts\RenditionTemplate;
+use App\Modules\DOC\Queries\RenditionStatus;
+use App\Modules\DOC\Services\UnwrittenTemplates;
+use App\Modules\DOC\Services\WeasyPrintRenderer;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
 use App\Support\Localization\Locales;
+use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
@@ -28,6 +34,13 @@ class AppServiceProvider extends ServiceProvider
 
         // Go-live is not recorded until TASK-077 binds the store P11Q-04 defines (NM-03; DIR-085 OF-04; TASK-021).
         $this->app->bindIf(NumberingGoLive::class, UnrecordedGoLive::class);
+
+        // FL-08's renderer (DIR-099 C1) and the layouts' templates, which TASK-029 binds (TASK-022).
+        $this->app->bindIf(DocumentRenderer::class, WeasyPrintRenderer::class);
+        $this->app->bindIf(RenditionTemplate::class, UnwrittenTemplates::class);
+
+        // ROUTE-285's kinds; the export and import kinds join with TASK-060 and TASK-057 (TASK-022).
+        $this->app->tag([RenditionStatus::class], StatusRead::TAG);
     }
 
     private static function scalar(mixed $value): string

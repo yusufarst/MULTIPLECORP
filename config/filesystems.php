@@ -38,6 +38,17 @@ return [
             'report' => false,
         ],
 
+        // TASK-022: the private disk of every business file (ARCHITECTURE §12; SECURITY FL-07) — outside the web
+        // root, never linked or served by the web server, its keys generated, its bytes never overwritten.
+        'files' => [
+            'driver' => 'local',
+            'root' => env('FILES_ROOT', storage_path('app/files')),
+            'serve' => false,
+            'throw' => true,
+            'report' => false,
+            'visibility' => 'private',
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -69,6 +69,10 @@ final class SourceScan
             'patterns' => ['/\\\\Models\\\\\w+Balance\b/'],
             'skip' => ['/Services/', '/Queries/', '/Models/'],
         ],
+        'job-batching' => [
+            'source' => 'CONCURRENCY_IDEMPOTENCY JB-07; ARCHITECTURE §11; HO-20: no job uses the framework\'s batching, and no job-batch table exists',
+            'patterns' => ['/\bBatchable\b/', '/Bus::batch\(/', '/[\'"]job_batches[\'"]/'],
+        ],
         'automatic-eager-loading' => [
             'source' => 'PERFORMANCE PF-03',
             'patterns' => ['/automaticallyEagerLoadRelationships\(/', '/withRelationshipAutoloading\(/'],
