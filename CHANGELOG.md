@@ -572,3 +572,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's decision DIR-097 on one discovery, with APPR-025's text: LK-02's row lock on the OWNER role made available to the runtime role by `UPDATE` of `roles.is_builtin` alone, a trigger refusing every update of a role row; TASK-024's account image and the atomic end of recovery as readings — TASK_PLAN's Change 13.
 - ER-06's independent review found no HIGH point; its others fixed and tested.
 - Every check passed in fresh CI on `485a452`. TASK-020 DONE — progress 20 / 87 —; TASK-021 next; pull request #25 squash-merged once eligible.
+
+## Unreleased — 2026-10-26, TASK-021 — Numbering, its settings page and the Owner's raise after a restore
+
+- TASK-020 squash-merged by the executor into `main` as `15da126` (pull request #25); TASK-021 started in the same turn.
+- Built TASK-021 on its branch `task/TASK-021-numbering`: the one number allocator — counter rows locked last, one increment per number, a counter created on first use only for a live period after its proof, fail closed otherwise (NM-01–NM-10) —; PG-061 with its schemes, the start and the Owner's seed through HO-39's statements, and the Owner's raise after a restore; the counters registered as a verified family.
+- The Owner's decision DIR-098 at one checkpoint: the number format's tokens (and, on ER-06's finding, the period's tokens required), the raise's incident and once per recovery point, eight readings.
+- ER-06's independent review found two HIGH points; every point fixed and tested. Codex's two P2 points on pull request #26 — the retry of a lost answer, MSG-35 before unsent input is lost — fixed and tested.
+- Every check passed in fresh CI on `3af812a`. TASK-021 DONE — progress 21 / 87 —; TASK-022 next, not started: execution paused at the Owner's SHUTDOWN_AFTER_CURRENT_TASK; pull request #26 squash-merged once eligible.

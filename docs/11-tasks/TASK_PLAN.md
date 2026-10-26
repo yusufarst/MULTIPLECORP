@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 20
-READY: 9
+DONE: 21
+READY: 8
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 45
 SUPERSEDED: 0
 
 Progress:
-20 / 87
-Percentage: 23.0 %
+21 / 87
+Percentage: 24.1 %
 
-CURRENT TASK: none in progress — TASK-020 — Installation step, the first Owner and the Owner-recovery path DONE on its branch `task/TASK-020-installation`, CI PASS on `485a452`, its pull request #25 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-021 — Numbering, its settings page and the Owner's raise after a restore, READY, taken first from the merged `main` (DIR-096); TASK-022, TASK-023, TASK-024, TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-025, TASK-027 and TASK-030 wait on TASK-022, TASK-082 on TASK-071 and TASK-078, TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-021 — Numbering, its settings page and the Owner's raise after a restore DONE on its branch `task/TASK-021-numbering`, CI PASS on `3af812a`, its pull request #26 squash-merged by the executor once eligible (DIR-096); execution paused after it at the Owner's SHUTDOWN_AFTER_CURRENT_TASK, until the Owner resumes it
+NEXT READY TASK: TASK-022 — Jobs, files and the document renderer, READY, not started — taken first from the merged `main` once the Owner resumes execution (DIR-096); TASK-023, TASK-024, TASK-026, TASK-028, TASK-031, TASK-061 and TASK-073 READY; TASK-025, TASK-027 and TASK-030 wait on TASK-022, TASK-029 on TASK-022 and TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 13 of 2026-10-26 — DIR-097's disposition of TASK-020's discovery: the runtime role's lock on the OWNER role row, and TASK-024's account image
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -69,7 +69,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-018](TASK-018.md) — Two-step verification (TOTP) and recovery codes
 - [x] [TASK-019](TASK-019.md) — Google sign-in for existing accounts
 - [x] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
-- [ ] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
+- [x] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
 - [ ] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
 - [ ] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
 - [ ] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
@@ -161,7 +161,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-018](TASK-018.md) | Two-step verification (TOTP) and recovery codes | Platform · IAM | HIGH | DONE | 017 | 019, 020, 021, 074 | NO | AGENT | NONE | YES |
 | [TASK-019](TASK-019.md) | Google sign-in for existing accounts | Platform · IAM | HIGH | DONE | 018 | 020, 023, 024, 082 | NO | AGENT | NONE | YES |
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | DONE | 010, 018, 019 | 069, 076, 085 | NO | AGENT | NONE | NO |
-| [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | READY | 006, 013, 016, 018 | 029, 032, 074, 076, 077 | NO | AGENT | NONE | YES |
+| [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | DONE | 006, 013, 016, 018 | 029, 032, 074, 076, 077 | NO | AGENT | NONE | YES |
 | [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | READY | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
 | [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | READY | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | READY | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
