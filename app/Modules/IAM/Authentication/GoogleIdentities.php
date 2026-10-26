@@ -22,8 +22,10 @@ use InvalidArgumentException;
  * when two accounts race (C-64); an account already linked unlinks first. The e-mail is kept once, for display
  * only. Rows are never deleted: an unlink records its time, reason and actor once (C-63), and relinking adds a
  * row. Each step writes its business audit event in its transaction and its security event after the commit
- * (RG-11; LG-01); a link never grants a role, capability or company scope (AZ-13). The account's own and the
- * Owner's controls for them are TASK-023's and TASK-024's.
+ * (RG-11; LG-01); a link never grants a role, capability or company scope (AZ-13). Each step may run inside its
+ * caller's transaction — a link with RV-16's code acceptance, an unlink inside a deactivation —, its events and
+ * alerts then following the outermost commit alone. The account's own and the Owner's controls for them are
+ * TASK-023's and TASK-024's.
  */
 final class GoogleIdentities
 {
@@ -117,8 +119,9 @@ final class GoogleIdentities
             $outcome = self::CONFLICT;
         }
 
+        // After the outermost commit — at once when the caller opened no transaction —, never for a rolled-back step.
         match ($outcome) {
-            self::LINKED => $this->linked($holder),
+            self::LINKED => DB::afterCommit(fn () => $this->linked($holder)),
             self::CONFLICT => $this->conflict($holder),
             default => null,
         };
@@ -131,13 +134,25 @@ final class GoogleIdentities
      * TOTP_DISABLED, another account for OWNER, CREDENTIAL_REISSUE and DEACTIVATION, none for OWNER_RECOVERY —;
      * answers whether a link was ended. The sessions the reason ends are its command's to end (AU-10).
      */
-    public function unlink(User $account, string $reason, ?int $by): bool
+    public function unlink(User $account, string $reason, ?int $by, ?int $credentialLink = null, ?string $keepSession = null): bool
     {
         if (! isset(self::REASONS[$reason])) {
             throw new InvalidArgumentException("{$reason} is not an unlink reason of AU-24.");
         }
 
-        $unlinked = DB::transaction(function () use ($account, $reason, $by): bool {
+        // AU-24's actor: the account itself for SELF and TOTP_DISABLED, another account for OWNER, CREDENTIAL_REISSUE
+        // and DEACTIVATION, no application account for OWNER_RECOVERY, whose event names the credential link.
+        $actorValid = match ($reason) {
+            'SELF', 'TOTP_DISABLED' => $by === $account->id,
+            'OWNER_RECOVERY' => $by === null && $credentialLink !== null,
+            default => $by !== null && $by !== $account->id,
+        };
+
+        if (! $actorValid) {
+            throw new InvalidArgumentException("The unlink reason {$reason} does not allow this actor (AU-24).");
+        }
+
+        $unlinked = DB::transaction(function () use ($account, $reason, $by, $credentialLink, $keepSession): bool {
             $row = User::query()->lockForUpdate()->find($account->id);
             $link = $row instanceof User
                 ? DB::table('user_external_identities')->where('user_id', $row->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->first(['id'])
@@ -158,14 +173,19 @@ final class GoogleIdentities
                 entityPublicId: $row->public_id,
                 reason: $reason,
                 change: AuditChange::updated(['unlinked' => false], ['unlinked' => true]),
-                metadata: ['external_identity' => $link->id],
+                metadata: array_filter(['external_identity' => $link->id, 'credential_link' => $credentialLink], fn (mixed $value): bool => $value !== null),
             );
+
+            // SELF: the holder's other sessions end last, in the same transaction (AU-24; RV-16).
+            if ($keepSession !== null) {
+                DB::table('sessions')->where('user_id', $row->id)->where('id', '!=', $keepSession)->delete();
+            }
 
             return true;
         });
 
         if ($unlinked) {
-            $this->events->record(SecurityEventKind::GoogleUnlinked, userId: $account->id, actorUserId: $by, reasonCode: $reason);
+            DB::afterCommit(fn () => $this->events->record(SecurityEventKind::GoogleUnlinked, userId: $account->id, actorUserId: $by, reasonCode: $reason));
         }
 
         return $unlinked;

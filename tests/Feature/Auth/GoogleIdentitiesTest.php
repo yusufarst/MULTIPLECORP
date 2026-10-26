@@ -68,7 +68,7 @@ it('unlinks with AU-24\'s reason and actor once, the row kept, a relink adding a
         ->and(count(linkRows()))->toBe(2);
 
     // OWNER_RECOVERY: no application actor.
-    expect($this->identities->unlink($this->holder, 'OWNER_RECOVERY', null))->toBeTrue()
+    expect($this->identities->unlink($this->holder, 'OWNER_RECOVERY', null, credentialLink: 41))->toBeTrue()
         ->and(linkRows()[1]['unlink_reason'])->toBe('OWNER_RECOVERY')
         ->and(linkRows()[1]['unlinked_by'])->toBeNull()
         ->and(fn () => $this->identities->unlink($this->holder, 'FORGOTTEN', null))->toThrow(InvalidArgumentException::class);
@@ -98,4 +98,40 @@ it('gives no role, capability or company scope with a link (AZ-13)', function ()
     expect($after->capabilities)->toBe($before->capabilities)
         ->and($after->scope->isEmpty())->toBe($before->scope->isEmpty())
         ->and($after->ownerRole)->toBeFalse();
+});
+
+it('refuses an unlink whose actor AU-24 does not allow for its reason (AU-24)', function () {
+    $this->identities->link($this->holder, 'sub-a', null);
+
+    foreach ([['SELF', $this->other->id, null], ['DEACTIVATION', $this->holder->id, null], ['OWNER', null, null], ['OWNER_RECOVERY', null, null], ['OWNER_RECOVERY', $this->other->id, 41]] as [$reason, $by, $link]) {
+        expect(fn () => $this->identities->unlink($this->holder, $reason, $by, $link))->toThrow(InvalidArgumentException::class);
+    }
+
+    expect($this->identities->accountFor('sub-a')?->id)->toBe($this->holder->id)
+        ->and(DB::table('audit_events')->where('action', 'IAM.GoogleUnlinked')->where('metadata->credential_link', 41)->count())->toBe(0);
+});
+
+it('writes its events only after the caller\'s outermost commit, never for a step its caller rolls back (RV-16; LG-02)', function () {
+    expect(fn () => DB::transaction(function () {
+        $this->identities->link($this->holder, 'sub-a', null);
+
+        throw new RuntimeException('the caller\'s command fails after the link');
+    }))->toThrow(RuntimeException::class);
+
+    expect(linkRows())->toBe([])
+        ->and(DB::table('security_events')->where('event_kind', 'GOOGLE_LINKED')->count())->toBe(0);
+
+    DB::transaction(fn () => $this->identities->link($this->holder, 'sub-a', null));
+    expect(DB::table('security_events')->where('event_kind', 'GOOGLE_LINKED')->count())->toBe(1);
+});
+
+it('ends the holder\'s other sessions last in a SELF unlink, keeping the acting one (AU-24; RV-16)', function () {
+    $this->identities->link($this->holder, 'sub-a', null);
+    foreach (['sesi-ini', 'sesi-lain'] as $id) {
+        DB::table('sessions')->insert(['id' => $id, 'user_id' => $this->holder->id, 'payload' => '', 'last_activity' => time()]);
+    }
+
+    $this->identities->unlink($this->holder, 'SELF', $this->holder->id, keepSession: 'sesi-ini');
+
+    expect(DB::table('sessions')->where('user_id', $this->holder->id)->pluck('id')->all())->toBe(['sesi-ini']);
 });

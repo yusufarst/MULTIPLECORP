@@ -6,7 +6,8 @@ namespace App\Modules\IAM\Authentication;
  * SECURITY AU-22's check of the ID token Google's token endpoint returns over HTTPS with the client secret, which
  * Google documents as trustworthy without a signature check: its `nonce` the attempt's, its audience the client
  * ID, its issuer `https://accounts.google.com` or `accounts.google.com`, not expired; the subject and the e-mail
- * are taken from it, never from the userinfo endpoint. Anything else answers null — one generic failure.
+ * are taken from it, never from the userinfo endpoint — the e-mail only when Google verified it, and with several
+ * audiences only when the token was issued to this client (`azp`). Anything else answers null — one generic failure.
  */
 final class GoogleIdToken
 {
@@ -37,10 +38,11 @@ final class GoogleIdToken
 
         $valid = is_string($claims['nonce'] ?? null) && hash_equals($nonce, $claims['nonce'])
             && in_array($clientId, $audiences, true)
+            && (! is_array($audience) || ($claims['azp'] ?? null) === $clientId)
             && in_array($claims['iss'] ?? null, self::ISSUERS, true)
             && is_int($expires) && $expires > $now
             && is_string($subject) && preg_match('/^[ -~]{1,255}$/', $subject) === 1;
 
-        return $valid ? ['sub' => $subject, 'email' => is_string($email) ? $email : null] : null;
+        return $valid ? ['sub' => $subject, 'email' => is_string($email) && ($claims['email_verified'] ?? null) === true ? $email : null] : null;
     }
 }

@@ -49,13 +49,14 @@ final class GoogleSignInProvider extends GoogleProvider
             if ($this->hasInvalidState()) {
                 throw new InvalidStateException;
             }
-        } catch (InvalidStateException) {
+        } catch (\Throwable) {
             return ['identity' => null, 'reason' => 'STATE_MISMATCH'];
         }
 
-        $code = $this->getCode();
+        // Google's cancel answers `error` and no `code`: nothing to exchange.
+        $code = $this->request->input('code');
 
-        if ($code === '') {
+        if (! is_string($code) || $code === '') {
             return ['identity' => null, 'reason' => 'NO_CODE'];
         }
 

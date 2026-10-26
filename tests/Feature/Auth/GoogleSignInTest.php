@@ -10,6 +10,7 @@ use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use Illuminate\Cache\RateLimiter;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Testing\TestResponse;
@@ -178,4 +179,62 @@ it('throttles the redirect and the callback per client address (AU-05)', functio
 it('never starts a sign-in from an authenticated session (AU-22)', function () {
     $this->actingAs($this->user)->get('/masuk/google')->assertRedirect('/');
     expect(app(GoogleIdentities::class)->accountFor('sub-laras')?->id)->toBe($this->user->id);
+});
+
+it('answers Google\'s cancel without an exchange, and a malformed state generically (AU-22)', function () {
+    $this->get('/masuk/google')->assertRedirect();
+    fakeGoogle([tokenAnswer()]);
+    $this->get('/masuk/google/callback?'.http_build_query(['state' => session('state'), 'error' => 'access_denied']))->assertRedirect('/masuk');
+
+    $this->get('/masuk/google')->assertRedirect();
+    $this->get('/masuk/google/callback?state[]=x&code=kode-uji')->assertRedirect('/masuk');
+
+    expect(googleFailures())->toBe(['NO_CODE', 'STATE_MISMATCH'])
+        ->and($this->sent)->toHaveCount(0)
+        ->and(session('state'))->toBeNull()
+        ->and(session('code_verifier'))->toBeNull();
+});
+
+it('fails a callback in a session that signed in meanwhile, and leads one after a password challenge to that challenge (AU-22; M-43)', function () {
+    $this->get('/masuk/google')->assertRedirect();
+    $this->postJson('/masuk', ['email' => 'laras@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertExactJson(['two_factor' => true]);
+    $challenge = session(TwoFactorChallenge::KEY);
+
+    // The password's challenge began in the same session: the callback leads to it unchanged.
+    $this->get('/masuk/google/callback?state=apa-saja&code=kode-uji')->assertRedirect('/masuk/verifikasi');
+    expect(session(TwoFactorChallenge::KEY))->toBe($challenge);
+
+    $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+    session([GoogleSignIn::ATTEMPT => ['purpose' => 'SIGN_IN', 'nonce' => 'n', 'started_at' => now()->getTimestamp()]]);
+    $this->get('/masuk/google/callback?state=x&code=y')->assertRedirect('/masuk');
+    expect(googleFailures())->toBe(['SESSION_AUTHENTICATED']);
+});
+
+it('keeps no Google token and names Google and TOTP in LOGIN_SUCCEEDED (AU-22; LG-02)', function () {
+    googleCallback(fn () => tokenAnswer())->assertRedirect('/masuk/verifikasi');
+    $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
+
+    expect(json_encode(session()->all()))->not->toContain('akses-uji')
+        ->and(DB::table('security_events')->where('event_kind', 'LOGIN_SUCCEEDED')->value('details'))->toContain('google_totp');
+});
+
+it('shows the generic Google failure in both languages (TL-10)', function () {
+    foreach (['id' => 'Tidak dapat masuk dengan Google.', 'en' => 'Could not sign in with Google.'] as $lang => $text) {
+        session()->flash(GoogleSignIn::FAILED, true);
+        $this->get("/masuk?bahasa={$lang}")->assertInertia(fn ($page) => $page->where('googleFailed', fn (string $failed) => str_starts_with($failed, $text)));
+    }
+});
+
+it('refuses the redirect when its limiter store cannot be reached — fail closed (AU-05; H6-07)', function () {
+    config(['cache.default' => 'redis', 'cache.limiter' => 'redis', 'database.redis.cache.port' => 1, 'database.redis.default.port' => 1]);
+    app('cache')->forgetDriver('redis');
+    app('redis')->purge('cache');
+    app('redis')->purge('default');
+    // The limiter was built on the testing store at boot: built again on the unreachable one.
+    app()->forgetInstance(RateLimiter::class);
+    Illuminate\Support\Facades\RateLimiter::clearResolvedInstance(RateLimiter::class);
+
+    $answer = $this->get('/masuk/google');
+
+    expect((string) $answer->headers->get('Location'))->not->toContain('accounts.google.com');
 });

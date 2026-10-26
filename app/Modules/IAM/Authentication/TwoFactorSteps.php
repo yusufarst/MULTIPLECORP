@@ -101,7 +101,8 @@ final class TwoFactorSteps
 
         $this->passed($request, $place);
         TwoFactorChallenge::void($request);
-        $this->signIn($request, $user, EstablishSession::TOTP);
+        // LG-02: LOGIN_SUCCEEDED names how — the password or Google, then TOTP.
+        $this->signIn($request, $user, EstablishSession::TOTP, $path === SecondFactorLimit::PATH_GOOGLE ? 'google_totp' : 'totp');
 
         return app(LoginResponse::class)->toResponse($request);
     }

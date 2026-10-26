@@ -14,13 +14,14 @@ function idToken(array $claims): string
 
 function claims(array $overrides = []): array
 {
-    return [...['iss' => 'https://accounts.google.com', 'aud' => 'klien-uji', 'sub' => '110248495921238986420', 'email' => 'laras@contoh.test', 'nonce' => 'nonce-uji', 'exp' => 1_800_000_600], ...$overrides];
+    return [...['iss' => 'https://accounts.google.com', 'aud' => 'klien-uji', 'sub' => '110248495921238986420', 'email' => 'laras@contoh.test', 'email_verified' => true, 'nonce' => 'nonce-uji', 'exp' => 1_800_000_600], ...$overrides];
 }
 
 it('takes the subject and the e-mail from a token whose nonce, audience, issuer and expiry hold (AU-22)', function () {
     expect(GoogleIdToken::verified(idToken(claims()), 'klien-uji', 'nonce-uji', 1_800_000_000))->toBe(['sub' => '110248495921238986420', 'email' => 'laras@contoh.test'])
         ->and(GoogleIdToken::verified(idToken(claims(['iss' => 'accounts.google.com'])), 'klien-uji', 'nonce-uji', 1_800_000_000))->not->toBeNull()
-        ->and(GoogleIdToken::verified(idToken(claims(['aud' => ['lain', 'klien-uji']])), 'klien-uji', 'nonce-uji', 1_800_000_000))->not->toBeNull();
+        ->and(GoogleIdToken::verified(idToken(claims(['aud' => ['lain', 'klien-uji'], 'azp' => 'klien-uji'])), 'klien-uji', 'nonce-uji', 1_800_000_000))->not->toBeNull()
+        ->and(GoogleIdToken::verified(idToken(claims(['email_verified' => false])), 'klien-uji', 'nonce-uji', 1_800_000_000))->toBe(['sub' => '110248495921238986420', 'email' => null]);
 });
 
 it('refuses a token whose nonce, audience, issuer, expiry or subject does not hold (AU-22)', function (array $overrides) {
@@ -29,6 +30,7 @@ it('refuses a token whose nonce, audience, issuer, expiry or subject does not ho
     'another nonce' => [['nonce' => 'nonce-lain']],
     'no nonce' => [['nonce' => null]],
     'another audience' => [['aud' => 'klien-lain']],
+    'several audiences, issued to another client' => [['aud' => ['lain', 'klien-uji'], 'azp' => 'lain']],
     'another issuer' => [['iss' => 'https://evil.example']],
     'expired' => [['exp' => 1_800_000_000]],
     'no expiry' => [['exp' => null]],

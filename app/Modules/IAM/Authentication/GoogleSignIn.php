@@ -141,6 +141,7 @@ final class GoogleSignIn
     private function failure(Request $request, string $reason, ?string $subject = null): Response
     {
         $this->events->record(SecurityEventKind::GoogleSigninFailed, reasonCode: $reason, routeName: $request->route()?->getName(), providerSubject: $subject, ipAddress: $request->ip(), userAgent: $request->userAgent());
+        $request->session()->forget(['state', 'code_verifier']);
         $request->session()->flash(self::FAILED, true);
 
         return redirect('/masuk'.TwoFactorChallenge::addressQuery($request));
