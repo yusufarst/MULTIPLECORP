@@ -48,6 +48,8 @@ final class OwnAccountView
                 'email' => $link === null ? null : $link->email_at_link,
                 'since' => $link === null || ! is_string($link->linked_at) ? null : CarbonImmutable::parse($link->linked_at)->toIso8601ZuluString(),
                 'pending' => GoogleSignIn::pendingLink($request, $user) !== null,
+                // A LINK attempt's answer from Google's callback, once: `ready` or `failed` (AU-22; AU-23).
+                'answer' => $request->session()->get(GoogleSignIn::LINK_ANSWER),
             ],
             'last_login' => $this->events->lastLogin($user),
             'events' => $this->events->recent($user),

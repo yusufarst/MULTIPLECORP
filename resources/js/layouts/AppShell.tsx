@@ -1,5 +1,5 @@
 import { Head, Link, router, usePage } from '@inertiajs/react';
-import { ArrowLeft, LogOut, UserRound } from 'lucide-react';
+import { ArrowLeft, LogOut, ShieldAlert, UserRound } from 'lucide-react';
 import { type ReactNode, useRef, useState } from 'react';
 
 import { GlobalSearch } from '@/components/shell/global-search';
@@ -10,9 +10,11 @@ import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Icon } from '@/components/ui/icon';
+import { Alert } from '@/components/ui/alert';
 import { Kbd } from '@/components/ui/kbd';
 import { ToastViewport } from '@/components/ui/toast';
-import { useTranslation } from '@/lib/i18n';
+import { dateTime } from '@/lib/format';
+import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints, BUILT } from '@/lib/navigation';
 import { type ReauthGateway, SessionGuard } from '@/lib/session-guard';
 import { useShortcut } from '@/lib/shortcuts';
@@ -109,6 +111,7 @@ export default function AppShell({ title, back, focused = false, children, built
                     </header>
                     <NoticeStrip />
                     <main id="konten" tabIndex={-1} className={cn('flex min-w-0 flex-1 flex-col px-m-gutter py-4 outline-none md:px-gutter md:py-6', !focused && 'max-md:pb-[calc(var(--m-bottom-nav-h)+var(--safe-bottom)+var(--space-4))]')}>
+                        <AccountNotice />
                         {children}
                     </main>
                 </div>
@@ -179,5 +182,24 @@ export default function AppShell({ title, back, focused = false, children, built
             />
             <ToastViewport closeLabel={t('toast.close')} />
         </SessionGuard>
+    );
+}
+
+/** MSG-29 at the first sign-in after a credential or factor event of the account, naming it and its time, once — on the page
+    the sign-in lands on (SECURITY AU-13; H7-14; H7-18). */
+function AccountNotice() {
+    const { t } = useTranslation();
+    const notice = (usePage().flash as { account_notice?: { kind?: unknown; at?: unknown } }).account_notice;
+
+    if (notice === undefined || typeof notice.kind !== 'string' || typeof notice.at !== 'string') {
+        return null;
+    }
+
+    return (
+        <div className="mb-4">
+            <Alert tone="warning" icon={ShieldAlert} title={t('messages.msg_29_event', { peristiwa: t(`account.events.${notice.kind}` as TranslationKey), waktu: dateTime(notice.at) })}>
+                {t('messages.msg_29_not_you')}
+            </Alert>
+        </div>
     );
 }
