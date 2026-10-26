@@ -65,6 +65,17 @@ it('declares the thumbnail and the status background by their routes, the downlo
         ->and(Route::getRoutes()->getByName('doc.files.download')?->getAction(BackgroundRequest::ROUTE_FLAG))->toBeNull();
 });
 
+it('writes no session for a thumbnail or a status read, and does for a download (RB-05; RV-06; criterion 5)', function () {
+    $cookie = config('session.cookie');
+    $rendition = readyRendition($this->company->id);
+    $version = DocumentVersion::query()->findOrFail($rendition->document_version_id);
+    $viewer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view']);
+
+    $this->actingAs($viewer)->get('/status/rendisi/'.$version->public_id)->assertOk()->assertCookieMissing($cookie);
+    $this->actingAs($viewer)->get('/berkas/'.renditionFile($rendition)->public_id.'/gambar-kecil')->assertNotFound()->assertCookieMissing($cookie);
+    $this->actingAs($viewer)->get('/berkas/'.renditionFile($rendition)->public_id.'/unduh')->assertOk()->assertCookie($cookie);
+});
+
 it('downloads a rendition to its family\'s viewer with FL-07\'s attachment profile (ROUTE-226; INT-226)', function () {
     $rendition = readyRendition($this->company->id);
     $file = renditionFile($rendition);

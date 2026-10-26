@@ -195,8 +195,29 @@ it('fails an attempt whose document names the network or a file outside the asse
 
 it('locks the subject\'s project and the projects of the requirements linked to the version (LK-01; §5)', function () {
     $attempt = pendingAttempt();
-    $project = (int) DB::table('documents')->join('document_versions', 'document_versions.document_id', '=', 'documents.id')
-        ->where('document_versions.id', $attempt->document_version_id)->value('documents.project_id');
+    $version = DocumentVersion::query()->findOrFail($attempt->document_version_id);
+    $project = (int) DB::table('documents')->where('id', $version->document_id)->value('project_id');
+    $other = App\Modules\PRJ\Models\Project::factory()->create(['company_id' => $version->company_id]);
+    $requirement = App\Modules\ADM\Models\AdminRequirement::factory()->create(['project_id' => $other->id, 'company_id' => $version->company_id]);
+    App\Modules\ADM\Models\AdminRequirementLink::factory()->create(['admin_requirement_id' => $requirement->id, 'company_id' => $version->company_id, 'evidence_document_id' => null, 'document_version_id' => $version->id]);
 
-    expect(app(Renditions::class)->projectsOf($attempt->document_version_id))->toBe([$project]);
+    expect(app(Renditions::class)->projectsOf($version->id))->toBe(collect([$project, $other->id])->sort()->values()->all());
+
+    // The finish takes both projects' locks, then the document's, and the attempt becomes READY.
+    RenderDocument::dispatch($attempt->id);
+    expect($attempt->refresh()->state)->toBe('READY');
+});
+
+it('re-dispatches an attempt a dead worker left RENDERING after 10 minutes, never sooner (JB-02; criterion 3)', function () {
+    $attempt = pendingAttempt();
+    app(Renditions::class)->claim($attempt->id);
+    Queue::fake();
+
+    $this->travel(9)->minutes();
+    (new RenditionSweeper)->handle();
+    Queue::assertNothingPushed();
+
+    $this->travel(2)->minutes();
+    (new RenditionSweeper)->handle();
+    Queue::assertPushed(RenderDocument::class, fn (RenderDocument $job): bool => $job->renditionId === $attempt->id);
 });

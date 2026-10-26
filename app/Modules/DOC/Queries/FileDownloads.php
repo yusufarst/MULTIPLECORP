@@ -30,7 +30,7 @@ final class FileDownloads
     {
         $file = $this->access->find($this->capabilities->for($viewer), $id);
 
-        return new Download($this->store->stream($file->storage_key), $file->mime_type, $file->size_bytes, $this->name($file));
+        return new Download($this->store->stream($file->storage_key, $file->storage_disk), $file->mime_type, $file->size_bytes, $this->name($file));
     }
 
     public function derivative(Authenticatable $viewer, string $id, string $variant): Download
@@ -43,13 +43,13 @@ final class FileDownloads
 
         $key = $this->store->derivativeKey($file, $variant);
 
-        if (! $this->store->disk()->exists($key)) {
+        if (! $this->store->disk($file->storage_disk)->exists($key)) {
             ProcessImage::dispatch($file->id, $variant);
 
             throw new NotFoundHttpException;
         }
 
-        return new Download($this->store->stream($key), DetectedType::Webp->value, $this->store->disk()->size($key), "{$variant}.webp");
+        return new Download($this->store->stream($key, $file->storage_disk), DetectedType::Webp->value, $this->store->disk($file->storage_disk)->size($key), "{$variant}.webp");
     }
 
     /** The download's name: the sanitized original, or for a rendition its document's number. */

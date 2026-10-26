@@ -17,9 +17,10 @@ use LogicException;
  */
 final class FileStore
 {
-    public function disk(): Filesystem
+    /** The configured private disk, or the disk a stored file's row names (ER-06). */
+    public function disk(?string $name = null): Filesystem
     {
-        return Storage::disk($this->diskName());
+        return Storage::disk($name ?? $this->diskName());
     }
 
     public function diskName(): string
@@ -51,13 +52,13 @@ final class FileStore
     }
 
     /** Writes a derivative only when it is absent, so a re-run writes nothing that exists (JB-04). */
-    public function writeOnce(string $key, string $bytes): bool
+    public function writeOnce(string $key, string $bytes, ?string $disk = null): bool
     {
-        if ($this->disk()->exists($key)) {
+        if ($this->disk($disk)->exists($key)) {
             return false;
         }
 
-        $this->disk()->put($key, $bytes);
+        $this->disk($disk)->put($key, $bytes);
 
         return true;
     }
@@ -77,9 +78,9 @@ final class FileStore
     }
 
     /** @return resource */
-    public function stream(string $key)
+    public function stream(string $key, ?string $disk = null)
     {
-        return $this->disk()->readStream($key) ?? throw new LogicException('A stored file is missing from its disk.');
+        return $this->disk($disk)->readStream($key) ?? throw new LogicException('A stored file is missing from its disk.');
     }
 
     /** The sanitized original name, display metadata only: no control characters, quotes or path separators. */

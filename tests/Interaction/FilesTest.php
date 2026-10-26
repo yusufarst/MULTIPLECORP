@@ -59,9 +59,13 @@ it('finds a duplicate of evidence content and a reproduction of a rendition by t
 });
 
 it('authorizes each download at request time, so a capability revoked meanwhile denies the next (INT-014; INT-226)', function () {
-    $evidence = EvidenceDocumentVersion::factory()->create();
-    $file = FileObject::query()->findOrFail($evidence->file_object_id);
-    $companyId = (int) $file->company_id;
+    $company = Company::factory()->create();
+    $file = FileObjectFactory::new()->create(['company_id' => $company->id, 'storage_disk' => 'files']);
+    EvidenceDocumentVersion::factory()->create([
+        'evidence_document_id' => App\Modules\DOC\Models\EvidenceDocument::factory()->create(['company_id' => $company->id])->id,
+        'file_object_id' => $file->id,
+    ]);
+    $companyId = $company->id;
     $viewer = Authorization::admin([$companyId], ['evidence.view', 'projects.view']);
     Storage::disk('files')->put($file->storage_key, Files::pdf());
 

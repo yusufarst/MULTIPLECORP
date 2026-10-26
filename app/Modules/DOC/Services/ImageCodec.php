@@ -37,10 +37,14 @@ final class ImageCodec
         }
     }
 
+    /** H9-12's memory bound of a decode: FL-03's 40 megapixels at four bytes each, with room for one derivative. */
+    public const MEMORY_LIMIT = '512M';
+
     /** Decodes with the one decoder of the detected type, after the header check. */
     public function decode(string $path, DetectedType $type): GdImage
     {
         $this->checkHeader($path, $type);
+        self::boundMemory();
 
         $image = match ($type) {
             DetectedType::Jpeg => @imagecreatefromjpeg($path),
@@ -101,6 +105,28 @@ final class ImageCodec
         }
 
         return $bytes;
+    }
+
+    /** Raises a lower memory limit to the decode's bound, never lowers a higher or unlimited one. */
+    private static function boundMemory(): void
+    {
+        $current = (string) ini_get('memory_limit');
+
+        if ($current !== '-1' && self::bytes($current) < self::bytes(self::MEMORY_LIMIT)) {
+            ini_set('memory_limit', self::MEMORY_LIMIT);
+        }
+    }
+
+    private static function bytes(string $limit): int
+    {
+        $value = (int) $limit;
+
+        return match (strtoupper(substr(trim($limit), -1))) {
+            'G' => $value * 1024 ** 3,
+            'M' => $value * 1024 ** 2,
+            'K' => $value * 1024,
+            default => $value,
+        };
     }
 
     private static function imageType(DetectedType $type): int

@@ -121,6 +121,24 @@ final class Files
         return self::office(extra: ['word/document.xml' => self::document($runs)]);
     }
 
+    /** A DOCX whose DDE field follows an ordinary one — simple fields, or complex fields one after the other. */
+    public static function docxWithDdeAfterField(bool $simple): string
+    {
+        $kind = implode('', ['D', 'D', 'E']).'AUTO "Server" "Topic"';
+        $runs = $simple
+            ? '<w:fldSimple w:instr="DATE"/><w:fldSimple w:instr="'.htmlspecialchars($kind).'"/>'
+            : '<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText>DATE</w:instrText></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>'
+                .'<w:r><w:fldChar w:fldCharType="begin"/></w:r><w:r><w:instrText>'.htmlspecialchars($kind).'</w:instrText></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>';
+
+        return self::office(extra: ['word/document.xml' => self::document($runs)]);
+    }
+
+    /** A document part holding one simple field with the given code. */
+    public static function documentWithField(string $code): string
+    {
+        return self::document('<w:fldSimple w:instr="'.htmlspecialchars($code).'"/>');
+    }
+
     private static function document(string $runs): string
     {
         return '<?xml version="1.0" encoding="UTF-8"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p>'.$runs.'</w:p></w:body></w:document>';

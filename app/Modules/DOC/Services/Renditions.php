@@ -10,6 +10,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * The rendition attempts of JB-01 (CONCURRENCY_IDEMPOTENCY §15; SF-RENDER; ARCHITECTURE §11), each step one
@@ -121,6 +122,11 @@ final class Renditions
                 $this->store->disk()->delete($key);
 
                 return false;
+            } catch (Throwable $failure) {
+                // Nothing references the bytes of a step that did not commit (ER-06).
+                $this->store->disk()->delete($key);
+
+                throw $failure;
             }
 
             if ($done) {

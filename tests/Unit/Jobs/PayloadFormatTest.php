@@ -2,9 +2,10 @@
 
 use App\Support\Jobs\PayloadFormat;
 use App\Support\Jobs\PlatformJob;
+use Illuminate\Support\Facades\Queue;
 
 // TL-03 (TASK-022; GAP-012; HO-31; CONCURRENCY_IDEMPOTENCY §15): a job's payload carries its format version; a worker
-// that meets a newer one releases it back with a delay instead of failing it, runs the current and the previous
+// that meets a newer one queues it again as a fresh copy with a delay instead of failing it, runs the current and the previous
 // format, and fails an older one; every job leaves only after its transaction commits.
 
 final class FormatTwoJob extends PlatformJob
@@ -34,13 +35,15 @@ it('stamps the payload with its format and dispatches after commit', function ()
         ->and($job->middleware()[0])->toBeInstanceOf(PayloadFormat::class);
 });
 
-it('releases a newer payload with a delay, runs the current and the previous, and fails an older one', function () {
+it('queues a newer payload again with a delay, its attempts unspent, runs the current and the previous, and fails an older one', function () {
+    Queue::fake();
     [$newer, $ranNewer] = throughFormat(3);
     [, $ranCurrent] = throughFormat(2);
     [, $ranPrevious] = throughFormat(1);
     [$older, $ranOlder] = throughFormat(0);
 
-    $newer->assertReleased(PayloadFormat::RELEASE_DELAY_SECONDS);
+    $newer->assertDeleted();
+    Queue::assertPushed(FormatTwoJob::class, fn (FormatTwoJob $copy): bool => $copy->format === 3 && $copy->delay === PayloadFormat::RELEASE_DELAY_SECONDS);
     $older->assertFailed();
 
     expect($ranNewer)->toBeFalse()

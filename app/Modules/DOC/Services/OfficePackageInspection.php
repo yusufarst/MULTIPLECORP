@@ -57,7 +57,8 @@ final class OfficePackageInspection
             foreach ($names as $name) {
                 if (str_ends_with($name, '.rels')) {
                     $this->checkRelationships($zip, $name);
-                } elseif (str_ends_with($name, '.xml') && (str_starts_with($name, 'word/') || str_starts_with($name, 'xl/'))) {
+                } elseif (str_ends_with(strtolower($name), '.xml')) {
+                    // Every XML part, wherever the package's relationships place its main or any other part (ER-06).
                     $this->checkFields($zip, $name);
                 }
             }
@@ -123,20 +124,29 @@ final class OfficePackageInspection
     {
         $document = $this->xml($zip, $name) ?? throw new UploadRefused(UploadRefused::OFFICE);
         $codes = [];
+        // A complex field's code may be split across runs: its pieces are joined within its own begin and end only,
+        // a nested field on a stack of its own, so one field's code never runs into another's.
+        $open = [];
 
         foreach ($document->getElementsByTagName('*') as $element) {
             /** @var DOMElement $element */
             match ($element->localName) {
-                'instrText' => $codes[] = $element->textContent,
-                'fldSimple' => $codes[] = $element->getAttributeNS($element->namespaceURI ?? '', 'instr') ?: $element->getAttribute('w:instr'),
+                'fldChar' => match ($element->getAttributeNS($element->namespaceURI ?? '', 'fldCharType')) {
+                    'begin' => $open[] = '',
+                    'end' => $open === [] ? null : $codes[] = array_pop($open),
+                    default => null,
+                },
+                'instrText' => $open === [] ? $codes[] = $element->textContent : $open[array_key_last($open)] .= $element->textContent,
+                'fldSimple' => $codes[] = $element->getAttributeNS($element->namespaceURI ?? '', 'instr'),
                 'ddeLink', 'oleLink' => throw new UploadRefused(UploadRefused::OFFICE_ACTIVE),
                 default => null,
             };
         }
 
-        // A complex field's code may be split across runs, so the codes are read together.
-        if (preg_match('~(^|\s)DDE(AUTO)?(\s|$)~i', implode('', $codes)) === 1) {
-            throw new UploadRefused(UploadRefused::OFFICE_ACTIVE);
+        foreach ([...$codes, ...$open] as $code) {
+            if (preg_match('~^\s*DDE(AUTO)?(\s|$)~i', $code) === 1) {
+                throw new UploadRefused(UploadRefused::OFFICE_ACTIVE);
+            }
         }
     }
 
@@ -171,6 +181,11 @@ final class OfficePackageInspection
 
         if (! $loaded) {
             throw new UploadRefused(UploadRefused::OFFICE);
+        }
+
+        // A DTD in another encoding than the byte check reads (UTF-16) is found on the parsed tree (ER-06).
+        if ($document->doctype !== null) {
+            throw new UploadRefused(UploadRefused::OFFICE_ACTIVE);
         }
 
         return $document;

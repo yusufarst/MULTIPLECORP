@@ -34,6 +34,7 @@ final class WeasyPrintRenderer implements DocumentRenderer
             'XDG_CACHE_HOME' => $home,
             'LANG' => 'C.UTF-8',
             'RENDERER_MEMORY_BYTES' => (string) (config()->integer('files.renderer.memory_megabytes') * 1024 * 1024),
+            'RENDERER_CPU_SECONDS' => (string) config()->integer('files.renderer.timeout_seconds'),
         ], $html, config()->integer('files.renderer.timeout_seconds'));
 
         try {

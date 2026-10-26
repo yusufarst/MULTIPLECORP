@@ -24,6 +24,10 @@ def main() -> int:
     limit = int(os.environ.get('RENDERER_MEMORY_BYTES', '0'))
     if limit > 0:
         resource.setrlimit(resource.RLIMIT_AS, (limit, limit))
+    seconds = int(os.environ.get('RENDERER_CPU_SECONDS', '0'))
+    if seconds > 0:
+        # Its own bound too, should the worker that started it die before its time limit ends it.
+        resource.setrlimit(resource.RLIMIT_CPU, (seconds, seconds))
 
     from weasyprint import HTML
     from weasyprint.urls import FatalURLFetchingError, URLFetcher, URLFetcherResponse

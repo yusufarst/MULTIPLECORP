@@ -53,7 +53,7 @@ final class ProcessImage extends PlatformJob implements ShouldBeUnique
 
         $key = $store->derivativeKey($file, $this->variant);
 
-        if ($store->disk()->exists($key)) {
+        if ($store->disk($file->storage_disk)->exists($key)) {
             return;
         }
 
@@ -61,8 +61,8 @@ final class ProcessImage extends PlatformJob implements ShouldBeUnique
         $local = tempnam(sys_get_temp_dir(), 'img-');
 
         try {
-            file_put_contents($local, $store->stream($file->storage_key));
-            $store->writeOnce($key, $codec->derive($local, $type, $this->variant));
+            file_put_contents($local, $store->stream($file->storage_key, $file->storage_disk));
+            $store->writeOnce($key, $codec->derive($local, $type, $this->variant), $file->storage_disk);
         } finally {
             @unlink($local);
         }

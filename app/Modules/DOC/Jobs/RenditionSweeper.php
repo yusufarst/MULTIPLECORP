@@ -24,6 +24,7 @@ final class RenditionSweeper extends PlatformJob
         $owed = DocumentRendition::query()
             ->whereIn('state', ['PENDING', 'RENDERING', 'FAILED'])
             ->where('recorded_at', '<=', $now->subMinute())
+            ->where(fn ($query) => $query->where('state', '<>', 'FAILED')->orWhere('attempt_no', '<', Renditions::attempts()))
             ->whereRaw('attempt_no = (select max(x.attempt_no) from document_renditions x where x.document_version_id = document_renditions.document_version_id)')
             ->orderBy('recorded_at')
             ->get();

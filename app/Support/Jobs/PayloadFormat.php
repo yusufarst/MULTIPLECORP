@@ -6,8 +6,8 @@ use Closure;
 use Illuminate\Support\Facades\Log;
 
 /**
- * GAP-012's payload versioning (CONCURRENCY_IDEMPOTENCY §15): a payload newer than the worker knows is released
- * back with a delay — a newer worker will take it once deployed —; the current and the previous format run; an
+ * GAP-012's payload versioning (CONCURRENCY_IDEMPOTENCY §15): a payload newer than the worker knows goes back to the
+ * queue with a delay as a fresh job, its attempts unspent — a newer worker will take it once deployed —; the current and the previous format run; an
  * older one fails, because no release reads it any more (HO-31).
  */
 final class PayloadFormat
@@ -19,8 +19,10 @@ final class PayloadFormat
         $known = $job->knownFormat();
 
         if ($job->format > $known) {
-            Log::warning('A job payload is newer than this worker knows; released back (GAP-012).', ['job' => $job::class, 'format' => $job->format, 'known' => $known]);
-            $job->release(self::RELEASE_DELAY_SECONDS);
+            Log::warning('A job payload is newer than this worker knows; queued again (GAP-012).', ['job' => $job::class, 'format' => $job->format, 'known' => $known]);
+            // A fresh copy, delayed, so the waits never spend the job's attempts; the copy delivered is removed.
+            dispatch((clone $job)->delay(self::RELEASE_DELAY_SECONDS));
+            $job->delete();
 
             return null;
         }

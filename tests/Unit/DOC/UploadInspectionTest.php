@@ -98,7 +98,22 @@ it('keeps an external hyperlink and refuses a DDE field split across runs (FL-02
     $hyperlink = Files::office(extra: ['word/_rels/document.xml.rels' => '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="r1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="https://example.invalid/" TargetMode="External"/></Relationships>']);
 
     expect(inspect($hyperlink, 'surat.docx', FilePurpose::Upload))->toBe(DetectedType::Docx)
-        ->and(refusal(Files::docxWithDdeField(), 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE);
+        ->and(refusal(Files::docxWithDdeField(), 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE)
+        // Each field read on its own: a DDE field after an ordinary one is refused too (Codex P2 on #27).
+        ->and(refusal(Files::docxWithDdeAfterField(simple: true), 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE)
+        ->and(refusal(Files::docxWithDdeAfterField(simple: false), 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE)
+        ->and(inspect(Files::office(extra: ['word/document.xml' => '<?xml version="1.0"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body><w:p><w:fldSimple w:instr="DATE"/></w:p></w:body></w:document>']), 'surat.docx', FilePurpose::Upload))->toBe(DetectedType::Docx);
+});
+
+it('reads every XML part wherever it lies, and finds a DTD in any encoding (FL-02; ER-06)', function () {
+    $relocated = Files::office(extra: [
+        '_rels/.rels' => '<?xml version="1.0"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="r1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="elsewhere/main.xml"/></Relationships>',
+        'elsewhere/main.xml' => Files::documentWithField(implode('', ['D', 'D', 'E']).'AUTO "Server" "Topic"'),
+    ]);
+    $utf16 = mb_convert_encoding('<?xml version="1.0" encoding="UTF-16"?><!DOCTYPE d [<!ENTITY x "y">]><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">&x;</w:document>', 'UTF-16LE', 'UTF-8');
+
+    expect(refusal($relocated, 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE)
+        ->and(refusal(Files::office(extra: ['word/settings.xml' => "\xFF\xFE".$utf16]), 'surat.docx', FilePurpose::Upload))->toBe(UploadRefused::OFFICE_ACTIVE);
 });
 
 it('refuses a package by its entry count or its uncompressed size before reading a part (FL-02; FL-06)', function () {
