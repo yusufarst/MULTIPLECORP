@@ -105,9 +105,14 @@ export function time(instant: string): string {
 
 /** A date with its time: "02 Okt 2026 14.05 WIB". */
 export function dateTime(instant: string): string {
+    return `${date(dayOf(instant))} ${time(instant)}`;
+}
+
+/** An instant's day in WIB as `YYYY-MM-DD`, for the day formats above. */
+export function dayOf(instant: string): string {
     const local = wib(instant);
 
-    return `${date(`${String(local.getUTCFullYear())}-${two(local.getUTCMonth() + 1)}-${two(local.getUTCDate())}`)} ${time(instant)}`;
+    return `${String(local.getUTCFullYear())}-${two(local.getUTCMonth() + 1)}-${two(local.getUTCDate())}`;
 }
 
 /** A period: "Okt 2026" for a month (`YYYY-MM`), "2026" for a year. */

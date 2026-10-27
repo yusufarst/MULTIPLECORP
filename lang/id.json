@@ -1177,5 +1177,6 @@
     "account.events.TWO_FACTOR_COOLDOWN_STARTED": "Verifikasi ditunda karena terlalu banyak percobaan",
     "account.events.GOOGLE_LINKED": "Akun Google ditautkan",
     "account.events.GOOGLE_UNLINKED": "Tautan Google dilepas",
-    "messages.msg_29_event": "Ada perubahan keamanan pada akun ini: :peristiwa, pada :waktu."
+    "messages.msg_29_event": "Ada perubahan keamanan pada akun ini: :peristiwa, pada :waktu.",
+    "account.google.linked_since": "Tertaut sejak :tanggal"
 }

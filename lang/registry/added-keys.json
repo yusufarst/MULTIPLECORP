@@ -1740,6 +1740,12 @@
             "source": "SECURITY AU-13; H7-18 (MSG-29 naming the event)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "account.google.linked_since": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -43,7 +43,7 @@ final class GoogleFixture
         app()->bind(GoogleSignIn::HTTP_CLIENT, fn (): Client => new Client(['handler' => HandlerStack::create(new MockHandler([
             function () use ($armed): Response {
                 $current = Cache::get(self::KEY);
-                $claims = ['iss' => 'https://accounts.google.com', 'aud' => 'klien-fixture', 'sub' => $armed['sub'], 'email' => 'akun@contoh.test',
+                $claims = ['iss' => 'https://accounts.google.com', 'aud' => 'klien-fixture', 'sub' => $armed['sub'], 'email' => 'akun@contoh.test', 'email_verified' => true,
                     'nonce' => is_array($current) ? ($current['nonce'] ?? '') : '', 'exp' => now()->getTimestamp() + 600];
                 $encode = fn (array $part): string => rtrim(strtr(base64_encode((string) json_encode($part)), '+/', '-_'), '=');
 

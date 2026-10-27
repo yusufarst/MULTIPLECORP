@@ -1177,5 +1177,6 @@
     "account.events.TWO_FACTOR_COOLDOWN_STARTED": "Verification paused after too many attempts",
     "account.events.GOOGLE_LINKED": "Google account linked",
     "account.events.GOOGLE_UNLINKED": "Google account unlinked",
-    "messages.msg_29_event": "A security change was made to this account: :peristiwa, at :waktu."
+    "messages.msg_29_event": "A security change was made to this account: :peristiwa, at :waktu.",
+    "account.google.linked_since": "Linked since :tanggal"
 }

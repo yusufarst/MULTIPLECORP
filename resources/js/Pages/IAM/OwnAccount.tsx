@@ -17,14 +17,14 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateTimeText } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
-import { dateLong, dateTime } from '@/lib/format';
+import { dateLong, dateTime, dayOf } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints } from '@/lib/navigation';
 
 type Props = {
     account: { name: string; email: string; locale: 'id' | 'en' | null };
     totp: { active: boolean; since: string | null; high_risk: boolean; established: boolean };
-    google: { enabled: boolean; email: string | null; since: string | null; pending: boolean; answer: 'ready' | 'failed' | null };
+    google: { enabled: boolean; linked: boolean; email: string | null; since: string | null; pending: boolean; answer: 'ready' | 'failed' | null };
     last_login: string | null;
     events: { kind: string; at: string; by: string | null }[];
 };
@@ -107,7 +107,7 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
                                 {...control}
                                 value={account.locale ?? 'default'}
                                 onChange={(event) => {
-                                    router.put('/akun/bahasa', { locale: event.target.value }, { preserveScroll: true });
+                                    router.put('/akun/bahasa', { locale: event.target.value }, { preserveScroll: true, preserveState: true });
                                 }}
                             >
                                 <option value="default">{t('account.locale.default')}</option>
@@ -145,7 +145,7 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
 
                 <FormSection title={t('account.sections.totp')}>
                     <p className="text-body text-text-primary">
-                        {totp.active && totp.since !== null ? t('account.totp.on', { tanggal: dateLong(totp.since) }) : t('account.totp.off')}
+                        {totp.active && totp.since !== null ? t('account.totp.on', { tanggal: dateLong(dayOf(totp.since)) }) : t('account.totp.off')}
                     </p>
                     {totp.high_risk && <p className="text-body text-text-secondary">{t('account.totp.required')}</p>}
                     {qr !== null && key !== null ? (
@@ -211,9 +211,13 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
 
                 <FormSection title={t('account.sections.google')}>
                     <p className="text-body text-text-primary">
-                        {google.email !== null && google.since !== null ? t('account.google.linked_line', { email: google.email, tanggal: dateLong(google.since) }) : t('account.google.none')}
+                        {!google.linked || google.since === null
+                            ? t('account.google.none')
+                            : google.email !== null
+                              ? t('account.google.linked_line', { email: google.email, tanggal: dateLong(dayOf(google.since)) })
+                              : t('account.google.linked_since', { tanggal: dateLong(dayOf(google.since)) })}
                     </p>
-                    {google.email !== null ? (
+                    {google.linked ? (
                         <div>
                             <Button variant="outline" size="md" onClick={() => { router.delete('/akun/google', { preserveScroll: true }); }}>
                                 {t('account.google.unlink')}

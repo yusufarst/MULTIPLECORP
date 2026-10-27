@@ -67,6 +67,7 @@ it('shows the account its own profile, factor, link and activity, holding no sec
         ->where('account.email', $this->admin->email)
         ->where('totp.active', true)
         ->where('totp.high_risk', false)
+        ->where('google.linked', false)
         ->where('google.email', null)
         ->where('events.0.kind', 'PASSWORD_CHANGED'));
 

@@ -45,6 +45,8 @@ final class OwnAccountView
             ],
             'google' => [
                 'enabled' => GoogleSignIn::enabled(),
+                'linked' => $link !== null,
+                // The e-mail Google verified at the link, when it did (GoogleIdToken keeps no unverified one).
                 'email' => $link === null ? null : $link->email_at_link,
                 'since' => $link === null || ! is_string($link->linked_at) ? null : CarbonImmutable::parse($link->linked_at)->toIso8601ZuluString(),
                 'pending' => GoogleSignIn::pendingLink($request, $user) !== null,
