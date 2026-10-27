@@ -72,6 +72,7 @@ test('creates a client search-first with a unit, answers a duplicate name with t
     let sheet = page.getByRole('dialog', { name: 'Buat Klien' });
     await sheet.getByLabel(NAME).fill(name);
     await sheet.getByRole('button', { name: 'Buat Klien' }).click();
+    await expect(sheet, 'the creation sheet closes once its command commits').toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(name);
 
     await page.getByRole('button', { name: 'Tambah Unit' }).click();
@@ -124,6 +125,7 @@ test('creates, edits and archives a supplier chosen directly (J-MD-03; CJ-19)', 
     await sheet.getByLabel(NAME).fill(name);
     await sheet.getByLabel(/^Kota/).fill('Bantul');
     await sheet.getByRole('button', { name: 'Buat Pemasok' }).click();
+    await expect(sheet, 'the creation sheet closes once its command commits').toBeHidden();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(name);
     await expect(page.getByText('Bantul')).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Riwayat Harga Beli' })).toBeVisible();
