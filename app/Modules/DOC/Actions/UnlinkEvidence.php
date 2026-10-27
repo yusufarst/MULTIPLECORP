@@ -41,14 +41,19 @@ final class UnlinkEvidence
     {
         $actor = $this->capabilities->for($actorUserId);
         $this->use->ensureVisible($actor, $evidence);
+        $request = $this->registry->request($commandId, self::TYPE, $actorUserId, $evidence->company_id, $companyPublicId ?? 'POOL',
+            ['evidence' => $evidence->public_id, 'link' => $handle, 'reason' => $reason]);
+        // CI-05: a replay answers its recorded outcome before the link its first execution removed is looked for.
+        $replayed = $this->registry->replay($request);
+
+        if ($replayed !== null) {
+            return $replayed;
+        }
 
         // PJ-08 row 95: a link to a record the actor may not see answers as unknown, whatever its evidence.
         if ($this->change($evidence, $handle, $actor)->links === []) {
             throw new ModelNotFoundException;
         }
-
-        $request = $this->registry->request($commandId, self::TYPE, $actorUserId, $evidence->company_id, $companyPublicId ?? 'POOL',
-            ['evidence' => $evidence->public_id, 'link' => $handle, 'reason' => $reason]);
 
         return $this->registry->run($request, function (CommandContext $context) use ($evidence, $handle, $reason, $actor): CommandResult {
             $context->lock($this->use->locksFor($this->change($evidence, $handle, $actor)));

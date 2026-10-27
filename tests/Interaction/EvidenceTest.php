@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\DOC\Data\LinkHandle;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
@@ -80,6 +81,20 @@ it('replays a duplicate warning with its current matches, so "Coba Lagi" still h
     expect(Evidence::answer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'FL-10'])
         ->and(Evidence::answer()['state']['matches'] ?? null)->toBe([$match])
         ->and(Evidence::answer()['state']['labels'][0]['id'] ?? null)->toBe($match);
+});
+
+it('replays an unlink with its recorded outcome, its link already removed (CI-05; INT-231)', function () {
+    $this->actingAs($this->actor)->post("/bukti/{$this->evidence->public_id}/tautan", ['command_id' => (string) Str::uuid(), 'action' => 'link', 'project' => $this->project->public_id, 'role' => 'SUPPORTING']);
+    $unlink = ['command_id' => (string) Str::uuid(), 'action' => 'unlink', 'link' => LinkHandle::of((int) DB::table('evidence_links')->value('id')), 'reason' => 'Salah proyek'];
+
+    $this->actingAs($this->actor)->post("/bukti/{$this->evidence->public_id}/tautan", $unlink)->assertRedirect();
+    expect(Evidence::answer()['kind'] ?? null)->toBe(Outcome::COMMITTED);
+    $audits = DB::table('audit_events')->count();
+    $this->actingAs($this->actor)->get('/dokumen/bukti')->assertOk();
+
+    $this->actingAs($this->actor)->post("/bukti/{$this->evidence->public_id}/tautan", $unlink)->assertRedirect();
+    expect(Evidence::answer()['kind'] ?? null)->toBe(Outcome::COMMITTED)
+        ->and(DB::table('audit_events')->count())->toBe($audits);
 });
 
 it('answers ROUTE-228 without a command identity, nothing in the command log (INT-228; RB-03)', function () {

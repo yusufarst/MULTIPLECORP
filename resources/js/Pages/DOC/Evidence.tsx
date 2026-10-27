@@ -14,7 +14,7 @@ import { FileThumbnail } from '@/components/file-thumbnail';
 import { DecimalInput, FormField, FormSection } from '@/components/form';
 import { Lookup, type LookupGroup, type LookupResult } from '@/components/lookup';
 import { DuplicateWarning, type DuplicateMatch, UploadField, type UploadState } from '@/components/notices';
-import { OutcomeMessage } from '@/components/outcome-message';
+import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
 import { Badge } from '@/components/ui/badge';
@@ -107,6 +107,29 @@ function useUpload(fields: () => Record<string, string>) {
             }
         },
     };
+}
+
+/** A command's answer in place (IP-01), with "Coba Lagi" sending the same `command_id` and payload again while its outcome
+    is unknown (IP-02; IP-04) — never a second command —, or the action its answer offers. */
+function CommandAnswer({ command, action }: { command: { answer: Answer | null; unknown: boolean; retry: () => void }; action?: ReactNode }) {
+    const { t } = useTranslation();
+
+    if (command.answer === null) return null;
+
+    return (
+        <OutcomeMessage
+            answer={command.answer}
+            action={
+                command.unknown ? (
+                    <Button variant="outline" size="sm" onClick={command.retry}>
+                        {t('actions.try_again')}
+                    </Button>
+                ) : (
+                    action
+                )
+            }
+        />
+    );
 }
 
 /** IP-05's block for the matches the server named, each with its link where its page is the evidence's. */
@@ -294,8 +317,8 @@ function UploadSheet({ open, onOpenChange, branch, branches, amountTypes, poolTy
                     </FormSection>
                     <Warning state={register.state} acknowledged={acknowledged} onAcknowledge={setAcknowledged} reason={reason} onReason={setReason} error={register.errors.reason} />
                     {register.answer !== null && (
-                        <OutcomeMessage
-                            answer={register.answer}
+                        <CommandAnswer
+                            command={register}
                             action={
                                 existing !== null && upload.file !== null ? (
                                     <Button variant="outline" size="sm" pending={asVersion.pending} onClick={() => { asVersion.submit({ file: upload.file, note: null, acknowledged: [], reason: null }, close); }}>
@@ -305,7 +328,7 @@ function UploadSheet({ open, onOpenChange, branch, branches, amountTypes, poolTy
                             }
                         />
                     )}
-                    {asVersion.answer !== null && <OutcomeMessage answer={asVersion.answer} />}
+                    <CommandAnswer command={asVersion} />
                     <div className="flex flex-wrap justify-end gap-3">
                         <Button type="button" variant="ghost" onClick={close}>
                             {t('actions.cancel')}
@@ -384,7 +407,7 @@ function LinkForm({ evidence }: { evidence: Detail }) {
                     </NativeSelect>
                 )}
             </FormField>
-            {link.answer !== null && <OutcomeMessage answer={link.answer} />}
+            <CommandAnswer command={link} />
             <div>
                 <Button type="submit" variant="outline" size="sm" disabled={project === null || link.frozen} pending={link.pending}>
                     <Icon icon={Link2} size="sm" />
@@ -421,7 +444,7 @@ function UnlinkControl({ evidence, link }: { evidence: Detail; link: EvidenceLin
             <FormField label={t('evidence.unlink_reason')} required error={unlink.errors.reason}>
                 {(control) => <Textarea {...control} value={reason} maxLength={500} onChange={(event) => { setReason(event.target.value); }} />}
             </FormField>
-            {unlink.answer !== null && <OutcomeMessage answer={unlink.answer} />}
+            <CommandAnswer command={unlink} />
             <div className="flex gap-2">
                 <Button type="submit" variant="destructive" size="sm" pending={unlink.pending} disabled={unlink.frozen}>
                     {t('evidence.unlink')}
@@ -465,7 +488,7 @@ function VersionRow({ evidence, version, canUpload }: { evidence: Detail; versio
                     </Button>
                 </div>
             )}
-            {replace.answer !== null && <OutcomeMessage answer={replace.answer} />}
+            <CommandAnswer command={replace} />
         </li>
     );
 }
@@ -498,7 +521,7 @@ function AddVersion({ evidence, branch }: { evidence: Detail; branch: string | n
                 {(control) => <Input {...control} value={note} maxLength={500} onChange={(event) => { setNote(event.target.value); }} />}
             </FormField>
             <Warning state={version.state} acknowledged={acknowledged} onAcknowledge={setAcknowledged} reason={reason} onReason={setReason} error={version.errors.reason} />
-            {version.answer !== null && <OutcomeMessage answer={version.answer} />}
+            <CommandAnswer command={version} />
             <div>
                 <Button type="submit" variant="outline" size="sm" disabled={upload.file === null || version.frozen} pending={version.pending}>
                     <Icon icon={Plus} size="sm" />
