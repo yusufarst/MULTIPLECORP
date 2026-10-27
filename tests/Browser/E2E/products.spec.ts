@@ -64,7 +64,7 @@ test('builds a product: units, barcodes and the label, serial policy, a price de
 
     await page.getByRole('button', { name: 'Ubah Kebijakan' }).click();
     sheet = page.getByRole('dialog', { name: 'Ubah Kebijakan' });
-    await sheet.getByLabel('Dilacak per nomor seri').check();
+    await sheet.getByRole('checkbox', { name: 'Dilacak per nomor seri' }).check();
     await sheet.getByRole('button', { name: 'Simpan' }).click();
     await expect(page.locator('#konten').getByText('Kebijakan diperbarui.')).toBeVisible();
     await expect(page.locator('#konten').getByText(/^Dilacak per nomor seri/)).toBeVisible();

@@ -1,8 +1,10 @@
 <?php
 
+use App\Modules\CAT\Actions\UpdateProduct;
 use App\Modules\CAT\Models\Product;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\CatalogRaces;
 use Tests\Support\Concurrency\Barrier;
@@ -79,6 +81,9 @@ it('refuses the serial switch once a receipt holding the guard has put stock on 
 
     expect($results)->toBe(['receipt' => 'RECEIVED', 'switch' => 'REJECTED L-35'])
         ->and(Product::query()->findOrFail($product)->is_serialized)->toBeFalse();
+
+    // The stand-in receipt has no ledger fact behind it; its guard goes back to what the facts say (GAP-031).
+    DB::update('update stock_product_balances set on_hand_qty = 0 where product_id = ?', [$product]);
 });
 
 it('switches a product without stock to serialized, and off again keeping its serial history (criterion 4; L-35)', function () {
@@ -90,7 +95,7 @@ it('switches a product without stock to serialized, and off again keeping its se
     // A serial already dispatched — history, holding no lot or place (C-02).
     DB::table('serial_units')->insert(['product_id' => $product->id, 'serial_number' => 'SN-0001', 'serial_key' => 'SN-0001', 'state' => 'DISPATCHED']);
 
-    $off = app(App\Modules\CAT\Actions\UpdateProduct::class)->policy((string) Illuminate\Support\Str::uuid(), $this->first->id, $product, $product->lock_version, false, 0);
+    $off = app(UpdateProduct::class)->policy((string) Str::uuid(), $this->first->id, $product, $product->lock_version, false, 0);
 
     expect($off->kind)->toBe('COMMITTED')->and($product->refresh()->is_serialized)->toBeFalse()
         ->and(DB::table('serial_units')->where('product_id', $product->id)->count())->toBe(1);

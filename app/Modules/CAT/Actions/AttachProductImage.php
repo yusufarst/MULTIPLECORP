@@ -75,7 +75,7 @@ final class AttachProductImage
                 $images = ProductImage::query()->join('file_objects', 'file_objects.id', '=', 'product_images.file_object_id')->where('product_images.product_id', $product->id)
                     ->orderBy('product_images.sort_order')->orderBy('product_images.id')->get(['product_images.*', 'file_objects.public_id as file_public_id'])->all();
                 $images = array_values($images);
-                $index = array_search(strtolower($filePublicId), array_map(fn (ProductImage $image): string => (string) $image->getAttribute('file_public_id'), $images), true);
+                $index = array_search(strtolower($filePublicId), array_map(fn (ProductImage $image): string => is_string($public = $image->getAttribute('file_public_id')) ? $public : '', $images), true);
 
                 if (! is_int($index)) {
                     throw new ModelNotFoundException;

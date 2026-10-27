@@ -44,7 +44,7 @@ final class RegisterBarcode
                 }
 
                 $next = $kind === 'INTERNAL' ? DB::selectOne("select nextval('product_barcode_internal_codes') as n") : null;
-                $printed = $next !== null ? self::INTERNAL_PREFIX.str_pad(Row::text($next, 'n'), 8, '0', STR_PAD_LEFT) : CodeKey::printed((string) $code);
+                $printed = is_object($next) ? self::INTERNAL_PREFIX.str_pad(Row::text($next, 'n'), 8, '0', STR_PAD_LEFT) : CodeKey::printed((string) $code);
                 $holder = DB::table('product_barcodes')->where('is_active', true)->where('code_key', CodeKey::of($printed))->value('product_id');
 
                 if (is_numeric($holder)) {

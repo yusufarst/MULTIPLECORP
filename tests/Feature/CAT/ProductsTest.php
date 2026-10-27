@@ -1,12 +1,14 @@
 <?php
 
 use App\Modules\CAT\Models\Product;
+use App\Modules\CAT\Queries\ProductLookup;
 use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Services\Uploads;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseLine;
 use App\Support\Command\Outcome;
+use App\Support\Search\Term;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
@@ -180,7 +182,7 @@ it('archives a product, kept with its history and offered for no new demand or p
 
     $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'archive', 'lock_version' => 0, 'reason' => 'Tidak dijual'])->assertRedirect();
     expect(productAnswer()['kind'])->toBe(Outcome::COMMITTED)->and($product->refresh()->is_active)->toBeFalse()
-        ->and(app(App\Modules\CAT\Queries\ProductLookup::class)->names(new App\Support\Search\Term('Arsip Produk'), 20)['rows'])->toBe([]);
+        ->and(app(ProductLookup::class)->names(new Term('Arsip Produk'), 20)['rows'])->toBe([]);
 
     $this->actingAs($this->admin)->post("/data-master/produk/{$product->public_id}/barcode", ['command_id' => (string) Str::uuid(), 'kind' => 'INTERNAL'])->assertRedirect();
     expect(productAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'WF-MD-04']);
