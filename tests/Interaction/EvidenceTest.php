@@ -66,6 +66,22 @@ it('commits each command once, and its command_id replayed answers the recorded 
     expect(Evidence::answer()['kind'] ?? null)->toBe(Outcome::CONFLICT);
 })->with(['INT-229', 'INT-230', 'INT-231']);
 
+it('replays a duplicate warning with its current matches, so "Coba Lagi" still has them to acknowledge (CI-05; IP-05)', function () {
+    $body = Evidence::registration(Evidence::upload($this->actor, $this->company->id), $this->company->public_id, ['reference' => null, 'issuer' => 'SMA Tanpa Nomor']);
+    $this->actingAs($this->actor)->post('/bukti', [...$body, 'command_id' => (string) Str::uuid()]);
+    $match = EvidenceDocument::query()->where('declared_issuer', 'SMA Tanpa Nomor')->sole()->public_id;
+    $again = Evidence::registration(Evidence::upload($this->actor, $this->company->id), $this->company->public_id, ['reference' => null, 'issuer' => 'SMA Tanpa Nomor']);
+
+    $this->actingAs($this->actor)->post('/bukti', $again);
+    expect(Evidence::answer()['state']['matches'] ?? null)->toBe([$match]);
+    $this->actingAs($this->actor)->get('/dokumen/bukti')->assertOk();
+
+    $this->actingAs($this->actor)->post('/bukti', $again);
+    expect(Evidence::answer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'FL-10'])
+        ->and(Evidence::answer()['state']['matches'] ?? null)->toBe([$match])
+        ->and(Evidence::answer()['state']['labels'][0]['id'] ?? null)->toBe($match);
+});
+
 it('answers ROUTE-228 without a command identity, nothing in the command log (INT-228; RB-03)', function () {
     $before = DB::table('command_log')->count();
 

@@ -5,6 +5,7 @@ namespace App\Modules\DOC\Services;
 use App\Modules\DOC\Contracts\DocumentChangeParticipant;
 use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\DOC\Data\EvidenceTypes;
+use App\Modules\DOC\Models\EvidenceBalance;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\IAM\Data\Authority;
 use App\Support\Command\CommandContext;
@@ -49,6 +50,45 @@ final class EvidenceUse
 
     public const ROLES = ['PRIMARY_PROOF', 'SUPPORTING', 'CLIENT_ORIGINAL', 'REVIEWED'];
 
+    /** PJ-08 row 95: the view capability of each linked record's family — a link shows only where both sides do. */
+    private const TARGET_VIEW = [
+        'project_id' => 'projects.view',
+        'commercial_confirmation_id' => 'projects.view',
+        'delivery_id' => 'projects.view',
+        'dropship_confirmation_id' => 'projects.view',
+        'service_handover_id' => 'projects.view',
+        'admin_requirement_id' => 'projects.view',
+        'correction_case_id' => 'projects.view',
+        'purchase_id' => 'cost.view',
+        'expense_id' => 'cost.view',
+        'payment_id' => 'finance.view',
+        'other_cash_receipt_id' => 'finance.view',
+        'disbursement_id' => 'finance.view',
+        'deduction_settlement_id' => 'finance.view',
+        'receivable_writeoff_id' => 'finance.view',
+        'stock_movement_id' => 'stock.view',
+        'unattributed_loss_case_id' => 'stock.view',
+        'import_batch_id' => 'import.prepare',
+    ];
+
+    /** Whether the viewer may see the linked record's family in the evidence's company — any company for the pool. */
+    public static function targetVisible(Authority $viewer, string $target, ?int $companyId): bool
+    {
+        $capability = self::TARGET_VIEW[$target] ?? null;
+
+        return $viewer->active && $capability !== null && ($viewer->ownerRole || ($companyId === null ? $viewer->has($capability) : $viewer->allows($capability, $companyId)));
+    }
+
+    /**
+     * The link targets the viewer may see for evidence of the company.
+     *
+     * @return list<string>
+     */
+    public static function visibleTargets(Authority $viewer, ?int $companyId): array
+    {
+        return array_values(array_filter(array_keys(self::TARGETS), fn (string $target): bool => self::targetVisible($viewer, $target, $companyId)));
+    }
+
     public function __construct(private readonly Container $container) {}
 
     /** PJ-08: evidence the viewer may not see answers as unknown (AZ-11; TM-55). */
@@ -63,7 +103,7 @@ final class EvidenceUse
     public function inUse(int $evidenceId): bool
     {
         return DB::table('evidence_links')->where('evidence_document_id', $evidenceId)->whereNull('unlinked_at')->exists()
-            || DB::table('evidence_balances')->where('evidence_document_id', $evidenceId)->whereRaw('(cited_amount > 0 or expensed_amount > 0)')->exists()
+            || EvidenceBalance::query()->where('evidence_document_id', $evidenceId)->whereRaw('(cited_amount > 0 or expensed_amount > 0)')->exists()
             || DB::table('bank_statement_lines')->where('statement_evidence_id', $evidenceId)->where('state', 'ACTIVE')->exists();
     }
 

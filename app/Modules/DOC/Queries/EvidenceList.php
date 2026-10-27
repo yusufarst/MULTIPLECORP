@@ -137,11 +137,14 @@ final class EvidenceList
             $query->where('e.id', '<', $after);
         }
 
+        // PJ-08 row 95: only the links whose record the viewer may see are counted.
+        $targets = EvidenceUse::visibleTargets($viewer, $companyId);
+        $linked = $targets === [] ? 'false' : '('.implode(' or ', array_map(fn (string $column): string => "l.{$column} is not null", $targets)).')';
         $found = $query->orderByDesc('e.id')->limit(self::PAGE + 1)->get([
             'e.id', 'e.public_id', 'e.evidence_type', 'e.declared_issuer', 'e.issuer_reference', 'e.document_date', 'e.proven_amount', 'e.recorded_at',
             'cv.version_no', 'f.sha256', 'f.mime_type',
             DB::raw('(select count(*) from evidence_document_versions v where v.evidence_document_id = e.id) as versions'),
-            DB::raw('(select count(*) from evidence_links l where l.evidence_document_id = e.id and l.unlinked_at is null) as links'),
+            DB::raw("(select count(*) from evidence_links l where l.evidence_document_id = e.id and l.unlinked_at is null and {$linked}) as links"),
         ])->all();
         $more = count($found) > self::PAGE ? self::text($found[self::PAGE - 1]->public_id) : null;
         $found = array_slice($found, 0, self::PAGE);
@@ -226,7 +229,8 @@ final class EvidenceList
                 'recorded_at' => self::text($version->recorded_at),
                 'reproduction' => isset($reproductions[self::text($version->sha256)]),
             ], $versions),
-            'links' => array_values(array_filter(array_map(fn (object $link): ?array => self::link(get_object_vars($link)), $links))),
+            'links' => array_values(array_filter(array_map(fn (object $link): ?array => self::link(get_object_vars($link)), $links),
+                fn (?array $link): bool => $link !== null && EvidenceUse::targetVisible($viewer, $link['target'], $evidence->company_id))),
         ];
     }
 
@@ -263,7 +267,7 @@ final class EvidenceList
     /**
      * A link as the sheet shows it: its handle, its record's kind and, for a project or a purchase, its number.
      *
-     * @param  array<string, mixed>  $link
+     * @param  array<mixed>  $link
      * @return array{handle: string, target: string, record: string|null, label: string|null, role: string, linked_at: string}|null
      */
     private static function link(array $link): ?array

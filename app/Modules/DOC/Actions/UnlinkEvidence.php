@@ -7,6 +7,7 @@ use App\Modules\DOC\Data\LinkHandle;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Services\EvidenceRegistry;
 use App\Modules\DOC\Services\EvidenceUse;
+use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
@@ -15,6 +16,7 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -37,16 +39,23 @@ final class UnlinkEvidence
 
     public function run(string $commandId, int $actorUserId, EvidenceDocument $evidence, ?string $companyPublicId, string $handle, string $reason): Outcome
     {
-        $this->use->ensureVisible($this->capabilities->for($actorUserId), $evidence);
+        $actor = $this->capabilities->for($actorUserId);
+        $this->use->ensureVisible($actor, $evidence);
+
+        // PJ-08 row 95: a link to a record the actor may not see answers as unknown, whatever its evidence.
+        if ($this->change($evidence, $handle, $actor)->links === []) {
+            throw new ModelNotFoundException;
+        }
+
         $request = $this->registry->request($commandId, self::TYPE, $actorUserId, $evidence->company_id, $companyPublicId ?? 'POOL',
             ['evidence' => $evidence->public_id, 'link' => $handle, 'reason' => $reason]);
 
-        return $this->registry->run($request, function (CommandContext $context) use ($evidence, $handle, $reason): CommandResult {
-            $context->lock($this->use->locksFor($this->change($evidence, $handle)));
-            // Data-dependent (§5 steps 3–4): the link and its anchor read again under the locks.
-            $change = $this->change($evidence, $handle);
+        return $this->registry->run($request, function (CommandContext $context) use ($evidence, $handle, $reason, $actor): CommandResult {
+            $context->lock($this->use->locksFor($this->change($evidence, $handle, $actor)));
+            $authority = $this->registry->ensureHandles($context, $evidence->evidence_type, $evidence->company_id);
+            // Data-dependent (§5 steps 3–4): the link and its anchor read again under the locks, by the re-read authority.
+            $change = $this->change($evidence, $handle, $authority);
             $context->require($this->use->locksFor($change));
-            $this->registry->ensureHandles($context, $evidence->evidence_type, $evidence->company_id);
             $links = $change->links;
 
             if ($links === []) {
@@ -75,10 +84,11 @@ final class UnlinkEvidence
         });
     }
 
-    /** The unlink as a change: the evidence's active link the handle names, none when it names none. */
-    private function change(EvidenceDocument $evidence, string $handle): DocumentChange
+    /** The unlink as a change: the evidence's active link the handle names, if the actor may see its record. */
+    private function change(EvidenceDocument $evidence, string $handle, Authority $actor): DocumentChange
     {
-        $links = array_values(array_filter($this->use->activeLinks($evidence->id), fn (array $link): bool => hash_equals(LinkHandle::of($link['link']), $handle)));
+        $links = array_values(array_filter($this->use->activeLinks($evidence->id), fn (array $link): bool => hash_equals(LinkHandle::of($link['link']), $handle)
+            && EvidenceUse::targetVisible($actor, $link['target'], $evidence->company_id)));
 
         return new DocumentChange(DocumentChange::EVIDENCE_UNLINKED, $evidence->id, $evidence->company_id, $evidence->evidence_type, $links);
     }

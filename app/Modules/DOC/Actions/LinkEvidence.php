@@ -38,19 +38,17 @@ final class LinkEvidence
 
     public function run(string $commandId, int $actorUserId, EvidenceDocument $evidence, ?string $companyPublicId, string $target, int $targetId, string $targetPublicId, string $role): Outcome
     {
-        $this->use->ensureVisible($this->capabilities->for($actorUserId), $evidence);
+        $actor = $this->capabilities->for($actorUserId);
+        $this->use->ensureVisible($actor, $evidence);
         $pool = $evidence->company_id === null;
 
-        if (! isset(EvidenceUse::TARGETS[$target]) || ($pool && ! in_array($target, EvidenceUse::POOL_TARGETS, true))) {
+        // A link never widens visibility: its record's family the actor's too (PJ-08 row 95).
+        if (! isset(EvidenceUse::TARGETS[$target]) || ($pool && ! in_array($target, EvidenceUse::POOL_TARGETS, true))
+            || ! EvidenceUse::targetVisible($actor, $target, $evidence->company_id)) {
             throw new ModelNotFoundException;
         }
 
-        $table = EvidenceUse::TARGETS[$target][0];
-        $owner = DB::table($table)->where('id', $targetId)->first();
-        $company = is_object($owner) && property_exists($owner, 'company_id') && is_numeric($owner->company_id) ? (int) $owner->company_id : null;
-
-        // C-58: company evidence to its company's records, pool evidence to a pool-wide movement or a pool record.
-        if (! is_object($owner) || ($pool ? $company !== null : ($company !== null && $company !== $evidence->company_id))) {
+        if (! $this->belongs($target, $targetId, $evidence->company_id)) {
             throw new ModelNotFoundException;
         }
 
@@ -97,5 +95,30 @@ final class LinkEvidence
 
             return new CommandResult('evidence_document', $evidence->id);
         });
+    }
+
+    /**
+     * C-58: company evidence links to a record of its own company — an import batch whose companies include it —, and
+     * pool evidence to a pool-wide movement, an unattributed-loss case or an import batch, never a company's record.
+     */
+    private function belongs(string $target, int $targetId, ?int $companyId): bool
+    {
+        $owner = DB::table(EvidenceUse::TARGETS[$target][0])->where('id', $targetId)->first();
+
+        if (! is_object($owner)) {
+            return false;
+        }
+
+        if ($target === 'import_batch_id') {
+            return $companyId === null || in_array((string) $companyId, explode(',', trim(is_string($owner->company_scope ?? null) ? $owner->company_scope : '', '{}')), true);
+        }
+
+        if ($target === 'unattributed_loss_case_id') {
+            return $companyId === null;
+        }
+
+        $company = property_exists($owner, 'company_id') && is_numeric($owner->company_id) ? (int) $owner->company_id : null;
+
+        return $company === $companyId;
     }
 }

@@ -4,6 +4,7 @@ namespace App\Modules\DOC\Actions;
 
 use App\Modules\DOC\Data\EvidenceIdentity;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\DOC\Queries\EvidenceMatches;
 use App\Modules\DOC\Services\EvidenceRegistry;
 use App\Modules\DOC\Services\EvidenceUse;
 use App\Modules\IAM\Services\EffectiveCapabilities;
@@ -14,6 +15,7 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\CommandResult;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 /**
  * `DOC AddEvidenceVersion` (ROUTE-230; INT-230; NX-07; L-41; IP-16 step 4): a new version of an evidence — "Tambahkan
@@ -29,6 +31,7 @@ final class AddEvidenceVersion
 
     public function __construct(
         private readonly EvidenceRegistry $registry,
+        private readonly EvidenceMatches $matches,
         private readonly EvidenceUse $use,
         private readonly EffectiveCapabilities $capabilities,
         private readonly AuditRecorder $audit,
@@ -42,22 +45,31 @@ final class AddEvidenceVersion
         $actor = $this->capabilities->for($actorUserId);
         $this->use->ensureVisible($actor, $evidence);
         $request = $this->registry->request($commandId, self::TYPE, $actorUserId, $evidence->company_id, $companyPublicId ?? 'POOL', ['evidence' => $evidence->public_id, ...$input]);
-        $replayed = $this->registry->replay($request);
+        $date = $evidence->document_date->format('Y-m-d');
+        // CI-05: a replayed warning answers with the matches its actor may view now.
+        $replayState = fn (Outcome $outcome): ?array => $outcome->code === 'FL-10' ? $this->currentWarning($actorUserId, $evidence, $input['file'], $date) : null;
+        $replayed = $this->registry->replay($request, $replayState);
 
         if ($replayed !== null) {
             return $replayed;
         }
 
-        $file = $this->registry->ownUpload($actorUserId, $input['file'], $evidence->company_id);
-        $date = $evidence->document_date->format('Y-m-d');
+        try {
+            $file = $this->registry->ownUpload($actorUserId, $input['file'], $evidence->company_id);
+        } catch (ModelNotFoundException $unknown) {
+            // The same command committed meanwhile, its upload now a version: its recorded outcome answers (CI-05).
+            return $this->registry->replay($request, $replayState) ?? throw $unknown;
+        }
 
-        return $this->registry->withKeys([EvidenceIdentity::contentKey($file->sha256)], function () use ($request, $actor, $file, $evidence, $input, $date): Outcome {
-            $found = $this->registry->matches($actor, $file, $evidence->declared_issuer, $evidence->evidence_type, $evidence->issuer_reference, $date, $evidence->proven_amount, $evidence->company_id, $evidence->id);
+        return $this->registry->withKeys([EvidenceIdentity::contentKey($file->sha256)], function () use ($request, $replayState, $file, $evidence, $input, $date): Outcome {
+            $lookups = $this->matches->of($file->sha256, $file->id, $evidence->declared_issuer, $evidence->evidence_type, $evidence->issuer_reference, $date, $evidence->proven_amount, $evidence->company_id, $evidence->id);
 
-            return $this->registry->run($request, function (CommandContext $context) use ($found, $file, $evidence, $input): CommandResult {
+            return $this->registry->run($request, function (CommandContext $context) use ($lookups, $file, $evidence, $input): CommandResult {
                 $context->lock((new LockSet)->add('evidence_documents', ['id' => $evidence->id]));
                 $this->registry->confirmSession();
                 $authority = $this->registry->ensureHandles($context, $evidence->evidence_type, $evidence->company_id);
+                // DP-13 under the authority re-read at LK-03.
+                $found = $this->registry->classify($authority, $lookups);
                 $row = EvidenceDocument::query()->findOrFail($evidence->id);
                 $override = $this->registry->warn($authority, $row->company_id, $found['visible'], $input['acknowledged'], $input['reason']);
                 $now = $context->now();
@@ -80,7 +92,7 @@ final class AddEvidenceVersion
                     reason: $version->reason,
                     commandId: $context->request->commandId,
                     change: AuditChange::updated(['current_version_id' => $before], ['current_version_id' => $inUse ? $before : $version->id]),
-                    metadata: ['file' => $file->public_id, 'version_no' => $version->version_no, 'current' => ! $inUse, 'reproduction' => $found['reproduction']],
+                    metadata: ['file' => $file->public_id, 'version_no' => $version->version_no, 'current' => ! $inUse, 'reproduction' => $found['reproduction'], 'pool' => $row->company_id === null],
                 );
 
                 if ($override) {
@@ -90,7 +102,26 @@ final class AddEvidenceVersion
                 $this->registry->announceHidden($context, $row, $found['hidden']);
 
                 return new CommandResult('evidence_document', $row->id);
-            });
+            }, $replayState);
         });
+    }
+
+    /**
+     * A refused warning's current matches for its replay, under the actor's authority read again.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function currentWarning(int $actorUserId, EvidenceDocument $evidence, string $filePublicId, string $date): ?array
+    {
+        try {
+            $file = $this->registry->ownUpload($actorUserId, $filePublicId, $evidence->company_id);
+        } catch (ModelNotFoundException) {
+            return null;
+        }
+
+        $actor = $this->capabilities->fresh($actorUserId);
+        $found = $this->registry->classify($actor, $this->matches->of($file->sha256, $file->id, $evidence->declared_issuer, $evidence->evidence_type, $evidence->issuer_reference, $date, $evidence->proven_amount, $evidence->company_id, $evidence->id));
+
+        return $this->registry->warningState($actor, $evidence->company_id, $found['visible']);
     }
 }

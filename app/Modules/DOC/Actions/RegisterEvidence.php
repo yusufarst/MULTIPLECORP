@@ -4,8 +4,8 @@ namespace App\Modules\DOC\Actions;
 
 use App\Modules\DOC\Data\EvidenceIdentity;
 use App\Modules\DOC\Data\EvidenceTypes;
-use App\Modules\DOC\Models\EvidenceBalance;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\DOC\Queries\EvidenceMatches;
 use App\Modules\DOC\Services\EvidenceRegistry;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Audit\AuditChange;
@@ -17,6 +17,7 @@ use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,6 +36,7 @@ final class RegisterEvidence
 
     public function __construct(
         private readonly EvidenceRegistry $registry,
+        private readonly EvidenceMatches $matches,
         private readonly EffectiveCapabilities $capabilities,
         private readonly AuditRecorder $audit,
     ) {}
@@ -48,7 +50,9 @@ final class RegisterEvidence
         $type = $input['type'];
         $amount = EvidenceTypes::isAmountBearing($type) ? $input['amount'] : null;
         $request = $this->registry->request($commandId, self::TYPE, $actorUserId, $companyId, $companyPublicId ?? 'POOL', [...$input, 'amount' => $amount]);
-        $replayed = $this->registry->replay($request);
+        // CI-05: a replayed warning answers with the matches its actor may view now.
+        $replayState = fn (Outcome $outcome): ?array => $outcome->code === 'FL-10' ? $this->currentWarning($actorUserId, $companyId, $input, $amount) : null;
+        $replayed = $this->registry->replay($request, $replayState);
 
         if ($replayed !== null) {
             return $replayed;
@@ -58,16 +62,24 @@ final class RegisterEvidence
             throw new AuthorizationException;
         }
 
-        $file = $this->registry->ownUpload($actorUserId, $input['file'], $companyId);
+        try {
+            $file = $this->registry->ownUpload($actorUserId, $input['file'], $companyId);
+        } catch (ModelNotFoundException $unknown) {
+            // The same command committed meanwhile, its upload now a version: its recorded outcome answers (CI-05).
+            return $this->registry->replay($request, $replayState) ?? throw $unknown;
+        }
+
         $keys = EvidenceIdentity::registrationKeys($file->sha256, $input['issuer'], $input['reference'], $input['date'], $companyId);
 
-        return $this->registry->withKeys($keys, function () use ($request, $actor, $file, $input, $type, $amount, $companyId): Outcome {
-            $found = $this->registry->matches($actor, $file, $input['issuer'], $type, $input['reference'], $input['date'], $amount, $companyId);
+        return $this->registry->withKeys($keys, function () use ($request, $replayState, $file, $input, $type, $amount, $companyId): Outcome {
+            $lookups = $this->matches->of($file->sha256, $file->id, $input['issuer'], $type, $input['reference'], $input['date'], $amount, $companyId);
 
-            return $this->registry->run($request, function (CommandContext $context) use ($found, $file, $input, $type, $amount, $companyId): CommandResult {
+            return $this->registry->run($request, function (CommandContext $context) use ($lookups, $file, $input, $type, $amount, $companyId): CommandResult {
                 $context->lock(new LockSet);
                 $this->registry->confirmSession();
                 $authority = $this->registry->ensureHandles($context, $type, $companyId);
+                // DP-13 under the authority re-read at LK-03: a match revoked meanwhile is shown nothing.
+                $found = $this->registry->classify($authority, $lookups);
                 $key = EvidenceIdentity::key($input['issuer'], $type, $input['reference'], $input['date']);
 
                 if (EvidenceIdentity::reference($input['reference']) !== '') {
@@ -101,7 +113,7 @@ final class RegisterEvidence
                 $version = $this->registry->addVersion($context, $evidence, $file, null, $now);
                 $evidence->forceFill(['current_version_id' => $version->id])->save();
                 // The evidence guard is born with its evidence (FU; C-18): the proven amount caps every citation.
-                (new EvidenceBalance)->forceFill(['evidence_document_id' => $evidence->id, 'proven_amount' => $amount ?? '0', 'recorded_at' => $now])->save();
+                $this->registry->bearGuard($evidence, $amount, $now);
 
                 $this->audit->record(
                     action: 'DOC.EvidenceRegistered',
@@ -123,7 +135,28 @@ final class RegisterEvidence
                 $this->registry->announceHidden($context, $evidence, $found['hidden']);
 
                 return new CommandResult('evidence_document', $evidence->id);
-            });
+            }, $replayState);
         });
+    }
+
+    /**
+     * A refused warning's current matches for its replay, under the actor's authority read again: none when its
+     * upload is no longer the actor's to register.
+     *
+     * @param  array{file: string, type: string, issuer: string, reference: ?string, date: string}  $input
+     * @return array<string, mixed>|null
+     */
+    private function currentWarning(int $actorUserId, ?int $companyId, array $input, ?string $amount): ?array
+    {
+        try {
+            $file = $this->registry->ownUpload($actorUserId, $input['file'], $companyId);
+        } catch (ModelNotFoundException) {
+            return null;
+        }
+
+        $actor = $this->capabilities->fresh($actorUserId);
+        $found = $this->registry->classify($actor, $this->matches->of($file->sha256, $file->id, $input['issuer'], $input['type'], $input['reference'], $input['date'], $amount, $companyId));
+
+        return $this->registry->warningState($actor, $companyId, $found['visible']);
     }
 }

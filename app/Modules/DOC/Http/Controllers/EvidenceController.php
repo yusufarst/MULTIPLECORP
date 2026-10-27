@@ -9,6 +9,7 @@ use App\Modules\DOC\Actions\RegisterEvidence;
 use App\Modules\DOC\Actions\ReplaceEvidence;
 use App\Modules\DOC\Actions\StoreUpload;
 use App\Modules\DOC\Actions\UnlinkEvidence;
+use App\Modules\DOC\Data\EvidenceIdentity;
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Data\LinkHandle;
 use App\Modules\DOC\Data\StoredUpload;
@@ -105,6 +106,11 @@ final class EvidenceController extends Controller
             'reason' => ['nullable', 'string', 'max:500'],
         ]);
         $pool = (bool) ($input['pool'] ?? false);
+
+        // L-45: an issuer of no letter or digit normalizes to nothing and would share one identity with every other.
+        if (EvidenceIdentity::issuer(self::text($input['issuer'])) === '') {
+            throw ValidationException::withMessages(['issuer' => __('evidence.validation.required')]);
+        }
 
         if ($pool && (! in_array($input['type'], EvidenceTypes::POOL_TYPES, true) || ($input['pool_confirmed'] ?? false) !== true)) {
             throw ValidationException::withMessages(['pool_confirmed' => __('evidence.validation.pool')]);

@@ -4,10 +4,10 @@ namespace App\Modules\DOC\Services;
 
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Data\FileFamilies;
+use App\Modules\DOC\Models\EvidenceBalance;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\DOC\Models\FileObject;
-use App\Modules\DOC\Queries\EvidenceMatches;
 use App\Modules\IAM\Data\Authority;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -48,7 +48,6 @@ final class EvidenceRegistry
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly CommandLog $log,
-        private readonly EvidenceMatches $matches,
         private readonly AuditRecorder $audit,
         private readonly SecurityEventRecorder $events,
     ) {}
@@ -104,10 +103,11 @@ final class EvidenceRegistry
 
     /**
      * @param  Closure(CommandContext): CommandResult  $action
+     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState  a replayed warning's current matches (CI-05)
      */
-    public function run(CommandRequest $request, Closure $action): Outcome
+    public function run(CommandRequest $request, Closure $action, ?Closure $replayState = null): Outcome
     {
-        return $this->envelope->run($request, $action);
+        return $this->envelope->run($request, $action, replayState: $replayState);
     }
 
     /**
@@ -115,13 +115,16 @@ final class EvidenceRegistry
      * conflict of other content — through the envelope's replay, so a replay is never refused by a check its own first
      * execution changed, such as its upload now being a version.
      */
-    public function replay(CommandRequest $request): ?Outcome
+    /**
+     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState
+     */
+    public function replay(CommandRequest $request, ?Closure $replayState = null): ?Outcome
     {
         if ($this->log->probe($request->commandId) === null) {
             return null;
         }
 
-        return $this->envelope->run($request, fn (): never => throw new LogicException('A recorded command replays without running (CI-05).'));
+        return $this->envelope->run($request, fn (): never => throw new LogicException('A recorded command replays without running (CI-05).'), replayState: $replayState);
     }
 
     /** FU-10: the attempt's transaction runs on the session that holds the keys, or it ends (SQ-16). */
@@ -160,17 +163,19 @@ final class EvidenceRegistry
     }
 
     /**
-     * The FL-10 matches of an upload, split under DP-13 into those the actor may view and the others.
+     * The matches split under DP-13 by the authority re-read under LK-03 — those the actor may view, and the others —,
+     * and whether one is a rendition, which records the upload as a reproduction (FL-05).
      *
+     * @param  list<array{basis: string, kind: string, record_id: int, public_id: string, company_id: int|null, type: string}>  $matches
      * @return array{visible: list<array{basis: string, kind: string, record_id: int, public_id: string, company_id: int|null, type: string}>, hidden: list<array{basis: string, kind: string, record_id: int, public_id: string, company_id: int|null, type: string}>, reproduction: bool}
      */
-    public function matches(Authority $actor, FileObject $file, string $issuer, string $type, ?string $reference, string $date, ?string $amount, ?int $companyId, ?int $evidenceId = null): array
+    public function classify(Authority $actor, array $matches): array
     {
         $visible = [];
         $hidden = [];
         $reproduction = false;
 
-        foreach ($this->matches->of($file->sha256, $file->id, $issuer, $type, $reference, $date, $amount, $companyId, $evidenceId) as $match) {
+        foreach ($matches as $match) {
             $reproduction = $reproduction || $match['kind'] === 'rendition';
 
             if ($match['kind'] === 'rendition') {
@@ -209,10 +214,29 @@ final class EvidenceRegistry
         $override = $companyId === null ? $authority->has('warnings.override') : $authority->allows('warnings.override', $companyId);
 
         if (! $override || array_diff($ids, $acknowledged) !== [] || $reason === null || trim($reason) === '') {
-            throw Refused::rejected('FL-10', ['matches' => $ids, 'override' => $override, 'labels' => $this->labels($visible)]);
+            throw Refused::rejected('FL-10', $this->warningState($authority, $companyId, $visible));
         }
 
         return true;
+    }
+
+    /**
+     * IP-05's block for the visible matches: their identifiers, whether the actor may override, and their labels — the
+     * first submission's refusal, and a replayed one's current list (CI-05).
+     *
+     * @param  list<array{public_id: string}>  $visible
+     * @return array{matches: list<string>, override: bool, labels: list<array{id: string, kind: string, type: string, reference: string|null, date: string|null, branch: string|null}>}
+     */
+    public function warningState(Authority $authority, ?int $companyId, array $visible): array
+    {
+        $ids = array_values(array_unique(array_column($visible, 'public_id')));
+        sort($ids);
+
+        return [
+            'matches' => $ids,
+            'override' => $companyId === null ? $authority->has('warnings.override') : $authority->allows('warnings.override', $companyId),
+            'labels' => $this->labels($visible),
+        ];
     }
 
     /**
@@ -302,6 +326,12 @@ final class EvidenceRegistry
                 );
             }
         })->always());
+    }
+
+    /** The evidence guard, born with its evidence at the proven amount, 0 for a type that proves none (C-18; FU). */
+    public function bearGuard(EvidenceDocument $evidence, ?string $proven, CarbonImmutable $now): void
+    {
+        (new EvidenceBalance)->forceFill(['evidence_document_id' => $evidence->id, 'proven_amount' => $proven ?? '0', 'recorded_at' => $now])->save();
     }
 
     /** A version's row — the next number of its evidence —, its file the actor's own upload. */

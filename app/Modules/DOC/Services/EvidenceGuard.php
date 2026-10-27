@@ -6,6 +6,7 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
+use App\Support\GuardUpdate;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -35,9 +36,9 @@ final class EvidenceGuard
             throw Refused::rejected('C-58', ['role' => $role]);
         }
 
-        $statement = in_array($role, self::EXPENSED, true)
-            ? 'update evidence_balances set expensed_amount = expensed_amount + ?::numeric where evidence_document_id = ?'
-            : 'update evidence_balances set cited_amount = cited_amount + ?::numeric where evidence_document_id = ?';
-        DB::update($statement, [$amount, $evidenceId]);
+        GuardUpdate::apply($context->connection, 'evidence_balances', [[
+            'key' => ['evidence_document_id' => $evidenceId],
+            'deltas' => [in_array($role, self::EXPENSED, true) ? 'expensed_amount' : 'cited_amount' => $amount],
+        ]]);
     }
 }

@@ -1,9 +1,12 @@
 <?php
 
+use App\Modules\DOC\Data\LinkHandle;
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\DOC\Models\EvidenceDocumentVersion;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PRJ\Models\Project;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
@@ -65,6 +68,21 @@ it('serves an evidence file only to its family\'s viewers in scope, another comp
         ->assertHeader('Content-Disposition');
     $this->actingAs($this->projects)->get("/berkas/{$this->statementFile->public_id}/unduh")->assertNotFound();
     $this->actingAs($outsider)->get("/berkas/{$this->statementFile->public_id}/unduh")->assertNotFound();
+});
+
+it('shows, counts and unlinks only the links whose record the viewer may see (PJ-08 row 95)', function () {
+    $project = Project::factory()->create(['company_id' => $this->company->id]);
+    $link = DB::table('evidence_links')->insertGetId(['evidence_document_id' => $this->statement->id, 'evidence_scope' => 'COMPANY',
+        'company_id' => $this->company->id, 'role' => 'SUPPORTING', 'project_id' => $project->id, 'recorded_at' => now()]);
+    $both = Authorization::admin([$this->company->id], ['finance.view', 'projects.view', 'evidence.view', 'evidence.upload']);
+    $sheet = fn ($viewer) => $this->actingAs($viewer)->get("/dokumen/bukti?bukti={$this->statement->public_id}");
+
+    $sheet($this->finance)->assertInertia(fn (AssertableInertia $page) => $page->has('evidence.links', 0)->where('rows.0.links', 0));
+    $sheet($both)->assertInertia(fn (AssertableInertia $page) => $page->has('evidence.links', 1)->where('rows.0.links', 1));
+    $this->actingAs($this->finance)->post("/bukti/{$this->statement->public_id}/tautan", ['command_id' => (string) Str::uuid(), 'action' => 'unlink',
+        'link' => LinkHandle::of($link), 'reason' => 'Bukan urusan saya'])->assertNotFound();
+
+    expect(DB::table('evidence_links')->whereNull('unlinked_at')->count())->toBe(1);
 });
 
 it('opens pool evidence to `stock.view` with `evidence.view` only, whatever company the reader has (PJ-08; CS-05)', function () {
