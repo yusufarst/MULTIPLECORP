@@ -76,7 +76,8 @@ it('shows the directory and an account\'s detail to the Owner, never a secret, a
     $page = usersOwner($this)->get('/pengaturan/pengguna?akun='.$this->admin->public_id.'&bagian=sesi')->assertOk();
     $page->assertInertia(fn (AssertableInertia $inertia) => $inertia
         ->component('IAM/UsersAndAccess', false)
-        ->has('accounts', 2)
+        ->has('accounts.rows', 2)
+        ->where('accounts.more', false)
         ->where('account.id', $this->admin->public_id)
         ->where('account.capabilities', ['projects.view'])
         ->where('account.companies.0.id', $this->company->public_id)

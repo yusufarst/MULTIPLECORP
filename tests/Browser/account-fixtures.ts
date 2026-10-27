@@ -6,7 +6,7 @@ import { expect, type Page } from '@playwright/test';
 // has TOTP —, the test's own authenticator, and the faked Google of ROUTE-102 and ROUTE-103 for the link attempt
 // (routes/fixtures.php; SM-20 — no test calls Google).
 
-export type Account = { email: string; password: string; secret?: string; recovery_codes?: string[] };
+export type Account = { id: string; email: string; password: string; secret?: string; recovery_codes?: string[] };
 
 let runs = 0;
 

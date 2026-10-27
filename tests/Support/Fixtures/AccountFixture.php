@@ -33,7 +33,7 @@ final class AccountFixture
         $locale = in_array($request->input('locale'), ['id', 'en'], true) ? $request->input('locale') : 'id';
         $account = (new User)->forceFill(['name' => 'Rani Uji', 'email' => "rani-{$run}@contoh.test", 'password' => self::PASSWORD, 'locale' => $locale]);
         $account->save();
-        $answer = ['email' => $account->email, 'password' => self::PASSWORD, 'token' => $links->issue($account, 'RESET', $owner->id)];
+        $answer = ['id' => $account->public_id, 'email' => $account->email, 'password' => self::PASSWORD, 'token' => $links->issue($account, 'RESET', $owner->id)];
 
         // TASK-021: an Owner with a confirmed TOTP (`kind=owner`, `totp=1`), for PG-061.
         if ($request->input('kind') === 'totp' || $request->boolean('totp')) {

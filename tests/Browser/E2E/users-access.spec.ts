@@ -80,7 +80,7 @@ test('creates an account, grants after the preview, shows its link once, activat
     await device.getByLabel('Ulangi kata sandi baru').fill('Rapat-Gudang-24!');
     await device.getByRole('button', { name: 'Simpan Kata Sandi' }).click();
     await device.waitForURL('**/masuk');
-    await signIn(device, { email, password: 'Rapat-Gudang-24!' });
+    await signIn(device, { id: '', email, password: 'Rapat-Gudang-24!' });
 
     // "Akhiri Sesi" (ROUTE-130): the holder signs in again.
     await page.reload();
@@ -113,6 +113,7 @@ test('creates an account, grants after the preview, shows its link once, activat
 
 test('answers an Admin\'s address for PG-060 as a missing page (OD-01; IP-21)', async ({ page }) => {
     await signedIn(page, 'pengguna-admin');
-    await page.goto('/pengaturan/pengguna');
-    await expect(page.locator('[data-system-page="not_found"]')).toBeVisible();
+    const answer = await page.goto('/pengaturan/pengguna');
+    expect(answer?.status()).toBe(404);
+    await expect(page.getByRole('heading', { level: 1 })).not.toHaveText('Pengguna & Akses');
 });

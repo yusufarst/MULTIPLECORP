@@ -12,7 +12,7 @@ import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { ActionBar } from '@/components/action-bar';
 import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
-import { DataTable } from '@/components/data-list';
+import { DataTable, ListContinuation } from '@/components/data-list';
 import { FormField, FormSection } from '@/components/form';
 import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
@@ -65,7 +65,7 @@ type Preview = {
     changes: { capabilities_added: string[]; capabilities_removed: string[]; companies_added: string[]; companies_removed: string[]; disabled: string[] } | null;
     missing?: string[];
 };
-type Props = { accounts: Directory[]; account: Account | null; section: Section; catalogue: Catalogue; companies: Company[]; preview?: Preview | null };
+type Props = { accounts: { rows: Directory[]; more: boolean }; account: Account | null; section: Section; catalogue: Catalogue; companies: Company[]; preview?: Preview | null };
 type Flash = { credential_link?: { url?: unknown; purpose?: unknown; expires_at?: unknown } };
 
 const SECTIONS: Section[] = ['profil', 'akses', 'sesi', 'tautan', 'keamanan'];
@@ -82,11 +82,12 @@ function visit(account: string | null, section?: Section) {
     router.get('/pengaturan/pengguna', account === null ? {} : { akun: account, bagian: section ?? 'profil' }, { preserveScroll: true });
 }
 
-/** A command form's answer in place, with "Coba Lagi" while the outcome is unknown (IP-01; IP-04). */
+/** A command form's refusal or failure in place, with "Coba Lagi" while the outcome is unknown (IP-01; IP-04); its
+    success is the page's (PageAnswer), since the section it came from is drawn again with the change. */
 function CommandAnswer({ command }: { command: { answer: Answer | null; unknown: boolean; retry: () => void } }) {
     const { t } = useTranslation();
 
-    if (command.answer === null) return null;
+    if (command.answer === null || command.answer.kind === 'COMMITTED') return null;
 
     return (
         <OutcomeMessage
@@ -100,6 +101,13 @@ function CommandAnswer({ command }: { command: { answer: Answer | null; unknown:
             }
         />
     );
+}
+
+/** A command's success on the page the answer opened, once — its flash data (IP-01). */
+function PageAnswer() {
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
+
+    return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
 /** The link the command issued, shown once with its expiry for out-of-band delivery (AU-12), copied but never kept. */
@@ -198,9 +206,15 @@ function CreateAccount({ onDone }: { onDone: () => void }) {
     );
 }
 
-function Directory({ accounts }: { accounts: Directory[] }) {
+function Directory({ accounts }: { accounts: { rows: Directory[]; more: boolean } }) {
     const { t } = useTranslation();
     const [creating, setCreating] = useState(false);
+    const [loading, setLoading] = useState(false);
+    // PT-08: "Muat Lagi" asks for as many rows again on a partial reload, the address unchanged.
+    const loadMore = () => {
+        setLoading(true);
+        router.reload({ only: ['accounts'], data: { batas: accounts.rows.length + 25 }, preserveUrl: true, onFinish: () => { setLoading(false); } });
+    };
 
     return (
         <div className="flex min-w-0 flex-col gap-6">
@@ -215,6 +229,7 @@ function Directory({ accounts }: { accounts: Directory[] }) {
                     )
                 }
             />
+            <PageAnswer />
             {creating && <CreateAccount onDone={() => { setCreating(false); }} />}
             {/* On the phone the page header's primary action moves to the bottom action bar (PT-03). */}
             {!creating && (
@@ -227,7 +242,7 @@ function Directory({ accounts }: { accounts: Directory[] }) {
             )}
             <DataTable
                 caption={t('pages.pg_060.title')}
-                rows={accounts}
+                rows={accounts.rows}
                 rowKey={(row) => row.id}
                 rowHref={(row) => `/pengaturan/pengguna?akun=${row.id}&bagian=profil`}
                 columns={[
@@ -239,6 +254,7 @@ function Directory({ accounts }: { accounts: Directory[] }) {
                     { key: 'activity', header: t('users.sessions.last_activity'), cell: (row) => (row.last_activity === null ? '—' : <DateTimeText value={row.last_activity} />), priority: 'low' },
                 ]}
             />
+            <ListContinuation state={accounts.more ? 'more' : 'end'} loading={loading} onLoadMore={loadMore} onReload={loadMore} />
         </div>
     );
 }
@@ -712,6 +728,7 @@ function Detail({ account, section, catalogue, companies, preview }: { account: 
                 {t('shell.back')}
             </Button>
             <PageHeader title={account.name} facts={<span className="break-all">{account.email}</span>} />
+            <PageAnswer />
             <Tabs
                 value={section}
                 onValueChange={(value) => {

@@ -21,7 +21,7 @@ for (const width of [390, 1280]) {
         await expect(page.getByLabel(/^E-mail/)).toBeVisible();
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
-        await page.getByRole('row').filter({ hasText: owner.email }).getByRole('link').click();
+        await page.goto(`/pengaturan/pengguna?akun=${owner.id}&bagian=profil`);
         await expect(page.getByRole('tab', { name: 'Profil' })).toBeVisible({ timeout: 15_000 });
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 

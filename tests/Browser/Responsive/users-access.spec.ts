@@ -16,7 +16,7 @@ for (const width of [320, 390, 768, 1280, 1680]) {
         await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pengguna & Akses');
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
-        await page.getByRole('row').filter({ hasText: owner.email }).getByRole('link').click();
+        await page.goto(`/pengaturan/pengguna?akun=${owner.id}&bagian=profil`);
         await expect(page.getByRole('tab', { name: 'Profil' })).toBeVisible({ timeout: 15_000 });
         await expect(page.getByRole('button', { name: 'Nonaktifkan' })).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);

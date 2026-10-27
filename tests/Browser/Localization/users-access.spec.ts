@@ -21,7 +21,7 @@ for (const locale of ['id', 'en'] as const) {
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(copy.title);
         await expect(page.getByRole('button', { name: copy.create })).toBeVisible();
 
-        await page.getByRole('row').filter({ hasText: owner.email }).getByRole('link').click();
+        await page.goto(`/pengaturan/pengguna?akun=${owner.id}&bagian=profil`);
         for (const section of copy.sections) {
             await expect(page.getByRole('tab', { name: section })).toBeVisible({ timeout: 15_000 });
         }
