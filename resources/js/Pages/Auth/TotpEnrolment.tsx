@@ -7,6 +7,7 @@
 import { Head, router, useForm, usePage } from '@inertiajs/react';
 import { useEffect, useId, useState } from 'react';
 
+import { QrCode } from '@/components/qr-code';
 import { PasswordInput } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui/field';
@@ -16,28 +17,6 @@ import { postAnswer } from '@/lib/session-guard';
 import { documentTitle } from '@/lib/title';
 
 type Flash = { qr?: unknown; key?: unknown; recovery_codes?: unknown };
-
-/** The enrolment's QR code, encoded by the server and drawn here from its modules — no remote image, no raw markup. */
-function QrCode({ rows, label }: { rows: string[]; label: string }) {
-    const size = rows.length;
-    const quiet = 4;
-
-    return (
-        <svg
-            role="img"
-            aria-label={label}
-            viewBox={`${String(-quiet)} ${String(-quiet)} ${String(size + quiet * 2)} ${String(size + quiet * 2)}`}
-            className="size-48 self-start bg-white"
-            shapeRendering="crispEdges"
-        >
-            {rows.flatMap((row, y) =>
-                Array.from({ length: row.length }, (_, x) =>
-                    row.charAt(x) === '1' ? <rect key={`${String(x)}-${String(y)}`} x={x} y={y} width={1} height={1} fill="#111827" /> : null,
-                ),
-            )}
-        </svg>
-    );
-}
 
 export default function TotpEnrolment({ stage, replacing }: { stage: 'enrol' | 'codes'; replacing: boolean }) {
     const { t } = useTranslation();

@@ -1260,6 +1260,492 @@
             "source": "DIR-098 D1a",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "account.sections.profile": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.sections.password": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.sections.totp": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.sections.codes": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.sections.google": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.sections.activity": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.name": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.email": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.role": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.capabilities": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.companies": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.profile.none": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.current": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.new": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.repeat": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.submit": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.changed": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.current_wrong": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.password.mismatch": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.on": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.off": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.required": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.enrol": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.replace": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.current_code": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.new_code": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.code": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.scan": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.key": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.confirm": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.enrolled": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.disable": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.disable_line": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.disabled": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.high_risk": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.totp.none": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.codes.view": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.codes.regenerate": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.codes.line": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.codes.shown": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.codes.regenerated": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.linked": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.linked_line": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.none": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.link": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.confirm": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.pending": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.unlink": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.unlinked": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.refused": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.no_attempt": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.failed": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.off": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.needs_totp": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.activity.last_login": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.activity.empty": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.activity.by": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.locale.label": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.locale.default": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.locale.id": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.locale.en": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.locale.unknown": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.ACCOUNT_SETUP_LINK_ISSUED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.ACCOUNT_SETUP_COMPLETED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.PASSWORD_RESET_REQUESTED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.PASSWORD_RESET_COMPLETED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.OWNER_RECOVERY_LINK_ISSUED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.PASSWORD_CHANGED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.TOTP_ENROLLED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.TOTP_REPLACED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.TOTP_RESET": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.TOTP_DISABLED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.CREDENTIALS_VOIDED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.RECOVERY_CODE_USED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.RECOVERY_CODES_VIEWED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.RECOVERY_CODES_REGENERATED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.TWO_FACTOR_COOLDOWN_STARTED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.GOOGLE_LINKED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.events.GOOGLE_UNLINKED": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "messages.msg_29_event": {
+            "task": "TASK-023",
+            "source": "SECURITY AU-13; H7-18 (MSG-29 naming the event)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "account.google.linked_since": {
+            "task": "TASK-023",
+            "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -61,6 +61,16 @@ class AppServiceProvider extends ServiceProvider
 
         CapabilityGates::register();
 
+        // WS-12's password-change limiter: 5 per 15 minutes per account (ROUTE-111; AU-13), its answer MSG-20 at the field.
+        RateLimiter::for('password-change', fn (Request $request): Limit => Limit::perMinutes(15, 5)
+            ->by('password-change:'.self::scalar($request->user()?->getAuthIdentifier()))
+            ->response(function (Request $request, array $headers) {
+                $retry = $headers['Retry-After'] ?? 900;
+                $minutes = max(1, (int) ceil((is_numeric($retry) ? (int) $retry : 900) / 60));
+
+                return back(303)->withErrors(['current_password' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])]);
+            }));
+
         // WS-12's search limiter: 60 searches a minute per account, separate from the scanner's burst-sized one
         // (TM-43); its answer is MSG-20 with the minutes left, read by the field that asked (ROUTE-281).
         RateLimiter::for('search', fn (Request $request): Limit => Limit::perMinute(60)

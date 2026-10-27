@@ -8,8 +8,8 @@ import { SystemPage } from '@/components/region-state';
 import { Button } from '@/components/ui/button';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
-import { type AccountHints, BUILT, isOwner } from '@/lib/navigation';
-import { previousPage } from '@/lib/previous-page';
+import { type AccountHints } from '@/lib/navigation';
+import { landingPage, previousPage } from '@/lib/previous-page';
 import { documentTitle } from '@/lib/title';
 
 type Kind = 'not_found' | 'forbidden' | 'error';
@@ -25,8 +25,7 @@ function back(account: AccountHints): void {
         return;
     }
 
-    const landing = isOwner(account) && BUILT.has('PG-006') ? '/beranda' : BUILT.has('PG-007') ? '/pekerjaan' : '/';
-    window.location.assign(landing);
+    window.location.assign(landingPage(account));
 }
 
 export default function SystemPageView({ kind, reference }: { kind: Kind; reference: string }) {

@@ -69,64 +69,80 @@ final class GoogleIdentities
     /** The holder links its own verified Google identity (AU-23); answers what happened. */
     public function link(User $holder, string $subject, ?string $email): string
     {
+        $outcome = DB::transaction(function () use ($holder, $subject, $email): string {
+            $row = User::query()->lockForUpdate()->find($holder->id);
+
+            return $row instanceof User ? $this->linkLocked($row, $subject, $email) : self::REFUSED;
+        });
+        $this->announce($holder, $outcome);
+
+        return $outcome;
+    }
+
+    /**
+     * The link on an account row its caller holds locked in its transaction — PG-065's in the current code's own
+     * (AU-23; RV-16): the account active with a confirmed TOTP, the subject and the account re-read, then the insert.
+     * Its outcome is announced by `announce` once that transaction commits.
+     */
+    public function linkLocked(User $row, string $subject, ?string $email): string
+    {
+        if ($row->getAttribute('is_active') !== true || $row->getAttribute('two_factor_confirmed_at') === null) {
+            return self::REFUSED;
+        }
+
+        $linked = DB::table('user_external_identities')->where('provider', self::PROVIDER)
+            ->where('provider_subject', $subject)->whereNull('unlinked_at')->value('user_id');
+
+        if (is_numeric($linked)) {
+            return (int) $linked === $row->id ? self::NO_OP : self::CONFLICT;
+        }
+
+        if (DB::table('user_external_identities')->where('user_id', $row->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->exists()) {
+            return self::ALREADY_LINKED;
+        }
+
         try {
-            $outcome = DB::transaction(function () use ($holder, $subject, $email): string {
-                $row = User::query()->lockForUpdate()->find($holder->id);
-
-                if (! $row instanceof User || $row->getAttribute('is_active') !== true || $row->getAttribute('two_factor_confirmed_at') === null) {
-                    return self::REFUSED;
-                }
-
-                $linked = DB::table('user_external_identities')->where('provider', self::PROVIDER)
-                    ->where('provider_subject', $subject)->whereNull('unlinked_at')->value('user_id');
-
-                if (is_numeric($linked)) {
-                    return (int) $linked === $row->id ? self::NO_OP : self::CONFLICT;
-                }
-
-                if (DB::table('user_external_identities')->where('user_id', $row->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->exists()) {
-                    return self::ALREADY_LINKED;
-                }
-
-                $id = DB::table('user_external_identities')->insertGetId([
-                    'user_id' => $row->id,
-                    'provider' => self::PROVIDER,
-                    'provider_subject' => $subject,
-                    'email_at_link' => $email,
-                    'linked_at' => now(),
-                    'linked_by' => $row->id,
-                ]);
-                $this->audit->record(
-                    action: 'IAM.GoogleLinked',
-                    authorityClass: AuthorityClass::System,
-                    actorUserId: $row->id,
-                    companyId: null,
-                    entityType: 'user',
-                    entityId: $row->id,
-                    entityPublicId: $row->public_id,
-                    change: AuditChange::created(['provider' => self::PROVIDER, 'email_at_link' => $email]),
-                    metadata: ['external_identity' => $id],
-                );
-
-                return self::LINKED;
-            });
+            // A savepoint: C-64's unique violation — another account took the subject between the re-read and the
+            // insert — rolls back the insert alone, the caller's transaction going on.
+            $id = DB::transaction(fn (): int => DB::table('user_external_identities')->insertGetId([
+                'user_id' => $row->id,
+                'provider' => self::PROVIDER,
+                'provider_subject' => $subject,
+                'email_at_link' => $email,
+                'linked_at' => now(),
+                'linked_by' => $row->id,
+            ]));
         } catch (QueryException $e) {
-            // C-64: another account took the subject between the re-read and the insert.
             if ($e->getCode() !== '23505') {
                 throw $e;
             }
 
-            $outcome = self::CONFLICT;
+            return self::CONFLICT;
         }
 
-        // After the outermost commit — at once when the caller opened no transaction —, never for a rolled-back step.
+        $this->audit->record(
+            action: 'IAM.GoogleLinked',
+            authorityClass: AuthorityClass::System,
+            actorUserId: $row->id,
+            companyId: null,
+            entityType: 'user',
+            entityId: $row->id,
+            entityPublicId: $row->public_id,
+            change: AuditChange::created(['provider' => self::PROVIDER, 'email_at_link' => $email]),
+            metadata: ['external_identity' => $id],
+        );
+
+        return self::LINKED;
+    }
+
+    /** A link's security event and alert, after the outermost commit — never for a rolled-back step (LG-01; LG-07). */
+    public function announce(User $holder, string $outcome): void
+    {
         match ($outcome) {
             self::LINKED => DB::afterCommit(fn () => $this->linked($holder)),
-            self::CONFLICT => $this->conflict($holder),
+            self::CONFLICT => DB::afterCommit(fn () => $this->conflict($holder)),
             default => null,
         };
-
-        return $outcome;
     }
 
     /**

@@ -8,6 +8,7 @@ use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
 use App\Modules\IAM\Http\Controllers\ConfirmPasswordController;
 use App\Modules\IAM\Http\Controllers\GoogleSignInController;
+use App\Modules\IAM\Http\Controllers\OwnAccountController;
 use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
@@ -38,7 +39,9 @@ Route::post('/verifikasi-dua-langkah', [TotpEnrolmentController::class, 'confirm
 
 // Google sign-in (TASK-019; SECURITY AU-22): existing accounts only, always followed by PG-002's challenge;
 // throttled per client address (AU-05); off with no client configured (GLC-09).
-Route::get('/masuk/google', [GoogleSignInController::class, 'redirect'])->middleware(['guest', 'access:none,google_redirect', 'throttle:google'])->name('google.redirect');
+// ROUTE-102 starts a SIGN_IN attempt for a guest and, with `tujuan=tautkan`, PG-065's LINK attempt for the holder's own
+// session established with TOTP (AU-23; TASK-023): each purpose checks its own session state.
+Route::get('/masuk/google', [GoogleSignInController::class, 'redirect'])->middleware(['access:none,google_redirect', 'throttle:google'])->name('google.redirect');
 Route::get('/masuk/google/callback', [GoogleSignInController::class, 'callback'])->middleware(['access:none,google_callback', 'throttle:google'])->name('google.callback');
 
 // PG-061 *Penomoran Dokumen* (TASK-021; ROUTE-061, ROUTE-136, ROUTE-137; NAV-061): the Owner's numbering area and its
@@ -48,6 +51,18 @@ Route::get('/pengaturan/penomoran', [NumberingController::class, 'show'])->middl
 Route::put('/pengaturan/penomoran/{type}', [NumberingController::class, 'configure'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.configure');
 Route::post('/pengaturan/penomoran/{type}/mulai', [NumberingController::class, 'start'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.start');
 
+// PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
+// own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),
+// the code-taking ones under AU-05's throttles inside their steps, the password change under WS-12's 5 per 15 minutes.
+Route::get('/akun', [OwnAccountController::class, 'show'])->middleware(['auth', 'access:self'])->name('account.show');
+Route::put('/akun/kata-sandi', [OwnAccountController::class, 'password'])->middleware(['auth', 'access:self', 'throttle:password-change'])->name('account.password');
+Route::post('/akun/verifikasi-dua-langkah', [OwnAccountController::class, 'enrol'])->middleware(['auth', 'access:self', 'step-up'])->name('account.totp');
+Route::delete('/akun/verifikasi-dua-langkah', [OwnAccountController::class, 'disableTotp'])->middleware(['auth', 'access:self', 'step-up'])->name('account.totp.disable');
+Route::post('/akun/kode-pemulihan', [OwnAccountController::class, 'viewCodes'])->middleware(['auth', 'access:self', 'step-up'])->name('account.recovery-codes');
+Route::post('/akun/kode-pemulihan/baru', [OwnAccountController::class, 'regenerateCodes'])->middleware(['auth', 'access:self', 'step-up'])->name('account.recovery-codes.regenerate');
+Route::post('/akun/google', [OwnAccountController::class, 'linkGoogle'])->middleware(['auth', 'access:self', 'step-up'])->name('account.google');
+Route::delete('/akun/google', [OwnAccountController::class, 'unlinkGoogle'])->middleware(['auth', 'access:self', 'step-up'])->name('account.google.unlink');
+Route::put('/akun/bahasa', [OwnAccountController::class, 'locale'])->middleware(['auth', 'access:self'])->name('account.locale');
 // Private files and polled states (TASK-022; ROUTE-226, ROUTE-227, ROUTE-285): every active account reaches the
 // route, and the owning record or the page's query class decides at request time (DP-05; FL-07; PJ-08; PJ-15); a
 // denied and an unknown record answer alike (AZ-11). The download is the user's own request (RB-04); the thumbnail

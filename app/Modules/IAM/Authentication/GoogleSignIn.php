@@ -28,6 +28,15 @@ final class GoogleSignIn
 
     public const ATTEMPT_SECONDS = 600;
 
+    /** A LINK attempt's verified identity, kept for the holder's confirming request for 10 minutes (AU-23). */
+    public const LINK = 'auth.google_link';
+
+    /** The flash key of PG-065's answer to a LINK attempt: `ready` or `failed`. */
+    public const LINK_ANSWER = 'auth.google_link_answer';
+
+    /** The address value that starts a LINK attempt from PG-065 (`?tujuan=tautkan`). */
+    public const LINK_PURPOSE = 'tautkan';
+
     /** The flash key of PG-001's generic Google failure. */
     public const FAILED = 'auth.google_failed';
 
@@ -48,8 +57,17 @@ final class GoogleSignIn
     /** ROUTE-102: Google's consent page, the attempt's marker and nonce kept in the session. */
     public function start(Request $request): Response
     {
-        if (! self::enabled() || $request->user() !== null) {
-            return $this->failure($request, self::enabled() ? 'SESSION_AUTHENTICATED' : 'NOT_CONFIGURED');
+        if ($request->query('tujuan') === self::LINK_PURPOSE) {
+            return $this->startLink($request);
+        }
+
+        // A signed-in session never starts a sign-in: it goes home, as the `guest` middleware sent it (AU-22).
+        if ($request->user() !== null) {
+            return redirect('/');
+        }
+
+        if (! self::enabled()) {
+            return $this->failure($request, 'NOT_CONFIGURED');
         }
 
         $nonce = Str::random(40);
@@ -67,6 +85,10 @@ final class GoogleSignIn
         }
 
         $attempt = $request->session()->pull(self::ATTEMPT);
+
+        if (is_array($attempt) && ($attempt['purpose'] ?? null) === 'LINK') {
+            return $this->linkCallback($request, $attempt);
+        }
 
         if (! self::enabled()) {
             return $this->failure($request, 'NOT_CONFIGURED');
@@ -135,6 +157,84 @@ final class GoogleSignIn
         }
 
         return $provider;
+    }
+
+    /**
+     * The verified identity a LINK attempt keeps for this account, still within its 10 minutes (AU-23).
+     *
+     * @return array{sub: string, email: ?string}|null
+     */
+    public static function pendingLink(Request $request, User $account): ?array
+    {
+        $held = $request->session()->get(self::LINK);
+
+        if (! is_array($held) || ($held['user'] ?? null) !== $account->id || ! is_string($held['sub'] ?? null)
+            || ! is_int($held['expires_at'] ?? null) || $held['expires_at'] <= now()->getTimestamp()) {
+            return null;
+        }
+
+        return ['sub' => $held['sub'], 'email' => is_string($held['email'] ?? null) ? $held['email'] : null];
+    }
+
+    /**
+     * ROUTE-102 with `tujuan=tautkan` (AU-23): only the holder links, from its active session established with TOTP,
+     * active TOTP on the account; the attempt records the account it is for.
+     */
+    private function startLink(Request $request): Response
+    {
+        $user = $request->user();
+
+        if (! self::enabled() || ! $user instanceof User || $user->getAttribute('two_factor_confirmed_at') === null
+            || $request->session()->get(TwoFactorChallenge::METHOD) !== EstablishSession::TOTP) {
+            return $this->linkFailure($request, ! self::enabled() ? 'NOT_CONFIGURED' : 'NOT_ALLOWED');
+        }
+
+        $nonce = Str::random(40);
+        $request->session()->put(self::ATTEMPT, ['purpose' => 'LINK', 'user' => $user->id, 'nonce' => $nonce, 'started_at' => now()->getTimestamp()]);
+
+        return $this->provider($request)->redirectWithNonce($nonce);
+    }
+
+    /**
+     * ROUTE-103 for a LINK attempt: Google's response verified in the session of the account the attempt recorded;
+     * the verified `sub` and e-mail kept for 10 minutes; nothing is linked here (AU-22; AU-23).
+     *
+     * @param  array<mixed>  $attempt
+     */
+    private function linkCallback(Request $request, array $attempt): Response
+    {
+        $user = $request->user();
+
+        if (! self::enabled() || ! $user instanceof User || ($attempt['user'] ?? null) !== $user->id || ! is_string($attempt['nonce'] ?? null)
+            || ! is_int($attempt['started_at'] ?? null) || now()->getTimestamp() - $attempt['started_at'] > self::ATTEMPT_SECONDS) {
+            return $this->linkFailure($request, 'NO_ATTEMPT');
+        }
+
+        $verified = $this->provider($request)->verifiedIdentity($attempt['nonce']);
+
+        if ($verified['identity'] === null) {
+            return $this->linkFailure($request, $verified['reason']);
+        }
+
+        $request->session()->put(self::LINK, [
+            'user' => $user->id,
+            'sub' => $verified['identity']['sub'],
+            'email' => $verified['identity']['email'] ?? null,
+            'expires_at' => now()->getTimestamp() + self::ATTEMPT_SECONDS,
+        ]);
+        $request->session()->flash(self::LINK_ANSWER, 'ready');
+
+        return redirect('/akun');
+    }
+
+    /** A LINK attempt's failure answers generically on PG-065, recorded with its reason (AU-22; AU-23). */
+    private function linkFailure(Request $request, string $reason): Response
+    {
+        $this->events->record(SecurityEventKind::GoogleSigninFailed, userId: is_numeric($request->user()?->getAuthIdentifier()) ? (int) $request->user()->getAuthIdentifier() : null, reasonCode: "LINK_{$reason}", routeName: $request->route()?->getName(), ipAddress: $request->ip(), userAgent: $request->userAgent());
+        $request->session()->forget(['state', 'code_verifier']);
+        $request->session()->flash(self::LINK_ANSWER, 'failed');
+
+        return redirect($request->user() === null ? '/masuk' : '/akun');
     }
 
     /** One generic failure on PG-001, recorded with its reason; password sign-in stays (AU-22, AU-24). */

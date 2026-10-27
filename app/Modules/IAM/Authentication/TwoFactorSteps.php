@@ -52,6 +52,9 @@ final class TwoFactorSteps
 
     public const STALE = 'STALE';
 
+    /** PG-065's device replacement proved by a current code of the device being replaced, for the enrolment's life (AU-20 a). */
+    public const REPLACEMENT_PROVED = 'auth.replacement_proved';
+
     public function __construct(
         private readonly Totp $totp,
         private readonly SecondFactorLimit $limit,
@@ -233,6 +236,19 @@ final class TwoFactorSteps
     }
 
     /**
+     * The enrolment this session still holds, for its confirmation's retry after a wrong code; null once it lapsed or
+     * was discarded.
+     *
+     * @return array{qr: list<string>, key: string, replacing: bool}|null
+     */
+    public function heldEnrolment(Request $request): ?array
+    {
+        $held = $request->session()->get(self::ENROLMENT);
+
+        return is_array($held) && is_int($held['expires_at'] ?? null) && $held['expires_at'] > now()->getTimestamp() ? $this->enrolment($request) : null;
+    }
+
+    /**
      * ROUTE-004: the enrolment in progress, a new secret when none is held or it lapsed; its QR code and text
      * key, for the page's flash data only.
      *
@@ -300,8 +316,11 @@ final class TwoFactorSteps
         $step = $this->totp->stepOf($secret, $code, null);
         $replacing = $user->getAttribute('two_factor_confirmed_at') !== null;
 
-        // A device is replaced here only by AU-20 b's recovery-code session; any other replacement is path (a).
-        if ($step === null || ($replacing && $request->session()->get(TwoFactorChallenge::RECOVERY_MARK) !== true)) {
+        // A device is replaced by AU-20 b's recovery-code session, or on PG-065 after a current code of the device
+        // being replaced, for the same enrolment (path (a)).
+        $proved = $request->session()->get(self::REPLACEMENT_PROVED) === $held['expires_at'];
+
+        if ($step === null || ($replacing && $request->session()->get(TwoFactorChallenge::RECOVERY_MARK) !== true && ! $proved)) {
             $this->throttle->failed($request, self::throttleKey($user->id));
 
             return null;
@@ -309,7 +328,8 @@ final class TwoFactorSteps
 
         $codes = $this->totp->newRecoveryCodes();
         $digest = $request->session()->get(EnforceSessionLimits::DIGEST);
-        $confirmed = DB::transaction(function () use ($user, $secret, $codes, $step, $digest, $replacing): bool {
+        $sessionId = $request->session()->getId();
+        $confirmed = DB::transaction(function () use ($user, $secret, $codes, $step, $digest, $replacing, $sessionId): bool {
             $row = User::query()->lockForUpdate()->find($user->id);
 
             // RV-12: the account active, its password the session's (RV-10), its factor state the one this session saw.
@@ -339,6 +359,10 @@ final class TwoFactorSteps
                 change: AuditChange::updated($before, ['two_factor_secret' => $after['two_factor_secret'], 'two_factor_recovery_codes' => $after['two_factor_recovery_codes']]),
             );
 
+            // RV-14, last: the account's unused credential links revoked (LK-04) and its other sessions deleted (LK-05).
+            DB::table('credential_tokens')->where('user_id', $row->id)->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => now()]);
+            $this->terminator->endAll($row->id, $sessionId);
+
             return true;
         });
 
@@ -355,7 +379,7 @@ final class TwoFactorSteps
 
         // The enrolment's change ends every other session and restamps this one, under a new identifier (AU-16; AU-06).
         // AU-20's every path: the password confirmation this session held is cleared with the enrolment-only state.
-        $request->session()->forget([self::ENROLMENT, TwoFactorChallenge::ENROLMENT_ONLY, TwoFactorChallenge::RECOVERY_MARK, RequireStepUp::CONFIRMED_AT]);
+        $request->session()->forget([self::ENROLMENT, self::REPLACEMENT_PROVED, TwoFactorChallenge::ENROLMENT_ONLY, TwoFactorChallenge::RECOVERY_MARK, RequireStepUp::CONFIRMED_AT]);
         $request->session()->regenerate(true);
         $this->terminator->endAll($user->id, $request->session()->getId());
         $fresh = User::query()->findOrFail($user->id);
@@ -365,6 +389,69 @@ final class TwoFactorSteps
         $request->session()->put(EnforceSessionLimits::FACTOR, ['user' => $fresh->id, 'digest' => EnforceSessionLimits::factorDigest($fresh)]);
 
         return $codes;
+    }
+
+    /**
+     * A current code at a signed-in account's own step (AU-15; AU-16; AU-19; AU-20 a, f; AU-23): AU-05's throttles and
+     * the account's second-factor count on the session-step path, the code's step after `two_factor_last_step`, then
+     * under the account row lock the account active, its secret the one checked, and one conditional update of the
+     * step — so one code passes once, in sequence and concurrently (M-39). Answers ACCEPTED or STALE.
+     *
+     * @throws SecondFactorRefused
+     */
+    public function sessionCode(Request $request, User $user, string $code): string
+    {
+        return $this->underSessionCode($request, $user, $code, fn (): bool => true) === null ? self::STALE : self::ACCEPTED;
+    }
+
+    /**
+     * sessionCode's check with the step it guards in the same transaction, run on the locked row once the code's step
+     * is taken (RV-14; RV-16): a reset, a replacement or a deactivation racing the code refuses both, and a step that
+     * throws gives the code back. Answers the step's result, or null for a code refused.
+     *
+     * @template T
+     *
+     * @param  \Closure(User): T  $then
+     * @return T|null
+     *
+     * @throws SecondFactorRefused
+     */
+    public function underSessionCode(Request $request, User $user, string $code, \Closure $then): mixed
+    {
+        $place = $this->admit($request, $user->id);
+        $step = $this->totp->stepOf(self::secretOf($user), $code, self::lastStepOf($user));
+        $outcome = $step === null ? null : DB::transaction(function () use ($user, $step, $then): ?array {
+            $row = User::query()->lockForUpdate()->find($user->id);
+
+            $taken = $row instanceof User && $row->getAttribute('is_active') === true && $row->getAttribute('two_factor_confirmed_at') !== null
+                && self::sameSecret($row, $user)
+                && DB::table('users')->where('id', $row->id)->where('two_factor_last_step', '<', $step)->update(['two_factor_last_step' => $step]) === 1;
+
+            return $taken ? ['result' => $then($row)] : null;
+        });
+
+        if ($outcome !== null) {
+            $this->passed($request, $place);
+
+            return $outcome['result'];
+        }
+
+        $this->throttle->failed($request, self::throttleKey($user->id));
+        $this->limit->failed($place, SecondFactorLimit::PATH_SESSION_STEP, $request);
+
+        return null;
+    }
+
+    /**
+     * The decrypted recovery codes of an account (AU-19), read for its own view only.
+     *
+     * @return list<string>
+     */
+    public static function recoveryCodesOf(User $user): array
+    {
+        $stored = $user->getRawOriginal('two_factor_recovery_codes');
+
+        return is_string($stored) ? self::codesOf($stored) : [];
     }
 
     private static function signedIn(Request $request): User

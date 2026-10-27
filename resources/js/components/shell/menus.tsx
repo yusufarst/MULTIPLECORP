@@ -1,9 +1,9 @@
-import { Link } from '@inertiajs/react';
+import { Link, router, usePage } from '@inertiajs/react';
 import { ChevronDown, LogOut, Plus, UserRound } from 'lucide-react';
 
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuGroupLabel, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuGroup, DropdownMenuGroupLabel, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Icon } from '@/components/ui/icon';
 import { useTranslation } from '@/lib/i18n';
 import { type AccountHints, BUILT, CREATE, isOwner, present } from '@/lib/navigation';
@@ -49,6 +49,9 @@ export function AccountMenu({ account, built = BUILT, onSignOut }: { account: Ac
     const name = account.name ?? '';
     const ownPage = built.has('PG-065');
     const signOut = built.has('ROUTE-108') && onSignOut !== undefined;
+    // *Bahasa tampilan* (ROUTE-118; INT-002; RB-10): the account's own language, kept and applied at once.
+    const language = built.has('ROUTE-118');
+    const locale = (usePage().props as { locale?: string }).locale;
 
     return (
         <DropdownMenu>
@@ -71,6 +74,26 @@ export function AccountMenu({ account, built = BUILT, onSignOut }: { account: Ac
                         <Icon icon={UserRound} size="sm" />
                         {t('shell.account.my_account')}
                     </DropdownMenuItem>
+                )}
+                {language && (
+                    <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                            <DropdownMenuGroupLabel>{t('account.locale.label')}</DropdownMenuGroupLabel>
+                            {(['id', 'en'] as const).map((choice) => (
+                                <DropdownMenuCheckboxItem
+                                    key={choice}
+                                    checked={locale === choice}
+                                    onCheckedChange={() => {
+                                        router.put('/akun/bahasa', { locale: choice }, { preserveScroll: true, preserveState: true });
+                                    }}
+                                >
+                                    {t(choice === 'id' ? 'account.locale.id' : 'account.locale.en')}
+                                </DropdownMenuCheckboxItem>
+                            ))}
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                    </>
                 )}
                 {signOut && (
                     <DropdownMenuItem tone="danger" onClick={onSignOut}>

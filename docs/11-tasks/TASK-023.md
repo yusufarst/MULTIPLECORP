@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -239,34 +239,48 @@ SECURITY AU-13 gives every authenticated account self-service of its own credent
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-043 — the Fortify behaviours these routes rely on re-verified and recorded (SM-22)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Account/OwnAccountTest.php` — PG-065's profile, factor, link and activity on the account's own row, holding no secret, a guest sent to sign-in —; `tests/Authorization/OwnAccountAccessTest.php` — every route of this Task reaches the signed-in account's own row and no other (SM-02). Capabilities are shown by their catalogue code, their display names TASK-024's with PG-060 (a reading within the approved text)
+- Criterion 2: `tests/Feature/Account/OwnAccountTest.php` — the current password and AU-03's profile required, the other sessions ended, the unused links revoked, 5 per 15 minutes answered with MSG-20 —; `tests/Integration/Authentication/OwnAccountRacesTest.php` — a change verified against a hash that changed before its transaction refused generically (RV-10) —; the acting session kept, `tests/Browser/E2E/own-account.spec.ts`
+- Criterion 3: `tests/Feature/Account/OwnAccountTest.php` and `tests/Interaction/OwnAccountTest.php` — the step-up asked on ROUTE-112–ROUTE-117 once 15 minutes have passed —; M-39 in sequence (the feature test) and concurrently (`tests/Integration/Authentication/OwnAccountRacesTest.php`)
+- Criterion 4: the QR code, the key and each set of codes as flash data only — `tests/Feature/Account/OwnAccountTest.php`, and in the browser absent from history and storage (SM-13; `tests/Browser/E2E/own-account.spec.ts`) —; a regeneration voids the previous set
+- Criterion 5: `tests/Feature/Account/OwnAccountTest.php` — TOTP off refused for a high-risk account; otherwise the four fields cleared together, Google unlinked with TOTP_DISABLED, the links revoked, the other sessions ended and the step-up cleared (AU-20 f; RV-14)
+- Criterion 6: `tests/Feature/Account/OwnAccountTest.php` — the link on the holder's confirming request with a current code, a conflict refused generically —; `tests/Integration/Authentication/OwnAccountRacesTest.php` — M-41 with GOOGLE_LINK_CONFLICT and M-42's deactivation leaving no active link —; the faked provider's link in the browser. M-42's link-first order on a deactivation is TASK-024's deactivation command (a reading within the approved text)
+- Criterion 7: `tests/Feature/Account/OwnAccountTest.php` and HO-41 in `tests/Integration/Authentication/OwnAccountRacesTest.php` — the own unlink as SELF, the other sessions ended, the acting one kept
+- Criterion 8: `tests/Feature/Account/OwnAccountTest.php` and `tests/Unit/IAM/OwnAccountRulesTest.php` — `id`, `en` or the default kept in `users.locale`, applied at once, another account unaffected, any other value refused —; the switch with unsent input and across a re-login in the browser (CJ-18)
+- Criterion 9: `tests/Feature/Account/OwnAccountTest.php` — MSG-29 naming the newest event since the previous sign-in, once —; in the browser after the password change. Beranda's Owner variant is TASK-058's (a reading within the approved text)
+- Criterion 10: each change's audit event in its transaction with the account as actor and authority SYSTEM, its security event after the commit, no password, code, secret or token in either — the feature tests' audit and security-event assertions
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS locally and in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS locally and in CI (TL-02)
+- [x] Relevant automated tests: Unit — the locale rule and the high-risk condition (TL-03); Feature — ROUTE-065 and ROUTE-111–ROUTE-118 with their answers and refusals (TL-04); Integration — M-39, M-41, M-42, HO-41 and RV-10's refused change on real PostgreSQL with database sessions (TL-05); PASS locally and in CI
+- [x] Authorization: SELF only on every route (TL-06)
+- [x] Route integrity: ROUTE-065 and ROUTE-111–ROUTE-118 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-002 and INT-111–INT-118, the step-up expiring on each guarded one (TL-08)
+- [x] Browser E2E if required: PG-065's part of J-ACC-01 — the password change, the enrolment, the codes, the Google link through the faked provider and the unlink — and CJ-18, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-065 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll, the QR code shown (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's sections, fields and buttons, nothing hand-styled
+- [x] Production build: TL-13 PASS locally and in CI
+- [x] Security checks if required: SM-18–SM-20 and SM-13 — the codes, the secret and the QR code absent from history and storage; no test calls Google (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `17ffe6e`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40430773069 (push) and 40430779458 (pull request #28), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". On the Owner's workstation, 2026-10-27: the suites Unit 316, Architecture 54, Feature 217, Integration 952, Authorization 130, Routes 11, Interaction 28 and Performance 9 PASS, with Pint, Larastan/PHPStan, TypeScript and ESLint; PG-065's browser specs 24 of 24 on Chromium and WebKit
+- Build result: `TL-13 Frontend build: PASS — Evidence: 17ffe6e, CI ubuntu-24.04 run 40430773069`
+- Route evidence: TL-07's route audit PASS — ROUTE-065 `GET /akun`, ROUTE-111 `PUT /akun/kata-sandi`, ROUTE-112 and ROUTE-115 `POST`/`DELETE /akun/verifikasi-dua-langkah`, ROUTE-113 `POST /akun/kode-pemulihan`, ROUTE-114 `POST /akun/kode-pemulihan/baru`, ROUTE-116 and ROUTE-117 `POST`/`DELETE /akun/google`, ROUTE-118 `PUT /akun/bahasa`, each `auth` and `access:self`, ROUTE-112–ROUTE-117 with `step-up` —; ROUTE-102 without `guest`, a signed-in plain start still sent home; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/OwnAccountTest.php` (INT-002, INT-111–INT-118)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 17ffe6e, CI ubuntu-24.04 run 40430773069`; TL-10, TL-11 and TL-12 for PG-065 in the same run
+- Localization evidence: PG-065 and the account menu in both languages (`tests/Browser/Localization/own-account.spec.ts`) (DOD-16); 81 catalogue keys added, all proposed copy in `lang/registry/added-keys.json`
+- Performance evidence: PFM-01 and PFM-02 for PG-065 and PFM-19 — the identity steps read only the account row and the limiter (`tests/Performance/OwnAccountQueriesTest.php`); MSG-29's read adds one statement to the sign-in (`tests/Performance/SignInQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/IAM/` — `Authentication/` (`OwnAccount`, `AccountEvents`, `TwoFactorSteps`, `GoogleSignIn`, `EstablishSession`), `Queries/OwnAccountView`, `Http/Controllers/OwnAccountController` —, `app/Providers/AppServiceProvider.php` (the password-change limiter), `routes/web.php`; the frontend's PG-065, the shared QR code, the account menu's language, MSG-29's notice in the shell, `lib/format.ts` and `lib/previous-page.ts` (NAV-065's return); `lang/` (81 keys); the tests and the browser fixtures; TOOLCHAIN's row
+- Commit SHA: `b989334`, `62be8a0`, `f5339ab`, `80ec2c9`, `b5be33b`, `608232e` and `17ffe6e`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-023-my-account`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Environment: the Owner's Windows workstation, Claude Code Desktop, 2026-10-27; Context7 and Fortify 1.41.0's source consulted for the password update, the password confirmation and the two-factor features (TOOLCHAIN's TASK-023 row; GAP-043); CI the final proof. Readings within the approved text: the LINK attempt reuses ROUTE-102 with `tujuan=tautkan`, so ROUTE-102 lost its `guest` middleware; a Google link holds an e-mail only when Google verified it, so PG-065 shows a link by its row. ER-06's independent review found one HIGH point — the password change revoked no unused link and did not re-check the verified hash under its lock — and MEDIUM and LOW points on TOTP off and the code's transaction; all fixed and tested. Codex's review of pull request #28 found two P1 — the Google link outside the current code's transaction, and PG-065 without NAV-065's "Kembali" — and one P2 — a wrong code at the enrolment's confirmation dropping its form —; all fixed and tested. No DONE record for another Task changed; no server or VPS touched
 
 **SAFE NEXT TASK:**
 
