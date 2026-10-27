@@ -28,7 +28,7 @@ Progress:
 25 / 87
 Percentage: 28.7 %
 
-CURRENT TASK: none in progress — TASK-030 — Evidence and uploaded documents DONE on its branch `task/TASK-030-evidence`, CI PASS on `67e732f`, its pull request #30 squash-merged by the executor once eligible (DIR-096)
+CURRENT TASK: none in progress — TASK-030 — Evidence and uploaded documents DONE on its branch `task/TASK-030-evidence`, CI PASS on `1d59f67`, its pull request #30 squash-merged by the executor once eligible (DIR-096)
 NEXT READY TASK: TASK-025 — Companies, identity assets, bank accounts and tax configuration, READY, taken first from the merged `main` (DIR-096); TASK-026, TASK-027, TASK-028, TASK-031, TASK-036, TASK-061 and TASK-073 READY — TASK-036 once TASK-030 was DONE —; TASK-029 waits on TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
