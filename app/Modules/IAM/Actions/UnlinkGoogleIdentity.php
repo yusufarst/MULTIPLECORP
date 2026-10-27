@@ -41,12 +41,12 @@ final class UnlinkGoogleIdentity
                     throw Refused::rejected('AU-24', ['reason' => 'self']);
                 }
 
-                if (! $this->identities->unlinkHeld($row, 'OWNER', $actor, $context->request->commandId, $reason)) {
+                if (! $this->identities->unlinkHeld($row, GoogleIdentities::BY_OWNER, $actor, $context->request->commandId, $reason)) {
                     throw Refused::rejected('AU-24', ['reason' => 'no_link']);
                 }
 
                 $this->access->endSessions($row->id);
-                $this->access->announce($context, SecurityEventKind::GoogleUnlinked, $row->id, 'OWNER',
+                $this->access->announce($context, SecurityEventKind::GoogleUnlinked, $row->id, GoogleIdentities::BY_OWNER,
                     $this->access->holdsOwnerRole($row->id) ? 'An OWNER-role account\'s Google identity was unlinked by another Owner (AU-24; LG-07).' : null);
 
                 return new CommandResult('user', $row->id);

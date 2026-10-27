@@ -9,6 +9,7 @@ import { router, usePage } from '@inertiajs/react';
 import { ArrowLeft, Copy, Plus } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
+import { ActionBar } from '@/components/action-bar';
 import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataTable } from '@/components/data-list';
@@ -215,6 +216,15 @@ function Directory({ accounts }: { accounts: Directory[] }) {
                 }
             />
             {creating && <CreateAccount onDone={() => { setCreating(false); }} />}
+            {/* On the phone the page header's primary action moves to the bottom action bar (PT-03). */}
+            {!creating && (
+                <ActionBar label={t('pages.pg_060.title')} className="md:hidden">
+                    <Button variant="primary" size="lg" onClick={() => { setCreating(true); }}>
+                        <Icon icon={Plus} size="sm" />
+                        {t('users.create.title')}
+                    </Button>
+                </ActionBar>
+            )}
             <DataTable
                 caption={t('pages.pg_060.title')}
                 rows={accounts}

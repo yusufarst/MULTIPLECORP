@@ -26,6 +26,9 @@ use Throwable;
  */
 final class UsersAndAccess
 {
+    /** The built-in roles an account may be given (RG-01). */
+    public const ROLES = AccountAccess::ROLES;
+
     public function __construct(private readonly AccountAccess $access) {}
 
     /**

@@ -25,6 +25,7 @@ use Closure;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use LogicException;
 
 /**
  * The steps PG-060's NX-02 commands share (CONCURRENCY_IDEMPOTENCY §16; SECURITY AU-09, AU-11, AU-18, AU-20 c;
@@ -35,6 +36,9 @@ use Illuminate\Support\Facades\Log;
  */
 final class AccountAccess
 {
+    /** RG-01's two built-in roles, the one each account holds. */
+    public const ROLES = [BuiltinRole::Owner->value, BuiltinRole::AdminOperasional->value];
+
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly EffectiveCapabilities $capabilities,
@@ -110,6 +114,14 @@ final class AccountAccess
     public function ownerSet(): LockSet
     {
         return (new LockSet)->add('roles', ['id' => $this->ownerRoleId()]);
+    }
+
+    /** The built-in ADMIN_OPERASIONAL role row's id, a new account's role (RG-04). */
+    public function adminRoleId(): int
+    {
+        $id = DB::table('roles')->where('code', BuiltinRole::AdminOperasional->value)->where('is_builtin', true)->value('id');
+
+        return is_numeric($id) ? (int) $id : throw new LogicException('The built-in roles are missing: run authorization:sync-catalogue first.');
     }
 
     /** The built-in OWNER role row's id, the key of LK-02. */

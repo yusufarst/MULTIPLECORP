@@ -4,6 +4,7 @@ use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Authentication\CredentialLinks;
 use App\Modules\IAM\Data\SessionHandle;
 use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -195,8 +196,12 @@ it('grants the role, companies and capabilities after the preview, refusing OWNE
         ->and(usersAudit('IAM.GrantsChanged')?->reason)->toBe('Mengurus alokasi antarperusahaan')
         ->and(usersAudit('IAM.GrantsChanged')?->authority_class)->toBe('OWNER_ONLY');
 
-    // A prerequisite removed keeps its dependant's grant, disabled (RG-06).
-    usersOwner($this)->put($path, usersCommand(['role' => 'ADMIN_OPERASIONAL', 'companies' => [$this->company->public_id, $second->public_id], 'capabilities' => ['projects.view', 'stock.allocate_intercompany'], 'lock_version' => $version()]))->assertSessionHasErrors('reason');
+    // A prerequisite removed keeps its dependant's grant, disabled until it is granted again (RG-06).
+    usersOwner($this)->put($path, usersCommand(['role' => 'ADMIN_OPERASIONAL', 'companies' => [$this->company->public_id, $second->public_id], 'capabilities' => ['projects.view', 'stock.allocate_intercompany'], 'lock_version' => $version()]));
+    Authorization::forget();
+    expect(usersAnswer()['kind'] ?? null)->toBe('COMMITTED')
+        ->and(DB::table('user_capability_grants')->join('capabilities', 'capabilities.id', '=', 'capability_id')->where('user_id', $this->admin->id)->whereNull('revoked_at')->orderBy('code')->pluck('code')->all())->toBe(['projects.view', 'stock.allocate_intercompany'])
+        ->and(app(EffectiveCapabilities::class)->for($this->admin->id)->has('stock.allocate_intercompany'))->toBeFalse();
 
     // Nobody grants to itself (OD-02).
     usersOwner($this)->put("/pengaturan/pengguna/{$this->owner->public_id}/akses", usersCommand(['role' => 'ADMIN_OPERASIONAL', 'companies' => [], 'capabilities' => [], 'lock_version' => 0]));
@@ -240,6 +245,8 @@ it('shows a credential link once and a replayed issue its record, never the link
     expect($link['purpose'] ?? null)->toBe('ONBOARDING')
         ->and(DB::table('audit_events')->where('action', 'IAM.CredentialLinkIssued')->value('metadata'))->not->toContain(Str::after((string) $link['url'], '#'));
 
+    // The page that showed it consumes the flash data; the replay flashes no link (CI-05).
+    usersOwner($this)->get("/pengaturan/pengguna?akun={$this->admin->public_id}")->assertOk();
     usersOwner($this)->post("/pengaturan/pengguna/{$this->admin->public_id}/tautan", $issue)->assertRedirect();
     expect(usersLink())->toBeNull()->and(usersAnswer()['text'] ?? null)->toBe(__('users.answer.link_replayed'))
         ->and(DB::table('credential_tokens')->where('user_id', $this->admin->id)->count())->toBe(1);

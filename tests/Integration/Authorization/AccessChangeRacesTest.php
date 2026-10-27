@@ -6,11 +6,11 @@ use App\Modules\IAM\Authentication\GoogleIdentities;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\CommandAuthorization;
 use App\Modules\ORG\Models\Company;
-use App\Support\Command\Outcome;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Tests\Support\AccessRaces;
 use Tests\Support\Authorization;
 use Tests\Support\Concurrency\Barrier;
 use Tests\Support\Concurrency\Sessions;
@@ -37,41 +37,15 @@ beforeEach(function () {
     $this->admin = Authorization::admin([$this->company->id], ['projects.view', 'projects.manage']);
 });
 
-/** An NX-02 command's answer as a word: its outcome kind and code, or the denial a stale actor gets (AZ-11). */
-function raceOutcome(Closure $command): string
-{
-    try {
-        $outcome = $command();
-
-        return $outcome instanceof Outcome ? trim("{$outcome->kind} {$outcome->code}") : 'none';
-    } catch (AuthorizationException) {
-        return 'denied';
-    }
-}
-
-/** The target's command in flight: it holds its own row at LK-03 (RV-01) until another session waits on it. */
-function raceHoldTarget(int $userId, string $capability, int $companyId): Closure
-{
-    return static function () use ($userId, $capability, $companyId): string {
-        return DB::transaction(function () use ($userId, $capability, $companyId): string {
-            app(CommandAuthorization::class)->reauthorize($userId, $capability, $companyId);
-            Barrier::await('the target\'s command holds its row');
-            Sessions::awaitBlocked();
-
-            return 'committed';
-        });
-    };
-}
-
 it('commits an access change after the target\'s command in flight, the target\'s next command denied (RV-02; RV-03; M-20)', function () {
     [$owner, $admin, $company] = [$this->owner->id, $this->admin->id, $this->company->id];
 
     $results = Sessions::run([
-        'target' => raceHoldTarget($admin, 'projects.manage', $company),
+        'target' => static fn (): string => AccessRaces::holdTarget($admin, 'projects.manage', $company),
         'revocation' => static function () use ($owner, $admin, $company): string {
             Barrier::await('the target\'s command holds its row');
 
-            return raceOutcome(fn () => app(GrantAccess::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin), 'ADMIN_OPERASIONAL', [$company], ['projects.view'], 0, null));
+            return AccessRaces::outcome(fn () => app(GrantAccess::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin), 'ADMIN_OPERASIONAL', [$company], ['projects.view'], 0, null));
         },
     ]);
 
@@ -91,11 +65,11 @@ it('commits a deactivation after the target\'s command in flight, every grant re
     [$owner, $admin, $company] = [$this->owner->id, $this->admin->id, $this->company->id];
 
     $results = Sessions::run([
-        'target' => raceHoldTarget($admin, 'projects.manage', $company),
+        'target' => static fn (): string => AccessRaces::holdTarget($admin, 'projects.manage', $company),
         'deactivation' => static function () use ($owner, $admin): string {
             Barrier::await('the target\'s command holds its row');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin)));
         },
     ]);
 
@@ -112,12 +86,12 @@ it('keeps an active Owner when two Owners deactivate each other at once (LK-02; 
         'first' => static function () use ($first, $second): string {
             Barrier::await('both are ready');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($second)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($second)));
         },
         'second' => static function () use ($first, $second): string {
             Barrier::await('both are ready');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $second, User::query()->findOrFail($first)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $second, User::query()->findOrFail($first)));
         },
     ]);
 
@@ -133,12 +107,12 @@ it('keeps an active Owner when one Owner deactivates both of the last two at onc
         'the other' => static function () use ($first, $second): string {
             Barrier::await('both are ready');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($second)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($second)));
         },
         'itself' => static function () use ($first): string {
             Barrier::await('both are ready');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($first)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $first, User::query()->findOrFail($first)));
         },
     ]);
 
@@ -165,7 +139,7 @@ it('unlinks a Google link that committed before the deactivation, with reason DE
         'deactivation' => static function () use ($owner, $target): string {
             Barrier::await('the link holds the account');
 
-            return raceOutcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($target)));
+            return AccessRaces::outcome(fn () => app(DeactivateUser::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($target)));
         },
     ]);
 
@@ -218,7 +192,7 @@ it('makes the password unusable with one RESET link when a high-risk grant meets
         'grant' => static function () use ($owner, $admin, $company): string {
             Barrier::await('the change holds the account');
 
-            return raceOutcome(fn () => app(GrantAccess::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin), 'ADMIN_OPERASIONAL', [$company], ['projects.view', 'projects.manage', 'finance.view'], 0, null));
+            return AccessRaces::outcome(fn () => app(GrantAccess::class)->run((string) Str::uuid(), $owner, User::query()->findOrFail($admin), 'ADMIN_OPERASIONAL', [$company], ['projects.view', 'projects.manage', 'finance.view'], 0, null));
         },
     ]);
 

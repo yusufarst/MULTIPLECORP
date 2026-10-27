@@ -41,6 +41,9 @@ final class GoogleIdentities
 
     public const REFUSED = 'REFUSED';
 
+    /** AU-24's unlink reason of an Owner's unlink of another account. */
+    public const BY_OWNER = 'OWNER';
+
     /** The unlink reasons of AU-24, with the authority each acts under. */
     private const REASONS = [
         'SELF' => AuthorityClass::System,
@@ -215,7 +218,8 @@ final class GoogleIdentities
      */
     public function unlinkHeld(User $account, string $reason, int $by, string $commandId, ?string $ownerReason = null): bool
     {
-        if (! in_array($reason, ['OWNER', 'DEACTIVATION', 'CREDENTIAL_REISSUE'], true) || $by === $account->id) {
+        // C-63: OWNER and CREDENTIAL_REISSUE are another account's; an Owner may deactivate itself (M-22).
+        if (! in_array($reason, [self::BY_OWNER, 'DEACTIVATION', 'CREDENTIAL_REISSUE'], true) || ($reason !== 'DEACTIVATION' && $by === $account->id)) {
             throw new InvalidArgumentException("The unlink reason {$reason} does not allow this actor (AU-24).");
         }
 

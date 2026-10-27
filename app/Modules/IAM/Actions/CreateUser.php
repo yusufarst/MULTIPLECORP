@@ -2,7 +2,6 @@
 
 namespace App\Modules\IAM\Actions;
 
-use App\Modules\IAM\Enums\BuiltinRole;
 use App\Modules\IAM\Services\AccountAccess;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
@@ -54,7 +53,7 @@ final class CreateUser
                     'name' => $name, 'email' => $email, 'password' => $unusable, 'is_active' => false,
                     'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
                 ]);
-                $role = DB::table('roles')->where('code', BuiltinRole::AdminOperasional->value)->where('is_builtin', true)->value('id');
+                $role = $this->access->adminRoleId();
                 DB::table('user_roles')->insert([
                     'user_id' => $id, 'role_id' => $role, 'granted_by' => $actor, 'granted_at' => $now,
                     'command_id' => $context->request->commandId, 'command_line_no' => 2, 'recorded_at' => $now,

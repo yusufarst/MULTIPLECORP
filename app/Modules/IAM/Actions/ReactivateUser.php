@@ -11,7 +11,6 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
-use App\Support\SecurityLog\SecurityEventKind;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;

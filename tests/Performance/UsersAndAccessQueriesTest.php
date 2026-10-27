@@ -67,10 +67,20 @@ it('renders an account\'s detail in the same number of statements whatever its s
     $few = populatedAccount($this, 1);
     $many = populatedAccount($this, 25);
 
-    $one = statementsOf(fn () => $this->actingAs($this->owner)->get("/pengaturan/pengguna?akun={$few->public_id}")->assertOk());
-    $full = statementsOf(fn () => $this->actingAs($this->owner)->get("/pengaturan/pengguna?akun={$many->public_id}")->assertOk());
+    $sql = function (string $publicId): array {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->actingAs($this->owner)->get("/pengaturan/pengguna?akun={$publicId}")->assertOk();
+        $queries = array_map(fn (array $query): string => $query['query'], DB::getQueryLog());
+        DB::disableQueryLog();
 
-    expect($full)->toBe($one)->and($one)->toBeLessThanOrEqual(40);
+        return $queries;
+    };
+    $sql($few->public_id);
+    $one = $sql($few->public_id);
+    $full = $sql($many->public_id);
+
+    expect($full)->toBe($one)->and(count($one))->toBeLessThanOrEqual(40);
 });
 
 it('runs a grant change within QB-13\'s budget of about forty statements (PFM-20)', function () {

@@ -54,6 +54,8 @@ it('ends the sessions a high-risk grant meets, the target\'s next request unauth
     $outcome = app(GrantAccess::class)->run((string) Str::uuid(), $this->owner->id, User::query()->findOrFail($this->admin->id), 'ADMIN_OPERASIONAL', [$this->company->id], ['projects.view', 'finance.view'], 0, null);
 
     expect($outcome->kind)->toBe('COMMITTED')->and(DB::table('sessions')->where('user_id', $this->admin->id)->exists())->toBeFalse();
+    // The test client keeps its guard's account between requests; a browser's next request reads it again.
+    auth()->forgetGuards();
     $this->get('/akun')->assertRedirect('/masuk');
     $this->postJson('/masuk', ['email' => 'sari@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertStatus(422);
 });
@@ -79,6 +81,8 @@ it('ends the target\'s own sessions at the Owner\'s reset and voids its recovery
 
     expect($outcome->kind)->toBe('COMMITTED')
         ->and(DB::table('users')->where('id', $this->admin->id)->value('two_factor_recovery_codes'))->toBeNull();
+    // The test client keeps its guard's account between requests; a browser's next request reads it again.
+    auth()->forgetGuards();
     $this->get('/akun')->assertRedirect('/masuk');
     $this->postJson('/masuk', ['email' => 'sari@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertStatus(422);
 });
@@ -88,6 +92,8 @@ it('deletes the target\'s sessions by account at its deactivation, the next requ
 
     expect(app(DeactivateUser::class)->run((string) Str::uuid(), $this->owner->id, User::query()->findOrFail($this->admin->id))->kind)->toBe('COMMITTED')
         ->and(DB::table('sessions')->where('user_id', $this->admin->id)->exists())->toBeFalse();
+    // The test client keeps its guard's account between requests; a browser's next request reads it again.
+    auth()->forgetGuards();
     $this->get('/akun')->assertRedirect('/masuk');
     $this->postJson('/masuk', ['email' => 'sari@contoh.test', 'password' => 'Kata-Sandi-Uji-9'])->assertStatus(422);
 });

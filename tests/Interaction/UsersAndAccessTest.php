@@ -66,6 +66,8 @@ it('commits each command once, and its command_id replayed answers the recorded 
     expect(interactionAnswer()['kind'] ?? null)->toBe('COMMITTED');
     $audits = DB::table('audit_events')->count();
     $links = DB::table('credential_tokens')->count();
+    // The page the answer opens consumes its flash data, as the browser's next visit does.
+    $owner()->get('/pengaturan/pengguna')->assertOk();
 
     $owner()->call($method, $path, $payload)->assertRedirect();
     expect(interactionAnswer()['kind'] ?? null)->toBe('COMMITTED')

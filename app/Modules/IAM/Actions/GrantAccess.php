@@ -4,7 +4,6 @@ namespace App\Modules\IAM\Actions;
 
 use App\Modules\IAM\Data\AccessPreview;
 use App\Modules\IAM\Data\CapabilityCatalogue;
-use App\Modules\IAM\Enums\BuiltinRole;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\AccountAccess;
 use App\Support\Audit\AuditChange;

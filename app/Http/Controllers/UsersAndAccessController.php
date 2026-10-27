@@ -14,7 +14,6 @@ use App\Modules\IAM\Actions\UnlinkGoogleIdentity;
 use App\Modules\IAM\Actions\UpdateUser;
 use App\Modules\IAM\Data\CapabilityAreas;
 use App\Modules\IAM\Data\SessionHandle;
-use App\Modules\IAM\Enums\BuiltinRole;
 use App\Modules\IAM\Queries\UsersAndAccess;
 use App\Modules\ORG\Queries\CompanyDirectory;
 use App\Support\Command\Outcome;
@@ -59,7 +58,7 @@ final class UsersAndAccessController extends Controller
 
         if ($account !== null) {
             $detail = $this->users->detail($account, self::actor($request), $request->session()->getId());
-            $held = array_values(array_map(fn (int $id): array => $companies[$id] ?? ['id' => '', 'code' => '?', 'name' => '', 'active' => false], $this->users->companyIdsOf($account)));
+            $held = array_map(fn (int $id): array => $companies[$id] ?? ['id' => '', 'code' => '?', 'name' => '', 'active' => false], $this->users->companyIdsOf($account));
             $detail['companies'] = $held;
             $role = $this->users->roleOf($account);
             // "Pratinjau Akses" (PT-30): computed on the server for the editor's state, on its own partial reload.
@@ -131,7 +130,7 @@ final class UsersAndAccessController extends Controller
         $account = $this->users->account($id) ?? throw new NotFoundHttpException;
         $input = $this->validated($request, [
             'command_id' => ['required', 'uuid'],
-            'role' => ['required', Rule::in([BuiltinRole::Owner->value, BuiltinRole::AdminOperasional->value])],
+            'role' => ['required', Rule::in(UsersAndAccess::ROLES)],
             'companies' => ['present', 'array', 'max:200'],
             'companies.*' => ['string', 'uuid'],
             'capabilities' => ['present', 'array', 'max:100'],

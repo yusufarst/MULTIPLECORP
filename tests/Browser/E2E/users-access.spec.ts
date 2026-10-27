@@ -44,8 +44,9 @@ test('creates an account, grants after the preview, shows its link once, activat
 
     // Access (ROUTE-124): a company and a capability, "Pratinjau Akses", then "Simpan Akses".
     await tab(page, 'Akses');
-    await page.locator(`#perusahaan-${company}`).click();
-    await page.locator('#kewenangan-projects\\.view').click();
+    // The checkbox's own control is the label's: the input behind it is hidden.
+    await page.locator(`label[for="perusahaan-${company}"]`).click();
+    await page.locator('label[for="kewenangan-projects.view"]').click();
     await page.getByRole('button', { name: 'Pratinjau Akses' }).click();
     const preview = page.locator('[data-slot="capability-preview"]');
     await expect(preview).toBeVisible({ timeout: VISIT });
@@ -113,5 +114,5 @@ test('creates an account, grants after the preview, shows its link once, activat
 test('answers an Admin\'s address for PG-060 as a missing page (OD-01; IP-21)', async ({ page }) => {
     await signedIn(page, 'pengguna-admin');
     await page.goto('/pengaturan/pengguna');
-    await expect(page.getByText('Halaman tidak ditemukan.')).toBeVisible();
+    await expect(page.locator('[data-system-page="not_found"]')).toBeVisible();
 });
