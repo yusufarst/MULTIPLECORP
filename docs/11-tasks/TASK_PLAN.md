@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 22
-READY: 10
+DONE: 23
+READY: 9
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 42
 SUPERSEDED: 0
 
 Progress:
-22 / 87
-Percentage: 25.3 %
+23 / 87
+Percentage: 26.4 %
 
-CURRENT TASK: none in progress — TASK-022 — Jobs, files and the document renderer DONE on its branch `task/TASK-022-jobs-files-renderer`, CI PASS on `70f3ba6`, its pull request #27 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-023 — My account — password, two-step verification, Google link and language, READY, taken first from the merged `main` (DIR-096); TASK-024, TASK-025, TASK-026, TASK-027, TASK-028, TASK-030, TASK-031, TASK-061 and TASK-073 READY; TASK-029 waits on TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-023 — My account — password, two-step verification, Google link and language DONE on its branch `task/TASK-023-my-account`, CI PASS on `17ffe6e`, its pull request #28 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-024 — Users and access — accounts, roles, capabilities and company grants, READY, taken first from the merged `main` (DIR-096); TASK-025, TASK-026, TASK-027, TASK-028, TASK-030, TASK-031, TASK-061 and TASK-073 READY; TASK-029 waits on TASK-025, TASK-082 on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -71,7 +71,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-020](TASK-020.md) — Installation step, the first Owner and the Owner-recovery path
 - [x] [TASK-021](TASK-021.md) — Numbering, its settings page and the Owner's raise after a restore
 - [x] [TASK-022](TASK-022.md) — Jobs, files and the document renderer
-- [ ] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
+- [x] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
 - [ ] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
 - [ ] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
 - [ ] [TASK-026](TASK-026.md) — Clients and suppliers
@@ -163,7 +163,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-020](TASK-020.md) | Installation step, the first Owner and the Owner-recovery path | Platform · IAM · OPS | HIGH | DONE | 010, 018, 019 | 069, 076, 085 | NO | AGENT | NONE | NO |
 | [TASK-021](TASK-021.md) | Numbering, its settings page and the Owner's raise after a restore | Platform · ORG · Platform | HIGH | DONE | 006, 013, 016, 018 | 029, 032, 074, 076, 077 | NO | AGENT | NONE | YES |
 | [TASK-022](TASK-022.md) | Jobs, files and the document renderer | Platform · Platform · DOC | HIGH | DONE | 006, 012, 013, 015, 017 | 025, 027, 029, 030, 057, 060, 072, 074, 075 | NO | AGENT | NONE | NO |
-| [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | READY | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | DONE | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | READY | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | READY | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
 | [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | READY | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
