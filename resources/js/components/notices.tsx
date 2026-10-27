@@ -19,7 +19,7 @@ import type { MenuAction } from '@/components/page-header';
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
-export type DuplicateMatch = { id: string; label: ReactNode; href: string };
+export type DuplicateMatch = { id: string; label: ReactNode; href: string | null };
 
 // IP-05's duplicate warning (ADMIN_FLOW §5; HO-05): a warning, never a block — the first submission came back
 // REJECTED with the matches the actor may see; the block lists each with a link, a tick per match and the reason,
@@ -62,7 +62,7 @@ export function DuplicateWarning({
                                     }}
                                 />
                             )}
-                            <TextLink href={match.href}>{match.label}</TextLink>
+                            {match.href === null ? <span>{match.label}</span> : <TextLink href={match.href}>{match.label}</TextLink>}
                         </li>
                     ))}
                 </ul>

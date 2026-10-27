@@ -2,6 +2,7 @@
 
 namespace App\Modules\DOC\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Data\FileFamilies;
 use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\FileObject;
@@ -71,30 +72,7 @@ final class FileAccess
             return false;
         }
 
-        $type = self::text($owner->evidence_type);
-        $companyId = $owner->company_id === null ? null : self::int($owner->company_id);
-
-        if ($type === 'OPENING_SIGNOFF') {
-            // PJ-20: the Owner, or `import.prepare` with the company in scope — a pool sign-off with every company.
-            return $viewer->ownerRole || ($viewer->has('import.prepare') && ($companyId === null ? $viewer->scope->all : $viewer->scope->includes($companyId)));
-        }
-
-        if ($companyId === null) {
-            // Pool evidence: the pool's readers, no company needed (PJ-08; CS-05).
-            return in_array($type, ['WAREHOUSE_RECORD', 'OTHER'], true) && $viewer->has('evidence.view') && $viewer->has('stock.view');
-        }
-
-        if (! $viewer->allows('evidence.view', $companyId)) {
-            return false;
-        }
-
-        foreach (FileFamilies::evidence($type) as $capability) {
-            if ($viewer->allows($capability, $companyId)) {
-                return true;
-            }
-        }
-
-        return false;
+        return EvidenceTypes::mayView($viewer, self::text($owner->evidence_type), $owner->company_id === null ? null : self::int($owner->company_id));
     }
 
     private function identityAsset(Authority $viewer, FileObject $file): bool

@@ -20,6 +20,13 @@ return [
         'memory_megabytes' => (int) env('RENDERER_MEMORY_MB', 768),
     ],
 
+    // WS-12's upload bounds, counted from `file_objects` under the uploader's row lock (H6-07): 60 an hour, and a
+    // daily byte budget per account, an assumption kept until P8 measures (TASK-030).
+    'uploads' => [
+        'per_hour' => 60,
+        'daily_bytes' => (int) env('UPLOAD_DAILY_BYTES', 500 * 1024 * 1024),
+    ],
+
     'renditions' => [
         // JB-01: the job's timeout and the unique-job lock's lifetime above it plus the queue wait it tolerates.
         'timeout_seconds' => 120,

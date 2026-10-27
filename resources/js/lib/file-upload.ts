@@ -1,14 +1,25 @@
 // The client of an upload field (INT-013; ADMIN_FLOW IP-16; SECURITY FL-01): the file streamed outside any command,
 // its progress reported and its request cancellable ("Batalkan"); the server answers the stored file's id for the
 // command that follows, or MSG-31 for a file outside its purpose's types or size, or WS-12's limit. An upload is
-// the user's own request, never a background one, and carries no `command_id` (RB-03).
+// the user's own request, never a background one, and carries no `command_id` (RB-03). ROUTE-228's purpose and company
+// travel as fields beside the file (TASK-030).
 
 export type UploadAnswer = { kind: 'stored'; id: string; name: string } | { kind: 'refused'; message: string } | { kind: 'failed' } | { kind: 'cancelled' };
 
-export function uploadFile(url: string, file: File, field: string, onProgress: (percent: number) => void, signal: AbortSignal): Promise<UploadAnswer> {
+export function uploadFile(
+    url: string,
+    file: File,
+    field: string,
+    onProgress: (percent: number) => void,
+    signal: AbortSignal,
+    fields: Record<string, string> = {},
+): Promise<UploadAnswer> {
     return new Promise((resolve) => {
         const request = new XMLHttpRequest();
         const body = new FormData();
+        for (const [name, value] of Object.entries(fields)) {
+            body.append(name, value);
+        }
         body.append(field, file);
 
         request.open('POST', url);

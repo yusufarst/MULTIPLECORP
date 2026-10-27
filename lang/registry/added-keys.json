@@ -2940,6 +2940,528 @@
             "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "evidence.upload_line": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.section.file": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.section.identity": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.branch": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.limits": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.type": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.issuer": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.reference": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.reference_help": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.date": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.amount": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.deliverer": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.received": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.note": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.field.role": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.add_version": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "evidence.register": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.link_project": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.link": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.unlink": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.unlink_reason": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.version_n": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.current": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.reproduction": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.versions": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.links": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.no_links": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.empty": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.answer.registered": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.answer.version": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.answer.linked": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.answer.unlinked": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.answer.replaced": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.l_45": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.fl_10": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.nx_14_linked": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.nx_14_not_linked": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.nx_14_current": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.refusal.nx_14_no_version": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.required": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.too_long": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.choice": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.date": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.future": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.amount": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.validation.pool": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.CLIENT_SPK": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.CLIENT_ORDER": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.SIPLAH_ORDER": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.THIRD_PARTY_HPS": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.TAX_INVOICE": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.NPWP": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.NIB": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.BANK_STATEMENT": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.TAX_WITHHOLDING_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.TAX_COLLECTION_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.TAX_PAYMENT_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.FEE_ADVICE": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.SUPPLIER_BILL": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.DELIVERY_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.PAYMENT_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.TRANSFER_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.WAREHOUSE_RECORD": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.OPENING_SIGNOFF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.LEGACY_DOCUMENT": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.type.OTHER": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.role.PRIMARY_PROOF": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.role.SUPPORTING": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.role.CLIENT_ORIGINAL": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.role.REVIEWED": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.project_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.commercial_confirmation_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.purchase_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.stock_movement_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.delivery_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.dropship_confirmation_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.service_handover_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.payment_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.other_cash_receipt_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.disbursement_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.expense_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.deduction_settlement_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.receivable_writeoff_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.correction_case_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.admin_requirement_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.unattributed_loss_case_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.target.import_batch_id": {
+            "task": "TASK-030",
+            "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
