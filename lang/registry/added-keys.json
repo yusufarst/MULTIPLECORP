@@ -3462,6 +3462,810 @@
             "source": "ADMIN_FLOW IP-16, IP-05; INFORMATION_ARCHITECTURE §8.4 PG-038; DATABASE §4.10; MSG-15, MSG-31, MSG-32",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "companies.create": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.back": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.empty": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.issued_keep_identity": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.section.data": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.section.aset": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.section.rekening": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.section.status": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.code": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.code_help": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.legal_name": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.legal_form": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.npwp": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.address_lines": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.city": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.phone": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.email": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.field.director_name": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.logo": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.stamp": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.signature": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.none": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.replace": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.limits": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.asset.set": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.bank_name": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.account_number": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.account_holder": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.branch": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.reason": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.add": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.change": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.change_line": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.deactivate": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.deactivate_line": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.empty": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.active": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.account.inactive": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.status.inactive": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.status.inactive_badge": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.status.deactivate": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.status.deactivate_line": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.title": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.company_data": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.identity_assets": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.bank_account": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.tax": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.number_format": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.numbering": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.admin_access": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.open_tax": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.open_numbering": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.open_access": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.created": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.updated": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.deactivated": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.asset": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.account_add": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.account_change": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.answer.account_deactivate": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.refusal.c_54_inactive": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.refusal.br_sn_02_inactive": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.required": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.too_long": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.choice": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.email": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.format": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.validation.duplicate": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.intro": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.section.tax_type": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.section.rate_version": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.section.profile": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.section.rule": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.add.tax_type": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.add.rate_version": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.add.profile": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.add.rule": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.empty.tax_type": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.empty.rate_version": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.empty.profile": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.empty.rule": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.edit": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.global": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.open_ended": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.yes": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.no": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.code": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.name": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.category": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.active": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.type": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.rate_percent": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.base": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.base_numerator": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.base_denominator": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.rounding_mode": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.effective": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.effective_from": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.effective_to": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.company": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.registration_status": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.context": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.treatment": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.field.evidence_required": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.category.OUTPUT_TAX": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.category.INPUT_TAX": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.category.WITHHOLDING": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.category.COLLECTION": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.category.OTHER": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.rounding.HALF_UP": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.rounding.DOWN": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.context.SALES_INVOICE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.context.PURCHASE_LINE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.context.PAYMENT_WITHHELD": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.context.PAYMENT_COLLECTED": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.context.TAX_REMITTANCE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.OUTPUT_EXCLUDED_FROM_REVENUE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.INPUT_CREDITABLE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.INPUT_TO_ACQUISITION_COST": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.SETTLEMENT_NO_EXPENSE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.SETTLEMENT_TO_EXPENSE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.REMITTANCE_NOT_COST": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.treatment.REMITTANCE_TO_EXPENSE": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.answer.saved": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.required": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.too_long": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.choice": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.format": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.date": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.range": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.type": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.overlap": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "tax.validation.duplicate": {
+            "task": "TASK-025",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "companies.readiness.numbering_missing": {
+            "task": "TASK-025",
+            "source": "ADMIN_FLOW §12.4",
+            "indonesian": "canonical",
+            "english": "proposed"
         }
     }
 }

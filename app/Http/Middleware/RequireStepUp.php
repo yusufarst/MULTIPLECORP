@@ -23,13 +23,21 @@ class RequireStepUp
      */
     public function handle(Request $request, Closure $next): Response
     {
+        return self::recent($request) ? $next($request) : self::ask();
+    }
+
+    /** Whether the password was confirmed within the step-up's window — for a route whose step-up is conditional (ROUTE-132). */
+    public static function recent(Request $request): bool
+    {
         $confirmedAt = $request->session()->get(self::CONFIRMED_AT, 0);
         $timeout = config('auth.password_timeout');
 
-        if (now()->getTimestamp() - (is_numeric($confirmedAt) ? (int) $confirmedAt : 0) > (is_numeric($timeout) ? (int) $timeout : 0)) {
-            return response()->json(['message' => __('messages.msg_27')], Response::HTTP_LOCKED);
-        }
+        return now()->getTimestamp() - (is_numeric($confirmedAt) ? (int) $confirmedAt : 0) <= (is_numeric($timeout) ? (int) $timeout : 0);
+    }
 
-        return $next($request);
+    /** MSG-27's 423, the client's cue to confirm the password and send the same request again (IP-10). */
+    public static function ask(): Response
+    {
+        return response()->json(['message' => __('messages.msg_27')], Response::HTTP_LOCKED);
     }
 }

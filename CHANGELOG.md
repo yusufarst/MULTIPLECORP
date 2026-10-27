@@ -611,3 +611,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The workstation's Docker engine stopped answering twice; the Owner restarted it, nothing was restarted by the executor, and CI ran the browser suites.
 - ER-06's independent review found one P1, two P2 and four P3 points, Codex two P2; each fixed and tested.
 - Every check passed in fresh CI on `1d59f67`. TASK-030 DONE — progress 25 / 87 —; TASK-036 READY; TASK-025 next; its pull request squash-merged once eligible.
+
+## Unreleased — 2026-10-28, TASK-025 — Companies, identity assets, bank accounts and tax configuration
+
+- TASK-030 squash-merged by the executor into `main` as `9dd073c` (pull request #30); TASK-025 started.
+- Built TASK-025 on its branch `task/TASK-025-companies`: PG-059 *Perusahaan* — a company created, its legal data, identity assets, bank accounts (a change a new account and the old one's deactivation) and deactivation, each NX-01 under LK-06–LK-08, the step-up before money destinations and identity assets, the readiness list derived each time —; PG-062 *Pajak* — tax types, rate versions, company profiles and treatment rules as data under C-52 —; `CompanyGuard` for C-54 and `CompanyIdentity` under PJ-19.
+- The workstation's Docker engine stopped answering again; nothing was restarted, and CI ran every suite.
+- ER-06's independent review found no P1, four P2 and five P3 points, Codex three P2; each fixed and tested or recorded.
+- Every check passed in fresh CI on `720c122`. TASK-025 DONE — progress 26 / 87 —; TASK-029 READY; TASK-026 next; its pull request squash-merged once eligible.

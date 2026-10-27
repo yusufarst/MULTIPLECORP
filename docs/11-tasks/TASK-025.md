@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -242,34 +242,48 @@ Every document, project, purchase and invoice carries a legal company's identity
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-026's configured-treatment fixtures for TEST_STRATEGY §5 — the numeric annex's example 13 values set through PG-062 (BUSINESS_RULES numeric annex)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Authorization/CompaniesAccessTest.php` — every route of PG-059 and PG-062 declares `companies.manage` or `tax.configure`, both OWNER_ONLY; an Admin holding every other capability, its step-up confirmed, answered by the not-found page on all eight paths, writing nothing
+- Criterion 2: `tests/Feature/ORG/CompaniesTest.php` — a duplicate code or NPWP refused at its field, the NPWP compared by its digits under every company row at LK-06 so two checks run one after the other —; a stale edit CONFLICT (ST-01); `tests/Interaction/CompaniesTest.php` — each `command_id` replayed answering its recorded outcome, other content CONFLICT
+- Criterion 3: `tests/Feature/ORG/CompaniesTest.php` and `tests/Interaction/CompaniesTest.php` — the step-up always before a bank account and an identity asset, before the legal data only when NPWP, the address, the contact or the director changes; expired, nothing recorded
+- Criterion 4: `tests/Feature/ORG/CompaniesTest.php` — a referenced account's details refused by its trigger; its change a new account and the old one's deactivation in one command after its confirmation; the issued version keeping the account it recorded
+- Criterion 5: `tests/Feature/ORG/CompaniesTest.php` — an issued version's payload unchanged after the stamp is replaced (C-11)
+- Criterion 6: `tests/Feature/ORG/CompaniesTest.php` — the stamp served to the Owner and answered as not found to an Admin; the asset the Owner's own IDENTITY_ASSET upload of the company through ROUTE-228, refused outside the purpose's allowlist there (TASK-030's tests)
+- Criterion 7: `tests/Integration/Organization/CompanyDeactivationRaceTest.php` — under real sessions, new business after the deactivation holding the company row REJECTED under C-54 and a correction still committed; new business started first committed and the deactivation after it (LK-06) —; `CompanyGuard` the check every new-business command takes (TASK-032, TASK-037, TASK-049)
+- Criterion 8: `tests/Feature/ORG/TaxTest.php` — overlapping rate versions, and overlapping rules globally or for a company, refused at their field by C-52's exclusion constraints; the company's rule resolved over the global one for its date —; `tests/Unit/ORG/TreatmentPrecedenceTest.php`
+- Criterion 9: `tests/Feature/ORG/CompaniesTest.php` — the readiness lines follow the rows that exist, nothing stored
+- Criterion 10: `tests/Authorization/CompaniesAccessTest.php` — `CompanyIdentity`: the identity to a viewer of its family in scope, the bank accounts with `finance.view`, the stamp and signature to the Owner only, nothing outside scope
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the treatment rules' precedence (TL-03); Feature — ROUTE-059, ROUTE-062, ROUTE-131–ROUTE-135 and ROUTE-138 with each refusal (TL-04); Integration — the deactivation racing new business under real sessions, C-52 on real PostgreSQL (TL-05); PASS in CI
+- [x] Authorization: OWNER_ONLY on every route and path; PJ-19's projection (TL-06)
+- [x] Route integrity: ROUTE-059, ROUTE-062, ROUTE-131–ROUTE-135 and ROUTE-138 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-131–INT-135 and INT-138, each with one `command_id` replayed and the step-up expiring where it applies (TL-08)
+- [x] Browser E2E if required: J-MD-01's company, bank, asset and tax steps and CJ-19's company master, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-059 and PG-062 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll, read-only on the phone (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's forms, readiness list, tabs, tables and confirmations, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 and SM-25 for PJ-19; SM-04 for OD-03 and OD-04; SM-09 for the asset uploads through ROUTE-228 (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review — no P1, four P2 and five P3 — and Codex's three P2, each fixed and tested or recorded below
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `720c122`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40554229307 (push) and 40554235697 (pull request #31), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". The workstation's Docker engine stopped answering during the Task; nothing was restarted, the targeted PHP suites ran locally before it did, and CI ran every suite
+- Build result: `TL-13 Frontend build: PASS — Evidence: 720c122, CI ubuntu-24.04 run 40554229307`
+- Route evidence: TL-07's route audit PASS — ROUTE-059 `GET /pengaturan/perusahaan`, ROUTE-131 `POST /pengaturan/perusahaan`, ROUTE-132 `PUT …/{id}`, ROUTE-133 `POST …/{id}/nonaktifkan`, ROUTE-134 `POST …/{id}/rekening` and ROUTE-135 `POST …/{id}/aset-identitas` behind the step-up (`companies.manage`), ROUTE-062 `GET /pengaturan/pajak` and ROUTE-138 `PUT /pengaturan/pajak` (`tax.configure`)
+- Interaction evidence: `tests/Interaction/CompaniesTest.php` (INT-131–INT-135, INT-138)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 720c122, CI ubuntu-24.04 run 40554229307`; TL-10, TL-11 and TL-12 for PG-059 and PG-062 in the same run
+- Localization evidence: PG-059 and PG-062 in both languages (`tests/Browser/Localization/companies.spec.ts`) (DOD-16); 134 catalogue keys added, the numbering line of ADMIN_FLOW §12.4 canonical, the rest proposed
+- Performance evidence: PFM-01, PFM-02 and PFM-20 (`tests/Performance/CompaniesQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/ORG/` — `Actions/` (CreateCompany, UpdateCompany, DeactivateCompany, ManageBankAccount, ReplaceIdentityAsset, ConfigureTaxTreatment), `Data/` (CompanyFields, RowHandle, TreatmentPrecedence), `Services/` (CompanyCommands, CompanyGuard), `Queries/` (CompanySettings, TaxConfiguration, CompanyIdentity), `Http/Controllers/` (CompaniesController, TaxController) —, the step-up's conditional check, the routes, PG-059 and PG-062 with the navigation, 134 catalogue keys, the tests and browser specs, TOOLCHAIN's row; this record
+- Commit SHA: `b76736b`, `f5160b1`, `686724f`, `54c1506`, `dbb7472`, `2d0b9af`, `7b31100`, `fe57bb6`, `867df9d`, `38f7435`, `720c122`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-025-companies`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `867df9d`, its three P2 fixed and tested in `38f7435`; no review of the later commits arrived within ten minutes of their push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). Discovery for Planning: a bank account's holder or branch cannot be corrected while it keeps its bank and number, `company_bank_accounts_account_unique` holding the retired row — a partial key on active rows would be a schema change. Readings within the approved text: an NPWP is one legal identity by its digits, checked under every company row since no unique key holds it; a bank account and a tax row are named by a keyed hash of their identifier, the page never receiving it; `registration_status` a configured value, never a list in code (DATABASE §4.2); a company's name, code and state also to its `finance.view` and `cost.view` readers in scope, who print its identity (PJ-19); the readiness's company data line includes the contact. Not applicable: Migration tests (TL-16) — no migration
 
 **SAFE NEXT TASK:**
 
