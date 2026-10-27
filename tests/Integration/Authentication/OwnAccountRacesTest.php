@@ -6,8 +6,10 @@ use App\Modules\IAM\Authentication\OwnAccount;
 use App\Modules\IAM\Authentication\Totp;
 use App\Modules\IAM\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Database\Events\TransactionBeginning;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\RefreshDatabase;
@@ -94,13 +96,24 @@ it('refuses a link generically when another account links the subject first, wit
         ->and(DB::table('security_events')->where('event_kind', 'GOOGLE_LINK_CONFLICT')->exists())->toBeTrue();
 });
 
+it('refuses a link when the device is replaced between the request\'s read and its transaction, no link made (AU-23; RV-16)', function () {
+    // The request holds the account as it was; a replacement commits before the code's and the link's one transaction.
+    $this->actingAs($this->user)->withSession([RequireStepUp::CONFIRMED_AT => now()->getTimestamp(), GoogleSignIn::LINK => ['user' => $this->user->id, 'sub' => 'sub-ganti', 'email' => null, 'expires_at' => now()->getTimestamp() + 600]]);
+    DB::table('users')->where('id', $this->user->id)->update(['two_factor_confirmed_at' => now()->addSecond()]);
+
+    $this->post('/akun/google', ['code' => TwoFactor::code()])->assertSessionHasErrors('code');
+
+    expect(DB::table('user_external_identities')->where('provider_subject', 'sub-ganti')->exists())->toBeFalse();
+});
+
 it('refuses a link once the account is deactivated before its transaction, no link surviving (M-42; RV-05; RV-16)', function () {
     $this->actingAs($this->user)->withSession([RequireStepUp::CONFIRMED_AT => now()->getTimestamp(), GoogleSignIn::LINK => ['user' => $this->user->id, 'sub' => 'sub-sari', 'email' => 'sari@contoh.invalid', 'expires_at' => now()->getTimestamp() + 600]]);
 
-    DB::listen(function (QueryExecuted $query) {
+    // The deactivation lands ahead of the code's and the link's one transaction, past the request's own checks.
+    Event::listen(TransactionBeginning::class, function () {
         static $raced = false;
 
-        if (! $raced && str_contains($query->sql, 'two_factor_last_step') && str_starts_with(strtolower($query->sql), 'update')) {
+        if (! $raced) {
             $raced = true;
             DB::table('users')->where('id', $this->user->id)->update(['is_active' => false]);
         }

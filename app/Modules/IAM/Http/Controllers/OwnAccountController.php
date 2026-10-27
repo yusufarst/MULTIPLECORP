@@ -56,6 +56,8 @@ final class OwnAccountController
                 $codes = app(TwoFactorSteps::class)->confirmEnrolment($request, $code);
 
                 if ($codes === null) {
+                    self::keepEnrolment($request);
+
                     return TwoFactorAnswers::mismatch($request);
                 }
 
@@ -66,6 +68,10 @@ final class OwnAccountController
 
             $enrolment = $this->account->startEnrolment($request, self::code($request, 'current_code'));
         } catch (SecondFactorRefused $refused) {
+            if ($code !== null) {
+                self::keepEnrolment($request);
+            }
+
             return TwoFactorAnswers::throttled($request, $refused->seconds, $code !== null ? 'code' : 'current_code');
         }
 
@@ -123,6 +129,16 @@ final class OwnAccountController
         $this->account->setLocale($request, $chosen === 'default' ? null : $chosen);
 
         return back(303);
+    }
+
+    /** A refused confirmation keeps its form: the enrolment still held is flashed again, never kept in history (AU-16). */
+    private static function keepEnrolment(Request $request): void
+    {
+        $held = app(TwoFactorSteps::class)->heldEnrolment($request);
+
+        if ($held !== null) {
+            Inertia::flash('enrolment', $held);
+        }
     }
 
     /**

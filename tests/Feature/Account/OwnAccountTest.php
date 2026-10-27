@@ -128,6 +128,10 @@ it('enrols TOTP with its QR code shown once, then the codes shown once (ROUTE-11
 
     expect($enrolment['qr'] ?? null)->toBeArray()->and($enrolment['key'] ?? null)->toBeString();
 
+    // A wrong code keeps the confirmation's form: the same enrolment flashed again with the error.
+    $this->actingAs($fresh)->post('/akun/verifikasi-dua-langkah', ['code' => '000000'])->assertSessionHasErrors('code');
+    expect(flashedOf('enrolment')['key'] ?? null)->toBe($enrolment['key']);
+
     $this->actingAs($fresh)->post('/akun/verifikasi-dua-langkah', ['code' => TwoFactor::code($secret)])->assertRedirect('/akun');
 
     expect(flashedOf('recovery_codes'))->toHaveCount(8)

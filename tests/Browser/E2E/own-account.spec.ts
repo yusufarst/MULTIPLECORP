@@ -61,6 +61,23 @@ test('switches the language with unsent input, changes the password and keeps th
     await expect(page.getByText(/A security change was made to this account: Password changed/)).toBeVisible();
 });
 
+test('returns with "Kembali" to the page the account menu was opened from (NAV-065)', async ({ page }) => {
+    await signedIn(page, 'akun-kembali');
+    const origin = new URL(page.url()).pathname;
+
+    await page.getByRole('button', { name: /Menu akun/ }).click();
+    await page.getByRole('menuitem', { name: 'Akun Saya' }).click();
+    await page.waitForURL('**/akun');
+    // A visit at the same address keeps the origin: the language switched there and back.
+    await page.getByLabel('Bahasa tampilan').selectOption('en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('My account', { timeout: VISIT });
+    await page.getByLabel('Display language').selectOption('id');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Akun Saya', { timeout: VISIT });
+
+    await page.getByRole('button', { name: 'Kembali' }).click();
+    await page.waitForURL((url) => url.pathname === origin, { timeout: VISIT });
+});
+
 test('turns two-step verification on, shows the codes once and views them again, none kept (ROUTE-112, ROUTE-113; criteria 3, 4)', async ({ page }) => {
     const account = await signedIn(page, 'akun-totp', { plain: true });
     await page.goto('/akun');
@@ -84,7 +101,8 @@ test('turns two-step verification on, shows the codes once and views them again,
     await page.reload();
     await expect(page.getByRole('list', { name: 'Kode pemulihan' })).toHaveCount(0);
 
-    await step(page, 'Lihat Kode').getByLabel('Kode verifikasi').fill(totp(key, 1));
+    const viewing = totp(key, 1);
+    await step(page, 'Lihat Kode').getByLabel('Kode verifikasi').fill(viewing);
     await step(page, 'Lihat Kode').getByRole('button', { name: 'Lihat Kode' }).click();
     // A changed factor asks the step-up again (AU-15).
     await stepUp(page, account.password);
@@ -93,7 +111,7 @@ test('turns two-step verification on, shows the codes once and views them again,
     await nothingKept(page, [key, ...first]);
 
     // The same code a second time is refused (M-39).
-    await step(page, 'Buat Kode Baru').getByLabel('Kode verifikasi').fill(totp(key, 1));
+    await step(page, 'Buat Kode Baru').getByLabel('Kode verifikasi').fill(viewing);
     await step(page, 'Buat Kode Baru').getByRole('button', { name: 'Buat Kode Baru' }).click();
     await expect(page.getByText('Kode tidak cocok atau sudah tidak berlaku. Masukkan kode terbaru dari aplikasi autentikator.')).toBeVisible({ timeout: VISIT });
 });

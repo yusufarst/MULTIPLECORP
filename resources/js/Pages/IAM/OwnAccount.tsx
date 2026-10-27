@@ -4,6 +4,7 @@
 // step-up the shell answers (AU-15; IP-10); the QR code, the key and the recovery codes arrive as flash data and are
 // shown once, never kept in history (AU-12's rule; AU-16; AU-19; H7-12).
 import { router, useForm, usePage } from '@inertiajs/react';
+import { ArrowLeft } from 'lucide-react';
 import { type ReactNode, type SyntheticEvent, useEffect } from 'react';
 
 import { FormField, FormSection } from '@/components/form';
@@ -13,6 +14,7 @@ import { QrCode } from '@/components/qr-code';
 import { PasswordInput } from '@/components/session-dialogs';
 import { roleLabel } from '@/components/shell/menus';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateTimeText } from '@/components/values';
@@ -20,6 +22,7 @@ import AppShell from '@/layouts/AppShell';
 import { dateLong, dateTime, dayOf } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints } from '@/lib/navigation';
+import { returnTarget } from '@/lib/previous-page';
 
 type Props = {
     account: { name: string; email: string; locale: 'id' | 'en' | null };
@@ -87,7 +90,22 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
     return (
         <AppShell title={t('pages.pg_065.title')}>
             <div className="flex min-w-0 flex-col gap-8">
-                <PageHeader title={t('pages.pg_065.title')} />
+                <div className="flex min-w-0 flex-col gap-2">
+                    {/* NAV-065: "Kembali" returns to the page the account menu was opened from — kept while this page
+                        answers its own forms at the same address —, else to the landing page. */}
+                    <Button
+                        variant="ghost"
+                        size="md"
+                        className="self-start"
+                        onClick={() => {
+                            router.visit(returnTarget(hints));
+                        }}
+                    >
+                        <Icon icon={ArrowLeft} size="sm" />
+                        {t('shell.back')}
+                    </Button>
+                    <PageHeader title={t('pages.pg_065.title')} />
+                </div>
                 {flash.answer !== undefined && <OutcomeMessage answer={flash.answer.kind === 'COMMITTED' ? { kind: 'COMMITTED', text: flash.answer.text } : { kind: 'REJECTED', text: flash.answer.text }} />}
                 {google.answer === 'failed' && <OutcomeMessage answer={{ kind: 'REJECTED', text: t('account.google.failed') }} />}
 

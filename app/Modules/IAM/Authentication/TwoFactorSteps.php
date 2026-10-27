@@ -236,6 +236,19 @@ final class TwoFactorSteps
     }
 
     /**
+     * The enrolment this session still holds, for its confirmation's retry after a wrong code; null once it lapsed or
+     * was discarded.
+     *
+     * @return array{qr: list<string>, key: string, replacing: bool}|null
+     */
+    public function heldEnrolment(Request $request): ?array
+    {
+        $held = $request->session()->get(self::ENROLMENT);
+
+        return is_array($held) && is_int($held['expires_at'] ?? null) && $held['expires_at'] > now()->getTimestamp() ? $this->enrolment($request) : null;
+    }
+
+    /**
      * ROUTE-004: the enrolment in progress, a new secret when none is held or it lapsed; its QR code and text
      * key, for the page's flash data only.
      *

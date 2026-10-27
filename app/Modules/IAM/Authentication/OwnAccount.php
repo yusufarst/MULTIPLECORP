@@ -299,13 +299,18 @@ final class OwnAccount
             return self::NO_TOTP;
         }
 
-        if ($this->steps->sessionCode($request, $user, $code) !== TwoFactorSteps::ACCEPTED) {
+        // One transaction (AU-23; RV-16): the row locked, the code's step taken, the factor re-read, then the link — so a
+        // replacement or a reset between the code and the link refuses both.
+        $outcome = $this->steps->underSessionCode($request, $user, $code, fn (User $row): string => $this->identities->linkLocked($row, $pending['sub'], $pending['email']));
+
+        if ($outcome === null) {
             return self::WRONG_CODE;
         }
 
         $request->session()->forget(GoogleSignIn::LINK);
+        $this->identities->announce($user, $outcome);
 
-        return $this->identities->link($user, $pending['sub'], $pending['email']);
+        return $outcome;
     }
 
     /** ROUTE-117: the holder's own unlink, its other sessions ending (AU-24 SELF). */
