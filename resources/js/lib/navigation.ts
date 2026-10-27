@@ -24,7 +24,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-054', 'PG-055', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -73,7 +73,15 @@ export const MODULES: Entry[] = [
         icon: BarChart3,
         allowed: (account) => has('stock.view')(account) || scoped('projects.view', 'finance.view', 'cost.view', 'profit.view', 'reports.consolidated')(account),
     },
-    { key: 'data-master', pg: 'PG-054', label: 'glossary.gl_021', href: '/data-master/klien', icon: Users, allowed: everyAccount },
+    {
+        key: 'data-master',
+        pg: 'PG-054',
+        label: 'glossary.gl_021',
+        href: '/data-master/klien',
+        icon: Users,
+        allowed: everyAccount,
+        subpages: [{ pg: 'PG-055', href: '/data-master/pemasok' }],
+    },
     { key: 'aktivitas', pg: 'PG-063', label: 'shell.nav.aktivitas_keamanan', href: '/aktivitas/riwayat', icon: ShieldCheck, allowed: has('audit.view', 'security_log.view') },
     {
         key: 'pengaturan',

@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Modules\ORG\Data;
+namespace App\Support;
 
 use LogicException;
 
 /**
- * The handle PG-059 and PG-062 name a bank account or a tax-configuration row by — rows without a public identifier —:
- * a keyed hash of its table and identifier, which the page never receives (the pattern of PG-060's session handle),
- * resolved by the controller among the rows the page showed.
+ * The handle a page names a row without a public identifier by — PG-059's bank account, PG-062's tax-configuration
+ * row, PG-054's client unit, address and PIC —: a keyed hash of its table and identifier, which the page never
+ * receives (the pattern of PG-060's session handle), resolved by the controller among the rows the page showed.
  */
 final class RowHandle
 {

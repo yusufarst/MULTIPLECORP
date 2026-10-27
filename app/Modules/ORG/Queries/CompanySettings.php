@@ -2,11 +2,11 @@
 
 namespace App\Modules\ORG\Queries;
 
-use App\Modules\ORG\Data\RowHandle;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Services\NumberingState;
 use App\Support\BusinessDate;
+use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 
 /**

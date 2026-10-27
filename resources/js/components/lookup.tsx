@@ -151,6 +151,15 @@ export function Lookup({
                     )}
                 </ComboboxList>
                 {(cut || total(groups) > LOOKUP_ROWS) && <p className="border-t border-border-subtle px-3 py-2 text-caption text-text-secondary">{t('messages.msg_23')}</p>}
+                {/* Search first, then create: with the matches shown, "Buat {Objek}" stays offered below them (J-MD-02). */}
+                {create !== undefined && !short && !loading && term.trim() !== '' && total(shown) > 0 && (
+                    <div className="border-t border-border-subtle px-1 py-1">
+                        <Button variant="ghost" size="sm" onClick={create.onCreate}>
+                            <Icon icon={Plus} size="sm" />
+                            {t('actions.create_object', { objek: create.object })}
+                        </Button>
+                    </div>
+                )}
             </ComboboxContent>
         </Combobox>
     );

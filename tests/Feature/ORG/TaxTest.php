@@ -1,9 +1,9 @@
 <?php
 
-use App\Modules\ORG\Data\RowHandle;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Queries\TaxConfiguration;
 use App\Support\Command\Outcome;
+use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;

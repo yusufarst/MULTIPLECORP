@@ -22,7 +22,7 @@ export type CommandForm<P> = {
     unknown: boolean;
     frozen: boolean;
     clear: () => void;
-    submit: (payload: P, done?: () => void) => void;
+    submit: (payload: P, done?: (state: Record<string, unknown>) => void) => void;
     retry: () => void;
 };
 
@@ -32,13 +32,13 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
     const [answer, setAnswer] = useState<Answer | null>(null);
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [state, setState] = useState<Record<string, unknown>>({});
-    const finished = useRef<(() => void) | undefined>(undefined);
+    const finished = useRef<((state: Record<string, unknown>) => void) | undefined>(undefined);
     const unknown = (): void => {
         intent.failed();
         setAnswer({ kind: 'FAILED', cause: 'unknown', text: t('messages.msg_07') });
     };
 
-    const send = (sent: { commandId: string; payload: P } | null, done?: () => void) => {
+    const send = (sent: { commandId: string; payload: P } | null, done?: (state: Record<string, unknown>) => void) => {
         if (sent === null) return;
         setErrors({});
         router[method](url(), { command_id: sent.commandId, ...sent.payload }, {
@@ -74,7 +74,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
                 );
 
                 if (given.kind === 'COMMITTED') {
-                    done?.();
+                    done?.(given.state ?? {});
                 }
             },
             onError: (bag) => {
@@ -101,7 +101,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
             setErrors({});
         },
         /** Sends the payload as a new intent — or, while an earlier one's outcome is unknown, retries it unchanged (IP-02). */
-        submit: (payload: P, done?: () => void) => {
+        submit: (payload: P, done?: (state: Record<string, unknown>) => void) => {
             if (intent.state.phase === 'unknown') {
                 send(intent.retry(), finished.current);
 

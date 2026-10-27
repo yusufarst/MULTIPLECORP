@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -232,34 +232,46 @@ CAP-02 and AC-02 need one generic organization → unit → PIC hierarchy in whi
 - Migration: N/A — no migration or import code in this Task
 - Other: N/A — nothing beyond the layers above
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PTY/ClientsTest.php` — the search-first lookup lists the name equal to the term first, then the names beginning with it, then the ranked substring and word-similarity matches (PF-21, NameSearch over IX-17 and the trigram index); a creation whose name an active organization equals or begins with answers REJECTED with that list, a second submission naming only some of them refused again, one naming each with its reason committed (IP-05; DuplicateWarning); `tests/Feature/PTY/SuppliersTest.php` the same for a supplier, and a replayed refusal answering its current matches (CI-05)
+- Criterion 2: `tests/Feature/PTY/ClientsTest.php` — UNY, UGM and a school created through one organization → unit → PIC flow, the first unit, its address and a PIC in the creation's one command; no institution-specific code
+- Criterion 3: `tests/Feature/PTY/ClientsTest.php` — an issued document version's payload unchanged after its unit, address and PIC change while the project form's choices read the new values; `tests/Feature/PTY/SuppliersTest.php` — a purchase's supplier snapshot unchanged after the supplier's edit (C-11; DATABASE §14)
+- Criterion 4: `tests/Feature/PTY/ClientsTest.php` and `SuppliersTest.php` — an archived organization, unit or supplier kept with its history, no longer offered by PTY's lookups or the form's choices, taking no addition or edit; an open purchase of an archived supplier still OPEN
+- Criterion 5: `tests/Integration/Parties/SupplierPriceHistoryTest.php` — PUR's `SupplierPrices`: each company's latest actual price and date per product from its own purchases, a cancelled purchase excluded, never pooled, shown with `cost.view` for companies in scope only, no stored price; `tests/Feature/PTY/SuppliersTest.php` — the supplier chosen directly, no comparison, score or ranking
+- Criterion 6: `tests/Authorization/PartiesAccessTest.php` — S0 names to every active account; NPWP, units, addresses and PICs to `projects.view`, a supplier's details to `projects.view` or `cost.view`, its prices to `cost.view`; related projects in scope only, with no count; every command refused without `parties.manage` or a company in scope, writing nothing
+- Criterion 7: `tests/Integration/Parties/UnitNameRaceTest.php` — two creations of one unit name under real PostgreSQL sessions: COMMITTED and CONFLICT SQ-08, one unit kept; a taken name refused at its field (Feature)
+- Criterion 8: `tests/Interaction/PartiesTest.php` — an inline creation answered on the form it came from, on this host only, with the new organization, unit, address and PIC, or the supplier, chosen; `tests/Browser/E2E/parties.spec.ts` — J-MD-02 inline at 390 and 1,280 px and J-MD-03 inline, the form's own input kept, through the stand-ins of PG-013 and PG-017 (`/__fixtures/formulir-pihak`) until TASK-032 and TASK-037 build them
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the name normalization (TL-03); Feature — ROUTE-054, ROUTE-055 and ROUTE-141–ROUTE-144 with each refusal, the search-first ranking (TL-04); Integration — the unit-name race under real sessions and the price history over two companies (TL-05); PASS in CI
+- [x] Authorization: S0 names, the S2 relations by capability, `parties.manage` with a company in scope (TL-06)
+- [x] Route integrity: ROUTE-054, ROUTE-055 and ROUTE-141–ROUTE-144 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-141–INT-144, each with one `command_id` replayed, and the inline answer (TL-08)
+- [x] Browser E2E if required: J-MD-02 inline on the phone and the desktop, J-MD-03 inline, CJ-19's party masters on PG-054 and PG-055, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-054 and PG-055 and the creation's one-column form at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's lookup, sheets, data lists, confirmations and form fields, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for the masters' projection and the lookups, SM-12 — no count of out-of-scope projects —, SM-25 for the price history (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; Codex's three P2 fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `0b9ef62`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40576576977 (push) and 40576586168 (pull request #32), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". The workstation's Docker engine stopped answering during the Task; nothing was restarted, the targeted PHP suites ran locally before it did, and CI ran every suite
+- Build result: `TL-13 Frontend build: PASS — Evidence: 0b9ef62, CI ubuntu-24.04 run 40576576977`
+- Route evidence: TL-07's route audit PASS — ROUTE-054 `GET /data-master/klien` and ROUTE-055 `GET /data-master/pemasok` (every active account, S0), ROUTE-141 `POST /data-master/klien`, ROUTE-142 `PUT /data-master/klien/{id}`, ROUTE-143 `POST /data-master/pemasok` and ROUTE-144 `PUT /data-master/pemasok/{id}` (`parties.manage`)
+- Interaction evidence: `tests/Interaction/PartiesTest.php` (INT-141–INT-144)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 0b9ef62, CI ubuntu-24.04 run 40576576977`; TL-10, TL-11 and TL-12 for PG-054 and PG-055 in the same run
+- Localization evidence: PG-054 and PG-055 in both languages (`tests/Browser/Localization/parties.spec.ts`) (DOD-16); 72 catalogue keys added, proposed copy
+- Performance evidence: PFM-01, PFM-02 and PFM-20 (`tests/Performance/PartiesQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/PTY/` — `Actions/` (CreateClientOrganization, AddClientUnit, UpdateClient, ArchiveClient, CreateSupplier, UpdateSupplier, ArchiveSupplier), `Data/PartyFields`, `Services/` (PartyCommands, ClientRows), `Queries/` (ClientDirectory, SupplierDirectory, PartyLookup's form choices), `Http/Controllers/` (ClientsController, SuppliersController, PartyForms) —; PUR's `Queries/SupplierPrices` and PRJ's `Queries/ClientProjects`; `RowHandle` moved from ORG's `Data` to `App\Support`; the routes and the fixture stand-in; PG-054 and PG-055 with the navigation, the shared party components and the lookup's "Buat {Objek}" below its matches; `useCommand` handing its answer's state to its completion; 72 catalogue keys; the tests and browser specs; TOOLCHAIN's row; this record
+- Commit SHA: `031306d`, `a8de364`, `f7ddf7b`, `698c5bf`, `e235106` and `0b9ef62`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-026-parties`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `a8de364`, its three P2 — a stale answer remounting the edit sheet, a sheet's close control and Escape bypassing the unsent-input guard, a replayed duplicate refusal without its matches — fixed and tested in `f7ddf7b`. A WebKit run of the record's first commit showed the creation sheet's similar-names list, arriving after the typing, moving the submit button under the press — fixed in `0b9ef62` by placing the list below the actions. Readings within the approved text: an organization's or supplier's duplicate warning is IP-05's, refusing a creation while an active name equals the new one or begins with it, a second submission naming each with its reason — no unique key holds these names (DATABASE §4.3), so two concurrent creations of one new name are not serialized; a name normalized — trimmed, white space collapsed — before the unit's unique key, the warning and the search compare it; the first unit, its address and a PIC may be given with the organization in the creation's one command, so an inline creation answers once (IP-19); an archive asks its reason; the page's search is ROUTE-281's, the term never in the address (H7-10); the lookup offers "Buat {Objek}" below its matches as well as on an empty answer, so a creation stays possible when a similar name exists. Discovery for Planning: `purchases` has no index on `supplier_id` — the price history walks each scoped company's purchases by IX-11, a candidate for P8's plan measurement (HO-16). Not applicable: Migration tests (TL-16) — no migration
 
 **SAFE NEXT TASK:**
 

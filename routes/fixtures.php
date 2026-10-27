@@ -69,4 +69,8 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // The run's own requests carry no form token; the application's routes keep the check (RequestForgeryTest).
     Route::post('__fixtures/berkas', [FilesFixture::class, 'upload'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/berkas/rendisi', [FilesFixture::class, 'rendition'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-026): stand-ins of PG-013's and PG-017's party fields, for J-MD-02's and J-MD-03's inline
+    // creation through the real ROUTE-141 and ROUTE-143, before the project and purchase forms exist.
+    Route::get('__fixtures/formulir-pihak', fn () => Inertia::render('Fixtures/PartyForms'));
 });
