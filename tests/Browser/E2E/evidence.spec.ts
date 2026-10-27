@@ -17,7 +17,8 @@ async function openUpload(page: Page): Promise<void> {
 async function identify(page: Page, type: string, issuer: string, reference: string | null): Promise<void> {
     const sheet = page.getByRole('dialog', { name: 'Unggah Dokumen' });
     await sheet.getByLabel('Jenis bukti').selectOption({ label: type });
-    await sheet.getByLabel('Penerbit', { exact: true }).fill(issuer);
+    // A required field's name carries its marking, "Penerbit (wajib)"; the reference's starts "Nomor referensi penerbit".
+    await sheet.getByLabel(/^Penerbit\b/).fill(issuer);
 
     if (reference !== null) {
         await sheet.getByLabel('Nomor referensi penerbit').fill(reference);

@@ -10,6 +10,7 @@ use App\Modules\DOC\Services\EvidenceUse;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -139,13 +140,23 @@ final class EvidenceList
 
         // PJ-08 row 95: only the links whose record the viewer may see are counted.
         $targets = EvidenceUse::visibleTargets($viewer, $companyId);
-        $linked = $targets === [] ? 'false' : '('.implode(' or ', array_map(fn (string $column): string => "l.{$column} is not null", $targets)).')';
-        $found = $query->orderByDesc('e.id')->limit(self::PAGE + 1)->get([
+        $links = DB::table('evidence_links as l')->selectRaw('count(*)')->whereColumn('l.evidence_document_id', 'e.id')->whereNull('l.unlinked_at');
+
+        if ($targets === []) {
+            $links->whereRaw('false');
+        } else {
+            $links->where(function (Builder $visible) use ($targets): void {
+                foreach ($targets as $column) {
+                    $visible->orWhereNotNull("l.{$column}");
+                }
+            });
+        }
+
+        $found = $query->select([
             'e.id', 'e.public_id', 'e.evidence_type', 'e.declared_issuer', 'e.issuer_reference', 'e.document_date', 'e.proven_amount', 'e.recorded_at',
             'cv.version_no', 'f.sha256', 'f.mime_type',
             DB::raw('(select count(*) from evidence_document_versions v where v.evidence_document_id = e.id) as versions'),
-            DB::raw("(select count(*) from evidence_links l where l.evidence_document_id = e.id and l.unlinked_at is null and {$linked}) as links"),
-        ])->all();
+        ])->selectSub($links, 'links')->orderByDesc('e.id')->limit(self::PAGE + 1)->get()->all();
         $more = count($found) > self::PAGE ? self::text($found[self::PAGE - 1]->public_id) : null;
         $found = array_slice($found, 0, self::PAGE);
         $reproductions = $this->reproductions($viewer, array_map(fn (object $row): string => self::text($row->sha256), $found));
