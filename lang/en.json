@@ -1597,5 +1597,6 @@
     "tax.validation.range": "The end must be after the start.",
     "tax.validation.type": "The tax type was not found.",
     "tax.validation.overlap": "This date range overlaps another setting of the same kind.",
-    "tax.validation.duplicate": "This code is already in use."
+    "tax.validation.duplicate": "This code is already in use.",
+    "companies.readiness.numbering_missing": "Not started — :jenis cannot be numbered for this company yet."
 }

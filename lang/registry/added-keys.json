@@ -4260,6 +4260,12 @@
             "source": "INFORMATION_ARCHITECTURE §8.6 PG-059, PG-062; ADMIN_FLOW §12.4, J-MD-01; DATABASE §4.2, §12; MSG-39",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "companies.readiness.numbering_missing": {
+            "task": "TASK-025",
+            "source": "ADMIN_FLOW §12.4",
+            "indonesian": "canonical",
+            "english": "proposed"
         }
     }
 }

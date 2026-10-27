@@ -30,9 +30,10 @@ final class UpdateCompany
     {
         return $this->commands->run($commandId, self::TYPE, $actorUserId, 'companies.manage', $company->id, $company->public_id, [...$fields, 'lock_version' => $lockVersion],
             function (CommandContext $context) use ($company, $lockVersion, $fields): CommandResult {
-                $context->lock((new LockSet)->add('companies', ['id' => $company->id]));
-                $row = Company::query()->findOrFail($company->id);
                 $npwp = CompanyFields::npwpDigits($fields['npwp'] ?? null);
+                $own = (new LockSet)->add('companies', ['id' => $company->id]);
+                $context->lock($npwp === null ? $own : $this->commands->allCompanies()->union($own));
+                $row = Company::query()->findOrFail($company->id);
 
                 if ($npwp !== null && DB::table('companies')->where('id', '<>', $row->id)
                     ->whereRaw("regexp_replace(coalesce(npwp, ''), '[^0-9]', '', 'g') = ?", [$npwp])->exists()) {
@@ -49,9 +50,12 @@ final class UpdateCompany
                     }
                 }
 
-                $this->commands->update($context, 'companies', $row->id, $lockVersion, $after);
+                if ($row->lock_version !== $lockVersion) {
+                    throw Refused::conflict('ST-01');
+                }
 
                 if ($after !== []) {
+                    $this->commands->update($context, 'companies', $row->id, $lockVersion, $after);
                     $this->commands->record($context, 'ORG.CompanyUpdated', $row->id, 'company', $row->id, $row->public_id, $before, $after);
                 }
 

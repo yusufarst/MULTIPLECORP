@@ -6,6 +6,7 @@ use App\Modules\ORG\Data\RowHandle;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Services\NumberingState;
+use App\Support\BusinessDate;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -112,10 +113,11 @@ final class CompanySettings
         $schemes = array_map(fn (mixed $type): string => is_string($type) ? $type : '', DB::table('numbering_schemes')->where('company_id', $company->id)->distinct()->pluck('sequence_type')->all());
         $types = SequenceType::cases();
         $lines = [
-            ['key' => 'company_data', 'complete' => $company->legal_form !== null && $company->npwp !== null && $company->address_lines !== null && $company->city !== null],
+            ['key' => 'company_data', 'complete' => $company->legal_form !== null && $company->npwp !== null && $company->address_lines !== null && $company->city !== null
+                && ($company->phone !== null || $company->email !== null)],
             ['key' => 'identity_assets', 'complete' => $company->logo_file_id !== null && $company->stamp_file_id !== null && $company->signature_file_id !== null && $company->director_name !== null],
             ['key' => 'bank_account', 'complete' => array_filter($accounts, fn (array $account): bool => $account['active']) !== []],
-            ['key' => 'tax', 'complete' => DB::table('company_tax_profiles')->where('company_id', $company->id)->whereRaw('effective @> current_date')->exists()],
+            ['key' => 'tax', 'complete' => DB::table('company_tax_profiles')->where('company_id', $company->id)->whereRaw('effective @> ?::date', [BusinessDate::today()])->exists()],
             ['key' => 'number_format', 'complete' => array_diff(array_map(fn (SequenceType $type): string => $type->value, $types), $schemes) === []],
         ];
 

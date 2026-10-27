@@ -72,7 +72,7 @@ final class TaxController extends Controller
             default => ['company_id' => $company?->id, 'transaction_context' => self::text($input['context']), 'tax_type_id' => $type(), 'treatment' => self::text($input['treatment']),
                 'evidence_required' => (bool) $input['evidence_required'], 'effective' => $effective],
         };
-        $companyId = $company !== null ? $company->id : ($row['company_id'] ?? null);
+        $companyId = $row !== null ? $row['company_id'] : $company?->id;
         $outcome = $action->run(self::text($input['command_id']), self::actor($request), $kind, $row['id'] ?? null, $row === null ? null : (int) self::text($input['lock_version'] ?? 0),
             $values, $companyId, $company?->public_id);
 

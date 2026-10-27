@@ -62,8 +62,11 @@ test('creates a company and sets it up section by section, its readiness followi
 
     await page.getByRole('button', { name: 'Ganti Rekening' }).click();
     await page.getByLabel(/^Nomor rekening/).fill('5555666677');
-    await page.getByLabel(/^Alasan/).fill('Pindah ke rekening baru');
     await page.getByRole('button', { name: 'Ganti Rekening' }).last().click();
+    // The old account's deactivation is confirmed first, with its reason (IP-08).
+    const confirm = page.getByRole('alertdialog', { name: /^Ganti Rekening/ });
+    await confirm.getByRole('textbox').fill('Pindah ke rekening baru');
+    await confirm.getByRole('button', { name: 'Ganti Rekening' }).click();
     await expect(page.getByText('Rekening diganti; rekening lama dinonaktifkan.')).toBeVisible();
     await expect(page.getByRole('listitem').filter({ hasText: '1234567890' })).toContainText('Nonaktif');
 

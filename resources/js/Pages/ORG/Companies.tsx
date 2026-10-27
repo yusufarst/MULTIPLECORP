@@ -162,8 +162,17 @@ function LegalData({ company }: { company: Company }) {
     const update = useCommand<Payload>(() => `/pengaturan/perusahaan/${company.id}`, 'put');
 
     return (
+        <>
+            <dl className="grid min-w-0 grid-cols-1 gap-3 md:hidden">
+                {LEGAL.map((field) => (
+                    <div key={field} className="flex min-w-0 flex-col gap-1">
+                        <dt className="text-caption text-text-tertiary">{t(`companies.field.${field}` as TranslationKey)}</dt>
+                        <dd className="min-w-0 break-words text-body text-text-primary">{company[field] ?? '—'}</dd>
+                    </div>
+                ))}
+            </dl>
         <form
-            className="flex min-w-0 flex-col gap-6"
+            className="flex min-w-0 flex-col gap-6 max-md:hidden"
             noValidate
             onSubmit={(event) => {
                 event.preventDefault();
@@ -179,6 +188,7 @@ function LegalData({ company }: { company: Company }) {
                 </Button>
             </div>
         </form>
+        </>
     );
 }
 
@@ -240,6 +250,7 @@ function AccountForm({ company, account, onDone }: { company: Company; account: 
     const { t } = useTranslation();
     const [details, setDetails] = useState({ bank_name: '', account_number: '', account_holder: company.legal_name, branch: '' });
     const [reason, setReason] = useState('');
+    const [confirming, setConfirming] = useState(false);
     const command = useCommand<Payload>(() => `/pengaturan/perusahaan/${company.id}/rekening`, 'post');
     const field = (name: keyof typeof details, label: TranslationKey, required = true) => (
         <FormField label={t(label)} required={required} error={command.errors[name]}>
@@ -253,7 +264,11 @@ function AccountForm({ company, account, onDone }: { company: Company; account: 
             noValidate
             onSubmit={(event) => {
                 event.preventDefault();
-                command.submit(account === null ? { action: 'add', ...details } : { action: 'change', account: account.handle, lock_version: account.lock_version, reason, ...details }, onDone);
+                if (account === null) {
+                    command.submit({ action: 'add', ...details }, onDone);
+                } else {
+                    setConfirming(true);
+                }
             }}
         >
             {account !== null && <p className="text-body text-text-secondary">{t('companies.account.change_line')}</p>}
@@ -264,9 +279,22 @@ function AccountForm({ company, account, onDone }: { company: Company; account: 
                 {field('branch', 'companies.account.branch', false)}
             </div>
             {account !== null && (
-                <FormField label={t('companies.account.reason')} required error={command.errors.reason}>
-                    {(control) => <Textarea {...control} value={reason} maxLength={500} onChange={(event) => { setReason(event.target.value); }} />}
-                </FormField>
+                <ConfirmCommand
+                    open={confirming}
+                    onOpenChange={setConfirming}
+                    title={t('companies.account.change')}
+                    consequence={t('companies.account.change_line')}
+                    reason={{ value: reason, onChange: setReason, error: command.errors.reason }}
+                    confirmLabel={t('companies.account.change')}
+                    pending={command.pending}
+                    answer={command.answer}
+                    onConfirm={() => {
+                        command.submit({ action: 'change', account: account.handle, lock_version: account.lock_version, reason, ...details }, () => {
+                            setConfirming(false);
+                            onDone();
+                        });
+                    }}
+                />
             )}
             <CommandAnswer command={command} />
             <div className="flex justify-end gap-3">
@@ -394,7 +422,9 @@ function Detail({ company, section }: { company: Company; section: Section }) {
         : {};
     const items = company.readiness.map((line, index) => ({
         key: `${line.key}-${String(index)}`,
-        label: line.type !== undefined ? t('companies.readiness.numbering', { jenis: t(typeLabel(line.type)) }) : t(`companies.readiness.${line.key}` as TranslationKey),
+        label: line.type !== undefined
+            ? t(line.complete ? 'companies.readiness.numbering' : 'companies.readiness.numbering_missing', { jenis: t(typeLabel(line.type)) })
+            : t(`companies.readiness.${line.key}` as TranslationKey),
         complete: line.complete,
         ...link(line.key),
     }));
@@ -440,7 +470,7 @@ export default function Companies({ companies, company, section }: Props) {
     const { t } = useTranslation();
     const [creating, setCreating] = useState(false);
     const createAction = (
-        <Button onClick={() => { setCreating(true); }}>
+        <Button className="max-md:hidden" onClick={() => { setCreating(true); }}>
             <Icon icon={Plus} size="sm" />
             {t('companies.create')}
         </Button>

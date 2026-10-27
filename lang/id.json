@@ -1597,5 +1597,6 @@
     "tax.validation.range": "Tanggal akhir harus setelah tanggal mulai.",
     "tax.validation.type": "Jenis pajak tidak ditemukan.",
     "tax.validation.overlap": "Rentang tanggal ini bertumpang tindih dengan pengaturan lain yang sama.",
-    "tax.validation.duplicate": "Kode ini sudah dipakai."
+    "tax.validation.duplicate": "Kode ini sudah dipakai.",
+    "companies.readiness.numbering_missing": "Belum dimulai — :jenis belum dapat dinomori untuk perusahaan ini."
 }

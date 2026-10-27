@@ -28,8 +28,8 @@ final class CreateCompany
     public function run(string $commandId, int $actorUserId, array $fields): Outcome
     {
         return $this->commands->run($commandId, self::TYPE, $actorUserId, 'companies.manage', null, null, $fields, function (CommandContext $context) use ($fields): CommandResult {
-            $context->lock(new LockSet);
             $npwp = CompanyFields::npwpDigits($fields['npwp'] ?? null);
+            $context->lock($npwp === null ? new LockSet : $this->commands->allCompanies());
 
             if (DB::table('companies')->where('code', $fields['code'])->exists()) {
                 throw Refused::rejected('BD-16', ['field' => 'code']);

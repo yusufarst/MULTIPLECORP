@@ -10,6 +10,7 @@ use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
+use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
 use Closure;
@@ -36,6 +37,22 @@ final class CompanyCommands
     public function run(string $commandId, string $type, int $actorUserId, string $capability, ?int $companyId, ?string $companyPublicId, array $payload, Closure $action): Outcome
     {
         return $this->envelope->run(new CommandRequest($commandId, $type, $actorUserId, $companyId, $capability, Fingerprint::of($type, $companyPublicId, $payload)), $action);
+    }
+
+    /**
+     * Every company row at LK-06, in id order: a legal identity is checked under them, so two creations or changes of
+     * one NPWP — which no unique key holds — run one after the other and the second sees the first (BD-16). The
+     * workspace holds a handful of legal entities.
+     */
+    public function allCompanies(): LockSet
+    {
+        $set = new LockSet;
+
+        foreach (DB::table('companies')->orderBy('id')->pluck('id') as $id) {
+            $set = $set->add('companies', ['id' => is_numeric($id) ? (int) $id : 0]);
+        }
+
+        return $set;
     }
 
     /**
