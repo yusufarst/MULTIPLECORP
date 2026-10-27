@@ -142,5 +142,5 @@ test('creates, edits and archives a supplier chosen directly (J-MD-03; CJ-19)', 
     await expect(confirm).toContainText('Pembelian, penerimaan barang, dan retur yang berjalan tetap berlanjut');
     await confirm.getByRole('textbox').fill('Tutup usaha');
     await confirm.getByRole('button', { name: 'Arsipkan' }).click();
-    await expect(page.getByText('Pemasok diarsipkan.')).toBeVisible();
+    await expect(page.locator('#konten').getByText('Pemasok diarsipkan.')).toBeVisible();
 });
