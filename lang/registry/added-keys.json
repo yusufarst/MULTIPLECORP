@@ -2389,12 +2389,6 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
-        "users.refusal.rg_10_self": {
-            "task": "TASK-024",
-            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
         "users.refusal.rg_10_inactive": {
             "task": "TASK-024",
             "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",

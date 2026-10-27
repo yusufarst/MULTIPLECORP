@@ -21,8 +21,8 @@ use Illuminate\Support\Facades\DB;
  * (RG-09) —, the account's grants revoked, its Google identity unlinked with reason DEACTIVATION and the acting Owner
  * as `unlinked_by`, the account inactive, its export requests withheld (RV-08), and last its unused credential links
  * revoked and every session deleted by `user_id`, a pending challenge's and an enrolment-only session's included.
- * Historical attribution stays (RG-10). The acting Owner's own account is refused — a reading within the approved
- * text: PG-060 offers the account screens never on the acting Owner's own account (AUTH_JOURNEYS §2.10).
+ * Historical attribution stays (RG-10). The acting Owner's own account may be deactivated while another active Owner
+ * remains — M-22's "the same Owner twice" —, RG-09 refusing the last.
  */
 final class DeactivateUser
 {
@@ -44,10 +44,6 @@ final class DeactivateUser
                 $row = User::query()->findOrFail($target->id);
                 $actor = $context->request->actorUserId;
                 $now = $context->now();
-
-                if ($row->id === $actor) {
-                    throw Refused::rejected('RG-10', ['reason' => 'self']);
-                }
 
                 if ($row->getAttribute('is_active') !== true) {
                     throw Refused::rejected('RG-10', ['reason' => 'inactive']);

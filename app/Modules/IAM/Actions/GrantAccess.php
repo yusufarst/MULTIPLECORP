@@ -98,7 +98,14 @@ final class GrantAccess
 
                 if ($roleChanges) {
                     $roleId = DB::table('roles')->where('code', $role)->where('is_builtin', true)->value('id');
-                    DB::table('user_roles')->where('user_id', $row->id)->update(['role_id' => $roleId, 'granted_by' => $actor, 'granted_at' => $now]);
+
+                    // One role per account (RG-01): replaced in place, or written for an account that holds none.
+                    if ($roleBefore === null) {
+                        DB::table('user_roles')->insert(['user_id' => $row->id, 'role_id' => $roleId, 'granted_by' => $actor, 'granted_at' => $now,
+                            'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now]);
+                    } else {
+                        DB::table('user_roles')->where('user_id', $row->id)->update(['role_id' => $roleId, 'granted_by' => $actor, 'granted_at' => $now]);
+                    }
                 }
 
                 foreach (array_diff($companiesAfter, $held['companies']) as $company) {

@@ -56,10 +56,11 @@ export async function signIn(page: Page, account: Account, password = account.pa
     await page.waitForURL((url) => !url.pathname.startsWith('/masuk'));
 }
 
-/** A fresh account for the run — with a confirmed TOTP unless `plain` —, signed in. */
-export async function signedIn(page: Page, prefix: string, options: { plain?: boolean; locale?: 'id' | 'en' } = {}): Promise<Account> {
+/** A fresh account for the run — with a confirmed TOTP unless `plain`, an Owner with it when `owner` —, signed in. */
+export async function signedIn(page: Page, prefix: string, options: { plain?: boolean; owner?: boolean; locale?: 'id' | 'en' } = {}): Promise<Account> {
+    const kind = options.owner === true ? 'owner' : options.plain === true ? 'plain' : 'totp';
     const response = await page.request.post('/__fixtures/akun', {
-        data: { run: `${prefix}-${String(Date.now())}-${String((runs += 1))}`, kind: options.plain === true ? 'plain' : 'totp', locale: options.locale ?? 'id' },
+        data: { run: `${prefix}-${String(Date.now())}-${String((runs += 1))}`, kind, totp: options.owner === true, locale: options.locale ?? 'id' },
     });
     expect(response.ok()).toBe(true);
     const account = (await response.json()) as Account;

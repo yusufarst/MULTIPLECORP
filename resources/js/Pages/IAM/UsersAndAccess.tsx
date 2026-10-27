@@ -222,7 +222,7 @@ function Directory({ accounts }: { accounts: Directory[] }) {
                 rowHref={(row) => `/pengaturan/pengguna?akun=${row.id}&bagian=profil`}
                 columns={[
                     { key: 'name', header: t('users.profile.name'), cell: (row) => row.name },
-                    { key: 'email', header: t('users.profile.email'), cell: (row) => row.email, priority: 'low' },
+                    { key: 'email', header: t('users.profile.email'), cell: (row) => <span className="break-all">{row.email}</span> },
                     { key: 'role', header: t('users.profile.role'), cell: (row) => t(roleName(row.role)) },
                     { key: 'state', header: t('users.profile.state'), cell: (row) => <Badge tone={row.active ? 'success' : 'neutral'}>{t(row.active ? 'users.state.active' : 'users.state.inactive')}</Badge> },
                     { key: 'totp', header: t('users.security.totp'), cell: (row) => t(row.totp ? 'users.security.totp_on' : 'users.security.totp_off'), priority: 'low' },
@@ -271,17 +271,15 @@ function Profile({ account }: { account: Account }) {
                     </div>
                 </form>
             </FormSection>
-            {!account.self && (
-                <FormSection title={t('users.profile.state')}>
-                    <p className="text-body text-text-secondary">{t(account.active ? 'users.state.deactivate_line' : 'users.state.activate_line')}</p>
-                    <CommandAnswer command={status} />
-                    <div>
-                        <Button variant={account.active ? 'destructive' : 'primary'} size="lg" onClick={() => { setConfirm('status'); }}>
-                            {t(account.active ? 'glossary.gl_047' : 'users.state.activate')}
-                        </Button>
-                    </div>
-                </FormSection>
-            )}
+            <FormSection title={t('users.profile.state')}>
+                <p className="text-body text-text-secondary">{t(account.active ? 'users.state.deactivate_line' : 'users.state.activate_line')}</p>
+                <CommandAnswer command={status} />
+                <div>
+                    <Button variant={account.active ? 'destructive' : 'primary'} size="lg" onClick={() => { setConfirm('status'); }}>
+                        {t(account.active ? 'glossary.gl_047' : 'users.state.activate')}
+                    </Button>
+                </div>
+            </FormSection>
             <ConfirmCommand
                 open={confirm === 'edit'}
                 onOpenChange={(open) => { setConfirm(open ? 'edit' : null); }}

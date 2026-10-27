@@ -1286,7 +1286,6 @@
     "users.answer.unlinked": "The account's Google link is removed.",
     "users.answer.session_ended": "The session has ended.",
     "users.refusal.rg_09": "Cannot be processed: the last active Owner cannot be deactivated or demoted. Make another account an Owner first.",
-    "users.refusal.rg_10_self": "Cannot be processed: your own account is not deactivated here.",
     "users.refusal.rg_10_inactive": "Cannot be processed: this account is already inactive.",
     "users.refusal.rg_10_active": "Cannot be processed: this account is already active.",
     "users.refusal.od_02_self": "Cannot be processed: nobody changes their own access.",

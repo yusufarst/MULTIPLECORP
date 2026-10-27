@@ -1286,7 +1286,6 @@
     "users.answer.unlinked": "Tautan Google akun dilepas.",
     "users.answer.session_ended": "Sesi diakhiri.",
     "users.refusal.rg_09": "Tidak dapat diproses: Owner aktif terakhir tidak dapat dinonaktifkan atau diturunkan. Tetapkan Owner lain terlebih dahulu.",
-    "users.refusal.rg_10_self": "Tidak dapat diproses: akun Anda sendiri tidak dinonaktifkan di sini.",
     "users.refusal.rg_10_inactive": "Tidak dapat diproses: akun ini sudah nonaktif.",
     "users.refusal.rg_10_active": "Tidak dapat diproses: akun ini sudah aktif.",
     "users.refusal.od_02_self": "Tidak dapat diproses: tidak ada yang mengubah aksesnya sendiri.",
