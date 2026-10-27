@@ -70,7 +70,7 @@ it('creates UNY, UGM and another client through the one organization â†’ unit â†
         ->and(DB::table('audit_events')->where('action', 'PTY.ClientOrganizationCreated')->whereNotNull('company_id')->exists())->toBeFalse();
 
     $this->actingAs($this->admin)->get("/data-master/klien?klien={$uny->public_id}")->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('PTY/Clients')->where('client.name', 'Universitas Negeri Yogyakarta')
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('PTY/Clients', false)->where('client.name', 'Universitas Negeri Yogyakarta')
             ->where('client.units.0.name', 'Fakultas Teknik 0')->where('client.units.0.addresses.0.city', 'Yogyakarta')->where('client.units.0.contacts.0.position', 'Bendahara')
             ->where('can.manage', true));
 });

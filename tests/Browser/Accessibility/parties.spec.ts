@@ -36,7 +36,8 @@ for (const width of [390, 1280]) {
         await page.goto('/data-master/klien');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText('Klien');
         await noViolation(page);
-        await page.getByRole('link', { name: `Klien Aksesibel ${stamp}` }).first().click();
+        await page.getByRole('combobox', { name: 'Cari klien' }).fill(`Klien Aksesibel ${stamp}`);
+        await page.getByRole('option', { name: `Klien Aksesibel ${stamp}` }).click();
         await expect(page.getByRole('heading', { name: 'Unit Aksesibel' })).toBeVisible();
         await noViolation(page);
 

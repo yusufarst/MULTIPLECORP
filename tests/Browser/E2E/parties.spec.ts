@@ -8,7 +8,8 @@ import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 // with a unit and its address, a duplicate name answered with the list and created with a reason, a taken unit name
 // refused at its field, an archive saying what continues; and PG-055: a supplier created, edited and archived.
 
-const NAME = /^Nama(\s*\(wajib\))?$/;
+// The required name's label reads "Nama", its marker and "(wajib)"; "Nama unit" and "Nama PIC" are other fields.
+const NAME = /^Nama\W*\(wajib\)/;
 
 function stamp(): string {
     return `${String(Date.now())}${String(Math.floor(Math.random() * 1000))}`;

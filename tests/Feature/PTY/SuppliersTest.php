@@ -98,6 +98,6 @@ it('renders PG-055 with the supplier chosen directly — no comparison, scoring 
     $supplier = Supplier::factory()->create();
 
     $this->actingAs($this->admin)->get("/data-master/pemasok?pemasok={$supplier->public_id}")->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('PTY/Suppliers')->where('supplier.id', $supplier->public_id)
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('PTY/Suppliers', false)->where('supplier.id', $supplier->public_id)
             ->has('supplier.details')->has('supplier.prices')->missing('supplier.score')->missing('supplier.ranking')->missing('supplier.comparison'));
 });

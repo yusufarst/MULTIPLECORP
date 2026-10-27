@@ -35,8 +35,7 @@ final class PartyCommands
     /**
      * @param  array<string, mixed>  $payload
      * @param  Closure(CommandContext): CommandResult  $action
-     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState  a replayed refusal's current state — a
-     *                                                                              search-first refusal's matches, read again (CI-05)
+     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState  a replayed refusal's current state (CI-05)
      */
     public function run(string $commandId, string $type, int $actorUserId, array $payload, Closure $action, ?Closure $replayState = null): Outcome
     {
