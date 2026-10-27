@@ -75,6 +75,14 @@ it('shows the controls with parties.manage and not without it (IG-01; AZ-01 as a
     $this->actingAs($viewer)->get('/data-master/pemasok')->assertInertia(fn (AssertableInertia $page) => $page->where('can.manage', false));
 });
 
+it('keeps a command\'s answer for its page when a type-ahead search lands between the redirect and the page (IP-01; IP-02)', function () {
+    $this->actingAs($this->admin)->post('/data-master/pemasok', ['command_id' => (string) Str::uuid(), 'name' => 'Pemasok Sela'])->assertRedirect();
+
+    $this->actingAs($this->admin)->postJson('/cari', ['q' => 'Pemasok', 'jenis' => ['supplier']])->assertOk();
+
+    expect(partiesAnswer()['kind'] ?? null)->toBe(Outcome::COMMITTED);
+});
+
 it('answers an inline creation on the form it came from with the new values chosen (criterion 8; ROUTE-141; ROUTE-143; IP-19)', function () {
     $form = '/__fixtures/formulir-pihak';
 
