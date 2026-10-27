@@ -87,5 +87,6 @@ test('warns of a reference-less likely duplicate and records it once the match i
     await sheet.getByRole('button', { name: 'Daftarkan Bukti' }).click();
 
     await expect(page.getByRole('dialog', { name: 'Surat pesanan klien' })).toBeVisible();
-    await expect(page.getByRole('dialog', { name: 'Surat pesanan klien' }).getByText(issuer)).toBeVisible();
+    // The registered evidence's own facts name its issuer (the sheet's description repeats it).
+    await expect(page.getByRole('dialog', { name: 'Surat pesanan klien' }).locator('dd').filter({ hasText: issuer })).toBeVisible();
 });
