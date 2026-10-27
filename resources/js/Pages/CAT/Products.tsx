@@ -48,7 +48,7 @@ type Product = {
     serialized: boolean;
     active: boolean;
     lock_version: number;
-    units: { code: string; name: string; ratio: number; base: boolean }[];
+    units: { code: string; name: string; ratio: number; base: boolean; lock_version: number }[];
     barcodes: { code: string; kind: string; active: boolean }[];
     images: { file: string; primary: boolean }[];
     prices: { kind: string; history: PriceRow[] }[];
@@ -72,7 +72,9 @@ function PageAnswer() {
 }
 
 /** One form in a sheet: its fields, its answer in place, "Batal" and every dismissal asking first with unsent input
-    (PT-09; MSG-35); a stale answer keeps it open with its input (IP-03). */
+    (PT-09; MSG-35). It keeps the values and version it opened with: a stale answer leaves the input in place with MSG-03,
+    and only "Muat Versi Terbaru" takes the record's latest values and version — never a silent resend over another
+    user's change (IP-03; ST-01). */
 function FormSheet({
     title,
     url,
@@ -93,10 +95,12 @@ function FormSheet({
     children: (values: Values, set: (field: string, value: string) => void, errors: Record<string, string>) => ReactNode;
 }) {
     const { t } = useTranslation();
+    const [opened, setOpened] = useState({ initial, fixed });
     const [values, setValues] = useState<Values>(initial);
     const [leaving, setLeaving] = useState(false);
     const command = useCommand<Payload>(() => url, method);
-    const dirty = JSON.stringify(values) !== JSON.stringify(initial);
+    const dirty = JSON.stringify(values) !== JSON.stringify(opened.initial);
+    const stale = command.answer?.kind === 'CONFLICT' && command.answer.cause === 'stale';
 
     return (
         <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
@@ -109,11 +113,26 @@ function FormSheet({
                     noValidate
                     onSubmit={(event) => {
                         event.preventDefault();
-                        command.submit({ ...fixed, ...values }, onClose);
+                        command.submit({ ...opened.fixed, ...values }, onClose);
                     }}
                 >
                     {children(values, (field, value) => { setValues((current) => ({ ...current, [field]: value })); }, command.errors)}
                     <CommandAnswer command={command} />
+                    {stale && (
+                        <div>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                    setOpened({ initial, fixed });
+                                    setValues(initial);
+                                    command.clear();
+                                }}
+                            >
+                                {t('forms.load_latest')}
+                            </Button>
+                        </div>
+                    )}
                     <div className="flex justify-end gap-3">
                         <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
                             {t('actions.cancel')}
@@ -242,6 +261,7 @@ function Images({ product, edit }: { product: Product; edit: boolean }) {
     const abort = useRef<AbortController | null>(null);
     const last = useRef<File | null>(null);
     const attach = useCommand<Payload>(() => `${LIST}/${product.id}`, 'put');
+    const arrange = useCommand<Payload>(() => `${LIST}/${product.id}`, 'put');
     const choose = (chosen: File) => {
         last.current = chosen;
         abort.current = new AbortController();
@@ -264,10 +284,29 @@ function Images({ product, edit }: { product: Product; edit: boolean }) {
                 <p className="text-body text-text-secondary">{t('products.images.empty')}</p>
             ) : (
                 <ul role="list" className="flex min-w-0 flex-wrap gap-3">
-                    {product.images.map((image) => (
+                    {product.images.map((image, index) => (
                         <li key={image.file} className="flex flex-col items-start gap-1">
                             <FileThumbnail fileId={image.file} alt={product.name} />
                             {image.primary && <Badge>{t('products.images.primary')}</Badge>}
+                            {edit && (
+                                <span className="flex flex-wrap gap-1 max-md:hidden">
+                                    {!image.primary && (
+                                        <Button variant="ghost" size="sm" disabled={arrange.frozen} onClick={() => { arrange.submit({ action: 'arrange', file: image.file, move: 'primary' }); }}>
+                                            {t('products.images.make_primary')}
+                                        </Button>
+                                    )}
+                                    {index > 0 && (
+                                        <Button variant="ghost" size="sm" disabled={arrange.frozen} onClick={() => { arrange.submit({ action: 'arrange', file: image.file, move: 'earlier' }); }}>
+                                            {t('products.images.earlier')}
+                                        </Button>
+                                    )}
+                                    {index < product.images.length - 1 && (
+                                        <Button variant="ghost" size="sm" disabled={arrange.frozen} onClick={() => { arrange.submit({ action: 'arrange', file: image.file, move: 'later' }); }}>
+                                            {t('products.images.later')}
+                                        </Button>
+                                    )}
+                                </span>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -288,6 +327,7 @@ function Images({ product, edit }: { product: Product; edit: boolean }) {
                         onRetry={() => { if (last.current !== null) choose(last.current); }}
                     />
                     <CommandAnswer command={attach} />
+                    <CommandAnswer command={arrange} />
                     <div>
                         <Button variant="outline" disabled={file === null || attach.frozen} pending={attach.pending} onClick={() => { if (file !== null) attach.submit({ action: 'image', file }, () => { setFile(null); setState({ phase: 'idle' }); }); }}>
                             {t('products.images.attach')}
@@ -360,6 +400,7 @@ function Prices({ product, editable }: { product: Product; editable: string[] })
 function Detail({ product, can }: { product: Product; can: Props['can'] }) {
     const { t } = useTranslation();
     const [sheet, setSheet] = useState<'details' | 'policy' | 'unit' | null>(null);
+    const [ratio, setRatio] = useState<Product['units'][number] | null>(null);
     const [archiving, setArchiving] = useState(false);
     const [reason, setReason] = useState('');
     const archive = useCommand<Payload>(() => `${LIST}/${product.id}`, 'put');
@@ -397,8 +438,13 @@ function Detail({ product, can }: { product: Product; can: Props['can'] }) {
             <FormSection title={t('products.units.title')}>
                 <ul role="list" className="flex min-w-0 flex-col gap-1">
                     {product.units.map((unit) => (
-                        <li key={unit.code} className="text-body text-text-primary">
+                        <li key={unit.code} className="flex min-w-0 flex-wrap items-center gap-2 text-body text-text-primary">
                             {unit.base ? t('products.units.base', { satuan: `${unit.code} · ${unit.name}` }) : t('products.units.alternate', { satuan: unit.code, jumlah: String(unit.ratio), dasar: base })}
+                            {edit && !unit.base && (
+                                <Button variant="ghost" size="sm" onClick={() => { setRatio(unit); }}>
+                                    {t('products.units.change')}
+                                </Button>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -434,6 +480,24 @@ function Detail({ product, can }: { product: Product; can: Props['can'] }) {
                             <p className="text-body text-text-secondary">{t('products.issued_keep')}</p>
                             <TextField name="name" values={values} set={set} errors={errors} required />
                             <TextField name="sku" values={values} set={set} errors={errors} />
+                        </>
+                    )}
+                </FormSheet>
+            )}
+            {ratio !== null && (
+                <FormSheet
+                    title={t('products.units.change')}
+                    url={`${LIST}/${product.id}`}
+                    method="put"
+                    initial={{ ratio: String(product.units.find((unit) => unit.code === ratio.code)?.ratio ?? ratio.ratio) }}
+                    fixed={{ action: 'ratio', unit_code: ratio.code, lock_version: product.units.find((unit) => unit.code === ratio.code)?.lock_version ?? ratio.lock_version }}
+                    submitLabel={t('products.units.change')}
+                    onClose={() => { setRatio(null); }}
+                >
+                    {(values, set, errors) => (
+                        <>
+                            <p className="text-body text-text-secondary">{t('products.units.change_line')}</p>
+                            <TextField name="ratio" values={values} set={set} errors={errors} required />
                         </>
                     )}
                 </FormSheet>

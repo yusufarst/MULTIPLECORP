@@ -1757,5 +1757,14 @@
     "products.validation.ratio": "Isi dengan bilangan bulat paling kecil 2.",
     "products.validation.taken": "Sudah dipakai.",
     "products.validation.code_other": "Barcode ini sudah terdaftar pada produk lain.",
-    "products.validation.code_own": "Barcode ini sudah terdaftar pada produk ini."
+    "products.validation.code_own": "Barcode ini sudah terdaftar pada produk ini.",
+    "products.units.change": "Ubah Rasio",
+    "products.units.change_line": "Transaksi yang sudah tersimpan tetap memakai rasio saat itu; rasio baru berlaku untuk isian berikutnya.",
+    "products.images.make_primary": "Jadikan Utama",
+    "products.images.earlier": "Geser ke depan",
+    "products.images.later": "Geser ke belakang",
+    "products.answer.ratio": "Rasio satuan diperbarui.",
+    "products.answer.arrange": "Urutan gambar diperbarui.",
+    "products.refusal.wf_md_04_image_edge": "Gambar ini sudah di ujung urutan.",
+    "forms.load_latest": "Muat Versi Terbaru"
 }

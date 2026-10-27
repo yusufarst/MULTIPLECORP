@@ -11,7 +11,7 @@ import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormSection } from '@/components/form';
-import { type Answer, OutcomeMessage } from '@/components/outcome-message';
+import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { CommandAnswer, PartyField, PartyLookup, SUPPLIER_FIELDS, SupplierCreateSheet } from '@/components/parties';
 import { DataMasterNav } from '@/components/party-nav';
@@ -46,24 +46,21 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
+/** The supplier's fields as the page shows them now. */
+function fieldsOf(supplier: Supplier): Record<string, string> {
+    return { name: supplier.name, npwp: supplier.details?.npwp ?? '', address_lines: supplier.details?.address_lines ?? '', city: supplier.details?.city ?? '', phone: supplier.details?.phone ?? '', email: supplier.details?.email ?? '' };
+}
+
 /** The supplier's own fields, changed at the version the page read (ST-01); a purchase keeps its snapshot (BR-SN-01).
-    A stale answer keeps the sheet and its input open with MSG-03, and sending again applies the input to the latest
-    version (IP-03); every dismissal with unsent input asks first (PT-09). */
+    The sheet keeps the values and version it opened with: a stale answer leaves the input in place with MSG-03, and only
+    "Muat Versi Terbaru" takes the latest values and version (IP-03); every dismissal with unsent input asks first (PT-09). */
 function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => void }) {
     const { t } = useTranslation();
-    const [initial] = useState<Record<string, string>>(() => ({ name: supplier.name, npwp: supplier.details?.npwp ?? '', address_lines: supplier.details?.address_lines ?? '', city: supplier.details?.city ?? '', phone: supplier.details?.phone ?? '', email: supplier.details?.email ?? '' }));
-    const [values, setValues] = useState(initial);
+    const [opened, setOpened] = useState(() => ({ values: fieldsOf(supplier), version: supplier.lock_version }));
+    const [values, setValues] = useState(opened.values);
     const [leaving, setLeaving] = useState(false);
-    const [version, setVersion] = useState(supplier.lock_version);
-    const [seen, setSeen] = useState<Answer | null>(null);
     const update = useCommand<Payload>(() => `${LIST}/${supplier.id}`, 'put');
-    const dirty = JSON.stringify(values) !== JSON.stringify(initial);
-
-    if (update.answer !== seen) {
-        setSeen(update.answer);
-
-        if (update.answer?.kind === 'CONFLICT' && update.answer.cause === 'stale') setVersion(supplier.lock_version);
-    }
+    const dirty = JSON.stringify(values) !== JSON.stringify(opened.values);
 
     return (
         <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
@@ -76,7 +73,7 @@ function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => v
                     noValidate
                     onSubmit={(event) => {
                         event.preventDefault();
-                        update.submit({ action: 'change', lock_version: version, ...values }, onClose);
+                        update.submit({ action: 'change', lock_version: opened.version, ...values }, onClose);
                     }}
                 >
                     <p className="text-body text-text-secondary">{t('parties.issued_keep')}</p>
@@ -86,6 +83,13 @@ function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => v
                         ))}
                     </div>
                     <CommandAnswer command={update} />
+                    {update.answer?.kind === 'CONFLICT' && update.answer.cause === 'stale' && (
+                        <div>
+                            <Button type="button" variant="outline" onClick={() => { const latest = { values: fieldsOf(supplier), version: supplier.lock_version }; setOpened(latest); setValues(latest.values); update.clear(); }}>
+                                {t('forms.load_latest')}
+                            </Button>
+                        </div>
+                    )}
                     <div className="flex justify-end gap-3">
                         <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
                             {t('actions.cancel')}

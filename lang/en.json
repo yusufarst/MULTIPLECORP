@@ -1757,5 +1757,14 @@
     "products.validation.ratio": "Enter a whole number of at least 2.",
     "products.validation.taken": "Already in use.",
     "products.validation.code_other": "This barcode is already registered to another product.",
-    "products.validation.code_own": "This barcode is already registered to this product."
+    "products.validation.code_own": "This barcode is already registered to this product.",
+    "products.units.change": "Change Ratio",
+    "products.units.change_line": "Saved transactions keep the ratio they used; the new ratio applies to later entries.",
+    "products.images.make_primary": "Make Primary",
+    "products.images.earlier": "Move earlier",
+    "products.images.later": "Move later",
+    "products.answer.ratio": "Unit ratio updated.",
+    "products.answer.arrange": "Image order updated.",
+    "products.refusal.wf_md_04_image_edge": "This image is already at the end of the order.",
+    "forms.load_latest": "Load Latest Version"
 }

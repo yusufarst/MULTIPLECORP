@@ -24,13 +24,14 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * PG-056 *Produk & Jasa* (ROUTE-056, ROUTE-145–ROUTE-147; INT-145–INT-147; NAV-056; SCR-52; J-MD-04): every active
  * account's catalogue — the cursor `setelah` and the product `produk` as whitelisted address keys (NV-05), the lookup
  * ROUTE-281's —, each part under its own read class (PJ-14), and the `products.edit` commands: create, the record's
- * edits — details, serial policy and scale, an alternate unit, a price default, an image, the archive — and the
+ * edits — details, serial policy and scale, an alternate unit and its ratio's correction, a price default, an image
+ * and its place or primary flag, the archive — and the
  * barcode registration. Each NX-01 command carries its `command_id`, its answer in place as flash data (IP-01) and its
  * field errors at their fields (IP-14). A registration sent `inline` from a scan goes back to it, which continues.
  */
 final class ProductsController extends Controller
 {
-    public const ACTIONS = ['details', 'policy', 'unit', 'price', 'image', 'archive'];
+    public const ACTIONS = ['details', 'policy', 'unit', 'ratio', 'price', 'image', 'arrange', 'archive'];
 
     private const LIST = '/data-master/produk';
 
@@ -72,7 +73,9 @@ final class ProductsController extends Controller
             'policy' => ['lock_version' => ['required', 'integer', 'min:0'], 'serialized' => ['required', 'boolean'], 'quantity_scale' => ['required', 'integer', 'between:0,3']],
             'unit' => ['unit_code' => ['required', 'string', 'regex:/^[A-Za-z0-9]{1,12}$/'], 'unit_name' => ['nullable', 'string', 'max:60'], 'ratio' => ['required', 'integer', 'min:2', 'max:1000000']],
             'price' => ['price_kind' => ['required', Rule::in(array_keys(ChangeDefaultPrice::FAMILIES))], 'amount' => ['required', 'string', 'regex:/^\d{1,16}(\.\d{1,2})?$/'], 'reason' => ['nullable', 'string', 'max:500']],
+            'ratio' => ['unit_code' => ['required', 'string', 'regex:/^[A-Za-z0-9]{1,12}$/'], 'ratio' => ['required', 'integer', 'min:2', 'max:1000000'], 'lock_version' => ['required', 'integer', 'min:0']],
             'image' => ['file' => ['required', 'uuid']],
+            'arrange' => ['file' => ['required', 'uuid'], 'move' => ['required', Rule::in(['primary', 'earlier', 'later'])]],
             default => ['lock_version' => ['required', 'integer', 'min:0'], 'reason' => ['nullable', 'string', 'max:500']],
         }]);
         $commandId = self::text($input['command_id']);
@@ -84,7 +87,9 @@ final class ProductsController extends Controller
             'policy' => $change->policy($commandId, $actor, $product, $version, $request->boolean('serialized'), (int) self::text($input['quantity_scale'])),
             'unit' => $unit->run($commandId, $actor, $product, self::text($input['unit_code']), self::optional($input['unit_name'] ?? null) ?? self::text($input['unit_code']), (int) self::text($input['ratio'])),
             'price' => $price->run($commandId, $actor, $product, self::text($input['price_kind']), self::text($input['amount']), self::optional($input['reason'] ?? null)),
+            'ratio' => $unit->change($commandId, $actor, $product, self::text($input['unit_code']), (int) self::text($input['ratio']), $version),
             'image' => $image->run($commandId, $actor, $product, self::text($input['file'])),
+            'arrange' => $image->arrange($commandId, $actor, $product, self::text($input['file']), self::move($input['move'])),
             default => $change->archive($commandId, $actor, $product, $version, self::optional($input['reason'] ?? null)),
         };
         self::fieldRefusal($outcome);
@@ -171,6 +176,16 @@ final class ProductsController extends Controller
         ])->validate();
 
         return $valid;
+    }
+
+    /** @return 'primary'|'earlier'|'later' */
+    private static function move(mixed $value): string
+    {
+        return match ($value) {
+            'earlier' => 'earlier',
+            'later' => 'later',
+            default => 'primary',
+        };
     }
 
     private static function optional(mixed $value): ?string

@@ -5220,6 +5220,60 @@
             "source": "INFORMATION_ARCHITECTURE §8.6 PG-056; ADMIN_FLOW J-MD-04; WORKFLOWS WF-MD-04; DATABASE §4.4; PERMISSIONS_MATRIX PJ-14; DESIGN_SYSTEM §17",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "products.units.change": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.units.change_line": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.images.make_primary": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.images.earlier": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.images.later": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.answer.ratio": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.answer.arrange": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "products.refusal.wf_md_04_image_edge": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "forms.load_latest": {
+            "task": "TASK-027",
+            "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

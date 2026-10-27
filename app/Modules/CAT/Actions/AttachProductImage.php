@@ -23,6 +23,8 @@ final class AttachProductImage
 {
     public const TYPE = 'CAT.AttachProductImage';
 
+    public const ARRANGE = 'CAT.ArrangeProductImage';
+
     public function __construct(private readonly CatalogCommands $commands) {}
 
     public function run(string $commandId, int $actorUserId, Product $product, string $filePublicId): Outcome
@@ -54,6 +56,57 @@ final class AttachProductImage
                 $this->commands->record($context, 'CAT.ProductImageAttached', 'product_image', $image->id, $row->public_id, [], ['file' => strtolower($filePublicId), 'is_primary' => $first]);
 
                 return new CommandResult('product', $row->id);
+            });
+    }
+
+    /**
+     * An attached image made the primary — the list's thumbnail — or moved one place earlier or later (DATABASE §4.4;
+     * §19; DIR-089 (4)): what V1 changes of an image, which stays with its product. The product row at LK-08 serializes
+     * every change of its images; the primary passes from one row to the other in two statements, the old one first,
+     * so the partial unique key never sees two.
+     *
+     * @param  'primary'|'earlier'|'later'  $move
+     */
+    public function arrange(string $commandId, int $actorUserId, Product $product, string $filePublicId, string $move): Outcome
+    {
+        return $this->commands->run($commandId, self::ARRANGE, $actorUserId, ['product' => $product->public_id, 'file' => $filePublicId, 'move' => $move],
+            function (CommandContext $context) use ($product, $filePublicId, $move): CommandResult {
+                $context->lock((new LockSet)->add('products', ['id' => $product->id]));
+                $images = ProductImage::query()->join('file_objects', 'file_objects.id', '=', 'product_images.file_object_id')->where('product_images.product_id', $product->id)
+                    ->orderBy('product_images.sort_order')->orderBy('product_images.id')->get(['product_images.*', 'file_objects.public_id as file_public_id'])->all();
+                $images = array_values($images);
+                $index = array_search(strtolower($filePublicId), array_map(fn (ProductImage $image): string => (string) $image->getAttribute('file_public_id'), $images), true);
+
+                if (! is_int($index)) {
+                    throw new ModelNotFoundException;
+                }
+
+                $image = $images[$index];
+
+                if ($move === 'primary') {
+                    if (! $image->is_primary) {
+                        foreach ($images as $other) {
+                            if ($other->is_primary) {
+                                $this->commands->update($context, 'product_images', $other->id, $other->lock_version, ['is_primary' => false]);
+                            }
+                        }
+
+                        $this->commands->update($context, 'product_images', $image->id, $image->lock_version, ['is_primary' => true]);
+                    }
+                } else {
+                    $neighbour = $images[$move === 'earlier' ? $index - 1 : $index + 1] ?? null;
+
+                    if ($neighbour === null) {
+                        throw Refused::rejected('WF-MD-04', ['reason' => 'image_edge']);
+                    }
+
+                    $this->commands->update($context, 'product_images', $image->id, $image->lock_version, ['sort_order' => $neighbour->sort_order === $image->sort_order ? $neighbour->sort_order + ($move === 'earlier' ? -1 : 1) : $neighbour->sort_order]);
+                    $this->commands->update($context, 'product_images', $neighbour->id, $neighbour->lock_version, ['sort_order' => $image->sort_order]);
+                }
+
+                $this->commands->record($context, 'CAT.ProductImageArranged', 'product_image', $image->id, $product->public_id, ['file' => strtolower($filePublicId)], ['file' => strtolower($filePublicId), 'move' => $move]);
+
+                return new CommandResult('product', $product->id);
             });
     }
 }

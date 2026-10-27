@@ -89,6 +89,40 @@ it('adds an alternate unit as an integer multiple of the base, never a fraction 
     $add(['unit_code' => 'PAK', 'ratio' => 1])->assertSessionHasErrors('ratio');
 });
 
+it('corrects an alternate unit\'s ratio at the version read, saved lines keeping the ratio they pinned (numeric annex 11; ST-01)', function () {
+    $product = createdProduct($this);
+    $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'unit', 'unit_code' => 'BOX', 'ratio' => 10])->assertRedirect();
+    $line = PurchaseLine::factory()->for(Purchase::factory()->for($this->company))->for($product)->create(['ratio_to_base' => 10, 'entered_qty' => '2.000', 'qty_base' => '20.000']);
+    $change = fn (int $version, int $ratio) => $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'ratio', 'unit_code' => 'box', 'ratio' => $ratio, 'lock_version' => $version]);
+
+    $change(0, 12)->assertRedirect();
+    expect(productAnswer()['kind'])->toBe(Outcome::COMMITTED)
+        ->and(DB::table('product_units')->join('units', 'units.id', '=', 'product_units.unit_id')->where('product_id', $product->id)->where('units.code', 'BOX')->value('ratio_to_base'))->toBe(12)
+        ->and(DB::table('purchase_lines')->where('id', $line->id)->value('qty_base'))->toBe('20.000');
+
+    $change(0, 6)->assertRedirect();
+    expect(productAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'cause' => 'stale']);
+    $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'ratio', 'unit_code' => 'RIM', 'ratio' => 3, 'lock_version' => 0])->assertNotFound();
+});
+
+it('makes another image the primary and moves an image in the order (DATABASE §4.4; DIR-089 (4))', function () {
+    $product = createdProduct($this);
+    $files = array_map(fn (string $name) => app(Uploads::class)->accept(Files::path(Files::png()), $name, FilePurpose::ProductImage, null, $this->admin->id)->public_id, ['a.png', 'b.png']);
+    foreach ($files as $file) {
+        $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'image', 'file' => $file])->assertRedirect();
+    }
+    $arrange = fn (string $file, string $move) => $this->actingAs($this->admin)->put("/data-master/produk/{$product->public_id}", ['command_id' => (string) Str::uuid(), 'action' => 'arrange', 'file' => $file, 'move' => $move]);
+
+    $arrange($files[1], 'primary')->assertRedirect();
+    $arrange($files[1], 'earlier')->assertRedirect();
+    $this->actingAs($this->admin)->get("/data-master/produk?produk={$product->public_id}")
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('product.images', [['file' => $files[1], 'primary' => true], ['file' => $files[0], 'primary' => false]]));
+
+    $arrange($files[1], 'earlier')->assertRedirect();
+    expect(productAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'WF-MD-04'])
+        ->and(DB::table('product_images')->where('product_id', $product->id)->where('is_primary', true)->count())->toBe(1);
+});
+
 it('registers a manufacturer code by its key, refuses it on another product, and creates an internal one from the sequence (criteria 1, 2; BR-INV-09)', function () {
     $first = createdProduct($this);
     $second = createdProduct($this, ['name' => 'Map Plastik']);

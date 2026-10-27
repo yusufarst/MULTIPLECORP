@@ -110,7 +110,7 @@ final class ProductCatalog
     {
         $units = DB::table('product_units')->join('units', 'units.id', '=', 'product_units.unit_id')->where('product_units.product_id', $product->id)
             ->orderByDesc('product_units.is_base')->orderBy('product_units.ratio_to_base')
-            ->get(['units.code', 'units.name', 'product_units.ratio_to_base', 'product_units.is_base'])->all();
+            ->get(['units.code', 'units.name', 'product_units.ratio_to_base', 'product_units.is_base', 'product_units.lock_version'])->all();
         $barcodes = DB::table('product_barcodes')->where('product_id', $product->id)->orderByDesc('is_active')->orderBy('id')->get(['code', 'kind', 'is_active'])->all();
         $images = DB::table('product_images')->join('file_objects', 'file_objects.id', '=', 'product_images.file_object_id')
             ->where('product_images.product_id', $product->id)->orderByDesc('product_images.is_primary')->orderBy('product_images.sort_order')
@@ -140,7 +140,7 @@ final class ProductCatalog
             'deactivated_at' => $product->deactivated_at?->toIso8601String(),
             'lock_version' => $product->lock_version,
             'units' => array_map(fn (object $unit): array => ['code' => Row::text($unit, 'code'), 'name' => Row::text($unit, 'name'),
-                'ratio' => (int) Row::text($unit, 'ratio_to_base'), 'base' => data_get($unit, 'is_base') === true], $units),
+                'ratio' => (int) Row::text($unit, 'ratio_to_base'), 'base' => data_get($unit, 'is_base') === true, 'lock_version' => (int) Row::text($unit, 'lock_version')], $units),
             'barcodes' => array_map(fn (object $barcode): array => ['code' => Row::text($barcode, 'code'), 'kind' => Row::text($barcode, 'kind'),
                 'active' => data_get($barcode, 'is_active') === true], $barcodes),
             'images' => array_map(fn (object $image): array => ['file' => Row::text($image, 'public_id'), 'primary' => data_get($image, 'is_primary') === true], $images),
