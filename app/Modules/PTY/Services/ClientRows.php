@@ -2,6 +2,7 @@
 
 namespace App\Modules\PTY\Services;
 
+use App\Modules\PTY\Data\PartyFields;
 use App\Modules\PTY\Models\ClientAddress;
 use App\Modules\PTY\Models\ClientContact;
 use App\Modules\PTY\Models\ClientUnit;
@@ -25,6 +26,7 @@ final class ClientRows
     /** @param  array<string, string|null>  $address */
     public function unit(CommandContext $context, int $organizationId, string $name, ?array $address): ClientUnit
     {
+        $name = PartyFields::name($name);
         $this->freeUnitName($organizationId, $name, null);
         $unit = $this->insert($context, new ClientUnit, ['client_organization_id' => $organizationId, 'name' => $name]);
         $this->commands->record($context, 'PTY.ClientUnitAdded', 'client_unit', $unit->id, null, [], ['client_organization_id' => $organizationId, 'name' => $name]);
@@ -58,7 +60,7 @@ final class ClientRows
     public function freeUnitName(int $organizationId, string $name, ?int $exceptId): void
     {
         $taken = DB::table('client_units')->where('client_organization_id', $organizationId)
-            ->whereRaw('lower(name) = ?', [mb_strtolower($name)])
+            ->whereRaw('lower(name) = ?', [PartyFields::key($name)])
             ->where('id', '<>', $exceptId ?? 0)
             ->exists();
 
@@ -76,7 +78,7 @@ final class ClientRows
      */
     public function sameNames(string $table, string $name, ?int $exceptId = null): array
     {
-        $key = addcslashes(mb_strtolower($name), '\\%_');
+        $key = addcslashes(PartyFields::key($name), '\\%_');
         $found = DB::table($table)->where('is_active', true)
             ->whereRaw("lower(name) like ? escape '\\'", [$key.'%'])
             ->where('id', '<>', $exceptId ?? 0)

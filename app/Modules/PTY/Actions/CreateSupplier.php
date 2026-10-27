@@ -8,6 +8,7 @@ use App\Modules\PTY\Services\PartyCommands;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandResult;
 use App\Support\Command\DuplicateWarning;
+use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 
 /**
@@ -35,6 +36,7 @@ final class CreateSupplier
         $values = ['name' => $name, ...$fields];
 
         return $this->commands->run($commandId, self::TYPE, $actorUserId, [...$values, 'acknowledged' => $acknowledged, 'reason' => $reason], function (CommandContext $context) use ($name, $values, $acknowledged, $reason): CommandResult {
+            $context->lock(new LockSet);
             DuplicateWarning::check('PF-21', $this->rows->sameNames('suppliers', $name), $acknowledged, $reason);
 
             $supplier = $this->rows->insert($context, new Supplier, $values);

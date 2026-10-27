@@ -67,6 +67,14 @@ final class PartyForms
         return redirect()->to($to, 303);
     }
 
+    /** The page the request came from, on this host only — otherwise the given page. */
+    public static function back(Request $request, string $otherwise): string
+    {
+        $previous = url()->previous();
+
+        return parse_url($previous, PHP_URL_HOST) === $request->getHost() ? $previous : $otherwise;
+    }
+
     public static function optional(mixed $value): ?string
     {
         return is_string($value) && trim($value) !== '' ? trim($value) : null;

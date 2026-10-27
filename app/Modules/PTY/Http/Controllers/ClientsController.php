@@ -19,8 +19,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * PG-054 *Klien* (ROUTE-054, ROUTE-141, ROUTE-142; INT-141, INT-142; NAV-054; SCR-50; J-MD-02): every active account's
- * page of client organizations — search-first, the term `q`, the cursor `setelah` and the organization `klien` as
- * whitelisted address keys (NV-05) — with each part under its own read class (PJ-10), and the `parties.manage`
+ * page of client organizations — the cursor `setelah` and the organization `klien` as whitelisted address keys
+ * (NV-05), the search-first lookup ROUTE-281's — with each part under its own read class (PJ-10), and the `parties.manage`
  * commands that create, edit and archive an organization, a unit with its address, an address or a PIC. Each NX-01
  * command carries its `command_id`, its answer in place as flash data (IP-01) and its field errors at their fields
  * (IP-14). A creation sent `inline` from a form — PG-013's — goes back to that form with the new values chosen (IP-19).
@@ -34,14 +34,11 @@ final class ClientsController extends Controller
     /** `PTY ShowClients` (ROUTE-054). */
     public function show(Request $request): HttpResponse
     {
-        $term = $request->query('q');
         $after = $request->query('setelah');
         $selected = $request->query('klien');
-        $term = is_string($term) && trim($term) !== '' ? mb_substr(trim($term), 0, 100) : null;
 
         return Inertia::render('PTY/Clients', [
-            ...$this->clients->screen(PartyForms::actor($request), $term, is_string($after) ? $after : null, is_string($selected) ? $selected : null),
-            'term' => $term,
+            ...$this->clients->screen(PartyForms::actor($request), is_string($after) ? $after : null, is_string($selected) ? $selected : null),
         ])->toResponse($request);
     }
 
@@ -78,7 +75,7 @@ final class ClientsController extends Controller
         $inline = $request->boolean('inline');
         $created = $committed && $organization === null && $inline ? ($this->clients->created((int) $outcome->resultId, $commandId) ?? []) : [];
         $matches = $outcome->code === 'PF-21' ? $this->clients->matches(PartyForms::list($outcome->state['matches'] ?? [])) : [];
-        $to = $inline || ! $committed ? url()->previous() : '/data-master/klien?'.http_build_query(['klien' => $id]);
+        $to = $inline || ! $committed ? PartyForms::back($request, '/data-master/klien') : '/data-master/klien?'.http_build_query(['klien' => $id]);
 
         return PartyForms::answer($outcome, 'parties.answer.client_'.PartyForms::text($kind), $to, $matches, $created);
     }

@@ -18,8 +18,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * PG-055 *Pemasok* (ROUTE-055, ROUTE-143, ROUTE-144; INT-143, INT-144; NAV-055; SCR-51; J-MD-03): every active account's
- * page of suppliers — the term `q`, the cursor `setelah` and the supplier `pemasok` as whitelisted address keys
- * (NV-05) —, their details and price history each under its own read class (PJ-09; PJ-10), and the `parties.manage`
+ * page of suppliers — the cursor `setelah` and the supplier `pemasok` as whitelisted address keys (NV-05), the
+ * lookup ROUTE-281's —, their details and price history each under its own read class (PJ-09; PJ-10), and the `parties.manage`
  * commands that create, edit and archive a supplier. A creation sent `inline` from PG-017 goes back to the purchase
  * form with the supplier chosen (IP-19).
  */
@@ -30,14 +30,11 @@ final class SuppliersController extends Controller
     /** `PTY ShowSuppliers` (ROUTE-055). */
     public function show(Request $request): HttpResponse
     {
-        $term = $request->query('q');
         $after = $request->query('setelah');
         $selected = $request->query('pemasok');
-        $term = is_string($term) && trim($term) !== '' ? mb_substr(trim($term), 0, 100) : null;
 
         return Inertia::render('PTY/Suppliers', [
-            ...$this->suppliers->screen(PartyForms::actor($request), $term, is_string($after) ? $after : null, is_string($selected) ? $selected : null),
-            'term' => $term,
+            ...$this->suppliers->screen(PartyForms::actor($request), is_string($after) ? $after : null, is_string($selected) ? $selected : null),
         ])->toResponse($request);
     }
 
@@ -54,7 +51,7 @@ final class SuppliersController extends Controller
         $supplier = $committed ? $this->suppliers->supplierOf((int) $outcome->resultId) : null;
         $inline = $request->boolean('inline');
         $matches = $outcome->code === 'PF-21' ? $this->suppliers->matches(PartyForms::list($outcome->state['matches'] ?? [])) : [];
-        $to = $inline || $supplier === null ? url()->previous() : '/data-master/pemasok?'.http_build_query(['pemasok' => $supplier['id']]);
+        $to = $inline || $supplier === null ? PartyForms::back($request, '/data-master/pemasok') : '/data-master/pemasok?'.http_build_query(['pemasok' => $supplier['id']]);
 
         return PartyForms::answer($outcome, 'parties.answer.supplier_created', $to, $matches, $inline && $supplier !== null ? ['supplier' => $supplier] : []);
     }

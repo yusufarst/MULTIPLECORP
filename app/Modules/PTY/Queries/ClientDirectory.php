@@ -9,15 +9,13 @@ use App\Modules\PTY\Models\ClientOrganization;
 use App\Modules\PTY\Models\ClientUnit;
 use App\Modules\PTY\Services\PartyCommands;
 use App\Support\RowHandle;
-use App\Support\Search\NameSearch;
 use App\Support\Search\Row;
-use App\Support\Search\Term;
 use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 
 /**
  * PG-054 *Klien* (ROUTE-054; SCR-50; WF-MD-02; PERMISSIONS_MATRIX §7.2 rows 17–20; PJ-10): the organizations' S0
- * names to every active account — a page in name order after a cursor, or, for a term, PF-21's search-first list —,
+ * names to every active account — a page in name order after a cursor; the page's search-first lookup is ROUTE-281's
+ * PF-21 list, the term in a request body, never the address (H7-10) —,
  * and one organization's detail: its NPWP, units, unit addresses and PICs to `projects.view` with a company in
  * scope, and its related projects only through PRJ's scope-filtered list, without a count (UXN-23; D-IA-14). A unit,
  * address or PIC has no public identifier: the page names it by a row handle (RowHandle), resolved here among the
@@ -38,15 +36,15 @@ final class ClientDirectory
      * The page's props: the list, the chosen organization's detail, and the hints of what the viewer may do — the
      * server decides every request (AZ-01).
      *
-     * @return array{list: array{rows: list<array{id: string, name: string, active: bool}>, more: ?string, cut: bool}, client: ?array<string, mixed>, can: array{manage: bool, relations: bool}}
+     * @return array{list: array{rows: list<array{id: string, name: string, active: bool}>, more: ?string}, client: ?array<string, mixed>, can: array{manage: bool, relations: bool}}
      */
-    public function screen(int $viewerId, ?string $term, ?string $after, ?string $selected): array
+    public function screen(int $viewerId, ?string $after, ?string $selected): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $organization = $selected === null ? null : $this->find($selected);
 
         return [
-            'list' => $this->page($term, $after),
+            'list' => $this->page($after),
             'client' => $organization === null ? null : $this->detail($viewer, $organization),
             'can' => ['manage' => $viewer->allows(PartyCommands::CAPABILITY) && ! $viewer->scope->isEmpty(), 'relations' => PartyLookup::relations()->admits($viewer)],
         ];
@@ -58,17 +56,10 @@ final class ClientDirectory
         return $this->capabilities->for($viewerId);
     }
 
-    /** @return array{rows: list<array{id: string, name: string, active: bool}>, more: ?string, cut: bool} */
-    public function page(?string $term, ?string $after): array
+    /** @return array{rows: list<array{id: string, name: string, active: bool}>, more: ?string} */
+    public function page(?string $after): array
     {
         $base = ClientOrganization::query()->select(['client_organizations.id as search_key', 'client_organizations.public_id', 'client_organizations.name', 'client_organizations.is_active']);
-        $search = self::term($term);
-
-        if ($search !== null) {
-            $found = NameSearch::run($base, 'client_organizations.name', $search, self::PAGE);
-
-            return ['rows' => array_map(self::listed(...), $found['rows']), 'more' => null, 'cut' => $found['cut']];
-        }
 
         $cursor = $after !== null && preg_match(self::UUID, $after) === 1 ? ClientOrganization::query()->where('public_id', $after)->first(['id', 'name']) : null;
 
@@ -79,7 +70,7 @@ final class ClientDirectory
         $found = array_values($base->orderByRaw('lower(name)')->orderBy('id')->limit(self::PAGE + 1)->get()->all());
         $rows = array_map(self::listed(...), array_slice($found, 0, self::PAGE));
 
-        return ['rows' => $rows, 'more' => count($found) > self::PAGE ? $rows[self::PAGE - 1]['id'] : null, 'cut' => false];
+        return ['rows' => $rows, 'more' => count($found) > self::PAGE ? $rows[self::PAGE - 1]['id'] : null];
     }
 
     public function find(string $publicId): ?ClientOrganization
@@ -247,14 +238,5 @@ final class ClientDirectory
     private static function listed(object $row): array
     {
         return ['id' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'active' => data_get($row, 'is_active') === true];
-    }
-
-    private static function term(?string $term): ?Term
-    {
-        try {
-            return $term === null ? null : new Term($term);
-        } catch (InvalidArgumentException) {
-            return null;
-        }
     }
 }

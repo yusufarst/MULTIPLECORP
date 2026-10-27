@@ -4266,6 +4266,438 @@
             "source": "ADMIN_FLOW §12.4",
             "indonesian": "canonical",
             "english": "proposed"
+        },
+        "parties.nav_label": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.archived_badge": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.search_clients": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.search_suppliers": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.edit": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.issued_keep": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.name": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.npwp": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.unit_name": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.address_label": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.address_lines": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.city": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.contact_name": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.contact_position": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.contact_phone": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.contact_email": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.phone": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.field.email": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.empty": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.back": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.first_unit": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.first_unit_line": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.units": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.addresses": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.contacts": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.add_unit": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.add_address": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.add_contact": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.no_units": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.no_addresses": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.no_contacts": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.relations_hidden": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.projects": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.no_projects": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.more_projects": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.archive_title": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.archive_line.organization": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.archive_line.unit": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.archive_line.address": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.client.archive_line.contact": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.empty": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.back": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.details": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.details_hidden": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.prices": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.prices_line": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.prices_empty": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.edit_title": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.archive_title": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.supplier.archive_line": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.price.price": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.price.purchase": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.inline.chosen": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_organization": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_unit": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_address": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_contact": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_change": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.client_archive": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.supplier_created": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.supplier_change": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.answer.supplier_archive": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.refusal.wf_md_02_archived": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.refusal.wf_md_02_missing": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.refusal.wf_md_03_archived": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.required": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.too_long": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.choice": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.email": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.format": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.validation.unit_taken": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "parties.similar": {
+            "task": "TASK-026",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-054, PG-055; ADMIN_FLOW J-MD-02, J-MD-03; WORKFLOWS WF-MD-02, WF-MD-03; PERMISSIONS_MATRIX PJ-09, PJ-10; DATABASE §4.3",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

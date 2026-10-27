@@ -8,6 +8,7 @@ use App\Modules\PTY\Services\PartyCommands;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandResult;
 use App\Support\Command\DuplicateWarning;
+use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 
 /**
@@ -38,6 +39,7 @@ final class CreateClientOrganization
         $payload = [...$organization, 'unit' => $unitName, 'address' => $address, 'contact' => $contact, 'acknowledged' => $acknowledged, 'reason' => $reason];
 
         return $this->commands->run($commandId, self::TYPE, $actorUserId, $payload, function (CommandContext $context) use ($organization, $unitName, $address, $contact, $acknowledged, $reason): CommandResult {
+            $context->lock(new LockSet);
             DuplicateWarning::check('PF-21', $this->rows->sameNames('client_organizations', $organization['name']), $acknowledged, $reason);
 
             $row = $this->rows->insert($context, new ClientOrganization, $organization);
