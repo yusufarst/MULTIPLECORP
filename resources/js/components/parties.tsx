@@ -179,7 +179,7 @@ function CreationSheet({
     const changed = JSON.stringify(values) !== JSON.stringify(initial);
 
     return (
-        <Sheet open={open} onOpenChange={onOpenChange}>
+        <Sheet open={open} onOpenChange={(next) => { if (!next && changed) setLeaving(true); else onOpenChange(next); }}>
             <SheetContent width="lg" closeLabel={t('actions.close')}>
                 <SheetHeader>
                     <SheetTitle>{title}</SheetTitle>

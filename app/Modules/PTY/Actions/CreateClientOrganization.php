@@ -54,6 +54,6 @@ final class CreateClientOrganization
             }
 
             return new CommandResult('client_organization', $row->id);
-        });
+        }, fn (Outcome $outcome): ?array => $outcome->code === 'PF-21' ? ['matches' => $this->rows->sameNames('client_organizations', $organization['name'])] : null);
     }
 }

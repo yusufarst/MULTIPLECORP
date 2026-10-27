@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormSection } from '@/components/form';
-import { OutcomeMessage } from '@/components/outcome-message';
+import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { CLIENT_FIELDS, ClientCreateSheet, CommandAnswer, PartyField, PartyLookup } from '@/components/parties';
 import { DataMasterNav } from '@/components/party-nav';
@@ -51,17 +51,43 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
-/** Adding a unit with its address, an address or a PIC; editing any client row — at the version the page read (ST-01). */
+/** The row's version as the page shows it now. */
+function versionOf(client: Client, target: Target): number {
+    if (target.kind === 'organization') return client.lock_version;
+
+    for (const unit of client.units ?? []) {
+        const row = target.kind === 'unit' ? (unit.handle === target.row ? unit : undefined)
+            : target.kind === 'address' ? unit.addresses.find((address) => address.handle === target.row)
+            : unit.contacts.find((contact) => contact.handle === target.row);
+
+        if (row !== undefined) return row.lock_version;
+    }
+
+    return target.lock_version ?? 0;
+}
+
+/** Adding a unit with its address, an address or a PIC; editing any client row — at the version the page read (ST-01).
+    A stale answer keeps the sheet and its input open with MSG-03; the page then shows the latest version, and sending
+    again applies the input to it (IP-03). Every dismissal with unsent input asks first (PT-09). */
 function RowSheet({ client, target, onClose }: { client: Client; target: Target; onClose: () => void }) {
     const { t } = useTranslation();
     const [values, setValues] = useState<Values>(target.values);
     const [leaving, setLeaving] = useState(false);
+    const [version, setVersion] = useState(target.lock_version ?? 0);
+    const [seen, setSeen] = useState<Answer | null>(null);
     const command = useCommand<Payload>(() => (target.mode === 'add' ? LIST : `${LIST}/${client.id}`), target.mode === 'add' ? 'post' : 'put');
     const fields: readonly string[] = target.mode === 'add' && target.kind === 'unit' ? [...CLIENT_FIELDS.unit, ...CLIENT_FIELDS.address] : CLIENT_FIELDS[target.kind];
     const title = t(`parties.${target.mode === 'add' ? `client.add_${target.kind}` : 'edit'}` as TranslationKey);
+    const dirty = JSON.stringify(values) !== JSON.stringify(target.values);
+
+    if (command.answer !== seen) {
+        setSeen(command.answer);
+
+        if (command.answer?.kind === 'CONFLICT' && command.answer.cause === 'stale') setVersion(versionOf(client, target));
+    }
 
     return (
-        <Sheet open onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
             <SheetContent width="lg" closeLabel={t('actions.close')}>
                 <SheetHeader>
                     <SheetTitle>{title}</SheetTitle>
@@ -74,7 +100,7 @@ function RowSheet({ client, target, onClose }: { client: Client; target: Target;
                         command.submit(
                             target.mode === 'add'
                                 ? { kind: target.kind, klien: client.id, ...(target.unit !== undefined ? { unit: target.unit } : {}), ...values }
-                                : { action: 'change', kind: target.kind, row: target.row ?? null, lock_version: target.lock_version ?? 0, ...values },
+                                : { action: 'change', kind: target.kind, row: target.row ?? null, lock_version: version, ...values },
                             onClose,
                         );
                     }}
@@ -94,7 +120,7 @@ function RowSheet({ client, target, onClose }: { client: Client; target: Target;
                     </div>
                     <CommandAnswer command={command} />
                     <div className="flex justify-end gap-3">
-                        <Button type="button" variant="ghost" onClick={() => { if (JSON.stringify(values) === JSON.stringify(target.values)) onClose(); else setLeaving(true); }}>
+                        <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
                             {t('actions.cancel')}
                         </Button>
                         <Button type="submit" pending={command.pending} disabled={command.frozen}>
@@ -384,7 +410,7 @@ export default function Clients({ list, client, can }: Props) {
                                 {t('parties.client.back')}
                             </Button>
                         </div>
-                        <Detail key={`${client.id}-${String(client.lock_version)}`} client={client} can={can} />
+                        <Detail key={client.id} client={client} can={can} />
                     </>
                 )}
             </div>

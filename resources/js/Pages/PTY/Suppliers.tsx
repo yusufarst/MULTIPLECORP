@@ -11,7 +11,7 @@ import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormSection } from '@/components/form';
-import { OutcomeMessage } from '@/components/outcome-message';
+import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { CommandAnswer, PartyField, PartyLookup, SUPPLIER_FIELDS, SupplierCreateSheet } from '@/components/parties';
 import { DataMasterNav } from '@/components/party-nav';
@@ -46,16 +46,27 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
-/** The supplier's own fields, changed at the version the page read (ST-01); a purchase keeps its snapshot (BR-SN-01). */
+/** The supplier's own fields, changed at the version the page read (ST-01); a purchase keeps its snapshot (BR-SN-01).
+    A stale answer keeps the sheet and its input open with MSG-03, and sending again applies the input to the latest
+    version (IP-03); every dismissal with unsent input asks first (PT-09). */
 function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => void }) {
     const { t } = useTranslation();
-    const initial: Record<string, string> = { name: supplier.name, npwp: supplier.details?.npwp ?? '', address_lines: supplier.details?.address_lines ?? '', city: supplier.details?.city ?? '', phone: supplier.details?.phone ?? '', email: supplier.details?.email ?? '' };
+    const [initial] = useState<Record<string, string>>(() => ({ name: supplier.name, npwp: supplier.details?.npwp ?? '', address_lines: supplier.details?.address_lines ?? '', city: supplier.details?.city ?? '', phone: supplier.details?.phone ?? '', email: supplier.details?.email ?? '' }));
     const [values, setValues] = useState(initial);
     const [leaving, setLeaving] = useState(false);
+    const [version, setVersion] = useState(supplier.lock_version);
+    const [seen, setSeen] = useState<Answer | null>(null);
     const update = useCommand<Payload>(() => `${LIST}/${supplier.id}`, 'put');
+    const dirty = JSON.stringify(values) !== JSON.stringify(initial);
+
+    if (update.answer !== seen) {
+        setSeen(update.answer);
+
+        if (update.answer?.kind === 'CONFLICT' && update.answer.cause === 'stale') setVersion(supplier.lock_version);
+    }
 
     return (
-        <Sheet open onOpenChange={(open) => { if (!open) onClose(); }}>
+        <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
             <SheetContent width="lg" closeLabel={t('actions.close')}>
                 <SheetHeader>
                     <SheetTitle>{t('parties.supplier.edit_title')}</SheetTitle>
@@ -65,7 +76,7 @@ function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => v
                     noValidate
                     onSubmit={(event) => {
                         event.preventDefault();
-                        update.submit({ action: 'change', lock_version: supplier.lock_version, ...values }, onClose);
+                        update.submit({ action: 'change', lock_version: version, ...values }, onClose);
                     }}
                 >
                     <p className="text-body text-text-secondary">{t('parties.issued_keep')}</p>
@@ -76,7 +87,7 @@ function EditSheet({ supplier, onClose }: { supplier: Supplier; onClose: () => v
                     </div>
                     <CommandAnswer command={update} />
                     <div className="flex justify-end gap-3">
-                        <Button type="button" variant="ghost" onClick={() => { if (JSON.stringify(values) === JSON.stringify(initial)) onClose(); else setLeaving(true); }}>
+                        <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
                             {t('actions.cancel')}
                         </Button>
                         <Button type="submit" pending={update.pending} disabled={update.frozen}>
@@ -241,7 +252,7 @@ export default function Suppliers({ list, supplier, can }: Props) {
                                 {t('parties.supplier.back')}
                             </Button>
                         </div>
-                        <Detail key={`${supplier.id}-${String(supplier.lock_version)}`} supplier={supplier} can={can} />
+                        <Detail key={supplier.id} supplier={supplier} can={can} />
                     </>
                 )}
             </div>

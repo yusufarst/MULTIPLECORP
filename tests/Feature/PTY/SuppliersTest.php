@@ -54,6 +54,18 @@ it('creates a supplier directly, a likely duplicate name answered with its list 
     $this->actingAs($this->admin)->post('/data-master/pemasok', ['command_id' => (string) Str::uuid(), 'name' => '', 'email' => 'x'])->assertSessionHasErrors(['name', 'email']);
 });
 
+it('answers a replayed duplicate-name refusal with its current matches, so the warning survives a lost answer (CI-05; IP-05)', function () {
+    $existing = Supplier::factory()->create(['name' => 'Toko Berkah Jaya']);
+    $body = ['command_id' => (string) Str::uuid(), 'name' => 'Toko Berkah'];
+
+    $this->actingAs($this->admin)->post('/data-master/pemasok', $body)->assertRedirect();
+    expect(supplierAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'PF-21']);
+
+    $this->actingAs($this->admin)->post('/data-master/pemasok', $body)->assertRedirect();
+    expect(supplierAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'PF-21'])
+        ->and(array_column(supplierAnswer()['state']['matches'], 'id'))->toBe([$existing->public_id]);
+});
+
 it('changes a supplier at the version read, a stale edit CONFLICT, a purchase keeping its snapshot (criterion 3; ST-01; BR-SN-01)', function () {
     $supplier = Supplier::factory()->create(['name' => 'CV Lama', 'city' => 'Bantul'])->refresh();
     $purchase = Purchase::factory()->for($this->company)->for($supplier)->create(['supplier_snapshot' => ['nama' => 'CV Lama', 'alamat' => 'Bantul']]);

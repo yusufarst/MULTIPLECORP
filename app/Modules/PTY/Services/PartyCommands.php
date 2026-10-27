@@ -35,10 +35,12 @@ final class PartyCommands
     /**
      * @param  array<string, mixed>  $payload
      * @param  Closure(CommandContext): CommandResult  $action
+     * @param  (Closure(Outcome): (array<string, mixed>|null))|null  $replayState  a replayed refusal's current state — a
+     *                                                                              search-first refusal's matches, read again (CI-05)
      */
-    public function run(string $commandId, string $type, int $actorUserId, array $payload, Closure $action): Outcome
+    public function run(string $commandId, string $type, int $actorUserId, array $payload, Closure $action, ?Closure $replayState = null): Outcome
     {
-        return $this->envelope->run(new CommandRequest($commandId, $type, $actorUserId, null, self::CAPABILITY, Fingerprint::of($type, null, $payload)), $action);
+        return $this->envelope->run(new CommandRequest($commandId, $type, $actorUserId, null, self::CAPABILITY, Fingerprint::of($type, null, $payload)), $action, null, $replayState);
     }
 
     /**

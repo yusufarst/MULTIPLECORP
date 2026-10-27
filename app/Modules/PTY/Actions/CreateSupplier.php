@@ -43,6 +43,6 @@ final class CreateSupplier
             $this->commands->record($context, 'PTY.SupplierCreated', 'supplier', $supplier->id, $supplier->public_id, [], $values, $reason);
 
             return new CommandResult('supplier', $supplier->id);
-        });
+        }, fn (Outcome $outcome): ?array => $outcome->code === 'PF-21' ? ['matches' => $this->rows->sameNames('suppliers', $name)] : null);
     }
 }
