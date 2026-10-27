@@ -609,7 +609,6 @@ export default function Products({ list, product, can }: Props) {
                                     rowKey={(row) => row.id}
                                     rowHref={(row) => `${LIST}?produk=${row.id}`}
                                     columns={[
-                                        { key: 'image', header: t('products.images.title'), cell: (row) => (row.thumbnail === null ? <span className="text-text-tertiary">—</span> : <FileThumbnail fileId={row.thumbnail} alt={row.name} />) },
                                         {
                                             key: 'name',
                                             header: t('products.field.name'),
@@ -620,6 +619,7 @@ export default function Products({ list, product, can }: Props) {
                                                 </span>
                                             ),
                                         },
+                                        { key: 'image', header: t('products.images.title'), cell: (row) => (row.thumbnail === null ? <span className="text-text-tertiary">—</span> : <FileThumbnail fileId={row.thumbnail} alt={row.name} />) },
                                         { key: 'sku', header: t('products.field.sku'), cell: (row) => <span className="font-mono">{row.sku ?? '—'}</span> },
                                         { key: 'kind', header: t('products.field.kind'), priority: 'low', cell: (row) => t(row.kind === 'SERVICE' ? 'products.kind.service' : 'products.kind.goods') },
                                     ]}
