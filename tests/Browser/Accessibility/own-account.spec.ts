@@ -22,6 +22,10 @@ for (const width of [390, 1280]) {
 
         await page.getByRole('button', { name: /Menu akun/ }).click();
         await expect(page.getByRole('menuitemcheckbox', { name: 'English' })).toBeVisible();
+        // The menu fades in: its colours are measured at rest, never blended mid-motion.
+        const menu = page.locator('[data-slot="dropdown-menu-content"]');
+        await expect(menu).not.toHaveAttribute('data-starting-style');
+        await expect(menu).toHaveCSS('opacity', '1');
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
         await page.keyboard.press('Escape');
 
