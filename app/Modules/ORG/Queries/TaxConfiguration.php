@@ -3,8 +3,8 @@
 namespace App\Modules\ORG\Queries;
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
-use App\Modules\ORG\Data\RowHandle;
 use App\Modules\ORG\Data\TreatmentPrecedence;
+use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 
 /**

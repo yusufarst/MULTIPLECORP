@@ -18,6 +18,8 @@ use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
+use App\Modules\PTY\Http\Controllers\ClientsController;
+use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,6 +68,16 @@ Route::post('/pengaturan/perusahaan/{id}/rekening', [CompaniesController::class,
 Route::post('/pengaturan/perusahaan/{id}/aset-identitas', [CompaniesController::class, 'asset'])->middleware(['auth', 'capability:companies.manage', 'step-up'])->name('org.companies.asset');
 Route::get('/pengaturan/pajak', [TaxController::class, 'show'])->middleware(['auth', 'capability:tax.configure'])->name('org.tax');
 Route::put('/pengaturan/pajak', [TaxController::class, 'configure'])->middleware(['auth', 'capability:tax.configure'])->name('org.tax.configure');
+
+// PG-054 *Klien* and PG-055 *Pemasok* (TASK-026; ROUTE-054, ROUTE-055, ROUTE-141–ROUTE-144; NAV-054, NAV-055): the
+// shared party masters, every active account's for their S0 names, each other part under its own read class (PJ-09;
+// PJ-10); their create, edit and archive `parties.manage`, each NX-01 command with its `command_id` (CI-01).
+Route::get('/data-master/klien', [ClientsController::class, 'show'])->middleware(['auth', 'access:s0'])->name('pty.clients');
+Route::post('/data-master/klien', [ClientsController::class, 'store'])->middleware(['auth', 'capability:parties.manage'])->name('pty.clients.store');
+Route::put('/data-master/klien/{id}', [ClientsController::class, 'update'])->middleware(['auth', 'capability:parties.manage'])->name('pty.clients.update');
+Route::get('/data-master/pemasok', [SuppliersController::class, 'show'])->middleware(['auth', 'access:s0'])->name('pty.suppliers');
+Route::post('/data-master/pemasok', [SuppliersController::class, 'store'])->middleware(['auth', 'capability:parties.manage'])->name('pty.suppliers.store');
+Route::put('/data-master/pemasok/{id}', [SuppliersController::class, 'update'])->middleware(['auth', 'capability:parties.manage'])->name('pty.suppliers.update');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),
