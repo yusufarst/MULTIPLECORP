@@ -16,6 +16,7 @@ import { UploadField, type UploadState } from '@/components/notices';
 import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { ReadinessList } from '@/components/signals';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -248,7 +249,11 @@ function AssetRow({ company, asset }: { company: Company; asset: (typeof ASSETS)
 
 function AccountForm({ company, account, onDone }: { company: Company; account: Account | null; onDone: () => void }) {
     const { t } = useTranslation();
-    const [details, setDetails] = useState({ bank_name: '', account_number: '', account_holder: company.legal_name, branch: '' });
+    const initial = account === null
+        ? { bank_name: '', account_number: '', account_holder: company.legal_name, branch: '' }
+        : { bank_name: account.bank_name, account_number: account.account_number, account_holder: account.account_holder, branch: account.branch ?? '' };
+    const [details, setDetails] = useState(initial);
+    const [leaving, setLeaving] = useState(false);
     const [reason, setReason] = useState('');
     const [confirming, setConfirming] = useState(false);
     const command = useCommand<Payload>(() => `/pengaturan/perusahaan/${company.id}/rekening`, 'post');
@@ -298,13 +303,14 @@ function AccountForm({ company, account, onDone }: { company: Company; account: 
             )}
             <CommandAnswer command={command} />
             <div className="flex justify-end gap-3">
-                <Button type="button" variant="ghost" onClick={onDone}>
+                <Button type="button" variant="ghost" onClick={() => { if (JSON.stringify(details) === JSON.stringify(initial)) onDone(); else setLeaving(true); }}>
                     {t('actions.cancel')}
                 </Button>
                 <Button type="submit" pending={command.pending} disabled={command.frozen}>
                     {account === null ? t('companies.account.add') : t('companies.account.change')}
                 </Button>
             </div>
+            <UnsentInputDialog open={leaving} kind="leave" onStay={() => { setLeaving(false); }} onLeave={onDone} />
         </form>
     );
 }
@@ -429,7 +435,7 @@ function Detail({ company, section }: { company: Company; section: Section }) {
         ...link(line.key),
     }));
     const body: Record<Section, ReactNode> = {
-        data: <LegalData key={`${company.id}-${String(company.lock_version)}`} company={company} />,
+        data: <LegalData key={company.id} company={company} />,
         aset: (
             <div className="flex min-w-0 flex-col gap-6">
                 {ASSETS.map((asset) => (

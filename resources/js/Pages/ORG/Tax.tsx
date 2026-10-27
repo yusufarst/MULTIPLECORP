@@ -12,6 +12,7 @@ import { FormField } from '@/components/form';
 import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
+import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Icon } from '@/components/ui/icon';
@@ -79,6 +80,7 @@ function Range({ from, to }: { from: string | null; to: string | null }) {
 function KindForm({ kind, row, initial, props, onDone }: { kind: Kind; row: Base | null; initial: Values; props: Props; onDone: () => void }) {
     const { t } = useTranslation();
     const [values, setValues] = useState<Values>(initial);
+    const [leaving, setLeaving] = useState(false);
     const command = useCommand<Record<string, string | number | boolean | null>>(() => '/pengaturan/pajak', 'put');
     const set = (name: string, value: string | boolean) => { setValues((current) => ({ ...current, [name]: value })); };
     const text = (name: string) => (typeof values[name] === 'string' ? values[name] : '');
@@ -150,8 +152,9 @@ function KindForm({ kind, row, initial, props, onDone }: { kind: Kind; row: Base
                 </div>
             )}
             <CommandAnswer command={command} />
+            <UnsentInputDialog open={leaving} kind="leave" onStay={() => { setLeaving(false); }} onLeave={onDone} />
             <div className="flex justify-end gap-3">
-                <Button type="button" variant="ghost" onClick={onDone}>
+                <Button type="button" variant="ghost" onClick={() => { if (JSON.stringify(values) === JSON.stringify(initial)) onDone(); else setLeaving(true); }}>
                     {t('actions.cancel')}
                 </Button>
                 <Button type="submit" pending={command.pending} disabled={command.frozen}>
