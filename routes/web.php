@@ -15,7 +15,9 @@ use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
+use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
+use App\Modules\ORG\Http\Controllers\TaxController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -52,6 +54,18 @@ Route::get('/masuk/google/callback', [GoogleSignInController::class, 'callback']
 Route::get('/pengaturan/penomoran', [NumberingController::class, 'show'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering');
 Route::put('/pengaturan/penomoran/{type}', [NumberingController::class, 'configure'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.configure');
 Route::post('/pengaturan/penomoran/{type}/mulai', [NumberingController::class, 'start'])->middleware(['auth', 'capability:companies.manage'])->name('org.numbering.start');
+// PG-059 *Perusahaan* and PG-062 *Pajak* (TASK-025; ROUTE-059, ROUTE-062, ROUTE-131–ROUTE-135, ROUTE-138; NAV-059,
+// NAV-062): the Owner's company master and tax configuration (OD-03; OD-04), each NX-01 command carrying its
+// `command_id`; the bank accounts and identity assets behind the step-up, a legal-data change when it touches an
+// identity asset (AU-15); an Admin's request answers as a missing page (IP-21; AZ-11).
+Route::get('/pengaturan/perusahaan', [CompaniesController::class, 'show'])->middleware(['auth', 'capability:companies.manage'])->name('org.companies');
+Route::post('/pengaturan/perusahaan', [CompaniesController::class, 'store'])->middleware(['auth', 'capability:companies.manage'])->name('org.companies.store');
+Route::put('/pengaturan/perusahaan/{id}', [CompaniesController::class, 'update'])->middleware(['auth', 'capability:companies.manage'])->name('org.companies.update');
+Route::post('/pengaturan/perusahaan/{id}/nonaktifkan', [CompaniesController::class, 'deactivate'])->middleware(['auth', 'capability:companies.manage'])->name('org.companies.deactivate');
+Route::post('/pengaturan/perusahaan/{id}/rekening', [CompaniesController::class, 'accounts'])->middleware(['auth', 'capability:companies.manage', 'step-up'])->name('org.companies.accounts');
+Route::post('/pengaturan/perusahaan/{id}/aset-identitas', [CompaniesController::class, 'asset'])->middleware(['auth', 'capability:companies.manage', 'step-up'])->name('org.companies.asset');
+Route::get('/pengaturan/pajak', [TaxController::class, 'show'])->middleware(['auth', 'capability:tax.configure'])->name('org.tax');
+Route::put('/pengaturan/pajak', [TaxController::class, 'configure'])->middleware(['auth', 'capability:tax.configure'])->name('org.tax.configure');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),
