@@ -82,6 +82,17 @@ class AppServiceProvider extends ServiceProvider
                 return response()->json(['message' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])], 429, $headers);
             }));
 
+        // WS-12's upload limiter: 60 uploads an hour per account in front of the durable count and byte budget of H6-07
+        // (ROUTE-228); its answer is MSG-20 with the minutes left, read by the upload field.
+        RateLimiter::for('uploads', fn (Request $request): Limit => Limit::perHour(60)
+            ->by('uploads:'.self::scalar($request->user()?->getAuthIdentifier()))
+            ->response(function (Request $request, array $headers): JsonResponse {
+                $retry = $headers['Retry-After'] ?? 3600;
+                $minutes = max(1, (int) ceil((is_numeric($retry) ? (int) $retry : 3600) / 60));
+
+                return response()->json(['message' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])], 429, $headers);
+            }));
+
         // LOCALIZATION §3.6: a catalogue key missing in a language is shown in its canonical Indonesian text,
         // never as itself, and logged; TL-10 keeps the catalogue complete (TASK-014).
         Lang::handleMissingKeysUsing(function (string $key, array $replace, ?string $locale): string {

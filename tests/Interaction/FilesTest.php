@@ -59,9 +59,11 @@ it('finds a duplicate of evidence content and a reproduction of a rendition by t
     $upload = FileObjectFactory::new()->create(['company_id' => $this->company->id, 'sha256' => $evidenceFile->sha256]);
 
     expect(app(ContentMatches::class)->of($evidenceFile->sha256, $upload->id))
-        ->toBe([['kind' => 'evidence', 'file_id' => $evidenceFile->id, 'company_id' => $evidenceFile->company_id, 'type' => 'CLIENT_ORDER']])
+        ->toBe([['kind' => 'evidence', 'file_id' => $evidenceFile->id, 'company_id' => $evidenceFile->company_id, 'type' => 'CLIENT_ORDER',
+            'record_id' => $existing->evidence_document_id, 'public_id' => EvidenceDocument::query()->findOrFail($existing->evidence_document_id)->public_id]])
         ->and(app(ContentMatches::class)->of(hash('sha256', 'pdf terbit')))
-        ->toBe([['kind' => 'rendition', 'file_id' => $rendered->id, 'company_id' => $version->company_id, 'type' => $version->document_type_code]])
+        ->toBe([['kind' => 'rendition', 'file_id' => $rendered->id, 'company_id' => $version->company_id, 'type' => $version->document_type_code,
+            'record_id' => $version->id, 'public_id' => $version->public_id]])
         ->and(app(ContentMatches::class)->of(hash('sha256', 'tidak ada')))->toBe([]);
 });
 

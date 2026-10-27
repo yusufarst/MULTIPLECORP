@@ -4,6 +4,7 @@ use App\Http\BackgroundRequest;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
 use App\Http\Controllers\UsersAndAccessController;
+use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
@@ -79,6 +80,15 @@ Route::post('/pengaturan/pengguna/{id}/tautan/cabut', [UsersAndAccessController:
 Route::post('/pengaturan/pengguna/{id}/reset-verifikasi', [UsersAndAccessController::class, 'reset'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.reset');
 Route::post('/pengaturan/pengguna/{id}/lepas-google', [UsersAndAccessController::class, 'unlink'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.unlink');
 Route::post('/pengaturan/pengguna/{id}/sesi/{sesi}/akhiri', [UsersAndAccessController::class, 'endSession'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.session.end');
+// PG-038 *Bukti* and the evidence (TASK-030; ROUTE-038, ROUTE-228–ROUTE-231; NAV-038): the page by `evidence.view`, each
+// family inside its query (PJ-08); the one upload of every upload field, each purpose under its own capability in the
+// action (PJ-08; PJ-20), without `command_id` behind WS-12's upload limiter (RB-03); the registration, a version and the
+// links by `evidence.upload`, each NX-07 or NX-14 command carrying its `command_id`.
+Route::get('/dokumen/bukti', [EvidenceController::class, 'show'])->middleware(['auth', 'capability:evidence.view'])->name('doc.evidence');
+Route::post('/berkas', [EvidenceController::class, 'upload'])->middleware(['auth', 'access:s0', 'throttle:uploads'])->name('doc.files.store');
+Route::post('/bukti', [EvidenceController::class, 'register'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.register');
+Route::post('/bukti/{id}/versi', [EvidenceController::class, 'version'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.version');
+Route::post('/bukti/{id}/tautan', [EvidenceController::class, 'links'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.links');
 // Private files and polled states (TASK-022; ROUTE-226, ROUTE-227, ROUTE-285): every active account reaches the
 // route, and the owning record or the page's query class decides at request time (DP-05; FL-07; PJ-08; PJ-15); a
 // denied and an unknown record answer alike (AZ-11). The download is the user's own request (RB-04); the thumbnail

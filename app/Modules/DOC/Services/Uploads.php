@@ -6,6 +6,7 @@ use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Models\FileObject;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
@@ -15,8 +16,9 @@ use Throwable;
  * generated key and registered in its own short transaction; the business command then references the file id.
  * The calling action then owes an image's derivatives to JB-04 (`ProcessImage::owedFor`), and a derivative still
  * missing is made on demand by its thumbnail request. A refusal stores nothing and is written as an
- * UPLOAD_REJECTED security event (LG-02). The route, its limiter and the purpose's capability are the calling
- * command's (ROUTE-228, TASK-030).
+ * UPLOAD_REJECTED security event (LG-02). The account's upload count and byte budget are claimed in the file's own
+ * transaction (WS-12; H6-07), a file past them stored nowhere. The route, its limiter and the purpose's capability
+ * are `DOC StoreUpload`'s (ROUTE-228, TASK-030).
  */
 final class Uploads
 {
@@ -24,6 +26,7 @@ final class Uploads
         private readonly UploadInspection $inspection,
         private readonly FileStore $store,
         private readonly SecurityEventRecorder $events,
+        private readonly UploadBudget $budget,
     ) {}
 
     public function accept(string $path, string $clientName, FilePurpose $purpose, ?int $companyId, int $uploaderId): FileObject
@@ -41,16 +44,21 @@ final class Uploads
         $this->store->write($key, $bytes);
 
         try {
-            $file = $this->store->register($key, [
-                'purpose' => $purpose->value,
-                'mime_type' => $inspected->type->value,
-                'sha256' => hash('sha256', $bytes),
-                'size_bytes' => strlen($bytes),
-                'company_id' => $companyId,
-                'uploaded_by' => $uploaderId,
-                'original_filename' => FileStore::displayName($clientName),
-                'sensitivity' => $purpose->sensitivity(),
-            ]);
+            $file = DB::transaction(function () use ($key, $purpose, $inspected, $bytes, $companyId, $uploaderId, $clientName): FileObject {
+                // WS-12's bounds from durable rows, in the upload's own short transaction (H6-07).
+                $this->budget->claim($uploaderId, strlen($bytes));
+
+                return $this->store->register($key, [
+                    'purpose' => $purpose->value,
+                    'mime_type' => $inspected->type->value,
+                    'sha256' => hash('sha256', $bytes),
+                    'size_bytes' => strlen($bytes),
+                    'company_id' => $companyId,
+                    'uploaded_by' => $uploaderId,
+                    'original_filename' => FileStore::displayName($clientName),
+                    'sensitivity' => $purpose->sensitivity(),
+                ]);
+            });
         } catch (Throwable $failure) {
             // The row was not written, so nothing references the bytes: they go with it.
             $this->store->disk()->delete($key);

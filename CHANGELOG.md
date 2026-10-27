@@ -603,3 +603,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The Owner's workstation's Docker engine stopped answering during the Task; the Owner was told, nothing was restarted, and CI ran every suite.
 - ER-06's independent review found no HIGH point; its MEDIUM and LOW points fixed and tested.
 - Every check passed in fresh CI on `fb2be5f`. TASK-024 DONE — progress 24 / 87 —; TASK-025 next; its pull request squash-merged once eligible.
+
+## Unreleased — 2026-10-27, TASK-030 — Evidence and uploaded documents
+
+- TASK-024 squash-merged by the executor into `main` as `7f2636e` (pull request #29); TASK-030 taken before TASK-025 at the Owner's word.
+- Built TASK-030 on its branch `task/TASK-030-evidence`: ROUTE-228's one upload of every upload field, each purpose under its capability, with WS-12's count and byte budget from the stored files; the evidence's registration under FU-10's keys with FL-10's lookups and IP-05's warning, its versions, links, unlinks and "Jadikan Versi Berlaku" reaching `DocumentChangeParticipant`; the evidence guard of C-18 and C-58; the type-free identity index; PG-038 *Bukti*.
+- The workstation's Docker engine stopped answering twice; the Owner restarted it, nothing was restarted by the executor, and CI ran the browser suites.
+- ER-06's independent review found one P1, two P2 and four P3 points, Codex two P2; each fixed and tested.
+- Every check passed in fresh CI on `1d59f67`. TASK-030 DONE — progress 25 / 87 —; TASK-036 READY; TASK-025 next; its pull request squash-merged once eligible.

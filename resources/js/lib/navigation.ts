@@ -24,7 +24,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-060', 'PG-061', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-060', 'PG-061', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -56,7 +56,15 @@ export const MODULES: Entry[] = [
     { key: 'pembelian', pg: 'PG-015', label: 'glossary.gl_006', href: '/pembelian', icon: ShoppingCart, allowed: scoped('cost.view') },
     { key: 'gudang', pg: 'PG-018', label: 'glossary.gl_007', href: '/gudang/stok', icon: Boxes, allowed: (account) => has('stock.view')(account) || scoped('stock.receive', 'stock.dispatch')(account) },
     { key: 'keuangan', pg: 'PG-041', label: 'glossary.gl_016', href: '/keuangan/invoice', icon: Wallet, allowed: scoped('finance.view') },
-    { key: 'dokumen', pg: 'PG-035', label: 'glossary.gl_014', href: '/dokumen', icon: FileText, allowed: scoped('projects.view') },
+    {
+        key: 'dokumen',
+        pg: 'PG-035',
+        label: 'glossary.gl_014',
+        href: '/dokumen',
+        icon: FileText,
+        allowed: scoped('projects.view', 'evidence.view'),
+        subpages: [{ pg: 'PG-038', href: '/dokumen/bukti' }],
+    },
     {
         key: 'laporan',
         pg: 'PG-051',

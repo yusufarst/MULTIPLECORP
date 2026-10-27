@@ -8,7 +8,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -250,34 +250,50 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - Migration: N/A — no migration or import code in this Task
 - Other: FL-11 — a file marked infected by the scanner, where TASK-079 adopted one, is never served
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/DOC/EvidenceTest.php` — an SVG, a disguised type, an active office file and a pixel bomb refused at ROUTE-228 with MSG-31 and the purpose's types and size, nothing stored, UPLOAD_REJECTED written —; each purpose under its own capability, a company outside the scope answered as unknown; the pipeline's checks themselves TASK-022's (`tests/Unit/DOC/UploadInspectionTest.php`)
+- Criterion 2: `tests/Feature/DOC/EvidenceTest.php` — an identity of the company REJECTED under L-45 naming it, versioned by ROUTE-230, never a second record —; two concurrent registrations of one identity and of one content under real PostgreSQL sessions, run one after the other on FU-10's keys, the second seeing the first (`tests/Integration/Evidence/EvidenceRacesTest.php`)
+- Criterion 3: `tests/Feature/DOC/EvidenceTest.php` — a reference-less match REJECTED with its matches and their labels, refused again without `warnings.override`, without naming the matches or without a reason, then recorded with an ADM_PLUS `DOC.EvidenceDuplicateOverridden` event for QS-21 and the Owner's review —; a replayed warning answering its current matches (`tests/Interaction/EvidenceTest.php`); the browser's CJ-20 (`tests/Browser/E2E/evidence.spec.ts`)
+- Criterion 4: `tests/Feature/DOC/EvidenceTest.php` — a match in another company COMMITTED with the ordinary answer and written as EVIDENCE_DUPLICATE_UNDISCLOSED after the commit, its basis, both public identifiers and both companies —; the split made by the authority re-read at LK-03
+- Criterion 5: `tests/Feature/DOC/EvidenceTest.php` — an upload equal to another company's rendition recorded as a reproduction in its audit, written for the Owner, its flag shown to the Owner and not to the uploader —; the requirement's satisfaction is TASK-035's, the flag derived from the stored checksums (DATABASE §10's application check)
+- Criterion 6: `tests/Integration/Evidence/EvidenceGuardTest.php` — a fee advice's citations and expenses capped by its proven amount through the guard's CHECK and `GuardUpdate`, a document registered again as OTHER refused under C-58 in every amount-bearing role, nothing moved
+- Criterion 7: `tests/Integration/Evidence/EvidenceChangeTest.php` — a replacement reaching two `DocumentChangeParticipant`s, standing for ADM's requirement and FIN's settlement re-evaluation, inside DOC's transaction with their project locked at LK-01, committed together; a participant's refusal refusing the replacement and the unlink, nothing written
+- Criterion 8: `tests/Feature/DOC/EvidenceTest.php` and `tests/Authorization/EvidenceAccessTest.php` — pool evidence only of WAREHOUSE_RECORD and OTHER with MSG-32's tick, linked only to pool records, seen with `stock.view` and `evidence.view`, every pool registration and version flagged `pool` in its audit for the Owner's QS-14
+- Criterion 9: `tests/Authorization/EvidenceAccessTest.php` — an evidence file served through its evidence as an attachment under FL-07's headers to its family's viewers, answered as not found to another family and another company —; the download route TASK-022's (`tests/Feature/Files/FileRoutesTest.php`)
+- Criterion 10: `tests/Feature/DOC/EvidenceTest.php` — 60 uploads an hour and the daily byte budget counted from `file_objects` under the uploader's row lock, MSG-20 with the minutes left —; `tests/Authorization/EvidenceAccessTest.php` — another family's type refused at the upload and the registration, its evidence unknown to a version and a link, a link to a record the viewer may not see neither shown, counted nor unlinked (PJ-08 row 95)
+- Criterion 11: `tests/Performance/EvidenceQueriesTest.php` — FL-10's cross-type lookup across every company and the pool, and BD-14's reference-less lookup, served by `evidence_documents_type_free_identity` in `EXPLAIN` —; the issuer's normalization defined once in `EvidenceIdentity`, the index reading `identity_key`'s parts (`tests/Unit/DOC/EvidenceIdentityTest.php`); §4.10's column order kept, so no amendment
+- Criterion 12: `tests/Feature/DOC/EvidenceTest.php` — a registration and a version referencing another account's upload answered as not found, nothing written
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the identity's normalization and FU-10's keys (TL-03); Feature — ROUTE-038 and ROUTE-228–ROUTE-231, each purpose's allowlist and limit (TL-04); Integration — BD-14 and BD-15 under real sessions, the participants in one transaction, the guard's caps (TL-05); PASS in CI
+- [x] Authorization: each upload purpose's capability; PJ-08's families for upload, version, link and view; pool evidence's audience; a link's record (row 95); criterion 12 (TL-06)
+- [x] Route integrity: ROUTE-038 and ROUTE-228–ROUTE-231 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-228–INT-231, each command's `command_id` replayed, an unlink's and a warning's replay among them (TL-08)
+- [x] Browser E2E if required: J-DOC-02 — a client order dropped on the desktop's field and a photo from the phone's picker — and CJ-20's warning, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-038 and its upload sheet at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's components — the data list, the sheet, the upload field, the duplicate warning —, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-09 for every purpose; SM-12 and SM-23 for the hidden matches and the reproduction; SM-25 and SM-01 for foreign and invisible files (TL-14); TM-16 and TM-46 stay with TASK-060
+- [x] Database safety review: one expand-only index, `2026_10_27_000144`; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review — one P1, two P2, four P3 — and Codex's two P2, each fixed and tested; the accessibility check measured at rest, once the sheet's reveal has finished
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `1d59f67`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40538305251 (push) and 40538310936 (pull request #30), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". The workstation's Docker engine stopped answering twice during the Task; the Owner restarted it, and the local runs were the targeted PHP suites, ESLint and TypeScript, the browser suites left to CI while BantuKasir's ran
+- Build result: `TL-13 Frontend build: PASS — Evidence: 1d59f67, CI ubuntu-24.04 run 40538305251`
+- Route evidence: TL-07's route audit PASS — ROUTE-038 `GET /dokumen/bukti` (`evidence.view`), ROUTE-228 `POST /berkas` (`access:s0`, each purpose's capability in the action, WS-12's limiter), ROUTE-229 `POST /bukti`, ROUTE-230 `POST /bukti/{id}/versi` and ROUTE-231 `POST /bukti/{id}/tautan` (`evidence.upload`)
+- Interaction evidence: `tests/Interaction/EvidenceTest.php` (INT-228–INT-231)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 1d59f67, CI ubuntu-24.04 run 40538305251`; TL-10, TL-11 and TL-12 for PG-038 in the same run
+- Localization evidence: PG-038 and its upload sheet in both languages (`tests/Browser/Localization/evidence.spec.ts`) (DOD-16); 87 catalogue keys added, "Tambahkan sebagai Versi Baru" canonical, the rest proposed
+- Performance evidence: QB-12 — PG-038 in the same statements for one evidence and for 25 —; the type-free identity index in `EXPLAIN` (`tests/Performance/EvidenceQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/DOC/` — `Actions/` (StoreUpload, RegisterEvidence, AddEvidenceVersion, LinkEvidence, UnlinkEvidence, ReplaceEvidence), `Contracts/DocumentChangeParticipant`, `Data/` (DocumentChange, EvidenceIdentity, EvidenceTypes, LinkHandle, StoredUpload), `Http/Controllers/EvidenceController`, `Queries/` (EvidenceList, EvidenceMatches; ContentMatches' record identifiers; FileAccess on EvidenceTypes), `Services/` (EvidenceRegistry, EvidenceUse, EvidenceGuard, UploadBudget, UploadLimited; Uploads claiming the budget) —, the type-free index's migration, WS-12's upload limiter and `config/files.php`'s bounds, the routes, PG-038 `resources/js/Pages/DOC/Evidence.tsx` with the upload client's fields, the duplicate warning's link-less match and PG-038 in the navigation, 87 catalogue keys, the tests and browser fixtures, TOOLCHAIN's row; this record
+- Commit SHA: `01e95dd`, `de69dce`, `acb482c`, `d0641a2`, `67e732f`, `772714f`, `1d59f67`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-030-evidence`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Discoveries for Planning: `DocumentChangeParticipant`, named TASK-029's contract, is defined here since TASK-029 is not built and NX-14 needs it now — TASK-029 uses it as it stands —; the daily byte budget has no number in the sources, 500 MB per account an assumption (`UPLOAD_DAILY_BYTES`) until P8 measures (H6-07). Readings within the approved text: OPENING_SIGNOFF is registered by the import (TASK-057), never chosen on PG-038; PG-038 links evidence to projects, each record page linking its own records through the same action later; an unlink names its link by a keyed hash of its identifier, the page never receiving it; a link's own visibility follows its record's family (PJ-08 row 95); the reproduction flag is derived from the stored checksums, recorded in the registration's audit. Codex reviewed `de69dce`, its two P2 fixed and tested in `d0641a2`; no review of the later commits arrived within ten minutes of their push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). Not applicable: Migration tests (TL-16) — an index alone, its migration run by every suite —; FL-11's scanner — off until TASK-079
 
 **SAFE NEXT TASK:**
 

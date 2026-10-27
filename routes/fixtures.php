@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
@@ -57,6 +58,9 @@ if (! app()->runningInConsole()) {
     NumberingFixture::apply();
 }
 Route::post('__fixtures/penomoran', [NumberingFixture::class, 'arm']);
+
+// TL-09–TL-12 (TASK-030): PG-038's company for the run, with a reference-less client order for IP-05's warning.
+Route::post('__fixtures/bukti', [EvidenceFixture::class, 'create']);
 
 // TL-09–TL-12 (TASK-022): a sample page for an upload through the pipeline, its download by ROUTE-226 and a
 // rendition's state by ROUTE-285, for a signed-in account; the upload route and the evidence registration are TASK-030's.
