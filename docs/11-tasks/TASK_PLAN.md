@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 27
+DONE: 28
 READY: 7
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 40
+TODO: 39
 SUPERSEDED: 0
 
 Progress:
-27 / 87
-Percentage: 31.0 %
+28 / 87
+Percentage: 32.2 %
 
-CURRENT TASK: none in progress — TASK-026 — Clients and suppliers DONE on its branch `task/TASK-026-parties`, CI PASS on `0b9ef62`, its pull request #32 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-027 — Catalog — products, services, units, barcodes, prices and images, READY, taken next from the merged `main` (DIR-096); TASK-028, TASK-029, TASK-031, TASK-036, TASK-061 and TASK-073 READY; TASK-032 once TASK-027 is DONE; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-027 — Catalog — products, services, units, barcodes, prices and images DONE on its branch `task/TASK-027-catalog`, CI PASS on `99bfacc`, its pull request #33 squash-merged by the executor once eligible (DIR-096); the Owner's SHUTDOWN_AFTER_CURRENT_TASK hold active — no next Task starts until the Owner resumes
+NEXT READY TASK: TASK-028 — Rack locations and minimum stock, READY, taken next from the merged `main` once the Owner resumes (DIR-096); TASK-029, TASK-031, TASK-032, TASK-036, TASK-061 and TASK-073 READY — TASK-032 once TASK-027 was DONE —; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -75,7 +75,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
 - [x] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
 - [x] [TASK-026](TASK-026.md) — Clients and suppliers
-- [ ] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
+- [x] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
 - [ ] [TASK-028](TASK-028.md) — Rack locations and minimum stock
 - [ ] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
 - [x] [TASK-030](TASK-030.md) — Evidence and uploaded documents
@@ -167,12 +167,12 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | DONE | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | DONE | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
 | [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | DONE | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
-| [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | READY | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | DONE | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | READY | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | READY | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
 | [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | DONE | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
 | [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | READY | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
-| [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | TODO | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
+| [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | READY | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | TODO | 029, 032 | 034 | NO | AGENT | NONE | YES |
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | TODO | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | TODO | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |

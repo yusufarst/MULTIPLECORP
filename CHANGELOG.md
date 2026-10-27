@@ -627,3 +627,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The workstation's Docker engine stopped answering again; nothing was restarted, and CI ran every suite.
 - Codex's three P2 points fixed and tested; the creation sheet's similar names moved below its actions, so their arrival never moves the button being pressed.
 - Every check passed in fresh CI on `0b9ef62`. TASK-026 DONE — progress 27 / 87 —; TASK-027 next; its pull request squash-merged once eligible.
+
+## Unreleased — 2026-10-28, TASK-027 — Catalog
+
+- TASK-026 squash-merged by the executor into `main` as `07a3053` (pull request #32); TASK-027 started.
+- Built TASK-027 on its branch `task/TASK-027-catalog`: PG-056 *Produk & Jasa* — products and services with SKU, base unit and scale, alternate units as integer multiples with their ratio's correction, manufacturer and internal barcodes by their `code_key`, the Code 39 label printed by the browser, the serial policy under the product's guard (L-35), price defaults forward by family, images with their order and primary, archive —, each NX-01; the guard born with its product.
+- The workstation's Docker engine answered HTTP 500 throughout; nothing was restarted, and CI ran every suite. Each browser layer now keeps its own failure evidence.
+- Codex's two P1 and one P2 points fixed and tested; the stale form's silent version advance also removed from PG-054 and PG-055.
+- Every check passed in fresh CI on `99bfacc`. TASK-027 DONE — progress 28 / 87 —; TASK-032 READY; the Owner's shutdown hold stops here, TASK-028 next on resumption.
