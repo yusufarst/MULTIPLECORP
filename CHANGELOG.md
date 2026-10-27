@@ -632,6 +632,6 @@ This is a change summary; current state and approval authority live in their [ow
 
 - TASK-026 squash-merged by the executor into `main` as `07a3053` (pull request #32); TASK-027 started.
 - Built TASK-027 on its branch `task/TASK-027-catalog`: PG-056 *Produk & Jasa* — products and services with SKU, base unit and scale, alternate units as integer multiples with their ratio's correction, manufacturer and internal barcodes by their `code_key`, the Code 39 label printed by the browser, the serial policy under the product's guard (L-35), price defaults forward by family, images with their order and primary, archive —, each NX-01; the guard born with its product.
-- The workstation's Docker engine answered HTTP 500 throughout; nothing was restarted, and CI ran every suite. Each browser layer now keeps its own failure evidence.
+- The workstation's Docker engine answered HTTP 500 throughout; nothing was restarted, and CI ran every suite. Each browser layer now keeps its own failure evidence, which found a type-ahead search consuming a command's flash answer; ROUTE-281 now keeps the flash.
 - Codex's two P1 and one P2 points fixed and tested; the stale form's silent version advance also removed from PG-054 and PG-055.
-- Every check passed in fresh CI on `99bfacc`. TASK-027 DONE — progress 28 / 87 —; TASK-032 READY; the Owner's shutdown hold stops here, TASK-028 next on resumption.
+- Every check passed in fresh CI on `71e206c`. TASK-027 DONE — progress 28 / 87 —; TASK-032 READY; the Owner's shutdown hold stops here, TASK-028 next on resumption.
