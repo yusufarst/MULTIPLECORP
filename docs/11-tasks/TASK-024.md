@@ -8,7 +8,7 @@ Amendment: on 2026-10-26 the Owner's decision [DIR-097](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -250,34 +250,49 @@ Accounts, roles, capabilities and company grants are Owner-only authority (WORKF
 - Migration: N/A — no migration or import code in this Task
 - Other: H8-18 — after a reset no recovery code of the target is usable (AU-20 c)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Authorization/UsersAndAccessAccessTest.php` — every route declares `users.manage`, `permissions.manage` for the grants, both OWNER_ONLY; an Admin holding every other capability, its step-up confirmed, answered by the not-found page on every route and path, writing nothing —; the browser's Admin address answered 404 (`tests/Browser/E2E/users-access.spec.ts`)
+- Criterion 2: `tests/Feature/IAM/UsersAndAccessTest.php` — a new account inactive, ADMIN_OPERASIONAL, with no company and no capability —; an OWNER_ONLY capability refused for an account at validation and in the command (RG-02), each ADM_PLUS grant its own row with its reason (RG-08) — `tests/Authorization/UsersAndAccessAccessTest.php` for every OWNER_ONLY code
+- Criterion 3: `tests/Unit/IAM/AccessPreviewTest.php` — *Dapat*, *Baru*, *Dicabut* against every granted company and "Nonaktif — prasyarat dicabut" with the grant kept —; the preview's partial reload and the save in `tests/Feature/IAM/UsersAndAccessTest.php`; the browser's "Pratinjau Akses" before "Simpan Akses", the save confirming only the state previewed
+- Criterion 4: `tests/Feature/IAM/UsersAndAccessTest.php` — the last active Owner's deactivation REJECTED with the rule in words —; M-22's two Owners against each other and one Owner sending both, under real sessions (`tests/Integration/Authorization/AccessChangeRacesTest.php`)
+- Criterion 5: `tests/Feature/IAM/UsersAndAccessTest.php` — the grants revoked, Google unlinked with DEACTIVATION, the links revoked and the sessions ended in one command —; HO-20's deletion by account and the next request unauthenticated with real sessions (`tests/Integration/Authentication/AccountCommandSessionsTest.php`); M-21 and M-42 in both orders under real sessions
+- Criterion 6: `tests/Feature/IAM/UsersAndAccessTest.php` — a grant making an active account without TOTP high-risk: sessions ended, password unusable, one RESET link shown once; the activation of an account given high-risk grants while inactive replacing its ONBOARDING link —; M-45 against the account's own password change and its TOTP confirmation committed first, and HO-41's grant against a session signed in for real
+- Criterion 7: `tests/Feature/IAM/UsersAndAccessTest.php` and `tests/Interaction/UsersAndAccessTest.php` — the link flashed once, never in the audit; a replayed issue its record, never the link; a revoked link refused afterwards —; in the browser the link absent from history and storage
+- Criterion 8: `tests/Feature/IAM/UsersAndAccessTest.php` — the reset with and without TOTP, the reason required, the acting Owner's own refused, every session ended, TOTP_RESET or PASSWORD_RESET_REQUESTED of reason CREDENTIAL_REISSUE, the Google unlink with reason OWNER —; HO-41's reset against the target's own requests, its recovery codes void (H8-18)
+- Criterion 9: `tests/Integration/Authorization/AccessChangeRacesTest.php` — an access change and a deactivation committing after the target's command in flight, the target's next command denied (M-20) —; TX-09's wait answered FAILED by the envelope's deadline (TASK-013's tests)
+- Criterion 10: each command's audit event in its transaction with its command, the acting Owner, OWNER_ONLY and its reason, the security events after the commit — the feature tests' assertions —; SM-05's reconciliation finds no OWNER_ONLY grant (`tests/Authorization/UsersAndAccessAccessTest.php`)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the preview's derivation (TL-03); Feature — ROUTE-060, ROUTE-121–ROUTE-128 and ROUTE-130 with each refusal (TL-04); Integration — M-13, M-20–M-22, M-42, M-45, HO-20 and HO-41 with real sessions (TL-05); PASS in CI
+- [x] Authorization: OD-01 and OD-02 on every route and path; SM-04's self-grant and RG-07 on the Admin with A and B (TL-06)
+- [x] Route integrity: ROUTE-060, ROUTE-121–ROUTE-128 and ROUTE-130 in the route audit and the route list; no ROUTE-129 (TL-07)
+- [x] Interaction behavior: INT-121–INT-128 and INT-130, each with one `command_id` replayed and the step-up expiring (TL-08)
+- [x] Browser E2E if required: J-ACC-02 and CJ-11 — create, grant after the preview, the link shown once, activate, the holder's sign-in and its session ended, the reissue and the deactivation — on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-060 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll, "Nonaktifkan" and the sessions on the phone (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's table, sections, preview and confirmation, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04, SM-05, SM-07, SM-13, SM-19 (paths c and d) and SM-20 (the Owner's unlink) (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review, its points fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `fb2be5f`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40447074607 (push) and 40447079116 (pull request #29), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". The Owner's workstation's Docker engine stopped answering during the Task, so CI ran every suite; nothing local is claimed beyond ESLint and TypeScript
+- Build result: `TL-13 Frontend build: PASS — Evidence: fb2be5f, CI ubuntu-24.04 run 40447074607`
+- Route evidence: TL-07's route audit PASS — ROUTE-060 `GET /pengaturan/pengguna`, ROUTE-121 `POST /pengaturan/pengguna`, ROUTE-122 `PUT …/{id}`, ROUTE-123 `POST …/{id}/status`, ROUTE-124 `PUT …/{id}/akses`, ROUTE-125 `POST …/{id}/tautan`, ROUTE-126 `POST …/{id}/tautan/cabut`, ROUTE-127 `POST …/{id}/reset-verifikasi`, ROUTE-128 `POST …/{id}/lepas-google`, ROUTE-130 `POST …/{id}/sesi/{sesi}/akhiri`, the commands behind `step-up` —; `tests/Routes/RouteAuditTest.php`, `tests/Feature/BootTest.php`
+- Interaction evidence: `tests/Interaction/UsersAndAccessTest.php` (INT-121–INT-128, INT-130)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: fb2be5f, CI ubuntu-24.04 run 40447074607`; TL-10, TL-11 and TL-12 for PG-060 in the same run
+- Localization evidence: PG-060 in both languages (`tests/Browser/Localization/users-access.spec.ts`) (DOD-16); 199 catalogue keys added — the capabilities' names, their areas and PG-060's copy —, "Simpan Akses" canonical, the rest proposed
+- Performance evidence: PFM-01 and PFM-02 — the directory and an account's detail in the same statements for one row and for 25 —; PFM-20 — a grant change within the budget (`tests/Performance/UsersAndAccessQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/IAM/` — `Actions/` (the ten NX-02 commands), `Services/AccountAccess`, `Queries/UsersAndAccess`, `Data/` (`AccessPreview`, `CapabilityAreas`, `SessionHandle`), `Authentication/GoogleIdentities` (the Owner's unlink inside a command) —, `app/Modules/ORG/Queries/CompanyDirectory` (the grantable companies), `app/Http/Controllers/UsersAndAccessController.php`, `routes/web.php`; the frontend's PG-060, `lib/use-command.ts` and the settings navigation; `lang/`; the tests, `tests/Support/AccessRaces.php` and the browser fixtures; `tests/Architecture/SourceScan.php`'s AZ-02 allowance; TOOLCHAIN's row
+- Commit SHA: `2629e7e`, `0aa1552`, `4910953`, `494d089`, `5d5630c`, `7d38a93` and `fb2be5f`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-024-users-access`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Readings within the approved text: a new account is created inactive and activated once its grants and link are set (WF-ACC-02's "→ activate"; AU-12; RV-11; M-45); an account's detail is the whitelisted address keys `akun` and `bagian` of ROUTE-060, no route viewing one account; ROUTE-130 names a session by a keyed hash of its identifier, which PJ-17 never shows; ROUTE-126 names the link by its purpose, one open per account and purpose; a promotion to OWNER revokes the account's individual grants; an Owner may deactivate itself while another active Owner remains (M-22), RG-09 refusing the last; a link, a reset and an unlink of the acting Owner's own account refused; the capabilities grouped by area from WORKFLOWS §4's rows, ADM_PLUS under "Kewenangan khusus" (GL-036); the directory 25 rows at a time with PT-08's "Muat Lagi". ER-06's independent review found no HIGH point; its MEDIUM and LOW points fixed and tested. Codex's review of pull request #29 found one P1 — a reissued RESET link not shown on the section its answer opens — and one P2 — the directory capped at 500 accounts —; both fixed and tested. No DONE record for another Task changed; no server or VPS touched
+
 
 **SAFE NEXT TASK:**
 
