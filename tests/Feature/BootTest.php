@@ -21,6 +21,9 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD pengaturan/penomoran', 'PUT pengaturan/penomoran/{type}', 'POST pengaturan/penomoran/{type}/mulai',
         'GET|HEAD akun', 'PUT akun/kata-sandi', 'POST akun/verifikasi-dua-langkah', 'DELETE akun/verifikasi-dua-langkah', 'POST akun/kode-pemulihan',
         'POST akun/kode-pemulihan/baru', 'POST akun/google', 'DELETE akun/google', 'PUT akun/bahasa',
+        'GET|HEAD pengaturan/pengguna', 'POST pengaturan/pengguna', 'PUT pengaturan/pengguna/{id}', 'POST pengaturan/pengguna/{id}/status',
+        'PUT pengaturan/pengguna/{id}/akses', 'POST pengaturan/pengguna/{id}/tautan', 'POST pengaturan/pengguna/{id}/tautan/cabut',
+        'POST pengaturan/pengguna/{id}/reset-verifikasi', 'POST pengaturan/pengguna/{id}/lepas-google', 'POST pengaturan/pengguna/{id}/sesi/{sesi}/akhiri',
         'GET|HEAD berkas/{id}/unduh', 'GET|HEAD berkas/{id}/gambar-kecil', 'GET|HEAD status/{kind}/{id}',
         'POST cari', 'GET|HEAD {fallbackPlaceholder}',
     ]);

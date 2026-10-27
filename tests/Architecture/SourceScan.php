@@ -102,6 +102,9 @@ final class SourceScan
         // TASK-020: AU-25's audit-trail reading of who held the OWNER role at the window start, for the operator's
         // recovery commands only (RG-11) — no capability or access decision reads it.
         '/app/Modules/IAM/Recovery/AccountHistory.php',
+        // TASK-024: PG-060's role assignment (RG-01; RG-05) and RG-09's count of the active Owners, read by the
+        // account commands' shared steps — the resolver still decides every capability (AZ-02).
+        '/app/Modules/IAM/Services/AccountAccess.php',
     ];
 
     /**

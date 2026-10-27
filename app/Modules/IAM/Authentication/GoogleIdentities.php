@@ -9,6 +9,7 @@ use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -40,6 +41,9 @@ final class GoogleIdentities
     public const ALREADY_LINKED = 'ALREADY_LINKED';
 
     public const REFUSED = 'REFUSED';
+
+    /** AU-24's unlink reason of an Owner's unlink of another account. */
+    public const BY_OWNER = 'OWNER';
 
     /** The unlink reasons of AU-24, with the authority each acts under. */
     private const REASONS = [
@@ -205,6 +209,43 @@ final class GoogleIdentities
         }
 
         return $unlinked;
+    }
+
+    /**
+     * An Owner's unlink inside its NX-02 command (AU-24 OWNER, DEACTIVATION, CREDENTIAL_REISSUE; RV-05; RV-15), on the
+     * account row the command's envelope holds at LK-03: a conditional update of the active row's unlink columns
+     * (C-63), its audit event naming the command and the Owner's reason. The command writes GOOGLE_UNLINKED after its
+     * commit — and LG-07's alert for an OWNER-role account. Answers whether a link was active.
+     */
+    public function unlinkHeld(User $account, string $reason, int $by, string $commandId, ?string $ownerReason = null, ?CarbonImmutable $at = null): bool
+    {
+        // C-63: OWNER and CREDENTIAL_REISSUE are another account's; an Owner may deactivate itself (M-22).
+        if (! in_array($reason, [self::BY_OWNER, 'DEACTIVATION', 'CREDENTIAL_REISSUE'], true) || ($reason !== 'DEACTIVATION' && $by === $account->id)) {
+            throw new InvalidArgumentException("The unlink reason {$reason} does not allow this actor (AU-24).");
+        }
+
+        $link = DB::table('user_external_identities')->where('user_id', $account->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->first(['id']);
+
+        if ($link === null || DB::table('user_external_identities')->where('id', $link->id)->whereNull('unlinked_at')
+            ->update(['unlinked_at' => $at ?? now(), 'unlinked_by' => $by, 'unlink_reason' => $reason]) !== 1) {
+            return false;
+        }
+
+        $this->audit->record(
+            action: 'IAM.GoogleUnlinked',
+            authorityClass: self::REASONS[$reason],
+            actorUserId: $by,
+            companyId: null,
+            entityType: 'user',
+            entityId: $account->id,
+            entityPublicId: $account->public_id,
+            reason: $ownerReason ?? $reason,
+            commandId: $commandId,
+            change: AuditChange::updated(['unlinked' => false], ['unlinked' => true]),
+            metadata: ['external_identity' => $link->id, 'unlink_reason' => $reason],
+        );
+
+        return true;
     }
 
     private function linked(User $holder): void

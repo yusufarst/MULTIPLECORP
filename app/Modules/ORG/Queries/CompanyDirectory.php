@@ -32,6 +32,24 @@ final class CompanyDirectory
         return array_values(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, $ids));
     }
 
+    /**
+     * Every company of the workspace for PG-060's company grants (TASK-024; C-32), active or deactivated — a deactivated
+     * company stays grantable for history, collection and corrections (CS-02; C-54) —, keyed by internal identifier,
+     * which the page never receives. One query.
+     *
+     * @return array<int, array{id: string, code: string, name: string, active: bool}>
+     */
+    public function grantable(): array
+    {
+        $companies = [];
+
+        foreach (Company::query()->orderBy('code')->get(['id', 'public_id', 'code', 'legal_name', 'is_active']) as $company) {
+            $companies[(int) $company->id] = ['id' => $company->public_id, 'code' => $company->code, 'name' => $company->legal_name, 'active' => $company->is_active === true];
+        }
+
+        return $companies;
+    }
+
     /** @return list<array{id: string, code: string, name: string}> */
     public function inScope(CompanyScope $scope): array
     {

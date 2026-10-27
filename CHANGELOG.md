@@ -595,3 +595,11 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-023 on its branch `task/TASK-023-my-account`: PG-065 *Akun Saya* and ROUTE-111–ROUTE-118 on the account's own row — the password change, TOTP's enrolment and replacement, the recovery codes, TOTP off, the Google link from a LINK attempt and the own unlink, the display language —, each sensitive step behind the step-up and a code accepted once (M-39); MSG-29's notice at the first sign-in after an account event; 81 catalogue keys, proposed copy.
 - ER-06's independent review found one HIGH point, the password change's unused links and re-check under its lock (RV-10); it and the MEDIUM and LOW points fixed and tested.
 - Every check passed in fresh CI on `17ffe6e`. TASK-023 DONE — progress 23 / 87 —; TASK-024 next; pull request #28 squash-merged once eligible.
+
+## Unreleased — 2026-10-27, TASK-024 — Users and access — accounts, roles, capabilities and company grants
+
+- TASK-023 squash-merged by the executor into `main` as `673316f` (pull request #28); TASK-024 started.
+- Built TASK-024 on its branch `task/TASK-024-users-access`: PG-060 *Pengguna & Akses* and its ten NX-02 commands — an account created inactive, edited, deactivated and activated; its role and grants after "Pratinjau Akses"; its credential links; the Owner's TOTP reset or reissue and Google unlink with a reason; one of its sessions ended —, each behind the step-up, under LK-02 and LK-03, its audit in its transaction; 199 catalogue keys.
+- The Owner's workstation's Docker engine stopped answering during the Task; the Owner was told, nothing was restarted, and CI ran every suite.
+- ER-06's independent review found no HIGH point; its MEDIUM and LOW points fixed and tested.
+- Every check passed in fresh CI on `fb2be5f`. TASK-024 DONE — progress 24 / 87 —; TASK-025 next; its pull request squash-merged once eligible.

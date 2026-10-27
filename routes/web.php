@@ -3,6 +3,7 @@
 use App\Http\BackgroundRequest;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
+use App\Http\Controllers\UsersAndAccessController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
@@ -63,6 +64,21 @@ Route::post('/akun/kode-pemulihan/baru', [OwnAccountController::class, 'regenera
 Route::post('/akun/google', [OwnAccountController::class, 'linkGoogle'])->middleware(['auth', 'access:self', 'step-up'])->name('account.google');
 Route::delete('/akun/google', [OwnAccountController::class, 'unlinkGoogle'])->middleware(['auth', 'access:self', 'step-up'])->name('account.google.unlink');
 Route::put('/akun/bahasa', [OwnAccountController::class, 'locale'])->middleware(['auth', 'access:self'])->name('account.locale');
+
+// PG-060 *Pengguna & Akses* (TASK-024; ROUTE-060, ROUTE-121–ROUTE-128, ROUTE-130; NAV-060): the Owner's accounts,
+// grants, credential links and sessions (OD-01, OD-02), each command of family NX-02 carrying its `command_id` behind
+// the step-up (AU-15); an Admin's request for any of them answers as a missing page (IP-21; AZ-11). ROUTE-129 stays
+// withdrawn: the key-compromise command is the operator's console command (AU-21).
+Route::get('/pengaturan/pengguna', [UsersAndAccessController::class, 'show'])->middleware(['auth', 'capability:users.manage'])->name('users.show');
+Route::post('/pengaturan/pengguna', [UsersAndAccessController::class, 'store'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.store');
+Route::put('/pengaturan/pengguna/{id}', [UsersAndAccessController::class, 'update'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.update');
+Route::post('/pengaturan/pengguna/{id}/status', [UsersAndAccessController::class, 'status'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.status');
+Route::put('/pengaturan/pengguna/{id}/akses', [UsersAndAccessController::class, 'access'])->middleware(['auth', 'capability:permissions.manage', 'step-up'])->name('users.access');
+Route::post('/pengaturan/pengguna/{id}/tautan', [UsersAndAccessController::class, 'link'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.link');
+Route::post('/pengaturan/pengguna/{id}/tautan/cabut', [UsersAndAccessController::class, 'revokeLink'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.link.revoke');
+Route::post('/pengaturan/pengguna/{id}/reset-verifikasi', [UsersAndAccessController::class, 'reset'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.reset');
+Route::post('/pengaturan/pengguna/{id}/lepas-google', [UsersAndAccessController::class, 'unlink'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.unlink');
+Route::post('/pengaturan/pengguna/{id}/sesi/{sesi}/akhiri', [UsersAndAccessController::class, 'endSession'])->middleware(['auth', 'capability:users.manage', 'step-up'])->name('users.session.end');
 // Private files and polled states (TASK-022; ROUTE-226, ROUTE-227, ROUTE-285): every active account reaches the
 // route, and the owning record or the page's query class decides at request time (DP-05; FL-07; PJ-08; PJ-15); a
 // denied and an unknown record answer alike (AZ-11). The download is the user's own request (RB-04); the thumbnail
