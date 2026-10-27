@@ -279,7 +279,7 @@ Authentic external originals — client SPK and orders, SIPLAH orders, third-par
 - [x] Production build: TL-13 PASS in CI
 - [x] Security checks if required: SM-09 for every purpose; SM-12 and SM-23 for the hidden matches and the reproduction; SM-25 and SM-01 for foreign and invisible files (TL-14); TM-16 and TM-46 stay with TASK-060
 - [x] Database safety review: one expand-only index, `2026_10_27_000144`; local and CI databases only, no production connection
-- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review — one P1, two P2, four P3 — and Codex's two P2, each fixed and tested
+- [x] Final diff review: each rule against the contract and its sources; ER-06's one independent review — one P1, two P2, four P3 — and Codex's two P2, each fixed and tested; the accessibility check measured at rest, once the sheet's reveal has finished
 
 **COMPLETION EVIDENCE:**
 

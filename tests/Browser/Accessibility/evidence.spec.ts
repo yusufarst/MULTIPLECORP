@@ -1,11 +1,12 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test } from '@playwright/test';
 
-import { evidenceCompany, uniquePdf } from '../evidence-fixtures';
+import { atRest, evidenceCompany, uniquePdf } from '../evidence-fixtures';
 import { ownerSignedIn } from '../numbering-fixtures';
 
 // TL-12 (TASK-030; DESIGN_SYSTEM §10 *Upload*; PG-038): the list and the upload sheet pass the WCAG 2.2 AA checks at
-// both bands — the upload field named by its label and described by its limits, its finished state announced.
+// both bands — the upload field named by its label and described by its limits, its finished state announced —, each
+// measured once the sheet's reveal has finished.
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 
@@ -16,6 +17,7 @@ for (const width of [390, 1280]) {
         const { company } = await evidenceCompany(page);
 
         await page.goto(`/dokumen/bukti?cabang=${company}`);
+        await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
         await page.getByRole('button', { name: 'Unggah', exact: true }).filter({ visible: true }).first().click();
@@ -24,6 +26,7 @@ for (const width of [390, 1280]) {
         await expect(input).toHaveAccessibleDescription('PDF, JPG, PNG, WebP, DOCX atau XLSX, maksimal 20 MB. Di ponsel, Anda bisa langsung memotret.');
         await input.setInputFiles({ name: 'spk.pdf', mimeType: 'application/pdf', buffer: uniquePdf() });
         await expect(sheet.getByRole('status')).toContainText('spk.pdf');
+        await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
     });
 }

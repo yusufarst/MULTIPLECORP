@@ -45,6 +45,15 @@ export function uniquePhoto(): Buffer {
     ]);
 }
 
+/** Waits for every running animation and transition — the sheet's reveal among them — to finish, so a measurement such
+    as the contrast check reads the page at rest, never a colour mid-fade. */
+export async function atRest(page: Page): Promise<void> {
+    await page.evaluate(async () => {
+        const finite = document.getAnimations().filter((animation) => animation.effect?.getTiming().iterations !== Infinity);
+        await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
+    });
+}
+
 /** Drops a file on the upload field's area, as a desktop's drag and drop does (J-DOC-02). */
 export async function dropFile(page: Page, zone: Locator, name: string, type: string, bytes: Buffer): Promise<void> {
     const transfer = await page.evaluateHandle(
