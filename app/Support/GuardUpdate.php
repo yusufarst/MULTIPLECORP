@@ -80,4 +80,20 @@ final class GuardUpdate
             throw new GuardMissing($table, count($rows), $affected);
         }
     }
+
+    /**
+     * A guard keyed by a record, born with it at its columns' defaults (CONCURRENCY_IDEMPOTENCY D-CC-07; NX-01) — never
+     * created inside its own update, which would hide a missing row (GU-02).
+     *
+     * @param  array<string, int|string>  $key
+     * @param  array<string, mixed>  $values
+     */
+    public static function bear(ConnectionInterface $connection, string $table, array $key, array $values = []): void
+    {
+        if (preg_match('/^[a-z_]+_balances$/', $table) !== 1 || $key === []) {
+            throw new InvalidArgumentException('A guard is born in a guard table with its key (D-CC-07).');
+        }
+
+        $connection->table($table)->insert([...$key, ...$values]);
+    }
 }

@@ -225,6 +225,11 @@
     th {
         break-inside: avoid;
     }
+
+    /* "Cetak Label" (TASK-027; DESIGN_SYSTEM §17): while a label view is in the document, the paper is the label alone. */
+    body:has(> #label-print) > :not(#label-print) {
+        display: none !important;
+    }
 }
 
 /* The scrollbar rule Base UI would otherwise inject as a `<style>` element: the application renders Base UI

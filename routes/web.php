@@ -4,6 +4,7 @@ use App\Http\BackgroundRequest;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
 use App\Http\Controllers\UsersAndAccessController;
+use App\Modules\CAT\Http\Controllers\ProductsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
@@ -78,6 +79,14 @@ Route::put('/data-master/klien/{id}', [ClientsController::class, 'update'])->mid
 Route::get('/data-master/pemasok', [SuppliersController::class, 'show'])->middleware(['auth', 'access:s0'])->name('pty.suppliers');
 Route::post('/data-master/pemasok', [SuppliersController::class, 'store'])->middleware(['auth', 'capability:parties.manage'])->name('pty.suppliers.store');
 Route::put('/data-master/pemasok/{id}', [SuppliersController::class, 'update'])->middleware(['auth', 'capability:parties.manage'])->name('pty.suppliers.update');
+
+// PG-056 *Produk & Jasa* (TASK-027; ROUTE-056, ROUTE-145–ROUTE-147; NAV-056): the catalogue, every active account's for
+// its S0 identity, price defaults by family and stock figures with `stock.view` (PJ-14); its create, edits and the
+// barcode registration `products.edit`, each NX-01 command with its `command_id` (CI-01); "Cetak Label" client-only.
+Route::get('/data-master/produk', [ProductsController::class, 'show'])->middleware(['auth', 'access:s0'])->name('cat.products');
+Route::post('/data-master/produk', [ProductsController::class, 'store'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.store');
+Route::put('/data-master/produk/{id}', [ProductsController::class, 'update'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.update');
+Route::post('/data-master/produk/{id}/barcode', [ProductsController::class, 'barcode'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.barcode');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),

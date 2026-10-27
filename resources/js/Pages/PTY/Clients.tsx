@@ -11,7 +11,7 @@ import { useState } from 'react';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormSection } from '@/components/form';
-import { type Answer, OutcomeMessage } from '@/components/outcome-message';
+import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { CLIENT_FIELDS, ClientCreateSheet, CommandAnswer, PartyField, PartyLookup } from '@/components/parties';
 import { DataMasterNav } from '@/components/party-nav';
@@ -51,40 +51,40 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
-/** The row's version as the page shows it now. */
-function versionOf(client: Client, target: Target): number {
-    if (target.kind === 'organization') return client.lock_version;
+/** The row's values and version as the page shows them now. */
+function latestOf(client: Client, target: Target): { values: Values; version: number } {
+    if (target.kind === 'organization') return { values: { name: client.name, npwp: client.npwp ?? '' }, version: client.lock_version };
 
     for (const unit of client.units ?? []) {
-        const row = target.kind === 'unit' ? (unit.handle === target.row ? unit : undefined)
-            : target.kind === 'address' ? unit.addresses.find((address) => address.handle === target.row)
-            : unit.contacts.find((contact) => contact.handle === target.row);
+        if (target.kind === 'unit' && unit.handle === target.row) return { values: { unit_name: unit.name }, version: unit.lock_version };
 
-        if (row !== undefined) return row.lock_version;
+        const address = target.kind === 'address' ? unit.addresses.find((row) => row.handle === target.row) : undefined;
+
+        if (address !== undefined) return { values: { address_label: address.label ?? '', address_lines: address.address_lines ?? '', city: address.city ?? '' }, version: address.lock_version };
+
+        const contact = target.kind === 'contact' ? unit.contacts.find((row) => row.handle === target.row) : undefined;
+
+        if (contact !== undefined) {
+            return { values: { contact_name: contact.name ?? '', contact_position: contact.position ?? '', contact_phone: contact.phone ?? '', contact_email: contact.email ?? '' }, version: contact.lock_version };
+        }
     }
 
-    return target.lock_version ?? 0;
+    return { values: target.values, version: target.lock_version ?? 0 };
 }
 
 /** Adding a unit with its address, an address or a PIC; editing any client row — at the version the page read (ST-01).
-    A stale answer keeps the sheet and its input open with MSG-03; the page then shows the latest version, and sending
-    again applies the input to it (IP-03). Every dismissal with unsent input asks first (PT-09). */
+    The sheet keeps the values and version it opened with: a stale answer leaves the input in place with MSG-03, and only
+    "Muat Versi Terbaru" takes the row's latest values and version — never a silent resend over another user's change
+    (IP-03). Every dismissal with unsent input asks first (PT-09). */
 function RowSheet({ client, target, onClose }: { client: Client; target: Target; onClose: () => void }) {
     const { t } = useTranslation();
+    const [opened, setOpened] = useState({ values: target.values, version: target.lock_version ?? 0 });
     const [values, setValues] = useState<Values>(target.values);
     const [leaving, setLeaving] = useState(false);
-    const [version, setVersion] = useState(target.lock_version ?? 0);
-    const [seen, setSeen] = useState<Answer | null>(null);
     const command = useCommand<Payload>(() => (target.mode === 'add' ? LIST : `${LIST}/${client.id}`), target.mode === 'add' ? 'post' : 'put');
     const fields: readonly string[] = target.mode === 'add' && target.kind === 'unit' ? [...CLIENT_FIELDS.unit, ...CLIENT_FIELDS.address] : CLIENT_FIELDS[target.kind];
     const title = t(`parties.${target.mode === 'add' ? `client.add_${target.kind}` : 'edit'}` as TranslationKey);
-    const dirty = JSON.stringify(values) !== JSON.stringify(target.values);
-
-    if (command.answer !== seen) {
-        setSeen(command.answer);
-
-        if (command.answer?.kind === 'CONFLICT' && command.answer.cause === 'stale') setVersion(versionOf(client, target));
-    }
+    const dirty = JSON.stringify(values) !== JSON.stringify(opened.values);
 
     return (
         <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
@@ -100,7 +100,7 @@ function RowSheet({ client, target, onClose }: { client: Client; target: Target;
                         command.submit(
                             target.mode === 'add'
                                 ? { kind: target.kind, klien: client.id, ...(target.unit !== undefined ? { unit: target.unit } : {}), ...values }
-                                : { action: 'change', kind: target.kind, row: target.row ?? null, lock_version: version, ...values },
+                                : { action: 'change', kind: target.kind, row: target.row ?? null, lock_version: opened.version, ...values },
                             onClose,
                         );
                     }}
@@ -119,6 +119,13 @@ function RowSheet({ client, target, onClose }: { client: Client; target: Target;
                         ))}
                     </div>
                     <CommandAnswer command={command} />
+                    {command.answer?.kind === 'CONFLICT' && command.answer.cause === 'stale' && (
+                        <div>
+                            <Button type="button" variant="outline" onClick={() => { const latest = latestOf(client, target); setOpened(latest); setValues(latest.values); command.clear(); }}>
+                                {t('forms.load_latest')}
+                            </Button>
+                        </div>
+                    )}
                     <div className="flex justify-end gap-3">
                         <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
                             {t('actions.cancel')}

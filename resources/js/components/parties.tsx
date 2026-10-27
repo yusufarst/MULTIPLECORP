@@ -39,7 +39,7 @@ const REQUIRED = new Set(['name', 'unit_name', 'contact_name']);
 
 /** ROUTE-281's rows of one party type for the term, a quarter second after the last keystroke, an earlier request
     abandoned; a changed term shows nothing until its own answer (IP-17). */
-export function usePartySearch(type: 'client' | 'supplier') {
+export function usePartySearch(type: 'client' | 'supplier' | 'product') {
     const [term, setTerm] = useState('');
     const [answer, setAnswer] = useState<{ term: string; rows: SearchResult[]; cut: boolean } | null>(null);
     const pending = useRef<{ timer: number; controller: AbortController } | null>(null);

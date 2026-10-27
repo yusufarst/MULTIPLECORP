@@ -8,7 +8,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -239,34 +239,47 @@ CAP-03 and AC-03 require one catalogue in which a known code resolves the intend
 - Migration: N/A — no migration or import code in this Task
 - Other: DEP-03 — the label-print method confirmed at the device UAT without a printer purchase (TEST_STRATEGY §12)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Unit/CAT/CatalogArithmeticTest.php` — a code's key with white space removed, letters upper-cased and leading zeros kept; `tests/Feature/CAT/ProductsTest.php` — a code typed with spaces registered by its key, the same code refused at its field on another product and again on its own (BR-INV-09; C-01)
+- Criterion 2: `tests/Feature/CAT/ProductsTest.php` — "Buat Barcode Internal" twice gives two distinct `MC` codes from the sequence; `tests/Frontend/code39.test.ts` — the label's Code 39 symbol; `tests/Browser/E2E/products.spec.ts` — "Cetak Label" calls the browser's print of the label view, nothing sent
+- Criterion 3: `tests/Unit/CAT/CatalogArithmeticTest.php` — conversion by multiplication only against the numeric annex's examples 10–11, a base quantity storable only at its scale; `tests/Feature/CAT/ProductsTest.php` — an alternate unit an integer multiple of at least 2, a fraction refused, its ratio corrected at the version read
+- Criterion 4: `tests/Integration/Catalog/CatalogRacesTest.php` — under real sessions the serial switch waits on a receipt holding the product's guard (LK-13), reads ON HAND under it and is REJECTED under L-35 with the registration-count path; without stock it commits, and switching it off keeps the serial history; a stale form CONFLICT (ST-01; ST-09)
+- Criterion 5: `tests/Feature/CAT/ProductsTest.php` — price defaults forward only, the history listed by kind, amount and date; a saved purchase line's price and base quantity unchanged by a price or ratio change (BR-SN-01; numeric annex 11)
+- Criterion 6: `tests/Authorization/ProductsAccessTest.php` — purchase defaults with `cost.view`, selling and SPJ-reference defaults with `finance.view`, stock figures with `stock.view`, each absent otherwise; a price change also needs its kind's family, re-read in the command (PJ-14; SM-25)
+- Criterion 7: `tests/Feature/CAT/ProductsTest.php` — an archived product kept, no longer offered by CAT's lookup and taking no new barcode (WF-MD-04)
+- Criterion 8: `tests/Integration/Catalog/CatalogRacesTest.php` — two creations of one SKU and two registrations of one code give one COMMITTED and one CONFLICT; `tests/Interaction/ProductsTest.php` — each `command_id` replayed answering its recorded outcome (BD-16; CI-05)
+- Criterion 9: `tests/Feature/CAT/ProductsTest.php` — a service created at scale 0 and refused serialization (BR-INV-11); the serialized flag only at scale 0 (BR-INV-03; DATABASE §4.4)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the code key and the conversion arithmetic (TL-03); Feature — ROUTE-056 and ROUTE-145–ROUTE-147 with each refusal (TL-04); Integration — concurrent SKU creations and code registrations, the serial switch against stock under LK-13 (TL-05); PASS in CI
+- [x] Authorization: S0 to every active account, `products.edit` for the commands, PJ-14's families on the price defaults (TL-06)
+- [x] Route integrity: ROUTE-056 and ROUTE-145–ROUTE-147 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-145–INT-147, each with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-MD-04 and CJ-19's catalogue — units, barcodes and the label, serial policy, a price default, an image — on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-056 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's lookup, sheets, data lists, confirmations, upload field and form fields, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01's exact lookup by SKU and barcode, SM-09 for the image uploads through ROUTE-228, SM-25 for the price defaults (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; Codex's two P1 and one P2 fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `71e206c`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40594097561 (push) and 40594102325 (pull request #33), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration". The workstation's Docker engine answered HTTP 500 throughout the Task; nothing was restarted, and CI ran every suite
+- Build result: `TL-13 Frontend build: PASS — Evidence: 71e206c, CI ubuntu-24.04 run 40594097561`
+- Route evidence: TL-07's route audit PASS — ROUTE-056 `GET /data-master/produk` (every active account, S0), ROUTE-145 `POST /data-master/produk`, ROUTE-146 `PUT /data-master/produk/{id}` and ROUTE-147 `POST /data-master/produk/{id}/barcode` (`products.edit`); "Cetak Label" client-only
+- Interaction evidence: `tests/Interaction/ProductsTest.php` (INT-145–INT-147)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 71e206c, CI ubuntu-24.04 run 40594097561`; TL-10, TL-11 and TL-12 for PG-056 in the same run
+- Localization evidence: PG-056 in both languages (`tests/Browser/Localization/products.spec.ts`) (DOD-16); 96 catalogue keys added, proposed copy
+- Performance evidence: PFM-01, PFM-02 and PFM-20 (`tests/Performance/ProductsQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/CAT/` — `Actions/` (CreateProduct, UpdateProduct, AddAlternateUnit with the ratio's correction, ChangeDefaultPrice, AttachProductImage with the image's arrangement, RegisterBarcode), `Data/` (CodeKey, Quantity), `Services/CatalogCommands`, `Queries/ProductCatalog`, `Http/Controllers/ProductsController` —; INV's `Queries/ProductStock`; `GuardUpdate::bear`; the routes; PG-056 with the navigation, the Code 39 label and its print style; the explicit "Muat Versi Terbaru" after a stale answer, also on PG-054's and PG-055's sheets; each browser layer's own artifact folder; 96 catalogue keys; the tests and browser specs; TOOLCHAIN's row; this record
+- Commit SHA: `b722ea4`, `9b3d20c`, `095dd8a`, `7704750`, `a3ce621`, `55119ca`, `99bfacc` and `71e206c`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-027-catalog`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `095dd8a`: its two P1 — no correction of an alternate unit's ratio, no change of the primary image or the order — and its P2 — a stale answer silently advancing the form's version — fixed and tested in `7704750`, the P2's pattern also removed from PG-054's and PG-055's sheets; ROUTE-281 keeps the session's flash, so a type-ahead never consumes a command's answer; no review of the later commits arrived within ten minutes of their push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). A WebKit run of `parties.spec.ts`'s supplier creation failed once on the push run of `55119ca` while its pull request run passed; its evidence had been overwritten by the next browser layer, so each layer now keeps its own artifacts and the spec asserts the creation sheet closes — the kept evidence of `0d55ff7`'s pull request run then showed the sheet holding MSG-07 — the answer unknown: the similar-names type-ahead's `/cari` request, landing between the creation's redirect and its page, saved the session and aged away the flash answer. ROUTE-281 now keeps the session's flash for the next request (`71e206c`), and an interaction test proves a command's answer survives a search in between. Readings within the approved text: the product's guard row is born with it through `GuardUpdate::bear`, CAT writing no INV model; units are the dictionary's by code, a unit the form names created in the same command when none has it — no unit command is contracted; an internal code prints as `MC` and eight digits; the label is Code 39, which keyboard-wedge scanners read without configuration (DEP-03, the device UAT confirms the print method); a scale still referenced is REJECTED under C-09 through a savepoint, not left to the generic foreign-key failure. Not applicable: Migration tests (TL-16) — no migration
 
 **SAFE NEXT TASK:**
 
