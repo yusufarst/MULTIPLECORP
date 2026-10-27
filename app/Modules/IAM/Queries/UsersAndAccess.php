@@ -31,23 +31,22 @@ final class UsersAndAccess
 
     public function __construct(private readonly AccountAccess $access) {}
 
-    /** A page of the directory (PT-05; PT-08), "Muat Lagi" adding as many again. */
+    /** A page of the directory (PT-05; PT-08), "Muat Lagi" adding the next. */
     public const PAGE = 25;
 
     /**
-     * The directory's first `$limit` accounts by name, each with its role, state, factor, link and last activity, and
-     * whether more follow (PT-08) — one statement, whatever the rows (PFM-02).
+     * One page of the directory by name from `$offset`, each account with its role, state, factor, link and last
+     * activity, and whether more follow (PT-08) — one statement, whatever the rows (PFM-02).
      *
      * @return array{rows: list<array{id: string, name: string, email: string, role: ?string, active: bool, totp: bool, google: bool, last_activity: ?string}>, more: bool}
      */
-    public function directory(int $limit = self::PAGE): array
+    public function directory(int $offset = 0): array
     {
-        $limit = max(self::PAGE, min(500, $limit));
         $rows = array_values(DB::table('users')
             ->leftJoin('user_roles', 'user_roles.user_id', '=', 'users.id')
             ->leftJoin('roles', 'roles.id', '=', 'user_roles.role_id')
             ->orderBy('users.name')->orderBy('users.id')
-            ->limit($limit + 1)
+            ->offset(max(0, $offset))->limit(self::PAGE + 1)
             ->get([
                 'users.public_id', 'users.name', 'users.email', 'roles.code as role', 'users.is_active', 'users.two_factor_confirmed_at',
                 DB::raw("exists (select 1 from user_external_identities x where x.user_id = users.id and x.provider = 'google' and x.unlinked_at is null) as google"),
@@ -65,7 +64,7 @@ final class UsersAndAccess
             ])
             ->all());
 
-        return ['rows' => array_slice($rows, 0, $limit), 'more' => count($rows) > $limit];
+        return ['rows' => array_slice($rows, 0, self::PAGE), 'more' => count($rows) > self::PAGE];
     }
 
     /** The account a public identifier names, or none — answered as a missing page (AZ-11). */

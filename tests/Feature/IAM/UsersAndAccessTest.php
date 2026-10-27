@@ -327,3 +327,12 @@ it('ends one session by its handle, refusing an ended one and the acting one (RO
 
     usersOwner($this)->post("/pengaturan/pengguna/{$this->admin->public_id}/sesi/bukan-handle/akhiri", usersCommand())->assertNotFound();
 });
+
+it('continues the directory past each page of 25 by its offset, never capped (PT-08; PFM-02)', function () {
+    foreach (range(1, 30) as $ignored) {
+        Authorization::admin();
+    }
+
+    usersOwner($this)->get('/pengaturan/pengguna')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->has('accounts.rows', 25)->where('accounts.more', true));
+    usersOwner($this)->get('/pengaturan/pengguna?mulai=25')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->has('accounts.rows', 7)->where('accounts.more', false));
+});

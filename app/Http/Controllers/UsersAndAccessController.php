@@ -69,7 +69,7 @@ final class UsersAndAccessController extends Controller
         }
 
         return Inertia::render('IAM/UsersAndAccess', [
-            'accounts' => $this->users->directory(is_numeric($request->query('batas')) ? (int) $request->query('batas') : UsersAndAccess::PAGE),
+            'accounts' => $this->users->directory(is_numeric($request->query('mulai')) ? (int) $request->query('mulai') : 0),
             'account' => $detail,
             'section' => is_string($section) && in_array($section, self::SECTIONS, true) ? $section : 'profil',
             'catalogue' => $this->users->catalogue(),

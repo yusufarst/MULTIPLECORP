@@ -209,10 +209,23 @@ function Directory({ accounts }: { accounts: { rows: Directory[]; more: boolean 
     const { t } = useTranslation();
     const [creating, setCreating] = useState(false);
     const [loading, setLoading] = useState(false);
-    // PT-08: "Muat Lagi" asks for as many rows again on a partial reload, the address unchanged.
+    const [rows, setRows] = useState(accounts.rows);
+    const [more, setMore] = useState(accounts.more);
+    // PT-08: "Muat Lagi" asks for the next page from the rows shown on a partial reload, the address unchanged, and
+    // adds it below them.
     const loadMore = () => {
         setLoading(true);
-        router.reload({ only: ['accounts'], data: { batas: accounts.rows.length + 25 }, preserveUrl: true, onFinish: () => { setLoading(false); } });
+        router.reload({
+            only: ['accounts'],
+            data: { mulai: rows.length },
+            preserveUrl: true,
+            onSuccess: (page) => {
+                const next = (page.props as unknown as Props).accounts;
+                setRows((shown) => [...shown, ...next.rows.filter((row) => !shown.some((known) => known.id === row.id))]);
+                setMore(next.more);
+            },
+            onFinish: () => { setLoading(false); },
+        });
     };
 
     return (
@@ -241,7 +254,7 @@ function Directory({ accounts }: { accounts: { rows: Directory[]; more: boolean 
             )}
             <DataTable
                 caption={t('pages.pg_060.title')}
-                rows={accounts.rows}
+                rows={rows}
                 rowKey={(row) => row.id}
                 rowHref={(row) => `/pengaturan/pengguna?akun=${row.id}&bagian=profil`}
                 columns={[
@@ -253,7 +266,7 @@ function Directory({ accounts }: { accounts: { rows: Directory[]; more: boolean 
                     { key: 'activity', header: t('users.sessions.last_activity'), cell: (row) => (row.last_activity === null ? '—' : <DateTimeText value={row.last_activity} />), priority: 'low' },
                 ]}
             />
-            <ListContinuation state={accounts.more ? 'more' : 'end'} loading={loading} onLoadMore={loadMore} onReload={loadMore} />
+            <ListContinuation state={more ? 'more' : 'end'} loading={loading} onLoadMore={loadMore} onReload={loadMore} />
         </div>
     );
 }
@@ -576,7 +589,6 @@ function Links({ account }: { account: Account }) {
 
     return (
         <div className="flex min-w-0 flex-col gap-4">
-            <LinkShownOnce />
             {!account.self && (
                 <div className="flex flex-col gap-2">
                     <p className="text-body text-text-secondary">{t('users.link.issue_line')}</p>
@@ -649,7 +661,6 @@ function Security({ account }: { account: Account }) {
 
     return (
         <div className="flex min-w-0 flex-col gap-6">
-            <LinkShownOnce />
             <FormSection title={t('users.security.totp')}>
                 <p className="text-body text-text-primary">
                     {account.totp.active && account.totp.since !== null ? (
@@ -734,6 +745,7 @@ function Detail({ account, section, catalogue, companies, preview }: { account: 
             </Button>
             <PageHeader title={account.name} facts={<span className="break-all">{account.email}</span>} />
             <PageAnswer />
+            <LinkShownOnce />
             <Tabs
                 value={section}
                 onValueChange={(value) => {
