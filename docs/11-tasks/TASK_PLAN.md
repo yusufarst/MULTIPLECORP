@@ -28,7 +28,7 @@ Progress:
 27 / 87
 Percentage: 31.0 %
 
-CURRENT TASK: none in progress — TASK-026 — Clients and suppliers DONE on its branch `task/TASK-026-parties`, CI PASS on `e235106`, its pull request #32 squash-merged by the executor once eligible (DIR-096)
+CURRENT TASK: none in progress — TASK-026 — Clients and suppliers DONE on its branch `task/TASK-026-parties`, CI PASS on `0b9ef62`, its pull request #32 squash-merged by the executor once eligible (DIR-096)
 NEXT READY TASK: TASK-027 — Catalog — products, services, units, barcodes, prices and images, READY, taken next from the merged `main` (DIR-096); TASK-028, TASK-029, TASK-031, TASK-036, TASK-061 and TASK-073 READY; TASK-032 once TASK-027 is DONE; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)

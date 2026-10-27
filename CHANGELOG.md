@@ -625,5 +625,5 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-025 squash-merged by the executor into `main` as `4d202ea` (pull request #31); TASK-026 started.
 - Built TASK-026 on its branch `task/TASK-026-parties`: PG-054 *Klien* — search-first, an organization with its units, unit addresses and PICs, its related projects in scope without a count — and PG-055 *Pemasok* — chosen directly, its price history per company from PUR's query with `cost.view` —; create, edit and archive under NX-01 at LK-08, a unit's name race CONFLICT; the inline creation from the project and purchase forms, proven on their stand-ins.
 - The workstation's Docker engine stopped answering again; nothing was restarted, and CI ran every suite.
-- Codex's three P2 points fixed and tested.
-- Every check passed in fresh CI on `e235106`. TASK-026 DONE — progress 27 / 87 —; TASK-027 next; its pull request squash-merged once eligible.
+- Codex's three P2 points fixed and tested; the creation sheet's similar names moved below its actions, so their arrival never moves the button being pressed.
+- Every check passed in fresh CI on `0b9ef62`. TASK-026 DONE — progress 27 / 87 —; TASK-027 next; its pull request squash-merged once eligible.
