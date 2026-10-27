@@ -4,6 +4,7 @@ namespace App\Modules\IAM\Actions;
 
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\AccountAccess;
+use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\CommandContext;
@@ -50,6 +51,7 @@ final class RevokeCredentialLink
                     entityId: $row->id,
                     entityPublicId: $row->public_id,
                     commandId: $context->request->commandId,
+                    change: AuditChange::updated(['credential_link_state' => 'open'], ['credential_link_state' => 'revoked']),
                     metadata: ['credential_link' => (int) $link, 'purpose' => $purpose],
                 );
 

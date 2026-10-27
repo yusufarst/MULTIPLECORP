@@ -70,8 +70,9 @@ final class AccessPreview
     public function addedWithoutPrerequisite(): array
     {
         $added = array_diff($this->held($this->capabilitiesAfter), $this->capabilitiesBefore);
+        $effective = self::effective($this->capabilitiesAfter);
 
-        return array_values(array_filter($added, fn (string $code): bool => array_diff(CapabilityCatalogue::prerequisites($code), $this->capabilitiesAfter) !== []));
+        return array_values(array_filter($added, fn (string $code): bool => array_diff(CapabilityCatalogue::prerequisites($code), $effective) !== []));
     }
 
     /**

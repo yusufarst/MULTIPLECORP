@@ -6,6 +6,7 @@ use App\Modules\IAM\Data\SessionHandle;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Models\Company;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Vite;
@@ -64,9 +65,13 @@ function usersAudit(string $action): ?object
     return DB::table('audit_events')->where('action', $action)->orderByDesc('id')->first();
 }
 
+/** A session row as the store writes it: its attributes serialized as configured, encrypted when configured (AU-06). */
 function usersSession(User $user, string $id): void
 {
-    DB::table('sessions')->insert(['id' => $id, 'user_id' => $user->id, 'user_agent' => 'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0', 'payload' => base64_encode(serialize(['auth' => ['signed_in_at' => time() - 60]])), 'last_activity' => time()]);
+    $attributes = ['auth' => ['signed_in_at' => time() - 60]];
+    $data = config('session.serialization') === 'json' ? json_encode($attributes, JSON_THROW_ON_ERROR) : serialize($attributes);
+    $payload = base64_encode(config('session.encrypt') === true ? Crypt::encrypt($data) : $data);
+    DB::table('sessions')->insert(['id' => $id, 'user_id' => $user->id, 'user_agent' => 'Mozilla/5.0 (Windows NT 10.0) Chrome/130.0', 'payload' => $payload, 'last_activity' => time()]);
 }
 
 it('shows the directory and an account\'s detail to the Owner, never a secret, and nothing to an Admin (ROUTE-060; PJ-17; OD-01; criterion 1)', function () {
@@ -83,6 +88,7 @@ it('shows the directory and an account\'s detail to the Owner, never a secret, a
         ->where('account.companies.0.id', $this->company->public_id)
         ->where('account.sessions.0.handle', SessionHandle::of(str_repeat('s', 40)))
         ->where('account.sessions.0.device', fn (?string $device) => $device !== null)
+        ->where('account.sessions.0.started_at', fn (?string $started) => $started !== null)
         ->where('account.links.0.purpose', 'ONBOARDING')
         ->where('section', 'sesi'));
 

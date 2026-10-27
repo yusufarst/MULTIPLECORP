@@ -9,7 +9,6 @@ import { router, usePage } from '@inertiajs/react';
 import { ArrowLeft, Copy, Plus } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
-import { ActionBar } from '@/components/action-bar';
 import { CompanyTag } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataTable, ListContinuation } from '@/components/data-list';
@@ -231,14 +230,14 @@ function Directory({ accounts }: { accounts: { rows: Directory[]; more: boolean 
             />
             <PageAnswer />
             {creating && <CreateAccount onDone={() => { setCreating(false); }} />}
-            {/* On the phone the page header's primary action moves to the bottom action bar (PT-03). */}
+            {/* On the phone the page header holds no action (PT-03): creating stays reachable above the directory. */}
             {!creating && (
-                <ActionBar label={t('pages.pg_060.title')} className="md:hidden">
-                    <Button variant="primary" size="lg" onClick={() => { setCreating(true); }}>
+                <div className="md:hidden">
+                    <Button variant="primary" size="lg" className="w-full" onClick={() => { setCreating(true); }}>
                         <Icon icon={Plus} size="sm" />
                         {t('users.create.title')}
                     </Button>
-                </ActionBar>
+                </div>
             )}
             <DataTable
                 caption={t('pages.pg_060.title')}
@@ -348,7 +347,12 @@ function Access({ account, catalogue, companies, preview }: { account: Account; 
     const command = useCommand<{ role: Role; companies: string[]; capabilities: string[]; lock_version: number; reason: string }>(() => `/pengaturan/pengguna/${account.id}/akses`, 'put');
     const codeOf = useMemo(() => Object.fromEntries(companies.map((company) => [company.id, company.code])), [companies]);
     const special = useMemo(() => new Set(catalogue.flatMap((area) => area.capabilities.filter((capability) => capability.special).map((capability) => capability.code))), [catalogue]);
-    const touchesSpecial = [...capabilities.filter((code) => !account.capabilities.includes(code)), ...account.capabilities.filter((code) => !capabilities.includes(code))].some((code) => special.has(code));
+    const sent = role === 'OWNER' ? [] : capabilities;
+    const touchesSpecial = [...sent.filter((code) => !account.capabilities.includes(code)), ...account.capabilities.filter((code) => !sent.includes(code))].some((code) => special.has(code));
+    // The save confirms what was previewed (PT-30): a change after the preview asks for it again.
+    const state = JSON.stringify([role, [...chosen].sort(), [...capabilities].sort()]);
+    const [previewedFor, setPreviewedFor] = useState<string | null>(null);
+    const fresh = preview !== null && previewedFor === state;
     const toggle = (list: string[], value: string, on: boolean) => (on ? [...list, value] : list.filter((entry) => entry !== value));
 
     if (account.self) {
@@ -357,6 +361,7 @@ function Access({ account, catalogue, companies, preview }: { account: Account; 
 
     const askPreview = () => {
         setPreviewing(true);
+        setPreviewedFor(state);
         router.reload({
             only: ['preview'],
             data: { akun: account.id, bagian: 'akses', peran: role, perusahaan: chosen, kewenangan: capabilities },
@@ -449,12 +454,12 @@ function Access({ account, catalogue, companies, preview }: { account: Account; 
                 <Button variant="outline" size="lg" pending={previewing} pendingLabel={t('glossary.gl_191')} onClick={askPreview}>
                     {t('glossary.gl_191')}
                 </Button>
-                <Button variant="primary" size="lg" disabled={preview === null} onClick={() => { setConfirming(true); }}>
+                <Button variant="primary" size="lg" disabled={!fresh} onClick={() => { setConfirming(true); }}>
                     {t('users.access.save')}
                 </Button>
             </div>
-            {preview?.owner === true && <p className="text-body text-text-secondary">{t('users.access.owner_line')}</p>}
-            {preview !== null && !preview.owner && (
+            {fresh && preview.owner && <p className="text-body text-text-secondary">{t('users.access.owner_line')}</p>}
+            {fresh && !preview.owner && (
                 preview.rows.length === 0 ? (
                     <RegionEmpty text={t('users.access.none')} />
                 ) : (

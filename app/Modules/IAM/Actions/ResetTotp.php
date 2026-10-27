@@ -74,7 +74,7 @@ final class ResetTotp
                     commandId: $context->request->commandId,
                     change: AuditChange::updated(['second_factor_active' => $hadTotp, 'password_usable' => true], ['second_factor_active' => false, 'password_usable' => false]),
                 );
-                $unlinked = $this->identities->unlinkHeld($row, 'CREDENTIAL_REISSUE', $actor, $context->request->commandId, $reason);
+                $unlinked = $this->identities->unlinkHeld($row, 'CREDENTIAL_REISSUE', $actor, $context->request->commandId, $reason, $now);
                 // LR-02: the token statements, then the sessions, last.
                 $link = $this->access->issueLink($row->id, 'RESET', $actor, $now, revokeAll: true);
                 $this->access->recordLink($context, $row, $link, 'RESET', $hadTotp ? 'TOTP_RESET' : 'CREDENTIAL_REISSUE', $reason);

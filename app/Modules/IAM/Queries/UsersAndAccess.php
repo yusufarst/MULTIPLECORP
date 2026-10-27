@@ -259,7 +259,8 @@ final class UsersAndAccess
             }
 
             $decrypted = config('session.encrypt') === true ? Crypt::decrypt($data) : $data;
-            $attributes = is_string($decrypted) ? unserialize($decrypted, ['allowed_classes' => false]) : null;
+            $attributes = ! is_string($decrypted) ? null
+                : (config('session.serialization') === 'json' ? json_decode($decrypted, true) : unserialize($decrypted, ['allowed_classes' => false]));
             $signedIn = is_array($attributes) && is_array($attributes['auth'] ?? null) ? ($attributes['auth']['signed_in_at'] ?? null) : null;
 
             return is_numeric($signedIn) ? CarbonImmutable::createFromTimestamp((int) $signedIn)->toIso8601ZuluString() : null;

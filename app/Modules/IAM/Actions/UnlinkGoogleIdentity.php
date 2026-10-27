@@ -41,7 +41,7 @@ final class UnlinkGoogleIdentity
                     throw Refused::rejected('AU-24', ['reason' => 'self']);
                 }
 
-                if (! $this->identities->unlinkHeld($row, GoogleIdentities::BY_OWNER, $actor, $context->request->commandId, $reason)) {
+                if (! $this->identities->unlinkHeld($row, GoogleIdentities::BY_OWNER, $actor, $context->request->commandId, $reason, $context->now())) {
                     throw Refused::rejected('AU-24', ['reason' => 'no_link']);
                 }
 

@@ -54,7 +54,7 @@ test('creates an account, grants after the preview, shows its link once, activat
     await page.getByRole('button', { name: 'Simpan Akses' }).click();
     await expect(page.getByRole('alertdialog')).toContainText('Lihat proyek');
     await confirm(page, 'Simpan Akses');
-    await expect(page.getByText('Akses disimpan.')).toBeVisible({ timeout: VISIT });
+    await expect(page.getByText('Akses disimpan.').first()).toBeVisible({ timeout: VISIT });
 
     // The link (ROUTE-125), shown once, kept nowhere.
     await tab(page, 'Tautan');
@@ -70,7 +70,7 @@ test('creates an account, grants after the preview, shows its link once, activat
     await tab(page, 'Profil');
     await page.getByRole('button', { name: 'Aktifkan' }).click();
     await confirm(page, 'Aktifkan');
-    await expect(page.getByText('Akun diaktifkan.')).toBeVisible({ timeout: VISIT });
+    await expect(page.getByText('Akun diaktifkan.').first()).toBeVisible({ timeout: VISIT });
 
     // The holder sets the password through the link and signs in, in a device of its own.
     const holder = await browser.newContext();
@@ -87,7 +87,7 @@ test('creates an account, grants after the preview, shows its link once, activat
     await tab(page, 'Sesi');
     await page.getByRole('button', { name: 'Akhiri Sesi' }).first().click();
     await confirm(page, 'Akhiri Sesi');
-    await expect(page.getByText('Sesi diakhiri.')).toBeVisible({ timeout: VISIT });
+    await expect(page.getByText('Sesi diakhiri.').first()).toBeVisible({ timeout: VISIT });
     await device.goto('/akun');
     await device.waitForURL('**/masuk', { timeout: VISIT });
     await holder.close();
@@ -97,13 +97,13 @@ test('creates an account, grants after the preview, shows its link once, activat
     await page.getByRole('button', { name: 'Terbitkan Ulang Kredensial' }).click();
     await page.getByRole('alertdialog').getByLabel(/^Alasan/).fill('Kata sandi dibagikan, dilaporkan langsung');
     await confirm(page, 'Terbitkan Ulang Kredensial');
-    await expect(page.getByText('Kredensial akun diatur ulang.', { exact: false })).toBeVisible({ timeout: VISIT });
+    await expect(page.getByText('Kredensial akun diatur ulang.', { exact: false }).first()).toBeVisible({ timeout: VISIT });
 
     // Deactivation (ROUTE-123).
     await tab(page, 'Profil');
     await page.getByRole('button', { name: 'Nonaktifkan' }).click();
     await confirm(page, 'Nonaktifkan');
-    await expect(page.getByText('Akun dinonaktifkan.', { exact: false })).toBeVisible({ timeout: VISIT });
+    await expect(page.getByText('Akun dinonaktifkan.', { exact: false }).first()).toBeVisible({ timeout: VISIT });
 
     // "Kembali" from an account → the directory (NAV-060).
     await page.getByRole('button', { name: 'Kembali' }).click();
@@ -115,5 +115,5 @@ test('answers an Admin\'s address for PG-060 as a missing page (OD-01; IP-21)', 
     await signedIn(page, 'pengguna-admin');
     const answer = await page.goto('/pengaturan/pengguna');
     expect(answer?.status()).toBe(404);
-    await expect(page.getByRole('heading', { level: 1 })).not.toHaveText('Pengguna & Akses');
+    await expect(page.getByText('Pengguna & Akses')).toHaveCount(0);
 });

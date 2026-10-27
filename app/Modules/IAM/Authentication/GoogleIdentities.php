@@ -9,6 +9,7 @@ use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -216,7 +217,7 @@ final class GoogleIdentities
      * (C-63), its audit event naming the command and the Owner's reason. The command writes GOOGLE_UNLINKED after its
      * commit — and LG-07's alert for an OWNER-role account. Answers whether a link was active.
      */
-    public function unlinkHeld(User $account, string $reason, int $by, string $commandId, ?string $ownerReason = null): bool
+    public function unlinkHeld(User $account, string $reason, int $by, string $commandId, ?string $ownerReason = null, ?CarbonImmutable $at = null): bool
     {
         // C-63: OWNER and CREDENTIAL_REISSUE are another account's; an Owner may deactivate itself (M-22).
         if (! in_array($reason, [self::BY_OWNER, 'DEACTIVATION', 'CREDENTIAL_REISSUE'], true) || ($reason !== 'DEACTIVATION' && $by === $account->id)) {
@@ -226,7 +227,7 @@ final class GoogleIdentities
         $link = DB::table('user_external_identities')->where('user_id', $account->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->first(['id']);
 
         if ($link === null || DB::table('user_external_identities')->where('id', $link->id)->whereNull('unlinked_at')
-            ->update(['unlinked_at' => now(), 'unlinked_by' => $by, 'unlink_reason' => $reason]) !== 1) {
+            ->update(['unlinked_at' => $at ?? now(), 'unlinked_by' => $by, 'unlink_reason' => $reason]) !== 1) {
             return false;
         }
 

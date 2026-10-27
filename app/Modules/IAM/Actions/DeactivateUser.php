@@ -62,7 +62,7 @@ final class DeactivateUser
 
                 $before = $this->access->image($row->id);
                 $revoked = $this->access->revokeGrants($row->id, $actor, $now);
-                $unlinked = $this->identities->unlinkHeld($row, 'DEACTIVATION', $actor, $context->request->commandId);
+                $unlinked = $this->identities->unlinkHeld($row, 'DEACTIVATION', $actor, $context->request->commandId, at: $now);
                 DB::table('users')->where('id', $row->id)->update([
                     'is_active' => false, 'deactivated_at' => $now, 'deactivated_by' => $actor,
                     'lock_version' => AccountAccess::version($row) + 1, 'updated_at' => $now,
