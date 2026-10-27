@@ -1746,6 +1746,1206 @@
             "source": "INFORMATION_ARCHITECTURE §14.2; AUTH_JOURNEYS §2.9",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "users.section.profil": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.section.akses": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.section.sesi": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.section.tautan": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.section.keamanan": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.name": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.email": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.role": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.state": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.edit": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.save": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.confirm_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.profile.confirm_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.active": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.inactive": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.activate": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.activate_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.deactivate_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.activate_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.deactivate_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.activate_consequence": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.state.deactivate_consequence": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.create.title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.create.submit": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.create.confirm_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.create.confirm_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.summary": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.no_company": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.company_inactive": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.none": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.needs": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.save": {
+            "task": "TASK-024",
+            "source": "UXS-27; PT-30; GL-191",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "users.access.owner_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.confirm_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.confirm_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_role": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_companies_added": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_companies_removed": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_added": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_removed": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.change_disabled": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.access.no_change": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.none": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.unknown_device": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.current": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.started": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.last_activity": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.confirm_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.sessions.confirm_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.issue_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.shown_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.shown_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.copy": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.copied": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.expires": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.none": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.purpose": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.issuer": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.issued": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.state": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.console": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.purpose_onboarding": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.purpose_reset": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.purpose_owner_recovery": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.state_open": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.state_used": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.state_revoked": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.state_expired": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.revoke": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.revoke_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.link.revoke_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.totp": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.totp_on": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.totp_off": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.totp_on_since": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.reset": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.reissue": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.reset_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.reissue_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.reset_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.google": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.google_none": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.google_no_email": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.google_linked": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.google_unlinked": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_title": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_line": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_owner": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_deactivation": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_credential_reissue": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_totp_disabled": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.security.unlink_reason_owner_recovery": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.created": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.updated": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.activated": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.deactivated": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.access": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.link": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.link_replayed": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.link_revoked": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.reset": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.unlinked": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.answer.session_ended": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_09": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_10_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_10_inactive": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_10_active": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.od_02_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.od_01_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_02": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_06": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_06_company": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rg_05_unchanged": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.rv_11_retry": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_11_no_link": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_20_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_24_self": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_24_no_link": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_10_gone": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.refusal.au_10_current": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.required": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.email_taken": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.reason_special": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.company": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.email": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.too_long": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "users.validation.choice": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.master": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.projects": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.operations": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.finance": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.import": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.area.special": {
+            "task": "TASK-024",
+            "source": "GL-036",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "capability.name.stock.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.finance.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.cost.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.profit.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.evidence.view": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.reports.export": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.parties.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.products.edit": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.warehouse.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.quotation.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.confirm": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.reserve": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.purchase.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.receive": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.dispatch": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.move": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.count": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.delivery.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.dropship.confirm": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.handover.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.documents.issue": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.evidence.upload": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.invoice.issue": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.billing.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.payment.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.payment.apply": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.expense.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.disbursement.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.cashin.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.bank_statement.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.requirements.manage": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.complete": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.receivables.dispute": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.requirements.waive": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.import.prepare": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.reverse": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.sales_return.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.purchase_return.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.purchase.correct_cost": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.finance.contra": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.payment.reallocate": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.invoice.correct": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.documents.correct": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.billing.correct": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.decisions.supersede": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.fulfillment.correct": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.warnings.override": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.cash.correct": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.purchase.cancel": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.refund.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.settlement.record": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.adjust": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.condition": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.count_apply": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.resolve_unattributed_evidence": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.stock.allocate_intercompany": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.cancel_scope": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.delivery.close": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.purchase.close_remainder": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.cases.close": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "capability.name.projects.cancel": {
+            "task": "TASK-024",
+            "source": "INFORMATION_ARCHITECTURE §8.6, §14.5; AUTH_JOURNEYS §2.10; PERMISSIONS_MATRIX §4",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

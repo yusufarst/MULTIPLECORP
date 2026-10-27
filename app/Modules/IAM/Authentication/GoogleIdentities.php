@@ -207,6 +207,42 @@ final class GoogleIdentities
         return $unlinked;
     }
 
+    /**
+     * An Owner's unlink inside its NX-02 command (AU-24 OWNER, DEACTIVATION, CREDENTIAL_REISSUE; RV-05; RV-15), on the
+     * account row the command's envelope holds at LK-03: a conditional update of the active row's unlink columns
+     * (C-63), its audit event naming the command and the Owner's reason. The command writes GOOGLE_UNLINKED after its
+     * commit — and LG-07's alert for an OWNER-role account. Answers whether a link was active.
+     */
+    public function unlinkHeld(User $account, string $reason, int $by, string $commandId, ?string $ownerReason = null): bool
+    {
+        if (! in_array($reason, ['OWNER', 'DEACTIVATION', 'CREDENTIAL_REISSUE'], true) || $by === $account->id) {
+            throw new InvalidArgumentException("The unlink reason {$reason} does not allow this actor (AU-24).");
+        }
+
+        $link = DB::table('user_external_identities')->where('user_id', $account->id)->where('provider', self::PROVIDER)->whereNull('unlinked_at')->first(['id']);
+
+        if ($link === null || DB::table('user_external_identities')->where('id', $link->id)->whereNull('unlinked_at')
+            ->update(['unlinked_at' => now(), 'unlinked_by' => $by, 'unlink_reason' => $reason]) !== 1) {
+            return false;
+        }
+
+        $this->audit->record(
+            action: 'IAM.GoogleUnlinked',
+            authorityClass: self::REASONS[$reason],
+            actorUserId: $by,
+            companyId: null,
+            entityType: 'user',
+            entityId: $account->id,
+            entityPublicId: $account->public_id,
+            reason: $ownerReason ?? $reason,
+            commandId: $commandId,
+            change: AuditChange::updated(['unlinked' => false], ['unlinked' => true]),
+            metadata: ['external_identity' => $link->id, 'unlink_reason' => $reason],
+        );
+
+        return true;
+    }
+
     private function linked(User $holder): void
     {
         $this->events->record(SecurityEventKind::GoogleLinked, userId: $holder->id, actorUserId: $holder->id);
