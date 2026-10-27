@@ -12,7 +12,8 @@ use Tests\Support\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('signs in reading only the account, its authority, the session and the security log (PFM-19)', function () {
-    config(['session.driver' => 'database']);
+    // No session garbage collection by lottery: its occasional delete would make the count vary.
+    config(['session.driver' => 'database', 'session.lottery' => [0, 100]]);
     User::factory()->create(['email' => 'laras@contoh.test', 'password' => 'Kata-Sandi-Uji-9']);
 
     DB::flushQueryLog();
