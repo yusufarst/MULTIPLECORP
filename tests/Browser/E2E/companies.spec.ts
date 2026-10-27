@@ -47,7 +47,8 @@ test('creates a company and sets it up section by section, its readiness followi
     const readiness = page.getByRole('list', { name: 'Kesiapan Perusahaan' });
     await expect(readiness.getByRole('listitem').filter({ hasText: 'Rekening bank' })).toContainText('Belum');
 
-    await page.getByLabel(/^Bentuk badan usaha/).fill('CV');
+    // The create sheet's own form stays in the document once closed: the section's panel names the field.
+    await page.getByRole('tabpanel').getByLabel(/^Bentuk badan usaha/).fill('CV');
     await page.getByRole('button', { name: 'Simpan', exact: true }).click();
     await expect(page.getByText('Data perusahaan disimpan.')).toBeVisible();
 
