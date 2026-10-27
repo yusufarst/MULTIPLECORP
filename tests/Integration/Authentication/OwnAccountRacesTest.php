@@ -2,10 +2,13 @@
 
 use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Authentication\GoogleSignIn;
+use App\Modules\IAM\Authentication\OwnAccount;
 use App\Modules\IAM\Authentication\Totp;
 use App\Modules\IAM\Models\User;
 use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\TwoFactor;
@@ -54,6 +57,20 @@ it('passes a code at a code-taking step once when another submission commits its
 
     expect(session('inertia.flash_data')['recovery_codes'] ?? null)->toBeNull()
         ->and(DB::table('security_events')->where('event_kind', 'RECOVERY_CODES_VIEWED')->count())->toBe(0);
+});
+
+it('refuses a password change whose verified password changed before its transaction, applying neither twice (RV-10; criterion 2)', function () {
+    // The request verified the password it holds; another change committed before its transaction took the row lock.
+    $seen = User::query()->findOrFail($this->user->id);
+    $request = Request::create('/akun/kata-sandi', 'PUT');
+    $request->setLaravelSession(app('session')->driver());
+    $request->setUserResolver(fn () => $seen);
+    DB::table('users')->where('id', $seen->id)->update(['password' => Hash::make('Kata-Sandi-Lain-7')]);
+
+    expect(app(OwnAccount::class)->changePassword($request, 'Pelangi-Biru#8492'))->toBeFalse()
+        ->and(Hash::check('Kata-Sandi-Lain-7', (string) DB::table('users')->where('id', $seen->id)->value('password')))->toBeTrue()
+        ->and(DB::table('audit_events')->where('action', 'IAM.PasswordChanged')->exists())->toBeFalse()
+        ->and(DB::table('security_events')->where('event_kind', 'PASSWORD_CHANGED')->exists())->toBeFalse();
 });
 
 it('refuses a link generically when another account links the subject first, with the conflict event (M-41; BD-19; C-64)', function () {

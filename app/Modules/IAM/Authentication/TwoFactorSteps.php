@@ -315,7 +315,8 @@ final class TwoFactorSteps
 
         $codes = $this->totp->newRecoveryCodes();
         $digest = $request->session()->get(EnforceSessionLimits::DIGEST);
-        $confirmed = DB::transaction(function () use ($user, $secret, $codes, $step, $digest, $replacing): bool {
+        $sessionId = $request->session()->getId();
+        $confirmed = DB::transaction(function () use ($user, $secret, $codes, $step, $digest, $replacing, $sessionId): bool {
             $row = User::query()->lockForUpdate()->find($user->id);
 
             // RV-12: the account active, its password the session's (RV-10), its factor state the one this session saw.
@@ -344,6 +345,10 @@ final class TwoFactorSteps
                 entityPublicId: $row->public_id,
                 change: AuditChange::updated($before, ['two_factor_secret' => $after['two_factor_secret'], 'two_factor_recovery_codes' => $after['two_factor_recovery_codes']]),
             );
+
+            // RV-14, last: the account's unused credential links revoked (LK-04) and its other sessions deleted (LK-05).
+            DB::table('credential_tokens')->where('user_id', $row->id)->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => now()]);
+            $this->terminator->endAll($row->id, $sessionId);
 
             return true;
         });
@@ -383,26 +388,45 @@ final class TwoFactorSteps
      */
     public function sessionCode(Request $request, User $user, string $code): string
     {
+        return $this->underSessionCode($request, $user, $code, fn (): bool => true) === null ? self::STALE : self::ACCEPTED;
+    }
+
+    /**
+     * sessionCode's check with the step it guards in the same transaction, run on the locked row once the code's step
+     * is taken (RV-14; RV-16): a reset, a replacement or a deactivation racing the code refuses both, and a step that
+     * throws gives the code back. Answers the step's result, or null for a code refused.
+     *
+     * @template T
+     *
+     * @param  \Closure(User): T  $then
+     * @return T|null
+     *
+     * @throws SecondFactorRefused
+     */
+    public function underSessionCode(Request $request, User $user, string $code, \Closure $then): mixed
+    {
         $place = $this->admit($request, $user->id);
         $step = $this->totp->stepOf(self::secretOf($user), $code, self::lastStepOf($user));
-        $accepted = $step !== null && DB::transaction(function () use ($user, $step): bool {
+        $outcome = $step === null ? null : DB::transaction(function () use ($user, $step, $then): ?array {
             $row = User::query()->lockForUpdate()->find($user->id);
 
-            return $row instanceof User && $row->getAttribute('is_active') === true && $row->getAttribute('two_factor_confirmed_at') !== null
+            $taken = $row instanceof User && $row->getAttribute('is_active') === true && $row->getAttribute('two_factor_confirmed_at') !== null
                 && self::sameSecret($row, $user)
                 && DB::table('users')->where('id', $row->id)->where('two_factor_last_step', '<', $step)->update(['two_factor_last_step' => $step]) === 1;
+
+            return $taken ? ['result' => $then($row)] : null;
         });
 
-        if ($accepted) {
+        if ($outcome !== null) {
             $this->passed($request, $place);
 
-            return self::ACCEPTED;
+            return $outcome['result'];
         }
 
         $this->throttle->failed($request, self::throttleKey($user->id));
         $this->limit->failed($place, SecondFactorLimit::PATH_SESSION_STEP, $request);
 
-        return self::STALE;
+        return null;
     }
 
     /**

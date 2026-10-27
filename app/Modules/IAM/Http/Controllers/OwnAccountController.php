@@ -11,6 +11,7 @@ use App\Modules\IAM\Queries\OwnAccountView;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -28,7 +29,7 @@ final class OwnAccountController
 
     public function show(Request $request, OwnAccountView $view): Response
     {
-        return Inertia::render('IAM/OwnAccount', $view->page($request))->toResponse($request);
+        return Inertia::render('IAM/OwnAccount', $this->account->page($request, $view))->toResponse($request);
     }
 
     public function password(Request $request): RedirectResponse
@@ -38,7 +39,10 @@ final class OwnAccountController
             'password' => ['required', 'string', 'confirmed', OwnAccount::passwordProfile($request)],
         ], ['required' => __('forms.required'), 'password.confirmed' => __('account.password.mismatch')]);
 
-        $this->account->changePassword($request, $request->string('password')->toString());
+        // RV-10's generic failure: the password changed, or the account was deactivated, since the check.
+        if (! $this->account->changePassword($request, $request->string('password')->toString())) {
+            throw ValidationException::withMessages(['current_password' => __('account.password.current_wrong')]);
+        }
 
         return $this->done('account.password.changed');
     }

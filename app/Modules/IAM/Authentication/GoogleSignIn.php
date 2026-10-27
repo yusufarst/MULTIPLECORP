@@ -61,8 +61,13 @@ final class GoogleSignIn
             return $this->startLink($request);
         }
 
-        if (! self::enabled() || $request->user() !== null) {
-            return $this->failure($request, self::enabled() ? 'SESSION_AUTHENTICATED' : 'NOT_CONFIGURED');
+        // A signed-in session never starts a sign-in: it goes home, as the `guest` middleware sent it (AU-22).
+        if ($request->user() !== null) {
+            return redirect('/');
+        }
+
+        if (! self::enabled()) {
+            return $this->failure($request, 'NOT_CONFIGURED');
         }
 
         $nonce = Str::random(40);
@@ -181,7 +186,7 @@ final class GoogleSignIn
 
         if (! self::enabled() || ! $user instanceof User || $user->getAttribute('two_factor_confirmed_at') === null
             || $request->session()->get(TwoFactorChallenge::METHOD) !== EstablishSession::TOTP) {
-            return $this->linkFailure($request, ! self::enabled() ? 'NOT_CONFIGURED' : 'LINK_NOT_ALLOWED');
+            return $this->linkFailure($request, ! self::enabled() ? 'NOT_CONFIGURED' : 'NOT_ALLOWED');
         }
 
         $nonce = Str::random(40);

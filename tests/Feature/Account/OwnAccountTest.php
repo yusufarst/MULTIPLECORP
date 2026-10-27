@@ -79,8 +79,9 @@ it('shows the account its own profile, factor, link and activity, holding no sec
     $this->get('/akun')->assertRedirect('/masuk');
 });
 
-it('changes the password with the current one and AU-03\'s profile, ending the other sessions (ROUTE-111; criterion 2)', function () {
+it('changes the password with the current one and AU-03\'s profile, ending the other sessions and voiding the links (ROUTE-111; RV-10; criterion 2)', function () {
     DB::table('sessions')->insert(['id' => Str::random(40), 'user_id' => $this->admin->id, 'payload' => '', 'last_activity' => time()]);
+    DB::table('credential_tokens')->insert(['user_id' => $this->admin->id, 'purpose' => 'RESET', 'issued_by' => $this->admin->id, 'token_hash' => str_repeat('a', 64), 'issued_at' => now(), 'expires_at' => now()->addHour()]);
 
     $this->actingAs($this->admin)->put('/akun/kata-sandi', ['current_password' => 'salah-sekali-123', 'password' => 'Pelangi-Biru#8492', 'password_confirmation' => 'Pelangi-Biru#8492'])
         ->assertSessionHasErrors('current_password');
@@ -91,6 +92,7 @@ it('changes the password with the current one and AU-03\'s profile, ending the o
 
     expect(Hash::check('Pelangi-Biru#8492', (string) User::query()->findOrFail($this->admin->id)->password))->toBeTrue()
         ->and(DB::table('sessions')->where('user_id', $this->admin->id)->count())->toBe(0)
+        ->and(DB::table('credential_tokens')->where('user_id', $this->admin->id)->whereNull('revoked_at')->exists())->toBeFalse()
         ->and(answered()['kind'] ?? null)->toBe('COMMITTED')
         ->and(auditOf('IAM.PasswordChanged')?->actor_user_id)->toBe($this->admin->id)
         ->and((string) auditOf('IAM.PasswordChanged')?->before.(string) auditOf('IAM.PasswordChanged')?->after)->not->toContain('$argon')
@@ -169,12 +171,18 @@ it('refuses TOTP off for a high-risk account, and turns it off for another, unli
         ->and(User::query()->findOrFail($owner->id)->two_factor_confirmed_at)->not->toBeNull();
 
     DB::table('user_external_identities')->insert(['user_id' => $this->admin->id, 'provider' => 'google', 'provider_subject' => 'sub-admin', 'email_at_link' => 'admin@contoh.invalid', 'linked_at' => now(), 'linked_by' => $this->admin->id]);
+    DB::table('credential_tokens')->insert(['user_id' => $this->admin->id, 'purpose' => 'RESET', 'issued_by' => $this->admin->id, 'token_hash' => str_repeat('b', 64), 'issued_at' => now(), 'expires_at' => now()->addHour()]);
+    DB::table('sessions')->insert(['id' => Str::random(40), 'user_id' => $this->admin->id, 'payload' => '', 'last_activity' => time()]);
     $this->actingAs($this->admin)->withSession(confirmed())->delete('/akun/verifikasi-dua-langkah', ['code' => TwoFactor::code()])->assertRedirect('/akun');
     $row = DB::table('users')->where('id', $this->admin->id)->first(['two_factor_secret', 'two_factor_recovery_codes', 'two_factor_confirmed_at', 'two_factor_last_step']);
 
     expect(array_filter((array) $row, fn ($value) => $value !== null))->toBe([])
         ->and(DB::table('user_external_identities')->where('user_id', $this->admin->id)->value('unlink_reason'))->toBe('TOTP_DISABLED')
-        ->and(auditOf('IAM.TotpDisabled')?->actor_user_id)->toBe($this->admin->id);
+        ->and(auditOf('IAM.TotpDisabled')?->actor_user_id)->toBe($this->admin->id)
+        // AU-20 f; RV-14: the links voided, the other sessions ended, the step-up's confirmation cleared.
+        ->and(DB::table('credential_tokens')->where('user_id', $this->admin->id)->whereNull('revoked_at')->exists())->toBeFalse()
+        ->and(DB::table('sessions')->where('user_id', $this->admin->id)->count())->toBe(0)
+        ->and(session(RequireStepUp::CONFIRMED_AT))->toBeNull();
 });
 
 it('links the verified Google identity on the holder\'s confirming request, and refuses a conflict generically (ROUTE-116; AU-23; criterion 6)', function () {

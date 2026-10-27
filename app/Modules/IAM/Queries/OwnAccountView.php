@@ -4,11 +4,9 @@ namespace App\Modules\IAM\Queries;
 
 use App\Modules\IAM\Authentication\AccountEvents;
 use App\Modules\IAM\Authentication\GoogleSignIn;
-use App\Modules\IAM\Authentication\TwoFactorChallenge;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use Carbon\CarbonImmutable;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -22,15 +20,15 @@ final class OwnAccountView
 {
     public function __construct(private readonly EffectiveCapabilities $capabilities, private readonly AccountEvents $events) {}
 
-    /** @return array<string, mixed> */
-    public function page(Request $request): array
+    /**
+     * The page for the signed-in account, with what its session holds: whether it signed in with TOTP, whether a
+     * verified Google identity waits for it, and the LINK attempt's answer once.
+     *
+     * @param  'ready'|'failed'|null  $answer
+     * @return array<string, mixed>
+     */
+    public function page(User $user, bool $established, bool $pending, ?string $answer): array
     {
-        $user = $request->user();
-
-        if (! $user instanceof User) {
-            return [];
-        }
-
         $link = DB::table('user_external_identities')->where('user_id', $user->id)->where('provider', 'google')->whereNull('unlinked_at')
             ->first(['email_at_link', 'linked_at']);
         $confirmedAt = $user->getAttribute('two_factor_confirmed_at');
@@ -41,7 +39,7 @@ final class OwnAccountView
                 'active' => $confirmedAt !== null,
                 'since' => $confirmedAt instanceof \DateTimeInterface || is_string($confirmedAt) ? CarbonImmutable::parse($confirmedAt)->toIso8601ZuluString() : null,
                 'high_risk' => $this->capabilities->requiresTotp($user->id),
-                'established' => $request->session()->get(TwoFactorChallenge::METHOD) === 'TOTP',
+                'established' => $established,
             ],
             'google' => [
                 'enabled' => GoogleSignIn::enabled(),
@@ -49,9 +47,9 @@ final class OwnAccountView
                 // The e-mail Google verified at the link, when it did (GoogleIdToken keeps no unverified one).
                 'email' => $link === null ? null : $link->email_at_link,
                 'since' => $link === null || ! is_string($link->linked_at) ? null : CarbonImmutable::parse($link->linked_at)->toIso8601ZuluString(),
-                'pending' => GoogleSignIn::pendingLink($request, $user) !== null,
+                'pending' => $pending,
                 // A LINK attempt's answer from Google's callback, once: `ready` or `failed` (AU-22; AU-23).
-                'answer' => $request->session()->get(GoogleSignIn::LINK_ANSWER),
+                'answer' => $answer,
             ],
             'last_login' => $this->events->lastLogin($user),
             'events' => $this->events->recent($user),

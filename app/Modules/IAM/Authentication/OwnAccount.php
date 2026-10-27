@@ -2,7 +2,9 @@
 
 namespace App\Modules\IAM\Authentication;
 
+use App\Http\Middleware\RequireStepUp;
 use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Queries\OwnAccountView;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
@@ -43,6 +45,24 @@ final class OwnAccount
         private readonly SecurityEventRecorder $events,
     ) {}
 
+    /**
+     * ROUTE-065: PG-065's read for the signed-in account, with its session's facts (SELF; PJ-17).
+     *
+     * @return array<string, mixed>
+     */
+    public function page(Request $request, OwnAccountView $view): array
+    {
+        $user = self::account($request);
+        $answer = $request->session()->get(GoogleSignIn::LINK_ANSWER);
+
+        return $view->page(
+            $user,
+            established: $request->session()->get(TwoFactorChallenge::METHOD) === EstablishSession::TOTP,
+            pending: GoogleSignIn::pendingLink($request, $user) !== null,
+            answer: in_array($answer, ['ready', 'failed'], true) ? $answer : null,
+        );
+    }
+
     /** ROUTE-111's rule: the account's current password (AU-13). */
     public static function currentPassword(Request $request): \Closure
     {
@@ -59,15 +79,28 @@ final class OwnAccount
         return new PasswordProfile(self::account($request));
     }
 
-    /** ROUTE-111: the current password checked by the caller's validation; the other sessions end (AU-13; RV-10). */
-    public function changePassword(Request $request, #[\SensitiveParameter] string $password): void
+    /**
+     * ROUTE-111: the current password checked by the caller's validation, then one transaction under the row lock
+     * (RV-10): the account still active and still holding the hash that check verified — so two changes verified
+     * against one old password cannot both apply —, the new hash, the unused credential links revoked (AU-11) and the
+     * other sessions deleted last; the acting session then continues under a new identifier. Answers false for the
+     * generic failure.
+     */
+    public function changePassword(Request $request, #[\SensitiveParameter] string $password): bool
     {
         $user = self::account($request);
+        $verified = $user->getAuthPassword();
         $hash = Hash::make($password);
+        $sessionId = $request->session()->getId();
 
-        DB::transaction(function () use ($user, $hash): void {
+        $changed = DB::transaction(function () use ($user, $hash, $verified, $sessionId): bool {
             $row = User::query()->lockForUpdate()->findOrFail($user->id);
             $before = $row->getRawOriginal('password');
+
+            if ($row->getAttribute('is_active') !== true || ! hash_equals($verified, $row->getAuthPassword())) {
+                return false;
+            }
+
             $row->forceFill(['password' => $hash])->save();
 
             $this->audit->record(
@@ -81,10 +114,19 @@ final class OwnAccount
                 // The password's place in the before/after, its values redacted (RG-11; LG-03).
                 change: AuditChange::updated(['password' => $before], ['password' => $hash]),
             );
+            $this->voidCredentials($row->id, $sessionId);
+
+            return true;
         });
+
+        if (! $changed) {
+            return false;
+        }
 
         $this->restamp($request, $user->id, regenerate: true);
         $this->events->record(SecurityEventKind::PasswordChanged, userId: $user->id, routeName: 'account.password', ipAddress: $request->ip(), userAgent: $request->userAgent());
+
+        return true;
     }
 
     /**
@@ -152,14 +194,10 @@ final class OwnAccount
             return self::NO_TOTP;
         }
 
-        if ($this->steps->sessionCode($request, $user, $code) !== TwoFactorSteps::ACCEPTED) {
-            return self::WRONG_CODE;
-        }
-
         $codes = app(Totp::class)->newRecoveryCodes();
 
-        DB::transaction(function () use ($user, $codes): void {
-            $row = User::query()->lockForUpdate()->findOrFail($user->id);
+        // In the code's transaction: a reset or a replacement racing the code refuses both (RV-14).
+        $done = $this->steps->underSessionCode($request, $user, $code, function (User $row) use ($codes): bool {
             $before = $row->getRawOriginal('two_factor_recovery_codes');
             $after = Crypt::encryptString(json_encode($codes, JSON_THROW_ON_ERROR));
             DB::table('users')->where('id', $row->id)->update(['two_factor_recovery_codes' => $after]);
@@ -174,7 +212,13 @@ final class OwnAccount
                 entityPublicId: $row->public_id,
                 change: AuditChange::updated(['two_factor_recovery_codes' => $before], ['two_factor_recovery_codes' => $after]),
             );
+
+            return true;
         });
+
+        if ($done === null) {
+            return self::WRONG_CODE;
+        }
 
         $this->events->record(SecurityEventKind::RecoveryCodesRegenerated, userId: $user->id, routeName: 'account.recovery-codes.regenerate', ipAddress: $request->ip(), userAgent: $request->userAgent());
         $this->alertIfHighRisk($user, 'The recovery codes were regenerated (AU-19; LG-07).');
@@ -199,16 +243,13 @@ final class OwnAccount
             return self::NO_TOTP;
         }
 
-        if ($this->steps->sessionCode($request, $user, $code) !== TwoFactorSteps::ACCEPTED) {
-            return self::WRONG_CODE;
-        }
+        $sessionId = $request->session()->getId();
 
-        $done = DB::transaction(function () use ($user): bool {
-            $row = User::query()->lockForUpdate()->findOrFail($user->id);
-
+        // One transaction with the code (RV-14): the account row locked, the code's step taken, the factor re-read.
+        $outcome = $this->steps->underSessionCode($request, $user, $code, function (User $row) use ($sessionId): string {
             // Re-read under the lock: a grant made meanwhile makes the account high-risk (AU-18).
             if ($this->capabilities->requiresTotp($row->id)) {
-                return false;
+                return self::HIGH_RISK;
             }
 
             $before = ['two_factor_secret' => $row->getRawOriginal('two_factor_secret'), 'two_factor_recovery_codes' => $row->getRawOriginal('two_factor_recovery_codes')];
@@ -225,15 +266,18 @@ final class OwnAccount
                 change: AuditChange::updated($before, ['two_factor_secret' => null, 'two_factor_recovery_codes' => null]),
             );
             $this->identities->unlink($row, 'TOTP_DISABLED', $row->id);
+            $this->voidCredentials($row->id, $sessionId);
 
-            return true;
+            return self::DONE;
         });
 
-        if (! $done) {
-            return self::HIGH_RISK;
+        if ($outcome !== self::DONE) {
+            return $outcome ?? self::WRONG_CODE;
         }
 
-        $this->restamp($request, $user->id);
+        // AU-20 f: the session continues under a new identifier, its password confirmation cleared (AU-06; AU-15).
+        $request->session()->forget(RequireStepUp::CONFIRMED_AT);
+        $this->restamp($request, $user->id, regenerate: true);
         $this->events->record(SecurityEventKind::TotpDisabled, userId: $user->id, routeName: 'account.totp.disable', ipAddress: $request->ip(), userAgent: $request->userAgent());
 
         return self::DONE;
@@ -294,6 +338,13 @@ final class OwnAccount
         });
 
         $request->session()->put(Locales::SESSION_KEY, $locale ?? Locales::DEFAULT);
+    }
+
+    /** A credential change's last writes in its transaction: the unused links revoked (LK-04), the other sessions deleted (LK-05). */
+    private function voidCredentials(int $userId, string $keptSessionId): void
+    {
+        DB::table('credential_tokens')->where('user_id', $userId)->whereNull('used_at')->whereNull('revoked_at')->update(['revoked_at' => now()]);
+        $this->terminator->endAll($userId, $keptSessionId);
     }
 
     /** The acting session kept after the account's password or factor changed: its digests read again (AU-09; RV-10). */
