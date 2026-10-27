@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 26
-READY: 8
+DONE: 27
+READY: 7
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 40
 SUPERSEDED: 0
 
 Progress:
-26 / 87
-Percentage: 29.9 %
+27 / 87
+Percentage: 31.0 %
 
-CURRENT TASK: none in progress — TASK-025 — Companies, identity assets, bank accounts and tax configuration DONE on its branch `task/TASK-025-companies`, CI PASS on `720c122`, its pull request #31 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-026 — Clients and suppliers, READY, taken first from the merged `main` (DIR-096); TASK-027, TASK-028, TASK-029, TASK-031, TASK-036, TASK-061 and TASK-073 READY — TASK-029 once TASK-025 was DONE —; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-026 — Clients and suppliers DONE on its branch `task/TASK-026-parties`, CI PASS on `e235106`, its pull request #32 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-027 — Catalog — products, services, units, barcodes, prices and images, READY, taken next from the merged `main` (DIR-096); TASK-028, TASK-029, TASK-031, TASK-036, TASK-061 and TASK-073 READY; TASK-032 once TASK-027 is DONE; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -74,7 +74,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-023](TASK-023.md) — My account — password, two-step verification, Google link and language
 - [x] [TASK-024](TASK-024.md) — Users and access — accounts, roles, capabilities and company grants
 - [x] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
-- [ ] [TASK-026](TASK-026.md) — Clients and suppliers
+- [x] [TASK-026](TASK-026.md) — Clients and suppliers
 - [ ] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
 - [ ] [TASK-028](TASK-028.md) — Rack locations and minimum stock
 - [ ] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
@@ -166,7 +166,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-023](TASK-023.md) | My account — password, two-step verification, Google link and language | Module · IAM | HIGH | DONE | 014, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-024](TASK-024.md) | Users and access — accounts, roles, capabilities and company grants | Module · IAM | HIGH | DONE | 013, 016, 019 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | DONE | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
-| [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | READY | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
+| [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | DONE | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
 | [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | READY | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | READY | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | READY | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
