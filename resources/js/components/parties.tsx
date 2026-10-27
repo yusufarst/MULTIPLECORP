@@ -200,7 +200,6 @@ function CreationSheet({
                             <PartyField key={field} name={field} value={values[field] ?? ''} error={create.errors[field]} onChange={(value) => { set(field, value); }} />
                         ))}
                     </div>
-                    {!warned && <SimilarNames type={type} rows={similar.rows} />}
                     {children?.(values, set, create.errors)}
                     {warned ? (
                         <DuplicateWarning
@@ -222,6 +221,8 @@ function CreationSheet({
                             {t('actions.create_object', { objek: t(type === 'client' ? 'glossary.gl_048' : 'glossary.gl_051') })}
                         </Button>
                     </div>
+                    {/* Below the actions: the list arrives after the typing, and must never move the button about to be pressed. */}
+                    {!warned && <SimilarNames type={type} rows={similar.rows} />}
                     <UnsentInputDialog open={leaving} kind="leave" onStay={() => { setLeaving(false); }} onLeave={() => { setLeaving(false); onOpenChange(false); }} />
                 </form>
             </SheetContent>
