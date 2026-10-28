@@ -32,7 +32,8 @@ test('builds a product: units, barcodes and the label, serial policy, a price de
     const id = stamp();
     const name = `Pulpen Uji ${id}`;
     await createProduct(page, name, `PLP-${id}`);
-    await expect(page.getByText('Satuan dasar: PCS · Pieces')).toBeVisible();
+    // The unit dictionary is shared: PCS keeps the name its first creator gave it.
+    await expect(page.getByText(/^Satuan dasar: PCS · /)).toBeVisible();
 
     await page.getByRole('button', { name: 'Tambah Satuan' }).click();
     let sheet = page.getByRole('dialog', { name: 'Tambah Satuan' });

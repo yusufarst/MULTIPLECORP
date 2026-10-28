@@ -16,14 +16,14 @@ class StartSessionUnlessBackground extends StartSession
 {
     protected function addCookieToResponse(Response $response, Session $session): void
     {
-        if (! BackgroundRequest::is(request())) {
+        if (! BackgroundRequest::readsSessionOnly(request())) {
             parent::addCookieToResponse($response, $session);
         }
     }
 
     protected function saveSession($request): void
     {
-        if (! BackgroundRequest::is($request)) {
+        if (! BackgroundRequest::readsSessionOnly($request)) {
             parent::saveSession($request);
         }
     }

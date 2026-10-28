@@ -144,8 +144,8 @@ Route::get('/status/{kind}/{id}', ['uses' => StatusController::class, Background
     ->name('status.show');
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's
-// search limiter.
-Route::post('/cari', SearchController::class)
+// search limiter. It reads the session and never writes it back, so a search beside a command never erases its answer.
+Route::post('/cari', ['uses' => SearchController::class, BackgroundRequest::READS_SESSION_ONLY => true])
     ->middleware(['auth', 'access:s0', 'throttle:search'])
     ->name('reporting.search');
 

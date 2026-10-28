@@ -23,8 +23,12 @@ for (const width of [390, 1280]) {
         await page.goto('/data-master/lokasi-rak');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText('Lokasi Rak');
         await noViolation(page);
-        await page.getByRole('button', { name: 'Tambah Rak' }).first().click();
-        await expect(page.getByRole('dialog', { name: 'Tambah Rak' })).toBeVisible();
-        await noViolation(page);
+
+        // `[desk]`: the rack's form is the desktop's; the phone reads the lists.
+        if (width >= 768) {
+            await page.getByRole('button', { name: 'Tambah Rak' }).first().click();
+            await expect(page.getByRole('dialog', { name: 'Tambah Rak' })).toBeVisible();
+            await noViolation(page);
+        }
     });
 }
