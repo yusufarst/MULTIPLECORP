@@ -635,3 +635,11 @@ This is a change summary; current state and approval authority live in their [ow
 - The workstation's Docker engine answered HTTP 500 throughout; nothing was restarted, and CI ran every suite. Each browser layer now keeps its own failure evidence, which found a type-ahead search consuming a command's flash answer; ROUTE-281 now keeps the flash.
 - Codex's two P1 and one P2 points fixed and tested; the stale form's silent version advance also removed from PG-054 and PG-055.
 - Every check passed in fresh CI on `71e206c`. TASK-027 DONE — progress 28 / 87 —; TASK-032 READY; the Owner's shutdown hold stops here, TASK-028 next on resumption.
+
+## Unreleased — 2026-10-28, TASK-028 — Rack locations and minimum stock
+
+- TASK-027 squash-merged by the executor into `main` as `8551875` (pull request #33); the Owner's shutdown hold released on resumption; TASK-028 started.
+- Built TASK-028 on its branch `task/TASK-028-locations`: PG-057 *Lokasi Rak* — racks of the shared warehouse, of no company, created with a unique code, renamed and deactivated; each product's minimum stock in base units through CAT's write service, advice only —, one NX-01 command under `warehouse.manage`, both lists continued and any product reachable with its version.
+- ROUTE-281's search now reads the session and never writes it back, so a type-ahead beside a command never erases its answer.
+- Codex's P1 and P2 points fixed and tested.
+- Every check passed in fresh CI on `1a37e5b`. TASK-028 DONE — progress 29 / 87 —; the Owner's shutdown hold stops here, TASK-029 next on resumption.

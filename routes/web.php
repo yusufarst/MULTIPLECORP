@@ -16,6 +16,7 @@ use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
+use App\Modules\INV\Http\Controllers\LocationsController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
@@ -88,6 +89,12 @@ Route::post('/data-master/produk', [ProductsController::class, 'store'])->middle
 Route::put('/data-master/produk/{id}', [ProductsController::class, 'update'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.update');
 Route::post('/data-master/produk/{id}/barcode', [ProductsController::class, 'barcode'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.barcode');
 
+// PG-057 *Lokasi Rak* (TASK-028; ROUTE-057, ROUTE-148; NAV-057): the shared warehouse's racks and the products' minimum
+// stock, pool records of no company to `stock.view` (CS-05); their one command `warehouse.manage`, NX-01 with its
+// `command_id` (CI-01).
+Route::get('/data-master/lokasi-rak', [LocationsController::class, 'show'])->middleware(['auth', 'capability:stock.view'])->name('inv.locations');
+Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->middleware(['auth', 'capability:warehouse.manage'])->name('inv.locations.save');
+
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),
 // the code-taking ones under AU-05's throttles inside their steps, the password change under WS-12's 5 per 15 minutes.
@@ -137,8 +144,8 @@ Route::get('/status/{kind}/{id}', ['uses' => StatusController::class, Background
     ->name('status.show');
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's
-// search limiter.
-Route::post('/cari', SearchController::class)
+// search limiter. It reads the session and never writes it back, so a search beside a command never erases its answer.
+Route::post('/cari', ['uses' => SearchController::class, BackgroundRequest::READS_SESSION_ONLY => true])
     ->middleware(['auth', 'access:s0', 'throttle:search'])
     ->name('reporting.search');
 

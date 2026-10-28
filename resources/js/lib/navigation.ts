@@ -24,7 +24,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-054', 'PG-055', 'PG-056', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -83,6 +83,7 @@ export const MODULES: Entry[] = [
         subpages: [
             { pg: 'PG-055', href: '/data-master/pemasok' },
             { pg: 'PG-056', href: '/data-master/produk' },
+            { pg: 'PG-057', href: '/data-master/lokasi-rak' },
         ],
     },
     { key: 'aktivitas', pg: 'PG-063', label: 'shell.nav.aktivitas_keamanan', href: '/aktivitas/riwayat', icon: ShieldCheck, allowed: has('audit.view', 'security_log.view') },

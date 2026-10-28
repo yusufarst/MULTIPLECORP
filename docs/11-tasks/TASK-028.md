@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -219,34 +219,43 @@ Receiving, counts and moves record a location for every unit (WF-MD-05; L-13; L-
 - Migration: N/A — no migration or import code in this Task
 - Other: N/A — nothing beyond the layers above
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Authorization/LocationsAccessTest.php` — PG-057 denied without `stock.view` and shown with it; the command refused without `warehouse.manage` or a company in scope, writing nothing; the control's hint present only with it; `tests/Interaction/LocationsTest.php`
+- Criterion 2: `tests/Feature/INV/LocationsTest.php` — a rack's code upper-cased and unique, a duplicate answered at its field; `tests/Integration/Inventory/LocationRaceTest.php` — two concurrent creations of one code give one COMMITTED and one CONFLICT under real sessions (BD-16)
+- Criterion 3: `tests/Feature/INV/LocationsTest.php` — a minimum in base units at the product's scale through CAT's `ProductMinimum`, a fraction of a counted product refused at its field, cleared with an empty value; no purchase, reservation or movement created (BR-INV-10)
+- Criterion 4: `tests/Feature/INV/LocationsTest.php` — a stale rack or minimum edit CONFLICT, a minimum of a product chosen without its version set only while it has none; `tests/Interaction/LocationsTest.php` — each `command_id` replayed answering its recorded outcome (ST-01; CI-05)
+- Criterion 5: `tests/Feature/INV/LocationsTest.php` — racks and minimums to a `stock.view` holder of another company, no company on the rack or its audit (CS-05)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Feature — ROUTE-057 and ROUTE-148 with their refusals, both lists' continuation and the chosen product's loading (TL-04); Integration — two concurrent creations of one code (TL-05); PASS in CI and locally
+- [x] Authorization: `stock.view` for the view and `warehouse.manage` for the command, present and absent (TL-06)
+- [x] Route integrity: ROUTE-057 and ROUTE-148 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-148 with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-MD-05's maintenance and CJ-19's racks and minimum stock, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-057 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's lists, sheets, lookup and form fields, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04's `warehouse.manage` positive and denial cases (TL-14)
+- [x] Database safety review: no migration; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; Codex's P1 and P2 fixed and tested
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `1a37e5b`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40615596119 (push) and 40615599681 (pull request #34), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the PHP suites and PHPStan also PASS on the workstation's restored stack, whose browser layer timed out at sign-in while it answered each request in four to seven seconds — CI ran the browser layers
+- Build result: `TL-13 Frontend build: PASS — Evidence: 1a37e5b, CI ubuntu-24.04 run 40615596119`
+- Route evidence: TL-07's route audit PASS — ROUTE-057 `GET /data-master/lokasi-rak` (`stock.view`) and ROUTE-148 `POST /data-master/lokasi-rak` (`warehouse.manage`)
+- Interaction evidence: `tests/Interaction/LocationsTest.php` (INT-148)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 1a37e5b, CI ubuntu-24.04 run 40615596119`; TL-10, TL-11 and TL-12 for PG-057 in the same run
+- Localization evidence: PG-057 in both languages (`tests/Browser/Localization/locations.spec.ts`) (DOD-16); 27 catalogue keys added, proposed copy
+- Performance evidence: PFM-01 and PFM-02 (`tests/Performance/LocationsQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/INV/` — `Actions/SaveLocation`, `Queries/LocationDirectory` (both lists after their cursors, the chosen product, the active racks' lookup), `Http/Controllers/LocationsController` —; CAT's write service `Services/ProductMinimum`; `BackgroundRequest::READS_SESSION_ONLY` and ROUTE-281 reading the session without writing it back; the routes; PG-057 with the navigation and `components/form-sheet.tsx` shared with PG-056; 27 catalogue keys; the tests and browser specs; this record
+- Commit SHA: `54dceaf`, `9f6e17b`, `fa85636` and `1a37e5b`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-028-locations`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `9f6e17b`: its P1 — a sheet's reload taking a refreshed version with stale values — and its P2 — both lists capped with no way to their tail — fixed and tested in `fa85636`; no review of the later commits arrived within ten minutes of their push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). The browser run of `fa85636` showed a sheet holding MSG-07 again: ROUTE-281's type-ahead, running beside the command, wrote back the session it had loaded before the answer was stored, erasing it — TASK-027's flash keeping covered only a search after the command; the search route now reads the session and never writes it (`1a37e5b`), which closes it for every page with a lookup. Readings within the approved text: a rack is named by its code, unique, upper-cased and fixed once made, its name and active state editable; a minimum of a product chosen by the lookup is loaded with its current value and version by the address key `produk`, and one sent without a version is set only while the product has none. Not applicable: Unit tests (TL-03) — no calculation; Migration tests (TL-16) — no migration
 
 **SAFE NEXT TASK:**
 
