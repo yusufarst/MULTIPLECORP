@@ -59,6 +59,8 @@ final class ProjectsController extends Controller
 
         // The page's own props are read only by the page's load, never by a deferred group's request (QB-02).
         return Inertia::render('PRJ/Journey', [...self::lazy(self::memo(fn (): array => $this->workspace->screen($actor, $project)), ['project', 'journey', 'financial', 'can']),
+            // *Item dan pemenuhan* with the page: PRJ's own facts in a bounded number of statements (J-FUL-01; QB-02).
+            'fulfilment' => fn (): array => $this->workspace->fulfilment($actor, $project),
             'predicates' => Inertia::defer(self::group(fn (): ?array => $this->workspace->predicates($actor, $project)), 'predicates'),
             'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project)), 'documents'),
             'history' => Inertia::defer(self::group(fn (): array => $this->workspace->history($actor, $project)), 'history'),

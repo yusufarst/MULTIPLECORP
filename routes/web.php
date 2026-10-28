@@ -22,6 +22,7 @@ use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
+use App\Modules\PRJ\Http\Controllers\FulfilmentController;
 use App\Modules\PRJ\Http\Controllers\ProjectsController;
 use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
@@ -104,6 +105,12 @@ Route::get('/proyek/{id}', [ProjectsController::class, 'show'])->whereUuid('id')
 Route::get('/proyek/{id}/ubah', [ProjectsController::class, 'edit'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.edit');
 Route::put('/proyek/{id}', [ProjectsController::class, 'update'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.update');
 Route::post('/proyek/{id}/hapus-draf', [ProjectsController::class, 'discard'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.discard');
+// The commercial confirmation and fulfilment planning (TASK-034; WF-PRJ-02; WF-FUL-01): "Konfirmasi Proyek" without a quotation
+// (ROUTE-158) to `projects.confirm`, "Batalkan Sisa" (ROUTE-159) to `projects.cancel_scope` and "Ubah Cara Pemenuhan" (ROUTE-160) to
+// `projects.manage`, each AX-13 or AX-14 command with its `command_id`, answered in place on PG-011.
+Route::post('/proyek/{id}/konfirmasi', [FulfilmentController::class, 'confirm'])->whereUuid('id')->middleware(['auth', 'capability:projects.confirm'])->name('prj.projects.confirm');
+Route::post('/proyek/{id}/batalkan-sisa', [FulfilmentController::class, 'cancel'])->whereUuid('id')->middleware(['auth', 'capability:projects.cancel_scope'])->name('prj.projects.cancel-scope');
+Route::post('/proyek/{id}/ubah-pemenuhan', [FulfilmentController::class, 'replan'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.replan');
 // The quotation cycle (TASK-033; WF-QUO-01; J-QUO-01): PG-014 *Penawaran* (ROUTE-014; NAV-014) to `quotation.manage` with
 // `finance.view`, or for the client's answer `projects.confirm` — checked by its query beyond `projects.view` —, PG-037
 // *Daftar Penawaran* (ROUTE-037; NAV-037) to `projects.view`; the draft, the issue and the revision `quotation.manage`
