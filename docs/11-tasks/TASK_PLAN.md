@@ -28,8 +28,8 @@ Progress:
 29 / 87
 Percentage: 33.3 %
 
-CURRENT TASK: none in progress — TASK-028 — Rack locations and minimum stock DONE on its branch `task/TASK-028-locations`, CI PASS on `1a37e5b`, its pull request #34 squash-merged by the executor once eligible (DIR-096); the Owner's SHUTDOWN_AFTER_CURRENT_TASK hold active — no next Task starts until the Owner resumes
-NEXT READY TASK: TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer, READY, NOT STARTED, taken next from the merged `main` once the Owner resumes (DIR-096); TASK-031, TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer — IN PROGRESS on `task/TASK-029-documents`, taken from `main` at TASK-028's merge `0962568` after the Owner resumed (DIR-096)
+NEXT READY TASK: TASK-031 — Correction cases, READY, taken after TASK-029 (DIR-096); TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
