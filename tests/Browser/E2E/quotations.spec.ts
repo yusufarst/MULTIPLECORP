@@ -29,7 +29,7 @@ test('drafts, issues and approves a quotation from PG-014, landing on PG-011 (J-
     const confirm = page.getByRole('alertdialog');
     await expect(confirm).toContainText('Penawaran tidak memesan stok dan tidak mencatat uang.');
     await confirm.getByRole('button', { name: 'Terbitkan Penawaran' }).click();
-    await expect(page.getByText('Penawaran terbit. Berkasnya sedang disiapkan.')).toBeVisible();
+    await expect(page.locator('#konten').getByText('Penawaran terbit. Berkasnya sedang disiapkan.')).toBeVisible();
     await expect(content).toContainText(/UJI\/PNW\/\d{4}\/0001/);
     await expect(content).not.toContainText(/Batalkan|Reservasi|Pembayaran/);
 
@@ -56,7 +56,7 @@ test('records the client\'s rejection through the phone\'s quick action, then cr
     await dialog.getByRole('radio', { name: 'Klien menolak' }).check();
     await dialog.getByLabel(/^Catatan/).fill('Anggaran belum tersedia');
     await dialog.getByRole('button', { name: 'Catat Ditolak' }).click();
-    await expect(page.getByText('Penolakan klien dicatat.')).toBeVisible();
+    await expect(page.locator('#konten').getByText('Penolakan klien dicatat.')).toBeVisible();
     await expect(page.locator('#konten')).toContainText('Ditolak Klien');
 
     await page.getByRole('button', { name: 'Buat Revisi' }).first().click();
