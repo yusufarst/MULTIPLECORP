@@ -28,8 +28,8 @@ Progress:
 30 / 87
 Percentage: 34.5 %
 
-CURRENT TASK: none in progress — TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer DONE on its branch `task/TASK-029-documents`, CI PASS on `4c6f177`, its pull request #35 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-031 — Correction cases, READY, NOT STARTED, taken next from the merged `main` (DIR-096); TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-031 — Correction cases — IN PROGRESS on `task/TASK-031-correction-cases`, taken from `main` at TASK-029's merge `76e8aad` (DIR-096)
+NEXT READY TASK: TASK-032 — after TASK-031 (DIR-096); TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
