@@ -4,6 +4,7 @@ namespace App\Modules\DOC\Queries;
 
 use App\Modules\DOC\Data\Download;
 use App\Modules\DOC\Enums\DetectedType;
+use App\Modules\DOC\Enums\FilePurpose;
 use App\Modules\DOC\Jobs\ProcessImage;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\DOC\Services\FileStore;
@@ -29,6 +30,18 @@ final class FileDownloads
     public function download(Authenticatable $viewer, string $id): Download
     {
         $file = $this->access->find($this->capabilities->for($viewer), $id);
+
+        return new Download($this->store->stream($file->storage_key, $file->storage_disk), $file->mime_type, $file->size_bytes, $this->name($file));
+    }
+
+    /** ROUTE-225: an issued rendition, opened through its document like a download, for the inline profile only (FL-07). */
+    public function rendition(Authenticatable $viewer, string $id): Download
+    {
+        $file = $this->access->find($this->capabilities->for($viewer), $id);
+
+        if (FilePurpose::tryFrom($file->purpose) !== FilePurpose::Rendition) {
+            throw new NotFoundHttpException;
+        }
 
         return new Download($this->store->stream($file->storage_key, $file->storage_disk), $file->mime_type, $file->size_bytes, $this->name($file));
     }

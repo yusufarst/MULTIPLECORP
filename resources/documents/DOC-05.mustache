@@ -1,0 +1,12 @@
+{{> open}}
+<div class="paper-heading"><h1 class="paper-title">Kuitansi</h1>{{#prepayment}}<p class="paper-subtitle">untuk proses pembayaran</p>{{/prepayment}}{{> number}}</div>
+<table class="paper-references">
+<tr><th>Sudah terima dari</th><td>{{#recipient}}{{name}}{{/recipient}}</td></tr>
+<tr><th>Uang sejumlah</th><td class="paper-words">{{amount_words}}</td></tr>
+<tr><th>Untuk pembayaran</th><td>{{subject}}</td></tr>
+{{#references}}<tr><th>{{label}}</th><td>{{value}}</td></tr>{{/references}}
+</table>
+{{#amount}}<p class="paper-amount">{{amount}}</p>{{/amount}}
+{{#prepayment}}<p class="paper-note">Kuitansi ini diterbitkan untuk proses pembayaran dan belum menyatakan pembayaran telah diterima.</p>{{/prepayment}}
+<div class="paper-signatures paper-signatures-end">{{> issuer_signature}}</div>
+{{> close}}

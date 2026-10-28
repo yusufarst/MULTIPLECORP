@@ -24,6 +24,20 @@ final class FileResponses
     }
 
     /**
+     * FL-07's inline profile for a system rendition (ROUTE-225): shown in its page's frame, without the sandbox that
+     * stops built-in PDF viewers, and framed by the application's own pages only.
+     *
+     * @param  resource  $stream
+     */
+    public static function inline($stream, string $mimeType, int $size, string $name): StreamedResponse
+    {
+        return self::stream($stream, $mimeType, $size, [
+            'Content-Disposition' => HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, self::utf8($name), self::ascii($name)),
+            'Content-Security-Policy' => "default-src 'none'; frame-ancestors 'self'",
+        ]);
+    }
+
+    /**
      * @param  resource  $stream
      * @param  array<string, string>  $headers
      */

@@ -1,0 +1,10 @@
+{{> open}}
+<div class="paper-heading"><h1 class="paper-title">Surat Permintaan Pembayaran</h1>{{> number}}</div>
+{{> meta}}
+<p class="paper-text">Dengan hormat, bersama ini kami mengajukan permintaan pembayaran sebagai berikut:</p>
+{{> totals}}
+{{#amount}}<p class="paper-text">Sejumlah <strong>{{amount}}</strong> ({{amount_words}}).</p>{{/amount}}
+{{> bank}}
+<p class="paper-text">Atas perhatian dan kerja samanya kami ucapkan terima kasih.</p>
+<div class="paper-signatures paper-signatures-end">{{> issuer_signature}}</div>
+{{> close}}

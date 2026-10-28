@@ -5,6 +5,7 @@ use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
 use App\Http\Controllers\UsersAndAccessController;
 use App\Modules\CAT\Http\Controllers\ProductsController;
+use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
@@ -131,6 +132,17 @@ Route::post('/berkas', [EvidenceController::class, 'upload'])->middleware(['auth
 Route::post('/bukti', [EvidenceController::class, 'register'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.register');
 Route::post('/bukti/{id}/versi', [EvidenceController::class, 'version'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.version');
 Route::post('/bukti/{id}/tautan', [EvidenceController::class, 'links'])->middleware(['auth', 'capability:evidence.upload'])->name('doc.evidence.links');
+// PG-035 *Dokumen* and PG-036 *Detail Dokumen* with the document engine (TASK-029; ROUTE-035, ROUTE-036,
+// ROUTE-221–ROUTE-225; NAV-035, NAV-036): the list by `projects.view`, each family inside its query (PJ-15); the draft
+// and the issue by `documents.issue`, revision and void by `documents.correct`, each NX-12 or AX-15 command carrying
+// its `command_id`; the rendition inline through its document at request time like a download (FL-07; DP-05).
+Route::get('/dokumen', [DocumentsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('doc.documents');
+Route::post('/dokumen', [DocumentsController::class, 'save'])->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.save');
+Route::get('/dokumen/{id}', [DocumentsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('doc.documents.show');
+Route::post('/dokumen/{id}/terbitkan', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.issue');
+Route::post('/dokumen/{id}/revisi', [DocumentsController::class, 'revise'])->whereUuid('id')->middleware(['auth', 'capability:documents.correct'])->name('doc.documents.revise');
+Route::post('/dokumen/{id}/batalkan', [DocumentsController::class, 'void'])->whereUuid('id')->middleware(['auth', 'capability:documents.correct'])->name('doc.documents.void');
+Route::get('/berkas/{id}/tampil', [DocumentsController::class, 'rendition'])->middleware(['auth', 'access:s0'])->name('doc.files.rendition');
 // Private files and polled states (TASK-022; ROUTE-226, ROUTE-227, ROUTE-285): every active account reaches the
 // route, and the owning record or the page's query class decides at request time (DP-05; FL-07; PJ-08; PJ-15); a
 // denied and an unknown record answer alike (AZ-11). The download is the user's own request (RB-04); the thumbnail

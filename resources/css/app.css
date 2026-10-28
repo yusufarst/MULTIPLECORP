@@ -230,6 +230,22 @@
     body:has(> #label-print) > :not(#label-print) {
         display: none !important;
     }
+
+    /* "Cetak Draf" (TASK-029; DESIGN_SYSTEM §14.3, §17): while a composer is on the page, the paper is its composed
+       draft alone, marked on every page; an issued document prints from its rendition, never from a screen. */
+    body:has(> #document-print) > :not(#document-print) {
+        display: none !important;
+    }
+
+    #document-print {
+        display: block;
+    }
+}
+
+@media screen {
+    #document-print {
+        display: none;
+    }
 }
 
 /* The scrollbar rule Base UI would otherwise inject as a `<style>` element: the application renders Base UI
