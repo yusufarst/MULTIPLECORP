@@ -17,7 +17,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * PG-057 *Lokasi Rak* (ROUTE-057, ROUTE-148; INT-148; NAV-057; SCR-53; J-MD-05): `stock.view`'s page of the shared
- * warehouse's racks and the products' minimum stock, and `warehouse.manage`'s one command that creates or edits a rack
+ * warehouse's racks and the products' minimum stock — the cursors `setelah_rak` and `setelah_minimum` and the chosen
+ * product `produk` as whitelisted address keys (NV-05) —, and `warehouse.manage`'s one command that creates or edits a rack
  * and sets a product's minimum. Each NX-01 command carries its `command_id`, its answer in place as flash data (IP-01)
  * and its field errors at their fields (IP-14).
  */
@@ -30,7 +31,10 @@ final class LocationsController extends Controller
     /** `INV ShowLocations` (ROUTE-057). */
     public function show(Request $request): HttpResponse
     {
-        return Inertia::render('INV/Locations', $this->locations->screen(self::actor($request)))->toResponse($request);
+        $text = fn (string $key): ?string => is_string($value = $request->query($key)) && $value !== '' ? $value : null;
+
+        return Inertia::render('INV/Locations', $this->locations->screen(self::actor($request), $text('setelah_rak'), $text('setelah_minimum'), $text('produk')))
+            ->toResponse($request);
     }
 
     /** `INV SaveLocation · SetMinimumStock` (ROUTE-148). */

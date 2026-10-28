@@ -82,6 +82,20 @@ it('sets a minimum in base units at the product\'s scale, creating no purchase, 
     expect($product->refresh()->min_stock_qty_base)->toBeNull();
 });
 
+it('continues both lists after their cursors and loads any chosen product with its current minimum and version (PT-08; ST-01)', function () {
+    foreach (range(1, 101) as $number) {
+        DB::table('locations')->insert(['code' => sprintf('R-%03d', $number), 'name' => "Rak {$number}"]);
+    }
+    $product = Product::factory()->create(['min_stock_qty_base' => '7'])->refresh();
+
+    $this->actingAs($this->manager)->get('/data-master/lokasi-rak')
+        ->assertInertia(fn (AssertableInertia $page) => $page->has('locations.rows', 100)->where('locations.more', 'R-100')->where('picked', null));
+    $this->actingAs($this->manager)->get('/data-master/lokasi-rak?setelah_rak=R-100')
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('locations.rows.0.code', 'R-101')->where('locations.more', null));
+    $this->actingAs($this->manager)->get("/data-master/lokasi-rak?produk={$product->public_id}")
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('picked.minimum', '7.000')->where('picked.lock_version', $product->lock_version));
+});
+
 it('shows the racks and minimums to a stock.view holder of any company — pool records of none (criterion 5; CS-05)', function () {
     saveLocation($this, ['kind' => 'create', 'code' => 'C-01', 'name' => 'Rak C']);
     $product = Product::factory()->create(['min_stock_qty_base' => '4']);
