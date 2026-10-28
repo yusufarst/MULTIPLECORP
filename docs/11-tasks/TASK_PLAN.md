@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 28
-READY: 7
+DONE: 29
+READY: 6
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 39
 SUPERSEDED: 0
 
 Progress:
-28 / 87
-Percentage: 32.2 %
+29 / 87
+Percentage: 33.3 %
 
-CURRENT TASK: none in progress — TASK-027 — Catalog — products, services, units, barcodes, prices and images DONE on its branch `task/TASK-027-catalog`, CI PASS on `71e206c`, its pull request #33 squash-merged by the executor once eligible (DIR-096); the Owner's SHUTDOWN_AFTER_CURRENT_TASK hold active — no next Task starts until the Owner resumes
-NEXT READY TASK: TASK-028 — Rack locations and minimum stock, READY, taken next from the merged `main` once the Owner resumes (DIR-096); TASK-029, TASK-031, TASK-032, TASK-036, TASK-061 and TASK-073 READY — TASK-032 once TASK-027 was DONE —; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-028 — Rack locations and minimum stock DONE on its branch `task/TASK-028-locations`, CI PASS on `1a37e5b`, its pull request #34 squash-merged by the executor once eligible (DIR-096); the Owner's SHUTDOWN_AFTER_CURRENT_TASK hold active — no next Task starts until the Owner resumes
+NEXT READY TASK: TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer, READY, NOT STARTED, taken next from the merged `main` once the Owner resumes (DIR-096); TASK-031, TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -76,7 +76,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-025](TASK-025.md) — Companies, identity assets, bank accounts and tax configuration
 - [x] [TASK-026](TASK-026.md) — Clients and suppliers
 - [x] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
-- [ ] [TASK-028](TASK-028.md) — Rack locations and minimum stock
+- [x] [TASK-028](TASK-028.md) — Rack locations and minimum stock
 - [ ] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
 - [x] [TASK-030](TASK-030.md) — Evidence and uploaded documents
 - [ ] [TASK-031](TASK-031.md) — Correction cases
@@ -168,7 +168,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-025](TASK-025.md) | Companies, identity assets, bank accounts and tax configuration | Module · ORG | HIGH | DONE | 013, 016, 022 | 029, 032, 049 | NO | AGENT | NONE | YES |
 | [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | DONE | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
 | [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | DONE | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
-| [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | READY | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
+| [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | DONE | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
 | [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | READY | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
 | [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | DONE | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
 | [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | READY | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
