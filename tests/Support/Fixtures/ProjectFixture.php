@@ -28,6 +28,11 @@ final class ProjectFixture
         $user = $request->user();
         $year = substr(BusinessDate::today(), 0, 4);
 
+        // Go-live for this request and, armed again, for the run's following ones — never left to an earlier request's
+        // cache entry, whose absence would leave no period live (NM-03).
+        Numbering::goLive("{$year}-01-01");
+        NumberingFixture::arm(Request::create('/', 'POST', ['go_live' => "{$year}-01-01"]));
+
         if ($request->boolean('numbered', true)) {
             Numbering::scheme($company, SequenceType::Project, "{$year}-01-01", 'YEAR', 'UJI/PRJ/{tahun}/{nomor:4}');
             Numbering::started($company, SequenceType::Project, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
