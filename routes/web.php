@@ -22,6 +22,7 @@ use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
+use App\Modules\PRJ\Http\Controllers\ProjectsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
 use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
@@ -90,6 +91,18 @@ Route::get('/data-master/produk', [ProductsController::class, 'show'])->middlewa
 Route::post('/data-master/produk', [ProductsController::class, 'store'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.store');
 Route::put('/data-master/produk/{id}', [ProductsController::class, 'update'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.update');
 Route::post('/data-master/produk/{id}/barcode', [ProductsController::class, 'barcode'])->middleware(['auth', 'capability:products.edit'])->name('cat.products.barcode');
+
+// The project hub (TASK-032; WF-PRJ-01; J-PRJ-01): PG-010 *Proyek* and PG-011 *Perjalanan Proyek* to `projects.view`
+// (ROUTE-010, ROUTE-011; NAV-010, NAV-011), PG-013 *Formulir Proyek* and its commands "Buat Proyek", "Ubah proyek" and
+// "Buang Draf" to `projects.manage` (ROUTE-013, ROUTE-151–ROUTE-153; NAV-013), each NX-03 command with its `command_id`
+// (CI-01); the company of each command checked against the actor's scope by the command itself (CS-03; AZ-11).
+Route::get('/proyek', [ProjectsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('prj.projects');
+Route::get('/proyek/baru', [ProjectsController::class, 'create'])->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.create');
+Route::post('/proyek', [ProjectsController::class, 'store'])->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.store');
+Route::get('/proyek/{id}', [ProjectsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('prj.projects.show');
+Route::get('/proyek/{id}/ubah', [ProjectsController::class, 'edit'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.edit');
+Route::put('/proyek/{id}', [ProjectsController::class, 'update'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.update');
+Route::post('/proyek/{id}/hapus-draf', [ProjectsController::class, 'discard'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.discard');
 
 // PG-057 *Lokasi Rak* (TASK-028; ROUTE-057, ROUTE-148; NAV-057): the shared warehouse's racks and the products' minimum
 // stock, pool records of no company to `stock.view` (CS-05); their one command `warehouse.manage`, NX-01 with its

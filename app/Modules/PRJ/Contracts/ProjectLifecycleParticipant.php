@@ -1,0 +1,26 @@
+<?php
+
+namespace App\Modules\PRJ\Contracts;
+
+use App\Support\Command\CommandContext;
+
+/**
+ * PRJ's inversion contract for what a project's lifecycle triggers in a higher tier (ARCHITECTURE §3): INV, FUL, FIN
+ * and ADM each implement it in their own Task and register it under {@see self::TAG}. PRJ's action calls every
+ * participant inside its own transaction, the project held at LK-01 first (CONCURRENCY_IDEMPOTENCY §7) — a
+ * re-confirmation adjusting reservations (AX-13; TASK-034), a cancellation releasing them (AX-27; TASK-056), a
+ * revalidation reopening requirements (SF-REVAL; TASK-055).
+ */
+interface ProjectLifecycleParticipant
+{
+    public const TAG = 'prj.lifecycle-participants';
+
+    /** A later confirmation superseded the project's pinned demand (AX-13). */
+    public function reconfirmed(CommandContext $context, int $projectId): void;
+
+    /** The project was cancelled (AX-27; BR-PRJ-01). */
+    public function cancelled(CommandContext $context, int $projectId): void;
+
+    /** A material correction returned the completed project to ACTIVE (SF-REVAL; BR-CR-05). */
+    public function revalidated(CommandContext $context, int $projectId): void;
+}

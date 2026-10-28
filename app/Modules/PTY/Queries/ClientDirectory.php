@@ -124,15 +124,26 @@ final class ClientDirectory
      */
     public function rowOf(ClientOrganization $organization, string $kind, ?string $handle): ?int
     {
+        return $this->rowIn($organization->id, $kind, $handle);
+    }
+
+    /**
+     * {@see self::rowOf()} for the organization named by its identifier — the form of a higher tier, which reads PTY
+     * through this query class and never its models (ARCHITECTURE §3).
+     *
+     * @param  'organization'|'unit'|'address'|'contact'  $kind
+     */
+    public function rowIn(int $organizationId, string $kind, ?string $handle): ?int
+    {
         if ($kind === 'organization') {
-            return $organization->id;
+            return $organizationId;
         }
 
         if ($handle === null || ! RowHandle::valid($handle)) {
             return null;
         }
 
-        $units = DB::table('client_units')->where('client_organization_id', $organization->id)->select('id');
+        $units = DB::table('client_units')->where('client_organization_id', $organizationId)->select('id');
         $ids = match ($kind) {
             'unit' => $units->pluck('id')->all(),
             'address' => DB::table('client_addresses')->whereIn('client_unit_id', $units)->pluck('id')->all(),
@@ -147,6 +158,27 @@ final class ClientDirectory
         }
 
         return null;
+    }
+
+    /**
+     * An organization by public identifier — its identifier, name and whether it is active —, or null; and its detail
+     * as {@see self::detail()} gives it, for a higher tier's form (ARCHITECTURE §3).
+     *
+     * @return array{id: int, name: string, active: bool}|null
+     */
+    public function organization(string $publicId): ?array
+    {
+        $row = $this->find($publicId);
+
+        return $row === null ? null : ['id' => $row->id, 'name' => $row->name, 'active' => $row->is_active];
+    }
+
+    /** @return array<string, mixed>|null */
+    public function detailOf(Authority $viewer, int $organizationId): ?array
+    {
+        $row = ClientOrganization::query()->find($organizationId);
+
+        return $row === null ? null : $this->detail($viewer, $row);
     }
 
     public function unitOf(ClientOrganization $organization, ?string $handle): ?ClientUnit
