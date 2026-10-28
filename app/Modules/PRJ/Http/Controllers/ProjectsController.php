@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
@@ -38,15 +39,15 @@ final class ProjectsController extends Controller
         private readonly ProjectForm $form,
     ) {}
 
-    /** ROUTE-010: PG-010, the page's rows at once and their journey summary deferred. */
+    /** ROUTE-010: PG-010, the page's rows at once and their journey summary deferred — whose request reads the page's rows only. */
     public function index(Request $request): HttpResponse
     {
         $actor = self::actor($request);
-        $screen = $this->projects->screen($actor, self::codes($request), self::query($request, 'status'), self::query($request, 'setelah'));
-        $ids = array_map(fn (array $row): string => $row['id'], $screen['rows']);
+        $screen = self::memo(fn (): array => $this->projects->screen($actor, self::codes($request), self::query($request, 'status'), self::query($request, 'setelah')));
 
-        return Inertia::render('PRJ/Projects', [...$screen,
-            'journeys' => Inertia::defer(self::group(fn (): array => $this->projects->journeys($actor, $ids)), 'journey'),
+        return Inertia::render('PRJ/Projects', [
+            ...self::lazy($screen, ['companies', 'filter', 'rows', 'more', 'can']),
+            'journeys' => Inertia::defer(self::group(fn (): array => $this->projects->journeys($actor, self::ids($screen()['rows'] ?? []))), 'journey'),
         ])->toResponse($request);
     }
 
@@ -56,7 +57,8 @@ final class ProjectsController extends Controller
         $actor = self::actor($request);
         $project = $this->workspace->find($actor, $id);
 
-        return Inertia::render('PRJ/Journey', [...$this->workspace->screen($actor, $project),
+        // The page's own props are read only by the page's load, never by a deferred group's request (QB-02).
+        return Inertia::render('PRJ/Journey', [...self::lazy(self::memo(fn (): array => $this->workspace->screen($actor, $project)), ['project', 'journey', 'financial', 'can']),
             'predicates' => Inertia::defer(self::group(fn (): ?array => $this->workspace->predicates($actor, $project)), 'predicates'),
             'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project)), 'documents'),
             'history' => Inertia::defer(self::group(fn (): array => $this->workspace->history($actor, $project)), 'history'),
@@ -74,6 +76,10 @@ final class ProjectsController extends Controller
     {
         $actor = self::actor($request);
         $project = $this->workspace->find($actor, $id);
+
+        if (! $this->workspace->mayManage($actor, $project)) {
+            throw new AccessDeniedHttpException;
+        }
 
         return Inertia::render('PRJ/ProjectForm', $this->form->screen($actor, $project, self::query($request, 'klien'), self::query($request, 'produk')))->toResponse($request);
     }
@@ -136,7 +142,7 @@ final class ProjectsController extends Controller
                 'C-10' => self::say(($numbering['numbering'] ?? null) !== null ? 'projects.refusal.numbering_owner' : 'messages.msg_17',
                     ['jenis' => self::say('glossary.gl_004'), 'periode' => self::text($state['periode'] ?? ''), 'perusahaan' => $numbering['company'] ?? '']),
                 'C-54' => self::say('projects.refusal.company_inactive'),
-                'L-20' => self::say('projects.refusal.confirmed'),
+                'L-20' => self::say(($state['reason'] ?? null) === 'referenced' ? 'projects.refusal.line_referenced' : 'projects.refusal.confirmed'),
                 'L-21' => self::say('projects.refusal.company_locked'),
                 'BR-PRJ-05' => self::say('projects.refusal.channel_locked'),
                 'L-37' => self::say(($state['reason'] ?? null) === 'downstream' ? 'projects.refusal.downstream' : 'projects.refusal.not_draft'),
@@ -158,6 +164,57 @@ final class ProjectsController extends Controller
         }
 
         return redirect()->to($origin, 303);
+    }
+
+    /**
+     * The public identifiers of the page's rows.
+     *
+     * @return list<string>
+     */
+    private static function ids(mixed $rows): array
+    {
+        $ids = [];
+
+        foreach (is_array($rows) ? $rows : [] as $row) {
+            if (is_array($row) && is_string($row['id'] ?? null)) {
+                $ids[] = $row['id'];
+            }
+        }
+
+        return $ids;
+    }
+
+    /**
+     * A read run once, however many props take from it.
+     *
+     * @param  Closure(): array<string, mixed>  $read
+     * @return Closure(): array<string, mixed>
+     */
+    private static function memo(Closure $read): Closure
+    {
+        $value = null;
+
+        return function () use ($read, &$value): array {
+            return $value ??= $read();
+        };
+    }
+
+    /**
+     * The page's props, each read only when the response includes it — a partial reload naming a deferred group skips them.
+     *
+     * @param  Closure(): array<string, mixed>  $screen
+     * @param  list<string>  $keys
+     * @return array<string, Closure(): mixed>
+     */
+    private static function lazy(Closure $screen, array $keys): array
+    {
+        $props = [];
+
+        foreach ($keys as $key) {
+            $props[$key] = fn (): mixed => $screen()[$key] ?? null;
+        }
+
+        return $props;
     }
 
     /**
@@ -200,6 +257,7 @@ final class ProjectsController extends Controller
             'judul' => ['required', 'string', 'min:3', 'max:200'],
             'tenggat' => ['nullable', 'date_format:Y-m-d'],
             'tautan' => ['nullable', 'uuid'],
+            'tautan_tetap' => ['nullable', 'boolean'],
             'alasan_tautan' => ['nullable', 'required_with:tautan', 'string', 'min:3', 'max:500'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],

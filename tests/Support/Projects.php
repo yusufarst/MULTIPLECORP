@@ -63,13 +63,15 @@ final class Projects
      */
     public static function product(string $kind = 'GOODS', ?string $price = '15000.00'): array
     {
-        $base = Unit::factory()->create();
-        $product = Product::factory()->create(['kind' => $kind, 'base_unit_id' => $base->id, 'quantity_scale' => 0]);
+        // Codes of their own, so the browser fixture's requests — each a fresh process whose factory sequences restart — never collide.
+        $tag = Str::upper(Str::random(6));
+        $base = Unit::factory()->create(['code' => "S{$tag}"]);
+        $product = Product::factory()->create(['kind' => $kind, 'sku' => "UJI-{$tag}", 'base_unit_id' => $base->id, 'quantity_scale' => 0]);
         ProductUnit::factory()->create(['product_id' => $product->id, 'unit_id' => $base->id, 'ratio_to_base' => 1, 'is_base' => true]);
         $box = null;
 
         if ($kind === 'GOODS') {
-            $box = Unit::factory()->create();
+            $box = Unit::factory()->create(['code' => "K{$tag}"]);
             ProductUnit::factory()->create(['product_id' => $product->id, 'unit_id' => $box->id, 'ratio_to_base' => 12]);
         }
 

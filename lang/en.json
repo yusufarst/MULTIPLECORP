@@ -2029,5 +2029,6 @@
     "projects.history.force_complete": "Project force-completed",
     "projects.history.revalidate": "Project reopened after a correction",
     "projects.discard.title": "Discard Draft?",
-    "projects.discard.consequence": "The draft and its lines are removed. Number :nomor is retired and never used again. To continue, create a new project."
+    "projects.discard.consequence": "The draft and its lines are removed. Number :nomor is retired and never used again. To continue, create a new project.",
+    "projects.refusal.line_referenced": "This line is already used by a quotation or another record, so it cannot be removed or given another product. Change it through a quotation revision."
 }

@@ -129,3 +129,22 @@ it('offers no stage filter on PG-010 — a stage is derived, never stored (PFM-0
 
     expect(DB::getSchemaBuilder()->hasColumn('projects', 'stage'))->toBeFalse();
 });
+
+it('serves each PG-011 deferred group without reading the page\'s own props again (QB-02; PF-36; ER-06)', function () {
+    seedProjects([$this->companies[0]], 1);
+    $project = Project::query()->firstOrFail();
+    $version = $this->actingAs($this->viewer)->get("/proyek/{$project->public_id}")->viewData('page')['version'];
+
+    foreach (['predicates', 'documents', 'history'] as $group) {
+        DB::flushQueryLog();
+        DB::enableQueryLog();
+        $this->actingAs($this->viewer)->get("/proyek/{$project->public_id}", [
+            'X-Inertia' => 'true', 'X-Inertia-Version' => (string) $version, 'X-Inertia-Partial-Component' => 'PRJ/Journey', 'X-Inertia-Partial-Data' => $group,
+        ])->assertOk()->assertJsonPath("props.{$group}.failed", null);
+        $statements = array_column(DB::getQueryLog(), 'query');
+        DB::disableQueryLog();
+
+        // The header's read and the lines' read belong to the page's load only.
+        expect(array_filter($statements, fn (string $sql): bool => str_contains($sql, '"client_organizations" as "o"') || str_contains($sql, '"project_lines" as "l" inner join "products"')))->toBe([]);
+    }
+});

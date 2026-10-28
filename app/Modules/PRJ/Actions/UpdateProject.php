@@ -67,7 +67,7 @@ final class UpdateProject
             }
 
             BusinessDateRule::check($businessDate, $prefilled);
-            $created = $this->records->create($context, self::carried($input, $project->id), $businessDate);
+            $created = $this->records->create($context, self::carried($input, $project->id, $context->authority()->allows('finance.view', $project->company_id)), $businessDate);
             $this->records->discard($context, $project, 'Company changed while a DRAFT (L-21); replaced by '.$created->project_number.'.', $created->public_id);
 
             return new CommandResult('project', $created->id);
@@ -75,10 +75,11 @@ final class UpdateProject
     }
 
     /**
-     * The input for the new project of the other company: every line new, and what the actor may not see — a line's
-     * price, a SIPLAH amount — carried from the draft as stored, so nothing is lost with the move (PJ-12).
+     * The input for the new project of the other company: every line new, and what the actor did not both see in the draft
+     * and send for the target — a line's price, a SIPLAH amount — carried from the draft as stored, so nothing is lost with
+     * the move whichever company's `finance.view` the actor holds (PJ-12).
      */
-    private static function carried(ProjectInput $input, int $projectId): ProjectInput
+    private static function carried(ProjectInput $input, int $projectId, bool $sourceMoney): ProjectInput
     {
         $snapshot = ProjectRecords::snapshot($projectId);
         $prices = [];
@@ -87,11 +88,12 @@ final class UpdateProject
             $prices[$line['id']] = $line['unit_price'];
         }
 
+        $entered = $sourceMoney && $input->money;
         $lines = array_map(fn (LineInput $line): LineInput => new LineInput(null, $line->productId, $line->kind, $line->quantityScale, $line->description, $line->quantity,
-            $line->unitId, $line->ratio, $line->quantityBase, $input->money ? $line->price : ($line->id === null ? null : $prices[$line->id] ?? null), $line->mode), $input->lines);
+            $line->unitId, $line->ratio, $line->quantityBase, $line->id === null ? ($input->money ? $line->price : null) : ($entered ? $line->price : $prices[$line->id] ?? null), $line->mode), $input->lines);
         $siplah = $input->siplah;
 
-        if ($siplah !== null && ! $input->money) {
+        if ($siplah !== null && ! $entered) {
             foreach (ProjectInput::SIPLAH_AMOUNTS as $amount) {
                 $stored = $snapshot['siplah'][$amount] ?? null;
                 $siplah[$amount] = is_numeric($stored) ? (string) $stored : null;
@@ -99,7 +101,7 @@ final class UpdateProject
         }
 
         return new ProjectInput($input->companyId, $input->clientId, $input->unitId, $input->addressId, $input->contactId, $input->channel, $input->title, $input->deadline,
-            $input->linkedProjectId, $input->linkReason, $lines, $siplah, true, $input->payload);
+            $input->linkedProjectId, $input->linkReason, $lines, $siplah, true, $input->payload, $input->linkKept);
     }
 
     private static function companyKey(int $companyId): ?string

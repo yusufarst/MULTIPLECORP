@@ -100,10 +100,22 @@ final class ProjectForm
             }
         }
 
-        $linked = $this->linked($viewer, self::nullable($input['tautan'] ?? null), $company, $project);
+        // An amendment that leaves the project's link as it is keeps it — also one the editor may not see or manage, never
+        // removed by a save that did not choose to (XL-4); only a new or changed link needs both companies in scope.
+        $kept = $project?->linked_project_id !== null && in_array($input['tautan_tetap'] ?? false, [true, 1, '1', 'true'], true);
+        $linked = $kept ? $project->linked_project_id : $this->linked($viewer, self::nullable($input['tautan'] ?? null), $company, $project);
 
-        if (self::nullable($input['tautan'] ?? null) !== null && $linked === null) {
+        if (! $kept && self::nullable($input['tautan'] ?? null) !== null && $linked === null) {
             $errors['tautan'] = $unknown;
+        }
+
+        // Once ACTIVE, a project keeps the unit and PIC its activation needed (SM:Project).
+        if ($project !== null && $project->state !== 'DRAFT') {
+            foreach (['unit' => $unit, 'pic' => $contact] as $field => $id) {
+                $errors[$field] ??= $id === null ? self::say('projects.validation.required') : null;
+            }
+
+            $errors = array_filter($errors, fn (?string $message): bool => $message !== null);
         }
 
         [$lines, $lineErrors] = $this->lines($viewer, is_array($input['baris'] ?? null) ? array_values($input['baris']) : [], $project, $money);
@@ -126,7 +138,7 @@ final class ProjectForm
         }
 
         return new ProjectInput($company, $organization['id'], $unit, $address, $contact, $channel, trim(self::text($input['judul'] ?? null)), self::nullable($input['tenggat'] ?? null),
-            $linked, $linked === null ? null : trim(self::text($input['alasan_tautan'] ?? null)), $lines, $siplah, $money, self::payload($input));
+            $linked, $linked === null ? null : ($kept ? $project->link_reason : trim(self::text($input['alasan_tautan'] ?? null))), $lines, $siplah, $money, self::payload($input), $kept);
     }
 
     /**
@@ -456,7 +468,7 @@ final class ProjectForm
      */
     private static function payload(array $input): array
     {
-        $keys = ['perusahaan', 'klien', 'unit', 'alamat', 'pic', 'kanal', 'judul', 'tenggat', 'tautan', 'alasan_tautan', 'siplah', 'baris'];
+        $keys = ['perusahaan', 'klien', 'unit', 'alamat', 'pic', 'kanal', 'judul', 'tenggat', 'tautan', 'tautan_tetap', 'alasan_tautan', 'siplah', 'baris'];
 
         return array_intersect_key($input, array_flip($keys));
     }

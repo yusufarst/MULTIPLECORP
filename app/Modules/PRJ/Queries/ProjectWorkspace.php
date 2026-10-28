@@ -51,6 +51,12 @@ final class ProjectWorkspace
         return $project;
     }
 
+    /** Whether the viewer may amend the project — `projects.manage` of its company (AZ-01). */
+    public function mayManage(int $viewerId, Project $project): bool
+    {
+        return $this->viewer($viewerId)->allows('projects.manage', $project->company_id);
+    }
+
     /** @return array<string, mixed> */
     public function screen(int $viewerId, Project $project): array
     {

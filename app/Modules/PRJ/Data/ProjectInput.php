@@ -8,6 +8,7 @@ namespace App\Modules\PRJ\Data;
  * channel with its SIPLAH fields — null for a REGULAR project —, the title and deadline, a linked project of another
  * company with its reason (XL-4), the demand lines. `money` says whether the actor holds `finance.view`, without which
  * no price or SIPLAH amount is taken (PJ-12). `payload` is the validated request, the command's fingerprint (CI-01).
+ * `linkKept` says an amendment left the project's link as it was, which needs no new XL-4 check.
  */
 final class ProjectInput
 {
@@ -35,5 +36,6 @@ final class ProjectInput
         public readonly ?array $siplah,
         public readonly bool $money,
         public readonly array $payload,
+        public readonly bool $linkKept = false,
     ) {}
 }

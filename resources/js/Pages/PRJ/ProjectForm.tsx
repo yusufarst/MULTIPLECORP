@@ -218,6 +218,8 @@ export default function ProjectForm({ companies, project, client, today }: Props
             tenggat: deadline === '' ? null : deadline,
             tautan: link?.id ?? null,
             alasan_tautan: link === null ? null : linkReason,
+            // The project's link as it was — also one this account may not see — stays; only a new or changed one is checked (XL-4).
+            tautan_tetap: linkKept,
             tanggal: date.date,
             tanggal_otomatis: !date.chosen,
             siplah: channel === 'SIPLAH' ? Object.fromEntries(Object.entries(siplah).map(([field, value]) => [field, value === '' ? null : value])) : null,
@@ -233,6 +235,7 @@ export default function ProjectForm({ companies, project, client, today }: Props
             ...(project === null ? {} : { lock_version: project.lock_version }),
         }, () => { setDirty(false); });
     };
+    const linkKept = project?.link != null && (!project.link.visible || (link?.id === project.link.id && linkReason === (project.link.reason ?? '')));
     const origin = project === null ? '/proyek' : `/proyek/${project.id}`;
     const pageTitle = project === null ? t('projects.form.create_title') : t('projects.form.edit_title', { nomor: project.number });
 

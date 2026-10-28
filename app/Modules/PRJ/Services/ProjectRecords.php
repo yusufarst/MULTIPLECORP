@@ -273,7 +273,8 @@ final class ProjectRecords
     }
 
     /**
-     * XL-4: a linked project is another company's, both companies in the actor's `projects.manage` scope.
+     * XL-4: a linked project is another company's, both companies in the actor's `projects.manage` scope when the link is
+     * made or changed; a link the amendment kept as it was is checked for its company only.
      *
      * @throws AuthorizationException when the linked project's company left the actor's scope
      */
@@ -289,19 +290,40 @@ final class ProjectRecords
             throw Refused::rejected('XL-4');
         }
 
-        if ($context->authority()?->allows('projects.manage', (int) $company) !== true) {
+        if (! $input->linkKept && $context->authority()?->allows('projects.manage', (int) $company) !== true) {
             throw new AuthorizationException;
         }
     }
 
     /**
      * The draft lines as the form sent them: a removed one deleted, a kept one updated in place under its number, a new
-     * one added after the highest number the project has used — a line's number is never changed or reused, so what
-     * cites it keeps its place (DATABASE §4.5; `line_no` is not updatable).
+     * one added after the highest number the project's lines hold — a line's number is never changed (DATABASE §4.5;
+     * `line_no` is not updatable); a removed line's number may come back on a later line, since nothing cited it. A line a
+     * quotation revision or another record already cites cannot be removed or given another product: the database
+     * refuses it, and the amendment is REJECTED with the path to a quotation revision (L-20) — in a savepoint, so the
+     * command stays whole.
      *
      * @param  list<LineInput>  $lines
+     *
+     * @throws Refused L-20 when a removed or re-produced line is cited by another record
      */
     private function writeLines(CommandContext $context, int $projectId, int $companyId, array $lines, bool $money): void
+    {
+        try {
+            $context->connection->transaction(function () use ($context, $projectId, $companyId, $lines, $money): void {
+                $this->replaceLines($context, $projectId, $companyId, $lines, $money);
+            });
+        } catch (QueryException $error) {
+            if (in_array((string) $error->getCode(), ['23001', '23503'], true)) {
+                throw Refused::rejected('L-20', ['reason' => 'referenced']);
+            }
+
+            throw $error;
+        }
+    }
+
+    /** @param  list<LineInput>  $lines */
+    private function replaceLines(CommandContext $context, int $projectId, int $companyId, array $lines, bool $money): void
     {
         $existing = DB::table('project_lines')->where('project_id', $projectId)->pluck('id')->map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0)->all();
         $highest = DB::table('project_lines')->where('project_id', $projectId)->max('line_no');
@@ -340,8 +362,9 @@ final class ProjectRecords
 
     /**
      * A SIPLAH project's manual values as entered (CAP-12; BR-FIN-10) — its amounts only from an actor with
-     * `finance.view` —; a project changed to REGULAR before the lock keeps its row with every value cleared, the row
-     * leaving only with its DRAFT (§19).
+     * `finance.view` —; a project changed to REGULAR before the lock keeps its row with the values the actor may write
+     * cleared — the amounts of an actor without `finance.view` staying as stored —, the row leaving only with its DRAFT
+     * (§19).
      */
     private function writeSiplah(CommandContext $context, int $projectId, ProjectInput $input): void
     {

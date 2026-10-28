@@ -41,7 +41,7 @@ it('opens PG-010 and PG-011 with projects.view only, "Buat Proyek" and Tindakan 
 
     $viewer = Authorization::admin([$this->company->id], ['projects.view']);
     $this->actingAs($viewer)->get('/proyek')->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/Projects')->where('can.create', false)->has('rows', 1));
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/Projects', false)->where('can.create', false)->has('rows', 1));
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page->where('can', ['edit' => false, 'discard' => false]));
     $this->actingAs($this->manager)->get("/proyek/{$this->project->public_id}")

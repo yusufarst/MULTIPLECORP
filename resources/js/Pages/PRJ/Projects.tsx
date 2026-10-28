@@ -67,6 +67,9 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
     const [appending, setAppending] = useState(false);
     const [known, setKnown] = useState<Record<string, JourneySummary>>({});
     const [seen, setSeen] = useState(journeys);
+    // The page the last journey request was for, so a retry asks for that page's rows (`setelah`), not the first page's.
+    const [requested, setRequested] = useState<string | null>(null);
+    const [failedPage, setFailedPage] = useState<string | null>(null);
 
     if (base !== rows) {
         setBase(rows);
@@ -80,17 +83,21 @@ export default function Projects({ companies, filter, rows, more, can, journeys 
 
         if (journeys !== undefined && !isFailed(journeys)) {
             setKnown((earlier) => ({ ...earlier, ...journeys }));
+        } else if (isFailed(journeys)) {
+            setFailedPage(requested);
         }
     }
 
     const loadMore = () => {
         if (next === null) return;
         setAppending(true);
+        setRequested(next);
         router.reload({ only: ['rows', 'more', 'journeys'], data: { setelah: next }, preserveUrl: true });
     };
     const failed = isFailed(journeys);
     const reloadJourneys = () => {
-        router.reload({ only: ['journeys'] });
+        setRequested(failedPage);
+        router.reload({ only: ['journeys'], data: failedPage === null ? {} : { setelah: failedPage }, preserveUrl: true });
     };
     const stage = (row: Row) => {
         const summary = known[row.id];

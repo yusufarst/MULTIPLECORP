@@ -6852,6 +6852,12 @@
             "source": "MSG-39; L-37",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "projects.refusal.line_referenced": {
+            "task": "TASK-032",
+            "source": "L-20; BR-QUO-02 (a line a quotation revision cites)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

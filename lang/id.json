@@ -2029,5 +2029,6 @@
     "projects.history.force_complete": "Proyek diselesaikan paksa",
     "projects.history.revalidate": "Proyek dibuka kembali setelah koreksi",
     "projects.discard.title": "Buang Draf?",
-    "projects.discard.consequence": "Draf dan barisnya dihapus. Nomor :nomor dihentikan dan tidak dipakai lagi. Untuk melanjutkan, buat proyek baru."
+    "projects.discard.consequence": "Draf dan barisnya dihapus. Nomor :nomor dihentikan dan tidak dipakai lagi. Untuk melanjutkan, buat proyek baru.",
+    "projects.refusal.line_referenced": "Baris ini sudah dipakai penawaran atau catatan lain, jadi tidak dapat dihapus atau diganti produknya. Ubah lewat revisi penawaran."
 }

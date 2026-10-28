@@ -290,7 +290,7 @@ it('refuses a line whose quantity the product\'s scale cannot hold, or whose mod
 it('renders PG-013 with the companies in scope, the chosen client\'s rows and the chosen product, prices to finance.view only (ROUTE-013; criterion 12)', function () {
     $this->actingAs($this->admin)->get('/proyek/baru?klien='.$this->client['organization']->public_id.'&produk='.$this->goods['product']->public_id)
         ->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/ProjectForm')
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/ProjectForm', false)
             ->where('companies.0.id', $this->company->public_id)->where('companies.0.money', true)
             ->where('client.units.0.handle', RowHandle::of('client_units', $this->client['unit']->id))
             ->where('product.price', '15000.00')
@@ -299,4 +299,46 @@ it('renders PG-013 with the companies in scope, the chosen client\'s rows and th
     $plain = Authorization::admin([$this->company->id], ['projects.view', 'projects.manage']);
     $this->actingAs($plain)->get('/proyek/baru?produk='.$this->goods['product']->public_id)
         ->assertInertia(fn (AssertableInertia $page) => $page->where('companies.0.money', false)->missing('product.price'));
+});
+
+it('keeps a link the editor cannot see when an amendment leaves it as it was, and refuses none for it (XL-4; ER-06)', function () {
+    $other = Projects::company();
+    $partner = ProjectFactory::new()->createOne(['company_id' => $other->id, 'period_key' => '2019']);
+    $this->actingAs($this->admin)->post('/proyek', Projects::payload($this->company, $this->client, [$this->goods]));
+    $project = newest();
+    DB::table('projects')->where('id', $project->id)->update(['linked_project_id' => $partner->id, 'link_reason' => 'Pengadaan bersama']);
+    $line = RowHandle::of('project_lines', (int) DB::table('project_lines')->where('project_id', $project->id)->value('id'));
+
+    $this->actingAs($this->admin)->put("/proyek/{$project->public_id}", Projects::payload($this->company, $this->client, [], ['lock_version' => $project->fresh()?->lock_version, 'judul' => 'Judul baru', 'tautan_tetap' => true,
+        'baris' => [['baris' => $line, 'produk' => $this->goods['product']->public_id, 'satuan' => $this->goods['base']->code, 'jumlah' => '10', 'harga' => '15000', 'mode' => 'WAREHOUSE']]]));
+
+    expect(projectAnswer()['kind'] ?? null)->toBe('COMMITTED')
+        ->and($project->fresh()?->only(['title', 'linked_project_id', 'link_reason']))->toBe(['title' => 'Judul baru', 'linked_project_id' => $partner->id, 'link_reason' => 'Pengadaan bersama']);
+});
+
+it('refuses removing a line a quotation revision cites, in words, with the path to a revision (L-20; ER-06)', function () {
+    $this->actingAs($this->admin)->post('/proyek', Projects::payload($this->company, $this->client, [$this->goods, $this->service]));
+    $project = newest();
+    $lines = DB::table('project_lines')->where('project_id', $project->id)->orderBy('line_no')->get();
+    $revision = DB::table('quotation_revisions')->insertGetId(['public_id' => (string) Str::uuid(), 'project_id' => $project->id, 'company_id' => $this->company->id, 'revision_no' => 1, 'state' => 'DRAFT', 'recorded_at' => now(), 'recorded_by' => $this->admin->id]);
+    $quoted = $lines[0];
+    DB::table('quotation_revision_lines')->insert(['quotation_revision_id' => $revision, 'company_id' => $this->company->id, 'project_line_id' => $quoted->id, 'product_id' => $quoted->product_id,
+        'quantity_scale' => $quoted->quantity_scale, 'description' => 'Buku', 'entered_qty' => '10', 'entered_unit_id' => $quoted->entered_unit_id, 'ratio_to_base' => 1, 'qty_base' => '10',
+        'unit_price' => '15000', 'sales_value' => '150000', 'recorded_at' => now(), 'recorded_by' => $this->admin->id]);
+    $kept = $lines[1];
+
+    $this->actingAs($this->admin)->put("/proyek/{$project->public_id}", Projects::payload($this->company, $this->client, [], ['lock_version' => $project->fresh()?->lock_version,
+        'baris' => [['baris' => RowHandle::of('project_lines', (int) $kept->id), 'produk' => $this->service['product']->public_id, 'satuan' => $this->service['base']->code, 'jumlah' => '10', 'harga' => '15000', 'mode' => 'SERVICE']]]));
+
+    expect(projectAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'L-20'])->and(projectAnswer()['text'])->toContain('revisi penawaran')
+        ->and(DB::table('project_lines')->where('project_id', $project->id)->count())->toBe(2);
+});
+
+it('keeps an ACTIVE project\'s unit and PIC, refusing an amendment without them at the fields (SM:Project; ER-06)', function () {
+    $this->actingAs($this->admin)->post('/proyek', Projects::payload($this->company, $this->client, [$this->goods]));
+    $project = newest();
+
+    $this->actingAs($this->admin)->put("/proyek/{$project->public_id}", Projects::payload($this->company, $this->client, [], ['lock_version' => $project->fresh()?->lock_version, 'unit' => null, 'pic' => null, 'baris' => []]))
+        ->assertSessionHasErrors(['unit', 'pic']);
+    expect($project->fresh()?->client_contact_id)->not->toBeNull();
 });
