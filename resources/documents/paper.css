@@ -63,6 +63,10 @@
     pointer-events: none;
 }
 
+.paper-watermark::after {
+    content: 'DRAF';
+}
+
 .paper-letterhead {
     display: flex;
     gap: 5mm;

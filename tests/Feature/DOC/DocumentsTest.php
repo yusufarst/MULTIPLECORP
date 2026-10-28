@@ -1,13 +1,13 @@
 <?php
 
 use App\Modules\DOC\Contracts\DocumentChangeParticipant;
+use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Jobs\RenderDocument;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\FileObject;
-use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\FileStore;
 use App\Modules\ORG\Enums\SequenceType;
@@ -87,7 +87,7 @@ function preparedDocument(object $test, string $type = 'DOC-09'): Document
 {
     prepareDocument($test, $type);
 
-    return Document::query()->where('project_id', $test->project->id)->where('document_type_code', $type)->firstOrFail();
+    return Document::query()->where('project_id', $test->project->id)->where('document_type_code', $type)->orderByDesc('id')->firstOrFail();
 }
 
 function issueDocument(object $test, Document $document, ?int $lockVersion = null, ?string $commandId = null, array $extra = []): TestResponse

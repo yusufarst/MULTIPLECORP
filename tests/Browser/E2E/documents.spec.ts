@@ -37,12 +37,12 @@ test('issues a prepared draft from PG-036 and shows its rendition (J-DOC-01; CJ-
     await expect(content.getByText('PDF sedang dibuat. Dokumen sudah terbit.')).toBeVisible();
     const year = String(new Date().getFullYear());
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(new RegExp(`^SPK UJI/09/${year}/\\d{4}$`));
-    await expect(content.getByText('PDF Sedang Dibuat')).toBeVisible();
+    await expect(content.getByText('PDF Sedang Dibuat', { exact: true })).toBeVisible();
     await expect(paper).toBeHidden();
 
     await rendition(page, document, 'READY');
     await page.reload();
-    await expect(content.getByText('PDF Siap')).toBeVisible();
+    await expect(content.getByText('PDF Siap', { exact: true })).toBeVisible();
     const frame = content.locator('iframe');
     await expect(frame).toHaveAttribute('src', /^\/berkas\/[0-9a-f-]{36}\/tampil$/);
     const inline = await page.request.get((await frame.getAttribute('src')) ?? '');
