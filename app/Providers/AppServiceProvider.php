@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Modules\DOC\Contracts\DocumentRenderer;
+use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Queries\RenditionStatus;
 use App\Modules\DOC\Services\MustacheTemplates;
@@ -11,6 +12,7 @@ use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
+use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Support\Localization\Locales;
 use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -41,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
 
         // ROUTE-285's kinds; the export and import kinds join with TASK-060 and TASK-057 (TASK-022).
         $this->app->tag([RenditionStatus::class], StatusRead::TAG);
+
+        // The issuing modules' document subjects (ARCHITECTURE §3): PRJ's quotation and company HPS (TASK-033).
+        $this->app->tag([QuotationSubjects::class], DocumentSubjectProvider::TAG);
     }
 
     private static function scalar(mixed $value): string

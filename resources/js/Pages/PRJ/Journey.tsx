@@ -110,7 +110,8 @@ export default function Journey({ project, journey, financial, can, predicates, 
         ...(can.discard ? [{ label: t('actions.discard_draft'), tone: 'danger' as const, onSelect: () => { discard.clear(); setDiscarding(true); } }] : []),
     ];
     const primary = shown?.next?.href ? (
-        <Button size="lg" render={<a href={shown.next.href} />}>
+        // The next step's sentence may be long: the button wraps it rather than widening the page (TL-11).
+        <Button size="lg" className="h-auto min-h-control-lg max-w-full shrink whitespace-normal py-2 text-left leading-snug" render={<a href={shown.next.href} />}>
             {t(shown.next.key as TranslationKey, shown.next.params)}
         </Button>
     ) : undefined;

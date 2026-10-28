@@ -194,9 +194,15 @@ it('answers a second issue of one draft CONFLICT with its number and a replay fr
 });
 
 it('refuses an issue whose period has no numbering, of a deactivated company\'s new chain, or a refused precondition, writing nothing (C-10; C-54; criterion 13)', function () {
-    $other = preparedDocument($this, 'DOC-11');
+    // C-10: a project of a second company in the issuer's scope, whose DOC-09 numbering never started.
+    $own = $this->project;
+    $unnumbered = Company::factory()->create();
+    $this->project = ProjectFactory::new()->createOne(['company_id' => $unnumbered->id]);
+    $this->issuer = Authorization::admin([$this->company->id, $unnumbered->id], ['projects.view', 'finance.view', 'documents.issue']);
+    $other = preparedDocument($this);
     issueDocument($this, $other);
     expect(documentAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-10']);
+    $this->project = $own;
 
     $document = preparedDocument($this);
     SyntheticSubjects::$refusal = 'C-43';
@@ -270,18 +276,6 @@ it('voids an issued version with its reason, the participants re-evaluating in i
 
     $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/batalkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Lagi']);
     expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-02']);
-});
-
-it('never voids a quotation and corrects an invoice layout through the invoice (L-25; CM-23)', function () {
-    Queue::fake();
-    startNumbering($this->company, SequenceType::Doc01, $this->year, 'CTH/PNW/{tahun}/{nomor:4}');
-    Authorization::grant($this->issuer, 'quotation.manage');
-    $document = preparedDocument($this, 'DOC-01');
-    issueDocument($this, $document);
-
-    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/batalkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Batal']);
-    expect(documentAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'L-25'])
-        ->and(DocumentVersion::query()->where('document_id', $document->id)->value('state'))->toBe('ISSUED');
 });
 
 it('lists one company\'s documents with the exact number lookup inside its scope (ROUTE-035; PJ-23; criterion 14)', function () {

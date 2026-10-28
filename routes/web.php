@@ -23,6 +23,7 @@ use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
 use App\Modules\PRJ\Http\Controllers\ProjectsController;
+use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
 use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
@@ -103,6 +104,15 @@ Route::get('/proyek/{id}', [ProjectsController::class, 'show'])->whereUuid('id')
 Route::get('/proyek/{id}/ubah', [ProjectsController::class, 'edit'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.edit');
 Route::put('/proyek/{id}', [ProjectsController::class, 'update'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.update');
 Route::post('/proyek/{id}/hapus-draf', [ProjectsController::class, 'discard'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.discard');
+// The quotation cycle (TASK-033; WF-QUO-01; J-QUO-01): PG-014 *Penawaran* (ROUTE-014; NAV-014) to `quotation.manage` with
+// `finance.view`, or for the client's answer `projects.confirm` — checked by its query beyond `projects.view` —, PG-037
+// *Daftar Penawaran* (ROUTE-037; NAV-037) to `projects.view`; the draft, the issue and the revision `quotation.manage`
+// (ROUTE-154–ROUTE-156), the client's answer by its own capability in its command (ROUTE-157), each with its `command_id`.
+Route::get('/proyek/{id}/penawaran', [QuotationsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('prj.quotations.show');
+Route::post('/proyek/{id}/penawaran', [QuotationsController::class, 'save'])->whereUuid('id')->middleware(['auth', 'capability:quotation.manage'])->name('prj.quotations.save');
+Route::post('/proyek/{id}/penawaran/terbitkan', [QuotationsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:quotation.manage'])->name('prj.quotations.issue');
+Route::post('/proyek/{id}/penawaran/revisi', [QuotationsController::class, 'revise'])->whereUuid('id')->middleware(['auth', 'capability:quotation.manage'])->name('prj.quotations.revise');
+Route::post('/proyek/{id}/penawaran/jawaban', [QuotationsController::class, 'answerClient'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('prj.quotations.answer');
 
 // PG-057 *Lokasi Rak* (TASK-028; ROUTE-057, ROUTE-148; NAV-057): the shared warehouse's racks and the products' minimum
 // stock, pool records of no company to `stock.view` (CS-05); their one command `warehouse.manage`, NX-01 with its
@@ -151,6 +161,7 @@ Route::post('/bukti/{id}/tautan', [EvidenceController::class, 'links'])->middlew
 // and the issue by `documents.issue`, revision and void by `documents.correct`, each NX-12 or AX-15 command carrying
 // its `command_id`; the rendition inline through its document at request time like a download (FL-07; DP-05).
 Route::get('/dokumen', [DocumentsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('doc.documents');
+Route::get('/dokumen/penawaran', [QuotationsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('prj.quotations');
 // PG-040 *Kasus Koreksi* (TASK-031; ROUTE-040, ROUTE-271; NAV-040): the cases by `projects.view` of their company, money
 // by family inside the query (PJ-16); "Tutup Kasus" by `cases.close`, its NX-06 command carrying its `command_id`.
 Route::get('/dokumen/kasus', [CorrectionCasesController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ops.cases');

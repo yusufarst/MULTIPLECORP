@@ -662,3 +662,10 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-032 on its branch `task/TASK-032-projects`: "Buat Proyek", "Ubah proyek" and "Buang Draf" (ROUTE-151–ROUTE-153) — the number drawn at creation, the activation once unit and PIC are set, the channel lock, commercial changes refused after confirmation, a draft's company change as a new project, the retired number's tombstone —; PG-010 with its journey summary, PG-011 as the project's guided journey with its deferred groups, PG-013 with the line editor; PRJ's two inversion contracts.
 - ER-06's independent review and Codex's review dispositioned; a safe shutdown checkpoint taken and resumed on the Owner's instruction.
 - Every check passed in fresh CI on `fb630ae`. TASK-032 DONE — progress 32 / 87 —; TASK-033 next.
+
+## Unreleased — 2026-10-29, TASK-033 — Quotations
+
+- TASK-032 squash-merged by the executor into `main` as `6d9fc55` (pull request #38); TASK-033 started.
+- Built TASK-033 on its branch `task/TASK-033-quotations`: the quotation's draft from the project's lines, "Terbitkan Penawaran" issuing DOC-01 through DOC's issue, "Buat Revisi" and "Catat Jawaban Klien" (ROUTE-154–ROUTE-157) — the approval the commercial confirmation's root, an expired or answered revision refused —; PG-014 in the document composer with its live paper and the phone's quick action; PG-037 by company; DOC-01 and DOC-11 supplied by PRJ.
+- Codex's review dispositioned; the browser layers' first CI findings fixed.
+- Every check passed in fresh CI on `93e66c9`. TASK-033 DONE — progress 33 / 87 —; TASK-034 next.

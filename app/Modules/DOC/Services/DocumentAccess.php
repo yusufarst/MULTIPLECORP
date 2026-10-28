@@ -22,6 +22,12 @@ final class DocumentAccess
     /** The layouts the invoice's own issue and correction govern (`invoice.issue`, `invoice.correct`; L-26). */
     public const INVOICE_LAYOUTS = ['DOC-04', 'DOC-06'];
 
+    /** Whether the type is prepared and issued on PG-036; a quotation is issued only from its revision, at the record (WF-QUO-01; ROUTE-155). */
+    public static function issuedHere(string $typeCode): bool
+    {
+        return $typeCode !== 'DOC-01';
+    }
+
     public static function mayViewMetadata(Authority $viewer, int $companyId): bool
     {
         return $viewer->allows('projects.view', $companyId);
