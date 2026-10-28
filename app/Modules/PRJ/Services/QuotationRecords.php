@@ -22,6 +22,19 @@ use Illuminate\Support\Facades\DB;
  */
 final class QuotationRecords
 {
+    /** The output taxes in force on a day with their SALES_INVOICE treatment, the company's rule over the global one; bound: day, day, company. */
+    private const TAXES = <<<'SQL'
+        select t.code, r.rate_percent, r.base_numerator, r.base_denominator, r.rounding_mode, u.treatment
+        from tax_types t
+        join tax_rate_versions r on r.tax_type_id = t.id and r.effective @> ?::date
+        join lateral (
+            select treatment from tax_treatment_rules u
+            where u.tax_type_id = t.id and u.transaction_context = 'SALES_INVOICE' and u.effective @> ?::date and (u.company_id = ? or u.company_id is null)
+            order by u.company_id nulls last limit 1
+        ) u on true
+        where t.category = 'OUTPUT_TAX' and t.is_active
+        SQL;
+
     public function __construct(private readonly AuditRecorder $audit) {}
 
     /**
@@ -198,6 +211,27 @@ final class QuotationRecords
     }
 
     /**
+     * The output taxes a quotation line carries today, as {@see self::taxes()} applies them — for the composer's live
+     * preview, which computes each line's components as the save will (INT-012).
+     *
+     * @return list<array{type: string, rate: string, numerator: string, denominator: string, rounding: string}>
+     */
+    public static function rules(int $companyId): array
+    {
+        $today = BusinessDate::today();
+        $rules = [];
+
+        foreach (DB::select(self::TAXES.' order by t.code', [$today, $today, $companyId]) as $rule) {
+            if (is_object($rule)) {
+                $rules[] = ['type' => Row::text($rule, 'code'), 'rate' => Row::text($rule, 'rate_percent'), 'numerator' => Row::text($rule, 'base_numerator'),
+                    'denominator' => Row::text($rule, 'base_denominator'), 'rounding' => Row::text($rule, 'rounding_mode')];
+            }
+        }
+
+        return $rules;
+    }
+
+    /**
      * Each line's tax components under the company's treatment on the day (DIR-024 D-1; BR-FIN-17): every active output
      * tax with a rate in force and a SALES_INVOICE treatment — the company's rule over the global one —, its amount on the
      * line's value at the rate's base and rounding. None configured, none written (FS-13).
@@ -205,18 +239,7 @@ final class QuotationRecords
     private function taxes(int $revisionId, int $companyId): void
     {
         $today = BusinessDate::today();
-        DB::statement(<<<'SQL'
-            with taxes as (
-                select t.code, r.rate_percent, r.base_numerator, r.base_denominator, r.rounding_mode, u.treatment
-                from tax_types t
-                join tax_rate_versions r on r.tax_type_id = t.id and r.effective @> ?::date
-                join lateral (
-                    select treatment from tax_treatment_rules u
-                    where u.tax_type_id = t.id and u.transaction_context = 'SALES_INVOICE' and u.effective @> ?::date and (u.company_id = ? or u.company_id is null)
-                    order by u.company_id nulls last limit 1
-                ) u on true
-                where t.category = 'OUTPUT_TAX' and t.is_active
-            )
+        DB::statement('with taxes as ('.self::TAXES.') '.<<<'SQL'
             update quotation_revision_lines q set tax_components = coalesce((
                 select jsonb_agg(jsonb_build_object(
                     'type', taxes.code,

@@ -8,8 +8,10 @@ use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\QuotationRecords;
 use App\Support\BusinessDate;
+use App\Support\Command\Outcome;
 use Carbon\CarbonImmutable;
 use Database\Factories\DOC\DocumentTypeFactory;
+use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
@@ -39,7 +41,7 @@ beforeEach(function () {
     $this->project = Project::query()->sole();
 });
 
-function quotationWord(App\Support\Command\Outcome $outcome): string
+function quotationWord(Outcome $outcome): string
 {
     return trim($outcome->kind.' '.($outcome->kind === 'COMMITTED' ? '' : (string) $outcome->code));
 }
@@ -73,7 +75,7 @@ it('drafts from the project\'s lines, saves at the revision\'s version and issue
         ->and($version->formatted_number)->toStartWith('UJI/PNW/')
         ->and(json_decode((string) $version->payload, true)['paper']['recipient']['name'])->toBe($this->client['organization']->name)
         ->and($issue())->toBe('CONFLICT BD-06')
-        ->and(fn () => DB::table('quotation_revision_lines')->where('id', $line->id)->update(['unit_price' => '1']))->toThrow(Illuminate\Database\QueryException::class, 'frozen');
+        ->and(fn () => DB::table('quotation_revision_lines')->where('id', $line->id)->update(['unit_price' => '1']))->toThrow(QueryException::class, 'frozen');
 });
 
 it('approves the latest sent revision as the commercial confirmation once, moving no stock or money, and refuses an expired one (criteria 2, 3, 5)', function () {

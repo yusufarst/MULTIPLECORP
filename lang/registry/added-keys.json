@@ -6858,6 +6858,366 @@
             "source": "L-20; BR-QUO-02 (a line a quotation revision cites)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "quotations.title": {
+            "task": "TASK-033",
+            "source": "PG-014; IA §8.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.paper": {
+            "task": "TASK-033",
+            "source": "GL-005; DOC-01",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "quotations.empty": {
+            "task": "TASK-033",
+            "source": "PG-014 empty state (TASK-033 UI requirements)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.expired_note": {
+            "task": "TASK-033",
+            "source": "J-QUO-01; L-25; BR-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.revisions": {
+            "task": "TASK-033",
+            "source": "PG-014; WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.no_revisions": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.revision": {
+            "task": "TASK-033",
+            "source": "PG-014; WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.lines": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.decided": {
+            "task": "TASK-033",
+            "source": "DATABASE §4.5 decided_by",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.action.start": {
+            "task": "TASK-033",
+            "source": "ROUTE-154; O-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.action.issue": {
+            "task": "TASK-033",
+            "source": "ROUTE-155 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "quotations.action.revise": {
+            "task": "TASK-033",
+            "source": "ROUTE-156 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "quotations.action.answer": {
+            "task": "TASK-033",
+            "source": "ROUTE-157 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "quotations.action.approve": {
+            "task": "TASK-033",
+            "source": "ROUTE-157; AX-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.action.reject": {
+            "task": "TASK-033",
+            "source": "ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer_choice.approve": {
+            "task": "TASK-033",
+            "source": "ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer_choice.reject": {
+            "task": "TASK-033",
+            "source": "ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.project": {
+            "task": "TASK-033",
+            "source": "GL-004",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "quotations.field.revision": {
+            "task": "TASK-033",
+            "source": "PG-037",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.valid_until": {
+            "task": "TASK-033",
+            "source": "L-25; DATABASE §4.5 valid_until",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.value": {
+            "task": "TASK-033",
+            "source": "PG-037; PJ-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.description": {
+            "task": "TASK-033",
+            "source": "PG-014 line",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.quantity": {
+            "task": "TASK-033",
+            "source": "PG-014 line",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.price": {
+            "task": "TASK-033",
+            "source": "PG-014 line",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.answer": {
+            "task": "TASK-033",
+            "source": "ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.field.reason": {
+            "task": "TASK-033",
+            "source": "ROUTE-157; DATABASE §4.5 decision_reason",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.title": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.lines": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.valid_help": {
+            "task": "TASK-033",
+            "source": "L-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.no_lines": {
+            "task": "TASK-033",
+            "source": "WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.remove": {
+            "task": "TASK-033",
+            "source": "L-20",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.subtotal": {
+            "task": "TASK-033",
+            "source": "IP-13; DESIGN_SYSTEM §14.1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.subset": {
+            "task": "TASK-033",
+            "source": "L-20",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.form.save_first": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.issue_title": {
+            "task": "TASK-033",
+            "source": "IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.issue_consequence": {
+            "task": "TASK-033",
+            "source": "MSG-39; BR-QUO-03; BR-CR-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.valid_until": {
+            "task": "TASK-033",
+            "source": "L-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.answer_title": {
+            "task": "TASK-033",
+            "source": "IP-08; ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.approve_consequence": {
+            "task": "TASK-033",
+            "source": "MSG-39; AX-13; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.confirm.reject_consequence": {
+            "task": "TASK-033",
+            "source": "MSG-39; BR-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.drafted": {
+            "task": "TASK-033",
+            "source": "ROUTE-154",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.saved": {
+            "task": "TASK-033",
+            "source": "ROUTE-154",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.issued": {
+            "task": "TASK-033",
+            "source": "ROUTE-155; MSG-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.revised": {
+            "task": "TASK-033",
+            "source": "ROUTE-156",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.approved": {
+            "task": "TASK-033",
+            "source": "ROUTE-157; AX-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.answer.rejected": {
+            "task": "TASK-033",
+            "source": "ROUTE-157",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.numbering_owner": {
+            "task": "TASK-033",
+            "source": "MSG-17; NM-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.expired": {
+            "task": "TASK-033",
+            "source": "L-25; BR-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.validity": {
+            "task": "TASK-033",
+            "source": "L-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.no_lines": {
+            "task": "TASK-033",
+            "source": "WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.not_sent": {
+            "task": "TASK-033",
+            "source": "WF-QUO-01; BR-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.no_draft": {
+            "task": "TASK-033",
+            "source": "WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.state_changed": {
+            "task": "TASK-033",
+            "source": "ST-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.already_issued": {
+            "task": "TASK-033",
+            "source": "BD-06; M-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.refusal.already_answered": {
+            "task": "TASK-033",
+            "source": "BD-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.validation.line": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.validation.price": {
+            "task": "TASK-033",
+            "source": "PG-014",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.validation.lines": {
+            "task": "TASK-033",
+            "source": "WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.validation.validity": {
+            "task": "TASK-033",
+            "source": "L-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "quotations.list.empty": {
+            "task": "TASK-033",
+            "source": "PG-037",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

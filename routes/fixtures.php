@@ -14,6 +14,7 @@ use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
+use Tests\Support\Fixtures\QuotationFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
@@ -93,4 +94,8 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // TL-09–TL-12 (TASK-032): the run's company with its PROJECT numbering started or not, a client, goods and a service,
     // the account's grants on it, and optionally a project created through ROUTE-151's action.
     Route::post('__fixtures/proyek', [ProjectFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-033): the run's company with its PROJECT and DOC-01 numbering started, a project of `lines` goods
+    // and, by `stage`, its quotation drafted with a validity and prices or also issued through the quotation's actions.
+    Route::post('__fixtures/penawaran', [QuotationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });

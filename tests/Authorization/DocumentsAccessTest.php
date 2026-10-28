@@ -55,7 +55,7 @@ it('opens the pages with projects.view only, and another company\'s document as 
     $this->actingAs($outsider)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-09', 'subjek' => ['project_id' => $this->project->public_id]])->assertNotFound();
 });
 
-it('prepares and issues only with documents.issue and the family\'s view — DOC-01 with quotation.manage, a purchase\'s layout with cost.view (PJ-15)', function () {
+it('prepares and issues only with documents.issue and the family\'s view — DOC-01 with quotation.manage and only at its quotation, a purchase\'s layout with cost.view (PJ-15; WF-QUO-01)', function () {
     $subject = ['project_id' => $this->project->public_id];
 
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view', 'finance.view']))
@@ -68,7 +68,9 @@ it('prepares and issues only with documents.issue and the family\'s view — DOC
 
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'documents.issue', 'quotation.manage']))
         ->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-01', 'subjek' => $subject])->assertRedirect();
-    expect(DB::table('documents')->where('document_type_code', 'DOC-01')->count())->toBe(1);
+    // DOC-01 is readied and issued at PG-014 with its revision (ROUTE-154, ROUTE-155), never from PG-036.
+    expect(session('inertia.flash_data')['answer'] ?? null)->toMatchArray(['kind' => 'REJECTED', 'code' => 'WF-QUO-01'])
+        ->and(DB::table('documents')->where('document_type_code', 'DOC-01')->count())->toBe(0);
 
     $purchase = PurchaseFactory::new()->createOne(['company_id' => $this->company->id]);
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'documents.issue']))
