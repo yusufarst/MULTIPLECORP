@@ -129,7 +129,8 @@ final class QuotationWorkspace
                 $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
         } elseif ($money) {
             // An issued revision shows the paper it was issued with, never one recomposed from today's client (BR-SN-01; architecture challenge 1b).
-            $payload = json_decode((string) DB::table('document_versions')->where('quotation_revision_id', $id)->value('payload'), true);
+            $stored = DB::table('document_versions')->where('quotation_revision_id', $id)->value('payload');
+            $payload = is_string($stored) ? json_decode($stored, true) : null;
             $paper = is_array($payload) && is_array($payload['paper'] ?? null) ? $payload['paper'] : null;
         }
 

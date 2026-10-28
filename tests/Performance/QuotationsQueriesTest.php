@@ -64,7 +64,7 @@ it('reads PG-014 in at most fourteen statements, the same for one line and thirt
     $revision = QuotationRecords::latest($project->id);
     $line = DB::table('quotation_revision_lines')->where('quotation_revision_id', $revision['id'])->first();
     foreach (range(2, 30) as $number) {
-        DB::table('quotation_revision_lines')->insert(array_diff_key((array) $line, ['id' => true, 'public_id' => true]));
+        DB::table('quotation_revision_lines')->insert([...array_diff_key((array) $line, ['id' => true, 'public_id' => true]), 'command_line_no' => $number]);
     }
 
     expect($one)->toBeLessThanOrEqual(14)

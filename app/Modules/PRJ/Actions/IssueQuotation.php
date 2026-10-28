@@ -2,6 +2,7 @@
 
 namespace App\Modules\PRJ\Actions;
 
+use App\Modules\DOC\Actions\IssueDocument;
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\DOC\Services\DocumentSubjects;
@@ -76,6 +77,7 @@ final class IssueQuotation
             }
 
             $version = $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true);
+            IssueDocument::render($context, $version);
             $this->quotations->sent($context, $latest['id'], $project->company_id, (string) $latest['valid_until'], (string) $version->formatted_number);
 
             return new CommandResult('quotation_revision', $latest['id']);

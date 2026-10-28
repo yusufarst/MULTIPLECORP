@@ -5,7 +5,6 @@ namespace App\Modules\DOC\Services;
 use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\DOC\Data\DocumentSubject;
-use App\Modules\DOC\Jobs\RenderDocument;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentVersion;
@@ -264,9 +263,6 @@ final class DocumentIssuing
         if ($predecessor !== null) {
             $this->chain->changed($context, $this->chain->change(DocumentChange::DOCUMENT_REVISED, $document, $predecessor->id, $draft->id));
         }
-
-        $renditionId = $rendition->id;
-        $context->afterCommit(fn () => RenderDocument::dispatch($renditionId));
 
         return DocumentVersion::query()->findOrFail($draft->id);
     }

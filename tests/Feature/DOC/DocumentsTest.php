@@ -194,9 +194,15 @@ it('answers a second issue of one draft CONFLICT with its number and a replay fr
 });
 
 it('refuses an issue whose period has no numbering, of a deactivated company\'s new chain, or a refused precondition, writing nothing (C-10; C-54; criterion 13)', function () {
-    $other = preparedDocument($this, 'DOC-12');
+    // C-10: a project of a second company in the issuer's scope, whose DOC-09 numbering never started.
+    $own = $this->project;
+    $unnumbered = Company::factory()->create();
+    $this->project = ProjectFactory::new()->createOne(['company_id' => $unnumbered->id]);
+    $this->issuer = Authorization::admin([$this->company->id, $unnumbered->id], ['projects.view', 'finance.view', 'documents.issue']);
+    $other = preparedDocument($this);
     issueDocument($this, $other);
     expect(documentAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-10']);
+    $this->project = $own;
 
     $document = preparedDocument($this);
     SyntheticSubjects::$refusal = 'C-43';

@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
-use Illuminate\Support\ViewErrorBag;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
@@ -50,13 +49,6 @@ function quotationAnswer(): array
     $flash = session('inertia.flash_data');
 
     return is_array($flash) && is_array($flash['answer'] ?? null) ? $flash['answer'] : [];
-}
-
-function quotationFieldError(string $field): mixed
-{
-    $errors = session('errors');
-
-    return $errors instanceof ViewErrorBag ? $errors->getBag('default')->get($field) : null;
 }
 
 function startQuotationNumbering(object $test): void
@@ -121,12 +113,12 @@ it('keeps a stale save\'s input with CONFLICT and refuses a past validity at its
     quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'] - 1, 'baris' => [['baris' => $handle, 'jumlah' => '5', 'harga' => '1000']]]);
     expect(quotationAnswer())->toMatchArray(['kind' => 'CONFLICT', 'code' => 'ST-01', 'cause' => 'stale']);
 
-    quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'berlaku' => CarbonImmutable::parse(BusinessDate::today())->subDay()->toDateString(), 'baris' => [['baris' => $handle, 'jumlah' => '5', 'harga' => '1000']]]);
-    expect(quotationFieldError('berlaku'))->not->toBeEmpty();
+    quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'berlaku' => CarbonImmutable::parse(BusinessDate::today())->subDay()->toDateString(), 'baris' => [['baris' => $handle, 'jumlah' => '5', 'harga' => '1000']]])
+        ->assertSessionHasErrors('berlaku');
 
-    quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'baris' => [['baris' => str_repeat('a', 32), 'jumlah' => '5', 'harga' => '1000']]]);
-    expect(quotationFieldError('baris.0.baris'))->not->toBeEmpty()
-        ->and(DB::table('quotation_revision_lines')->where('quotation_revision_id', $revision['id'])->value('entered_qty'))->toBe('12.000');
+    quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'baris' => [['baris' => str_repeat('a', 32), 'jumlah' => '5', 'harga' => '1000']]])
+        ->assertSessionHasErrors('baris.0.baris');
+    expect(DB::table('quotation_revision_lines')->where('quotation_revision_id', $revision['id'])->value('entered_qty'))->toBe('12.000');
 });
 
 it('refuses the issue in words until DOC-01 numbering starts, then issues once — a second issue CONFLICT with its number (ROUTE-155; C-10; BD-06; criterion 1)', function () {
@@ -153,8 +145,7 @@ it('records the client\'s rejection with its reason, revises, and approves the l
     $answer = fn (array $revision, string $choice, ?string $reason = null, ?object $actor = null) => quotationPost($this, '/jawaban',
         ['revisi' => $revision['public_id'], 'jawaban' => $choice, 'alasan' => $reason, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true], $actor);
 
-    $answer($first, 'TOLAK');
-    expect(quotationFieldError('alasan'))->not->toBeEmpty();
+    $answer($first, 'TOLAK')->assertSessionHasErrors('alasan');
     $answer($first, 'TOLAK', 'Harga terlalu tinggi')->assertRedirect("/proyek/{$this->project->public_id}/penawaran");
     expect(quotationAnswer())->toMatchArray(['kind' => 'COMMITTED'])
         ->and(DB::table('quotation_revisions')->where('id', $first['id'])->first())->toMatchObject(['state' => 'REJECTED', 'decision_reason' => 'Harga terlalu tinggi']);

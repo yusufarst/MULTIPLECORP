@@ -3,7 +3,10 @@
 namespace App\Modules\DOC\Actions;
 
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Jobs\RenderDocument;
 use App\Modules\DOC\Models\Document;
+use App\Modules\DOC\Models\DocumentRendition;
+use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Services\DocumentAccess;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentIssuing;
@@ -56,9 +59,19 @@ final class IssueDocument
                 throw Refused::rejected('WF-QUO-01', ['reason' => 'issued_at_record']);
             }
 
-            $this->issuing->issue($context, $document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId);
+            self::render($context, $this->issuing->issue($context, $document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId));
 
             return new CommandResult('document', $document->id);
         });
+    }
+
+    /** SF-RENDER: the issued version's PENDING rendition handed to the render job once the issue commits (IP-12). */
+    public static function render(CommandContext $context, DocumentVersion $version): void
+    {
+        $rendition = DocumentRendition::query()->where('document_version_id', $version->id)->orderByDesc('attempt_no')->value('id');
+
+        if (is_int($rendition)) {
+            $context->afterCommit(fn () => RenderDocument::dispatch($rendition));
+        }
     }
 }

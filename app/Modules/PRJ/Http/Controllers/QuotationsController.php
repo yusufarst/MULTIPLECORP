@@ -64,7 +64,7 @@ final class QuotationsController extends Controller
             'baris.*.keterangan' => ['nullable', 'string', 'max:500'],
         ]);
         $revision = is_string($input['revisi'] ?? null) ? $input['revisi'] : null;
-        $entered = is_array($input['baris'] ?? null) ? $input['baris'] : [];
+        $entered = is_array($input['baris'] ?? null) ? array_values($input['baris']) : [];
         $lines = $revision === null ? [] : $this->workspace->resolve($actor, $project, $revision, $entered);
         $validUntil = is_string($input['berlaku'] ?? null) ? $input['berlaku'] : null;
 

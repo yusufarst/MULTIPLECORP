@@ -71,7 +71,7 @@ final class QuotationList
             ->join('projects as p', 'p.id', '=', 'r.project_id')
             ->join('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
             ->leftJoin('document_versions as v', 'v.quotation_revision_id', '=', 'r.id')
-            ->when(is_numeric($cursor), fn (Builder $where) => $where->where('r.id', '<', (int) $cursor))
+            ->when(is_numeric($cursor), fn (Builder $where) => $where->where('r.id', '<', is_numeric($cursor) ? (int) $cursor : 0))
             ->when($money, fn (Builder $select) => $select->selectSub(DB::table('quotation_revision_lines as l')->whereColumn('l.quotation_revision_id', 'r.id')
                 ->selectRaw('coalesce(sum(l.sales_value), 0)'), 'value'))
             ->orderByDesc('r.id')
