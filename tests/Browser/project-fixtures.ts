@@ -6,7 +6,7 @@ import { numberingCompany, ownerSignedIn } from './numbering-fixtures';
 // go-live armed and its PROJECT numbering started — or not, for UXS-28 —, a client with its unit and PIC, goods and a
 // service, and optionally a project created through ROUTE-151's action, a DRAFT when asked.
 
-export type ProjectRun = { company: string; client: string; unit: string; contact: string; goods: string; service: string; project: string | null; number: string | null };
+export type ProjectRun = { company: string; code: string; client: string; unit: string; contact: string; goods: string; service: string; project: string | null; number: string | null };
 
 export async function projectRun(page: Page, run: string, options: { numbered?: boolean; project?: boolean; draft?: boolean; locale?: 'id' | 'en' } = {}): Promise<ProjectRun> {
     await ownerSignedIn(page, run, options.locale ?? 'id');

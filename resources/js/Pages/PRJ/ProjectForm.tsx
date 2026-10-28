@@ -15,6 +15,7 @@ import { ActionBar } from '@/components/action-bar';
 import { type BusinessDate, BusinessDateControl, DateField } from '@/components/date-field';
 import { DecimalInput, FormField, FormSection, ValidationSummary } from '@/components/form';
 import { LineEditor } from '@/components/line-editor';
+import { StaleComparison, type StaleField } from '@/components/notices';
 import { Lookup, type LookupResult } from '@/components/lookup';
 import { PageHeader } from '@/components/page-header';
 import { ClientCreateSheet, PartyLookup, usePartySearch } from '@/components/parties';
@@ -78,6 +79,34 @@ const blank = (key: string): Line => ({ key, handle: null, term: '', product: nu
 /** The quantity as entered, without the trailing zeros the database's scale adds. */
 const entered = (quantity: string): string => (quantity.includes('.') ? quantity.replace(/\.?0+$/, '') : quantity);
 
+/** A stored version's lines as the editor holds them. */
+const linesOf = (project: Existing | null): Line[] => (project?.lines ?? []).map((line) => ({
+    key: line.handle,
+    handle: line.handle,
+    term: '',
+    product: line.product,
+    quantity: entered(line.quantity),
+    unit: line.unit,
+    mode: line.mode,
+    price: line.price ?? null,
+    description: line.product !== null && line.description === line.product.name ? '' : line.description,
+}));
+
+const lineSignature = (lines: Line[]): string => lines.map((line) => [line.handle, line.product?.id, line.quantity, line.unit, line.mode, line.price ?? '', line.description].join('|')).join('\n');
+const siplahOf = (values: Record<string, string | null> | null): Record<string, string> => Object.fromEntries([...SIPLAH_TEXTS, ...SIPLAH_AMOUNTS].map((field) => [field, values?.[field] ?? '']));
+
+/** The comparable values of a stored version, as the form's own state holds them (IP-03). */
+const versionOf = (project: Existing): Record<string, string> => ({
+    title: project.title,
+    deadline: project.deadline ?? '',
+    channel: project.channel,
+    unit: project.unit ?? '',
+    address: project.address ?? '',
+    contact: project.contact ?? '',
+    siplah: JSON.stringify(siplahOf(project.siplah)),
+    lines: lineSignature(linesOf(project)),
+});
+
 export default function ProjectForm({ companies, project, client, today }: Props) {
     const { t } = useTranslation();
     const page = usePage<{ auth: AccountHints }>();
@@ -92,22 +121,15 @@ export default function ProjectForm({ companies, project, client, today }: Props
     const [address, setAddress] = useState(project?.address ?? '');
     const [contact, setContact] = useState(project?.contact ?? '');
     const [channel, setChannel] = useState<'REGULAR' | 'SIPLAH'>(project?.channel ?? 'REGULAR');
-    const [siplah, setSiplah] = useState<Record<string, string>>(() => Object.fromEntries([...SIPLAH_TEXTS, ...SIPLAH_AMOUNTS].map((field) => [field, project?.siplah?.[field] ?? ''])));
+    const [siplah, setSiplah] = useState<Record<string, string>>(() => siplahOf(project?.siplah ?? null));
     const [title, setTitle] = useState(project?.title ?? '');
     const [deadline, setDeadline] = useState(project?.deadline ?? '');
     const [link, setLink] = useState<LookupResult | null>(project?.link?.id != null ? { id: project.link.id, code: project.link.number ?? '', label: project.link.title ?? '' } : null);
     const [linkReason, setLinkReason] = useState(project?.link?.reason ?? '');
-    const [lines, setLines] = useState<Line[]>(() => (project?.lines ?? []).map((line) => ({
-        key: line.handle,
-        handle: line.handle,
-        term: '',
-        product: line.product,
-        quantity: entered(line.quantity),
-        unit: line.unit,
-        mode: line.mode,
-        price: line.price ?? null,
-        description: line.product !== null && line.description === line.product.name ? '' : line.description,
-    })));
+    const [lines, setLines] = useState<Line[]>(() => linesOf(project));
+    // The version the form shows and sends: a CONFLICT's newer version never replaces it silently — only an explicit
+    // re-apply onto it, or discarding the input (IP-03; ST-01; PX-07).
+    const [base, setBase] = useState<Existing | null>(project);
     const [creating, setCreating] = useState<{ name: string; key: number } | null>(null);
     const [dirty, setDirty] = useState(false);
     const [leaving, setLeaving] = useState<(() => void) | null>(null);
@@ -232,11 +254,49 @@ export default function ProjectForm({ companies, project, client, today }: Props
                 mode: line.mode,
                 keterangan: line.description === '' ? null : line.description,
             })),
-            ...(project === null ? {} : { lock_version: project.lock_version }),
+            ...(base === null ? {} : { lock_version: base.lock_version }),
         }, () => { setDirty(false); });
     };
     const linkKept = project?.link != null && (!project.link.visible || (link?.id === project.link.id && linkReason === (project.link.reason ?? '')));
     const origin = project === null ? '/proyek' : `/proyek/${project.id}`;
+    // A newer version than the one shown (another Admin's save): the current values beside this form's, marked where they differ.
+    const mine: Record<string, string> = { title, deadline, channel, unit, address, contact, siplah: JSON.stringify(siplah), lines: lineSignature(lines) };
+    const newer = project !== null && base !== null && project.lock_version !== base.lock_version ? project : null;
+    const labelKeys: Record<string, string> = { title: 'judul', deadline: 'tenggat', channel: 'kanal', unit: 'unit', address: 'alamat', contact: 'pic' };
+    const shown = (key: string, value: string): string => {
+        if (key === 'lines') return t('projects.journey.lines', { n: value === '' ? 0 : value.split('\n').length });
+        if (key === 'siplah') return value === JSON.stringify(siplahOf(null)) ? '—' : t('projects.siplah.title');
+        if (key === 'unit') return units.find((option) => option.handle === value)?.name ?? (value === '' ? '—' : value);
+
+        return value === '' ? '—' : value;
+    };
+    const stale: StaleField[] | null = newer === null || base === null ? null : Object.entries(versionOf(newer)).map(([key, current]) => {
+        const before = versionOf(base)[key] ?? '';
+        const own = mine[key] ?? '';
+        const label = key === 'lines' ? t('projects.form.lines') : key === 'siplah' ? t('projects.siplah.title') : (fieldLabels[labelKeys[key] ?? key] ?? key);
+
+        return { key, label, current: shown(key, current), mine: shown(key, own), differs: current !== own, bothChanged: own !== before && current !== before && own !== current };
+    });
+    // Each field this form did not change takes the newer version's value; its own changes stay (IP-03).
+    const reapply = () => {
+        if (newer === null || base === null) return;
+        const before = versionOf(base);
+
+        if (mine.title === before.title) setTitle(newer.title);
+        if (mine.deadline === before.deadline) setDeadline(newer.deadline ?? '');
+        if (mine.channel === before.channel) setChannel(newer.channel);
+        if (mine.unit === before.unit) setUnit(newer.unit ?? '');
+        if (mine.address === before.address) setAddress(newer.address ?? '');
+        if (mine.contact === before.contact) setContact(newer.contact ?? '');
+        if (mine.siplah === before.siplah) setSiplah(siplahOf(newer.siplah));
+        if (mine.lines === before.lines) setLines(linesOf(newer));
+        setBase(newer);
+        command.clear();
+    };
+    const discardMine = () => {
+        setDirty(false);
+        router.visit(window.location.pathname, { preserveState: false });
+    };
     const pageTitle = project === null ? t('projects.form.create_title') : t('projects.form.edit_title', { nomor: project.number });
 
     return (
@@ -248,6 +308,7 @@ export default function ProjectForm({ companies, project, client, today }: Props
                     date={project === null || chosen?.id !== project.company ? <BusinessDateControl today={today} value={date} onChange={(next) => { setDate(next); touch(); }} /> : undefined}
                 />
                 {summary.length > 0 && <ValidationSummary fields={summary} />}
+                {stale !== null && <StaleComparison fields={stale} onReapply={reapply} onDiscard={discardMine} />}
                 <FormSection title={t('projects.form.parties')}>
                     <FormField label={t('projects.field.company')} required id="field-perusahaan" error={error('perusahaan')}
                         help={amend && !companyFixed ? t('projects.form.company_change') : undefined}>

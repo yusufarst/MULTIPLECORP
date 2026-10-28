@@ -5,10 +5,12 @@ namespace App\Modules\PRJ\Actions;
 use App\Modules\PRJ\Data\LineInput;
 use App\Modules\PRJ\Data\ProjectInput;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Queries\ProjectForm;
 use App\Modules\PRJ\Services\ProjectRecords;
 use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
+use App\Support\Command\CommandLog;
 use App\Support\Command\CommandRequest;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
@@ -17,6 +19,7 @@ use App\Support\Command\Refused;
 use App\Support\Search\Row;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
+use LogicException;
 
 /**
  * `PRJ UpdateProject` (ROUTE-152; INT-152; NX-03; WF-PRJ-01; J-PRJ-01): "Ubah proyek" at the version the form read —
@@ -35,6 +38,7 @@ final class UpdateProject
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly ProjectRecords $records,
+        private readonly CommandLog $log,
     ) {}
 
     public function run(string $commandId, int $actorUserId, Project $project, int $lockVersion, ProjectInput $input, string $businessDate, bool $prefilled): Outcome
@@ -72,6 +76,26 @@ final class UpdateProject
 
             return new CommandResult('project', $created->id);
         });
+    }
+
+    /**
+     * A retry of a company change whose draft is gone — discarded by that very command —: its recorded outcome,
+     * re-authorized and checked against its payload by the envelope (CI-05); null when no such command was recorded.
+     *
+     * @param  array<string, mixed>  $payload  the validated request as {@see ProjectForm::payload()} keeps it
+     */
+    public function replay(string $commandId, int $actorUserId, string $publicId, array $payload, int $lockVersion, string $businessDate, bool $prefilled): ?Outcome
+    {
+        $recorded = $this->log->probe($commandId);
+
+        if ($recorded === null || $recorded->commandType !== self::TYPE || $recorded->companyId === null) {
+            return null;
+        }
+
+        $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $recorded->companyId, self::CAPABILITY,
+            Fingerprint::of(self::TYPE, self::companyKey($recorded->companyId), [...$payload, 'project' => strtolower($publicId), 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled]));
+
+        return $this->envelope->run($request, fn (): CommandResult => throw new LogicException('A recorded command only replays (CI-05).'));
     }
 
     /**

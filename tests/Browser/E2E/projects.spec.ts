@@ -11,7 +11,7 @@ import { projectRun, type ProjectRun } from '../project-fixtures';
 const UUID = /\/proyek\/[0-9a-f-]{36}$/;
 
 async function fillParties(page: Page, run: ProjectRun, title: string): Promise<void> {
-    await page.getByLabel(/^Perusahaan/).selectOption(run.company);
+    await page.getByRole('combobox', { name: /^Perusahaan/ }).selectOption(run.company);
     await page.getByRole('combobox', { name: 'Klien' }).fill(run.client);
     await page.getByRole('option', { name: run.client }).click();
     await page.getByLabel(/^Unit/).selectOption({ label: run.unit });

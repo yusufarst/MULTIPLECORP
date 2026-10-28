@@ -57,6 +57,7 @@ final class ProjectFixture
         }
 
         return response()->json([
+            'code' => $company->code,
             'client' => $client['organization']->name,
             'unit' => $client['unit']->name,
             'contact' => $client['contact']->name,

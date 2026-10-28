@@ -16,7 +16,7 @@ for (const [locale, texts] of [
 
         await page.goto('/proyek');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
-        await expect(page.getByRole('row').filter({ hasText: run.number ?? '' })).toContainText(texts.stage);
+        await expect(page.getByRole('row').filter({ hasText: run.number ?? '' }).filter({ hasText: run.code })).toContainText(texts.stage);
 
         await page.goto(`/proyek/${run.project ?? ''}`);
         await expect(page.getByRole('list', { name: texts.track })).toContainText(texts.stage);

@@ -51,6 +51,14 @@ final class ProjectWorkspace
         return $project;
     }
 
+    /** A discarded draft's retired number, by the draft's public identifier (L-37). */
+    public function retiredNumberOf(string $publicId): ?string
+    {
+        $number = preg_match(self::UUID, $publicId) === 1 ? DB::table('retired_numbers')->where('source_public_id', strtolower($publicId))->value('formatted_number') : null;
+
+        return is_string($number) ? $number : null;
+    }
+
     /** Whether the viewer may amend the project — `projects.manage` of its company (AZ-01). */
     public function mayManage(int $viewerId, Project $project): bool
     {

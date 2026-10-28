@@ -19,7 +19,6 @@ import { RegionEmpty, RegionLoading } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Code, DateText, DateTimeText, Money } from '@/components/values';
 import { typeName } from '@/features/doc/labels';
 import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
@@ -255,30 +254,21 @@ export default function Journey({ project, journey, financial, can, predicates, 
                     {project.lines.length === 0 ? (
                         <p className="text-body text-text-secondary">{t('projects.form.no_lines')}</p>
                     ) : (
-                        <Table>
-                            <caption className="sr-only">{t('projects.form.lines')}</caption>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>{t('projects.line.product')}</TableHead>
-                                    <TableHead className="text-right">{t('projects.line.quantity')}</TableHead>
-                                    <TableHead>{t('projects.line.mode')}</TableHead>
-                                    {project.lines.some((line) => 'price' in line) && <TableHead className="text-right">{t('projects.line.price')}</TableHead>}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {project.lines.map((line) => (
-                                    <TableRow key={line.no}>
-                                        <TableCell>
-                                            <span className="block font-medium text-text-primary">{line.product}</span>
-                                            {line.description !== line.product && <span className="block text-caption text-text-secondary">{line.description}</span>}
-                                        </TableCell>
-                                        <TableCell className="text-right tabular-nums">{`${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</TableCell>
-                                        <TableCell>{t(modeName(line.mode))}</TableCell>
-                                        {'price' in line && <TableCell className="text-right">{line.price == null ? '—' : <Money value={line.price} />}</TableCell>}
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                        <ul role="list" aria-label={t('projects.form.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
+                            {project.lines.map((line) => (
+                                <li key={line.no} className="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-2">
+                                    <span className="min-w-0">
+                                        <span className="block font-medium text-text-primary">{line.product}</span>
+                                        {line.description !== line.product && <span className="block text-caption text-text-secondary">{line.description}</span>}
+                                    </span>
+                                    <span className="flex shrink-0 flex-wrap items-baseline gap-x-3 text-body text-text-secondary">
+                                        <span className="tabular-nums text-text-primary">{`${line.quantity.replace(/\.?0+$/, '')} ${line.unit}`}</span>
+                                        <span>{t(modeName(line.mode))}</span>
+                                        {'price' in line && <span>{line.price == null ? '—' : <Money value={line.price} />}</span>}
+                                    </span>
+                                </li>
+                            ))}
+                        </ul>
                     )}
                 </Section>
                 <Section title={t('projects.journey.history')}>

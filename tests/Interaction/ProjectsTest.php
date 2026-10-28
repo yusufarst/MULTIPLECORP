@@ -75,4 +75,28 @@ it('discards once, its command_id replayed answering the recorded outcome with o
 
     $this->actingAs($this->admin)->post("/proyek/{$project->public_id}/hapus-draf", $body)->assertRedirect('/proyek');
     expect(projectsInteractionAnswer()['kind'])->toBe(Outcome::COMMITTED)->and(DB::table('retired_numbers')->count())->toBe(1);
+
+    // The draft is gone; the same command's retry answers its recorded outcome rather than an unknown address (CI-05).
+    $this->actingAs($this->admin)->post("/proyek/{$project->public_id}/hapus-draf", $body)->assertRedirect('/proyek');
+    expect(projectsInteractionAnswer())->toMatchArray(['kind' => Outcome::COMMITTED])->and(projectsInteractionAnswer()['text'])->toContain($project->project_number)
+        ->and(DB::table('retired_numbers')->count())->toBe(1);
+
+    // Another account, or another command identifier, still finds no such project (AZ-11).
+    $this->actingAs(Authorization::admin([$this->company->id], ['projects.view', 'projects.manage']))->post("/proyek/{$project->public_id}/hapus-draf", $body)->assertRedirect("/proyek/{$project->public_id}");
+    expect(projectsInteractionAnswer()['kind'])->toBe(Outcome::CONFLICT);
+    $this->actingAs($this->admin)->post("/proyek/{$project->public_id}/hapus-draf", ['command_id' => (string) Str::uuid()])->assertNotFound();
+});
+
+it('answers a retried company change its recorded outcome once its draft is gone (INT-152; CI-05; L-21)', function () {
+    $other = Projects::company();
+    Authorization::grantCompany($this->admin, $other->id);
+    $this->actingAs($this->admin)->post('/proyek', Projects::payload($this->company, $this->client, [$this->goods], ['pic' => null]));
+    $draft = Project::query()->sole();
+    $payload = Projects::payload($other, $this->client, [$this->goods], ['pic' => null, 'lock_version' => $draft->lock_version]);
+
+    $this->actingAs($this->admin)->put("/proyek/{$draft->public_id}", $payload);
+    $moved = Project::query()->sole();
+    $this->actingAs($this->admin)->put("/proyek/{$draft->public_id}", $payload)->assertRedirect("/proyek/{$moved->public_id}");
+
+    expect(projectsInteractionAnswer()['kind'])->toBe(Outcome::COMMITTED)->and(Project::query()->count())->toBe(1)->and(DB::table('retired_numbers')->count())->toBe(1);
 });
