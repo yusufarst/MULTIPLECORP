@@ -6132,6 +6132,726 @@
             "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "projects.action.save_new": {
+            "task": "TASK-032",
+            "source": "ADMIN_FLOW J-PRJ-01; ROUTE-151 \"Buat Proyek\"",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.action.save": {
+            "task": "TASK-032",
+            "source": "ROUTE-152; INT-152 (the amendment's save, PT-03)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.action.start_numbering": {
+            "task": "TASK-032",
+            "source": "ADMIN_FLOW UXS-28 (\"Mulai Penomoran\" on PG-061)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.answer.created": {
+            "task": "TASK-032",
+            "source": "ROUTE-151 success (NAV-013)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.answer.amended": {
+            "task": "TASK-032",
+            "source": "ROUTE-152 success (NAV-013)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.answer.moved": {
+            "task": "TASK-032",
+            "source": "L-21; L-37; DIR-090 (6)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.answer.discarded": {
+            "task": "TASK-032",
+            "source": "ROUTE-153 success; L-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.numbering_owner": {
+            "task": "TASK-032",
+            "source": "ADMIN_FLOW UXS-28 (the Owner's path); MSG-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.company_inactive": {
+            "task": "TASK-032",
+            "source": "BR-ACC-03; C-54",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.confirmed": {
+            "task": "TASK-032",
+            "source": "L-20; BR-QUO-02; J-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.company_locked": {
+            "task": "TASK-032",
+            "source": "L-21; WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.channel_locked": {
+            "task": "TASK-032",
+            "source": "BR-PRJ-05; C-51",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.downstream": {
+            "task": "TASK-032",
+            "source": "L-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.not_draft": {
+            "task": "TASK-032",
+            "source": "L-37; ROUTE-153",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.closed": {
+            "task": "TASK-032",
+            "source": "L-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.link": {
+            "task": "TASK-032",
+            "source": "XL-4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.unknown": {
+            "task": "TASK-032",
+            "source": "CS-04; AZ-11 (an unknown and an out-of-scope reference alike)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.of_unit": {
+            "task": "TASK-032",
+            "source": "WF-MD-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.unit": {
+            "task": "TASK-032",
+            "source": "C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.scale": {
+            "task": "TASK-032",
+            "source": "C-09; BR-INV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.quantity": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.validation.mode": {
+            "task": "TASK-032",
+            "source": "BR-XD-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.required": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.choice": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.too_short": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.too_long": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.date": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.number": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.lines": {
+            "task": "TASK-032",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.validation.future": {
+            "task": "TASK-032",
+            "source": "C-50; BR-DT-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.details": {
+            "task": "TASK-032",
+            "source": "SM:Project (activation); PL-3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.quotation": {
+            "task": "TASK-032",
+            "source": "PL-3 Kesepakatan; WF-QUO-01; WF-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.answer": {
+            "task": "TASK-032",
+            "source": "PL-3 Kesepakatan; WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.revise": {
+            "task": "TASK-032",
+            "source": "PL-3 Kesepakatan; WF-QUO-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.confirm": {
+            "task": "TASK-032",
+            "source": "PL-3 Kesepakatan; WF-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.warehouse": {
+            "task": "TASK-032",
+            "source": "PL-3 Gudang",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.direct": {
+            "task": "TASK-032",
+            "source": "PL-3 Kirim langsung",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.delivery": {
+            "task": "TASK-032",
+            "source": "PL-3 Pengiriman",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.service": {
+            "task": "TASK-032",
+            "source": "PL-3 Jasa",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.documents": {
+            "task": "TASK-032",
+            "source": "PL-3 Dokumen",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.invoice": {
+            "task": "TASK-032",
+            "source": "PL-3 Invoice; QS-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.billing": {
+            "task": "TASK-032",
+            "source": "PL-3 Penagihan",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.payment": {
+            "task": "TASK-032",
+            "source": "PL-3 Pembayaran",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.complete": {
+            "task": "TASK-032",
+            "source": "PL-3 Penyelesaian; AX-25",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.item.cases_open": {
+            "task": "TASK-032",
+            "source": "BR-PRJ-02 predicate 3; BR-CR-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.rendition_failed": {
+            "task": "TASK-032",
+            "source": "the P7 gate record's journey model (Dokumen blocker)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.company": {
+            "task": "TASK-032",
+            "source": "GL; INFORMATION_ARCHITECTURE PG-013 \"Perusahaan\"",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.field.number": {
+            "task": "TASK-032",
+            "source": "PG-010",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.title": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.client": {
+            "task": "TASK-032",
+            "source": "GL gl_048",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.field.unit": {
+            "task": "TASK-032",
+            "source": "GL gl_049",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.field.address": {
+            "task": "TASK-032",
+            "source": "WF-MD-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.contact": {
+            "task": "TASK-032",
+            "source": "WF-MD-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.channel": {
+            "task": "TASK-032",
+            "source": "GL gl_060",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.field.state": {
+            "task": "TASK-032",
+            "source": "PG-010",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.deadline": {
+            "task": "TASK-032",
+            "source": "DIR-077 CA-10; journey.deadline",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.field.stage": {
+            "task": "TASK-032",
+            "source": "PG-010 (DIR-077 CA-06)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.link": {
+            "task": "TASK-032",
+            "source": "XL-4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.field.link_reason": {
+            "task": "TASK-032",
+            "source": "XL-4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.channel.regular": {
+            "task": "TASK-032",
+            "source": "GL gl_060",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.channel.siplah": {
+            "task": "TASK-032",
+            "source": "GL gl_060",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.mode.warehouse": {
+            "task": "TASK-032",
+            "source": "BR-XD-03 (WAREHOUSE)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.mode.dropship": {
+            "task": "TASK-032",
+            "source": "journey.stage.direct",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.mode.service": {
+            "task": "TASK-032",
+            "source": "journey.stage.service",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.siplah.title": {
+            "task": "TASK-032",
+            "source": "CAP-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.manual": {
+            "task": "TASK-032",
+            "source": "BR-FIN-10; IC-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.external_reference": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01 (external reference)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.program_code": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.account_code": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.notes": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.siplah_value": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.real_purchase_value": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.fee_amount": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.va_fee_amount": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.cashback_amount": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.siplah.refund_amount": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.create_title": {
+            "task": "TASK-032",
+            "source": "PG-013",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.edit_title": {
+            "task": "TASK-032",
+            "source": "PG-013; \"Ubah proyek\"",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.parties": {
+            "task": "TASK-032",
+            "source": "J-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.project": {
+            "task": "TASK-032",
+            "source": "J-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.lines": {
+            "task": "TASK-032",
+            "source": "PT-10; WF-PRJ-01 (demand lines)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.new_line": {
+            "task": "TASK-032",
+            "source": "PT-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.no_lines": {
+            "task": "TASK-032",
+            "source": "TASK-032 UI (a project without lines says so)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.activation": {
+            "task": "TASK-032",
+            "source": "SM:Project",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.company_change": {
+            "task": "TASK-032",
+            "source": "L-21; DIR-090 (6)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.deadline_help": {
+            "task": "TASK-032",
+            "source": "DIR-077 CA-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.channel_locked": {
+            "task": "TASK-032",
+            "source": "BR-PRJ-05; C-51",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.link": {
+            "task": "TASK-032",
+            "source": "XL-4; WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.confirmed_lines": {
+            "task": "TASK-032",
+            "source": "L-20; J-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.taxes": {
+            "task": "TASK-032",
+            "source": "DIR-024 D-1; WF-PRJ-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.no_tax": {
+            "task": "TASK-032",
+            "source": "FS-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.form.total": {
+            "task": "TASK-032",
+            "source": "DC-3 (perkiraan)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.line.product": {
+            "task": "TASK-032",
+            "source": "pt10.columns.product",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.line.quantity": {
+            "task": "TASK-032",
+            "source": "pt10.columns.quantity",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.line.mode": {
+            "task": "TASK-032",
+            "source": "WF-PRJ-01 (proposed mode)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.line.price": {
+            "task": "TASK-032",
+            "source": "pt10.columns.price",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.line.description": {
+            "task": "TASK-032",
+            "source": "DATABASE §4.5 (draft description)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.line.description_help": {
+            "task": "TASK-032",
+            "source": "PT-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.link.other_company": {
+            "task": "TASK-032",
+            "source": "XL-4; J-PRJ-01 (\"proyek perusahaan lain\")",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.link.reason": {
+            "task": "TASK-032",
+            "source": "XL-4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.list.all_states": {
+            "task": "TASK-032",
+            "source": "PG-010",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.list.empty": {
+            "task": "TASK-032",
+            "source": "PT-19 (empty state)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.list.empty_filtered": {
+            "task": "TASK-032",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.list.journey_loading": {
+            "task": "TASK-032",
+            "source": "PT-19 (the journey summary group)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.list.journey_failed": {
+            "task": "TASK-032",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.closed": {
+            "task": "TASK-032",
+            "source": "L-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.group_failed": {
+            "task": "TASK-032",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.reload": {
+            "task": "TASK-032",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.lines": {
+            "task": "TASK-032",
+            "source": "PT-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.no_documents": {
+            "task": "TASK-032",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.nothing_remaining": {
+            "task": "TASK-032",
+            "source": "SCR-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.journey.history": {
+            "task": "TASK-032",
+            "source": "INFORMATION_ARCHITECTURE §8.2 (*Riwayat*)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "projects.history.create": {
+            "task": "TASK-032",
+            "source": "Riwayat",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.history.activate": {
+            "task": "TASK-032",
+            "source": "SM:Project ACTIVATE",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.history.cancel": {
+            "task": "TASK-032",
+            "source": "SM:Project CANCEL",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.history.complete_normal": {
+            "task": "TASK-032",
+            "source": "SM:Project COMPLETE_NORMAL",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.history.force_complete": {
+            "task": "TASK-032",
+            "source": "SM:Project FORCE_COMPLETE",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.history.revalidate": {
+            "task": "TASK-032",
+            "source": "SM:Project REVALIDATE",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.discard.title": {
+            "task": "TASK-032",
+            "source": "MSG-39; IP-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.discard.consequence": {
+            "task": "TASK-032",
+            "source": "MSG-39; L-37",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

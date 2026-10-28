@@ -13,6 +13,7 @@ use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
+use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
@@ -88,4 +89,8 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-031): two correction cases of the run's company, one closable and one carrying a residual.
     Route::post('__fixtures/kasus', [CaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-032): the run's company with its PROJECT numbering started or not, a client, goods and a service,
+    // the account's grants on it, and optionally a project created through ROUTE-151's action.
+    Route::post('__fixtures/proyek', [ProjectFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });
