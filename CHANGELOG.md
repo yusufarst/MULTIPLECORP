@@ -643,3 +643,9 @@ This is a change summary; current state and approval authority live in their [ow
 - ROUTE-281's search now reads the session and never writes it back, so a type-ahead beside a command never erases its answer.
 - Codex's P1 and P2 points fixed and tested.
 - Every check passed in fresh CI on `1a37e5b`. TASK-028 DONE — progress 29 / 87 —; the Owner's shutdown hold stops here, TASK-029 next on resumption.
+
+## Unreleased — 2026-10-28, TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
+
+- TASK-028 squash-merged by the executor into `main` as `0962568` (pull request #34); the Owner's shutdown hold released on resumption; TASK-029 started.
+- Built TASK-029 on its branch `task/TASK-029-documents`: the fourteen document types seeded; the document chain with its draft prepared from the record's facts through `DocumentSubjectProvider`, the issue drawing the period's next number last and freezing the payload with one PENDING rendition, revision NEW_NUMBER or BASE_SUFFIX and void through `DocumentChangeParticipant`; one Mustache template per layout read by the composer and the renderer; PG-035 *Dokumen* and PG-036 *Detail Dokumen* with the composer and the inline rendition.
+- Every check passed in fresh CI on `4c6f177`. TASK-029 DONE — progress 30 / 87 —; TASK-031 next.

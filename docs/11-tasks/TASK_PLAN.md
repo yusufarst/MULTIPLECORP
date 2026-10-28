@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 29
-READY: 6
+DONE: 30
+READY: 5
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 39
 SUPERSEDED: 0
 
 Progress:
-29 / 87
-Percentage: 33.3 %
+30 / 87
+Percentage: 34.5 %
 
-CURRENT TASK: TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer — IN PROGRESS on `task/TASK-029-documents`, taken from `main` at TASK-028's merge `0962568` after the Owner resumed (DIR-096)
-NEXT READY TASK: TASK-031 — Correction cases, READY, taken after TASK-029 (DIR-096); TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer DONE on its branch `task/TASK-029-documents`, CI PASS on `4c6f177`, its pull request #35 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-031 — Correction cases, READY, NOT STARTED, taken next from the merged `main` (DIR-096); TASK-032, TASK-036, TASK-061 and TASK-073 READY; TASK-038 waits on TASK-034; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -77,7 +77,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-026](TASK-026.md) — Clients and suppliers
 - [x] [TASK-027](TASK-027.md) — Catalog — products, services, units, barcodes, prices and images
 - [x] [TASK-028](TASK-028.md) — Rack locations and minimum stock
-- [ ] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
+- [x] [TASK-029](TASK-029.md) — Document engine — drafts, issue, revision, void, renditions and the composer
 - [x] [TASK-030](TASK-030.md) — Evidence and uploaded documents
 - [ ] [TASK-031](TASK-031.md) — Correction cases
 - [ ] [TASK-032](TASK-032.md) — Projects — list, form, journey page and amendment
@@ -169,7 +169,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-026](TASK-026.md) | Clients and suppliers | Module · PTY | STANDARD | DONE | 013, 016 | 032, 037, 057 | NO | AGENT | NONE | YES |
 | [TASK-027](TASK-027.md) | Catalog — products, services, units, barcodes, prices and images | Module · CAT | STANDARD | DONE | 013, 016, 022 | 032, 037, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-028](TASK-028.md) | Rack locations and minimum stock | Module · INV | STANDARD | DONE | 008, 013, 016 | 038, 057 | NO | AGENT | NONE | YES |
-| [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | READY | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
+| [TASK-029](TASK-029.md) | Document engine — drafts, issue, revision, void, renditions and the composer | Module · DOC | HIGH | DONE | 021, 022, 025 | 033, 037, 039, 041, 045, 046, 047, 049, 059, 074 | NO | AGENT | PROPOSED | YES |
 | [TASK-030](TASK-030.md) | Evidence and uploaded documents | Module · DOC | HIGH | DONE | 016, 022 | 034, 035, 036, 051, 054, 057 | NO | AGENT | PROPOSED | YES |
 | [TASK-031](TASK-031.md) | Correction cases | Module · OPS | HIGH | READY | 010, 013, 016 | 039, 042, 055 | NO | AGENT | NONE | YES |
 | [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | READY | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |

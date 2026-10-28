@@ -417,3 +417,21 @@ it('keeps the stamp and the signature out of a draft\'s props, the Owner\'s iden
         ->not->toContain($assets['stamp']->public_id)
         ->not->toContain($assets['signature']->public_id);
 });
+
+it('answers an issue or a save naming a draft the chain no longer holds CONFLICT, though its lock_version matches (ST-01)', function () {
+    Queue::fake();
+    $document = preparedDocument($this);
+    $shown = DocumentVersion::query()->where('document_id', $document->id)->sole();
+    issueDocument($this, $document);
+    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/revisi", ['command_id' => (string) Str::uuid(), 'alasan' => 'Nama keliru']);
+    $revision = DocumentVersion::query()->where('document_id', $document->id)->where('state', 'DRAFT')->sole();
+
+    // Another tab still shows the first draft, at the lock_version the revision's draft also starts at.
+    issueDocument($this, $document, 0, extra: ['draf' => $shown->public_id]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-01'])
+        ->and($revision->fresh()?->state)->toBe('DRAFT');
+
+    $this->actingAs($this->issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'dokumen' => $document->public_id, 'draf' => $shown->public_id, 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-01'])
+        ->and($revision->fresh()?->lock_version)->toBe(0);
+});
