@@ -93,7 +93,7 @@ final class LineScope
 
         foreach ($quantities as $line => $quantity) {
             $number = DB::table('project_lines')->where('id', $line)->value('line_no');
-            $lines[is_numeric($number) ? (string) $number : (string) $line] = $quantity;
+            $lines['line_'.(is_numeric($number) ? (string) $number : (string) $line)] = $quantity;
         }
 
         $this->record($context, 'PRJ.RemainingScopeCancelled', AuthorityClass::AdmPlus, $projectId, $companyId, $reason, $businessDate, AuditChange::updated([], ['lines' => $lines]));
