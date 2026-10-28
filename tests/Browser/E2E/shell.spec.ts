@@ -108,7 +108,10 @@ test('searches with the term in the request body only, an exact code first (IP-1
 
     await expect(page.getByRole('option').first()).toContainText('Kode Cocok');
     expect(JSON.parse(bodies.at(-1) ?? '{}')).toEqual({ q: 'ARJ/PRJ/2026/0007' });
-    expect(page.url()).not.toContain('0007');
+    // The term never enters the address. The fixture's own run id rides in it and may hold the same digits by chance.
+    const address = new URL(page.url());
+    address.searchParams.delete('run');
+    expect(address.toString()).not.toContain('0007');
 
     // One hit opens its record: an Inertia visit to the project's journey (PG-011) — answered here by the stack's
     // fallback, since the fixture keeps no session.
