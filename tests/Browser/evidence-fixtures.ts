@@ -46,9 +46,11 @@ export function uniquePhoto(): Buffer {
 }
 
 /** Waits for every running animation and transition — the sheet's reveal among them — to finish, so a measurement such
-    as the contrast check reads the page at rest, never a colour mid-fade. */
+    as the contrast check reads the page at rest, never a colour mid-fade. A dialog opened just now starts its reveal
+    only when its starting style leaves on a following frame, so two frames pass before the running ones are read. */
 export async function atRest(page: Page): Promise<void> {
     await page.evaluate(async () => {
+        await new Promise((resolve) => { requestAnimationFrame(() => { requestAnimationFrame(resolve); }); });
         const finite = document.getAnimations().filter((animation) => animation.effect?.getTiming().iterations !== Infinity);
         await Promise.all(finite.map((animation) => animation.finished.catch(() => undefined)));
     });
