@@ -206,14 +206,15 @@ final class CorrectionCases
             throw Refused::conflict('ST-02', ['state' => 'CLOSED']);
         }
 
-        if (self::int($case->lock_version ?? null) !== $lockVersion) {
-            throw Refused::conflict('ST-01');
-        }
-
+        // A residual first: whatever version the page read, the case cannot close while one stands, and the answer names it.
         $residuals = self::residuals($caseId);
 
         if ($residuals !== []) {
             throw Refused::rejected('C-46', ['residuals' => $residuals]);
+        }
+
+        if (self::int($case->lock_version ?? null) !== $lockVersion) {
+            throw Refused::conflict('ST-01');
         }
 
         $closed = DB::table('correction_cases')->where('id', $caseId)->where('state', 'OPEN')->where('lock_version', $lockVersion)->update([

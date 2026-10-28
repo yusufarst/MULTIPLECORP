@@ -25,8 +25,8 @@ final class CorrectionLegality
      * @var array<string, array<string, string>>
      */
     public const MATRIX = [
-        'QUOTATION' => ['EDIT' => 'draft only', 'REVISION' => self::ALLOWED, 'VOID' => self::PROHIBITED, 'REVERSAL' => self::PROHIBITED, 'RETURN' => self::PROHIBITED, 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::PROHIBITED, 'ARCHIVE' => self::PROHIBITED],
-        'DOCUMENT' => ['EDIT' => 'draft only', 'REVISION' => self::ALLOWED, 'VOID' => self::ALLOWED, 'REVERSAL' => self::PROHIBITED, 'RETURN' => self::PROHIBITED, 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::PROHIBITED, 'ARCHIVE' => self::PROHIBITED],
+        'QUOTATION' => ['EDIT' => 'draft only', 'REVISION' => 're-approval', 'VOID' => self::PROHIBITED, 'REVERSAL' => self::PROHIBITED, 'RETURN' => self::PROHIBITED, 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::PROHIBITED, 'ARCHIVE' => self::PROHIBITED],
+        'DOCUMENT' => ['EDIT' => 'draft only', 'REVISION' => 'new version', 'VOID' => 'number retired', 'REVERSAL' => self::PROHIBITED, 'RETURN' => self::PROHIBITED, 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::PROHIBITED, 'ARCHIVE' => self::PROHIBITED],
         'INVOICE_UNBILLED' => ['EDIT' => 'draft only', 'REVISION' => self::ALLOWED, 'VOID' => self::ALLOWED, 'REVERSAL' => self::PROHIBITED, 'RETURN' => self::PROHIBITED, 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::PROHIBITED, 'ARCHIVE' => self::PROHIBITED],
         'INVOICE_BILLED' => ['EDIT' => self::PROHIBITED, 'REVISION' => self::COMPANION, 'VOID' => self::COMPANION, 'REVERSAL' => self::PROHIBITED, 'RETURN' => 'via sales return', 'REALLOC' => self::PROHIBITED, 'COMPENS' => self::ALLOWED, 'ARCHIVE' => self::PROHIBITED],
         'MONEY_FACT' => ['EDIT' => self::PROHIBITED, 'REVISION' => self::PROHIBITED, 'VOID' => self::PROHIBITED, 'REVERSAL' => 'contra-fact', 'RETURN' => self::PROHIBITED, 'REALLOC' => 'applications only', 'COMPENS' => self::ALLOWED, 'ARCHIVE' => self::PROHIBITED],
