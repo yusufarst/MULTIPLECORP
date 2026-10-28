@@ -277,7 +277,8 @@ function seedIndexRegister(Connection $owner): void
             from invoices i join invoice_billing_acts a on a.invoice_id = i.id;
 
         insert into document_types (code, name, subject_kind, is_numbered, allowed_modes)
-            values ('DOC-01', 'Penawaran', 'CONTOH', true, '{STANDARD}'), ('DOC-05', 'Kuitansi', 'CONTOH', true, '{RECEIPT,PRE_PAYMENT}');
+            values ('DOC-01', 'Penawaran', 'CONTOH', true, '{STANDARD}'), ('DOC-05', 'Kuitansi', 'CONTOH', true, '{RECEIPT,PRE_PAYMENT}')
+            on conflict (code) do nothing;
         -- A quotation chain per project, its company the project's (C-32), and a pre-payment Kuitansi in fifty.
         insert into documents (company_id, document_type_code, mode, project_id, invoice_id)
             select p.company_id, case when p.sequence_no % 50 = 0 then 'DOC-05' else 'DOC-01' end,
