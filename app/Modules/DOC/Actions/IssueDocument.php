@@ -14,6 +14,7 @@ use App\Support\Command\CommandRequest;
 use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
+use App\Support\Command\Refused;
 
 /**
  * `DOC IssueDocument` (ROUTE-222; INT-222; AX-15; SF-ISSUE; BD-06): a draft issued after its confirmation (IP-08) —
@@ -50,6 +51,11 @@ final class IssueDocument
 
         return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId): CommandResult {
             $context->lock($this->issuing->locks($document, $subject, $provider->locks($subject)));
+
+            if (! DocumentAccess::issuedHere($document->document_type_code)) {
+                throw Refused::rejected('WF-QUO-01', ['reason' => 'issued_at_record']);
+            }
+
             $this->issuing->issue($context, $document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId);
 
             return new CommandResult('document', $document->id);

@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\DB;
  */
 final class SyntheticSubjects implements DocumentSubjectProvider
 {
+    /** The types a module's own provider supplies (QuotationSubjects). */
+    public const SUPPLIED = ['DOC-01', 'DOC-11'];
+
     private const TABLES = [
         'project_id' => 'projects', 'purchase_id' => 'purchases', 'dispatch_movement_id' => 'stock_movements', 'dropship_confirmation_id' => 'dropship_confirmations',
         'invoice_id' => 'invoices', 'payment_id' => 'payments', 'parent_document_id' => 'documents', 'delivery_id' => 'deliveries',
@@ -55,7 +58,12 @@ final class SyntheticSubjects implements DocumentSubjectProvider
         $types = [];
 
         foreach (range(1, 14) as $number) {
-            $types[sprintf('DOC-%02d', $number)] = $number === 5 ? ['RECEIPT', 'PRE_PAYMENT'] : ['STANDARD'];
+            $type = sprintf('DOC-%02d', $number);
+
+            // The types an issuing module already supplies stay its own: PRJ's quotation and HPS (TASK-033).
+            if (! in_array($type, self::SUPPLIED, true)) {
+                $types[$type] = $number === 5 ? ['RECEIPT', 'PRE_PAYMENT'] : ['STANDARD'];
+            }
         }
 
         return $types;

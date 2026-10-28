@@ -61,6 +61,11 @@ final class SaveDocumentDraft
         return $this->envelope->run($request, function (CommandContext $context) use ($subject, $provider): CommandResult {
             $context->lock($provider->locks($subject));
             DocumentAccess::ensureIssue($context->authority(), $subject->typeCode, $subject->companyId);
+
+            if (! DocumentAccess::issuedHere($subject->typeCode)) {
+                throw Refused::rejected('WF-QUO-01', ['reason' => 'issued_at_record']);
+            }
+
             $document = $this->find($subject);
 
             if ($document !== null) {
