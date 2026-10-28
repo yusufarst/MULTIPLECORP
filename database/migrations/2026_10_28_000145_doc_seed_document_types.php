@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\DB;
 // (WORKFLOWS WF-DOC-01); `allowed_modes` RECEIPT and PRE_PAYMENT for DOC-05, STANDARD for the others (DATABASE §4.10;
 // DIR-024 D-4); `subject_kind` names the subject columns `documents_subject_by_type` requires of the type, in its own
 // words — `|` between alternatives, `+` for columns required together —, so the catalogue and the arc cannot disagree
-// (an integration test proves it). Expand-only: rows inserted, none changed; the down step removes only these rows.
+// (an integration test proves it). Expand-only: the rows inserted, none changed — a row never changes (DIR-099) —, so a
+// code a database already holds keeps its row; only a local stack's test fixture can have written one, no command
+// creates a type, and production holds none. The down step removes only these rows.
 return new class extends Migration
 {
     /** @var array<string, array{0: string, 1: string, 2: list<string>}> */
@@ -32,7 +34,8 @@ return new class extends Migration
     public function up(): void
     {
         foreach (self::TYPES as $code => [$name, $subject, $modes]) {
-            DB::statement('insert into document_types (code, name, subject_kind, is_numbered, allowed_modes) values (?, ?, ?, true, ?::text[])',
+            DB::statement('insert into document_types (code, name, subject_kind, is_numbered, allowed_modes) values (?, ?, ?, true, ?::text[])'
+                .' on conflict (code) do nothing',
                 [$code, $name, $subject, '{'.implode(',', $modes).'}']);
         }
     }

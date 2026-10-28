@@ -24,7 +24,7 @@ import { type Paper } from '@/features/doc/paper';
 import AppShell from '@/layouts/AppShell';
 import { dateLong } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
-import { useCommand } from '@/lib/use-command';
+import { type CommandForm, useCommand } from '@/lib/use-command';
 
 type Bank = { handle: string; bank_name: string; account_number: string; account_holder: string; branch: string | null };
 type Rendition = { state: 'PENDING' | 'RENDERING' | 'READY' | 'FAILED'; attempt: number; attempts: number; file: string | null };
@@ -70,7 +70,10 @@ function useCommandAnswer(command: { answer: Answer | null; unknown: boolean; re
     );
 }
 
-function DraftComposer({ document, draft, today, canIssue }: { document: Props['document']; draft: Draft; today: string; canIssue: boolean }) {
+type IssueCommand = CommandForm<Record<string, string | number | boolean>>;
+
+// The issue's command lives with the page, not the draft: its answer stays once the issued draft is gone (IP-01).
+function DraftComposer({ document, draft, today, canIssue, issue }: { document: Props['document']; draft: Draft; today: string; canIssue: boolean; issue: IssueCommand }) {
     const { t } = useTranslation();
     const name = t(typeName(document.type));
     const saved = draft.business_date ?? today;
@@ -78,7 +81,6 @@ function DraftComposer({ document, draft, today, canIssue }: { document: Props['
     const [bank, setBank] = useState(draft.bank_account ?? '');
     const [confirming, setConfirming] = useState(false);
     const save = useCommand<Record<string, string | number | boolean>>(() => '/dokumen', 'post');
-    const issue = useCommand<Record<string, string | number | boolean>>(() => `/dokumen/${document.id}/terbitkan`, 'post');
     const entered = { lock_version: draft.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, rekening: bank };
     const chosenBank = draft.bank_accounts.find((account) => account.handle === bank) ?? null;
     // The live preview: the server's paper with the entered date and bank destination, never a number (DC-2).
@@ -94,7 +96,6 @@ function DraftComposer({ document, draft, today, canIssue }: { document: Props['
         [draft.paper, draft.states_bank, date.date, chosenBank],
     );
     const saveAnswer = useCommandAnswer(save);
-    const issueAnswer = useCommandAnswer(issue);
 
     const form = (
         <FormSection title={t('documents.draft.title', { versi: draft.version_no })}>
@@ -121,7 +122,6 @@ function DraftComposer({ document, draft, today, canIssue }: { document: Props['
     const finalize = (
         <div className="flex min-w-0 flex-col gap-3">
             {saveAnswer}
-            {issueAnswer}
             <div className="flex flex-wrap gap-2">
                 <Button variant="outline" pending={save.pending} disabled={save.frozen} onClick={() => { save.submit({ dokumen: document.id, ...entered }); }}>
                     {t('composer.save_draft')}
@@ -220,6 +220,8 @@ export default function DocumentPage({ document, versions, current, draft, conte
     const [reason, setReason] = useState('');
     const revise = useCommand<Record<string, string>>(() => `/dokumen/${document.id}/revisi`, 'post');
     const voiding = useCommand<Record<string, string>>(() => `/dokumen/${document.id}/batalkan`, 'post');
+    const issue: IssueCommand = useCommand<Record<string, string | number | boolean>>(() => `/dokumen/${document.id}/terbitkan`, 'post');
+    const issueAnswer = useCommandAnswer(issue);
     const correction = correcting === 'void' ? voiding : revise;
     const reviseAnswer = useCommandAnswer(revise);
     const voidAnswer = useCommandAnswer(voiding);
@@ -251,7 +253,8 @@ export default function DocumentPage({ document, versions, current, draft, conte
                 />
                 {reviseAnswer}
                 {voidAnswer}
-                {draft !== null && <DraftComposer key={`${draft.id}-${String(draft.lock_version)}`} document={document} draft={draft} today={today} canIssue={can.issue} />}
+                {issueAnswer}
+                {draft !== null && <DraftComposer key={`${draft.id}-${String(draft.lock_version)}`} document={document} draft={draft} today={today} canIssue={can.issue} issue={issue} />}
                 {!content && <p className="text-body text-text-secondary">{t('documents.no_content')}</p>}
                 <FormSection title={t('documents.versions')}>
                     <ol className="flex min-w-0 flex-col divide-y divide-border-subtle">

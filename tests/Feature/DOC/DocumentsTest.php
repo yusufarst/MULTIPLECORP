@@ -15,6 +15,7 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\PRJ\ProjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
