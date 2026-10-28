@@ -41,7 +41,7 @@ test('issues a prepared draft from PG-036 and shows its rendition (J-DOC-01; CJ-
     await expect(paper).toBeHidden();
 
     await rendition(page, document, 'READY');
-    await page.reload();
+    await content.getByRole('button', { name: 'Muat Ulang' }).click();
     await expect(content.getByText('PDF Siap', { exact: true })).toBeVisible();
     const frame = content.locator('iframe');
     await expect(frame).toHaveAttribute('src', /^\/berkas\/[0-9a-f-]{36}\/tampil$/);

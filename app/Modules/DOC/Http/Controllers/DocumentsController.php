@@ -53,9 +53,9 @@ final class DocumentsController extends Controller
         $actor = self::actor($request);
 
         if ($request->filled('dokumen')) {
-            $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'dokumen' => ['required', 'string'], 'lock_version' => ['required', 'integer', 'min:0']]);
+            $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'dokumen' => ['required', 'string'], 'draf' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0']]);
             $document = $this->documents->find($actor, self::text($input['dokumen']));
-            $outcome = $drafts->save(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null));
+            $outcome = $drafts->save(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null), self::text($input['draf']));
 
             return $this->answer($outcome, $document->public_id, 'saved', self::text($input['tanggal']));
         }
@@ -92,8 +92,8 @@ final class DocumentsController extends Controller
     {
         $actor = self::actor($request);
         $document = $this->documents->find($actor, $id);
-        $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0'], 'isi' => ['nullable', 'string', 'size:64']]);
-        $outcome = $issue->run(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null), self::nullable($input['isi'] ?? null));
+        $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'draf' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0'], 'isi' => ['nullable', 'string', 'size:64']]);
+        $outcome = $issue->run(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null), self::nullable($input['isi'] ?? null), self::text($input['draf']));
 
         return $this->answer($outcome, $document->public_id, 'issued', self::text($input['tanggal']), $document->document_type_code,
             $outcome->code === 'C-10' ? $this->documents->numberingOf($actor, $document) : null);

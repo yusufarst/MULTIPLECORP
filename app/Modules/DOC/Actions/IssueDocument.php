@@ -62,15 +62,18 @@ final class IssueDocument
         private readonly NumberAllocator $numbers,
     ) {}
 
-    /** @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed (DocumentDetail), or null where no paper was shown */
-    public function run(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle, ?string $factsDigest = null): Outcome
+    /**
+     * @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed (DocumentDetail), or null where no paper was shown
+     * @param  ?string  $draftId  the draft version the page showed: another draft of the chain — a revision's made meanwhile — is stale (ST-01)
+     */
+    public function run(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null): Outcome
     {
         $subject = DocumentSubject::of($document);
         $provider = $this->subjects->of($subject);
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $document->company_id, DocumentAccess::ISSUE,
-            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle, 'facts' => $factsDigest]));
+            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle, 'facts' => $factsDigest, 'draft' => $draftId]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId): CommandResult {
             $context->lock($this->locks($document, $subject, $provider->locks($subject)));
             DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
             $draft = $this->chain->draftOf($document->id);
@@ -84,7 +87,7 @@ final class IssueDocument
             // Data-dependent (§5 steps 3–4): the draft, its predecessor and their requirements read again under the locks.
             $context->require($this->locks($document, $subject, $provider->locks($subject)));
 
-            if ($draft->lock_version !== $lockVersion) {
+            if ($draft->lock_version !== $lockVersion || ($draftId !== null && $draft->public_id !== $draftId)) {
                 throw Refused::conflict('ST-01');
             }
 

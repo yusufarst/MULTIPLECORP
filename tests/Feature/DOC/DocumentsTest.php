@@ -96,6 +96,8 @@ function issueDocument(object $test, Document $document, ?int $lockVersion = nul
 
     return $test->actingAs($test->issuer)->post("/dokumen/{$document->public_id}/terbitkan", [
         'command_id' => $commandId ?? (string) Str::uuid(), 'lock_version' => $lockVersion ?? $draft?->lock_version ?? 0,
+        // The draft the page showed — once issued, the version it became.
+        'draf' => $draft?->public_id ?? DocumentVersion::query()->where('document_id', $document->id)->orderByDesc('version_no')->value('public_id'),
         'tanggal' => $test->today, 'tanggal_otomatis' => true, ...$extra,
     ]);
 }
@@ -137,7 +139,7 @@ it('shows the draft\'s paper by family — marked, unnumbered, the logo at most,
 it('saves the draft\'s date at the version read, a stale save CONFLICT and a future date refused at its field (ROUTE-221; ST-01; C-50)', function () {
     $document = preparedDocument($this);
     $yesterday = date('Y-m-d', strtotime("{$this->today} -1 day"));
-    $save = fn (array $body) => $this->actingAs($this->issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'dokumen' => $document->public_id, ...$body]);
+    $save = fn (array $body) => $this->actingAs($this->issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'dokumen' => $document->public_id, 'draf' => DocumentVersion::query()->where('document_id', $document->id)->value('public_id'), ...$body]);
 
     $save(['lock_version' => 0, 'tanggal' => $yesterday, 'tanggal_otomatis' => false])->assertRedirect("/dokumen/{$document->public_id}");
     expect(documentAnswer()['kind'])->toBe(Outcome::COMMITTED)

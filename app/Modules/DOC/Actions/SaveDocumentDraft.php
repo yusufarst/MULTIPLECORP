@@ -106,14 +106,15 @@ final class SaveDocumentDraft
      * The draft's entered fields saved at the version the page read (ST-01): its date — a chosen day taken as it is,
      * a prefilled one no longer today a CONFLICT carrying today (SF-DATE; ST-08) — and its bank destination by handle.
      */
-    public function save(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle): Outcome
+    /** @param  ?string  $draftId  the draft version the page showed: another draft of the chain is stale (ST-01) */
+    public function save(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle, ?string $draftId = null): Outcome
     {
         $subject = DocumentSubject::of($document);
         $provider = $this->subjects->of($subject);
         $request = new CommandRequest($commandId, self::SAVE, $actorUserId, $document->company_id, DocumentAccess::ISSUE,
-            Fingerprint::of(self::SAVE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle]));
+            Fingerprint::of(self::SAVE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle, 'draft' => $draftId]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $draftId): CommandResult {
             $draft = $this->chain->draftOf($document->id);
             $context->lock($provider->locks($subject)->union($this->chain->locks($document, $draft === null ? [] : [$draft->id])));
             DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
@@ -125,7 +126,7 @@ final class SaveDocumentDraft
 
             $context->require($this->chain->locks($document, [$draft->id]));
 
-            if ($draft->lock_version !== $lockVersion) {
+            if ($draft->lock_version !== $lockVersion || ($draftId !== null && $draft->public_id !== $draftId)) {
                 throw Refused::conflict('ST-01');
             }
 

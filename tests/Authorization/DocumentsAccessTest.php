@@ -86,7 +86,7 @@ it('revises and voids only with documents.correct, its controls present with it 
     $issuer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'documents.issue']);
     $this->actingAs($issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-09', 'subjek' => ['project_id' => $this->project->public_id]]);
     $document = Document::query()->sole();
-    $this->actingAs($issuer)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'lock_version' => 0, 'tanggal' => CarbonImmutable::now('Asia/Jakarta')->toDateString(), 'tanggal_otomatis' => true]);
+    $this->actingAs($issuer)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'draf' => DB::table('document_versions')->where('document_id', $document->id)->value('public_id'), 'lock_version' => 0, 'tanggal' => CarbonImmutable::now('Asia/Jakarta')->toDateString(), 'tanggal_otomatis' => true]);
 
     $this->actingAs($issuer)->get("/dokumen/{$document->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('can.correct', false));
     $this->actingAs($issuer)->post("/dokumen/{$document->public_id}/batalkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Uji'])->assertForbidden();

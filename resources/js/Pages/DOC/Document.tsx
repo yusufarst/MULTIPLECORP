@@ -81,7 +81,7 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
     const [bank, setBank] = useState(draft.bank_account ?? '');
     const [confirming, setConfirming] = useState(false);
     const save = useCommand<Record<string, string | number | boolean>>(() => '/dokumen', 'post');
-    const entered = { lock_version: draft.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, rekening: bank };
+    const entered = { draf: draft.id, lock_version: draft.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, rekening: bank };
     // The issue carries the digest of the facts its paper showed: a record changed since is a CONFLICT (architecture challenge 15a).
     const confirmed = { ...entered, isi: draft.facts ?? '' };
     const chosenBank = draft.bank_accounts.find((account) => account.handle === bank) ?? null;
@@ -168,7 +168,8 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
 function VersionRow({ version, document, current, content }: { version: Version; document: Props['document']; current: boolean; content: boolean }) {
     const { t } = useTranslation();
     const name = t(typeName(document.type));
-    const file = version.rendition?.file ?? null;
+    const [polled, setPolled] = useState<string | null>(null);
+    const file = version.rendition?.file ?? polled;
 
     return (
         <li data-version={version.version_no} className="flex min-w-0 flex-col gap-3 py-4">
@@ -193,7 +194,7 @@ function VersionRow({ version, document, current, content }: { version: Version;
                     {version.voided_reason !== null && ` · ${version.voided_reason}`}
                 </p>
             )}
-            {version.state !== 'DRAFT' && version.number !== null && current && <RenditionStatus versionId={version.id} documentName={name} number={version.number} />}
+            {version.state !== 'DRAFT' && version.number !== null && current && <RenditionStatus versionId={version.id} documentName={name} number={version.number} onFile={content ? setPolled : undefined} />}
             {version.state !== 'DRAFT' && !current && version.rendition !== null && <StatusBadge family="rendition" state={version.rendition.state} size="sm" />}
             {content && file !== null && (
                 <div className="flex min-w-0 flex-col gap-2">

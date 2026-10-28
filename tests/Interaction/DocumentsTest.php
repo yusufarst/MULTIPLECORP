@@ -60,14 +60,15 @@ it('replays each command\'s command_id with its recorded outcome, writing nothin
     $document = Document::query()->sole();
 
     $commands = [
-        ['/dokumen', ['dokumen' => $document->public_id, 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true, 'rekening' => '']],
-        ["/dokumen/{$document->public_id}/terbitkan", ['lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]],
-        ["/dokumen/{$document->public_id}/revisi", ['alasan' => 'Nama keliru']],
-        ["/dokumen/{$document->public_id}/terbitkan", ['lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]],
-        ["/dokumen/{$document->public_id}/batalkan", ['alasan' => 'Salah pihak']],
+        ['/dokumen', fn () => ['dokumen' => $document->public_id, 'draf' => DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->value('public_id'), 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true, 'rekening' => '']],
+        ["/dokumen/{$document->public_id}/terbitkan", fn () => ['draf' => DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->value('public_id'), 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]],
+        ["/dokumen/{$document->public_id}/revisi", fn () => ['alasan' => 'Nama keliru']],
+        ["/dokumen/{$document->public_id}/terbitkan", fn () => ['draf' => DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->value('public_id'), 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]],
+        ["/dokumen/{$document->public_id}/batalkan", fn () => ['alasan' => 'Salah pihak']],
     ];
 
-    foreach ($commands as [$url, $body]) {
+    foreach ($commands as [$url, $payload]) {
+        $body = $payload();
         $commandId = (string) Str::uuid();
         $this->actingAs($this->user)->post($url, ['command_id' => $commandId, ...$body])->assertRedirect("/dokumen/{$document->public_id}");
         expect(documentInteractionAnswer()['kind'])->toBe(Outcome::COMMITTED, $url);
@@ -90,7 +91,7 @@ it('answers the same command_id with other content CONFLICT (CI-04; IG-05)', fun
     $this->actingAs($this->user)->post('/dokumen', ['command_id' => $commandId, 'jenis' => 'DOC-09', 'subjek' => ['project_id' => $this->project->public_id]]);
     $document = Document::query()->sole();
 
-    $this->actingAs($this->user)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => $commandId, 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
+    $this->actingAs($this->user)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => $commandId, 'draf' => DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->value('public_id'), 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
     expect(documentInteractionAnswer()['kind'])->toBe(Outcome::CONFLICT)
         ->and(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('DRAFT');
 });
