@@ -42,6 +42,11 @@ beforeEach(function () {
     Vite::useHotFile($this->hotFile);
     Authorization::catalogue();
     SyntheticSubjects::register();
+
+    foreach (range(1, 14) as $number) {
+        DocumentTypeFactory::ensure(sprintf('DOC-%02d', $number));
+    }
+
     $this->today = BusinessDate::today();
     $this->year = substr($this->today, 0, 4);
     Numbering::goLive("{$this->year}-01-01");

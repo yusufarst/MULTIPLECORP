@@ -34,12 +34,19 @@ final class SyntheticSubjects implements DocumentSubjectProvider
     /** How many preconditions ran, so a replay can be shown to run none. */
     public static int $preconditions = 0;
 
-    /** Registers the provider for every type, its state cleared. */
+    /** Registers the provider for every type once per application, its state cleared. */
     public static function register(): void
     {
         self::$refusal = null;
         self::$facts = null;
         self::$preconditions = 0;
+
+        foreach (app()->tagged(DocumentSubjectProvider::TAG) as $provider) {
+            if ($provider instanceof self) {
+                return;
+            }
+        }
+
         app()->tag([self::class], DocumentSubjectProvider::TAG);
     }
 
