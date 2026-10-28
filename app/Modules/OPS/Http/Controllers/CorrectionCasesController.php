@@ -27,7 +27,7 @@ final class CorrectionCasesController extends Controller
 
     public function index(Request $request): HttpResponse
     {
-        return Inertia::render('OPS/CorrectionCases', $this->cases->screen(self::actor($request), self::query($request, 'perusahaan'), self::query($request, 'setelah')))->toResponse($request);
+        return Inertia::render('OPS/CorrectionCases', $this->cases->screen(self::actor($request), self::query($request, 'perusahaan'), self::query($request, 'setelah'), self::query($request, 'kasus')))->toResponse($request);
     }
 
     public function close(Request $request, CloseCorrectionCase $close, string $id): RedirectResponse
@@ -63,7 +63,7 @@ final class CorrectionCasesController extends Controller
         };
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text]);
 
-        return redirect()->to(self::PAGE.'?'.http_build_query(['perusahaan' => self::query($request, 'perusahaan')]), 303);
+        return redirect()->to(self::PAGE.'?'.http_build_query(['perusahaan' => self::query($request, 'perusahaan'), 'kasus' => $case->public_id]), 303);
     }
 
     /** @param  array<string, string>  $replace */

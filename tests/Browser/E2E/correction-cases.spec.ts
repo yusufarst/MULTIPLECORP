@@ -22,8 +22,14 @@ test('closes a case without residual and keeps one with a residual open (J-DOC; 
     await closable.getByRole('button', { name: 'Tutup Kasus' }).click();
     const dialog = page.getByRole('alertdialog', { name: 'Tutup kasus Retur penjualan?' });
     await dialog.getByRole('textbox').fill('Barang sudah kembali ke gudang dan dinilai.');
+    // The reason's step keeps the unsent input through 'Kembali' (NV-02).
+    await dialog.getByRole('button', { name: 'Kembali' }).click();
+    await expect(dialog).toBeHidden();
+    await closable.getByRole('button', { name: 'Tutup Kasus' }).click();
+    await expect(dialog.getByRole('textbox')).toHaveValue('Barang sudah kembali ke gudang dan dinilai.');
     await dialog.getByRole('button', { name: 'Tutup Kasus' }).click();
     await expect(dialog).toBeHidden();
+    await expect(content.getByText('Kasus ditutup.')).toBeVisible();
     await expect(closable.getByText('Ditutup', { exact: true })).toBeVisible();
     await expect(closable).toContainText('Hasil: Barang sudah kembali ke gudang dan dinilai.');
     await expect(closable.getByRole('button', { name: 'Tutup Kasus' })).toHaveCount(0);

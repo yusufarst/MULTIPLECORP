@@ -4,7 +4,7 @@
 // family (PJ-16), another company's causal project as the relation marker (XL-3). The page starts no case: a case opens
 // with the correction that records it. "Tutup Kasus" with its outcome (IP-09; MSG-40), offered only when no residual
 // remains and decided by the server.
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 import { RelationMarker } from '@/components/company';
@@ -39,7 +39,7 @@ type Row = {
     steps: { key: string; done: boolean }[];
     counters: Partial<Record<'unbacked_refund_amount' | 'residual_settlement_amount' | 'returned_cost' | 'refunded_value' | 'replaced_value' | 'unrecovered_value', string>>;
 };
-type Props = { branches: Branch[]; branch: string | null; rows: Row[]; more: string | null; can: { close: boolean } };
+type Props = { branches: Branch[]; branch: string | null; rows: Row[]; more: string | null; selected: Row | null; can: { close: boolean } };
 
 const kindName = (kind: string): TranslationKey => `cases.kind.${kind.toLowerCase()}` as TranslationKey;
 const residualName = (residual: string): TranslationKey => `cases.residual.${residual}` as TranslationKey;
@@ -128,10 +128,9 @@ function CaseDetail({ row, branch, canClose }: { row: Row; branch: string | null
                 </div>
             )}
             {row.outcome !== null && row.state === 'CLOSED' && <p className="text-body text-text-secondary">{t('cases.outcome', { hasil: row.outcome })}</p>}
-            {close.answer !== null && <OutcomeMessage answer={close.answer} />}
             {canClose && row.state === 'OPEN' && row.residuals.length === 0 && (
                 <div>
-                    <Button variant="outline" onClick={() => { setReason(''); close.clear(); setOpen(true); }}>
+                    <Button variant="outline" onClick={() => { close.clear(); setOpen(true); }}>
                         {t('actions.close_case')}
                     </Button>
                 </div>
@@ -146,14 +145,21 @@ function CaseDetail({ row, branch, canClose }: { row: Row; branch: string | null
                 pending={close.pending}
                 answer={close.answer}
                 onConfirm={() => {
-                    close.submit({ lock_version: row.lock_version, alasan: reason }, () => { setOpen(false); });
+                    close.submit({ lock_version: row.lock_version, alasan: reason }, () => { setOpen(false); setReason(''); });
                 }}
             />
         </section>
     );
 }
 
-export default function CorrectionCases({ branches, branch, rows, more, can }: Props) {
+/** A command's success on the page its answer opened, once (IP-01), whatever page the acted-on case now falls on. */
+function PageAnswer() {
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
+
+    return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
+}
+
+export default function CorrectionCases({ branches, branch, rows, more, selected, can }: Props) {
     const { t } = useTranslation();
     // PT-08: "Muat Lagi" adds the page after the rows shown on a partial reload; any other visit shows its first page.
     const [base, setBase] = useState(rows);
@@ -178,6 +184,8 @@ export default function CorrectionCases({ branches, branch, rows, more, can }: P
         <AppShell title={t('pages.pg_040.title')} back={{ href: '/dokumen', label: t('pages.pg_035.title') }}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_040.title')} />
+                <PageAnswer />
+                {selected !== null && !shown.some((row) => row.id === selected.id) && <CaseDetail key={selected.id} row={selected} branch={branch} canClose={can.close} />}
                 {branches.length > 1 && (
                     <FormField label={t('cases.field.branch')} className="min-w-0 sm:w-80">
                         {(control) => (

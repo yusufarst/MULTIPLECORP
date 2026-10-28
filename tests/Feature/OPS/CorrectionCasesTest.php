@@ -269,3 +269,16 @@ it('names another company\'s causal project in scope, shows a lot only with stoc
     $seen = [...array_column($first['rows'], 'id'), ...array_column($second['rows'], 'id')];
     expect($seen)->toHaveCount(52)->and(array_unique($seen))->toHaveCount(52);
 });
+
+it('keeps the acted-on case and its outcome in view after its closure, wherever the order now puts it (IP-01; Codex)', function () {
+    CorrectionCase::factory()->count(51)->create(['company_id' => $this->company->id]);
+    $case = CorrectionCase::factory()->create(['company_id' => $this->company->id]);
+
+    $this->actingAs($this->closer)->post("/dokumen/kasus/{$case->public_id}/tutup", ['command_id' => (string) Str::uuid(), 'lock_version' => 0, 'alasan' => 'Kasus selesai ditinjau.'])
+        ->assertRedirect('/dokumen/kasus?kasus='.$case->public_id);
+
+    $this->actingAs($this->closer)->get('/dokumen/kasus?kasus='.$case->public_id)->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('selected.id', $case->public_id)
+        ->where('selected.state', 'CLOSED')
+        ->where('selected.outcome', 'Kasus selesai ditinjau.'));
+});

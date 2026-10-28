@@ -31,7 +31,7 @@ final class CorrectionCaseList
     public function __construct(private readonly EffectiveCapabilities $capabilities) {}
 
     /** @return array<string, mixed> */
-    public function screen(int $viewerId, ?string $branch, ?string $after): array
+    public function screen(int $viewerId, ?string $branch, ?string $after, ?string $selected = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $branches = [];
@@ -53,12 +53,15 @@ final class CorrectionCaseList
         }
 
         $page = $chosen === null ? ['rows' => [], 'more' => null] : $this->page($viewer, $chosen['internal'], $after);
+        // The case a command just acted on, wherever the order now puts it, so its answer and outcome stay in view (IP-01).
+        $acted = $chosen === null || $selected === null || preg_match(self::UUID, $selected) !== 1 ? [] : $this->page($viewer, $chosen['internal'], null, $selected)['rows'];
 
         return [
             'branches' => array_map(fn (array $item): array => array_diff_key($item, ['internal' => true]), $branches),
             'branch' => $chosen['id'] ?? null,
             'rows' => $page['rows'],
             'more' => $page['more'],
+            'selected' => $acted[0] ?? null,
             'can' => ['close' => $chosen !== null && $viewer->allows('cases.close', $chosen['internal'])],
         ];
     }
@@ -68,7 +71,7 @@ final class CorrectionCaseList
      *
      * @return array{rows: list<array<string, mixed>>, more: ?string}
      */
-    public function page(Authority $viewer, int $companyId, ?string $after): array
+    public function page(Authority $viewer, int $companyId, ?string $after, ?string $only = null): array
     {
         // The cursor names the last case shown with the state it had then, so a case closed or reopened since skips or repeats nothing.
         [$afterState, $afterId] = is_string($after) && preg_match('/^(OPEN|CLOSED)~([0-9a-f-]{36})$/i', $after, $parts) === 1 ? [strtoupper($parts[1]), strtolower($parts[2])] : [null, null];
@@ -76,6 +79,7 @@ final class CorrectionCaseList
         $cursor = is_numeric($cursorId) ? (object) ['id' => (int) $cursorId, 'state' => $afterState] : null;
         $query = $viewer->scope->apply(DB::table('correction_cases as c'), 'c.company_id')
             ->where('c.company_id', $companyId)
+            ->when($only !== null, fn (Builder $one) => $one->where('c.public_id', strtolower((string) $only)))
             ->leftJoin('projects as p', 'p.id', '=', 'c.project_id')
             ->leftJoin('projects as cp', 'cp.id', '=', 'c.causal_project_id')
             ->leftJoin('inventory_lots as l', 'l.id', '=', 'c.source_lot_id')
