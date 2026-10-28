@@ -83,8 +83,8 @@ final class QuotationsController extends Controller
     {
         $actor = self::actor($request);
         $project = $this->workspace->open($actor, $id);
-        $input = self::validated($request, ['revisi' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0'], 'tanggal' => ['required', 'date_format:Y-m-d'], 'tanggal_otomatis' => ['nullable', 'boolean']]);
-        $outcome = $issue->run(self::text($input['command_id']), $actor, $project, self::text($input['revisi']), (int) self::text($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
+        $input = self::validated($request, ['revisi' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0'], 'tanggal' => ['required', 'date_format:Y-m-d'], 'tanggal_otomatis' => ['nullable', 'boolean'], 'isi' => ['required', 'string', 'size:64']]);
+        $outcome = $issue->run(self::text($input['command_id']), $actor, $project, self::text($input['revisi']), (int) self::text($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::text($input['isi']));
 
         return $this->answer($actor, $project->public_id, $outcome, 'issued', self::text($input['tanggal']));
     }
@@ -142,7 +142,7 @@ final class QuotationsController extends Controller
                 default => self::say('messages.msg_04'),
             }],
             Outcome::CONFLICT => match ($outcome->code) {
-                'ST-01' => ['stale', self::say('messages.msg_03')],
+                'ST-01' => ['stale', self::say(($state['reason'] ?? null) === 'facts' ? 'quotations.refusal.facts_changed' : 'messages.msg_03')],
                 'ST-02' => ['stale', self::say('quotations.refusal.state_changed')],
                 'ST-08' => ['stale', self::say('messages.msg_16', ['tanggal_lama' => $sent, 'tanggal' => self::text($state['today'] ?? BusinessDate::today())])],
                 'BD-06' => ['recorded', self::say('quotations.refusal.already_issued', ['nomor' => self::text($state['number'] ?? '')])],

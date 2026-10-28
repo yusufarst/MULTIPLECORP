@@ -33,7 +33,7 @@ import { useTranslation } from '@/lib/i18n';
 import { type CommandForm, useCommand } from '@/lib/use-command';
 
 type Line = { handle: string; product: string; description: string; quantity: string; unit: string; ratio: number; scale: number; price?: string; value?: string };
-type Current = { id: string; no: number; state: Exclude<RevisionState, 'EXPIRED'>; valid_until: string | null; lock_version: number; lines: Line[]; paper: Paper | null };
+type Current = { id: string; no: number; state: Exclude<RevisionState, 'EXPIRED'>; valid_until: string | null; lock_version: number; lines: Line[]; paper: Paper | null; facts: string | null };
 type Revision = { id: string; no: number; state: RevisionState; valid_until: string | null; decided_at: string | null; decided_by: string | null; reason: string | null; number: string | null; document: string | null };
 type Props = {
     project: { id: string; number: string; title: string; company: string; client: string; state: string } | null;
@@ -154,7 +154,7 @@ function DraftComposer({ project, draft, taxes, today, money, issue }: { project
                             <li key={line.handle} id={`line-${String(index)}`} className="grid min-w-0 gap-3 py-4 sm:grid-cols-2">
                                 <div className="flex min-w-0 items-start justify-between gap-2 sm:col-span-2">
                                     <span className="min-w-0 font-semibold text-text-primary">{`${String(index + 1)}. ${line.product}`}</span>
-                                    <Button variant="ghost" size="sm" aria-label={t('quotations.form.remove', { n: index + 1 })} onClick={() => { setLines(lines.filter((_, at) => at !== index)); setDirty(true); }}>
+                                    <Button variant="ghost" size="sm" disabled={lines.length === 1} aria-label={t('quotations.form.remove', { n: index + 1 })} onClick={() => { setLines(lines.filter((_, at) => at !== index)); setDirty(true); }}>
                                         <Icon icon={Trash2} size="sm" />
                                     </Button>
                                 </div>
@@ -191,7 +191,7 @@ function DraftComposer({ project, draft, taxes, today, money, issue }: { project
                 <Button variant="outline" pending={save.pending} disabled={save.frozen || newer !== null} onClick={submit}>
                     {t('composer.save_draft')}
                 </Button>
-                <Button disabled={dirty || newer !== null} onClick={() => { issue.clear(); setConfirming(true); }}>
+                <Button disabled={dirty || newer !== null || lines.length === 0} onClick={() => { issue.clear(); setConfirming(true); }}>
                     <Icon icon={Send} size="sm" />
                     {t('quotations.action.issue')}
                 </Button>
@@ -226,7 +226,7 @@ function DraftComposer({ project, draft, taxes, today, money, issue }: { project
                 pending={issue.pending}
                 answer={issue.answer}
                 onConfirm={() => {
-                    issue.submit({ revisi: base.id, lock_version: base.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setConfirming(false); });
+                    issue.submit({ revisi: base.id, lock_version: base.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, isi: draft.facts ?? '' }, () => { setConfirming(false); });
                 }}
             />
         </>

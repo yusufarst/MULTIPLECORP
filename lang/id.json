@@ -2090,5 +2090,6 @@
     "quotations.validation.price": "Isi harga satuan.",
     "quotations.validation.lines": "Penawaran perlu sedikitnya satu baris.",
     "quotations.validation.validity": "Tanggal berlaku tidak boleh sebelum hari ini.",
-    "quotations.list.empty": "Belum ada penawaran di perusahaan ini."
+    "quotations.list.empty": "Belum ada penawaran di perusahaan ini.",
+    "quotations.refusal.facts_changed": "Data klien atau proyek berubah sejak pratinjau dibuka. Muat ulang, periksa pratinjau, lalu terbitkan lagi."
 }

@@ -63,6 +63,8 @@ final class QuotationList
     public function page(Authority $viewer, int $companyId, ?string $after): array
     {
         $money = $viewer->allows('finance.view', $companyId);
+        // Each row opens a page its viewer may open: PG-014 for its two audiences (ROUTE-014), else the project's PG-011.
+        $quotation = ($money && $viewer->allows('quotation.manage', $companyId)) || $viewer->allows('projects.confirm', $companyId);
         $today = BusinessDate::today();
         $cursor = is_string($after) && preg_match(self::UUID, $after) === 1
             ? DB::table('quotation_revisions')->where('public_id', strtolower($after))->where('company_id', $companyId)->value('id') : null;
@@ -92,6 +94,7 @@ final class QuotationList
                 'state' => QuotationRecords::shown(Row::text($row, 'state'), Row::nullable($row, 'valid_until'), $today),
                 'valid_until' => Row::nullable($row, 'valid_until'),
                 'number' => Row::nullable($row, 'formatted_number'),
+                'href' => '/proyek/'.Row::text($row, 'project').($quotation ? '/penawaran' : ''),
                 ...($money ? ['value' => Row::text($row, 'value')] : []),
             ];
         }

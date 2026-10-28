@@ -6,6 +6,7 @@ use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\ProjectRecords;
 use App\Modules\PRJ\Services\QuotationRecords;
+use App\Support\BusinessDate;
 use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
@@ -75,7 +76,8 @@ final class AnswerQuotation
 
             BusinessDateRule::check($businessDate, $prefilled);
 
-            if (QuotationRecords::expired($latest['state'], $latest['valid_until'], $businessDate)) {
+            // Expiry is read on today's WIB date at the command's clock, never on the confirmation's chosen date (L-25; BR-DT-04).
+            if (QuotationRecords::expired($latest['state'], $latest['valid_until'], BusinessDate::of($context->now()))) {
                 throw Refused::rejected('L-25', ['reason' => 'expired']);
             }
 

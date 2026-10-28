@@ -17,7 +17,7 @@ import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 
 type Branch = { id: string; code: string; name: string };
-type Row = { id: string; project: string; project_number: string; title: string; client: string; no: number; state: RevisionState; valid_until: string | null; number: string | null; value?: string };
+type Row = { id: string; project: string; project_number: string; title: string; client: string; no: number; state: RevisionState; valid_until: string | null; number: string | null; href: string; value?: string };
 type Props = { branches: Branch[]; branch: string | null; money: boolean; rows: Row[]; more: string | null };
 
 export default function Quotations({ branches, branch, money, rows, more }: Props) {
@@ -67,7 +67,7 @@ export default function Quotations({ branches, branch, money, rows, more }: Prop
                             caption={t('pages.pg_037.title')}
                             rows={shown}
                             rowKey={(row) => row.id}
-                            rowHref={(row) => `/proyek/${row.project}/penawaran`}
+                            rowHref={(row) => row.href}
                             columns={[
                                 { key: 'project', header: t('quotations.field.project'), cell: (row) => (
                                     <span className="flex min-w-0 flex-col">

@@ -42,13 +42,14 @@ final class IssueQuotation
         private readonly QuotationRecords $quotations,
     ) {}
 
-    public function run(string $commandId, int $actorUserId, Project $project, string $revision, int $lockVersion, string $businessDate, bool $prefilled): Outcome
+    /** @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed: a client changed since is a CONFLICT (architecture challenge 15a) */
+    public function run(string $commandId, int $actorUserId, Project $project, string $revision, int $lockVersion, string $businessDate, bool $prefilled, ?string $factsDigest = null): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $project->company_id, self::CAPABILITY,
             Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($project->company_id), ['project' => $project->public_id, 'revision' => strtolower($revision),
-                'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled]));
+                'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'facts' => $factsDigest]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($project, $revision, $lockVersion, $businessDate, $prefilled): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($project, $revision, $lockVersion, $businessDate, $prefilled, $factsDigest): CommandResult {
             $subject = new DocumentSubject(QuotationSubjects::QUOTATION, 'STANDARD', $project->company_id, ['project_id' => $project->id]);
             $provider = $this->subjects->of($subject);
             // The chain and its draft readied with the revision (SaveQuotationDraft, ReviseQuotation): AX-15's locks on existing rows —
@@ -76,7 +77,7 @@ final class IssueQuotation
                 throw Refused::conflict('ST-01');
             }
 
-            $version = $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true);
+            $version = $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, $factsDigest, authorized: true);
             IssueDocument::render($context, $version);
             $this->quotations->sent($context, $latest['id'], $project->company_id, (string) $latest['valid_until'], (string) $version->formatted_number);
 

@@ -7218,6 +7218,12 @@
             "source": "PG-037",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "quotations.refusal.facts_changed": {
+            "task": "TASK-033",
+            "source": "ST-01; architecture challenge 15a",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

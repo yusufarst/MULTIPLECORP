@@ -2,6 +2,7 @@
 
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Queries\QuotationWorkspace;
 use App\Modules\PRJ\Services\QuotationRecords;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
@@ -82,7 +83,8 @@ it('issues, revises and answers once each, every replay answering its recorded o
         'berlaku' => CarbonImmutable::parse(BusinessDate::today())->addDays(7)->toDateString(), 'baris' => [['baris' => RowHandle::of('quotation_revision_lines', (int) DB::table('quotation_revision_lines')->value('id')), 'jumlah' => '12', 'harga' => '20000']]]);
     $revision = QuotationRecords::latest($this->project->id);
 
-    expect(twice($this, "{$this->path}/terbitkan", ['command_id' => (string) Str::uuid(), 'revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]))
+    expect(twice($this, "{$this->path}/terbitkan", ['command_id' => (string) Str::uuid(), 'revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+        'isi' => (string) app(QuotationWorkspace::class)->screen($this->admin->id, $this->project)['current']['facts']]))
         ->toBe(Outcome::COMMITTED)
         ->and(Numbering::next($this->company, SequenceType::Doc01, $this->year))->toBe(2);
 

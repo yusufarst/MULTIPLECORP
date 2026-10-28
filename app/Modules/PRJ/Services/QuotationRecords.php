@@ -138,6 +138,10 @@ final class QuotationRecords
             throw Refused::conflict('ST-01');
         }
 
+        if ($lines === []) {
+            throw Refused::rejected('WF-QUO-01', ['reason' => 'no_lines']);
+        }
+
         $before = self::content($revisionId);
         DB::table('quotation_revision_lines')->where('quotation_revision_id', $revisionId)->whereNotIn('id', array_keys($lines))->delete();
 

@@ -2,6 +2,7 @@
 
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Queries\QuotationWorkspace;
 use App\Modules\PRJ\Services\QuotationRecords;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -78,10 +79,16 @@ function savedQuotation(object $test): array
 function issuedQuotation(object $test): array
 {
     $revision = savedQuotation($test);
-    quotationPost($test, '/terbitkan', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
+    quotationPost($test, '/terbitkan', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, 'isi' => quotationDigest($test)]);
     expect(quotationAnswer())->toMatchArray(['kind' => 'COMMITTED']);
 
     return QuotationRecords::latest($test->project->id);
+}
+
+/** The digest of the facts PG-014's paper shows the account, which the issue carries (architecture challenge 15a). */
+function quotationDigest(object $test): string
+{
+    return (string) app(QuotationWorkspace::class)->screen($test->admin->id, $test->project)['current']['facts'];
 }
 
 it('shows PG-014 empty, then the draft from the project\'s lines with its paper, values only with finance.view (ROUTE-014, ROUTE-154; criterion 9)', function () {
@@ -118,12 +125,16 @@ it('keeps a stale save\'s input with CONFLICT and refuses a past validity at its
 
     quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'baris' => [['baris' => str_repeat('a', 32), 'jumlah' => '5', 'harga' => '1000']]])
         ->assertSessionHasErrors('baris.0.baris');
+
+    // A draft keeps at least one line: one with none could neither be issued nor revised (WF-QUO-01).
+    quotationPost($this, '', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'baris' => []])->assertSessionHasErrors('baris');
     expect(DB::table('quotation_revision_lines')->where('quotation_revision_id', $revision['id'])->value('entered_qty'))->toBe('12.000');
 });
 
 it('refuses the issue in words until DOC-01 numbering starts, then issues once — a second issue CONFLICT with its number (ROUTE-155; C-10; BD-06; criterion 1)', function () {
     $revision = savedQuotation($this);
-    $issue = fn () => quotationPost($this, '/terbitkan', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
+    $digest = quotationDigest($this);
+    $issue = fn () => quotationPost($this, '/terbitkan', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, 'isi' => $digest]);
 
     $issue()->assertRedirect("/proyek/{$this->project->public_id}/penawaran");
     expect(quotationAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'C-10'])
@@ -155,7 +166,8 @@ it('records the client\'s rejection with its reason, revises, and approves the l
     quotationPost($this, '/revisi', ['revisi' => $first['public_id']]);
     expect(quotationAnswer())->toMatchArray(['kind' => 'COMMITTED']);
     $second = QuotationRecords::latest($this->project->id);
-    quotationPost($this, '/terbitkan', ['revisi' => $second['public_id'], 'lock_version' => $second['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
+    quotationPost($this, '/terbitkan', ['revisi' => $second['public_id'], 'lock_version' => $second['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, 'isi' => quotationDigest($this)]);
+    expect(quotationAnswer())->toMatchArray(['kind' => 'COMMITTED']);
 
     // `quotation.manage` alone never approves; `projects.confirm` does, onto PG-011 (AX-13; SM-04).
     $answer($second, 'SETUJU', null, Authorization::admin([$this->company->id], ['projects.view', 'quotation.manage', 'finance.view']))->assertForbidden();
@@ -165,12 +177,28 @@ it('records the client\'s rejection with its reason, revises, and approves the l
         ->and(DB::table('document_versions')->whereNotNull('quotation_revision_id')->orderBy('version_no')->pluck('state')->all())->toBe(['SUPERSEDED', 'ISSUED']);
 });
 
+it('refuses an issue whose client changed since the preview with CONFLICT, nothing issued (architecture challenge 15a; ST-01)', function () {
+    startQuotationNumbering($this);
+    $revision = savedQuotation($this);
+    $digest = quotationDigest($this);
+    DB::table('client_organizations')->where('id', $this->project->client_organization_id)->update(['name' => 'SMA Berganti Nama']);
+
+    quotationPost($this, '/terbitkan', ['revisi' => $revision['public_id'], 'lock_version' => $revision['lock_version'], 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, 'isi' => $digest]);
+    expect(quotationAnswer())->toMatchArray(['kind' => 'CONFLICT', 'code' => 'ST-01', 'cause' => 'stale'])
+        ->and(QuotationRecords::latest($this->project->id)['state'])->toBe('DRAFT')
+        ->and(DB::table('document_versions')->whereNotNull('formatted_number')->count())->toBe(0);
+});
+
 it('refuses the approval of an expired revision in words and offers only "Buat Revisi" (L-25; BR-QUO-01; criterion 2)', function () {
     startQuotationNumbering($this);
     $revision = issuedQuotation($this);
     DB::table('quotation_revisions')->where('id', $revision['id'])->update(['valid_until' => CarbonImmutable::parse(BusinessDate::today())->subDay()->toDateString()]);
 
     quotationPost($this, '/jawaban', ['revisi' => $revision['public_id'], 'jawaban' => 'SETUJU', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
+    expect(quotationAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'L-25']);
+
+    // A chosen earlier date never brings an expired revision back within its validity (BR-DT-04).
+    quotationPost($this, '/jawaban', ['revisi' => $revision['public_id'], 'jawaban' => 'SETUJU', 'tanggal' => CarbonImmutable::parse(BusinessDate::today())->subDays(2)->toDateString(), 'tanggal_otomatis' => false]);
     expect(quotationAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'L-25'])
         ->and(DB::table('commercial_confirmations')->count())->toBe(0);
 
@@ -197,7 +225,10 @@ it('lists one company\'s revisions on PG-037 with their state, the value only wi
 
     $viewer = Authorization::admin([$this->company->id], ['projects.view']);
     $this->actingAs($viewer)->get('/dokumen/penawaran')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('money', false)->has('rows', 1)->where('rows.0.state', 'DRAFT')->missing('rows.0.value'));
+        ->where('money', false)->has('rows', 1)->where('rows.0.state', 'DRAFT')->missing('rows.0.value')
+        // Its row opens the project's PG-011, the one page of the two this viewer may open (AZ-01).
+        ->where('rows.0.href', "/proyek/{$this->project->public_id}"));
+    $this->actingAs($this->admin)->get('/dokumen/penawaran')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.href', "/proyek/{$this->project->public_id}/penawaran"));
 
     $this->actingAs(Authorization::admin([$this->company->id], ['finance.view']))->get('/dokumen/penawaran')->assertForbidden();
 });

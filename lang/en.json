@@ -2090,5 +2090,6 @@
     "quotations.validation.price": "Enter the unit price.",
     "quotations.validation.lines": "A quotation needs at least one line.",
     "quotations.validation.validity": "The validity date cannot be before today.",
-    "quotations.list.empty": "No quotations in this company yet."
+    "quotations.list.empty": "No quotations in this company yet.",
+    "quotations.refusal.facts_changed": "The client or project data changed since the preview opened. Reload, check the preview, then issue again."
 }

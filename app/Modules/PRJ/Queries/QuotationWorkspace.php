@@ -4,6 +4,7 @@ namespace App\Modules\PRJ\Queries;
 
 use App\Modules\CAT\Data\Quantity;
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentPaper;
 use App\Modules\DOC\Services\IssuerIdentity;
 use App\Modules\IAM\Data\Authority;
@@ -120,12 +121,16 @@ final class QuotationWorkspace
             ->orderBy('l.id')
             ->get(['l.id', 'l.description', 'l.entered_qty', 'l.ratio_to_base', 'l.quantity_scale', 'l.unit_price', 'l.sales_value', 'l.tax_components', 'p.name as product', 'u.code as unit'])->all();
         $paper = null;
+        $digest = null;
 
         if ($money && Row::text($revision, 'state') === 'DRAFT') {
             // The draft's paper from the project's client as it is now; the logo through its company (PJ-19; ROUTE-226).
             $subject = new DocumentSubject(QuotationSubjects::QUOTATION, 'STANDARD', $project->company_id, ['project_id' => $project->id]);
             $identity = $this->identity->of($project->company_id);
-            $paper = DocumentPaper::compose(QuotationSubjects::QUOTATION, 'STANDARD', $this->subjects->facts($subject), $identity, null, BusinessDate::today(), null, true,
+            $facts = $this->subjects->facts($subject);
+            // The issue carries the digest of the facts this paper shows: a client changed since is a CONFLICT (architecture challenge 15a).
+            $digest = DocumentChain::factsDigest($facts);
+            $paper = DocumentPaper::compose(QuotationSubjects::QUOTATION, 'STANDARD', $facts, $identity, null, BusinessDate::today(), null, true,
                 $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
         } elseif ($money) {
             // An issued revision shows the paper it was issued with, never one recomposed from today's client (BR-SN-01; architecture challenge 1b).
@@ -151,6 +156,7 @@ final class QuotationWorkspace
                 ...($money ? ['price' => Row::text($line, 'unit_price'), 'value' => Row::text($line, 'sales_value'), 'taxes' => self::taxes(Row::text($line, 'tax_components'))] : []),
             ], $lines),
             'paper' => $paper,
+            'facts' => $digest,
         ];
     }
 
@@ -212,7 +218,8 @@ final class QuotationWorkspace
             throw ValidationException::withMessages($errors);
         }
 
-        if ($lines === [] && $entered !== []) {
+        // A draft keeps at least one line: one with none could neither be issued nor revised (WF-QUO-01).
+        if ($lines === []) {
             throw ValidationException::withMessages(['baris' => self::say('quotations.validation.lines')]);
         }
 
