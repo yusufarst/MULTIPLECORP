@@ -1,0 +1,7 @@
+{{#has_lines}}<table class="paper-lines">
+<thead><tr><th class="num">No.</th><th>Uraian</th><th class="qty">Jumlah</th><th>Satuan</th>{{#priced}}<th class="money">Harga Satuan</th><th class="money">Total</th>{{/priced}}</tr></thead>
+<tbody>
+{{#lines}}<tr><td class="num">{{no}}</td><td>{{description}}{{#note}}<span class="paper-line-note">{{note}}</span>{{/note}}</td><td class="qty">{{quantity}}</td><td>{{unit}}</td>{{#priced}}<td class="money">{{unit_price}}</td><td class="money">{{amount}}</td>{{/priced}}</tr>
+{{/lines}}
+</tbody>
+</table>{{/has_lines}}

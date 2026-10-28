@@ -1,4 +1,5 @@
 import { Download, RefreshCw } from 'lucide-react';
+import { useEffect } from 'react';
 
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
@@ -11,9 +12,15 @@ import { useStatusPoll } from '@/lib/use-status-poll';
     background request no faster than once a minute and refreshable; *PDF siap* with "Unduh" for the family's viewers;
     *PDF gagal dibuat* with MSG-08 and its attempt — the system tries again by itself —, or MSG-08's exhausted variant
     once the operator is told. There is no "terbitkan ulang". */
-export function RenditionStatus({ versionId, documentName, number }: { versionId: string; documentName: string; number: string }) {
+export function RenditionStatus({ versionId, documentName, number, onFile }: { versionId: string; documentName: string; number: string; onFile?: (file: string) => void }) {
     const { t } = useTranslation();
     const { status, refresh } = useStatusPoll('rendisi', versionId);
+    const file = status?.state === 'READY' ? status.file : null;
+
+    // The page that shows the rendition inline learns of its file as the poll does (DESIGN_SYSTEM §14.3).
+    useEffect(() => {
+        if (file !== null) onFile?.(file);
+    }, [file, onFile]);
     const state = status?.state === 'READY' || status?.state === 'FAILED' || status?.state === 'RENDERING' ? status.state : 'PENDING';
 
     return (

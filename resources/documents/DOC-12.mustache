@@ -1,0 +1,13 @@
+{{> open}}
+<div class="paper-heading"><h2 class="paper-title">Nota Terima Barang</h2>{{> number}}</div>
+<div class="paper-meta">
+{{#recipient}}<div class="paper-recipient"><p class="paper-label">Diterima dari</p><p class="paper-recipient-name">{{name}}</p>{{#lines}}<p>{{.}}</p>{{/lines}}</div>{{/recipient}}
+{{> references}}
+</div>
+<p class="paper-text">Telah diterima barang berikut:</p>
+{{> lines_plain}}
+<div class="paper-signatures">
+<div class="paper-signature"><p>&nbsp;</p><p>Diserahkan oleh,</p><p>{{#recipient}}{{name}}{{/recipient}}</p><div class="paper-signature-space"></div><span class="paper-signer-blank"></span><p>Nama dan tanda tangan</p></div>
+{{> issuer_signature}}
+</div>
+{{> close}}

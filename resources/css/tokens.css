@@ -609,6 +609,11 @@
     --m-action-bar-h: 4.5rem;
     /* D-DS-06: the action region grows to hold its answer up to a third of the viewport, then scrolls inside. */
     --action-region-max: 33vh;
+    /* D-DS-23: the composer's preview at VD-07's share — its lower end to 1,279 px, the share from 1,280 px —, and the
+       height of a preview or rendition frame that is not the desktop's sticky column. */
+    --composer-preview-narrow: 40%;
+    --composer-preview: 45%;
+    --composer-frame-h: 70dvh;
 
     /* §5.3 — the custom select's popover and its phone sheet. */
     --select-menu-pad: 0.5rem;

@@ -19,12 +19,14 @@ export type Entry = {
     allowed: (account: AccountHints) => boolean;
     /** A module's later sub-pages: while its first page is not built, the entry opens on the first one that is (§5.3). */
     subpages?: { pg: string; href: string }[];
+    /** Who reaches the module's first page, where fewer reach it than the module: the others open on a sub-page. */
+    page?: (account: AccountHints) => boolean;
 };
 
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-038', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-035', 'PG-036', 'PG-038', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -63,6 +65,7 @@ export const MODULES: Entry[] = [
         href: '/dokumen',
         icon: FileText,
         allowed: scoped('projects.view', 'evidence.view'),
+        page: scoped('projects.view'),
         subpages: [{ pg: 'PG-038', href: '/dokumen/bukti' }],
     },
     {
@@ -142,7 +145,7 @@ export function present(entries: Entry[], account: AccountHints, built: Readonly
             return [];
         }
 
-        if (built.has(entry.pg)) {
+        if (built.has(entry.pg) && (entry.page === undefined || entry.page(account))) {
             return [entry];
         }
 

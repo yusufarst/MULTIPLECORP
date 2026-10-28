@@ -1,0 +1,9 @@
+{
+    "_comment": "TL-03 (TASK-029; DESIGN_SYSTEM §14.3; UXI-14): a composer's provisional totals on the entered strings — each line rounded half away from zero to sen, the tax on the subtotal, the total their sum — as resources/js/features/doc/totals.ts computes them and as PostgreSQL's numeric arithmetic, the server's, computes them (tests/Unit/DOC/ProvisionalTotalsTest.php).",
+    "cases": [
+        { "lines": [["2", "7500000"], ["1.5", "1000.50"]], "tax_percent": "11", "subtotal": "15001500.75", "tax": "1650165.08", "total": "16651665.83" },
+        { "lines": [["3", "333.33"]], "tax_percent": "0", "subtotal": "999.99", "tax": "0.00", "total": "999.99" },
+        { "lines": [["0.333", "1000.05"], ["7", "0.01"]], "tax_percent": "11", "subtotal": "333.09", "tax": "36.64", "total": "369.73" },
+        { "lines": [["1", "100000.00"]], "tax_percent": "1.1", "subtotal": "100000.00", "tax": "1100.00", "total": "101100.00" }
+    ]
+}

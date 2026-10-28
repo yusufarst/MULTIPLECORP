@@ -1,0 +1,12 @@
+{{> open}}
+<div class="paper-heading"><h2 class="paper-title">Surat Perintah Kerja</h2>{{> number}}</div>
+{{> meta}}
+<p class="paper-text">{{issuer.name}} memberikan perintah kerja untuk pekerjaan berikut:</p>
+{{> lines}}
+{{> totals}}
+<p class="paper-note">Pekerjaan dilaksanakan sesuai lingkup dan nilai di atas.</p>
+<div class="paper-signatures">
+<div class="paper-signature"><p>&nbsp;</p><p>Menyetujui,</p><p>{{#recipient}}{{name}}{{/recipient}}</p><div class="paper-signature-space"></div><span class="paper-signer-blank"></span><p>Nama dan tanda tangan</p></div>
+{{> issuer_signature}}
+</div>
+{{> close}}

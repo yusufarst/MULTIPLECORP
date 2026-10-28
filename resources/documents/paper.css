@@ -1,0 +1,340 @@
+/* The paper of every document layout (DESIGN_SYSTEM §14.3, §17; DOCUMENT_PREVIEW_PRODUCER §3): one style the browser's
+   composer and TASK-022's renderer both read — the renderer inlines it, the composer's bundle imports it —, A4 on the
+   named page `document` so no other page's print changes, the renderer's margins, the draft marking on every page.
+   Paper is white with dark text in either theme: it is what prints. No rule depends on a script (FL-08). */
+
+@page document {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+
+    @bottom-right {
+        content: 'Halaman ' counter(page) ' dari ' counter(pages);
+        font-family: 'Inter Variable', sans-serif;
+        font-size: 8pt;
+        color: #555555;
+    }
+}
+
+.paper {
+    page: document;
+    position: relative;
+    box-sizing: border-box;
+    font-family: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    font-size: 10pt;
+    line-height: 1.45;
+    color: #1a1a1a;
+    background: #ffffff;
+    text-align: left;
+}
+
+.paper *,
+.paper *::before,
+.paper *::after {
+    box-sizing: border-box;
+}
+
+.paper p,
+.paper h1,
+.paper h2 {
+    margin: 0;
+}
+
+.paper-marking {
+    margin: 0 0 6mm;
+    padding: 2mm 3mm;
+    border: 0.4mm solid #9a3412;
+    color: #9a3412;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.paper-watermark {
+    position: absolute;
+    top: 38%;
+    left: 0;
+    right: 0;
+    color: rgba(154, 52, 18, 0.07);
+    font-size: 88pt;
+    font-weight: 800;
+    text-align: center;
+    transform: rotate(-28deg);
+    pointer-events: none;
+}
+
+.paper-watermark::after {
+    content: 'DRAF';
+}
+
+.paper-letterhead {
+    display: flex;
+    gap: 5mm;
+    align-items: flex-start;
+    padding-bottom: 4mm;
+    border-bottom: 0.5mm solid #1a1a1a;
+}
+
+.paper-logo {
+    width: 22mm;
+    height: auto;
+    max-height: 22mm;
+    object-fit: contain;
+}
+
+.paper-issuer {
+    font-size: 9pt;
+    color: #333333;
+}
+
+.paper-issuer-name {
+    font-size: 13pt;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.paper-heading {
+    margin: 7mm 0 5mm;
+    text-align: center;
+}
+
+.paper-title {
+    font-size: 15pt;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+.paper-subtitle {
+    margin-top: 1mm;
+    font-size: 10pt;
+    font-weight: 600;
+}
+
+.paper-number,
+.paper-date {
+    font-size: 9.5pt;
+}
+
+.paper-number-pending {
+    font-style: italic;
+    color: #555555;
+}
+
+.paper-meta {
+    display: flex;
+    gap: 8mm;
+    justify-content: space-between;
+    margin-bottom: 5mm;
+}
+
+.paper-label {
+    font-size: 8.5pt;
+    font-weight: 600;
+    color: #555555;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.paper-recipient-name {
+    font-weight: 700;
+}
+
+.paper-references {
+    border-collapse: collapse;
+    font-size: 9.5pt;
+}
+
+.paper-references th {
+    padding: 0 3mm 0 0;
+    font-weight: 400;
+    color: #555555;
+    text-align: left;
+    vertical-align: top;
+    white-space: nowrap;
+}
+
+.paper-references td {
+    padding: 0;
+    vertical-align: top;
+}
+
+.paper-text {
+    margin-bottom: 4mm;
+}
+
+.paper-lines {
+    width: 100%;
+    margin: 2mm 0 4mm;
+    border-collapse: collapse;
+    font-size: 9.5pt;
+}
+
+.paper-lines thead {
+    display: table-header-group;
+}
+
+.paper-lines tr {
+    break-inside: avoid;
+}
+
+.paper-lines th {
+    padding: 1.6mm 2mm;
+    border-top: 0.4mm solid #1a1a1a;
+    border-bottom: 0.4mm solid #1a1a1a;
+    background: #f2f2f2;
+    font-weight: 600;
+    text-align: left;
+}
+
+.paper-lines td {
+    padding: 1.6mm 2mm;
+    border-bottom: 0.2mm solid #cccccc;
+    vertical-align: top;
+}
+
+.paper-lines .num {
+    width: 9mm;
+    text-align: right;
+}
+
+.paper-lines .qty,
+.paper-lines .money,
+.paper-totals .money {
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
+.paper-line-note {
+    display: block;
+    font-size: 8.5pt;
+    color: #555555;
+}
+
+.paper-totals {
+    margin: 0 0 5mm auto;
+    border-collapse: collapse;
+    min-width: 70mm;
+    font-size: 9.5pt;
+}
+
+.paper-totals th {
+    padding: 1mm 4mm 1mm 0;
+    font-weight: 400;
+    text-align: left;
+}
+
+.paper-totals td {
+    padding: 1mm 0;
+}
+
+.paper-totals .grand th,
+.paper-totals .grand td {
+    padding-top: 1.6mm;
+    border-top: 0.4mm solid #1a1a1a;
+    font-weight: 700;
+}
+
+.paper-amount {
+    display: inline-block;
+    margin: 2mm 0 4mm;
+    padding: 2mm 5mm;
+    border: 0.4mm solid #1a1a1a;
+    font-size: 12pt;
+    font-weight: 700;
+}
+
+.paper-words {
+    font-style: italic;
+}
+
+.paper-bank {
+    margin: 2mm 0 5mm;
+    padding: 2.5mm 3mm;
+    border: 0.2mm solid #cccccc;
+    font-size: 9.5pt;
+    break-inside: avoid;
+}
+
+.paper-note {
+    margin: 2mm 0 4mm;
+    font-size: 9pt;
+    color: #333333;
+}
+
+.paper-signatures {
+    display: flex;
+    gap: 10mm;
+    justify-content: space-between;
+    margin-top: 8mm;
+    break-inside: avoid;
+}
+
+.paper-signatures-end {
+    justify-content: flex-end;
+}
+
+.paper-signature {
+    width: 62mm;
+    text-align: center;
+}
+
+.paper-signature-space {
+    position: relative;
+    height: 24mm;
+}
+
+.paper-stamp,
+.paper-sign {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: 24mm;
+    width: auto;
+    transform: translateX(-50%);
+}
+
+.paper-stamp {
+    opacity: 0.85;
+}
+
+.paper-signer {
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+.paper-signer-blank {
+    display: block;
+    margin: 0 auto;
+    width: 45mm;
+    border-bottom: 0.3mm solid #1a1a1a;
+    height: 5mm;
+}
+
+@media screen {
+    .paper {
+        width: 210mm;
+        min-height: 297mm;
+        padding: 18mm 16mm 20mm;
+    }
+}
+
+@media print {
+    .paper-marking {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        background: #ffffff;
+    }
+
+    .paper-watermark {
+        position: fixed;
+    }
+
+    .paper-draft {
+        padding-top: 14mm;
+    }
+}

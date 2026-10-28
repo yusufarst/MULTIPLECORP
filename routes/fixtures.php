@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\DocumentFixture;
 use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
@@ -59,6 +60,11 @@ if (! app()->runningInConsole()) {
 }
 Route::post('__fixtures/penomoran', [NumberingFixture::class, 'arm']);
 
+// TL-09–TL-12 (TASK-029): the synthetic subjects of the issuing Tasks for the requests of an armed run.
+if (! app()->runningInConsole()) {
+    DocumentFixture::apply();
+}
+
 // TL-09–TL-12 (TASK-030): PG-038's company for the run, with a reference-less client order for IP-05's warning.
 Route::post('__fixtures/bukti', [EvidenceFixture::class, 'create']);
 
@@ -73,4 +79,9 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // TL-09–TL-12 (TASK-026): stand-ins of PG-013's and PG-017's party fields, for J-MD-02's and J-MD-03's inline
     // creation through the real ROUTE-141 and ROUTE-143, before the project and purchase forms exist.
     Route::get('__fixtures/formulir-pihak', fn () => Inertia::render('Fixtures/PartyForms'));
+
+    // TL-09–TL-12 (TASK-029; J-DOC-01; CJ-15): a draft prepared from a synthetic project through ROUTE-221's action, and
+    // its rendition rendered or failed as the absent queue worker would, before the issuing pages exist.
+    Route::post('__fixtures/dokumen', [DocumentFixture::class, 'draft'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/dokumen/rendisi', [DocumentFixture::class, 'rendition'])->withoutMiddleware(PreventRequestForgery::class);
 });

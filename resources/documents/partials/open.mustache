@@ -1,0 +1,12 @@
+<div class="paper paper-{{layout}}{{#draft}} paper-draft{{/draft}}" data-layout="{{layout}}">
+{{#draft}}<p class="paper-marking">DRAF — belum terbit</p><div class="paper-watermark" aria-hidden="true"></div>{{/draft}}
+<header class="paper-letterhead">
+{{#issuer.logo_src}}<img class="paper-logo" src="{{issuer.logo_src}}" alt="">{{/issuer.logo_src}}
+<div class="paper-issuer">
+<p class="paper-issuer-name">{{issuer.name}}</p>
+{{#issuer.address}}<p>{{.}}</p>{{/issuer.address}}
+{{#issuer.city}}<p>{{issuer.city}}</p>{{/issuer.city}}
+{{#issuer.contact}}<p>{{issuer.contact}}</p>{{/issuer.contact}}
+{{#issuer.npwp}}<p>NPWP {{issuer.npwp}}</p>{{/issuer.npwp}}
+</div>
+</header>

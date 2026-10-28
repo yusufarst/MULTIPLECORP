@@ -5436,6 +5436,390 @@
             "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "documents.answer.saved": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.issued": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.revised": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.voided": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.already_issued": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.state_changed": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.company_inactive": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.corrected_at_record": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.not_issued": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.no_subject": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.precondition": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.numbering_owner": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.required": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.date": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.reason": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.too_long": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.choice": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.future": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.validation.bank": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.branch": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.number_lookup": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.number_help": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.type": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.number": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.state": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.date": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.field.version": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.find": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.clear_lookup": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.issue": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.revise": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.void": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.action.print_draft": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.empty": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.empty_scope": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.number_pending": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.draft.title": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.draft.revision_of": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.draft.bank": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.draft.bank_none": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.draft.carried": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.issue_title": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.issue_consequence": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.issue_date": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.revise_title": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.revise_consequence": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.void_title": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.confirm.void_consequence": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.version": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.versions": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.current": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.revises": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.issued_by": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.voided_by": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.rendition_frame": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.prepayment_note": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.no_content": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.none_issued": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.steps": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.step.edit": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.step.preview": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.step.finalize": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.back": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "composer.next": {
+            "task": "TASK-029",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

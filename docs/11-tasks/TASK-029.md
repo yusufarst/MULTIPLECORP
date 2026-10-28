@@ -8,7 +8,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -269,34 +269,54 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - Migration: N/A — no migration or import code in this Task
 - Other: DOCUMENT_PREVIEW_PRODUCER §4's seven tests with P8's tolerance recorded; GAP-019 — each layout's sample listed for the Owner's and the validators' acceptance (DEP-04)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/DOC/DocumentsTest.php` — the issue draws the period's next number, freezes the payload with the company's identity, the bank destination by its typed account and the number, its checksum over the canonical JSON, writes one PENDING rendition and its audit event in one transaction, the render dispatched after the commit; a later change of the company leaves the issued payload as it was (BR-SN-01)
+- Criterion 2: `tests/Integration/Documents/DocumentIssueRacesTest.php` — under real PostgreSQL sessions two issues of one draft give one issued version and one CONFLICT naming the issued number, one number consumed (BD-06; M-19); three concurrent issues of different drafts draw three distinct consecutive numbers (M-15; M-16)
+- Criterion 3: `tests/Feature/DOC/DocumentsTest.php` and `tests/Interaction/DocumentsTest.php` — "Terbitkan" replayed with one `command_id` answers the recorded issue, the precondition run once; each of INT-221–INT-224 replayed writes nothing twice; another content under one identifier CONFLICT (CI-04; CI-05)
+- Criterion 4: `tests/Integration/Documents/DocumentRenditionsTest.php` — an issue whose dispatch never ran is found by the sweeper after two minutes and rendered once through the real renderer, the version, its number, payload and checksum and the counter untouched (GAP-007; M-32); TASK-022's `RenditionPipelineTest` keeps the takeover and the retries; PG-036 shows MSG-08 and no re-issue control (`tests/Browser/E2E/documents.spec.ts`)
+- Criterion 5: `tests/Feature/DOC/DocumentsTest.php` — "Revisi" drafts a version linked to the issued one, which stays current until the revision issues — then SUPERSEDED, the revision NEW_NUMBER with the period's next number or BASE_SUFFIX with the base number and the next suffix, no counter drawn —; "Batalkan Dokumen" retires the version and its number with its reason, actor and link, the business record untouched
+- Criterion 6: `tests/Feature/DOC/DocumentsTest.php` — a void hands its change to every `DocumentChangeParticipant` inside its transaction; `tests/Integration/Documents/DocumentIssueRacesTest.php` — a participant's refusal of a revision's issue rolls the issue back with its number, the predecessor still current (L-41; M-17)
+- Criterion 7: `tests/Integration/Documents/DocumentRenditionsTest.php` — each of DOC-01–DOC-14 composed as a draft and as issued differs only in the marking, the number line and the signature block, and renders through the real renderer from its one template; the browser composes the same template (`resources/js/features/doc/paper.ts`), its lines and totals checked on PG-036 (`tests/Browser/E2E/documents.spec.ts`). The page-break comparison within P8's tolerance stays the Owner's and the validators' visual review of each layout's sample (GAP-019; DEP-04)
+- Criterion 8: `tests/Unit/DOC/DocumentPaperTest.php` — every layout's draft marked "DRAF — belum terbit" with "Nomor diberikan saat terbit" and a text signature block; `tests/Feature/DOC/DocumentsTest.php` — a prepared and saved draft writes no number, counter, payload or rendition; the marking on every printed page through the paper style
+- Criterion 9: `tests/Feature/DOC/DocumentsTest.php` — the draft's props by family, without the stamp, the signature or a number, and none at all without the family's view; provisional totals held to PostgreSQL's arithmetic (`tests/Frontend/totals.test.ts`, `DocumentRenditionsTest.php`)
+- Criterion 10: `tests/Unit/DOC/DocumentPaperTest.php` and `tests/Browser/Localization/documents.spec.ts` — the paper Indonesian in either interface language
+- Criterion 11: `tests/Browser/Responsive/documents.spec.ts` and `tests/Browser/Accessibility/documents.spec.ts` — side by side at 1,025, 1,279 and 1,280 px with "100%" and "Layar penuh", "Rincian | Pratinjau" at 1,024 px, Edit → Preview → Finalize at 390 px; the paper a named region after the form, never live, its frame reachable by keyboard
+- Criterion 12: `tests/Integration/Documents/DocumentRenditionsTest.php` — an issue and its rendition move no stock, cash or obligation (BR-XD-04)
+- Criterion 13: `tests/Feature/DOC/DocumentsTest.php` — C-10 in a period whose numbering has not started (MSG-17; the numbering link for the Owner) and C-54 for a deactivated company's new chain, nothing written
+- Criterion 14: `tests/Authorization/DocumentsAccessTest.php` and `tests/Feature/DOC/DocumentsTest.php` — the payload and rendition by family within the company, DOC-01 with `quotation.manage`, a purchase's layout with `cost.view`, another company's document unknown, PG-035's lookup inside its branch
+- Criterion 15: `tests/Feature/DOC/DocumentsTest.php` — each issue, revision and void with its audit event in its transaction; refusals write nothing
+- Criterion 16: `tests/Integration/Documents/DocumentTypesTest.php` — the fourteen rows' names from V1_SCOPE's catalogue, numbered, DOC-05 in RECEIPT and PRE_PAYMENT, each type's subject agreeing with the arc PostgreSQL enforces
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL with the real renderer (TL-05); PASS in CI and locally
+- [x] Authorization: `documents.issue` and `documents.correct` with and without each family's view; DOC-01 by `quotation.manage` (TL-06)
+- [x] Route integrity: ROUTE-035, ROUTE-036 and ROUTE-221–ROUTE-225 in the route audit (TL-07)
+- [x] Interaction behavior: INT-221–INT-224 with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-DOC-01 and CJ-15 on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: 1,024, 1,025, 1,279, 1,280 and 390 px (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's primitives; the composer and paper of DESIGN_SYSTEM §14.3
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-10 — every template value escaped, no raw HTML in the page (WS-09's allowlist of the paper's own elements), the renderer reading only its assets —; SM-25 for the payloads, the draft props and the renditions (TL-14)
+- [x] Database safety review: one expand-only seed migration, insert-only (DIR-099 keeps a type's row unchanged); local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `4c6f177`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40643395665 (push) and 40643398663 (pull request #35), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; on the workstation the documents' PHP tests passed on `4265430` and the frontend checks on every commit, its browser layer timing out at sign-in while the shared stack answered each request in 3.5–9 s, and after the Owner's restart its Docker engine was not running, so the later commits' and the browser evidence is CI's
+- Build result: `TL-13 Frontend build: PASS — Evidence: 4c6f177, CI ubuntu-24.04 run 40643395665`
+- Route evidence: TL-07's route audit PASS — ROUTE-035 `GET /dokumen` and ROUTE-036 `GET /dokumen/{id}` (`projects.view`), ROUTE-221 `POST /dokumen` and ROUTE-222 `POST /dokumen/{id}/terbitkan` (`documents.issue`), ROUTE-223 `POST /dokumen/{id}/revisi` and ROUTE-224 `POST /dokumen/{id}/batalkan` (`documents.correct`), ROUTE-225 `GET /berkas/{id}/tampil` (`access:s0`, the document's family at request time)
+- Interaction evidence: `tests/Interaction/DocumentsTest.php` (INT-221–INT-224); INT-225 in `tests/Feature/DOC/DocumentsTest.php`
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 4c6f177, CI ubuntu-24.04 run 40643395665`; TL-10, TL-11 and TL-12 for PG-035 and PG-036 in the same run
+- Localization evidence: PG-035 and PG-036 in both languages, the paper Indonesian (`tests/Browser/Localization/documents.spec.ts`) (DOD-16); 64 catalogue keys added, proposed copy
+- Performance evidence: QB-12 and QB-16 (`tests/Performance/DocumentsQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — `mustache/mustache` 3.2.0 and `mustache` 4.2.0, both MIT, project-local (TOOLCHAIN)
+- Files changed: `app/Modules/DOC/` — `Contracts/DocumentSubjectProvider`; `Data/DocumentSubject`, `DocumentFacts`, `DocumentChange`'s document kinds; `Actions/SaveDocumentDraft`, `IssueDocument`, `ReviseDocument`, `VoidDocument`; `Services/DocumentChain`, `DocumentPaper`, `DocumentAccess`, `DocumentSubjects`, `IssuerIdentity`, `MustacheTemplates` (the rendition template, replacing `UnwrittenTemplates`), `PaperFormat`; `Queries/DocumentList`, `DocumentDetail`, `FileDownloads::rendition`; `Http/Controllers/DocumentsController`, `FileResponses::inline` —; the seed migration; the routes; `resources/documents/` — fourteen templates, their partials and `paper.css` —; PG-035 and PG-036, the composer in `resources/js/features/doc`, the shell's rail for a composer page, the navigation, the provisional totals in `lib/decimal.ts`, the composer tokens and the draft's print rule; 64 catalogue keys; the tests, the synthetic subject provider and the browser fixtures
+- Commit SHA: `8feb5e0`, `e80b5eb`, `76e2593`, `78c8f66`, `4265430`, `9cce3d6`, `813a39b`, `32d19dc` and `4c6f177`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-029-documents`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request; Codex reviewed `32d19dc`: its P1 — the issue and the save not bound to the draft the page showed — and its P2 — the inline rendition not following the polled READY state — fixed in `4c6f177`, the draft-identity check's test added with this record; no review of `4c6f177` arrived within ten minutes of its push — CODEX_TIMEOUT recorded for it, never a pass (DIR-096). A type's issuing Task supplies its real subject through `DocumentSubjectProvider`; until then no production type has a provider, so no draft of it is made — the synthetic provider of the tests and the local browser fixtures stands in (TOOL REQUIREMENTS). A BASE_SUFFIX revision writes its number as the base number with `-R{n}`, its wording GAP-019's to validate. WS-09 forbids raw HTML: the browser rebuilds the template's paper through an allowlist of its own elements and attributes instead of inserting it. The Owner paused this Task at a WIP checkpoint (`813a39b`) for a safe shutdown and resumed it on 2026-10-28; nothing finished was repeated
 
 **SAFE NEXT TASK:**
 

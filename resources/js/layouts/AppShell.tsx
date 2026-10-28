@@ -40,14 +40,17 @@ export type ShellProps = {
     /** The pages and routes built — the fixture gallery's own list; pages use the application's. */
     built?: ReadonlySet<string>;
     gateway?: ReauthGateway;
+    /** A document composer's page (D-DS-23): from 1,025 to 1,279 px it opens with the sidebar as the rail, Ctrl B still
+        expanding it, and the state is not remembered across pages (§9.1). */
+    composer?: boolean;
 };
 
-export default function AppShell({ title, back, focused = false, children, built = BUILT, gateway }: ShellProps) {
+export default function AppShell({ title, back, focused = false, children, built = BUILT, gateway, composer = false }: ShellProps) {
     const { t } = useTranslation();
     const page = usePage<{ auth: AccountHints }>();
     const account = page.props.auth;
     const pathname = new URL(page.url, window.location.origin).pathname;
-    const [rail, setRail] = useState(false);
+    const [rail, setRail] = useState(() => composer && window.matchMedia('(width >= 64.0625rem) and (width < 80rem)').matches);
     const [more, setMore] = useState(false);
     const [phoneSearch, setPhoneSearch] = useState(false);
     const [help, setHelp] = useState(false);

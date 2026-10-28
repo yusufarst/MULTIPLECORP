@@ -1,0 +1,8 @@
+<div class="paper-signature">
+<p>{{#place}}{{place}}, {{/place}}{{date}}</p>
+<p>Hormat kami,</p>
+<p>{{issuer.name}}</p>
+<div class="paper-signature-space">{{^draft}}{{#stamp_src}}<img class="paper-stamp" src="{{stamp_src}}" alt="">{{/stamp_src}}{{#signature_src}}<img class="paper-sign" src="{{signature_src}}" alt="">{{/signature_src}}{{/draft}}</div>
+{{#signer.name}}<p class="paper-signer">{{signer.name}}</p>{{/signer.name}}{{^signer.name}}<span class="paper-signer-blank"></span>{{/signer.name}}
+<p>{{signer.title}}</p>
+</div>

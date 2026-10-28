@@ -53,3 +53,16 @@ export function round(value: string, scale: number): string {
 
     return text({ units: x.units < 0n ? -rounded : rounded, scale });
 }
+
+export type ProvisionalTotals = { lines: string[]; subtotal: string; tax: string; total: string };
+
+/** A document composer's provisional totals (DESIGN_SYSTEM §14.3; DC-3): each line rounded half away from zero to
+    sen, the tax on the subtotal, the total their sum — as PostgreSQL's numeric arithmetic, the server's, computes them,
+    held to one list by tests/Frontend/provisional-totals.json (TL-03; TASK-029) —, labelled "perkiraan" until saved. */
+export function provisionalTotals(lines: [quantity: string, unitPrice: string][], taxPercent: string): ProvisionalTotals {
+    const amounts = lines.map(([quantity, unitPrice]) => round(multiply(quantity, unitPrice), 2));
+    const subtotal = round(amounts.length === 0 ? '0' : add(...amounts), 2);
+    const tax = round(multiply(multiply(subtotal, taxPercent), '0.01'), 2);
+
+    return { lines: amounts, subtotal, tax, total: round(add(subtotal, tax), 2) };
+}
