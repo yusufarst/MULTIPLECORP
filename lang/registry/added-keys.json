@@ -5820,6 +5820,318 @@
             "source": "INFORMATION_ARCHITECTURE §8.4 PG-035, PG-036; DESIGN_SYSTEM §14.3, D-DS-23; ADMIN_FLOW J-DOC-01, IP-08, IP-09, §12.3; WORKFLOWS WF-DOC-01; ROUTE-221–ROUTE-225",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "cases.kind.sales_return": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.delivery_discrepancy": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.damaged_unit": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.purchase_return": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.dropship_return": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.payment_correction": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.invoice_correction": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.opening_correction": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.kind.other": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.residual.unbacked_refund": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.residual.unresolved_deduction": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.residual.unaccounted_return": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.unbacked_refund_amount": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.residual_settlement_amount": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.returned_cost": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.refunded_value": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.replaced_value": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.counter.unrecovered_value": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.branch": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.kind": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.state": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.project": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.causal": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.lot": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.field.opened": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.residuals": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.reopened": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.outcome": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.empty": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.empty_scope": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.confirm.title": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.confirm.consequence": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.answer.closed": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.answer.state_changed": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.refusal.residual": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.validation.required": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.validation.reason": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.validation.too_long": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "timeline.relation.revises": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "timeline.relation.voids": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "timeline.relation.reverses": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "timeline.relation.returns": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "timeline.relation.supersedes": {
+            "task": "TASK-031",
+            "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.steps": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step_open": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step_done": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.stock_return": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.invoice_correction": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.refund": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.replacement": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.delivery_correction": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.payment_rerecord": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

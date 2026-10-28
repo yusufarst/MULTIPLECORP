@@ -58,6 +58,37 @@ final class Families
                 // The remaining cost is the cost semantics', registered by its posting Task; a missing row is reported, never invented.
                 null,
             ),
+            // TASK-031 (C-46; C-61): a correction case's counters whose formula §3.1 fixes over the schema — the refund
+            // shortfalls its money facts carry, its RESIDUAL settlements, its returned units' SUPPLIER_RETURN cost without
+            // the RETURN_SETTLEMENT re-attribution, and that settlement's LOSS. `refunded_value` and `replaced_value` are
+            // their posting Tasks' to register with the sign and corrections they build. A case is never invented.
+            new Family(
+                'correction_cases',
+                ['id'],
+                ['unbacked_refund_amount', 'residual_settlement_amount', 'returned_cost', 'unrecovered_value'],
+                <<<'SQL'
+                    select id,
+                        sum(unbacked_refund_amount) as unbacked_refund_amount,
+                        sum(residual_settlement_amount) as residual_settlement_amount,
+                        sum(returned_cost) as returned_cost,
+                        sum(unrecovered_value) as unrecovered_value
+                    from (
+                        select residual_case_id as id, shortfall_amount as unbacked_refund_amount, 0 as residual_settlement_amount, 0 as returned_cost, 0 as unrecovered_value
+                        from money_fact_balances where fact_kind = 'REFUND' and residual_case_id is not null
+                        union all
+                        select correction_case_id, 0, amount, 0, 0
+                        from deduction_settlements where state = 'RESIDUAL' and correction_case_id is not null
+                        union all
+                        select correction_case_id, 0, 0, amount, 0
+                        from cost_attributions where cost_class = 'SUPPLIER_RETURN' and cause <> 'RETURN_SETTLEMENT' and correction_case_id is not null
+                        union all
+                        select correction_case_id, 0, 0, 0, amount
+                        from cost_attributions where cost_class = 'LOSS' and cause = 'RETURN_SETTLEMENT' and correction_case_id is not null
+                    ) facts
+                    group by id
+                    SQL,
+                null,
+            ),
         ];
     }
 

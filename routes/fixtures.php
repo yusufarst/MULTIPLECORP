@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\DocumentFixture;
 use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
@@ -84,4 +85,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // its rendition rendered or failed as the absent queue worker would, before the issuing pages exist.
     Route::post('__fixtures/dokumen', [DocumentFixture::class, 'draft'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dokumen/rendisi', [DocumentFixture::class, 'rendition'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-031): two correction cases of the run's company, one closable and one carrying a residual.
+    Route::post('__fixtures/kasus', [CaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });

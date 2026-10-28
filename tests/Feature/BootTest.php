@@ -30,7 +30,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'PUT pengaturan/pengguna/{id}/akses', 'POST pengaturan/pengguna/{id}/tautan', 'POST pengaturan/pengguna/{id}/tautan/cabut',
         'POST pengaturan/pengguna/{id}/reset-verifikasi', 'POST pengaturan/pengguna/{id}/lepas-google', 'POST pengaturan/pengguna/{id}/sesi/{sesi}/akhiri',
         'GET|HEAD dokumen/bukti', 'POST berkas', 'POST bukti', 'POST bukti/{id}/versi', 'POST bukti/{id}/tautan',
-        'GET|HEAD dokumen', 'POST dokumen', 'GET|HEAD dokumen/{id}', 'POST dokumen/{id}/terbitkan', 'POST dokumen/{id}/revisi', 'POST dokumen/{id}/batalkan',
+        'GET|HEAD dokumen', 'GET|HEAD dokumen/kasus', 'POST dokumen/kasus/{id}/tutup', 'POST dokumen', 'GET|HEAD dokumen/{id}', 'POST dokumen/{id}/terbitkan', 'POST dokumen/{id}/revisi', 'POST dokumen/{id}/batalkan',
         'GET|HEAD berkas/{id}/tampil',
         'GET|HEAD berkas/{id}/unduh', 'GET|HEAD berkas/{id}/gambar-kecil', 'GET|HEAD status/{kind}/{id}',
         'POST cari', 'GET|HEAD {fallbackPlaceholder}',

@@ -649,3 +649,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-028 squash-merged by the executor into `main` as `0962568` (pull request #34); the Owner's shutdown hold released on resumption; TASK-029 started.
 - Built TASK-029 on its branch `task/TASK-029-documents`: the fourteen document types seeded; the document chain with its draft prepared from the record's facts through `DocumentSubjectProvider`, the issue drawing the period's next number last and freezing the payload with one PENDING rendition, revision NEW_NUMBER or BASE_SUFFIX and void through `DocumentChangeParticipant`; one Mustache template per layout read by the composer and the renderer; PG-035 *Dokumen* and PG-036 *Detail Dokumen* with the composer and the inline rendition.
 - Every check passed in fresh CI on `4c6f177`. TASK-029 DONE — progress 30 / 87 —; TASK-031 next.
+
+## Unreleased — 2026-10-28, TASK-031 — Correction cases
+
+- TASK-029 squash-merged by the executor into `main` as `76e8aad` (pull request #35); TASK-031 started.
+- Built TASK-031 on its branch `task/TASK-031-correction-cases`: the correction case every correcting command opens, posts to and closes — its residuals refusing the closure, a closed case reopened by a posting in the same transaction —; the shared correction record with BR-CR-06's legality matrix and the "Mengoreksi" / "Dikoreksi oleh" trail; PG-040 *Kasus Koreksi* with "Tutup Kasus"; the case counters' guard family.
+- Every check passed in fresh CI on `53b4794`. TASK-031 DONE — progress 31 / 87 —; TASK-032 next.

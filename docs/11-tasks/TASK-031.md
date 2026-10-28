@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -238,34 +238,47 @@ Committed history never disappears: every correction revises, voids, reverses or
 - Migration: N/A — no migration or import code in this Task
 - Other: each listed CM row's expected end state (WORKFLOWS §8) asserted by its module's Task through this service; here on synthetic linked facts (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/OPS/CorrectionCasesTest.php` — a case opens only through `CorrectionCases::open` inside the correcting command that records it, in that command's own company, with its reason, project, causal project and steps, audited under the command's authority; `tests/Authorization/CorrectionCasesAccessTest.php` — no route or capability opens a case on its own
+- Criterion 2: `tests/Feature/OPS/CorrectionCasesTest.php` — "Tutup Kasus" closes a case without residual with its outcome; a closure while an unbacked refund or an unresolved deduction stands is REJECTED naming each in words, a purchase return closes only when returned cost = refunded + replaced + unrecovered (C-46); PG-040 offers the control only without residual (`tests/Browser/E2E/correction-cases.spec.ts`)
+- Criterion 3: `tests/Feature/OPS/CorrectionCasesTest.php` and `tests/Integration/Cases/CorrectionCaseRacesTest.php` — a posting that changes a closed case's figures reopens it in its own transaction, audited with its reason; a posting of zero writes nothing. The completion predicate that reads the case's state is TASK-055's
+- Criterion 4: `tests/Feature/OPS/CorrectionCasesTest.php` — `Corrections::record` keeps the reason, actor, time and link to the original, read back by `CorrectionTrail` as "Mengoreksi" and "Dikoreksi oleh" within the viewer's scope; BR-CR-06's matrix refuses a prohibited primitive (`tests/Unit/OPS/CorrectionLegalityTest.php`); no screen offers deleting a committed fact
+- Criterion 5: `tests/Feature/OPS/CorrectionCasesTest.php` — a case's companion corrections named at its opening are listed as its open steps until a correction recorded for the case completes each (CM-10, CM-12); each companion's own command — the return, the invoice correction, the refund — is its module's Task, and the completion predicate reading the closure TASK-055's (OUT OF SCOPE)
+- Criterion 6: the return of a completed project to ACTIVE with its link, and a cancelled project's correction changing only what it corrects, are TASK-055's completion and revalidation transition (OUT OF SCOPE: "the completion predicates and revalidation's project transition (TASK-055)"); this Task gives every correcting command the case and correction services that transition reads
+- Criterion 7: `tests/Integration/Cases/CorrectionCaseRacesTest.php` — under real PostgreSQL sessions a closure that waited on a posting of the same case at its project and the case is REJECTED with the residual the posting left; a posting after a closure reopens the case (NX-06; C-46)
+- Criterion 8: `tests/Feature/OPS/CorrectionCasesTest.php` and `tests/Authorization/CorrectionCasesAccessTest.php` — the residual counters to the finance family, the return equation's to the cost family (PJ-16); another company's causal project as the relation marker unless that company is in the viewer's projects scope, a lot's code only with `stock.view` (XL-3)
+- Criterion 9: `tests/Integration/Cases/CorrectionCaseRacesTest.php` — the `correction_cases` guard family of `ReconcileGuards` recomputes the unbacked refund, the residual settlements, the returned cost and the unrecovered value from the facts that post them, and a drift is reported, never repaired. `refunded_value` and `replaced_value` are registered by their posting Tasks: the texts fix neither the sign of a RETURN_REFUNDED adjustment nor which corrections of a replacement basis count (executor discovery)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL (TL-05); PASS in CI and locally
+- [x] Authorization: `cases.close` with `projects.view` of the case's company, PG-040 by `projects.view`, positive and denial cases (TL-06)
+- [x] Route integrity: ROUTE-040 and ROUTE-271 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-271 with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: PG-040's closure and its residual on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-040 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's cards, lists and confirmation, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04's `cases.close` cases; PJ-16 and XL-3 projections (TL-14)
+- [x] Database safety review: no migration; the case's CHECKs as the closure's backstop; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `53b4794`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40654593516 (push) and 40654598315 (pull request #36), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-031 PHP tests, PHPStan, Pint and the frontend checks also PASS on the workstation's stack
+- Build result: `TL-13 Frontend build: PASS — Evidence: 53b4794, CI ubuntu-24.04 run 40654593516`
+- Route evidence: TL-07's route audit PASS — ROUTE-040 `GET /dokumen/kasus` (`projects.view`) and ROUTE-271 `POST /dokumen/kasus/{id}/tutup` (`cases.close`)
+- Interaction evidence: `tests/Interaction/CorrectionCasesTest.php` (INT-271)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 53b4794, CI ubuntu-24.04 run 40654593516`; TL-10, TL-11 and TL-12 for PG-040 in the same run
+- Localization evidence: PG-040 in both languages (`tests/Browser/Localization/correction-cases.spec.ts`) (DOD-16); 52 catalogue keys added, proposed copy
+- Performance evidence: QB-12 (`tests/Performance/CorrectionCasesQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/OPS/` — `Data/CorrectionLegality`; `Services/CorrectionCases`, `Corrections`; `Actions/CloseCorrectionCase`; `Queries/CorrectionCaseList`, `CorrectionTrail`; `Http/Controllers/CorrectionCasesController` —; the `correction_cases` guard family; the routes; PG-040, the correction-trail component and the navigation; 52 catalogue keys; the tests, the race helper and the browser fixture
+- Commit SHA: `6e19725`, `e22cbe0`, `201da5d`, `24ea77b`, `93120b1` and `53b4794`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-031-correction-cases`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request: its P1 — a case opened and posted in one command could never commit — and its P2 points fixed and tested in `93120b1`; Codex reviewed `93120b1`: its two P2 — the acted-on case leaving the page after its closure, the unsent reason cleared when the confirmation opened again — fixed and tested in `53b4794`; no review of `53b4794` arrived within ten minutes of its push — CODEX_TIMEOUT recorded for it, never a pass (DIR-096). Executor discoveries for later Tasks: the `refunded_value` and `replaced_value` formulas of DATABASE §3.1 are left to their posting Tasks; a drop-ship RETURN_SETTLEMENT attribution cannot carry the purchase company's case under `cost_attributions_case_side`; `audit_events` has no index for the trail's link containment or `entity_public_id`, to add when the first record page shows the trail
 
 **SAFE NEXT TASK:**
 
