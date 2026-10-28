@@ -1900,5 +1900,14 @@
     "timeline.relation.voids": "Pembatalan",
     "timeline.relation.reverses": "Pembalikan",
     "timeline.relation.returns": "Retur",
-    "timeline.relation.supersedes": "Keputusan pengganti"
+    "timeline.relation.supersedes": "Keputusan pengganti",
+    "cases.steps": "Langkah koreksi",
+    "cases.step_open": "belum",
+    "cases.step_done": "selesai",
+    "cases.step.stock_return": "Barang diterima kembali",
+    "cases.step.invoice_correction": "Koreksi invoice",
+    "cases.step.refund": "Pengembalian dana",
+    "cases.step.replacement": "Barang pengganti",
+    "cases.step.delivery_correction": "Koreksi catatan pengiriman",
+    "cases.step.payment_rerecord": "Pembayaran yang benar dicatat ulang"
 }

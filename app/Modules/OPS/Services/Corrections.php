@@ -42,7 +42,8 @@ final class Corrections
 
     /**
      * Records a correction in the correcting command's transaction (BR-CR-01): its reason required, its actor and time
-     * the command's, its link to the original by the relation it corrects through, and its case when it has one.
+     * the command's, its link to the original by the relation it corrects through, and its case when it has one —
+     * with the open step of that case it completes (CM-10, CM-12).
      *
      * @param  array<string, mixed>  $metadata
      */
@@ -61,6 +62,7 @@ final class Corrections
         AuditChange $change,
         ?string $casePublicId = null,
         array $metadata = [],
+        ?string $step = null,
     ): void {
         if (trim($reason) === '') {
             throw new InvalidArgumentException('A correction carries its reason (BR-CR-01).');
@@ -74,6 +76,14 @@ final class Corrections
 
         if ($casePublicId !== null) {
             $linkage->correctionCase($casePublicId);
+        }
+
+        if ($step !== null) {
+            if ($casePublicId === null || ! in_array($step, CorrectionCases::STEPS, true)) {
+                throw new InvalidArgumentException('A correction closes a step only of its case (CM-10, CM-12).');
+            }
+
+            $metadata['step'] = $step;
         }
 
         $this->audit->record(

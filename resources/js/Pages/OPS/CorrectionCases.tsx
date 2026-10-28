@@ -36,6 +36,7 @@ type Row = {
     causal: { foreign: true } | { foreign: false; id: string; number: string } | null;
     lot: string | null;
     residuals: string[];
+    steps: { key: string; done: boolean }[];
     counters: Partial<Record<'unbacked_refund_amount' | 'residual_settlement_amount' | 'returned_cost' | 'refunded_value' | 'replaced_value' | 'unrecovered_value', string>>;
 };
 type Props = { branches: Branch[]; branch: string | null; rows: Row[]; more: string | null; can: { close: boolean } };
@@ -43,6 +44,7 @@ type Props = { branches: Branch[]; branch: string | null; rows: Row[]; more: str
 const kindName = (kind: string): TranslationKey => `cases.kind.${kind.toLowerCase()}` as TranslationKey;
 const residualName = (residual: string): TranslationKey => `cases.residual.${residual}` as TranslationKey;
 const counterName = (counter: string): TranslationKey => `cases.counter.${counter}` as TranslationKey;
+const stepName = (step: string): TranslationKey => `cases.step.${step}` as TranslationKey;
 
 function visit(query: Record<string, string | null>) {
     const params = new URLSearchParams(window.location.search);
@@ -111,6 +113,16 @@ function CaseDetail({ row, branch, canClose }: { row: Row; branch: string | null
                     <ul className="list-disc pl-5 text-body text-text-secondary">
                         {row.residuals.map((residual) => (
                             <li key={residual}>{t(residualName(residual))}</li>
+                        ))}
+                    </ul>
+                </div>
+            )}
+            {row.steps.length > 0 && (
+                <div className="flex min-w-0 flex-col gap-1">
+                    <p className="text-body font-medium text-text-primary">{t('cases.steps')}</p>
+                    <ul className="flex min-w-0 flex-col gap-1 text-body text-text-secondary">
+                        {row.steps.map((step) => (
+                            <li key={step.key}>{`${t(stepName(step.key))} — ${step.done ? t('cases.step_done') : t('cases.step_open')}`}</li>
                         ))}
                     </ul>
                 </div>

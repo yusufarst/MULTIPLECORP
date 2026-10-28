@@ -61,10 +61,11 @@ final class CloseCorrectionCase
                 reason: trim($outcome),
                 commandId: $context->request->commandId,
                 change: AuditChange::updated(['state' => 'OPEN'], ['state' => 'CLOSED']),
+                linkage: CorrectionCases::caseLinkage($case->id),
                 metadata: ['case_kind' => $case->case_kind],
             );
 
             return new CommandResult('correction_case', $case->id);
-        });
+        }, replayState: fn (Outcome $replayed): ?array => $replayed->code === 'C-46' ? ['residuals' => CorrectionCases::residuals($case->id)] : null);
     }
 }

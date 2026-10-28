@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\OPS\Queries\CorrectionTrail;
 use App\Modules\OPS\Services\CorrectionCases;
@@ -164,9 +165,10 @@ it('records a correction with its reason and link, read as "Mengoreksi" and "Dik
     });
 
     $trail = app(CorrectionTrail::class);
-    expect($trail->of('stock_movement', $original)['corrected_by'])->toHaveCount(1)
-        ->and($trail->of('stock_movement', $original)['corrected_by'][0])->toMatchArray(['relation' => 'REVERSES', 'type' => 'stock_movement', 'id' => $correction, 'reason' => 'Salah lot dipindai.', 'by' => $this->closer->name])
-        ->and($trail->of('stock_movement', $correction)['corrects'][0])->toMatchArray(['relation' => 'REVERSES', 'id' => $original])
+    $viewer = app(EffectiveCapabilities::class)->for($this->closer->id);
+    expect($trail->of($viewer, 'stock_movement', $original)['corrected_by'])->toHaveCount(1)
+        ->and($trail->of($viewer, 'stock_movement', $original)['corrected_by'][0])->toMatchArray(['relation' => 'REVERSES', 'type' => 'stock_movement', 'id' => $correction, 'reason' => 'Salah lot dipindai.', 'by' => $this->closer->name])
+        ->and($trail->of($viewer, 'stock_movement', $correction)['corrects'][0])->toMatchArray(['relation' => 'REVERSES', 'id' => $original])
         ->and(fn () => Corrections::ensureLegal('MONEY_FACT', 'VOID'))->toThrow(Refused::class)
         ->and(fn () => Corrections::ensureLegal('INVOICE_BILLED', 'VOID'))->toThrow(Refused::class);
 
@@ -191,4 +193,79 @@ it('lists a branch\'s cases with residuals by name, amounts by family and anothe
         ->where('rows.0.counters', ['unbacked_refund_amount' => '0.00', 'residual_settlement_amount' => '5000.00']));
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view', 'cost.view']))->get('/dokumen/kasus')->assertInertia(fn (AssertableInertia $page) => $page
         ->where('rows.0.counters', ['returned_cost' => '9000.00', 'refunded_value' => '0.00', 'replaced_value' => '0.00', 'unrecovered_value' => '0.00']));
+});
+
+it('opens a case and posts to it in one correcting command, only in that command\'s company (ER-06; SF-CASE)', function () {
+    $outcome = correcting($this->closer->id, $this->company->id, function (CommandContext $context): CommandResult {
+        $context->lock(CorrectionCases::openingLocks($this->project->id, null));
+        $case = app(CorrectionCases::class)->open($context, AuthorityClass::Adm, $this->company->id, 'PURCHASE_RETURN', 'Retur 3 unit cacat ke pemasok.', $this->project->id, steps: ['refund', 'replacement']);
+        app(CorrectionCases::class)->post($context, $case->id, ['returned_cost' => '450000.00'], 'Retur dicatat.');
+
+        return new CommandResult('correction_case', $case->id);
+    });
+
+    expect($outcome->kind)->toBe(Outcome::COMMITTED)
+        ->and(CorrectionCase::query()->sole()->returned_cost)->toBe('450000.00')
+        ->and(fn () => correcting($this->closer->id, $this->company->id, function (CommandContext $context): CommandResult {
+            $context->lock(new LockSet);
+            app(CorrectionCases::class)->open($context, AuthorityClass::Adm, Company::factory()->create()->id, 'OTHER', 'Perusahaan lain');
+
+            return new CommandResult;
+        }))->toThrow(InvalidArgumentException::class);
+});
+
+it('refuses an unknown counter or a malformed delta, and a zero posting writes nothing (C-61; ER-06)', function () {
+    $case = CorrectionCase::factory()->create(['company_id' => $this->company->id]);
+    $post = fn (array $deltas) => correcting($this->closer->id, $this->company->id, function (CommandContext $context) use ($case, $deltas): CommandResult {
+        $context->lock(CorrectionCases::locks($case->id));
+        app(CorrectionCases::class)->post($context, $case->id, $deltas, 'Uji');
+
+        return new CommandResult;
+    });
+
+    expect(fn () => $post(['state' => '1.00']))->toThrow(InvalidArgumentException::class)
+        ->and(fn () => $post(['returned_cost' => '1.005']))->toThrow(InvalidArgumentException::class)
+        ->and(fn () => $post(['returned_cost' => '1; drop table x']))->toThrow(InvalidArgumentException::class);
+
+    $post(['returned_cost' => '0.00']);
+    expect($case->fresh()?->lock_version)->toBe(0);
+});
+
+it('lists a case\'s open steps until a correction recorded for it completes each (CM-10; CM-12; criterion 5)', function () {
+    $case = null;
+    correcting($this->closer->id, $this->company->id, function (CommandContext $context) use (&$case): CommandResult {
+        $context->lock(CorrectionCases::openingLocks($this->project->id, null));
+        $case = app(CorrectionCases::class)->open($context, AuthorityClass::Adm, $this->company->id, 'SALES_RETURN', 'Klien mengembalikan barang.', $this->project->id, steps: ['invoice_correction', 'refund']);
+
+        return new CommandResult;
+    });
+    correcting($this->closer->id, $this->company->id, function (CommandContext $context) use ($case): CommandResult {
+        $context->lock(new LockSet);
+        app(Corrections::class)->record($context, 'FIN.InvoiceRevisedDown', AuthorityClass::AdmPlus, $this->company->id, 'invoice_version', 9, (string) Str::uuid7(),
+            AuditRelation::Revises, 'invoice_version', (string) Str::uuid7(), 'Retur klien.', AuditChange::created([]), $case?->public_id, step: 'invoice_correction');
+
+        return new CommandResult;
+    });
+
+    $this->actingAs($this->closer)->get('/dokumen/kasus')->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('rows.0.steps', [['key' => 'invoice_correction', 'done' => true], ['key' => 'refund', 'done' => false]]));
+});
+
+it('names another company\'s causal project in scope, shows a lot only with stock.view, and pages by the state shown (XL-3; ER-06)', function () {
+    $sibling = Company::factory()->create();
+    $causal = ProjectFactory::new()->createOne(['company_id' => $sibling->id]);
+    CorrectionCase::factory()->create(['company_id' => $this->company->id, 'causal_project_id' => $causal->id, 'case_kind' => 'DAMAGED_UNIT']);
+    $both = Authorization::admin([$this->company->id, $sibling->id], ['projects.view']);
+
+    $this->actingAs($both)->get('/dokumen/kasus?perusahaan='.$this->company->public_id)->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('rows.0.causal', ['foreign' => false, 'id' => $causal->public_id, 'number' => $causal->project_number])
+        ->where('rows.0.lot', null));
+
+    // The cursor carries the state shown: a case closed since the first page neither repeats nor drops a row.
+    CorrectionCase::factory()->count(51)->create(['company_id' => $this->company->id]);
+    $first = $this->actingAs($this->closer)->get('/dokumen/kasus')->viewData('page')['props'];
+    expect($first['more'])->toStartWith('OPEN~');
+    $second = $this->actingAs($this->closer)->get('/dokumen/kasus?setelah='.urlencode($first['more']))->viewData('page')['props'];
+    $seen = [...array_column($first['rows'], 'id'), ...array_column($second['rows'], 'id')];
+    expect($seen)->toHaveCount(52)->and(array_unique($seen))->toHaveCount(52);
 });

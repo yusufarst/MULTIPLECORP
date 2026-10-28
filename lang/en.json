@@ -1900,5 +1900,14 @@
     "timeline.relation.voids": "Void",
     "timeline.relation.reverses": "Reversal",
     "timeline.relation.returns": "Return",
-    "timeline.relation.supersedes": "Superseding decision"
+    "timeline.relation.supersedes": "Superseding decision",
+    "cases.steps": "Correction steps",
+    "cases.step_open": "not yet",
+    "cases.step_done": "done",
+    "cases.step.stock_return": "Goods taken back",
+    "cases.step.invoice_correction": "Invoice correction",
+    "cases.step.refund": "Refund",
+    "cases.step.replacement": "Replacement goods",
+    "cases.step.delivery_correction": "Delivery record correction",
+    "cases.step.payment_rerecord": "Correct payment recorded again"
 }

@@ -6078,6 +6078,60 @@
             "source": "INFORMATION_ARCHITECTURE §8.4 PG-040; ADMIN_FLOW §11; WORKFLOWS SF-CASE; DATABASE §4.13; ROUTE-040, ROUTE-271",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "cases.steps": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step_open": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step_done": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.stock_return": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.invoice_correction": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.refund": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.replacement": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.delivery_correction": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.payment_rerecord": {
+            "task": "TASK-031",
+            "source": "ADMIN_FLOW §11 CM-10, CM-12; WORKFLOWS SF-CASE; TASK-031 IN SCOPE (the companion corrections listed as the case's open steps)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

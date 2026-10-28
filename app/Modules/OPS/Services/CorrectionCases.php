@@ -4,7 +4,9 @@ namespace App\Modules\OPS\Services;
 
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Support\Audit\AuditChange;
+use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRecorder;
+use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
@@ -24,6 +26,9 @@ use InvalidArgumentException;
 final class CorrectionCases
 {
     public const KINDS = ['SALES_RETURN', 'DELIVERY_DISCREPANCY', 'DAMAGED_UNIT', 'PURCHASE_RETURN', 'DROPSHIP_RETURN', 'PAYMENT_CORRECTION', 'INVOICE_CORRECTION', 'OPENING_CORRECTION', 'OTHER'];
+
+    /** The companion corrections a case may wait for (CM-10, CM-12; ADMIN_FLOW §11), each a module's command. */
+    public const STEPS = ['stock_return', 'invoice_correction', 'refund', 'replacement', 'delivery_correction', 'payment_rerecord'];
 
     /** The guard counters of DATABASE §3.1, each one posting service's (C-61). */
     public const COUNTERS = ['unbacked_refund_amount', 'residual_settlement_amount', 'returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value'];
@@ -48,6 +53,40 @@ final class CorrectionCases
         return $set;
     }
 
+    /** A case's projects alone, at LK-01, of whichever company. */
+    public static function projectLocks(int $caseId): LockSet
+    {
+        $case = DB::table('correction_cases')->where('id', $caseId)->first(['project_id', 'causal_project_id']);
+
+        return self::openingLocks(is_object($case) && is_numeric($case->project_id) ? (int) $case->project_id : null, is_object($case) && is_numeric($case->causal_project_id) ? (int) $case->causal_project_id : null);
+    }
+
+    /** The audit links of a case's events to the projects the case names. */
+    public static function caseLinkage(int $caseId): ?AuditLinkage
+    {
+        $case = DB::table('correction_cases')->where('id', $caseId)->first(['project_id', 'causal_project_id']);
+
+        return self::linkage(is_object($case) && is_numeric($case->project_id) ? (int) $case->project_id : null, is_object($case) && is_numeric($case->causal_project_id) ? (int) $case->causal_project_id : null);
+    }
+
+    /** The audit links of a case's events to the projects it names (LG-01). */
+    public static function linkage(?int $projectId, ?int $causalProjectId): ?AuditLinkage
+    {
+        $linkage = AuditLinkage::make();
+        $named = false;
+
+        foreach (array_filter([$projectId, $causalProjectId]) as $project) {
+            $publicId = DB::table('projects')->where('id', $project)->value('public_id');
+
+            if (is_string($publicId)) {
+                $linkage->link(AuditRelation::Affects, 'project', $publicId);
+                $named = true;
+            }
+        }
+
+        return $named ? $linkage : null;
+    }
+
     /** The projects a case opened now will name, at LK-01, before the opening command reads its clock. */
     public static function openingLocks(?int $projectId, ?int $causalProjectId): LockSet
     {
@@ -68,11 +107,26 @@ final class CorrectionCases
     }
 
     /**
-     * Opens a case inside the correcting command that records it (SF-CASE; criterion 1), its reason required and the
-     * causal project and source lot set from the facts the command cites (XL-3), audited under the command's authority.
+     * Opens a case inside the correcting command that records it (SF-CASE; criterion 1), in that command's own company
+     * (CS-03; AZ-08), its reason required and the causal project and source lot set from the facts the command cites
+     * (XL-3), audited under the command's authority and linked to its projects. `steps` names the companion corrections
+     * the case waits for — a return's invoice correction and refund (CM-10, CM-12) —, listed as its open steps until a
+     * correction recorded for the case closes each (Corrections::record).
+     *
+     * @param  list<string>  $steps
      */
-    public function open(CommandContext $context, AuthorityClass $authority, int $companyId, string $kind, string $reason, ?int $projectId = null, ?int $causalProjectId = null, ?int $sourceLotId = null): CorrectionCase
+    public function open(CommandContext $context, AuthorityClass $authority, int $companyId, string $kind, string $reason, ?int $projectId = null, ?int $causalProjectId = null, ?int $sourceLotId = null, array $steps = []): CorrectionCase
     {
+        if ($context->request->companyId !== $companyId) {
+            throw new InvalidArgumentException('A correction case opens in its command\'s own company (CS-03).');
+        }
+
+        foreach ($steps as $step) {
+            if (! in_array($step, self::STEPS, true)) {
+                throw new InvalidArgumentException("{$step} is no companion correction step.");
+            }
+        }
+
         if (! in_array($kind, self::KINDS, true)) {
             throw new InvalidArgumentException("{$kind} is not a correction case kind.");
         }
@@ -102,6 +156,8 @@ final class CorrectionCases
             reason: trim($reason),
             commandId: $context->request->commandId,
             change: AuditChange::created(['case_kind' => $kind, 'state' => 'OPEN']),
+            linkage: self::linkage($projectId, $causalProjectId),
+            metadata: $steps === [] ? [] : ['steps' => $steps],
         );
 
         return $case;
@@ -116,7 +172,9 @@ final class CorrectionCases
      */
     public function post(CommandContext $context, int $caseId, array $deltas, string $reopenReason): void
     {
-        $context->require(self::locks($caseId));
+        // A case this command opened is its own uncommitted row, which no other session sees: only its projects need holding.
+        $own = DB::table('correction_cases')->where('id', $caseId)->where('command_id', $context->request->commandId)->exists();
+        $context->require($own ? self::projectLocks($caseId) : self::locks($caseId));
         $sets = [];
         $bindings = [];
 
@@ -140,7 +198,13 @@ final class CorrectionCases
         }
 
         $changed = array_filter($deltas, fn (string $delta): bool => preg_match('/^-?0+(\.0+)?$/', $delta) !== 1) !== [];
-        $reopen = $changed && $before->state === 'CLOSED';
+
+        // A posting of zero changes no figure: nothing written, no page's version made stale.
+        if (! $changed) {
+            return;
+        }
+
+        $reopen = $before->state === 'CLOSED';
         $now = $context->now();
 
         if ($reopen) {
@@ -162,6 +226,7 @@ final class CorrectionCases
                 reason: trim($reopenReason),
                 commandId: $context->request->commandId,
                 change: AuditChange::updated(['state' => 'CLOSED'], ['state' => 'OPEN']),
+                linkage: self::caseLinkage($caseId),
                 metadata: ['counters' => $deltas],
             );
         }
