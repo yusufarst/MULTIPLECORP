@@ -41,14 +41,16 @@ final class ProjectWorkspace
     /** A project by public identifier, or unknown to a viewer without `projects.view` of its company (AZ-11; CS-04). */
     public function find(int $viewerId, string $publicId): Project
     {
+        return $this->lookup($viewerId, $publicId) ?? throw (new ModelNotFoundException)->setModel(Project::class, [$publicId]);
+    }
+
+    /** {@see self::find()}, null for an unknown project or one the viewer may not see, alike. */
+    public function lookup(int $viewerId, string $publicId): ?Project
+    {
         $viewer = $this->viewer($viewerId);
         $project = preg_match(self::UUID, $publicId) === 1 ? Project::query()->where('public_id', strtolower($publicId))->first() : null;
 
-        if ($project === null || ! $viewer->allows('projects.view', $project->company_id)) {
-            throw (new ModelNotFoundException)->setModel(Project::class, [$publicId]);
-        }
-
-        return $project;
+        return $project === null || ! $viewer->allows('projects.view', $project->company_id) ? null : $project;
     }
 
     /** A discarded draft's retired number, by the draft's public identifier (L-37). */

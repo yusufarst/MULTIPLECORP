@@ -52,7 +52,14 @@ final class ProjectFixture
         if ($request->boolean('project') && $user !== null) {
             $actor = $user->getAuthIdentifier();
             // A draft lacks its PIC, so it stays a DRAFT that "Buang Draf" may discard (SM:Project; L-37).
-            Projects::create(is_int($actor) ? $actor : 0, $company, $client, [$goods, $service], null, $request->boolean('draft') ? ['pic' => null] : []);
+            // The account's scope is read afresh, the run's company created after it was last read.
+            Authorization::forget();
+            $created = Projects::create(is_int($actor) ? $actor : 0, $company, $client, [$goods, $service], null, $request->boolean('draft') ? ['pic' => null] : []);
+
+            if (! str_starts_with($created, 'COMMITTED')) {
+                return response()->json(['error' => $created], 500);
+            }
+
             $project = Project::query()->where('company_id', $company->id)->latest('id')->first();
         }
 

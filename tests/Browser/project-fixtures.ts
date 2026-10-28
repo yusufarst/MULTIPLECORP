@@ -11,9 +11,15 @@ export type ProjectRun = { company: string; code: string; client: string; unit: 
 export async function projectRun(page: Page, run: string, options: { numbered?: boolean; project?: boolean; draft?: boolean; locale?: 'id' | 'en' } = {}): Promise<ProjectRun> {
     await ownerSignedIn(page, run, options.locale ?? 'id');
     const company = await numberingCompany(page, `${String(new Date().getFullYear())}-01-01`);
-    const answer = (await (await page.request.post('/__fixtures/proyek', {
+    const response = await page.request.post('/__fixtures/proyek', {
         data: { company, numbered: options.numbered ?? true, project: options.project ?? false, draft: options.draft ?? false },
-    })).json()) as Omit<ProjectRun, 'company'>;
+    });
+
+    if (!response.ok()) {
+        throw new Error(`The project fixture failed: ${String(response.status())} ${await response.text()}`);
+    }
+
+    const answer = (await response.json()) as Omit<ProjectRun, 'company'>;
 
     return { company, ...answer };
 }

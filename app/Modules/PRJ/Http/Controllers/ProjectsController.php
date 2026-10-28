@@ -12,7 +12,6 @@ use App\Modules\PRJ\Queries\ProjectWorkspace;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
 use Closure;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -102,13 +101,13 @@ final class ProjectsController extends Controller
         $actor = self::actor($request);
         $input = self::validated($request, true);
 
-        try {
-            $current = $this->workspace->find($actor, $id);
-        } catch (ModelNotFoundException $missing) {
+        $current = $this->workspace->lookup($actor, $id);
+
+        if ($current === null) {
             // A retry of a company change whose draft that very command discarded answers its recorded outcome (CI-05).
             $replayed = $update->replay(self::text($input['command_id']), $actor, $id, ProjectForm::payload($input), (int) self::text($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
 
-            return $replayed === null ? throw $missing : $this->answer($actor, $replayed, '/proyek', 'moved', self::text($input['tanggal']), 0);
+            return $replayed === null ? throw new NotFoundHttpException : $this->answer($actor, $replayed, '/proyek', 'moved', self::text($input['tanggal']), 0);
         }
 
         $project = $this->form->resolve($this->form->viewer($actor), $input, $current);
@@ -123,11 +122,11 @@ final class ProjectsController extends Controller
         $actor = self::actor($request);
         $input = Validator::make($request->only(['command_id']), ['command_id' => ['required', 'uuid']], ['required' => __('projects.validation.required')])->validate();
 
-        try {
-            $project = $this->workspace->find($actor, $id);
-        } catch (ModelNotFoundException $missing) {
+        $project = $this->workspace->lookup($actor, $id);
+
+        if ($project === null) {
             // A retry of a discard that committed answers its recorded outcome, the draft being gone (CI-05).
-            $replayed = $discard->replay(self::text($input['command_id']), $actor, $id) ?? throw $missing;
+            $replayed = $discard->replay(self::text($input['command_id']), $actor, $id) ?? throw new NotFoundHttpException;
 
             return $this->discarded($replayed, $this->workspace->retiredNumberOf($id) ?? '', $actor, $id, 0);
         }

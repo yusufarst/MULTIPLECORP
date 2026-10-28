@@ -56,7 +56,7 @@ test('creates a project with its line, amends it and finds it on PG-010 with its
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Pengadaan buku perpustakaan 2026');
 
     await page.goto('/proyek');
-    const row = page.getByRole('row').filter({ hasText: 'Pengadaan buku perpustakaan 2026' });
+    const row = page.getByRole('row').filter({ hasText: 'Pengadaan buku perpustakaan 2026' }).filter({ hasText: run.client });
     await expect(row).toContainText(run.client);
     await expect(row).toContainText('Kesepakatan');
 });
