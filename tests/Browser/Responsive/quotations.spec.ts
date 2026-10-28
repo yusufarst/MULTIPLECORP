@@ -35,7 +35,14 @@ for (const width of [1025, 1279, 1280]) {
                     line: element?.closest('li[id^="line-"]')?.id ?? null,
                     // WebKit's Tab reaches fields, not buttons: the form ends at "Simpan Draf" or, there, at the paper beside it.
                     end: element?.closest('[data-slot="paper-frame"]') != null,
-                    inView: rect !== undefined && rect.top >= 0 && rect.bottom <= window.innerHeight,
+                    // Reachable: once in view, nothing — a sticky bar, the preview — covers it.
+                    inView: element !== null && rect !== undefined && (() => {
+                        element.scrollIntoView({ block: 'nearest' });
+                        const box = element.getBoundingClientRect();
+                        const top = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+
+                        return top !== null && (top === element || element.contains(top));
+                    })(),
                 };
             });
 

@@ -294,7 +294,7 @@ export default function Quotation({ project, revisions, current, taxes, today, c
     }
 
     return (
-        <AppShell title={t('pages.pg_014.title')} back={{ href: `/proyek/${project.id}`, label: t('pages.pg_011.title') }} composer={current?.state === 'DRAFT' && can.manage}>
+        <AppShell title={t('pages.pg_014.title')} back={{ href: `/proyek/${project.id}`, label: t('pages.pg_011.title') }} composer={current?.state === 'DRAFT' && can.manage} focused={primary !== undefined}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader
                     title={t('quotations.title', { nomor: project.number })}
