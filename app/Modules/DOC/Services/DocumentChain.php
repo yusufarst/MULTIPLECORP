@@ -3,6 +3,7 @@
 namespace App\Modules\DOC\Services;
 
 use App\Modules\DOC\Data\DocumentChange;
+use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Support\Command\CommandContext;
@@ -30,10 +31,28 @@ final class DocumentChain
         return DocumentVersion::query()->where('document_id', $documentId)->where('state', 'ISSUED')->first();
     }
 
-    /** Whether the document has issued a version yet: its first issue starts the chain (C-54; WF-DOC-01). */
-    public function started(int $documentId): bool
+    /**
+     * DATABASE §4.10: a pre-payment Kuitansi, an SPK and an HPS may have several chains for one subject; every other
+     * layout has one chain per subject and type, held by its partial unique index.
+     */
+    public static function severalChains(string $typeCode, string $mode): bool
     {
-        return DocumentVersion::query()->where('document_id', $documentId)->where('state', '<>', 'DRAFT')->exists();
+        return in_array($typeCode, ['DOC-09', 'DOC-11'], true) || ($typeCode === 'DOC-05' && $mode === 'PRE_PAYMENT');
+    }
+
+    /**
+     * Whether issuing the draft starts new business — any issue but a revision's, a void leaving the chain without a
+     * current version —, which C-54 refuses for a deactivated company unless it is a collection document (WF-DOC-01).
+     */
+    public static function newBusiness(DocumentVersion $draft, string $typeCode): bool
+    {
+        return $draft->supersedes_version_id === null && ! in_array($typeCode, DocumentPaper::COLLECTION_LAYOUTS, true);
+    }
+
+    /** The digest of the record's facts a draft's paper composed, so the issue prints what was previewed (architecture challenge 15a). */
+    public static function factsDigest(DocumentFacts $facts): string
+    {
+        return self::checksum(get_object_vars($facts));
     }
 
     /**

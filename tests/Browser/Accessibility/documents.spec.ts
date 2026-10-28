@@ -18,7 +18,7 @@ async function noViolation(page: Page): Promise<void> {
 for (const width of [390, 1280]) {
     test(`finds no WCAG 2.2 AA violation on PG-035 and PG-036 at ${String(width)} px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
-        const draft = await documentDraft(page, `dokumen-a11y-${String(width)}-${String(Date.now())}`);
+        const { id: draft } = await documentDraft(page, `dokumen-a11y-${String(width)}-${String(Date.now())}`);
 
         await page.goto(`/dokumen/${draft}`);
         await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
@@ -32,7 +32,7 @@ for (const width of [390, 1280]) {
 
 test('keeps the paper a named region after the form, never live, its frame reachable by keyboard (§15; 2.1.1)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    const draft = await documentDraft(page, `dokumen-kertas-${String(Date.now())}`);
+    const { id: draft } = await documentDraft(page, `dokumen-kertas-${String(Date.now())}`);
     await page.goto(`/dokumen/${draft}`);
 
     const paper = page.getByRole('region', { name: 'Pratinjau SPK, draf belum terbit' });

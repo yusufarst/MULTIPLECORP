@@ -41,7 +41,7 @@ type Version = {
     supersedes: string | null;
     rendition: Rendition | null;
 };
-type Draft = { id: string; version_no: number; lock_version: number; business_date: string | null; bank_account: string | null; bank_accounts: Bank[]; states_bank: boolean; revision_of: string | null; paper: Paper | null };
+type Draft = { id: string; version_no: number; lock_version: number; business_date: string | null; bank_account: string | null; bank_accounts: Bank[]; states_bank: boolean; revision_of: string | null; paper: Paper | null; facts: string | null };
 type Props = {
     document: { id: string; type: string; type_name: string; mode: string; company: { id: string | null; code: string | null; name: string | null }; prepayment: 'open_not_linked' | 'linked' | null };
     versions: Version[];
@@ -82,6 +82,8 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
     const [confirming, setConfirming] = useState(false);
     const save = useCommand<Record<string, string | number | boolean>>(() => '/dokumen', 'post');
     const entered = { lock_version: draft.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, rekening: bank };
+    // The issue carries the digest of the facts its paper showed: a record changed since is a CONFLICT (architecture challenge 15a).
+    const confirmed = { ...entered, isi: draft.facts ?? '' };
     const chosenBank = draft.bank_accounts.find((account) => account.handle === bank) ?? null;
     // The live preview: the server's paper with the entered date and bank destination, never a number (DC-2).
     const paper = useMemo<Paper | null>(
@@ -156,7 +158,7 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
                 pending={issue.pending}
                 answer={issue.answer}
                 onConfirm={() => {
-                    issue.submit(entered, () => { setConfirming(false); });
+                    issue.submit(confirmed, () => { setConfirming(false); });
                 }}
             />
         </>
@@ -278,7 +280,7 @@ export default function DocumentPage({ document, versions, current, draft, conte
                 pending={correction.pending}
                 answer={correction.answer}
                 onConfirm={() => {
-                    correction.submit({ alasan: reason }, () => { setCorrecting(null); });
+                    correction.submit({ alasan: reason, versi: current ?? '' }, () => { setCorrecting(null); });
                 }}
             />
         </AppShell>

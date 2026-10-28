@@ -11,7 +11,7 @@ for (const [locale, texts] of [
 ] as const) {
     test(`shows PG-035 and PG-036 in ${locale}, the paper Indonesian`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
-        const draft = await documentDraft(page, `dokumen-${locale}-${String(Date.now())}`, 'DOC-09', locale);
+        const { id: draft } = await documentDraft(page, `dokumen-${locale}-${String(Date.now())}`, 'DOC-09', locale);
 
         await page.goto(`/dokumen/${draft}`);
         await expect(page.getByRole('button', { name: texts.save })).toBeVisible();

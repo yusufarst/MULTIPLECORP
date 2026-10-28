@@ -22,6 +22,7 @@ use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -156,7 +157,12 @@ final class SaveDocumentDraft
             isset($subject->records[$column]) ? $query->where($column, $subject->records[$column]) : $query->whereNull($column);
         }
 
-        return $query->first();
+        // A layout with several chains reuses only the chain whose draft an earlier press left open (DATABASE §4.10).
+        if (DocumentChain::severalChains($subject->typeCode, $subject->mode)) {
+            $query->whereExists(fn (Builder $versions) => $versions->from('document_versions')->whereColumn('document_versions.document_id', 'documents.id')->where('document_versions.state', 'DRAFT'));
+        }
+
+        return $query->orderByDesc('id')->first();
     }
 
     private function record(CommandContext $context, string $action, Document $document, DocumentVersion $draft, AuditChange $change): void

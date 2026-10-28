@@ -35,8 +35,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * `DOC IssueDocument` (ROUTE-222; INT-222; AX-15; SF-ISSUE; BD-06): a draft issued after its confirmation (IP-08) —
- * one transaction that re-reads, under the subject's anchors, the actor, the company where a new chain of a document
- * other than a collection document starts (C-54), and the chain at LK-30, that the version is still the DRAFT the page
+ * one transaction that re-reads, under the subject's anchors, the actor, the company where an issue other than a revision's
+ * starts new business with a document other than a collection document (C-54), and the chain at LK-30, that the version is still the DRAFT the page
  * confirmed (ST-01, ST-02), the record-bound precondition, the date (SF-DATE; ST-08) —; then draws the next number of
  * the company, type and business-date period last (LK-31; NM-01) — a BASE_SUFFIX revision keeps its predecessor's
  * number with the next suffix and draws none (NM-07) —, freezes the payload with the company's identity, the bank
@@ -62,14 +62,15 @@ final class IssueDocument
         private readonly NumberAllocator $numbers,
     ) {}
 
-    public function run(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle): Outcome
+    /** @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed (DocumentDetail), or null where no paper was shown */
+    public function run(string $commandId, int $actorUserId, Document $document, int $lockVersion, string $businessDate, bool $prefilled, ?string $bankHandle, ?string $factsDigest = null): Outcome
     {
         $subject = DocumentSubject::of($document);
         $provider = $this->subjects->of($subject);
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $document->company_id, DocumentAccess::ISSUE,
-            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle]));
+            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'bank' => $bankHandle, 'facts' => $factsDigest]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest): CommandResult {
             $context->lock($this->locks($document, $subject, $provider->locks($subject)));
             DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
             $draft = $this->chain->draftOf($document->id);
@@ -87,7 +88,7 @@ final class IssueDocument
                 throw Refused::conflict('ST-01');
             }
 
-            if (! $this->chain->started($document->id) && ! in_array($document->document_type_code, DocumentPaper::COLLECTION_LAYOUTS, true)) {
+            if (DocumentChain::newBusiness($draft, $document->document_type_code)) {
                 $this->company->ensureOpenForNewBusiness($context, $document->company_id);
             }
 
@@ -95,6 +96,12 @@ final class IssueDocument
             $account = $this->identity->accountByHandle($document->company_id, $document->document_type_code, $bankHandle);
             $provider->precondition($context, $subject);
             $facts = $provider->facts($subject);
+
+            // Architecture challenge 15a: the issued paper is the one previewed — a record changed since, a CONFLICT to review.
+            if ($factsDigest !== null && ! hash_equals(DocumentChain::factsDigest($facts), $factsDigest)) {
+                throw Refused::conflict('ST-01', ['reason' => 'facts']);
+            }
+
             $predecessor = $draft->supersedes_version_id === null ? null : DocumentVersion::query()->find($draft->supersedes_version_id);
             $number = $this->number($context, $document, $predecessor, $businessDate);
             $now = $context->now();
@@ -175,7 +182,7 @@ final class IssueDocument
         $versions = $draft === null ? [] : array_values(array_filter([$draft->id, $draft->supersedes_version_id]));
         $set = $anchors->union($this->chain->locks($document, $versions));
 
-        if (! $this->chain->started($document->id) && ! in_array($subject->typeCode, DocumentPaper::COLLECTION_LAYOUTS, true)) {
+        if ($draft !== null && DocumentChain::newBusiness($draft, $subject->typeCode)) {
             $set = $set->union(CompanyGuard::locks($document->company_id));
         }
 

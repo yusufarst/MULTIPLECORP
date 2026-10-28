@@ -46,7 +46,7 @@ beforeEach(function () {
 
 afterEach(fn () => @unlink($this->hotFile));
 
-function interactionAnswer(): array
+function documentInteractionAnswer(): array
 {
     $flash = session('inertia.flash_data');
 
@@ -70,12 +70,12 @@ it('replays each command\'s command_id with its recorded outcome, writing nothin
     foreach ($commands as [$url, $body]) {
         $commandId = (string) Str::uuid();
         $this->actingAs($this->user)->post($url, ['command_id' => $commandId, ...$body])->assertRedirect("/dokumen/{$document->public_id}");
-        expect(interactionAnswer()['kind'])->toBe(Outcome::COMMITTED, $url);
+        expect(documentInteractionAnswer()['kind'])->toBe(Outcome::COMMITTED, $url);
         $log = DB::table('command_log')->count();
         $audit = DB::table('audit_events')->count();
 
         $this->actingAs($this->user)->post($url, ['command_id' => $commandId, ...$body])->assertRedirect("/dokumen/{$document->public_id}");
-        expect(interactionAnswer()['kind'])->toBe(Outcome::COMMITTED, $url)
+        expect(documentInteractionAnswer()['kind'])->toBe(Outcome::COMMITTED, $url)
             ->and(DB::table('command_log')->count())->toBe($log)
             ->and(DB::table('audit_events')->count())->toBe($audit);
     }
@@ -91,6 +91,6 @@ it('answers the same command_id with other content CONFLICT (CI-04; IG-05)', fun
     $document = Document::query()->sole();
 
     $this->actingAs($this->user)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => $commandId, 'lock_version' => 0, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
-    expect(interactionAnswer()['kind'])->toBe(Outcome::CONFLICT)
+    expect(documentInteractionAnswer()['kind'])->toBe(Outcome::CONFLICT)
         ->and(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('DRAFT');
 });

@@ -35,6 +35,27 @@ final class DocumentRaces
         return self::word(app(IssueDocument::class)->run($commandId ?? (string) Str::uuid(), $actorId, $document, $lockVersion, BusinessDate::today(), true, null));
     }
 
+    /** The draft's date saved at the version given (ST-01). */
+    public static function save(int $actorId, int $documentId, int $lockVersion, string $businessDate): string
+    {
+        SyntheticSubjects::register();
+        $document = Document::query()->findOrFail($documentId);
+
+        return self::word(app(SaveDocumentDraft::class)->save((string) Str::uuid(), $actorId, $document, $lockVersion, $businessDate, false, null));
+    }
+
+    /** The save committed only once the other session waits on the document it holds. */
+    public static function holdThenSave(int $actorId, int $documentId, int $lockVersion, string $businessDate): string
+    {
+        return DB::transaction(function () use ($actorId, $documentId, $lockVersion, $businessDate): string {
+            $word = self::save($actorId, $documentId, $lockVersion, $businessDate);
+            Barrier::await('the first save is written');
+            Sessions::awaitBlocked();
+
+            return $word;
+        });
+    }
+
     /** The issue committed only once the other session waits on the document it holds. */
     public static function holdThenIssue(int $actorId, int $documentId): string
     {

@@ -2,10 +2,12 @@
 
 use App\Modules\DOC\Contracts\DocumentChangeParticipant;
 use App\Modules\DOC\Data\DocumentChange;
+use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Jobs\RenderDocument;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Models\FileObject;
+use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\FileStore;
 use App\Modules\ORG\Enums\SequenceType;
@@ -169,7 +171,8 @@ it('issues the draft: the next number, the frozen payload and one PENDING rendit
 
     // BR-SN-01: a later change of the company changes no issued version.
     DB::table('companies')->where('id', $this->company->id)->update(['legal_name' => 'CV Nama Baru']);
-    expect($version->fresh()?->payload['paper']['issuer']['name'])->toBe($this->company->legal_name);
+    expect($version->fresh()?->payload['paper']['issuer']['name'])->toBe($this->company->legal_name)
+        ->and(app(RenditionTemplate::class)->html($version->fresh() ?? $version, sys_get_temp_dir()))->toContain($this->company->legal_name)->not->toContain('CV Nama Baru');
 });
 
 it('answers a second issue of one draft CONFLICT with its number and a replay from the record, issuing once (BD-06; CI-05; criteria 2, 3)', function () {
@@ -316,4 +319,99 @@ it('shows a ready rendition inline under the RENDITION profile only to its famil
         ->and($response->headers->get('Cache-Control'))->toContain('no-store');
 
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view']))->get("/berkas/{$file->public_id}/tampil")->assertNotFound();
+});
+
+it('prepares another chain of a several-chain layout once the first is issued, an open draft reused (DATABASE §4.10)', function () {
+    Queue::fake();
+    $first = preparedDocument($this);
+    issueDocument($this, $first);
+
+    prepareDocument($this);
+    prepareDocument($this);
+    $chains = Document::query()->where('project_id', $this->project->id)->where('document_type_code', 'DOC-09')->orderBy('id')->pluck('id')->all();
+
+    expect($chains)->toHaveCount(2)
+        ->and(DocumentVersion::query()->where('document_id', $chains[1])->pluck('state')->all())->toBe(['DRAFT']);
+});
+
+it('refuses a deactivated company\'s new issue after a void, a revision still open to it (C-54; WF-DOC-01)', function () {
+    Queue::fake();
+    $document = preparedDocument($this);
+    issueDocument($this, $document);
+    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/batalkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Salah pihak']);
+    DB::table('companies')->where('id', $this->company->id)->update(['is_active' => false, 'deactivated_at' => now(), 'deactivated_by' => $this->issuer->id, 'deactivated_reason' => 'Uji']);
+
+    // ROUTE-221 for the voided chain's subject: SPK has several chains, so a new one, whose issue starts new business.
+    $again = preparedDocument($this);
+    issueDocument($this, $again);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-54']);
+});
+
+it('answers a revision or void of a version no longer current CONFLICT, touching the current one never (ST-02)', function () {
+    Queue::fake();
+    $document = preparedDocument($this);
+    issueDocument($this, $document);
+    $shown = DocumentVersion::query()->where('document_id', $document->id)->sole();
+    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/revisi", ['command_id' => (string) Str::uuid(), 'alasan' => 'Nama keliru', 'versi' => $shown->public_id]);
+    issueDocument($this, $document);
+    $current = DocumentVersion::query()->where('document_id', $document->id)->where('state', 'ISSUED')->sole();
+
+    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/batalkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Batal', 'versi' => $shown->public_id]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-02'])
+        ->and($current->fresh()?->state)->toBe('ISSUED');
+
+    $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/revisi", ['command_id' => (string) Str::uuid(), 'alasan' => 'Lagi', 'versi' => $shown->public_id]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-02'])
+        ->and(DocumentVersion::query()->where('document_id', $document->id)->where('state', 'DRAFT')->exists())->toBeFalse();
+});
+
+it('refuses an issue whose record changed since its paper was previewed, issuing what was confirmed (ST-01; architecture challenge 15a)', function () {
+    Queue::fake();
+    $document = preparedDocument($this);
+    $previewed = DocumentChain::factsDigest(SyntheticSubjects::sample('DOC-09'));
+    $sample = SyntheticSubjects::sample('DOC-09');
+    SyntheticSubjects::$facts = new DocumentFacts(recipient: ['name' => 'SMA Negeri 2 Contoh', 'lines' => []], references: $sample->references, subject: $sample->subject, lines: $sample->lines, totals: $sample->totals);
+
+    issueDocument($this, $document, extra: ['isi' => $previewed]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::CONFLICT, 'code' => 'ST-01'])
+        ->and(DocumentVersion::query()->where('document_id', $document->id)->value('state'))->toBe('DRAFT')
+        ->and(DB::table('number_sequences')->count())->toBe(0);
+
+    issueDocument($this, $document, extra: ['isi' => DocumentChain::factsDigest(SyntheticSubjects::$facts)]);
+    expect(documentAnswer()['kind'])->toBe(Outcome::COMMITTED)
+        ->and(DocumentVersion::query()->where('document_id', $document->id)->first()?->payload['paper']['recipient']['name'])->toBe('SMA Negeri 2 Contoh');
+});
+
+it('draws a backdated issue from its own period, and refuses a date whose period has no numbering (M-18; NM-05)', function () {
+    Queue::fake();
+    $document = preparedDocument($this);
+    $lastYear = ((int) $this->year - 1).'-12-30';
+
+    issueDocument($this, $document, extra: ['tanggal' => $lastYear, 'tanggal_otomatis' => false]);
+    expect(documentAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-10']);
+
+    $earlier = date('Y-m-d', strtotime("{$this->today} -1 day"));
+
+    if (substr($earlier, 0, 4) === $this->year) {
+        issueDocument($this, $document, extra: ['tanggal' => $earlier, 'tanggal_otomatis' => false]);
+        expect(documentAnswer()['kind'])->toBe(Outcome::COMMITTED)
+            ->and(DocumentVersion::query()->where('document_id', $document->id)->first(['business_date', 'period_key'])?->only(['period_key']))->toBe(['period_key' => $this->year])
+            ->and(DocumentVersion::query()->where('document_id', $document->id)->value('business_date')?->format('Y-m-d'))->toBe($earlier);
+    }
+});
+
+it('keeps the stamp and the signature out of a draft\'s props, the Owner\'s identity assets the renderer\'s alone (PJ-19; DC-4)', function () {
+    $assets = [];
+
+    foreach (['logo', 'stamp', 'signature'] as $asset) {
+        $assets[$asset] = FileObject::factory()->create(['purpose' => 'IDENTITY_ASSET', 'mime_type' => 'image/png', 'company_id' => $this->company->id, 'storage_disk' => app(FileStore::class)->diskName()]);
+    }
+
+    DB::table('companies')->where('id', $this->company->id)->update(['logo_file_id' => $assets['logo']->id, 'stamp_file_id' => $assets['stamp']->id, 'signature_file_id' => $assets['signature']->id]);
+    $document = preparedDocument($this);
+    $props = json_encode($this->actingAs($this->issuer)->get("/dokumen/{$document->public_id}")->viewData('page')['props']);
+
+    expect($props)->toContain($assets['logo']->public_id)
+        ->not->toContain($assets['stamp']->public_id)
+        ->not->toContain($assets['signature']->public_id);
 });

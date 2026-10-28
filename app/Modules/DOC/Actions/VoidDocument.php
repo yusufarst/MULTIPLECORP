@@ -42,14 +42,15 @@ final class VoidDocument
         private readonly DocumentChain $chain,
     ) {}
 
-    public function run(string $commandId, int $actorUserId, Document $document, string $reason): Outcome
+    /** @param  ?string  $versionId  the issued version the page showed and the actor confirmed to void (ST-02) */
+    public function run(string $commandId, int $actorUserId, Document $document, string $reason, ?string $versionId = null): Outcome
     {
         $subject = DocumentSubject::of($document);
         $provider = $this->subjects->of($subject);
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $document->company_id, DocumentAccess::CORRECT,
-            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'reason' => $reason]));
+            Fingerprint::of(self::TYPE, DocumentChain::companyKey($document->company_id), ['document' => $document->public_id, 'reason' => $reason, 'version' => $versionId]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $reason): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $reason, $versionId): CommandResult {
             $context->lock($this->locks($document, $provider->locks($subject)));
             DocumentAccess::ensureCorrect($context->authority(), $document->document_type_code, $document->company_id);
 
@@ -64,6 +65,10 @@ final class VoidDocument
             }
 
             $context->require($this->locks($document, $provider->locks($subject)));
+
+            if ($versionId !== null && $issued->public_id !== $versionId) {
+                throw Refused::conflict('ST-02', ['state' => 'SUPERSEDED']);
+            }
             $now = $context->now();
             $draft = $this->chain->draftOf($document->id);
 

@@ -92,8 +92,8 @@ final class DocumentsController extends Controller
     {
         $actor = self::actor($request);
         $document = $this->documents->find($actor, $id);
-        $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0']]);
-        $outcome = $issue->run(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null));
+        $input = self::validated($request, [...self::entered(), 'command_id' => ['required', 'uuid'], 'lock_version' => ['required', 'integer', 'min:0'], 'isi' => ['nullable', 'string', 'size:64']]);
+        $outcome = $issue->run(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null), self::nullable($input['isi'] ?? null));
 
         return $this->answer($outcome, $document->public_id, 'issued', self::text($input['tanggal']), $document->document_type_code,
             $outcome->code === 'C-10' ? $this->documents->numberingOf($actor, $document) : null);
@@ -104,9 +104,9 @@ final class DocumentsController extends Controller
     {
         $actor = self::actor($request);
         $document = $this->documents->find($actor, $id);
-        $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:500']]);
+        $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:500'], 'versi' => ['nullable', 'uuid']]);
 
-        return $this->answer($revise->run(self::text($input['command_id']), $actor, $document, self::text($input['alasan'])), $document->public_id, 'revised', BusinessDate::today());
+        return $this->answer($revise->run(self::text($input['command_id']), $actor, $document, self::text($input['alasan']), self::nullable($input['versi'] ?? null)), $document->public_id, 'revised', BusinessDate::today());
     }
 
     /** ROUTE-224: "Batalkan Dokumen" with its reason. */
@@ -114,9 +114,9 @@ final class DocumentsController extends Controller
     {
         $actor = self::actor($request);
         $document = $this->documents->find($actor, $id);
-        $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:500']]);
+        $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:500'], 'versi' => ['nullable', 'uuid']]);
 
-        return $this->answer($void->run(self::text($input['command_id']), $actor, $document, self::text($input['alasan'])), $document->public_id, 'voided', BusinessDate::today());
+        return $this->answer($void->run(self::text($input['command_id']), $actor, $document, self::text($input['alasan']), self::nullable($input['versi'] ?? null)), $document->public_id, 'voided', BusinessDate::today());
     }
 
     /** ROUTE-225: an issued rendition inline, its document authorizing the viewer at request time (FL-07; DP-05). */

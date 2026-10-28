@@ -9,7 +9,7 @@ import { documentDraft } from '../document-fixtures';
 for (const width of [1025, 1279, 1280]) {
     test(`sets the form beside the live preview at ${String(width)} px`, async ({ page }) => {
         await page.setViewportSize({ width, height: 900 });
-        const draft = await documentDraft(page, `komposer-${String(width)}-${String(Date.now())}`);
+        const { id: draft } = await documentDraft(page, `komposer-${String(width)}-${String(Date.now())}`);
         await page.goto(`/dokumen/${draft}`);
 
         const composer = page.locator('[data-slot="document-composer"]');
@@ -37,7 +37,7 @@ for (const width of [1025, 1279, 1280]) {
 
 test('offers "Rincian | Pratinjau" at 1,024 px', async ({ page }) => {
     await page.setViewportSize({ width: 1024, height: 900 });
-    const draft = await documentDraft(page, `komposer-1024-${String(Date.now())}`);
+    const { id: draft } = await documentDraft(page, `komposer-1024-${String(Date.now())}`);
     await page.goto(`/dokumen/${draft}`);
 
     await expect(page.locator('[data-slot="document-composer"]')).toHaveAttribute('data-band', 'tablet');
@@ -48,7 +48,7 @@ test('offers "Rincian | Pratinjau" at 1,024 px', async ({ page }) => {
 
 test('steps the phone through Edit, Preview and Finalize, the preview full-screen at 390 px (DC-11)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    const draft = await documentDraft(page, `komposer-390-${String(Date.now())}`);
+    const { id: draft } = await documentDraft(page, `komposer-390-${String(Date.now())}`);
     await page.goto(`/dokumen/${draft}`);
 
     await expect(page.locator('[data-slot="document-composer"]')).toHaveAttribute('data-band', 'phone');

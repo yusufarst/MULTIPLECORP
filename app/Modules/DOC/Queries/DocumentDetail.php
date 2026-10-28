@@ -7,6 +7,7 @@ use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentRendition;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Services\DocumentAccess;
+use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentPaper;
 use App\Modules\DOC\Services\DocumentSubjects;
 use App\Modules\DOC\Services\IssuerIdentity;
@@ -114,7 +115,8 @@ final class DocumentDetail
         }
 
         // PJ-19: the logo through its owning company at request time (ROUTE-226), never the stamp or the signature.
-        $paper = $provider === null ? null : DocumentPaper::compose($document->document_type_code, $document->mode, $provider->facts($subject), $identity,
+        $facts = $provider?->facts($subject);
+        $paper = $facts === null ? null : DocumentPaper::compose($document->document_type_code, $document->mode, $facts, $identity,
             $bank === null ? null : ['bank_name' => $bank['bank_name'], 'account_number' => $bank['account_number'], 'account_holder' => $bank['account_holder'], 'branch' => $bank['branch']], $draft->business_date?->format('Y-m-d') ?? BusinessDate::today(), null, true,
             $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
 
@@ -128,6 +130,7 @@ final class DocumentDetail
             'states_bank' => in_array($document->document_type_code, DocumentPaper::BANK_LAYOUTS, true) && $finance,
             'revision_of' => $draft->supersedes_version_id === null ? null : DocumentVersion::query()->whereKey($draft->supersedes_version_id)->value('formatted_number'),
             'paper' => $paper,
+            'facts' => $facts === null ? null : DocumentChain::factsDigest($facts),
         ];
     }
 

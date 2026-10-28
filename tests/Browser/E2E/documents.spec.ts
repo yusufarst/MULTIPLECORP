@@ -13,7 +13,7 @@ function stamp(): string {
 
 test('issues a prepared draft from PG-036 and shows its rendition (J-DOC-01; CJ-15)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    const document = await documentDraft(page, `dokumen-${stamp()}`);
+    const { id: document } = await documentDraft(page, `dokumen-${stamp()}`);
     const content = page.locator('#konten');
 
     await page.goto(`/dokumen/${document}`);
@@ -56,7 +56,7 @@ test('issues a prepared draft from PG-036 and shows its rendition (J-DOC-01; CJ-
 
 test('shows a failed rendition with MSG-08 and never a re-issue, then voids the document with its reason (UXS-09; J-DOC-01)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    const document = await documentDraft(page, `dokumen-gagal-${stamp()}`);
+    const { id: document } = await documentDraft(page, `dokumen-gagal-${stamp()}`);
     const content = page.locator('#konten');
 
     await page.goto(`/dokumen/${document}`);
@@ -66,7 +66,7 @@ test('shows a failed rendition with MSG-08 and never a re-issue, then voids the 
 
     await rendition(page, document, 'FAILED');
     await page.reload();
-    await expect(content.getByText('PDF Gagal Dibuat')).toBeVisible();
+    await expect(content.getByText('PDF Gagal Dibuat', { exact: true })).toBeVisible();
     await expect(content.getByText(/PDF gagal dibuat dan akan dicoba lagi otomatis/)).toBeVisible();
     await expect(content.getByRole('button', { name: /^Terbitkan/ })).toHaveCount(0);
 
@@ -84,7 +84,7 @@ test('shows a failed rendition with MSG-08 and never a re-issue, then voids the 
 
 test('lists the document on PG-035 and finds it by its exact number (ROUTE-035; PF-19)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
-    const document = await documentDraft(page, `dokumen-daftar-${stamp()}`);
+    const { id: document, company } = await documentDraft(page, `dokumen-daftar-${stamp()}`);
     const content = page.locator('#konten');
     await page.goto(`/dokumen/${document}`);
     await content.getByRole('button', { name: 'Terbitkan SPK' }).click();
@@ -92,7 +92,8 @@ test('lists the document on PG-035 and finds it by its exact number (ROUTE-035; 
     await expect(content.getByText('PDF sedang dibuat. Dokumen sudah terbit.')).toBeVisible();
     const number = ((await page.getByRole('heading', { level: 1 }).textContent()) ?? '').replace(/^SPK /, '');
 
-    await page.goto('/dokumen');
+    // The run's company is one branch of many the Owner reads; the list opens on it by its address.
+    await page.goto(`/dokumen?perusahaan=${company}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Dokumen');
     await page.getByLabel(/^Cari nomor dokumen/).fill(number.toLowerCase());
     await page.getByRole('button', { name: 'Cari' }).click();

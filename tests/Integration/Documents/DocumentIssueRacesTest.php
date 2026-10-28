@@ -132,3 +132,24 @@ it('rolls a revision\'s issue back with its number when a participant refuses it
         ->and(Numbering::next($this->company, SequenceType::Doc09, $this->year))->toBe(2)
         ->and(DB::table('audit_events')->where('action', 'DOC.DocumentIssued')->count())->toBe(1);
 });
+
+it('saves one of two concurrent edits of one draft at the version both read, the other CONFLICT (M-38; ST-01)', function () {
+    $project = ProjectFactory::new()->createOne(['company_id' => $this->company->id]);
+    $document = DocumentRaces::prepare($this->actors[0], $this->company->id, $project->id)->id;
+    [$first, $second, $today] = [$this->actors[0], $this->actors[1], $this->today];
+    $yesterday = CarbonImmutable::parse($today)->subDay()->toDateString();
+
+    $results = Sessions::run([
+        'first' => static fn (): string => DocumentRaces::holdThenSave($first, $document, 0, $yesterday),
+        'second' => static function () use ($second, $document, $today): string {
+            Barrier::await('the first save is written');
+
+            return DocumentRaces::save($second, $document, 0, $today);
+        },
+    ]);
+
+    expect($results['first'])->toBe('COMMITTED')
+        ->and($results['second'])->toStartWith('CONFLICT ST-01')
+        ->and(DocumentVersion::query()->where('document_id', $document)->sole()->only(['lock_version']))->toBe(['lock_version' => 1])
+        ->and(DocumentVersion::query()->where('document_id', $document)->value('business_date')?->format('Y-m-d'))->toBe($yesterday);
+});
