@@ -18,6 +18,7 @@ use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\INV\Http\Controllers\LocationsController;
+use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
@@ -137,6 +138,10 @@ Route::post('/bukti/{id}/tautan', [EvidenceController::class, 'links'])->middlew
 // and the issue by `documents.issue`, revision and void by `documents.correct`, each NX-12 or AX-15 command carrying
 // its `command_id`; the rendition inline through its document at request time like a download (FL-07; DP-05).
 Route::get('/dokumen', [DocumentsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('doc.documents');
+// PG-040 *Kasus Koreksi* (TASK-031; ROUTE-040, ROUTE-271; NAV-040): the cases by `projects.view` of their company, money
+// by family inside the query (PJ-16); "Tutup Kasus" by `cases.close`, its NX-06 command carrying its `command_id`.
+Route::get('/dokumen/kasus', [CorrectionCasesController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ops.cases');
+Route::post('/dokumen/kasus/{id}/tutup', [CorrectionCasesController::class, 'close'])->whereUuid('id')->middleware(['auth', 'capability:cases.close'])->name('ops.cases.close');
 Route::post('/dokumen', [DocumentsController::class, 'save'])->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.save');
 Route::get('/dokumen/{id}', [DocumentsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('doc.documents.show');
 Route::post('/dokumen/{id}/terbitkan', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.issue');
