@@ -71,6 +71,60 @@ final class DocumentIssuing
     }
 
     /**
+     * The subject's chain with a DRAFT to issue, for an issuing module that issues at its record (a quotation's revision;
+     * WF-QUO-01): the chain created on first use (FU-12) with its first draft, a draft left open kept, or — once a version
+     * is issued — a new draft revising it, so the issue supersedes the predecessor (C-11). The caller holds the subject's
+     * anchors; the chain is locked here at LK-30.
+     */
+    public function draftFor(CommandContext $context, DocumentSubject $subject): Document
+    {
+        $query = Document::query()->where('company_id', $subject->companyId)->where('document_type_code', $subject->typeCode)->where('mode', $subject->mode);
+
+        foreach (DocumentSubject::COLUMNS as $column) {
+            isset($subject->records[$column]) ? $query->where($column, $subject->records[$column]) : $query->whereNull($column);
+        }
+
+        $document = $query->orderByDesc('id')->first();
+        $now = $context->now();
+
+        if ($document === null) {
+            $document = new Document;
+            $document->forceFill([
+                'company_id' => $subject->companyId, 'document_type_code' => $subject->typeCode, 'mode' => $subject->mode, ...$subject->records,
+                'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
+            ])->save();
+        }
+
+        $issued = $this->chain->issuedOf($document->id);
+        $draft = $this->chain->draftOf($document->id);
+        $context->lock($this->chain->locks($document, array_values(array_filter([$draft?->id, $issued?->id]))));
+
+        if ($this->chain->draftOf($document->id) !== null) {
+            return $document;
+        }
+
+        if ($issued !== null) {
+            $this->revisionDraft($context, $document, $issued);
+
+            return $document;
+        }
+
+        $draft = new DocumentVersion;
+        $draft->forceFill([
+            'document_id' => $document->id,
+            'company_id' => $document->company_id,
+            'document_type_code' => $document->document_type_code,
+            'version_no' => DocumentChain::nextVersionNo($document->id),
+            'state' => 'DRAFT',
+            'business_date' => BusinessDate::of($now),
+            'recorded_at' => $now,
+            'recorded_by' => $context->request->actorUserId,
+        ])->save();
+
+        return $document;
+    }
+
+    /**
      * A new DRAFT version of the chain revising its issued one — the predecessor the issue will supersede — for an
      * issuing module that revises at its record (a quotation's next revision; L-25), under the chain's lock.
      */
@@ -100,13 +154,17 @@ final class DocumentIssuing
      *
      * @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed, or null where no paper was shown
      * @param  ?string  $draftId  the draft version the page showed: another draft of the chain is stale (ST-01)
+     * @param  bool  $authorized  whether the calling command already checked its own route's capability — ROUTE-155's `quotation.manage` (PJ-15) —, PG-036's issue checked here otherwise
      *
      * @throws Refused BD-06 for a draft already issued, ST-01 for a stale one, the precondition's and the numbering's refusals
      */
     public function issue(CommandContext $context, Document $document, DocumentSubject $subject, DocumentSubjectProvider $provider, ?int $lockVersion, string $businessDate,
-        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null): DocumentVersion
+        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null, bool $authorized = false): DocumentVersion
     {
-        DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
+        if (! $authorized) {
+            DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
+        }
+
         $draft = $this->chain->draftOf($document->id);
 
         if ($draft === null) {
