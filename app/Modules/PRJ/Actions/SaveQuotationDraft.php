@@ -2,9 +2,12 @@
 
 namespace App\Modules\PRJ\Actions;
 
+use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\ProjectRecords;
 use App\Modules\PRJ\Services\QuotationRecords;
+use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -31,6 +34,7 @@ final class SaveQuotationDraft
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly QuotationRecords $quotations,
+        private readonly DocumentIssuing $issuing,
     ) {}
 
     /**
@@ -60,6 +64,8 @@ final class SaveQuotationDraft
                 if ($latest !== null) {
                     throw Refused::conflict('ST-02', ['state' => $latest['state']]);
                 }
+
+                $this->issuing->draftFor($context, new DocumentSubject(QuotationSubjects::QUOTATION, 'STANDARD', $project->company_id, ['project_id' => $project->id]));
 
                 return new CommandResult('quotation_revision', $this->quotations->draft($context, $project->id, $project->company_id, null));
             }

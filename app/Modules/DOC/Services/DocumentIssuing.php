@@ -74,24 +74,18 @@ final class DocumentIssuing
      * The subject's chain with a DRAFT to issue, for an issuing module that issues at its record (a quotation's revision;
      * WF-QUO-01): the chain created on first use (FU-12) with its first draft, a draft left open kept, or — once a version
      * is issued — a new draft revising it, so the issue supersedes the predecessor (C-11). The caller holds the subject's
-     * anchors; the chain is locked here at LK-30.
+     * anchors and has read no clock yet: the chain is locked here at LK-30, before it. Run in its own command before the
+     * issue's, so the issue locks rows that exist (CONCURRENCY_IDEMPOTENCY §5).
      */
     public function draftFor(CommandContext $context, DocumentSubject $subject): Document
     {
-        $query = Document::query()->where('company_id', $subject->companyId)->where('document_type_code', $subject->typeCode)->where('mode', $subject->mode);
-
-        foreach (DocumentSubject::COLUMNS as $column) {
-            isset($subject->records[$column]) ? $query->where($column, $subject->records[$column]) : $query->whereNull($column);
-        }
-
-        $document = $query->orderByDesc('id')->first();
-        $now = $context->now();
+        $document = $this->chainOf($subject);
 
         if ($document === null) {
             $document = new Document;
             $document->forceFill([
                 'company_id' => $subject->companyId, 'document_type_code' => $subject->typeCode, 'mode' => $subject->mode, ...$subject->records,
-                'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
+                'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_by' => $context->request->actorUserId,
             ])->save();
         }
 
@@ -102,6 +96,8 @@ final class DocumentIssuing
         if ($this->chain->draftOf($document->id) !== null) {
             return $document;
         }
+
+        $now = $context->now();
 
         if ($issued !== null) {
             $this->revisionDraft($context, $document, $issued);
@@ -122,6 +118,18 @@ final class DocumentIssuing
         ])->save();
 
         return $document;
+    }
+
+    /** The subject's chain, or null before its first draft. */
+    public function chainOf(DocumentSubject $subject): ?Document
+    {
+        $query = Document::query()->where('company_id', $subject->companyId)->where('document_type_code', $subject->typeCode)->where('mode', $subject->mode);
+
+        foreach (DocumentSubject::COLUMNS as $column) {
+            isset($subject->records[$column]) ? $query->where($column, $subject->records[$column]) : $query->whereNull($column);
+        }
+
+        return $query->orderByDesc('id')->first();
     }
 
     /**

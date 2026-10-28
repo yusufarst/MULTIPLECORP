@@ -50,8 +50,10 @@ final class IssueQuotation
         return $this->envelope->run($request, function (CommandContext $context) use ($project, $revision, $lockVersion, $businessDate, $prefilled): CommandResult {
             $subject = new DocumentSubject(QuotationSubjects::QUOTATION, 'STANDARD', $project->company_id, ['project_id' => $project->id]);
             $provider = $this->subjects->of($subject);
-            // AX-15's order: the project (LK-01), its company for a new chain (LK-06), the chain (LK-30) as the draft is readied, the counter last (LK-31).
-            $context->lock(ProjectRecords::locks([$project->id], $project->company_id));
+            // The chain and its draft readied with the revision (SaveQuotationDraft, ReviseQuotation): AX-15's locks on existing rows —
+            // the project (LK-01), its company for a new chain (LK-06), the chain (LK-30) —, the counter last (LK-31).
+            $document = $this->issuing->chainOf($subject) ?? throw Refused::rejected('WF-QUO-01', ['reason' => 'no_draft']);
+            $context->lock(ProjectRecords::locks([$project->id])->union($this->issuing->locks($document, $subject, $provider->locks($subject))));
 
             if ($context->authority()?->allows('finance.view', $project->company_id) !== true) {
                 throw new AuthorizationException;
@@ -73,7 +75,6 @@ final class IssueQuotation
                 throw Refused::conflict('ST-01');
             }
 
-            $document = $this->issuing->draftFor($context, $subject);
             $version = $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true);
             $this->quotations->sent($context, $latest['id'], $project->company_id, (string) $latest['valid_until'], (string) $version->formatted_number);
 

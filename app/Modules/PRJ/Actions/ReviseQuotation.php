@@ -2,9 +2,12 @@
 
 namespace App\Modules\PRJ\Actions;
 
+use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\ProjectRecords;
 use App\Modules\PRJ\Services\QuotationRecords;
+use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -30,6 +33,7 @@ final class ReviseQuotation
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly QuotationRecords $quotations,
+        private readonly DocumentIssuing $issuing,
     ) {}
 
     public function run(string $commandId, int $actorUserId, Project $project, string $revision): Outcome
@@ -53,6 +57,9 @@ final class ReviseQuotation
             if ($latest === null || $latest['public_id'] !== strtolower($revision) || $latest['state'] === 'DRAFT') {
                 throw Refused::conflict('ST-02', ['state' => $latest['state'] ?? 'DELETED']);
             }
+
+            // The DOC-01 draft revising the issued version, readied before the clock so the next issue supersedes it (C-11).
+            $this->issuing->draftFor($context, new DocumentSubject(QuotationSubjects::QUOTATION, 'STANDARD', $project->company_id, ['project_id' => $project->id]));
 
             return new CommandResult('quotation_revision', $this->quotations->draft($context, $project->id, $project->company_id, $latest['id']));
         });
