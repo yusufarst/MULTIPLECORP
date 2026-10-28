@@ -22,7 +22,7 @@ for (const [locale, texts] of [
         await expect(page.locator('[data-slot="paper-frame"]').first()).toContainText('Penawaran Harga');
         await expect(page.locator('[data-slot="paper-frame"]').first()).toContainText('Berlaku sampai');
 
-        await page.goto('/dokumen/penawaran');
+        await page.goto(`/dokumen/penawaran?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
         await expect(page.getByRole('row').filter({ hasText: run.number })).toContainText(texts.draft);
     });

@@ -19,7 +19,7 @@ for (const width of [390, 1280]) {
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
-        await page.goto('/dokumen/penawaran');
+        await page.goto(`/dokumen/penawaran?perusahaan=${run.company}`);
         await expect(page.locator('#konten')).toContainText(run.number);
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);

@@ -38,7 +38,7 @@ test('drafts, issues and approves a quotation from PG-014, landing on PG-011 (J-
     await page.waitForURL(`**/proyek/${run.project}`);
     await expect(page.getByText('Persetujuan klien dicatat sebagai konfirmasi komersial.')).toBeVisible();
 
-    await page.goto('/dokumen/penawaran');
+    await page.goto(`/dokumen/penawaran?perusahaan=${run.company}`);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Daftar Penawaran');
     const row = page.getByRole('row').filter({ hasText: run.number });
     await expect(row).toContainText('Disetujui Klien');

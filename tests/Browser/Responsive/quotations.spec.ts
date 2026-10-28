@@ -33,13 +33,15 @@ for (const width of [1025, 1279, 1280]) {
                 return {
                     label: (element?.labels?.[0]?.textContent ?? element?.textContent ?? '').trim(),
                     line: element?.closest('li[id^="line-"]')?.id ?? null,
+                    // WebKit's Tab reaches fields, not buttons: the form ends at "Simpan Draf" or, there, at the paper beside it.
+                    end: element?.closest('[data-slot="paper-frame"]') != null,
                     inView: rect !== undefined && rect.top >= 0 && rect.bottom <= window.innerHeight,
                 };
             });
 
+            if (focused.label === 'Simpan Draf' || focused.end) break;
             expect(focused.inView).toBe(true);
             if (focused.label.startsWith('Harga satuan') && focused.line !== null) prices.push(Number(focused.line.replace('line-', '')));
-            if (focused.label === 'Simpan Draf') break;
         }
 
         expect(prices).toEqual(Array.from({ length: 30 }, (_, index) => index));
@@ -65,7 +67,7 @@ for (const width of [320, 390]) {
         await expect(page.getByRole('button', { name: 'Catat Jawaban Klien' }).first()).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 
-        await page.goto('/dokumen/penawaran');
+        await page.goto(`/dokumen/penawaran?perusahaan=${run.company}`);
         await expect(page.locator('#konten')).toContainText(run.number);
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     });

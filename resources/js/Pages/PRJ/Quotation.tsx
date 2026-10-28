@@ -9,6 +9,7 @@ import { router } from '@inertiajs/react';
 import { CopyPlus, MessageSquareReply, Send, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ActionBar } from '@/components/action-bar';
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { BusinessDateControl, type BusinessDate, DateField } from '@/components/date-field';
 import { DecimalInput, FormField, FormSection } from '@/components/form';
@@ -361,6 +362,12 @@ export default function Quotation({ project, revisions, current, taxes, today, c
                     )}
                 </FormSection>
             </div>
+            {/* On the phone the page's one primary action — "Catat Jawaban Klien" or "Buat Revisi" — sits in the bottom bar (J-QUO-01). */}
+            {primary !== undefined && (
+                <ActionBar label={t('pages.pg_014.title')} className="md:hidden">
+                    {primary}
+                </ActionBar>
+            )}
             <ConfirmCommand
                 open={answering}
                 onOpenChange={setAnswering}

@@ -62,7 +62,7 @@ export function PageHeader({
                     {date}
                 </div>
                 {(primary !== undefined || ordered.length > 0) && (
-                    <div className="flex shrink-0 items-center gap-2">
+                    <div className="flex min-w-0 max-w-full shrink-0 flex-wrap items-center gap-2">
                         {ordered.length > 0 && (
                             <DropdownMenu>
                                 <DropdownMenuTrigger render={<Button variant="outline" size="lg" />}>
@@ -78,7 +78,7 @@ export function PageHeader({
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         )}
-                        {primary !== undefined && <div className="max-md:hidden">{primary}</div>}
+                        {primary !== undefined && <div className="min-w-0 max-w-full max-md:hidden">{primary}</div>}
                     </div>
                 )}
             </div>
