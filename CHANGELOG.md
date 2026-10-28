@@ -655,3 +655,10 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-029 squash-merged by the executor into `main` as `76e8aad` (pull request #35); TASK-031 started.
 - Built TASK-031 on its branch `task/TASK-031-correction-cases`: the correction case every correcting command opens, posts to and closes — its residuals refusing the closure, a closed case reopened by a posting in the same transaction —; the shared correction record with BR-CR-06's legality matrix and the "Mengoreksi" / "Dikoreksi oleh" trail; PG-040 *Kasus Koreksi* with "Tutup Kasus"; the case counters' guard family.
 - Every check passed in fresh CI on `53b4794`. TASK-031 DONE — progress 31 / 87 —; TASK-032 next.
+
+## Unreleased — 2026-10-28, TASK-032 — Projects — list, form, journey page and amendment
+
+- TASK-031 squash-merged by the executor into `main` as `cfb15aa` (pull request #36); the browser suite's at-rest wait fixed as `37862f1` (pull request #37); TASK-032 started.
+- Built TASK-032 on its branch `task/TASK-032-projects`: "Buat Proyek", "Ubah proyek" and "Buang Draf" (ROUTE-151–ROUTE-153) — the number drawn at creation, the activation once unit and PIC are set, the channel lock, commercial changes refused after confirmation, a draft's company change as a new project, the retired number's tombstone —; PG-010 with its journey summary, PG-011 as the project's guided journey with its deferred groups, PG-013 with the line editor; PRJ's two inversion contracts.
+- ER-06's independent review and Codex's review dispositioned; a safe shutdown checkpoint taken and resumed on the Owner's instruction.
+- Every check passed in fresh CI on `fb630ae`. TASK-032 DONE — progress 32 / 87 —; TASK-033 next.

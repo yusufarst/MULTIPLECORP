@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -247,34 +247,50 @@ CAP-04 and AC-04 need one hub where staff find a project's number, company, clie
 - Migration: N/A — no migration or import code in this Task
 - Other: AC-20's golden journey and its existing-stock and service-only projects start here and run end to end in TASK-062 (CJ-01)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PRJ/ProjectsTest.php` — a project is created in the chosen company, in the actor's scope and active (C-54 refused), its number drawn from that company's PROJECT counter at creation; a period whose numbering has not started is REJECTED with MSG-17 for an Admin, the Owner's text with PG-061's address, and succeeds once started (UXS-28); `tests/Integration/Projects/ProjectRacesTest.php` — two creations at once draw distinct numbers; `tests/Browser/E2E/projects.spec.ts` — J-PRJ-01 and UXS-28 in the browser
+- Criterion 2: `tests/Feature/PRJ/ProjectsTest.php` and `tests/Authorization/ProjectsAccessTest.php` — a company, a client row or a linked project outside the actor's scope answers exactly as a nonexistent one, at the field and on every route (CS-04; AZ-11; SM-01); a linked project is another company's, both companies in scope (XL-4), an unchanged link kept by an amendment whoever edits
+- Criterion 3: `tests/Feature/PRJ/ProjectsTest.php` — SIPLAH values are stored as entered for a SIPLAH project only, a REGULAR project never needs them, nothing computes them or moves money (BR-FIN-10; IC-14); CJ-08's SIPLAH project in `tests/Browser/E2E/projects.spec.ts`
+- Criterion 4: `tests/Feature/PRJ/ProjectsTest.php` and `tests/Integration/Projects/ProjectRacesTest.php` — the channel changes before the first channel-dependent commit and is refused after it (BR-PRJ-05; C-51, the trigger the backstop), a change that waited on that commit refused; a DRAFT's company change is a new project of the other company with the draft's number retired, an ACTIVE project's refused (L-21; DIR-090 (6))
+- Criterion 5: `tests/Feature/PRJ/ProjectsTest.php` — after confirmation an amendment of lines or client is REJECTED with the path to a quotation revision or a re-confirmation, the other fields editable (L-20); a line a quotation revision cites cannot be removed or re-produced
+- Criterion 6: `tests/Feature/PRJ/ProjectsTest.php` and `tests/Interaction/ProjectsTest.php` — "Buang Draf" discards only a DRAFT without committed records, its number kept as a `retired_numbers` tombstone and never drawn again (L-37; C-10); its confirmation in `tests/Browser/E2E/projects.spec.ts`
+- Criterion 7: `tests/Feature/PRJ/ProjectsTest.php` and `tests/Integration/Projects/ProjectRacesTest.php` — two saves of one draft at the version both read, whichever lines each changed: one commits, the other is CONFLICT with the input kept (ST-01; PX-07); the form keeps the version it shows until the user re-applies or discards (IP-03)
+- Criterion 8: `tests/Performance/ProjectsQueriesTest.php` — PG-010's page in at most four statements with one bounded branch per company and its journey summary group in at most twelve, the same for few rows and many; `tests/Unit/PRJ/JourneyTest.php` — QS-15's money items omitted without `finance.view`. The group's 500 ms is TASK-068's script on staging in TASK-079 (PERFORMANCE_TARGETS §1)
+- Criterion 9: `tests/Performance/ProjectsQueriesTest.php` — PG-010 offers no stage filter, a stage being derived and never stored (L-01; PFM-04)
+- Criterion 10: `tests/Performance/ProjectsQueriesTest.php` — PG-011 at once and each of its three deferred groups in at most ten statements, a group's request never reading the page's own props; `tests/Authorization/ProjectsAccessTest.php` — the financial position absent, never zero, without `finance.view`
+- Criterion 11: the project's client, unit, PIC, lines and prices are kept once on the project's spine (`projects`, `project_lines`) for the quotation, purchase, delivery, invoice and documents to read without retyping; each of those reads is its own Task (TASK-033, TASK-034, TASK-037, TASK-044, TASK-049)
+- Criterion 12: `tests/Authorization/ProjectsAccessTest.php` and `tests/Feature/PRJ/ProjectsTest.php` — selling prices, the output taxes in force and SIPLAH amounts shown and taken only with `finance.view`; an Admin without it amends a draft and its prices stay as stored
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL (TL-05); PASS in CI and locally
+- [x] Authorization: `projects.view`, `projects.manage` and the `finance.view` family, positive and denial cases; XL-4 (TL-06)
+- [x] Route integrity: ROUTE-010, ROUTE-011, ROUTE-013 and ROUTE-151–ROUTE-153 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-151–INT-153, each with one `command_id` replayed, a gone target's retry answering its recorded outcome (TL-08)
+- [x] Browser E2E if required: J-PRJ-01 on the desktop and the phone, CJ-01's project steps, CJ-08's SIPLAH project, "Buang Draf" and UXS-28 on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-010, PG-011 and PG-013 at 320, 390, 768, 1,280 and 1,680 px without a sideways scroll (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's lists, stage track, now strip, part strip, line editor and confirmation, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01's forged and foreign identifiers; SM-04 for `projects.manage`; SM-25's money families (TL-14)
+- [x] Database safety review: no migration; the database's keys and triggers as the backstops of the discard, the channel lock and the line guard; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `fb630ae`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40688604114 (push) and 40688613292 (pull request #38), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-032 PHP tests, PHPStan, Pint and the frontend checks also PASS on the workstation's stack
+- Build result: `TL-13 Frontend build: PASS — Evidence: fb630ae, CI ubuntu-24.04 run 40688604114`
+- Route evidence: TL-07's route audit PASS — ROUTE-010 `GET /proyek` and ROUTE-011 `GET /proyek/{id}` (`projects.view`); ROUTE-013 `GET /proyek/baru`, `GET /proyek/{id}/ubah`, ROUTE-151 `POST /proyek`, ROUTE-152 `PUT /proyek/{id}` and ROUTE-153 `POST /proyek/{id}/hapus-draf` (`projects.manage`)
+- Interaction evidence: `tests/Interaction/ProjectsTest.php` (INT-151–INT-153)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: fb630ae, CI ubuntu-24.04 run 40688604114`; TL-10, TL-11 and TL-12 for PG-010, PG-011 and PG-013 in the same run
+- Localization evidence: PG-010, PG-011 and PG-013 in both languages (`tests/Browser/Localization/projects.spec.ts`) (DOD-16); 121 catalogue keys added, proposed copy except the canonical ones the registry marks
+- Performance evidence: QB-01, QB-02 and PFM-04 (`tests/Performance/ProjectsQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/PRJ/` — `Contracts/CompletionPredicateProvider`, `ProjectLifecycleParticipant`; `Data/`; `Services/ProjectRecords`, `Journey`; `Actions/CreateProject`, `UpdateProject`, `DiscardDraftProject`; `Queries/ProjectList`, `ProjectWorkspace`, `ProjectForm`, `ProjectJourneys`; `Http/Controllers/ProjectsController` —; DOC's `ProjectDocuments`, OPS's `ProjectCases`, PTY's `ClientDirectory` id-based reads; the routes; PG-010, PG-011 and PG-013 with the journey feature and the navigation; 121 catalogue keys; the tests, the race helper and the browser fixture
+- Commit SHA: `15d3594`, `5045637`, `b952788`, `520ca61` and `fb630ae`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-032-projects`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request: its P1 — an amendment erasing a link the editor cannot see — and its P2 and P3 points fixed and tested in `5045637`; Codex reviewed `5045637`: its P1 — the edit form adopting a newer version after a CONFLICT, so a second save overwrote the other Admin's changes — and its P2 — a retried discard or company change unable to replay once its project was gone — fixed and tested in `b952788` (IP-03's comparison with "Terapkan Ulang pada Versi Terbaru" and "Buang Isian Saya"; the recorded outcome replayed for the same actor, CI-05); no review of `b952788`, `520ca61` or `fb630ae` arrived within ten minutes of its push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). Executor readings within the approved text: the deferred groups are Inertia deferred props served by the page's own view route, the page's props lazy so a group's request reads only its group — ROUTE-285's status route stays for polled states —; `project_lines.line_no` is not updatable by the runtime role, so existing lines keep their numbers and new lines follow the highest; a project line stores no tax — PG-013 shows the configured output taxes, the components pinned at confirmation (TASK-034) —; the channel counts as locked once `project_siplah_details.locked_at` is set or a commercial confirmation exists; a committed downstream record is decided by the database, a restricting key answered REJECTED (L-37, L-20) in a savepoint; DRAFT → ACTIVE inside create and amend once unit and PIC are set; *Riwayat* shows the project's creation and transitions and the correction trail, the business audit staying the Owner's (LG-05); IP-03's re-apply carries whole fields, the lines one field; predicates without a registered provider have no facts to judge. Executor discoveries for later Tasks: `ProjectLifecycleParticipant`'s three hooks take only the project, TASK-034, TASK-055 and TASK-056 extending them if their steps need more; the journey's predicates group reaches eight provider statements once every higher tier registers, against QB-02's ten
 
 **SAFE NEXT TASK:**
 
