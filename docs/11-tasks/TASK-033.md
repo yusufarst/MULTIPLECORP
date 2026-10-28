@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -237,34 +237,49 @@ CAP-04 and AC-04 require quotation drafts, sent revisions with their validity, r
 - Migration: N/A — no migration or import code in this Task
 - Other: DOC-01's and DOC-11's layouts compared with their previews (DOCUMENT_PREVIEW_PRODUCER §4) and their samples listed for the Owner's content validation (GAP-019)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PRJ/QuotationCommandsTest.php` and `tests/Feature/PRJ/QuotationsTest.php` — the issue draws DOC-01's number, freezes the revision's lines by trigger and makes it *Terkirim* with its validity in one transaction, a second issue CONFLICT BD-06 with the number, MSG-17 before numbering (C-10); `tests/Integration/Projects/QuotationRacesTest.php` — two issues of one draft at once draw one number (M-19)
+- Criterion 2: `tests/Unit/PRJ/QuotationExpiryTest.php` — *Kedaluwarsa* from the WIB day after the validity, derived and never stored; `tests/Feature/PRJ/QuotationsTest.php` — an expired revision's approval REJECTED L-25, a backdated one too, PG-014 then offering only "Buat Revisi"
+- Criterion 3: `tests/Feature/PRJ/QuotationsTest.php` and `tests/Feature/PRJ/QuotationCommandsTest.php` — only the latest sent revision is approved, a second answer CONFLICT BD-05, a rejected or expired one never approved; `tests/Integration/Projects/QuotationRacesTest.php` — two approvals at once write one confirmation
+- Criterion 4: `tests/Feature/PRJ/QuotationCommandsTest.php` and `tests/Feature/PRJ/QuotationsTest.php` — "Buat Revisi" from a sent, rejected or approved revision makes a new DRAFT, the earlier revisions and DOC-01 versions kept (SUPERSEDED, then ISSUED); DOC-01 is never voided through PG-036 (L-25; BR-CR-06) and PG-014 offers no void
+- Criterion 5: `tests/Feature/PRJ/QuotationCommandsTest.php` — the issue, revision and answers write no stock movement, reservation or money; `tests/Browser/E2E/quotations.spec.ts` — PG-014 shows no void, reservation or payment
+- Criterion 6: `tests/Feature/PRJ/QuotationCommandsTest.php` — the issued DOC-01 payload keeps the client it was issued to; `tests/Feature/PRJ/QuotationsTest.php` — a client changed since the preview is CONFLICT, nothing issued; a sent revision's PG-014 shows its issued paper, a later draft the client as named then
+- Criterion 7: `tests/Feature/PRJ/QuotationsTest.php` and `tests/Integration/Projects/QuotationRacesTest.php` — two saves of one draft at the version both read: one commits, the other CONFLICT with the input kept and "Terapkan Ulang pada Versi Terbaru" (ST-01; M-38)
+- Criterion 8: `tests/Browser/Responsive/quotations.spec.ts` — a 30-line draft at 1,025, 1,279 and 1,280 px beside the live paper, every price reached in one keyboard order and uncovered; "Rincian | Pratinjau" at 1,024 px; `tests/Performance/QuotationsQueriesTest.php` — PG-014 in the same statements for one line and thirty
+- Criterion 9: `tests/Feature/PRJ/QuotationsTest.php` and `tests/Authorization/QuotationsAccessTest.php` — with `projects.view` alone PG-037 lists the revision with its state and without values, its row opening the project's PG-011
+- Criterion 10: DOC-11 supplied by PRJ's `QuotationSubjects` on PG-036 with the company's own issuer and its draft marking until issued (BR-DOC-04); an uploaded client's or third party's HPS stays evidence (TASK-030)
+- Criterion 11: the approval writes the revision APPROVED and `commercial_confirmations`' QUOTATION_APPROVAL root naming it, its lines the ones the confirmation pins (TASK-034 adds the pins and the reservation adjustments)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL (TL-05); PASS in CI and locally
+- [x] Authorization: `quotation.manage`, `projects.confirm` and the `finance.view` family, positive and denial cases (TL-06)
+- [x] Route integrity: ROUTE-014, ROUTE-037 and ROUTE-154–ROUTE-157 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-154–INT-157, each with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-QUO-01 and J-PRJ-02's approval, the phone's quick action, on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the composer at 1,024, 1,025, 1,279 and 1,280 px; PG-014 and PG-037 at 320 and 390 px (TL-11)
+- [x] Visual breathing room/density if UI: TASK-029's composer, TASK-015's lists, status badges and confirmation, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-25 for the values and DOC-01's payload; SM-04 for `projects.confirm` (TL-14)
+- [x] Database safety review: no migration; the frozen-lines trigger, the forward-only state and the keys as the backstops; local and CI databases only, no production connection
+- [x] Final diff review: each rule against the contract and its sources; Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `93e66c9`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40755691157 (push) and 40755699200 (pull request #39), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-033 PHP tests, PHPStan, Pint and the frontend checks also PASS on the workstation's stack, whose browser layers timed out on its fixtures for want of memory, TASK-032's own as well, so CI's run is their evidence
+- Build result: `TL-13 Frontend build: PASS — Evidence: 93e66c9, CI ubuntu-24.04 run 40755691157`
+- Route evidence: TL-07's route audit PASS — ROUTE-014 `GET /proyek/{id}/penawaran` and ROUTE-037 `GET /dokumen/penawaran` (`projects.view`, PG-014's two audiences checked by its query); ROUTE-154 `POST /proyek/{id}/penawaran`, ROUTE-155 `POST /proyek/{id}/penawaran/terbitkan` and ROUTE-156 `POST /proyek/{id}/penawaran/revisi` (`quotation.manage`); ROUTE-157 `POST /proyek/{id}/penawaran/jawaban` (`projects.confirm` or `quotation.manage` by its command)
+- Interaction evidence: `tests/Interaction/QuotationsTest.php` (INT-154–INT-157)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 93e66c9, CI ubuntu-24.04 run 40755691157`; TL-10, TL-11 and TL-12 for PG-014 and PG-037 in the same run
+- Localization evidence: PG-014 and PG-037 in both languages, the paper Indonesian (`tests/Browser/Localization/quotations.spec.ts`) (DOD-16); 62 catalogue keys added, proposed copy except the canonical ones the registry marks
+- Performance evidence: PFM-01 and PFM-02 (`tests/Performance/QuotationsQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/PRJ/` — `Actions/SaveQuotationDraft`, `IssueQuotation`, `ReviseQuotation`, `AnswerQuotation`; `Services/QuotationRecords`, `QuotationSubjects`; `Queries/QuotationWorkspace`, `QuotationList`; `Http/Controllers/QuotationsController`; the journey's link to PG-014 —; DOC's `Services/DocumentIssuing` (AX-15's issue, extracted from `IssueDocument`) with `IssueDocument::render`, DOC-01 issued only at its quotation; the routes; PG-014 and PG-037 with the live paper and the navigation; the page header's wrapping primary action; 62 catalogue keys; the tests, the race helper and the browser fixture
+- Commit SHA: `b69c50d`, `07b2531`, `7834d3b`, `8339cf8`, `7d844dd`, `be45b5d`, `f67fa87`, `f09dd62`, `3286777`, `4afde99` and `93e66c9`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-033-quotations`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `be45b5d`: its three P1s — an expired revision approved by choosing an earlier confirmation date, a draft saved with no line left unable to be issued or revised, PG-037's rows linking a `projects.view`-only viewer to a page refused to them — and its P2 — an issue taking a client changed since the preview — fixed and tested in `f67fa87` (expiry on today's WIB date at the command's clock; a draft keeps a line; each row's destination by the viewer's access; the previewed facts' digest required, a change CONFLICT ST-01); no review of the later heads arrived within ten minutes of their push — CODEX_TIMEOUT recorded for them, never a pass (DIR-096). The PHP dependency audit (TL-14) failed on a symfony/mime advisory published during the run (CVE-2026-45070): the package raised within its minor line to 7.4.22 in `93e66c9`, nothing else changed. Executor readings within the approved text: the DOC-01 chain and its draft are readied with the quotation's first draft or revision, so the issue locks existing rows before its clock; ApproveQuotation and RecordQuotationRejection are one action with two command types, each with its own capability; the approval writes the revision APPROVED and the confirmation's root row, its pins, snapshots and reservation adjustments TASK-034's; the validity date is entered on the draft and required before the issue; a draft keeps at least one line; PG-014's live paper computes each line's output taxes as the save does. Executor discoveries for later Tasks: TASK-034's confirmation extends the root row this Task writes; the phone's page header lets a long title run under *Tindakan Lain*, a shared-header point for TASK-015's owner
 
 **SAFE NEXT TASK:**
 
