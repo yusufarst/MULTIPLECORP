@@ -6,7 +6,7 @@
 // own command answered in place (IP-19). `[desk]`: the phone looks up, reads and registers a barcode.
 import { router, usePage } from '@inertiajs/react';
 import { Plus, Printer } from 'lucide-react';
-import { type ReactNode, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -16,18 +16,17 @@ import { FormField, FormSection } from '@/components/form';
 import { UploadField, type UploadState } from '@/components/notices';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
+import { FormSheet } from '@/components/form-sheet';
 import { CommandAnswer, usePartySearch } from '@/components/parties';
 import { DataMasterNav } from '@/components/party-nav';
 import { Lookup } from '@/components/lookup';
 import { RegionEmpty } from '@/components/region-state';
-import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Textarea } from '@/components/ui/textarea';
 import { DateText, Money, Quantity } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
@@ -71,82 +70,6 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
-/** One form in a sheet: its fields, its answer in place, "Batal" and every dismissal asking first with unsent input
-    (PT-09; MSG-35). It keeps the values and version it opened with: a stale answer leaves the input in place with MSG-03,
-    and only "Muat Versi Terbaru" takes the record's latest values and version — never a silent resend over another
-    user's change (IP-03; ST-01). */
-function FormSheet({
-    title,
-    url,
-    method,
-    initial,
-    fixed,
-    submitLabel,
-    onClose,
-    children,
-}: {
-    title: string;
-    url: string;
-    method: 'post' | 'put';
-    initial: Values;
-    fixed: Payload;
-    submitLabel: string;
-    onClose: () => void;
-    children: (values: Values, set: (field: string, value: string) => void, errors: Record<string, string>) => ReactNode;
-}) {
-    const { t } = useTranslation();
-    const [opened, setOpened] = useState({ initial, fixed });
-    const [values, setValues] = useState<Values>(initial);
-    const [leaving, setLeaving] = useState(false);
-    const command = useCommand<Payload>(() => url, method);
-    const dirty = JSON.stringify(values) !== JSON.stringify(opened.initial);
-    const stale = command.answer?.kind === 'CONFLICT' && command.answer.cause === 'stale';
-
-    return (
-        <Sheet open onOpenChange={(open) => { if (!open) { if (dirty) setLeaving(true); else onClose(); } }}>
-            <SheetContent width="lg" closeLabel={t('actions.close')}>
-                <SheetHeader>
-                    <SheetTitle>{title}</SheetTitle>
-                </SheetHeader>
-                <form
-                    className="flex min-w-0 flex-col gap-6"
-                    noValidate
-                    onSubmit={(event) => {
-                        event.preventDefault();
-                        command.submit({ ...opened.fixed, ...values }, onClose);
-                    }}
-                >
-                    {children(values, (field, value) => { setValues((current) => ({ ...current, [field]: value })); }, command.errors)}
-                    <CommandAnswer command={command} />
-                    {stale && (
-                        <div>
-                            <Button
-                                type="button"
-                                variant="outline"
-                                onClick={() => {
-                                    setOpened({ initial, fixed });
-                                    setValues(initial);
-                                    command.clear();
-                                }}
-                            >
-                                {t('forms.load_latest')}
-                            </Button>
-                        </div>
-                    )}
-                    <div className="flex justify-end gap-3">
-                        <Button type="button" variant="ghost" onClick={() => { if (dirty) setLeaving(true); else onClose(); }}>
-                            {t('actions.cancel')}
-                        </Button>
-                        <Button type="submit" pending={command.pending} disabled={command.frozen}>
-                            {submitLabel}
-                        </Button>
-                    </div>
-                    <UnsentInputDialog open={leaving} kind="leave" onStay={() => { setLeaving(false); }} onLeave={onClose} />
-                </form>
-            </SheetContent>
-        </Sheet>
-    );
-}
 
 function TextField({ name, values, set, errors, required = false, multiline = false }: { name: string; values: Values; set: (field: string, value: string) => void; errors: Record<string, string>; required?: boolean; multiline?: boolean }) {
     const { t } = useTranslation();

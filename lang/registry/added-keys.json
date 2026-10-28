@@ -5274,6 +5274,168 @@
             "source": "ADMIN_FLOW J-MD-04; DATABASE §4.4, §19; DIR-089 (4); ADMIN_FLOW IP-03",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "locations.racks": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.racks_line": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.empty": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.create": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.edit": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.inactive": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.code": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.code_help": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.name": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.active": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.minimums": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.minimums_line": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.minimums_empty": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.minimum_set": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.product": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.minimum": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.field.minimum_help": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.cut": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.answer.create": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.answer.edit": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.answer.minimum": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.required": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.too_long": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.choice": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.format": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.taken": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "locations.validation.scale": {
+            "task": "TASK-028",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-057; ADMIN_FLOW J-MD-05; WORKFLOWS WF-MD-05; DATABASE §4.4, §4.7; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
