@@ -71,7 +71,9 @@ final class Families
                 null,
             ),
             // TASK-036 (C-21; L-47): a charge's current amount — recorded plus its corrections —, what is allocated of it —
-            // every CHARGE row naming it, on a lot or direct — and what is expensed of it.
+            // every CHARGE row naming it, on a lot or direct, a drop-ship return's contra aside: the units it moves into
+            // their return lot's basis keep their cost allocated (§5.7) — and what is expensed of it. Every charge has
+            // its guard from its recording, so a missing one is reported, never invented (C-61).
             new Family(
                 'purchase_charge_balances',
                 ['purchase_charge_id'],
@@ -80,15 +82,16 @@ final class Families
                     select c.id as purchase_charge_id,
                         c.amount + coalesce((select sum(a.amount_delta) from purchase_line_adjustments a where a.purchase_charge_id = c.id and a.kind = 'CHARGE_CORRECTION'), 0) as amount,
                         coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_id = c.id), 0)
-                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_id = c.id), 0) as allocated_amount,
+                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_id = c.id
+                                and not exists (select 1 from stock_restorations r where r.id = t.stock_restoration_id and r.kind = 'DROPSHIP_RETURN')), 0) as allocated_amount,
                         coalesce((select sum(x.amount) from expenses x where x.purchase_charge_id = c.id), 0) as expensed_amount
                     from purchase_charges c
-                    where exists (select 1 from purchase_charge_balances b where b.purchase_charge_id = c.id)
                     SQL,
                 null,
             ),
-            // TASK-036 (C-21; DATABASE §6.1): each line's share of a charge at its current version — what is posted under
-            // that share, re-spread out of the line under that version, and expensed out of it.
+            // TASK-036 (C-21; DATABASE §6.1): each line's share of an attributable charge at its current version — what is
+            // posted under that share, re-spread out of the line under that version, and expensed out of it, a drop-ship
+            // return's contra aside as above.
             new Family(
                 'purchase_charge_share_balances',
                 ['purchase_charge_id', 'purchase_line_id'],
@@ -96,16 +99,18 @@ final class Families
                 <<<'SQL'
                     select s.purchase_charge_id, s.purchase_line_id, s.allocation_version, s.share_amount,
                         coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_line_share_id = s.id), 0)
-                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_line_share_id = s.id), 0) as posted_amount,
+                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_line_share_id = s.id
+                                and not exists (select 1 from stock_restorations r where r.id = t.stock_restoration_id and r.kind = 'DROPSHIP_RETURN')), 0) as posted_amount,
                         coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_id = s.purchase_charge_id
                             and e.respread_from_purchase_line_id = s.purchase_line_id and e.allocation_version = s.allocation_version), 0)
                             + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_id = s.purchase_charge_id
-                            and t.respread_from_purchase_line_id = s.purchase_line_id and t.allocation_version = s.allocation_version), 0) as respread_out_amount,
+                            and t.respread_from_purchase_line_id = s.purchase_line_id and t.allocation_version = s.allocation_version
+                                and not exists (select 1 from stock_restorations r where r.id = t.stock_restoration_id and r.kind = 'DROPSHIP_RETURN')), 0) as respread_out_amount,
                         coalesce((select sum(x.amount) from expenses x where x.purchase_charge_id = s.purchase_charge_id and x.purchase_line_id = s.purchase_line_id), 0) as expensed_out_amount
                     from purchase_charge_line_shares s
+                    join purchase_charges c on c.id = s.purchase_charge_id and c.classification = 'ATTRIBUTABLE'
                     where s.allocation_version = (select max(v.allocation_version) from purchase_charge_line_shares v
                         where v.purchase_charge_id = s.purchase_charge_id and v.purchase_line_id = s.purchase_line_id)
-                    and exists (select 1 from purchase_charge_share_balances b where b.purchase_charge_id = s.purchase_charge_id)
                     SQL,
                 null,
             ),

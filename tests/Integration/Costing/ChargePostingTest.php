@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
 use Tests\Support\CostWorld;
 use Tests\Support\RefreshDatabase;
+use Tests\Support\Refusal;
 
 // TL-05 (TASK-036; SF-CHARGE; AX-29; AX-32; AX-05; AX-34; FX-03; FX-04; L-43; L-47; criteria 4, 5, 7) on real PostgreSQL:
 // a charge's share posted with each receipt over the ordered quantity, its open remainder pending, re-spread over the
@@ -25,16 +26,21 @@ function chargeDifferences(): array
     return CostWorld::differences();
 }
 
-/** @return array{allocated: string, expensed: string, pending: string} the charge's figures, pending what neither took */
+/**
+ * The charge's allocated and expensed figures from its guard, and what is pending on its lines read from the shares'
+ * guards — share less posted, re-spread and expensed —, the three summing to the charge (L-47; AX-29).
+ *
+ * @return array{allocated: string, expensed: string, pending: string}
+ */
 function chargeFigures(int $charge): array
 {
     $balance = DB::table('purchase_charge_balances')->where('purchase_charge_id', $charge)->first(['amount', 'allocated_amount', 'expensed_amount']);
+    $pending = (string) DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $charge)
+        ->selectRaw('coalesce(sum(share_amount - posted_amount - respread_out_amount - expensed_out_amount), 0.00) as pending')->value('pending');
 
-    return [
-        'allocated' => (string) $balance->allocated_amount,
-        'expensed' => (string) $balance->expensed_amount,
-        'pending' => Money::of((string) $balance->amount)->minus(Money::of((string) $balance->allocated_amount))->minus(Money::of((string) $balance->expensed_amount))->toString(),
-    ];
+    expect(Money::sum(Money::of((string) $balance->allocated_amount), Money::of((string) $balance->expensed_amount), Money::of($pending))->toString())->toBe((string) $balance->amount);
+
+    return ['allocated' => (string) $balance->allocated_amount, 'expensed' => (string) $balance->expensed_amount, 'pending' => $pending];
 }
 
 function lotCost(int $lot): string
@@ -123,17 +129,21 @@ it('refuses a charge or a correction beyond its source bill with C-20, a bill ci
     $bill = $this->world->bill('30000.00');
     $first = $this->world->charge($purchase, '20000.00', [$line->id => '200000.00'], billId: $bill);
     $this->world->expect($this->world->recordCharge($first));
-    $second = $this->world->charge($purchase, '15000.00', [$line->id => '200000.00'], billId: $bill);
-    $outcome = $this->world->recordCharge($second);
+    $outcome = $this->world->recordNew($purchase, '15000.00', [$line->id => '200000.00'], billId: $bill);
 
+    // The second charge is refused whole: neither it, nor a guard, nor a citation stays.
     expect([$outcome->kind, $outcome->code])->toBe(['REJECTED', 'C-20'])
-        ->and(DB::table('purchase_charge_balances')->where('purchase_charge_id', $second->id)->exists())->toBeFalse()
+        ->and(DB::table('purchase_charges')->where('purchase_id', $purchase->id)->pluck('id')->all())->toBe([$first->id])
         ->and(DB::table('evidence_balances')->where('evidence_document_id', $bill)->value('cited_amount'))->toBe('20000.00');
 
     $correction = $this->world->correctCharge($first, '31000.00', [$line->id => '200000.00']);
     expect([$correction->kind, $correction->code])->toBe(['REJECTED', 'C-20'])
         ->and(DB::table('purchase_charge_balances')->where('purchase_charge_id', $first->id)->value('amount'))->toBe('20000.00')
         ->and(chargeDifferences())->toBe([]);
+
+    // Never allocated and expensed beyond the charge: the guard refuses it under the runtime role (C-21).
+    Refusal::assert(Refusal::CHECK, 'purchase_charge_balances_c21_conservation',
+        fn () => DB::table('purchase_charge_balances')->where('purchase_charge_id', $first->id)->update(['allocated_amount' => '20000.00', 'expensed_amount' => '1.00']));
 });
 
 it('corrects a charge\'s basis by contra\'ing the old version and re-posting the new one, Σ allocated = the charge (CM-35; AX-34; criterion 7)', function () {
@@ -161,5 +171,38 @@ it('corrects a charge\'s basis by contra\'ing the old version and re-posting the
     // Ending B's remainder re-spreads its pending 5,000; every remainder ended, Σ allocated = the charge exactly.
     $this->world->closeRemainder($b, '5');
     expect(chargeFigures($freight->id))->toBe(['allocated' => '40000.00', 'expensed' => '0.00', 'pending' => '0.00'])
+        ->and(chargeDifferences())->toBe([]);
+});
+
+it('corrects a charge\'s amount with an expensed share present, cites the delta and posts a later receipt under the new version (CM-35; FX-04; C-20; criterion 7)', function () {
+    $purchase = $this->world->purchase();
+    $a = $this->world->line($purchase, '10', '1000000.00', lineNo: 1);
+    $b = $this->world->line($purchase, '10', '1000000.00', lineNo: 2);
+    $bill = $this->world->bill('100000.00');
+    $freight = $this->world->charge($purchase, '40000.00', [$a->id => '1', $b->id => '1'], billId: $bill);
+    $this->world->expect($this->world->recordCharge($freight));
+    // B ends with nothing of the charge received anywhere: its 20,000 is expensed.
+    $this->world->closeRemainder($b, '10');
+    $this->world->receive($a, '4');
+
+    expect(chargeFigures($freight->id))->toBe(['allocated' => '8000.00', 'expensed' => '20000.00', 'pending' => '12000.00']);
+
+    // 60,000 on a basis of 2 : 1 — A 40,000, B 20,000: B's share stays expensed, A's 4 received units take 16,000.
+    $this->world->expect($this->world->correctCharge($freight, '60000.00', [$a->id => '2', $b->id => '1']));
+    expect(chargeFigures($freight->id))->toBe(['allocated' => '16000.00', 'expensed' => '20000.00', 'pending' => '24000.00'])
+        ->and(DB::table('evidence_balances')->where('evidence_document_id', $bill)->value('cited_amount'))->toBe('60000.00')
+        ->and(DB::table('purchase_charge_balances')->where('purchase_charge_id', $freight->id)->value('amount'))->toBe('60000.00');
+
+    // A later receipt posts only what the new version still has pending (FX-04).
+    $second = $this->world->receive($a, '6');
+    expect(DB::table('lot_cost_entries')->where('lot_id', $second)->orderBy('id')->get(['entry_kind', 'amount'])->map(fn ($row) => "{$row->entry_kind} {$row->amount}")->all())
+        ->toBe(['GOODS 600000.00', 'CHARGE_SHARE 24000.00'])
+        ->and(chargeFigures($freight->id))->toBe(['allocated' => '40000.00', 'expensed' => '20000.00', 'pending' => '0.00'])
+        ->and(chargeDifferences())->toBe([]);
+
+    // A share below what it already expensed cannot be posted (C-21); a version leaving a line out is no version.
+    $refused = $this->world->correctCharge($freight, '60000.00', [$a->id => '5', $b->id => '1']);
+    expect([$refused->kind, $refused->code])->toBe(['REJECTED', 'C-21'])
+        ->and(fn () => $this->world->correctCharge($freight, '60000.00', [$a->id => '1']))->toThrow(InvalidArgumentException::class)
         ->and(chargeDifferences())->toBe([]);
 });

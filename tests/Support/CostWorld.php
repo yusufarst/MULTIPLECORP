@@ -6,6 +6,9 @@ use App\Modules\CAT\Models\Product;
 use App\Modules\CST\Data\ReceiptPosted;
 use App\Modules\CST\Queries\AllocationOverlay;
 use App\Modules\CST\Services\CostPosting;
+use App\Modules\DOC\Services\EvidenceGuard;
+use App\Modules\FUL\Models\DropshipConfirmation;
+use App\Modules\FUL\Models\DropshipConfirmationLine;
 use App\Modules\INV\Models\DispatchLine;
 use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\ReceivingLine;
@@ -14,6 +17,7 @@ use App\Modules\INV\Models\StockMovementEntry;
 use App\Modules\INV\Models\StockRestoration;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\ORG\Models\Company;
+use App\Modules\ORG\Models\TaxType;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Models\ProjectLine;
 use App\Modules\PRJ\Models\ProjectStateTransition;
@@ -21,6 +25,7 @@ use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseCharge;
 use App\Modules\PUR\Models\PurchaseChargeLineShare;
 use App\Modules\PUR\Models\PurchaseLine;
+use App\Modules\PUR\Models\PurchaseLineTaxComponent;
 use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
@@ -39,6 +44,7 @@ use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\INV\LocationFactory;
 use Database\Factories\INV\StockMovementFactory;
 use Database\Factories\OPS\CorrectionCaseFactory;
+use Database\Factories\ORG\TaxTreatmentRuleFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -118,6 +124,22 @@ final class CostWorld
         return $line;
     }
 
+    /**
+     * A purchase line with its input tax recorded under `treatment` (DIR-024 D-1): the guard's non-creditable tax is what a
+     * treatment taking the tax into acquisition cost gives it, as PUR derives it; a creditable input tax gives it nothing.
+     */
+    public function taxedLine(Purchase $purchase, string $qty, string $value, string $tax, string $treatment): PurchaseLine
+    {
+        $line = $this->line($purchase, $qty, $value, $treatment === 'INPUT_TO_ACQUISITION_COST' ? $tax : '0.00');
+        $type = TaxType::factory()->create()->id;
+        PurchaseLineTaxComponent::factory()->create([
+            'purchase_line_id' => $line->id, 'tax_type_id' => $type, 'treatment' => $treatment, 'base_amount' => $value, 'amount' => $tax,
+            'treatment_rule_id' => TaxTreatmentRuleFactory::new()->createOne(['tax_type_id' => $type, 'transaction_context' => 'PURCHASE_LINE', 'treatment' => $treatment])->id,
+        ]);
+
+        return $line;
+    }
+
     public function project(?Company $company = null, string $state = 'DRAFT'): Project
     {
         return Project::factory()->create(['company_id' => ($company ?? $this->company)->id, 'state' => $state]);
@@ -140,11 +162,11 @@ final class CostWorld
         return CorrectionCaseFactory::new()->createOne(['company_id' => $this->company->id, 'case_kind' => 'PURCHASE_RETURN'])->id;
     }
 
-    /** The case closed, the supplier's refund settling its returned cost (C-46's equation). */
-    public function closeCase(int $case, string $refunded): void
+    /** The case closed, the supplier's refund and replacement settling its returned cost (C-46's equation). */
+    public function closeCase(int $case, string $refunded, string $replaced = '0.00'): void
     {
         DB::table('correction_cases')->where('id', $case)->update([
-            'refunded_value' => $refunded, 'state' => 'CLOSED', 'closure_outcome' => 'Dana retur sudah diterima.', 'closed_by' => $this->actorId, 'closed_at' => now(),
+            'refunded_value' => $refunded, 'replaced_value' => $replaced, 'state' => 'CLOSED', 'closure_outcome' => 'Dana retur sudah diterima.', 'closed_by' => $this->actorId, 'closed_at' => now(),
         ]);
     }
 
@@ -194,6 +216,161 @@ final class CostWorld
         return $this->run(CostPosting::chargeLocks($charge->id), function (CommandContext $context) use ($charge): void {
             app(CostPosting::class)->chargeRecorded($context, $charge->id, BusinessDate::today());
         });
+    }
+
+    /**
+     * A charge created and recorded in one command, as ROUTE-171 records a purchase's charges (AX-29): nothing of it
+     * stays when its recording is refused.
+     *
+     * @param  array<int, string>  $basis
+     */
+    public function recordNew(Purchase $purchase, string $amount, array $basis = [], string $classification = 'ATTRIBUTABLE', ?int $billId = null): Outcome
+    {
+        $billId ??= $this->bill('1000000000.00');
+
+        return $this->run(CostPosting::purchaseLocks($purchase->id)->union(EvidenceGuard::locks($billId)), function (CommandContext $context) use ($purchase, $amount, $basis, $classification, $billId): void {
+            $charge = $this->charge($purchase, $amount, $basis, $classification, $billId);
+            app(CostPosting::class)->chargeRecorded($context, $charge->id, BusinessDate::today());
+        });
+    }
+
+    /** A non-stock line of the purchase — a service bought for a project —, one unit of `value`, its guard born (L-18). */
+    public function nonStockLine(Purchase $purchase, string $value, int $lineNo = 0): PurchaseLine
+    {
+        $line = PurchaseLine::factory()->create([
+            'purchase_id' => $purchase->id, 'product_id' => $this->productId, 'kind' => 'NONSTOCK', 'entered_qty' => '1', 'qty_base' => '1', 'unit_price' => $value, 'line_value' => $value,
+            ...($lineNo > 0 ? ['line_no' => $lineNo] : []),
+        ]);
+        DB::table('purchase_line_balances')->insert(['purchase_line_id' => $line->id, 'ordered_qty_base' => '1', 'goods_value' => $value]);
+
+        return $line;
+    }
+
+    /** The non-stock line's cost attributed to the project at the purchase (L-18), PUR's posted value moved by it. */
+    public function attributeNonStock(PurchaseLine $line, Project $project): void
+    {
+        $this->expect($this->run(CostPosting::purchaseLocks($line->purchase_id)->add('projects', ['id' => $project->id]), function (CommandContext $context) use ($line, $project): void {
+            $this->posted($context, $line->id, app(CostPosting::class)->nonStockLine($context, $line->id, $project->id, BusinessDate::today()));
+        }));
+    }
+
+    /** A drop-ship line of the purchase for a demand line of the project, its guard born. */
+    public function dropshipLine(Purchase $purchase, Project $project, string $qty, string $value, int $lineNo = 0): PurchaseLine
+    {
+        $demand = ProjectLine::factory()->create(['project_id' => $project->id, 'product_id' => $this->productId, 'fulfillment_mode' => 'DROPSHIP',
+            'line_no' => DB::table('project_lines')->where('project_id', $project->id)->count() + 1]);
+        $line = PurchaseLine::factory()->create([
+            'purchase_id' => $purchase->id, 'product_id' => $this->productId, 'delivery_mode' => 'DROPSHIP', 'project_line_id' => $demand->id, 'entered_qty' => $qty, 'qty_base' => $qty,
+            'unit_price' => Money::of($value)->share('1', $qty)->toString(), 'line_value' => $value, ...($lineNo > 0 ? ['line_no' => $lineNo] : []),
+        ]);
+        DB::table('purchase_line_balances')->insert(['purchase_line_id' => $line->id, 'ordered_qty_base' => $qty, 'goods_value' => $value]);
+
+        return $line;
+    }
+
+    /** `qty` of the drop-ship line confirmed shipped to its project: the confirmation, its consumption guard, the line's confirmed quantity and its direct cost. */
+    public function confirmDropship(PurchaseLine $line, string $qty): int
+    {
+        $confirmed = 0;
+        $this->expect($this->run(CostPosting::purchaseLocks($line->purchase_id), function (CommandContext $context) use ($line, $qty, &$confirmed): void {
+            $project = (int) DB::table('project_lines')->where('id', $line->project_line_id)->value('project_id');
+            $confirmation = DropshipConfirmation::factory()->create(['company_id' => $line->company_id, 'project_id' => $project, 'purchase_id' => $line->purchase_id]);
+            $confirmed = DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => $confirmation->id, 'purchase_line_id' => $line->id,
+                'project_line_id' => $line->project_line_id, 'product_id' => $this->productId, 'entered_qty' => $qty, 'qty_base' => $qty])->id;
+            DB::table('stock_consumption_balances')->insert(['dropship_confirmation_line_id' => $confirmed, 'qty_base' => $qty]);
+            $this->moveLine($context, $line->id, ['dropship_confirmed_net_qty_base' => $qty]);
+            $this->posted($context, $line->id, app(CostPosting::class)->dropshipConfirmed($context, $confirmed, BusinessDate::today()));
+        }));
+
+        return $confirmed;
+    }
+
+    /**
+     * `qty` of a confirmed drop-ship line restored (§5.7): returned to the warehouse into a new DROPSHIP_RETURN lot (CM-14),
+     * returned to the supplier under the case (CM-15), or reversed as never confirmed (CM-27) — the restoration, the
+     * return lot with its movement, the line's balance and, for a reversal, the line's confirmed quantity and posted values.
+     */
+    public function restoreDropship(int $confirmed, string $qty, string $kind, ?int $case = null): int
+    {
+        $row = DropshipConfirmationLine::query()->findOrFail($confirmed);
+        $purchaseLine = PurchaseLine::query()->findOrFail($row->purchase_line_id);
+        $locks = CostPosting::purchaseLocks($purchaseLine->purchase_id);
+        $restoration = 0;
+        $this->expect($this->run($case === null ? $locks : $locks->union(CorrectionCases::locks($case)), function (CommandContext $context) use ($row, $purchaseLine, $qty, $kind, $case, &$restoration): void {
+            $returns = $kind === 'DROPSHIP_RETURN';
+            $restoration = StockRestoration::factory()->create([
+                'stock_consumption_id' => null, 'dropship_confirmation_line_id' => $row->id, 'source_company_id' => $row->company_id, 'product_id' => $this->productId, 'quantity_scale' => 0,
+                'stock_movement_id' => $returns ? StockMovementFactory::post('DROPSHIP_RETURN_RECEIPT', $row->company_id) : null, 'returned_condition' => $returns ? 'USABLE' : null,
+                'entered_qty' => $qty, 'qty_base' => $qty, 'cited_unit_id' => $row->entered_unit_id, 'cited_ratio_to_base' => 1, 'kind' => $kind,
+                'after_delivery' => $kind === 'DROPSHIP_CONFIRMATION_REVERSAL' ? null : true,
+                'correction_case_id' => $case, 'case_company_id' => $case === null ? null : $row->company_id,
+            ])->id;
+
+            if ($returns) {
+                $lot = InventoryLot::factory()->create(['acquisition_kind' => 'DROPSHIP_RETURN', 'import_row_id' => null, 'restoration_id' => $restoration, 'source_company_id' => $row->company_id,
+                    'product_id' => $this->productId, 'entered_qty' => $qty, 'acquired_qty_base' => $qty, 'business_date' => BusinessDate::today()])->id;
+                $this->entry($lot, (int) StockRestoration::query()->findOrFail($restoration)->stock_movement_id, 'DROPSHIP_RETURN_RECEIPT', $qty, ['stock_restoration_id' => $restoration]);
+            }
+
+            $posted = app(CostPosting::class)->dropshipRestored($context, $restoration, BusinessDate::today());
+            GuardUpdate::apply($context->connection, 'stock_consumption_balances', [['key' => ['dropship_confirmation_line_id' => $row->id], 'deltas' => ['restored_qty_base' => $qty]]]);
+
+            if ($kind === 'DROPSHIP_CONFIRMATION_REVERSAL') {
+                $this->moveLine($context, $purchaseLine->id, ['dropship_confirmed_net_qty_base' => '-'.$qty]);
+                $this->posted($context, $purchaseLine->id, $posted);
+            }
+        }));
+
+        return $restoration;
+    }
+
+    /** An opening lot of `qty` with its OPENING_COST from the signed opening data (BR-INV-12), its movement and its guard. */
+    public function openingLot(string $qty, string $cost): int
+    {
+        $lot = 0;
+        $this->expect($this->run(new LockSet, function (CommandContext $context) use ($qty, $cost, &$lot): void {
+            $row = InventoryLot::factory()->create(['source_company_id' => $this->company->id, 'product_id' => $this->productId, 'entered_qty' => $qty, 'acquired_qty_base' => $qty]);
+            $lot = $row->id;
+            $this->entry($lot, StockMovementFactory::post('OPENING', $this->company->id), 'OPENING', $qty);
+            app(CostPosting::class)->basis($context, $lot, 'OPENING_COST', Money::of($cost), BusinessDate::today(), ['import_row_id' => (int) $row->import_row_id]);
+        }));
+
+        return $lot;
+    }
+
+    /** `qty` of a basis lot's units removed as never acquired: their movement and the cost removed with them (BR-INV-12). */
+    public function removeBasis(int $lot, string $qty): void
+    {
+        $this->expect($this->run((new LockSet)->add('lot_cost_balances', ['lot_id' => $lot]), function (CommandContext $context) use ($lot, $qty): void {
+            $this->entry($lot, StockMovementFactory::post('ADJUSTMENT_DECREASE', $this->company->id), 'ADJUSTMENT_DECREASE', '-'.$qty);
+            app(CostPosting::class)->reverseBasis($context, $lot, $qty, BusinessDate::today());
+        }));
+    }
+
+    /** `qty` received on the line as the case's replacement (PX-03): its REPLACEMENT receipt and lot with the basis the case gives it (§6.1). */
+    public function replacementLot(PurchaseLine $line, string $qty, int $case, string $basis): int
+    {
+        $lot = 0;
+        $this->expect($this->run(CostPosting::purchaseLocks($line->purchase_id)->union(CorrectionCases::locks($case)), function (CommandContext $context) use ($line, $qty, $case, $basis, &$lot): void {
+            $receiving = ReceivingLine::factory()->create(['purchase_line_id' => $line->id, 'entered_qty' => $qty, 'qty_base' => $qty, 'usable_qty_base' => $qty,
+                'receipt_kind' => 'REPLACEMENT', 'correction_case_id' => $case]);
+            $lot = InventoryLot::factory()->create([
+                'acquisition_kind' => 'RECEIPT', 'import_row_id' => null, 'receiving_line_id' => $receiving->id, 'source_company_id' => $line->company_id,
+                'product_id' => $this->productId, 'entered_qty' => $qty, 'acquired_qty_base' => $qty, 'business_date' => BusinessDate::today(),
+            ])->id;
+            $this->entry($lot, (int) $receiving->stock_movement_id, 'RECEIPT', $qty);
+            app(CostPosting::class)->basis($context, $lot, 'REPLACEMENT_BASIS', Money::of($basis), BusinessDate::today(), ['correction_case_id' => $case]);
+        }));
+
+        return $lot;
+    }
+
+    /** The case's unrecovered share of a supplier return settled on the bearer project — another company's with its reason (AX-11; L-44). */
+    public function settleReturn(int $consumption, string $amount, Project $bearer, ?string $reason = null): void
+    {
+        $this->expect($this->run(CostPosting::consumptionLocks($consumption)->add('projects', ['id' => $bearer->id]), function (CommandContext $context) use ($consumption, $amount, $bearer, $reason): void {
+            app(CostPosting::class)->settleReturn($context, $consumption, Money::of($amount), $bearer->company_id, $bearer->id, $reason, BusinessDate::today());
+        }));
     }
 
     /** A receiving event of `qty` on the line: its lot, its movement, the line's received quantity, its cost basis. */

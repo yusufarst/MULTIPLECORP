@@ -156,10 +156,10 @@ it('draws 6 of A\'s lot for B\'s project as 72,000 with source A, bearer B and i
         ->and(costDifferences())->toBe([]);
 });
 
-it('takes a line\'s non-creditable tax into its lots and never a creditable one (BR-FIN-17; L-43; criterion 13)', function () {
-    $taxed = $this->world->line($this->world->purchase(), '4', '400000.00', '44000.00');
+it('takes a line\'s tax into its lots only under the treatment recorded on it, a creditable input tax never (BR-FIN-17; L-43; criterion 13)', function () {
+    $taxed = $this->world->taxedLine($this->world->purchase(), '4', '400000.00', '44000.00', 'INPUT_TO_ACQUISITION_COST');
     $lot = $this->world->receive($taxed, '4');
-    $creditable = $this->world->line($this->world->purchase(), '4', '400000.00');
+    $creditable = $this->world->taxedLine($this->world->purchase(), '4', '400000.00', '44000.00', 'INPUT_CREDITABLE');
     $plain = $this->world->receive($creditable, '4');
 
     expect(DB::table('lot_cost_entries')->where('lot_id', $lot)->orderBy('id')->pluck('entry_kind')->all())->toBe(['GOODS', 'NONCREDITABLE_TAX'])
