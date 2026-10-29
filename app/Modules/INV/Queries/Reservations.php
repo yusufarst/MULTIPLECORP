@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
  */
 final class Reservations
 {
-    private const PAGE = 50;
+    public const PAGE = 50;
 
     public const TABS = ['aktif', 'dilepas', 'riwayat'];
 

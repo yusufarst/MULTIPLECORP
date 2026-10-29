@@ -131,15 +131,21 @@ final class ReservationWorld
     /** Synthetic stock: an opening lot of `usable` + `unusable`, its entries and the guards they move. */
     public function stock(string $usable, string $unusable = '0'): int
     {
+        return self::opening($this->company->id, $this->productId(), $this->locationId, $usable, $unusable);
+    }
+
+    /** The company's opening lot of the product at the location — the browser fixture's stock as well. */
+    public static function opening(int $companyId, int $productId, int $locationId, string $usable, string $unusable = '0'): int
+    {
         $total = (string) BigDecimal::of($usable)->plus($unusable);
         $lot = InventoryLot::factory()->create([
-            'product_id' => $this->productId(), 'source_company_id' => $this->company->id, 'entered_qty' => $total, 'acquired_qty_base' => $total, 'business_date' => BusinessDate::today(),
+            'product_id' => $productId, 'source_company_id' => $companyId, 'entered_qty' => $total, 'acquired_qty_base' => $total, 'business_date' => BusinessDate::today(),
         ])->id;
-        $movement = StockMovementFactory::post('OPENING', $this->company->id);
+        $movement = StockMovementFactory::post('OPENING', $companyId);
 
         foreach (['USABLE' => $usable, 'UNUSABLE' => $unusable] as $condition => $qty) {
             if (BigDecimal::of($qty)->isPositive()) {
-                self::entry($lot, $this->productId(), $this->locationId, $movement, 'OPENING', $qty, $condition);
+                self::entry($lot, $productId, $locationId, $movement, 'OPENING', $qty, $condition);
             }
         }
 
