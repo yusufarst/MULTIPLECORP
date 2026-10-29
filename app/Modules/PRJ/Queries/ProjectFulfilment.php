@@ -4,6 +4,7 @@ namespace App\Modules\PRJ\Queries;
 
 use App\Modules\IAM\Data\Authority;
 use App\Modules\PRJ\Models\Project;
+use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Database\Query\JoinClause;
@@ -52,6 +53,10 @@ final class ProjectFulfilment
             ->whereIn('pu.product_id', DB::table('project_lines')->where('project_id', $project->id)->select('product_id'))
             ->pluck('u.code', 'pu.product_id')->all();
         $active = in_array($project->state, ['DRAFT', 'ACTIVE'], true);
+        // "Konfirmasi Proyek" without a quotation: an ACTIVE project not yet confirmed, its quotation not sent or approved (WF-PRJ-02).
+        $quotation = DB::table('quotation_revisions')->where('project_id', $project->id)->orderByDesc('revision_no')->value('state');
+        $confirm = $confirmation === null && $project->state === 'ACTIVE' && ! in_array($quotation, ['SENT', 'APPROVED'], true)
+            && $viewer->allows('projects.confirm', $company) && $viewer->allows('projects.view', $company);
 
         return [
             'confirmation' => $confirmation === null ? null : [
@@ -90,9 +95,17 @@ final class ProjectFulfilment
                     ],
                 ];
             }, $lines),
-            'can' => [
-                'confirm' => $confirmation === null && $project->state === 'ACTIVE' && $viewer->allows('projects.confirm', $company),
-            ],
+            'can' => ['confirm' => $confirm],
+            'today' => BusinessDate::today(),
+            // The client's order evidence registered for the company (IP-16; TASK-030), the confirmation choosing one (PJ-08).
+            'evidence' => $confirm ? array_map(fn (object $row): array => [
+                'id' => Row::text($row, 'public_id'),
+                'type' => Row::text($row, 'evidence_type'),
+                'issuer' => Row::text($row, 'declared_issuer'),
+                'reference' => Row::nullable($row, 'issuer_reference'),
+                'date' => Row::text($row, 'document_date'),
+            ], DB::table('evidence_documents')->where('company_id', $company)->whereIn('evidence_type', ['CLIENT_SPK', 'CLIENT_ORDER', 'SIPLAH_ORDER'])
+                ->orderByDesc('id')->limit(20)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date'])->all()) : [],
         ];
     }
 }

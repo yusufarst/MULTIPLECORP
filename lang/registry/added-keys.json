@@ -7224,6 +7224,318 @@
             "source": "ST-01; architecture challenge 15a",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "fulfilment.title": {
+            "task": "TASK-034",
+            "source": "PG-011 IA §8.2 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "fulfilment.lines": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.unconfirmed": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02; TASK-034 empty state",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.kind.quotation_approval": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02 path A",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.kind.no_quotation": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02 path B",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.kind.migration": {
+            "task": "TASK-034",
+            "source": "WF-MIG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.decided_by": {
+            "task": "TASK-034",
+            "source": "DATABASE §4.5 decided_by",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.split_from": {
+            "task": "TASK-034",
+            "source": "L-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.evidence_type.client_spk": {
+            "task": "TASK-034",
+            "source": "EvidenceTypes CLIENT_SPK",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.evidence_type.client_order": {
+            "task": "TASK-034",
+            "source": "EvidenceTypes CLIENT_ORDER",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.evidence_type.siplah_order": {
+            "task": "TASK-034",
+            "source": "EvidenceTypes SIPLAH_ORDER",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.demand": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.reserved": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.dispatched": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.dropship": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.handed_over": {
+            "task": "TASK-034",
+            "source": "J-FUL-01; L-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.delivered": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.cancelled": {
+            "task": "TASK-034",
+            "source": "J-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.remainder": {
+            "task": "TASK-034",
+            "source": "J-FUL-01; PX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.shortage": {
+            "task": "TASK-034",
+            "source": "QS-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.available": {
+            "task": "TASK-034",
+            "source": "PJ-01; RD-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.value": {
+            "task": "TASK-034",
+            "source": "PJ-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.evidence": {
+            "task": "TASK-034",
+            "source": "IP-16; WF-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.cancel_quantity": {
+            "task": "TASK-034",
+            "source": "ROUTE-159",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.field.mode": {
+            "task": "TASK-034",
+            "source": "ROUTE-160",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.action.confirm": {
+            "task": "TASK-034",
+            "source": "ROUTE-158 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "fulfilment.action.cancel": {
+            "task": "TASK-034",
+            "source": "ROUTE-159 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "fulfilment.action.replan": {
+            "task": "TASK-034",
+            "source": "ROUTE-160 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "fulfilment.confirm.title": {
+            "task": "TASK-034",
+            "source": "IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.confirm.consequence": {
+            "task": "TASK-034",
+            "source": "MSG-39; AX-13; IP-19; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.confirm.no_evidence": {
+            "task": "TASK-034",
+            "source": "IP-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.confirm.upload": {
+            "task": "TASK-034",
+            "source": "PG-038; IP-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.cancel.title": {
+            "task": "TASK-034",
+            "source": "IP-09; MSG-40",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.cancel.consequence": {
+            "task": "TASK-034",
+            "source": "MSG-40; ADMIN_FLOW §11; SF-CANCEL-LINE",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.replan.title": {
+            "task": "TASK-034",
+            "source": "IP-09; L-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.replan.consequence": {
+            "task": "TASK-034",
+            "source": "L-21; WF-FUL-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.answer.confirmed": {
+            "task": "TASK-034",
+            "source": "ROUTE-158",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.answer.cancelled": {
+            "task": "TASK-034",
+            "source": "ROUTE-159",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.answer.replanned": {
+            "task": "TASK-034",
+            "source": "ROUTE-160",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.executed": {
+            "task": "TASK-034",
+            "source": "C-05; L-20; J-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.invoiced": {
+            "task": "TASK-034",
+            "source": "C-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.remainder": {
+            "task": "TASK-034",
+            "source": "ST-06; PX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.unconfirmed": {
+            "task": "TASK-034",
+            "source": "L-20",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.mode": {
+            "task": "TASK-034",
+            "source": "L-21; BR-XD-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.started": {
+            "task": "TASK-034",
+            "source": "L-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.quotation": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.no_lines": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.unpriced": {
+            "task": "TASK-034",
+            "source": "BR-INV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.details": {
+            "task": "TASK-034",
+            "source": "SM:Project",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.confirmed": {
+            "task": "TASK-034",
+            "source": "BD-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.validation.evidence": {
+            "task": "TASK-034",
+            "source": "PJ-08; AZ-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.validation.line": {
+            "task": "TASK-034",
+            "source": "AZ-11",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

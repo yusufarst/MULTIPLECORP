@@ -21,6 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Code, DateText, DateTimeText, Money } from '@/components/values';
 import { typeName } from '@/features/doc/labels';
+import { type Fulfilment, FulfilmentSection } from '@/features/prj/fulfilment';
 import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
@@ -57,6 +58,7 @@ type Props = {
     journey: JourneyShape | null;
     financial: { confirmed: string; invoiced: string } | null;
     can: { edit: boolean; discard: boolean };
+    fulfilment: Fulfilment & { today: string };
     predicates?: JourneyShape | null | Failed;
     documents?: Documents | Failed;
     history?: History | Failed;
@@ -98,7 +100,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
-export default function Journey({ project, journey, financial, can, predicates, documents, history }: Props) {
+export default function Journey({ project, journey, financial, can, fulfilment, predicates, documents, history }: Props) {
     const { t } = useTranslation();
     const [discarding, setDiscarding] = useState(false);
     const discard = useCommand<Record<string, never>>(() => `/proyek/${project.id}/hapus-draf`, 'post');
@@ -215,6 +217,8 @@ export default function Journey({ project, journey, financial, can, predicates, 
                         </Deferred>
                     </Section>
                 </div>
+                {/* The confirmation and *Item dan pemenuhan* (J-PRJ-02; J-FUL-01; TASK-034). */}
+                <FulfilmentSection projectId={project.id} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
                 {financial !== null && (
                     <Section title={t('journey.financial')}>
                         <PositionBlock title={t('journey.financial')} lines={[
