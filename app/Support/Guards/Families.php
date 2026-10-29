@@ -46,16 +46,67 @@ final class Families
                     SQL,
                 ['product_id'],
             ),
+            // TASK-036 (C-26; DATABASE §6.2): a lot's remaining cost is Σ its cost entries less its net draws — every cost row
+            // keyed to it, contras and corrections included — beside its remaining quantity. A missing row is reported, never invented.
             new Family(
                 'lot_cost_balances',
                 ['lot_id'],
-                ['remaining_qty_base'],
+                ['remaining_qty_base', 'remaining_cost'],
                 <<<'SQL'
-                    select lot_id, sum(qty_delta_base) as remaining_qty_base
-                    from stock_movement_entries where lot_id is not null
-                    group by lot_id
+                    select keys.lot_id,
+                        coalesce(quantities.qty, 0) as remaining_qty_base,
+                        coalesce(entries.cost, 0) - coalesce(draws.drawn, 0) as remaining_cost
+                    from (
+                        select lot_id from stock_movement_entries where lot_id is not null
+                        union select lot_id from lot_cost_entries
+                    ) keys
+                    left join (
+                        select lot_id, sum(qty_delta_base) as qty from stock_movement_entries where lot_id is not null group by lot_id
+                    ) quantities on quantities.lot_id = keys.lot_id
+                    left join (select lot_id, sum(amount) as cost from lot_cost_entries group by lot_id) entries on entries.lot_id = keys.lot_id
+                    left join (
+                        select lot_id, sum(amount) as drawn from cost_attributions where lot_id is not null group by lot_id
+                    ) draws on draws.lot_id = keys.lot_id
                     SQL,
-                // The remaining cost is the cost semantics', registered by its posting Task; a missing row is reported, never invented.
+                null,
+            ),
+            // TASK-036 (C-21; L-47): a charge's current amount — recorded plus its corrections —, what is allocated of it —
+            // every CHARGE row naming it, on a lot or direct — and what is expensed of it.
+            new Family(
+                'purchase_charge_balances',
+                ['purchase_charge_id'],
+                ['amount', 'allocated_amount', 'expensed_amount'],
+                <<<'SQL'
+                    select c.id as purchase_charge_id,
+                        c.amount + coalesce((select sum(a.amount_delta) from purchase_line_adjustments a where a.purchase_charge_id = c.id and a.kind = 'CHARGE_CORRECTION'), 0) as amount,
+                        coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_id = c.id), 0)
+                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_id = c.id), 0) as allocated_amount,
+                        coalesce((select sum(x.amount) from expenses x where x.purchase_charge_id = c.id), 0) as expensed_amount
+                    from purchase_charges c
+                    where exists (select 1 from purchase_charge_balances b where b.purchase_charge_id = c.id)
+                    SQL,
+                null,
+            ),
+            // TASK-036 (C-21; DATABASE §6.1): each line's share of a charge at its current version — what is posted under
+            // that share, re-spread out of the line under that version, and expensed out of it.
+            new Family(
+                'purchase_charge_share_balances',
+                ['purchase_charge_id', 'purchase_line_id'],
+                ['allocation_version', 'share_amount', 'posted_amount', 'respread_out_amount', 'expensed_out_amount'],
+                <<<'SQL'
+                    select s.purchase_charge_id, s.purchase_line_id, s.allocation_version, s.share_amount,
+                        coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_line_share_id = s.id), 0)
+                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_line_share_id = s.id), 0) as posted_amount,
+                        coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_charge_id = s.purchase_charge_id
+                            and e.respread_from_purchase_line_id = s.purchase_line_id and e.allocation_version = s.allocation_version), 0)
+                            + coalesce((select sum(t.amount) from cost_attributions t where t.purchase_charge_id = s.purchase_charge_id
+                            and t.respread_from_purchase_line_id = s.purchase_line_id and t.allocation_version = s.allocation_version), 0) as respread_out_amount,
+                        coalesce((select sum(x.amount) from expenses x where x.purchase_charge_id = s.purchase_charge_id and x.purchase_line_id = s.purchase_line_id), 0) as expensed_out_amount
+                    from purchase_charge_line_shares s
+                    where s.allocation_version = (select max(v.allocation_version) from purchase_charge_line_shares v
+                        where v.purchase_charge_id = s.purchase_charge_id and v.purchase_line_id = s.purchase_line_id)
+                    and exists (select 1 from purchase_charge_share_balances b where b.purchase_charge_id = s.purchase_charge_id)
+                    SQL,
                 null,
             ),
             // TASK-031 (C-46; C-61): a correction case's counters whose formula §3.1 fixes over the schema — the refund
