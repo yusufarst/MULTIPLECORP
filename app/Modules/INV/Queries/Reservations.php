@@ -94,19 +94,22 @@ final class Reservations
     }
 
     /**
-     * The reservation a "Kurangi Reservasi" or "Lepas" names, when its company is in the viewer's scope with `stock.reserve`.
+     * The reservation a "Kurangi Reservasi" or "Lepas" names, when its company is in the viewer's scope with `stock.reserve`:
+     * an ACTIVE one, or the one this `command_id` already changed — so its replay answers the recorded outcome (CI-05).
      *
      * @return ?array{reservation: int, company: int, scale: int}
      */
-    public function reservation(int $viewerId, string $handle): ?array
+    public function reservation(int $viewerId, string $handle, string $commandId): ?array
     {
         if (! RowHandle::valid($handle)) {
             return null;
         }
 
         $viewer = $this->capabilities->for($viewerId);
+        $replayed = DB::table('reservation_events')->where('command_id', $commandId)->select('reservation_id');
 
-        foreach ($viewer->scope->apply(DB::table('reservations as r'), 'r.company_id')->where('r.state', 'ACTIVE')->get(['r.id', 'r.company_id', 'r.quantity_scale']) as $row) {
+        foreach ($viewer->scope->apply(DB::table('reservations as r'), 'r.company_id')->where(fn (Builder $named) => $named->where('r.state', 'ACTIVE')->orWhereIn('r.id', $replayed))
+            ->get(['r.id', 'r.company_id', 'r.quantity_scale']) as $row) {
             if (hash_equals(RowHandle::of('reservations', (int) Row::text($row, 'id')), $handle) && $viewer->allows('stock.reserve', (int) Row::text($row, 'company_id'))) {
                 return ['reservation' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id'), 'scale' => (int) Row::text($row, 'quantity_scale')];
             }

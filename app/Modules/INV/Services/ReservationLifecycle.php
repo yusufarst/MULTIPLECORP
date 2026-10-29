@@ -2,25 +2,20 @@
 
 namespace App\Modules\INV\Services;
 
-use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
 use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
-use App\Modules\PRJ\Data\JourneyItem;
-use App\Modules\PRJ\Data\Predicates;
-use App\Modules\PRJ\Data\PredicateState;
 use App\Support\Command\CommandContext;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
  * INV's part of a project's lifecycle (ARCHITECTURE §3; TASK-038), inside PRJ's transaction under its LK-01: a
  * re-confirmation's lower demand lowers the reservations above it (AX-13; BR-QUO-02), a cancelled or split remainder releases
  * what it held (AX-14; SF-CANCEL-LINE; L-21), a cancelled project releases every active reservation (AX-27; BR-PRJ-01) —
- * each through the reservation service, its failure rolling PRJ's command back. And INV's part of the stock predicate: no
- * active reservation of the project (WF-PRJ-03 predicate 8), a residual one listed to be released (QS-16).
+ * each through the reservation service, its failure rolling PRJ's command back. The stock predicate's part is
+ * {@see ReservationPredicate}.
  */
-final class ReservationLifecycle implements CompletionPredicateProvider, ProjectLifecycleParticipant
+final class ReservationLifecycle implements ProjectLifecycleParticipant
 {
     private const RECONFIRMED = 'Konfirmasi ulang menurunkan permintaan baris.';
 
@@ -70,39 +65,6 @@ final class ReservationLifecycle implements CompletionPredicateProvider, Project
     }
 
     public function revalidated(CommandContext $context, int $projectId): void {}
-
-    /** @return list<string> */
-    public function predicates(): array
-    {
-        return [Predicates::STOCK];
-    }
-
-    /**
-     * Predicate 8's reservation part for each project with a warehouse line: met while no reservation of it is ACTIVE, one
-     * blocker naming how many remain to be released otherwise — one set query (QB-01).
-     *
-     * @param  list<int>  $projectIds
-     * @return array<int, array<string, PredicateState>>
-     */
-    public function states(array $projectIds, bool $money): array
-    {
-        if ($projectIds === []) {
-            return [];
-        }
-
-        $rows = DB::table('project_lines as l')->leftJoin('reservations as r', fn (JoinClause $join) => $join->on('r.project_line_id', '=', 'l.id')->where('r.state', 'ACTIVE'))
-            ->whereIn('l.project_id', $projectIds)->where('l.fulfillment_mode', 'WAREHOUSE')->groupBy('l.project_id')
-            ->selectRaw('l.project_id, count(r.id) as active')->get();
-        $states = [];
-
-        foreach ($rows as $row) {
-            $active = (int) Row::text($row, 'active');
-            $states[(int) Row::text($row, 'project_id')] = [Predicates::STOCK => new PredicateState(true,
-                $active === 0 ? [] : [new JourneyItem('projects.item.reservations_active', ['jumlah' => (string) $active], 'warehouse', true)])];
-        }
-
-        return $states;
-    }
 
     /** @return array<int, string> project line => the reserved quantity it may hold */
     private static function allowed(string $sql, int $projectId): array

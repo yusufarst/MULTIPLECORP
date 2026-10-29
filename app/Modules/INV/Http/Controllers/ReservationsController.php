@@ -57,12 +57,12 @@ final class ReservationsController extends Controller
     public function reduce(Request $request, ReleaseReservation $release, string $id): RedirectResponse
     {
         $actor = self::actor($request);
-        $reservation = $this->reservations->reservation($actor, $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, [
             'lepas' => ['nullable', 'boolean'],
             'jumlah' => ['required_unless:lepas,1,true', 'nullable', 'regex:/^\d{1,15}(\.\d{1,3})?$/'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
         ]);
+        $reservation = $this->reservations->reservation($actor, $id, self::text($input['command_id'])) ?? throw new NotFoundHttpException;
         $quantity = $request->boolean('lepas') ? null : self::quantity(self::text($input['jumlah']), $reservation['scale']);
         $outcome = $release->run(self::text($input['command_id']), $actor, $reservation['company'], $reservation['reservation'], $id, $quantity, trim(self::text($input['alasan'])));
 
