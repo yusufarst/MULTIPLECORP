@@ -1,15 +1,26 @@
 <?php
 
+use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Services\CommercialConfirmation;
 use App\Support\BusinessDate;
+use App\Support\Command\CommandContext;
+use App\Support\Command\CommandEnvelope;
+use App\Support\Command\CommandRequest;
+use App\Support\Command\CommandResult;
+use App\Support\Command\Fingerprint;
 use App\Support\RowHandle;
+use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
+use Tests\Support\Numbering;
 use Tests\Support\Projects;
 use Tests\Support\RefreshDatabase;
 
@@ -146,4 +157,48 @@ it('shows PG-011\'s lines by mode with their progress, prices only with finance.
     $viewer = Authorization::admin([$this->company->id], ['projects.view']);
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page
         ->missing('fulfilment.lines.0.price')->missing('fulfilment.lines.0.available')->where('fulfilment.lines.0.can', ['cancel' => false, 'replan' => false]));
+});
+
+it('issues the company SPK (DOC-09) only for a confirmed project, its lines as pinned and the company its issuer (WF-PRJ-02; BR-DOC-04; criterion 10)', function () {
+    Queue::fake();
+    DocumentTypeFactory::ensure('DOC-09');
+    $year = substr(BusinessDate::today(), 0, 4);
+    Numbering::goLive("{$year}-01-01");
+    Numbering::scheme($this->company, SequenceType::Doc09, "{$year}-01-01", 'YEAR', 'UJI/SPK/{tahun}/{nomor:4}');
+    Numbering::started($this->company, SequenceType::Doc09, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+    $issuer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'documents.issue']);
+    $this->actingAs($issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-09', 'subjek' => ['project_id' => $this->project->public_id]])->assertRedirect();
+    $document = DB::table('documents')->where('document_type_code', 'DOC-09')->sole();
+    $issue = function () use ($issuer, $document) {
+        $draft = DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->first();
+
+        return $this->actingAs($issuer)->post("/dokumen/{$document->public_id}/terbitkan", [
+            'command_id' => (string) Str::uuid(), 'lock_version' => $draft?->lock_version ?? 0, 'draf' => $draft?->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+        ]);
+    };
+
+    $issue();
+    expect(confirmationAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'WF-DOC-01']);
+
+    confirmProject($this);
+    $issue();
+    $paper = json_decode((string) DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->value('payload'), true)['paper'];
+
+    expect(confirmationAnswer())->toMatchArray(['kind' => 'COMMITTED'])
+        ->and($paper['lines'])->toHaveCount(2)
+        ->and($paper['recipient']['name'])->toBe($this->client['organization']->name)
+        ->and($paper['issuer']['name'])->toBe(DB::table('companies')->where('id', $this->company->id)->value('legal_name'));
+});
+
+it('writes a MIGRATION confirmation for an open project carried over through the same step (WF-MIG-01; DATABASE §24)', function () {
+    $request = new CommandRequest((string) Str::uuid(), 'test.migrate', $this->admin->id, $this->company->id, 'projects.view', Fingerprint::of('test.migrate', null, ['project' => $this->project->id]));
+    $outcome = app(CommandEnvelope::class)->run($request, function (CommandContext $context): CommandResult {
+        $context->lock(CommercialConfirmation::locks($this->project->id));
+
+        return new CommandResult('commercial_confirmation', app(CommercialConfirmation::class)->confirm($context, $this->project->id, $this->company->id, 'MIGRATION', null, BusinessDate::today(), 'Data pembukaan'));
+    });
+
+    expect($outcome->kind)->toBe('COMMITTED')
+        ->and(DB::table('commercial_confirmations')->sole()->kind)->toBe('MIGRATION')
+        ->and(DB::table('confirmation_line_pins')->count())->toBe(2);
 });
