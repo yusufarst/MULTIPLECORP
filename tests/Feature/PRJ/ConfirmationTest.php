@@ -22,6 +22,7 @@ use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\Numbering;
 use Tests\Support\Projects;
+use Tests\Support\RecordingParticipant;
 use Tests\Support\RefreshDatabase;
 
 // TL-04 (TASK-034; ROUTE-158–ROUTE-160; AX-13; AX-14; WF-PRJ-02; WF-FUL-01; criteria 1–3, 5–8): "Konfirmasi Proyek" on the
@@ -59,7 +60,7 @@ function confirmationAnswer(): array
 function confirmProject(object $test, array $extra = [], ?object $actor = null): TestResponse
 {
     return $test->actingAs($actor ?? $test->admin)->post("/proyek/{$test->project->public_id}/konfirmasi", [
-        'command_id' => (string) Str::uuid(), 'bukti' => $test->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, ...$extra,
+        'command_id' => (string) Str::uuid(), 'lock_version' => $test->project->fresh()?->lock_version, 'bukti' => $test->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true, ...$extra,
     ]);
 }
 
@@ -201,4 +202,51 @@ it('writes a MIGRATION confirmation for an open project carried over through the
     expect($outcome->kind)->toBe('COMMITTED')
         ->and(DB::table('commercial_confirmations')->sole()->kind)->toBe('MIGRATION')
         ->and(DB::table('confirmation_line_pins')->count())->toBe(2);
+});
+
+it('re-pins a split under a superseding confirmation, each line\'s pin its demand and the pins\' sum the confirmed value (L-21; BR-SN-01; ER-06)', function () {
+    confirmProject($this);
+    $value = (string) DB::table('project_commercial_balances')->where('project_id', $this->project->id)->value('confirmed_sales_value');
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/ubah-pemenuhan", [
+        'command_id' => (string) Str::uuid(), 'baris' => lineHandle($this, 1), 'cara' => 'DROPSHIP', 'alasan' => 'Dikirim langsung oleh pemasok',
+    ]);
+    $current = DB::table('project_lines as l')->join('confirmation_line_pins as p', 'p.id', '=', 'l.current_pin_id')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')
+        ->where('l.project_id', $this->project->id)->get(['p.qty_base', 'b.demand_qty_base', 'p.sales_value', 'p.commercial_confirmation_id']);
+    $latest = DB::table('commercial_confirmations')->orderByDesc('id')->first();
+
+    expect($current)->toHaveCount(3)
+        ->and($current->every(fn (object $pin): bool => (float) $pin->qty_base === (float) $pin->demand_qty_base))->toBeTrue()
+        ->and($current->pluck('commercial_confirmation_id')->unique()->all())->toBe([$latest->id])
+        ->and($latest->supersedes_confirmation_id)->not->toBeNull()
+        ->and(round((float) $current->sum('sales_value'), 2))->toBe(round((float) $value, 2))
+        ->and((string) DB::table('project_commercial_balances')->where('project_id', $this->project->id)->value('confirmed_sales_value'))->toBe($value);
+});
+
+it('refuses a confirmation whose project changed since PG-011 read it (ST-01; ER-06)', function () {
+    $stale = $this->project->lock_version;
+    DB::table('projects')->where('id', $this->project->id)->update(['lock_version' => $stale + 1]);
+
+    confirmProject($this, ['lock_version' => $stale]);
+    expect(confirmationAnswer())->toMatchArray(['kind' => 'CONFLICT', 'code' => 'ST-01'])
+        ->and(DB::table('commercial_confirmations')->count())->toBe(0);
+});
+
+it('hands a cancellation\'s released quantity to the lifecycle participants inside its transaction, a participant\'s failure rolling it back (AX-14; IP-20; ER-06)', function () {
+    RecordingParticipant::register();
+    confirmProject($this);
+    $line = (int) DB::table('project_lines')->where('project_id', $this->project->id)->where('line_no', 2)->value('id');
+    $cancel = fn () => $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/batalkan-sisa", [
+        'command_id' => (string) Str::uuid(), 'baris' => [['baris' => lineHandle($this, 2), 'jumlah' => '1']], 'alasan' => 'Klien membatalkan', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+    ]);
+
+    $cancel();
+    expect(RecordingParticipant::$calls)->toHaveCount(1)
+        ->and(RecordingParticipant::$calls[0])->toMatchArray(['hook' => 'scopeReduced', 'project' => $this->project->id, 'released' => [$line => '1']])
+        ->and(RecordingParticipant::$calls[0]['transaction'])->toBeGreaterThan(0);
+
+    RecordingParticipant::$fail = true;
+    $before = DB::table('line_scope_cancellations')->count();
+    $cancel();
+    expect(DB::table('line_scope_cancellations')->count())->toBe($before)
+        ->and((string) DB::table('project_line_balances')->where('project_line_id', $line)->value('cancelled_qty_base'))->toStartWith('1');
 });

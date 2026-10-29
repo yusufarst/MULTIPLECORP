@@ -44,7 +44,7 @@ function confirmedProject(object $test, int $lines): Project
     expect(Projects::create($test->admin->id, $test->company, Projects::client(), $products))->toStartWith('COMMITTED');
     $project = Project::query()->orderByDesc('id')->firstOrFail();
     $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $test->company->id, 'evidence_type' => 'CLIENT_SPK']);
-    $test->actingAs($test->admin)->post("/proyek/{$project->public_id}/konfirmasi", ['command_id' => (string) Str::uuid(), 'bukti' => $evidence->public_id, 'tanggal' => date('Y-m-d'), 'tanggal_otomatis' => true]);
+    $test->actingAs($test->admin)->post("/proyek/{$project->public_id}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $project->lock_version, 'bukti' => $evidence->public_id, 'tanggal' => date('Y-m-d'), 'tanggal_otomatis' => true]);
 
     return $project->fresh() ?? $project;
 }

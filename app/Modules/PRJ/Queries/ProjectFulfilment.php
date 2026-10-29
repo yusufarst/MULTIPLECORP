@@ -2,6 +2,7 @@
 
 namespace App\Modules\PRJ\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\PRJ\Models\Project;
 use App\Support\BusinessDate;
@@ -64,7 +65,8 @@ final class ProjectFulfilment
                 'business_date' => Row::text($confirmation, 'business_date'),
                 'decided_by' => Row::nullable($confirmation, 'decided_by'),
                 'reason' => Row::nullable($confirmation, 'reason'),
-                'evidence' => Row::nullable($confirmation, 'evidence') === null ? null : ['id' => Row::text($confirmation, 'evidence'), 'type' => Row::text($confirmation, 'evidence_type')],
+                'evidence' => Row::nullable($confirmation, 'evidence') === null || ! EvidenceTypes::mayView($viewer, Row::text($confirmation, 'evidence_type'), $company)
+                    ? null : ['id' => Row::text($confirmation, 'evidence'), 'type' => Row::text($confirmation, 'evidence_type')],
             ],
             'lines' => array_map(function (object $line) use ($money, $stock, $base, $active, $viewer, $company): array {
                 $open = ($line->open ?? false) === true;
@@ -91,7 +93,8 @@ final class ProjectFulfilment
                     ...($money ? ['price' => Row::text($line, 'unit_price'), 'value' => Row::text($line, 'sales_value')] : []),
                     'can' => [
                         'cancel' => $active && $open && $viewer->allows('projects.cancel_scope', $company),
-                        'replan' => $active && $open && Row::text($line, 'kind') === 'GOODS' && $viewer->allows('projects.manage', $company),
+                        'replan' => $active && $open && Row::text($line, 'kind') === 'GOODS' && $viewer->allows('projects.manage', $company)
+                            && (preg_match('/^0+(\.0+)?$/', Row::text($line, 'reserved_qty_base')) === 1 || $viewer->allows('stock.reserve', $company)),
                     ],
                 ];
             }, $lines),
@@ -105,7 +108,8 @@ final class ProjectFulfilment
                 'reference' => Row::nullable($row, 'issuer_reference'),
                 'date' => Row::text($row, 'document_date'),
             ], DB::table('evidence_documents')->where('company_id', $company)->whereIn('evidence_type', ['CLIENT_SPK', 'CLIENT_ORDER', 'SIPLAH_ORDER'])
-                ->orderByDesc('id')->limit(20)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date'])->all()) : [],
+                ->orderByDesc('id')->limit(100)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date'])
+                ->filter(fn (object $row): bool => EvidenceTypes::mayView($viewer, Row::text($row, 'evidence_type'), $company))->values()->all()) : [],
         ];
     }
 }

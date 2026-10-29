@@ -7536,6 +7536,24 @@
             "source": "AZ-11",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "fulfilment.validation.duplicate": {
+            "task": "TASK-034",
+            "source": "ROUTE-159",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.stale": {
+            "task": "TASK-034",
+            "source": "ST-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.refusal.split": {
+            "task": "TASK-034",
+            "source": "L-21; BR-QUO-02",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

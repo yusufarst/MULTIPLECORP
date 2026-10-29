@@ -10,9 +10,11 @@ use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
+use App\Support\GuardUpdate;
 use App\Support\Search\Row;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Container\Container;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -45,7 +47,7 @@ final class CommercialConfirmation
             $set = $set->add('project_line_balances', ['project_line_id' => is_numeric($line) ? (int) $line : 0]);
         }
 
-        if (DB::table('project_commercial_balances')->where('project_id', $projectId)->exists()) {
+        if (DB::selectOne('select 1 as found from project_commercial_balances where project_id = ?', [$projectId]) !== null) {
             $set = $set->add('project_commercial_balances', ['project_id' => $projectId]);
         }
 
@@ -111,17 +113,43 @@ final class CommercialConfirmation
             }
         }
 
-        DB::statement(<<<'SQL'
-            insert into project_line_balances (project_line_id, fulfillment_mode, demand_qty_base, recorded_at)
-            select l.id, l.fulfillment_mode, p.qty_base, ? from project_lines l join confirmation_line_pins p on p.id = l.current_pin_id
-            where l.project_id = ?
-            on conflict (project_line_id) do update set demand_qty_base = excluded.demand_qty_base
-            SQL, [$now, $projectId]);
-        DB::statement(<<<'SQL'
-            insert into project_commercial_balances (project_id, confirmed_sales_value, recorded_at)
-            select ?, coalesce(sum(p.sales_value), 0), ? from project_lines l join confirmation_line_pins p on p.id = l.current_pin_id where l.project_id = ?
-            on conflict (project_id) do update set confirmed_sales_value = excluded.confirmed_sales_value
-            SQL, [$projectId, $now, $projectId]);
+        // The guards through the shared writer (ARCHITECTURE §7; GU-01): a first confirmation's rows born (FU-09), then each
+        // line's demand and the project's confirmed value moved by their deltas to the current pins.
+        $lines = DB::select(<<<'SQL'
+            select l.id, l.fulfillment_mode, b.project_line_id is not null as guarded, p.qty_base - coalesce(b.demand_qty_base, 0) as delta
+            from project_lines l join confirmation_line_pins p on p.id = l.current_pin_id
+            left join project_line_balances b on b.project_line_id = l.id
+            where l.project_id = ? order by l.id
+            SQL, [$projectId]);
+        $deltas = [];
+
+        foreach ($lines as $line) {
+            if (! is_object($line)) {
+                continue;
+            }
+
+            if (($line->guarded ?? false) !== true) {
+                GuardUpdate::bear($context->connection, 'project_line_balances', ['project_line_id' => (int) Row::text($line, 'id')], ['fulfillment_mode' => Row::text($line, 'fulfillment_mode'), 'recorded_at' => $now]);
+            }
+
+            $deltas[] = ['key' => ['project_line_id' => (int) Row::text($line, 'id')], 'deltas' => ['demand_qty_base' => Row::text($line, 'delta')]];
+        }
+
+        if ($deltas !== []) {
+            GuardUpdate::apply($context->connection, 'project_line_balances', $deltas);
+        }
+
+        $value = DB::selectOne(<<<'SQL'
+            select (select count(*) from project_commercial_balances c where c.project_id = ?) as guarded,
+                coalesce(sum(p.sales_value), 0) - coalesce((select c.confirmed_sales_value from project_commercial_balances c where c.project_id = ?), 0) as delta
+            from project_lines l join confirmation_line_pins p on p.id = l.current_pin_id where l.project_id = ?
+            SQL, [$projectId, $projectId, $projectId]);
+
+        if (is_object($value) && Row::text($value, 'guarded') === '0') {
+            GuardUpdate::bear($context->connection, 'project_commercial_balances', ['project_id' => $projectId], ['recorded_at' => $now]);
+        }
+
+        GuardUpdate::apply($context->connection, 'project_commercial_balances', [['key' => ['project_id' => $projectId], 'deltas' => ['confirmed_sales_value' => is_object($value) ? Row::text($value, 'delta') : '0']]]);
         // C-51: the channel and its SIPLAH details are fixed by the first channel-dependent commit (BR-PRJ-05).
         DB::table('project_siplah_details')->where('project_id', $projectId)->whereNull('locked_at')->update(['locked_at' => $now]);
 
@@ -164,6 +192,17 @@ final class CommercialConfirmation
     private function pin(int $confirmation, int $projectId, string $kind, ?int $revisionId, string $commandId, CarbonImmutable $now, string $today): void
     {
         if ($kind === 'QUOTATION_APPROVAL') {
+            // A re-planned line (L-21) has no line in the quotation, whose revisions copy the earlier one: a re-confirmation would
+            // zero it and give its remainder back to its origin — refused; the re-plan stands until a superseding decision (CM-27).
+            $split = DB::table('project_lines as l')->join('confirmation_line_pins as p', 'p.id', '=', 'l.current_pin_id')
+                ->where('l.project_id', $projectId)->whereNotNull('l.split_from_line_id')->where('p.qty_base', '>', 0)
+                ->whereNotExists(fn (Builder $lines) => $lines->from('quotation_revision_lines as q')->whereColumn('q.project_line_id', 'l.id')->where('q.quotation_revision_id', $revisionId))
+                ->exists();
+
+            if ($split) {
+                throw Refused::rejected('L-21', ['reason' => 'split']);
+            }
+
             DB::statement(<<<'SQL'
                 insert into confirmation_line_pins (commercial_confirmation_id, company_id, project_line_id, product_id, quantity_scale, description,
                     entered_qty, entered_unit_id, ratio_to_base, qty_base, unit_price, sales_value, tax_components, command_id, command_line_no, recorded_at)

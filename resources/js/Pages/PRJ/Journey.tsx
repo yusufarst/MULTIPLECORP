@@ -218,7 +218,7 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
                     </Section>
                 </div>
                 {/* The confirmation and *Item dan pemenuhan* (J-PRJ-02; J-FUL-01; TASK-034). */}
-                <FulfilmentSection projectId={project.id} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
+                <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
                 {financial !== null && (
                     <Section title={t('journey.financial')}>
                         <PositionBlock title={t('journey.financial')} lines={[

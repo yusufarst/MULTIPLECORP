@@ -37,6 +37,7 @@ final class FulfilmentController extends Controller
         $actor = self::actor($request);
         $project = $this->projects->lookup($actor, $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, [
+            'lock_version' => ['required', 'integer', 'min:0'],
             'bukti' => ['required', 'uuid'],
             'alasan' => ['nullable', 'string', 'max:500'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
@@ -45,7 +46,7 @@ final class FulfilmentController extends Controller
         $evidence = $this->evidence->idOf($actor, self::text($input['bukti']), $project->company_id, ConfirmWithoutQuotation::EVIDENCE)
             ?? throw ValidationException::withMessages(['bukti' => self::say('fulfilment.validation.evidence')]);
         $reason = trim(self::text($input['alasan'] ?? ''));
-        $outcome = $confirm->run(self::text($input['command_id']), $actor, $project, $evidence, self::text($input['bukti']), $reason === '' ? null : $reason,
+        $outcome = $confirm->run(self::text($input['command_id']), $actor, $project, (int) self::text($input['lock_version']), $evidence, self::text($input['bukti']), $reason === '' ? null : $reason,
             self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
 
         return $this->answer($project->public_id, $outcome, 'confirmed', self::text($input['tanggal']));
@@ -70,6 +71,10 @@ final class FulfilmentController extends Controller
         foreach (is_array($input['baris']) ? array_values($input['baris']) : [] as $index => $line) {
             $line = is_array($line) ? $line : [];
             $lineId = $this->projects->lineOf($project, self::text($line['baris'] ?? '')) ?? throw ValidationException::withMessages(["baris.{$index}.baris" => self::say('fulfilment.validation.line')]);
+            if (isset($quantities[$lineId])) {
+                throw ValidationException::withMessages(["baris.{$index}.baris" => self::say('fulfilment.validation.duplicate')]);
+            }
+
             $quantities[$lineId] = self::text($line['jumlah'] ?? '');
         }
 
@@ -114,12 +119,13 @@ final class FulfilmentController extends Controller
                 'ST-06' => self::say('fulfilment.refusal.remainder', ['baris' => self::text($state['line'] ?? ''), 'sisa' => self::text($state['remainder'] ?? '0')]),
                 'L-11' => self::say('projects.refusal.closed'),
                 'L-20' => self::say('fulfilment.refusal.unconfirmed'),
-                'L-21' => self::say($reason === 'mode' ? 'fulfilment.refusal.mode' : 'fulfilment.refusal.started'),
+                'L-21' => self::say(in_array($reason, ['mode', 'split'], true) ? "fulfilment.refusal.{$reason}" : 'fulfilment.refusal.started'),
                 'WF-PRJ-02' => self::say(in_array($reason, ['quotation', 'no_lines', 'unpriced', 'details'], true) ? "fulfilment.refusal.{$reason}" : 'messages.msg_04'),
                 default => self::say('messages.msg_04'),
             }],
             Outcome::CONFLICT => match ($outcome->code) {
                 'BD-05' => ['recorded', self::say('fulfilment.refusal.confirmed')],
+                'ST-01' => ['stale', self::say('fulfilment.refusal.stale')],
                 'ST-08' => ['stale', self::say('messages.msg_16', ['tanggal_lama' => $sent, 'tanggal' => self::text($state['today'] ?? BusinessDate::today())])],
                 default => ['recorded', self::say('messages.msg_04')],
             },

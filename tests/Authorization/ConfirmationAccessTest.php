@@ -37,7 +37,7 @@ afterEach(fn () => @unlink($this->hotFile));
 
 it('runs each command only with its capability and answers another company\'s project as unknown (ROUTE-158–ROUTE-160; SM-04; AZ-11)', function () {
     $viewer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'evidence.view']);
-    $confirm = fn (object $actor) => $this->actingAs($actor)->post("{$this->path}/konfirmasi", ['command_id' => (string) Str::uuid(), 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today()]);
+    $confirm = fn (object $actor) => $this->actingAs($actor)->post("{$this->path}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $this->project->lock_version, 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today()]);
 
     $confirm($viewer)->assertForbidden();
     $this->actingAs($viewer)->post("{$this->path}/batalkan-sisa", ['command_id' => (string) Str::uuid(), 'baris' => [['baris' => $this->line, 'jumlah' => '1']], 'alasan' => 'Uji', 'tanggal' => BusinessDate::today()])->assertForbidden();
@@ -48,7 +48,7 @@ it('runs each command only with its capability and answers another company\'s pr
 });
 
 it('shows PG-011\'s commands with their capability, values with finance.view and availability with stock.view (AZ-01; PJ-01; PJ-12)', function () {
-    $this->actingAs($this->owner)->post("{$this->path}/konfirmasi", ['command_id' => (string) Str::uuid(), 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
+    $this->actingAs($this->owner)->post("{$this->path}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $this->project->lock_version, 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
 
     $this->actingAs($this->owner)->get($this->path)->assertInertia(fn (AssertableInertia $page) => $page
         ->where('fulfilment.lines.0.can', ['cancel' => true, 'replan' => true])->has('fulfilment.lines.0.price')->has('fulfilment.lines.0.available'));

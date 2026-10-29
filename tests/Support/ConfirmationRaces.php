@@ -21,7 +21,7 @@ final class ConfirmationRaces
     {
         $evidence = (string) DB::table('evidence_documents')->where('id', $evidenceId)->value('public_id');
 
-        return self::word(app(ConfirmWithoutQuotation::class)->run((string) Str::uuid(), $actorUserId, Project::query()->findOrFail($projectId), $evidenceId, $evidence, null, BusinessDate::today(), true));
+        return self::word(app(ConfirmWithoutQuotation::class)->run((string) Str::uuid(), $actorUserId, $project = Project::query()->findOrFail($projectId), $project->lock_version, $evidenceId, $evidence, null, BusinessDate::today(), true));
     }
 
     public static function cancel(int $actorUserId, int $projectId, int $lineId, string $quantity): string

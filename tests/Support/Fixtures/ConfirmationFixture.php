@@ -52,7 +52,7 @@ final class ConfirmationFixture
         $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $company->id, 'evidence_type' => 'CLIENT_SPK', 'declared_issuer' => 'SMA Uji '.$company->code]);
 
         if ($request->boolean('confirmed')) {
-            $outcome = app(ConfirmWithoutQuotation::class)->run((string) Str::uuid(), $actor, $project, $evidence->id, $evidence->public_id, null, BusinessDate::today(), true);
+            $outcome = app(ConfirmWithoutQuotation::class)->run((string) Str::uuid(), $actor, $project, $project->lock_version, $evidence->id, $evidence->public_id, null, BusinessDate::today(), true);
 
             if ($outcome->kind !== 'COMMITTED') {
                 return response()->json(['error' => "confirm {$outcome->kind} {$outcome->code}"], 500);

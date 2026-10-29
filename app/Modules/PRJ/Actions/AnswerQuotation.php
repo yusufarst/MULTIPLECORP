@@ -46,6 +46,7 @@ final class AnswerQuotation
 
         return $this->envelope->run($request, function (CommandContext $context) use ($project, $revision, $approve, $reason, $businessDate, $prefilled): CommandResult {
             $context->lock(CommercialConfirmation::locks($project->id));
+            $context->require(CommercialConfirmation::locks($project->id));
 
             if (! in_array(DB::table('projects')->where('id', $project->id)->value('state'), ['DRAFT', 'ACTIVE'], true)) {
                 throw Refused::rejected('L-11', ['reason' => 'closed']);

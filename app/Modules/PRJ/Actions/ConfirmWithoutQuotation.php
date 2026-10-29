@@ -37,14 +37,23 @@ final class ConfirmWithoutQuotation
         private readonly CommercialConfirmation $confirmation,
     ) {}
 
-    public function run(string $commandId, int $actorUserId, Project $project, int $evidenceId, string $evidencePublicId, ?string $reason, string $businessDate, bool $prefilled): Outcome
+    /** @param  int  $lockVersion  the project version PG-011 showed: lines or prices changed since are a CONFLICT (ST-01) */
+    public function run(string $commandId, int $actorUserId, Project $project, int $lockVersion, int $evidenceId, string $evidencePublicId, ?string $reason, string $businessDate, bool $prefilled): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $project->company_id, self::CAPABILITY,
-            Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($project->company_id), ['project' => $project->public_id, 'evidence' => strtolower($evidencePublicId),
+            Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($project->company_id), ['project' => $project->public_id, 'lock_version' => $lockVersion, 'evidence' => strtolower($evidencePublicId),
                 'reason' => $reason, 'business_date' => $businessDate, 'prefilled' => $prefilled]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($project, $evidenceId, $reason, $businessDate, $prefilled): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($project, $lockVersion, $evidenceId, $reason, $businessDate, $prefilled): CommandResult {
             $context->lock(CommercialConfirmation::locks($project->id, $evidenceId));
+            // The lines' guards re-read under LK-01: a line a concurrent command added joins the set (restart).
+            $context->require(CommercialConfirmation::locks($project->id, $evidenceId));
+
+            $version = DB::table('projects')->where('id', $project->id)->value('lock_version');
+
+            if (! is_numeric($version) || (int) $version !== $lockVersion) {
+                throw Refused::conflict('ST-01');
+            }
 
             if (! in_array(DB::table('projects')->where('id', $project->id)->value('state'), ['DRAFT', 'ACTIVE'], true)) {
                 throw Refused::rejected('L-11', ['reason' => 'closed']);

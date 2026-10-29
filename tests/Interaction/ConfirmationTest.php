@@ -54,7 +54,7 @@ function handleOf(object $test, int $number): string
 }
 
 it('confirms, cancels and re-plans once each, every replay answering its recorded outcome (INT-158–INT-160; CI-05)', function () {
-    $confirm = ['command_id' => (string) Str::uuid(), 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true];
+    $confirm = ['command_id' => (string) Str::uuid(), 'lock_version' => $this->project->lock_version, 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true];
     expect(sentTwice($this, "{$this->path}/konfirmasi", $confirm))->toBe(Outcome::COMMITTED)
         ->and(DB::table('commercial_confirmations')->count())->toBe(1)
         ->and(DB::table('audit_events')->where('action', 'PRJ.ProjectConfirmed')->count())->toBe(1);

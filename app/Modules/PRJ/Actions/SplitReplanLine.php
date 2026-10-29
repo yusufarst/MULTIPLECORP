@@ -11,6 +11,7 @@ use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -41,6 +42,13 @@ final class SplitReplanLine
 
             if (! in_array(DB::table('projects')->where('id', $project->id)->value('state'), ['DRAFT', 'ACTIVE'], true)) {
                 throw Refused::rejected('L-11', ['reason' => 'closed']);
+            }
+
+            // Releasing a reservation also `stock.reserve` (W4-23).
+            $reserved = DB::selectOne('select 1 as found from project_line_balances where project_line_id = ? and reserved_qty_base > 0', [$lineId]) !== null;
+
+            if ($reserved && $context->authority()?->allows('stock.reserve', $project->company_id) !== true) {
+                throw new AuthorizationException;
             }
 
             return new CommandResult('project_line', $this->scope->split($context, $project->id, $project->company_id, $lineId, $mode, $reason));

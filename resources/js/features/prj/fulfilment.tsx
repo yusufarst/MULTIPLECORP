@@ -110,7 +110,7 @@ function LineProgress({ line, onCancel, onReplan }: { line: FulfilmentLine; onCa
     );
 }
 
-export function FulfilmentSection({ projectId, fulfilment, today, title }: { projectId: string; fulfilment: Fulfilment; today: string; title: (children: ReactNode) => ReactNode }) {
+export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, title }: { projectId: string; lockVersion: number; fulfilment: Fulfilment; today: string; title: (children: ReactNode) => ReactNode }) {
     const { t } = useTranslation();
     const confirm = useCommand<Payload>(() => `/proyek/${projectId}/konfirmasi`, 'post');
     const cancel = useCommand<Payload>(() => `/proyek/${projectId}/batalkan-sisa`, 'post');
@@ -133,10 +133,16 @@ export function FulfilmentSection({ projectId, fulfilment, today, title }: { pro
             {confirmation === null ? (
                 <div className="flex min-w-0 flex-col gap-3">
                     <p className="text-body text-text-secondary">{t('fulfilment.unconfirmed')}</p>
-                    {fulfilment.can.confirm && (
+                    {fulfilment.can.confirm && fulfilment.evidence.length > 0 && (
                         <div>
                             <Button onClick={() => { confirm.clear(); setConfirming(true); }}>{t('fulfilment.action.confirm')}</Button>
                         </div>
+                    )}
+                    {fulfilment.can.confirm && fulfilment.evidence.length === 0 && (
+                        <p className="text-body text-text-secondary">
+                            {t('fulfilment.confirm.no_evidence')}{' '}
+                            <a href="/dokumen/bukti" className="text-accent-link underline underline-offset-2">{t('fulfilment.confirm.upload')}</a>
+                        </p>
                     )}
                 </div>
             ) : (
@@ -196,7 +202,7 @@ export function FulfilmentSection({ projectId, fulfilment, today, title }: { pro
                 answer={confirm.answer}
                 onConfirm={() => {
                     if (evidence === '') return;
-                    confirm.submit({ bukti: evidence, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setConfirming(false); });
+                    confirm.submit({ lock_version: lockVersion, bukti: evidence, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setConfirming(false); });
                 }}
             />
             <ConfirmCommand

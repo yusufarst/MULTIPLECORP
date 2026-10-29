@@ -2143,5 +2143,8 @@
     "fulfilment.refusal.details": "Complete the client's unit and PIC first so the project is active, then confirm.",
     "fulfilment.refusal.confirmed": "This project is already confirmed. Reload to see it.",
     "fulfilment.validation.evidence": "Choose client order evidence registered for this project's company.",
-    "fulfilment.validation.line": "This line is not in the project. Reload this page."
+    "fulfilment.validation.line": "This line is not in the project. Reload this page.",
+    "fulfilment.validation.duplicate": "This line is already in the list. Each line once is enough.",
+    "fulfilment.refusal.stale": "Someone else changed this project since the page opened. Reload, check its lines, then confirm again.",
+    "fulfilment.refusal.split": "A line of this project was split by Change Fulfilment Mode, and the quotation does not carry the split line. This approval would undo that split, so it is not recorded."
 }

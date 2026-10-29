@@ -9,6 +9,7 @@ use App\Support\Audit\AuthorityClass;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
+use App\Support\GuardUpdate;
 use App\Support\Search\Row;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Facades\DB;
@@ -71,6 +72,7 @@ final class LineScope
         $actor = $context->request->actorUserId;
         $commandId = $context->request->commandId;
         $number = 0;
+        $deltas = [];
 
         foreach ($quantities as $line => $quantity) {
             $number++;
@@ -79,8 +81,11 @@ final class LineScope
                     command_id, command_line_no, recorded_at, recorded_by)
                 select l.id, l.company_id, l.product_id, l.quantity_scale, ?::numeric, ?, ?, ?, ?, ?, ?, ? from project_lines l where l.id = ?
                 SQL, [$quantity, $reason, $actor, $businessDate, $commandId, $number, $now, $actor, $line]);
-            DB::update('update project_line_balances set cancelled_qty_base = cancelled_qty_base + ?::numeric where project_line_id = ?', [$quantity, $line]);
+            $deltas[] = ['key' => ['project_line_id' => $line], 'deltas' => ['cancelled_qty_base' => $quantity]];
         }
+
+        // The lines' guards through the shared writer, one statement (GU-01).
+        GuardUpdate::apply($context->connection, 'project_line_balances', $deltas);
 
         if ($evidenceId !== null) {
             DB::table('evidence_links')->insert([
@@ -123,10 +128,13 @@ final class LineScope
         $now = $context->now();
         $actor = $context->request->actorUserId;
         $commandId = $context->request->commandId;
+        // The new line follows the highest number, under the project's lock (line_no is never reused for a cited line).
+        $highest = DB::table('project_lines')->where('project_id', $projectId)->max('line_no');
+        $next = (is_numeric($highest) ? (int) $highest : 0) + 1;
         $inserted = DB::selectOne(<<<'SQL'
             insert into project_lines (project_id, company_id, line_no, kind, product_id, quantity_scale, description, entered_qty, entered_unit_id,
                 ratio_to_base, qty_base, unit_price, fulfillment_mode, split_from_line_id, command_id, command_line_no, recorded_at, recorded_by)
-            select o.project_id, o.company_id, (select max(n.line_no) + 1 from project_lines n where n.project_id = o.project_id), o.kind, o.product_id,
+            select o.project_id, o.company_id, ?::integer, o.kind, o.product_id,
                 o.quantity_scale, p.description,
                 case when mod(r.qty, p.ratio_to_base) = 0 then r.qty / p.ratio_to_base else r.qty end,
                 case when mod(r.qty, p.ratio_to_base) = 0 then p.entered_unit_id else (select pu.unit_id from product_units pu where pu.product_id = o.product_id and pu.is_base) end,
@@ -137,29 +145,82 @@ final class LineScope
             from project_lines o join confirmation_line_pins p on p.id = o.current_pin_id cross join (select ?::numeric as qty) r
             where o.id = ?
             returning id, line_no
-            SQL, [$mode, $commandId, $now, $actor, $remainder, $lineId]);
+            SQL, [$next, $mode, $commandId, $now, $actor, $remainder, $lineId]);
         $id = is_object($inserted) ? (int) Row::text($inserted, 'id') : 0;
-        // The new line's pin under the current confirmation: the remainder's share of the pinned value and tax (BR-SN-01).
-        DB::insert(<<<'SQL'
-            insert into confirmation_line_pins (commercial_confirmation_id, company_id, project_line_id, product_id, quantity_scale, description,
-                entered_qty, entered_unit_id, ratio_to_base, qty_base, unit_price, sales_value, tax_components, command_id, command_line_no, recorded_at)
-            select p.commercial_confirmation_id, l.company_id, l.id, l.product_id, l.quantity_scale, l.description, l.entered_qty, l.entered_unit_id, l.ratio_to_base,
-                l.qty_base, l.unit_price, round(p.sales_value * l.qty_base / nullif(p.qty_base, 0), 2),
-                coalesce((select jsonb_agg(c || jsonb_build_object('base', round(p.sales_value * l.qty_base / nullif(p.qty_base, 0), 2)::text,
-                    'amount', round((c->>'amount')::numeric * l.qty_base / nullif(p.qty_base, 0), 2)::text)) from jsonb_array_elements(p.tax_components) c), '[]'::jsonb),
-                ?, 1, ?
-            from project_lines l join project_lines o on o.id = l.split_from_line_id join confirmation_line_pins p on p.id = o.current_pin_id
-            where l.id = ?
-            SQL, [$commandId, $now, $id]);
-        DB::update('update project_lines l set current_pin_id = p.id from confirmation_line_pins p where p.project_line_id = l.id and l.id = ?', [$id]);
-        DB::update('update project_line_balances set demand_qty_base = demand_qty_base - ?::numeric where project_line_id = ?', [$remainder, $lineId]);
-        DB::table('project_line_balances')->insert(['project_line_id' => $id, 'fulfillment_mode' => $mode, 'demand_qty_base' => $remainder, 'recorded_at' => $now]);
+        $this->repin($context, $projectId, $lineId, $id, $remainder, $reason);
+        // The new line's guard born (FU-09), then the remainder moved from the origin's demand to it in one statement (GU-01).
+        GuardUpdate::bear($context->connection, 'project_line_balances', ['project_line_id' => $id], ['fulfillment_mode' => $mode, 'recorded_at' => $now]);
+        GuardUpdate::apply($context->connection, 'project_line_balances', [
+            ['key' => ['project_line_id' => $lineId], 'deltas' => ['demand_qty_base' => '-'.$remainder]],
+            ['key' => ['project_line_id' => $id], 'deltas' => ['demand_qty_base' => $remainder]],
+        ]);
         $this->record($context, 'PRJ.LineReplanned', AuthorityClass::Adm, $projectId, $companyId, $reason, null, AuditChange::updated(
             ['line' => Row::text($line, 'line_no'), 'mode' => Row::text($line, 'fulfillment_mode')],
             ['line' => is_object($inserted) ? Row::text($inserted, 'line_no') : '', 'mode' => $mode, 'qty_base' => $remainder],
         ));
 
         return $id;
+    }
+
+    /**
+     * The re-plan's pins (BR-SN-01; DATABASE §9): a confirmation of the same kind superseding the current one in its chain
+     * (CM-27's link) — the re-plan's record, no re-approval —, pinning the new line at its quantity and price with its share
+     * of the tax, the origin at its pinned quantity less the remainder with the rest of the value and tax, and every other
+     * line as it stood; the pointers moved to them. The current pins' sum stays the confirmed value, and each line's pin its demand.
+     */
+    private function repin(CommandContext $context, int $projectId, int $originId, int $newId, string $remainder, string $reason): void
+    {
+        $now = $context->now();
+        $actor = $context->request->actorUserId;
+        $commandId = $context->request->commandId;
+        $created = DB::selectOne(<<<'SQL'
+            insert into commercial_confirmations (project_id, company_id, kind, quotation_revision_id, business_date, decided_by, reason, supersedes_confirmation_id,
+                command_id, command_line_no, recorded_at, recorded_by)
+            select c.project_id, c.company_id, c.kind, c.quotation_revision_id, (?::timestamptz at time zone 'Asia/Jakarta')::date, ?, ?, c.id, ?, 1, ?, ?
+            from commercial_confirmations c where c.project_id = ? order by c.id desc limit 1
+            returning id
+            SQL, [$now, $actor, $reason, $commandId, $now, $actor, $projectId]);
+        $confirmation = is_object($created) ? (int) Row::text($created, 'id') : 0;
+        $columns = 'commercial_confirmation_id, company_id, project_line_id, product_id, quantity_scale, description, entered_qty, entered_unit_id, ratio_to_base, '
+            .'qty_base, unit_price, sales_value, tax_components, command_id, command_line_no, recorded_at';
+        // The new line: its own quantity and price, its value from them, the origin pin's tax in proportion to that value.
+        DB::insert('insert into confirmation_line_pins ('.$columns.') '.<<<'SQL'
+            select ?, l.company_id, l.id, l.product_id, l.quantity_scale, l.description, l.entered_qty, l.entered_unit_id, l.ratio_to_base, l.qty_base, l.unit_price,
+                round(l.entered_qty * l.unit_price, 2),
+                coalesce((select jsonb_agg(c || jsonb_build_object('base', round(l.entered_qty * l.unit_price, 2)::text,
+                    'amount', round((c->>'amount')::numeric * round(l.entered_qty * l.unit_price, 2) / nullif(p.sales_value, 0), 2)::text) order by n)
+                    from jsonb_array_elements(p.tax_components) with ordinality as t(c, n)), '[]'::jsonb),
+                ?, 1, ?
+            from project_lines l join project_lines o on o.id = l.split_from_line_id join confirmation_line_pins p on p.id = o.current_pin_id
+            where l.id = ?
+            SQL, [$confirmation, $commandId, $now, $newId]);
+        // The origin: its pinned quantity less the remainder — in its entered unit when whole, else in the base unit —, the rest of its value and tax.
+        DB::insert('insert into confirmation_line_pins ('.$columns.') '.<<<'SQL'
+            select ?, o.company_id, o.id, p.product_id, p.quantity_scale, p.description,
+                case when mod(r.qty, p.ratio_to_base) = 0 then p.entered_qty - r.qty / p.ratio_to_base else p.qty_base - r.qty end,
+                case when mod(r.qty, p.ratio_to_base) = 0 then p.entered_unit_id else (select pu.unit_id from product_units pu where pu.product_id = p.product_id and pu.is_base) end,
+                case when mod(r.qty, p.ratio_to_base) = 0 then p.ratio_to_base else 1 end,
+                p.qty_base - r.qty,
+                case when mod(r.qty, p.ratio_to_base) = 0 then p.unit_price else round(p.unit_price / p.ratio_to_base, 2) end,
+                p.sales_value - s.sales_value,
+                coalesce((select jsonb_agg(c || jsonb_build_object('base', (p.sales_value - s.sales_value)::text,
+                    'amount', ((c->>'amount')::numeric - coalesce((sc->>'amount')::numeric, 0))::text) order by n)
+                    from jsonb_array_elements(p.tax_components) with ordinality as t(c, n)
+                    left join jsonb_array_elements(s.tax_components) with ordinality as u(sc, m) on m = n), '[]'::jsonb),
+                ?, 2, ?
+            from project_lines o join confirmation_line_pins p on p.id = o.current_pin_id
+            join confirmation_line_pins s on s.commercial_confirmation_id = ? and s.project_line_id = ?
+            cross join (select ?::numeric as qty) r
+            where o.id = ?
+            SQL, [$confirmation, $commandId, $now, $confirmation, $newId, $remainder, $originId]);
+        // Every other line as it stood.
+        DB::insert('insert into confirmation_line_pins ('.$columns.') '.<<<'SQL'
+            select ?, p.company_id, p.project_line_id, p.product_id, p.quantity_scale, p.description, p.entered_qty, p.entered_unit_id, p.ratio_to_base, p.qty_base,
+                p.unit_price, p.sales_value, p.tax_components, ?, 2 + row_number() over (order by l.line_no), ?
+            from project_lines l join confirmation_line_pins p on p.id = l.current_pin_id
+            where l.project_id = ? and l.id <> ? and l.id <> ?
+            SQL, [$confirmation, $commandId, $now, $projectId, $originId, $newId]);
+        DB::update('update project_lines l set current_pin_id = p.id from confirmation_line_pins p where p.commercial_confirmation_id = ? and p.project_line_id = l.id', [$confirmation]);
     }
 
     /**
