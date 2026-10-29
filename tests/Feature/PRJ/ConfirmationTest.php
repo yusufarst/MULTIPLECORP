@@ -250,3 +250,66 @@ it('hands a cancellation\'s released quantity to the lifecycle participants insi
     expect(DB::table('line_scope_cancellations')->count())->toBe($before)
         ->and((string) DB::table('project_line_balances')->where('project_line_id', $line)->value('cancelled_qty_base'))->toStartWith('1');
 });
+
+it('pins 2 boxes of 12 at 24 base units and keeps them after the master ratio changes (BR-INV-03; BR-SN-01; numeric annex 11; criterion 3)', function () {
+    $boxed = Projects::product();
+    expect(Projects::create($this->admin->id, $this->company, $this->client, [], null, ['baris' => [[
+        'produk' => $boxed['product']->public_id, 'satuan' => $boxed['box']->code, 'jumlah' => '2', 'harga' => '180000', 'mode' => 'WAREHOUSE',
+    ]]]))->toStartWith('COMMITTED');
+    $this->project = Project::query()->orderByDesc('id')->firstOrFail();
+    confirmProject($this);
+    $pin = DB::table('confirmation_line_pins as p')->join('project_lines as l', 'l.current_pin_id', '=', 'p.id')->where('l.project_id', $this->project->id)->sole(['p.*']);
+
+    expect($pin)->toMatchObject(['entered_qty' => '2.000', 'ratio_to_base' => 12, 'qty_base' => '24.000', 'sales_value' => '360000.00']);
+
+    DB::connection('migration')->table('product_units')->where('product_id', $boxed['product']->id)->where('unit_id', $boxed['box']->id)->update(['ratio_to_base' => 10]);
+    expect(DB::table('confirmation_line_pins')->where('id', $pin->id)->value('qty_base'))->toBe('24.000')
+        ->and(DB::table('project_line_balances')->where('project_line_id', $pin->project_line_id)->value('demand_qty_base'))->toBe('24.000');
+});
+
+it('locks a SIPLAH project\'s details at its first confirmation (C-51; BR-PRJ-05; criterion 5)', function () {
+    expect(Projects::create($this->admin->id, $this->company, $this->client, [$this->goods], null, ['kanal' => 'SIPLAH', 'siplah' => ['external_reference' => 'SIPLAH-UJI-1']]))->toStartWith('COMMITTED');
+    $this->project = Project::query()->orderByDesc('id')->firstOrFail();
+    expect(DB::table('project_siplah_details')->where('project_id', $this->project->id)->value('locked_at'))->toBeNull();
+
+    confirmProject($this);
+    expect(DB::table('project_siplah_details')->where('project_id', $this->project->id)->value('locked_at'))->not->toBeNull();
+});
+
+it('refuses a demand below what is already dispatched and names the path (C-05; L-20; BR-XD-01; criterion 4)', function () {
+    confirmProject($this);
+    $line = DB::table('project_lines')->where('project_id', $this->project->id)->where('line_no', 1)->first();
+    DB::table('project_line_balances')->where('project_line_id', $line->id)->update(['dispatched_net_qty_base' => '5']);
+    DB::table('project_lines')->where('id', $line->id)->update(['entered_qty' => '1', 'qty_base' => '1']);
+    $request = new CommandRequest((string) Str::uuid(), 'test.reconfirm', $this->admin->id, $this->company->id, 'projects.view', Fingerprint::of('test.reconfirm', null, ['project' => $this->project->id]));
+    $outcome = app(CommandEnvelope::class)->run($request, function (CommandContext $context): CommandResult {
+        $context->lock(CommercialConfirmation::locks($this->project->id));
+
+        return new CommandResult('commercial_confirmation', app(CommercialConfirmation::class)->confirm($context, $this->project->id, $this->company->id, 'MIGRATION', null, BusinessDate::today(), null));
+    });
+
+    expect($outcome->kind)->toBe('REJECTED')->and($outcome->code)->toBe('C-05')
+        ->and(DB::table('commercial_confirmations')->count())->toBe(1);
+});
+
+it('refuses a re-plan that would release a reservation without stock.reserve, and leaves the project ACTIVE when its last remainder is cancelled (W4-23; L-12; criteria 10, 11)', function () {
+    confirmProject($this);
+    $goods = (int) DB::table('project_lines')->where('project_id', $this->project->id)->where('line_no', 1)->value('id');
+    DB::table('project_line_balances')->where('project_line_id', $goods)->update(['reserved_qty_base' => '2']);
+
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/ubah-pemenuhan", [
+        'command_id' => (string) Str::uuid(), 'baris' => lineHandle($this, 1), 'cara' => 'DROPSHIP', 'alasan' => 'Pemasok kirim langsung',
+    ])->assertForbidden();
+    expect(DB::table('project_lines')->whereNotNull('split_from_line_id')->count())->toBe(0);
+
+    DB::table('project_line_balances')->where('project_line_id', $goods)->update(['reserved_qty_base' => '0']);
+    $remainders = DB::table('project_line_balances as b')->join('project_lines as l', 'l.id', '=', 'b.project_line_id')->where('l.project_id', $this->project->id)->orderBy('l.line_no')->pluck('b.demand_qty_base')->all();
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/batalkan-sisa", [
+        'command_id' => (string) Str::uuid(), 'alasan' => 'Klien membatalkan semuanya', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+        'baris' => [['baris' => lineHandle($this, 1), 'jumlah' => rtrim(rtrim($remainders[0], '0'), '.')], ['baris' => lineHandle($this, 2), 'jumlah' => rtrim(rtrim($remainders[1], '0'), '.')]],
+    ]);
+
+    expect(confirmationAnswer())->toMatchArray(['kind' => 'COMMITTED'])
+        ->and(DB::table('line_scope_cancellations')->count())->toBe(2)
+        ->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('ACTIVE');
+});
