@@ -73,6 +73,17 @@ it('leaves a split\'s residual to the last weight, the parts summing to the whol
         ->and(fn () => CostSplitter::split(Money::of('1.00'), ['a' => '0']))->toThrow(InvalidArgumentException::class);
 });
 
+it('never lets parts rounded up push a later one below zero, so a share is never negative (BR-FIN-13; C-21)', function () {
+    $parts = CostSplitter::split(Money::of('10001.00'), ['a' => '100000', 'b' => '100000', 'c' => '100000', 'd' => '1']);
+    $shares = ChargeAllocator::shares(Money::of('10001.00'), [1 => '100000', 2 => '100000', 3 => '100000', 4 => '1']);
+
+    // Each 3,333.67 rounds to 3,334, so the third takes only the 3,333 left and the last nothing.
+    expect(array_map(costingMoney(...), $parts))->toBe(['a' => '3334.00', 'b' => '3334.00', 'c' => '3333.00', 'd' => '0.00'])
+        ->and(array_map(costingMoney(...), $shares))->toBe([1 => '3334.00', 2 => '3334.00', 3 => '3333.00', 4 => '0.00'])
+        ->and(array_map(costingMoney(...), CostSplitter::split(Money::of('-10001.00'), ['a' => '100000', 'b' => '100000', 'c' => '100000', 'd' => '1'])))
+        ->toBe(['a' => '-3334.00', 'b' => '-3334.00', 'c' => '-3333.00', 'd' => '0.00']);
+});
+
 it('spreads an amount over quantities by cumulative rounding, a zero quantity taking nothing (DATABASE §6.3 step 1)', function () {
     $parts = CostSplitter::spread(Money::of('100.00'), ['a' => '1', 'gone' => '0', 'b' => '1', 'c' => '1']);
 

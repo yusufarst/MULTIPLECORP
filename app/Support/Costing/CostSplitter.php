@@ -39,7 +39,8 @@ final class CostSplitter
 
     /**
      * A total split over the weights in their order, each part rounded to Rp1 and the last absorbing the residual —
-     * a charge over its lines' basis (annex 14; DATABASE §6.1).
+     * a charge over its lines' basis (annex 14; DATABASE §6.1). A part never takes more than the total leaves, so parts
+     * rounded up never push a later one past zero: every part keeps the total's sign.
      *
      * @template K of array-key
      *
@@ -54,7 +55,9 @@ final class CostSplitter
         $last = array_key_last($weights);
 
         foreach ($weights as $key => $weight) {
-            $parts[$key] = $key === $last ? $total->minus($given) : $total->share($weight, $whole);
+            $left = $total->minus($given);
+            $share = $total->share($weight, $whole);
+            $parts[$key] = $key === $last ? $left : ($total->isNegative() ? Money::max($share, $left) : Money::min($share, $left));
             $given = $given->plus($parts[$key]);
         }
 
