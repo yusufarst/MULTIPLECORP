@@ -6,6 +6,7 @@ use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\IAM\Data\Authority;
+use App\Modules\PRJ\Services\SpkSubjects;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
@@ -43,6 +44,9 @@ final class SyntheticSubjects implements DocumentSubjectProvider
         self::$refusal = null;
         self::$facts = null;
         self::$preconditions = 0;
+
+        // The engine's tests issue DOC-09 through this synthetic subject: PRJ's company SPK (TASK-034) stays out of them.
+        app()->instance(SpkSubjects::class, new SilentSubjects);
 
         foreach (app()->tagged(DocumentSubjectProvider::TAG) as $provider) {
             if ($provider instanceof self) {

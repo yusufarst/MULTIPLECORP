@@ -183,6 +183,20 @@ final class EvidenceList
         return ['rows' => $rows, 'more' => $more];
     }
 
+    /**
+     * A company evidence of one of the types a command takes, by public identifier, for a viewer who may see it — the
+     * client's order evidence a no-quotation confirmation links (ROUTE-158; PJ-08) —; null when unknown, of another
+     * company or type, or hidden from the viewer alike (AZ-11).
+     *
+     * @param  list<string>  $types
+     */
+    public function idOf(int $viewerId, string $publicId, int $companyId, array $types): ?int
+    {
+        $evidence = $this->find($this->capabilities->for($viewerId), $publicId);
+
+        return $evidence !== null && $evidence->company_id === $companyId && in_array($evidence->evidence_type, $types, true) ? $evidence->id : null;
+    }
+
     /** The evidence by public identifier, when the viewer may see it (PJ-08; AZ-11). */
     public function find(Authority $viewer, string $publicId): ?EvidenceDocument
     {

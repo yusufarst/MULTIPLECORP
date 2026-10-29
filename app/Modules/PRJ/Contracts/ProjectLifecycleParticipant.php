@@ -18,6 +18,14 @@ interface ProjectLifecycleParticipant
     /** A later confirmation superseded the project's pinned demand (AX-13). */
     public function reconfirmed(CommandContext $context, int $projectId): void;
 
+    /**
+     * Lines' unfilled remainder was cancelled or split off to another mode (AX-14; SF-CANCEL-LINE; L-21): the reservation
+     * above each line's new remainder is released before PRJ lowers its guard.
+     *
+     * @param  array<int, string>  $released  by project line, the base quantity leaving its remainder
+     */
+    public function scopeReduced(CommandContext $context, int $projectId, array $released): void;
+
     /** The project was cancelled (AX-27; BR-PRJ-01). */
     public function cancelled(CommandContext $context, int $projectId): void;
 

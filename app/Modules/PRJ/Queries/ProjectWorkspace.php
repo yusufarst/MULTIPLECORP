@@ -9,6 +9,7 @@ use App\Modules\OPS\Queries\CorrectionTrail;
 use App\Modules\PRJ\Data\ProjectInput;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\Journey;
+use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
@@ -31,6 +32,7 @@ final class ProjectWorkspace
         private readonly ProjectJourneys $journeys,
         private readonly ProjectDocuments $documents,
         private readonly CorrectionTrail $trail,
+        private readonly ProjectFulfilment $fulfilment,
     ) {}
 
     public function viewer(int $viewerId): Authority
@@ -51,6 +53,32 @@ final class ProjectWorkspace
         $project = preg_match(self::UUID, $publicId) === 1 ? Project::query()->where('public_id', strtolower($publicId))->first() : null;
 
         return $project === null || ! $viewer->allows('projects.view', $project->company_id) ? null : $project;
+    }
+
+    /**
+     * *Item dan pemenuhan* (J-FUL-01): the confirmation and each confirmed line's progress by mode.
+     *
+     * @return array<string, mixed>
+     */
+    public function fulfilment(int $viewerId, Project $project): array
+    {
+        return $this->fulfilment->of($this->viewer($viewerId), $project);
+    }
+
+    /** A project line by the handle PG-011 showed, among the project's own (AZ-11); null when unknown. */
+    public function lineOf(Project $project, string $handle): ?int
+    {
+        if (! RowHandle::valid($handle)) {
+            return null;
+        }
+
+        foreach (DB::table('project_lines')->where('project_id', $project->id)->pluck('id') as $id) {
+            if (is_numeric($id) && hash_equals(RowHandle::of('project_lines', (int) $id), $handle)) {
+                return (int) $id;
+            }
+        }
+
+        return null;
     }
 
     /** A discarded draft's retired number, by the draft's public identifier (L-37). */

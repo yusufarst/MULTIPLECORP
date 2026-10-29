@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\DB;
 final class QuotationRecords
 {
     /** The output taxes in force on a day with their SALES_INVOICE treatment, the company's rule over the global one; bound: day, day, company. */
-    private const TAXES = <<<'SQL'
+    public const TAXES = <<<'SQL'
         select t.code, r.rate_percent, r.base_numerator, r.base_denominator, r.rounding_mode, u.treatment
         from tax_types t
         join tax_rate_versions r on r.tax_type_id = t.id and r.effective @> ?::date
