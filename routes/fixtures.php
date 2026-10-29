@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\AdministrationFixture;
 use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\ConfirmationFixture;
 use Tests\Support\Fixtures\DocumentFixture;
@@ -102,4 +103,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-034): a mixed project with the client's SPK registered as order evidence, confirmed when asked.
     Route::post('__fixtures/konfirmasi', [ConfirmationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-035): that confirmed project with its default invoice item, a required SPK and the client's SPK uploaded.
+    Route::post('__fixtures/administrasi', [AdministrationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });
