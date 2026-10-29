@@ -683,3 +683,9 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-035 on its branch `task/TASK-035-administration`: the administrative checklist per project with its derived statuses, ROUTE-164–ROUTE-169 — add, tighten, link, *Tidak Berlaku*, the Owner's eligibility, relaxation and removal, the supersession of a waiver or a quotation approval —, ADM's three participants with the default invoice item and the administration predicate, PG-011's checklist and PG-039 *Dokumen Administrasi*.
 - Fixed the project form's product line, which could lose a product chosen while its partial reload was in flight (the first attempt of main CI run 40831691869).
 - Every check passed in fresh CI on `74ce179`. TASK-035 DONE — progress 35 / 87 —; TASK-036 next.
+
+## Unreleased — 2026-10-29, TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
+
+- TASK-035 squash-merged by the executor into `main` as `e4acd2c` (pull request #41); TASK-036 started.
+- Built TASK-036 on its branch `task/TASK-036-costing`: CST's `CostPosting` — the lot cost basis by cumulative rounding, draws and their contras, the reclassification pair, purchase-return settlement, charges posted over the ordered quantity with their pending remainder re-spread or expensed, receipt reversals, and the AX-34 correction cascade reopening cases and revalidating completed projects —, `Money` over brick/math with the costing calculators, the guards' reconciliation formulas, CST's figures with the company scope first and C-28's overlay check.
+- Every check passed in fresh CI on `6ffdd19`. TASK-036 DONE — progress 36 / 87 —; TASK-038 next.
