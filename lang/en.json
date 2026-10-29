@@ -2293,5 +2293,7 @@
     "reservations.validation.positive": "Enter a quantity above zero.",
     "reservations.validation.scale": "The quantity has more decimal places than this product allows.",
     "reservations.validation.quantity": "Enter the quantity as a number with at most 3 decimal places.",
-    "projects.item.reservations_active": ":jumlah reservations still active"
+    "projects.item.reservations_active": ":jumlah reservations still active",
+    "reservations.list.tab.perlu": "To be reserved",
+    "reservations.field.unreserved": "Not yet reserved"
 }

@@ -50,12 +50,12 @@ function reservationRows(object $test, int $count): void
 
 it('reads PG-025 in the same number of statements for two reservations and a full page, and its product\'s pool alike (QB-12; PFM-01; PFM-02)', function () {
     $pool = $this->world->goods['product']->public_id;
-    $read = fn (?string $product): int => reservationStatements(fn () => app(Reservations::class)->screen($this->world->actorId, ['cabang' => null, 'tab' => null, 'produk' => $product, 'urut' => null, 'setelah' => null]));
+    $read = fn (?string $product): int => reservationStatements(fn () => app(Reservations::class)->screen($this->world->actorId, ['cabang' => null, 'tab' => 'aktif', 'produk' => $product, 'urut' => null, 'setelah' => null]));
     reservationRows($this, 2);
     $read(null);
     $few = [$read(null), $read($pool)];
     reservationRows($this, Reservations::PAGE + 5);
-    $screen = app(Reservations::class)->screen($this->world->actorId, ['cabang' => null, 'tab' => null, 'produk' => null, 'urut' => null, 'setelah' => null]);
+    $screen = app(Reservations::class)->screen($this->world->actorId, ['cabang' => null, 'tab' => 'aktif', 'produk' => null, 'urut' => null, 'setelah' => null]);
 
     expect($few[0])->toBeLessThanOrEqual(6)
         ->and([$read(null), $read($pool)])->toBe($few)

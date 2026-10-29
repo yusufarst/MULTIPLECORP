@@ -167,7 +167,7 @@ it('lists a residual reservation of a completed project as "perlu dilepas", rele
     ProjectStateTransition::factory()->create(['project_id' => $project->id, 'from_state' => 'ACTIVE', 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $this->world->actorId]);
     $actor = User::query()->findOrFail($this->world->actorId);
 
-    $this->actingAs($actor)->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page->component('INV/Reservations')->has('rows', 0));
+    $this->actingAs($actor)->get('/gudang/reservasi?tab=aktif')->assertInertia(fn (AssertableInertia $page) => $page->component('INV/Reservations')->has('rows', 0));
     $this->actingAs($actor)->get('/gudang/reservasi?tab=dilepas')->assertInertia(fn (AssertableInertia $page) => $page
         ->has('rows', 1)->where('rows.0.residual', true)->where('rows.0.may', ['reserve' => false, 'reduce' => true, 'release' => true])->where('rows.0.project.number', $project->project_number));
 
@@ -201,12 +201,12 @@ it('shows PG-025 by branch, another company\'s reservation of the pool by its qu
     reserveLine($this, $theirs, '4', $other->actorId);
     $actor = User::query()->findOrFail($this->world->actorId);
 
-    $this->actingAs($actor)->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page
+    $this->actingAs($actor)->get('/gudang/reservasi?tab=aktif')->assertInertia(fn (AssertableInertia $page) => $page
         ->component('INV/Reservations')->has('branches', 1)->where('branch', $this->world->company->public_id)->has('rows', 1)
         ->where('rows.0.quantity', '3.000')->where('rows.0.may', ['reserve' => true, 'reduce' => true, 'release' => true])->where('more', null));
 
     $pool = $this->world->goods['product']->public_id;
-    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}")->assertInertia(fn (AssertableInertia $page) => $page
+    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&tab=aktif")->assertInertia(fn (AssertableInertia $page) => $page
         ->where('product.name', $this->world->goods['product']->name)->where('filters.produk', $pool)->has('rows', 2)
         ->where('rows.0.quantity', '4.000')->where('rows.0.handle', null)->where('rows.0.project', null)->where('rows.0.line', null)->where('rows.0.company', null)
         ->where('rows.0.may', ['reserve' => false, 'reduce' => false, 'release' => false])
@@ -215,7 +215,7 @@ it('shows PG-025 by branch, another company\'s reservation of the pool by its qu
     // Nothing of the other company's project shows through the tabs or the sort: its reservation stays an ACTIVE row of
     // the pool, after the branch's own by number, whatever its project's state (PJ-04).
     DB::table('projects')->where('id', DB::table('project_lines')->where('id', $theirs)->value('project_id'))->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
-    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&urut=proyek")->assertInertia(fn (AssertableInertia $page) => $page
+    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&urut=proyek&tab=aktif")->assertInertia(fn (AssertableInertia $page) => $page
         ->has('rows', 2)->where('rows.0.quantity', '3.000')->where('rows.1.quantity', '4.000')->where('rows.1.residual', false));
     $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&tab=dilepas")->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));
 
@@ -223,4 +223,26 @@ it('shows PG-025 by branch, another company\'s reservation of the pool by its qu
     reduceReservation($this, ReservationWorld::active($theirs), ['lepas' => true, 'alasan' => 'Uji'])->assertNotFound();
     reserveLine($this, $theirs, '1')->assertNotFound();
     expect(DB::table('reservations')->where('project_line_id', $theirs)->value('remaining_qty_base'))->toBe('4.000');
+});
+
+it('lists the confirmed warehouse demand not yet reserved, each line\'s first "Reservasi" on PG-025 (QS-01; J-INV-02; AX-01)', function () {
+    $this->world->stock('6');
+    $project = $this->world->project(['WAREHOUSE', 'DROPSHIP', 'SERVICE'], '5');
+    $this->world->project(['WAREHOUSE'], '5', false);
+    $line = ReservationWorld::line($project);
+    $actor = User::query()->findOrFail($this->world->actorId);
+
+    // Only the confirmed warehouse line of a running project, with what is left to reserve and the availability.
+    $this->actingAs($actor)->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('filters.tab', 'perlu')->has('rows', 1)->where('rows.0.kind', 'demand')->where('rows.0.handle', null)->where('rows.0.state', null)
+        ->where('rows.0.quantity', '5.000')->where('rows.0.available', '6.000')->where('rows.0.project.id', $project->public_id)
+        ->where('rows.0.line', ['no' => 1, 'handle' => ReservationWorld::handle($line)])->where('rows.0.may', ['reserve' => true, 'reduce' => false, 'release' => false]));
+
+    // Its first "Reservasi" through ROUTE-184 leaves the rest to reserve; reserved whole, it leaves the list.
+    reserveLine($this, $line, '2');
+    expect(reservationAnswer())->toMatchArray(['kind' => 'COMMITTED']);
+    $this->actingAs($actor)->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page
+        ->has('rows', 1)->where('rows.0.quantity', '3.000')->where('rows.0.available', '4.000'));
+    reserveLine($this, $line, '3');
+    $this->actingAs($actor)->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));
 });

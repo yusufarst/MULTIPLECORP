@@ -1,6 +1,7 @@
 // PG-025 *Reservasi* (ROUTE-025; NAV-025; SCR-23; J-INV-02; WF-INV-02; TASK-038): the reservations of one company at a
 // time — a branch of the account's scope (CS-08) —, each row its project and line, product, quantity and state; the tabs
-// *Aktif*, *Perlu dilepas* — the residual reservations of completed or cancelled projects (QS-16) — and *Riwayat*; the
+// *Perlu direservasi* — the confirmed warehouse demand not yet reserved, each line's first "Reservasi" (QS-01) —, *Aktif*,
+// *Perlu dilepas* — the residual reservations of completed or cancelled projects (QS-16) — and *Riwayat*; the
 // sort, the product's pool and the cursor in the address, so Back and reload return them (IP-18). A product's pool shows
 // another company's reservation by its quantity and the relation marker only (PJ-04). "Reservasi", "Kurangi Reservasi"
 // and "Lepas" from the row's actions, the last two with their reason (AX-01; AX-02); the phone reads the rows (`[desk]`).
@@ -25,13 +26,18 @@ import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
 type Branch = { id: string; code: string; name: string };
-type Tab = 'aktif' | 'dilepas' | 'riwayat';
+type Tab = 'perlu' | 'aktif' | 'dilepas' | 'riwayat';
 type Sort = 'terbaru' | 'proyek' | 'produk';
 type Row = {
+    /** A line's demand not yet reserved (QS-01), or a reservation. */
+    kind: 'demand' | 'reservation';
     key: string;
     handle: string | null;
-    state: 'ACTIVE' | 'RELEASED' | 'CONSUMED';
+    state: 'ACTIVE' | 'RELEASED' | 'CONSUMED' | null;
+    /** The demand left to reserve, or the reservation's remaining quantity. */
     quantity: string;
+    /** A demand row's product availability (CALC-01). */
+    available?: string;
     unit: string;
     product: string;
     pool: string;
@@ -48,6 +54,8 @@ type Payload = Record<string, string | boolean>;
 
 const LIST = '/gudang/reservasi';
 const amount = (value: string, unit: string): string => formatQuantity(value.replace(/\.?0+$/, '') || '0', unit);
+// A demand row's hint only — what is left to reserve, or the availability when lower; AX-01 decides at commit.
+const ceiling = (row: Row): string => (row.available !== undefined && Number(row.available) < Number(row.quantity) ? row.available : row.quantity);
 
 /** A command's success on the page its answer opened, once (IP-01; NAV-025). */
 function PageAnswer() {
@@ -93,7 +101,7 @@ export default function Reservations({ branches, branch, filters, product, rows,
         const next = `${kind}:${row.key}`;
         [reserve, reduce].forEach((command) => { if (target.current === next) command.clear(); else command.leave(); });
         target.current = next;
-        setQuantity('');
+        setQuantity(kind === 'reserve' && row.kind === 'demand' ? ceiling(row).replace(/\.?0+$/, '') : '');
         setReason('');
         setAction({ kind, row });
     };
@@ -103,7 +111,15 @@ export default function Reservations({ branches, branch, filters, product, rows,
         ...(row.may.release ? [{ label: t('actions.release'), onSelect: () => { open('release', row); } }] : []),
         ...(product === null ? [{ label: t('reservations.action.pool'), onSelect: () => { visit({ produk: row.pool }); } }] : []),
     ];
-    const status = (row: Row) => (row.residual ? <span className="text-label text-text-secondary">{t('reservations.residual')}</span> : <StatusBadge family="reservation" state={row.state} size="sm" />);
+    const status = (row: Row) =>
+        row.state === null ? (
+            <span className="text-body text-text-secondary tabular-nums">{amount(row.available ?? '0', row.unit)}</span>
+        ) : row.residual ? (
+            <span className="text-label text-text-secondary">{t('reservations.residual')}</span>
+        ) : (
+            <StatusBadge family="reservation" state={row.state} size="sm" />
+        );
+    const demand = filters.tab === 'perlu';
     const project = (row: Row) =>
         row.project === null ? (
             <RelationMarker />
@@ -116,7 +132,8 @@ export default function Reservations({ branches, branch, filters, product, rows,
     const close = (opened: boolean) => { if (!opened) setAction(null); };
     const row = action?.row ?? null;
     const lineNo = row?.line?.no ?? 0;
-    const empty = branches.length === 0 ? t('reservations.empty_scope') : t(`reservations.list.empty.${filters.tab}` as TranslationKey);
+    const empty = branches.length === 0 ? t('reservations.empty_scope') : demand ? t('signals.qs_01_empty') : t(`reservations.list.empty.${filters.tab}` as TranslationKey);
+    const tabOf = (value: unknown): Tab => (value === 'aktif' || value === 'dilepas' || value === 'riwayat' ? value : 'perlu');
 
     return (
         <AppShell title={t('pages.pg_025.title')}>
@@ -150,9 +167,9 @@ export default function Reservations({ branches, branch, filters, product, rows,
                         </div>
                     )}
                 </div>
-                <Tabs value={filters.tab} onValueChange={(value: unknown) => { visit({ tab: value === 'dilepas' || value === 'riwayat' ? value : 'aktif' }); }}>
+                <Tabs value={filters.tab} onValueChange={(value: unknown) => { visit({ tab: tabOf(value) }); }}>
                     <TabsList>
-                        {(['aktif', 'dilepas', 'riwayat'] as const).map((tab) => <TabsTab key={tab} value={tab}>{t(`reservations.list.tab.${tab}` as TranslationKey)}</TabsTab>)}
+                        {(['perlu', 'aktif', 'dilepas', 'riwayat'] as const).map((tab) => <TabsTab key={tab} value={tab}>{t(`reservations.list.tab.${tab}` as TranslationKey)}</TabsTab>)}
                     </TabsList>
                 </Tabs>
                 {shown.length === 0 ? (
@@ -170,14 +187,14 @@ export default function Reservations({ branches, branch, filters, product, rows,
                                 { key: 'line', header: t('reservations.field.line'), cell: (item) => (item.line === null ? '' : t('reservations.line_no', { n: item.line.no })) },
                                 { key: 'product', header: t('reservations.field.product'), cell: (item) => item.product },
                                 { key: 'company', header: t('projects.field.company'), priority: 'low', cell: (item) => item.company ?? '' },
-                                { key: 'quantity', header: t('reservations.field.reserved'), numeric: true, cell: (item) => amount(item.quantity, item.unit) },
-                                { key: 'status', header: t('adm.field.status'), cell: status },
+                                { key: 'quantity', header: demand ? t('reservations.field.unreserved') : t('reservations.field.reserved'), numeric: true, cell: (item) => amount(item.quantity, item.unit) },
+                                { key: 'status', header: demand ? t('fulfilment.field.available') : t('adm.field.status'), cell: status },
                             ]}
                             dense={(item) => ({
                                 title: item.project === null ? <RelationMarker /> : `${item.project.number} · ${t('reservations.line_no', { n: item.line?.no ?? 0 })}`,
                                 figure: amount(item.quantity, item.unit),
                                 secondary: item.company === null ? item.product : `${item.company} · ${item.product}`,
-                                status: status(item),
+                                status: item.state === null ? `${t('fulfilment.field.available')} ${amount(item.available ?? '0', item.unit)}` : status(item),
                             })}
                         />
                         <ListContinuation state={next === null ? 'end' : 'more'} loading={appending} onLoadMore={loadMore} onReload={loadMore} />
@@ -189,9 +206,12 @@ export default function Reservations({ branches, branch, filters, product, rows,
                     title={t('reservations.reserve.title', { n: lineNo })}
                     consequence={t('reservations.reserve.consequence')}
                     items={
-                        <FormField label={t('reservations.field.quantity', { satuan: row?.unit ?? '' })} required error={reserve.errors.jumlah}>
-                            {(control) => <DecimalInput {...control} value={quantity} scale={3} unit={row?.unit} onValueChange={(value) => { setQuantity(value ?? ''); }} />}
-                        </FormField>
+                        <div className="flex min-w-0 flex-col gap-2">
+                            <FormField label={t('reservations.field.quantity', { satuan: row?.unit ?? '' })} required error={reserve.errors.jumlah}>
+                                {(control) => <DecimalInput {...control} value={quantity} scale={3} unit={row?.unit} onValueChange={(value) => { setQuantity(value ?? ''); }} />}
+                            </FormField>
+                            {row?.kind === 'demand' && <p className="text-caption text-text-secondary">{t('reservations.reserve.ceiling', { jumlah: amount(ceiling(row), row.unit) })}</p>}
+                        </div>
                     }
                     confirmLabel={t('actions.reserve')}
                     pending={reserve.pending}

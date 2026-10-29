@@ -8436,6 +8436,18 @@
             "source": "Predicate 8; QS-16",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "reservations.list.tab.perlu": {
+            "task": "TASK-038",
+            "source": "QS-01; IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.unreserved": {
+            "task": "TASK-038",
+            "source": "QS-01",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

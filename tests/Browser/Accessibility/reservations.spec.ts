@@ -14,7 +14,7 @@ for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 900 });
         const run = await reservationRun(page, `reservasi-a11y-${String(width)}-${String(Date.now())}`, { reserved: '2' });
 
-        await page.goto(`/gudang/reservasi?cabang=${run.company}`);
+        await page.goto(`/gudang/reservasi?cabang=${run.company}&tab=aktif`);
         await expect(page.locator('#konten')).toContainText(run.number);
         await expect(page.locator('[data-status="reservation.ACTIVE"]').first()).toHaveText('Aktif');
         await atRest(page);

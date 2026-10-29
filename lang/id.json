@@ -2293,5 +2293,7 @@
     "reservations.validation.positive": "Isi jumlah lebih dari nol.",
     "reservations.validation.scale": "Jumlah memakai lebih banyak angka desimal daripada yang diizinkan produk ini.",
     "reservations.validation.quantity": "Isi jumlah dengan angka, paling banyak 3 angka desimal.",
-    "projects.item.reservations_active": ":jumlah reservasi masih aktif"
+    "projects.item.reservations_active": ":jumlah reservasi masih aktif",
+    "reservations.list.tab.perlu": "Perlu direservasi",
+    "reservations.field.unreserved": "Belum direservasi"
 }

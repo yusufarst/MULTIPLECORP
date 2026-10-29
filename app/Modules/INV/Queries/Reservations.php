@@ -11,16 +11,17 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * PG-025 *Reservasi* (ROUTE-025; `INV ShowReservations`; WF-INV-02; J-INV-02) and the references its commands name: each
- * company in the viewer's scope its own branch, labelled and never totalled across companies (CS-08; PF-41); the tabs —
- * active reservations, the residual ones of completed or cancelled projects "perlu dilepas" (QS-16), the history —, sort and
- * "Muat Lagi" in the address (IP-18). A product's reservations of every company — the pool its supply serves — show another
- * company's only by quantity and the relation marker (PJ-04). The scope is applied inside every query first (CS-07).
+ * company in the viewer's scope its own branch, labelled and never totalled across companies (CS-08; PF-41); the tabs — the
+ * confirmed warehouse demand not yet reserved, each line's first "Reservasi" (QS-01), the active reservations, the residual
+ * ones of completed or cancelled projects "perlu dilepas" (QS-16), the history —, sort and "Muat Lagi" in the address
+ * (IP-18). A product's reservations of every company — the pool its supply serves — show another company's only by quantity
+ * and the relation marker (PJ-04). The scope is applied inside every query first (CS-07).
  */
 final class Reservations
 {
     public const PAGE = 50;
 
-    public const TABS = ['aktif', 'dilepas', 'riwayat'];
+    public const TABS = ['perlu', 'aktif', 'dilepas', 'riwayat'];
 
     public const SORTS = ['terbaru', 'proyek', 'produk'];
 
@@ -51,11 +52,15 @@ final class Reservations
             }
         }
 
-        $tab = in_array($query['tab'], self::TABS, true) ? $query['tab'] : 'aktif';
+        $tab = in_array($query['tab'], self::TABS, true) ? $query['tab'] : 'perlu';
         $sort = in_array($query['urut'], self::SORTS, true) ? $query['urut'] : 'terbaru';
         $offset = preg_match('/^\d{1,6}$/', (string) $query['setelah']) === 1 ? (int) $query['setelah'] : 0;
         $product = $this->product($query['produk']);
-        $rows = $branch === null ? [] : $this->rows($viewer, $branch['internal'], $tab, $sort, $product, $offset);
+        $rows = match (true) {
+            $branch === null => [],
+            $tab === 'perlu' => $this->demand($viewer, $branch['internal'], $sort, $product, $offset),
+            default => $this->rows($viewer, $branch['internal'], $tab, $sort, $product, $offset),
+        };
 
         return [
             'branches' => array_map(fn (array $branch): array => array_diff_key($branch, ['internal' => true]), $branches),
@@ -126,6 +131,59 @@ final class Reservations
     }
 
     /**
+     * QS-01's lines (J-INV-02): the branch's confirmed warehouse lines of ACTIVE projects whose demand is not all reserved,
+     * dispatched or cancelled — a line's first "Reservasi" starts here as on PG-011 —, each with what is left to reserve and
+     * its product's availability, in one statement (QB-12).
+     *
+     * @param  ?array{id: int, public_id: string, name: string}  $product
+     * @return list<array<string, mixed>>
+     */
+    private function demand(Authority $viewer, int $company, string $sort, ?array $product, int $offset): array
+    {
+        $left = 'b.demand_qty_base - b.reserved_qty_base - b.dispatched_net_qty_base - b.cancelled_qty_base';
+        $query = $viewer->scope->apply(DB::table('project_lines as l'), 'l.company_id')->where('l.company_id', $company)
+            ->join('projects as p', 'p.id', '=', 'l.project_id')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')
+            ->join('products as d', 'd.id', '=', 'l.product_id')->leftJoin('units as u', 'u.id', '=', 'd.base_unit_id')
+            ->leftJoin('companies as c', 'c.id', '=', 'l.company_id')->leftJoin('stock_product_balances as k', 'k.product_id', '=', 'l.product_id')
+            ->where('p.state', 'ACTIVE')->where('l.fulfillment_mode', 'WAREHOUSE')->whereNotNull('l.current_pin_id')->whereRaw("{$left} > 0");
+
+        if ($product !== null) {
+            $query->where('l.product_id', $product['id']);
+        }
+
+        match ($sort) {
+            'proyek' => $query->orderBy('p.project_number')->orderBy('l.line_no'),
+            'produk' => $query->orderBy('d.name')->orderByDesc('l.id'),
+            default => $query->orderByDesc('l.id'),
+        };
+
+        $reserve = $viewer->allows('stock.reserve', $company);
+        $rows = [];
+
+        foreach ($query->offset($offset)->limit(self::PAGE + 1)->get(['l.id', 'l.line_no', 'p.public_id as project', 'p.project_number', 'p.title', 'd.public_id as product_public_id',
+            'd.name as product', 'u.code as unit', 'c.code as company', DB::raw("{$left} as reservable"), DB::raw('coalesce(k.on_hand_qty - k.reserved_qty - k.unusable_qty, 0) as available')]) as $row) {
+            $rows[] = [
+                'kind' => 'demand',
+                'key' => RowHandle::of('reservation_demand', (int) Row::text($row, 'id')),
+                'handle' => null,
+                'state' => null,
+                'quantity' => Row::text($row, 'reservable'),
+                'available' => Row::text($row, 'available'),
+                'unit' => Row::nullable($row, 'unit') ?? '',
+                'product' => Row::text($row, 'product'),
+                'pool' => Row::text($row, 'product_public_id'),
+                'company' => Row::nullable($row, 'company') ?? '',
+                'project' => ['id' => Row::text($row, 'project'), 'number' => Row::text($row, 'project_number'), 'title' => Row::text($row, 'title'), 'href' => '/proyek/'.Row::text($row, 'project')],
+                'line' => ['no' => (int) Row::text($row, 'line_no'), 'handle' => RowHandle::of('project_lines', (int) Row::text($row, 'id'))],
+                'residual' => false,
+                'may' => ['reserve' => $reserve, 'reduce' => false, 'release' => false],
+            ];
+        }
+
+        return $rows;
+    }
+
+    /**
      * @param  ?array{id: int, public_id: string, name: string}  $product
      * @return list<array<string, mixed>>
      */
@@ -164,6 +222,7 @@ final class Reservations
             // The row's key in the list only — a handle no command resolves.
             $key = RowHandle::of('reservation_rows', (int) Row::text($row, 'id'));
             $rows[] = $seen ? [
+                'kind' => 'reservation',
                 'key' => $key,
                 'handle' => RowHandle::of('reservations', (int) Row::text($row, 'id')),
                 'state' => Row::text($row, 'state'),
@@ -179,6 +238,7 @@ final class Reservations
                 'may' => ['reserve' => $reservable && Row::text($row, 'project_state') === 'ACTIVE', 'reduce' => $reservable, 'release' => $reservable],
             ] : [
                 // Another company's reservation of the pooled product: its quantity and the relation marker, nothing more (PJ-04).
+                'kind' => 'reservation',
                 'key' => $key,
                 'handle' => null,
                 'state' => Row::text($row, 'state'),
