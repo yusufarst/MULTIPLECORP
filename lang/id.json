@@ -2146,5 +2146,7 @@
     "fulfilment.validation.line": "Baris ini tidak ada di proyek. Muat ulang halaman ini.",
     "fulfilment.validation.duplicate": "Baris ini sudah ada di daftar. Satu baris cukup sekali.",
     "fulfilment.refusal.stale": "Proyek ini sudah diubah orang lain sejak halaman dibuka. Muat ulang, periksa barisnya, lalu konfirmasi lagi.",
-    "fulfilment.refusal.split": "Baris proyek ini sudah dipecah dengan Ubah Cara Pemenuhan, dan penawaran tidak memuat baris pecahannya. Persetujuan ini akan membatalkan pemecahan itu, jadi tidak dicatat."
+    "fulfilment.refusal.split": "Baris proyek ini sudah dipecah dengan Ubah Cara Pemenuhan, dan penawaran tidak memuat baris pecahannya. Persetujuan ini akan membatalkan pemecahan itu, jadi tidak dicatat.",
+    "fulfilment.action.spk": "Buat SPK Perusahaan",
+    "fulfilment.action.open_spk": "Buka SPK Perusahaan"
 }

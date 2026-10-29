@@ -3,8 +3,10 @@
 namespace App\Modules\PRJ\Queries;
 
 use App\Modules\DOC\Data\EvidenceTypes;
+use App\Modules\DOC\Services\DocumentAccess;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Services\SpkSubjects;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -98,7 +100,13 @@ final class ProjectFulfilment
                     ],
                 ];
             }, $lines),
-            'can' => ['confirm' => $confirm],
+            'can' => [
+                'confirm' => $confirm,
+                // The company SPK, the confirmation's optional output as its own command (WF-PRJ-02; IP-19): DOC-09 with its issue's capability.
+                'spk' => $confirmation !== null && DocumentAccess::mayIssue($viewer, SpkSubjects::SPK, $company),
+            ],
+            // The project's company SPK already drafted or issued, opened rather than drafted again (ROUTE-221 answers it alike).
+            'spk' => $confirmation === null ? null : self::nullable(DB::table('documents')->where('project_id', $project->id)->where('document_type_code', SpkSubjects::SPK)->orderByDesc('id')->value('public_id')),
             'today' => BusinessDate::today(),
             // The client's order evidence registered for the company (IP-16; TASK-030), the confirmation choosing one (PJ-08).
             'evidence' => $confirm ? array_map(fn (object $row): array => [
@@ -111,5 +119,10 @@ final class ProjectFulfilment
                 ->orderByDesc('id')->limit(100)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date'])
                 ->filter(fn (object $row): bool => EvidenceTypes::mayView($viewer, Row::text($row, 'evidence_type'), $company))->values()->all()) : [],
         ];
+    }
+
+    private static function nullable(mixed $value): ?string
+    {
+        return is_string($value) ? $value : null;
     }
 }

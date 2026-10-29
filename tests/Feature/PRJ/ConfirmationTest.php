@@ -168,6 +168,7 @@ it('issues the company SPK (DOC-09) only for a confirmed project, its lines as p
     Numbering::scheme($this->company, SequenceType::Doc09, "{$year}-01-01", 'YEAR', 'UJI/SPK/{tahun}/{nomor:4}');
     Numbering::started($this->company, SequenceType::Doc09, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
     $issuer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'documents.issue']);
+    $this->actingAs($issuer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('fulfilment.can.spk', false)->where('fulfilment.spk', null));
     $this->actingAs($issuer)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-09', 'subjek' => ['project_id' => $this->project->public_id]])->assertRedirect();
     $document = DB::table('documents')->where('document_type_code', 'DOC-09')->sole();
     $issue = function () use ($issuer, $document) {
@@ -189,6 +190,9 @@ it('issues the company SPK (DOC-09) only for a confirmed project, its lines as p
         ->and($paper['lines'])->toHaveCount(2)
         ->and($paper['recipient']['name'])->toBe($this->client['organization']->name)
         ->and($paper['issuer']['name'])->toBe(DB::table('companies')->where('id', $this->company->id)->value('legal_name'));
+
+    // PG-011 then opens the company SPK rather than drafting another (IP-19).
+    $this->actingAs($issuer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('fulfilment.can.spk', true)->where('fulfilment.spk', $document->public_id));
 });
 
 it('writes a MIGRATION confirmation for an open project carried over through the same step (WF-MIG-01; DATABASE §24)', function () {
@@ -312,4 +316,24 @@ it('refuses a re-plan that would release a reservation without stock.reserve, an
     expect(confirmationAnswer())->toMatchArray(['kind' => 'COMMITTED'])
         ->and(DB::table('line_scope_cancellations')->count())->toBe(2)
         ->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('ACTIVE');
+});
+
+it('allocates a re-plan\'s value from the origin\'s pin, never from a rounded base price (L-21; BR-SN-01; Codex on 5d25532)', function () {
+    $boxed = Projects::product();
+    expect(Projects::create($this->admin->id, $this->company, $this->client, [], null, ['baris' => [[
+        'produk' => $boxed['product']->public_id, 'satuan' => $boxed['box']->code, 'jumlah' => '100', 'harga' => '0.18', 'mode' => 'WAREHOUSE',
+    ]]]))->toStartWith('COMMITTED');
+    $this->project = Project::query()->orderByDesc('id')->firstOrFail();
+    confirmProject($this);
+    $origin = (int) DB::table('project_lines')->where('project_id', $this->project->id)->value('id');
+    DB::table('project_line_balances')->where('project_line_id', $origin)->update(['dispatched_net_qty_base' => '1']);
+
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/ubah-pemenuhan", [
+        'command_id' => (string) Str::uuid(), 'baris' => lineHandle($this, 1), 'cara' => 'DROPSHIP', 'alasan' => 'Pemasok kirim langsung',
+    ]);
+    $values = DB::table('project_lines as l')->join('confirmation_line_pins as p', 'p.id', '=', 'l.current_pin_id')->where('l.project_id', $this->project->id)->orderBy('l.line_no')->pluck('p.sales_value')->all();
+
+    expect(confirmationAnswer())->toMatchArray(['kind' => 'COMMITTED'])
+        ->and($values)->toBe(['0.01', '17.99'])
+        ->and((string) DB::table('project_commercial_balances')->where('project_id', $this->project->id)->value('confirmed_sales_value'))->toBe('18.00');
 });

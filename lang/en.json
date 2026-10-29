@@ -2146,5 +2146,7 @@
     "fulfilment.validation.line": "This line is not in the project. Reload this page.",
     "fulfilment.validation.duplicate": "This line is already in the list. Each line once is enough.",
     "fulfilment.refusal.stale": "Someone else changed this project since the page opened. Reload, check its lines, then confirm again.",
-    "fulfilment.refusal.split": "A line of this project was split by Change Fulfilment Mode, and the quotation does not carry the split line. This approval would undo that split, so it is not recorded."
+    "fulfilment.refusal.split": "A line of this project was split by Change Fulfilment Mode, and the quotation does not carry the split line. This approval would undo that split, so it is not recorded.",
+    "fulfilment.action.spk": "Create Company SPK",
+    "fulfilment.action.open_spk": "Open Company SPK"
 }

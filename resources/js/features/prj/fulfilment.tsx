@@ -46,7 +46,8 @@ export type FulfilmentLine = {
 export type Fulfilment = {
     confirmation: { kind: 'QUOTATION_APPROVAL' | 'NO_QUOTATION' | 'MIGRATION'; business_date: string; decided_by: string | null; reason: string | null; evidence: { id: string; type: string } | null } | null;
     lines: FulfilmentLine[];
-    can: { confirm: boolean };
+    can: { confirm: boolean; spk: boolean };
+    spk: string | null;
     evidence: { id: string; type: string; issuer: string; reference: string | null; date: string }[];
 };
 type Payload = Record<string, string | number | boolean | null | Record<string, string>[]>;
@@ -115,6 +116,8 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
     const confirm = useCommand<Payload>(() => `/proyek/${projectId}/konfirmasi`, 'post');
     const cancel = useCommand<Payload>(() => `/proyek/${projectId}/batalkan-sisa`, 'post');
     const replan = useCommand<Payload>(() => `/proyek/${projectId}/ubah-pemenuhan`, 'post');
+    // The company SPK, the confirmation's optional output as its own command (WF-PRJ-02; IP-19): ROUTE-221 drafts it and opens its composer.
+    const spk = useCommand<Record<string, string | Record<string, string>>>(() => '/dokumen', 'post');
     const [confirming, setConfirming] = useState(false);
     const [evidence, setEvidence] = useState(fulfilment.evidence[0]?.id ?? '');
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
@@ -124,7 +127,7 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
     const [mode, setMode] = useState<Mode>('DROPSHIP');
     const [reason, setReason] = useState('');
     // A success shows once, as the page's answer (PageAnswer); a refusal or an unknown outcome shows here (IP-01; IP-03).
-    const answers = [confirm, cancel, replan].map((command, index) => (command.answer === null || command.answer.kind === 'COMMITTED' ? null : <OutcomeMessage key={index} answer={command.answer} />));
+    const answers = [confirm, cancel, replan, spk].map((command, index) => (command.answer === null || command.answer.kind === 'COMMITTED' ? null : <OutcomeMessage key={index} answer={command.answer} />));
     const confirmation = fulfilment.confirmation;
 
     return title(
@@ -153,6 +156,19 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
                         <DateText value={confirmation.business_date} />
                         {confirmation.decided_by !== null && ` · ${t('fulfilment.decided_by', { nama: confirmation.decided_by })}`}
                     </p>
+                    {fulfilment.can.spk && (
+                        <div className="flex flex-wrap gap-2">
+                            {fulfilment.spk === null ? (
+                                <Button variant="outline" pending={spk.pending} onClick={() => { spk.submit({ jenis: 'DOC-09', subjek: { project_id: projectId } }); }}>
+                                    {t('fulfilment.action.spk')}
+                                </Button>
+                            ) : (
+                                <Button variant="outline" render={<a href={`/dokumen/${fulfilment.spk}`} />}>
+                                    {t('fulfilment.action.open_spk')}
+                                </Button>
+                            )}
+                        </div>
+                    )}
                     {confirmation.evidence !== null && (
                         <a href={`/dokumen/bukti?bukti=${confirmation.evidence.id}`} className="text-body text-accent-link underline underline-offset-2">
                             {t(evidenceName(confirmation.evidence.type))}

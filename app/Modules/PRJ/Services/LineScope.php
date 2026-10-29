@@ -183,12 +183,13 @@ final class LineScope
         $confirmation = is_object($created) ? (int) Row::text($created, 'id') : 0;
         $columns = 'commercial_confirmation_id, company_id, project_line_id, product_id, quantity_scale, description, entered_qty, entered_unit_id, ratio_to_base, '
             .'qty_base, unit_price, sales_value, tax_components, command_id, command_line_no, recorded_at';
-        // The new line: its own quantity and price, its value from them, the origin pin's tax in proportion to that value.
+        // The new line: its quantity and price, its value the remainder's share of the origin's pinned value in exact arithmetic,
+        // rounded once — the residual stays on the origin, never a value the price's rounding moved —, the tax in proportion to it.
         DB::insert('insert into confirmation_line_pins ('.$columns.') '.<<<'SQL'
             select ?, l.company_id, l.id, l.product_id, l.quantity_scale, l.description, l.entered_qty, l.entered_unit_id, l.ratio_to_base, l.qty_base, l.unit_price,
-                round(l.entered_qty * l.unit_price, 2),
-                coalesce((select jsonb_agg(c || jsonb_build_object('base', round(l.entered_qty * l.unit_price, 2)::text,
-                    'amount', round((c->>'amount')::numeric * round(l.entered_qty * l.unit_price, 2) / nullif(p.sales_value, 0), 2)::text) order by n)
+                round(p.sales_value * l.qty_base / nullif(p.qty_base, 0), 2),
+                coalesce((select jsonb_agg(c || jsonb_build_object('base', round(p.sales_value * l.qty_base / nullif(p.qty_base, 0), 2)::text,
+                    'amount', round((c->>'amount')::numeric * l.qty_base / nullif(p.qty_base, 0), 2)::text) order by n)
                     from jsonb_array_elements(p.tax_components) with ordinality as t(c, n)), '[]'::jsonb),
                 ?, 1, ?
             from project_lines l join project_lines o on o.id = l.split_from_line_id join confirmation_line_pins p on p.id = o.current_pin_id

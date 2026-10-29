@@ -7554,6 +7554,18 @@
             "source": "L-21; BR-QUO-02",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "fulfilment.action.spk": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02 optional output; DOC-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "fulfilment.action.open_spk": {
+            "task": "TASK-034",
+            "source": "WF-PRJ-02 optional output; DOC-09",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
