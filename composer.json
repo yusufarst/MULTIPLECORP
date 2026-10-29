@@ -6,6 +6,7 @@
     "license": "proprietary",
     "require": {
         "php": "^8.3",
+        "brick/math": "^1.0",
         "inertiajs/inertia-laravel": "^3.5",
         "laravel/fortify": "^1.41",
         "laravel/framework": "^13.17",
