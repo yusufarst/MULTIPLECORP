@@ -235,7 +235,10 @@ final class CostWorld
         $line = (int) ReceivingLine::query()->findOrFail($row->receiving_line_id)->purchase_line_id;
         $purchase = (int) PurchaseLine::query()->findOrFail($line)->purchase_id;
         $this->expect($this->run(CostPosting::purchaseLocks($purchase), function (CommandContext $context) use ($lot, $qty, $line): void {
-            $movement = StockMovementFactory::post('RECEIPT_REVERSAL', $this->company->id);
+            // The reversal names the receipt it reverses (C-55).
+            $receipt = (int) ReceivingLine::query()->findOrFail(InventoryLot::query()->findOrFail($lot)->receiving_line_id)->stock_movement_id;
+            $movement = StockMovementFactory::new()->createOne(['movement_type' => 'RECEIPT_REVERSAL', 'company_id' => $this->company->id,
+                'reverses_movement_id' => $receipt, 'reverses_movement_type' => 'RECEIPT'])->id;
             $this->entry($lot, $movement, 'RECEIPT_REVERSAL', '-'.$qty);
             $this->moveLine($context, $line, ['normal_received_net_qty_base' => '-'.$qty]);
             $this->posted($context, $line, app(CostPosting::class)->reverseReceipt($context, $lot, $qty, BusinessDate::today()));
