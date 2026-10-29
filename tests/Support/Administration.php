@@ -95,10 +95,10 @@ final class Administration
         return (string) DB::table('document_renditions as r')->join('file_objects as f', 'f.id', '=', 'r.file_object_id')->where('r.document_version_id', $version->id)->value('f.sha256');
     }
 
-    /** A company evidence of the type whose current version's file has the digest, by default a unique upload. */
-    public static function evidence(Company $company, string $type = 'CLIENT_SPK', ?string $sha256 = null): EvidenceDocument
+    /** A company evidence of the type whose current version's file has the digest, by default a unique upload, from its issuer. */
+    public static function evidence(Company $company, string $type = 'CLIENT_SPK', ?string $sha256 = null, ?string $issuer = null): EvidenceDocument
     {
-        $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $company->id, 'evidence_type' => $type]);
+        $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $company->id, 'evidence_type' => $type, ...($issuer === null ? [] : ['declared_issuer' => $issuer])]);
         $file = FileObjectFactory::new()->createOne(['company_id' => $company->id, 'sha256' => $sha256 ?? hash('sha256', 'unggahan-'.Str::uuid())]);
         $version = EvidenceDocumentVersionFactory::new()->createOne(['evidence_document_id' => $evidence->id, 'file_object_id' => $file->id]);
         DB::table('evidence_documents')->where('id', $evidence->id)->update(['current_version_id' => $version->id]);

@@ -8178,6 +8178,18 @@
             "source": "WF-ADM-01",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "adm.field.evidence_search": {
+            "task": "TASK-035",
+            "source": "PT-27; IP-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.evidence_search_help": {
+            "task": "TASK-035",
+            "source": "PT-27; IP-17",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

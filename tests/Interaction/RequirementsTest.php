@@ -69,6 +69,15 @@ it('adds, tightens and links once each, every replay answering its recorded outc
     $link = ['command_id' => (string) Str::uuid(), 'dokumen' => Administration::publicIdOf($version)];
     expect(requirementSentTwice($this, "{$this->path}/".Administration::handle($item).'/tautkan', $link))->toBe(Outcome::COMMITTED.' '.Outcome::COMMITTED)
         ->and(DB::table('admin_requirement_links')->where('admin_requirement_id', $item)->count())->toBe(1);
+
+    // Its response lost and the document since voided, the replay still answers the recorded outcome (CI-05).
+    DB::table('document_versions')->where('id', $version->id)->update(['state' => 'VOIDED', 'voided_by' => $this->admin->id, 'voided_at' => now(), 'voided_reason' => 'Salah pihak']);
+    $this->actingAs($this->admin)->post("{$this->path}/".Administration::handle($item).'/tautkan', $link);
+    expect(requirementInteractionAnswer()['kind'] ?? null)->toBe(Outcome::COMMITTED)
+        ->and(DB::table('admin_requirement_links')->where('admin_requirement_id', $item)->count())->toBe(1);
+    // A fresh link of the voided version is refused in place (BR-ADM-01).
+    $this->actingAs($this->admin)->post("{$this->path}/".Administration::handle($item).'/tautkan', [...$link, 'command_id' => (string) Str::uuid()]);
+    expect(requirementInteractionAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'BR-ADM-01']);
 });
 
 it('marks Tidak Berlaku, sets eligibility, relaxes and supersedes once each, every replay its recorded outcome (INT-166–INT-169; CI-05)', function () {

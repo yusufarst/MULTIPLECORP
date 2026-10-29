@@ -13,6 +13,7 @@ use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -28,6 +29,8 @@ use Illuminate\Support\Facades\DB;
  *
  * It also resolves what the commands name — a requirement or a decision by the handle the page showed, a document or
  * an evidence by public identifier — among the project's own rows, an unknown one alike to a hidden one (AZ-11).
+ *
+ * @phpstan-import-type Item from Readiness
  */
 final class ProjectChecklist implements ReadinessProvider
 {
@@ -36,7 +39,7 @@ final class ProjectChecklist implements ReadinessProvider
         private readonly EvidenceList $evidence,
     ) {}
 
-    public function checklist(int $viewerId, ProjectRef $project): ?array
+    public function checklist(int $viewerId, ProjectRef $project, ?string $evidenceTerm = null): ?array
     {
         $viewer = $this->capabilities->for($viewerId);
         $company = $project->companyId;
@@ -85,7 +88,7 @@ final class ProjectChecklist implements ReadinessProvider
         return [
             'items' => $rows,
             'can' => $can,
-            'options' => $can['manage'] ? $this->options($viewer, $project) : null,
+            'options' => $can['manage'] ? $this->options($viewer, $project, $items, $evidenceTerm) : null,
         ];
     }
 
@@ -146,14 +149,19 @@ final class ProjectChecklist implements ReadinessProvider
         return null;
     }
 
-    /** The issued version of a document of the project the viewer may open, by the document's public identifier (PJ-15; CS-04). */
+    /**
+     * A version of a document of the project the viewer may open, by the document's public identifier (PJ-15; CS-04):
+     * its issued version, else its latest — the document's identity resolved whatever its state, so a replayed link
+     * reaches its recorded outcome after a void (CI-05), the issue itself checked by the command under the lock (NX-03).
+     */
     public function versionOf(int $viewerId, ProjectRef $project, string $documentPublicId): ?int
     {
         $viewer = $this->capabilities->for($viewerId);
         $row = DB::table('documents as d')->join('document_versions as v', 'v.document_id', '=', 'd.id')
-            ->where('d.public_id', strtolower($documentPublicId))->where('d.company_id', $project->companyId)->where('v.state', 'ISSUED')
+            ->where('d.public_id', strtolower($documentPublicId))->where('d.company_id', $project->companyId)
             // A document of another project never satisfies this one's checklist (BR-ADM-01).
             ->whereRaw(DocumentProjects::SQL.' = ?', [$project->id])
+            ->orderByRaw("(v.state = 'ISSUED') desc")->orderByDesc('v.version_no')
             ->first(['v.id', 'd.document_type_code']);
 
         return is_object($row) && DocumentAccess::mayViewContent($viewer, Row::text($row, 'document_type_code'), $project->companyId) ? (int) Row::text($row, 'id') : null;
@@ -167,7 +175,8 @@ final class ProjectChecklist implements ReadinessProvider
 
     /**
      * Each item's active links as the viewer may see them, and whether an evidence it links reproduces a rendition the
-     * viewer may see (FS-12; IP-16).
+     * viewer may see in that rendition's own company (FS-12; IP-16; PJ-15) — the authenticity itself judged against every
+     * company's renditions by {@see Readiness}.
      *
      * @param  list<int>  $ids
      * @return array<int, array{rows: list<array<string, mixed>>, reproduction: bool}>
@@ -188,9 +197,9 @@ final class ProjectChecklist implements ReadinessProvider
             ->selectRaw(<<<'SQL'
                 l.admin_requirement_id, d.public_id as document, d.document_type_code, v.formatted_number, v.state as version_state,
                 e.public_id as evidence, e.evidence_type, e.declared_issuer,
-                (select rd.document_type_code from file_objects g join document_renditions dr on dr.file_object_id = g.id
-                    join document_versions rv on rv.id = dr.document_version_id join documents rd on rd.id = rv.document_id
-                    where g.purpose = 'RENDITION' and g.sha256 = f.sha256 limit 1) as reproduces
+                (select string_agg(distinct rv.company_id || ':' || rv.document_type_code, ',') from file_objects g
+                    join document_renditions dr on dr.file_object_id = g.id join document_versions rv on rv.id = dr.document_version_id
+                    where g.purpose = 'RENDITION' and g.sha256 = f.sha256) as reproduces
                 SQL)
             ->get();
         $links = [];
@@ -212,10 +221,12 @@ final class ProjectChecklist implements ReadinessProvider
             $visible = EvidenceTypes::mayView($viewer, $type, $company);
             $links[$requirement]['rows'][] = ['kind' => 'evidence', 'id' => $visible ? Row::text($row, 'evidence') : null, 'type' => $type,
                 'issuer' => $visible ? Row::nullable($row, 'declared_issuer') : null];
-            $reproduces = Row::nullable($row, 'reproduces');
+            foreach (explode(',', Row::nullable($row, 'reproduces') ?? '') as $rendition) {
+                [$owner, $renditionType] = array_pad(explode(':', $rendition, 2), 2, '');
 
-            if ($reproduces !== null && DocumentAccess::mayViewContent($viewer, $reproduces, $company)) {
-                $links[$requirement]['reproduction'] = true;
+                if (is_numeric($owner) && DocumentAccess::mayViewContent($viewer, $renditionType, (int) $owner)) {
+                    $links[$requirement]['reproduction'] = true;
+                }
             }
         }
 
@@ -257,11 +268,14 @@ final class ProjectChecklist implements ReadinessProvider
 
     /**
      * What a new requirement and a link choose from: the catalogue's document types and the evidence types; the
-     * project's documents with an issued version the viewer may open, and the company's evidence the viewer may see.
+     * project's documents with an issued version the viewer may open, and the company's evidence the viewer may see of
+     * the types its open items take — newest first, or matched by issuer or number when the link dialog searches, so an
+     * older record stays reachable (PT-27; IP-17).
      *
+     * @param  list<Item>  $items
      * @return array<string, mixed>
      */
-    private function options(Authority $viewer, ProjectRef $project): array
+    private function options(Authority $viewer, ProjectRef $project, array $items, ?string $term): array
     {
         $company = $project->companyId;
         $documents = DB::table('documents as d')->join('document_versions as v', 'v.document_id', '=', 'd.id')
@@ -270,7 +284,14 @@ final class ProjectChecklist implements ReadinessProvider
             ->filter(fn (object $row): bool => DocumentAccess::mayViewContent($viewer, Row::text($row, 'document_type_code'), $company))
             ->map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'document_type_code'), 'number' => Row::nullable($row, 'formatted_number')])
             ->values()->all();
-        $evidence = DB::table('evidence_documents')->where('company_id', $company)->orderByDesc('id')->limit(100)
+        $open = array_filter($items, fn (array $item): bool => ! $item['default_invoice'] && $item['mode'] !== 'GENERATED' && ! in_array($item['status'], Readiness::MET, true));
+        $types = array_values(array_unique(array_map(fn (array $item): ?string => $item['evidence_type'], $open)));
+        $term = trim(mb_substr($term ?? '', 0, 100));
+        $pattern = '%'.addcslashes($term, '%_'.chr(92)).'%';
+        $evidence = DB::table('evidence_documents')->where('company_id', $company)
+            ->when(! in_array(null, $types, true), fn (Builder $query) => $query->whereIn('evidence_type', $types))
+            ->when($term !== '', fn (Builder $query) => $query->where(fn (Builder $match) => $match->where('declared_issuer', 'ilike', $pattern)->orWhere('issuer_reference', 'ilike', $pattern)))
+            ->orderByDesc('id')->limit(100)
             ->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date'])
             ->filter(fn (object $row): bool => EvidenceTypes::mayView($viewer, Row::text($row, 'evidence_type'), $company))
             ->map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'evidence_type'), 'issuer' => Row::text($row, 'declared_issuer'),
@@ -281,7 +302,8 @@ final class ProjectChecklist implements ReadinessProvider
             'document_types' => array_values(array_map(fn (mixed $code): string => is_string($code) ? $code : '', DB::table('document_types')->orderBy('code')->pluck('code')->all())),
             'evidence_types' => $this->evidenceTypes(),
             'documents' => $documents,
-            'evidence' => $evidence,
+            'evidence' => $open === [] ? [] : $evidence,
+            'evidence_term' => $term,
         ];
     }
 }

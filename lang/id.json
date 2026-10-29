@@ -2250,5 +2250,7 @@
     "projects.item.requirements_external": ":jumlah dokumen pihak luar wajib belum terpenuhi",
     "projects.item.requirements_other": ":jumlah persyaratan wajib lain belum terpenuhi",
     "projects.item.requirements_invoice": "Invoice belum mencakup seluruh nilai terkonfirmasi",
-    "adm.refusal.waivable": "Persyaratan wajib yang boleh ditandai Tidak Berlaku ditangani dengan Tandai Tidak Berlaku, bukan dihapus."
+    "adm.refusal.waivable": "Persyaratan wajib yang boleh ditandai Tidak Berlaku ditangani dengan Tandai Tidak Berlaku, bukan dihapus.",
+    "adm.field.evidence_search": "Cari bukti",
+    "adm.field.evidence_search_help": "Penerbit atau nomor dokumen"
 }

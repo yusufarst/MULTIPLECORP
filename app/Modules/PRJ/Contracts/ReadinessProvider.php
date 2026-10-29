@@ -15,9 +15,10 @@ interface ReadinessProvider
     public const TAG = 'prj.readiness-providers';
 
     /**
-     * The project's checklist as the viewer may see it, or null when the viewer may see none.
+     * The project's checklist as the viewer may see it, or null when the viewer may see none; `evidenceTerm` narrows the
+     * evidence a link chooses from (PT-27).
      *
      * @return ?array<string, mixed>
      */
-    public function checklist(int $viewerId, ProjectRef $project): ?array;
+    public function checklist(int $viewerId, ProjectRef $project, ?string $evidenceTerm = null): ?array;
 }

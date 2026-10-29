@@ -205,13 +205,13 @@ final class ProjectWorkspace
      *
      * @return array{rows: list<array<string, mixed>>, more: bool, checklist: ?array<string, mixed>}
      */
-    public function documents(int $viewerId, Project $project): array
+    public function documents(int $viewerId, Project $project, ?string $evidenceTerm = null): array
     {
         $checklist = null;
 
         foreach ($this->app->tagged(ReadinessProvider::TAG) as $provider) {
             if ($provider instanceof ReadinessProvider) {
-                $checklist = $provider->checklist($viewerId, new ProjectRef($project->id, $project->company_id, $project->public_id)) ?? $checklist;
+                $checklist = $provider->checklist($viewerId, new ProjectRef($project->id, $project->company_id, $project->public_id), $evidenceTerm) ?? $checklist;
             }
         }
 

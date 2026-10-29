@@ -101,7 +101,8 @@ it('keeps a checklist per project, each status derived from its links and record
     // A draft of its document prepares the item and never satisfies it, nor can it be linked (architecture challenge 15b).
     $draft = Administration::document($this->project, 'DOC-09', null, false);
     expect(Administration::status($this->project, (int) $mine->id))->toBe(Readiness::PREPARED);
-    admPost($this, (int) $mine->id, 'tautkan', ['dokumen' => Administration::publicIdOf($draft)])->assertSessionHasErrors('dokumen');
+    admPost($this, (int) $mine->id, 'tautkan', ['dokumen' => Administration::publicIdOf($draft)]);
+    expect(admAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'BR-ADM-01'])->and(DB::table('admin_requirement_links')->count())->toBe(0);
 
     // An issued version whose rendition is still pending is linked yet does not satisfy until rendered.
     $issued = Administration::document($this->project, 'DOC-09', 'PENDING');
@@ -412,4 +413,32 @@ it('keeps the default invoice item open while the invoiced value exceeds the con
     ]);
     expect(admAnswer())->toMatchArray(['kind' => 'COMMITTED'])
         ->and(Administration::status($this->project, $invoice))->toBe(Readiness::MISSING);
+});
+
+it('tells why a client original stays open only to a viewer of the matched rendition\'s own company and family (PJ-15; SM-23)', function () {
+    $item = Administration::requirement($this->project, ['requirement_kind' => 'EXTERNAL_DOCUMENT', 'document_type_code' => null, 'evidence_type' => 'CLIENT_SPK',
+        'satisfaction_mode' => 'UPLOADED', 'requires_client_original' => true]);
+    $foreign = Projects::company();
+    $rendition = Administration::document(Administration::project(Authorization::admin([$foreign->id], ['projects.view', 'projects.manage', 'finance.view'])->id, $foreign));
+    admPost($this, $item, 'tautkan', ['bukti' => Administration::evidence($this->company, 'CLIENT_SPK', Administration::renditionDigest($rendition))->public_id]);
+
+    // The upload reproduces another company's rendition: open for everyone, its reason only for that company's viewers.
+    expect(Administration::status($this->project, $item))->toBe(Readiness::MISSING)
+        ->and(admChecklist($this)['items'][0]['reproduction'])->toBeFalse();
+    Authorization::grantCompany($this->admin, $foreign->id);
+    Authorization::forget();
+    expect(admChecklist($this)['items'][0]['reproduction'])->toBeTrue();
+});
+
+it('offers the evidence of the types its open items take, searchable by issuer or number (PT-27; IP-17)', function () {
+    Administration::requirement($this->project, ['requirement_kind' => 'EXTERNAL_DOCUMENT', 'document_type_code' => null, 'evidence_type' => 'CLIENT_SPK', 'satisfaction_mode' => 'UPLOADED']);
+    $old = Administration::evidence($this->company, 'CLIENT_SPK', null, 'SMA Lama Sekali');
+    $new = Administration::evidence($this->company, 'CLIENT_SPK');
+    $tax = Administration::evidence($this->company, 'NPWP');
+    $offered = fn (?string $term = null): array => collect(app(ProjectWorkspace::class)->documents($this->admin->id, $this->project, $term)['checklist']['options']['evidence'])->pluck('id')->all();
+
+    expect($offered())->toBe([$new->public_id, $old->public_id])
+        ->and($offered())->not->toContain($tax->public_id)
+        ->and($offered('lama sek'))->toBe([$old->public_id])
+        ->and($offered('100%_'))->toBe([]);
 });

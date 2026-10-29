@@ -5,7 +5,8 @@
 // Berlaku* with MSG-40's reason (ROUTE-166; IP-09); the Owner's eligibility, relaxation and removal (ROUTE-167,
 // ROUTE-168) and the correction of a waiver (ROUTE-169; CM-27) appear only with their capabilities (J-ADM-01; NV-08),
 // the server deciding either way (AZ-01).
-import { useState } from 'react';
+import { router } from '@inertiajs/react';
+import { useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { FormField } from '@/components/form';
@@ -14,6 +15,7 @@ import { RegionEmpty } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Textarea } from '@/components/ui/textarea';
 import { Code, DateTimeText } from '@/components/values';
@@ -49,6 +51,8 @@ type Options = {
     evidence_types: string[];
     documents: { id: string; type: string; number: string | null }[];
     evidence: { id: string; type: string; issuer: string; reference: string | null; date: string }[];
+    /** The search the evidence was narrowed by (PT-27), '' for the newest. */
+    evidence_term?: string;
 };
 export type Checklist = {
     items: Requirement[];
@@ -220,6 +224,17 @@ export function RequirementCommands({ projectId, action, options, onClose }: { p
     const [draft, setDraft] = useState<Draft>(blankDraft(options));
     const [reason, setReason] = useState('');
     const [shown, setShown] = useState<Action | null>(null);
+    // The evidence a link offers, narrowed on the server by issuer or number through the documents group's reload (PT-27; IP-17).
+    const [term, setTerm] = useState(options?.evidence_term ?? '');
+    const searching = useRef<number | null>(null);
+    const findEvidence = (text: string) => {
+        setTerm(text);
+
+        if (searching.current !== null) window.clearTimeout(searching.current);
+        searching.current = window.setTimeout(() => {
+            router.reload({ only: ['documents'], data: { cari_bukti: text.trim() }, preserveUrl: true });
+        }, 300);
+    };
     const set = (patch: Partial<Draft>) => { setDraft((current) => ({ ...current, ...patch })); };
 
     // A newly opened dialog starts from the item it acts on; an open one keeps its input (NV-02).
@@ -319,6 +334,11 @@ export function RequirementCommands({ projectId, action, options, onClose }: { p
                 items={
                     <div className="flex min-w-0 flex-col gap-4">
                         {item !== null && <p className="font-semibold text-text-primary">{name(item)}</p>}
+                        {takesEvidence && options !== null && (
+                            <FormField label={t('adm.field.evidence_search')} help={t('adm.field.evidence_search_help')}>
+                                {(control) => <Input {...control} type="search" value={term} maxLength={100} onChange={(event) => { findEvidence(event.target.value); }} />}
+                            </FormField>
+                        )}
                         {targets.length === 0 ? (
                             <p className="text-body text-text-secondary">{t('adm.link.none')}</p>
                         ) : (
