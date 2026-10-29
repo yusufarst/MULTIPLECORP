@@ -19,6 +19,7 @@ use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\INV\Http\Controllers\LocationsController;
+use App\Modules\INV\Http\Controllers\ReservationsController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
@@ -127,6 +128,12 @@ Route::post('/proyek/{id}/penawaran/jawaban', [QuotationsController::class, 'ans
 // `command_id` (CI-01).
 Route::get('/data-master/lokasi-rak', [LocationsController::class, 'show'])->middleware(['auth', 'capability:stock.view'])->name('inv.locations');
 Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->middleware(['auth', 'capability:warehouse.manage'])->name('inv.locations.save');
+
+// TASK-038 — PG-025 *Reservasi* and its commands (WF-INV-02; AX-01; AX-02): ROUTE-025, ROUTE-184 and ROUTE-185, `stock.reserve`
+// with its prerequisites `stock.view` and `projects.view` (PERMISSIONS_MATRIX §4).
+Route::get('/gudang/reservasi', [ReservationsController::class, 'index'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations');
+Route::post('/gudang/reservasi', [ReservationsController::class, 'store'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reserve');
+Route::post('/gudang/reservasi/{id}/kurangi', [ReservationsController::class, 'reduce'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reduce');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),

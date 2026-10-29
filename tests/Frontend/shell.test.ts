@@ -51,6 +51,16 @@ void test('RC-06: an entry whose page is not built is absent', () => {
     assert.deepEqual(keys(present(MODULES, owner, new Set(['PG-015']))), ['pembelian']);
 });
 
+void test('§5.3: *Gudang* opens on *Reservasi* while *Stok* is not built, only for `stock.reserve` with a company (TASK-038)', () => {
+    const reserver = account('stock.view', 'projects.view', 'stock.reserve');
+    const built = new Set(['PG-025']);
+
+    assert.deepEqual(present(MODULES, reserver, built).filter((entry) => entry.key === 'gudang').map((entry) => entry.href), ['/gudang/reservasi']);
+    assert.deepEqual(keys(present(MODULES, bayu, built)), []);
+    assert.deepEqual(keys(present(MODULES, { ...reserver, companies: [] }, built)), []);
+    assert.equal(present(MODULES, reserver, new Set(['PG-018', 'PG-025'])).find((entry) => entry.key === 'gudang')?.href, '/gudang/stok');
+});
+
 void test('§6.1: the current entry by the address\'s first segment', () => {
     assert.equal(currentKey(present(MODULES, owner, ALL), '/gudang/barang-masuk/01a1'), 'gudang');
     assert.equal(currentKey(primaryEntries(owner, ALL), '/proyek/01a1/penyelesaian'), 'proyek');

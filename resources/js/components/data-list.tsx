@@ -14,7 +14,8 @@ import { cn } from '@/lib/utils';
 // PT-05, PT-06 and PT-08 (DESIGN_SYSTEM §9.2, §10 "Data table and row list"): one data set — a table from 768 px,
 // dense rows on the phone —, a position number on every record list continuing across "Muat Lagi" (GR-08); the
 // first column the record's number as a link; numbers right-aligned in tabular figures; secondary row actions in
-// "⋯"; a row click or Enter opens the record, the arrow keys move between rows (KB-05). No total row, page number,
+// "⋯"; a row click or Enter opens the record, the arrow keys move between rows (KB-05); a row the viewer may not open —
+// another company's record shown by its relation marker (PJ-04) — has no link. No total row, page number,
 // "x dari y", page-size choice, selection checkboxes, column resizing or inline editing (PF-15; PF-17).
 export const PAGE_SIZE = 25;
 
@@ -42,7 +43,7 @@ export function DataTable<Row>({
     columns: Column<Row>[];
     rows: Row[];
     rowKey: (row: Row) => string;
-    rowHref: (row: Row) => string;
+    rowHref: (row: Row) => string | null;
     rowActions?: (row: Row) => MenuAction[];
     positionStart?: number;
 }) {
@@ -104,7 +105,7 @@ export function DataTable<Row>({
                         <TableRow
                             key={rowKey(row)}
                             tabIndex={index === 0 ? 0 : -1}
-                            className="cursor-pointer"
+                            className={cn(href !== null && 'cursor-pointer')}
                             onKeyDown={move}
                             onClick={(event) => {
                                 if ((event.target as HTMLElement).closest('a, button, [role=menu]') === null) {
@@ -117,7 +118,7 @@ export function DataTable<Row>({
                             </TableCell>
                             {columns.map((column, at) => (
                                 <TableCell key={column.key} numeric={column.numeric} className={cn(column.priority === 'low' && 'max-lg:hidden')}>
-                                    {at === 0 ? (
+                                    {at === 0 && href !== null ? (
                                         <Link href={href} data-row-link data-code tabIndex={-1} className="font-medium whitespace-nowrap text-text-primary underline-offset-2 hover:underline">
                                             {column.cell(row)}
                                         </Link>
@@ -159,7 +160,7 @@ export function RowMenu({ actions }: { actions: MenuAction[] }) {
     );
 }
 
-export type DenseRow = { key: string; href: string; title: ReactNode; figure?: ReactNode; secondary?: ReactNode; status?: ReactNode };
+export type DenseRow = { key: string; href: string | null; title: ReactNode; figure?: ReactNode; secondary?: ReactNode; status?: ReactNode };
 
 /** PT-06: rows of at least 60 px, two lines — the identifier with the key figure, the muted facts with the status. */
 export function RowList({ label, rows, positionStart = 1 }: { label: string; rows: DenseRow[]; positionStart?: number }) {
@@ -167,7 +168,7 @@ export function RowList({ label, rows, positionStart = 1 }: { label: string; row
         <ol aria-label={label} start={positionStart} className="flex min-w-0 flex-col divide-y divide-border-subtle">
             {rows.map((row, index) => (
                 <li key={row.key}>
-                    <Link href={row.href} className="flex min-h-row min-w-0 items-start gap-3 py-3 outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus">
+                    <DenseLink href={row.href}>
                         <span aria-hidden className="w-control-xs shrink-0 pt-px text-right text-m-meta text-text-tertiary tabular-nums">
                             {positionStart + index}
                         </span>
@@ -185,10 +186,22 @@ export function RowList({ label, rows, positionStart = 1 }: { label: string; row
                                 </span>
                             )}
                         </span>
-                    </Link>
+                    </DenseLink>
                 </li>
             ))}
         </ol>
+    );
+}
+
+function DenseLink({ href, children }: { href: string | null; children: ReactNode }) {
+    const layout = 'flex min-h-row min-w-0 items-start gap-3 py-3';
+
+    return href === null ? (
+        <div className={layout}>{children}</div>
+    ) : (
+        <Link href={href} className={cn(layout, 'outline-none hover:bg-row-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus')}>
+            {children}
+        </Link>
     );
 }
 

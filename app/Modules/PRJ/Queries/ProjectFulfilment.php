@@ -10,6 +10,7 @@ use App\Modules\PRJ\Services\SpkSubjects;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Brick\Math\BigDecimal;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
@@ -56,6 +57,7 @@ final class ProjectFulfilment
             ->whereIn('pu.product_id', DB::table('project_lines')->where('project_id', $project->id)->select('product_id'))
             ->pluck('u.code', 'pu.product_id')->all();
         $active = in_array($project->state, ['DRAFT', 'ACTIVE'], true);
+        $running = $project->state === 'ACTIVE';
         // "Konfirmasi Proyek" without a quotation: an ACTIVE project not yet confirmed, its quotation not sent or approved (WF-PRJ-02).
         $quotation = DB::table('quotation_revisions')->where('project_id', $project->id)->orderByDesc('revision_no')->value('state');
         $confirm = $confirmation === null && $project->state === 'ACTIVE' && ! in_array($quotation, ['SENT', 'APPROVED'], true)
@@ -70,7 +72,7 @@ final class ProjectFulfilment
                 'evidence' => Row::nullable($confirmation, 'evidence') === null || ! EvidenceTypes::mayView($viewer, Row::text($confirmation, 'evidence_type'), $company)
                     ? null : ['id' => Row::text($confirmation, 'evidence'), 'type' => Row::text($confirmation, 'evidence_type')],
             ],
-            'lines' => array_map(function (object $line) use ($money, $stock, $base, $active, $viewer, $company): array {
+            'lines' => array_map(function (object $line) use ($money, $stock, $base, $active, $running, $viewer, $company): array {
                 $open = ($line->open ?? false) === true;
 
                 return [
@@ -93,7 +95,14 @@ final class ProjectFulfilment
                     'split_from' => Row::nullable($line, 'split_from') === null ? null : (int) Row::text($line, 'split_from'),
                     ...($stock ? ['available' => Row::text($line, 'available')] : []),
                     ...($money ? ['price' => Row::text($line, 'unit_price'), 'value' => Row::text($line, 'sales_value')] : []),
+                    // What a reservation may still bind (L-04): demand less reserved, dispatched and cancelled — INV re-reads it at commit.
+                    'reservable' => (string) BigDecimal::of(Row::text($line, 'demand_qty_base'))->minus(Row::text($line, 'reserved_qty_base'))
+                        ->minus(Row::text($line, 'dispatched_net_qty_base'))->minus(Row::text($line, 'cancelled_qty_base')),
                     'can' => [
+                        // "Reservasi" (ROUTE-184; J-FUL-01) on a confirmed warehouse line of an ACTIVE project with room left, for a holder of the stock family.
+                        'reserve' => $running && Row::text($line, 'fulfillment_mode') === 'WAREHOUSE' && $stock && $viewer->allows('stock.reserve', $company)
+                            && BigDecimal::of(Row::text($line, 'demand_qty_base'))->minus(Row::text($line, 'reserved_qty_base'))->minus(Row::text($line, 'dispatched_net_qty_base'))
+                                ->minus(Row::text($line, 'cancelled_qty_base'))->isPositive(),
                         'cancel' => $active && $open && $viewer->allows('projects.cancel_scope', $company),
                         'replan' => $active && $open && Row::text($line, 'kind') === 'GOODS' && $viewer->allows('projects.manage', $company)
                             && (preg_match('/^0+(\.0+)?$/', Row::text($line, 'reserved_qty_base')) === 1 || $viewer->allows('stock.reserve', $company)),

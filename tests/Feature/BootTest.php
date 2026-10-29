@@ -26,6 +26,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD proyek', 'GET|HEAD proyek/baru', 'POST proyek', 'GET|HEAD proyek/{id}', 'GET|HEAD proyek/{id}/ubah', 'PUT proyek/{id}', 'POST proyek/{id}/hapus-draf', 'POST proyek/{id}/konfirmasi', 'POST proyek/{id}/batalkan-sisa', 'POST proyek/{id}/ubah-pemenuhan',
         'GET|HEAD proyek/{id}/penawaran', 'POST proyek/{id}/penawaran', 'POST proyek/{id}/penawaran/terbitkan', 'POST proyek/{id}/penawaran/revisi', 'POST proyek/{id}/penawaran/jawaban',
         'GET|HEAD data-master/lokasi-rak', 'POST data-master/lokasi-rak',
+        'GET|HEAD gudang/reservasi', 'POST gudang/reservasi', 'POST gudang/reservasi/{id}/kurangi',
         'GET|HEAD akun', 'PUT akun/kata-sandi', 'POST akun/verifikasi-dua-langkah', 'DELETE akun/verifikasi-dua-langkah', 'POST akun/kode-pemulihan',
         'POST akun/kode-pemulihan/baru', 'POST akun/google', 'DELETE akun/google', 'PUT akun/bahasa',
         'GET|HEAD pengaturan/pengguna', 'POST pengaturan/pengguna', 'PUT pengaturan/pengguna/{id}', 'POST pengaturan/pengguna/{id}/status',
