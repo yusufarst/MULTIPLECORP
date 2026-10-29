@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 34
+DONE: 35
 READY: 4
-IN_PROGRESS: 1
+IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
 TODO: 35
 SUPERSEDED: 0
 
 Progress:
-34 / 87
-Percentage: 39.1 %
+35 / 87
+Percentage: 40.2 %
 
-CURRENT TASK: TASK-035 — Administrative checklist and document readiness, IN PROGRESS on its branch `task/TASK-035-administration` from the merged `main` (DIR-096); TASK-034 DONE and squash-merged as `c2e1646` (pull request #40)
-NEXT READY TASK: TASK-036, TASK-038, TASK-061 and TASK-073 READY, NOT STARTED, once TASK-035 is merged (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-035 — Administrative checklist and document readiness DONE on its branch `task/TASK-035-administration`, CI PASS on `74ce179`, its pull request #41 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-036, TASK-038, TASK-061 and TASK-073 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -83,7 +83,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-032](TASK-032.md) — Projects — list, form, journey page and amendment
 - [x] [TASK-033](TASK-033.md) — Quotations
 - [x] [TASK-034](TASK-034.md) — Commercial confirmation and fulfillment planning
-- [ ] [TASK-035](TASK-035.md) — Administrative checklist and document readiness
+- [x] [TASK-035](TASK-035.md) — Administrative checklist and document readiness
 - [ ] [TASK-036](TASK-036.md) — Costing foundations — lot cost basis, charge allocation and HPP attribution
 - [ ] [TASK-037](TASK-037.md) — Purchases — project and replenishment purchases
 - [ ] [TASK-038](TASK-038.md) — Reservations
@@ -175,7 +175,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-032](TASK-032.md) | Projects — list, form, journey page and amendment | Module · PRJ | HIGH | DONE | 021, 025, 026, 027 | 033, 035, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-033](TASK-033.md) | Quotations | Module · PRJ | STANDARD | DONE | 029, 032 | 034 | NO | AGENT | NONE | YES |
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | DONE | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
-| [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | IN_PROGRESS | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
+| [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | READY | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
 | [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | BLOCKED — P11Q-02, P11Q-04 | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
 | [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | READY | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
