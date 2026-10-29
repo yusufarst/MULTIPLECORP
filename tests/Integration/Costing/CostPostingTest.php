@@ -1,8 +1,6 @@
 <?php
 
 use App\Modules\CST\Services\CostPosting;
-use App\Support\Guards\Families;
-use App\Support\Guards\Reconciler;
 use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
@@ -23,16 +21,10 @@ beforeEach(function () {
     $this->world = CostWorld::make();
 });
 
-/** The CST guards' differences from their facts (C-21; C-26; C-57; C-61). */
+/** The CST guards' differences from their facts and C-28's overlay violations (C-21; C-26; C-28; C-57; C-61). */
 function costDifferences(): array
 {
-    $found = [];
-
-    foreach (['lot_cost_balances', 'purchase_charge_balances', 'purchase_charge_share_balances', 'correction_cases'] as $table) {
-        $found = [...$found, ...(new Reconciler)->differences(DB::connection(), Families::named($table) ?? throw new RuntimeException($table))];
-    }
-
-    return $found;
+    return CostWorld::differences();
 }
 
 function costOf(int $lot): array
@@ -45,8 +37,7 @@ function costOf(int $lot): array
 /** @return list<string> the consumption's cost rows' amounts by class and cause, in id order */
 function costRows(int $consumption): array
 {
-    return DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->orderBy('id')->get(['cost_class', 'cause', 'amount'])
-        ->map(fn (object $row): string => "{$row->cost_class} {$row->cause} {$row->amount}")->all();
+    return CostWorld::rows($consumption);
 }
 
 it('draws a box of 12 for 100,000 as 41,667 and 58,333, and receives it in parts as the same cumulative amounts (annex 10; criterion 2)', function () {

@@ -4,6 +4,7 @@ namespace Tests\Support;
 
 use App\Modules\CAT\Models\Product;
 use App\Modules\CST\Data\ReceiptPosted;
+use App\Modules\CST\Queries\AllocationOverlay;
 use App\Modules\CST\Services\CostPosting;
 use App\Modules\INV\Models\DispatchLine;
 use App\Modules\INV\Models\InventoryLot;
@@ -11,9 +12,11 @@ use App\Modules\INV\Models\ReceivingLine;
 use App\Modules\INV\Models\StockConsumption;
 use App\Modules\INV\Models\StockMovementEntry;
 use App\Modules\INV\Models\StockRestoration;
+use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Models\ProjectLine;
+use App\Modules\PRJ\Models\ProjectStateTransition;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseCharge;
 use App\Modules\PUR\Models\PurchaseChargeLineShare;
@@ -27,12 +30,15 @@ use App\Support\Command\Fingerprint;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\Costing\ChargeAllocator;
+use App\Support\Guards\Families;
+use App\Support\Guards\Reconciler;
 use App\Support\GuardUpdate;
 use App\Support\Money;
 use Closure;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\INV\LocationFactory;
 use Database\Factories\INV\StockMovementFactory;
+use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -55,6 +61,9 @@ final class CostWorld
 
     public int $actorId;
 
+    /** Each execution of a posting's action, a restart's included (§5; RY-03). */
+    public int $attempts = 0;
+
     private function __construct() {}
 
     public static function make(?Company $company = null): self
@@ -64,6 +73,29 @@ final class CostWorld
         $world->productId = Product::factory()->create(['quantity_scale' => 0])->id;
         $world->locationId = LocationFactory::new()->createOne()->id;
         $world->actorId = Authorization::admin([$world->company->id], ['projects.view'])->id;
+
+        return $world;
+    }
+
+    /**
+     * The world as plain ids for another session: a session restores what its closure carries before it joins the test's
+     * database, so it carries no model (Sessions::run).
+     *
+     * @return array{company: int, product: int, location: int, actor: int}
+     */
+    public function ids(): array
+    {
+        return ['company' => $this->company->id, 'product' => $this->productId, 'location' => $this->locationId, 'actor' => $this->actorId];
+    }
+
+    /** @param  array{company: int, product: int, location: int, actor: int}  $ids */
+    public static function resume(array $ids): self
+    {
+        $world = new self;
+        $world->company = Company::query()->findOrFail($ids['company']);
+        $world->productId = $ids['product'];
+        $world->locationId = $ids['location'];
+        $world->actorId = $ids['actor'];
 
         return $world;
     }
@@ -86,9 +118,34 @@ final class CostWorld
         return $line;
     }
 
-    public function project(?Company $company = null): Project
+    public function project(?Company $company = null, string $state = 'DRAFT'): Project
     {
-        return Project::factory()->create(['company_id' => ($company ?? $this->company)->id]);
+        return Project::factory()->create(['company_id' => ($company ?? $this->company)->id, 'state' => $state]);
+    }
+
+    /** The project completed normally, its transition beside its state (SM:Project). */
+    public function complete(Project $project): void
+    {
+        DB::transaction(function () use ($project): void {
+            DB::table('projects')->where('id', $project->id)->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
+            ProjectStateTransition::factory()->create([
+                'project_id' => $project->id, 'from_state' => 'ACTIVE', 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $this->actorId,
+            ]);
+        });
+    }
+
+    /** A purchase-return case of the world's company (C-46). */
+    public function returnCase(): int
+    {
+        return CorrectionCaseFactory::new()->createOne(['company_id' => $this->company->id, 'case_kind' => 'PURCHASE_RETURN'])->id;
+    }
+
+    /** The case closed, the supplier's refund settling its returned cost (C-46's equation). */
+    public function closeCase(int $case, string $refunded): void
+    {
+        DB::table('correction_cases')->where('id', $case)->update([
+            'refunded_value' => $refunded, 'state' => 'CLOSED', 'closure_outcome' => 'Dana retur sudah diterima.', 'closed_by' => $this->actorId, 'closed_at' => now(),
+        ]);
     }
 
     /**
@@ -164,7 +221,8 @@ final class CostWorld
         $consumption = 0;
         $locks = CostPosting::lotLocks([$lot])->add('projects', ['id' => $project->id]);
         $this->expect($this->run($locks, function (CommandContext $context) use ($lot, $qty, $project, $reason, &$consumption): void {
-            $line = ProjectLine::factory()->create(['project_id' => $project->id, 'product_id' => $this->productId]);
+            // Numbered under the project's lock, so two sessions' dispatches never share a line number.
+            $line = ProjectLine::factory()->create(['project_id' => $project->id, 'product_id' => $this->productId, 'line_no' => DB::table('project_lines')->where('project_id', $project->id)->count() + 1]);
             $dispatch = DispatchLine::factory()->create(['project_line_id' => $line->id, 'entered_qty' => $qty, 'qty_base' => $qty, 'unreserved_qty_base' => $qty]);
             $consumption = $this->consume($lot, $qty, 'DISPATCH', (int) $dispatch->stock_movement_id, [
                 'dispatch_line_id' => $dispatch->id, 'bearer_company_id' => $project->company_id, 'bearer_project_id' => $project->id,
@@ -185,6 +243,21 @@ final class CostWorld
         $this->expect($this->run($locks, function (CommandContext $context) use ($lot, $qty, $project, $condition, &$consumption): void {
             $movement = StockMovementFactory::post('LOSS', $this->company->id);
             $consumption = $this->consume($lot, $qty, 'LOSS', $movement, ['bearer_company_id' => $this->company->id, 'bearer_project_id' => $project?->id], $condition);
+            app(CostPosting::class)->draw($context, $consumption, BusinessDate::today());
+        }));
+
+        return $consumption;
+    }
+
+    /** `qty` of the lot returned to its supplier under the case: its consumption, its SUPPLIER_RETURN draw, the case's returned cost. */
+    public function purchaseReturn(int $lot, string $qty, int $case): int
+    {
+        $consumption = 0;
+        $this->expect($this->run(CostPosting::lotLocks([$lot])->union(CorrectionCases::locks($case)), function (CommandContext $context) use ($lot, $qty, $case, &$consumption): void {
+            $movement = StockMovementFactory::post('PURCHASE_RETURN', $this->company->id);
+            $consumption = $this->consume($lot, $qty, 'PURCHASE_RETURN', $movement, [
+                'bearer_company_id' => $this->company->id, 'correction_case_id' => $case, 'case_company_id' => $this->company->id,
+            ]);
             app(CostPosting::class)->draw($context, $consumption, BusinessDate::today());
         }));
 
@@ -254,10 +327,19 @@ final class CostWorld
         }));
     }
 
-    /** The line's goods value corrected to `value` (AX-34; CM-17). */
-    public function correctPrice(PurchaseLine $line, string $value): Outcome
+    /**
+     * The line's goods value corrected to `value` (AX-34; CM-17); `$derived`, when given, runs between the lock set's
+     * derivation and its acquisition (§5 steps 1 and 2; M-07).
+     */
+    public function correctPrice(PurchaseLine $line, string $value, ?Closure $derived = null): Outcome
     {
-        return $this->run(CostPosting::purchaseLocks($line->purchase_id), function (CommandContext $context) use ($line, $value): void {
+        $locks = CostPosting::purchaseLocks($line->purchase_id);
+
+        if ($derived !== null) {
+            $derived();
+        }
+
+        return $this->run($locks, function (CommandContext $context) use ($line, $value): void {
             $before = (string) DB::table('purchase_line_balances')->where('purchase_line_id', $line->id)->value('goods_value');
             $delta = Money::of($value)->minus(Money::of($before))->toString();
             $adjustment = (int) DB::table('purchase_line_adjustments')->insertGetId([
@@ -289,12 +371,37 @@ final class CostWorld
         });
     }
 
+    /**
+     * The CST guards' differences from their facts (C-21; C-26; C-57; C-61) and C-28's overlay violations: none after
+     * any scenario (criterion 16).
+     *
+     * @return list<mixed>
+     */
+    public static function differences(): array
+    {
+        $found = AllocationOverlay::violations();
+
+        foreach (['lot_cost_balances', 'purchase_charge_balances', 'purchase_charge_share_balances', 'correction_cases'] as $table) {
+            $found = [...$found, ...(new Reconciler)->differences(DB::connection(), Families::named($table) ?? throw new RuntimeException($table))];
+        }
+
+        return $found;
+    }
+
+    /** @return list<string> the consumption's cost rows by class, cause and amount, in id order */
+    public static function rows(int $consumption): array
+    {
+        return DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->orderBy('id')->get(['cost_class', 'cause', 'amount'])
+            ->map(fn (object $row): string => "{$row->cost_class} {$row->cause} {$row->amount}")->values()->all();
+    }
+
     /** A posting run in the command envelope, holding the lock set given (CONCURRENCY_IDEMPOTENCY §5). */
     public function run(LockSet $locks, Closure $work): Outcome
     {
         $request = new CommandRequest((string) Str::uuid(), 'test.costing', $this->actorId, $this->company->id, 'projects.view', Fingerprint::of('test.costing', null, ['run' => (string) Str::uuid()]));
 
         return app(CommandEnvelope::class)->run($request, function (CommandContext $context) use ($locks, $work): CommandResult {
+            $this->attempts++;
             $context->lock($locks);
             $work($context);
 

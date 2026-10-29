@@ -1,7 +1,5 @@
 <?php
 
-use App\Support\Guards\Families;
-use App\Support\Guards\Reconciler;
 use App\Support\Money;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
@@ -24,13 +22,7 @@ beforeEach(function () {
 
 function chargeDifferences(): array
 {
-    $found = [];
-
-    foreach (['lot_cost_balances', 'purchase_charge_balances', 'purchase_charge_share_balances', 'correction_cases'] as $table) {
-        $found = [...$found, ...(new Reconciler)->differences(DB::connection(), Families::named($table) ?? throw new RuntimeException($table))];
-    }
-
-    return $found;
+    return CostWorld::differences();
 }
 
 /** @return array{allocated: string, expensed: string, pending: string} the charge's figures, pending what neither took */

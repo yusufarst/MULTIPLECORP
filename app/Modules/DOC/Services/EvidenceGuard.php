@@ -7,6 +7,7 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
 use App\Support\GuardUpdate;
+use App\Support\Search\Row;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -24,6 +25,18 @@ final class EvidenceGuard
     public static function locks(int $evidenceId): LockSet
     {
         return (new LockSet)->add('evidence_documents', ['id' => $evidenceId])->add('evidence_balances', ['evidence_document_id' => $evidenceId]);
+    }
+
+    /**
+     * What of the evidence's proven amount no citation holds yet, read under its guard's lock: the cap a citing role
+     * checks before it cites, to refuse with its own rule (C-18; C-20 for a charge's source bill).
+     */
+    public function uncited(CommandContext $context, int $evidenceId): string
+    {
+        $context->require(self::locks($evidenceId));
+        $balance = DB::selectOne('select proven_amount - cited_amount as uncited from evidence_balances where evidence_document_id = ?', [$evidenceId]);
+
+        return is_object($balance) ? Row::text($balance, 'uncited') : '0.00';
     }
 
     /** Cites `$amount` of the evidence in the role — a negative amount releases a citation. */

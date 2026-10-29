@@ -74,13 +74,16 @@ final class CostPosting
     {
         $set = new LockSet;
 
-        foreach (array_values(array_unique($lotIds)) as $lot) {
-            if (DB::table('lot_cost_balances')->where('lot_id', $lot)->exists()) {
-                $set->add('lot_cost_balances', ['lot_id' => $lot]);
-            }
+        if ($lotIds === []) {
+            return $set;
         }
 
-        $consumptions = $lotIds === [] ? [] : DB::table('stock_consumptions')->whereIn('lot_id', $lotIds)->get(['bearer_project_id', 'correction_case_id'])->all();
+        // The lots' guards and their dependents, each read in one statement for every lot (QB-14).
+        foreach (DB::table('lot_cost_balances as b')->whereIn('b.lot_id', $lotIds)->pluck('b.lot_id') as $lot) {
+            $set->add('lot_cost_balances', ['lot_id' => is_numeric($lot) ? (int) $lot : 0]);
+        }
+
+        $consumptions = DB::table('stock_consumptions')->whereIn('lot_id', $lotIds)->get(['bearer_project_id', 'correction_case_id'])->all();
 
         foreach ($consumptions as $consumption) {
             if (is_numeric($consumption->bearer_project_id ?? null)) {
@@ -112,19 +115,17 @@ final class CostPosting
 
         foreach ($lines as $line) {
             $set->add('purchase_lines', ['id' => $line]);
-
-            if (DB::table('purchase_line_balances')->where('purchase_line_id', $line)->exists()) {
-                $set->add('purchase_line_balances', ['purchase_line_id' => $line]);
-            }
         }
 
-        foreach (DB::table('purchase_charges')->where('purchase_id', $purchaseId)->orderBy('id')->pluck('id') as $charge) {
-            if (DB::table('purchase_charge_balances')->where('purchase_charge_id', $charge)->exists()) {
-                $set->add('purchase_charge_balances', ['purchase_charge_id' => is_numeric($charge) ? (int) $charge : 0]);
-            }
+        foreach (DB::table('purchase_line_balances as b')->whereIn('b.purchase_line_id', $lines)->pluck('b.purchase_line_id') as $line) {
+            $set->add('purchase_line_balances', ['purchase_line_id' => is_numeric($line) ? (int) $line : 0]);
         }
 
-        foreach (DB::table('purchase_charge_share_balances')->whereIn('purchase_line_id', $lines)->get(['purchase_charge_id', 'purchase_line_id']) as $share) {
+        foreach (DB::table('purchase_charges as c')->join('purchase_charge_balances as b', 'b.purchase_charge_id', '=', 'c.id')->where('c.purchase_id', $purchaseId)->pluck('c.id') as $charge) {
+            $set->add('purchase_charge_balances', ['purchase_charge_id' => is_numeric($charge) ? (int) $charge : 0]);
+        }
+
+        foreach (DB::table('purchase_charge_share_balances as b')->whereIn('purchase_line_id', $lines)->get(['purchase_charge_id', 'purchase_line_id']) as $share) {
             $set->add('purchase_charge_share_balances', ['purchase_charge_id' => (int) Row::text($share, 'purchase_charge_id'), 'purchase_line_id' => (int) Row::text($share, 'purchase_line_id')]);
         }
 
@@ -561,7 +562,7 @@ final class CostPosting
             $ledger->move('purchase_charge_balances', ['purchase_charge_id' => $chargeId], ['amount' => $delta->toString()]);
         }
 
-        $old = DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $chargeId)->get()->keyBy(fn (object $row): int => (int) Row::text($row, 'purchase_line_id'));
+        $old = DB::table('purchase_charge_share_balances as b')->where('purchase_charge_id', $chargeId)->get()->keyBy(fn (object $row): int => (int) Row::text($row, 'purchase_line_id'));
         $version = self::currentVersion($chargeId);
         $affected = $this->contraVersion($context, $ledger, $chargeId, $businessDate);
 
@@ -618,7 +619,7 @@ final class CostPosting
         foreach (self::versionShares($chargeId, $version) as $share) {
             $line = self::lineBalance($share['line']);
             $key = ['purchase_charge_id' => $chargeId, 'purchase_line_id' => $share['line']];
-            $balance = DB::table('purchase_charge_share_balances')->where($key)->first(['posted_amount', 'respread_out_amount', 'expensed_out_amount']);
+            $balance = DB::table('purchase_charge_share_balances as b')->where($key)->first(['posted_amount', 'respread_out_amount', 'expensed_out_amount']);
             $posted = Money::of(is_object($balance) ? Row::text($balance, 'posted_amount') : '0')->plus(Money::of((string) $ledger->moved('purchase_charge_share_balances', $key, 'posted_amount')));
             $respread = Money::of(is_object($balance) ? Row::text($balance, 'respread_out_amount') : '0')->plus(Money::of((string) $ledger->moved('purchase_charge_share_balances', $key, 'respread_out_amount')));
             $expensed = Money::of(is_object($balance) ? Row::text($balance, 'expensed_out_amount') : '0');
@@ -683,7 +684,7 @@ final class CostPosting
     private function contraVersion(CommandContext $context, CostLedger $ledger, int $chargeId, string $businessDate): array
     {
         $affected = ['consumptions' => [], 'returned' => []];
-        $version = DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $chargeId)->max('allocation_version');
+        $version = DB::table('purchase_charge_share_balances as b')->where('purchase_charge_id', $chargeId)->max('allocation_version');
 
         if (! is_numeric($version)) {
             return $affected;
@@ -897,7 +898,7 @@ final class CostPosting
     private function endedPending(CostLedger $ledger, array $share, object $line, ?Money $expensedCarried = null): Money
     {
         $key = ['purchase_charge_id' => $share['charge'], 'purchase_line_id' => $share['line']];
-        $balance = DB::table('purchase_charge_share_balances')->where($key)->first(['posted_amount', 'respread_out_amount', 'expensed_out_amount']);
+        $balance = DB::table('purchase_charge_share_balances as b')->where($key)->first(['posted_amount', 'respread_out_amount', 'expensed_out_amount']);
         $taken = Money::sum(
             Money::of(is_object($balance) ? Row::text($balance, 'posted_amount') : '0'),
             Money::of(is_object($balance) ? Row::text($balance, 'respread_out_amount') : '0'),
@@ -907,7 +908,7 @@ final class CostPosting
             Money::of((string) $ledger->moved('purchase_charge_share_balances', $key, 'expensed_out_amount')),
         );
         $ordered = Row::text($line, 'ordered_qty_base');
-        $cancelled = DB::table('purchases')->where('id', self::purchaseOf($share['line']))->value('state') === 'CANCELLED';
+        $cancelled = DB::table('purchase_lines as l')->join('purchases as p', 'p.id', '=', 'l.purchase_id')->where('l.id', $share['line'])->value('p.state') === 'CANCELLED';
         $ended = $cancelled ? $ordered : (string) BigDecimal::min(BigDecimal::of(self::received($line))->plus(Row::text($line, 'closed_qty_base')), BigDecimal::of($ordered));
 
         return Money::max(Money::zero(), CostSplitter::target($share['share'], $ended, $ordered)->minus($taken));
@@ -922,10 +923,7 @@ final class CostPosting
     /** The source bill's cap (C-20; L-43): Σ charges and expenses citing it never above its total. */
     private function cite(CommandContext $context, int $billId, Money $amount): void
     {
-        $context->require(EvidenceGuard::locks($billId));
-        $balance = DB::table('evidence_balances')->where('evidence_document_id', $billId)->first(['proven_amount', 'cited_amount']);
-
-        if (! is_object($balance) || Money::of(Row::text($balance, 'cited_amount'))->plus($amount)->compareTo(Money::of(Row::text($balance, 'proven_amount'))) > 0) {
+        if ($amount->compareTo(Money::of($this->evidence->uncited($context, $billId))) > 0) {
             throw Refused::rejected('C-20', ['bill' => $billId, 'amount' => $amount->toString()]);
         }
 
@@ -976,7 +974,7 @@ final class CostPosting
     /** @return array{0: string, 1: Money} the lot's remaining quantity and cost, with what this posting moved so far */
     private function lotBalance(CostLedger $ledger, int $lotId): array
     {
-        $balance = DB::table('lot_cost_balances')->where('lot_id', $lotId)->first(['remaining_qty_base', 'remaining_cost']);
+        $balance = DB::table('lot_cost_balances as b')->where('lot_id', $lotId)->first(['remaining_qty_base', 'remaining_cost']);
 
         if (! is_object($balance)) {
             throw new InvalidArgumentException("Lot {$lotId} has no cost guard yet.");
@@ -1080,7 +1078,7 @@ final class CostPosting
 
     private static function lineBalance(int $lineId): object
     {
-        return DB::table('purchase_line_balances')->where('purchase_line_id', $lineId)->first()
+        return DB::table('purchase_line_balances as b')->where('purchase_line_id', $lineId)->first()
             ?? throw new InvalidArgumentException("Purchase line {$lineId} has no balance.");
     }
 
