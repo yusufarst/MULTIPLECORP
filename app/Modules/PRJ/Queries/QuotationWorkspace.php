@@ -80,6 +80,9 @@ final class QuotationWorkspace
                 'v.formatted_number', 'v.state as version_state', 'd.public_id as document'])->all();
         $current = $revisions[0] ?? null;
         $state = $header === null ? 'DRAFT' : Row::text($header, 'state');
+        // ROUTE-169: the approval in force — the project's latest confirmation — is what "Koreksi Keputusan" supersedes (CM-27).
+        $confirmation = $viewer->allows('decisions.supersede', $project->company_id) && $state === 'ACTIVE'
+            ? DB::table('commercial_confirmations')->where('project_id', $project->id)->orderByDesc('id')->first(['id', 'kind']) : null;
 
         return [
             'project' => $header === null ? null : [
@@ -108,6 +111,8 @@ final class QuotationWorkspace
                 'manage' => $manage && in_array($state, ['DRAFT', 'ACTIVE'], true),
                 'approve' => $viewer->allows('projects.confirm', $project->company_id) && in_array($state, ['DRAFT', 'ACTIVE'], true),
                 'reject' => $manage && in_array($state, ['DRAFT', 'ACTIVE'], true),
+                'supersede' => is_object($confirmation) && Row::text($confirmation, 'kind') === 'QUOTATION_APPROVAL'
+                    ? RowHandle::of('commercial_confirmations', (int) Row::text($confirmation, 'id')) : null,
             ],
         ];
     }

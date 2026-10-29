@@ -4,6 +4,7 @@ use App\Http\BackgroundRequest;
 use App\Http\Controllers\StatusController;
 use App\Http\Controllers\SystemPageController;
 use App\Http\Controllers\UsersAndAccessController;
+use App\Modules\ADM\Http\Controllers\RequirementsController;
 use App\Modules\CAT\Http\Controllers\ProductsController;
 use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
@@ -171,6 +172,17 @@ Route::get('/dokumen', [DocumentsController::class, 'index'])->middleware(['auth
 Route::get('/dokumen/penawaran', [QuotationsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('prj.quotations');
 // PG-040 *Kasus Koreksi* (TASK-031; ROUTE-040, ROUTE-271; NAV-040): the cases by `projects.view` of their company, money
 // by family inside the query (PJ-16); "Tutup Kasus" by `cases.close`, its NX-06 command carrying its `command_id`.
+// PG-039 *Dokumen Administrasi* and the administrative checklist (TASK-035; ROUTE-039, ROUTE-164–ROUTE-169; NAV-039;
+// J-ADM-01): the page by `projects.view`; adding, tightening and linking by `requirements.manage`, "Tandai Tidak
+// Berlaku" by `requirements.waive`, the Owner's eligibility and relaxation by their OWNER_ONLY capabilities, each NX-03
+// command carrying its `command_id`; a decision superseded by `decisions.supersede` (CM-27; OD-15).
+Route::get('/dokumen/administrasi', [RequirementsController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('adm.documents');
+Route::post('/proyek/{id}/persyaratan', [RequirementsController::class, 'store'])->whereUuid('id')->middleware(['auth', 'capability:requirements.manage'])->name('adm.requirements.store');
+Route::post('/proyek/{id}/persyaratan/{req}/tautkan', [RequirementsController::class, 'link'])->whereUuid('id')->where('req', '[0-9a-f]{32}')->middleware(['auth', 'capability:requirements.manage'])->name('adm.requirements.link');
+Route::post('/proyek/{id}/persyaratan/{req}/tidak-berlaku', [RequirementsController::class, 'waive'])->whereUuid('id')->where('req', '[0-9a-f]{32}')->middleware(['auth', 'capability:requirements.waive'])->name('adm.requirements.waive');
+Route::post('/proyek/{id}/persyaratan/{req}/kelayakan', [RequirementsController::class, 'eligibility'])->whereUuid('id')->where('req', '[0-9a-f]{32}')->middleware(['auth', 'capability:requirements.set_waiver_eligibility'])->name('adm.requirements.eligibility');
+Route::post('/proyek/{id}/persyaratan/{req}/longgarkan', [RequirementsController::class, 'relax'])->whereUuid('id')->where('req', '[0-9a-f]{32}')->middleware(['auth', 'capability:requirements.relax'])->name('adm.requirements.relax');
+Route::post('/keputusan/{id}/ganti', [RequirementsController::class, 'supersede'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:decisions.supersede'])->name('adm.decisions.supersede');
 Route::get('/dokumen/kasus', [CorrectionCasesController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ops.cases');
 Route::post('/dokumen/kasus/{id}/tutup', [CorrectionCasesController::class, 'close'])->whereUuid('id')->middleware(['auth', 'capability:cases.close'])->name('ops.cases.close');
 Route::post('/dokumen', [DocumentsController::class, 'save'])->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.save');

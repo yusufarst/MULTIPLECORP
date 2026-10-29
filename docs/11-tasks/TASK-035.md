@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -252,34 +252,53 @@ CAP-09 and AC-09 need a checklist per project — per client and unit, never one
 - Migration: N/A — no migration or import code in this Task
 - Other: the administration predicate handed to TASK-055 with one blocker per kind of item (AC-21)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/ADM/RequirementsTest.php` — two projects with different checklists, each item's status derived by `Readiness` from its links, waivers and linked records; no status, fraction or progress column; `tests/Browser/E2E/administration.spec.ts` — the checklist with no percentage or count
+- Criterion 2: `tests/Feature/ADM/RequirementsTest.php` — a draft of the item's document *Disiapkan* and refused as a link; an issued version with a pending rendition not yet *Terpenuhi*, then *Terpenuhi* once rendered; `tests/Unit/ADM/ReadinessStatusTest.php`
+- Criterion 3: `tests/Feature/ADM/RequirementsTest.php` — a company document refused for a client original; an upload equal to a stored rendition linked yet open, the reason given only to a viewer with the rendition's family (`finance.view` for DOC-09); an authentic upload *Terpenuhi*
+- Criterion 4: `tests/Feature/ADM/RequirementsTest.php` and `tests/Authorization/RequirementsAccessTest.php` — an Admin adds and tightens; eligibility in the edit REJECTED OD-05, loosening a required non-waivable item REJECTED OD-06; the Owner's routes answer an Admin as missing pages (IP-21) and their controls and the eligibility field are absent
+- Criterion 5: `tests/Feature/ADM/RequirementsTest.php` — *Tidak Berlaku* REJECTED BR-ADM-02 on an ineligible item, answered at the field without a reason, committed with its reason on an eligible one, a second CONFLICT; `tests/Browser/E2E/administration.spec.ts`
+- Criterion 6: `tests/Feature/ADM/RequirementsTest.php` — a new item non-waivable; the Owner's eligibility, relaxation and removal each an OWNER_ONLY audit event with its reason
+- Criterion 7: `tests/Integration/Administration/RequirementChangesTest.php` — DOC's void unlinks the voided version's link in the void's own command and transaction, the item open; a revision's issue moves the link to the revision; `tests/Integration/Administration/LinkVoidRaceTest.php` — a link racing a void never leaves an active link to a voided version
+- Criterion 8: `tests/Integration/Administration/RequirementChangesTest.php` — DOC's unlink of the evidence opens the item in its transaction with the unlink's reason; a replacement is judged on the new current version, a reproduction no longer satisfying
+- Criterion 9: `tests/Feature/ADM/RequirementsTest.php` — a revalidation supersedes each standing waiver with a row marked as reopened, kept as history, the item open
+- Criterion 10: `tests/Feature/ADM/RequirementsTest.php` — a waiver superseded by a decision of the same authority with its reason, both kept, the superseded one CONFLICT; an Owner's waiver REJECTED OD-15 to an Admin and superseded by the Owner
+- Criterion 11: `tests/Feature/ADM/ApprovalSupersessionTest.php` — "Koreksi Keputusan" on PG-014 runs TASK-034's confirmation step under AX-13's locks: a superseding QUOTATION_APPROVAL with its reason and date, the pins and current pointers following, the lifecycle participants called inside the transaction, no reservation reactivated; a superseded approval CONFLICT
+- Criterion 12: `tests/Feature/ADM/RequirementsTest.php` — the confirmation adds the default invoice item, open until the invoiced value covers the confirmed value less the cancelled scope; no link or edit reaches it
+- Criterion 13: `tests/Feature/ADM/AdministrativeDocumentsTest.php` and `tests/Authorization/RequirementsAccessTest.php` — PG-039 lists only the companies in scope with each row's company, the tab, status filter, sort and cursor from the address, a cancelled project's items gone; `tests/Browser/E2E/administration.spec.ts` — the filters back after reload
+- Criterion 14: `tests/Feature/ADM/RequirementsTest.php` — the administration predicate false while a required item is open, one blocker per kind, never for an optional item, the invoice item a money item
+- Criterion 15: `tests/Interaction/RequirementsTest.php` — ROUTE-164–ROUTE-169 each replayed with one `command_id` answering its recorded outcome, nothing written twice; a stale edit CONFLICT ST-01
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL (TL-05); PASS in CI and locally
+- [x] Authorization: `requirements.manage`, `requirements.waive`, the OWNER_ONLY `requirements.set_waiver_eligibility` and `requirements.relax`, `decisions.supersede` with OD-15 (TL-06)
+- [x] Route integrity: ROUTE-039 and ROUTE-164–ROUTE-169 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-164–INT-169, each with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-ADM-01 — the checklist, the client original linked, the eligible item *Tidak Berlaku*, PG-039's filters, the phone's missing items with their upload — on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: the checklist and PG-039 at 320, 390, 768 and 1,280 px (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's sections, rows, dialogs and data table, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04 for W4-03, W4-04, W4-15, W4-18 and W4-24 with OD-05, OD-06 and OD-15; SM-23 for the undisclosed reproduction; SM-01 for a foreign document or evidence (TL-14)
+- [x] Database safety review: no migration; the links unlinked once and the waivers insert-only, a removed requirement keeping its row; the database's client-original trigger and exclusive arc the backstops; local and CI databases only
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `74ce179`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40868136031 (push) and 40868139525 (pull request #41), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-035 PHP tests, PHPStan, Pint and the frontend checks also PASS on the workstation's stack, whose memory is too low for the browser layers, so CI's run is their evidence
+- Build result: `TL-13 Frontend build: PASS — Evidence: 74ce179, CI ubuntu-24.04 run 40868136031`
+- Route evidence: TL-07's route audit PASS — ROUTE-039 `GET /dokumen/administrasi` (`projects.view`), ROUTE-164 `POST /proyek/{id}/persyaratan` and ROUTE-165 `POST /proyek/{id}/persyaratan/{req}/tautkan` (`requirements.manage`), ROUTE-166 `…/tidak-berlaku` (`requirements.waive`), ROUTE-167 `…/kelayakan` (`requirements.set_waiver_eligibility`), ROUTE-168 `…/longgarkan` (`requirements.relax`), ROUTE-169 `POST /keputusan/{id}/ganti` (`decisions.supersede`)
+- Interaction evidence: `tests/Interaction/RequirementsTest.php` (INT-164–INT-169)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 74ce179, CI ubuntu-24.04 run 40868136031`; TL-10, TL-11 and TL-12 for the checklist and PG-039 in the same run
+- Localization evidence: the checklist and PG-039 in both languages (`tests/Browser/Localization/administration.spec.ts`) (DOD-16); 104 catalogue keys added, proposed copy for the Owner's review
+- Performance evidence: PG-039 and PG-011's documents group constant in statements, the predicate one statement, a command bounded (`tests/Performance/AdministrationQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/ADM/` — `Services/Readiness`, `Requirements`, `RequirementChanges`, `RequirementLifecycle`, `AdministrationPredicate`; `Actions/SaveRequirement`, `LinkRequirementEvidence`, `WaiveRequirement`, `SetWaiverEligibility`, `RelaxRequirement`, `SupersedeDecision`; `Queries/ProjectChecklist`, `AdministrativeDocuments`; `Http/Controllers/RequirementsController` —; DOC's `DocumentProjects`; PRJ's `ReadinessProvider` and `ProjectRef`, `ProjectLifecycleParticipant::confirmed` called by the confirmation step, `ProjectWorkspace::reference` and the documents group, `QuotationWorkspace`'s supersession handle; the container tags; the routes; PG-011's checklist, PG-039, PG-014's "Koreksi Keputusan" and the navigation; the project form's term fix; 104 catalogue keys; the tests, race helper, fixtures and browser specs
+- Commit SHA: `8362801`, `67951bb`, `78b8553`, `5e1548d`, `b145ddc`, `e12bb53`, `74ce179`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-035-administration`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request found three P2 and two P3 points, each fixed and tested in `b145ddc`: a document of another project could satisfy an item — a document's project is now read through its subject (DOC's `DocumentProjects`) when linking, offering, preparing and satisfying —; an Admin could loosen a waiver-eligible or optional item through ROUTE-164 — an Admin only tightens now, the form offering nothing looser, each change audited with its real authority, and a required waiver-eligible item is never removed (WF-ADM-01) —; the default invoice item's status reached viewers without `finance.view` — a money fact on PG-011 and PG-039 now (PJ-13) —; withdrawing waiver eligibility left the waiver standing for a later grant to revive — the withdrawal reopens it —; the invoice item read *Terpenuhi* when over-invoiced — L-27's equality now. Codex's review of `b145ddc` (COMPLETED) found three P2 points, each fixed and tested in `e12bb53` and its thread answered: a reproduction's reason disclosed by the checklist's company rather than the matched rendition's own — now by that rendition's company and family —; a link's replay unreachable after its document was voided — the document now resolved whatever its state, the issue checked in the command —; evidence older than the newest 100 unreachable from the link dialog — now searchable by issuer or number through PG-011's documents-group reload (`cari_bukti`, no new route) and limited to the types the open items take. CI on `e12bb53` then failed on the route registry's list, PG-039's component assertion and the browser fixture's factory account, fixed in `74ce179`. Executor readings within the approved text: an item's status values are DESIGN_SYSTEM §12.1's family states (MISSING, DRAFT_ONLY, SATISFIED, WAIVED); a link takes an issued version of the item's own project, its project read through the document's subject, a draft or a voided one refused in the command; the link dialog searches the evidence of the types the open items take through PG-011's documents-group reload (`cari_bukti`); a link of an evidence also writes the evidence's own link to the item, so DOC's unlink reaches it; a voided version's link is unlinked and a revised version's moved to the revision in DOC's transaction; a waiver superseded by ROUTE-169 is withdrawn — its superseding row marked as reopened — and a waiver with the right reason is then ROUTE-166's; a quotation approval is superseded by a QUOTATION_APPROVAL of the same revision with its corrected date, the project's latest confirmation only; a decision an Owner account made is the Owner's to supersede (OD-15); a revalidation reopens every standing waiver of the project, and so does the Owner's withdrawal of an item's eligibility; an Admin never loosens any item, and a required waiver-eligible item is never removed; the default invoice item is shown only with `finance.view`; the default invoice item is added when a confirmation leaves the project with confirmed value, its status the invoiced value equal to the confirmed value less the cancelled scope — the client returns of TASK-048 join that comparison. Executor discoveries: `ProjectLifecycleParticipant` gains `confirmed()`, called for every confirmation, and PRJ gains `ReadinessProvider` with `ProjectRef` so PG-011 reads the checklist without calling a higher tier; main CI run 40831691869's first attempt failed once on `projects.spec.ts:64` — the project form's product line keeping its term from a stale copy of the lines, which could drop the product a partial reload had just set —, fixed here
 
 **SAFE NEXT TASK:**
 

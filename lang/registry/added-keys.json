@@ -7566,6 +7566,630 @@
             "source": "WF-PRJ-02 optional output; DOC-09",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "adm.checklist.title": {
+            "task": "TASK-035",
+            "source": "J-ADM-01; D-IA-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.checklist.empty": {
+            "task": "TASK-035",
+            "source": "J-ADM-01; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.add": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.tighten": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; DIR-024 D-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.link": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.waive": {
+            "task": "TASK-035",
+            "source": "J-ADM-01; BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.eligibility_on": {
+            "task": "TASK-035",
+            "source": "OD-05; BR-PRJ-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.eligibility_off": {
+            "task": "TASK-035",
+            "source": "OD-05; BR-PRJ-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.relax": {
+            "task": "TASK-035",
+            "source": "OD-06; DIR-024 D-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.supersede": {
+            "task": "TASK-035",
+            "source": "ADMIN_FLOW §11 CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.action.upload": {
+            "task": "TASK-035",
+            "source": "IP-16; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.required": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.optional": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.client_original": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.invoice": {
+            "task": "TASK-035",
+            "source": "L-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.mode.generated": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.mode.uploaded": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.mode.either": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.kind.catalog_document": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.kind.external_document": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.kind.free_text": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.missing.generated": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.missing.uploaded": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.missing.either": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.missing.invoice": {
+            "task": "TASK-035",
+            "source": "L-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.prepared": {
+            "task": "TASK-035",
+            "source": "WF-DOC-01; architecture challenge 15b",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.reproduction": {
+            "task": "TASK-035",
+            "source": "FS-12; IP-16; GAP-034",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.link.document": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.link.evidence": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.reason": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.by": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.waived": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.reopened": {
+            "task": "TASK-035",
+            "source": "BR-ADM-03; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.superseded": {
+            "task": "TASK-035",
+            "source": "CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waiver.history": {
+            "task": "TASK-035",
+            "source": "CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.kind": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.document_type": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.evidence_type": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.description": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.required": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.mode": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.client_original": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.document": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.evidence": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.remove": {
+            "task": "TASK-035",
+            "source": "OD-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.project": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.item": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.status": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.sort": {
+            "task": "TASK-035",
+            "source": "SCR-37; IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.add.title": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.add.consequence": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; DIR-024 D-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.tighten.title": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.link.title": {
+            "task": "TASK-035",
+            "source": "J-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.link.consequence": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.link.none": {
+            "task": "TASK-035",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waive.title": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.waive.consequence": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.eligibility.title": {
+            "task": "TASK-035",
+            "source": "OD-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.eligibility.consequence_on": {
+            "task": "TASK-035",
+            "source": "OD-05; BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.eligibility.consequence_off": {
+            "task": "TASK-035",
+            "source": "OD-05; BR-PRJ-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.relax.title": {
+            "task": "TASK-035",
+            "source": "OD-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.relax.consequence": {
+            "task": "TASK-035",
+            "source": "OD-06; AZ-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.supersede.title": {
+            "task": "TASK-035",
+            "source": "CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.supersede.consequence_waiver": {
+            "task": "TASK-035",
+            "source": "CM-27; L-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.supersede.consequence_approval": {
+            "task": "TASK-035",
+            "source": "CM-27; L-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.added": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.tightened": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.linked": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.waived": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.eligibility": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.relaxed": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.removed": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.answer.superseded": {
+            "task": "TASK-035",
+            "source": "NV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.eligibility": {
+            "task": "TASK-035",
+            "source": "OD-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.relax": {
+            "task": "TASK-035",
+            "source": "OD-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.owner_decision": {
+            "task": "TASK-035",
+            "source": "OD-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.ineligible": {
+            "task": "TASK-035",
+            "source": "BR-ADM-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.mode": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01; FS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.not_issued": {
+            "task": "TASK-035",
+            "source": "BR-ADM-01; architecture challenge 15b",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.satisfied": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01; DATABASE §13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.client_original": {
+            "task": "TASK-035",
+            "source": "DATABASE §4.11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.linked_document": {
+            "task": "TASK-035",
+            "source": "FS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.invoice": {
+            "task": "TASK-035",
+            "source": "L-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.linked": {
+            "task": "TASK-035",
+            "source": "NX-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.stale": {
+            "task": "TASK-035",
+            "source": "ST-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.changed": {
+            "task": "TASK-035",
+            "source": "ST-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.validation.type": {
+            "task": "TASK-035",
+            "source": "IP-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.validation.unknown": {
+            "task": "TASK-035",
+            "source": "IP-14; AZ-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.validation.document": {
+            "task": "TASK-035",
+            "source": "IP-14; CS-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.validation.evidence": {
+            "task": "TASK-035",
+            "source": "IP-14; CS-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.validation.target": {
+            "task": "TASK-035",
+            "source": "IP-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.empty": {
+            "task": "TASK-035",
+            "source": "PT-19; SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.tab.wajib": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.tab.semua": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.status.all": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.sort.terbaru": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.list.sort.terlama": {
+            "task": "TASK-035",
+            "source": "SCR-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.requirements_catalog": {
+            "task": "TASK-035",
+            "source": "WF-PRJ-03 predicate 5; AC-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.requirements_external": {
+            "task": "TASK-035",
+            "source": "WF-PRJ-03 predicate 5; AC-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.requirements_other": {
+            "task": "TASK-035",
+            "source": "WF-PRJ-03 predicate 5; AC-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.requirements_invoice": {
+            "task": "TASK-035",
+            "source": "WF-PRJ-03 predicate 5; L-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.refusal.waivable": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.evidence_search": {
+            "task": "TASK-035",
+            "source": "PT-27; IP-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adm.field.evidence_search_help": {
+            "task": "TASK-035",
+            "source": "PT-27; IP-17",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

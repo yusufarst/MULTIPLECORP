@@ -65,10 +65,10 @@ it('shows PG-014\'s controls with their capability and its values and paper only
     expect(QuotationRecords::latest($this->project->id)['state'])->toBe('DRAFT');
 
     $this->actingAs($this->manager)->get($this->path)->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('can', ['manage' => true, 'approve' => false, 'reject' => true])->has('current.lines.0.price')->where('current.paper.layout', 'DOC-01'));
+        ->where('can', ['manage' => true, 'approve' => false, 'reject' => true, 'supersede' => null])->has('current.lines.0.price')->where('current.paper.layout', 'DOC-01'));
 
     $confirmer = Authorization::admin([$this->company->id], ['projects.view', 'projects.confirm']);
     $this->actingAs($confirmer)->get($this->path)->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('can', ['manage' => false, 'approve' => true, 'reject' => false])->missing('current.lines.0.price')->where('current.paper', null));
+        ->where('can', ['manage' => false, 'approve' => true, 'reject' => false, 'supersede' => null])->missing('current.lines.0.price')->where('current.paper', null));
     $this->actingAs($confirmer)->get('/dokumen/penawaran')->assertInertia(fn (AssertableInertia $page) => $page->where('money', false)->missing('rows.0.value'));
 });

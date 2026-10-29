@@ -62,7 +62,8 @@ final class ProjectsController extends Controller
             // *Item dan pemenuhan* with the page: PRJ's own facts in a bounded number of statements (J-FUL-01; QB-02).
             'fulfilment' => fn (): array => $this->workspace->fulfilment($actor, $project),
             'predicates' => Inertia::defer(self::group(fn (): ?array => $this->workspace->predicates($actor, $project)), 'predicates'),
-            'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project)), 'documents'),
+            // `cari_bukti`: the checklist's link dialog searching the evidence it chooses from (PT-27; TASK-035).
+            'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project, self::query($request, 'cari_bukti'))), 'documents'),
             'history' => Inertia::defer(self::group(fn (): array => $this->workspace->history($actor, $project)), 'history'),
         ])->toResponse($request);
     }

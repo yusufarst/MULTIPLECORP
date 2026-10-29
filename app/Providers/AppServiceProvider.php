@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Modules\ADM\Queries\ProjectChecklist;
+use App\Modules\ADM\Services\AdministrationPredicate;
+use App\Modules\ADM\Services\RequirementChanges;
+use App\Modules\ADM\Services\RequirementLifecycle;
+use App\Modules\DOC\Contracts\DocumentChangeParticipant;
 use App\Modules\DOC\Contracts\DocumentRenderer;
 use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Contracts\RenditionTemplate;
@@ -12,6 +17,9 @@ use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
+use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
+use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
+use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Modules\PRJ\Services\SpkSubjects;
 use App\Support\Localization\Locales;
@@ -47,6 +55,13 @@ class AppServiceProvider extends ServiceProvider
 
         // The issuing modules' document subjects (ARCHITECTURE §3): PRJ's quotation and company HPS (TASK-033), its company SPK (TASK-034).
         $this->app->tag([QuotationSubjects::class, SpkSubjects::class], DocumentSubjectProvider::TAG);
+
+        // ADM's parts of the inversion contracts (ARCHITECTURE §3; TASK-035): the requirements a document or evidence
+        // change re-evaluates, the default invoice item and a revalidation's reopening, the administration predicate.
+        $this->app->tag([RequirementChanges::class], DocumentChangeParticipant::TAG);
+        $this->app->tag([RequirementLifecycle::class], ProjectLifecycleParticipant::TAG);
+        $this->app->tag([AdministrationPredicate::class], CompletionPredicateProvider::TAG);
+        $this->app->tag([ProjectChecklist::class], ReadinessProvider::TAG);
     }
 
     private static function scalar(mixed $value): string

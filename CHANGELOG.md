@@ -676,3 +676,10 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-034 on its branch `task/TASK-034-confirmation`: AX-13 as one PRJ step for every confirmation path — the quotation's approval, "Konfirmasi Proyek" on the client's order evidence (ROUTE-158), the opening import's MIGRATION kind —, pinning each line's conversion, price and tax with the guards and the SIPLAH lock; AX-14's "Batalkan Sisa" and "Ubah Cara Pemenuhan" (ROUTE-159, ROUTE-160); PG-011's *Item dan pemenuhan*; the company SPK (DOC-09).
 - The watcher gained a coding-phase liveness event after a six-hour stall; ER-06's independent review and Codex's review dispositioned.
 - Every check passed in fresh CI on `6137fb9`. TASK-034 DONE — progress 34 / 87 —; TASK-035 next.
+
+## Unreleased — 2026-10-29, TASK-035 — Administrative checklist and document readiness
+
+- TASK-034 squash-merged by the executor into `main` as `c2e1646` (pull request #40); TASK-035 started.
+- Built TASK-035 on its branch `task/TASK-035-administration`: the administrative checklist per project with its derived statuses, ROUTE-164–ROUTE-169 — add, tighten, link, *Tidak Berlaku*, the Owner's eligibility, relaxation and removal, the supersession of a waiver or a quotation approval —, ADM's three participants with the default invoice item and the administration predicate, PG-011's checklist and PG-039 *Dokumen Administrasi*.
+- Fixed the project form's product line, which could lose a product chosen while its partial reload was in flight (the first attempt of main CI run 40831691869).
+- Every check passed in fresh CI on `74ce179`. TASK-035 DONE — progress 35 / 87 —; TASK-036 next.
