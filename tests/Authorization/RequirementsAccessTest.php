@@ -107,7 +107,7 @@ it('opens PG-039 with projects.view, listing only the companies in scope (ROUTE-
     $viewer = Authorization::admin([$this->company->id], ['projects.view']);
 
     $this->actingAs($viewer)->get('/dokumen/administrasi?cabang='.$foreign->public_id)->assertOk()->assertInertia(fn (AssertableInertia $page) => $page
-        ->component('ADM/AdministrativeDocuments')
+        ->component('ADM/AdministrativeDocuments', false)
         ->where('branch', $this->company->public_id)
         ->has('branches', 1)
         ->has('rows', 1)

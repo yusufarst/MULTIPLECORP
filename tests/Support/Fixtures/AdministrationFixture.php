@@ -58,7 +58,8 @@ final class AdministrationFixture
 
         $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $project->company_id, 'evidence_type' => 'CLIENT_SPK', 'declared_issuer' => 'SMA Asli '.$run['code']]);
         $file = FileObjectFactory::new()->createOne(['company_id' => $project->company_id, 'sha256' => hash('sha256', 'spk-asli-'.Str::uuid())]);
-        $version = EvidenceDocumentVersionFactory::new()->createOne(['evidence_document_id' => $evidence->id, 'file_object_id' => $file->id]);
+        // The signed-in Owner uploaded it: the factory's own account would repeat its sequence's address across requests.
+        $version = EvidenceDocumentVersionFactory::new()->createOne(['evidence_document_id' => $evidence->id, 'file_object_id' => $file->id, 'uploaded_by' => is_int($actor) ? $actor : null]);
         DB::table('evidence_documents')->where('id', $evidence->id)->update(['current_version_id' => $version->id]);
 
         return response()->json([...$run, 'issuer' => 'SMA Asli '.$run['code']]);
