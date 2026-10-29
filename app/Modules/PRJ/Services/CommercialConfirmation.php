@@ -150,6 +150,12 @@ final class CommercialConfirmation
         }
 
         GuardUpdate::apply($context->connection, 'project_commercial_balances', [['key' => ['project_id' => $projectId], 'deltas' => ['confirmed_sales_value' => is_object($value) ? Row::text($value, 'delta') : '0']]]);
+        foreach ($this->app->tagged(ProjectLifecycleParticipant::TAG) as $participant) {
+            if ($participant instanceof ProjectLifecycleParticipant) {
+                $participant->confirmed($context, $projectId);
+            }
+        }
+
         // C-51: the channel and its SIPLAH details are fixed by the first channel-dependent commit (BR-PRJ-05).
         DB::table('project_siplah_details')->where('project_id', $projectId)->whereNull('locked_at')->update(['locked_at' => $now]);
 

@@ -6,11 +6,14 @@ use App\Modules\DOC\Queries\ProjectDocuments;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Queries\CorrectionTrail;
+use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Data\ProjectInput;
+use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\Journey;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Illuminate\Contracts\Container\Container;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 
@@ -33,6 +36,7 @@ final class ProjectWorkspace
         private readonly ProjectDocuments $documents,
         private readonly CorrectionTrail $trail,
         private readonly ProjectFulfilment $fulfilment,
+        private readonly Container $app,
     ) {}
 
     public function viewer(int $viewerId): Authority
@@ -53,6 +57,14 @@ final class ProjectWorkspace
         $project = preg_match(self::UUID, $publicId) === 1 ? Project::query()->where('public_id', strtolower($publicId))->first() : null;
 
         return $project === null || ! $viewer->allows('projects.view', $project->company_id) ? null : $project;
+    }
+
+    /** {@see self::lookup()} as a higher tier names the project (ARCHITECTURE §3). */
+    public function reference(int $viewerId, string $publicId): ?ProjectRef
+    {
+        $project = $this->lookup($viewerId, $publicId);
+
+        return $project === null ? null : new ProjectRef($project->id, $project->company_id, $project->public_id);
     }
 
     /**
@@ -188,13 +200,22 @@ final class ProjectWorkspace
     }
 
     /**
-     * The documents group, "Kesiapan dokumen" (QB-02).
+     * The documents group, "Kesiapan dokumen" (QB-02; D-IA-10): the project's documents and the administrative
+     * checklist ADM provides through {@see ReadinessProvider} (J-ADM-01; TASK-035), null without a provider.
      *
-     * @return array{rows: list<array<string, mixed>>, more: bool}
+     * @return array{rows: list<array<string, mixed>>, more: bool, checklist: ?array<string, mixed>}
      */
     public function documents(int $viewerId, Project $project): array
     {
-        return $this->documents->of($this->viewer($viewerId), $project->company_id, $project->id);
+        $checklist = null;
+
+        foreach ($this->app->tagged(ReadinessProvider::TAG) as $provider) {
+            if ($provider instanceof ReadinessProvider) {
+                $checklist = $provider->checklist($viewerId, new ProjectRef($project->id, $project->company_id, $project->public_id)) ?? $checklist;
+            }
+        }
+
+        return [...$this->documents->of($this->viewer($viewerId), $project->company_id, $project->id), 'checklist' => $checklist];
     }
 
     /**

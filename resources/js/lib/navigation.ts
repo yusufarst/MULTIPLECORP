@@ -66,7 +66,7 @@ export const MODULES: Entry[] = [
         icon: FileText,
         allowed: scoped('projects.view', 'evidence.view'),
         page: scoped('projects.view'),
-        subpages: [{ pg: 'PG-037', href: '/dokumen/penawaran' }, { pg: 'PG-038', href: '/dokumen/bukti' }, { pg: 'PG-040', href: '/dokumen/kasus' }],
+        subpages: [{ pg: 'PG-037', href: '/dokumen/penawaran' }, { pg: 'PG-038', href: '/dokumen/bukti' }, { pg: 'PG-039', href: '/dokumen/administrasi' }, { pg: 'PG-040', href: '/dokumen/kasus' }],
     },
     {
         key: 'laporan',

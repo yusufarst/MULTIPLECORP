@@ -236,8 +236,8 @@ it('refuses a confirmation whose project changed since PG-011 read it (ST-01; ER
 });
 
 it('hands a cancellation\'s released quantity to the lifecycle participants inside its transaction, a participant\'s failure rolling it back (AX-14; IP-20; ER-06)', function () {
-    RecordingParticipant::register();
     confirmProject($this);
+    RecordingParticipant::register();
     $line = (int) DB::table('project_lines')->where('project_id', $this->project->id)->where('line_no', 2)->value('id');
     $cancel = fn () => $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/batalkan-sisa", [
         'command_id' => (string) Str::uuid(), 'baris' => [['baris' => lineHandle($this, 2), 'jumlah' => '1']], 'alasan' => 'Klien membatalkan', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,

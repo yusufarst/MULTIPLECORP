@@ -457,7 +457,22 @@ export default function ProjectForm({ companies, project, client, today }: Props
                                     header: t('pt10.columns.product'),
                                     className: 'min-w-64',
                                     cell: (line, update, index) => (
-                                        <ProductCell line={line} error={lineError(index, 'produk')} onTerm={(term) => { update({ term }); }} onChoose={(next) => { chooseProduct(line.key, next); }} />
+                                        <ProductCell
+                                            line={line}
+                                            error={lineError(index, 'produk')}
+                                            onTerm={(term) => {
+                                                // The combobox resyncs its text after a choice, possibly once the product's partial reload has
+                                                // set it: a line already in the list takes only its term, from the lines as they are now — a
+                                                // copy from an earlier render would drop the product the reload just set.
+                                                if (lines.some((other) => other.key === line.key)) {
+                                                    setLines((current) => current.map((other) => (other.key === line.key ? { ...other, term } : other)));
+                                                    touch();
+                                                } else {
+                                                    update({ term });
+                                                }
+                                            }}
+                                            onChoose={(next) => { chooseProduct(line.key, next); }}
+                                        />
                                     ),
                                 },
                                 {

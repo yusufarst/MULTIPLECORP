@@ -26,6 +26,11 @@ final class RecordingParticipant implements ProjectLifecycleParticipant
         app()->tag([self::class], ProjectLifecycleParticipant::TAG);
     }
 
+    public function confirmed(CommandContext $context, int $projectId): void
+    {
+        $this->record('confirmed', $projectId, []);
+    }
+
     public function reconfirmed(CommandContext $context, int $projectId): void
     {
         $this->record('reconfirmed', $projectId, []);

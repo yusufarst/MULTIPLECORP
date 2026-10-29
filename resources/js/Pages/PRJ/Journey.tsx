@@ -20,6 +20,7 @@ import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Code, DateText, DateTimeText, Money } from '@/components/values';
+import { type Checklist, ChecklistSection } from '@/features/adm/checklist';
 import { typeName } from '@/features/doc/labels';
 import { type Fulfilment, FulfilmentSection } from '@/features/prj/fulfilment';
 import { type Failed, isFailed, ItemText, type Journey as JourneyShape, predicateName, stageName } from '@/features/prj/journey';
@@ -47,7 +48,7 @@ type Project = {
     recorded_at: string;
     lock_version: number;
 };
-type Documents = { rows: { id: string; type: string; type_name: string; state: string; number: string | null; rendition: string | null }[]; more: boolean };
+type Documents = { rows: { id: string; type: string; type_name: string; state: string; number: string | null; rendition: string | null }[]; more: boolean; checklist: Checklist | null };
 type History = {
     events: { kind: string; from: string | null; to: string | null; reason: string | null; by: string | null; at: string }[];
     corrects: { relation: string; type: string; id: string; reason: string | null; by: string | null; at: string }[];
@@ -199,8 +200,11 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
                     </Section>
                     <Section title={t('journey.docs_readiness')}>
                         <Deferred data="documents" fallback={<RegionLoading />}>
-                            {documents === undefined ? null : isFailed(documents) ? <GroupFailed group="documents" />
-                                : documents.rows.length === 0 ? <RegionEmpty text={t('projects.journey.no_documents')} />
+                            {documents === undefined ? null : isFailed(documents) ? <GroupFailed group="documents" /> : (
+                                <div className="flex min-w-0 flex-col gap-4">
+                                    {/* The administrative checklist, missing items first (J-ADM-01; TASK-035). */}
+                                    {documents.checklist !== null && <ChecklistSection projectId={project.id} checklist={documents.checklist} />}
+                                    {documents.rows.length === 0 ? <RegionEmpty text={t('projects.journey.no_documents')} />
                                     : (
                                         <ul role="list" className="flex flex-col divide-y divide-border-subtle">
                                             {documents.rows.map((row) => (
@@ -214,6 +218,8 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
                                             ))}
                                         </ul>
                                     )}
+                                </div>
+                            )}
                         </Deferred>
                     </Section>
                 </div>

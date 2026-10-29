@@ -4,7 +4,8 @@
 // beside the input with "Terapkan Ulang pada Versi Terbaru" (IP-03; UXS-11); "Terbitkan Penawaran" after its confirmation
 // (IP-08); on a sent revision "Catat Jawaban Klien" — on the phone its quick action —, on any non-draft one "Buat
 // Revisi"; the revision chain with each state, *Kedaluwarsa* derived (L-25), and its DOC-01 number. No control voids a
-// quotation (BR-CR-06), and nothing here reserves stock or records money (BR-QUO-03).
+// quotation (BR-CR-06), and nothing here reserves stock or records money (BR-QUO-03). An approval recorded in error is
+// superseded by "Koreksi Keputusan" with its reason and corrected date (ROUTE-169; CM-27; TASK-035).
 import { router } from '@inertiajs/react';
 import { CopyPlus, MessageSquareReply, Send, Trash2 } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
@@ -42,7 +43,7 @@ type Props = {
     current: Current | null;
     taxes: TaxRule[];
     today: string;
-    can: { manage: boolean; approve: boolean; reject: boolean };
+    can: { manage: boolean; approve: boolean; reject: boolean; supersede: string | null };
 };
 type Entered = { handle: string; product: string; unit: string; description: string; quantity: string | null; price: string | null };
 type Payload = Record<string, string | number | boolean | null | Record<string, string | null>[]>;
@@ -264,7 +265,9 @@ export default function Quotation({ project, revisions, current, taxes, today, c
     const issue = useCommand<Payload>(() => `/proyek/${id}/penawaran/terbitkan`, 'post');
     const revise = useCommand<Payload>(() => `/proyek/${id}/penawaran/revisi`, 'post');
     const answer = useCommand<Payload>(() => `/proyek/${id}/penawaran/jawaban`, 'post');
+    const supersede = useCommand<Payload>(() => `/keputusan/${can.supersede ?? ''}/ganti`, 'post');
     const [answering, setAnswering] = useState(false);
+    const [superseding, setSuperseding] = useState(false);
     const [choice, setChoice] = useState<'SETUJU' | 'TOLAK'>(can.approve ? 'SETUJU' : 'TOLAK');
     const [reason, setReason] = useState('');
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
@@ -308,12 +311,16 @@ export default function Quotation({ project, revisions, current, taxes, today, c
                         </div>
                     }
                     primary={primary}
-                    actions={answerable && revisable ? [{ label: t('quotations.action.revise'), onSelect: () => { revise.submit({ revisi: latest.id }); } }] : []}
+                    actions={[
+                        ...(answerable && revisable ? [{ label: t('quotations.action.revise'), onSelect: () => { revise.submit({ revisi: latest.id }); } }] : []),
+                        ...(can.supersede !== null ? [{ label: t('adm.action.supersede'), onSelect: () => { supersede.clear(); setReason(''); setDate({ date: today, chosen: false }); setSuperseding(true); } }] : []),
+                    ]}
                 />
                 <Answered command={start} />
                 <Answered command={issue} />
                 <Answered command={revise} />
                 <Answered command={answer} />
+                <Answered command={supersede} />
                 {shown === 'EXPIRED' && <p className="text-body text-text-secondary">{t('quotations.expired_note')}</p>}
                 {current === null ? (
                     <RegionEmpty
@@ -402,6 +409,23 @@ export default function Quotation({ project, revisions, current, taxes, today, c
                 onConfirm={() => {
                     answer.submit({ revisi: latest?.id ?? '', jawaban: choice, alasan: reason.trim() === '' ? null : reason.trim(), tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setAnswering(false); });
                 }}
+            />
+            <ConfirmCommand
+                open={superseding}
+                onOpenChange={setSuperseding}
+                title={t('adm.supersede.title')}
+                consequence={t('adm.supersede.consequence_approval')}
+                items={
+                    <div className="flex min-w-0 flex-col gap-4">
+                        <BusinessDateControl today={today} value={date} onChange={setDate} />
+                        {supersede.errors.tanggal !== undefined && <p className="text-danger">{supersede.errors.tanggal}</p>}
+                    </div>
+                }
+                reason={{ value: reason, onChange: setReason, error: supersede.errors.alasan ?? null }}
+                confirmLabel={t('adm.action.supersede')}
+                pending={supersede.pending}
+                answer={supersede.answer}
+                onConfirm={() => { supersede.submit({ proyek: id, alasan: reason, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setSuperseding(false); }); }}
             />
         </AppShell>
     );
