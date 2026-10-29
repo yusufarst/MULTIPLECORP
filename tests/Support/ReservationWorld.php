@@ -122,6 +122,13 @@ final class ReservationWorld
         return RowHandle::of('project_lines', $lineId);
     }
 
+    /** The public identifier of the project whose line the reservation binds — ROUTE-185 names a reservation within it. */
+    public static function projectOf(int $reservationId): string
+    {
+        return (string) DB::table('reservations as r')->join('project_lines as l', 'l.id', '=', 'r.project_line_id')->join('projects as p', 'p.id', '=', 'l.project_id')
+            ->where('r.id', $reservationId)->value('p.public_id');
+    }
+
     /** The line's ACTIVE reservation, or 0. */
     public static function active(int $lineId): int
     {
@@ -224,29 +231,29 @@ final class ReservationWorld
      *
      * @param  array<int, string>  $cuts  reservation => quantity cut
      */
-    public static function reduceSupply(int $actorUserId, int $companyId, int $productId, int $lot, int $location, string $qty, array $cuts): string
+    public static function reduceSupply(int $actorUserId, int $companyId, int $productId, int $lot, int $location, string $qty, array $cuts, string $capability = 'stock.reserve'): string
     {
         $locks = InventoryPosting::cutLocks($productId, array_keys($cuts));
 
         return self::word(self::run($actorUserId, $companyId, $locks, static function (CommandContext $context) use ($productId, $lot, $location, $qty, $cuts, $companyId): void {
             $movement = StockMovementFactory::post('CONDITION_CHANGE', $companyId);
             $reserved = $cuts === [] ? '0' : app(InventoryPosting::class)->cut($context, $productId, $cuts, $qty, $movement, 'INV.ConditionChange');
-            StockMovementEntry::factory()->create(['lot_id' => $lot, 'product_id' => $productId, 'stock_movement_id' => $movement, 'movement_type' => 'CONDITION_CHANGE',
-                'location_id' => $location, 'condition' => 'USABLE', 'qty_delta_base' => '-'.$qty]);
-            StockMovementEntry::factory()->create(['lot_id' => $lot, 'product_id' => $productId, 'stock_movement_id' => $movement, 'movement_type' => 'CONDITION_CHANGE',
-                'location_id' => $location, 'condition' => 'UNUSABLE', 'qty_delta_base' => $qty]);
+            // Both entries in one statement, so the movement's balance (C-07) is read with both, whatever constraint mode is set.
+            $entry = fn (string $condition, string $delta): array => StockMovementEntry::factory()->make(['lot_id' => $lot, 'product_id' => $productId, 'stock_movement_id' => $movement,
+                'movement_type' => 'CONDITION_CHANGE', 'location_id' => $location, 'condition' => $condition, 'qty_delta_base' => $delta])->getAttributes();
+            DB::table('stock_movement_entries')->insert([$entry('USABLE', '-'.$qty), $entry('UNUSABLE', $qty)]);
             DB::table('stock_lot_balances')->where(['lot_id' => $lot, 'location_id' => $location, 'condition' => 'USABLE'])->update(['qty' => DB::raw("qty - cast('{$qty}' as numeric)")]);
             self::place($lot, $productId, $location, 'UNUSABLE');
             DB::table('stock_lot_balances')->where(['lot_id' => $lot, 'location_id' => $location, 'condition' => 'UNUSABLE'])->update(['qty' => DB::raw("qty + cast('{$qty}' as numeric)")]);
             // One statement, so the CHECK reads RESERVED and UNUSABLE together (C-04; C-06).
             GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $productId], 'deltas' => ['reserved_qty' => $reserved, 'unusable_qty' => $qty]]]);
-        }));
+        }, $capability));
     }
 
     /** A posting run in the command envelope as the actor, holding `locks` (CONCURRENCY_IDEMPOTENCY §5). */
-    public static function run(int $actorUserId, int $companyId, LockSet $locks, Closure $work): Outcome
+    public static function run(int $actorUserId, int $companyId, LockSet $locks, Closure $work, string $capability = 'stock.reserve'): Outcome
     {
-        $request = new CommandRequest((string) Str::uuid(), 'test.inventory', $actorUserId, $companyId, 'stock.reserve', Fingerprint::of('test.inventory', null, ['run' => (string) Str::uuid()]));
+        $request = new CommandRequest((string) Str::uuid(), 'test.inventory', $actorUserId, $companyId, $capability, Fingerprint::of('test.inventory', null, ['run' => (string) Str::uuid()]));
 
         return app(CommandEnvelope::class)->run($request, static function (CommandContext $context) use ($locks, $work): CommandResult {
             $context->lock($locks);

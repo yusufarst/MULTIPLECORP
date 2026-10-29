@@ -8,7 +8,7 @@
 // line with room left sends INV's own command (ROUTE-184; J-INV-02; TASK-038), at most the line's reservable quantity and
 // the pooled availability — the server re-reads both at commit (AX-01). Nothing here records money: the company SPK is
 // its own command (IP-19).
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { BusinessDateControl, type BusinessDate } from '@/components/date-field';
@@ -135,6 +135,8 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
     const [cancelling, setCancelling] = useState<FulfilmentLine | null>(null);
     const [replanning, setReplanning] = useState<FulfilmentLine | null>(null);
     const [reserving, setReserving] = useState<FulfilmentLine | null>(null);
+    // An open "Reservasi" intent stays with its line: another line leaves it, never retrying it there (IP-02).
+    const reserved = useRef<string | null>(null);
     const [quantity, setQuantity] = useState('');
     const [mode, setMode] = useState<Mode>('DROPSHIP');
     const [reason, setReason] = useState('');
@@ -191,7 +193,7 @@ export function FulfilmentSection({ projectId, lockVersion, fulfilment, today, t
                             <LineProgress
                                 key={line.handle}
                                 line={line}
-                                onReserve={() => { reserve.clear(); setQuantity(ceiling(line).replace(/\.?0+$/, '')); setReserving(line); }}
+                                onReserve={() => { if (reserved.current === line.handle) reserve.clear(); else reserve.leave(); reserved.current = line.handle; setQuantity(ceiling(line).replace(/\.?0+$/, '')); setReserving(line); }}
                                 onCancel={() => { cancel.clear(); setQuantity(line.remainder.replace(/\.?0+$/, '')); setReason(''); setCancelling(line); }}
                                 onReplan={() => { replan.clear(); setMode(line.mode === 'WAREHOUSE' ? 'DROPSHIP' : 'WAREHOUSE'); setReason(''); setReplanning(line); }}
                             />

@@ -5,7 +5,7 @@
 // another company's reservation by its quantity and the relation marker only (PJ-04). "Reservasi", "Kurangi Reservasi"
 // and "Lepas" from the row's actions, the last two with their reason (AX-01; AX-02); the phone reads the rows (`[desk]`).
 import { router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 
 import { RelationMarker } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -42,7 +42,7 @@ type Row = {
     may: { reserve: boolean; reduce: boolean; release: boolean };
 };
 type Filters = { tab: Tab; urut: Sort; produk: string | null };
-type Props = { branches: Branch[]; branch: string | null; filters: Filters; product: { handle: string; name: string } | null; rows: Row[]; more: string | null; can: { reserve: boolean } };
+type Props = { branches: Branch[]; branch: string | null; filters: Filters; product: { id: string; name: string } | null; rows: Row[]; more: string | null; can: { reserve: boolean } };
 type Action = { kind: 'reserve' | 'reduce' | 'release'; row: Row };
 type Payload = Record<string, string | boolean>;
 
@@ -87,8 +87,12 @@ export default function Reservations({ branches, branch, filters, product, rows,
         setAppending(true);
         router.reload({ only: ['rows', 'more'], data: { setelah: next }, preserveUrl: true });
     };
+    // An open intent stays with its command on its reservation: another row or command leaves it, never retrying it there (IP-02).
+    const target = useRef<string | null>(null);
     const open = (kind: Action['kind'], row: Row) => {
-        [reserve, reduce].forEach((command) => { command.clear(); });
+        const next = `${kind}:${row.key}`;
+        [reserve, reduce].forEach((command) => { if (target.current === next) command.clear(); else command.leave(); });
+        target.current = next;
         setQuantity('');
         setReason('');
         setAction({ kind, row });
@@ -211,7 +215,7 @@ export default function Reservations({ branches, branch, filters, product, rows,
                     confirmLabel={t('actions.reduce_reservation')}
                     pending={reduce.pending}
                     answer={reduce.answer}
-                    onConfirm={() => { reduce.submit({ jumlah: quantity, alasan: reason }, () => { setAction(null); }); }}
+                    onConfirm={() => { if (row?.project) reduce.submit({ proyek: row.project.id, jumlah: quantity, alasan: reason }, () => { setAction(null); }); }}
                 />
                 <ConfirmCommand
                     open={action?.kind === 'release'}
@@ -222,7 +226,7 @@ export default function Reservations({ branches, branch, filters, product, rows,
                     confirmLabel={t('actions.release')}
                     pending={reduce.pending}
                     answer={reduce.answer}
-                    onConfirm={() => { reduce.submit({ lepas: true, alasan: reason }, () => { setAction(null); }); }}
+                    onConfirm={() => { if (row?.project) reduce.submit({ proyek: row.project.id, lepas: true, alasan: reason }, () => { setAction(null); }); }}
                 />
             </div>
         </AppShell>

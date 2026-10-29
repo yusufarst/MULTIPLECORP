@@ -49,7 +49,7 @@ function reserveLine(object $test, int $line, string $quantity, ?int $actor = nu
 function reduceReservation(object $test, int $reservation, array $body, ?int $actor = null): TestResponse
 {
     return $test->actingAs(User::query()->findOrFail($actor ?? $test->world->actorId))
-        ->post('/gudang/reservasi/'.RowHandle::of('reservations', $reservation).'/kurangi', ['command_id' => (string) Str::uuid(), ...$body]);
+        ->post('/gudang/reservasi/'.RowHandle::of('reservations', $reservation).'/kurangi', ['command_id' => (string) Str::uuid(), 'proyek' => ReservationWorld::projectOf($reservation), ...$body]);
 }
 
 it('reserves for a confirmed warehouse line: RESERVED and the line\'s reserved quantity move together, nothing else (annex 7; AC-22; BR-RSV-02; criteria 1, 13)', function () {
@@ -152,8 +152,10 @@ it('reduces and releases with a reason, never above what remains (AX-02; C-05; c
         ->and(DB::table('project_line_balances')->where('project_line_id', $line)->value('reserved_qty_base'))->toBe('0.000')
         ->and(DB::table('audit_events')->where('action', 'INV.ReservationReleased')->value('reason'))->toBe('Proyek ditunda');
 
-    // A released reservation is no longer one a command names.
-    reduceReservation($this, $reservation, ['lepas' => true, 'alasan' => 'Lagi'])->assertNotFound();
+    // A command from a stale page on the ended reservation is refused in place with what remains (C-05; NV-04).
+    reduceReservation($this, $reservation, ['lepas' => true, 'alasan' => 'Lagi']);
+    expect(reservationAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'C-05', 'text' => 'Melebihi sisa reservasi. Sisa saat ini: 0.'])
+        ->and(DB::table('reservation_events')->where('reservation_id', $reservation)->count())->toBe(3);
 });
 
 it('lists a residual reservation of a completed project as "perlu dilepas", released by command only (PX-02; FS-09; QS-16; criterion 7)', function () {
@@ -203,12 +205,19 @@ it('shows PG-025 by branch, another company\'s reservation of the pool by its qu
         ->component('INV/Reservations')->has('branches', 1)->where('branch', $this->world->company->public_id)->has('rows', 1)
         ->where('rows.0.quantity', '3.000')->where('rows.0.may', ['reserve' => true, 'reduce' => true, 'release' => true])->where('more', null));
 
-    $pool = RowHandle::of('products', $this->world->productId());
+    $pool = $this->world->goods['product']->public_id;
     $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}")->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('product.name', $this->world->goods['product']->name)->has('rows', 2)
+        ->where('product.name', $this->world->goods['product']->name)->where('filters.produk', $pool)->has('rows', 2)
         ->where('rows.0.quantity', '4.000')->where('rows.0.handle', null)->where('rows.0.project', null)->where('rows.0.line', null)->where('rows.0.company', null)
         ->where('rows.0.may', ['reserve' => false, 'reduce' => false, 'release' => false])
         ->where('rows.1.quantity', '3.000')->where('rows.1.project.number', DB::table('projects')->where('id', DB::table('project_lines')->where('id', $mine)->value('project_id'))->value('project_number')));
+
+    // Nothing of the other company's project shows through the tabs or the sort: its reservation stays an ACTIVE row of
+    // the pool, after the branch's own by number, whatever its project's state (PJ-04).
+    DB::table('projects')->where('id', DB::table('project_lines')->where('id', $theirs)->value('project_id'))->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
+    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&urut=proyek")->assertInertia(fn (AssertableInertia $page) => $page
+        ->has('rows', 2)->where('rows.0.quantity', '3.000')->where('rows.1.quantity', '4.000')->where('rows.1.residual', false));
+    $this->actingAs($actor)->get("/gudang/reservasi?produk={$pool}&tab=dilepas")->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));
 
     // The other company's reservation is unknown to a command of this account (SM-01; CS-03).
     reduceReservation($this, ReservationWorld::active($theirs), ['lepas' => true, 'alasan' => 'Uji'])->assertNotFound();

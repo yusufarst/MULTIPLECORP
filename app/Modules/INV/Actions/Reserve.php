@@ -37,6 +37,6 @@ final class Reserve
             $context->lock(InventoryPosting::lineLocks($lineId));
 
             return new CommandResult('reservation', $this->reservations->reserve($context, $lineId, $quantity));
-        });
+        }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED ? InventoryPosting::reserveRefusal($lineId, $outcome->code) : null);
     }
 }

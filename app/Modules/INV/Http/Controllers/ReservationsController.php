@@ -53,16 +53,17 @@ final class ReservationsController extends Controller
         return $this->answer($outcome, 'reserved');
     }
 
-    /** ROUTE-185 "Kurangi Reservasi" (`jumlah`) or "Lepas" (`lepas`), with the reason. */
+    /** ROUTE-185 "Kurangi Reservasi" (`jumlah`) or "Lepas" (`lepas`), with the reason; the reservation named within its project (`proyek`). */
     public function reduce(Request $request, ReleaseReservation $release, string $id): RedirectResponse
     {
         $actor = self::actor($request);
         $input = self::validated($request, [
+            'proyek' => ['required', 'uuid'],
             'lepas' => ['nullable', 'boolean'],
             'jumlah' => ['required_unless:lepas,1,true', 'nullable', 'regex:/^\d{1,15}(\.\d{1,3})?$/'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
         ]);
-        $reservation = $this->reservations->reservation($actor, $id, self::text($input['command_id'])) ?? throw new NotFoundHttpException;
+        $reservation = $this->reservations->reservation($actor, self::text($input['proyek']), $id) ?? throw new NotFoundHttpException;
         $quantity = $request->boolean('lepas') ? null : self::quantity(self::text($input['jumlah']), $reservation['scale']);
         $outcome = $release->run(self::text($input['command_id']), $actor, $reservation['company'], $reservation['reservation'], $id, $quantity, trim(self::text($input['alasan'])));
 

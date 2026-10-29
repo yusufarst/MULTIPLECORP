@@ -1,7 +1,6 @@
 <?php
 
 use App\Modules\IAM\Models\User;
-use App\Modules\INV\Services\InventoryPosting;
 use App\Modules\INV\Services\ReservationLifecycle;
 use App\Modules\INV\Services\ReservationPredicate;
 use App\Modules\ORG\Enums\SequenceType;
@@ -140,6 +139,26 @@ it('releases the reservation of a remainder "Ubah Cara Pemenuhan" splits off (L-
         ->and(ReservationWorld::guard($this->world->productId())->reserved_qty)->toBe('0.000');
 });
 
+it('fits the reservations of many lines in one "Batalkan Sisa", one restart whatever the lines (AX-14; SQ-20; GU-01; criterion 11)', function () {
+    $project = $this->world->project(array_fill(0, 5, 'WAREHOUSE'), '4');
+    $lines = array_map(fn (int $number): int => ReservationWorld::line($project, $number), range(1, 5));
+
+    foreach ($lines as $line) {
+        expect(ReservationWorld::reserve($this->world->actorId, $line, '2'))->toBe('COMMITTED');
+    }
+
+    // Each line's remainder of 4 cancelled whole in one command: every reservation released with it.
+    $this->actingAs($this->actor)->post("/proyek/{$project->public_id}/batalkan-sisa", [
+        'command_id' => (string) Str::uuid(), 'baris' => array_map(fn (int $line): array => ['baris' => ReservationWorld::handle($line), 'jumlah' => '4'], $lines),
+        'alasan' => 'Klien membatalkan seluruh pesanan', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+    ]);
+
+    expect(lifecycleAnswer())->toMatchArray(['kind' => 'COMMITTED'])
+        ->and(DB::table('reservations')->whereIn('project_line_id', $lines)->pluck('state')->unique()->values()->all())->toBe(['RELEASED'])
+        ->and(DB::table('project_line_balances')->whereIn('project_line_id', $lines)->pluck('reserved_qty_base')->unique()->values()->all())->toBe(['0.000'])
+        ->and(ReservationWorld::guard($this->world->productId())->reserved_qty)->toBe('0.000');
+});
+
 it('rolls the whole PRJ command back when a participant after INV\'s fails (AX-14; criterion 11)', function () {
     $project = $this->world->project();
     $line = ReservationWorld::line($project);
@@ -169,14 +188,17 @@ it('releases every active reservation of a cancelled project, and predicate 8 ho
         ->and($state()->items[0]->key)->toBe('projects.item.reservations_active')
         ->and($state()->items[0]->params)->toBe(['jumlah' => '2']);
 
-    // TASK-056 builds the cancellation; PRJ calls the participant inside it, under LK-01 (AX-27).
-    $locks = DB::table('project_lines')->where('project_id', $project->id)->pluck('id')
-        ->reduce(fn (LockSet $set, mixed $line): LockSet => $set->union(InventoryPosting::lineLocks((int) $line)), new LockSet);
-    expect(ReservationWorld::word(ReservationWorld::run($this->world->actorId, $this->world->company->id, $locks, static function (CommandContext $context) use ($project): void {
-        app(ReservationLifecycle::class)->cancelled($context, $project->id);
-    })))->toBe('COMMITTED');
+    // TASK-056 builds the cancellation; PRJ calls the participant inside it holding only the project (LK-01, AX-27): INV
+    // requires every reserved line's locks at once, so the command restarts once, whatever its lines (SQ-20).
+    $runs = 0;
+    expect(ReservationWorld::word(ReservationWorld::run($this->world->actorId, $this->world->company->id, (new LockSet)->add('projects', ['id' => $project->id]),
+        static function (CommandContext $context) use ($project, &$runs): void {
+            $runs++;
+            app(ReservationLifecycle::class)->cancelled($context, $project->id);
+        })))->toBe('COMMITTED');
 
-    expect(DB::table('reservations')->where('state', 'ACTIVE')->count())->toBe(0)
+    expect($runs)->toBe(2)
+        ->and(DB::table('reservations')->where('state', 'ACTIVE')->count())->toBe(0)
         ->and(DB::table('reservation_events')->where('reason', 'Proyek dibatalkan.')->pluck('kind')->all())->toBe(['RELEASE', 'RELEASE'])
         ->and(ReservationWorld::guard($this->world->productId())->reserved_qty)->toBe('0.000')
         ->and($state()->met())->toBeTrue();

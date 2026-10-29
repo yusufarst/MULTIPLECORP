@@ -3,7 +3,6 @@
 use App\Modules\INV\Models\Reservation;
 use App\Modules\INV\Queries\Reservations;
 use App\Modules\PRJ\Models\ProjectLine;
-use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Tests\Support\Authorization;
@@ -50,7 +49,7 @@ function reservationRows(object $test, int $count): void
 }
 
 it('reads PG-025 in the same number of statements for two reservations and a full page, and its product\'s pool alike (QB-12; PFM-01; PFM-02)', function () {
-    $pool = RowHandle::of('products', $this->world->productId());
+    $pool = $this->world->goods['product']->public_id;
     $read = fn (?string $product): int => reservationStatements(fn () => app(Reservations::class)->screen($this->world->actorId, ['cabang' => null, 'tab' => null, 'produk' => $product, 'urut' => null, 'setelah' => null]));
     reservationRows($this, 2);
     $read(null);

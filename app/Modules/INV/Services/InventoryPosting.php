@@ -148,7 +148,9 @@ final class InventoryPosting
         }
 
         $ends = $take->isEqualTo($remaining);
-        $this->lower($context, $reservation, (string) $take, $ends ? 'RELEASE' : 'DECREASE', $reason, null, null, true);
+        $this->lower($context, $reservation, (string) $take, $ends ? 'RELEASE' : 'DECREASE', $reason, null, null);
+        GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => (int) Row::text($reservation, 'product_id')], 'deltas' => ['reserved_qty' => '-'.$take]]]);
+        $this->demand->reserved($context, [(int) Row::text($reservation, 'project_line_id') => '-'.$take]);
         $this->audit->record(
             action: $ends ? 'INV.ReservationReleased' : 'INV.ReservationReduced',
             authorityClass: AuthorityClass::Adm,
@@ -185,46 +187,38 @@ final class InventoryPosting
             return '0';
         }
 
-        $this->lower($context, $reservation, (string) $take, 'CONSUME', null, $dispatchLineId, null, false);
+        $this->lower($context, $reservation, (string) $take, 'CONSUME', null, $dispatchLineId, null);
+        $this->demand->reserved($context, [$lineId => '-'.$take]);
 
         return (string) $take;
     }
 
     /**
      * SF-RSV-CUT (BR-RSV-04; C-06; IP-20; UXI-35): a supply-reducing command's explicit cuts — the actor's, never the
-     * system's — on the product whose usable supply its movement lowers by `usableReduction`: they must cover the shortfall,
-     * RESERVED above the usable supply left, else REJECTED with it (C-06); each is within its reservation's remaining
-     * quantity (C-05); a cut of a reservation whose company is outside the actor's grants is REJECTED and routed, one audit
-     * event per such company committed with the refusal (AZ-08; SQ-23). Each cut is a CUT event naming the movement; the
-     * line guards are lowered here and the product's reserved delta is returned for the caller's one statement on the product
-     * guard with its own on-hand and unusable moves, whose CHECK refuses a reduction the cuts do not cover. The caller holds
-     * the lock set of `cutLocks()` and audits the cuts with its own command.
+     * system's — on the product whose usable supply its movement lowers by `usableReduction`. A cut is AX-02 inside that
+     * command: one of a reservation whose company is outside the actor's grants — outside the scope, or without
+     * `stock.reserve` there — is REJECTED and routed before anything is said of it, one audit event per such company
+     * committed with the refusal (AZ-08; SQ-23); each cut is within its reservation's remaining quantity (C-05); together
+     * they cover the shortfall, RESERVED above the usable supply left, else REJECTED with it (C-06). Each cut is a CUT event
+     * naming the movement; the line guards are lowered here in one statement and the product's reserved delta is returned for
+     * the caller's one statement on the product guard with its own on-hand and unusable moves (GU-01), whose CHECK refuses a
+     * reduction the cuts do not cover. The caller holds the lock set of `cutLocks()` and audits the cuts with its own command.
      *
      * @param  array<int, string>  $cuts  reservation => quantity
      */
     public function cut(CommandContext $context, int $productId, array $cuts, string $usableReduction, int $movementId, string $routedAction): string
     {
         $context->require(self::cutLocks($productId, array_keys($cuts)));
-        $shortfall = self::shortfall($productId, $usableReduction);
-        $covered = array_reduce($cuts, fn (BigDecimal $sum, string $qty): BigDecimal => $sum->plus($qty), BigDecimal::zero());
-
-        if ($covered->isLessThan($shortfall)) {
-            throw Refused::rejected('C-06', ['shortfall' => (string) $shortfall, 'covered' => (string) $covered]);
-        }
-
+        $authority = $context->authority();
         $reservations = [];
         $outside = [];
 
-        foreach ($cuts as $id => $qty) {
+        foreach (array_keys($cuts) as $id) {
             $reservation = self::reservation($id);
+            $company = (int) Row::text($reservation, 'company_id');
 
-            if ((int) Row::text($reservation, 'product_id') !== $productId || Row::text($reservation, 'state') !== 'ACTIVE'
-                || BigDecimal::of($qty)->isGreaterThan(Row::text($reservation, 'remaining_qty_base')) || ! BigDecimal::of($qty)->isPositive()) {
-                throw Refused::rejected('C-05', ['reservation' => $id, 'remaining' => Row::text($reservation, 'state') === 'ACTIVE' ? Row::text($reservation, 'remaining_qty_base') : '0']);
-            }
-
-            if ($context->authority()?->scope->includes((int) Row::text($reservation, 'company_id')) !== true) {
-                $outside[(int) Row::text($reservation, 'company_id')] = true;
+            if ($authority === null || ! $authority->scope->includes($company) || ! $authority->allows('stock.reserve', $company)) {
+                $outside[$company] = true;
             }
 
             $reservations[$id] = $reservation;
@@ -241,12 +235,33 @@ final class InventoryPosting
             });
         }
 
+        foreach ($cuts as $id => $qty) {
+            $reservation = $reservations[$id];
+
+            if ((int) Row::text($reservation, 'product_id') !== $productId || Row::text($reservation, 'state') !== 'ACTIVE'
+                || BigDecimal::of($qty)->isGreaterThan(Row::text($reservation, 'remaining_qty_base')) || ! BigDecimal::of($qty)->isPositive()) {
+                throw Refused::rejected('C-05', ['reservation' => $id, 'remaining' => Row::text($reservation, 'state') === 'ACTIVE' ? Row::text($reservation, 'remaining_qty_base') : '0']);
+            }
+        }
+
+        $shortfall = self::shortfall($productId, $usableReduction);
+        $covered = array_reduce($cuts, fn (BigDecimal $sum, string $qty): BigDecimal => $sum->plus($qty), BigDecimal::zero());
+
+        if ($covered->isLessThan($shortfall)) {
+            throw Refused::rejected('C-06', ['shortfall' => (string) $shortfall, 'covered' => (string) $covered]);
+        }
+
         $reserved = BigDecimal::zero();
+        $lines = [];
 
         foreach ($reservations as $id => $reservation) {
-            $this->lower($context, $reservation, $cuts[$id], 'CUT', null, null, $movementId, false);
+            $this->lower($context, $reservation, $cuts[$id], 'CUT', null, null, $movementId);
             $reserved = $reserved->plus($cuts[$id]);
+            $line = (int) Row::text($reservation, 'project_line_id');
+            $lines[$line] = (string) BigDecimal::of($lines[$line] ?? '0')->minus($cuts[$id]);
         }
+
+        $this->demand->reserved($context, $lines);
 
         return (string) $reserved->negated();
     }
@@ -273,34 +288,83 @@ final class InventoryPosting
     /**
      * The reservations above a line's demand once PRJ moves it (AX-13; AX-14; AX-27): each line's active reservation lowered
      * to what its remainder leaves — `allowed`, the line's demand less dispatched and cancelled as PRJ is setting them —, a
-     * release at zero, with the system reason; inside PRJ's transaction, its failure rolling the whole command back.
+     * release at zero, with the system reason; inside PRJ's transaction, its failure rolling the whole command back. The
+     * lines' locks are required together — one restart at most, whatever the lines (SQ-20) —, and the product and line
+     * guards each moved in one statement (GU-01).
      *
      * @param  array<int, string>  $allowed  project line => the reserved quantity the line may still hold
      */
     public function fit(CommandContext $context, array $allowed, string $reason): void
     {
-        $lowered = [];
+        $active = fn () => DB::table('reservations')->whereIn('project_line_id', array_keys($allowed))->where('state', 'ACTIVE')->orderBy('id')->pluck('id')->all();
+        $locks = new LockSet;
 
-        foreach ($allowed as $line => $max) {
-            $active = DB::table('reservations')->where('project_line_id', $line)->where('state', 'ACTIVE')->value('id');
+        foreach ($active() as $id) {
+            $locks = $locks->union(self::lineLocks(self::lineOf(is_numeric($id) ? (int) $id : 0)));
+        }
 
-            if (! is_numeric($active)) {
-                continue;
-            }
+        $context->require($locks);
+        $products = [];
+        $lines = [];
 
-            $context->require(self::lineLocks($line));
-            $reservation = self::reservation((int) $active);
+        // Re-read under the locks: the project's lock (LK-01) keeps any other reservation of its lines from starting meanwhile.
+        foreach ($active() as $id) {
+            $reservation = self::reservation(is_numeric($id) ? (int) $id : 0);
+            $line = (int) Row::text($reservation, 'project_line_id');
             $remaining = BigDecimal::of(Row::text($reservation, 'remaining_qty_base'));
-            $excess = $remaining->minus(BigDecimal::max(BigDecimal::zero(), BigDecimal::of($max)));
+            $excess = $remaining->minus(BigDecimal::max(BigDecimal::zero(), BigDecimal::of($allowed[$line] ?? '0')));
 
             if ($excess->isPositive()) {
-                $lowered[] = [$reservation, (string) $excess, $excess->isEqualTo($remaining) ? 'RELEASE' : 'DECREASE'];
+                $this->lower($context, $reservation, (string) $excess, $excess->isEqualTo($remaining) ? 'RELEASE' : 'DECREASE', $reason, null, null);
+                $product = (int) Row::text($reservation, 'product_id');
+                $products[$product] = ($products[$product] ?? BigDecimal::zero())->plus($excess);
+                $lines[$line] = '-'.$excess;
             }
         }
 
-        foreach ($lowered as [$reservation, $excess, $kind]) {
-            $this->lower($context, $reservation, $excess, $kind, $reason, null, null, true);
+        if ($products !== []) {
+            GuardUpdate::apply($context->connection, 'stock_product_balances', array_map(fn (int $product, BigDecimal $sum): array => ['key' => ['product_id' => $product], 'deltas' => ['reserved_qty' => (string) $sum->negated()]],
+                array_keys($products), array_values($products)));
+            $this->demand->reserved($context, $lines);
         }
+    }
+
+    /**
+     * A replayed "Reservasi" refusal's current state (CI-05): the availability or the line's remainder as they are now, the
+     * reason the line is refused now — never the empty state that would read as zero.
+     *
+     * @return ?array<string, string>
+     */
+    public static function reserveRefusal(int $lineId, ?string $code): ?array
+    {
+        $line = self::line($lineId);
+        $scale = max(0, (int) Row::text($line, 'quantity_scale'));
+        $confirmed = Row::text($line, 'project_state') === 'ACTIVE' && Row::nullable($line, 'pinned') !== null && Row::nullable($line, 'demand') !== null;
+
+        return match ($code) {
+            'C-04' => ['available' => (string) self::available((int) Row::text($line, 'product_id'))->toScale($scale)],
+            'C-05' => $confirmed ? ['remainder' => (string) self::remainder($line)->toScale($scale), 'line' => Row::text($line, 'line_no')] : null,
+            'BR-RSV-01' => ['reason' => $confirmed ? 'mode' : 'unconfirmed'],
+            default => null,
+        };
+    }
+
+    /**
+     * A replayed "Kurangi Reservasi" or "Lepas" refusal's current state (CI-05): what remains of the reservation now.
+     *
+     * @return ?array<string, string>
+     */
+    public static function reduceRefusal(int $reservationId, ?string $code): ?array
+    {
+        if ($code !== 'C-05') {
+            return null;
+        }
+
+        $reservation = self::reservation($reservationId);
+        $active = Row::text($reservation, 'state') === 'ACTIVE';
+
+        return ['remaining' => $active ? (string) BigDecimal::of(Row::text($reservation, 'remaining_qty_base'))->toScale(max(0, (int) Row::text($reservation, 'quantity_scale'))) : '0',
+            'state' => Row::text($reservation, 'state')];
     }
 
     /** AVAILABLE for a product (CALC-01): ON HAND − RESERVED − UNUSABLE, zero without its guard. */
@@ -320,10 +384,10 @@ final class InventoryPosting
     }
 
     /**
-     * One reservation lowered by `qty` with its event — RELEASED or CONSUMED at zero, never ACTIVE at zero (C-05) —, its line
-     * guard lowered and, when `productGuard`, the product guard's RESERVED with it.
+     * One reservation lowered by `qty` with its event — RELEASED or CONSUMED at zero, never ACTIVE at zero (C-05). The caller
+     * moves the product and line guards, each once per command (GU-01).
      */
-    private function lower(CommandContext $context, object $reservation, string $qty, string $kind, ?string $reason, ?int $dispatchLineId, ?int $movementId, bool $productGuard): void
+    private function lower(CommandContext $context, object $reservation, string $qty, string $kind, ?string $reason, ?int $dispatchLineId, ?int $movementId): void
     {
         $id = (int) Row::text($reservation, 'id');
         $ends = BigDecimal::of(Row::text($reservation, 'remaining_qty_base'))->isEqualTo($qty);
@@ -331,12 +395,6 @@ final class InventoryPosting
         $context->connection->update('update reservations set remaining_qty_base = remaining_qty_base - ?::numeric, state = ?, lock_version = lock_version + 1, updated_at = ? where id = ?',
             [$qty, $state, $context->now(), $id]);
         $this->event($context, $id, $reservation, $kind, '-'.$qty, $reason, $dispatchLineId, $movementId);
-
-        if ($productGuard) {
-            GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => (int) Row::text($reservation, 'product_id')], 'deltas' => ['reserved_qty' => '-'.$qty]]]);
-        }
-
-        $this->demand->reserved($context, [(int) Row::text($reservation, 'project_line_id') => '-'.$qty]);
     }
 
     private function event(CommandContext $context, int $reservationId, object $source, string $kind, string $delta, ?string $reason, ?int $dispatchLineId = null, ?int $movementId = null): void

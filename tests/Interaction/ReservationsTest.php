@@ -60,11 +60,22 @@ it('reserves once for one command_id sent twice, the same identifier with anothe
         ->and(DB::table('reservations')->value('remaining_qty_base'))->toBe('3.000');
 });
 
+it('answers a replayed refusal with the availability as it is now, never an empty figure (INT-184; CI-05; ST-06)', function () {
+    $refused = ['command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'baris' => ReservationWorld::handle($this->line), 'jumlah' => '11'];
+    $this->actingAs($this->actor)->post('/gudang/reservasi', $refused);
+    expect(reservationInteractionAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-04', 'text' => 'Stok tersedia tidak cukup. Tersedia saat ini: 10.']);
+
+    // Meanwhile another line takes 3: the replay answers the recorded refusal with today's 7.
+    expect(ReservationWorld::reserve($this->world->actorId, ReservationWorld::line($this->world->project()), '3'))->toBe('COMMITTED');
+    $this->actingAs($this->actor)->post('/gudang/reservasi', $refused);
+    expect(reservationInteractionAnswer())->toMatchArray(['kind' => Outcome::REJECTED, 'code' => 'C-04', 'text' => 'Stok tersedia tidak cukup. Tersedia saat ini: 7.']);
+});
+
 it('reduces and releases once each for one command_id sent twice, another reason a CONFLICT (INT-185; CI-05; M-09)', function () {
     expect(ReservationWorld::reserve($this->world->actorId, $this->line, '5'))->toBe('COMMITTED');
     $reservation = ReservationWorld::active($this->line);
     $path = '/gudang/reservasi/'.RowHandle::of('reservations', $reservation).'/kurangi';
-    $reduce = ['command_id' => (string) Str::uuid(), 'jumlah' => '2', 'alasan' => 'Klien menunda'];
+    $reduce = ['command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'jumlah' => '2', 'alasan' => 'Klien menunda'];
 
     expect(reservationSentTwice($this, $path, $reduce))->toBe(Outcome::COMMITTED.' '.Outcome::COMMITTED)
         ->and(DB::table('reservations')->where('id', $reservation)->value('remaining_qty_base'))->toBe('3.000')
@@ -73,7 +84,7 @@ it('reduces and releases once each for one command_id sent twice, another reason
     $this->actingAs($this->actor)->post($path, [...$reduce, 'alasan' => 'Alasan lain']);
     expect(reservationInteractionAnswer()['kind'] ?? null)->toBe(Outcome::CONFLICT);
 
-    $release = ['command_id' => (string) Str::uuid(), 'lepas' => true, 'alasan' => 'Proyek ditunda'];
+    $release = ['command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'lepas' => true, 'alasan' => 'Proyek ditunda'];
     $this->actingAs($this->actor)->post($path, $release);
     expect(reservationInteractionAnswer()['kind'] ?? null)->toBe(Outcome::COMMITTED)
         ->and(DB::table('reservations')->where('id', $reservation)->value('state'))->toBe('RELEASED');

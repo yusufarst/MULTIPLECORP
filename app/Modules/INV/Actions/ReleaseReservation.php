@@ -40,6 +40,6 @@ final class ReleaseReservation
             $this->reservations->reduce($context, $reservationId, $quantity, $reason);
 
             return new CommandResult('reservation', $reservationId);
-        });
+        }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED ? InventoryPosting::reduceRefusal($reservationId, $outcome->code) : null);
     }
 }

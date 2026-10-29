@@ -37,7 +37,7 @@ it('refuses the page and both commands without stock.reserve, and PG-011 offers 
 
     $this->actingAs($viewer)->get('/gudang/reservasi')->assertForbidden();
     $this->actingAs($viewer)->post('/gudang/reservasi', ['command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'baris' => ReservationWorld::handle($this->line), 'jumlah' => '1'])->assertForbidden();
-    $this->actingAs($viewer)->post('/gudang/reservasi/'.RowHandle::of('reservations', $this->reservation).'/kurangi', ['command_id' => (string) Str::uuid(), 'lepas' => true, 'alasan' => 'Uji'])->assertForbidden();
+    $this->actingAs($viewer)->post('/gudang/reservasi/'.RowHandle::of('reservations', $this->reservation).'/kurangi', ['command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'lepas' => true, 'alasan' => 'Uji'])->assertForbidden();
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('fulfilment.lines.0.can.reserve', false));
     $this->actingAs(User::query()->findOrFail($this->world->actorId))->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('fulfilment.lines.0.can.reserve', true));
 
@@ -51,7 +51,7 @@ it('answers another company\'s line or reservation as unknown, and a page of no 
         'command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'baris' => ReservationWorld::handle($this->line), 'jumlah' => '1',
     ])->assertNotFound();
     $this->actingAs(User::query()->findOrFail($stranger->actorId))->post('/gudang/reservasi/'.RowHandle::of('reservations', $this->reservation).'/kurangi', [
-        'command_id' => (string) Str::uuid(), 'lepas' => true, 'alasan' => 'Uji',
+        'command_id' => (string) Str::uuid(), 'proyek' => $this->project->public_id, 'lepas' => true, 'alasan' => 'Uji',
     ])->assertNotFound();
     $this->actingAs(User::query()->findOrFail($stranger->actorId))->get('/gudang/reservasi')->assertInertia(fn (AssertableInertia $page) => $page->has('branches', 1)->has('rows', 0));
 
@@ -65,9 +65,25 @@ it('refuses and routes a cut on another company\'s reservation, one audit event 
     $foreign = ReservationWorld::active($theirs);
     $lot = (int) DB::table('inventory_lots')->value('id');
 
-    // 10 on hand, 5 reserved: turning 7 unusable leaves 2 short; the actor chooses the other company's reservation.
+    // 10 on hand, 5 reserved: turning 7 unusable leaves 2 short; the actor chooses the other company's reservation — routed
+    // before anything is said of it, even a cut above what it holds (C-05 never answered for it).
     expect(ReservationWorld::reduceSupply($this->world->actorId, $this->world->company->id, $this->world->productId(), $lot, $this->world->locationId, '7', [$foreign => '2']))->toBe('REJECTED AZ-08')
-        ->and(DB::table('audit_events')->where('action', 'INV.ReservationCutRouted')->pluck('company_id')->all())->toBe([$other->company->id])
+        ->and(ReservationWorld::reduceSupply($this->world->actorId, $this->world->company->id, $this->world->productId(), $lot, $this->world->locationId, '7', [$foreign => '9']))->toBe('REJECTED AZ-08')
+        ->and(DB::table('audit_events')->where('action', 'INV.ReservationCutRouted')->pluck('company_id')->all())->toBe([$other->company->id, $other->company->id])
         ->and(DB::table('reservations')->where('id', $foreign)->value('remaining_qty_base'))->toBe('3.000')
         ->and(ReservationWorld::guard($this->world->productId()))->toEqual((object) ['on_hand_qty' => '10.000', 'unusable_qty' => '0.000', 'reserved_qty' => '5.000']);
+});
+
+it('routes a cut inside another command by an actor without stock.reserve in the reservation\'s company (AZ-08; TL-06; criterion 10)', function () {
+    $lot = (int) DB::table('inventory_lots')->value('id');
+    // The reducing command's own capability, not the reservation family's.
+    $keeper = Authorization::admin([$this->world->company->id], ['stock.view', 'projects.view'])->id;
+
+    expect(ReservationWorld::reduceSupply($keeper, $this->world->company->id, $this->world->productId(), $lot, $this->world->locationId, '9', [$this->reservation => '1'], 'stock.view'))->toBe('REJECTED AZ-08')
+        ->and(DB::table('audit_events')->where('action', 'INV.ReservationCutRouted')->pluck('company_id')->all())->toBe([$this->world->company->id])
+        ->and(DB::table('reservations')->where('id', $this->reservation)->value('remaining_qty_base'))->toBe('2.000');
+
+    // With stock.reserve the same cut commits with the reduction.
+    expect(ReservationWorld::reduceSupply($this->world->actorId, $this->world->company->id, $this->world->productId(), $lot, $this->world->locationId, '9', [$this->reservation => '1']))->toBe('COMMITTED')
+        ->and(ReservationWorld::guard($this->world->productId()))->toEqual((object) ['on_hand_qty' => '10.000', 'unusable_qty' => '9.000', 'reserved_qty' => '1.000']);
 });
