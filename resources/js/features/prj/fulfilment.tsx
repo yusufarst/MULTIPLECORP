@@ -123,7 +123,8 @@ export function FulfilmentSection({ projectId, fulfilment, today, title }: { pro
     const [quantity, setQuantity] = useState('');
     const [mode, setMode] = useState<Mode>('DROPSHIP');
     const [reason, setReason] = useState('');
-    const answers = [confirm, cancel, replan].map((command, index) => (command.answer === null ? null : <OutcomeMessage key={index} answer={command.answer} />));
+    // A success shows once, as the page's answer (PageAnswer); a refusal or an unknown outcome shows here (IP-01; IP-03).
+    const answers = [confirm, cancel, replan].map((command, index) => (command.answer === null || command.answer.kind === 'COMMITTED' ? null : <OutcomeMessage key={index} answer={command.answer} />));
     const confirmation = fulfilment.confirmation;
 
     return title(

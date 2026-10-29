@@ -13,6 +13,7 @@ use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
+use Tests\Support\Fixtures\ConfirmationFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\QuotationFixture;
 use Tests\Support\Fixtures\ShellFixture;
@@ -98,4 +99,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // TL-09–TL-12 (TASK-033): the run's company with its PROJECT and DOC-01 numbering started, a project of `lines` goods
     // and, by `stage`, its quotation drafted with a validity and prices or also issued through the quotation's actions.
     Route::post('__fixtures/penawaran', [QuotationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-034): a mixed project with the client's SPK registered as order evidence, confirmed when asked.
+    Route::post('__fixtures/konfirmasi', [ConfirmationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });
