@@ -42,8 +42,8 @@ use InvalidArgumentException;
  * movement, the restoration (before its quantity moves the consumption's balance), the reversal movement, the closed
  * quantity, the adjustment and the corrected value, the charge and its shares.
  *
- * @phpstan-type Affected array{cases: array<int, Money>, replaced: array<int, Money>, projects: array<int, Money>}
- * @phpstan-type Target array{kind: string, id: int, qty: string, company?: int, project?: int}
+ * @phpstan-type Affected array{cases: array<int, Money>, replaced: array<int, Money>, projects: array<int, Money>, returns: array<string, Money>}
+ * @phpstan-type Target array{kind: string, id: int, qty: string, company?: int, project?: int, line?: int}
  */
 final class CostPosting
 {
@@ -256,10 +256,13 @@ final class CostPosting
     }
 
     /**
-     * Units removed from an opening, surplus or drop-ship return lot as never acquired (DATABASE §6.3; BR-INV-12): their
-     * share of the lot's remaining cost — all of it when they zero the lot — as one BASIS_REVERSAL entry, the lot's guard
-     * lowered by both; the cost removed is returned. A receipt lot, a replacement's among them, is reversed by
-     * reverseReceipt(). The caller has recorded the removal's movement.
+     * Units removed from an opening, surplus or drop-ship return lot as never acquired (DATABASE §5.3's MOVEMENT_REVERSAL;
+     * §6.3; BR-INV-12): their share of the lot's remaining cost — all of it when they zero the lot —, the lot's guard
+     * lowered by both; the cost removed is returned. An opening or surplus lot's share leaves as one BASIS_REVERSAL
+     * entry. A drop-ship return lot's goes back to its confirmation line's HPP, re-establishing the restoration it came
+     * from (reestablished()). A receipt lot, a replacement's among them, is reversed by reverseReceipt(). The caller has
+     * recorded the removal's movement — for a drop-ship return, the reversal of its return receipt — and gives the
+     * confirmation line its units back on its balance.
      *
      * @param  array<string, int>  $references  `import_row_id`, `stock_restoration_id` or `correction_case_id`
      */
@@ -271,21 +274,122 @@ final class CostPosting
             throw new InvalidArgumentException("Lot {$lotId} is a receipt's lot: its units are reversed by reverseReceipt().");
         }
 
-        $context->require((new LockSet)->add('lot_cost_balances', ['lot_id' => $lotId]));
+        $dropship = Row::nullable($lot, 'dropship_confirmation_line_id');
+        $context->require($dropship === null ? (new LockSet)->add('lot_cost_balances', ['lot_id' => $lotId])
+            : self::purchaseLocks(self::purchaseOf((int) Row::text(self::dropshipLine((int) $dropship), 'purchase_line_id'))));
         $ledger = new CostLedger($context);
         [$remainingQty, $remainingCost] = $this->lotBalance($ledger, $lotId);
         $removed = CostSplitter::draw($remainingCost, $qty, $remainingQty);
         $ledger->move('lot_cost_balances', ['lot_id' => $lotId], ['remaining_qty_base' => '-'.$qty, 'remaining_cost' => $removed->negated()->toString()]);
+        $entry = [...array_intersect_key($references, array_flip(['import_row_id', 'stock_restoration_id', 'correction_case_id'])),
+            'lot_id' => $lotId, 'source_company_id' => (int) Row::text($lot, 'source_company_id'), 'business_date' => $businessDate];
 
         if (! $removed->isZero()) {
-            $ledger->entry([...array_intersect_key($references, array_flip(['import_row_id', 'stock_restoration_id', 'correction_case_id'])),
-                'lot_id' => $lotId, 'source_company_id' => (int) Row::text($lot, 'source_company_id'), 'entry_kind' => 'BASIS_REVERSAL', 'cost_component' => 'BASIS',
-                'amount' => $removed->negated()->toString(), 'business_date' => $businessDate]);
+            $dropship === null
+                ? $ledger->entry([...$entry, 'entry_kind' => 'BASIS_REVERSAL', 'cost_component' => 'BASIS', 'amount' => $removed->negated()->toString()])
+                : $this->reestablished($ledger, $lot, (int) $dropship, $removed, $entry, $businessDate);
         }
 
         $ledger->flush();
 
         return $removed;
+    }
+
+    /**
+     * A drop-ship return lot's removed cost back on its confirmation line (§5.3): split over what the lot holds by its net
+     * amounts — its basis as the restoration's own contra parts, then each part a later correction or charge brought to
+     * it, a contra'd version's negative part among them — the last absorbing the residual; the basis parts leave as one
+     * BASIS_REVERSAL and return as rows of the restoration, so the lot and its line hold between them what the
+     * restoration moved; each other part leaves as a COST_CORRECTION of its own component and returns as the same part.
+     *
+     * @param  array<string, int|string>  $entry
+     */
+    private function reestablished(CostLedger $ledger, object $lot, int $dropshipLineId, Money $removed, array $entry, string $businessDate): void
+    {
+        $restoration = (int) Row::text($lot, 'restoration_id');
+        $dropship = self::dropshipLine($dropshipLineId);
+        $line = ['dropship_confirmation_line_id' => $dropshipLineId, 'cost_class' => 'HPP', 'bearer_company_id' => (int) Row::text($dropship, 'company_id'),
+            'bearer_project_id' => (int) Row::text($dropship, 'project_id'), 'business_date' => $businessDate];
+        $held = [];
+
+        foreach (self::restorationGroups($restoration) as $group) {
+            $held[] = [...$group, 'basis' => true];
+        }
+
+        foreach (DB::table('lot_cost_entries')->where('lot_id', (int) Row::text($lot, 'id'))->where('cost_component', '<>', 'BASIS')
+            ->groupBy('cost_component', 'purchase_line_id', 'purchase_charge_id', 'purchase_charge_line_share_id', 'respread_from_purchase_line_id', 'allocation_version')
+            ->selectRaw('cost_component, purchase_line_id, purchase_charge_id, purchase_charge_line_share_id, respread_from_purchase_line_id, allocation_version, sum(amount) as net')
+            ->orderBy('cost_component')->get() as $row) {
+            $net = Money::of(Row::text($row, 'net'));
+
+            if (! $net->isZero()) {
+                $held[] = ['component' => Row::text($row, 'cost_component'), 'net' => $net, 'basis' => false, 'references' => array_map('intval', array_filter([
+                    'purchase_line_id' => Row::nullable($row, 'purchase_line_id'), 'purchase_charge_id' => Row::nullable($row, 'purchase_charge_id'),
+                    'purchase_charge_line_share_id' => Row::nullable($row, 'purchase_charge_line_share_id'),
+                    'respread_from_purchase_line_id' => Row::nullable($row, 'respread_from_purchase_line_id'), 'allocation_version' => Row::nullable($row, 'allocation_version'),
+                ], fn (?string $value): bool => $value !== null))];
+            }
+        }
+
+        $whole = Money::sum(Money::zero(), ...array_column($held, 'net'));
+        $given = Money::zero();
+        $basis = Money::zero();
+        $last = array_key_last($held);
+
+        foreach ($held as $index => $part) {
+            // A signed split: a contra'd version's negative part leaves with its share too.
+            $amount = $index === $last ? $removed->minus($given) : $removed->share($part['net']->toString(), $whole->toString());
+            $given = $given->plus($amount);
+
+            if ($amount->isZero()) {
+                continue;
+            }
+
+            $direct = [...$line, ...array_diff_key($part['references'], ['purchase_line_id' => true]), 'cost_component' => $part['component'], 'amount' => $amount->toString()];
+
+            if ($part['basis']) {
+                $basis = $basis->plus($amount);
+                $ledger->attribution([...$direct, 'cause' => 'RESTORATION_CONTRA', 'stock_restoration_id' => $restoration]);
+
+                continue;
+            }
+
+            $ledger->entry([...$entry, ...$part['references'], 'entry_kind' => 'COST_CORRECTION', 'cost_component' => $part['component'], 'amount' => $amount->negated()->toString()]);
+            $ledger->attribution([...$direct, 'cause' => 'COST_CORRECTION']);
+        }
+
+        if (! $basis->isZero()) {
+            $ledger->entry([...$entry, 'entry_kind' => 'BASIS_REVERSAL', 'cost_component' => 'BASIS', 'amount' => $basis->negated()->toString()]);
+        }
+    }
+
+    /**
+     * What a drop-ship return's restoration still holds in its lot's basis, by the parts its contra took off the
+     * confirmation line — every row of the restoration net, a re-established part given back —, in component order.
+     *
+     * @return list<array{component: string, net: Money, references: array<string, int>}>
+     */
+    private static function restorationGroups(int $restorationId): array
+    {
+        $groups = [];
+
+        foreach (DB::table('cost_attributions')->where('stock_restoration_id', $restorationId)->where('cause', 'RESTORATION_CONTRA')->whereNotNull('dropship_confirmation_line_id')
+            ->groupBy('cost_component', 'purchase_charge_id', 'purchase_charge_line_share_id', 'respread_from_purchase_line_id', 'allocation_version')
+            ->selectRaw('cost_component, purchase_charge_id, purchase_charge_line_share_id, respread_from_purchase_line_id, allocation_version, -sum(amount) as net')->get() as $row) {
+            $net = Money::of(Row::text($row, 'net'));
+
+            if ($net->isPositive()) {
+                $groups[] = ['component' => Row::text($row, 'cost_component'), 'net' => $net, 'references' => array_map('intval', array_filter([
+                    'purchase_charge_id' => Row::nullable($row, 'purchase_charge_id'), 'purchase_charge_line_share_id' => Row::nullable($row, 'purchase_charge_line_share_id'),
+                    'respread_from_purchase_line_id' => Row::nullable($row, 'respread_from_purchase_line_id'), 'allocation_version' => Row::nullable($row, 'allocation_version'),
+                ], fn (?string $value): bool => $value !== null))];
+            }
+        }
+
+        usort($groups, fn (array $a, array $b): int => [self::COMPONENT_ORDER[$a['component']], $a['references']['purchase_charge_id'] ?? 0, $a['references']['purchase_charge_line_share_id'] ?? 0]
+            <=> [self::COMPONENT_ORDER[$b['component']], $b['references']['purchase_charge_id'] ?? 0, $b['references']['purchase_charge_line_share_id'] ?? 0]);
+
+        return $groups;
     }
 
     /**
@@ -932,11 +1036,12 @@ final class CostPosting
                 ['entry_kind' => 'COST_CORRECTION', 'cost_component' => 'CHARGE', ...$references], 'COST_CORRECTION', $businessDate));
         }
 
-        $direct = DB::table('cost_attributions')->where('purchase_charge_id', $chargeId)->where('allocation_version', $version)->whereNull('stock_consumption_id')
-            ->groupBy('dropship_confirmation_line_id', 'purchase_line_id', 'purchase_charge_line_share_id', 'respread_from_purchase_line_id', 'bearer_company_id', 'bearer_project_id',
-                'cost_class', 'correction_case_id', 'case_company_id')
-            ->selectRaw('dropship_confirmation_line_id, purchase_line_id, purchase_charge_line_share_id, respread_from_purchase_line_id, bearer_company_id, bearer_project_id,
-                cost_class, correction_case_id, case_company_id, sum(amount) as net')->get();
+        $direct = DB::table('cost_attributions as a')->leftJoin('dropship_confirmation_lines as d', 'd.id', '=', 'a.dropship_confirmation_line_id')
+            ->where('a.purchase_charge_id', $chargeId)->where('a.allocation_version', $version)->whereNull('a.stock_consumption_id')
+            ->groupBy('a.dropship_confirmation_line_id', 'a.purchase_line_id', 'a.purchase_charge_line_share_id', 'a.respread_from_purchase_line_id', 'a.bearer_company_id',
+                'a.bearer_project_id', 'a.cost_class', 'a.correction_case_id', 'a.case_company_id', 'd.purchase_line_id')
+            ->selectRaw('a.dropship_confirmation_line_id, a.purchase_line_id, a.purchase_charge_line_share_id, a.respread_from_purchase_line_id, a.bearer_company_id,
+                a.bearer_project_id, a.cost_class, a.correction_case_id, a.case_company_id, d.purchase_line_id as source_line_id, sum(a.amount) as net')->get();
 
         foreach ($direct as $row) {
             $net = Money::of(Row::text($row, 'net'));
@@ -954,8 +1059,9 @@ final class CostPosting
                 'bearer_project_id' => Row::nullable($row, 'bearer_project_id'), 'correction_case_id' => Row::nullable($row, 'correction_case_id'),
                 'case_company_id' => Row::nullable($row, 'case_company_id'), 'business_date' => $businessDate,
             ], fn (mixed $value): bool => $value !== null));
+            $source = Row::nullable($row, 'source_line_id');
             $affected = $class === 'SUPPLIER_RETURN'
-                ? self::moved($affected, 'cases', Row::nullable($row, 'correction_case_id'), $net->negated())
+                ? self::returnedMove($affected, Row::nullable($row, 'correction_case_id'), $source === null ? null : (int) $source, $net->negated())
                 : self::moved($affected, 'projects', Row::nullable($row, 'bearer_project_id'), $net->negated());
         }
 
@@ -1060,8 +1166,9 @@ final class CostPosting
 
                 $ledger->attribution([...self::drawOf($consumption), 'cost_class' => $class, 'cause' => $drawCause, 'amount' => $classPart->toString(),
                     'reverses_attribution_id' => $drawCause === 'COST_CORRECTION' ? self::initialOf((int) Row::text($consumption, 'id')) : null, 'business_date' => $businessDate]);
+                $line = Row::nullable($lot, 'purchase_line_id');
                 $affected = $class === 'SUPPLIER_RETURN'
-                    ? self::moved($affected, 'cases', Row::nullable($consumption, 'correction_case_id'), $classPart)
+                    ? self::returnedMove($affected, Row::nullable($consumption, 'correction_case_id'), $line === null ? null : (int) $line, $classPart)
                     : self::moved($affected, 'projects', Row::nullable($consumption, 'bearer_project_id'), $classPart);
             }
         }
@@ -1121,19 +1228,22 @@ final class CostPosting
                 continue;
             }
 
-            $ledger->attribution([...$row, 'cost_class' => 'SUPPLIER_RETURN', 'amount' => $part->toString(), 'stock_restoration_id' => $holder['restoration'],
+            // The returned units' part is a draw of their supplier return, as a lot's purchase return takes it (one
+            // INITIAL per source and charge stays the confirmation's own).
+            $ledger->attribution([...$row, 'cost_class' => 'SUPPLIER_RETURN', 'cause' => $drawCause, 'amount' => $part->toString(), 'stock_restoration_id' => $holder['restoration'],
                 'correction_case_id' => $holder['case'], 'case_company_id' => $holder['case_company']]);
-            $affected = self::moved($affected, 'cases', (string) $holder['case'], $part);
+            $affected = self::returnedMove($affected, $holder['case'] === null ? null : (string) $holder['case'], $target['line'] ?? null, $part);
         }
 
         return $affected;
     }
 
     /**
-     * Step 3's replacements (DATABASE §6.3): each case whose returned cost this posting moves passes the replaced units'
-     * share of that move — over the case's returned units — to the replacement lots and confirmations created for it, a
-     * COST_CORRECTION of their basis passed on to their own holders, and moves its replaced value by the same, so a
-     * replaced return stays balanced; a case a replacement's holders reach in turn is passed on once.
+     * Step 3's replacements (DATABASE §6.3): each case whose returned cost this posting moves for one purchase line's
+     * units passes the replaced units' share of that move — over the units the case returned from that line — to the
+     * replacement lots and confirmations created for them, a COST_CORRECTION of their basis passed on to their own
+     * holders, and moves its replaced value by the same, so a replaced return stays balanced; a case a replacement's
+     * holders reach in turn is passed on once.
      *
      * @param  Affected  $affected
      * @return Affected
@@ -1142,17 +1252,18 @@ final class CostPosting
     {
         $done = [];
 
-        while (($pending = array_diff_key(array_filter($affected['cases'], fn (Money $moved): bool => ! $moved->isZero()), $done)) !== []) {
-            foreach ($pending as $case => $moved) {
-                $done[$case] = true;
-                $replacements = self::replacementsOf($case);
+        while (($pending = array_diff_key(array_filter($affected['returns'], fn (Money $moved): bool => ! $moved->isZero()), $done)) !== []) {
+            foreach ($pending as $key => $moved) {
+                $done[$key] = true;
+                [$case, $line] = array_map('intval', explode(':', $key));
+                $replacements = self::replacementsOf($case, $line);
 
                 if ($replacements === []) {
                     continue;
                 }
 
                 $weights = array_map(fn (array $replacement): string => $replacement['qty'], $replacements);
-                $rest = BigDecimal::of(self::returnedUnits($case))->minus(array_reduce($weights, fn (BigDecimal $sum, string $qty): BigDecimal => $sum->plus($qty), BigDecimal::zero()));
+                $rest = BigDecimal::of(self::returnedUnits($case, $line))->minus(array_reduce($weights, fn (BigDecimal $sum, string $qty): BigDecimal => $sum->plus($qty), BigDecimal::zero()));
 
                 if ($rest->isPositive()) {
                     $weights['rest'] = (string) $rest;
@@ -1256,12 +1367,13 @@ final class CostPosting
     }
 
     /**
-     * Moves each case by the returned cost and replaced value this posting changed, reopening a closed case whose
-     * equation they unbalance (step 4).
+     * Moves each case by the returned cost and replaced value this posting changed: a closed case whose figures change
+     * reopens (AX-29's rule, TASK-031's `CorrectionCases`), except, for a correction's cascade (`keepBalanced`), a
+     * purchase return the moves leave balanced (DATABASE §6.3 step 4).
      *
      * @param  Affected  $affected
      */
-    private function cased(CommandContext $context, array $affected): void
+    private function cased(CommandContext $context, array $affected, bool $keepBalanced = false): void
     {
         foreach (array_unique([...array_keys($affected['cases']), ...array_keys($affected['replaced'])]) as $case) {
             $deltas = array_filter([
@@ -1270,20 +1382,20 @@ final class CostPosting
             ], fn (string $delta): bool => ! Money::of($delta)->isZero());
 
             if ($deltas !== []) {
-                $this->cases->post($context, $case, $deltas, self::REOPENED);
+                $this->cases->post($context, $case, $deltas, self::REOPENED, $keepBalanced);
             }
         }
     }
 
     /**
-     * A correction's cases (step 4) and its completed bearer projects revalidated where material — whose cost it moved
-     * by a non-zero net (step 5).
+     * A correction's cases — a balanced one kept closed (step 4) — and its completed bearer projects revalidated where
+     * material, whose cost it moved by a non-zero net (step 5).
      *
      * @param  Affected  $affected
      */
     private function corrected(CommandContext $context, array $affected, string $reference): void
     {
-        $this->cased($context, $affected);
+        $this->cased($context, $affected, true);
 
         foreach ($affected['projects'] as $project => $net) {
             if (! $net->isZero()) {
@@ -1295,7 +1407,7 @@ final class CostPosting
     /** @return Affected */
     private static function none(): array
     {
-        return ['cases' => [], 'replaced' => [], 'projects' => []];
+        return ['cases' => [], 'replaced' => [], 'projects' => [], 'returns' => []];
     }
 
     /**
@@ -1311,7 +1423,30 @@ final class CostPosting
             }
         }
 
+        foreach ($b['returns'] as $key => $amount) {
+            $a['returns'][$key] = ($a['returns'][$key] ?? Money::zero())->plus($amount);
+        }
+
         return $a;
+    }
+
+    /**
+     * The affected sums with a case's returned cost moved by `amount` for the units of one purchase line — the line whose
+     * replacements take their share of it (§6.3 step 3); a null case moves nothing.
+     *
+     * @param  Affected  $affected
+     * @return Affected
+     */
+    private static function returnedMove(array $affected, ?string $case, ?int $line, Money $amount): array
+    {
+        if ($case === null || $amount->isZero()) {
+            return $affected;
+        }
+
+        $key = (int) $case.':'.($line ?? 0);
+        $affected['returns'][$key] = ($affected['returns'][$key] ?? Money::zero())->plus($amount);
+
+        return self::moved($affected, 'cases', $case, $amount);
     }
 
     /**
@@ -1424,9 +1559,14 @@ final class CostPosting
         ];
     }
 
+    /** The lot with the purchase line its units came from — its receipt's, or its drop-ship return's confirmation's — when one. */
     private static function lot(int $lotId): object
     {
-        return DB::table('inventory_lots')->where('id', $lotId)->first(['id', 'source_company_id', 'acquisition_kind', 'receiving_line_id', 'acquired_qty_base'])
+        return DB::table('inventory_lots as l')->leftJoin('receiving_lines as r', 'r.id', '=', 'l.receiving_line_id')
+            ->leftJoin('stock_restorations as s', 's.id', '=', 'l.restoration_id')->leftJoin('dropship_confirmation_lines as d', 'd.id', '=', 's.dropship_confirmation_line_id')
+            ->where('l.id', $lotId)
+            ->first(['l.id', 'l.source_company_id', 'l.acquisition_kind', 'l.receiving_line_id', 'l.restoration_id', 'l.acquired_qty_base', 's.dropship_confirmation_line_id',
+                DB::raw('coalesce(r.purchase_line_id, d.purchase_line_id) as purchase_line_id')])
             ?? throw new InvalidArgumentException("No lot {$lotId}.");
     }
 
@@ -1649,7 +1789,7 @@ final class CostPosting
         $dropship = DB::table('dropship_confirmation_lines as l')->join('dropship_confirmations as c', 'c.id', '=', 'l.dropship_confirmation_id')
             ->whereIn('l.purchase_line_id', $lines)->where('l.is_replacement', false)->orderBy('l.id')
             ->selectRaw(<<<'SQL'
-                l.id, l.company_id, c.project_id, l.qty_base - coalesce((select sum(r.qty_base) from stock_restorations r
+                l.id, l.company_id, c.project_id, l.purchase_line_id, l.qty_base - coalesce((select sum(r.qty_base) from stock_restorations r
                     where r.dropship_confirmation_line_id = l.id and r.kind = 'DROPSHIP_CONFIRMATION_REVERSAL'
                     and not exists (select 1 from stock_restorations e where e.reverses_restoration_id = r.id)), 0) as net
                 SQL)->get();
@@ -1657,7 +1797,7 @@ final class CostPosting
         foreach ($dropship as $line) {
             if (BigDecimal::of(Row::text($line, 'net'))->isPositive()) {
                 $targets[] = ['kind' => 'dropship', 'id' => (int) Row::text($line, 'id'), 'qty' => Row::text($line, 'net'), 'company' => (int) Row::text($line, 'company_id'),
-                    'project' => (int) Row::text($line, 'project_id')];
+                    'project' => (int) Row::text($line, 'project_id'), 'line' => (int) Row::text($line, 'purchase_line_id')];
             }
         }
 
@@ -1665,8 +1805,9 @@ final class CostPosting
     }
 
     /**
-     * A drop-ship line's units moved away and not undone (§5.7): each return to the warehouse with its lot, each return
-     * to the supplier with its case, in id order.
+     * A drop-ship line's units moved away and not undone (§5.7; §5.3): each return to the warehouse with its lot, less
+     * what a reversal of its return receipt brought back to the line, each return to the supplier with its case, not
+     * reversed by a DROPSHIP_ERROR_REVERSAL, in id order.
      *
      * @return array<string, array{restoration: int, qty: string, lot: ?int, case: ?int, case_company: ?int}>
      */
@@ -1675,7 +1816,12 @@ final class CostPosting
         $rows = DB::table('stock_restorations as r')->leftJoin('inventory_lots as l', 'l.restoration_id', '=', 'r.id')
             ->where('r.dropship_confirmation_line_id', $dropshipLineId)->whereIn('r.kind', self::DROPSHIP_AWAY)
             ->whereNotExists(fn (Builder $reversal) => $reversal->selectRaw('1')->from('stock_restorations as e')->whereColumn('e.reverses_restoration_id', 'r.id'))
-            ->orderBy('r.id')->get(['r.id', 'r.kind', 'r.qty_base', 'r.correction_case_id', 'r.case_company_id', 'l.id as lot_id']);
+            ->orderBy('r.id')
+            ->selectRaw(<<<'SQL'
+                r.id, r.kind, r.correction_case_id, r.case_company_id, l.id as lot_id,
+                r.qty_base + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_movements m on m.id = e.stock_movement_id
+                    where e.lot_id = l.id and m.movement_type = 'MOVEMENT_REVERSAL' and m.reverses_movement_id = r.stock_movement_id), 0) as qty
+                SQL)->get();
         $away = [];
 
         foreach ($rows as $row) {
@@ -1685,9 +1831,13 @@ final class CostPosting
                 throw new InvalidArgumentException('Drop-ship return '.Row::text($row, 'id').' has no return lot.');
             }
 
+            if (! BigDecimal::of(Row::text($row, 'qty'))->isPositive()) {
+                continue;
+            }
+
             $case = Row::nullable($row, 'correction_case_id');
             $caseCompany = Row::nullable($row, 'case_company_id');
-            $away['r'.Row::text($row, 'id')] = ['restoration' => (int) Row::text($row, 'id'), 'qty' => Row::text($row, 'qty_base'), 'lot' => $lot === null ? null : (int) $lot,
+            $away['r'.Row::text($row, 'id')] = ['restoration' => (int) Row::text($row, 'id'), 'qty' => Row::text($row, 'qty'), 'lot' => $lot === null ? null : (int) $lot,
                 'case' => $case === null ? null : (int) $case, 'case_company' => $caseCompany === null ? null : (int) $caseCompany];
         }
 
@@ -1695,45 +1845,62 @@ final class CostPosting
     }
 
     /**
-     * The replacements a case created (§6.3 step 3; PX-03): the lots whose REPLACEMENT_BASIS names it, by acquired units,
-     * and its replacement drop-ship lines, by quantity less confirmation reversals, keyed in id order.
+     * The replacements a case created for one purchase line's returned units (§6.3 step 3; PX-03): the replacement lots
+     * received on the line whose REPLACEMENT_BASIS names the case, by their units net of receipt reversals, and the
+     * line's replacement drop-ship lines for the case, by quantity less confirmation reversals, keyed in id order.
      *
      * @return array<string, Target>
      */
-    private static function replacementsOf(int $caseId): array
+    private static function replacementsOf(int $caseId, int $lineId): array
     {
         $replacements = [];
+        $lots = DB::table('lot_cost_entries as e')->join('inventory_lots as l', 'l.id', '=', 'e.lot_id')->join('receiving_lines as r', 'r.id', '=', 'l.receiving_line_id')
+            ->where('e.correction_case_id', $caseId)->where('e.entry_kind', 'REPLACEMENT_BASIS')->where('r.purchase_line_id', $lineId)->orderBy('l.id')
+            ->selectRaw(<<<'SQL'
+                l.id, l.acquired_qty_base + coalesce((select sum(m.qty_delta_base) from stock_movement_entries m join stock_movements v on v.id = m.stock_movement_id
+                    where m.lot_id = l.id and v.movement_type = 'RECEIPT_REVERSAL'), 0) as net
+                SQL)->get();
 
-        foreach (DB::table('lot_cost_entries as e')->join('inventory_lots as l', 'l.id', '=', 'e.lot_id')->where('e.correction_case_id', $caseId)->where('e.entry_kind', 'REPLACEMENT_BASIS')
-            ->orderBy('l.id')->get(['l.id', 'l.acquired_qty_base']) as $lot) {
-            $replacements['l'.Row::text($lot, 'id')] = ['kind' => 'lot', 'id' => (int) Row::text($lot, 'id'), 'qty' => Row::text($lot, 'acquired_qty_base')];
+        foreach ($lots as $lot) {
+            if (BigDecimal::of(Row::text($lot, 'net'))->isPositive()) {
+                $replacements['l'.Row::text($lot, 'id')] = ['kind' => 'lot', 'id' => (int) Row::text($lot, 'id'), 'qty' => Row::text($lot, 'net')];
+            }
         }
 
         foreach (DB::table('dropship_confirmation_lines as l')->join('dropship_confirmations as c', 'c.id', '=', 'l.dropship_confirmation_id')->where('l.correction_case_id', $caseId)
-            ->where('l.is_replacement', true)->orderBy('l.id')
+            ->where('l.purchase_line_id', $lineId)->where('l.is_replacement', true)->orderBy('l.id')
             ->selectRaw(<<<'SQL'
-                l.id, l.company_id, c.project_id, l.qty_base - coalesce((select sum(r.qty_base) from stock_restorations r
+                l.id, l.company_id, c.project_id, l.purchase_line_id, l.qty_base - coalesce((select sum(r.qty_base) from stock_restorations r
                     where r.dropship_confirmation_line_id = l.id and r.kind = 'DROPSHIP_CONFIRMATION_REVERSAL'
                     and not exists (select 1 from stock_restorations e where e.reverses_restoration_id = r.id)), 0) as net
                 SQL)->get() as $line) {
             if (BigDecimal::of(Row::text($line, 'net'))->isPositive()) {
                 $replacements['d'.Row::text($line, 'id')] = ['kind' => 'dropship', 'id' => (int) Row::text($line, 'id'), 'qty' => Row::text($line, 'net'),
-                    'company' => (int) Row::text($line, 'company_id'), 'project' => (int) Row::text($line, 'project_id')];
+                    'company' => (int) Row::text($line, 'company_id'), 'project' => (int) Row::text($line, 'project_id'), 'line' => (int) Row::text($line, 'purchase_line_id')];
             }
         }
 
         return $replacements;
     }
 
-    /** The units a case returned to the supplier: its purchase returns' units still out and its drop-ship supplier returns not undone. */
-    private static function returnedUnits(int $caseId): string
+    /**
+     * The units a case returned to the supplier from one purchase line: its purchase returns' units still out of lots that
+     * line received — or of return lots of its drop-ship lines — and its drop-ship supplier returns on that line not undone.
+     */
+    private static function returnedUnits(int $caseId, int $lineId): string
     {
         $row = DB::selectOne(<<<'SQL'
             select coalesce((select sum(b.qty_base - b.restored_qty_base - b.substituted_qty_base) from stock_consumptions c
-                    join stock_consumption_balances b on b.stock_consumption_id = c.id where c.correction_case_id = ? and c.kind = 'PURCHASE_RETURN'), 0)
-                + coalesce((select sum(r.qty_base) from stock_restorations r where r.correction_case_id = ? and r.kind = 'DROPSHIP_SUPPLIER_RETURN'
+                    join stock_consumption_balances b on b.stock_consumption_id = c.id
+                    join inventory_lots l on l.id = c.lot_id
+                    left join receiving_lines r on r.id = l.receiving_line_id
+                    left join stock_restorations s on s.id = l.restoration_id
+                    left join dropship_confirmation_lines d on d.id = s.dropship_confirmation_line_id
+                    where c.correction_case_id = ? and c.kind = 'PURCHASE_RETURN' and coalesce(r.purchase_line_id, d.purchase_line_id) = ?), 0)
+                + coalesce((select sum(r.qty_base) from stock_restorations r join dropship_confirmation_lines d on d.id = r.dropship_confirmation_line_id
+                    where r.correction_case_id = ? and r.kind = 'DROPSHIP_SUPPLIER_RETURN' and d.purchase_line_id = ?
                     and not exists (select 1 from stock_restorations e where e.reverses_restoration_id = r.id)), 0) as units
-            SQL, [$caseId, $caseId]);
+            SQL, [$caseId, $lineId, $caseId, $lineId]);
 
         return is_object($row) ? Row::text($row, 'units') : '0';
     }

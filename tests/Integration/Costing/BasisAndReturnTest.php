@@ -56,9 +56,26 @@ it('passes a correction of a replaced supplier return to its replacement lot\'s 
     expect(basisEntries($replacement))->toBe(['REPLACEMENT_BASIS 200000.00', 'COST_CORRECTION 20000.00'])
         ->and(basisLot($replacement))->toBe(['2.000', '220000.00'])
         ->and(basisLot($lot))->toBe(['8.000', '880000.00'])
-        // Its figures changed, so the closed case is open for its re-closure (TASK-031's rule), its equation still whole.
+        // The correction leaves the replaced return balanced, so the closed case stays closed (step 4).
         ->and(DB::table('correction_cases')->where('id', $case)->first(['state', 'returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value']))
-        ->toMatchObject(['state' => 'OPEN', 'returned_cost' => '220000.00', 'refunded_value' => '0.00', 'replaced_value' => '220000.00', 'unrecovered_value' => '0.00'])
+        ->toMatchObject(['state' => 'CLOSED', 'returned_cost' => '220000.00', 'refunded_value' => '0.00', 'replaced_value' => '220000.00', 'unrecovered_value' => '0.00'])
+        ->and(CostWorld::differences())->toBe([]);
+});
+
+it('passes a correction only to the replacement units still held, the rest of the returned units\' share left to the case (§6.3 step 3; C-46)', function () {
+    $line = $this->world->line($this->world->purchase(), '10', '1000000.00');
+    $lot = $this->world->receive($line, '10');
+    $case = $this->world->returnCase();
+    $this->world->purchaseReturn($lot, '2', $case);
+    $replacement = $this->world->replacementLot($line, '2', $case, '200000.00');
+    $this->world->reverseReceipt($replacement, '1');
+
+    $this->world->expect($this->world->correctPrice($line, '1100000.00'));
+
+    // +20,000 returned for the 2 units: the 1 replacement unit still held takes 10,000, the other 10,000 is the case's to settle.
+    expect(basisEntries($replacement))->toBe(['REPLACEMENT_BASIS 200000.00', 'RECEIPT_REVERSAL -100000.00', 'COST_CORRECTION 10000.00'])
+        ->and(basisLot($replacement))->toBe(['1.000', '110000.00'])
+        ->and(DB::table('correction_cases')->where('id', $case)->first(['returned_cost', 'replaced_value']))->toMatchObject(['returned_cost' => '220000.00', 'replaced_value' => '10000.00'])
         ->and(CostWorld::differences())->toBe([]);
 });
 

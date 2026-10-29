@@ -285,6 +285,22 @@ final class CostWorld
         return $confirmed;
     }
 
+    /** `qty` shipped by the supplier as the case's replacement on the drop-ship line (§5.7; PX-03): the confirmation carrying the basis the case gives it. */
+    public function confirmReplacement(PurchaseLine $line, string $qty, int $case, string $basis): int
+    {
+        $confirmed = 0;
+        $this->expect($this->run(CostPosting::purchaseLocks($line->purchase_id)->union(CorrectionCases::locks($case)), function (CommandContext $context) use ($line, $qty, $case, $basis, &$confirmed): void {
+            $project = (int) DB::table('project_lines')->where('id', $line->project_line_id)->value('project_id');
+            $confirmation = DropshipConfirmation::factory()->create(['company_id' => $line->company_id, 'project_id' => $project, 'purchase_id' => $line->purchase_id]);
+            $confirmed = DropshipConfirmationLine::factory()->create(['dropship_confirmation_id' => $confirmation->id, 'purchase_line_id' => $line->id, 'project_line_id' => $line->project_line_id,
+                'product_id' => $this->productId, 'entered_qty' => $qty, 'qty_base' => $qty, 'is_replacement' => true, 'correction_case_id' => $case])->id;
+            DB::table('stock_consumption_balances')->insert(['dropship_confirmation_line_id' => $confirmed, 'qty_base' => $qty]);
+            app(CostPosting::class)->replacementConfirmed($context, $confirmed, Money::of($basis), BusinessDate::today());
+        }));
+
+        return $confirmed;
+    }
+
     /**
      * `qty` of a confirmed drop-ship line restored (§5.7): returned to the warehouse into a new DROPSHIP_RETURN lot (CM-14),
      * returned to the supplier under the case (CM-15), or reversed as never confirmed (CM-27) — the restoration, the
@@ -324,6 +340,26 @@ final class CostWorld
         return $restoration;
     }
 
+    /**
+     * `qty` of a drop-ship return lot's units taken back as never returned (§5.3; CM-37): the reversal of its return
+     * receipt, the cost back on the confirmation line, and the line's restored quantity given back.
+     */
+    public function reverseDropshipReturn(int $lot, string $qty): void
+    {
+        $row = InventoryLot::query()->findOrFail($lot);
+        $restoration = StockRestoration::query()->findOrFail($row->restoration_id);
+        $purchase = (int) DB::table('dropship_confirmation_lines as d')->join('purchase_lines as p', 'p.id', '=', 'd.purchase_line_id')
+            ->where('d.id', $restoration->dropship_confirmation_line_id)->value('p.purchase_id');
+        $this->expect($this->run(CostPosting::purchaseLocks($purchase), function (CommandContext $context) use ($lot, $qty, $restoration): void {
+            $movement = StockMovementFactory::new()->createOne(['movement_type' => 'MOVEMENT_REVERSAL', 'company_id' => $this->company->id,
+                'reverses_movement_id' => $restoration->stock_movement_id, 'reverses_movement_type' => 'DROPSHIP_RETURN_RECEIPT'])->id;
+            $this->entry($lot, $movement, 'MOVEMENT_REVERSAL', '-'.$qty);
+            app(CostPosting::class)->reverseBasis($context, $lot, $qty, BusinessDate::today());
+            GuardUpdate::apply($context->connection, 'stock_consumption_balances', [['key' => ['dropship_confirmation_line_id' => $restoration->dropship_confirmation_line_id],
+                'deltas' => ['restored_qty_base' => '-'.$qty]]]);
+        }));
+    }
+
     /** An opening lot of `qty` with its OPENING_COST from the signed opening data (BR-INV-12), its movement and its guard. */
     public function openingLot(string $qty, string $cost): int
     {
@@ -359,6 +395,7 @@ final class CostWorld
                 'product_id' => $this->productId, 'entered_qty' => $qty, 'acquired_qty_base' => $qty, 'business_date' => BusinessDate::today(),
             ])->id;
             $this->entry($lot, (int) $receiving->stock_movement_id, 'RECEIPT', $qty);
+            $this->moveLine($context, $line->id, ['replacement_expected_qty_base' => $qty, 'replacement_received_net_qty_base' => $qty]);
             app(CostPosting::class)->basis($context, $lot, 'REPLACEMENT_BASIS', Money::of($basis), BusinessDate::today(), ['correction_case_id' => $case]);
         }));
 
@@ -490,7 +527,9 @@ final class CostWorld
             $movement = StockMovementFactory::new()->createOne(['movement_type' => 'RECEIPT_REVERSAL', 'company_id' => $this->company->id,
                 'reverses_movement_id' => $receipt, 'reverses_movement_type' => 'RECEIPT'])->id;
             $this->entry($lot, $movement, 'RECEIPT_REVERSAL', '-'.$qty);
-            $this->moveLine($context, $line, ['normal_received_net_qty_base' => '-'.$qty]);
+            // A replacement receipt counts against the line's replacement cap, never its normal received quantity (PX-03).
+            $replacement = ReceivingLine::query()->findOrFail(InventoryLot::query()->findOrFail($lot)->receiving_line_id)->receipt_kind === 'REPLACEMENT';
+            $this->moveLine($context, $line, [$replacement ? 'replacement_received_net_qty_base' : 'normal_received_net_qty_base' => '-'.$qty]);
             $this->posted($context, $line, app(CostPosting::class)->reverseReceipt($context, $lot, $qty, BusinessDate::today()));
         }));
     }
@@ -558,7 +597,7 @@ final class CostWorld
     {
         $found = AllocationOverlay::violations();
 
-        foreach (['lot_cost_balances', 'purchase_charge_balances', 'purchase_charge_share_balances', 'correction_cases'] as $table) {
+        foreach (['lot_cost_balances', 'purchase_charge_balances', 'purchase_charge_share_balances', 'correction_cases', 'purchase_line_balances'] as $table) {
             $found = [...$found, ...(new Reconciler)->differences(DB::connection(), Families::named($table) ?? throw new RuntimeException($table))];
         }
 

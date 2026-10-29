@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\CST\Services\CostPosting;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\Authorization;
 use Tests\Support\CostWorld;
@@ -71,6 +72,79 @@ it('posts a non-stock line\'s share when its charge is recorded before the line 
 
     expect(directRows('purchase_line_id', $service->id))->toBe(['HPP GOODS INITIAL 300000.00', 'HPP CHARGE INITIAL 6000.00'])
         ->and(directCharge($fee->id))->toBe(['6000.00', '0.00'])
+        ->and(CostWorld::differences())->toBe([]);
+});
+
+it('passes a correction of a drop-ship supplier return to the replacement confirmation carrying its basis (CM-15; PX-03; DATABASE §6.3 step 3)', function () {
+    $project = $this->world->project(state: 'ACTIVE');
+    $line = $this->world->dropshipLine($this->world->purchase($project), $project, '10', '1000000.00');
+    $confirmed = $this->world->confirmDropship($line, '10');
+    $case = $this->world->returnCase();
+    $this->world->restoreDropship($confirmed, '2', 'DROPSHIP_SUPPLIER_RETURN', $case);
+    $replacement = $this->world->confirmReplacement($line, '2', $case, '200000.00');
+    $this->world->closeCase($case, '0.00', '200000.00');
+
+    expect(directRows('dropship_confirmation_line_id', $replacement))->toBe(['HPP BASIS INITIAL 200000.00']);
+
+    // +100,000 over the 10 units: 80,000 on the project's 8, 20,000 more returned — passed whole to the 2 replacement units.
+    $this->world->expect($this->world->correctPrice($line, '1100000.00'));
+    expect(directRows('dropship_confirmation_line_id', $replacement))->toBe(['HPP BASIS INITIAL 200000.00', 'HPP BASIS COST_CORRECTION 20000.00'])
+        ->and(DB::table('correction_cases')->where('id', $case)->first(['returned_cost', 'replaced_value']))->toMatchObject(['returned_cost' => '220000.00', 'replaced_value' => '220000.00'])
+        ->and(DB::table('cost_attributions')->where('dropship_confirmation_line_id', $confirmed)->where('cost_class', 'HPP')->sum('amount'))->toBe('880000.00')
+        ->and(CostWorld::differences())->toBe([]);
+
+    // A replacement confirmation never takes the purchase line's own cost (PX-03).
+    expect(fn () => $this->world->expect($this->world->run(CostPosting::purchaseLocks($line->purchase_id), fn ($context) => app(CostPosting::class)->dropshipConfirmed($context, $replacement, '2026-10-29'))))
+        ->toThrow(InvalidArgumentException::class);
+});
+
+it('takes a drop-ship return lot\'s units back onto their confirmation line as never returned, with what corrections and charges brought them (§5.3; CM-37; AX-36)', function () {
+    $project = $this->world->project(state: 'ACTIVE');
+    $purchase = $this->world->purchase($project);
+    $line = $this->world->dropshipLine($purchase, $project, '10', '1000000.00');
+    $freight = $this->world->charge($purchase, '10000.00', [$line->id => '1000000.00']);
+    $this->world->expect($this->world->recordCharge($freight));
+    $confirmed = $this->world->confirmDropship($line, '10');
+    $returned = $this->world->restoreDropship($confirmed, '2', 'DROPSHIP_RETURN');
+    $lot = (int) DB::table('inventory_lots')->where('restoration_id', $returned)->value('id');
+    $this->world->expect($this->world->correctPrice($line, '1100000.00'));
+    $this->world->expect($this->world->correctCharge($freight, '20000.00', [$line->id => '1000000.00']));
+    $hpp = fn (): string => (string) DB::table('cost_attributions')->where('dropship_confirmation_line_id', $confirmed)->where('cost_class', 'HPP')->sum('amount');
+    $lotCost = fn (): string => (string) DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost');
+
+    expect([$hpp(), $lotCost()])->toBe(['896000.00', '224000.00']);
+
+    // One unit back as never returned: its 112,000 — the basis it was returned with, its price correction and the new freight — back on the line.
+    $this->world->reverseDropshipReturn($lot, '1');
+    expect([$hpp(), $lotCost()])->toBe(['1008000.00', '112000.00'])
+        ->and(directCharge($freight->id))->toBe(['20000.00', '0.00'])
+        ->and(CostWorld::differences())->toBe([]);
+
+    // The line's units are 9 on the project and 1 in the lot: a further correction follows them there.
+    $this->world->expect($this->world->correctPrice($line, '1210000.00'));
+    expect([$hpp(), $lotCost()])->toBe(['1107000.00', '123000.00'])
+        ->and(CostWorld::differences())->toBe([]);
+});
+
+it('passes a correction of one line\'s returned units to that line\'s replacement only, a case it leaves balanced kept closed (§6.3 steps 3–4; C-46)', function () {
+    $project = $this->world->project(state: 'ACTIVE');
+    $purchase = $this->world->purchase($project);
+    $stock = $this->world->line($purchase, '10', '1000000.00', lineNo: 1);
+    $lot = $this->world->receive($stock, '10');
+    $dropship = $this->world->dropshipLine($purchase, $project, '10', '1000000.00', lineNo: 2);
+    $confirmed = $this->world->confirmDropship($dropship, '10');
+    $case = $this->world->returnCase();
+    $this->world->purchaseReturn($lot, '3', $case);
+    $this->world->restoreDropship($confirmed, '2', 'DROPSHIP_SUPPLIER_RETURN', $case);
+    $replacement = $this->world->confirmReplacement($dropship, '2', $case, '200000.00');
+    $this->world->closeCase($case, '300000.00', '200000.00');
+
+    $this->world->expect($this->world->correctPrice($dropship, '1100000.00'));
+
+    // +20,000 for the drop-ship line's 2 returned units, passed whole to their replacement: the case stays balanced, and closed.
+    expect(directRows('dropship_confirmation_line_id', $replacement))->toBe(['HPP BASIS INITIAL 200000.00', 'HPP BASIS COST_CORRECTION 20000.00'])
+        ->and(DB::table('correction_cases')->where('id', $case)->first(['state', 'returned_cost', 'refunded_value', 'replaced_value']))
+        ->toMatchObject(['state' => 'CLOSED', 'returned_cost' => '520000.00', 'refunded_value' => '300000.00', 'replaced_value' => '220000.00'])
         ->and(CostWorld::differences())->toBe([]);
 });
 

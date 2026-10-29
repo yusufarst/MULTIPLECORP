@@ -166,11 +166,13 @@ final class CorrectionCases
     /**
      * A posting service's counters of the facts it posts in this transaction, as decimal strings, under the case's
      * locks: a CLOSED case whose figures change reopens here, audited with the reason the posting gives, so the
-     * completion predicate it feeds is false again (C-46; BR-CR-04; L-06; L-46).
+     * completion predicate it feeds is false again (C-46; BR-CR-04; L-06; L-46) — except, for a cost correction's
+     * cascade that asks it (`keepBalanced`), a purchase return the deltas leave balanced, which stays CLOSED (DATABASE
+     * §6.3 step 4).
      *
      * @param  array<string, string>  $deltas  counter => signed decimal string
      */
-    public function post(CommandContext $context, int $caseId, array $deltas, string $reopenReason): void
+    public function post(CommandContext $context, int $caseId, array $deltas, string $reopenReason, bool $keepBalanced = false): void
     {
         // A case this command opened is its own uncommitted row, which no other session sees: only its projects need holding.
         $own = DB::table('correction_cases')->where('id', $caseId)->where('command_id', $context->request->commandId)->exists();
@@ -204,7 +206,7 @@ final class CorrectionCases
             return;
         }
 
-        $reopen = $before->state === 'CLOSED';
+        $reopen = $before->state === 'CLOSED' && ! ($keepBalanced && self::balancedAfter($caseId, $deltas));
         $now = $context->now();
 
         if ($reopen) {
@@ -230,6 +232,26 @@ final class CorrectionCases
                 metadata: ['counters' => $deltas],
             );
         }
+    }
+
+    /**
+     * Whether a purchase-return case still meets its closure after the deltas (C-46): returned cost = refunded +
+     * replaced + unrecovered, with no unbacked refund and no residual settlement.
+     *
+     * @param  array<string, string>  $deltas
+     */
+    private static function balancedAfter(int $caseId, array $deltas): bool
+    {
+        $delta = fn (string $counter): string => $deltas[$counter] ?? '0';
+        $row = DB::selectOne(<<<'SQL'
+            select case_kind = 'PURCHASE_RETURN'
+                and returned_cost + ?::numeric = refunded_value + ?::numeric + replaced_value + ?::numeric + unrecovered_value + ?::numeric
+                and unbacked_refund_amount + ?::numeric = 0 and residual_settlement_amount + ?::numeric = 0 as balanced
+            from correction_cases where id = ?
+            SQL, [$delta('returned_cost'), $delta('refunded_value'), $delta('replaced_value'), $delta('unrecovered_value'),
+            $delta('unbacked_refund_amount'), $delta('residual_settlement_amount'), $caseId]);
+
+        return is_object($row) && in_array($row->balanced ?? null, [true, 't', 1, '1'], true);
     }
 
     /**

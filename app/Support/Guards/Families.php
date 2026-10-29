@@ -114,6 +114,28 @@ final class Families
                     SQL,
                 null,
             ),
+            // TASK-036 (C-57; DATABASE §6.1, §6.3): a purchase line's posted goods and non-creditable tax — net of every receipt
+            // reversal, confirmation reversal and cost correction — are the cost rows of those components that name it: its
+            // lots' entries, and the direct rows of its drop-ship and non-stock lines in every class, a drop-ship return's
+            // contra aside — its units' cost moved into their return lot's basis, still the line's posted value (§5.7).
+            new Family(
+                'purchase_line_balances',
+                ['purchase_line_id'],
+                ['posted_goods_value', 'posted_noncreditable_tax_value'],
+                <<<'SQL'
+                    select b.purchase_line_id,
+                        coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_line_id = b.purchase_line_id and e.cost_component = 'GOODS'), 0)
+                            + coalesce((select sum(t.amount) from cost_attributions t left join dropship_confirmation_lines d on d.id = t.dropship_confirmation_line_id
+                                where coalesce(d.purchase_line_id, t.purchase_line_id) = b.purchase_line_id and t.stock_consumption_id is null and t.cost_component = 'GOODS'
+                                and not exists (select 1 from stock_restorations r where r.id = t.stock_restoration_id and r.kind = 'DROPSHIP_RETURN')), 0) as posted_goods_value,
+                        coalesce((select sum(e.amount) from lot_cost_entries e where e.purchase_line_id = b.purchase_line_id and e.cost_component = 'NONCREDITABLE_TAX'), 0)
+                            + coalesce((select sum(t.amount) from cost_attributions t left join dropship_confirmation_lines d on d.id = t.dropship_confirmation_line_id
+                                where coalesce(d.purchase_line_id, t.purchase_line_id) = b.purchase_line_id and t.stock_consumption_id is null and t.cost_component = 'NONCREDITABLE_TAX'
+                                and not exists (select 1 from stock_restorations r where r.id = t.stock_restoration_id and r.kind = 'DROPSHIP_RETURN')), 0) as posted_noncreditable_tax_value
+                    from purchase_line_balances b
+                    SQL,
+                null,
+            ),
             // TASK-031 (C-46; C-61): a correction case's counters whose formula §3.1 fixes over the schema — the refund
             // shortfalls its money facts carry, its RESIDUAL settlements, its returned units' SUPPLIER_RETURN cost without
             // the RETURN_SETTLEMENT re-attribution, and that settlement's LOSS. `refunded_value` and `replaced_value` are
