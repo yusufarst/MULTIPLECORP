@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -269,34 +269,56 @@ The commercial confirmation is the reservation trigger and the point where a pro
 - Migration: N/A — no migration or import code in this Task; the MIGRATION kind is tested at TL-04 and the import that writes it is TASK-057's (TL-16)
 - Other: the line state WF-PRJ-03's predicates 1 and 8 read, asserted for TASK-055 (C-38; C-39); DOC-09's layout compared with its preview (DOCUMENT_PREVIEW_PRODUCER §4) and its sample listed for the Owner's content validation (GAP-019)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PRJ/ConfirmationTest.php` — "Konfirmasi Proyek" commits one NO_QUOTATION confirmation, one pin per line and the evidence's link; evidence of another type or company, or none, is refused at its field with nothing committed; `tests/Browser/E2E/confirmation.spec.ts` — J-PRJ-02's no-quotation path
+- Criterion 2: `tests/Feature/PRJ/QuotationCommandsTest.php` and `tests/Feature/PRJ/QuotationsTest.php` — the approval commits the QUOTATION_APPROVAL confirmation, the revision APPROVED and the pins; a rejected or expired revision yields none; a second answer CONFLICT BD-05; `tests/Feature/PRJ/ConfirmationTest.php` and `tests/Integration/Projects/ConfirmationRacesTest.php` — a second no-quotation confirmation CONFLICT, two at once one
+- Criterion 3: `tests/Feature/PRJ/ConfirmationTest.php` — 2 boxes of 12 pinned at 24 base units with price and tax; after the master ratio becomes 10 the pin and the demand stay 24
+- Criterion 4: `tests/Feature/PRJ/QuotationCommandsTest.php` — a later revision's approval re-pins and moves the current pins, the earlier pins kept; `tests/Feature/PRJ/ConfirmationTest.php` — a demand below what is dispatched REJECTED C-05 with the line, the path named in its message (a return or an invoice revision); C-31 guarded the same way
+- Criterion 5: `tests/Feature/PRJ/ConfirmationTest.php` — the SIPLAH details locked at the first confirmation (C-51)
+- Criterion 6: PG-011 answers the confirmation with its pinned lines; no reservation is made by it — the reservation proposal is TASK-038's command and the company SPK its own on PG-036 (IP-19); `projects.confirm` alone confirms (`tests/Authorization/ConfirmationAccessTest.php`)
+- Criterion 7: `tests/Feature/PRJ/ConfirmationTest.php` — a *Gudang* and a *Jasa* line each guarded by its mode, the database's mode checks holding the other columns at zero; no purchase is needed to confirm or plan
+- Criterion 8: `tests/Feature/PRJ/ConfirmationTest.php` — "Batalkan Sisa" on two lines records one cancellation each, the released quantity handed to the lifecycle participants inside the transaction, a quantity above the remainder REJECTED ST-06; `tests/Integration/Projects/ConfirmationRacesTest.php` — two at once cancel once
+- Criterion 9: `tests/Authorization/ConfirmationAccessTest.php` — without `projects.cancel_scope` the control is absent and the route refused; the audit event ADM_PLUS (`tests/Feature/PRJ/ConfirmationTest.php`)
+- Criterion 10: `tests/Feature/PRJ/ConfirmationTest.php` — the unstarted remainder becomes a *Kirim langsung* line with the same price and tax and its origin's link, re-pinned under a superseding confirmation so each pin stays its demand, with no re-approval; without `stock.reserve` a split releasing a reservation is refused; `tests/Browser/E2E/confirmation.spec.ts` — J-FUL-01's re-plan
+- Criterion 11: `tests/Feature/PRJ/ConfirmationTest.php` — cancelling the last remainders leaves the project ACTIVE
+- Criterion 12: `tests/Feature/PRJ/ConfirmationTest.php` and `tests/Authorization/ConfirmationAccessTest.php` — the progress derived from the line guard each time, no status stored; availability only with `stock.view`
+- Criterion 13: `tests/Feature/PRJ/ConfirmationTest.php` — a project changed since PG-011 read it is CONFLICT ST-01; a stale prefilled date CONFLICT ST-08 by the shared business-date rule
+- Criterion 14: `tests/Feature/PRJ/ConfirmationTest.php` and `tests/Authorization/ConfirmationAccessTest.php` — no price or value without `finance.view`
+- Criterion 15: `tests/Feature/PRJ/ConfirmationTest.php` — the company SPK issued only for a confirmed project, its lines as pinned and the company its issuer, drafted as a draft until issued (TASK-029's engine); a client's order is only uploaded evidence
+- Criterion 16: `tests/Feature/PRJ/ConfirmationTest.php` — a MIGRATION confirmation through the same step pins the demand, no reservation, stock or money written
+- Criterion 17: `tests/Interaction/ConfirmationTest.php` — ROUTE-158–ROUTE-160 replayed answer their recorded outcome, a changed payload CONFLICT
+- Criterion 18: each confirmed line's current pin is exposed through `project_lines.current_pin_id` and PRJ's `ProjectFulfilment` read; the later Tasks' forms read it rather than retype it
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint and Pint PASS in CI (TL-01)
+- [x] Typecheck: TypeScript and Larastan/PHPStan at level `max` PASS in CI (TL-02)
+- [x] Relevant automated tests: Feature (TL-04), Integration on real PostgreSQL (TL-05); PASS in CI and locally
+- [x] Authorization: `projects.confirm`, `projects.cancel_scope`, `projects.manage`, `stock.reserve`, the `finance.view` and `stock.view` families (TL-06)
+- [x] Route integrity: ROUTE-158–ROUTE-160 in the route audit and the route list (TL-07)
+- [x] Interaction behavior: INT-158–INT-160, each with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-PRJ-02's no-quotation path and J-FUL-01 with "Batalkan Sisa" and "Ubah Cara Pemenuhan" on Chromium and WebKit (TL-09)
+- [x] Responsive/adaptive if required: PG-011's confirmed lines at 320, 390, 768 and 1,280 px (TL-11)
+- [x] Visual breathing room/density if UI: TASK-015's sections, confirmations and fields, nothing hand-styled
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04 for each command's capability; SM-25's money families; AZ-11 for another company's project, line and evidence (TL-14)
+- [x] Database safety review: no migration; the guards through `GuardUpdate`, the mode checks, the pins insert-only and the partial unique root as the backstops; local and CI databases only
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `6137fb9`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40827997638 (push) and 40828003313 (pull request #40), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-034 PHP tests, PHPStan, Pint and the frontend checks also PASS on the workstation's stack, whose memory is too low for the browser layers, so CI's run is their evidence
+- Build result: `TL-13 Frontend build: PASS — Evidence: 6137fb9, CI ubuntu-24.04 run 40827997638`
+- Route evidence: TL-07's route audit PASS — ROUTE-158 `POST /proyek/{id}/konfirmasi` (`projects.confirm`), ROUTE-159 `POST /proyek/{id}/batalkan-sisa` (`projects.cancel_scope`), ROUTE-160 `POST /proyek/{id}/ubah-pemenuhan` (`projects.manage`; `stock.reserve` in its command where a reservation is released)
+- Interaction evidence: `tests/Interaction/ConfirmationTest.php` (INT-158–INT-160)
+- Browser evidence: `TL-09 E2E/browser: PASS — Evidence: 6137fb9, CI ubuntu-24.04 run 40827997638`; TL-10, TL-11 and TL-12 for PG-011's confirmation and *Item dan pemenuhan* in the same run
+- Localization evidence: PG-011's part in both languages (`tests/Browser/Localization/confirmation.spec.ts`) (DOD-16); 57 catalogue keys added, proposed copy except the canonical ones the registry marks
+- Performance evidence: the part's read in a bounded number of statements (`tests/Performance/FulfilmentQueriesTest.php`) (TL-15)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/PRJ/` — `Services/CommercialConfirmation`, `LineScope`, `SpkSubjects`; `Actions/ConfirmWithoutQuotation`, `CancelRemainingScope`, `SplitReplanLine` and `AnswerQuotation` through the shared step; `Queries/ProjectFulfilment`, `ProjectWorkspace`; `Http/Controllers/FulfilmentController`; `Contracts/ProjectLifecycleParticipant`'s `scopeReduced` —; DOC's `EvidenceList::idOf`; the routes; PG-011's part and dialogs; 57 catalogue keys; the tests, the race helper, the recording participant and the browser fixture
+- Commit SHA: `abd310f`, `8e6e12b`, `1e81ee4`, `e21edf8`, `a96417f`, `c8bad9b`, `323db7c`, `5d25532`, `6137fb9`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-034-confirmation`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request: its P1 — a re-plan leaving the origin's pin at full quantity, so the SPK and PG-011 counted the remainder twice and a later quotation approval undid the re-plan — and its P2 and P3 points fixed and tested in `323db7c`; its pin-history P3 recorded below. Codex reviewed `5d25532`: its two P2s — a re-plan's value computed from a base-unit price already rounded, which could move value or leave the origin's pin negative, and no control creating the company SPK after the confirmation — fixed and tested in `6137fb9` (the remainder's share of the origin's pinned value, rounded once; "Buat SPK Perusahaan" as its own command on PG-011); no review of `6137fb9` arrived within ten minutes of its push — CODEX_TIMEOUT recorded for it, never a pass (DIR-096). Executor readings within the approved text: a confirmation needs an ACTIVE project; the no-quotation path is closed while a quotation is SENT or APPROVED; a re-plan is recorded as a confirmation of the same kind superseding the current one, its reason the re-plan's, no re-approval; a quotation approval that would zero a re-planned line is REJECTED (L-21) rather than undoing it, the quotation's revisions copying the earlier one; a re-confirmation pins every line again, the unchanged ones with their earlier values; availability is read from INV's pooled `stock_product_balances` table, INV being a higher tier whose queries PRJ may not call; the document engine's tests keep a synthetic DOC-09, PRJ's provider silenced there. Executor discoveries for later Tasks: `ProjectLifecycleParticipant` gains `scopeReduced`, which INV implements in TASK-038 with LK-13 and LK-18 for its reservation release; a quotation revision carrying re-planned lines is the quotation's (a later revision Task or TASK-035's supersession)
 
 **SAFE NEXT TASK:**
 

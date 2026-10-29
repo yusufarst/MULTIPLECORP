@@ -669,3 +669,10 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-033 on its branch `task/TASK-033-quotations`: the quotation's draft from the project's lines, "Terbitkan Penawaran" issuing DOC-01 through DOC's issue, "Buat Revisi" and "Catat Jawaban Klien" (ROUTE-154–ROUTE-157) — the approval the commercial confirmation's root, an expired or answered revision refused —; PG-014 in the document composer with its live paper and the phone's quick action; PG-037 by company; DOC-01 and DOC-11 supplied by PRJ.
 - Codex's review dispositioned; the browser layers' first CI findings fixed.
 - Every check passed in fresh CI on `93e66c9`. TASK-033 DONE — progress 33 / 87 —; TASK-034 next.
+
+## Unreleased — 2026-10-29, TASK-034 — Commercial confirmation and fulfillment planning
+
+- TASK-033 squash-merged by the executor into `main` as `5217588` (pull request #39); TASK-034 started.
+- Built TASK-034 on its branch `task/TASK-034-confirmation`: AX-13 as one PRJ step for every confirmation path — the quotation's approval, "Konfirmasi Proyek" on the client's order evidence (ROUTE-158), the opening import's MIGRATION kind —, pinning each line's conversion, price and tax with the guards and the SIPLAH lock; AX-14's "Batalkan Sisa" and "Ubah Cara Pemenuhan" (ROUTE-159, ROUTE-160); PG-011's *Item dan pemenuhan*; the company SPK (DOC-09).
+- The watcher gained a coding-phase liveness event after a six-hour stall; ER-06's independent review and Codex's review dispositioned.
+- Every check passed in fresh CI on `6137fb9`. TASK-034 DONE — progress 34 / 87 —; TASK-035 next.
