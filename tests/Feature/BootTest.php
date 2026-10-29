@@ -23,7 +23,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'POST pengaturan/perusahaan/{id}/rekening', 'POST pengaturan/perusahaan/{id}/aset-identitas', 'GET|HEAD pengaturan/pajak', 'PUT pengaturan/pajak',
         'GET|HEAD data-master/klien', 'POST data-master/klien', 'PUT data-master/klien/{id}', 'GET|HEAD data-master/pemasok', 'POST data-master/pemasok', 'PUT data-master/pemasok/{id}',
         'GET|HEAD data-master/produk', 'POST data-master/produk', 'PUT data-master/produk/{id}', 'POST data-master/produk/{id}/barcode',
-        'GET|HEAD proyek', 'GET|HEAD proyek/baru', 'POST proyek', 'GET|HEAD proyek/{id}', 'GET|HEAD proyek/{id}/ubah', 'PUT proyek/{id}', 'POST proyek/{id}/hapus-draf',
+        'GET|HEAD proyek', 'GET|HEAD proyek/baru', 'POST proyek', 'GET|HEAD proyek/{id}', 'GET|HEAD proyek/{id}/ubah', 'PUT proyek/{id}', 'POST proyek/{id}/hapus-draf', 'POST proyek/{id}/konfirmasi', 'POST proyek/{id}/batalkan-sisa', 'POST proyek/{id}/ubah-pemenuhan',
         'GET|HEAD proyek/{id}/penawaran', 'POST proyek/{id}/penawaran', 'POST proyek/{id}/penawaran/terbitkan', 'POST proyek/{id}/penawaran/revisi', 'POST proyek/{id}/penawaran/jawaban',
         'GET|HEAD data-master/lokasi-rak', 'POST data-master/lokasi-rak',
         'GET|HEAD akun', 'PUT akun/kata-sandi', 'POST akun/verifikasi-dua-langkah', 'DELETE akun/verifikasi-dua-langkah', 'POST akun/kode-pemulihan',
