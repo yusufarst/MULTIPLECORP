@@ -3,6 +3,7 @@
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Queries\ProjectFulfilment;
+use App\Support\BusinessDate;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -44,7 +45,9 @@ function confirmedProject(object $test, int $lines): Project
     expect(Projects::create($test->admin->id, $test->company, Projects::client(), $products))->toStartWith('COMMITTED');
     $project = Project::query()->orderByDesc('id')->firstOrFail();
     $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $test->company->id, 'evidence_type' => 'CLIENT_SPK']);
-    $test->actingAs($test->admin)->post("/proyek/{$project->public_id}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $project->lock_version, 'bukti' => $evidence->public_id, 'tanggal' => date('Y-m-d'), 'tanggal_otomatis' => true]);
+    // The prefilled date is the business date (Asia/Jakarta), never the server's UTC day, which is stale after 17:00 UTC (ST-08).
+    $test->actingAs($test->admin)->post("/proyek/{$project->public_id}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $project->lock_version, 'bukti' => $evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true])
+        ->assertRedirect();
 
     return $project->fresh() ?? $project;
 }
