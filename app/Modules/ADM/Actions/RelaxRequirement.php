@@ -50,6 +50,11 @@ final class RelaxRequirement
             }
 
             if ($change === null) {
+                if ($current['required'] && $current['waiver_eligible']) {
+                    // WF-ADM-01: a required waiver-eligible item is handled by Tidak Berlaku, never by removal.
+                    throw Refused::rejected('WF-ADM-01', ['reason' => 'waivable']);
+                }
+
                 $this->requirements->remove($context, $current, $lockVersion, $reason);
             } else {
                 $this->requirements->change($context, $current, $lockVersion, $change, true, $reason);

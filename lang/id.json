@@ -2249,5 +2249,6 @@
     "projects.item.requirements_catalog": ":jumlah dokumen wajib belum terpenuhi",
     "projects.item.requirements_external": ":jumlah dokumen pihak luar wajib belum terpenuhi",
     "projects.item.requirements_other": ":jumlah persyaratan wajib lain belum terpenuhi",
-    "projects.item.requirements_invoice": "Invoice belum mencakup seluruh nilai terkonfirmasi"
+    "projects.item.requirements_invoice": "Invoice belum mencakup seluruh nilai terkonfirmasi",
+    "adm.refusal.waivable": "Persyaratan wajib yang boleh ditandai Tidak Berlaku ditangani dengan Tandai Tidak Berlaku, bukan dihapus."
 }

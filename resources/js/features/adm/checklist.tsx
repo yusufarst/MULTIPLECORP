@@ -292,7 +292,7 @@ export function RequirementCommands({ projectId, action, options, onClose }: { p
                         <FormField label={t('adm.field.description')} required error={save.errors.uraian}>
                             {(control) => <Textarea {...control} value={draft.description} maxLength={500} disabled={action?.kind === 'tighten'} onChange={(event) => { set({ description: event.target.value }); }} />}
                         </FormField>
-                        <RequirementTerms draft={draft} set={set} errors={save.errors} />
+                        <RequirementTerms draft={draft} set={set} errors={save.errors} floor={action?.kind === 'tighten' ? item : null} />
                     </div>
                 }
                 confirmLabel={action?.kind === 'tighten' ? t('adm.action.tighten') : t('adm.action.add')}
@@ -373,10 +373,13 @@ export function RequirementCommands({ projectId, action, options, onClose }: { p
                 items={
                     <div className="flex min-w-0 flex-col gap-4">
                         {item !== null && <p className="font-semibold text-text-primary">{name(item)}</p>}
-                        <div className="flex items-center gap-2">
-                            <Checkbox id="requirement-remove" checked={draft.remove} onCheckedChange={(checked) => { set({ remove: checked }); }} />
-                            <label htmlFor="requirement-remove" className="text-body text-text-primary">{t('adm.field.remove')}</label>
-                        </div>
+                        {/* A required waiver-eligible item is handled by Tidak Berlaku, never by removal (WF-ADM-01). */}
+                        {!(item?.required === true && item.waiver_eligible === true) && (
+                            <div className="flex items-center gap-2">
+                                <Checkbox id="requirement-remove" checked={draft.remove} onCheckedChange={(checked) => { set({ remove: checked }); }} />
+                                <label htmlFor="requirement-remove" className="text-body text-text-primary">{t('adm.field.remove')}</label>
+                            </div>
+                        )}
                         {!draft.remove && <RequirementTerms draft={draft} set={set} errors={relax.errors} />}
                     </div>
                 }
@@ -406,26 +409,31 @@ export function RequirementCommands({ projectId, action, options, onClose }: { p
     );
 }
 
-/** *Wajib*, the mode and "Harus asli dari klien" — the last only with the uploaded mode (DATABASE §4.11). */
-function RequirementTerms({ draft, set, errors }: { draft: Draft; set: (patch: Partial<Draft>) => void; errors: Record<string, string> }) {
+/**
+ * *Wajib*, the mode and "Harus asli dari klien" — the last only with the uploaded mode (DATABASE §4.11). On an Admin's
+ * tightening the item read is the floor: nothing looser is offered — a required item stays required, a chosen mode
+ * stays unless it was either, the client-original flag stays set (OD-06; J-ADM-01).
+ */
+function RequirementTerms({ draft, set, errors, floor = null }: { draft: Draft; set: (patch: Partial<Draft>) => void; errors: Record<string, string>; floor?: Requirement | null }) {
     const { t } = useTranslation();
+    const modes = floor === null || floor.mode === 'EITHER' ? MODES : [floor.mode];
 
     return (
         <>
             <div className="flex items-center gap-2">
-                <Checkbox id="requirement-required" checked={draft.required} onCheckedChange={(checked) => { set({ required: checked }); }} />
+                <Checkbox id="requirement-required" checked={draft.required} disabled={floor?.required === true} onCheckedChange={(checked) => { set({ required: checked }); }} />
                 <label htmlFor="requirement-required" className="text-body text-text-primary">{t('adm.field.required')}</label>
             </div>
             <FormField label={t('adm.field.mode')} required error={errors.cara}>
                 {(control) => (
                     <NativeSelect {...control} value={draft.mode} onChange={(event) => { set({ mode: event.target.value as Mode }); }}>
-                        {MODES.map((mode) => <option key={mode} value={mode}>{t(modeName(mode))}</option>)}
+                        {modes.map((mode) => <option key={mode} value={mode}>{t(modeName(mode))}</option>)}
                     </NativeSelect>
                 )}
             </FormField>
             {draft.mode === 'UPLOADED' && (
                 <div className="flex items-center gap-2">
-                    <Checkbox id="requirement-original" checked={draft.clientOriginal} onCheckedChange={(checked) => { set({ clientOriginal: checked }); }} />
+                    <Checkbox id="requirement-original" checked={draft.clientOriginal} disabled={floor?.client_original === true} onCheckedChange={(checked) => { set({ clientOriginal: checked }); }} />
                     <label htmlFor="requirement-original" className="text-body text-text-primary">{t('adm.field.client_original')}</label>
                 </div>
             )}

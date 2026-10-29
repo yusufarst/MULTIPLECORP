@@ -27,6 +27,9 @@ final class Requirements
 
     public const MODES = ['GENERATED', 'UPLOADED', 'EITHER'];
 
+    /** The reopening row's reason when the Owner withdraws waiver eligibility (OD-05). */
+    public const WITHDRAWN = 'Waiver eligibility withdrawn by the Owner (OD-05).';
+
     public function __construct(private readonly AuditRecorder $audit) {}
 
     /** NX-03's locks: the project's row (LK-01), under which its checklist changes. */
@@ -93,8 +96,9 @@ final class Requirements
 
     /**
      * ROUTE-164's tightening, or ROUTE-168's relaxation by the Owner: the item's required flag, mode and client-original
-     * flag at the version the page read, while it is not yet satisfied (DATABASE §13; ST-01). An Admin's edit that
-     * loosens a required non-waivable item is REJECTED (OD-06).
+     * flag at the version the page read, while it is not yet satisfied (DATABASE §13; ST-01). An Admin only tightens: an
+     * edit that loosens any item is REJECTED (OD-06; DIR-024 D-5) — a required waiver-eligible item is handled by *Tidak
+     * Berlaku* with its reason, never by loosening (WF-ADM-01). Each change is audited with the authority that made it.
      *
      * @param  Item  $current
      * @param  array{required: bool, mode: string, client_original: bool}  $change
@@ -123,7 +127,7 @@ final class Requirements
             || ($current['client_original'] && ! $change['client_original'])
             || ($current['mode'] !== $change['mode'] && $current['mode'] !== 'EITHER');
 
-        if ($looser && ! $owner && $current['required'] && ! $current['waiver_eligible']) {
+        if ($looser && ! $owner) {
             throw Refused::rejected('OD-06', ['reason' => 'owner']);
         }
 
@@ -140,7 +144,7 @@ final class Requirements
             throw Refused::conflict('ST-01');
         }
 
-        $this->record($context, $looser ? 'ADM.RequirementRelaxed' : 'ADM.RequirementTightened', $looser ? AuthorityClass::OwnerOnly : AuthorityClass::Adm,
+        $this->record($context, $looser ? 'ADM.RequirementRelaxed' : 'ADM.RequirementTightened', $owner ? AuthorityClass::OwnerOnly : AuthorityClass::Adm,
             $current['project'], $current['company'], $current['id'], $reason, AuditChange::updated(self::texts($before), self::texts($change)));
     }
 
@@ -166,7 +170,9 @@ final class Requirements
     }
 
     /**
-     * ROUTE-167: the Owner's waiver eligibility at the version read (OD-05).
+     * ROUTE-167: the Owner's waiver eligibility at the version read (OD-05). Withdrawn, it reopens a standing waiver in
+     * the same transaction — a row marked as reopened —, so a later grant never revives that waiver without a new
+     * decision and its reason (BR-ADM-02).
      *
      * @param  Item  $current
      */
@@ -181,6 +187,11 @@ final class Requirements
 
         $this->record($context, 'ADM.WaiverEligibilitySet', AuthorityClass::OwnerOnly, $current['project'], $current['company'], $current['id'], null,
             AuditChange::updated(['waiver_eligible' => $current['waiver_eligible'] ? 'true' : 'false'], ['waiver_eligible' => $eligible ? 'true' : 'false']));
+        $head = self::head($current['id']);
+
+        if (! $eligible && $head !== null && ! $head['reopened']) {
+            $this->waive($context, $current, self::WITHDRAWN, true, 'ADM.WaiverReopened', AuthorityClass::OwnerOnly);
+        }
     }
 
     /**

@@ -2249,5 +2249,6 @@
     "projects.item.requirements_catalog": ":jumlah required documents not yet satisfied",
     "projects.item.requirements_external": ":jumlah required external documents not yet satisfied",
     "projects.item.requirements_other": ":jumlah other required requirements not yet satisfied",
-    "projects.item.requirements_invoice": "The invoices do not yet cover the whole confirmed value"
+    "projects.item.requirements_invoice": "The invoices do not yet cover the whole confirmed value",
+    "adm.refusal.waivable": "A required requirement that may be marked not applicable is handled by marking it so, not by removing it."
 }

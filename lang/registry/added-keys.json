@@ -8172,6 +8172,12 @@
             "source": "WF-PRJ-03 predicate 5; L-27",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "adm.refusal.waivable": {
+            "task": "TASK-035",
+            "source": "WF-ADM-01",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

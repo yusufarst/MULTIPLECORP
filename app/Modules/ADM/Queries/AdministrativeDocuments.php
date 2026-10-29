@@ -91,6 +91,11 @@ final class AdministrativeDocuments
         $where = ["p.state in ('DRAFT', 'ACTIVE')", Readiness::UNMET];
         $bindings = [$companyId];
 
+        // The default invoice item's status is a money fact (PJ-13): listed only with finance.view.
+        if (! $viewer->allows('finance.view', $companyId)) {
+            $where[] = 'not s.is_default_invoice_item';
+        }
+
         if ($filters['tab'] === 'wajib') {
             $where[] = 's.is_required';
         }

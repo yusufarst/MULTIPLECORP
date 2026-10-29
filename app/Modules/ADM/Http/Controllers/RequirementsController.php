@@ -194,7 +194,7 @@ final class RequirementsController extends Controller
                 'OD-15' => self::say('adm.refusal.owner_decision'),
                 'BR-ADM-02' => self::say('adm.refusal.ineligible'),
                 'BR-ADM-01' => self::say($reason === 'not_issued' ? 'adm.refusal.not_issued' : 'adm.refusal.mode'),
-                'WF-ADM-01' => self::say(in_array($reason, ['satisfied', 'client_original', 'linked_document', 'invoice'], true) ? "adm.refusal.{$reason}" : 'messages.msg_04'),
+                'WF-ADM-01' => self::say(in_array($reason, ['satisfied', 'client_original', 'linked_document', 'invoice', 'waivable'], true) ? "adm.refusal.{$reason}" : 'messages.msg_04'),
                 'NX-03' => self::say('adm.refusal.linked'),
                 'L-11' => self::say('projects.refusal.closed'),
                 'C-05' => self::say('fulfilment.refusal.executed', ['baris' => self::text($state['line'] ?? '')]),

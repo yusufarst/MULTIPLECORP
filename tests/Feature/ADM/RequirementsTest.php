@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use Inertia\Testing\AssertableInertia;
 use Tests\Support\Administration;
 use Tests\Support\Authorization;
 use Tests\Support\Projects;
@@ -327,4 +328,88 @@ it('shows the checklist in PG-011\'s documents group (D-IA-10; J-ADM-01)', funct
         ->and($group['checklist']['can'])->toMatchArray(['manage' => true, 'waive' => true, 'supersede' => true])
         ->and($group['checklist']['options']['document_types'])->toContain('DOC-09')
         ->and(app(ProjectWorkspace::class)->documents(Authorization::admin([Projects::company()->id], ['projects.view'])->id, $this->project)['checklist'])->toBeNull();
+});
+
+it('links only a document of the item\'s own project, read through its subject (BR-ADM-01)', function () {
+    $item = Administration::requirement($this->project);
+    $other = Administration::document(Administration::project($this->admin->id, $this->company));
+
+    admPost($this, $item, 'tautkan', ['dokumen' => Administration::publicIdOf($other)])->assertSessionHasErrors('dokumen');
+    expect(collect(admChecklist($this)['options']['documents'])->pluck('id')->all())->not->toContain(Administration::publicIdOf($other))
+        ->and(DB::table('admin_requirement_links')->count())->toBe(0);
+});
+
+it('refuses an Admin any loosening, of a waiver-eligible or optional item too, and the removal of a required waiver-eligible item (OD-06; WF-ADM-01)', function () {
+    $eligible = Administration::requirement($this->project, ['waiver_eligible' => true]);
+    $optional = Administration::requirement($this->project, ['is_required' => false, 'satisfaction_mode' => 'EITHER']);
+    $loosen = fn (int $item, array $body) => admSave($this, ['persyaratan' => Administration::handle($item), 'lock_version' => admLockVersion($item), ...$body]);
+
+    $loosen($eligible, ['wajib' => false]);
+    expect(admAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'OD-06']);
+    $loosen($optional, ['wajib' => false, 'cara' => 'UPLOADED', 'asli_klien' => false]);
+    expect(admAnswer())->toMatchArray(['kind' => 'COMMITTED']);
+    $loosen($optional, ['wajib' => false, 'cara' => 'EITHER']);
+    expect(admAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'OD-06'])
+        ->and(DB::table('audit_events')->where('action', 'ADM.RequirementRelaxed')->count())->toBe(0);
+
+    admPost($this, $eligible, 'longgarkan', ['lock_version' => admLockVersion($eligible), 'hapus' => true, 'alasan' => 'Tidak diminta'], $this->owner);
+    expect(admAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'WF-ADM-01'])
+        ->and(DB::table('admin_requirements')->where('id', $eligible)->value('state'))->toBe('ACTIVE');
+
+    // The Owner's own change is audited with the Owner's authority, a tightening included.
+    admPost($this, $optional, 'longgarkan', ['lock_version' => admLockVersion($optional), 'hapus' => false, 'wajib' => true, 'cara' => 'UPLOADED', 'asli_klien' => false, 'alasan' => 'Diminta sekolah'], $this->owner);
+    expect(DB::table('audit_events')->where('action', 'ADM.RequirementTightened')->orderByDesc('id')->value('authority_class'))->toBe('OWNER_ONLY');
+});
+
+it('shows the default invoice item only with finance.view, on PG-011 and PG-039 (PJ-13)', function () {
+    Administration::requirement($this->project, ['requirement_kind' => 'FREE_TEXT', 'document_type_code' => null, 'description' => 'Invoice', 'is_default_invoice_item' => true]);
+    Administration::requirement($this->project);
+    $reader = Authorization::admin([$this->company->id], ['projects.view']);
+    $listed = function (object $viewer): array {
+        $props = [];
+        $this->actingAs($viewer)->get('/dokumen/administrasi')->assertInertia(function (AssertableInertia $page) use (&$props) {
+            $props = $page->toArray()['props'];
+        });
+
+        return collect($props['rows'])->pluck('default_invoice')->sort()->values()->all();
+    };
+
+    expect(collect(admChecklist($this, $reader)['items'])->pluck('default_invoice')->all())->toBe([false])
+        ->and(collect(admChecklist($this)['items'])->pluck('default_invoice')->sort()->values()->all())->toBe([false, true])
+        ->and($listed($reader))->toBe([false])
+        ->and($listed($this->admin))->toBe([false, true]);
+});
+
+it('reopens a standing waiver when the Owner withdraws eligibility, so a later grant revives nothing (BR-ADM-02; OD-05)', function () {
+    $item = Administration::requirement($this->project, ['waiver_eligible' => true]);
+    admPost($this, $item, 'tidak-berlaku', ['alasan' => 'Tidak diminta']);
+    expect(Administration::status($this->project, $item))->toBe(Readiness::WAIVED);
+
+    admPost($this, $item, 'kelayakan', ['lock_version' => admLockVersion($item), 'layak' => false], $this->owner);
+    expect(Administration::status($this->project, $item))->toBe(Readiness::MISSING)
+        ->and(DB::table('admin_requirement_waivers')->where('admin_requirement_id', $item)->orderBy('id')->pluck('reopened_by_correction')->all())->toBe([false, true]);
+
+    admPost($this, $item, 'kelayakan', ['lock_version' => admLockVersion($item), 'layak' => true], $this->owner);
+    expect(Administration::status($this->project, $item))->toBe(Readiness::MISSING);
+    admPost($this, $item, 'tidak-berlaku', ['alasan' => 'Keputusan baru']);
+    expect(admAnswer())->toMatchArray(['kind' => 'COMMITTED'])->and(Administration::status($this->project, $item))->toBe(Readiness::WAIVED);
+});
+
+it('keeps the default invoice item open while the invoiced value exceeds the confirmed value less the cancelled scope (L-27)', function () {
+    Authorization::grant($this->admin, 'projects.cancel_scope');
+    $evidence = Administration::evidence($this->company, 'CLIENT_SPK');
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/konfirmasi", [
+        'command_id' => (string) Str::uuid(), 'lock_version' => $this->project->fresh()?->lock_version, 'bukti' => $evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+    ]);
+    $invoice = (int) DB::table('admin_requirements')->where('project_id', $this->project->id)->where('is_default_invoice_item', true)->value('id');
+    $confirmed = (string) DB::table('project_commercial_balances')->where('project_id', $this->project->id)->value('confirmed_sales_value');
+    GuardUpdate::apply(DB::connection(), 'project_commercial_balances', [['key' => ['project_id' => $this->project->id], 'deltas' => ['invoiced_sales_value' => $confirmed]]]);
+    expect(Administration::status($this->project, $invoice))->toBe(Readiness::SATISFIED);
+
+    $line = RowHandle::of('project_lines', (int) DB::table('project_lines')->where('project_id', $this->project->id)->where('line_no', 2)->value('id'));
+    $this->actingAs($this->admin)->post("/proyek/{$this->project->public_id}/batalkan-sisa", [
+        'command_id' => (string) Str::uuid(), 'baris' => [['baris' => $line, 'jumlah' => '1']], 'alasan' => 'Klien membatalkan', 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true,
+    ]);
+    expect(admAnswer())->toMatchArray(['kind' => 'COMMITTED'])
+        ->and(Administration::status($this->project, $invoice))->toBe(Readiness::MISSING);
 });

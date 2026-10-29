@@ -6,6 +6,7 @@ use App\Modules\ADM\Services\Readiness;
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Queries\EvidenceList;
 use App\Modules\DOC\Services\DocumentAccess;
+use App\Modules\DOC\Services\DocumentProjects;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\PRJ\Contracts\ReadinessProvider;
@@ -20,9 +21,10 @@ use Illuminate\Support\Facades\DB;
  * waivers —, missing items first, with no stored progress, fraction or percentage. A linked document shows its number
  * only with its family's view capability and an evidence only with its type's (PJ-15; PJ-08); why a client-original
  * item stays open — its upload reproduces a system rendition — only to a viewer who may see that rendition (IP-16;
- * GAP-034; SM-23). Waiver eligibility is the Owner's to read (row 96; OD-05): an Admin receives only whether "Tandai
- * Tidak Berlaku" is offered. The controls follow the capabilities, the server deciding either way (AZ-01). A bounded
- * number of statements, whatever the number of items (QB-02).
+ * GAP-034; SM-23); the default invoice item only with `finance.view` (PJ-13); a document only of the project itself,
+ * through its subject (BR-ADM-01). Waiver eligibility is the Owner's to read (row 96; OD-05): an Admin receives only
+ * whether "Tandai Tidak Berlaku" is offered. The controls follow the capabilities, the server deciding either way
+ * (AZ-01). A bounded number of statements, whatever the number of items (QB-02).
  *
  * It also resolves what the commands name — a requirement or a decision by the handle the page showed, a document or
  * an evidence by public identifier — among the project's own rows, an unknown one alike to a hidden one (AZ-11).
@@ -50,7 +52,9 @@ final class ProjectChecklist implements ReadinessProvider
             'relax' => $viewer->allows('requirements.relax', $company),
             'supersede' => $viewer->allows('decisions.supersede', $company),
         ];
-        $items = Readiness::of([$project->id])[$project->id] ?? [];
+        // The default invoice item's status tells the invoiced value against the confirmed: a money fact (PJ-13).
+        $money = $viewer->allows('finance.view', $company);
+        $items = array_values(array_filter(Readiness::of([$project->id])[$project->id] ?? [], fn (array $item): bool => $money || ! $item['default_invoice']));
         $ids = array_column($items, 'id');
         $links = $this->links($viewer, $ids, $company);
         $waivers = $this->waivers($ids);
@@ -142,12 +146,14 @@ final class ProjectChecklist implements ReadinessProvider
         return null;
     }
 
-    /** The issued version of a company document the viewer may open, by the document's public identifier (PJ-15; CS-04). */
+    /** The issued version of a document of the project the viewer may open, by the document's public identifier (PJ-15; CS-04). */
     public function versionOf(int $viewerId, ProjectRef $project, string $documentPublicId): ?int
     {
         $viewer = $this->capabilities->for($viewerId);
         $row = DB::table('documents as d')->join('document_versions as v', 'v.document_id', '=', 'd.id')
             ->where('d.public_id', strtolower($documentPublicId))->where('d.company_id', $project->companyId)->where('v.state', 'ISSUED')
+            // A document of another project never satisfies this one's checklist (BR-ADM-01).
+            ->whereRaw(DocumentProjects::SQL.' = ?', [$project->id])
             ->first(['v.id', 'd.document_type_code']);
 
         return is_object($row) && DocumentAccess::mayViewContent($viewer, Row::text($row, 'document_type_code'), $project->companyId) ? (int) Row::text($row, 'id') : null;
@@ -259,7 +265,7 @@ final class ProjectChecklist implements ReadinessProvider
     {
         $company = $project->companyId;
         $documents = DB::table('documents as d')->join('document_versions as v', 'v.document_id', '=', 'd.id')
-            ->where('d.company_id', $company)->where('d.project_id', $project->id)->where('v.state', 'ISSUED')->orderByDesc('d.id')->limit(100)
+            ->where('d.company_id', $company)->whereRaw(DocumentProjects::SQL.' = ?', [$project->id])->where('v.state', 'ISSUED')->orderByDesc('d.id')->limit(100)
             ->get(['d.public_id', 'd.document_type_code', 'v.formatted_number'])
             ->filter(fn (object $row): bool => DocumentAccess::mayViewContent($viewer, Row::text($row, 'document_type_code'), $company))
             ->map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'document_type_code'), 'number' => Row::nullable($row, 'formatted_number')])

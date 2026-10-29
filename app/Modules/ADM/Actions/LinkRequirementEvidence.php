@@ -3,6 +3,7 @@
 namespace App\Modules\ADM\Actions;
 
 use App\Modules\ADM\Services\Requirements;
+use App\Modules\DOC\Services\DocumentProjects;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\Command\CommandContext;
@@ -59,8 +60,10 @@ final class LinkRequirementEvidence
                 // Read under LK-30: a void or a revision that committed first leaves no issued version to link (NX-03).
                 $version = DB::table('document_versions')->where('id', $versionId)->where('company_id', $project->companyId)->first(['document_type_code', 'state']);
 
+                // A document satisfies only its own project's checklist, its project read through its subject (BR-ADM-01).
                 if ($current['client_original'] || $current['mode'] === 'UPLOADED' || $version === null
-                    || ($current['document_type'] !== null && $version->document_type_code !== $current['document_type'])) {
+                    || ($current['document_type'] !== null && $version->document_type_code !== $current['document_type'])
+                    || DocumentProjects::ofVersion($versionId) !== $project->id) {
                     throw Refused::rejected('BR-ADM-01', ['reason' => 'mode']);
                 }
 

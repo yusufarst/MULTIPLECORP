@@ -89,6 +89,13 @@ it('marks Tidak Berlaku, sets eligibility, relaxes and supersedes once each, eve
         ->and(DB::table('admin_requirement_waivers')->where('admin_requirement_id', $item)->count())->toBe(2);
 
     $version = (int) DB::table('admin_requirements')->where('id', $item)->value('lock_version');
+    expect(requirementSentTwice($this, "{$this->path}/{$handle}/longgarkan", ['command_id' => (string) Str::uuid(), 'lock_version' => $version, 'hapus' => false,
+        'wajib' => false, 'cara' => 'EITHER', 'asli_klien' => false, 'alasan' => 'Sekolah menerima salinan'], $this->owner))
+        ->toBe(Outcome::COMMITTED.' '.Outcome::COMMITTED)
+        ->and(DB::table('audit_events')->where('action', 'ADM.RequirementRelaxed')->count())->toBe(1);
+
+    // An optional item is removed once, its replay answering the recorded outcome.
+    $version = (int) DB::table('admin_requirements')->where('id', $item)->value('lock_version');
     expect(requirementSentTwice($this, "{$this->path}/{$handle}/longgarkan", ['command_id' => (string) Str::uuid(), 'lock_version' => $version, 'hapus' => true, 'alasan' => 'Tidak diperlukan'], $this->owner))
         ->toBe(Outcome::COMMITTED.' '.Outcome::COMMITTED)
         ->and(DB::table('audit_events')->where('action', 'ADM.RequirementRemoved')->count())->toBe(1);
