@@ -29,9 +29,10 @@ final class RequirementLifecycle implements ProjectLifecycleParticipant
 
     public function confirmed(CommandContext $context, int $projectId): void
     {
-        $value = DB::table('project_commercial_balances')->where('project_id', $projectId)->value('confirmed_sales_value');
+        // The commercial guard read in SQL, its value compared there, never as a float (D-DB-03).
+        $valued = DB::selectOne('select 1 as found from project_commercial_balances where project_id = ? and confirmed_sales_value > 0', [$projectId]) !== null;
 
-        if (! is_numeric($value) || (float) $value <= 0.0 || DB::table('admin_requirements')->where('project_id', $projectId)->where('is_default_invoice_item', true)->exists()) {
+        if (! $valued || DB::table('admin_requirements')->where('project_id', $projectId)->where('is_default_invoice_item', true)->exists()) {
             return;
         }
 
