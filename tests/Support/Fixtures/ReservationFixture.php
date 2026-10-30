@@ -56,7 +56,9 @@ final class ReservationFixture
             return response()->json(['error' => "confirm {$outcome->kind} {$outcome->code}"], 500);
         }
 
-        ReservationWorld::opening($company->id, $goods['product']->id, LocationFactory::new()->createOne()->id, (string) $request->input('stock', '8'));
+        $tag = Str::upper(Str::random(8));
+        $location = LocationFactory::new()->createOne(['code' => "RAK-UJI-{$tag}", 'name' => "Rak uji {$tag}"])->id;
+        ReservationWorld::opening($company->id, $goods['product']->id, $location, (string) $request->input('stock', '8'));
         $line = ReservationWorld::line($project);
         $reserved = (string) $request->input('reserved', '0');
 

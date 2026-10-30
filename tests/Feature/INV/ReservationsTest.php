@@ -167,7 +167,7 @@ it('lists a residual reservation of a completed project as "perlu dilepas", rele
     ProjectStateTransition::factory()->create(['project_id' => $project->id, 'from_state' => 'ACTIVE', 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $this->world->actorId]);
     $actor = User::query()->findOrFail($this->world->actorId);
 
-    $this->actingAs($actor)->get('/gudang/reservasi?tab=aktif')->assertInertia(fn (AssertableInertia $page) => $page->component('INV/Reservations')->has('rows', 0));
+    $this->actingAs($actor)->get('/gudang/reservasi?tab=aktif')->assertInertia(fn (AssertableInertia $page) => $page->component('INV/Reservations', false)->has('rows', 0));
     $this->actingAs($actor)->get('/gudang/reservasi?tab=dilepas')->assertInertia(fn (AssertableInertia $page) => $page
         ->has('rows', 1)->where('rows.0.residual', true)->where('rows.0.may', ['reserve' => false, 'reduce' => true, 'release' => true])->where('rows.0.project.number', $project->project_number));
 
@@ -202,7 +202,7 @@ it('shows PG-025 by branch, another company\'s reservation of the pool by its qu
     $actor = User::query()->findOrFail($this->world->actorId);
 
     $this->actingAs($actor)->get('/gudang/reservasi?tab=aktif')->assertInertia(fn (AssertableInertia $page) => $page
-        ->component('INV/Reservations')->has('branches', 1)->where('branch', $this->world->company->public_id)->has('rows', 1)
+        ->component('INV/Reservations', false)->has('branches', 1)->where('branch', $this->world->company->public_id)->has('rows', 1)
         ->where('rows.0.quantity', '3.000')->where('rows.0.may', ['reserve' => true, 'reduce' => true, 'release' => true])->where('more', null));
 
     $pool = $this->world->goods['product']->public_id;

@@ -29,8 +29,11 @@ use App\Support\RowHandle;
 use Brick\Math\BigDecimal;
 use Closure;
 use Database\Factories\DOC\EvidenceDocumentFactory;
+use Database\Factories\DOC\FileObjectFactory;
 use Database\Factories\INV\LocationFactory;
 use Database\Factories\INV\StockMovementFactory;
+use Database\Factories\OPS\ImportBatchFactory;
+use Database\Factories\OPS\ImportRowFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use RuntimeException;
@@ -145,8 +148,14 @@ final class ReservationWorld
     public static function opening(int $companyId, int $productId, int $locationId, string $usable, string $unusable = '0'): int
     {
         $total = (string) BigDecimal::of($usable)->plus($unusable);
+        // Values of their own, so the browser fixture's requests — each a fresh process whose factory sequences restart — never collide.
+        $tag = Str::upper(Str::random(10));
+        $source = FileObjectFactory::new()->importSource()->createOne(['sha256' => hash('sha256', "opening-{$tag}")])->id;
+        $batch = ImportBatchFactory::new()->createOne(['source_file_id' => $source, 'source_sha256' => hash('sha256', "opening-{$tag}")])->id;
+        $row = ImportRowFactory::new()->createOne(['import_batch_id' => $batch, 'company_id' => $companyId, 'import_identity' => "UJI-{$tag}"])->id;
         $lot = InventoryLot::factory()->create([
-            'product_id' => $productId, 'source_company_id' => $companyId, 'entered_qty' => $total, 'acquired_qty_base' => $total, 'business_date' => BusinessDate::today(),
+            'lot_code' => "LOT-UJI-{$tag}", 'import_row_id' => $row, 'product_id' => $productId, 'source_company_id' => $companyId, 'entered_qty' => $total, 'acquired_qty_base' => $total,
+            'business_date' => BusinessDate::today(),
         ])->id;
         $movement = StockMovementFactory::post('OPENING', $companyId);
 
