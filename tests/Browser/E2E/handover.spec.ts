@@ -30,6 +30,22 @@ test('records a handover from the journey at the desk, the live preview beside t
     await expect(page.locator('#konten').getByText('Serah terima jasa tercatat.')).toBeVisible();
 });
 
+test('asks before leaving with unsent input, then reaches PG-011 on "Batal" (MSG-35; NAV-033)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await handoverRun(page, `serah-batal-${String(Date.now())}`);
+
+    await page.goto(`/proyek/${run.project}/serah-terima`);
+    await page.getByLabel(/^Penerima/).fill('Bu Sari');
+    await page.getByRole('button', { name: 'Batal', exact: true }).click();
+    const leave = page.getByRole('alertdialog');
+    await leave.getByRole('button', { name: 'Kembali' }).click();
+    await expect(page.getByLabel(/^Penerima/)).toHaveValue('Bu Sari');
+
+    await page.getByRole('button', { name: 'Batal', exact: true }).click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Tinggalkan Halaman' }).click();
+    await expect(page).toHaveURL(new RegExp(`/proyek/${run.project}$`));
+});
+
 test('refuses the excess with the remainder and keeps the input (C-30; PX-03; NV-04; criterion 2)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await handoverRun(page, `serah-sisa-${String(Date.now())}`, { recorded: true });

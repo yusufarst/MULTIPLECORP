@@ -2558,5 +2558,7 @@
     "projects.item.handovers_open": ":jumlah service lines not yet handed over",
     "activity.action.FUL.HandoverRecorded": "Recorded a service handover",
     "activity.action.FUL.HandoverDuplicateConfirmed": "Recorded a service handover resembling another, with a reason",
-    "activity.action.FUL.HandoverReversed": "Reversed a service handover line"
+    "activity.action.FUL.HandoverReversed": "Reversed a service handover line",
+    "handover.recorded.older": "Show Older Handovers",
+    "handover.recorded.newest": "Back to the Newest"
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\FUL\Queries\ServiceHandovers;
 use App\Modules\FUL\Services\HandoverPredicate;
 use App\Modules\IAM\Models\User;
 use App\Support\BusinessDate;
@@ -245,6 +246,28 @@ it('shows PG-033 with the lines\' progress, the handovers and their reversal lin
         ->where('paper.layout', 'DOC-08')
         ->missing('stock')
         ->missing('lines.0.available'));
+});
+
+it('reaches every handover by keyset beyond the page, an older one still reversible; an unknown cursor starts from the newest (D-PF-02; PF-01; CM-27)', function () {
+    $large = $this->world->project(['SERVICE'], '5000');
+    $line = HandoverWorld::line($large);
+
+    foreach (range(1, ServiceHandovers::PAGE + 1) as $quantity) {
+        expect(HandoverWorld::record($this->world->actorId, $large->id, $line, (string) $quantity))->toBe('COMMITTED');
+    }
+
+    $oldest = DB::table('service_handovers')->where('project_id', $large->id)->orderBy('id')->first();
+    $page = "/proyek/{$large->public_id}/serah-terima";
+    $older = '';
+    $this->actingAs($this->actor)->get($page)->assertInertia(function (AssertableInertia $inertia) use (&$older) {
+        $inertia->has('handovers', ServiceHandovers::PAGE)->where('after', null)->whereNot('older', null);
+        $older = $inertia->toArray()['props']['older'];
+    });
+
+    $this->actingAs($this->actor)->get("{$page}?setelah={$older}")->assertInertia(fn (AssertableInertia $inertia) => $inertia
+        ->has('handovers', 1)->where('handovers.0.id', $oldest->public_id)->where('handovers.0.lines.0.can_reverse', true)->where('older', null)->where('after', $older));
+    $this->actingAs($this->actor)->get("{$page}?setelah=".Str::uuid())->assertInertia(fn (AssertableInertia $inertia) => $inertia->has('handovers', ServiceHandovers::PAGE)->where('after', null));
+    $this->actingAs($this->actor)->get("{$page}?setelah=bukan-kursor")->assertInertia(fn (AssertableInertia $inertia) => $inertia->where('after', null));
 });
 
 it('offers no form on a closed project, and only the service lines (L-11; L-39)', function () {

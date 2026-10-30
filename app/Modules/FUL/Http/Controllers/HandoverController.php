@@ -39,7 +39,9 @@ final class HandoverController extends Controller
     {
         $actor = self::actor($request);
 
-        return Inertia::render('FUL/ServiceHandover', $this->handovers->screen($actor, $this->project($actor, $id)));
+        $after = $request->query('setelah');
+
+        return Inertia::render('FUL/ServiceHandover', $this->handovers->screen($actor, $this->project($actor, $id), is_string($after) ? $after : null));
     }
 
     /** ROUTE-208 "Catat Serah Terima". */

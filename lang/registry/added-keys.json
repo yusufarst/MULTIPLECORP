@@ -10026,6 +10026,18 @@
             "source": "BR-CR-01; CM-27; AZ-10",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "handover.recorded.older": {
+            "task": "TASK-047",
+            "source": "D-PF-02; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.newest": {
+            "task": "TASK-047",
+            "source": "D-PF-02; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

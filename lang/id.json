@@ -2558,5 +2558,7 @@
     "projects.item.handovers_open": ":jumlah baris jasa belum diserahterimakan",
     "activity.action.FUL.HandoverRecorded": "Mencatat serah terima jasa",
     "activity.action.FUL.HandoverDuplicateConfirmed": "Mencatat serah terima jasa yang mirip catatan lain, dengan alasan",
-    "activity.action.FUL.HandoverReversed": "Membalik baris serah terima jasa"
+    "activity.action.FUL.HandoverReversed": "Membalik baris serah terima jasa",
+    "handover.recorded.older": "Lihat Serah Terima Lebih Lama",
+    "handover.recorded.newest": "Kembali ke Terbaru"
 }

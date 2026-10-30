@@ -7,7 +7,7 @@
 // in place after its confirmation (INT-221; INT-222; IP-08). No stock screen is ever involved (FS-05).
 import { router } from '@inertiajs/react';
 import { RotateCcw, Send } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ActionBar } from '@/components/action-bar';
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -43,6 +43,8 @@ type Props = {
     project: { id: string; number: string; title: string; company: string; client: string; state: string } | null;
     lines: ServiceLine[];
     handovers: Handover[];
+    older: string | null;
+    after: string | null;
     paper: Paper | null;
     evidence: EvidenceOption[];
     today: string;
@@ -126,7 +128,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
     );
 }
 
-export default function ServiceHandover({ project, lines, handovers, paper, evidence, today, can }: Props) {
+export default function ServiceHandover({ project, lines, handovers, older, after, paper, evidence, today, can }: Props) {
     const { t } = useTranslation();
     const id = project?.id ?? '';
     const [entered, setEntered] = useState<Entered>({});
@@ -141,6 +143,8 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
     const [issuing, setIssuing] = useState<string | null>(null);
     const [issueDate, setIssueDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    // The departure MSG-35 confirmed passes the guard at once: the guard's `dirty` is the last render's until the next one.
+    const departing = useRef(false);
     const record = useCommand<Payload>(() => `/proyek/${id}/serah-terima`, 'post');
     const reverse = useCommand<Payload>(() => `/proyek/${id}/serah-terima/${reversing?.handover ?? ''}/balikkan`, 'post');
     const prepare = useCommand<Payload>(() => '/dokumen', 'post');
@@ -158,7 +162,7 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
         const off = router.on('before', (event) => {
             const visit = event.detail.visit;
 
-            if (!dirty || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
+            if (!dirty || departing.current || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
                 return;
             }
 
@@ -168,7 +172,7 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
             return false;
         });
         const unload = (event: BeforeUnloadEvent) => {
-            if (dirty) event.preventDefault();
+            if (dirty && !departing.current) event.preventDefault();
         };
         window.addEventListener('beforeunload', unload);
 
@@ -202,6 +206,9 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
             baris: filled.map((line) => ({ baris: line.handle, jumlah: entered[line.handle]?.quantity ?? '', lingkup: entered[line.handle]?.scope ?? '' })),
             ...(warned ? { acknowledged, reason } : {}),
         });
+    };
+    const browse = (cursor: string | null) => {
+        router.get(page, cursor === null ? {} : { setelah: cursor }, { only: ['handovers', 'older', 'after'], preserveState: true, preserveScroll: true });
     };
     const startIssue = (handover: Handover) => {
         setIssueDate({ date: today, chosen: false });
@@ -279,7 +286,7 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
                 <Answered command={prepare} />
                 <Answered command={issue} />
                 {live !== null && shown !== null && <p className="text-caption text-text-secondary">{t('handover.preview_of', { tanggal: dateLong(shown.date) })}</p>}
-                {handovers.length === 0 ? (
+                {handovers.length === 0 && after === null ? (
                     <RegionEmpty text={t('handover.recorded.empty')} />
                 ) : (
                     <ol aria-label={t('handover.recorded.title')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
@@ -295,6 +302,12 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
                             />
                         ))}
                     </ol>
+                )}
+                {(older !== null || after !== null) && (
+                    <div className="flex flex-wrap gap-2">
+                        {after !== null && <Button variant="ghost" size="sm" onClick={() => { browse(null); }}>{t('handover.recorded.newest')}</Button>}
+                        {older !== null && <Button variant="outline" size="sm" onClick={() => { browse(older); }}>{t('handover.recorded.older')}</Button>}
+                    </div>
                 )}
             </FormSection>
         </div>
@@ -374,7 +387,7 @@ export default function ServiceHandover({ project, lines, handovers, paper, evid
                 }}
             />
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
-                onLeave={() => { const go = leaving; setEntered({}); setRecipient(''); setCited(''); setLeaving(null); go?.(); }} />
+                onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
         </AppShell>
     );
 }

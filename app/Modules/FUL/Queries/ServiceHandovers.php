@@ -25,11 +25,12 @@ use Illuminate\Support\Facades\DB;
  * their handed-over and remaining quantities, the handovers with their reversal lines and each one's BAST state, the
  * evidence the form may cite (PJ-08) and the paper the browser composes the draft's live preview from (D-DS-23;
  * DESIGN_SYSTEM §14.3), only the fields the viewer may see (PJ-15; PJ-19). No stock figure, ever (FS-05). Each command's
- * control present with its capability (AZ-01). In a constant number of statements whatever the rows shown (QB-02).
+ * control present with its capability (AZ-01). The handovers newest first by keyset (D-PF-02), older ones by `setelah`.
+ * In a constant number of statements whatever the rows shown (QB-02).
  */
 final class ServiceHandovers
 {
-    /** The newest handovers the page lists. */
+    /** The handovers one page lists. */
     public const PAGE = 50;
 
     /** The evidence types a handover cites (J-FUL-04; PJ-08). */
@@ -40,8 +41,11 @@ final class ServiceHandovers
         private readonly IssuerIdentity $identity,
     ) {}
 
-    /** @return array<string, mixed> */
-    public function screen(int $viewerId, ProjectRef $project): array
+    /**
+     * @param  ?string  $after  the handover the page's list continues after, within the project; an unknown one starts from the newest
+     * @return array<string, mixed>
+     */
+    public function screen(int $viewerId, ProjectRef $project, ?string $after = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $company = $project->companyId;
@@ -55,9 +59,12 @@ final class ServiceHandovers
             ->join('product_units as pu', fn (JoinClause $join) => $join->on('pu.product_id', '=', 'l.product_id')->where('pu.is_base', true))->join('units as bu', 'bu.id', '=', 'pu.unit_id')
             ->orderBy('l.line_no')
             ->get(['l.id', 'l.line_no', 'l.quantity_scale', 'p.description', 'p.ratio_to_base', 'u.code as unit', 'bu.code as base_unit', 'b.demand_qty_base', 'b.handed_over_qty_base', 'b.cancelled_qty_base'])->all();
-        $handovers = DB::table('service_handovers as h')->where('h.project_id', $project->id)->leftJoin('users as u', 'u.id', '=', 'h.recorded_by')
-            ->orderByDesc('h.id')->limit(self::PAGE)->get(['h.id', 'h.public_id', 'h.business_date', 'h.recipient_name', 'h.recorded_at', 'u.name as recorded_by'])->all();
-        $ids = array_values(array_map(fn (object $row): int => (int) Row::text($row, 'id'), $handovers));
+        $from = $after === null || preg_match('/^[0-9a-f-]{36}$/i', $after) !== 1 ? null : $this->handoverOf($project, $after);
+        $handovers = DB::table('service_handovers as h')->where('h.project_id', $project->id)->when($from !== null, fn ($query) => $query->where('h.id', '<', $from))->leftJoin('users as u', 'u.id', '=', 'h.recorded_by')
+            ->orderByDesc('h.id')->limit(self::PAGE + 1)->get(['h.id', 'h.public_id', 'h.business_date', 'h.recipient_name', 'h.recorded_at', 'u.name as recorded_by'])->all();
+        $more = count($handovers) > self::PAGE;
+        $handovers = array_slice($handovers, 0, self::PAGE);
+        $ids = array_map(fn (object $row): int => (int) Row::text($row, 'id'), $handovers);
         $issue = DocumentAccess::mayIssue($viewer, ServiceHandoverSubjects::BAST, $company);
         $bast = $this->bast($ids, $issue);
         $evidence = $this->citedEvidence($viewer, $ids, $company);
@@ -113,6 +120,9 @@ final class ServiceHandovers
                     'can_issue' => $issue && $standing !== [] && ($document === null || ($document['issued'] ?? null) === null),
                 ];
             }, $handovers),
+            // The last row of a full page continues the list; the page's own cursor says it is not the newest (D-PF-02).
+            'older' => $more && $handovers !== [] ? Row::text($handovers[count($handovers) - 1], 'public_id') : null,
+            'after' => $from === null ? null : $after,
             'paper' => $header === null || ! DocumentAccess::mayViewContent($viewer, ServiceHandoverSubjects::BAST, $company) ? null : $this->paper($company, $header),
             'evidence' => $canRecord && $viewer->allows('evidence.view', $company) ? $this->evidenceOptions($viewer, $company) : [],
             'today' => BusinessDate::today(),
