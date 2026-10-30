@@ -156,3 +156,17 @@ test('prepares the payment request from the invoice, on PG-036 with the billing 
     await expect(page.locator('#konten')).toContainText('Rp1.000.000');
     await expect(page.locator('#konten')).toContainText('Jatuh Tempo');
 });
+
+test('answers a cursor that reads nothing with MSG-26 and the offer to load from the start, never a silent first page (IP-18; NV-05; INT-008)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `piutang-kursor-${String(Date.now())}`, { stage: 'issued', billed: true });
+
+    await page.goto(`/keuangan/piutang?perusahaan=${run.company}&setelah=bukan-kursor`);
+    await expect(page.locator('#konten')).toContainText('Daftar tidak dapat dilanjutkan.');
+    await expect(page.getByRole('table', { name: 'Piutang' })).toHaveCount(0);
+    await page.locator('[data-slot="list-continuation"]').getByRole('button').click();
+
+    await expect(page.getByRole('table', { name: 'Piutang' })).toContainText('Rp1.000.000');
+    await expect(page).not.toHaveURL(/setelah=/);
+});
+

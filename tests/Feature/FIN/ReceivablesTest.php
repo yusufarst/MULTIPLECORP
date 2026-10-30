@@ -413,7 +413,7 @@ it('continues PG-044 after its cursor, oldest due first, nothing twice (D-PF-02;
         $ids[$n] = InvoiceWorld::publicId($id);
     }
 
-    $this->actingAs($this->actor)->get("/keuangan/piutang?setelah={$ids[3]}")->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 2)->where('rows.0.id', $ids[2])->where('rows.1.id', $ids[1]));
+    $this->actingAs($this->actor)->get("/keuangan/piutang?setelah={$ids[3]}")->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 2)->where('rows.0.id', $ids[2])->where('rows.1.id', $ids[1])->where('after', $ids[3])->where('cursor_failed', false));
 });
 
 it('tells the journey what billing and the receivable still need, without counts for a viewer without finance.view (BR-PRJ-02; PJ-13)', function () {
@@ -538,7 +538,9 @@ it('reads a cursor only within the viewer\'s companies: another company\'s invoi
     $theirs = $other->issued($other->project(), '1000');
     InvoiceWorld::bill($theirs, $this->today, '2100-12-31');
 
-    $this->actingAs($this->actor)->get('/keuangan/piutang?setelah='.InvoiceWorld::publicId($theirs))->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));
+    $this->actingAs($this->actor)->get('/keuangan/piutang?setelah='.InvoiceWorld::publicId($theirs))->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0)->where('cursor_failed', true)->where('after', null));
+    $this->actingAs($this->actor)->get('/keuangan/piutang?setelah=bukan-kursor')->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0)->where('cursor_failed', true));
+    $this->actingAs($this->actor)->get('/keuangan/piutang')->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 1)->where('cursor_failed', false)->where('after', null));
 });
 
 it('asks for evidence tied to the records of an invoice that has them: none without a project (DIR-092 (2); CM-25)', function () {

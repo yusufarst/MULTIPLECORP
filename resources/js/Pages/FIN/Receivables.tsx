@@ -24,12 +24,12 @@ type Branch = { id: string; code: string; name: string };
 type Client = { id: string; name: string };
 type Subtotal = { company: string; name: string; count: number; amount: string; buckets: Record<string, string> };
 type Row = { id: string; number: string | null; company: string; client: string; project: string | null; project_number: string | null; billed_at: string | null; due_date: string | null; days_past: number; bucket: string | null; outstanding: string; held: boolean; state: InvoiceState; href: string; can: { bill: boolean; pay: boolean } };
-type Props = { branches: Branch[]; branch: string | null; tab: Tab; client: string | null; clients: Client[]; subtotals: Subtotal[]; rows: Row[]; more: string | null; today: string };
+type Props = { branches: Branch[]; branch: string | null; tab: Tab; client: string | null; clients: Client[]; subtotals: Subtotal[]; rows: Row[]; more: string | null; after: string | null; cursor_failed: boolean; today: string };
 
 const TABS: Tab[] = ['aktif', 'belum', 'sengketa'];
 const BUCKETS = ['MIGRASI', 'CURRENT', 'DAYS_1_30', 'DAYS_31_60', 'DAYS_61_90', 'OVER_90'];
 
-export default function Receivables({ branches, branch, tab, client, clients, subtotals, rows, more, today }: Props) {
+export default function Receivables({ branches, branch, tab, client, clients, subtotals, rows, more, after, cursor_failed: cursorFailed, today }: Props) {
     const { t } = useTranslation();
     const [base, setBase] = useState(rows);
     const [shown, setShown] = useState(rows);
@@ -59,7 +59,8 @@ export default function Receivables({ branches, branch, tab, client, clients, su
     const loadMore = () => {
         if (next === null) return;
         setAppending(true);
-        router.reload({ only: ['rows', 'more'], data: { setelah: next }, preserveUrl: true });
+        // The cursor stays in the address and comes back with reload (NV-05).
+        router.reload({ only: ['rows', 'more', 'after', 'cursor_failed'], data: { setelah: next } });
     };
     const state = (row: Row) => <StatusBadge family="invoice_and_receivable" state={row.state} size="sm" />;
     const age = (row: Row) => row.bucket === null ? '—' : row.days_past > 0 ? t('receivables.age.short', { hari: String(row.days_past) }) : t(`receivables.bucket.${row.bucket}` as TranslationKey);
@@ -117,7 +118,9 @@ export default function Receivables({ branches, branch, tab, client, clients, su
                         </ul>
                     </section>
                 )}
-                {shown.length === 0 ? (
+                {cursorFailed && shown.length === 0 ? (
+                    <ListContinuation state="cursor_failed" onLoadMore={loadMore} onReload={() => { visit({}); }} />
+                ) : shown.length === 0 ? (
                     <RegionEmpty text={branches.length === 0 ? t('receivables.empty_scope') : t(`receivables.empty.${tab}` as TranslationKey)} />
                 ) : (
                     <>
@@ -139,11 +142,11 @@ export default function Receivables({ branches, branch, tab, client, clients, su
                             ]}
                             dense={(row) => ({ title: row.number ?? row.client, secondary: `${row.company} · ${row.client}`, figure: <Money value={row.outstanding} />, status: state(row) })}
                         />
-                        <ListContinuation state={next === null ? 'end' : 'more'} loading={appending} onLoadMore={loadMore} onReload={loadMore} />
+                        <ListContinuation state={cursorFailed ? 'cursor_failed' : next === null ? 'end' : 'more'} loading={appending} onLoadMore={loadMore} onReload={() => { visit({}); }} />
                     </>
                 )}
             </div>
-            {billing !== null && <BillDialog key={billing.id} command={bill} outstanding={billing.outstanding} today={today} open onOpenChange={(open) => { if (!open) setBilling(null); }} back={query({})} />}
+            {billing !== null && <BillDialog key={billing.id} command={bill} outstanding={billing.outstanding} today={today} open onOpenChange={(open) => { if (!open) setBilling(null); }} back={query({ setelah: after })} />}
         </AppShell>
     );
 }

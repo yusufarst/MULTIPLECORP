@@ -15,7 +15,8 @@ use Illuminate\Support\Facades\DB;
 /**
  * PG-044 *Piutang* (ROUTE-044; NAV-044; SCR-40; D-IA-15; J-FIN-02): by branch, the tabs *Aktif*, *Belum Ditagihkan* and *Sengketa*, oldest due first by keyset (IX-11),
  * each row with its company where several are in scope; a subtotal per company and its ageing buckets (CALC-07), never a total across companies (CS-08) — the
- * Owner's consolidated figure is PG-052's. `finance.view` within its company (PJ-23; SM-25). In at most four statements, ageing one group (QB-07).
+ * Owner's consolidated figure is PG-052's. `finance.view` within its company (PJ-23; SM-25). In at most four statements, ageing one group (QB-07). The cursor is an address key that comes back with
+ * reload (NV-05); one that reads nothing in scope is answered as failed, never as a silent first page (IP-18; PF-14).
  */
 final class ReceivableList
 {
@@ -51,6 +52,9 @@ final class ReceivableList
         $companies = $chosen !== null ? [$chosen] : array_keys($branches);
         $clientKey = is_string($client) && preg_match(self::UUID, $client) === 1 ? strtolower($client) : null;
         $today = BusinessDate::today();
+        $cursor = is_string($after) && $after !== '';
+        $page = $companies === [] || ($cursor && preg_match(self::UUID, $after) !== 1) ? ['rows' => [], 'more' => null] : $this->page($viewer, $companies, $tab, $clientKey, $after, $today, $branches);
+        $failed = $cursor && $page['rows'] === [];
 
         return [
             'branches' => array_values($branches),
@@ -59,7 +63,9 @@ final class ReceivableList
             'client' => $clientKey,
             'clients' => $companies === [] ? [] : $this->clients($viewer, $companies, $tab),
             'subtotals' => $companies === [] ? [] : $this->subtotals($viewer, $companies, $tab, $clientKey, $today, $branches),
-            ...($companies === [] ? ['rows' => [], 'more' => null] : $this->page($viewer, $companies, $tab, $clientKey, $after, $today, $branches)),
+            ...$page,
+            'after' => $cursor && ! $failed ? strtolower((string) $after) : null,
+            'cursor_failed' => $failed,
             'today' => $today,
         ];
     }
