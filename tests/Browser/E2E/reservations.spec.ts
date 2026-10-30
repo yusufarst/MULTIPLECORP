@@ -90,6 +90,7 @@ test('reads the reservations on the phone without their actions (J-INV-02 `[desk
     await page.goto(`/gudang/reservasi?cabang=${run.company}&tab=aktif`);
     const rows = page.getByRole('list', { name: 'Reservasi', exact: true });
     await expect(rows).toContainText(run.number);
-    await expect(rows.getByRole('listitem').first()).toContainText(/(^|\s)2 /);
+    // The row's key figure, the reservation's 2 in the product's unit.
+    await expect(rows.getByRole('listitem').first().getByText(/^2 \S/)).toBeVisible();
     await expect(page.getByRole('button', { name: 'Tindakan baris' })).toHaveCount(0);
 });
