@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\DB;
  */
 final class SyntheticSubjects implements DocumentSubjectProvider
 {
-    /** The types a module's own provider supplies (QuotationSubjects). */
-    public const SUPPLIED = ['DOC-01', 'DOC-11'];
+    /** The types a module's own provider supplies (QuotationSubjects; FUL's ServiceHandoverSubjects). */
+    public const SUPPLIED = ['DOC-01', 'DOC-08', 'DOC-11'];
 
     private const TABLES = [
         'project_id' => 'projects', 'purchase_id' => 'purchases', 'dispatch_movement_id' => 'stock_movements', 'dropship_confirmation_id' => 'dropship_confirmations',
@@ -47,8 +47,6 @@ final class SyntheticSubjects implements DocumentSubjectProvider
 
         // The engine's tests issue DOC-09 through this synthetic subject: PRJ's company SPK (TASK-034) stays out of them.
         app()->instance(SpkSubjects::class, new SilentSubjects);
-        // And DOC-08 too: FUL's BAST of a recorded handover (TASK-047) stays out of them.
-        app()->instance(ServiceHandoverSubjects::class, new SilentSubjects);
 
         foreach (app()->tagged(DocumentSubjectProvider::TAG) as $provider) {
             if ($provider instanceof self) {
@@ -66,7 +64,7 @@ final class SyntheticSubjects implements DocumentSubjectProvider
         foreach (range(1, 14) as $number) {
             $type = sprintf('DOC-%02d', $number);
 
-            // The types an issuing module already supplies stay its own: PRJ's quotation and HPS (TASK-033).
+            // The types an issuing module already supplies stay its own: PRJ's quotation and HPS (TASK-033), FUL's BAST (TASK-047).
             if (! in_array($type, self::SUPPLIED, true)) {
                 $types[$type] = $number === 5 ? ['RECEIPT', 'PRE_PAYMENT'] : ['STANDARD'];
             }
