@@ -115,7 +115,7 @@ final class DocumentDetail
         }
 
         // PJ-19: the logo through its owning company at request time (ROUTE-226), never the stamp or the signature.
-        $facts = $provider?->facts($subject);
+        $facts = $provider === null ? null : DocumentChain::factsOf($provider, $subject, $draft);
         $paper = $facts === null ? null : DocumentPaper::compose($document->document_type_code, $document->mode, $facts, $identity,
             $bank === null ? null : ['bank_name' => $bank['bank_name'], 'account_number' => $bank['account_number'], 'account_holder' => $bank['account_holder'], 'branch' => $bank['branch']], $draft->business_date?->format('Y-m-d') ?? BusinessDate::today(), null, true,
             $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');

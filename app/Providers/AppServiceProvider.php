@@ -13,6 +13,8 @@ use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Queries\RenditionStatus;
 use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\DOC\Services\WeasyPrintRenderer;
+use App\Modules\FIN\Services\InvoiceDocumentChanges;
+use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\FUL\Services\HandoverPredicate;
 use App\Modules\FUL\Services\ServiceHandoverSubjects;
 use App\Modules\IAM\Policies\CapabilityGates;
@@ -70,6 +72,10 @@ class AppServiceProvider extends ServiceProvider
         // INV's parts (TASK-038): a project's reservations fitted to its lifecycle, and the stock predicate's reservations.
         $this->app->tag([ReservationLifecycle::class], ProjectLifecycleParticipant::TAG);
         $this->app->tag([ReservationPredicate::class], CompletionPredicateProvider::TAG);
+
+        // FIN's parts (TASK-049): the invoice's layouts and pre-payment Kuitansi, and a Kuitansi's links ended with its void or revision.
+        $this->app->tag([InvoiceSubjects::class], DocumentSubjectProvider::TAG);
+        $this->app->tag([InvoiceDocumentChanges::class], DocumentChangeParticipant::TAG);
 
         // FUL's parts (TASK-047): the BAST's subject, a recorded handover, and the fulfilment predicate's service lines.
         $this->app->tag([ServiceHandoverSubjects::class], DocumentSubjectProvider::TAG);

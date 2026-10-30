@@ -90,6 +90,8 @@ export const STATUS = {
         LINKED: f('status.pre_payment_kuitansi.linked', 'success', Link),
     },
     invoice_and_receivable: {
+        DRAFT: f('status.invoice_and_receivable.draft', 'neutral', Pencil),
+        VOIDED: f('status.invoice_and_receivable.voided', 'neutral', Ban),
         ISSUED_NOT_BILLED: f('status.invoice_and_receivable.issued_not_billed', 'neutral', Square),
         BILLED_OUTSTANDING: f('status.invoice_and_receivable.billed_outstanding', 'info', Contrast),
         PAST_DUE_DATE: f('status.invoice_and_receivable.past_due_date', 'warning', TriangleAlert),

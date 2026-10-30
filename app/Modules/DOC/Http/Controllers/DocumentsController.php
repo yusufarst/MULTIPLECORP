@@ -14,6 +14,7 @@ use App\Modules\DOC\Queries\DocumentList;
 use App\Modules\DOC\Queries\FileDownloads;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
+use App\Support\Money;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -67,6 +68,7 @@ final class DocumentsController extends Controller
             'mode' => ['nullable', Rule::in(['STANDARD', 'RECEIPT', 'PRE_PAYMENT'])],
             'subjek' => ['required', 'array:'.implode(',', DocumentSubject::COLUMNS)],
             'subjek.*' => ['required', 'string', 'uuid'],
+            'jumlah' => ['nullable', 'regex:/^\d{1,16}(\.\d{1,2})?$/'],
         ]);
         $records = [];
 
@@ -77,7 +79,13 @@ final class DocumentsController extends Controller
         $type = self::text($input['jenis']);
         $mode = self::nullable($input['mode'] ?? null) ?? ($type === 'DOC-05' ? 'RECEIPT' : 'STANDARD');
         $subject = $this->documents->subjectOf($actor, $type, $mode, $records);
-        $outcome = $drafts->prepare(self::text($input['command_id']), $actor, $subject);
+        $amount = $type === 'DOC-05' && $mode === 'PRE_PAYMENT' ? self::nullable($input['jumlah'] ?? null) : null;
+
+        if ($type === 'DOC-05' && $mode === 'PRE_PAYMENT' && ($amount === null || ! Money::of($amount)->isPositive())) {
+            throw ValidationException::withMessages(['jumlah' => __('documents.validation.required')]);
+        }
+
+        $outcome = $drafts->prepare(self::text($input['command_id']), $actor, $subject, $amount);
         $inPlace = self::inPlace($request);
 
         if ($outcome->kind !== Outcome::COMMITTED || $outcome->resultId === null) {
@@ -213,6 +221,7 @@ final class DocumentsController extends Controller
         /** @var array<string, mixed> $valid */
         $valid = Validator::make($request->only($fields), $rules, [
             'required' => __('documents.validation.required'),
+            'regex' => __('documents.validation.required'),
             'date_format' => __('documents.validation.date'),
             'min' => __('documents.validation.reason'),
             'max' => __('documents.validation.too_long'),

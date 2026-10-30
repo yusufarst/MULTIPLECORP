@@ -2,8 +2,10 @@
 
 namespace App\Modules\DOC\Services;
 
+use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\DOC\Data\DocumentFacts;
+use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Models\DocumentVersion;
 use App\Support\Command\CommandContext;
@@ -47,6 +49,14 @@ final class DocumentChain
     public static function newBusiness(DocumentVersion $draft, string $typeCode): bool
     {
         return $draft->supersedes_version_id === null && ! in_array($typeCode, DocumentPaper::COLLECTION_LAYOUTS, true);
+    }
+
+    /** The record's facts as the draft's paper prints them: a pre-payment Kuitansi with the amount its draft holds (AX-31). */
+    public static function factsOf(DocumentSubjectProvider $provider, DocumentSubject $subject, DocumentVersion $draft): DocumentFacts
+    {
+        $facts = $provider->facts($subject);
+
+        return $subject->typeCode === 'DOC-05' && $subject->mode === 'PRE_PAYMENT' && $draft->kuitansi_amount !== null ? $facts->forKuitansi($draft->kuitansi_amount) : $facts;
     }
 
     /** The digest of the record's facts a draft's paper composed, so the issue prints what was previewed (architecture challenge 15a). */

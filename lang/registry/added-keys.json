@@ -10038,6 +10038,888 @@
             "source": "D-PF-02; PT-19",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "status.invoice_and_receivable.draft": {
+            "task": "TASK-049",
+            "source": "DESIGN_SYSTEM §12.1; PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "status.invoice_and_receivable.voided": {
+            "task": "TASK-049",
+            "source": "DESIGN_SYSTEM §12.1; PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.title": {
+            "task": "TASK-049",
+            "source": "NAV-043; SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.title_draft": {
+            "task": "TASK-049",
+            "source": "NAV-042; IA §8.5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.list.empty": {
+            "task": "TASK-049",
+            "source": "PT-19; PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.list.empty_scope": {
+            "task": "TASK-049",
+            "source": "CS-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.list.number": {
+            "task": "TASK-049",
+            "source": "PG-041; PT-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.list.search": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.list.create_hint": {
+            "task": "TASK-049",
+            "source": "ROUTE_CONTRACTS §4; NAV-042",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.number": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.project": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.client": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.date": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.value": {
+            "task": "TASK-049",
+            "source": "PG-041; CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.state": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.field.branch": {
+            "task": "TASK-049",
+            "source": "PG-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.from_project": {
+            "task": "TASK-049",
+            "source": "IA §8.5 PG-042",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.entered": {
+            "task": "TASK-049",
+            "source": "IA §8.5 PG-042",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.client": {
+            "task": "TASK-049",
+            "source": "IA §8.5 PG-042",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.confirmed": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.kind": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.itemized": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.value_only": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.line_quantity": {
+            "task": "TASK-049",
+            "source": "BR-INV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.line_description": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.line_value": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.add_line": {
+            "task": "TASK-049",
+            "source": "PT-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.remove_line": {
+            "task": "TASK-049",
+            "source": "PT-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.tax": {
+            "task": "TASK-049",
+            "source": "BR-FIN-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.tax_help": {
+            "task": "TASK-049",
+            "source": "DATABASE §12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.tax_evidence": {
+            "task": "TASK-049",
+            "source": "BR-FIN-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.no_tax": {
+            "task": "TASK-049",
+            "source": "FS-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.save_first": {
+            "task": "TASK-049",
+            "source": "NX-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.composer.issued": {
+            "task": "TASK-049",
+            "source": "J-FIN-01; BR-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.issue": {
+            "task": "TASK-049",
+            "source": "INT-242",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.issue_nota": {
+            "task": "TASK-049",
+            "source": "INT-242; L-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.open": {
+            "task": "TASK-049",
+            "source": "NAV-042",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.revise": {
+            "task": "TASK-049",
+            "source": "INT-245",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.void": {
+            "task": "TASK-049",
+            "source": "INT-245",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.kuitansi": {
+            "task": "TASK-049",
+            "source": "INT-249",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.link": {
+            "task": "TASK-049",
+            "source": "INT-250",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.action.other_layout": {
+            "task": "TASK-049",
+            "source": "L-26; INT-221",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.confirm.issue_title": {
+            "task": "TASK-049",
+            "source": "IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.confirm.issue_consequence": {
+            "task": "TASK-049",
+            "source": "MSG-39; BR-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.confirm.layout": {
+            "task": "TASK-049",
+            "source": "L-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.saved": {
+            "task": "TASK-049",
+            "source": "INT-241",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.issued": {
+            "task": "TASK-049",
+            "source": "J-FIN-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.voided": {
+            "task": "TASK-049",
+            "source": "INT-245",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.revised": {
+            "task": "TASK-049",
+            "source": "INT-245",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.kuitansi_issued": {
+            "task": "TASK-049",
+            "source": "J-FIN-08; GAP-029",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.answer.kuitansi_linked": {
+            "task": "TASK-049",
+            "source": "INT-250",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.cap": {
+            "task": "TASK-049",
+            "source": "C-31; L-16; MSG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.unconfirmed": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.no_value": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.unconfirmed_line": {
+            "task": "TASK-049",
+            "source": "L-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.evidence": {
+            "task": "TASK-049",
+            "source": "CM-24; DIR-092",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.not_downward": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.not_issued": {
+            "task": "TASK-049",
+            "source": "WF-DOC-01; CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.no_content": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.basis_billed": {
+            "task": "TASK-049",
+            "source": "C-56; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.basis_basis": {
+            "task": "TASK-049",
+            "source": "C-56",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.basis_basis_row": {
+            "task": "TASK-049",
+            "source": "C-56",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.replacement": {
+            "task": "TASK-049",
+            "source": "C-17; L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.undisposed": {
+            "task": "TASK-049",
+            "source": "C-16; BR-CR-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.collected": {
+            "task": "TASK-049",
+            "source": "C-22; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.writeoff": {
+            "task": "TASK-049",
+            "source": "OD-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.link_differs": {
+            "task": "TASK-049",
+            "source": "CM-26; J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.link_taken": {
+            "task": "TASK-049",
+            "source": "C-43",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.link_no_application": {
+            "task": "TASK-049",
+            "source": "AX-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.kuitansi_cap": {
+            "task": "TASK-049",
+            "source": "C-43",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.facts_changed": {
+            "task": "TASK-049",
+            "source": "ST-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.state_changed": {
+            "task": "TASK-049",
+            "source": "ST-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.reductions_changed": {
+            "task": "TASK-049",
+            "source": "ST-07; M-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.already_issued": {
+            "task": "TASK-049",
+            "source": "BD-06; UXS-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.refusal.numbering_owner": {
+            "task": "TASK-049",
+            "source": "C-10; UXS-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.validation.evidence": {
+            "task": "TASK-049",
+            "source": "MSG-12; PJ-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.validation.quantity": {
+            "task": "TASK-049",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.validation.value": {
+            "task": "TASK-049",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.validation.payment": {
+            "task": "TASK-049",
+            "source": "AZ-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.validation.basis": {
+            "task": "TASK-049",
+            "source": "C-56; CS-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.title": {
+            "task": "TASK-049",
+            "source": "PT-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.sales": {
+            "task": "TASK-049",
+            "source": "CALC-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.tax": {
+            "task": "TASK-049",
+            "source": "BR-FIN-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.gross": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.applied": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.fee": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.tax_settled": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.written_off": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.outstanding": {
+            "task": "TASK-049",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.position.unbilled": {
+            "task": "TASK-049",
+            "source": "BR-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.billing": {
+            "task": "TASK-049",
+            "source": "WF-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.inherited": {
+            "task": "TASK-049",
+            "source": "L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.replaces": {
+            "task": "TASK-049",
+            "source": "L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.replaced_by": {
+            "task": "TASK-049",
+            "source": "L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.void": {
+            "task": "TASK-049",
+            "source": "CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.documents": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.no_documents": {
+            "task": "TASK-049",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.reductions": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.no_reductions": {
+            "task": "TASK-049",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.application": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.settlement_fee": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.settlement_tax": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.writeoff": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.detail.lines": {
+            "task": "TASK-049",
+            "source": "SCR-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.title": {
+            "task": "TASK-049",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.empty": {
+            "task": "TASK-049",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.amount": {
+            "task": "TASK-049",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.dialog": {
+            "task": "TASK-049",
+            "source": "J-FIN-08; GAP-029",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.draft": {
+            "task": "TASK-049",
+            "source": "DC-2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.link_title": {
+            "task": "TASK-049",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.link_figures": {
+            "task": "TASK-049",
+            "source": "CM-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.no_payments": {
+            "task": "TASK-049",
+            "source": "AX-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.payment": {
+            "task": "TASK-049",
+            "source": "AX-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.kuitansi.confirm_title": {
+            "task": "TASK-049",
+            "source": "IP-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.unlink.corrected": {
+            "task": "TASK-049",
+            "source": "QS-19; CM-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.unlink.document": {
+            "task": "TASK-049",
+            "source": "CM-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.revise_title": {
+            "task": "TASK-049",
+            "source": "IP-09; CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.void_title": {
+            "task": "TASK-049",
+            "source": "IP-09; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.consequence": {
+            "task": "TASK-049",
+            "source": "BR-CR-03; ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis": {
+            "task": "TASK-049",
+            "source": "C-56",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_unbilled": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_replaced": {
+            "task": "TASK-049",
+            "source": "CM-24; L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_entry": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_return": {
+            "task": "TASK-049",
+            "source": "CM-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_reconfirmation": {
+            "task": "TASK-049",
+            "source": "CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_cancellation": {
+            "task": "TASK-049",
+            "source": "CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.basis_row": {
+            "task": "TASK-049",
+            "source": "C-56",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.evidence": {
+            "task": "TASK-049",
+            "source": "DIR-092",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.new_value": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.replacement_value": {
+            "task": "TASK-049",
+            "source": "L-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.new_description": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.action": {
+            "task": "TASK-049",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.release": {
+            "task": "TASK-049",
+            "source": "BR-FIN-03; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.retarget": {
+            "task": "TASK-049",
+            "source": "CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.keep": {
+            "task": "TASK-049",
+            "source": "CM-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.rerecord": {
+            "task": "TASK-049",
+            "source": "CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.residual": {
+            "task": "TASK-049",
+            "source": "L-06; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.supersede": {
+            "task": "TASK-049",
+            "source": "OD-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "invoices.correct.rerecord_writeoff": {
+            "task": "TASK-049",
+            "source": "OD-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.invoice": {
+            "task": "TASK-049",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.InvoiceDraftSaved": {
+            "task": "TASK-049",
+            "source": "BR-XC-01; LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.InvoiceIssued": {
+            "task": "TASK-049",
+            "source": "BR-XC-01; LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.InvoiceVoided": {
+            "task": "TASK-049",
+            "source": "BR-CR-01; AZ-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.InvoiceRevisedDown": {
+            "task": "TASK-049",
+            "source": "BR-CR-01; AZ-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PrepaymentKuitansiIssued": {
+            "task": "TASK-049",
+            "source": "BR-XC-01; LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PrepaymentKuitansiLinked": {
+            "task": "TASK-049",
+            "source": "BR-XC-01; LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PrepaymentKuitansiUnlinked": {
+            "task": "TASK-049",
+            "source": "BR-XC-01; LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

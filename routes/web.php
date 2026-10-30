@@ -9,6 +9,7 @@ use App\Modules\CAT\Http\Controllers\ProductsController;
 use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
+use App\Modules\FIN\Http\Controllers\InvoicesController;
 use App\Modules\FUL\Http\Controllers\HandoverController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
@@ -136,6 +137,17 @@ Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->mi
 Route::get('/gudang/reservasi', [ReservationsController::class, 'index'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations');
 Route::post('/gudang/reservasi', [ReservationsController::class, 'store'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reserve');
 Route::post('/gudang/reservasi/{id}/kurangi', [ReservationsController::class, 'reduce'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reduce');
+
+// TASK-049 — the invoice (WF-FIN-01; WF-FIN-08; AX-16; AX-22; AX-31): PG-041 and PG-043 to `finance.view`, PG-042 and "Simpan Draf" to `invoice.issue` — with `finance.view`, checked by
+// its command —, "Terbitkan Invoice" `invoice.issue`, the corrections `invoice.correct` (ADM+), the Kuitansi `documents.issue` and its link `payment.record`, each with its `command_id`.
+Route::get('/keuangan/invoice', [InvoicesController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.invoices');
+Route::get('/keuangan/invoice/baru', [InvoicesController::class, 'create'])->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.create');
+Route::get('/keuangan/invoice/{id}', [InvoicesController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:finance.view'])->name('fin.invoices.show');
+Route::post('/keuangan/invoice', [InvoicesController::class, 'save'])->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.save');
+Route::post('/keuangan/invoice/{id}/terbitkan', [InvoicesController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.issue');
+Route::post('/keuangan/invoice/{id}/koreksi', [InvoicesController::class, 'correct'])->whereUuid('id')->middleware(['auth', 'capability:invoice.correct'])->name('fin.invoices.correct');
+Route::post('/keuangan/invoice/{id}/kuitansi', [InvoicesController::class, 'kuitansi'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('fin.invoices.kuitansi');
+Route::post('/keuangan/kuitansi/{id}/tautkan', [InvoicesController::class, 'link'])->whereUuid('id')->middleware(['auth', 'capability:payment.record'])->name('fin.kuitansi.link');
 
 // TASK-047 — PG-033 *Serah Terima Jasa* and its commands (WF-FUL-04; AX-09): ROUTE-033 and ROUTE-208 `handover.record`, ROUTE-209
 // `fulfillment.correct` (ADM+), each with its prerequisite `projects.view` (PERMISSIONS_MATRIX §4); the BAST through ROUTE-221 and ROUTE-222.

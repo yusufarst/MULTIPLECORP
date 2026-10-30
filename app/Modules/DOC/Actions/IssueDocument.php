@@ -55,7 +55,7 @@ final class IssueDocument
         return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId): CommandResult {
             $context->lock($this->issuing->locks($document, $subject, $provider->locks($subject)));
 
-            if (! DocumentAccess::issuedHere($document->document_type_code)) {
+            if (! DocumentAccess::issuedByDocumentRoute($document->document_type_code, $document->mode)) {
                 throw Refused::rejected('WF-QUO-01', ['reason' => 'issued_at_record']);
             }
 

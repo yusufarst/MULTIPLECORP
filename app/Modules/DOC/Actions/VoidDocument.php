@@ -8,11 +8,7 @@ use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Services\DocumentAccess;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentSubjects;
-use App\Support\Audit\AuditChange;
-use App\Support\Audit\AuditLinkage;
-use App\Support\Audit\AuditRecorder;
-use App\Support\Audit\AuditRelation;
-use App\Support\Audit\AuthorityClass;
+use App\Modules\DOC\Services\DocumentVoiding;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -21,7 +17,6 @@ use App\Support\Command\Fingerprint;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
-use Illuminate\Support\Facades\DB;
 
 /**
  * `DOC VoidDocument` (ROUTE-224; INT-224; NX-12; CM-26): "Batalkan Dokumen" with its reason (IP-09) — the issued
@@ -37,9 +32,9 @@ final class VoidDocument
 
     public function __construct(
         private readonly CommandEnvelope $envelope,
-        private readonly AuditRecorder $audit,
         private readonly DocumentSubjects $subjects,
         private readonly DocumentChain $chain,
+        private readonly DocumentVoiding $voiding,
     ) {}
 
     /** @param  ?string  $versionId  the issued version the page showed and the actor confirmed to void (ST-02) */
@@ -69,37 +64,7 @@ final class VoidDocument
             if ($versionId !== null && $issued->public_id !== $versionId) {
                 throw Refused::conflict('ST-02', ['state' => 'SUPERSEDED']);
             }
-            $now = $context->now();
-            $draft = $this->chain->draftOf($document->id);
-
-            if ($draft !== null && $draft->supersedes_version_id === $issued->id) {
-                DB::table('document_versions')->where('id', $draft->id)->where('state', 'DRAFT')->delete();
-            }
-
-            $voided = DB::table('document_versions')->where('id', $issued->id)->where('state', 'ISSUED')->update([
-                'state' => 'VOIDED', 'voided_by' => $context->request->actorUserId, 'voided_at' => $now, 'voided_reason' => trim($reason),
-                'lock_version' => $issued->lock_version + 1, 'updated_at' => $now,
-            ]);
-
-            if ($voided !== 1) {
-                throw Refused::conflict('ST-02', ['state' => 'VOIDED']);
-            }
-
-            $this->audit->record(
-                action: 'DOC.DocumentVoided',
-                authorityClass: AuthorityClass::AdmPlus,
-                actorUserId: $context->request->actorUserId,
-                companyId: $document->company_id,
-                entityType: 'document_version',
-                entityId: $issued->id,
-                entityPublicId: $issued->public_id,
-                reason: trim($reason),
-                commandId: $context->request->commandId,
-                change: AuditChange::updated(['state' => 'ISSUED'], ['state' => 'VOIDED']),
-                linkage: AuditLinkage::make()->link(AuditRelation::Voids, 'document_version', $issued->public_id),
-                metadata: ['document_type' => $document->document_type_code, 'version_no' => $issued->version_no, 'number' => $issued->formatted_number, 'revision_draft_removed' => $draft !== null && $draft->supersedes_version_id === $issued->id],
-            );
-            $this->chain->changed($context, $this->chain->change(DocumentChange::DOCUMENT_VOIDED, $document, $issued->id, null));
+            $this->voiding->void($context, $document, $issued, $reason);
 
             return new CommandResult('document', $document->id);
         });

@@ -94,13 +94,13 @@ final class ReservationWorld
      *
      * @param  list<string>  $modes
      */
-    public function project(array $modes = ['WAREHOUSE'], string $qty = '10', bool $confirm = true): Project
+    public function project(array $modes = ['WAREHOUSE'], string $qty = '10', bool $confirm = true, string $price = '15000'): Project
     {
         $products = array_map(fn (string $mode): array => $mode === 'SERVICE' ? $this->service : $this->goods, $modes);
         $lines = Projects::payload($this->company, $this->client, $products)['baris'];
 
         foreach ($modes as $at => $mode) {
-            $lines[$at] = [...$lines[$at], 'mode' => $mode, 'jumlah' => $qty];
+            $lines[$at] = [...$lines[$at], 'mode' => $mode, 'jumlah' => $qty, 'harga' => $price];
         }
 
         $created = Projects::create($this->actorId, $this->company, $this->client, $products, null, ['baris' => $lines]);

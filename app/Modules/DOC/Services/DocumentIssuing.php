@@ -119,6 +119,39 @@ final class DocumentIssuing
         return $document;
     }
 
+    /**
+     * The chain and its open draft for a command that holds the subject's anchors and already locked any chain it found (AX-16; AX-22; FU-12): a chain first used here, or a
+     * draft on a chain that has none, is its own uncommitted row, which no other session sees, so no lock is taken after the clock.
+     */
+    public function openDraft(CommandContext $context, DocumentSubject $subject, ?Document $document): Document
+    {
+        $now = $context->now();
+
+        if ($document === null) {
+            $document = new Document;
+            $document->forceFill([
+                'company_id' => $subject->companyId, 'document_type_code' => $subject->typeCode, 'mode' => $subject->mode, ...$subject->records,
+                'command_id' => $context->request->commandId, 'command_line_no' => 2, 'recorded_by' => $context->request->actorUserId,
+            ])->save();
+        }
+
+        if ($this->chain->draftOf($document->id) === null) {
+            $draft = new DocumentVersion;
+            $draft->forceFill([
+                'document_id' => $document->id, 'company_id' => $document->company_id, 'document_type_code' => $document->document_type_code, 'version_no' => DocumentChain::nextVersionNo($document->id), 'state' => 'DRAFT',
+                'business_date' => BusinessDate::of($now), 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
+            ])->save();
+        }
+
+        return $document;
+    }
+
+    /** The counter's lock for the layout's number on the day, for a command that writes its record before it draws (AX-16; AX-22). */
+    public function numberLocks(int $companyId, string $typeCode, string $businessDate): LockSet
+    {
+        return $this->numbers->locks($companyId, SequenceType::from($typeCode), $businessDate);
+    }
+
     /** The subject's chain, or null before its first draft. */
     public function chainOf(DocumentSubject $subject): ?Document
     {
@@ -162,11 +195,12 @@ final class DocumentIssuing
      * @param  ?string  $factsDigest  the digest of the facts the confirmed paper composed, or null where no paper was shown
      * @param  ?string  $draftId  the draft version the page showed: another draft of the chain is stale (ST-01)
      * @param  bool  $authorized  whether the calling command already checked its own route's capability — ROUTE-155's `quotation.manage` (PJ-15) —, PG-036's issue checked here otherwise
+     * @param  bool  $held  whether the calling command already holds the chain and its anchors, the draft being its own uncommitted row — an invoice's issue and correction (AX-16; AX-22) —, so no set is re-derived from it
      *
      * @throws Refused BD-06 for a draft already issued, ST-01 for a stale one, the precondition's and the numbering's refusals
      */
     public function issue(CommandContext $context, Document $document, DocumentSubject $subject, DocumentSubjectProvider $provider, ?int $lockVersion, string $businessDate,
-        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null, bool $authorized = false): DocumentVersion
+        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null, bool $authorized = false, bool $held = false): DocumentVersion
     {
         if (! $authorized) {
             DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
@@ -181,7 +215,10 @@ final class DocumentIssuing
         }
 
         // Data-dependent (§5 steps 3–4): the draft, its predecessor and their requirements read again under the locks.
-        $context->require($this->locks($document, $subject, $provider->locks($subject)));
+        if (! $held) {
+            $context->require($this->locks($document, $subject, $provider->locks($subject)));
+        }
+
         $lockVersion ??= $draft->lock_version;
 
         if ($draft->lock_version !== $lockVersion || ($draftId !== null && $draft->public_id !== $draftId)) {
@@ -195,7 +232,7 @@ final class DocumentIssuing
         BusinessDateRule::check($businessDate, $prefilled);
         $account = $this->identity->accountByHandle($document->company_id, $document->document_type_code, $bankHandle);
         $provider->precondition($context, $subject);
-        $facts = $provider->facts($subject);
+        $facts = DocumentChain::factsOf($provider, $subject, $draft);
 
         // Architecture challenge 15a: the issued paper is the one previewed — a record changed since, a CONFLICT to review.
         if ($factsDigest !== null && ! hash_equals(DocumentChain::factsDigest($facts), $factsDigest)) {

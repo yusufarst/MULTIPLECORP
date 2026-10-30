@@ -37,6 +37,7 @@ final class ActivityHistory
         'client_organization' => ['table' => 'client_organizations', 'href' => '/data-master/klien?klien={id}'],
         'supplier' => ['table' => 'suppliers', 'href' => '/data-master/pemasok?pemasok={id}'],
         'evidence_document' => ['table' => 'evidence_documents', 'href' => '/dokumen/bukti?bukti={id}'],
+        'invoice' => ['table' => 'invoices', 'href' => '/keuangan/invoice/{id}'],
     ];
 
     /** The rows one bounded read of a timeline narrowed by company takes before its page returns short (PF-42). */

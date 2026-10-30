@@ -50,15 +50,16 @@ final class SaveDocumentDraft
 
     /**
      * The draft of the subject's chain, prepared from its record: the chain and its draft created, the draft an earlier
-     * press left kept, or — once issued — the document itself, which PG-036 opens (WF-DOC-01; `DIR-081` OB-02).
+     * press left kept, or — once issued — the document itself, which PG-036 opens (WF-DOC-01; `DIR-081` OB-02). A
+     * pre-payment Kuitansi takes the amount entered (AX-31; J-FIN-08), the draft an earlier press left saved with it.
      */
-    public function prepare(string $commandId, int $actorUserId, DocumentSubject $subject): Outcome
+    public function prepare(string $commandId, int $actorUserId, DocumentSubject $subject, ?string $amount = null): Outcome
     {
         $provider = $this->subjects->of($subject);
         $request = new CommandRequest($commandId, self::PREPARE, $actorUserId, $subject->companyId, DocumentAccess::ISSUE,
-            Fingerprint::of(self::PREPARE, DocumentChain::companyKey($subject->companyId), ['type' => $subject->typeCode, 'mode' => $subject->mode, 'records' => $subject->records]));
+            Fingerprint::of(self::PREPARE, DocumentChain::companyKey($subject->companyId), ['type' => $subject->typeCode, 'mode' => $subject->mode, 'records' => $subject->records, 'amount' => $amount]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($subject, $provider): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($subject, $provider, $amount): CommandResult {
             $context->lock($provider->locks($subject));
             DocumentAccess::ensureIssue($context->authority(), $subject->typeCode, $subject->companyId);
 
@@ -72,7 +73,15 @@ final class SaveDocumentDraft
                 $draft = $this->chain->draftOf($document->id);
                 $context->lock($this->chain->locks($document, $draft === null ? [] : [$draft->id]));
 
-                if ($this->chain->draftOf($document->id) !== null || $this->chain->issuedOf($document->id) !== null) {
+                $open = $this->chain->draftOf($document->id);
+
+                if ($open !== null && $amount !== null && $open->kuitansi_amount !== $amount) {
+                    DB::table('document_versions')->where('id', $open->id)->where('state', 'DRAFT')->where('lock_version', $open->lock_version)
+                        ->update(['kuitansi_amount' => $amount, 'lock_version' => $open->lock_version + 1, 'updated_at' => $context->now()]);
+                    $this->record($context, 'DOC.DocumentDraftSaved', $document, $open, AuditChange::updated(['kuitansi_amount' => $open->kuitansi_amount], ['kuitansi_amount' => $amount]));
+                }
+
+                if ($open !== null || $this->chain->issuedOf($document->id) !== null) {
                     return new CommandResult('document', $document->id);
                 }
             }
@@ -96,7 +105,7 @@ final class SaveDocumentDraft
                 'version_no' => DocumentChain::nextVersionNo($document->id),
                 'state' => 'DRAFT',
                 'business_date' => BusinessDate::of($now),
-                'kuitansi_amount' => $subject->typeCode === 'DOC-05' ? $provider->facts($subject)->kuitansiAmount : null,
+                'kuitansi_amount' => $subject->typeCode === 'DOC-05' ? ($amount ?? $provider->facts($subject)->kuitansiAmount) : null,
                 'company_bank_account_id' => in_array($subject->typeCode, DocumentPaper::BANK_LAYOUTS, true) && $accounts !== [] ? $accounts[0]['id'] : null,
                 'recorded_at' => $now,
                 'recorded_by' => $context->request->actorUserId,

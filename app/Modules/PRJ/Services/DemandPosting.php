@@ -52,6 +52,18 @@ final class DemandPosting
         $this->post($context, 'handed_over_qty_base', $deltas);
     }
 
+    /** The project's invoiced sales value moved by its net delta within the cap's CHECK (L-16; C-31), the one writer of the column. */
+    public function invoiced(CommandContext $context, int $projectId, string $delta): void
+    {
+        if (preg_match('/^-?\d+(\.\d+)?$/', $delta) !== 1) {
+            throw new InvalidArgumentException("{$delta} is no invoiced value's delta (DATABASE §9).");
+        }
+
+        if (! BigDecimal::of($delta)->isZero()) {
+            GuardUpdate::apply($context->connection, 'project_commercial_balances', [['key' => ['project_id' => $projectId], 'deltas' => ['invoiced_sales_value' => $delta]]]);
+        }
+    }
+
     /** @param  array<int, string>  $deltas */
     private function post(CommandContext $context, string $column, array $deltas): void
     {
