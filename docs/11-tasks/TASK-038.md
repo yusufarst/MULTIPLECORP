@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -255,34 +255,53 @@ The Owner's stock contract makes a reservation a claim on usable supply for conf
 - Migration: N/A — no migration or import code in this Task; imported projects' reservations are re-created by these commands (WF-MIG-01)
 - Other: M-03, the reservation racing another project's dispatch, run with TASK-041's dispatch; GAP-023's last-unit evidence recorded
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/INV/ReservationsTest.php` — ON HAND 10, UNUSABLE 2 and RESERVED 3 reading AVAILABLE 5; reserving 2 for a confirmed warehouse line through ROUTE-184 leaving RESERVED 5, the line guard's reserved quantity 2, one CREATE event and one `INV.ReservationCreated` audit event, and no stock movement, entry, lot or cost row written; a further "Reservasi" increasing the line's one ACTIVE reservation
+- Criterion 2: `tests/Feature/INV/ReservationsTest.php` — ON HAND 10 and UNUSABLE 2: 10 REJECTED C-04 with "Tersedia saat ini: 8.", 8 COMMITTED
+- Criterion 3: `tests/Feature/INV/ReservationsTest.php` — an unconfirmed line of a project not yet confirmed (a quotation's lines reach no reservation path) REJECTED BR-RSV-01, a drop-ship and a service line REJECTED BR-RSV-01, none reserved; PG-011's `can.reserve` true only on the confirmed warehouse line, with its reservable quantity; PG-025's *Perlu direservasi* listing only that line, its first "Reservasi" there, the line leaving once reserved whole
+- Criterion 4: `tests/Feature/INV/ReservationsTest.php` — 6 of 10 reserved, 5 more REJECTED C-05 with "Sisa saat ini: 4."; a quantity outside the product's scale or zero answered at its field (MSG-12)
+- Criterion 5: `tests/Integration/Inventory/ReservationRacesTest.php` — stock 1, two sessions reserving it for two projects with a barrier before LK-13, each order and for a counted and a serialized product: the holder COMMITTED, the waiter REJECTED C-04 — never both, never CONFLICT —, RESERVED 1
+- Criterion 6: `tests/Feature/INV/ReservationsTest.php` — "Kurangi Reservasi" without a reason refused at its field, above the remaining quantity REJECTED C-05 with it, 2 of 5 COMMITTED as DECREASE with its reason, "Lepas" RELEASED with its reason; `tests/Integration/Inventory/ReservationRacesTest.php` — a release racing a synthetic consumption of the same reservation in both orders: released with the dispatch unreserved, or consumed with the release REJECTED C-05 — never both
+- Criterion 7: `tests/Feature/INV/ReservationsTest.php` — a completed project's active reservation absent from *Aktif*, listed under *Perlu dilepas* with its release and reduction, released by "Lepas" into *Riwayat*; no job, timer, completion or document path calls the reservation service
+- Criterion 8: `tests/Feature/INV/ReservationsTest.php` — a reservation consumed whole stays CONSUMED, and reserving the line again creates a new ACTIVE reservation with its own CREATE event
+- Criterion 9: `tests/Integration/Inventory/ReservationRacesTest.php` — RESERVED 8 of 8, a synthetic CONDITION_CHANGE of 2 usable units: without cuts the product guard's CHECK refuses it (C-04), cuts of 1 REJECTED C-06, the actor's cuts of 1 and 1 committed with the movement — CUT events naming it, RESERVED 6, UNUSABLE 2, each line guard lowered —, no order of cuts proposed
+- Criterion 10: `tests/Authorization/ReservationsAccessTest.php` — a cut chosen on another company's reservation REJECTED AZ-08, one `INV.ReservationCutRouted` audit event for that company committed with the refusal before anything is said of it, the reservation and the guard unchanged; a cut inside another command by an actor without `stock.reserve` routed alike, the same cut committing with it; `tests/Feature/INV/ReservationsTest.php` — the product's pool showing another company's reservation by its quantity and the relation marker only (the IP-20 block itself is built with the first supply-reducing form, TASK-039 and TASK-042)
+- Criterion 11: `tests/Feature/INV/ReservationLifecycleTest.php` — a client-approved revision lowering the line from 12 to 6 lowering its reservation of 10 to 6 inside the re-confirmation (AX-13); "Batalkan Sisa" of 7 lowering a reservation of 5 to 3, then the whole remainder releasing it (AX-14); "Ubah Cara Pemenuhan" releasing the split remainder's reservation (L-21); five reserved lines cancelled whole in one "Batalkan Sisa", one restart; INV's `cancelled` releasing every active reservation of the project from the project's lock alone (AX-27, whose command TASK-056 builds); a participant failing after INV's rolling the whole "Batalkan Sisa" back
+- Criterion 12: `tests/Authorization/ReservationsAccessTest.php` — without `stock.reserve` the page and both commands refused and PG-011's "Reservasi" absent; another company's line and reservation unknown to an account outside its company (404); `tests/Feature/INV/ReservationsTest.php` — the pool's masked row; `tests/Frontend/shell.test.ts` — *Gudang* › *Reservasi* only with `stock.reserve` and a company
+- Criterion 13: `tests/Feature/INV/ReservationsTest.php` — no movement, entry, lot or cost row and the product guard's `version` (a count's basis) unchanged by a reservation
+- Criterion 14: `tests/Interaction/ReservationsTest.php` — ROUTE-184 and ROUTE-185 sent twice with one `command_id` writing once and answering the recorded outcome — a release's replay after the reservation ended included —, the same identifier with another quantity or reason CONFLICT, a replayed C-04 answering the availability as it is now
+- Criterion 15: `tests/Integration/Inventory/ReservationRacesTest.php` — the reconciliation formulas of the product guard (RESERVED = Σ ACTIVE remaining) and the line guard (its reserved quantity = its ACTIVE reservation) empty after every scenario, beside the suite's reconciliation after every integration test
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Feature — ROUTE-025, ROUTE-184 and ROUTE-185 with each refusal and the participant's adjustments through PRJ's commands (TL-04); Integration on real PostgreSQL — M-02 in both orders for a counted and a serialized product, the release racing a consumption, the cut with a synthetic supply reduction, the reconciliation (TL-05); Unit — the catalogue keys (TL-03); PASS in CI and locally
+- [x] Authorization: `stock.reserve` with its prerequisites, another company's line and reservation, the routed cut across companies (TL-06)
+- [x] Route integrity: ROUTE-025, ROUTE-184 and ROUTE-185 in the route audit and the boot test's route list (TL-07)
+- [x] Interaction behavior: INT-184 and INT-185, each with one `command_id` replayed (TL-08)
+- [x] Browser E2E if required: J-INV-02 from PG-011's *Item dan pemenuhan* and from PG-025, the phone's read-only rows (TL-09); the IP-20 block with the first supply-reducing form (TASK-039, TASK-042)
+- [x] Responsive/adaptive if required: PG-025 and the reservation dialog at 320, 390, 768 and 1280 px (TL-11)
+- [x] Visual breathing room/density if UI: PG-025 on the shared list, dialog and form components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for a foreign line, project or reservation; SM-04 for the commands (TL-14)
+- [x] Database safety review: no migration; reservations and their events through their existing grants, the product and line guards moved through `GuardUpdate` in one statement each, the CHECKs (C-04, C-05, C-06) and the one-ACTIVE-per-line index the backstops; local and CI databases only
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `461146d`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40980648812 (push) and 40980652905 (pull request #43), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-038 PHP tests, PHPStan, Pint, ESLint, TypeScript and the production build also PASS on the workstation's stack
+- Build result: `TL-13 Frontend build: PASS — Evidence: 461146d, CI ubuntu-24.04 run 40980648812`
+- Route evidence: ROUTE-025, ROUTE-184 and ROUTE-185 registered with their capabilities and in `tests/Feature/BootTest.php`'s list; the route audit PASS in CI run 40980648812
+- Interaction evidence: `tests/Interaction/ReservationsTest.php` — INT-184 and INT-185 PASS in CI run 40980648812
+- Browser evidence: `E2E: PASS — Evidence: 461146d, CI ubuntu-24.04 run 40980648812` — `tests/Browser/E2E/reservations.spec.ts` and the localization, responsive and accessibility specs of PG-025 in Chromium and WebKit
+- Localization evidence: `tests/Browser/Localization/reservations.spec.ts` — PG-025 and PG-011's "Reservasi" in Indonesian and English; the new keys in the registry as TASK-038's
+- Performance evidence: `tests/Performance/ReservationsQueriesTest.php` (TL-15) — PG-025 in the same number of statements for two reservations and a full page, and for its product's pool (PFM-01; PFM-02); "Reservasi" in the same number of statements whatever the project's lines (PFM-20)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/INV/` — `Services/InventoryPosting`, `ReservationLifecycle`, `ReservationPredicate`, `Actions/Reserve`, `ReleaseReservation`, `Queries/Reservations`, `Http/Controllers/ReservationsController` —; PRJ's `Services/DemandPosting` and `Queries/ProjectFulfilment`; `app/Support/Guards/Families.php`'s line-guard formula; `app/Providers/AppServiceProvider.php`; `routes/web.php` and `routes/fixtures.php`; `resources/js/Pages/INV/Reservations.tsx`, `features/prj/fulfilment.tsx`, `components/data-list.tsx` (a row without a link), `lib/navigation.ts`; the catalogues and their registry; the tests, the synthetic callers (`tests/Support/ReservationWorld.php`) and the browser fixture
+- Commit SHA: `a4f59f6`, `f747112`, `9833b42`, `d610430`, `aeb600d`, `20832e6`, `ff760d4`, `461146d`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-038-reservations`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent read-only review of the branch before the pull request found eight points, each fixed and tested on the branch: a lifecycle fit requiring each reserved line's locks one by one, so a re-confirmation, a remaining-scope cancellation or a project cancellation of four or more reserved lines spent the restart budget (SQ-20) — the lines' locks are now required together, one restart at most, the product and line guards each moved in one statement (GU-01), and a five-line "Batalkan Sisa" and the cancellation from the project's lock alone are tested; a cut checking only the scope — it now routes a reservation of a company without `stock.reserve` as well (AZ-08), before anything is said of it (C-05, C-06 after), tested with the reducing command's own capability; a retried unknown intent reaching another reservation from PG-025 or another line from PG-011 — `useCommand` gains `leave()`, called when the dialog turns to another row, line or command (IP-02); a replayed refusal answering an empty figure — the actions give the envelope the current availability, remainder or remaining quantity (CI-05), tested; the pool's masked rows split by their project's state and ordered by its number — the residual tab and the project sort are the branch's own (PJ-04), tested; a reservation resolved only while ACTIVE and among every reservation in scope — ROUTE-185 now names it within its project (`proyek`), whatever its state, so a replay answers its outcome and a stale page its C-05 in place; and the pool's product resolved by hashing every reserved product — it is named by its public identifier. Codex's review of `aeb600d` (COMPLETED) found one P1 point, fixed and tested in `20832e6` and its thread answered: PG-025 offered "Reservasi" only on an existing reservation's row, so a line's first reservation could start only on PG-011 — PG-025 now opens on *Perlu direservasi*, QS-01's confirmed warehouse demand not yet reserved, each line with what is left to reserve, the availability and its "Reservasi". Executor readings within the approved text: INV's `InventoryPosting` is the reservation service the receiving, dispatch and supply-reducing Tasks call — `reserve`, `reduce`, `consume` (the caller moving the product guard with its dispatch), `cut` (the caller's one product-guard statement carrying RESERVED and its own change, so the CHECK reads both) and `fit` for the lifecycle —; PRJ's `DemandPosting` moves the line guard's reserved quantity; a re-confirmation fits each reservation to the new pin less dispatched and cancelled, a remaining-scope cancellation or split to what remains after it, a cancellation to zero, each as DECREASE or RELEASE with an Indonesian reason; predicate 8's reservation part is `ReservationPredicate`, a blocker naming how many reservations remain; PG-025 opens on *Perlu direservasi* — QS-01's confirmed warehouse demand not yet reserved, each line's first "Reservasi" with what is left to reserve and the availability —, then *Aktif*, *Perlu dilepas* and *Riwayat*; PG-025's sort is newest, project number or product name, its cursor an offset; a product's pool is reached from a row's "Lihat semua reservasi produk ini" and named by the product's public identifier, another company's reservation in it an ACTIVE row after the branch's own; ROUTE-185's body names the reservation's project (`proyek`), the reservation resolved among that project's whatever its state, so a replay answers its recorded outcome (CI-05) and a stale page's command its refusal in place; a replayed refusal carries the current figure (CI-05); a refusal's figure reads without trailing zeros (ST-06). Executor discoveries: two PRJ contracts each declaring `TAG` cannot be implemented by one class, so the predicate is its own provider; a row the viewer may not open — another company's masked reservation — has no link in the shared data list; the browser layers run in CI, the workstation's local stack failing the existing specs as well; the testing configuration's page path is lowercase, so a page assertion names its component without the file check (`component(…, false)`) as the other tests do — the case-insensitive workstation hid it, CI run 40974898351 showed it; the browser fixture's opening lot, its import row and its location take values of their own, each fixture request a fresh process whose factory sequences restart (`locations_code_unique` in the same run); a local frontend build's manifest makes the Inertia version check answer 409 to a test's partial reload — a workstation-only effect, the test passing without it
 
 **SAFE NEXT TASK:**
 
