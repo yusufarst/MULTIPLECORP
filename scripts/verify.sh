@@ -78,6 +78,7 @@ local_layers() {
     check 'Repository gates (SM-15; LF)' sh -c 'sh scripts/ci/check-repository.sh --self-test && sh scripts/ci/check-repository.sh'
     check 'Commit messages (AGENTS.md)' sh -c "sh scripts/ci/check-commit-messages.sh --self-test && sh scripts/ci/check-commit-messages.sh $range"
     check 'Task plan integrity (PMC-15)' $node_run sh -c 'node scripts/ci/check-plan.mjs --self-test && node scripts/ci/check-plan.mjs'
+    check 'Release gate and report rules (PRQ-11; INF-03)' $node_run sh -c 'node scripts/release/gate.mjs --self-test && node scripts/release/report.mjs --self-test'
     check 'TL-01 Pint' $php_run vendor/bin/pint --test
     check 'TL-01 ESLint' $node_run npm run lint
     check 'TL-02 Larastan/PHPStan' $php_run vendor/bin/phpstan analyse --no-progress --memory-limit=1G
@@ -146,6 +147,8 @@ for section in "$@"; do
 done
 
 printf '\n%s' "$summary"
+# The summary kept with the evidence, one file per set of layers, for the release integrity report (RELEASE_PLAN §11).
+printf '%s' "$summary" > "$logs/summary-$(printf '%s' "$*" | tr ' ' '-').txt"
 if [ "$failed" -ne 0 ]; then
     echo 'verify: FAIL'
     exit 1

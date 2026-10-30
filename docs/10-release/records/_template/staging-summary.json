@@ -1,0 +1,7 @@
+{
+    "critical_journeys": { "total": 22, "passed": 0, "failed": 0 },
+    "ui_ux": { "missing_translations": 0, "redundant_critical_actions": 0, "failed_checks": 0 },
+    "browser": { "console_errors": 0, "failed_requests": 0 },
+    "performance": { "cases": 0, "within_target": 0, "outside_target": 0 },
+    "integrity": { "differences": 0 }
+}

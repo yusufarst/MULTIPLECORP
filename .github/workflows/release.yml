@@ -1,0 +1,59 @@
+# The release gate and the release integrity report (RELEASE_PLAN §2, §3, §11; INF-03; RL-01; DIR-083 OE-07; TASK-073):
+# a release is a tag on a commit of `main` whose CI passed. On a pushed tag this workflow refuses a commit off `main`
+# or one whose CI run on `main` did not pass, and otherwise compiles the report's CI part from that run's evidence —
+# the staging sections NOT RUN until the operator's summary enters the release record (REL-03–REL-06). It is the gate,
+# never the deployer: no step deploys, migrates, imports, backs up, restores or reaches staging or production, and it
+# holds no secret but the CI's own token, read-only (RL-01; SX-05; SM-15). A `release-check/*` tag exercises the gate
+# without naming a release (the release runbook).
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+      - 'release-check/*'
+
+permissions:
+  contents: read
+  actions: read
+
+jobs:
+  gate:
+    name: Release gate — a tagged commit of main whose CI passed
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Check out the tagged commit with main's history
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags origin main "${GITHUB_SHA}"
+          git checkout -q --detach "${GITHUB_SHA}"
+          git log -1 --format='Tagged commit: %H'
+
+      - name: The gate
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/release/gate.mjs --repo "${GITHUB_REPOSITORY}" --sha "${GITHUB_SHA}" --main origin/main
+
+      - name: The CI run's evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh run download "${{ steps.gate.outputs.run }}" --repo "${GITHUB_REPOSITORY}" --dir evidence
+
+      - name: The release integrity report from the evidence
+        run: |
+          record="docs/10-release/records/${GITHUB_REF_NAME}"
+          status=0
+          node scripts/release/report.mjs --evidence evidence --commit "${GITHUB_SHA}" --tag "${GITHUB_REF_NAME}" --out release-integrity-report.md \
+            --declarations "${record}/declarations.json" --staging "${record}/staging-summary.json" || status=$?
+          # 0: PASS; 3: a section FAIL or NOT RUN — the report is still written, the operator completes it after staging.
+          [ "$status" -eq 0 ] || [ "$status" -eq 3 ]
+
+      - name: Keep the report
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-integrity-report
+          path: release-integrity-report.md
+          retention-days: 90
