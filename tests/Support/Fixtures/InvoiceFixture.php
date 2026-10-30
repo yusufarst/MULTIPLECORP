@@ -24,7 +24,7 @@ use Tests\Support\Projects;
 
 /**
  * TASK-049's browser fixture (TL-09–TL-12; ROUTE-041–ROUTE-043; J-FIN-01; J-FIN-08): for the run's company — whose go-live the numbering fixture armed —, a project of `lines` service lines of ten at Rp250,000 confirmed through ROUTE-158's own action, the layouts' numbering started, a
- * registered evidence and, by `stage`, a draft of Rp1,000,000 or that invoice issued, with `payment` a synthetic payment applied (until TASK-051). Local only; synthetic names.
+ * registered evidence and, by `stage`, a draft of Rp1,000,000 or that invoice issued, with `payment` a synthetic payment applied (until TASK-051), and `billed`, `written_off`, `credit` or `recovery` as TASK-050's journeys start. Local only; synthetic names.
  */
 final class InvoiceFixture
 {
@@ -45,7 +45,7 @@ final class InvoiceFixture
             Numbering::started($company, $type, $start);
         }
 
-        foreach (['DOC-04', 'DOC-05', 'DOC-06'] as $layout) {
+        foreach (['DOC-04', 'DOC-05', 'DOC-06', 'DOC-13'] as $layout) {
             DocumentTypeFactory::ensure($layout);
         }
 
@@ -104,6 +104,37 @@ final class InvoiceFixture
 
             if ($request->boolean('payment')) {
                 InvoiceWorld::apply($invoice->id, InvoiceWorld::payment($invoice->id, '400000'), '400000');
+            }
+
+            // TASK-050's stages: billed, written off by the signed-in Owner, with credit or money recovered for it.
+            if ($request->boolean('billed')) {
+                $billed = InvoiceWorld::billInCommand($actor, $invoice->id, BusinessDate::today(), '2099-12-31');
+
+                if ($billed !== 'COMMITTED') {
+                    return response()->json(['error' => "bill {$billed}"], 500);
+                }
+            }
+
+            $writtenOff = $request->input('written_off');
+
+            if (is_string($writtenOff)) {
+                $word = InvoiceWorld::writeOffInCommand($actor, $invoice->id, $writtenOff, BusinessDate::today());
+
+                if ($word !== 'COMMITTED') {
+                    return response()->json(['error' => "write-off {$word}"], 500);
+                }
+            }
+
+            $credit = $request->input('credit');
+
+            if (is_string($credit)) {
+                InvoiceWorld::payment($invoice->id, $credit);
+            }
+
+            $recovery = $request->input('recovery');
+
+            if (is_string($recovery)) {
+                InvoiceWorld::recovery($invoice->id, $recovery);
             }
         }
 

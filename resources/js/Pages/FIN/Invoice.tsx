@@ -47,7 +47,7 @@ type Props = {
     writeoffs: WriteoffRow[];
     credit: string | null;
     recoveries: Recovery[];
-    can: { correct: boolean; supersede: boolean; kuitansi: boolean; link: boolean; nota: boolean; bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; request: boolean };
+    can: { correct: boolean; supersede: boolean; kuitansi: boolean; link: boolean; nota: boolean; bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; pay: boolean; request: boolean };
 };
 type Correcting = 'REVISI' | 'BATAL';
 type Payload = Record<string, FormDataConvertible>;

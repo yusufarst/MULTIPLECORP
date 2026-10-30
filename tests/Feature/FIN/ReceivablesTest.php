@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\IAM\Models\User;
 use App\Modules\PRJ\Data\Predicates;
@@ -425,4 +426,18 @@ it('tells the journey what billing and the receivable still need, without counts
     expect($states[Predicates::BILLING]->met())->toBeTrue()->and($states[Predicates::RECEIVABLE]->items[0]->key)->toBe('projects.item.receivables_open');
     expect($predicate->states([$this->project->id], false)[$this->project->id][Predicates::RECEIVABLE]->items[0]->key)->toBe('projects.next.payment')
         ->and($predicate->states([], true))->toBe([]);
+});
+
+it('renders DOC-13 in Indonesian whatever the interface language (LOCALIZATION §3.4; DOD-16; TL-10)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    billReceivable($this, $id);
+    $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-13', 'subjek' => ['invoice_id' => InvoiceWorld::publicId($id)]]);
+    $document = DB::table('documents')->where('invoice_id', $id)->where('document_type_code', 'DOC-13')->sole();
+    $draft = DB::table('document_versions')->where('document_id', $document->id)->sole();
+    $this->actingAs($this->actor)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'draf' => $draft->public_id, 'lock_version' => $draft->lock_version, 'tanggal' => $this->today]);
+    $paper = json_decode((string) DB::table('document_versions')->where('document_id', $document->id)->value('payload'), true)['paper'];
+
+    app()->setLocale('en');
+
+    expect(MustacheTemplates::render('DOC-13', $paper))->toContain('Surat Permintaan Pembayaran')->toContain('Dengan hormat')->toContain('Sisa Tagihan');
 });

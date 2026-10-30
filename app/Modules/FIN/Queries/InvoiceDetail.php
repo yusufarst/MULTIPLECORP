@@ -133,6 +133,7 @@ final class InvoiceDetail
                 'dispute' => $issued && $viewer->allows('receivables.dispute', $company) && ($owing && $billed || ($header->on_hold ?? false) === true),
                 'write_off' => $canWriteOff,
                 'recover' => $canSupersede,
+                'pay' => $issued && $owing && $viewer->allows('payment.record', $company),
                 'request' => $issued && $owing && DocumentAccess::mayIssue($viewer, InvoiceSubjects::REQUEST, $company),
             ],
         ];

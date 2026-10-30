@@ -12,11 +12,12 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
 import { Code, DateText, Money } from '@/components/values';
 import { type InvoiceState } from '@/features/fin/invoice';
-import { BillDialog } from '@/features/fin/invoice-receivable';
+import { Answered, BillDialog, type Payload } from '@/features/fin/invoice-receivable';
 import AppShell from '@/layouts/AppShell';
 import { money } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { BUILT } from '@/lib/navigation';
+import { useCommand } from '@/lib/use-command';
 
 type Tab = 'aktif' | 'belum' | 'sengketa';
 type Branch = { id: string; code: string; name: string };
@@ -35,6 +36,8 @@ export default function Receivables({ branches, branch, tab, client, clients, su
     const [next, setNext] = useState(more);
     const [appending, setAppending] = useState(false);
     const [billing, setBilling] = useState<Row | null>(null);
+    const [billed, setBilled] = useState('');
+    const bill = useCommand<Payload>(() => `/keuangan/invoice/${billed}/tagihkan`, 'post');
 
     if (base !== rows) {
         setBase(rows);
@@ -61,7 +64,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
     const state = (row: Row) => <StatusBadge family="invoice_and_receivable" state={row.state} size="sm" />;
     const age = (row: Row) => row.bucket === null ? '—' : row.days_past > 0 ? t('receivables.age.short', { hari: String(row.days_past) }) : t(`receivables.bucket.${row.bucket}` as TranslationKey);
     const rowActions = (row: Row): MenuAction[] => [
-        ...(row.can.bill ? [{ label: t('receivables.action.bill'), onSelect: () => { setBilling(row); } }] : []),
+        ...(row.can.bill ? [{ label: t('receivables.action.bill'), onSelect: () => { bill.clear(); setBilled(row.id); setBilling(row); } }] : []),
         ...(row.can.pay && BUILT.has('PG-046') ? [{ label: t('receivables.action.pay'), onSelect: () => { router.visit(`/keuangan/pembayaran/baru?${new URLSearchParams({ invoice: row.id }).toString()}`); } }] : []),
     ];
 
@@ -69,6 +72,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
         <AppShell title={t('pages.pg_044.title')}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_044.title')} />
+                <Answered command={bill} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
                         <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
@@ -139,7 +143,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
                     </>
                 )}
             </div>
-            {billing !== null && <BillDialog key={billing.id} invoice={billing.id} outstanding={billing.outstanding} today={today} open onOpenChange={(open) => { if (!open) setBilling(null); }} back={query({})} />}
+            {billing !== null && <BillDialog key={billing.id} command={bill} outstanding={billing.outstanding} today={today} open onOpenChange={(open) => { if (!open) setBilling(null); }} back={query({})} />}
         </AppShell>
     );
 }

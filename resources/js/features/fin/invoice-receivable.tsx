@@ -2,6 +2,7 @@
 // confirmation first (IP-08; MSG-39); "Koreksi Penagihan" with its evidence and reason (CM-25); "Tandai Sengketa" and "Cabut Sengketa" with their reason, the page saying what a hold does (J-FIN-05); the Owner's "Hapuskan Piutang" with the
 // client's available credit to apply first or a reason (L-17), and "Terapkan dan Cabut Penghapusan" for money recovered (AX-24). Every dialog's "Kembali" keeps its input (IP-08; IP-09).
 import type { FormDataConvertible } from '@inertiajs/core';
+import { router } from '@inertiajs/react';
 import { type ReactNode, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -15,18 +16,19 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Money } from '@/components/values';
 import { dateLong, money } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
-import { useCommand } from '@/lib/use-command';
+import { BUILT } from '@/lib/navigation';
+import { type CommandForm, useCommand } from '@/lib/use-command';
 
-type Payload = Record<string, FormDataConvertible>;
+export type Payload = Record<string, FormDataConvertible>;
 export type BillingAct = { billed_at: string; due_date: string | null; kind: string; reason: string | null };
 export type Billing = { current: BillingAct | null; history: BillingAct[]; days_past: number; bucket: string | null };
 export type Hold = { reason: string; set_at: string; lapsed: boolean };
 export type WriteoffRow = { handle: string; amount: string; standing: string; reason: string; date: string; before: string; after: string };
 export type Recovery = { id: string; amount: string; date: string };
 export type EvidenceOption = { id: string; type: string; issuer: string; reference: string | null; date: string };
-export type ReceivableCan = { bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean };
+export type ReceivableCan = { bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; pay: boolean };
 
-function Answered({ command }: { command: { answer: Answer | null; unknown: boolean; retry: () => void } }) {
+export function Answered({ command }: { command: { answer: Answer | null; unknown: boolean; retry: () => void } }) {
     const { t } = useTranslation();
 
     return command.answer === null ? null : (
@@ -34,12 +36,11 @@ function Answered({ command }: { command: { answer: Answer | null; unknown: bool
     );
 }
 
-/** "Tagihkan" after its confirmation, on PG-043 and PG-044's rows; `back` returns a row's action to the list's filters (IP-18). */
-export function BillDialog({ invoice, outstanding, today, open, onOpenChange, back }: { invoice: string; outstanding: string; today: string; open: boolean; onOpenChange: (open: boolean) => void; back?: string }) {
+/** "Tagihkan" after its confirmation, on PG-043 and PG-044's rows, its command the page's so the answer outlives the dialog; `back` returns a row's action to the list's filters (IP-18). */
+export function BillDialog({ command: bill, outstanding, today, open, onOpenChange, back }: { command: CommandForm<Payload>; outstanding: string; today: string; open: boolean; onOpenChange: (open: boolean) => void; back?: string }) {
     const { t } = useTranslation();
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [due, setDue] = useState<string | null>(null);
-    const bill = useCommand<Payload>(() => `/keuangan/invoice/${invoice}/tagihkan`, 'post');
 
     return (
         <ConfirmCommand
@@ -91,6 +92,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
     const [amount, setAmount] = useState('');
     const [creditReason, setCreditReason] = useState('');
     const [writeoff, setWriteoff] = useState('');
+    const bill = useCommand<Payload>(() => `/keuangan/invoice/${id}/tagihkan`, 'post');
     const correct = useCommand<Payload>(() => `/keuangan/invoice/${id}/koreksi-tagihan`, 'post');
     const dispute = useCommand<Payload>(() => `/keuangan/invoice/${id}/sengketa`, 'post');
     const writeOff = useCommand<Payload>(() => `/keuangan/invoice/${id}/hapuskan`, 'post');
@@ -104,6 +106,8 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
     const openRecover = (recovery: Recovery) => { recover.clear(); fresh(); setAmount(recovery.amount); setWriteoff(standing[0]?.handle ?? ''); setRecovering(recovery); };
     const bucketLabel = billing.bucket === null ? null : t(`receivables.bucket.${billing.bucket}` as TranslationKey);
     const menu: MenuAction[] = [
+        // PG-046 is TASK-051's: the link appears with its page (J-FIN-03).
+        ...(can.pay && BUILT.has('PG-046') ? [{ label: t('receivables.action.pay'), onSelect: () => { router.visit(`/keuangan/pembayaran/baru?${new URLSearchParams({ invoice: id }).toString()}`); } }] : []),
         ...(can.dispute ? [{ label: t(held ? 'receivables.action.clear' : 'receivables.action.hold'), onSelect: openHold }] : []),
         ...(can.correct_billing ? [{ label: t('receivables.action.correct'), onSelect: openCorrection }] : []),
         ...(can.write_off ? [{ label: t('receivables.action.write_off'), tone: 'danger' as const, onSelect: openWrite }] : []),
@@ -115,6 +119,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
         menu,
         answers: (
             <>
+                <Answered command={bill} />
                 <Answered command={correct} />
                 <Answered command={dispute} />
                 <Answered command={writeOff} />
@@ -184,7 +189,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
         ),
         dialogs: (
             <>
-                {can.bill && <BillDialog invoice={id} outstanding={outstanding} today={today} open={billingOpen} onOpenChange={setBillingOpen} />}
+                <BillDialog command={bill} outstanding={outstanding} today={today} open={billingOpen} onOpenChange={setBillingOpen} />
                 <ConfirmCommand
                     open={correcting}
                     onOpenChange={setCorrecting}
