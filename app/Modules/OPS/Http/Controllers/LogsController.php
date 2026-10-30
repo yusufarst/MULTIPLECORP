@@ -46,15 +46,22 @@ final class LogsController extends Controller
     /** ROUTE-064. */
     public function security(Request $request): HttpResponse
     {
+        $screen = $this->security->screen(self::actor($request), [
+            'jenis' => self::query($request, 'jenis'),
+            'dari' => self::query($request, 'dari'),
+            'sampai' => self::query($request, 'sampai'),
+            'perusahaan' => self::query($request, 'perusahaan'),
+            'setelah' => self::query($request, 'setelah'),
+            'peristiwa' => self::query($request, 'peristiwa'),
+        ]);
+
+        // A notice's event that does not resolve is a record out of reach: PG-005 with MSG-09 (INT-020; IP-21).
+        if (self::query($request, 'peristiwa') !== null && $screen['focus'] === null) {
+            throw new NotFoundHttpException;
+        }
+
         return Inertia::render('OPS/SecurityLog', [
-            ...$this->security->screen(self::actor($request), [
-                'jenis' => self::query($request, 'jenis'),
-                'dari' => self::query($request, 'dari'),
-                'sampai' => self::query($request, 'sampai'),
-                'perusahaan' => self::query($request, 'perusahaan'),
-                'setelah' => self::query($request, 'setelah'),
-                'peristiwa' => self::query($request, 'peristiwa'),
-            ]),
+            ...$screen,
             // Opened from a security notice: "Kembali" returns to the origin (INT-020; NAV-064).
             'from_notice' => self::query($request, 'asal') === 'beranda',
         ])->toResponse($request);

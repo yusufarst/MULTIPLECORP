@@ -106,6 +106,10 @@ const INDEX_REGISTER = [
     'IX-14 the payments without proof' => ['payments_ix14_unevidenced', 'select id from payments where company_id = (select min(id) from companies) and unevidenced_reason is not null'],
     '§20 an invoice\'s active applications' => ['payment_applications_active_invoice', "select id from payment_applications where invoice_id = 123 and state = 'ACTIVE'"],
     '§20 a client\'s invoices' => ['invoices_client', 'select id from invoices where company_id = {company} and client_organization_id = (select min(id) from client_organizations)'],
+    // TASK-061: PG-063's branch without a company, PG-064's time keys (PF-13; PF-42)
+    'IX-13 the events without a company' => ['audit_events_ix13_company', 'select id from audit_events where company_id is null order by occurred_at desc, id desc limit 51'],
+    'the security log' => ['security_events_time', 'select id from security_events order by occurred_at desc, id desc limit 51'],
+    'the security log by kind' => ['security_events_kind_time', "select id from security_events where event_kind = 'LOGOUT' order by occurred_at desc, id desc limit 51"],
 ];
 
 function seedIndexRegister(Connection $owner): void
