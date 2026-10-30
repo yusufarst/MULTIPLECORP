@@ -130,7 +130,7 @@ final class InvoiceDetail
                 'nota' => $issued && DocumentAccess::mayIssue($viewer, InvoiceSubjects::NOTA, $company),
                 'bill' => $issued && ! $billed && $viewer->allows('billing.record', $company),
                 'correct_billing' => $issued && $billed && $viewer->allows('billing.correct', $company),
-                'dispute' => $issued && $viewer->allows('receivables.dispute', $company) && ($owing && $billed || ($header->on_hold ?? false) === true),
+                'dispute' => $issued && $viewer->allows('receivables.dispute', $company) && (($owing && $billed) || ($header->on_hold ?? false) === true),
                 'write_off' => $canWriteOff,
                 'recover' => $canSupersede,
                 'pay' => $issued && $owing && $viewer->allows('payment.record', $company),
@@ -220,7 +220,7 @@ final class InvoiceDetail
     {
         $rows = [];
 
-        foreach (DB::table('payments as p')->where('p.recovery_for_invoice_id', $invoiceId)->join('application_source_balances as s', 's.payment_id', '=', 'p.id')->where('s.capacity_amount', '>', 0)->orderBy('p.id')->get(['p.public_id', 's.capacity_amount', 'p.business_date']) as $row) {
+        foreach (DB::table('payments as p')->whereIn('p.recovery_for_invoice_id', MoneyPosting::recoveryTargets($invoiceId))->join('application_source_balances as s', 's.payment_id', '=', 'p.id')->where('s.capacity_amount', '>', 0)->orderBy('p.id')->get(['p.public_id', 's.capacity_amount', 'p.business_date']) as $row) {
             $rows[] = ['id' => Row::text($row, 'public_id'), 'amount' => Row::text($row, 'capacity_amount'), 'date' => Row::text($row, 'business_date')];
         }
 

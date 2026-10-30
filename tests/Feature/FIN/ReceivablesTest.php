@@ -1,9 +1,12 @@
 <?php
 
 use App\Modules\DOC\Services\MustacheTemplates;
+use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Services\InvoiceEvidence;
 use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\IAM\Models\User;
 use App\Modules\PRJ\Data\Predicates;
+use App\Modules\PTY\Models\ClientOrganization;
 use App\Support\BusinessDate;
 use App\Support\Finance\AgingCalculator;
 use App\Support\Guards\Families;
@@ -440,4 +443,108 @@ it('renders DOC-13 in Indonesian whatever the interface language (LOCALIZATION ย
     app()->setLocale('en');
 
     expect(MustacheTemplates::render('DOC-13', $paper))->toContain('Surat Permintaan Pembayaran')->toContain('Dengan hormat')->toContain('Sisa Tagihan');
+});
+
+it('asks nothing of another client\'s credit (L-17; BR-FIN-05)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    billReceivable($this, $id);
+    InvoiceWorld::payment($id, '250000', '0.00', null, ClientOrganization::factory()->create()->id);
+
+    writeOffReceivable($this, $id, '100000');
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED');
+});
+
+it('accepts the residual commands on a completed project without reopening it, a correction revalidating it (WF-PRJ-03; L-11; SF-REVAL; BR-CR-05; M-26)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    $unbilled = $this->world->issued($this->project, '1000');
+    InvoiceWorld::bill($id, $this->today, '2099-12-31');
+    InvoiceWorld::close($this->project->id, $this->world->actorId);
+    $state = fn (): string => (string) DB::table('projects')->where('id', $this->project->id)->value('state');
+
+    billReceivable($this, $unbilled);
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and($state())->toBe('COMPLETED_NORMAL');
+    writeOffReceivable($this, $id, '300000');
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and($state())->toBe('COMPLETED_NORMAL');
+    $writeoff = (int) DB::table('receivable_writeoffs')->where('invoice_id', $id)->value('id');
+    receivablePost($this, $id, 'cabut-penghapusan', ['penghapusan' => RowHandle::of('receivable_writeoffs', $writeoff), 'pembayaran' => InvoiceWorld::recovery($id, '1000')->public_id, 'jumlah' => '1000', 'alasan' => 'Klien membayar kembali', 'tanggal' => $this->today], $this->owner);
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and($state())->toBe('COMPLETED_NORMAL');
+
+    receivablePost($this, $id, 'sengketa', ['aksi' => 'TANDAI', 'alasan' => 'Klien membantah']);
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and($state())->toBe('ACTIVE')
+        ->and(DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('from_state', 'COMPLETED_NORMAL')->value('correction_reference'))->toStartWith('FIN.DisputeHoldSet:');
+});
+
+it('revalidates a completed project on a void or a revision of its invoice (SF-REVAL; CM-23; M-26)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    InvoiceWorld::close($this->project->id, $this->world->actorId);
+
+    $this->actingAs($this->actor)->post('/keuangan/invoice/'.InvoiceWorld::publicId($id).'/koreksi', ['command_id' => (string) Str::uuid(), 'aksi' => 'BATAL', 'dasar' => 'UNBILLED_ENTRY_ERROR', 'lock_version' => DB::table('invoices')->where('id', $id)->value('lock_version'), 'alasan' => 'Salah catat', 'tanggal' => $this->today]);
+
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('ACTIVE')
+        ->and(DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('from_state', 'COMPLETED_NORMAL')->value('correction_reference'))->toStartWith('FIN.InvoiceVoided:');
+});
+
+it('re-records several standing write-offs of a void as one, nothing vanishing (AX-22; OD-07; DATABASE ยง4.12; criterion 8)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    billReceivable($this, $id);
+    writeOffReceivable($this, $id, '100000');
+    writeOffReceivable($this, $id, '200000');
+    $writeoffs = DB::table('receivable_writeoffs')->where('invoice_id', $id)->pluck('id')->all();
+    expect($writeoffs)->toHaveCount(2);
+
+    receivablePost($this, $id, 'koreksi', ['aksi' => 'BATAL', 'dasar' => 'ENTRY_ERROR_REPLACED', 'bukti' => InvoiceWorld::linkedEvidence($this->world->company->id, $this->project->id)->public_id, 'lock_version' => DB::table('invoices')->where('id', $id)->value('lock_version'), 'alasan' => 'Nilai salah catat', 'tanggal' => $this->today,
+        'isi' => ['jenis' => 'VALUE_ONLY', 'tanggal' => $this->today, 'baris' => [['keterangan' => 'Nilai benar', 'nilai' => '900000']]],
+        'disposisi' => ['hapus' => array_map(fn ($writeoff): array => ['id' => RowHandle::of('receivable_writeoffs', (int) $writeoff), 'tindakan' => 'RERECORD'], $writeoffs)]], $this->owner);
+
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED');
+    $replacement = (int) DB::table('invoices')->where('replaces_invoice_id', $id)->value('id');
+    expect(DB::table('receivable_writeoffs')->where('invoice_id', $replacement)->sole()->amount)->toBe('300000.00')
+        ->and(receivableBalance($replacement)->written_off_amount)->toBe('300000.00')
+        ->and(receivableDifferences())->toBe([]);
+});
+
+it('lets money recovered for a replaced invoice lift the write-off its replacement now carries (L-17; L-30; criterion 7)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    billReceivable($this, $id);
+    writeOffReceivable($this, $id, '100000');
+    $payment = InvoiceWorld::recovery($id, '50000');
+    $writeoff = (int) DB::table('receivable_writeoffs')->where('invoice_id', $id)->value('id');
+    receivablePost($this, $id, 'koreksi', ['aksi' => 'BATAL', 'dasar' => 'ENTRY_ERROR_REPLACED', 'bukti' => InvoiceWorld::linkedEvidence($this->world->company->id, $this->project->id)->public_id, 'lock_version' => DB::table('invoices')->where('id', $id)->value('lock_version'), 'alasan' => 'Nilai salah catat', 'tanggal' => $this->today,
+        'isi' => ['jenis' => 'VALUE_ONLY', 'tanggal' => $this->today, 'baris' => [['keterangan' => 'Nilai benar', 'nilai' => '900000']]],
+        'disposisi' => ['hapus' => [['id' => RowHandle::of('receivable_writeoffs', $writeoff), 'tindakan' => 'RERECORD']]]], $this->owner);
+    $replacement = (int) DB::table('invoices')->where('replaces_invoice_id', $id)->value('id');
+    $carried = (int) DB::table('receivable_writeoffs')->where('invoice_id', $replacement)->value('id');
+
+    $this->actingAs($this->owner)->get('/keuangan/invoice/'.InvoiceWorld::publicId($replacement))->assertInertia(fn (AssertableInertia $page) => $page->where('recoveries.0.id', $payment->public_id));
+    receivablePost($this, $replacement, 'cabut-penghapusan', ['penghapusan' => RowHandle::of('receivable_writeoffs', $carried), 'pembayaran' => $payment->public_id, 'jumlah' => '50000', 'alasan' => 'Klien membayar kembali', 'tanggal' => $this->today], $this->owner);
+
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and(receivableBalance($replacement)->applied_amount)->toBe('50000.00')->and(receivableBalance($replacement)->written_off_amount)->toBe('50000.00')->and(receivableDifferences())->toBe([]);
+});
+
+it('clears a hold that lapsed at zero, so it does not return should the outstanding come back (L-17; C-42)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    billReceivable($this, $id);
+    receivablePost($this, $id, 'sengketa', ['aksi' => 'TANDAI', 'alasan' => 'Klien membantah']);
+    writeOffReceivable($this, $id, '1000000');
+    receivablePost($this, $id, 'sengketa', ['aksi' => 'CABUT', 'alasan' => 'Sudah selesai']);
+
+    expect(receivableAnswer()['kind'])->toBe('COMMITTED')->and(DB::table('receivable_dispute_holds')->where('invoice_id', $id)->whereNull('cleared_at')->exists())->toBeFalse();
+});
+
+it('reads a cursor only within the viewer\'s companies: another company\'s invoice positions nothing (CS-07; AZ-11)', function () {
+    $id = $this->world->issued($this->project, '1000');
+    InvoiceWorld::bill($id, $this->today, '2099-12-31');
+    $other = InvoiceWorld::make();
+    $theirs = $other->issued($other->project(), '1000');
+    InvoiceWorld::bill($theirs, $this->today, '2100-12-31');
+
+    $this->actingAs($this->actor)->get('/keuangan/piutang?setelah='.InvoiceWorld::publicId($theirs))->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));
+});
+
+it('asks for evidence tied to the records of an invoice that has them: none without a project (DIR-092 (2); CM-25)', function () {
+    $invoice = new Invoice;
+    $invoice->forceFill(['project_id' => null]);
+    $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $this->world->company->id, 'evidence_type' => 'OTHER']);
+
+    expect(InvoiceEvidence::linked($invoice, $evidence->id))->toBeFalse();
 });

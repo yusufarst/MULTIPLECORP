@@ -184,11 +184,11 @@ final class InvoiceWorld
     }
 
     /** A payment of the invoice's client with its source guard, as TASK-051 will post it. */
-    public static function payment(int $invoiceId, string $amount, string $claimed = '0.00', ?int $recoveryFor = null): Payment
+    public static function payment(int $invoiceId, string $amount, string $claimed = '0.00', ?int $recoveryFor = null, ?int $clientId = null): Payment
     {
         $invoice = Invoice::query()->findOrFail($invoiceId);
-        $payment = PaymentFactory::new()->createOne(['company_id' => $invoice->company_id, 'client_organization_id' => $invoice->client_organization_id, 'amount' => $amount, 'recovery_for_invoice_id' => $recoveryFor, 'business_date' => BusinessDate::today()]);
-        DB::table('application_source_balances')->insert(['payment_id' => $payment->id, 'company_id' => $invoice->company_id, 'client_organization_id' => $invoice->client_organization_id, 'gross_amount' => $amount, 'claimed_deductions_amount' => $claimed, 'recorded_at' => now()]);
+        $payment = PaymentFactory::new()->createOne(['company_id' => $invoice->company_id, 'client_organization_id' => $clientId ?? $invoice->client_organization_id, 'amount' => $amount, 'recovery_for_invoice_id' => $recoveryFor, 'business_date' => BusinessDate::today()]);
+        DB::table('application_source_balances')->insert(['payment_id' => $payment->id, 'company_id' => $invoice->company_id, 'client_organization_id' => $clientId ?? $invoice->client_organization_id, 'gross_amount' => $amount, 'claimed_deductions_amount' => $claimed, 'recorded_at' => now()]);
 
         return $payment;
     }
@@ -307,6 +307,15 @@ final class InvoiceWorld
     public static function supersedeInCommand(int $ownerId, int $invoiceId, int $writeoffId, int $paymentId, string $amount, string $businessDate): string
     {
         return self::word(app(SupersedeWriteOff::class)->run((string) Str::uuid(), $ownerId, Invoice::query()->findOrFail($invoiceId), $writeoffId, $paymentId, $amount, 'Klien membayar kembali', $businessDate, false));
+    }
+
+    /** A project already closed, whatever it still holds open (L-10), its state and transition as TASK-055 will record them. */
+    public static function close(int $projectId, int $actorUserId): void
+    {
+        $company = DB::table('projects')->where('id', $projectId)->value('company_id');
+        $from = DB::table('projects')->where('id', $projectId)->value('state');
+        DB::table('projects')->where('id', $projectId)->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
+        ProjectStateTransition::factory()->create(['project_id' => $projectId, 'from_state' => $from, 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $actorUserId, 'company_id' => $company]);
     }
 
     /**

@@ -14,7 +14,7 @@ final class InvoiceEvidence
 {
     public static function linked(Invoice $invoice, ?int $evidenceId): bool
     {
-        return $evidenceId !== null && DB::table('evidence_links')->where('evidence_document_id', $evidenceId)->whereNull('unlinked_at')
+        return $evidenceId !== null && $invoice->project_id !== null && DB::table('evidence_links')->where('evidence_document_id', $evidenceId)->whereNull('unlinked_at')
             ->where(fn (Builder $link) => $link->where('project_id', $invoice->project_id)->orWhereIn('commercial_confirmation_id', DB::table('commercial_confirmations')->where('project_id', $invoice->project_id)->select('id')))->exists();
     }
 }

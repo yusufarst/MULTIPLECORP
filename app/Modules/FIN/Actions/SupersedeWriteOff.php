@@ -7,7 +7,6 @@ use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\FIN\Services\MoneyPosting;
 use App\Modules\FIN\Services\ReceivablePosting;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
-use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
@@ -20,6 +19,7 @@ use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
 use App\Support\Money;
+use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Support\Facades\DB;
 
@@ -27,7 +27,7 @@ use Illuminate\Support\Facades\DB;
  * `FIN SupersedeWriteOff` (ROUTE-248; INT-248; AX-24; L-17; WF-FIN-05) — "Terapkan dan Cabut Penghapusan", the Owner's alone, with MSG-40's reason (IP-09): money
  * recovered after a write-off — a real payment, its unapplied credit linked to the written-off invoice (QS-12; QS-14) — applied to the invoice in the same command
  * as the write-off's supersession by that amount: a `financial_contras` row on it (DATABASE §11.4), the original kept as disposed history. The outstanding does not
- * move: the written-off amount falls as the applied amount rises. `writeoff.supersede`, OWNER_ONLY (OD-11).
+ * move: the written-off amount falls as the applied amount rises. A residual command: no reopening of a completed project (WF-PRJ-03; L-11). `writeoff.supersede`, OWNER_ONLY (OD-11).
  */
 final class SupersedeWriteOff
 {
@@ -40,7 +40,6 @@ final class SupersedeWriteOff
         private readonly InvoiceRecords $records,
         private readonly ReceivablePosting $receivable,
         private readonly MoneyPosting $money,
-        private readonly Revalidation $revalidation,
     ) {}
 
     public function run(string $commandId, int $actorUserId, Invoice $invoice, int $writeoffId, int $paymentId, string $amount, string $reason, string $businessDate, bool $prefilled): Outcome
@@ -57,7 +56,9 @@ final class SupersedeWriteOff
             $payment = DB::table('payments')->where('id', $paymentId)->first(['public_id', 'company_id', 'client_organization_id', 'recovery_for_invoice_id']);
 
             // Credit linked to this invoice: money recovered for it, of its client and company (BR-FIN-07; C-14).
-            if ($payment === null || Row::nullable($payment, 'recovery_for_invoice_id') !== (string) $invoice->id) {
+            $recoveredFor = $payment === null ? null : Row::nullable($payment, 'recovery_for_invoice_id');
+
+            if ($recoveredFor === null || ! in_array((int) $recoveredFor, MoneyPosting::recoveryTargets($invoice->id), true)) {
                 throw Refused::rejected('L-17', ['reason' => 'not_recovery']);
             }
 
@@ -81,12 +82,8 @@ final class SupersedeWriteOff
             $this->money->applyFromPayment($context, $paymentId, $moved->toString());
             $this->receivable->move($context, $invoice->id, ['written_off_amount' => $moved->negated()->toString(), 'applied_amount' => $moved->toString()]);
             $this->records->record($context, 'FIN.WriteOffSuperseded', AuthorityClass::OwnerOnly, $invoice->id, $reason, $businessDate,
-                ['written_off_standing' => Money::of($standing)->minus($moved)->toString(), 'applied' => $moved->toString()], ['written_off_standing' => $standing],
+                ['writeoff' => RowHandle::of('receivable_writeoffs', $writeoffId), 'written_off_standing' => Money::of($standing)->minus($moved)->toString(), 'applied' => $moved->toString()], ['writeoff' => RowHandle::of('receivable_writeoffs', $writeoffId), 'written_off_standing' => $standing],
                 AuditLinkage::make()->link(AuditRelation::Affects, 'payment', Row::text($payment, 'public_id')));
-
-            if ($invoice->project_id !== null) {
-                $this->revalidation->revalidate($context, $invoice->project_id, "FIN.WriteOffSuperseded:{$invoice->public_id}");
-            }
 
             return new CommandResult('invoice', $invoice->id);
         });

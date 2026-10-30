@@ -7,6 +7,7 @@ use App\Modules\FIN\Models\MoneyFactBalance;
 use App\Support\Command\CommandContext;
 use App\Support\GuardUpdate;
 use App\Support\Search\Row;
+use Illuminate\Support\Facades\DB;
 
 /**
  * The money guards a receivable command moves (ARCHITECTURE §7; DATABASE §11.4): a write-off's money fact, born with it and contra'd by its supersession
@@ -27,6 +28,24 @@ final class MoneyPosting
     public function applyFromPayment(CommandContext $context, int $paymentId, string $amount): void
     {
         GuardUpdate::apply($context->connection, 'application_source_balances', [['key' => ['payment_id' => $paymentId], 'deltas' => ['invoice_applied_amount' => $amount]]]);
+    }
+
+    /**
+     * The invoice and those it replaces: money recovered for one is recovered for the invoice its write-off moved to (L-17; L-30).
+     *
+     * @return list<int>
+     */
+    public static function recoveryTargets(int $invoiceId): array
+    {
+        $ids = [];
+
+        foreach (DB::select('with recursive chain(id, replaces) as (select id, replaces_invoice_id from invoices where id = ? union select i.id, i.replaces_invoice_id from invoices i join chain c on i.id = c.replaces) select id from chain', [$invoiceId]) as $row) {
+            if (is_object($row)) {
+                $ids[] = (int) Row::text($row, 'id');
+            }
+        }
+
+        return $ids;
     }
 
     /** What of a write-off still stands: its amount less its supersessions. */

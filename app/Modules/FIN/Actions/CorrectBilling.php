@@ -17,6 +17,7 @@ use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -76,7 +77,7 @@ final class CorrectBilling
                 'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId,
             ]);
             $this->receivable->act($context, $invoice->id, $act, $dueDate);
-            $this->records->record($context, 'FIN.BillingCorrected', AuthorityClass::AdmPlus, $invoice->id, $reason, $billedAt, ['billed_at' => $billedAt, 'due_date' => $dueDate, 'evidence_id' => $evidenceId], $before);
+            $this->records->record($context, 'FIN.BillingCorrected', AuthorityClass::AdmPlus, $invoice->id, $reason, $billedAt, ['billed_at' => $billedAt, 'due_date' => $dueDate, 'evidence_id' => $evidenceId, 'supersedes_act' => RowHandle::of('invoice_billing_acts', (int) $currentId)], $before);
 
             if ($invoice->project_id !== null) {
                 $this->revalidation->revalidate($context, $invoice->project_id, "FIN.BillingCorrected:{$invoice->public_id}");

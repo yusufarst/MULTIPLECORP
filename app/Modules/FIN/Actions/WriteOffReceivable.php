@@ -7,7 +7,6 @@ use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\FIN\Services\MoneyPosting;
 use App\Modules\FIN\Services\ReceivablePosting;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
-use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
@@ -25,7 +24,7 @@ use Illuminate\Support\Facades\DB;
  * `FIN WriteOffReceivable` (ROUTE-247; INT-247; AX-24; WF-FIN-05; J-FIN-05) — "Hapuskan Piutang", the Owner's alone, with MSG-39 and MSG-40 (IP-08; IP-09): an
  * amount within the outstanding (C-15), its reason, before and after. The same client and company's unapplied credit is applied first or the reason recorded
  * (L-17). The amount leaves active receivable and collectible ageing and stays as disposed history, with no Cash-In and no profit (DIR-019; BR-FIN-08). A
- * completed project's predicate input moved, it is revalidated (M-26; SF-REVAL). `receivables.write_off`, OWNER_ONLY (OD-11).
+ * residual command: accepted on a completed or cancelled project without reopening it (WF-PRJ-03; L-11). `receivables.write_off`, OWNER_ONLY (OD-11).
  */
 final class WriteOffReceivable
 {
@@ -38,7 +37,6 @@ final class WriteOffReceivable
         private readonly InvoiceRecords $records,
         private readonly ReceivablePosting $receivable,
         private readonly MoneyPosting $money,
-        private readonly Revalidation $revalidation,
     ) {}
 
     public function run(string $commandId, int $actorUserId, Invoice $invoice, string $amount, string $reason, ?string $creditReason, string $businessDate, bool $prefilled): Outcome
@@ -78,10 +76,6 @@ final class WriteOffReceivable
             $this->receivable->move($context, $invoice->id, ['written_off_amount' => $written->toString()]);
             $this->records->record($context, 'FIN.ReceivableWrittenOff', AuthorityClass::OwnerOnly, $invoice->id, $reason, $businessDate,
                 ['outstanding' => $after, 'written_off' => $written->toString(), ...(Money::of($credit)->isPositive() ? ['credit_available' => $credit, 'credit_not_applied_because' => $creditReason] : [])], ['outstanding' => $before->toString()]);
-
-            if ($invoice->project_id !== null) {
-                $this->revalidation->revalidate($context, $invoice->project_id, "FIN.ReceivableWrittenOff:{$invoice->public_id}");
-            }
 
             return new CommandResult('invoice', $invoice->id);
         });

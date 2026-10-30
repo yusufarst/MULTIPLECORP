@@ -97,13 +97,36 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
     const dispute = useCommand<Payload>(() => `/keuangan/invoice/${id}/sengketa`, 'post');
     const writeOff = useCommand<Payload>(() => `/keuangan/invoice/${id}/hapuskan`, 'post');
     const recover = useCommand<Payload>(() => `/keuangan/invoice/${id}/cabut-penghapusan`, 'post');
-    const held = hold !== null && !hold.lapsed;
+    const [entered, setEntered] = useState<string | null>(null);
+    const held = hold !== null;
     const standing = writeoffs.filter((row) => Number(row.standing) > 0);
-    const fresh = () => { setDate({ date: today, chosen: false }); setReason(''); setAmount(''); };
-    const openCorrection = () => { correct.clear(); fresh(); setDue(billing.current?.due_date ?? null); setCited(''); setCorrecting(true); };
-    const openHold = () => { dispute.clear(); fresh(); setHolding(true); };
-    const openWrite = () => { writeOff.clear(); fresh(); setCreditReason(''); setWriting(true); };
-    const openRecover = (recovery: Recovery) => { recover.clear(); fresh(); setAmount(recovery.amount); setWriteoff(standing[0]?.handle ?? ''); setRecovering(recovery); };
+    // Reopening a dialog keeps what was entered (IP-08; IP-09); another dialog, or a committed command, starts anew.
+    const enter = (dialog: string, start: () => void) => {
+        if (entered !== dialog) {
+            setDate({ date: today, chosen: false });
+            setReason('');
+            setAmount('');
+            start();
+            setEntered(dialog);
+        }
+    };
+    const openCorrection = () => {
+        correct.clear();
+        enter('correct', () => {
+            const billedAt = billing.current?.billed_at ?? today;
+            setDate({ date: billedAt, chosen: billedAt !== today });
+            setDue(billing.current?.due_date ?? null);
+            setCited('');
+        });
+        setCorrecting(true);
+    };
+    const openHold = () => { dispute.clear(); enter(held ? 'clear' : 'hold', () => undefined); setHolding(true); };
+    const openWrite = () => { writeOff.clear(); enter('write', () => { setCreditReason(''); }); setWriting(true); };
+    const openRecover = (recovery: Recovery) => {
+        recover.clear();
+        enter(`recover:${recovery.id}`, () => { setAmount(recovery.amount); setWriteoff(standing[0]?.handle ?? ''); });
+        setRecovering(recovery);
+    };
     const bucketLabel = billing.bucket === null ? null : t(`receivables.bucket.${billing.bucket}` as TranslationKey);
     const menu: MenuAction[] = [
         // PG-046 is TASK-051's: the link appears with its page (J-FIN-03).
@@ -216,7 +239,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
                     confirmLabel={t('receivables.action.correct')}
                     pending={correct.pending}
                     answer={correct.answer}
-                    onConfirm={() => { correct.submit({ tanggal: date.date, tanggal_otomatis: !date.chosen, jatuh_tempo: due ?? '', bukti: cited, alasan: reason }, () => { setCorrecting(false); }); }}
+                    onConfirm={() => { correct.submit({ tanggal: date.date, tanggal_otomatis: !date.chosen, jatuh_tempo: due ?? '', bukti: cited, alasan: reason }, () => { setCorrecting(false); setEntered(null); }); }}
                 />
                 <ConfirmCommand
                     open={holding}
@@ -227,7 +250,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
                     confirmLabel={t(held ? 'receivables.action.clear' : 'receivables.action.hold')}
                     pending={dispute.pending}
                     answer={dispute.answer}
-                    onConfirm={() => { dispute.submit({ aksi: held ? 'CABUT' : 'TANDAI', alasan: reason }, () => { setHolding(false); }); }}
+                    onConfirm={() => { dispute.submit({ aksi: held ? 'CABUT' : 'TANDAI', alasan: reason }, () => { setHolding(false); setEntered(null); }); }}
                 />
                 <ConfirmCommand
                     open={writing}
@@ -257,7 +280,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
                     destructive
                     pending={writeOff.pending}
                     answer={writeOff.answer}
-                    onConfirm={() => { writeOff.submit({ jumlah: amount, alasan: reason, ...(creditReason.trim() === '' ? {} : { alasan_kredit: creditReason }), tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setWriting(false); }); }}
+                    onConfirm={() => { writeOff.submit({ jumlah: amount, alasan: reason, ...(creditReason.trim() === '' ? {} : { alasan_kredit: creditReason }), tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setWriting(false); setEntered(null); }); }}
                 />
                 <ConfirmCommand
                     open={recovering !== null}
@@ -284,7 +307,7 @@ export function useInvoiceReceivable({ id, outstanding, billing, hold, inherited
                     confirmLabel={t('receivables.action.supersede')}
                     pending={recover.pending}
                     answer={recover.answer}
-                    onConfirm={() => { recover.submit({ penghapusan: writeoff, pembayaran: recovering?.id ?? '', jumlah: amount, alasan: reason, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setRecovering(null); }); }}
+                    onConfirm={() => { recover.submit({ penghapusan: writeoff, pembayaran: recovering?.id ?? '', jumlah: amount, alasan: reason, tanggal: date.date, tanggal_otomatis: !date.chosen }, () => { setRecovering(null); setEntered(null); }); }}
                 />
             </>
         ),

@@ -15,6 +15,7 @@ use App\Modules\FIN\Models\InvoiceBalance;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Services\DemandPosting;
+use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
@@ -54,6 +55,7 @@ final class InvoiceCorrections
         private readonly DocumentSubjects $subjects,
         private readonly CorrectionCases $cases,
         private readonly PrepaymentKuitansi $kuitansi,
+        private readonly Revalidation $revalidation,
     ) {}
 
     /**
@@ -206,6 +208,8 @@ final class InvoiceCorrections
             $linkage = $linkage->link(AuditRelation::Supersedes, 'invoices', is_string($publicId) ? $publicId : '');
         }
 
+        // A correction on a completed project: a material one returns it to ACTIVE (SF-REVAL; M-26).
+        $this->revalidation->revalidate($context, $project->id, "FIN.InvoiceVoided:{$invoice->public_id}");
         $this->records->record($context, 'FIN.InvoiceVoided', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['state' => 'VOIDED', 'basis' => $input->basis, 'dispositions' => self::named($input)], ['state' => 'ISSUED', 'sales_value' => $sales], $linkage);
 
@@ -286,6 +290,7 @@ final class InvoiceCorrections
         }
 
         $this->kuitansi->reconcile($context, $invoice->id, 'invoices.unlink.corrected');
+        $this->revalidation->revalidate($context, $project->id, "FIN.InvoiceRevisedDown:{$invoice->public_id}");
         $this->records->record($context, 'FIN.InvoiceRevisedDown', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['sales_value' => $sales, 'output_tax_value' => $tax, 'basis' => $input->basis, 'dispositions' => self::named($input)], ['sales_value' => Row::text($balance, 'sales_value'), 'output_tax_value' => Row::text($balance, 'output_tax_value')]);
 
@@ -491,6 +496,8 @@ final class InvoiceCorrections
             }
         }
 
+        $rerecorded = Money::zero();
+
         foreach ($input->writeoffs as $id => $action) {
             $amount = Money::of($current['writeoffs'][$id]['amount']);
             self::add($old, 'written_off_amount', $amount->negated());
@@ -499,15 +506,21 @@ final class InvoiceCorrections
             GuardUpdate::apply($context->connection, 'money_fact_balances', [['key' => ['receivable_writeoff_id' => $id], 'deltas' => ['contra_amount' => $amount->toString()]]]);
 
             if ($action === InvoiceCorrection::RERECORD) {
-                $target = $replacement ?? $invoice->id;
-                $written = DB::table('receivable_writeoffs')->insertGetId(['company_id' => $invoice->company_id, 'invoice_id' => $target, 'amount' => $amount->toString(), 'reason' => $reason,
-                    'outstanding_before' => $amount->toString(), 'outstanding_after' => '0.00', 'decided_by' => $actor, 'business_date' => $input->businessDate, 'command_id' => $commandId, 'command_line_no' => $line, 'recorded_at' => $now, 'recorded_by' => $actor]);
-                GuardUpdate::bear($context->connection, 'money_fact_balances', ['receivable_writeoff_id' => $written], ['company_id' => $invoice->company_id, 'fact_kind' => 'WRITEOFF', 'amount' => $amount->toString(), 'recorded_at' => $now]);
-                if ($target === $invoice->id) {
-                    self::add($old, 'written_off_amount', $amount);
-                } else {
-                    self::add($new, 'written_off_amount', $amount);
-                }
+                $rerecorded = $rerecorded->plus($amount);
+            }
+        }
+
+        // What is re-recorded is one new write-off of the sum: one per invoice and command (DATABASE §4.12).
+        if ($rerecorded->isPositive()) {
+            $target = $replacement ?? $invoice->id;
+            $written = DB::table('receivable_writeoffs')->insertGetId(['company_id' => $invoice->company_id, 'invoice_id' => $target, 'amount' => $rerecorded->toString(), 'reason' => $reason,
+                'outstanding_before' => $rerecorded->toString(), 'outstanding_after' => '0.00', 'decided_by' => $actor, 'business_date' => $input->businessDate, 'command_id' => $commandId, 'command_line_no' => ++$line, 'recorded_at' => $now, 'recorded_by' => $actor]);
+            GuardUpdate::bear($context->connection, 'money_fact_balances', ['receivable_writeoff_id' => $written], ['company_id' => $invoice->company_id, 'fact_kind' => 'WRITEOFF', 'amount' => $rerecorded->toString(), 'recorded_at' => $now]);
+
+            if ($target === $invoice->id) {
+                self::add($old, 'written_off_amount', $rerecorded);
+            } else {
+                self::add($new, 'written_off_amount', $rerecorded);
             }
         }
 

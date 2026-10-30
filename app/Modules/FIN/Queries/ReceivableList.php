@@ -75,8 +75,8 @@ final class ReceivableList
     {
         $found = $this->scoped($viewer, $companies, $tab, $client)
             ->when(is_string($after) && preg_match(self::UUID, $after) === 1, fn (Builder $where) => $where->whereRaw(
-                "(coalesce(b.current_due_date, date '0001-01-01'), b.invoice_id) > (select coalesce(c.current_due_date, date '0001-01-01'), c.invoice_id from invoice_balances c join invoices n on n.id = c.invoice_id where n.public_id = ?)",
-                [strtolower((string) $after)],
+                "(coalesce(b.current_due_date, date '0001-01-01'), b.invoice_id) > (select coalesce(c.current_due_date, date '0001-01-01'), c.invoice_id from invoice_balances c join invoices n on n.id = c.invoice_id where n.public_id = ? and n.company_id = any(?::bigint[]))",
+                [strtolower((string) $after), '{'.implode(',', $companies).'}'],
             ))
             ->leftJoin('projects as p', 'p.id', '=', 'i.project_id')
             ->leftJoin('invoice_billing_acts as a', 'a.id', '=', 'b.current_billing_act_id')

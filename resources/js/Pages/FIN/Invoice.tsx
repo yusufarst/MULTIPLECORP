@@ -73,6 +73,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
     const { t } = useTranslation();
     const id = invoice?.id ?? '';
     const [correcting, setCorrecting] = useState<Correcting | null>(null);
+    const [enteredFor, setEnteredFor] = useState<Correcting | null>(null);
     const [reason, setReason] = useState('');
     const [basis, setBasis] = useState('');
     const [basisRow, setBasisRow] = useState('');
@@ -109,14 +110,20 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
     const writeoffChoices: [string, TranslationKey][] = replacing ? [['SUPERSEDE', 'invoices.correct.supersede'], ['RERECORD', 'invoices.correct.rerecord_writeoff']] : [['SUPERSEDE', 'invoices.correct.supersede']];
     const open = (kind: Correcting) => {
         correct.clear();
-        setReason('');
-        setBasis('');
-        setBasisRow('');
-        setCited('');
-        setValue('');
-        setDescription(invoice.title ?? '');
-        setDate({ date: today, chosen: false });
-        setActions({});
+
+        // Reopening keeps what was entered (IP-08; IP-09); the other correction, or a committed one, starts anew.
+        if (enteredFor !== kind) {
+            setReason('');
+            setBasis('');
+            setBasisRow('');
+            setCited('');
+            setValue('');
+            setDescription(invoice.title ?? '');
+            setDate({ date: today, chosen: false });
+            setActions({});
+            setEnteredFor(kind);
+        }
+
         setCorrecting(kind);
     };
     const chosenAction = (handle: string, choices: [string, TranslationKey][]): string => actions[handle] ?? choices[0]?.[0] ?? '';
@@ -137,7 +144,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                 hapus: reductions.writeoffs.map((row) => ({ id: row.handle, tindakan: chosenAction(row.handle, writeoffChoices) })),
             },
         };
-        correct.submit(body, () => { setCorrecting(null); });
+        correct.submit(body, () => { setCorrecting(null); setEnteredFor(null); });
     };
     const noReductions = reductions.applications.length + reductions.settlements.length + reductions.writeoffs.length === 0;
     const actionsMenu = [
