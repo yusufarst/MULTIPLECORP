@@ -41,9 +41,9 @@ final class InvoiceInputs
     }
 
     /** @return list<int> */
-    public function caseIds(int $companyId): array
+    public function caseIds(int $companyId, ?int $projectId): array
     {
-        return self::ids(DB::table('correction_cases')->where('company_id', $companyId)->pluck('id')->all());
+        return self::ids(DB::table('correction_cases')->where('company_id', $companyId)->where('project_id', $projectId ?? 0)->pluck('id')->all());
     }
 
     /** @return list<int> */

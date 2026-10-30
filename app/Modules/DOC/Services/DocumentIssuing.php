@@ -196,11 +196,12 @@ final class DocumentIssuing
      * @param  ?string  $draftId  the draft version the page showed: another draft of the chain is stale (ST-01)
      * @param  bool  $authorized  whether the calling command already checked its own route's capability — ROUTE-155's `quotation.manage` (PJ-15) —, PG-036's issue checked here otherwise
      * @param  bool  $held  whether the calling command already holds the chain and its anchors, the draft being its own uncommitted row — an invoice's issue and correction (AX-16; AX-22) —, so no set is re-derived from it
+     * @param  bool  $correcting  whether the issue is a correction's replacement, which C-54 leaves allowed
      *
      * @throws Refused BD-06 for a draft already issued, ST-01 for a stale one, the precondition's and the numbering's refusals
      */
     public function issue(CommandContext $context, Document $document, DocumentSubject $subject, DocumentSubjectProvider $provider, ?int $lockVersion, string $businessDate,
-        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null, bool $authorized = false, bool $held = false): DocumentVersion
+        bool $prefilled, ?string $bankHandle, ?string $factsDigest = null, ?string $draftId = null, bool $authorized = false, bool $held = false, bool $correcting = false): DocumentVersion
     {
         if (! $authorized) {
             DocumentAccess::ensureIssue($context->authority(), $document->document_type_code, $document->company_id);
@@ -225,7 +226,8 @@ final class DocumentIssuing
             throw Refused::conflict('ST-01');
         }
 
-        if (DocumentChain::newBusiness($draft, $document->document_type_code)) {
+        // A replacement's first version corrects an existing record: never new business (BR-ACC-03; AX-22).
+        if (! $correcting && DocumentChain::newBusiness($draft, $document->document_type_code)) {
             $this->company->ensureOpenForNewBusiness($context, $document->company_id);
         }
 

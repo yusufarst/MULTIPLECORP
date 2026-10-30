@@ -141,7 +141,7 @@ Route::post('/gudang/reservasi/{id}/kurangi', [ReservationsController::class, 'r
 // TASK-049 — the invoice (WF-FIN-01; WF-FIN-08; AX-16; AX-22; AX-31): PG-041 and PG-043 to `finance.view`, PG-042 and "Simpan Draf" to `invoice.issue` — with `finance.view`, checked by
 // its command —, "Terbitkan Invoice" `invoice.issue`, the corrections `invoice.correct` (ADM+), the Kuitansi `documents.issue` and its link `payment.record`, each with its `command_id`.
 Route::get('/keuangan/invoice', [InvoicesController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.invoices');
-Route::get('/keuangan/invoice/baru', [InvoicesController::class, 'create'])->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.create');
+Route::get('/keuangan/invoice/baru', [InvoicesController::class, 'create'])->middleware(['auth', 'capability:invoice.issue', 'capability:finance.view'])->name('fin.invoices.create');
 Route::get('/keuangan/invoice/{id}', [InvoicesController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:finance.view'])->name('fin.invoices.show');
 Route::post('/keuangan/invoice', [InvoicesController::class, 'save'])->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.save');
 Route::post('/keuangan/invoice/{id}/terbitkan', [InvoicesController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.issue');

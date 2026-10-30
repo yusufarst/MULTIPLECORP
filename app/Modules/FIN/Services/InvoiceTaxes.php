@@ -64,7 +64,8 @@ final class InvoiceTaxes
                 coalesce(sum((select sum(t.amount) from invoice_tax_components t join tax_types y on y.id = t.tax_type_id where t.invoice_version_id = v.id and y.code = ?)), 0) as tax
             from invoices i join invoice_versions v on v.id = i.current_version_id
             where i.project_id = ? and i.state = 'ISSUED' and i.origin = 'LIVE' and (?::bigint is null or i.id <> ?::bigint)
-            SQL, [$code, $projectId, $exceptInvoiceId, $exceptInvoiceId]);
+                and i.id is distinct from (select r.replaces_invoice_id from invoices r where r.id = ?::bigint)
+            SQL, [$code, $projectId, $exceptInvoiceId, $exceptInvoiceId, $exceptInvoiceId]);
 
         return InvoiceValues::terminTax(Row::text($pinned, 'value'), Row::text($pinned, 'tax'), is_object($invoiced) ? Row::text($invoiced, 'value') : '0.00', is_object($invoiced) ? Row::text($invoiced, 'tax') : '0.00', $sales);
     }

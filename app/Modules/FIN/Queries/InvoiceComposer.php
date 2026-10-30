@@ -50,6 +50,7 @@ final class InvoiceComposer
         $client = InvoiceRecords::clientSnapshot($project->id);
         $recipient = ['name' => $client['organization'] ?? '', 'lines' => array_values(array_filter([$client['unit'] ?? null, ($client['contact'] ?? null) === null ? null : 'u.p. '.$client['contact'], $client['address'] ?? null, $client['city'] ?? null], fn (?string $line): bool => $line !== null && $line !== ''))];
         $facts = new DocumentFacts(recipient: $recipient, references: [['label' => 'No. Proyek', 'value' => $header === null ? '' : Row::text($header, 'project_number')]], subject: $header === null ? null : Row::text($header, 'title'));
+        $draftPayload = $draft === null || $draft->state !== 'DRAFT' ? null : $this->draft($draft);
         $paper = DocumentPaper::compose(InvoiceSubjects::INVOICE, 'STANDARD', $facts, $identity, null, $today, null, true, $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
 
         return [
@@ -66,16 +67,16 @@ final class InvoiceComposer
             ], $lines)),
             'confirmed' => $commercial['confirmed'],
             'remaining' => InvoiceValues::remaining($commercial['confirmed'], $commercial['invoiced']),
-            'taxes' => array_map(fn (array $rule): array => ['code' => $rule['code'], 'rate' => $rule['rate_percent'], 'numerator' => $rule['numerator'], 'denominator' => $rule['denominator'], 'rounding' => $rule['rounding'], 'evidence_required' => $rule['evidence_required']], $this->outputTaxes->inForce($project->companyId, $today)),
+            'taxes' => array_map(fn (array $rule): array => ['code' => $rule['code'], 'rate' => $rule['rate_percent'], 'numerator' => $rule['numerator'], 'denominator' => $rule['denominator'], 'rounding' => $rule['rounding'], 'evidence_required' => $rule['evidence_required']], $this->outputTaxes->inForce($project->companyId, $draftPayload['business_date'] ?? $today)),
             'paper' => $paper,
-            'draft' => $draft === null || $draft->state !== 'DRAFT' ? null : $this->draft($draft),
+            'draft' => $draftPayload,
             'issued' => $draft === null || $draft->state === 'DRAFT' ? null : ['id' => $draft->public_id, 'number' => InvoiceSubjects::number($draft->id)],
             'today' => $today,
             'can' => ['issue' => $viewer->allows('invoice.issue', $project->companyId)],
         ];
     }
 
-    /** @return array<string, mixed> */
+    /** @return array{id: string, lock_version: int, kind: string, business_date: string, sales: string, tax: string, lines: list<array<string, mixed>>, taxes: array<mixed>, facts: string} */
     private function draft(Invoice $invoice): array
     {
         $version = DB::table('invoice_versions')->where('id', $invoice->current_version_id)->first(['kind', 'business_date', 'sales_value', 'output_tax_value']);

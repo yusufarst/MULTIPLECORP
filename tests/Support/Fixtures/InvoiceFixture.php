@@ -49,6 +49,10 @@ final class InvoiceFixture
             DocumentTypeFactory::ensure($layout);
         }
 
+        if ($request->boolean('tax')) {
+            InvoiceWorld::outputTax($company->id, '11.000000', "{$year}-01-01");
+        }
+
         $client = Projects::client();
         $client['organization']->forceFill(['name' => 'SMA Uji '.$company->code])->save();
         $service = Projects::product('SERVICE', '250000.00');

@@ -58,8 +58,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
     const [date, setDate] = useState<BusinessDate>({ date: draft?.business_date ?? today, chosen: draft !== null && draft.business_date !== today });
     const [quantities, setQuantities] = useState<Record<string, string>>(() => Object.fromEntries((draft?.lines ?? []).filter((line) => line.handle !== null && line.quantity !== null).map((line) => [line.handle ?? '', line.quantity ?? ''])));
     const [values, setValues] = useState<ValueLine[]>(() => (draft?.kind === 'VALUE_ONLY' ? draft.lines.map((line) => ({ description: line.description, value: line.value })) : [{ description: '', value: '' }]));
-    const [stated, setStated] = useState<Record<string, string>>(draft?.taxes ?? {});
-    const [taxTouched, setTaxTouched] = useState(false);
+    const [stated, setStated] = useState<Record<string, string>>({});
     const [layout, setLayout] = useState<'DOC-06' | 'DOC-04'>('DOC-06');
     const [dirty, setDirty] = useState(false);
     const [confirming, setConfirming] = useState(false);
@@ -98,7 +97,9 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
     const sales = kind === 'ITEMIZED'
         ? add('0', ...chosen.map((line) => round(multiply(quantities[line.handle] ?? '0', line.price), 2)))
         : add('0', ...values.map((line) => (line.value === '' ? '0' : line.value)));
-    const taxRows = taxes.map((tax) => ({ code: tax.code, rate: tax.rate, amount: stated[tax.code] !== undefined && taxTouched ? (stated[tax.code] ?? '') : proposedTax(sales, tax) }));
+    // What the actor typed, else what the draft stores for this same value (DATABASE §12), else the proposal.
+    const saved = draft !== null && round(sales, 2) === round(draft.sales, 2) ? draft.taxes : {};
+    const taxRows = taxes.map((tax) => ({ code: tax.code, rate: tax.rate, amount: stated[tax.code] ?? saved[tax.code] ?? proposedTax(sales, tax) }));
     const live = useMemo<Paper>(() => liveInvoice(paper, kind === 'ITEMIZED'
         ? chosen.map((line) => ({ description: line.description, quantity: quantities[line.handle] ?? null, unit: line.unit, price: line.price, value: round(multiply(quantities[line.handle] ?? '0', line.price), 2) }))
         : values.filter((line) => line.description !== '' || line.value !== '').map((line) => ({ description: line.description, quantity: null, unit: null, price: null, value: line.value === '' ? '0' : line.value })),
@@ -107,7 +108,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
         jenis: kind,
         tanggal: date.date,
         baris: kind === 'ITEMIZED' ? chosen.map((line) => ({ baris: line.handle, jumlah: quantities[line.handle] ?? '' })) : values.map((line) => ({ keterangan: line.description, nilai: line.value })),
-        pajak: taxTouched ? Object.fromEntries(taxRows.map((tax) => [tax.code, tax.amount])) : {},
+        pajak: Object.fromEntries(taxRows.filter((tax) => stated[tax.code] !== undefined || saved[tax.code] !== undefined).map((tax) => [tax.code, tax.amount])),
     };
     const submit = () => {
         save.submit({ ...(draft === null ? { proyek: project?.id ?? '' } : { invoice: draft.id, lock_version: draft.lock_version }), isi: content }, () => { setDirty(false); });
@@ -190,7 +191,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
                 {save.errors['isi.baris'] !== undefined && <p className="text-body text-danger">{save.errors['isi.baris']}</p>}
                 {taxes.length === 0 ? <p className="text-body text-text-secondary">{t('invoices.composer.no_tax')}</p> : taxRows.map((tax, index) => (
                     <FormField key={tax.code} label={t('invoices.composer.tax', { kode: tax.code })} help={taxes[index]?.evidence_required === true ? t('invoices.composer.tax_evidence') : t('invoices.composer.tax_help')}>
-                        {(control) => <DecimalInput {...control} value={tax.amount} scale={2} kind="money" onValueChange={(value) => { setTaxTouched(true); setStated(Object.fromEntries(taxRows.map((each) => [each.code, each.code === tax.code ? (value ?? '') : each.amount]))); touch(); }} />}
+                        {(control) => <DecimalInput {...control} value={tax.amount} scale={2} kind="money" onValueChange={(value) => { setStated({ ...stated, [tax.code]: value ?? '' }); touch(); }} />}
                     </FormField>
                 ))}
             </FormSection>

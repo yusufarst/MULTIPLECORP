@@ -8,6 +8,9 @@ namespace App\Modules\FIN\Data;
  */
 final class InvoiceCorrection
 {
+    /** The case kinds a RETURN basis cites: goods that came back (CM-12). */
+    public const RETURN_CASES = ['SALES_RETURN', 'DROPSHIP_RETURN'];
+
     /** The evidence types an entry error may rest on (DIR-092 (2)). */
     public const EVIDENCE = ['CLIENT_SPK', 'CLIENT_ORDER', 'SIPLAH_ORDER', 'TAX_INVOICE', 'OTHER'];
 

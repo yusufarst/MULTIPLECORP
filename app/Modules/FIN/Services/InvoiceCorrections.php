@@ -17,6 +17,7 @@ use App\Modules\PRJ\Services\DemandPosting;
 use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
+use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
@@ -24,6 +25,7 @@ use App\Support\GuardUpdate;
 use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -60,7 +62,7 @@ final class InvoiceCorrections
      */
     public function locks(Invoice $invoice, InvoiceCorrection $input): LockSet
     {
-        $set = (new LockSet)->add('invoices', ['id' => $invoice->id])->add('companies', ['id' => $invoice->company_id]);
+        $set = (new LockSet)->add('invoices', ['id' => $invoice->id]);
 
         if ($invoice->project_id !== null) {
             $set = $set->add('projects', ['id' => $invoice->project_id])->add('project_commercial_balances', ['project_id' => $invoice->project_id]);
@@ -81,7 +83,7 @@ final class InvoiceCorrections
         }
 
         foreach ($reductions['settlements'] as $id => $row) {
-            $set = $set->add('application_source_balances', ['payment_id' => $row['payment_id']])->add('money_fact_balances', ['deduction_settlement_id' => $id]);
+            $set = $set->add('application_source_balances', ['payment_id' => $row['payment_id']])->add('money_fact_balances', ['deduction_settlement_id' => $id])->add('evidence_documents', ['id' => $row['evidence_id']]);
         }
 
         foreach (array_keys($reductions['writeoffs']) as $id) {
@@ -105,7 +107,7 @@ final class InvoiceCorrections
     /**
      * The invoice's current reductions, by id: ACTIVE applications and settlements and uncontra'd write-offs.
      *
-     * @return array{applications: array<int, array{amount: string, payment_id: ?int, credit_id: ?int}>, settlements: array<int, array{amount: string, payment_id: int, class: string, direction: ?string}>, writeoffs: array<int, array{amount: string}>}
+     * @return array{applications: array<int, array{amount: string, payment_id: ?int, credit_id: ?int}>, settlements: array<int, array{amount: string, payment_id: int, class: string, direction: ?string, evidence_id: int}>, writeoffs: array<int, array{amount: string}>}
      */
     public static function reductions(int $invoiceId): array
     {
@@ -115,8 +117,8 @@ final class InvoiceCorrections
             $found['applications'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'amount'), 'payment_id' => self::id(Row::nullable($row, 'payment_id')), 'credit_id' => self::id(Row::nullable($row, 'opening_customer_credit_id'))];
         }
 
-        foreach (DB::table('deduction_settlements')->where('invoice_id', $invoiceId)->where('state', 'ACTIVE')->orderBy('id')->get(['id', 'amount', 'payment_id', 'settlement_class', 'tax_direction']) as $row) {
-            $found['settlements'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'amount'), 'payment_id' => (int) Row::text($row, 'payment_id'), 'class' => Row::text($row, 'settlement_class'), 'direction' => Row::nullable($row, 'tax_direction')];
+        foreach (DB::table('deduction_settlements')->where('invoice_id', $invoiceId)->where('state', 'ACTIVE')->orderBy('id')->get(['id', 'amount', 'payment_id', 'settlement_class', 'tax_direction', 'evidence_document_id']) as $row) {
+            $found['settlements'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'amount'), 'payment_id' => (int) Row::text($row, 'payment_id'), 'class' => Row::text($row, 'settlement_class'), 'direction' => Row::nullable($row, 'tax_direction'), 'evidence_id' => (int) Row::text($row, 'evidence_document_id')];
         }
 
         foreach (DB::table('receivable_writeoffs as w')->where('w.invoice_id', $invoiceId)->leftJoin('money_fact_balances as m', 'm.receivable_writeoff_id', '=', 'w.id')
@@ -140,8 +142,8 @@ final class InvoiceCorrections
         $context->connection->statement('set constraints invoices_c17_inherits_current_act, invoice_billing_acts_c17_inherits_current_act, invoices_c56_replaced_with_replacement, payment_applications_c44_superseded_by_successor deferred');
         $billed = Row::nullable($balance, 'current_billing_act_id') !== null;
         $replacing = $input->content !== null;
-        self::voidBasis($input, $billed, $replacing);
-        $this->linkEvidence($context, $invoice, $input);
+        self::voidBasis($invoice, $input, $billed, $replacing);
+        self::ensureEvidence($invoice, $input);
         $sales = Row::text($balance, 'sales_value');
         $now = $context->now();
         $replacement = null;
@@ -220,8 +222,8 @@ final class InvoiceCorrections
             throw Refused::rejected('CM-23', ['reason' => 'no_content']);
         }
 
-        self::reviseBasis($input);
-        $this->linkEvidence($context, $invoice, $input);
+        self::reviseBasis($invoice, $input);
+        self::ensureEvidence($invoice, $input);
         $now = $context->now();
         $previous = $invoice->current_version_id ?? 0;
         $client = DB::table('invoice_versions')->where('id', $previous)->value('client_snapshot');
@@ -286,13 +288,14 @@ final class InvoiceCorrections
     }
 
     /**
-     * The checks every correction takes under its locks: the invoice as the page read it, the payload naming exactly the current
+     * The checks every correction takes under its locks: its date (ST-08; C-50), the invoice as the page read it, the payload naming exactly the current
      * reductions (ST-07), a standing write-off the Owner's (OD-07).
      *
      * @return array{0: ProjectRef, 1: object}
      */
     private function admitted(CommandContext $context, Invoice $invoice, int $lockVersion, InvoiceCorrection $input): array
     {
+        BusinessDateRule::check($input->businessDate, $input->prefilled);
         $fresh = DB::table('invoices')->where('id', $invoice->id)->first(['state', 'lock_version', 'origin', 'project_id']);
 
         if ($fresh === null || Row::text($fresh, 'state') === 'VOIDED') {
@@ -327,7 +330,7 @@ final class InvoiceCorrections
     }
 
     /** A void's basis: an unbilled entry error needs none; a billed void cites what ended the value, or names the replacement (CM-24; C-56). */
-    private static function voidBasis(InvoiceCorrection $input, bool $billed, bool $replacing): void
+    private static function voidBasis(Invoice $invoice, InvoiceCorrection $input, bool $billed, bool $replacing): void
     {
         if ($input->basis === 'UNBILLED_ENTRY_ERROR' && $billed) {
             throw Refused::rejected('C-56', ['reason' => 'billed']);
@@ -341,23 +344,24 @@ final class InvoiceCorrections
             throw Refused::rejected('C-17', ['reason' => 'replacement_without_entry_error']);
         }
 
-        self::basisRow($input);
+        self::basisRow($invoice, $input);
     }
 
     /** A revision's basis (CM-23; CM-24). */
-    private static function reviseBasis(InvoiceCorrection $input): void
+    private static function reviseBasis(Invoice $invoice, InvoiceCorrection $input): void
     {
         if (! in_array($input->basis, ['ENTRY_ERROR', 'RETURN', 'RECONFIRMATION', 'CANCELLATION'], true)) {
             throw Refused::rejected('C-56', ['reason' => 'basis']);
         }
 
-        self::basisRow($input);
+        self::basisRow($invoice, $input);
     }
 
-    private static function basisRow(InvoiceCorrection $input): void
+    /** The row the basis cites: for a return, a return's case of the invoice's own project (CM-12; CM-24). */
+    private static function basisRow(Invoice $invoice, InvoiceCorrection $input): void
     {
         $missing = match ($input->basis) {
-            'RETURN' => $input->caseId === null,
+            'RETURN' => $input->caseId === null || ! DB::table('correction_cases')->where('id', $input->caseId)->where('project_id', $invoice->project_id)->whereIn('case_kind', InvoiceCorrection::RETURN_CASES)->exists(),
             'RECONFIRMATION' => $input->confirmationId === null,
             'CANCELLATION' => ($input->cancellationId === null) === ($input->transitionId === null),
             default => false,
@@ -368,24 +372,16 @@ final class InvoiceCorrections
         }
     }
 
-    /** DIR-092 (2): an entry error stands on evidence linked to the invoice's records — here its project, as `evidence_links` holds no invoice target. */
-    private function linkEvidence(CommandContext $context, Invoice $invoice, InvoiceCorrection $input): void
+    /** DIR-092 (2): an entry error stands on evidence already linked to the invoice's records — its project, or a confirmation of it, as `evidence_links` holds no invoice target; the check reads, it links nothing. */
+    private static function ensureEvidence(Invoice $invoice, InvoiceCorrection $input): void
     {
         if (! in_array($input->basis, ['ENTRY_ERROR', 'ENTRY_ERROR_REPLACED'], true)) {
             return;
         }
 
-        if ($input->evidenceId === null) {
+        if ($input->evidenceId === null || ! DB::table('evidence_links')->where('evidence_document_id', $input->evidenceId)->whereNull('unlinked_at')
+            ->where(fn (Builder $link) => $link->where('project_id', $invoice->project_id)->orWhereIn('commercial_confirmation_id', DB::table('commercial_confirmations')->where('project_id', $invoice->project_id)->select('id')))->exists()) {
             throw Refused::rejected('CM-24', ['reason' => 'evidence']);
-        }
-
-        $linked = DB::table('evidence_links')->where('evidence_document_id', $input->evidenceId)->where('project_id', $invoice->project_id)->whereNull('unlinked_at')->exists();
-
-        if (! $linked) {
-            DB::table('evidence_links')->insert([
-                'evidence_document_id' => $input->evidenceId, 'evidence_scope' => 'COMPANY', 'company_id' => $invoice->company_id, 'role' => 'SUPPORTING', 'project_id' => $invoice->project_id,
-                'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId,
-            ]);
         }
     }
 
@@ -585,7 +581,7 @@ final class InvoiceCorrections
         $provider = $this->subjects->of($subject);
         $document = $this->issuing->openDraft($context, $subject, null);
 
-        return $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true, held: true)->id;
+        return $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true, held: true, correcting: true)->id;
     }
 
     /** @return array<string, array<string, string>> */

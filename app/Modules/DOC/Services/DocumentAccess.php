@@ -49,7 +49,8 @@ final class DocumentAccess
     public static function mayIssue(Authority $viewer, string $typeCode, int $companyId): bool
     {
         return $viewer->allows(self::ISSUE, $companyId) && self::mayViewContent($viewer, $typeCode, $companyId)
-            && ($typeCode !== 'DOC-01' || $viewer->allows('quotation.manage', $companyId));
+            && ($typeCode !== 'DOC-01' || $viewer->allows('quotation.manage', $companyId))
+            && (! in_array($typeCode, self::INVOICE_LAYOUTS, true) || $viewer->allows('invoice.issue', $companyId));
     }
 
     public static function mayCorrect(Authority $viewer, string $typeCode, int $companyId): bool

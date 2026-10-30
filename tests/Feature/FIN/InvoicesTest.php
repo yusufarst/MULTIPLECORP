@@ -7,6 +7,7 @@ use App\Support\BusinessDate;
 use App\Support\Guards\Families;
 use App\Support\Guards\Reconciler;
 use App\Support\RowHandle;
+use Carbon\CarbonImmutable;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Database\QueryException;
@@ -79,7 +80,7 @@ function invoiceContent(string $value): array
 
 function invoiceEvidence(object $test): string
 {
-    return EvidenceDocumentFactory::new()->createOne(['company_id' => $test->world->company->id, 'evidence_type' => 'OTHER'])->public_id;
+    return InvoiceWorld::linkedEvidence($test->world->company->id, $test->project->id)->public_id;
 }
 
 function invoiceDifferences(): array
@@ -228,7 +229,7 @@ it('voids a billed invoice only with every reduction disposed: Rp400,000 release
     InvoiceWorld::bill($id, BusinessDate::today(), BusinessDate::today());
     $payment = InvoiceWorld::payment($id, '400000');
     $application = InvoiceWorld::apply($id, $payment, '400000');
-    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id]);
+    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id, 'case_kind' => 'SALES_RETURN']);
     $void = ['aksi' => 'BATAL', 'dasar' => 'RETURN', 'kasus' => RowHandle::of('correction_cases', $case->id)];
 
     // The reduction not named: CONFLICT with the current list, nothing moved.
@@ -337,7 +338,7 @@ it('voids an unbilled invoice with its reason, no evidence asked; the same void 
 
 it('cites a return\'s case only when the correction runs: nothing in the invoice changes when the goods come back until it does (BR-XD-01; CM-12; architecture challenge 4a; criterion 7)', function () {
     $id = $this->world->issued($this->project, '1000000');
-    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id]);
+    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id, 'case_kind' => 'SALES_RETURN']);
 
     expect(invoiceBalance($id)->gross_value)->toBe('1000000.00')->and(DB::table('invoice_versions')->where('invoice_id', $id)->count())->toBe(1);
 
@@ -350,7 +351,7 @@ it('cites a return\'s case only when the correction runs: nothing in the invoice
 it('leaves a settlement the replacement cannot carry as a residual on the case, blocking its closure; its evidence kept (L-06; CM-24; C-22; C-46; criterion 8)', function () {
     $code = $this->world->tax();
     $type = (int) DB::table('tax_types')->where('code', $code)->value('id');
-    $project = $this->world->project(['SERVICE'], '40');
+    $this->project = $project = $this->world->project(['SERVICE'], '40');
     $id = $this->world->issued($project, '1000000');
     InvoiceWorld::bill($id, BusinessDate::today(), BusinessDate::today());
     $payment = InvoiceWorld::payment($id, '500000', '110000');
@@ -398,7 +399,7 @@ it('refuses an Admin\'s correction over a standing write-off; the Owner supersed
     InvoiceWorld::bill($id, BusinessDate::today(), BusinessDate::today());
     $owner = Authorization::owner();
     $writeoff = InvoiceWorld::writeOff($id, '100000', $owner->id);
-    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id]);
+    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->world->company->id, 'project_id' => $this->project->id, 'case_kind' => 'SALES_RETURN']);
     $body = ['aksi' => 'BATAL', 'dasar' => 'RETURN', 'kasus' => RowHandle::of('correction_cases', $case->id), 'disposisi' => ['hapus' => [['id' => RowHandle::of('receivable_writeoffs', $writeoff), 'tindakan' => 'SUPERSEDE']]]];
 
     correctInvoice($this, $id, $body);
@@ -446,3 +447,83 @@ it('hands the correcting command\'s issued layouts to the render job: the replac
     Queue::assertPushed(RenderDocument::class, 2);
 });
 
+it('refuses an entry error on evidence not linked to the invoice\'s records, and links nothing itself (DIR-092 (2); CM-24; criterion 13)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    $unlinked = EvidenceDocumentFactory::new()->createOne(['company_id' => $this->world->company->id, 'evidence_type' => 'OTHER']);
+    $elsewhere = InvoiceWorld::linkedEvidence($this->world->company->id, $this->world->project()->id);
+
+    foreach ([$unlinked, $elsewhere] as $evidence) {
+        correctInvoice($this, $id, ['aksi' => 'REVISI', 'dasar' => 'ENTRY_ERROR', 'bukti' => $evidence->public_id, 'isi' => invoiceContent('900000')]);
+        expect(invoiceAnswer()['code'])->toBe('CM-24')->and(DB::table('evidence_links')->where('evidence_document_id', $evidence->id)->where('project_id', $this->project->id)->exists())->toBeFalse();
+    }
+
+    $this->actingAs($this->actor)->get('/keuangan/invoice/'.InvoiceWorld::publicId($id))->assertInertia(fn (AssertableInertia $page) => $page->where('evidence', fn ($rows) => ! collect($rows)->pluck('id')->contains($unlinked->public_id) && ! collect($rows)->pluck('id')->contains($elsewhere->public_id)));
+    $linked = invoiceEvidence($this);
+    $this->actingAs($this->actor)->get('/keuangan/invoice/'.InvoiceWorld::publicId($id))->assertInertia(fn (AssertableInertia $page) => $page->where('evidence.0.id', $linked));
+    correctInvoice($this, $id, ['aksi' => 'REVISI', 'dasar' => 'ENTRY_ERROR', 'bukti' => $linked, 'isi' => invoiceContent('900000')]);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED');
+});
+
+it('cites only a return\'s case of the invoice\'s own project for a return (CM-12; CM-24; criterion 6)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    $company = $this->world->company->id;
+    $payment = CorrectionCaseFactory::new()->createOne(['company_id' => $company, 'project_id' => $this->project->id, 'case_kind' => 'PAYMENT_CORRECTION']);
+    $other = CorrectionCaseFactory::new()->createOne(['company_id' => $company, 'project_id' => $this->world->project()->id, 'case_kind' => 'SALES_RETURN']);
+
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'RETURN', 'kasus' => RowHandle::of('correction_cases', $payment->id)]);
+    expect(invoiceAnswer()['code'])->toBe('C-56')->and(DB::table('invoices')->where('id', $id)->value('state'))->toBe('ISSUED');
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'RETURN', 'kasus' => RowHandle::of('correction_cases', $other->id)])->assertSessionHasErrors('dasar');
+    expect(DB::table('invoices')->where('id', $id)->value('state'))->toBe('ISSUED');
+    $this->actingAs($this->actor)->get('/keuangan/invoice/'.InvoiceWorld::publicId($id))->assertInertia(fn (AssertableInertia $page) => $page->has('bases.cases', 0));
+});
+
+it('holds a correction to its date: a future one at its field, a stale prefilled one a CONFLICT, nothing written (C-50; ST-08; AX-22)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'UNBILLED_ENTRY_ERROR', 'tanggal' => '2999-01-01'])->assertSessionHasErrors('tanggal');
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'UNBILLED_ENTRY_ERROR', 'tanggal' => CarbonImmutable::parse(BusinessDate::today())->subDay()->toDateString(), 'tanggal_otomatis' => true]);
+    expect(invoiceAnswer()['code'])->toBe('ST-08')->and(DB::table('invoices')->where('id', $id)->value('state'))->toBe('ISSUED');
+});
+
+it('corrects a billed entry error in a deactivated company, its replacement no new business, while a new issue stays refused (BR-ACC-03; AX-22; C-54)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    InvoiceWorld::bill($id, BusinessDate::today(), '2099-12-31');
+    $draft = $this->world->draft($this->project, '1000');
+    $evidence = invoiceEvidence($this);
+    DB::table('companies')->where('id', $this->world->company->id)->update(['is_active' => false]);
+
+    issueInvoice($this, $draft);
+    expect(invoiceAnswer()['code'])->toBe('C-54');
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'ENTRY_ERROR_REPLACED', 'bukti' => $evidence, 'isi' => invoiceContent('900000')]);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED')->and(DB::table('invoices')->where('replaces_invoice_id', $id)->value('state'))->toBe('ISSUED');
+});
+
+it('absorbs the residual in a replacement of the last termin, the replaced invoice no part of the invoiced sum (BR-FIN-13)', function () {
+    $line = InvoiceWorld::line($this->project);
+    $pin = (array) DB::table('confirmation_line_pins')->where('id', DB::table('project_lines')->where('id', $line)->value('current_pin_id'))->sole();
+    $confirmation = (array) DB::table('commercial_confirmations')->where('id', $pin['commercial_confirmation_id'])->sole();
+    $first = $confirmation['id'];
+    unset($confirmation['id'], $pin['id']);
+    $next = DB::table('commercial_confirmations')->insertGetId([...$confirmation, 'reason' => 'Pajak dikonfirmasi', 'supersedes_confirmation_id' => $first, 'command_id' => (string) Str::uuid()]);
+    $type = $this->world->tax();
+    $newPin = DB::table('confirmation_line_pins')->insertGetId([...$pin, 'commercial_confirmation_id' => $next, 'command_id' => (string) Str::uuid(), 'tax_components' => json_encode([['type' => $type, 'amount' => '275000.01']])]);
+    DB::table('project_lines')->where('id', $line)->update(['current_pin_id' => $newPin]);
+
+    $this->world->issued($this->project, '1000000');
+    $this->world->issued($this->project, '1000000');
+    $last = $this->world->issued($this->project, '500000');
+    $taxOf = fn (int $invoice): string => (string) DB::table('invoice_tax_components as t')->join('invoices as i', 'i.current_version_id', '=', 't.invoice_version_id')->where('i.id', $invoice)->value('t.amount');
+    expect($taxOf($last))->toBe('55000.01');
+
+    correctInvoice($this, $last, ['aksi' => 'BATAL', 'dasar' => 'ENTRY_ERROR_REPLACED', 'bukti' => invoiceEvidence($this), 'isi' => invoiceContent('500000')]);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED')->and($taxOf((int) DB::table('invoices')->where('replaces_invoice_id', $last)->value('id')))->toBe('55000.01');
+});
+
+it('reopens a draft with its stored tax, keeping a stated amount through another save of the same value (DATABASE §12)', function () {
+    $type = $this->world->tax();
+    $body = ['jenis' => 'VALUE_ONLY', 'tanggal' => BusinessDate::today(), 'baris' => [['keterangan' => 'Termin', 'nilai' => '1000000']], 'pajak' => [$type => '109000']];
+    saveInvoice($this, ['isi' => $body]);
+    $invoice = DB::table('invoices')->where('project_id', $this->project->id)->sole();
+
+    $this->actingAs($this->actor)->get("/keuangan/invoice/baru?invoice={$invoice->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where("draft.taxes.{$type}", '109000.00')->where('draft.sales', '1000000.00'));
+});

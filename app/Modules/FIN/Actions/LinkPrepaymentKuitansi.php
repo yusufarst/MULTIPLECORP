@@ -57,6 +57,11 @@ final class LinkPrepaymentKuitansi
                 throw Refused::conflict('ST-02', ['state' => 'VOIDED']);
             }
 
+            // One Kuitansi stands for one set of money: a stale page's second link adds none (CM-26).
+            if (DB::table('prepayment_kuitansi_links')->where('document_id', $document->id)->where('state', 'LINKED')->exists()) {
+                throw Refused::conflict('ST-02', ['state' => 'LINKED']);
+            }
+
             $taken = DB::table('prepayment_kuitansi_links')->where('invoice_id', $invoice->id)->whereIn('payment_id', $paymentIds)->where('state', 'LINKED')->exists();
 
             if ($taken) {

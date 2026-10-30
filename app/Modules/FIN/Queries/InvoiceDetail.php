@@ -4,6 +4,7 @@ namespace App\Modules\FIN\Queries;
 
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Services\DocumentAccess;
+use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Data\InvoicePosition;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceCorrections;
@@ -14,6 +15,7 @@ use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Closure;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -102,8 +104,7 @@ final class InvoiceDetail
             'kuitansi' => self::kuitansi($invoice->id),
             'payments' => $viewer->allows('payment.record', $company) ? self::linkable($invoice->id) : [],
             'bases' => $correct ? self::bases($invoice) : ['cases' => [], 'confirmations' => [], 'cancellations' => [], 'transitions' => []],
-            'evidence' => $correct ? self::evidence($viewer, $company) : [],
-            'lines_available' => $correct && $invoice->project_id !== null ? self::projectLines($invoice->project_id) : [],
+            'evidence' => $correct ? self::evidence($viewer, $company, $invoice->project_id ?? 0) : [],
             'today' => $today,
             'can' => [
                 'correct' => $correct,
@@ -210,31 +211,27 @@ final class InvoiceDetail
         };
 
         return [
-            'cases' => $rows('correction_cases', DB::table('correction_cases')->where('company_id', $invoice->company_id)->where('project_id', $project)->whereIn('state', ['OPEN', 'CLOSED'])->orderByDesc('id')->limit(20)->get(['id', 'case_kind', 'recorded_at']), fn (object $row): string => Row::text($row, 'case_kind').' · '.substr(Row::text($row, 'recorded_at'), 0, 10)),
+            'cases' => $rows('correction_cases', DB::table('correction_cases')->where('company_id', $invoice->company_id)->where('project_id', $project)->whereIn('case_kind', InvoiceCorrection::RETURN_CASES)->whereIn('state', ['OPEN', 'CLOSED'])->orderByDesc('id')->limit(20)->get(['id', 'case_kind', 'recorded_at']), fn (object $row): string => Row::text($row, 'case_kind').' · '.substr(Row::text($row, 'recorded_at'), 0, 10)),
             'confirmations' => $rows('commercial_confirmations', DB::table('commercial_confirmations')->where('project_id', $project)->orderByDesc('id')->limit(20)->get(['id', 'kind', 'business_date']), fn (object $row): string => Row::text($row, 'kind').' · '.Row::text($row, 'business_date')),
             'cancellations' => $rows('line_scope_cancellations', DB::table('line_scope_cancellations as c')->join('project_lines as l', 'l.id', '=', 'c.project_line_id')->where('l.project_id', $project)->orderByDesc('c.id')->limit(20)->get(['c.id', 'c.qty_base', 'c.business_date', 'l.line_no']), fn (object $row): string => '#'.Row::text($row, 'line_no').' · '.Row::text($row, 'qty_base').' · '.Row::text($row, 'business_date')),
             'transitions' => $rows('project_state_transitions', DB::table('project_state_transitions')->where('project_id', $project)->where('transition_kind', 'CANCEL')->orderByDesc('id')->limit(5)->get(['id', 'recorded_at']), fn (object $row): string => substr(Row::text($row, 'recorded_at'), 0, 10)),
         ];
     }
 
-    /** @return list<array{id: string, type: string, issuer: string, reference: ?string, date: string}> The evidence an entry error may rest on (DIR-092 (2); PJ-08). */
-    private static function evidence(Authority $viewer, int $company): array
+    /** @return list<array{id: string, type: string, issuer: string, reference: ?string, date: string}> The evidence linked to the invoice's records an entry error may rest on (DIR-092 (2); PJ-08). */
+    private static function evidence(Authority $viewer, int $company, int $project): array
     {
         $options = [];
 
-        foreach (DB::table('evidence_documents')->where('company_id', $company)->whereIn('evidence_type', InvoiceCorrections::EVIDENCE)->orderByDesc('id')->limit(100)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date']) as $row) {
+        foreach (DB::table('evidence_documents as e')->where('e.company_id', $company)->whereIn('e.evidence_type', InvoiceCorrections::EVIDENCE)
+            ->whereExists(fn (Builder $link) => $link->from('evidence_links as k')->whereColumn('k.evidence_document_id', 'e.id')->whereNull('k.unlinked_at')
+                ->where(fn (Builder $target) => $target->where('k.project_id', $project)->orWhereIn('k.commercial_confirmation_id', DB::table('commercial_confirmations')->where('project_id', $project)->select('id'))))
+            ->orderByDesc('e.id')->limit(100)->get(['public_id', 'evidence_type', 'declared_issuer', 'issuer_reference', 'document_date']) as $row) {
             if (EvidenceTypes::mayView($viewer, Row::text($row, 'evidence_type'), $company)) {
                 $options[] = ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'evidence_type'), 'issuer' => Row::text($row, 'declared_issuer'), 'reference' => Row::nullable($row, 'issuer_reference'), 'date' => Row::text($row, 'document_date')];
             }
         }
 
         return $options;
-    }
-
-    /** @return list<array<string, mixed>> The project's confirmed lines a revision or replacement may take. */
-    private static function projectLines(int $projectId): array
-    {
-        return array_values(array_map(fn (object $line): array => ['handle' => RowHandle::of('project_lines', (int) Row::text($line, 'id')), 'description' => Row::text($line, 'description'), 'quantity' => Row::text($line, 'entered_qty'), 'unit' => Row::text($line, 'code'), 'price' => Row::text($line, 'unit_price')],
-            DB::table('project_lines as l')->where('l.project_id', $projectId)->join('confirmation_line_pins as p', 'p.id', '=', 'l.current_pin_id')->join('units as u', 'u.id', '=', 'p.entered_unit_id')->where('p.qty_base', '>', 0)->orderBy('l.line_no')->get(['l.id', 'p.description', 'p.entered_qty', 'u.code', 'p.unit_price'])->all()));
     }
 }

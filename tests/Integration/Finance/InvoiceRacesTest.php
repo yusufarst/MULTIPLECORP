@@ -11,7 +11,6 @@ use App\Support\Guards\Reconciler;
 use Database\Factories\DOC\DocumentFactory;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\DocumentVersionFactory;
-use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Database\Events\QueryExecuted;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -243,7 +242,7 @@ it('commits a replacement with its inherited act at a real commit, and refuses a
     $act = InvoiceWorld::bill($id, BusinessDate::today(), '2099-12-31');
     $payment = InvoiceWorld::payment($id, '400000');
     $application = InvoiceWorld::apply($id, $payment, '400000');
-    $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $this->world->company->id, 'evidence_type' => 'OTHER']);
+    $evidence = InvoiceWorld::linkedEvidence($this->world->company->id, $this->project->id);
     $invoice = Invoice::query()->findOrFail($id);
     $input = new InvoiceCorrection('ENTRY_ERROR_REPLACED', 'Salah catat nilai', BusinessDate::today(), false, evidenceId: $evidence->id, content: InvoiceWorld::valueOnly('900000'), applications: [$application => InvoiceCorrection::RETARGET]);
 

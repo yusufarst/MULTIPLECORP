@@ -119,3 +119,31 @@ test('lists the branch\'s invoices and finds one by its exact number (ROUTE-041;
     await page.getByRole('button', { name: 'Cari' }).click();
     await expect(page.locator('#konten')).toContainText('Belum ada invoice di cabang ini.');
 });
+
+test('reopens a draft with the tax it stores, stated through a save of the same value, proposed anew for another (DATABASE §12; FS-13)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `invoice-pajak-${String(Date.now())}`, { tax: true });
+
+    await page.goto(`/keuangan/invoice/baru?proyek=${run.project}`);
+    await page.getByLabel(/^Keterangan/).fill('Termin pertama');
+    await page.getByRole('textbox', { name: /^Nilai/ }).fill('1000000');
+    const tax = page.getByRole('textbox', { name: /^Pajak/ });
+    await expect(tax).toHaveValue('Rp110.000');
+    await tax.fill('109000');
+    await page.getByRole('button', { name: 'Simpan Draf' }).click();
+    await expect(page.locator('#konten').getByText('Draf invoice tersimpan.')).toBeVisible();
+
+    await page.reload();
+    await expect(tax).toHaveValue('Rp109.000');
+    await expect(page.getByRole('region', { name: /^Pratinjau Invoice/ })).toContainText('Rp109.000');
+
+    await page.getByLabel(/^Keterangan/).fill('Termin pertama, diperbaiki');
+    await page.getByRole('button', { name: 'Simpan Draf' }).click();
+    await expect(page.locator('#konten').getByText('Draf invoice tersimpan.')).toBeVisible();
+    await page.reload();
+    await expect(tax).toHaveValue('Rp109.000');
+
+    await page.getByRole('textbox', { name: /^Nilai/ }).fill('2000000');
+    await expect(tax).toHaveValue('Rp220.000');
+});
+

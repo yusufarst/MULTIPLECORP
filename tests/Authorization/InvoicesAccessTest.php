@@ -47,6 +47,7 @@ it('refuses the draft and the issue without invoice.issue, and a draft holder wi
     $this->actingAs($reader)->post('/keuangan/invoice/'.InvoiceWorld::publicId($draft).'/terbitkan', ['command_id' => (string) Str::uuid(), 'lock_version' => 0, 'tata' => 'DOC-06', 'tanggal' => BusinessDate::today()])->assertForbidden();
 
     $blind = Authorization::admin([$this->company], ['projects.view', 'invoice.issue']);
+    $this->actingAs($blind)->get("/keuangan/invoice/baru?proyek={$this->project->public_id}")->assertForbidden();
     $this->actingAs($blind)->post('/keuangan/invoice', $this->draftBody)->assertForbidden();
     expect(DB::table('invoices')->where('project_id', $this->project->id)->count())->toBe(2);
 });
@@ -100,4 +101,12 @@ it('offers the journey\'s Invoice link only to a holder of invoice.issue with fi
     $viewer = Authorization::admin([$this->company], ['projects.view', 'finance.view']);
 
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('journey.next.key', 'projects.next.invoice')->where('journey.next.href', null));
+});
+
+it('lets a second layout of an invoice issue only through invoice.issue (PERMISSIONS_MATRIX §4; AZ-01)', function () {
+    $holder = Authorization::admin([$this->company], ['projects.view', 'finance.view', 'documents.issue']);
+
+    $this->actingAs($holder)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-04', 'subjek' => ['invoice_id' => $this->public]])->assertForbidden();
+    $this->actingAs($holder)->get("/keuangan/invoice/{$this->public}")->assertInertia(fn (AssertableInertia $page) => $page->where('can.nota', false)->where('can.kuitansi', true));
+    expect(DB::table('documents')->where('invoice_id', $this->invoice)->where('document_type_code', 'DOC-04')->exists())->toBeFalse();
 });

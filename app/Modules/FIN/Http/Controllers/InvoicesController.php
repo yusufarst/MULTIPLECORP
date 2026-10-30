@@ -158,7 +158,7 @@ final class InvoicesController extends Controller
             reason: trim(self::text($input['alasan'])),
             businessDate: self::text($input['tanggal']),
             prefilled: $request->boolean('tanggal_otomatis'),
-            caseId: self::rowOf('correction_cases', self::nullable($input['kasus'] ?? null), $this->inputs->caseIds($invoice->company_id)),
+            caseId: self::rowOf('correction_cases', self::nullable($input['kasus'] ?? null), $this->inputs->caseIds($invoice->company_id, $invoice->project_id)),
             confirmationId: self::rowOf('commercial_confirmations', self::nullable($input['konfirmasi'] ?? null), $this->inputs->confirmationIds($invoice->project_id)),
             cancellationId: self::rowOf('line_scope_cancellations', self::nullable($input['pembatalan'] ?? null), $this->inputs->cancellationIds($invoice->project_id)),
             transitionId: self::rowOf('project_state_transitions', self::nullable($input['transisi'] ?? null), $this->inputs->transitionIds($invoice->project_id)),

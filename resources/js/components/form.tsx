@@ -143,6 +143,17 @@ export function DecimalInput({
     invalidMessage?: (reason: 'format' | 'scale' | 'sign') => void;
 }) {
     const [text, setText] = useState(value === '' ? '' : display(value, kind, unit));
+    const [seen, setSeen] = useState(value);
+
+    // A value the page changed itself — a proposal following what is entered, a form cleared — shows; the actor's own keystrokes, which already read as it, stay as typed.
+    if (value !== seen) {
+        setSeen(value);
+        const typed = parseDecimal(entered(text, kind, unit), scale);
+
+        if (value === '' ? typed.ok : !typed.ok || plain(typed.value) !== plain(value)) {
+            setText(value === '' ? '' : display(value, kind, unit));
+        }
+    }
 
     return (
         <Input
@@ -167,6 +178,11 @@ export function DecimalInput({
             }}
         />
     );
+}
+
+/** A decimal without its trailing zeros, to compare two spellings of one figure. */
+function plain(decimal: string): string {
+    return decimal.includes('.') ? decimal.replace(/\.?0+$/, '') : decimal;
 }
 
 /** The entered text without the field's own presentation — "Rp" before money, the unit after a quantity — so a

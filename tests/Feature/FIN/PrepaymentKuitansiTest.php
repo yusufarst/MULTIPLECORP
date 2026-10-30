@@ -204,3 +204,17 @@ it('renders DOC-04, DOC-05 and DOC-06 in Indonesian whatever the interface langu
         ->and(MustacheTemplates::render('DOC-06', $rendered['DOC-06']))->toContain('Kepada Yth');
 });
 
+it('answers a second link of a linked Kuitansi CONFLICT from a stale page, its link untouched (CM-26; criterion 11)', function () {
+    $document = kuitansiDraft($this, '400000');
+    kuitansiIssue($this, $document);
+    $first = InvoiceWorld::payment($this->invoice, '400000');
+    InvoiceWorld::apply($this->invoice, $first, '400000');
+    kuitansiLink($this, $document, [$first]);
+    $second = InvoiceWorld::payment($this->invoice, '400000');
+    InvoiceWorld::apply($this->invoice, $second, '400000');
+
+    kuitansiLink($this, $document, [$second]);
+
+    expect(kuitansiAnswer()['kind'])->toBe('CONFLICT')->and(kuitansiAnswer()['code'])->toBe('ST-02')
+        ->and(DB::table('prepayment_kuitansi_links')->where('document_id', $document->id)->pluck('payment_id')->all())->toBe([$first->id]);
+});

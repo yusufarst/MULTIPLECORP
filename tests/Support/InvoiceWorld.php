@@ -4,6 +4,7 @@ namespace Tests\Support;
 
 use App\Modules\DOC\Actions\SaveDocumentDraft as SaveDocument;
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\FIN\Actions\IssueInvoice;
 use App\Modules\FIN\Actions\IssuePrepaymentKuitansi;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
@@ -28,6 +29,7 @@ use App\Support\GuardUpdate;
 use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
 use Closure;
+use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\FIN\DeductionSettlementFactory;
 use Database\Factories\FIN\PaymentFactory;
 use Database\Factories\ORG\TaxRateVersionFactory;
@@ -84,9 +86,15 @@ final class InvoiceWorld
     /** The output tax of 11%, its SALES_INVOICE rule global; its code. */
     public function tax(string $rate = '11.000000', string $from = '2026-01-01'): string
     {
-        $type = TaxTypeFactory::new()->createOne(['category' => 'OUTPUT_TAX']);
+        return self::outputTax(null, $rate, $from);
+    }
+
+    /** The output tax, its rule one company's or global; its code. */
+    public static function outputTax(?int $companyId, string $rate = '11.000000', string $from = '2026-01-01'): string
+    {
+        $type = TaxTypeFactory::new()->createOne(['category' => 'OUTPUT_TAX', 'code' => 'PPN-'.Str::upper(Str::random(8))]);
         TaxRateVersionFactory::new()->createOne(['tax_type_id' => $type->id, 'rate_percent' => $rate, 'base_numerator' => 1, 'base_denominator' => 1, 'effective' => "[{$from},)"]);
-        TaxTreatmentRuleFactory::new()->createOne(['tax_type_id' => $type->id, 'company_id' => null, 'transaction_context' => 'SALES_INVOICE', 'treatment' => 'OUTPUT_EXCLUDED_FROM_REVENUE', 'effective' => "[{$from},)"]);
+        TaxTreatmentRuleFactory::new()->createOne(['tax_type_id' => $type->id, 'company_id' => $companyId, 'transaction_context' => 'SALES_INVOICE', 'treatment' => 'OUTPUT_EXCLUDED_FROM_REVENUE', 'effective' => "[{$from},)"]);
 
         return $type->code;
     }
@@ -237,6 +245,15 @@ final class InvoiceWorld
     public static function hold(Closure $command, string $point): string
     {
         return ReservationWorld::hold($command, $point);
+    }
+
+    /** A registered evidence linked to the project, as ROUTE-* LinkEvidence leaves it; its row. */
+    public static function linkedEvidence(int $companyId, int $projectId): EvidenceDocument
+    {
+        $evidence = EvidenceDocumentFactory::new()->createOne(['company_id' => $companyId, 'evidence_type' => 'OTHER']);
+        DB::table('evidence_links')->insert(['evidence_document_id' => $evidence->id, 'evidence_scope' => 'COMPANY', 'company_id' => $companyId, 'role' => 'SUPPORTING', 'project_id' => $projectId, 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => DB::table('projects')->where('id', $projectId)->value('recorded_by')]);
+
+        return $evidence;
     }
 
     /** A void of an unbilled entry error through its own command, for the race tests; its word. */
