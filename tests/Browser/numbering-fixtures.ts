@@ -37,13 +37,15 @@ export async function ownerSignedIn(page: Page, run: string, locale: 'id' | 'en'
     await page.waitForURL((url) => !url.pathname.startsWith('/masuk'));
 }
 
-/** A company for the run; go-live recorded on the day given, or cleared. */
+/** A company for the run; go-live recorded on the day given, or cleared, for this browser context's own requests. */
 export async function numberingCompany(page: Page, goLive: string | null): Promise<string> {
+    await page.context().setExtraHTTPHeaders({ 'X-Fixture-Go-Live': goLive ?? 'none' });
     const answer = (await (await page.request.post('/__fixtures/penomoran', { data: { company: true, go_live: goLive ?? '' } })).json()) as { company: string };
 
     return answer.company;
 }
 
 export async function clearGoLive(page: Page): Promise<void> {
+    await page.context().setExtraHTTPHeaders({ 'X-Fixture-Go-Live': 'none' });
     await page.request.post('/__fixtures/penomoran', { data: { go_live: '' } });
 }
