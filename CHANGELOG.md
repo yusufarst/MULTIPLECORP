@@ -695,3 +695,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-036 squash-merged by the executor into `main` as `07892b3` (pull request #42); TASK-038 started.
 - Built TASK-038 on its branch `task/TASK-038-reservations`: INV's reservation service in `InventoryPosting` — reserve, reduce, release, consume, the explicit cut of a supply reduction routed across companies, the lifecycle fit —, PRJ's line-guard writer `DemandPosting`, INV's lifecycle participant and predicate 8's reservation part, PG-025 *Reservasi* with ROUTE-025, ROUTE-184 and ROUTE-185, and "Reservasi" on PG-011's *Item dan pemenuhan*.
 - Every check passed in fresh CI on `461146d`. TASK-038 DONE — progress 37 / 87 —; TASK-061 next.
+
+## Unreleased — 2026-10-30, TASK-061 — Activity history and security log
+
+- TASK-038 squash-merged by the executor into `main` as `3c68fa8` (pull request #43); TASK-061 started.
+- Built TASK-061 on its branch `task/TASK-061-activity-logs`: PG-063 *Riwayat Aktivitas* — the business audit of every company and of none, newest first in per-company keyset branches merged in one statement, each event's actor, business date, action sentence, record, reason and authority class, its before and after on demand — and PG-064 *Log Keamanan* — the security events by kind, period and company with only the keyed hashes, a notice's event with "Kembali" —, both OWNER_ONLY, with signed cursors and the security events' time indexes.
+- Every check passed in fresh CI on `56cdda8`. TASK-061 DONE — progress 38 / 87 —; TASK-073 next.

@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -233,34 +233,45 @@ Every committed business action keeps its individual actor, time, reason, before
 - Migration: N/A — no migration or import code in this Task
 - Other: N/A — no further obligation; LG-06's retention is TASK-010's
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Authorization/LogPagesAccessTest.php` — an Admin's request for `/aktivitas/riwayat` and `/aktivitas/log-keamanan` answering 404 with the same page as an unknown address, the Owner's 200; `tests/Frontend/shell.test.ts` — *Aktivitas & Keamanan* absent without `audit.view` or `security_log.view`, opening *Riwayat Aktivitas* with `audit.view` and *Log Keamanan* with `security_log.view` alone
+- Criterion 2: `tests/Feature/OPS/ActivityHistoryTest.php` — two companies' events and one without a company newest first, each with its actor, "Sistem" or the operator's recorded identity, its time and its business date when it differs, its action, record with its link, reason and authority class; the period, company, *Tanpa perusahaan*, actor and record filters; an event's before, after and metadata as a partial reload of `detail`
+- Criterion 3: `tests/Feature/OPS/SecurityLogTest.php` — the events newest first with LG-02's fields, the account and the acting account when different, the identifier and the address as the first characters of their keyed hashes; the kind, period and company filters
+- Criterion 4: `tests/Authorization/LogPagesAccessTest.php` — a failed sign-in's login identifier and address and a Google sign-in's provider subject absent from PG-064's page, an audit metadata token absent from PG-063's, no wide column in the list; `tests/Feature/OPS/ActivityHistoryTest.php` — a `session_id` key dropped from an event's shown metadata
+- Criterion 5: `tests/Interaction/LogsTest.php` — a notice's event opened above PG-064's list with `from_notice` for "Kembali", an account's notice on PG-060, a target that no longer resolves answered 404 (MSG-09); `tests/Browser/E2E/logs.spec.ts` — the notice's address opening its event with "Kembali" (*Beranda*'s notice itself is TASK-058's)
+- Criterion 6: `tests/Feature/OPS/ActivityHistoryTest.php` and `SecurityLogTest.php` — "Muat Lagi" continuing by the signed cursor without a total, a tampered cursor answered with MSG-26 (`cursor_failed`); `tests/Integration/Audit/ActivityBranchesTest.php` — one statement for the three companies' branches and the branch without a company, ties ordered by id; `tests/Performance/LogQueriesTest.php` — the same number of statements for three events and more than a page, filtered or not, within QB-12; `tests/Performance/IndexRegisterTest.php` — the branch without a company, the security log and its kind filter on their indexes (the scale procedure at 1x, 10x and 100x is TASK-068's, PFM-03)
+- Criterion 7: `tests/Interaction/LogsTest.php` — no write method on either address (405); neither page offers a control that edits, hides or deletes an event
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: Larastan/PHPStan at level `max` and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — every recorded audit action's sentence and every security event kind's label in both languages, the cursor's checks (TL-03); Feature — ROUTE-063 and ROUTE-064 with each filter (TL-04); Integration — the merged branches (TL-05); PASS in CI and locally
+- [x] Authorization: OWNER_ONLY `audit.view` and `security_log.view`, the redaction of every forbidden field (TL-06)
+- [x] Route integrity: ROUTE-063 and ROUTE-064 in the route audit and the boot test's route list (TL-07)
+- [x] Interaction behavior: INT-020 and the read-only routes (TL-08)
+- [x] Browser E2E if required: both pages' filters and continuation, an event's change, the notice's event with "Kembali" (TL-09)
+- [x] Responsive/adaptive if required: both pages at 320, 390, 768 and 1280 px (TL-11)
+- [x] Visual breathing room/density if UI: the shared dense data list, filters and dialog (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-04 for OD-14; SM-01 for a forged event key, cursor and filter; SM-05 — each event's authority class as recorded (TL-14)
+- [x] Database safety review: one expand-only migration of two indexes on `security_events`; read-only query classes, no application role updates or deletes a log row (C-53); local and CI databases only
+- [x] Final diff review: each rule against the contract and its sources; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `56cdda8`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 40995932604 (push) and 40995937496 (pull request #44), the three jobs PASS in each — "Verify", "Browser" and "Performance and migration"; the TASK-061 PHP tests, PHPStan, Pint, ESLint and TypeScript also PASS on the workstation's stack
+- Build result: `TL-13 Frontend build: PASS — Evidence: 56cdda8, CI ubuntu-24.04 run 40995932604`
+- Route evidence: ROUTE-063 and ROUTE-064 registered with their OWNER_ONLY capabilities and in `tests/Feature/BootTest.php`'s list; the route audit PASS in CI run 40995932604
+- Interaction evidence: `tests/Interaction/LogsTest.php` — INT-020 PASS in CI run 40995932604
+- Browser evidence: `E2E: PASS — Evidence: 56cdda8, CI ubuntu-24.04 run 40995932604` — `tests/Browser/E2E/logs.spec.ts` and the localization, responsive and accessibility specs of both pages in Chromium and WebKit
+- Localization evidence: `tests/Browser/Localization/logs.spec.ts` — both pages in Indonesian and English; the new keys in the registry as TASK-061's, an event's recorded values shown as recorded
+- Performance evidence: `tests/Performance/LogQueriesTest.php` and `IndexRegisterTest.php` (TL-15) — a page's statements independent of the rows, within QB-12, every query path on a registered index
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/OPS/` — `Queries/ActivityHistory`, `SecurityLog`, `LogCursor`, `Http/Controllers/LogsController` —; `routes/web.php` and `routes/fixtures.php`; `database/migrations/2026_10_30_000146_ops_add_security_event_time_indexes.php`; `resources/js/Pages/OPS/ActivityHistory.tsx` and `SecurityLog.tsx`, `lib/navigation.ts`, `lib/i18n.ts`'s `has`; the catalogues and their registry; GAP_REGISTER's GAP-070; the tests and the browser fixture
+- Commit SHA: `8ff4a98`, `5033091`, `6cdd9d8`, `2241159`, `56cdda8`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-061-activity-logs`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent read-only review of the branch before the pull request found no HIGH point; its MEDIUM and LOW points were fixed and tested on the branch: a console event's operator shown as the recorded object — now its stated name with the host account, as `OperatorIdentity::describe()` writes it, tested with the real shape; an actor's or record's timeline narrowed by company read without PF-42's bound — one read now takes at most 1,000 rows and returns short with "more" from the last row read, tested; the index migration in a Task contracted without a schema change — recorded as GAP-070 for Planning's register row; an event's detail reload recomputing the whole list — the list's props are now read only when asked for; a redaction stricter than the application's — `Redaction::isSensitiveKey` now decides, a token key dropped and an ordinary key kept, tested through the detail's partial reload; "Muat Lagi" left busy or appending after a cancelled or failed reload, and the change dialog's stale "cannot be shown" — both reset; the security details' flags shown in words as on PG-063; and two weak browser checks made exact. Kept as a reading: a filter change on PG-064 leaves the notice's event and its "Kembali", the Owner then browsing the log. Codex's review of `2241159` (COMPLETED) found one P2 point, fixed in `56cdda8` and its thread answered: a bounded read of a timeline narrowed by company that found no matching row yet showed PG-063's empty state and hid "Muat Lagi" — the empty state now shows only when nothing is left to read, the short-page notice and "Muat Lagi" kept otherwise, the server side of the case tested. Executor readings within the approved text: the query classes are `ActivityHistory` and `SecurityLog` (`OPS ShowActivityHistory`, `OPS ShowSecurityLog`) beside TASK-010's read models; the filters are `dari`, `sampai`, `perusahaan` (a code or `tanpa`), `pelaku`, `catatan` (a record's type and public identifier) and `jenis`, the cursor and an event's key one signed position (`occurred_at`, `id`); an actor reads its own index and a record its timeline's, each with the companies as a predicate; PG-064's company filter reads the two kinds that carry a company, on IX-14's index; an event's before, after and metadata are a partial reload, their nested values shown as JSON and any key LG-03 names dropped should one ever be recorded; the security log shows the first twelve characters of each keyed hash; a notice's event is `peristiwa` with `asal=beranda`, "Kembali" returning to the page shown before; the print view is the browser's print of the list. Executor discovery: `security_events` had no time key for an unfiltered list — only IX-14's and IX-19's partial indexes —, so one expand-only migration adds `(occurred_at, id)` and `(event_kind, occurred_at, id)` (a Level 1 safeguard of the contract's own PF-13 and criterion 6, registered in the index test and recorded as GAP-070 for Planning's register row); an actor's or a record's timeline narrowed by company reads at most 1,000 rows at a time, its page returning short with "more" (PF-42)
 
 **SAFE NEXT TASK:**
 
