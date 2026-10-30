@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -233,34 +233,43 @@ A release passes on evidence only — its integrity report PASS and the Owner's 
 - Migration: N/A — no migration or import code in this Task
 - Other: the report's sections compared one by one with RELEASE_PLAN §11's table, and the record's fields with PRQ-14 and REL-02
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `scripts/release/gate.mjs --self-test` in the verification command — a commit off `main`, one of `main` with no CI run, with only a pull request's run, with its run still going, failed, cancelled or failed after an earlier pass refused, and a passed commit of `main` accepted; on a test tag in CI, run 41002347191 on `release-check/TASK-073-1` — a commit off `main` — REFUSED; on the workstation the gate accepted `3c68fa8`, whose CI passed on `main`, and refused `d801376` while its CI ran; `.github/workflows/release.yml` has no step that deploys, migrates, imports, backs up, restores or reaches staging or production, its only secret the read-only token (RL-01; INF-03)
+- Criterion 2: `scripts/release/report.mjs --self-test` — fed fixture evidence, every one of RELEASE_PLAN §11's thirteen sections written in its order, a failed route check, a failed journey, a missing Layer 3 translation, a Task blocked in the plan, the release's own Tasks not DONE and a migration or a paid exception without the Owner's approval each FAIL with their count, a later Task still TODO outside the release not counted, RELEASE STATUS PASS only when every section passes
+- Criterion 3: the same self-test — no staging summary, a layer whose test is not written (EMPTY), no verification evidence at all, the record's untouched template with every count and declaration `null`, a count missing, negative or not a whole number, five of the twenty-two journeys, one case alone of PERFORMANCE_TARGETS §4's release-critical set, a migration without PFM-03's plans, and CI evidence whose runs tested another commit than the release's or with no release commit given each NOT RUN, never PASS, and the release then FAIL (GAP-017; TEST_STRATEGY §16)
+- Criterion 4: `docs/10-release/records/_template/RELEASE_RECORD.md` — the commit and tag, the gate's run and the CI run, the schema version, both declarations of RL-03, the report's status, the Owner's approval, the rollback target with the previous release's commit, schema version and the verified pre-deployment backup, and the actual effort beside the estimate; `declarations.json` and `staging-summary.json` the report reads
+- Criterion 5: `docs/09-operations/runbooks/BRANCH_PROTECTION.md` — `main`'s rule with a pull request required, the Owner's approval, the three required checks by the exact job names of `.github/workflows/ci.yml`, branches up to date, no force push and no deletion, for the Owner to apply (GLC-12; TASK-084)
+- Criterion 6: the secret-like scan (`scripts/ci/scan-secrets.sh`) over every committed file, the record template, the report's generator and the change log included, PASS; each holds placeholders or counts only (SM-15; RL-05)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: ESLint over `scripts/release` and the repository gates PASS in CI (TL-01)
+- [x] Typecheck: N/A — the scripts are plain JavaScript modules; their rules are checked by their self-tests (TL-02)
+- [x] Relevant automated tests: Unit — the gate's eight cases and the report's section rules on fixture evidence, as self-tests in the verification command (TL-03); Integration — the release workflow on a test tag in CI, refused off `main`; PASS in CI and locally
+- [x] Authorization: N/A — no route, query class or command in this Task
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: N/A — no INT- contract in this Task
+- [x] Browser E2E if required: N/A — no page in this Task
+- [x] Responsive/adaptive if required: N/A — no page in this Task
+- [x] Visual breathing room/density if UI: N/A — no UI
+- [x] Production build: N/A — no application code; the release workflow's run on a test tag stands in its place
+- [x] Security checks if required: SM-15's gates on both workflows — SHA-pinned actions, no secret but the CI token, lockfile-only installs — and the secret-like scan (TL-14)
+- [x] Database safety review: no schema change, no database access; no workflow reaches staging or production
+- [x] Final diff review: the report's sections compared one by one with RELEASE_PLAN §11's table, the record's fields with PRQ-14 and REL-02; ER-06's independent review and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: N/A — no application code in this Task; the release workflow's CI run on a test tag stands in its place
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `7604745`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41004700052 (push) and 41004702607 (pull request #45), the three jobs PASS in each — the verification command's "Release gate and report rules (PRQ-11; INF-03)" check among them; the release workflow's run 41002347191 on the test tag `release-check/TASK-073-1` REFUSED off `main`; the report compiled on the workstation from push run 41004700052's downloaded evidence against `7604745`: ROUTES, INTERACTIONS, BUILD and SECURITY PASS from that run's summaries, the staging sections, TASKS, COST and DATABASE NOT RUN without the record's files, TOOLCHAIN FAIL on its one capability not yet verified, RELEASE STATUS FAIL as expected before staging
+- Build result: N/A — no application code in this Task; the release workflow's run on a test tag stands in its place
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: N/A — no INT- contract in this Task
+- Browser evidence: N/A — no page in this Task
+- Localization evidence: N/A — no user-facing copy in this Task
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the repository's existing CI at no cost
+- Files changed: `.github/workflows/release.yml`, `.github/workflows/ci.yml`'s evidence retention, the performance job's upload and its push trigger narrowed to branches; `scripts/release/gate.mjs` and `report.mjs`; `scripts/verify.sh`'s summary file and self-test check; `docs/09-operations/runbooks/RELEASE_PROCESS.md` and `BRANCH_PROTECTION.md`; `docs/10-release/records/` with its template and `docs/10-release/CHANGE_LOG.md`; the start commit's statuses of TASK-047 and TASK-049
+- Commit SHA: `a3fcf95`, `b75e6e2`, `5942581`, `7604745`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-073-release-process`
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent read-only review of the branch before the pull request found one HIGH, one MEDIUM and four LOW points, each fixed and tested on the branch: the staging sections read PASS from the record's template or an empty summary, a missing count falling back to zero — the template's counts and declarations are now `null`, a staging count must be a whole number of at least zero or its section reads NOT RUN, CRITICAL JOURNEYS needs all 22 of CJ-01–CJ-22 and PERFORMANCE at least one case, and the self-test compiles the untouched template, every one of its sections NOT RUN; TASKS counted every open Task of the plan, so no release could pass while a later Task was TODO — it now reads the plan's BLOCKED and VERIFYING counters and the release's own Tasks, listed in `declarations.json`'s `tasks`, each DONE in the plan's table, tested both ways; a controlled migration passed without the Owner's approval — `db_approval` now required as `cost_approval` is, tested; CI ran on every tag as a push whose branch reads the tag's name — CI now runs on branches and pull requests only; the release process now says to re-run a Release run refused before its commit's CI run on `main` completed; and the handoff's Task plan row, stale since TASK-016, corrected with this record. Codex's review of `5942581` (COMPLETED) found two P2 points, fixed in `7604745` and their threads answered: PERFORMANCE passed on any positive count of cases — it now reads each case of PERFORMANCE_TARGETS §4's release-critical set by name, PFM-03's plans with a migration, a case missing keeping it NOT RUN; and CI evidence downloaded for another commit still passed its sections — each check's summary names the commit its run tested, and a check on another commit than the release's, or with none given, reads NOT RUN. Executor readings within the approved text: the tag name is `v<YYYY>.<MM>.<DD>-<n>` in WIB, recorded in the release process; a `release-check/*` tag exercises the gate and names no release; the release workflow compiles the report's CI part at tag time — its staging sections NOT RUN until the operator's summary enters the release record — and the release's report is compiled again by the same script after REL-03–REL-05; CI evidence is kept 90 days so a later tag can read its commit's run; TOOLCHAIN's section counts each capability whose status still reads "Not yet verified"; TASKS reads §11's "blocked 0, verifying 0" from the plan's counters and its "required todo 0" from the release's own Tasks, listed in `declarations.json`'s `tasks` and each DONE in the plan's table, so a later Task still TODO never fails a release; CI runs on every push to a branch and every pull request, a pushed tag running the release gate instead; the application's change log is `docs/10-release/CHANGE_LOG.md`, the root `CHANGELOG.md` staying the development history; the branch-protection list names the Owner's choice between a second approving account and an administrator's recorded bypass, the executor merging under the Owner's account (DIR-096). Executor discovery: TASK-034's DONE left TASK-047's and TASK-049's READY gates unchecked though every dependency was DONE; TASK-073's start re-checked both — READY, no open question names them
 
 **SAFE NEXT TASK:**
 

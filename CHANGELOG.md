@@ -701,3 +701,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-038 squash-merged by the executor into `main` as `3c68fa8` (pull request #43); TASK-061 started.
 - Built TASK-061 on its branch `task/TASK-061-activity-logs`: PG-063 *Riwayat Aktivitas* — the business audit of every company and of none, newest first in per-company keyset branches merged in one statement, each event's actor, business date, action sentence, record, reason and authority class, its before and after on demand — and PG-064 *Log Keamanan* — the security events by kind, period and company with only the keyed hashes, a notice's event with "Kembali" —, both OWNER_ONLY, with signed cursors and the security events' time indexes.
 - Every check passed in fresh CI on `56cdda8`. TASK-061 DONE — progress 38 / 87 —; TASK-073 next.
+
+## Unreleased — 2026-10-30, TASK-073 — Release process — branch protection, release tags, the release record and integrity report
+
+- TASK-061 squash-merged by the executor into `main` as `d801376` (pull request #44); TASK-073 started, TASK-047 and TASK-049 READY on their re-checked gates.
+- Built TASK-073 on its branch `task/TASK-073-release-process`: the release gate on a pushed tag — a commit of `main` whose CI passed, never a deploy —, the release integrity report compiled from the evidence with RELEASE_PLAN §11's sections, the CI jobs' evidence kept for it, the release process, the branch-protection settings for the Owner, the release record template and the application's change log.
+- Every check passed in fresh CI on `7604745`. TASK-073 DONE — progress 39 / 87 —; TASK-047 next.

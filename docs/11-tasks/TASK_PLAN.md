@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 38
-READY: 1
+DONE: 39
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 35
+TODO: 33
 SUPERSEDED: 0
 
 Progress:
-38 / 87
-Percentage: 43.7 %
+39 / 87
+Percentage: 44.8 %
 
-CURRENT TASK: none in progress — TASK-061 — Activity history and security log DONE on its branch `task/TASK-061-activity-logs`, CI PASS on `56cdda8`, its pull request #44 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-073 READY, NOT STARTED, taken from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-073 — Release process — branch protection, release tags, the release record and integrity report DONE on its branch `task/TASK-073-release-process`, CI PASS on `7604745`, its pull request #45 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-047 and TASK-049 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -121,7 +121,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
 - [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
 - [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
-- [ ] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
+- [x] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
 - [ ] [TASK-074](TASK-074.md) — Backup tooling, the off-server copy and the drill procedures
 - [ ] [TASK-075](TASK-075.md) — Monitoring — the business heartbeat, alerts and the uptime check
 - [ ] [TASK-076](TASK-076.md) — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
@@ -187,9 +187,9 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
 | [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
 | [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | BLOCKED — P11Q-02 | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
-| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | TODO | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
+| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | READY | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
-| [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | TODO | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
+| [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | READY | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | TODO | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | TODO | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | BLOCKED — P11Q-02 | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
@@ -213,7 +213,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | BLOCKED — OPI-03, P11Q-02 | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
-| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | READY | 003, 004 | 084 | NO | AGENT | NONE | NO |
+| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
 | [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
