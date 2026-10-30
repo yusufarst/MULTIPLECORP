@@ -9,6 +9,7 @@ use App\Modules\CAT\Http\Controllers\ProductsController;
 use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
+use App\Modules\FUL\Http\Controllers\HandoverController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
 use App\Modules\IAM\Http\Controllers\ConfirmPasswordController;
@@ -135,6 +136,12 @@ Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->mi
 Route::get('/gudang/reservasi', [ReservationsController::class, 'index'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations');
 Route::post('/gudang/reservasi', [ReservationsController::class, 'store'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reserve');
 Route::post('/gudang/reservasi/{id}/kurangi', [ReservationsController::class, 'reduce'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reduce');
+
+// TASK-047 — PG-033 *Serah Terima Jasa* and its commands (WF-FUL-04; AX-09): ROUTE-033 and ROUTE-208 `handover.record`, ROUTE-209
+// `fulfillment.correct` (ADM+), each with its prerequisite `projects.view` (PERMISSIONS_MATRIX §4); the BAST through ROUTE-221 and ROUTE-222.
+Route::get('/proyek/{id}/serah-terima', [HandoverController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:handover.record'])->name('ful.handovers.show');
+Route::post('/proyek/{id}/serah-terima', [HandoverController::class, 'store'])->whereUuid('id')->middleware(['auth', 'capability:handover.record'])->name('ful.handovers.record');
+Route::post('/proyek/{id}/serah-terima/{ho}/balikkan', [HandoverController::class, 'reverse'])->whereUuid('id')->whereUuid('ho')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.handovers.reverse');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),

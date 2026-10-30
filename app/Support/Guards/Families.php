@@ -47,14 +47,16 @@ final class Families
                 ['product_id'],
             ),
             // TASK-038 (C-61; BR-INV-08; DATABASE §5.5): a line guard's reserved quantity is its ACTIVE reservation's remaining
-            // quantity — the product's RESERVED is Σ of them above. A line with no guard is PRJ's to report.
+            // quantity — the product's RESERVED is Σ of them above. TASK-047 (C-30; L-39): its handed-over quantity is its
+            // handover lines' less their reversal lines. A line with no guard is PRJ's to report.
             new Family(
                 'project_line_balances',
                 ['project_line_id'],
-                ['reserved_qty_base'],
+                ['reserved_qty_base', 'handed_over_qty_base'],
                 <<<'SQL'
                     select b.project_line_id,
-                        coalesce((select sum(r.remaining_qty_base) from reservations r where r.project_line_id = b.project_line_id and r.state = 'ACTIVE'), 0) as reserved_qty_base
+                        coalesce((select sum(r.remaining_qty_base) from reservations r where r.project_line_id = b.project_line_id and r.state = 'ACTIVE'), 0) as reserved_qty_base,
+                        coalesce((select sum(case when h.reverses_line_id is null then h.qty_base else -h.qty_base end) from service_handover_lines h where h.project_line_id = b.project_line_id), 0) as handed_over_qty_base
                     from project_line_balances b
                     SQL,
                 null,

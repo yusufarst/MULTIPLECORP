@@ -170,7 +170,7 @@ final class ProjectWorkspace
                 'recorded_at' => Row::text($header, 'recorded_at'),
                 'lock_version' => (int) Row::text($header, 'lock_version'),
             ],
-            'journey' => $facts === null ? null : Journey::derive($facts, [], $money, $edit, $this->quotationHref($viewer, $project)),
+            'journey' => $facts === null ? null : Journey::derive($facts, [], $money, $edit, $this->quotationHref($viewer, $project), $this->serviceHref($viewer, $project)),
             'financial' => $money ? $this->financial($project->id) : null,
             'can' => ['edit' => $edit !== null, 'discard' => $manage && $project->state === 'DRAFT'],
         ];
@@ -188,7 +188,7 @@ final class ProjectWorkspace
         $edit = $viewer->allows('projects.manage', $project->company_id) && in_array($project->state, ['DRAFT', 'ACTIVE'], true) ? "/proyek/{$project->public_id}/ubah" : null;
 
         return $this->journeys->of([$project->id], [$project->id => $viewer->allows('finance.view', $project->company_id)], [$project->id => $edit],
-            [$project->id => $this->quotationHref($viewer, $project)])[$project->id] ?? null;
+            [$project->id => $this->quotationHref($viewer, $project)], [$project->id => $this->serviceHref($viewer, $project)])[$project->id] ?? null;
     }
 
     /** PG-014 for an account that may open the project's quotation: `quotation.manage` with `finance.view`, or `projects.confirm` (ROUTE-014). */
@@ -197,6 +197,12 @@ final class ProjectWorkspace
         $open = ($viewer->allows('quotation.manage', $project->company_id) && $viewer->allows('finance.view', $project->company_id)) || $viewer->allows('projects.confirm', $project->company_id);
 
         return $open ? "/proyek/{$project->public_id}/penawaran" : null;
+    }
+
+    /** PG-033 for an account that may record the handover (ROUTE-033; J-FUL-04). */
+    private function serviceHref(Authority $viewer, Project $project): ?string
+    {
+        return $viewer->allows('handover.record', $project->company_id) ? "/proyek/{$project->public_id}/serah-terima" : null;
     }
 
     /**

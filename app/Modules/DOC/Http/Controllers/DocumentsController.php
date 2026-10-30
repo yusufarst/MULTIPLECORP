@@ -27,9 +27,10 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  * PG-035 *Dokumen* and PG-036 *Detail Dokumen* (ROUTE-035, ROUTE-036; NAV-035, NAV-036) with the document engine's
  * commands — `DOC SaveDocumentDraft` (ROUTE-221), `DOC IssueDocument` (ROUTE-222), `DOC ReviseDocument` (ROUTE-223),
  * `DOC VoidDocument` (ROUTE-224) — and `DOC ShowRendition` (ROUTE-225). Each command carries its `command_id` (CI-01),
- * its answer in place as flash data on PG-036 (IP-01; NAV-036); validation at the fields (IP-14; MSG-12), a refusal
- * named (IP-06), a stale draft a CONFLICT with the input kept (IP-03). An unknown document and one the viewer may not
- * see answer alike (AZ-11).
+ * its answer in place as flash data on PG-036 (IP-01; NAV-036) — or on PG-033 for the BAST it issues in place, which
+ * names itself with `kembali` (NAV-033; ROUTE-222) —; validation at the fields (IP-14; MSG-12), a refusal named
+ * (IP-06), a stale draft a CONFLICT with the input kept (IP-03). An unknown document and one the viewer may not see
+ * answer alike (AZ-11).
  */
 final class DocumentsController extends Controller
 {
@@ -77,11 +78,18 @@ final class DocumentsController extends Controller
         $mode = self::nullable($input['mode'] ?? null) ?? ($type === 'DOC-05' ? 'RECEIPT' : 'STANDARD');
         $subject = $this->documents->subjectOf($actor, $type, $mode, $records);
         $outcome = $drafts->prepare(self::text($input['command_id']), $actor, $subject);
+        $inPlace = self::inPlace($request);
 
         if ($outcome->kind !== Outcome::COMMITTED || $outcome->resultId === null) {
             Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => null, 'text' => $this->refusal($outcome, $type)]);
 
-            return redirect()->back(303);
+            return $inPlace === null ? redirect()->back(303) : redirect()->to($inPlace, 303);
+        }
+
+        if ($inPlace !== null) {
+            Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => null, 'text' => __('documents.answer.prepared')]);
+
+            return redirect()->to($inPlace, 303);
         }
 
         return redirect()->to('/dokumen/'.$this->documents->publicIdOf($outcome->resultId), 303);
@@ -96,7 +104,7 @@ final class DocumentsController extends Controller
         $outcome = $issue->run(self::text($input['command_id']), $actor, $document, self::integer($input['lock_version']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['rekening'] ?? null), self::nullable($input['isi'] ?? null), self::text($input['draf']));
 
         return $this->answer($outcome, $document->public_id, 'issued', self::text($input['tanggal']), $document->document_type_code,
-            $outcome->code === 'C-10' ? $this->documents->numberingOf($actor, $document) : null);
+            $outcome->code === 'C-10' ? $this->documents->numberingOf($actor, $document) : null, self::inPlace($request));
     }
 
     /** ROUTE-223: "Revisi" with its reason. */
@@ -127,8 +135,11 @@ final class DocumentsController extends Controller
         return FileResponses::inline($download->stream, $download->mimeType, $download->size, $download->name);
     }
 
-    /** @param  array{company: string, numbering: ?string}|null  $numbering  the C-10 refusal's company and, for the Owner, PG-061 */
-    private function answer(Outcome $outcome, string $document, string $done, string $sent, ?string $type = null, ?array $numbering = null): RedirectResponse
+    /**
+     * @param  array{company: string, numbering: ?string}|null  $numbering  the C-10 refusal's company and, for the Owner, PG-061
+     * @param  ?string  $inPlace  the page that issues the document in place, else PG-036 answers
+     */
+    private function answer(Outcome $outcome, string $document, string $done, string $sent, ?string $type = null, ?array $numbering = null, ?string $inPlace = null): RedirectResponse
     {
         $state = $outcome->state;
         $field = is_string($state['field'] ?? null) ? $state['field'] : null;
@@ -151,7 +162,15 @@ final class DocumentsController extends Controller
         };
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'link' => $numbering['numbering'] ?? null]);
 
-        return redirect()->to("/dokumen/{$document}", 303);
+        return redirect()->to($inPlace ?? "/dokumen/{$document}", 303);
+    }
+
+    /** PG-033, the one page that drafts and issues a document in place by this route (NAV-033): its own address, never another. */
+    private static function inPlace(Request $request): ?string
+    {
+        $page = $request->input('kembali');
+
+        return is_string($page) && preg_match('#^/proyek/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/serah-terima$#', $page) === 1 ? $page : null;
     }
 
     /** @param  array{company: string, numbering: ?string}|null  $numbering */

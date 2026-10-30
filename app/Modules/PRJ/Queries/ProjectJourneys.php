@@ -39,9 +39,10 @@ final class ProjectJourneys
      * @param  array<int, bool>  $money  by project, whether the viewer may see its money items
      * @param  array<int, ?string>  $editHrefs  "Ubah proyek" by project, for an account that may amend it
      * @param  array<int, ?string>  $quotationHrefs  PG-014 by project, for an account that may open its quotation
+     * @param  array<int, ?string>  $serviceHrefs  PG-033 by project, for an account that may record its handover
      * @return array<int, array{outcome: ?string, stages: list<array{key: string, state: string}>, not_needed: list<string>, current: ?string, position: ?int, blocked: bool, blockers: list<array<string, mixed>>, next: ?array<string, mixed>, remaining: list<array{predicate: string, items: list<array<string, mixed>>}>}>
      */
-    public function of(array $projectIds, array $money, array $editHrefs = [], array $quotationHrefs = []): array
+    public function of(array $projectIds, array $money, array $editHrefs = [], array $quotationHrefs = [], array $serviceHrefs = []): array
     {
         $any = in_array(true, $money, true);
         $facts = $this->facts($projectIds, $any);
@@ -49,7 +50,7 @@ final class ProjectJourneys
         $journeys = [];
 
         foreach ($facts as $id => $fact) {
-            $journeys[$id] = Journey::derive($fact, $predicates[$id] ?? [], $money[$id] ?? false, $editHrefs[$id] ?? null, $quotationHrefs[$id] ?? null);
+            $journeys[$id] = Journey::derive($fact, $predicates[$id] ?? [], $money[$id] ?? false, $editHrefs[$id] ?? null, $quotationHrefs[$id] ?? null, $serviceHrefs[$id] ?? null);
         }
 
         return $journeys;

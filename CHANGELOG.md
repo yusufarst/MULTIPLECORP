@@ -707,3 +707,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-061 squash-merged by the executor into `main` as `d801376` (pull request #44); TASK-073 started, TASK-047 and TASK-049 READY on their re-checked gates.
 - Built TASK-073 on its branch `task/TASK-073-release-process`: the release gate on a pushed tag — a commit of `main` whose CI passed, never a deploy —, the release integrity report compiled from the evidence with RELEASE_PLAN §11's sections, the CI jobs' evidence kept for it, the release process, the branch-protection settings for the Owner, the release record template and the application's change log.
 - Every check passed in fresh CI on `7604745`. TASK-073 DONE — progress 39 / 87 —; TASK-047 next.
+
+## Unreleased — 2026-10-30, TASK-047 — Service fulfillment and handover
+
+- TASK-073 squash-merged by the executor into `main` as `06eb4bd` (pull request #45); the gate's accept path proven on `release-check/TASK-073-2`; TASK-047 started.
+- Built TASK-047 on its branch `task/TASK-047-service-handover`: `FUL RecordHandover` and `ReverseHandover` (AX-09) with their refusals, PG-033 *Serah Terima Jasa* with the form beside the BAST's live preview, the BAST's subject and its issue in place, the fulfilment predicate's service lines, the journey's *Jasa* stage leading to the page, and the reconciliation of a line guard's handed-over quantity.
+- Every check passed in fresh CI on `f9fdaac`. TASK-047 DONE — progress 40 / 87 —; TASK-049 next.

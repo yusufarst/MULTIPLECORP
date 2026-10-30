@@ -9744,6 +9744,300 @@
             "source": "LG-01; IA §8.6",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "handover.title": {
+            "task": "TASK-047",
+            "source": "NAV-033; IA §8.4 PG-033",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.lines": {
+            "task": "TASK-047",
+            "source": "SCR-31; J-FUL-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.no_lines": {
+            "task": "TASK-047",
+            "source": "PT-19; L-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.all_done": {
+            "task": "TASK-047",
+            "source": "PT-19; L-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.line.progress": {
+            "task": "TASK-047",
+            "source": "C-09; PX-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.line.done": {
+            "task": "TASK-047",
+            "source": "L-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.line.reversed": {
+            "task": "TASK-047",
+            "source": "CM-27; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.quantity": {
+            "task": "TASK-047",
+            "source": "WF-FUL-04; BR-INV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.ratio": {
+            "task": "TASK-047",
+            "source": "BR-INV-03; C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.scope": {
+            "task": "TASK-047",
+            "source": "WF-FUL-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.scope_help": {
+            "task": "TASK-047",
+            "source": "WF-FUL-04; BR-DOC-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.recipient": {
+            "task": "TASK-047",
+            "source": "WF-FUL-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.recipient_help": {
+            "task": "TASK-047",
+            "source": "WF-FUL-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.field.evidence": {
+            "task": "TASK-047",
+            "source": "IP-16; J-FUL-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.evidence.none": {
+            "task": "TASK-047",
+            "source": "IP-16; AC-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.evidence.add": {
+            "task": "TASK-047",
+            "source": "IP-16; NAV-038",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.section.form": {
+            "task": "TASK-047",
+            "source": "SCR-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.action.record": {
+            "task": "TASK-047",
+            "source": "INT-208",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.action.reverse": {
+            "task": "TASK-047",
+            "source": "INT-209",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.action.issue_bast": {
+            "task": "TASK-047",
+            "source": "INT-222",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.action.preview_bast": {
+            "task": "TASK-047",
+            "source": "INT-012",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.answer.recorded": {
+            "task": "TASK-047",
+            "source": "NAV-033; IP-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.answer.reversed": {
+            "task": "TASK-047",
+            "source": "CM-27; IP-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.refusal.remainder": {
+            "task": "TASK-047",
+            "source": "C-30; PX-03; MSG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.refusal.scale": {
+            "task": "TASK-047",
+            "source": "C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.refusal.not_service": {
+            "task": "TASK-047",
+            "source": "L-39; FS-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.refusal.reversed": {
+            "task": "TASK-047",
+            "source": "C-30; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.refusal.not_reversible": {
+            "task": "TASK-047",
+            "source": "C-30; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.validation.quantity": {
+            "task": "TASK-047",
+            "source": "MSG-12; C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.title": {
+            "task": "TASK-047",
+            "source": "SCR-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.empty": {
+            "task": "TASK-047",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.by": {
+            "task": "TASK-047",
+            "source": "PT-18; PJ-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.reverse.title": {
+            "task": "TASK-047",
+            "source": "IP-09; INT-209",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.reverse.consequence": {
+            "task": "TASK-047",
+            "source": "IP-09; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.none": {
+            "task": "TASK-047",
+            "source": "DOC-08; PG-033",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.draft": {
+            "task": "TASK-047",
+            "source": "DOC-08; DC-2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.issued": {
+            "task": "TASK-047",
+            "source": "DOC-08; NAV-033",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.affected": {
+            "task": "TASK-047",
+            "source": "CM-27; WORKFLOWS §8",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.open": {
+            "task": "TASK-047",
+            "source": "NAV-036",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.confirm_title": {
+            "task": "TASK-047",
+            "source": "IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.bast.consequence": {
+            "task": "TASK-047",
+            "source": "IP-08; MSG-39; BR-DOC-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.preview_of": {
+            "task": "TASK-047",
+            "source": "INT-012",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.answer.prepared": {
+            "task": "TASK-047",
+            "source": "INT-221; IP-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.handovers_open": {
+            "task": "TASK-047",
+            "source": "BR-PRJ-02; L-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.HandoverRecorded": {
+            "task": "TASK-047",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.HandoverDuplicateConfirmed": {
+            "task": "TASK-047",
+            "source": "BR-XC-01; L-49; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.HandoverReversed": {
+            "task": "TASK-047",
+            "source": "BR-CR-01; CM-27; AZ-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.older": {
+            "task": "TASK-047",
+            "source": "D-PF-02; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "handover.recorded.newest": {
+            "task": "TASK-047",
+            "source": "D-PF-02; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

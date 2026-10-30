@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\DB;
  */
 final class LineScope
 {
-    private const REMAINDER = 'b.demand_qty_base - b.dispatched_net_qty_base - b.dropship_confirmed_net_qty_base - b.handed_over_qty_base - b.cancelled_qty_base';
+    public const REMAINDER = 'b.demand_qty_base - b.dispatched_net_qty_base - b.dropship_confirmed_net_qty_base - b.handed_over_qty_base - b.cancelled_qty_base';
 
     public function __construct(
         private readonly AuditRecorder $audit,
