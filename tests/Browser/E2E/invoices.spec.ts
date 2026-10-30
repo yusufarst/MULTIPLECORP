@@ -147,3 +147,20 @@ test('reopens a draft with the tax it stores, stated through a save of the same 
     await expect(tax).toHaveValue('Rp220.000');
 });
 
+test('shows a saved draft as it will issue after the project moved on, an edit reading the current price (WF-FIN-01; architecture challenge 15a)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `invoice-pin-${String(Date.now())}`, { stage: 'moved' });
+
+    await page.goto(`/keuangan/invoice/baru?invoice=${run.invoice ?? ''}`);
+    const paper = page.getByRole('region', { name: /^Pratinjau Invoice/ });
+    await expect(paper).toContainText('Rp250.000');
+    await expect(paper).toContainText('Rp1.000.000');
+    await expect(page.locator('#konten')).toContainText('Baris proyek berubah sejak draf ini disimpan.');
+    await expect(page.getByRole('button', { name: 'Terbitkan Invoice' })).toBeEnabled();
+
+    await page.getByTestId('invoice-line').getByRole('textbox').fill('5');
+    await expect(paper).toContainText('Rp300.000');
+    await expect(paper).toContainText('Rp1.500.000');
+    await expect(page.getByRole('button', { name: 'Terbitkan Invoice' })).toBeDisabled();
+});
+

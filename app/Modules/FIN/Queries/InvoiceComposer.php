@@ -80,7 +80,7 @@ final class InvoiceComposer
     private function draft(Invoice $invoice): array
     {
         $version = DB::table('invoice_versions')->where('id', $invoice->current_version_id)->first(['kind', 'business_date', 'sales_value', 'output_tax_value']);
-        $lines = DB::table('invoice_version_lines')->where('invoice_version_id', $invoice->current_version_id)->orderBy('id')->get(['project_line_id', 'description', 'entered_qty', 'line_sales_value'])->all();
+        $lines = DB::table('invoice_version_lines as l')->leftJoin('units as u', 'u.id', '=', 'l.entered_unit_id')->where('l.invoice_version_id', $invoice->current_version_id)->orderBy('l.id')->get(['l.project_line_id', 'l.description', 'l.entered_qty', 'u.code as unit', 'l.unit_price', 'l.line_sales_value'])->all();
         $taxes = DB::table('invoice_tax_components as t')->join('tax_types as y', 'y.id', '=', 't.tax_type_id')->where('t.invoice_version_id', $invoice->current_version_id)->pluck('t.amount', 'y.code')->all();
 
         return [
@@ -94,6 +94,8 @@ final class InvoiceComposer
                 'handle' => Row::nullable($line, 'project_line_id') === null ? null : RowHandle::of('project_lines', (int) Row::text($line, 'project_line_id')),
                 'description' => Row::text($line, 'description'),
                 'quantity' => Row::nullable($line, 'entered_qty'),
+                'unit' => Row::nullable($line, 'unit'),
+                'price' => Row::nullable($line, 'unit_price'),
                 'value' => Row::text($line, 'line_sales_value'),
             ], $lines)),
             'taxes' => $taxes,

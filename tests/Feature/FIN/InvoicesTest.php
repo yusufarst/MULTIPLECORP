@@ -499,15 +499,8 @@ it('corrects a billed entry error in a deactivated company, its replacement no n
 });
 
 it('absorbs the residual in a replacement of the last termin, the replaced invoice no part of the invoiced sum (BR-FIN-13)', function () {
-    $line = InvoiceWorld::line($this->project);
-    $pin = (array) DB::table('confirmation_line_pins')->where('id', DB::table('project_lines')->where('id', $line)->value('current_pin_id'))->sole();
-    $confirmation = (array) DB::table('commercial_confirmations')->where('id', $pin['commercial_confirmation_id'])->sole();
-    $first = $confirmation['id'];
-    unset($confirmation['id'], $pin['id']);
-    $next = DB::table('commercial_confirmations')->insertGetId([...$confirmation, 'reason' => 'Pajak dikonfirmasi', 'supersedes_confirmation_id' => $first, 'command_id' => (string) Str::uuid()]);
     $type = $this->world->tax();
-    $newPin = DB::table('confirmation_line_pins')->insertGetId([...$pin, 'commercial_confirmation_id' => $next, 'command_id' => (string) Str::uuid(), 'tax_components' => json_encode([['type' => $type, 'amount' => '275000.01']])]);
-    DB::table('project_lines')->where('id', $line)->update(['current_pin_id' => $newPin]);
+    InvoiceWorld::repin($this->project, ['tax_components' => json_encode([['type' => $type, 'amount' => '275000.01']])]);
 
     $this->world->issued($this->project, '1000000');
     $this->world->issued($this->project, '1000000');
@@ -526,4 +519,30 @@ it('reopens a draft with its stored tax, keeping a stated amount through another
     $invoice = DB::table('invoices')->where('project_id', $this->project->id)->sole();
 
     $this->actingAs($this->actor)->get("/keuangan/invoice/baru?invoice={$invoice->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where("draft.taxes.{$type}", '109000.00')->where('draft.sales', '1000000.00'));
+});
+
+it('holds a saved draft to its own lines after the project is re-confirmed, the current pin only what an edit would take (WF-FIN-01; architecture challenge 15a)', function () {
+    $line = InvoiceWorld::line($this->project);
+    saveInvoice($this, ['isi' => ['jenis' => 'ITEMIZED', 'tanggal' => BusinessDate::today(), 'baris' => [['baris' => RowHandle::of('project_lines', $line), 'jumlah' => '4']]]]);
+    $invoice = DB::table('invoices')->where('project_id', $this->project->id)->sole();
+    $before = DB::table('invoice_version_lines')->where('invoice_version_id', $invoice->current_version_id)->sole();
+    InvoiceWorld::repin($this->project, ['description' => 'Uraian baru', 'unit_price' => '300000.00', 'sales_value' => '3000000.00']);
+
+    $this->actingAs($this->actor)->get("/keuangan/invoice/baru?invoice={$invoice->public_id}")->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('draft.lines.0.description', $before->description)->where('draft.lines.0.price', $before->unit_price)->where('draft.lines.0.value', '1000000.00')->where('draft.sales', '1000000.00')
+        ->where('lines.0.description', 'Uraian baru')->where('lines.0.price', '300000.00'));
+
+    issueInvoice($this, $invoice->id);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED')
+        ->and(DB::table('invoice_versions')->where('id', $invoice->current_version_id)->value('sales_value'))->toBe('1000000.00');
+});
+
+it('keeps a voided invoice\'s number on its page, in the list and in the exact lookup (SCR-38; CS-07)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    $number = (string) DB::table('document_versions as v')->join('documents as d', 'd.id', '=', 'v.document_id')->where('d.invoice_id', $id)->value('v.formatted_number');
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'UNBILLED_ENTRY_ERROR']);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED');
+
+    $this->actingAs($this->actor)->get('/keuangan/invoice/'.InvoiceWorld::publicId($id))->assertInertia(fn (AssertableInertia $page) => $page->where('invoice.number', $number)->where('invoice.state', 'VOIDED'));
+    $this->actingAs($this->actor)->get('/keuangan/invoice?perusahaan='.$this->world->company->public_id.'&nomor='.urlencode($number))->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 1)->where('rows.0.number', $number));
 });

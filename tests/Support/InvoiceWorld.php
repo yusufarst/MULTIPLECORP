@@ -78,6 +78,25 @@ final class InvoiceWorld
         return ReservationWorld::line($project, $number);
     }
 
+    /**
+     * A later confirmation of the project's first line, its pin as the current one with the fields given; its id. Synthetic, the guard unmoved.
+     *
+     * @param  array<string, mixed>  $fields
+     */
+    public static function repin(Project $project, array $fields): int
+    {
+        $line = self::line($project);
+        $pin = (array) DB::table('confirmation_line_pins')->where('id', DB::table('project_lines')->where('id', $line)->value('current_pin_id'))->sole();
+        $confirmation = (array) DB::table('commercial_confirmations')->where('id', $pin['commercial_confirmation_id'])->sole();
+        $first = $confirmation['id'];
+        unset($confirmation['id'], $pin['id']);
+        $next = DB::table('commercial_confirmations')->insertGetId([...$confirmation, 'reason' => 'Konfirmasi ulang', 'supersedes_confirmation_id' => $first, 'command_id' => (string) Str::uuid()]);
+        $id = DB::table('confirmation_line_pins')->insertGetId([...$pin, 'commercial_confirmation_id' => $next, 'command_id' => (string) Str::uuid(), ...$fields]);
+        DB::table('project_lines')->where('id', $line)->update(['current_pin_id' => $id]);
+
+        return $id;
+    }
+
     public static function ref(Project $project): ProjectRef
     {
         return new ProjectRef($project->id, $project->company_id, $project->public_id);

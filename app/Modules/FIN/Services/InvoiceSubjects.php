@@ -124,11 +124,11 @@ final class InvoiceSubjects implements DocumentSubjectProvider
         );
     }
 
-    /** The invoice's number: its current issued layout's. */
+    /** The invoice's number: its current issued layout's, or the last it carried once voided. */
     public static function number(int $invoiceId): ?string
     {
         $number = DB::table('documents as d')->where('d.invoice_id', $invoiceId)->whereIn('d.document_type_code', self::LAYOUTS)
-            ->join('document_versions as v', 'v.document_id', '=', 'd.id')->where('v.state', 'ISSUED')->orderBy('d.id')->value('v.formatted_number');
+            ->join('document_versions as v', 'v.document_id', '=', 'd.id')->whereNotNull('v.formatted_number')->orderByRaw("v.state = 'ISSUED' desc")->orderBy('d.id')->orderByDesc('v.id')->value('v.formatted_number');
 
         return is_string($number) ? $number : null;
     }

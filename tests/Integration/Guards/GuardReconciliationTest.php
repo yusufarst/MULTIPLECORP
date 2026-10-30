@@ -86,7 +86,7 @@ it('refuses a rebuild without a registered family, a reason and a reference', fu
     expect(Artisan::call('guards:maintain', $arguments))->toBe(2)
         ->and(DB::table('audit_events')->count())->toBe(0);
 })->with([
-    'an unregistered family' => [['family' => 'invoice_balances', '--reason' => 'r', '--reference' => 'x']],
+    'an unregistered family' => [['family' => 'no_such_guard', '--reason' => 'r', '--reference' => 'x']],
     'no reason' => [['family' => 'stock_lot_balances', '--reference' => 'x']],
     'no reference' => [['family' => 'stock_lot_balances', '--reason' => 'r', '--reference' => ' ']],
 ]);

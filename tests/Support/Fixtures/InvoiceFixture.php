@@ -80,13 +80,19 @@ final class InvoiceFixture
         $ref = new ProjectRef($project->id, $project->company_id, $project->public_id);
 
         if ($stage !== 'none') {
-            $saved = app(SaveInvoiceDraft::class)->run((string) Str::uuid(), $actor, $ref, null, null, InvoiceWorld::valueOnly('1000000'), ['fixture' => 'draft']);
+            $saved = app(SaveInvoiceDraft::class)->run((string) Str::uuid(), $actor, $ref, null, null, $stage === 'moved'
+                ? ['kind' => 'ITEMIZED', 'business_date' => BusinessDate::today(), 'lines' => [['line' => InvoiceWorld::line($project), 'quantity' => '4', 'description' => null]], 'taxes' => []]
+                : InvoiceWorld::valueOnly('1000000'), ['fixture' => 'draft']);
 
             if ($saved->kind !== 'COMMITTED') {
                 return response()->json(['error' => "draft {$saved->kind} {$saved->code}"], 500);
             }
 
             $invoice = Invoice::query()->findOrFail($saved->resultId);
+        }
+
+        if ($stage === 'moved') {
+            InvoiceWorld::repin($project, ['unit_price' => '300000.00', 'sales_value' => '3000000.00']);
         }
 
         if ($stage === 'issued' && $invoice !== null) {

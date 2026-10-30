@@ -2707,5 +2707,6 @@
     "activity.action.FIN.InvoiceRevisedDown": "Revised an invoice down",
     "activity.action.FIN.PrepaymentKuitansiIssued": "Issued a Kuitansi for payment processing",
     "activity.action.FIN.PrepaymentKuitansiLinked": "Linked a Kuitansi to a payment",
-    "activity.action.FIN.PrepaymentKuitansiUnlinked": "Unlinked a Kuitansi"
+    "activity.action.FIN.PrepaymentKuitansiUnlinked": "Unlinked a Kuitansi",
+    "invoices.composer.lines_moved": "The project lines changed since this draft was saved. The preview shows the draft; edit and save it to use the latest."
 }

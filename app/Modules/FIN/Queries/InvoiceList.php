@@ -78,7 +78,7 @@ final class InvoiceList
             ->limit(self::PAGE + 1)
             ->selectRaw("i.public_id, i.state, v.business_date, v.sales_value, v.gross_value, b.outstanding, b.written_off_amount, b.current_billing_act_id, b.current_due_date, p.public_id as project, p.project_number, o.name as client,
                 exists (select 1 from receivable_dispute_holds h where h.invoice_id = i.id and h.cleared_at is null) as on_hold,
-                (select n.formatted_number from documents d join document_versions n on n.document_id = d.id where d.invoice_id = i.id and d.document_type_code in ('DOC-04', 'DOC-06') and n.state = 'ISSUED' order by d.id limit 1) as number")
+                (select n.formatted_number from documents d join document_versions n on n.document_id = d.id where d.invoice_id = i.id and d.document_type_code in ('DOC-04', 'DOC-06') and n.formatted_number is not null order by n.state = 'ISSUED' desc, d.id, n.id desc limit 1) as number")
             ->get()->all();
         $more = count($found) > self::PAGE;
         $rows = [];

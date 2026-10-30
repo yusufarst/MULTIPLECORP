@@ -28,7 +28,7 @@ import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
 type ProjectLine = { handle: string; no: number; description: string; quantity: string; unit: string; scale: number; price: string; value: string };
-type Draft = { id: string; lock_version: number; kind: 'ITEMIZED' | 'VALUE_ONLY'; business_date: string; sales: string; tax: string; lines: { handle: string | null; description: string; quantity: string | null; value: string }[]; taxes: Record<string, string>; facts: string };
+type Draft = { id: string; lock_version: number; kind: 'ITEMIZED' | 'VALUE_ONLY'; business_date: string; sales: string; tax: string; lines: { handle: string | null; description: string; quantity: string | null; unit: string | null; price: string | null; value: string }[]; taxes: Record<string, string>; facts: string };
 type Props = {
     project: { id: string; number: string; title: string; company: string; client: string; state: string } | null;
     lines: ProjectLine[];
@@ -94,16 +94,24 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
     }, [dirty]);
 
     const chosen = lines.filter((line) => (quantities[line.handle] ?? '') !== '');
-    const sales = kind === 'ITEMIZED'
+    // A saved, unchanged draft shows what it holds, the paper the issue keeps, whatever the project's lines have become since; an edit reads them anew.
+    const pristine = draft !== null && !dirty;
+    const entered = kind === 'ITEMIZED'
         ? add('0', ...chosen.map((line) => round(multiply(quantities[line.handle] ?? '0', line.price), 2)))
         : add('0', ...values.map((line) => (line.value === '' ? '0' : line.value)));
+    const sales = pristine ? draft.sales : entered;
+    const moved = pristine && draft.kind === 'ITEMIZED' && draft.lines.some((held) => {
+        const current = lines.find((line) => line.handle === held.handle);
+
+        return current === undefined || current.description !== held.description || round(current.price, 6) !== round(held.price ?? '0', 6);
+    });
     // What the actor typed, else what the draft stores for this same value (DATABASE §12), else the proposal.
     const saved = draft !== null && round(sales, 2) === round(draft.sales, 2) ? draft.taxes : {};
     const taxRows = taxes.map((tax) => ({ code: tax.code, rate: tax.rate, amount: stated[tax.code] ?? saved[tax.code] ?? proposedTax(sales, tax) }));
-    const live = useMemo<Paper>(() => liveInvoice(paper, kind === 'ITEMIZED'
+    const live = useMemo<Paper>(() => liveInvoice(paper, pristine ? draft.lines : kind === 'ITEMIZED'
         ? chosen.map((line) => ({ description: line.description, quantity: quantities[line.handle] ?? null, unit: line.unit, price: line.price, value: round(multiply(quantities[line.handle] ?? '0', line.price), 2) }))
         : values.filter((line) => line.description !== '' || line.value !== '').map((line) => ({ description: line.description, quantity: null, unit: null, price: null, value: line.value === '' ? '0' : line.value })),
-    taxRows.map((tax) => ({ ...tax, amount: tax.amount === '' ? '0' : tax.amount })), date.date), [paper, kind, chosen, quantities, values, taxRows, date.date]);
+    taxRows.map((tax) => ({ ...tax, amount: tax.amount === '' ? '0' : tax.amount })), date.date), [paper, pristine, draft, kind, chosen, quantities, values, taxRows, date.date]);
     const content = {
         jenis: kind,
         tanggal: date.date,
@@ -111,7 +119,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
         pajak: Object.fromEntries(taxRows.filter((tax) => stated[tax.code] !== undefined || saved[tax.code] !== undefined).map((tax) => [tax.code, tax.amount])),
     };
     const submit = () => {
-        save.submit({ ...(draft === null ? { proyek: project?.id ?? '' } : { invoice: draft.id, lock_version: draft.lock_version }), isi: content }, () => { setDirty(false); });
+        save.submit({ ...(draft === null ? { proyek: project?.id ?? '' } : { invoice: draft.id, lock_version: draft.lock_version }), isi: content }, () => { setDirty(false); setStated({}); });
     };
     const touch = () => { setDirty(true); };
     const lineError = (index: number, field: string): string | undefined => save.errors[`isi.baris.${String(index)}.${field}`];
@@ -188,6 +196,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
                         </div>
                     </div>
                 )}
+                {moved && <p className="text-body text-text-secondary">{t('invoices.composer.lines_moved')}</p>}
                 {save.errors['isi.baris'] !== undefined && <p className="text-body text-danger">{save.errors['isi.baris']}</p>}
                 {taxes.length === 0 ? <p className="text-body text-text-secondary">{t('invoices.composer.no_tax')}</p> : taxRows.map((tax, index) => (
                     <FormField key={tax.code} label={t('invoices.composer.tax', { kode: tax.code })} help={taxes[index]?.evidence_required === true ? t('invoices.composer.tax_evidence') : t('invoices.composer.tax_help')}>

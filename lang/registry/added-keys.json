@@ -10920,6 +10920,12 @@
             "source": "BR-XC-01; LG-01",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "invoices.composer.lines_moved": {
+            "task": "TASK-049",
+            "source": "WF-FIN-01; architecture challenge 15a",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -2707,5 +2707,6 @@
     "activity.action.FIN.InvoiceRevisedDown": "Merevisi turun invoice",
     "activity.action.FIN.PrepaymentKuitansiIssued": "Menerbitkan Kuitansi untuk proses pembayaran",
     "activity.action.FIN.PrepaymentKuitansiLinked": "Menautkan Kuitansi ke pembayaran",
-    "activity.action.FIN.PrepaymentKuitansiUnlinked": "Melepas tautan Kuitansi"
+    "activity.action.FIN.PrepaymentKuitansiUnlinked": "Melepas tautan Kuitansi",
+    "invoices.composer.lines_moved": "Baris proyek berubah sejak draf ini disimpan. Pratinjau memakai isi draf; ubah lalu simpan untuk memakai yang terbaru."
 }
