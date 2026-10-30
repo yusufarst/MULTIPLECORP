@@ -1,7 +1,7 @@
 {
-    "critical_journeys": { "total": 22, "passed": 0, "failed": 0 },
-    "ui_ux": { "missing_translations": 0, "redundant_critical_actions": 0, "failed_checks": 0 },
-    "browser": { "console_errors": 0, "failed_requests": 0 },
-    "performance": { "cases": 0, "within_target": 0, "outside_target": 0 },
-    "integrity": { "differences": 0 }
+    "critical_journeys": { "total": null, "passed": null, "failed": null },
+    "ui_ux": { "missing_translations": null, "redundant_critical_actions": null, "failed_checks": null },
+    "browser": { "console_errors": null, "failed_requests": null },
+    "performance": { "cases": null, "within_target": null, "outside_target": null },
+    "integrity": { "differences": null }
 }

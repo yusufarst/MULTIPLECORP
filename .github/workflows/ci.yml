@@ -1,5 +1,5 @@
-# The CI of TEST_STRATEGY §17 (TASK-003, grown from TASK-001's minimal CI): on every push and pull
-# request, on a fresh runner, the Docker Compose stack of DEVELOPMENT.md runs the verification command —
+# The CI of TEST_STRATEGY §17 (TASK-003, grown from TASK-001's minimal CI): on every push to a branch and
+# every pull request — a pushed tag runs the release gate, never a second CI run (TASK-073) —, on a fresh runner, the Docker Compose stack of DEVELOPMENT.md runs the verification command —
 # the repository gates, TL-01–TL-08, TL-13 and TL-14 —, the browser suite of TL-09–TL-12 on Chromium and
 # WebKit, and TL-15 and TL-16; a failing check fails its job. No secret but the CI's own token, read-only,
 # for Composer's downloads from GitHub; the one action, GitHub's own artifact upload, pinned to a commit
@@ -9,6 +9,8 @@ name: CI
 
 on:
   push:
+    branches:
+      - '**'
   pull_request:
 
 permissions:

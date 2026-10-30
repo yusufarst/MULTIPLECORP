@@ -13,7 +13,7 @@ The record of one release (RELEASE_PLAN PRQ-14; REL-02; REL-12; INF-03), copied 
 | The gate's accepting run | `<release workflow run>` |
 | The commit's CI run on `main` | `<ci run>` |
 | Schema version — the last migration's name | `<migration>` |
-| The release's Tasks | `<TASK-…>` |
+| The release's Tasks — as `declarations.json`'s `tasks` lists them, the report's TASKS | `<TASK-…>` |
 | Modules counted, each with its Layer 2 run (REL-01; DEFINITION_OF_DONE §5) | `<module — run>` |
 
 ## Declarations (REL-02; RL-03)

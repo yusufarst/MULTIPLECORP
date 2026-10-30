@@ -44,11 +44,21 @@ export function readSummaries(directory) {
     return checks;
 }
 
-/** The Task plan's counters (§1 of TASK_PLAN). */
+/** The Task plan's counters (§1 of TASK_PLAN) and each Task's status from its table. */
 export function readPlan(text) {
     const count = (label) => Number((new RegExp(`^${label}: (\\d+)`, 'm').exec(text) ?? [])[1] ?? NaN);
+    const lines = text.split('\n');
+    const header = lines.findIndex((line) => /^\| Task \| Title \|/.test(line));
+    const column = header < 0 ? -1 : lines[header].split('|').map((cell) => cell.trim()).indexOf('Status');
+    const statuses = new Map();
 
-    return { total: count('Current Total Tasks'), done: count('DONE'), ready: count('READY'), inProgress: count('IN_PROGRESS'), blocked: count('BLOCKED'), verifying: count('VERIFYING'), todo: count('TODO') };
+    for (let i = header + 2; header >= 0 && column > 0 && i < lines.length && lines[i].startsWith('|'); i++) {
+        const cells = lines[i].split('|').map((cell) => cell.trim());
+        const task = /^\[(TASK-\d{3})\]/.exec(cells[1] ?? '');
+        if (task) statuses.set(task[1], cells[column]);
+    }
+
+    return { total: count('Current Total Tasks'), done: count('DONE'), ready: count('READY'), inProgress: count('IN_PROGRESS'), blocked: count('BLOCKED'), verifying: count('VERIFYING'), todo: count('TODO'), statuses };
 }
 
 /** TOOLCHAIN's capability rows whose project status still reads "Not yet verified". */
@@ -77,49 +87,81 @@ function fromChecks(checks, patterns) {
     return counted(0, found.map(([name, check]) => `${name} — ${check.evidence}`).join('; '));
 }
 
-/** A staging section from the operator's summary: its counted failures, or NOT RUN without a summary. */
-function fromStaging(staging, key, failuresOf, describe) {
-    const part = staging?.[key];
+/** CJ-01–CJ-22: the journeys a release's Layer 3 runs (TEST_STRATEGY §7). */
+const JOURNEYS = 22;
 
-    return part === undefined || part === null ? notRun('no staging summary for this section (RELEASE_PLAN REL-03, REL-04)') : counted(failuresOf(part), describe(part));
+const isCount = (value) => Number.isInteger(value) && value >= 0;
+
+/**
+ * A staging section from the operator's summary: its counted failures once every field is a count — a field missing,
+ * null, negative or not a whole number, as the template's are, keeps the section NOT RUN, never a measured zero
+ * (GAP-017) —, and NOT RUN where `valid` refuses the counts as an incomplete run.
+ */
+function fromStaging(staging, key, fields, failuresOf, describe, valid = () => null) {
+    const part = staging?.[key];
+    const missing = part === undefined || part === null ? fields : fields.filter((field) => !isCount(part[field]));
+
+    if (missing.length > 0) return notRun(`no staging count for ${missing.join(', ')} (RELEASE_PLAN REL-03, REL-04)`);
+    const incomplete = valid(part);
+
+    return incomplete === null ? counted(failuresOf(part), describe(part)) : notRun(incomplete);
 }
 
-/** The report's sections from the evidence; RELEASE STATUS PASS only when every section is. */
+/** The release's declaration of RL-03 and its approval: PASS for NONE, or for the exception with the Owner's approval named. */
+function declared(value, approval, exception, label) {
+    if (value === undefined || value === null) return null;
+    const ok = value === 'NONE' || (value === exception && typeof approval === 'string' && approval.trim() !== '');
+
+    return { failures: ok ? 0 : 1, detail: `${label}: ${value}${typeof approval === 'string' && approval.trim() !== '' ? ` (${approval})` : ''}` };
+}
+
+/**
+ * The report's sections from the evidence; RELEASE STATUS PASS only when every section is. TASKS reads the plan's
+ * BLOCKED and VERIFYING counters and the release's own Tasks — `declarations.tasks`, as the record lists them —, each
+ * DONE in the plan's table ("required todo 0"); a Task outside the release, a later one still TODO, is not counted.
+ */
 export function compile({ plan, checks, toolchain, declarations, staging }) {
     const sections = {};
-    const open = plan === null ? null : [plan.ready, plan.inProgress, plan.blocked, plan.verifying, plan.todo];
+    const tasks = Array.isArray(declarations?.tasks) ? declarations.tasks : [];
 
-    sections.TASKS = plan === null || open.some((value) => Number.isNaN(value))
-        ? notRun('no Task plan counters')
-        : counted(open.reduce((sum, value) => sum + value, 0), `total ${plan.total}, done ${plan.done}; ready ${plan.ready}, in progress ${plan.inProgress}, blocked ${plan.blocked}, verifying ${plan.verifying}, todo ${plan.todo}`);
+    if (plan === null || [plan.blocked, plan.verifying].some((value) => Number.isNaN(value))) sections.TASKS = notRun('no Task plan counters');
+    else if (tasks.length === 0) sections.TASKS = notRun('no list of the release\'s Tasks (REL-01)');
+    else {
+        const open = tasks.filter((task) => plan.statuses.get(task) !== 'DONE');
+        sections.TASKS = counted(plan.blocked + plan.verifying + open.length,
+            `total ${plan.total}, done ${plan.done}; blocked ${plan.blocked}, verifying ${plan.verifying}; the release's ${tasks.length} Tasks, not DONE ${open.length}${open.length > 0 ? `: ${open.join(', ')}` : ''}`);
+    }
     sections.ROUTES = fromChecks(checks, CHECKS.ROUTES);
     sections.INTERACTIONS = fromChecks(checks, CHECKS.INTERACTIONS);
-    sections['CRITICAL JOURNEYS'] = fromStaging(staging, 'critical_journeys', (part) => Number(part.failed ?? 0) + Math.max(0, Number(part.total ?? 0) - Number(part.passed ?? 0) - Number(part.failed ?? 0)),
-        (part) => `CJ-01–CJ-22 at Layer 3: total ${part.total}, passed ${part.passed}, failed ${part.failed ?? 0}`);
+    sections['CRITICAL JOURNEYS'] = fromStaging(staging, 'critical_journeys', ['total', 'passed', 'failed'], (part) => part.failed + (part.total - part.passed - part.failed),
+        (part) => `CJ-01–CJ-22 at Layer 3: total ${part.total}, passed ${part.passed}, failed ${part.failed}`,
+        (part) => (part.total !== JOURNEYS ? `CJ-01–CJ-22 are ${JOURNEYS} journeys; the staging summary counts ${part.total}` : part.passed + part.failed > part.total ? 'passed and failed exceed the total' : null));
     const browserUi = fromChecks(checks, CHECKS['UI/UX']);
-    const stagingUi = staging?.ui_ux;
-    sections['UI/UX'] = browserUi.status !== 'PASS' || stagingUi === undefined || stagingUi === null
-        ? (browserUi.status === 'FAIL' ? browserUi : notRun(browserUi.status === 'PASS' ? 'no staging summary for this section (TEST_STRATEGY §§9–11 at Layer 3)' : browserUi.detail))
-        : counted(Number(stagingUi.missing_translations ?? 0) + Number(stagingUi.redundant_critical_actions ?? 0) + Number(stagingUi.failed_checks ?? 0),
-            `${browserUi.detail}; Layer 3: missing translations ${stagingUi.missing_translations ?? 0}, redundant critical actions ${stagingUi.redundant_critical_actions ?? 0}, failed checks ${stagingUi.failed_checks ?? 0}`);
-    sections.BROWSER = fromStaging(staging, 'browser', (part) => Number(part.console_errors ?? 0) + Number(part.failed_requests ?? 0),
-        (part) => `critical console errors ${part.console_errors ?? 0}; critical failed requests ${part.failed_requests ?? 0}`);
+    const stagingUi = fromStaging(staging, 'ui_ux', ['missing_translations', 'redundant_critical_actions', 'failed_checks'],
+        (part) => part.missing_translations + part.redundant_critical_actions + part.failed_checks,
+        (part) => `Layer 3: missing translations ${part.missing_translations}, redundant critical actions ${part.redundant_critical_actions}, failed checks ${part.failed_checks}`);
+    sections['UI/UX'] = browserUi.status === 'FAIL' || stagingUi.status === 'FAIL'
+        ? counted((browserUi.failures ?? 0) + (stagingUi.failures ?? 0), [browserUi, stagingUi].filter((part) => part.status === 'FAIL').map((part) => part.detail).join('; '))
+        : browserUi.status !== 'PASS' ? browserUi
+            : stagingUi.status !== 'PASS' ? stagingUi : counted(0, `${browserUi.detail}; ${stagingUi.detail}`);
+    sections.BROWSER = fromStaging(staging, 'browser', ['console_errors', 'failed_requests'], (part) => part.console_errors + part.failed_requests,
+        (part) => `critical console errors ${part.console_errors}; critical failed requests ${part.failed_requests}`);
     sections.TOOLCHAIN = toolchain === null || toolchain.rows === 0
         ? notRun('no TOOLCHAIN rows read')
         : counted(toolchain.unverified.length, toolchain.unverified.length === 0 ? `${toolchain.rows} capabilities verified` : `not yet verified: ${toolchain.unverified.join('; ')}`);
-    sections.COST = declarations?.cost === undefined
-        ? notRun('no cost declaration (RL-03)')
-        : counted(declarations.cost === 'NONE' || (declarations.cost === 'APPROVED EXCEPTION' && Boolean(declarations.cost_approval)) ? 0 : 1,
-            `ADDITIONAL RECURRING COST CHANGE: ${declarations.cost}${declarations.cost_approval ? ` (${declarations.cost_approval})` : ''}`);
-    sections.DATABASE = declarations?.db === undefined
+    const cost = declared(declarations?.cost, declarations?.cost_approval, 'APPROVED EXCEPTION', 'ADDITIONAL RECURRING COST CHANGE');
+    sections.COST = cost === null ? notRun('no cost declaration (RL-03)') : counted(cost.failures, cost.detail);
+    const db = declared(declarations?.db, declarations?.db_approval, 'APPROVED CONTROLLED MIGRATION', 'DB CHANGE');
+    const mutation = declarations?.agent_production_db_mutation;
+    sections.DATABASE = db === null || mutation === undefined || mutation === null
         ? notRun('no database declaration (RL-03)')
-        : counted((['NONE', 'APPROVED CONTROLLED MIGRATION'].includes(declarations.db) ? 0 : 1) + (declarations.agent_production_db_mutation === 'NO' ? 0 : 1),
-            `DB CHANGE: ${declarations.db}; direct production DB mutation by a coding agent: ${declarations.agent_production_db_mutation ?? 'not declared'}`);
+        : counted(db.failures + (mutation === 'NO' ? 0 : 1), `${db.detail}; direct production DB mutation by a coding agent: ${mutation}`);
     sections.BUILD = fromChecks(checks, CHECKS.BUILD);
     sections.SECURITY = fromChecks(checks, CHECKS.SECURITY);
-    sections.PERFORMANCE = fromStaging(staging, 'performance', (part) => Number(part.outside_target ?? 0) + Math.max(0, Number(part.cases ?? 0) - Number(part.within_target ?? 0) - Number(part.outside_target ?? 0)),
-        (part) => `PERFORMANCE_TARGETS §4's release-critical set: ${part.within_target ?? 0} of ${part.cases ?? 0} within target`);
-    sections.INTEGRITY = fromStaging(staging, 'integrity', (part) => Number(part.differences ?? 0), (part) => `ReconcileGuards after Layer 3: ${part.differences ?? 0} differences`);
+    sections.PERFORMANCE = fromStaging(staging, 'performance', ['cases', 'within_target', 'outside_target'], (part) => part.outside_target + (part.cases - part.within_target - part.outside_target),
+        (part) => `PERFORMANCE_TARGETS §4's release-critical set: ${part.within_target} of ${part.cases} within target`,
+        (part) => (part.cases === 0 ? 'no release-critical case measured' : part.within_target + part.outside_target > part.cases ? 'within and outside the target exceed the cases' : null));
+    sections.INTEGRITY = fromStaging(staging, 'integrity', ['differences'], (part) => part.differences, (part) => `ReconcileGuards after Layer 3: ${part.differences} differences`);
 
     return { sections, status: SECTIONS.every((name) => sections[name].status === 'PASS') ? 'PASS' : 'FAIL' };
 }
@@ -154,19 +196,23 @@ function json(path) {
 
 function selfTest() {
     const root = mkdtempSync(join(tmpdir(), 'release-report-'));
-    const plan = 'Current Total Tasks: 3\n\nDONE: 3\nREADY: 0\nIN_PROGRESS: 0\nBLOCKED: 0\nVERIFYING: 0\nTODO: 0\n';
+    const row = (task, status) => `| [${task}](${task}.md) | A Task | Stage · module | HIGH | ${status} | — | — | NO | AGENT | NONE | NO |`;
+    const plan = ['Current Total Tasks: 3', '', 'DONE: 2', 'READY: 0', 'IN_PROGRESS: 0', 'BLOCKED: 0', 'VERIFYING: 0', 'TODO: 1', '',
+        '| Task | Title | Stage · module | Risk | Status | Depends on (TASK-) | Blocks (TASK-) | Parallel safe | Executor | DB impact | UI impact |',
+        '| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |', row('TASK-001', 'DONE'), row('TASK-002', 'DONE'), row('TASK-003', 'TODO'), ''].join('\n');
     const toolchain = '| Capability | Preferred tool | Project status | Verified by |\n| --- | --- | --- | --- |\n| Browser E2E (§5.3) | Playwright | Verified by TASK-003 | TASK-003 |\n';
     const lines = ['TL-06 Authorization', 'TL-07 Route integrity', 'TL-08 Interaction', 'TL-10 Localization', 'TL-11 Responsive', 'TL-12 Accessibility', 'TL-13 Frontend build', 'TL-14 Secret-like scan (SX-06)'];
     const summary = (status) => lines.map((name) => `${name}: ${status(name)} — Evidence: abc1234, CI ubuntu-24.04 run 1, command, log`).join('\n');
     const staging = { critical_journeys: { total: 22, passed: 22, failed: 0 }, ui_ux: { missing_translations: 0, redundant_critical_actions: 0, failed_checks: 0 },
         browser: { console_errors: 0, failed_requests: 0 }, performance: { cases: 5, within_target: 5, outside_target: 0 }, integrity: { differences: 0 } };
-    const declarations = { db: 'NONE', cost: 'NONE', agent_production_db_mutation: 'NO' };
-    const run = (status, stagingSummary, planText = plan) => {
+    const declarations = { tasks: ['TASK-001', 'TASK-002'], db: 'NONE', db_approval: null, cost: 'NONE', cost_approval: null, agent_production_db_mutation: 'NO' };
+    const run = (status, stagingSummary, planText = plan, declared = declarations) => {
         const dir = mkdtempSync(join(root, 'e-'));
         writeFileSync(join(dir, 'summary-local.txt'), summary(status));
 
-        return compile({ plan: readPlan(planText), checks: readSummaries(dir), toolchain: readToolchain(toolchain), declarations, staging: stagingSummary });
+        return compile({ plan: readPlan(planText), checks: readSummaries(dir), toolchain: readToolchain(toolchain), declarations: declared, staging: stagingSummary });
     };
+    const template = (name) => JSON.parse(readFileSync(new URL(`../../docs/10-release/records/_template/${name}`, import.meta.url), 'utf8'));
     const failures = [];
     const expect = (label, actual, wanted) => { if (actual !== wanted) failures.push(`${label}: ${actual} ≠ ${wanted}`); };
 
@@ -190,9 +236,29 @@ function selfTest() {
     const empty = run((name) => (name.startsWith('TL-08') ? 'EMPTY — no test until TASK-x' : 'PASS'), staging);
     expect('a layer with no test is no run', empty.sections.INTERACTIONS.status, 'NOT RUN');
 
-    const open = run(() => 'PASS', staging, plan.replace('TODO: 0', 'TODO: 2'));
-    expect('tasks still open', open.sections.TASKS.status, 'FAIL');
+    expect('a later Task still TODO outside the release', pass.sections.TASKS.status, 'PASS');
+    const open = run(() => 'PASS', staging, plan, { ...declarations, tasks: ['TASK-001', 'TASK-003', 'TASK-009'] });
+    expect('the release\'s Tasks not DONE, one unknown', open.sections.TASKS.status, 'FAIL');
     expect('their count', open.sections.TASKS.failures, 2);
+    const blocked = run(() => 'PASS', staging, plan.replace('BLOCKED: 0', 'BLOCKED: 1'));
+    expect('a Task blocked in the plan', blocked.sections.TASKS.status, 'FAIL');
+    expect('no list of the release\'s Tasks', run(() => 'PASS', staging, plan, { ...declarations, tasks: [] }).sections.TASKS.status, 'NOT RUN');
+
+    const copied = run(() => 'PASS', template('staging-summary.json'), plan, template('declarations.json'));
+    ['TASKS', 'CRITICAL JOURNEYS', 'UI/UX', 'BROWSER', 'COST', 'DATABASE', 'PERFORMANCE', 'INTEGRITY']
+        .forEach((name) => expect(`the template's ${name}, untouched`, copied.sections[name].status, 'NOT RUN'));
+    expect('a release from the untouched template', copied.status, 'FAIL');
+    expect('journeys given as an empty object', run(() => 'PASS', { ...staging, critical_journeys: {} }).sections['CRITICAL JOURNEYS'].status, 'NOT RUN');
+    expect('five of the twenty-two journeys', run(() => 'PASS', { ...staging, critical_journeys: { total: 5, passed: 5, failed: 0 } }).sections['CRITICAL JOURNEYS'].status, 'NOT RUN');
+    expect('a negative count', run(() => 'PASS', { ...staging, browser: { console_errors: 2, failed_requests: -2 } }).sections.BROWSER.status, 'NOT RUN');
+    expect('a count given as text', run(() => 'PASS', { ...staging, integrity: { differences: '0' } }).sections.INTEGRITY.status, 'NOT RUN');
+    expect('no performance case measured', run(() => 'PASS', { ...staging, performance: { cases: 0, within_target: 0, outside_target: 0 } }).sections.PERFORMANCE.status, 'NOT RUN');
+    expect('a Layer 3 translation missing', run(() => 'PASS', { ...staging, ui_ux: { ...staging.ui_ux, missing_translations: 1 } }).sections['UI/UX'].status, 'FAIL');
+
+    const migration = { ...declarations, db: 'APPROVED CONTROLLED MIGRATION' };
+    expect('a migration without the Owner\'s approval', run(() => 'PASS', staging, plan, migration).sections.DATABASE.status, 'FAIL');
+    expect('a migration with it', run(() => 'PASS', staging, plan, { ...migration, db_approval: 'APPR-0xx' }).sections.DATABASE.status, 'PASS');
+    expect('a paid exception without approval', run(() => 'PASS', staging, plan, { ...declarations, cost: 'APPROVED EXCEPTION' }).sections.COST.status, 'FAIL');
 
     const absent = compile({ plan: readPlan(plan), checks: new Map(), toolchain: readToolchain(toolchain), declarations: null, staging });
     expect('no verification evidence at all', absent.sections.BUILD.status, 'NOT RUN');
@@ -209,7 +275,7 @@ function selfTest() {
         process.exit(1);
     }
 
-    console.log(`PASS: the report's section rules hold on fixture evidence (${SECTIONS.length} sections; a pass, a failure, a missing run)`);
+    console.log(`PASS: the report's section rules hold on fixture evidence (${SECTIONS.length} sections; a pass, a failure, a missing run, the untouched template)`);
 }
 
 if (process.argv.includes('--self-test')) {
