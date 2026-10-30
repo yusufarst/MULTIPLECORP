@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 37
-READY: 2
+DONE: 38
+READY: 1
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 35
 SUPERSEDED: 0
 
 Progress:
-37 / 87
-Percentage: 42.5 %
+38 / 87
+Percentage: 43.7 %
 
-CURRENT TASK: none in progress — TASK-038 — Reservations DONE on its branch `task/TASK-038-reservations`, CI PASS on `461146d`, its pull request #43 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-061 and TASK-073 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-061 — Activity history and security log DONE on its branch `task/TASK-061-activity-logs`, CI PASS on `56cdda8`, its pull request #44 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-073 READY, NOT STARTED, taken from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -109,7 +109,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-058](TASK-058.md) — Home, Work and Review — signals and the action queue
 - [ ] [TASK-059](TASK-059.md) — Search and scanning
 - [ ] [TASK-060](TASK-060.md) — Reports, the consolidated report and exports
-- [ ] [TASK-061](TASK-061.md) — Activity history and security log
+- [x] [TASK-061](TASK-061.md) — Activity history and security log
 - [ ] [TASK-062](TASK-062.md) — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
 - [ ] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
 - [ ] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
@@ -201,7 +201,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | TODO | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 075 | NO | AGENT | PROPOSED | YES |
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | TODO | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | TODO | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | READY | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |

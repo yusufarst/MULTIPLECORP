@@ -1,6 +1,6 @@
 # Proactive gap register
 
-Status: REVIEW | Updated: 2026-10-20 | Owner: Planning
+Status: REVIEW | Updated: 2026-10-30 | Owner: Planning
 
 This is the single index of discovered gaps, risk treatment and pending owner decisions. Findings use the [owner records and supporting references](SOURCE_OF_TRUTH.md#authority-and-provenance) and current P0/P1 documents. They are planning risks, not claims of vulnerabilities in an application that does not yet exist. P1 decisions and follow-up answers resolve parts of earlier gaps without proving runtime mitigation. Recommendations remain proposals unless explicitly adopted or delegated under [decision authority](CHANGE_CONTROL.md#decision-authority).
 
@@ -163,6 +163,7 @@ Every gap's P11 Task or disposition, mapped by run PC-5 ([DIR-084](DECISION_LOG.
 | GAP-067 | OPEN | OF-03's consistency edit, made with OF-02's change; the contracts meanwhile follow the readings OF-03 confirms — TASK-020, TASK-039, TASK-043, TASK-045, TASK-046, TASK-053, TASK-054, TASK-057, TASK-069 |
 | GAP-068 | OPEN | the Owner's approval of OF-04's text first; then TASK-037, TASK-043, TASK-077 |
 | GAP-069 | CLOSED | closed — OF-06's step stated in TASK-085 with TASK-020's command (Change 3) |
+| GAP-070 | MITIGATED | TASK-061's expand-only index migration; the register's row Planning's — TASK-068 scales the keys |
 
 ## GAP-001 — Blanket approval rules could preserve a known-bad plan
 
@@ -872,3 +873,10 @@ Every gap's P11 Task or disposition, mapped by run PC-5 ([DIR-084](DECISION_LOG.
 - **Recommended mitigation:** the Owner decides P11Q-06; its recommendation (a) — the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command right after the installation step, with the Owner present, the operator's statement of why recorded in the issue's audit event; no new mechanism.
 - **Owner:** the Owner; Planning for the amendment or the step. **Affected:** SECURITY AU-12, AU-14; INFRASTRUCTURE §5; RELEASE_PLAN CUT-02; TASK-020, TASK-076, TASK-085; P5, P9, P11. **Status:** OWNER_DECISION_REQUIRED — raised by run PC-5 ([DIR-084](DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) §8 item 10), 2026-10-20.
 - **OG-4 continuation ([DIR-085](DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-06, the first execution session under DIR-086 §3.3, 2026-10-20):** P11Q-06 decided (a): the operator issues the first Owner's OWNER_RECOVERY link through AU-14's command right after the installation step, with the Owner present, who opens it on the Owner's own device; the operator's reason is recorded in the issue's audit event and AU-14's alerts follow; no new mechanism. TASK-085 states the step with TASK-020's command and TASK-020 builds no other path, both edited in TASK_PLAN's Change 3. **Status:** CLOSED.
+
+## GAP-070 — The security events have no time key for an unfiltered list
+
+- **Description/evidence:** TASK-061's PG-064 *Log Keamanan* reads the security events newest first, every kind or one kind at a time (PF-13; PF-42; TASK-061 criterion 6), and DATABASE §20 and PERFORMANCE §12 register only IX-14's and IX-19's partial indexes on `security_events` — no key serves an unfiltered or one-kind list in (`occurred_at`, `id`) order. Found by TASK-061's executor, 2026-10-30; its independent review (ER-06) asked that the discovery be recorded.
+- **Impact:** without a time key the list sorts the whole table on every page, its cost linear in the log's size, against PF-13 and the Task's own criterion 6.
+- **Mitigation applied:** a Level 1 technical safeguard ([CHANGE_CONTROL](CHANGE_CONTROL.md#decision-authority)): one expand-only migration, `2026_10_30_000146_ops_add_security_event_time_indexes`, adds `security_events (occurred_at, id)` and `(event_kind, occurred_at, id)`, each registered with the query it serves in `tests/Performance/IndexRegisterTest.php`; no row is touched and no behaviour changes.
+- **Owner:** Planning — the two keys' row in PERFORMANCE §12's index register and DATABASE §20's line. **Affected:** PERFORMANCE §12; DATABASE §20; TASK-061, TASK-068 (PFM-03's scale procedure). **Status:** MITIGATED — the keys exist and are verified in CI; the register's documentation row is pending with Planning.

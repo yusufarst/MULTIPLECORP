@@ -48,6 +48,8 @@ export function translator(strings: Strings) {
         t: (key: TranslationKey, replacements?: Replacements): string => replace(strings[key], replacements),
         tc: (key: TranslationKey, count: number, replacements?: Replacements): string =>
             replace(choose(strings[key], count), { count, ...replacements }),
+        /** Whether a key built from recorded data — an audit action, a security event kind — is in the catalogue. */
+        has: (key: string): key is TranslationKey => Object.hasOwn(strings, key),
     };
 }
 
