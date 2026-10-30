@@ -34,6 +34,14 @@ final class InvoiceComposer
         private readonly InvoiceSubjects $subjects,
     ) {}
 
+    /** The composer exists for a holder of `invoice.issue` with `finance.view` of the project's company (ROUTE-042; criterion 12). */
+    public function mayOpen(int $viewerId, int $companyId): bool
+    {
+        $viewer = $this->capabilities->for($viewerId);
+
+        return $viewer->allows('invoice.issue', $companyId) && $viewer->allows('finance.view', $companyId);
+    }
+
     /** @return array<string, mixed> */
     public function screen(int $viewerId, ProjectRef $project, ?Invoice $draft): array
     {

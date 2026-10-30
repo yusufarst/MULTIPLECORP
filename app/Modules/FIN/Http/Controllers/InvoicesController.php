@@ -30,6 +30,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -62,6 +63,10 @@ final class InvoicesController extends Controller
         $draft = self::query($request, 'invoice');
         $invoice = $draft === null ? null : ($this->detail->find($actor, $draft) ?? throw new NotFoundHttpException);
         $project = $invoice !== null ? $this->projectOf($actor, $invoice->project_id) : ($this->projects->reference($actor, self::query($request, 'proyek') ?? '') ?? throw new NotFoundHttpException);
+
+        if (! $this->composer->mayOpen($actor, $project->companyId)) {
+            throw new AccessDeniedHttpException;
+        }
 
         return Inertia::render('FIN/InvoiceComposer', $this->composer->screen($actor, $project, $invoice));
     }
