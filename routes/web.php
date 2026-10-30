@@ -21,6 +21,7 @@ use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\INV\Http\Controllers\LocationsController;
 use App\Modules\INV\Http\Controllers\ReservationsController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
+use App\Modules\OPS\Http\Controllers\LogsController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
@@ -192,6 +193,10 @@ Route::post('/proyek/{id}/persyaratan/{req}/longgarkan', [RequirementsController
 Route::post('/keputusan/{id}/ganti', [RequirementsController::class, 'supersede'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:decisions.supersede'])->name('adm.decisions.supersede');
 Route::get('/dokumen/kasus', [CorrectionCasesController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ops.cases');
 Route::post('/dokumen/kasus/{id}/tutup', [CorrectionCasesController::class, 'close'])->whereUuid('id')->middleware(['auth', 'capability:cases.close'])->name('ops.cases.close');
+
+// TASK-061: the Owner's two log pages, read-only (ROUTE-063; ROUTE-064; OD-14).
+Route::get('/aktivitas/riwayat', [LogsController::class, 'history'])->middleware(['auth', 'capability:audit.view'])->name('ops.activity');
+Route::get('/aktivitas/log-keamanan', [LogsController::class, 'security'])->middleware(['auth', 'capability:security_log.view'])->name('ops.security-log');
 Route::post('/dokumen', [DocumentsController::class, 'save'])->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.save');
 Route::get('/dokumen/{id}', [DocumentsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('doc.documents.show');
 Route::post('/dokumen/{id}/terbitkan', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.issue');

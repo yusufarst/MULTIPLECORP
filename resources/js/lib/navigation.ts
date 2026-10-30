@@ -27,7 +27,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-063', 'PG-064', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -99,7 +99,17 @@ export const MODULES: Entry[] = [
             { pg: 'PG-057', href: '/data-master/lokasi-rak' },
         ],
     },
-    { key: 'aktivitas', pg: 'PG-063', label: 'shell.nav.aktivitas_keamanan', href: '/aktivitas/riwayat', icon: ShieldCheck, allowed: has('audit.view', 'security_log.view') },
+    {
+        key: 'aktivitas',
+        pg: 'PG-063',
+        label: 'shell.nav.aktivitas_keamanan',
+        href: '/aktivitas/riwayat',
+        icon: ShieldCheck,
+        allowed: has('audit.view', 'security_log.view'),
+        // TASK-061: *Riwayat Aktivitas* with `audit.view`, *Log Keamanan* with `security_log.view` (OWNER_ONLY each).
+        page: has('audit.view'),
+        subpages: [{ pg: 'PG-064', href: '/aktivitas/log-keamanan', allowed: has('security_log.view') }],
+    },
     {
         key: 'pengaturan',
         pg: 'PG-059',

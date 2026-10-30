@@ -8448,6 +8448,1302 @@
             "source": "QS-01",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "activity.filter.from": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.to": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.company": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.company_all": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.no_company": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.actor": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.actor_all": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.record": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.filter.clear_record": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.time": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.actor": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.company": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.action": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.record": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.reason": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.field.authority": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.operator": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.unknown": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.title": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.before": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.after": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.metadata": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.none": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.open": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.detail.unavailable": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.record.history": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.record.open": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.empty": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.authority.ADM": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.authority.ADM_PLUS": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.authority.OWNER_ONLY": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.authority.SYSTEM": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.filter.kind": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.filter.kind_all": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.kind": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.account": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.actor": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.reason": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.route": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.target": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.identifier": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.address": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.agent": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.companies": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.field.details": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.focus": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.focus_unavailable": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.empty": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.show": {
+            "task": "TASK-061",
+            "source": "IA §8.6 PG-063/PG-064; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.DefaultInvoiceItemAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementLinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementRelaxed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementRemoved": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementTightened": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementUnlinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.RequirementWaived": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.WaiverEligibilitySet": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.WaiverReopened": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ADM.WaiverSuperseded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.AlternateUnitAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.BarcodeRegistered": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.DefaultPriceChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.MinimumStockSet": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductArchived": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductImageArranged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductImageAttached": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductPolicyChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.ProductUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.UnitCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CAT.UnitRatioChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.DocumentDraftCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.DocumentDraftSaved": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.DocumentIssued": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.DocumentRevisionDrafted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.DocumentVoided": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceDuplicateOverridden": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceLinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceRegistered": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceReplaced": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceUnlinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.EvidenceVersionAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.CredentialLinkConsumed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.CredentialLinkIssued": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.CredentialLinkRevoked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.CredentialsReissued": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.CredentialsVoided": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.GoogleLinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.GoogleUnlinked": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.GrantsChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.IncidentRecoveryEnded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.IncidentRunCompleted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.IncidentRunStarted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.IncidentSweep": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.LocaleChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.OwnerRecoveryLinkIssued": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.OwnerRestored": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.PasswordChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.RecoveryCodeUsed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.RecoveryCodesRegenerated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.RoleChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.SessionEnded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.TotpDisabled": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.TotpEnrolled": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.TotpReplaced": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.TotpReset": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.TotpSecretsReencrypted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.UserCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.UserDeactivated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.UserReactivated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.UserUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IAM.WorkspaceInstalled": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LocationCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LocationUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReservationCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReservationCutRouted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReservationIncreased": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReservationReduced": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReservationReleased": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.OPS.CorrectionCaseClosed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.OPS.CorrectionCaseOpened": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.OPS.CorrectionCaseReopened": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.BankAccountAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.BankAccountDeactivated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.CompanyCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.CompanyDeactivated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.CompanyUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.IdentityAssetReplaced": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.NumberingRaised": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.NumberingSchemeConfigured": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.NumberingSeeded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.TaxConfigurationAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.ORG.TaxConfigurationChanged": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ConfirmationSuperseded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.DraftProjectDiscarded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.LineReplanned": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectActivated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectAmended": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectConfirmed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectReconfirmed": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectRevalidated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationApproved": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationDraftSaved": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationDrafted": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationRejected": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationRevised": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.QuotationSent": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.RemainingScopeCancelled": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientAddressAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientArchived": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientContactAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientOrganizationCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientUnitAdded": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.ClientUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.SupplierArchived": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.SupplierCreated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PTY.SupplierUpdated": {
+            "task": "TASK-061",
+            "source": "BR-XC-01; LG-01; PT-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.LOGIN_SUCCEEDED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.LOGIN_FAILED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.THROTTLED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.LOGOUT": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.SESSION_INVALIDATED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.PASSWORD_RESET_REQUESTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.PASSWORD_RESET_COMPLETED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.ACCOUNT_SETUP_LINK_ISSUED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.ACCOUNT_SETUP_COMPLETED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.OWNER_RECOVERY_LINK_ISSUED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.CREDENTIAL_LINK_REJECTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.PASSWORD_CHANGED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.PASSWORD_CONFIRMATION_FAILED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.ACCESS_DENIED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.REQUEST_FORGERY_REJECTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.UPLOAD_REJECTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.EXPORT_REQUESTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.EXPORT_DOWNLOADED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.AUTHORIZATION_ANOMALY": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.EVIDENCE_DUPLICATE_UNDISCLOSED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.IMPORT_COLLISION_UNDISCLOSED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TWO_FACTOR_FAILED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TWO_FACTOR_COOLDOWN_STARTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TWO_FACTOR_COOLDOWN_REFUSED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.OWNER_RESTORED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TOTP_ENROLLED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TOTP_REPLACED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TOTP_RESET": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TOTP_DISABLED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.CREDENTIALS_VOIDED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.RECOVERY_CODE_USED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.RECOVERY_CODES_VIEWED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.RECOVERY_CODES_REGENERATED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.GOOGLE_SIGNIN_FAILED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.GOOGLE_LINKED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.GOOGLE_UNLINKED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.GOOGLE_LINK_CONFLICT": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.PASSWORD_CHECK_SKIPPED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "security_log.kind.TOTP_SECRETS_REENCRYPTED": {
+            "task": "TASK-061",
+            "source": "LG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.project": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.user": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.company": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.product": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.unit": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.client_organization": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.client_unit": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.client_address": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.client_contact": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.supplier": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.evidence_document": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.document_version": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.correction_case": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.reservation": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.quotation_revision": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.numbering_scheme": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.location": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.entity.other": {
+            "task": "TASK-061",
+            "source": "LG-01; IA §8.6",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
