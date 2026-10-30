@@ -54,6 +54,19 @@ export function round(value: string, scale: number): string {
     return text({ units: x.units < 0n ? -rounded : rounded, scale });
 }
 
+/** `value ÷ divisor` to `scale` decimals, half away from zero or truncated, on integers as the server's BigDecimal computes it. */
+export function quotient(value: string, divisor: string, scale: number, mode: 'HALF_UP' | 'DOWN'): string {
+    const x = scaled(value);
+    const y = scaled(divisor);
+    const top = x.units * 10n ** BigInt(y.scale + scale);
+    const bottom = y.units * 10n ** BigInt(x.scale);
+    const a = top < 0n ? -top : top;
+    const b = bottom < 0n ? -bottom : bottom;
+    const units = mode === 'DOWN' ? a / b : (2n * a + b) / (2n * b);
+
+    return text({ units: top < 0n !== bottom < 0n ? -units : units, scale });
+}
+
 export type ProvisionalTotals = { lines: string[]; subtotal: string; tax: string; total: string };
 
 /** A document composer's provisional totals (DESIGN_SYSTEM §14.3; DC-3): each line rounded half away from zero to

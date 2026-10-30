@@ -30,4 +30,10 @@ final class DocumentFacts
         public readonly array $renders = [],
         public readonly ?string $kuitansiAmount = null,
     ) {}
+
+    /** These facts stating a Kuitansi's amount, the one its draft holds where the record does not fix it (AX-31; WF-FIN-08). */
+    public function forKuitansi(string $amount): self
+    {
+        return new self($this->recipient, $this->references, $this->subject, $this->lines, $this->totals, $amount, $this->parentNumber, $this->renders, $amount);
+    }
 }

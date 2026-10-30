@@ -61,6 +61,35 @@ final class Families
                     SQL,
                 null,
             ),
+            // TASK-049 (C-15; C-16; C-31; DATABASE §11.2): an invoice's guard is its live version's values and its active reductions; a project's
+            // invoiced value is Σ its issued live versions'. A voided invoice's guard stands at nothing.
+            new Family(
+                'invoice_balances',
+                ['invoice_id'],
+                ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount'],
+                <<<'SQL'
+                    select b.invoice_id,
+                        case when i.state = 'ISSUED' then v.gross_value else 0 end as gross_value,
+                        case when i.state = 'ISSUED' then v.sales_value else 0 end as sales_value,
+                        case when i.state = 'ISSUED' then v.output_tax_value else 0 end as output_tax_value,
+                        coalesce((select sum(a.amount) from payment_applications a where a.invoice_id = b.invoice_id and a.state = 'ACTIVE'), 0) as applied_amount,
+                        coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'FEE'), 0) as fee_settled_amount,
+                        coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'TAX'), 0) as tax_settled_amount
+                    from invoice_balances b join invoices i on i.id = b.invoice_id join invoice_versions v on v.id = i.current_version_id
+                    SQL,
+                null,
+            ),
+            new Family(
+                'project_commercial_balances',
+                ['project_id'],
+                ['invoiced_sales_value'],
+                <<<'SQL'
+                    select b.project_id,
+                        coalesce((select sum(v.sales_value) from invoices i join invoice_versions v on v.id = i.current_version_id where i.project_id = b.project_id and i.state = 'ISSUED' and i.origin = 'LIVE'), 0) as invoiced_sales_value
+                    from project_commercial_balances b
+                    SQL,
+                null,
+            ),
             // TASK-036 (C-26; DATABASE §6.2): a lot's remaining cost is Σ its cost entries less its net draws — every cost row
             // keyed to it, contras and corrections included — beside its remaining quantity. A missing row is reported, never invented.
             new Family(

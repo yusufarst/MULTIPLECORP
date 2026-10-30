@@ -713,3 +713,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-073 squash-merged by the executor into `main` as `06eb4bd` (pull request #45); the gate's accept path proven on `release-check/TASK-073-2`; TASK-047 started.
 - Built TASK-047 on its branch `task/TASK-047-service-handover`: `FUL RecordHandover` and `ReverseHandover` (AX-09) with their refusals, PG-033 *Serah Terima Jasa* with the form beside the BAST's live preview, the BAST's subject and its issue in place, the fulfilment predicate's service lines, the journey's *Jasa* stage leading to the page, and the reconciliation of a line guard's handed-over quantity.
 - Every check passed in fresh CI on `f9fdaac`. TASK-047 DONE — progress 40 / 87 —; TASK-049 next.
+
+## Unreleased — 2026-10-31, TASK-049 — Invoices and the pre-payment Kuitansi
+
+- TASK-047 squash-merged by the executor into `main` as `ac3a6d6` (pull request #46); TASK-049 started.
+- Built TASK-049 on its branch `task/TASK-049-invoices`: `FIN SaveInvoiceDraft`, `IssueInvoice`, `VoidInvoice`, `ReviseInvoiceDown`, `IssuePrepaymentKuitansi` and `LinkPrepaymentKuitansi` (AX-16; AX-22; AX-31) with their refusals, PG-041–PG-043 with the composer beside its live paper, the pre-payment Kuitansi's issue from PG-036, DOC-04, DOC-05 and DOC-06's subjects, the journey's Invoice stage, and the reconciliation of the invoice and commercial guards; the phone's menu and select sheets back on screen, `DecimalInput` following a value the page set.
+- Every check passed in fresh CI on `3ed85a5`. TASK-049 DONE — progress 41 / 87 —; TASK-050 READY next.

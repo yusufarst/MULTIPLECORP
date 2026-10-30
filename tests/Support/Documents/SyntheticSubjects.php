@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\DB;
 final class SyntheticSubjects implements DocumentSubjectProvider
 {
     /** The types a module's own provider supplies (QuotationSubjects; FUL's ServiceHandoverSubjects). */
-    public const SUPPLIED = ['DOC-01', 'DOC-08', 'DOC-11'];
+    public const SUPPLIED = ['DOC-01', 'DOC-04', 'DOC-06', 'DOC-08', 'DOC-11'];
 
     private const TABLES = [
         'project_id' => 'projects', 'purchase_id' => 'purchases', 'dispatch_movement_id' => 'stock_movements', 'dropship_confirmation_id' => 'dropship_confirmations',
@@ -66,7 +66,8 @@ final class SyntheticSubjects implements DocumentSubjectProvider
 
             // The types an issuing module already supplies stay its own: PRJ's quotation and HPS (TASK-033), FUL's BAST (TASK-047).
             if (! in_array($type, self::SUPPLIED, true)) {
-                $types[$type] = $number === 5 ? ['RECEIPT', 'PRE_PAYMENT'] : ['STANDARD'];
+                // A pre-payment Kuitansi stays FIN's (TASK-049); the receipt mode is TASK-051's.
+                $types[$type] = $number === 5 ? ['RECEIPT'] : ['STANDARD'];
             }
         }
 

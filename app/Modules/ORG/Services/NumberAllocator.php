@@ -53,6 +53,17 @@ final class NumberAllocator
         return new DrawnNumber($scheme->id, $period->key, $number, NumberFormat::format($scheme->format_template, $period->key, $number));
     }
 
+    /**
+     * The counter's lock (LK-31) for a command that reads its clock before it draws — an invoice's issue and correction write their record first (AX-16; AX-22) —, so
+     * the draw finds it held; none where the day has no scheme, whose draw is REJECTED (C-10).
+     */
+    public function locks(int $companyId, SequenceType $type, string $businessDate): LockSet
+    {
+        $scheme = $this->state->schemeOn($companyId, $type, $businessDate);
+
+        return $scheme === null ? new LockSet : (new LockSet)->add('number_sequences', ['company_id' => $companyId, 'sequence_type' => $type->value, 'period_key' => NumberingPeriod::of($businessDate, $scheme->period_granularity)->key]);
+    }
+
     /** NM-02's one statement: the counter incremented, its pre-increment value returned; null when no counter exists. */
     private function increment(CommandContext $context, int $companyId, SequenceType $type, NumberingPeriod $period): ?int
     {

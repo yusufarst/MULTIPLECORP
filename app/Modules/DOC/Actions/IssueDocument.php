@@ -55,7 +55,7 @@ final class IssueDocument
         return $this->envelope->run($request, function (CommandContext $context) use ($document, $subject, $provider, $lockVersion, $businessDate, $prefilled, $bankHandle, $factsDigest, $draftId): CommandResult {
             $context->lock($this->issuing->locks($document, $subject, $provider->locks($subject)));
 
-            if (! DocumentAccess::issuedHere($document->document_type_code)) {
+            if (! DocumentAccess::issuedByDocumentRoute($document->document_type_code, $document->mode)) {
                 throw Refused::rejected('WF-QUO-01', ['reason' => 'issued_at_record']);
             }
 
@@ -68,7 +68,13 @@ final class IssueDocument
     /** SF-RENDER: the issued version's PENDING rendition handed to the render job once the issue commits (IP-12). */
     public static function render(CommandContext $context, DocumentVersion $version): void
     {
-        $rendition = DocumentRendition::query()->where('document_version_id', $version->id)->orderByDesc('attempt_no')->value('id');
+        self::renderVersion($context, $version->id);
+    }
+
+    /** The same, by the version's id, for a command whose services issued it. */
+    public static function renderVersion(CommandContext $context, int $versionId): void
+    {
+        $rendition = DocumentRendition::query()->where('document_version_id', $versionId)->orderByDesc('attempt_no')->value('id');
 
         if (is_int($rendition)) {
             $context->afterCommit(fn () => RenderDocument::dispatch($rendition));

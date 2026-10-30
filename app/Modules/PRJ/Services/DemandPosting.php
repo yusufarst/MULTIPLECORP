@@ -5,7 +5,9 @@ namespace App\Modules\PRJ\Services;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\GuardUpdate;
+use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 /**
@@ -50,6 +52,30 @@ final class DemandPosting
     public function handedOver(CommandContext $context, array $deltas): void
     {
         $this->post($context, 'handed_over_qty_base', $deltas);
+    }
+
+    /** The project's invoiced sales value moved by its net delta within the cap's CHECK (L-16; C-31), the one writer of the column. */
+    /**
+     * The confirmed and invoiced sales value of a project's commercial guard; null before any confirmation (L-16).
+     *
+     * @return array{confirmed: string, invoiced: string}|null
+     */
+    public static function commercial(int $projectId): ?array
+    {
+        $row = DB::selectOne('select confirmed_sales_value, invoiced_sales_value from project_commercial_balances where project_id = ?', [$projectId]);
+
+        return is_object($row) ? ['confirmed' => Row::text($row, 'confirmed_sales_value'), 'invoiced' => Row::text($row, 'invoiced_sales_value')] : null;
+    }
+
+    public function invoiced(CommandContext $context, int $projectId, string $delta): void
+    {
+        if (preg_match('/^-?\d+(\.\d+)?$/', $delta) !== 1) {
+            throw new InvalidArgumentException("{$delta} is no invoiced value's delta (DATABASE §9).");
+        }
+
+        if (! BigDecimal::of($delta)->isZero()) {
+            GuardUpdate::apply($context->connection, 'project_commercial_balances', [['key' => ['project_id' => $projectId], 'deltas' => ['invoiced_sales_value' => $delta]]]);
+        }
     }
 
     /** @param  array<int, string>  $deltas */

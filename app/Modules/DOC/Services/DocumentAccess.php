@@ -28,6 +28,12 @@ final class DocumentAccess
         return $typeCode !== 'DOC-01';
     }
 
+    /** Whether ROUTE-222 issues the layout: a pre-payment Kuitansi's draft is ROUTE-221's, its issue only ROUTE-249's, AX-31 and never AX-15 (`DIR-081` OB-02). */
+    public static function issuedByDocumentRoute(string $typeCode, string $mode): bool
+    {
+        return self::issuedHere($typeCode) && ! ($typeCode === 'DOC-05' && $mode === 'PRE_PAYMENT');
+    }
+
     public static function mayViewMetadata(Authority $viewer, int $companyId): bool
     {
         return $viewer->allows('projects.view', $companyId);
@@ -43,7 +49,8 @@ final class DocumentAccess
     public static function mayIssue(Authority $viewer, string $typeCode, int $companyId): bool
     {
         return $viewer->allows(self::ISSUE, $companyId) && self::mayViewContent($viewer, $typeCode, $companyId)
-            && ($typeCode !== 'DOC-01' || $viewer->allows('quotation.manage', $companyId));
+            && ($typeCode !== 'DOC-01' || $viewer->allows('quotation.manage', $companyId))
+            && (! in_array($typeCode, self::INVOICE_LAYOUTS, true) || $viewer->allows('invoice.issue', $companyId));
     }
 
     public static function mayCorrect(Authority $viewer, string $typeCode, int $companyId): bool
