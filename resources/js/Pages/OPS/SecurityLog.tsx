@@ -74,7 +74,7 @@ export default function SecurityLog({ kinds, companies, filters, focus, rows, mo
     const loadMore = () => {
         if (next === null) return;
         setAppending(true);
-        router.reload({ only: ['rows', 'more', 'cursor_failed'], data: { setelah: next }, preserveUrl: true });
+        router.reload({ only: ['rows', 'more', 'cursor_failed'], data: { setelah: next }, preserveUrl: true, onCancel: () => { setAppending(false); }, onError: () => { setAppending(false); } });
     };
     const kind = (value: string): string => {
         const key = `security_log.kind.${value}`;

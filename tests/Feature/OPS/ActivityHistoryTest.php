@@ -4,6 +4,7 @@ use App\Modules\OPS\Queries\ActivityHistory;
 use App\Modules\ORG\Models\Company;
 use Carbon\CarbonImmutable;
 use Database\Factories\OPS\AuditEventFactory;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia;
@@ -40,7 +41,7 @@ it('lists every company\'s events and those without a company, newest first, wit
     auditEvent(['occurred_at' => '2026-10-28 03:00:00+00', 'company_id' => $this->first->id, 'actor_user_id' => $this->admin->id, 'action' => 'PRJ.ProjectCreated',
         'entity_type' => 'project', 'entity_id' => 7, 'entity_public_id' => $project, 'reason' => 'Pesanan sekolah']);
     auditEvent(['occurred_at' => '2026-10-28 04:00:00+00', 'company_id' => $this->second->id, 'action' => 'ORG.NumberingSeeded', 'authority_class' => 'SYSTEM',
-        'metadata' => ['operator' => 'Budi (konsol)']]);
+        'metadata' => ['operator' => ['host_account' => 'deploy', 'name' => 'Budi']]]);
     // Recorded on 29 October WIB for a business date of 25 October: the date shows beside the time (BR-DT-05).
     auditEvent(['occurred_at' => '2026-10-28 18:00:00+00', 'action' => 'IAM.WorkspaceInstalled', 'authority_class' => 'OWNER_ONLY',
         'metadata' => ['business_date' => '2026-10-25']]);
@@ -49,7 +50,7 @@ it('lists every company\'s events and those without a company, newest first, wit
         ->component('OPS/ActivityHistory', false)->has('rows', 3)->where('more', null)->where('cursor_failed', false)
         ->where('rows.0.action', 'IAM.WorkspaceInstalled')->where('rows.0.company', null)->where('rows.0.actor', null)->where('rows.0.operator', null)
         ->where('rows.0.business_date', '2026-10-25')->where('rows.0.authority', 'OWNER_ONLY')
-        ->where('rows.1.action', 'ORG.NumberingSeeded')->where('rows.1.company', 'BBB')->where('rows.1.operator', 'Budi (konsol)')->where('rows.1.business_date', null)
+        ->where('rows.1.action', 'ORG.NumberingSeeded')->where('rows.1.company', 'BBB')->where('rows.1.operator', 'Budi (deploy)')->where('rows.1.business_date', null)
         ->where('rows.2.actor', $this->admin->name)->where('rows.2.company', 'AAA')->where('rows.2.reason', 'Pesanan sekolah')
         ->where('rows.2.record', ['type' => 'project', 'href' => "/proyek/{$project}", 'filter' => "project:{$project}"])
         // The wide columns stay out of the list (PF-06).
@@ -113,4 +114,18 @@ it('continues by keyset with "Muat Lagi", without a total, and answers a tampere
 
     $this->actingAs($this->owner)->get('/aktivitas/riwayat?setelah='.urlencode(str_replace('.', 'x.', (string) $first['more'])))->assertInertia(fn (AssertableInertia $page) => $page
         ->where('cursor_failed', true)->has('rows', 0)->where('more', null));
+});
+
+it('reads an actor\'s timeline narrowed by company in bounded steps, short pages carrying "more" (PF-42; criterion 6)', function () {
+    // 1,005 of the admin's events in the first company, then one older in the second.
+    auditEvent(['occurred_at' => '2026-09-30 00:00:00+00', 'company_id' => $this->second->id, 'actor_user_id' => $this->admin->id, 'action' => 'ORG.CompanyUpdated', 'reason' => 'yang dicari']);
+    DB::statement("insert into audit_events (occurred_at, actor_user_id, company_id, action, authority_class) select timestamptz '2026-10-01 00:00:00+00' + (g || ' seconds')::interval, ?, ?, 'PRJ.ProjectCreated', 'ADM' from generate_series(1, ?) g",
+        [$this->admin->id, $this->first->id, ActivityHistory::SCAN + 5]);
+    $query = "pelaku={$this->admin->public_id}&perusahaan=BBB";
+
+    $first = $this->actingAs($this->owner)->get("/aktivitas/riwayat?{$query}")->viewData('page')['props'];
+    expect($first['rows'])->toBe([])->and($first['partial'])->toBeTrue()->and($first['more'])->not->toBeNull();
+
+    $next = $this->actingAs($this->owner)->get("/aktivitas/riwayat?{$query}&setelah=".urlencode((string) $first['more']))->viewData('page')['props'];
+    expect(array_column($next['rows'], 'reason'))->toBe(['yang dicari'])->and($next['partial'])->toBeFalse()->and($next['more'])->toBeNull();
 });

@@ -42,6 +42,8 @@ type Props = {
     record: { type: string; id: string } | null;
     rows: Row[];
     more: string | null;
+    /** A timeline narrowed by company read its bound and returned short; "Muat Lagi" reads on (PF-42). */
+    partial: boolean;
     cursor_failed: boolean;
     detail?: Detail | null;
 };
@@ -49,7 +51,7 @@ type Props = {
 const LIST = '/aktivitas/riwayat';
 const NO_COMPANY = 'tanpa';
 
-export default function ActivityHistory({ companies, actors, filters, record, rows, more, cursor_failed: cursorFailed, detail }: Props) {
+export default function ActivityHistory({ companies, actors, filters, record, rows, more, partial, cursor_failed: cursorFailed, detail }: Props) {
     const { t, has } = useTranslation();
     // PT-08: "Muat Lagi" adds the page after the rows shown on a partial reload; any other visit shows its first page.
     const [base, setBase] = useState(rows);
@@ -57,6 +59,8 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
     const [next, setNext] = useState(more);
     const [appending, setAppending] = useState(false);
     const [opened, setOpened] = useState<Row | null>(null);
+    // The event whose detail answered last: until it is the opened one, the dialog shows it loading.
+    const [answered, setAnswered] = useState<string | null>(null);
 
     if (base !== rows) {
         setBase(rows);
@@ -74,11 +78,12 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
     const loadMore = () => {
         if (next === null) return;
         setAppending(true);
-        router.reload({ only: ['rows', 'more', 'cursor_failed'], data: { setelah: next }, preserveUrl: true });
+        // A reload cancelled by another visit or failed leaves the rows as they are, never appending another filter's page.
+        router.reload({ only: ['rows', 'more', 'partial', 'cursor_failed'], data: { setelah: next }, preserveUrl: true, onCancel: () => { setAppending(false); }, onError: () => { setAppending(false); } });
     };
     const open = (row: Row) => {
         setOpened(row);
-        router.reload({ only: ['detail'], data: { peristiwa: row.key }, preserveUrl: true });
+        router.reload({ only: ['detail'], data: { peristiwa: row.key }, preserveUrl: true, onSuccess: () => { setAnswered(row.key); } });
     };
     const sentence = (row: Row): string => {
         const key = `activity.action.${row.action}`;
@@ -105,8 +110,9 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
             )}
         </span>
     );
-    const state: Continuation = cursorFailed ? 'cursor_failed' : next === null ? 'end' : 'more';
-    const shownDetail = detail !== undefined && detail !== null && detail.key === opened?.key ? detail : null;
+    const state: Continuation = cursorFailed ? 'cursor_failed' : next === null ? 'end' : partial ? 'partial' : 'more';
+    const loaded = opened !== null && answered === opened.key;
+    const shownDetail = loaded && detail !== undefined && detail !== null && detail.key === opened.key ? detail : null;
 
     return (
         <AppShell title={t('pages.pg_063.title')}>
@@ -183,7 +189,7 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
                         <div className="flex min-w-0 flex-col gap-4">
                             <p className="text-body text-text-primary">{sentence(opened)}</p>
                             {shownDetail === null ? (
-                                <p className="text-body text-text-secondary">{detail === null ? t('activity.detail.unavailable') : t('states.loading')}</p>
+                                <p className="text-body text-text-secondary">{loaded ? t('activity.detail.unavailable') : t('states.loading')}</p>
                             ) : (
                                 (['before', 'after', 'metadata'] as const).map((part) => (
                                     <section key={part} className="flex min-w-0 flex-col gap-2">

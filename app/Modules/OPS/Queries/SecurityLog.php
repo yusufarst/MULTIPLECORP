@@ -118,7 +118,12 @@ final class SecurityLog
             'address' => self::short(Row::nullable($row, 'ip_hash')),
             'agent' => Row::nullable($row, 'user_agent_summary'),
             'companies' => array_values(array_filter([Row::nullable($row, 'company'), Row::nullable($row, 'related_company')])),
-            'details' => is_array($details) ? array_map(fn (mixed $value): string => is_scalar($value) ? (string) $value : (string) json_encode($value), $details) : [],
+            // As PG-063 shows a recorded value: a flag in words, a nested value as JSON.
+            'details' => is_array($details) ? array_map(fn (mixed $value): string => match (true) {
+                is_bool($value) => $value ? 'true' : 'false',
+                is_scalar($value) => (string) $value,
+                default => (string) json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES),
+            }, $details) : [],
         ];
     }
 

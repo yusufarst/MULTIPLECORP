@@ -29,16 +29,26 @@ final class LogsController extends Controller
     {
         $actor = self::actor($request);
         $event = self::query($request, 'peristiwa');
-
-        return Inertia::render('OPS/ActivityHistory', [
-            ...$this->history->screen($actor, [
+        $screen = null;
+        // Read once, and only when a prop of the list is asked for: an event's detail is a partial reload of its own.
+        $read = function () use (&$screen, $actor, $request): array {
+            return $screen ??= $this->history->screen($actor, [
                 'dari' => self::query($request, 'dari'),
                 'sampai' => self::query($request, 'sampai'),
                 'perusahaan' => self::query($request, 'perusahaan'),
                 'pelaku' => self::query($request, 'pelaku'),
                 'catatan' => self::query($request, 'catatan'),
                 'setelah' => self::query($request, 'setelah'),
-            ]),
+            ]);
+        };
+        $props = [];
+
+        foreach (['companies', 'actors', 'filters', 'record', 'rows', 'more', 'partial', 'cursor_failed'] as $key) {
+            $props[$key] = fn (): mixed => $read()[$key] ?? null;
+        }
+
+        return Inertia::render('OPS/ActivityHistory', [
+            ...$props,
             'detail' => Inertia::optional(fn (): ?array => $event === null ? null : $this->history->detail($event)),
         ])->toResponse($request);
     }

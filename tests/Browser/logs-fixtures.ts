@@ -6,7 +6,7 @@ import { numberingCompany, ownerSignedIn } from './numbering-fixtures';
 // events of it with a before and after, one event without a company, a failed sign-in and an authorization anomaly
 // whose key a security notice carries to PG-064 (INT-020).
 
-export type LogsRun = { company: string; code: string; tag: string; notice: string };
+export type LogsRun = { company: string; code: string; tag: string; actor: string; notice: string };
 
 export async function logsRun(page: Page, run: string, locale: 'id' | 'en' = 'id'): Promise<LogsRun> {
     await ownerSignedIn(page, run, locale);

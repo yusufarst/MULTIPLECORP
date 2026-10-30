@@ -17,9 +17,10 @@ test('searches the activity of a company and of no company, continues and opens 
     await expect(table).toContainText('Membuat proyek');
     await expect(table).toContainText(`Uji log ${run.tag} 55`);
 
+    await expect(table.getByRole('cell', { name: `Uji log ${run.tag} 1`, exact: true })).toHaveCount(0);
     await page.getByRole('button', { name: 'Muat Lagi' }).click();
     await expect(table.locator('tbody tr')).toHaveCount(55);
-    await expect(table).toContainText(`Uji log ${run.tag} 1`);
+    await expect(table.getByRole('cell', { name: `Uji log ${run.tag} 1`, exact: true })).toHaveCount(1);
 
     await table.locator('tbody tr').first().getByRole('button', { name: 'Tindakan baris' }).click();
     await page.getByRole('menuitem', { name: 'Lihat sebelum dan sesudah' }).click();
@@ -29,7 +30,8 @@ test('searches the activity of a company and of no company, continues and opens 
     await expect(dialog).toContainText('Baru 55');
     await page.keyboard.press('Escape');
 
-    await page.goto('/aktivitas/riwayat?perusahaan=tanpa');
+    // The run's own event without a company, narrowed to its Owner so another spec's events never crowd it out.
+    await page.goto(`/aktivitas/riwayat?perusahaan=tanpa&pelaku=${run.actor}`);
     await expect(table).toContainText(`Tanpa perusahaan ${run.tag}`);
 });
 

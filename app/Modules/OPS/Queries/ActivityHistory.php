@@ -4,6 +4,7 @@ namespace App\Modules\OPS\Queries;
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\BusinessDate;
+use App\Support\Redaction;
 use App\Support\Search\Row;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder;
@@ -38,8 +39,8 @@ final class ActivityHistory
         'evidence_document' => ['table' => 'evidence_documents', 'href' => '/dokumen/bukti?bukti={id}'],
     ];
 
-    /** Keys LG-03 keeps out of every record, dropped from a shown before, after or metadata should one ever arrive. */
-    private const FORBIDDEN = '/password|token|secret|session|cookie|recovery|totp|otp|oauth|provider_subject|ip_address/i';
+    /** The rows one bounded read of a timeline narrowed by company takes before its page returns short (PF-42). */
+    public const SCAN = 1000;
 
     public function __construct(private readonly EffectiveCapabilities $capabilities) {}
 
@@ -83,10 +84,11 @@ final class ActivityHistory
 
         // A filter naming no actor, record or company of the scope reads nothing (SM-01).
         $empty = ($query['pelaku'] !== null && $actor === null) || ($query['catatan'] !== null && $record === null) || $chosen === [];
-        $page = $empty ? [] : $this->page($chosen, $from, $to, $actor, $record, $after);
-        $rows = array_map(fn (object $row): array => $this->row($row), array_slice($page, 0, self::PAGE));
+        $page = $empty ? ['rows' => [], 'short' => null] : $this->page($chosen, $company !== null, $from, $to, $actor, $record, $after);
+        $rows = array_map(fn (object $row): array => $this->row($row), array_slice($page['rows'], 0, self::PAGE));
+        $more = count($page['rows']) > self::PAGE && $rows !== [] ? $rows[count($rows) - 1]['key'] : null;
 
-        return [...$base, 'rows' => $rows, 'more' => count($page) > self::PAGE && $rows !== [] ? $rows[count($rows) - 1]['key'] : null, 'cursor_failed' => false];
+        return [...$base, 'rows' => $rows, 'more' => $page['short'] === null ? $more : LogCursor::of(...$page['short']), 'partial' => $page['short'] !== null, 'cursor_failed' => false];
     }
 
     /**
@@ -114,29 +116,40 @@ final class ActivityHistory
     }
 
     /**
-     * The merged branches' page of narrow columns, page size + 1 rows (PF-41).
+     * The merged branches' page of narrow columns, page size + 1 rows (PF-41), and — for a timeline narrowed by company —
+     * the position its bounded read stopped at when it returns short (PF-42).
      *
      * @param  list<?int>  $companies
      * @param  ?array{type: string, public_id: string, id: int}  $record
      * @param  ?array{string, int}  $after
-     * @return list<object>
+     * @return array{rows: list<object>, short: ?array{string, int}}
      */
-    private function page(array $companies, ?string $from, ?string $to, ?int $actor, ?array $record, ?array $after): array
+    private function page(array $companies, bool $narrowed, ?string $from, ?string $to, ?int $actor, ?array $record, ?array $after): array
     {
-        $filtered = fn (Builder $query): Builder => $query
+        $filtered = fn (Builder $query, int $limit = self::PAGE + 1): Builder => $query
             ->when($from !== null, fn (Builder $where) => $where->where('occurred_at', '>=', BusinessDay::start((string) $from)))
             ->when($to !== null, fn (Builder $where) => $where->where('occurred_at', '<', BusinessDay::end((string) $to)))
             ->when($after !== null, fn (Builder $where) => $where->whereRaw('(occurred_at, id) < (cast(? as timestamptz), ?)', $after ?? []))
-            ->orderByDesc('occurred_at')->orderByDesc('id')->limit(self::PAGE + 1);
-        $inCompanies = fn (Builder $where): Builder => $where->where(fn (Builder $any) => $any
-            ->whereIn('company_id', array_values(array_filter($companies, fn (?int $id): bool => $id !== null)))
-            ->when(in_array(null, $companies, true), fn (Builder $none) => $none->orWhereNull('company_id')));
+            ->orderByDesc('occurred_at')->orderByDesc('id')->limit($limit);
+        $short = null;
 
         if ($record !== null || $actor !== null) {
-            // One timeline: the record's (IX-13) or the actor's (DATABASE §20), the companies a predicate.
-            $branches = $filtered($inCompanies(DB::table('audit_events')->select('id')
+            // One timeline: the record's (IX-13) or the actor's (DATABASE §20), the period a range of its index.
+            $timeline = DB::table('audit_events')
                 ->when($record !== null, fn (Builder $where) => $where->where('entity_type', $record['type'] ?? '')->where('entity_id', $record['id'] ?? 0))
-                ->when($actor !== null, fn (Builder $where) => $where->where('actor_user_id', $actor))));
+                ->when($actor !== null, fn (Builder $where) => $where->where('actor_user_id', $actor));
+
+            if ($narrowed) {
+                // A company is no key of these indexes: one read takes at most SCAN rows and the page returns short, with
+                // "more" from the last row read, rather than reading the whole timeline (PF-42).
+                $scanned = $filtered($timeline->select(['id', 'occurred_at', 'company_id']), self::SCAN)->get()->all();
+                $wanted = array_values(array_filter($scanned, fn (object $row): bool => in_array(Row::nullable($row, 'company_id') === null ? null : (int) Row::text($row, 'company_id'), $companies, true)));
+                $last = $scanned === [] ? null : $scanned[count($scanned) - 1];
+                $short = count($wanted) <= self::PAGE && count($scanned) === self::SCAN && $last !== null ? [Row::text($last, 'occurred_at'), (int) Row::text($last, 'id')] : null;
+                $branches = DB::table('audit_events')->select('id')->whereIn('id', array_map(fn (object $row): int => (int) Row::text($row, 'id'), array_slice($wanted, 0, self::PAGE + 1)) ?: [0]);
+            } else {
+                $branches = $filtered($timeline->select('id'));
+            }
         } else {
             $branch = fn (?int $company): Builder => $filtered(DB::table('audit_events')->select('id')
                 ->when($company === null, fn (Builder $where) => $where->whereNull('company_id'), fn (Builder $where) => $where->where('company_id', $company)));
@@ -147,11 +160,26 @@ final class ActivityHistory
             }
         }
 
-        return array_values(DB::table('audit_events as a')->joinSub($branches, 'b', 'b.id', '=', 'a.id')
+        $rows = array_values(DB::table('audit_events as a')->joinSub($branches, 'b', 'b.id', '=', 'a.id')
             ->leftJoin('users as u', 'u.id', '=', 'a.actor_user_id')->leftJoin('companies as c', 'c.id', '=', 'a.company_id')
             ->orderByDesc('a.occurred_at')->orderByDesc('a.id')->limit(self::PAGE + 1)
             ->get(['a.id', 'a.occurred_at', 'a.action', 'a.entity_type', 'a.entity_public_id', 'a.reason', 'a.authority_class', 'u.name as actor', 'c.code as company',
-                DB::raw("a.metadata->>'business_date' as business_date"), DB::raw("a.metadata->>'operator' as operator")])->all());
+                DB::raw("a.metadata->>'business_date' as business_date"), DB::raw("a.metadata->'operator' as operator")])->all());
+
+        return ['rows' => $rows, 'short' => $short];
+    }
+
+    /**
+     * The operator's recorded identity of a console command (AU-14): the stated name with the host account, as
+     * `OperatorIdentity::describe()` writes it; a plain string as recorded.
+     */
+    private static function operator(?string $json): ?string
+    {
+        $value = $json === null ? null : json_decode($json, true);
+        $name = is_array($value) ? ($value['name'] ?? $value['stated_name'] ?? null) : $value;
+        $host = is_array($value) ? ($value['host_account'] ?? null) : null;
+
+        return ! is_string($name) || $name === '' ? null : (is_string($host) && $host !== '' ? "{$name} ({$host})" : $name);
     }
 
     /** @return array<string, mixed> */
@@ -170,7 +198,7 @@ final class ActivityHistory
             // A backdated event shows its business date beside its recorded time (BR-DT-05; PT-18).
             'business_date' => $businessDate !== null && $businessDate !== $at->setTimezone(BusinessDate::TIMEZONE)->toDateString() ? $businessDate : null,
             'actor' => Row::nullable($row, 'actor'),
-            'operator' => Row::nullable($row, 'actor') === null ? Row::nullable($row, 'operator') : null,
+            'operator' => Row::nullable($row, 'actor') === null ? self::operator(Row::nullable($row, 'operator')) : null,
             'company' => Row::nullable($row, 'company'),
             'action' => Row::text($row, 'action'),
             'record' => $type === null ? null : [
@@ -224,7 +252,8 @@ final class ActivityHistory
         $values = [];
 
         foreach (is_array($decoded) ? $decoded : [] as $key => $value) {
-            if (preg_match(self::FORBIDDEN, (string) $key) === 1) {
+            // The keys the application's redaction treats as secret never show, should one ever be recorded (LG-03).
+            if (Redaction::isSensitiveKey($key)) {
                 continue;
             }
 

@@ -35,7 +35,7 @@ final class LogsFixture
             ]);
         }
 
-        AuditEventFactory::new()->createOne(['occurred_at' => $start->addMinutes(56), 'action' => 'IAM.LocaleChanged', 'authority_class' => 'ADM', 'actor_user_id' => $actor, 'reason' => "Tanpa perusahaan {$tag}"]);
+        AuditEventFactory::new()->createOne(['occurred_at' => CarbonImmutable::now(), 'action' => 'IAM.LocaleChanged', 'authority_class' => 'ADM', 'actor_user_id' => $actor, 'reason' => "Tanpa perusahaan {$tag}"]);
         SecurityEventFactory::new()->createOne(['occurred_at' => $start->addMinutes(57), 'event_kind' => 'LOGIN_FAILED', 'reason_code' => 'CREDENTIALS', 'route_name' => 'login',
             'identifier_hash' => hash('sha256', "id-{$tag}"), 'ip_hash' => hash('sha256', "ip-{$tag}"), 'user_agent_summary' => 'Chrome · Windows']);
         $anomaly = SecurityEventFactory::new()->createOne(['occurred_at' => $start->addMinutes(58), 'event_kind' => 'AUTHORIZATION_ANOMALY', 'user_id' => $actor, 'reason_code' => "UJI-{$tag}"]);
@@ -43,6 +43,8 @@ final class LogsFixture
         return response()->json([
             'code' => $company->code,
             'tag' => $tag,
+            // The signed-in Owner of the run, whose own events the actor filter narrows to.
+            'actor' => (string) DB::table('users')->where('id', $actor)->value('public_id'),
             // The key a security notice carries to PG-064 (INT-020).
             'notice' => LogCursor::of((string) DB::table('security_events')->where('id', $anomaly->getKey())->value('occurred_at'), (int) $anomaly->getKey()),
         ]);

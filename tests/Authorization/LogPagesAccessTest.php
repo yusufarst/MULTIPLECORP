@@ -44,8 +44,14 @@ it('carries no raw identifier, address, provider subject or forbidden key on eit
     AuditEventFactory::new()->createOne(['action' => 'IAM.UserUpdated', 'authority_class' => 'ADM', 'metadata' => ['token' => 'rahasia-token', 'note' => 'aman']]);
 
     $security = $this->actingAs($this->owner)->get('/aktivitas/log-keamanan')->getContent();
-    $history = $this->actingAs($this->owner)->get('/aktivitas/riwayat')->getContent();
+    $history = $this->actingAs($this->owner)->get('/aktivitas/riwayat');
+    $key = $history->viewData('page')['props']['rows'][0]['key'];
+    // The event's own metadata, read on demand: the token key dropped, the rest shown (PJ-11).
+    $detail = $this->actingAs($this->owner)->withHeaders(['X-Inertia' => 'true', 'X-Inertia-Partial-Component' => 'OPS/ActivityHistory', 'X-Inertia-Partial-Data' => 'detail'])
+        ->get('/aktivitas/riwayat?peristiwa='.urlencode($key));
 
     expect($security)->not->toContain('rani@contoh.test')->not->toContain('203.0.113.7')->not->toContain('203.0.113.8')->not->toContain('100000000000000000007')
-        ->and($history)->not->toContain('rahasia-token')->not->toContain('"metadata"');
+        ->and($history->getContent())->not->toContain('rahasia-token')->not->toContain('"metadata"')
+        ->and($detail->json('props.detail.metadata'))->toBe(['note' => 'aman'])
+        ->and($detail->getContent())->not->toContain('rahasia-token');
 });
