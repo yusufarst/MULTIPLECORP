@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 39
-READY: 2
-IN_PROGRESS: 0
+READY: 1
+IN_PROGRESS: 1
 BLOCKED: 13
 VERIFYING: 0
 TODO: 33
@@ -28,8 +28,8 @@ Progress:
 39 / 87
 Percentage: 44.8 %
 
-CURRENT TASK: none in progress — TASK-073 — Release process — branch protection, release tags, the release record and integrity report DONE on its branch `task/TASK-073-release-process`, CI PASS on `7604745`, its pull request #45 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-047 and TASK-049 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-047 — Service fulfillment and handover, IN PROGRESS on its branch `task/TASK-047-service-handover` from the merged `main` (DIR-096); TASK-073 DONE and squash-merged as `06eb4bd` (pull request #45)
+NEXT READY TASK: TASK-049 READY, NOT STARTED, once TASK-047 is merged (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -187,7 +187,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
 | [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
 | [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | BLOCKED — P11Q-02 | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
-| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | READY | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
+| [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | IN_PROGRESS | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
 | [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | READY | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | TODO | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
