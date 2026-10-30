@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 38
+DONE: 39
 READY: 2
-IN_PROGRESS: 1
+IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
 TODO: 33
 SUPERSEDED: 0
 
 Progress:
-38 / 87
-Percentage: 43.7 %
+39 / 87
+Percentage: 44.8 %
 
-CURRENT TASK: TASK-073 — Release process — branch protection, release tags, the release record and integrity report, IN PROGRESS on its branch `task/TASK-073-release-process` from the merged `main` (DIR-096); TASK-061 DONE and squash-merged as `d801376` (pull request #44)
-NEXT READY TASK: TASK-047 and TASK-049 READY, NOT STARTED, once TASK-073 is merged — their gates re-checked at TASK-073's start, TASK-034's DONE having left them unchecked (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-073 — Release process — branch protection, release tags, the release record and integrity report DONE on its branch `task/TASK-073-release-process`, CI PASS on `7604745`, its pull request #45 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-047 and TASK-049 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -121,7 +121,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-070](TASK-070.md) — Full release regression and the device UAT's preparation
 - [ ] [TASK-071](TASK-071.md) — The operator's inputs before staging
 - [ ] [TASK-072](TASK-072.md) — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
-- [ ] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
+- [x] [TASK-073](TASK-073.md) — Release process — branch protection, release tags, the release record and integrity report
 - [ ] [TASK-074](TASK-074.md) — Backup tooling, the off-server copy and the drill procedures
 - [ ] [TASK-075](TASK-075.md) — Monitoring — the business heartbeat, alerts and the uptime check
 - [ ] [TASK-076](TASK-076.md) — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
@@ -213,7 +213,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
 | [TASK-071](TASK-071.md) | The operator's inputs before staging | Operations · Operations | HIGH | BLOCKED — OPI-26 | — | 072, 075, 078, 082 | YES | HUMAN OPERATOR | NONE | NO |
 | [TASK-072](TASK-072.md) | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | Release · Release | HIGH | BLOCKED — OPI-03, P11Q-02 | 003, 013, 022, 071 | 074, 075, 077, 078 | NO | AGENT | NONE | NO |
-| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | IN_PROGRESS | 003, 004 | 084 | NO | AGENT | NONE | NO |
+| [TASK-073](TASK-073.md) | Release process — branch protection, release tags, the release record and integrity report | Release · Release | HIGH | DONE | 003, 004 | 084 | NO | AGENT | NONE | NO |
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
 | [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
