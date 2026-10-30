@@ -689,3 +689,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-035 squash-merged by the executor into `main` as `e4acd2c` (pull request #41); TASK-036 started.
 - Built TASK-036 on its branch `task/TASK-036-costing`: CST's `CostPosting` — the lot cost basis by cumulative rounding, draws and their contras, the reclassification pair, purchase-return settlement, charges posted over the ordered quantity with their pending remainder re-spread or expensed, receipt reversals, and the AX-34 correction cascade reopening cases and revalidating completed projects —, `Money` over brick/math with the costing calculators, the guards' reconciliation formulas, CST's figures with the company scope first and C-28's overlay check.
 - Every check passed in fresh CI on `6ffdd19`. TASK-036 DONE — progress 36 / 87 —; TASK-038 next.
+
+## Unreleased — 2026-10-30, TASK-038 — Reservations
+
+- TASK-036 squash-merged by the executor into `main` as `07892b3` (pull request #42); TASK-038 started.
+- Built TASK-038 on its branch `task/TASK-038-reservations`: INV's reservation service in `InventoryPosting` — reserve, reduce, release, consume, the explicit cut of a supply reduction routed across companies, the lifecycle fit —, PRJ's line-guard writer `DemandPosting`, INV's lifecycle participant and predicate 8's reservation part, PG-025 *Reservasi* with ROUTE-025, ROUTE-184 and ROUTE-185, and "Reservasi" on PG-011's *Item dan pemenuhan*.
+- Every check passed in fresh CI on `461146d`. TASK-038 DONE — progress 37 / 87 —; TASK-061 next.

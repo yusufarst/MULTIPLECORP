@@ -157,7 +157,7 @@ it('shows PG-011\'s lines by mode with their progress, prices only with finance.
 
     $viewer = Authorization::admin([$this->company->id], ['projects.view']);
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page
-        ->missing('fulfilment.lines.0.price')->missing('fulfilment.lines.0.available')->where('fulfilment.lines.0.can', ['cancel' => false, 'replan' => false]));
+        ->missing('fulfilment.lines.0.price')->missing('fulfilment.lines.0.available')->where('fulfilment.lines.0.can', ['reserve' => false, 'cancel' => false, 'replan' => false]));
 });
 
 it('issues the company SPK (DOC-09) only for a confirmed project, its lines as pinned and the company its issuer (WF-PRJ-02; BR-DOC-04; criterion 10)', function () {

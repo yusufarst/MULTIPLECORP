@@ -17,6 +17,7 @@ use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
@@ -106,4 +107,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-035): that confirmed project with its default invoice item, a required SPK and the client's SPK uploaded.
     Route::post('__fixtures/administrasi', [AdministrationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-038): a confirmed project of one warehouse line, an opening lot of its product, reserved when asked.
+    Route::post('__fixtures/reservasi', [ReservationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 });

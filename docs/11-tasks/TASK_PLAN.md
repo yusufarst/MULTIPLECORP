@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 36
-READY: 3
+DONE: 37
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 35
 SUPERSEDED: 0
 
 Progress:
-36 / 87
-Percentage: 41.4 %
+37 / 87
+Percentage: 42.5 %
 
-CURRENT TASK: none in progress — TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution DONE on its branch `task/TASK-036-costing`, CI PASS on `6ffdd19`, its pull request #42 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-038, TASK-061 and TASK-073 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-038 — Reservations DONE on its branch `task/TASK-038-reservations`, CI PASS on `461146d`, its pull request #43 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-061 and TASK-073 READY, NOT STARTED, taken in order from the merged `main` (DIR-096); TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -86,7 +86,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-035](TASK-035.md) — Administrative checklist and document readiness
 - [x] [TASK-036](TASK-036.md) — Costing foundations — lot cost basis, charge allocation and HPP attribution
 - [ ] [TASK-037](TASK-037.md) — Purchases — project and replenishment purchases
-- [ ] [TASK-038](TASK-038.md) — Reservations
+- [x] [TASK-038](TASK-038.md) — Reservations
 - [ ] [TASK-039](TASK-039.md) — Receiving (Barang Masuk)
 - [ ] [TASK-040](TASK-040.md) — Stock views, stock history and movement reversal
 - [ ] [TASK-041](TASK-041.md) — Dispatch (Barang Keluar) and inter-company allocation
@@ -178,7 +178,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | DONE | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
 | [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | BLOCKED — P11Q-02, P11Q-04 | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
-| [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | READY | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
+| [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | DONE | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
 | [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
 | [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 042, 044, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-041](TASK-041.md) | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | TODO | 029, 038, 039 | 045, 056 | NO | AGENT | NONE | YES |

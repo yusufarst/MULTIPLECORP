@@ -15,6 +15,8 @@ use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\DOC\Services\WeasyPrintRenderer;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Services\ReservationLifecycle;
+use App\Modules\INV\Services\ReservationPredicate;
 use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
 use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
@@ -62,6 +64,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->tag([RequirementLifecycle::class], ProjectLifecycleParticipant::TAG);
         $this->app->tag([AdministrationPredicate::class], CompletionPredicateProvider::TAG);
         $this->app->tag([ProjectChecklist::class], ReadinessProvider::TAG);
+
+        // INV's parts (TASK-038): a project's reservations fitted to its lifecycle, and the stock predicate's reservations.
+        $this->app->tag([ReservationLifecycle::class], ProjectLifecycleParticipant::TAG);
+        $this->app->tag([ReservationPredicate::class], CompletionPredicateProvider::TAG);
     }
 
     private static function scalar(mixed $value): string

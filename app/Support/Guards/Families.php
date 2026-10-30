@@ -46,6 +46,19 @@ final class Families
                     SQL,
                 ['product_id'],
             ),
+            // TASK-038 (C-61; BR-INV-08; DATABASE §5.5): a line guard's reserved quantity is its ACTIVE reservation's remaining
+            // quantity — the product's RESERVED is Σ of them above. A line with no guard is PRJ's to report.
+            new Family(
+                'project_line_balances',
+                ['project_line_id'],
+                ['reserved_qty_base'],
+                <<<'SQL'
+                    select b.project_line_id,
+                        coalesce((select sum(r.remaining_qty_base) from reservations r where r.project_line_id = b.project_line_id and r.state = 'ACTIVE'), 0) as reserved_qty_base
+                    from project_line_balances b
+                    SQL,
+                null,
+            ),
             // TASK-036 (C-26; DATABASE §6.2): a lot's remaining cost is Σ its cost entries less its net draws — every cost row
             // keyed to it, contras and corrections included — beside its remaining quantity. A missing row is reported, never invented.
             new Family(

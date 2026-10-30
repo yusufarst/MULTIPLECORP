@@ -22,6 +22,7 @@ export type CommandForm<P> = {
     unknown: boolean;
     frozen: boolean;
     clear: () => void;
+    leave: () => void;
     submit: (payload: P, done?: (state: Record<string, unknown>) => void) => void;
     retry: () => void;
 };
@@ -97,6 +98,12 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
         unknown: intent.state.phase === 'unknown',
         frozen: intent.frozen,
         clear: () => {
+            setAnswer(null);
+            setErrors({});
+        },
+        /** The form turns to another record or command: an open intent is left, never retried against it (IP-02). */
+        leave: () => {
+            intent.leave();
             setAnswer(null);
             setErrors({});
         },

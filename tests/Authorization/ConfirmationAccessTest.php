@@ -51,9 +51,9 @@ it('shows PG-011\'s commands with their capability, values with finance.view and
     $this->actingAs($this->owner)->post("{$this->path}/konfirmasi", ['command_id' => (string) Str::uuid(), 'lock_version' => $this->project->lock_version, 'bukti' => $this->evidence->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true]);
 
     $this->actingAs($this->owner)->get($this->path)->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('fulfilment.lines.0.can', ['cancel' => true, 'replan' => true])->has('fulfilment.lines.0.price')->has('fulfilment.lines.0.available'));
+        ->where('fulfilment.lines.0.can', ['reserve' => false, 'cancel' => true, 'replan' => true])->has('fulfilment.lines.0.price')->has('fulfilment.lines.0.available'));
 
     $this->actingAs(Authorization::admin([$this->company->id], ['projects.view']))->get($this->path)->assertInertia(fn (AssertableInertia $page) => $page
-        ->where('fulfilment.lines.0.can', ['cancel' => false, 'replan' => false])->missing('fulfilment.lines.0.price')->missing('fulfilment.lines.0.value')
+        ->where('fulfilment.lines.0.can', ['reserve' => false, 'cancel' => false, 'replan' => false])->missing('fulfilment.lines.0.price')->missing('fulfilment.lines.0.value')
         ->missing('fulfilment.lines.0.available')->where('fulfilment.can.confirm', false)->where('fulfilment.evidence', []));
 });

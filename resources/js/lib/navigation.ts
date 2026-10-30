@@ -17,8 +17,9 @@ export type Entry = {
     href: string;
     icon: LucideIcon;
     allowed: (account: AccountHints) => boolean;
-    /** A module's later sub-pages: while its first page is not built, the entry opens on the first one that is (§5.3). */
-    subpages?: { pg: string; href: string }[];
+    /** A module's later sub-pages: while its first page is not built, the entry opens on the first one that is (§5.3) —
+        and that the account reaches, where fewer reach a sub-page than the module. */
+    subpages?: { pg: string; href: string; allowed?: (account: AccountHints) => boolean }[];
     /** Who reaches the module's first page, where fewer reach it than the module: the others open on a sub-page. */
     page?: (account: AccountHints) => boolean;
 };
@@ -26,7 +27,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -56,7 +57,16 @@ export const ENTRIES = {
 /** *Menu lengkap* — each module opens on its first sub-page (§5.3). */
 export const MODULES: Entry[] = [
     { key: 'pembelian', pg: 'PG-015', label: 'glossary.gl_006', href: '/pembelian', icon: ShoppingCart, allowed: scoped('cost.view') },
-    { key: 'gudang', pg: 'PG-018', label: 'glossary.gl_007', href: '/gudang/stok', icon: Boxes, allowed: (account) => has('stock.view')(account) || scoped('stock.receive', 'stock.dispatch')(account) },
+    {
+        key: 'gudang',
+        pg: 'PG-018',
+        label: 'glossary.gl_007',
+        href: '/gudang/stok',
+        icon: Boxes,
+        allowed: (account) => has('stock.view')(account) || scoped('stock.receive', 'stock.dispatch')(account),
+        // PG-025 *Reservasi* (TASK-038): `stock.reserve` with a company in scope (CS-05).
+        subpages: [{ pg: 'PG-025', href: '/gudang/reservasi', allowed: scoped('stock.reserve') }],
+    },
     { key: 'keuangan', pg: 'PG-041', label: 'glossary.gl_016', href: '/keuangan/invoice', icon: Wallet, allowed: scoped('finance.view') },
     {
         key: 'dokumen',
@@ -149,7 +159,7 @@ export function present(entries: Entry[], account: AccountHints, built: Readonly
             return [entry];
         }
 
-        const page = entry.subpages?.find((subpage) => built.has(subpage.pg));
+        const page = entry.subpages?.find((subpage) => built.has(subpage.pg) && (subpage.allowed === undefined || subpage.allowed(account)));
 
         return page === undefined ? [] : [{ ...entry, pg: page.pg, href: page.href }];
     });

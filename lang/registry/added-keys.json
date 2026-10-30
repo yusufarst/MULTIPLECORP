@@ -8190,6 +8190,264 @@
             "source": "PT-27; IP-17",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "actions.reserve": {
+            "task": "TASK-038",
+            "source": "GL-080; AX-01; J-INV-02",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "reservations.reserve.title": {
+            "task": "TASK-038",
+            "source": "J-INV-02; AX-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.reserve.consequence": {
+            "task": "TASK-038",
+            "source": "BR-RSV-02; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.reserve.ceiling": {
+            "task": "TASK-038",
+            "source": "AX-01; L-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.quantity": {
+            "task": "TASK-038",
+            "source": "AX-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.reduce_quantity": {
+            "task": "TASK-038",
+            "source": "AX-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.project": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.line": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.product": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.reserved": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.line_no": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.residual": {
+            "task": "TASK-038",
+            "source": "QS-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.action.pool": {
+            "task": "TASK-038",
+            "source": "PJ-04; IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.filter.product": {
+            "task": "TASK-038",
+            "source": "IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.filter.clear": {
+            "task": "TASK-038",
+            "source": "IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.tab.aktif": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.tab.dilepas": {
+            "task": "TASK-038",
+            "source": "QS-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.tab.riwayat": {
+            "task": "TASK-038",
+            "source": "IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.sort.terbaru": {
+            "task": "TASK-038",
+            "source": "IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.sort.proyek": {
+            "task": "TASK-038",
+            "source": "IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.sort.produk": {
+            "task": "TASK-038",
+            "source": "IP-18",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.empty.aktif": {
+            "task": "TASK-038",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.empty.dilepas": {
+            "task": "TASK-038",
+            "source": "PT-19; QS-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.empty.riwayat": {
+            "task": "TASK-038",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.empty_scope": {
+            "task": "TASK-038",
+            "source": "CS-08; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.reduce.title": {
+            "task": "TASK-038",
+            "source": "AX-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.reduce.consequence": {
+            "task": "TASK-038",
+            "source": "AX-02; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.release.title": {
+            "task": "TASK-038",
+            "source": "AX-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.release.consequence": {
+            "task": "TASK-038",
+            "source": "AX-02; BR-RSV-02; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.answer.reserved": {
+            "task": "TASK-038",
+            "source": "IP-01; NAV-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.answer.reduced": {
+            "task": "TASK-038",
+            "source": "IP-01; NAV-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.answer.released": {
+            "task": "TASK-038",
+            "source": "IP-01; NAV-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.refusal.available": {
+            "task": "TASK-038",
+            "source": "ST-06; C-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.refusal.remainder": {
+            "task": "TASK-038",
+            "source": "L-04; C-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.refusal.remaining": {
+            "task": "TASK-038",
+            "source": "AX-02; C-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.refusal.mode": {
+            "task": "TASK-038",
+            "source": "BR-RSV-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.refusal.unconfirmed": {
+            "task": "TASK-038",
+            "source": "BR-RSV-01; BR-QUO-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.validation.positive": {
+            "task": "TASK-038",
+            "source": "MSG-12; C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.validation.scale": {
+            "task": "TASK-038",
+            "source": "MSG-12; C-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.validation.quantity": {
+            "task": "TASK-038",
+            "source": "MSG-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.reservations_active": {
+            "task": "TASK-038",
+            "source": "Predicate 8; QS-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.list.tab.perlu": {
+            "task": "TASK-038",
+            "source": "QS-01; IA §8.3 PG-025",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "reservations.field.unreserved": {
+            "task": "TASK-038",
+            "source": "QS-01",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
