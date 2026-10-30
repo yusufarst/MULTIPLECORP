@@ -126,13 +126,14 @@ final class InvoiceRecords
     public function markIssued(CommandContext $context, ProjectRef $project, int $invoiceId, int $versionId, int $lockVersion, string $businessDate, bool $prefilled, ?int $actId = null, ?string $dueDate = null, string $released = '0.00'): array
     {
         BusinessDateRule::check($businessDate, $prefilled);
-        $version = DB::table('invoice_versions')->where('id', $versionId)->first(['kind', 'business_date']);
+        $columns = ['kind', 'business_date', 'sales_value', 'output_tax_value', 'gross_value'];
+        $values = DB::table('invoice_versions')->where('id', $versionId)->first($columns);
 
-        if (is_object($version) && Row::text($version, 'business_date') !== $businessDate) {
-            $this->redate($context, $project, $invoiceId, $versionId, Row::text($version, 'kind'), $businessDate);
+        if (is_object($values) && Row::text($values, 'business_date') !== $businessDate) {
+            $this->redate($context, $project, $invoiceId, $versionId, Row::text($values, 'kind'), $businessDate);
+            $values = DB::table('invoice_versions')->where('id', $versionId)->first($columns);
         }
 
-        $values = DB::table('invoice_versions')->where('id', $versionId)->first(['sales_value', 'output_tax_value', 'gross_value']);
         $sales = is_object($values) ? Row::text($values, 'sales_value') : '0.00';
         $tax = is_object($values) ? Row::text($values, 'output_tax_value') : '0.00';
         $gross = is_object($values) ? Row::text($values, 'gross_value') : '0.00';

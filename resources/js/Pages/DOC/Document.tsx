@@ -43,7 +43,7 @@ type Version = {
 };
 type Draft = { id: string; version_no: number; lock_version: number; business_date: string | null; bank_account: string | null; bank_accounts: Bank[]; states_bank: boolean; revision_of: string | null; paper: Paper | null; facts: string | null };
 type Props = {
-    document: { id: string; type: string; type_name: string; mode: string; company: { id: string | null; code: string | null; name: string | null }; prepayment: 'open_not_linked' | 'linked' | null };
+    document: { id: string; type: string; type_name: string; mode: string; company: { id: string | null; code: string | null; name: string | null }; invoice: string | null; prepayment: 'open_not_linked' | 'linked' | null };
     versions: Version[];
     current: string | null;
     draft: Draft | null;
@@ -80,6 +80,8 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
     const [date, setDate] = useState<BusinessDate>({ date: saved, chosen: saved !== today });
     const [bank, setBank] = useState(draft.bank_account ?? '');
     const [confirming, setConfirming] = useState(false);
+    const [reason, setReason] = useState('');
+    const prepayment = document.mode === 'PRE_PAYMENT';
     const save = useCommand<Record<string, string | number | boolean>>(() => '/dokumen', 'post');
     const entered = { draf: draft.id, lock_version: draft.lock_version, tanggal: date.date, tanggal_otomatis: !date.chosen, rekening: bank };
     // The issue carries the digest of the facts its paper showed: a record changed since is a CONFLICT (architecture challenge 15a).
@@ -152,13 +154,14 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
                 open={confirming}
                 onOpenChange={setConfirming}
                 title={t('documents.confirm.issue_title', { jenis: name })}
-                consequence={t('documents.confirm.issue_consequence')}
+                consequence={prepayment ? t('invoices.kuitansi.dialog') : t('documents.confirm.issue_consequence')}
                 items={<p>{t('documents.confirm.issue_date', { tanggal: dateLong(date.date) })}</p>}
+                {...(prepayment ? { reason: { value: reason, onChange: setReason, error: issue.errors.alasan ?? null } } : {})}
                 confirmLabel={t('documents.action.issue', { jenis: name })}
                 pending={issue.pending}
                 answer={issue.answer}
                 onConfirm={() => {
-                    issue.submit(confirmed, () => { setConfirming(false); });
+                    issue.submit(prepayment ? { ...confirmed, dokumen: document.id, alasan: reason } : confirmed, () => { setConfirming(false); });
                 }}
             />
         </>
@@ -223,7 +226,7 @@ export default function DocumentPage({ document, versions, current, draft, conte
     const [reason, setReason] = useState('');
     const revise = useCommand<Record<string, string>>(() => `/dokumen/${document.id}/revisi`, 'post');
     const voiding = useCommand<Record<string, string>>(() => `/dokumen/${document.id}/batalkan`, 'post');
-    const issue: IssueCommand = useCommand<Record<string, string | number | boolean>>(() => `/dokumen/${document.id}/terbitkan`, 'post');
+    const issue: IssueCommand = useCommand<Record<string, string | number | boolean>>(() => (document.invoice !== null ? `/keuangan/invoice/${document.invoice}/kuitansi` : `/dokumen/${document.id}/terbitkan`), 'post');
     const issueAnswer = useCommandAnswer(issue);
     const correction = correcting === 'void' ? voiding : revise;
     const reviseAnswer = useCommandAnswer(revise);
@@ -244,7 +247,7 @@ export default function DocumentPage({ document, versions, current, draft, conte
                 <PageHeader
                     title={issued?.number !== undefined && issued.number !== null ? `${name} ${issued.number}` : name}
                     crumbs={[{ label: t('pages.pg_035.title'), href: '/dokumen' }]}
-                    back={{ label: t('pages.pg_035.title'), href: '/dokumen' }}
+                    back={document.invoice !== null ? { label: t('dialogs.back'), href: `/keuangan/invoice/${document.invoice}` } : { label: t('pages.pg_035.title'), href: '/dokumen' }}
                     facts={
                         <div className="flex flex-wrap items-center gap-3 text-body text-text-secondary">
                             {document.company.code !== null && <span>{`${document.company.code} · ${document.company.name ?? ''}`}</span>}

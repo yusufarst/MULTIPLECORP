@@ -200,6 +200,7 @@ final class InvoiceDetail
         $rows = function (string $table, Collection $found, Closure $label): array {
             $listed = [];
 
+            /** @var object $row */
             foreach ($found as $row) {
                 $text = $label($row);
                 $listed[] = ['handle' => RowHandle::of($table, (int) Row::text($row, 'id')), 'label' => is_string($text) ? $text : ''];

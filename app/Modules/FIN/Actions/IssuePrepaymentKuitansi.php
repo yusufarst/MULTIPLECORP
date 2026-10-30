@@ -55,6 +55,8 @@ final class IssuePrepaymentKuitansi
             $subject = DocumentSubject::of($document);
             $provider = $this->subjects->of($subject);
             $context->lock($this->issuing->locks($document, $subject, $provider->locks($subject)));
+            // An invoice not yet issued has nothing outstanding: say that, not that the amount is too high.
+            $provider->precondition($context, $subject);
             $draft = $this->chain->draftOf($document->id);
 
             if ($draft !== null && $draft->kuitansi_amount !== null) {

@@ -2,8 +2,14 @@
 
 namespace Tests\Support;
 
+use App\Modules\DOC\Actions\SaveDocumentDraft as SaveDocument;
+use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Models\Document;
 use App\Modules\FIN\Actions\IssueInvoice;
+use App\Modules\FIN\Actions\IssuePrepaymentKuitansi;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
+use App\Modules\FIN\Actions\VoidInvoice;
+use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Models\Payment;
 use App\Modules\ORG\Enums\SequenceType;
@@ -232,6 +238,39 @@ final class InvoiceWorld
     public static function hold(Closure $command, string $point): string
     {
         return ReservationWorld::hold($command, $point);
+    }
+
+    /** A void of an unbilled entry error through its own command, for the race tests; its word. */
+    public static function voidInCommand(int $actorUserId, int $invoiceId): string
+    {
+        $invoice = Invoice::query()->findOrFail($invoiceId);
+
+        return self::word(app(VoidInvoice::class)->run((string) Str::uuid(), $actorUserId, $invoice, $invoice->lock_version, new InvoiceCorrection('UNBILLED_ENTRY_ERROR', 'Salah catat', BusinessDate::today(), false), ['invoice' => $invoiceId]));
+    }
+
+    /** A save of the draft at the lock it was read at, for the race tests; its word. */
+    public static function saveInCommand(int $actorUserId, int $projectId, int $invoiceId, int $lock, string $value): string
+    {
+        $project = Project::query()->findOrFail($projectId);
+
+        return self::word(app(SaveInvoiceDraft::class)->run((string) Str::uuid(), $actorUserId, self::ref($project), Invoice::query()->findOrFail($invoiceId), $lock, self::valueOnly($value), ['value' => $value]));
+    }
+
+    /** ROUTE-221's draft of a pre-payment Kuitansi with the amount entered; the document's id. */
+    public static function prepareKuitansi(int $actorUserId, int $invoiceId, string $amount): int
+    {
+        $invoice = Invoice::query()->findOrFail($invoiceId);
+        $outcome = app(SaveDocument::class)->prepare((string) Str::uuid(), $actorUserId, new DocumentSubject('DOC-05', 'PRE_PAYMENT', $invoice->company_id, ['invoice_id' => $invoiceId]), $amount);
+
+        return $outcome->kind === Outcome::COMMITTED ? (int) $outcome->resultId : throw new RuntimeException("prepare {$outcome->kind} {$outcome->code}");
+    }
+
+    /** ROUTE-249's action as its own command; its word. */
+    public static function issueKuitansi(int $actorUserId, int $invoiceId, int $documentId, string $date): string
+    {
+        $draft = DB::table('document_versions')->where('document_id', $documentId)->where('state', 'DRAFT')->sole();
+
+        return self::word(app(IssuePrepaymentKuitansi::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), Document::query()->findOrFail($documentId), (int) $draft->lock_version, (string) $draft->public_id, $date, false, null, 'Proses pembayaran klien'));
     }
 
     public static function word(Outcome $outcome): string

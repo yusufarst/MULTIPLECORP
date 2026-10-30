@@ -54,6 +54,8 @@ final class DocumentDetail
                 'mode' => $document->mode,
                 'company' => ['id' => is_object($company) ? Row::nullable($company, 'public_id') : null, 'code' => is_object($company) ? Row::nullable($company, 'code') : null, 'name' => is_object($company) ? Row::nullable($company, 'legal_name') : null],
                 'prepayment' => $this->prepaymentState($document, $issued),
+                // A pre-payment Kuitansi is issued by its invoice's own route (ROUTE-249), PG-036's "Kembali" leading there (INT-249).
+                'invoice' => $document->mode === 'PRE_PAYMENT' ? self::invoiceOf($document) : null,
             ],
             'versions' => $versions->map(fn (DocumentVersion $version): array => $this->version($version, $content, $names))->values()->all(),
             'current' => $issued?->public_id,
@@ -132,6 +134,13 @@ final class DocumentDetail
             'paper' => $paper,
             'facts' => $facts === null ? null : DocumentChain::factsDigest($facts),
         ];
+    }
+
+    private static function invoiceOf(Document $document): ?string
+    {
+        $publicId = DB::table('invoices')->where('id', $document->invoice_id)->value('public_id');
+
+        return is_string($publicId) ? $publicId : null;
     }
 
     private function prepaymentState(Document $document, ?DocumentVersion $issued): ?string

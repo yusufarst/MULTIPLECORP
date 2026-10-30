@@ -56,9 +56,10 @@ final class IssueInvoice
             $provider = $this->subjects->of($subject);
             // AX-16's set: the project (LK-01), the company (LK-06), the cap (LK-20), the invoice (LK-25), a chain an earlier press left (LK-30; else first used here, FU-12) and the counter (LK-31).
             $chain = $this->issuing->chainOf($subject);
+            $open = $chain === null ? null : $this->chain->draftOf($chain->id);
             $context->lock((new LockSet)->add('projects', ['id' => $project->id])->add('companies', ['id' => $invoice->company_id])
                 ->add('project_commercial_balances', ['project_id' => $project->id])->add('invoices', ['id' => $invoice->id])
-                ->union($chain === null ? new LockSet : $this->chain->locks($chain, array_values(array_filter([$this->chain->draftOf($chain->id)?->id]))))
+                ->union($chain === null ? new LockSet : $this->chain->locks($chain, $open === null ? [] : [$open->id]))
                 ->union($this->issuing->numberLocks($invoice->company_id, $layout, $businessDate)));
 
             if ($context->authority()?->allows('finance.view', $invoice->company_id) !== true) {

@@ -601,8 +601,21 @@ final class InvoiceCorrections
     /** @return array<string, array<string, string>> */
     private static function named(InvoiceCorrection $input): array
     {
-        $named = fn (array $rows, string $prefix): array => array_combine(array_map(fn (int $id): string => $prefix.'_'.$id, array_keys($rows)), array_values($rows));
+        return ['applications' => self::prefixed($input->applications, 'application'), 'settlements' => self::prefixed($input->settlements, 'settlement'), 'writeoffs' => self::prefixed($input->writeoffs, 'writeoff')];
+    }
 
-        return ['applications' => $named($input->applications, 'application'), 'settlements' => $named($input->settlements, 'settlement'), 'writeoffs' => $named($input->writeoffs, 'writeoff')];
+    /**
+     * @param  array<int, string>  $rows
+     * @return array<string, string>
+     */
+    private static function prefixed(array $rows, string $prefix): array
+    {
+        $named = [];
+
+        foreach ($rows as $id => $action) {
+            $named[$prefix.'_'.$id] = $action;
+        }
+
+        return $named;
     }
 }
