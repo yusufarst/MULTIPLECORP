@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -236,34 +236,44 @@ A service-only project must complete without fictitious warehouse movements (AC-
 - Migration: N/A — no migration or import code in this Task
 - Other: DOCUMENT_PREVIEW_PRODUCER §4's checks on the BAST's preview, as TASK-029 states them
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/FUL/HandoverTest.php` — a SERVICE line's handover records its date, work performed, recipient and evidence, no stock movement, entry, delivery or purchase written; the service-only project reaches it with no warehouse step; E2E J-FUL-04 from the journey's *Jasa* stage (BR-INV-11; FS-05; AC-20)
+- Criterion 2: the same file — handovers repeat up to the pinned demand, the excess REJECTED C-30 with the remainder and the input kept; `tests/Interaction/HandoverTest.php` — one `command_id` replayed hands over once, with other content a CONFLICT; `tests/Integration/Fulfilment/HandoverRacesTest.php` — the last quantity between two sessions, one COMMITTED (C-30; PX-03; CI-05)
+- Criterion 3: `tests/Browser/Responsive/handover.spec.ts` — the form beside the live preview at 1,025, 1,279 and 1,280 px, no tab; "Rincian | Pratinjau" at 1,024 px; E2E on the phone Edit → Preview → Finalize, the preview full-screen; the preview composed in the browser, writing nothing (D-DS-23; `DIR-079` CD-04; DC-11; INT-012)
+- Criterion 4: `HandoverTest` — the BAST issues in place from the handover's confirmed facts, numbered at issue, a second issue CONFLICT BD-06 with the number, refused WF-DOC-01 from a handover with no standing line; `tests/Browser/Localization/handover.spec.ts` — its paper Indonesian in both languages (BR-DOC-04; BD-06; LOCALIZATION §3.4)
+- Criterion 5: `HandoverTest` — one exact reversal line with its reason, its guard moved back, a second refused C-30, an issued BAST flagged for revision or void on PG-036; `HandoverRacesTest` — two reversals, one line (CM-27; C-30)
+- Criterion 6: `HandoverTest` — a likely duplicate REJECTED L-49 with its matches until confirmed with a reason, committing under `FUL.HandoverDuplicateConfirmed` for QS-21; a reversed twin no duplicate; `HandoverRacesTest` — caught between two sessions at the anchor (L-49; BD-13)
+- Criterion 7: `tests/Authorization/HandoverAccessTest.php` — without `handover.record` PG-033 and its command refused, without `fulfillment.correct` the reversal refused and its control absent, the BAST's issue absent without `documents.issue`, another company's records unknown (AZ-01; SM-04; SM-01)
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the remaining-to-hand-over figure (TL-03); Feature — ROUTE-208 and ROUTE-209 with each refusal, DOC-08's precondition through ROUTE-222 (TL-04); Integration — a handover racing a remaining-scope cancellation in both orders, the last quantity, a likely duplicate, two reversals, the guard reconciled after each (TL-05); PASS in CI
+- [x] Authorization: `handover.record` against `fulfillment.correct`, `documents.issue` for the BAST (TL-06; SM-04) PASS in CI
+- [x] Route integrity: ROUTE-033, ROUTE-208 and ROUTE-209 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-208, INT-209 and INT-221 per IG-05 with one `command_id` replayed; INT-012 in the responsive layer (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FUL-04 at the desk and on the phone, CJ-03's handover, CJ-15's BAST (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: the composer's widths and the phone (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the form's and the list's sections in the shared components (TEST_STRATEGY §9); the composer beside the form at each width without a sideways scroll
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's project, handover and BAST subject (TL-14); the page's props without a stamp, signature file or number; `kembali` accepted only in PG-033's address shape
+- [x] Database safety review: no schema change, no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring it needs, named in its Notes; Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `f9fdaac`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41043340789 (push) and 41043346075 (pull request #46), the three jobs PASS in each; TL-15 — PG-033 in the same statements for one handover and a full page, ten lines within forty statements, one more per locked row only (QB-02; QB-13; PFM-01; PFM-02; PFM-20)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: ROUTE-033, ROUTE-208 and ROUTE-209 in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/HandoverTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: f9fdaac, CI ubuntu-24.04 run 41043340789, tests/Browser/E2E/handover.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-033 in both languages, its paper Indonesian in both — `tests/Browser/Localization/handover.spec.ts` PASS; 49 keys added with their registry rows
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FUL's `Actions/`, `Services/` (`HandoverPosting`, `HandoverFacts`, `ServiceHandoverSubjects`, `HandoverPredicate`), `Data/HandoverProgress`, `Queries/ServiceHandovers`, `Http/Controllers/HandoverController`, its README; `resources/js/Pages/FUL/ServiceHandover.tsx` and `features/ful/handover.ts`; PRJ's `DemandPosting`, `LineScope`'s remainder made public, `Journey`, `ProjectJourneys` and `ProjectWorkspace` for the *Jasa* stage's link; DOC's `DocumentsController` for the answer in place; `app/Support/Guards/Families.php`; `AppServiceProvider`, `routes/web.php`, `navigation.ts`, `lang/`; the tests and their fixtures, the synthetic subjects leaving DOC-08 to FUL
+- Commit SHA: `0d7730d`, `e292f96`, `0d805d4`, `8dd10c4`, `f9fdaac`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-047-service-handover`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex's review of `0d805d4` (COMPLETED) found one P1 and one P2 point, fixed in `8dd10c4` and their threads answered: a departure confirmed in MSG-35's dialog was stopped again by the guard's last-render state, the user left on PG-033 — a ref now lets it pass at once, an E2E step covering "Batal"; and handovers beyond the newest 50 could not be reached, reversed or issued — the list is now keyset-paginated by `setelah` (D-PF-02), a feature test reaching the oldest of 51. Context7 consulted for Inertia 3's visit order at the installed line: the page's props are set before `onSuccess`, so "Terbitkan BAST" opens its confirmation on the draft the redirect returned, without a second request. Graphify OPTIONAL and not used: a targeted search of FUL and DOC's subject providers. Executor readings within the approved text: evidence is optional — AC-07 asks for available proof, and the signed BAST, the usual proof, exists only after the handover is recorded; a reversal line sits under its original handover with its own `command_id`, the reason kept in its audit event and its `scope_note`, which PG-033 shows; INT-209's "a likely duplicate" does not arise for a reversal, a second one refused by the one-reversal key (C-30); the form enters the quantity in the pin's entered unit with its ratio; ROUTE-209's `{ho}` is the handover's public id, the line named by the handle PG-033 showed; ROUTE-221 and ROUTE-222 answer on PG-033 only for a `kembali` of its address shape, and keep PG-036 otherwise; the journey's warehouse step takes only items of its own stage, a service line's item waiting for *Jasa*; the fulfilment predicate is one provider's key, so TASK-045's goods lines extend `HandoverPredicate` as they extend `ServiceHandoverSubjects`; PG-033's handovers are keyset-paginated by `setelah` (D-PF-02). Executor discovery for a later Task: `resources/js/Pages/PRJ/ProjectForm.tsx`'s leave guard replays the confirmed visit before its `dirty` updates, the pattern Codex found here; outside this Task's scope and left unchanged
 
 **SAFE NEXT TASK:**
 
