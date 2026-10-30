@@ -61,6 +61,15 @@ void test('§5.3: *Gudang* opens on *Reservasi* while *Stok* is not built, only 
     assert.equal(present(MODULES, reserver, new Set(['PG-018', 'PG-025'])).find((entry) => entry.key === 'gudang')?.href, '/gudang/stok');
 });
 
+void test('§5.3: *Aktivitas & Keamanan* opens *Riwayat Aktivitas* with `audit.view`, else *Log Keamanan* (TASK-061; OD-14)', () => {
+    const built = new Set(['PG-063', 'PG-064']);
+    const href = (account: AccountHints) => present(MODULES, account, built).find((entry) => entry.key === 'aktivitas')?.href;
+
+    assert.equal(href(account('audit.view', 'security_log.view')), '/aktivitas/riwayat');
+    assert.equal(href(account('security_log.view')), '/aktivitas/log-keamanan');
+    assert.equal(href(account('projects.view', 'users.manage')), undefined);
+});
+
 void test('§6.1: the current entry by the address\'s first segment', () => {
     assert.equal(currentKey(present(MODULES, owner, ALL), '/gudang/barang-masuk/01a1'), 'gudang');
     assert.equal(currentKey(primaryEntries(owner, ALL), '/proyek/01a1/penyelesaian'), 'proyek');
