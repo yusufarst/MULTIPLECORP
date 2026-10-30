@@ -66,7 +66,7 @@ final class Families
             new Family(
                 'invoice_balances',
                 ['invoice_id'],
-                ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount'],
+                ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount', 'written_off_amount'],
                 <<<'SQL'
                     select b.invoice_id,
                         case when i.state = 'ISSUED' then v.gross_value else 0 end as gross_value,
@@ -74,7 +74,9 @@ final class Families
                         case when i.state = 'ISSUED' then v.output_tax_value else 0 end as output_tax_value,
                         coalesce((select sum(a.amount) from payment_applications a where a.invoice_id = b.invoice_id and a.state = 'ACTIVE'), 0) as applied_amount,
                         coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'FEE'), 0) as fee_settled_amount,
-                        coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'TAX'), 0) as tax_settled_amount
+                        coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'TAX'), 0) as tax_settled_amount,
+                        coalesce((select sum(w.amount) from receivable_writeoffs w where w.invoice_id = b.invoice_id), 0)
+                            - coalesce((select sum(c.amount) from financial_contras c join receivable_writeoffs w on w.id = c.receivable_writeoff_id where w.invoice_id = b.invoice_id), 0) as written_off_amount
                     from invoice_balances b join invoices i on i.id = b.invoice_id join invoice_versions v on v.id = i.current_version_id
                     SQL,
                 null,

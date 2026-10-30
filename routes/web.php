@@ -10,6 +10,7 @@ use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
+use App\Modules\FIN\Http\Controllers\ReceivablesController;
 use App\Modules\FUL\Http\Controllers\HandoverController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
@@ -147,6 +148,12 @@ Route::post('/keuangan/invoice', [InvoicesController::class, 'save'])->middlewar
 Route::post('/keuangan/invoice/{id}/terbitkan', [InvoicesController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:invoice.issue'])->name('fin.invoices.issue');
 Route::post('/keuangan/invoice/{id}/koreksi', [InvoicesController::class, 'correct'])->whereUuid('id')->middleware(['auth', 'capability:invoice.correct'])->name('fin.invoices.correct');
 Route::post('/keuangan/invoice/{id}/kuitansi', [InvoicesController::class, 'kuitansi'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('fin.invoices.kuitansi');
+Route::get('/keuangan/piutang', [ReceivablesController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.receivables');
+Route::post('/keuangan/invoice/{id}/tagihkan', [ReceivablesController::class, 'bill'])->whereUuid('id')->middleware(['auth', 'capability:billing.record'])->name('fin.receivables.bill');
+Route::post('/keuangan/invoice/{id}/koreksi-tagihan', [ReceivablesController::class, 'correct'])->whereUuid('id')->middleware(['auth', 'capability:billing.correct'])->name('fin.receivables.correct');
+Route::post('/keuangan/invoice/{id}/sengketa', [ReceivablesController::class, 'hold'])->whereUuid('id')->middleware(['auth', 'capability:receivables.dispute'])->name('fin.receivables.hold');
+Route::post('/keuangan/invoice/{id}/hapuskan', [ReceivablesController::class, 'writeOff'])->whereUuid('id')->middleware(['auth', 'capability:receivables.write_off'])->name('fin.receivables.write_off');
+Route::post('/keuangan/invoice/{id}/cabut-penghapusan', [ReceivablesController::class, 'supersede'])->whereUuid('id')->middleware(['auth', 'capability:writeoff.supersede'])->name('fin.receivables.supersede');
 Route::post('/keuangan/kuitansi/{id}/tautkan', [InvoicesController::class, 'link'])->whereUuid('id')->middleware(['auth', 'capability:payment.record'])->name('fin.kuitansi.link');
 
 // TASK-047 — PG-033 *Serah Terima Jasa* and its commands (WF-FUL-04; AX-09): ROUTE-033 and ROUTE-208 `handover.record`, ROUTE-209

@@ -10926,6 +10926,516 @@
             "source": "WF-FIN-01; architecture challenge 15a",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "receivables.tab.aktif": {
+            "task": "TASK-050",
+            "source": "IA §8.5 PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.tab.belum": {
+            "task": "TASK-050",
+            "source": "IA §8.5 PG-044; BR-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.tab.sengketa": {
+            "task": "TASK-050",
+            "source": "IA §8.5 PG-044; QS-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.empty.aktif": {
+            "task": "TASK-050",
+            "source": "PT-19; PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.empty.belum": {
+            "task": "TASK-050",
+            "source": "PT-19; PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.empty.sengketa": {
+            "task": "TASK-050",
+            "source": "PT-19; PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.empty_scope": {
+            "task": "TASK-050",
+            "source": "CS-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.branch": {
+            "task": "TASK-050",
+            "source": "PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.all_branches": {
+            "task": "TASK-050",
+            "source": "PG-044; CS-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.client": {
+            "task": "TASK-050",
+            "source": "J-FIN-02; NV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.all_clients": {
+            "task": "TASK-050",
+            "source": "J-FIN-02; NV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.due": {
+            "task": "TASK-050",
+            "source": "PG-044",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.due_date": {
+            "task": "TASK-050",
+            "source": "WF-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.field.age": {
+            "task": "TASK-050",
+            "source": "CALC-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.subtotal.title": {
+            "task": "TASK-050",
+            "source": "CS-08; D-IA-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.subtotal.line": {
+            "task": "TASK-050",
+            "source": "CS-08; D-IA-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.MIGRASI": {
+            "task": "TASK-050",
+            "source": "BR-FIN-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.CURRENT": {
+            "task": "TASK-050",
+            "source": "BR-FIN-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.DAYS_1_30": {
+            "task": "TASK-050",
+            "source": "BR-FIN-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.DAYS_31_60": {
+            "task": "TASK-050",
+            "source": "BR-FIN-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.DAYS_61_90": {
+            "task": "TASK-050",
+            "source": "BR-FIN-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bucket.OVER_90": {
+            "task": "TASK-050",
+            "source": "BR-FIN-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.age.short": {
+            "task": "TASK-050",
+            "source": "CALC-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.age.days": {
+            "task": "TASK-050",
+            "source": "CALC-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.bill": {
+            "task": "TASK-050",
+            "source": "J-FIN-02; INT-243",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.correct": {
+            "task": "TASK-050",
+            "source": "CM-25; INT-244",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.hold": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; INT-246",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.clear": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; INT-246",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.write_off": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; INT-247",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.supersede": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; INT-248",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.pay": {
+            "task": "TASK-050",
+            "source": "J-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.action.request": {
+            "task": "TASK-050",
+            "source": "DOC-13; J-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.bill.consequence": {
+            "task": "TASK-050",
+            "source": "MSG-39; BR-FIN-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.correct.consequence": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.hold.title": {
+            "task": "TASK-050",
+            "source": "J-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.hold.active": {
+            "task": "TASK-050",
+            "source": "J-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.hold.set_consequence": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; BR-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.hold.clear_consequence": {
+            "task": "TASK-050",
+            "source": "J-FIN-05; BR-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.hold.lapsed": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.billing.title": {
+            "task": "TASK-050",
+            "source": "J-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.billing.no_due": {
+            "task": "TASK-050",
+            "source": "BR-FIN-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.billing.history_title": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.billing.corrected": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoff.consequence": {
+            "task": "TASK-050",
+            "source": "MSG-39; DIR-019; BR-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoff.outstanding": {
+            "task": "TASK-050",
+            "source": "AX-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoff.amount": {
+            "task": "TASK-050",
+            "source": "AX-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoff.credit": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoff.credit_reason": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoffs.title": {
+            "task": "TASK-050",
+            "source": "BR-FIN-08; FS-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoffs.before_after": {
+            "task": "TASK-050",
+            "source": "BR-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoffs.standing": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.writeoffs.superseded": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.recoveries.title": {
+            "task": "TASK-050",
+            "source": "QS-12; QS-14; L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.recoveries.row": {
+            "task": "TASK-050",
+            "source": "QS-12; L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.supersede.consequence": {
+            "task": "TASK-050",
+            "source": "AX-24; L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.supersede.writeoff": {
+            "task": "TASK-050",
+            "source": "AX-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.supersede.amount": {
+            "task": "TASK-050",
+            "source": "AX-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.billed": {
+            "task": "TASK-050",
+            "source": "J-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.billing_corrected": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.hold_set": {
+            "task": "TASK-050",
+            "source": "J-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.hold_cleared": {
+            "task": "TASK-050",
+            "source": "J-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.written_off": {
+            "task": "TASK-050",
+            "source": "J-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.answer.superseded": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.already_billed": {
+            "task": "TASK-050",
+            "source": "BD-07; MSG-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.no_receivable": {
+            "task": "TASK-050",
+            "source": "BR-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.not_billed": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.unchanged": {
+            "task": "TASK-050",
+            "source": "CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.hold_open": {
+            "task": "TASK-050",
+            "source": "C-42",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.no_hold": {
+            "task": "TASK-050",
+            "source": "C-42",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.above_outstanding": {
+            "task": "TASK-050",
+            "source": "C-15; MSG-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.above_recovered": {
+            "task": "TASK-050",
+            "source": "C-15; L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.not_recovery": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.refusal.credit": {
+            "task": "TASK-050",
+            "source": "L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.validation.writeoff": {
+            "task": "TASK-050",
+            "source": "IP-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receivables.validation.due_before_billing": {
+            "task": "TASK-050",
+            "source": "IP-14; WF-FIN-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.invoices_unbilled": {
+            "task": "TASK-050",
+            "source": "QS-09; BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.receivables_open": {
+            "task": "TASK-050",
+            "source": "BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.receivables_disputed": {
+            "task": "TASK-050",
+            "source": "QS-11; L-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.receivable_held": {
+            "task": "TASK-050",
+            "source": "L-12; PJ-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.InvoiceBilled": {
+            "task": "TASK-050",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.BillingCorrected": {
+            "task": "TASK-050",
+            "source": "LG-01; CM-25",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.DisputeHoldSet": {
+            "task": "TASK-050",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.DisputeHoldCleared": {
+            "task": "TASK-050",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.ReceivableWrittenOff": {
+            "task": "TASK-050",
+            "source": "LG-01; OD-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.WriteOffSuperseded": {
+            "task": "TASK-050",
+            "source": "LG-01; L-17",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

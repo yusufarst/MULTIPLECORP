@@ -1,6 +1,6 @@
 // PG-043 *Detail Invoice* (ROUTE-043, ROUTE-245, ROUTE-249, ROUTE-250; NAV-043; SCR-39; J-FIN-01; J-FIN-08; TASK-049): its lines and tax, the position block keeping sales value, billed sum, applied, settled and outstanding apart (PT-24;
 // CALC-05; CALC-08), the billing act, the payments and deductions, its documents and its pre-payment Kuitansi. "Terbitkan Kuitansi untuk Proses Pembayaran" takes the amount, then PG-036 shows its draft and issues it with its reason
-// (`DIR-081` OB-02); it records no payment. "Revisi Turun" and "Batalkan Invoice" list every reduction and what becomes of it (ST-07), each with its typed basis and reason (IP-09). The billing controls are TASK-050's.
+// (`DIR-081` OB-02); it records no payment. "Revisi Turun" and "Batalkan Invoice" list every reduction and what becomes of it (ST-07), each with its typed basis and reason (IP-09). The billing, dispute and write-off controls live in `invoice-receivable` (TASK-050).
 import type { FormDataConvertible } from '@inertiajs/core';
 import { FileText, Link as LinkIcon } from 'lucide-react';
 import { useState } from 'react';
@@ -19,6 +19,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText, Money } from '@/components/values';
 import { type InvoiceState } from '@/features/fin/invoice';
+import { type Billing, type Hold, type Recovery, type WriteoffRow, useInvoiceReceivable } from '@/features/fin/invoice-receivable';
 import AppShell from '@/layouts/AppShell';
 import { dateLong, money, quantity as formatQuantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
@@ -41,7 +42,12 @@ type Props = {
     bases: { cases: Option[]; confirmations: Option[]; cancellations: Option[]; transitions: Option[] };
     evidence: { id: string; type: string; issuer: string; reference: string | null; date: string }[];
     today: string;
-    can: { correct: boolean; supersede: boolean; kuitansi: boolean; link: boolean; nota: boolean };
+    billing: Billing;
+    hold: Hold | null;
+    writeoffs: WriteoffRow[];
+    credit: string | null;
+    recoveries: Recovery[];
+    can: { correct: boolean; supersede: boolean; kuitansi: boolean; link: boolean; nota: boolean; bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; pay: boolean; request: boolean };
 };
 type Correcting = 'REVISI' | 'BATAL';
 type Payload = Record<string, FormDataConvertible>;
@@ -63,10 +69,11 @@ function PositionRow({ label, value, strong = false }: { label: string; value: s
     );
 }
 
-export default function Invoice({ invoice, position, lines, taxes, reductions, documents, kuitansi, payments, bases, evidence, today, can }: Props) {
+export default function Invoice({ invoice, position, lines, taxes, reductions, documents, kuitansi, payments, bases, evidence, billing, hold, writeoffs, credit, recoveries, today, can }: Props) {
     const { t } = useTranslation();
     const id = invoice?.id ?? '';
     const [correcting, setCorrecting] = useState<Correcting | null>(null);
+    const [enteredFor, setEnteredFor] = useState<Correcting | null>(null);
     const [reason, setReason] = useState('');
     const [basis, setBasis] = useState('');
     const [basisRow, setBasisRow] = useState('');
@@ -83,6 +90,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
     const prepare = useCommand<Payload>(() => '/dokumen', 'post');
     const other = useCommand<Payload>(() => '/dokumen', 'post');
     const link = useCommand<Payload>(() => `/keuangan/kuitansi/${linking?.id ?? ''}/tautkan`, 'post');
+    const receivable = useInvoiceReceivable({ id, outstanding: position?.outstanding ?? '0', billing, hold, inherited: invoice?.inherited ?? false, unbilled: invoice?.state === 'ISSUED_NOT_BILLED', writeoffs, credit, recoveries, evidence, today, can });
 
     if (invoice === null || position === null) {
         return null;
@@ -102,14 +110,20 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
     const writeoffChoices: [string, TranslationKey][] = replacing ? [['SUPERSEDE', 'invoices.correct.supersede'], ['RERECORD', 'invoices.correct.rerecord_writeoff']] : [['SUPERSEDE', 'invoices.correct.supersede']];
     const open = (kind: Correcting) => {
         correct.clear();
-        setReason('');
-        setBasis('');
-        setBasisRow('');
-        setCited('');
-        setValue('');
-        setDescription(invoice.title ?? '');
-        setDate({ date: today, chosen: false });
-        setActions({});
+
+        // Reopening keeps what was entered (IP-08; IP-09); the other correction, or a committed one, starts anew.
+        if (enteredFor !== kind) {
+            setReason('');
+            setBasis('');
+            setBasisRow('');
+            setCited('');
+            setValue('');
+            setDescription(invoice.title ?? '');
+            setDate({ date: today, chosen: false });
+            setActions({});
+            setEnteredFor(kind);
+        }
+
         setCorrecting(kind);
     };
     const chosenAction = (handle: string, choices: [string, TranslationKey][]): string => actions[handle] ?? choices[0]?.[0] ?? '';
@@ -130,7 +144,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                 hapus: reductions.writeoffs.map((row) => ({ id: row.handle, tindakan: chosenAction(row.handle, writeoffChoices) })),
             },
         };
-        correct.submit(body, () => { setCorrecting(null); });
+        correct.submit(body, () => { setCorrecting(null); setEnteredFor(null); });
     };
     const noReductions = reductions.applications.length + reductions.settlements.length + reductions.writeoffs.length === 0;
     const actionsMenu = [
@@ -154,12 +168,14 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                             <DateText value={invoice.date} />
                         </div>
                     }
-                    actions={actionsMenu}
+                    primary={receivable.primary}
+                    actions={[...receivable.menu, ...actionsMenu]}
                 />
                 <Answered command={correct} />
                 <Answered command={prepare} />
                 <Answered command={other} />
                 <Answered command={link} />
+                {receivable.answers}
                 {invoice.void_reason !== null && <p className="text-body text-text-secondary">{t('invoices.detail.void', { alasan: invoice.void_reason })}</p>}
                 {invoice.replaces !== null && <a href={`/keuangan/invoice/${invoice.replaces}`} className="text-body text-accent-link underline underline-offset-2">{t('invoices.detail.replaces')}</a>}
                 {invoice.replaced_by !== null && <a href={`/keuangan/invoice/${invoice.replaced_by}`} className="text-body text-accent-link underline underline-offset-2">{t('invoices.detail.replaced_by')}</a>}
@@ -174,11 +190,8 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                         <PositionRow label={t('invoices.position.written_off')} value={position.written_off} />
                         <PositionRow label={t('invoices.position.outstanding')} value={position.outstanding} strong />
                     </dl>
-                    {billed ? (
-                        <p className="text-body text-text-secondary">{t('invoices.detail.billing', { tanggal: dateLong(invoice.billed_at ?? invoice.date), jatuh: invoice.due_date === null ? '—' : dateLong(invoice.due_date) })}</p>
-                    ) : invoice.state === 'ISSUED_NOT_BILLED' && <p className="text-body text-text-secondary">{t('invoices.position.unbilled')}</p>}
-                    {invoice.inherited && <p className="text-body text-text-secondary">{t('invoices.detail.inherited')}</p>}
                 </FormSection>
+                {receivable.section}
                 <FormSection title={t('invoices.detail.lines')}>
                     <ol aria-label={t('invoices.detail.lines')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
                         {lines.map((line, index) => (
@@ -217,6 +230,9 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                     )}
                     {can.nota && !documents.some((document) => document.type === otherLayout) && (
                         <div><Button variant="ghost" size="sm" pending={other.pending} onClick={() => { other.submit({ jenis: otherLayout, subjek: { invoice_id: id } }); }}>{t('invoices.action.other_layout', { jenis: t(`documents.${otherLayout.toLowerCase().replace('-', '_')}` as TranslationKey) })}</Button></div>
+                    )}
+                    {can.request && !documents.some((document) => document.type === 'DOC-13') && (
+                        <div><Button variant="ghost" size="sm" pending={other.pending} onClick={() => { other.submit({ jenis: 'DOC-13', subjek: { invoice_id: id } }); }}>{t('receivables.action.request')}</Button></div>
                     )}
                 </FormSection>
                 <FormSection title={t('invoices.kuitansi.title')}>
@@ -343,6 +359,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                 answer={correct.answer}
                 onConfirm={submitCorrection}
             />
+            {receivable.dialogs}
         </AppShell>
     );
 }

@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 41
+DONE: 42
 READY: 1
 IN_PROGRESS: 0
 BLOCKED: 13
 VERIFYING: 0
-TODO: 32
+TODO: 31
 SUPERSEDED: 0
 
 Progress:
-41 / 87
-Percentage: 47.1 %
+42 / 87
+Percentage: 48.3 %
 
-CURRENT TASK: none in progress — TASK-049 — Invoices and the pre-payment Kuitansi DONE on its branch `task/TASK-049-invoices`, CI PASS on `3ed85a5`, its pull request #47 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-050 READY, NOT STARTED, taken from the merged `main` (DIR-096); TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-050 — Billing, receivables, dispute hold and Owner write-off DONE on its branch `task/TASK-050-billing`, CI PASS on `ca1fca2`, its pull request #48 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-051 READY, NOT STARTED, taken from the merged `main` (DIR-096); TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 14 of 2026-10-27 — DIR-099's disposition of TASK-022's discovery: the runtime role's locks on the document, document-type and opening-credit rows
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -98,7 +98,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-047](TASK-047.md) — Service fulfillment and handover
 - [ ] [TASK-048](TASK-048.md) — Client returns (sales return)
 - [x] [TASK-049](TASK-049.md) — Invoices and the pre-payment Kuitansi
-- [ ] [TASK-050](TASK-050.md) — Billing, receivables, dispute hold and Owner write-off
+- [x] [TASK-050](TASK-050.md) — Billing, receivables, dispute hold and Owner write-off
 - [ ] [TASK-051](TASK-051.md) — Payments, applications and bank statement lines
 - [ ] [TASK-052](TASK-052.md) — Deduction settlements and contras
 - [ ] [TASK-053](TASK-053.md) — Customer credit and refunds
@@ -190,8 +190,8 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
 | [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
-| [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | READY | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | TODO | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
+| [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | DONE | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
+| [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | READY | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | BLOCKED — P11Q-02 | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | BLOCKED — P11Q-02 | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |

@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -250,34 +250,48 @@ CAP-10, AC-10 and REF-040 require explicit billing with `billed_at` and `due_dat
 - Migration: N/A — no migration or import code in this Task; the OPENING act is TASK-057's
 - Other: CM-25's expected end state asserted (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/FIN/ReceivablesTest.php` — billing Rp1,000,000 records `billed_at` and the entered due date and activates Rp1,000,000, no amount on the act, no Cash-In; after a Rp400,000 advance it activates Rp600,000 with no second Cash-In; `tests/Unit/FIN/AgingCalculatorTest.php` — FX-01 1–2.
+- Criterion 2: `ReceivablesTest` — a second act CONFLICT BD-07 with its dates; a correction without linked evidence refused at its field; a correct one a linear chain, the old dates visible, ageing recomputed, audited ADM_PLUS for QS-14 (TASK-058 reads it); `tests/Interaction/ReceivablesTest.php` — one `command_id` bills once; `tests/Integration/Finance/ReceivableRacesTest.php` — two at once.
+- Criterion 3: `ReceivablesTest` — a replacement after a correction carries an INHERITED act citing the current act with its dates, its age continuing from that due date.
+- Criterion 4: `AgingCalculatorTest` — every bucket's edges and the WIB boundary through the controlled clock (FX-08); `ReceivablesTest` — PG-044's rows and subtotals in their buckets, the written-off amount gone from collectible ageing, a disputed receivable keeping its indicator and age.
+- Criterion 5: `ReceivablesTest` — set with a reason, active and blocking through `ReceivablePredicate`, one uncleared hold (C-42), clearing needing its reason, the hold lapsing at zero; `ReceivableRacesTest` — two at once. Normal completion itself is TASK-055's: the predicate it will read is built and tested here.
+- Criterion 6: `ReceivablesTest` — at most the outstanding (C-15, with the figure), reason and before/after, disposed history, no Cash-In; another client's credit asks nothing, the same client's asks to be applied first or a recorded reason (L-17); `tests/Authorization/ReceivablesAccessTest.php` — Owner only.
+- Criterion 7: `ReceivablesTest` and `ReceivableRacesTest` — a contra on the write-off and the application in one command, on a synthetic payment as this Task's OUT OF SCOPE allows until TASK-051, the original visible; FX-03's recovery at a real commit, reconciled.
+- Criterion 8: `ReceivablesTest` — an Admin refused OD-07 over a standing write-off, the Owner disposing of what still stands, a partly superseded write-off included; several re-recorded as one.
+- Criterion 9: `ReceivablesAccessTest` — the controls absent for an Admin, the routes refused, through a replay of the Owner's own `command_id` and with a forced grant row.
+- Criterion 10: `ReceivablesTest` — DOC-13 with the billing data, payments and outstanding unchanged, refused with nothing outstanding, voided with its invoice; `tests/Browser/E2E/receivables.spec.ts` — from PG-043 to PG-036.
+- Criterion 11: `ReceivablesTest` — a subtotal per company, no total key, branch and client filters, the keyset; `ReceivablesAccessTest` — no PG-044 without `finance.view`.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the `AgingCalculator` across the WIB boundary and the buckets, the remainder after advances (TL-03); Feature — ROUTE-243, ROUTE-244 and ROUTE-246–ROUTE-248 with each refusal (TL-04); Integration on real PostgreSQL sessions — billing, hold and write-off races, a hold or write-off racing a completion (M-26) with a synthetic completion until TASK-055, a supersession on a synthetic recovered payment until TASK-051, FX-03's recovery, the reconciliation after each (TL-05) PASS in CI
+- [x] Authorization: `billing.record`, `billing.correct`, `receivables.dispute`; `receivables.write_off` and `writeoff.supersede` OWNER_ONLY, denied to an Admin and through a replay (TL-06; SM-04) PASS in CI
+- [x] Route integrity: ROUTE-044, ROUTE-243, ROUTE-244 and ROUTE-246–ROUTE-248 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-243, INT-244 and INT-246–INT-248 per IG-05 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-02 and J-FIN-05, CJ-04's billing, CJ-14's receivables and ageing (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: PG-044 and PG-043's section at 320, 390 and 1,280 px, the phone's client lookup and "Tagihkan" (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the list, its subtotals and PG-043's sections in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's invoice, its cursor positioning nothing; SM-25 for the receivable figures without `finance.view` (TL-14)
+- [x] Database safety review: no schema change, no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and TASK-049's corrections named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `ca1fca2`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41137756919 (push) and 41137762203 (pull request #48), the three jobs PASS in each; TL-15 — PG-044 in at most four statements, the same for one receivable and many, ageing one group (QB-07); AX-17's and AX-24's commands within forty statements (QB-13; PFM-01; PFM-02; PFM-20)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: ROUTE-044, ROUTE-243, ROUTE-244 and ROUTE-246–ROUTE-248 in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/ReceivablesTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: ca1fca2, CI ubuntu-24.04 run 41137756919, tests/Browser/E2E/receivables.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-044 and PG-043's controls in both languages — `tests/Browser/Localization/receivables.spec.ts` PASS; DOC-13 Indonesian whatever the language — `ReceivablesTest` PASS; the keys added with their registry rows
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FIN's `Actions/` (`BillInvoice`, `CorrectBilling`, `SetDisputeHold`, `ClearDisputeHold`, `WriteOffReceivable`, `SupersedeWriteOff`), `Services/` (`ReceivablePosting`, `MoneyPosting`, `InvoiceEvidence`, `ReceivablePredicate`, `InvoiceSubjects`, `InvoiceCorrections`), `Queries/` (`ReceivableList`, `InvoiceDetail`, `InvoiceInputs`), `Http/Controllers/ReceivablesController`, its README; `app/Support/Finance/AgingCalculator`; `app/Support/Guards/Families.php`; `resources/js/Pages/FIN/Receivables.tsx`, `Invoice.tsx`, `features/fin/invoice-receivable.tsx`; the provider, routes, navigation and `lang/`; the tests; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `187b452`, `bdcfcbe`, `ba81a8e`, `1c732be`, `ca1fca2`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-050-billing`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `1c732be` and raised one P2 (PG-044's cursor kept out of the address, against NV-05); fixed in `ca1fca2` with its tests and answered on the pull request, a cursor that reads nothing now answered MSG-26, no thread open; it did not review `ca1fca2`. Flagged, outside this Task: sixteen other list pages, PG-041 among them, keep the same `preserveUrl` on "Muat Lagi". ER-06: a fresh read-only review before the pull request found eleven points, each verified against the code and specification and fixed — a write-off and its supersession reopening a completed project, against WF-PRJ-03's residual commands; the correction dialog starting from today instead of the act's dates; evidence on an invoice without a project passing unlinked; several standing write-offs unable to be re-recorded; AX-22 not revalidating a completed project; a lapsed hold offering only "Tandai Sengketa"; PG-044's cursor unscoped; recovered money not following a replacement; a hold's clearing neither revalidating nor refused; the superseded act and the write-off missing from their audit events; a reopened dialog losing its input; and two weak tests. Context7 consulted at the installed line: PostgreSQL 18's `date - date` returning whole days, so the bucket's SQL and PHP agree with no zone involved, and its partial UNIQUE keys — this Task reads the root act under LK-25 and answers BD-07 itself, the key its backstop. Graphify OPTIONAL and not used: a targeted search of FIN's receivable actions and `ReceivablePosting`. TASK-049's code this Task corrects, within its own domain: `VoidInvoice` and `ReviseInvoiceDown` revalidating, a partly superseded write-off disposed for what stands, write-offs re-recorded as one, a voided invoice's DOC-13 voided with it, PG-043's correction dialog keeping its input. Executor readings within the approved text: what reopens a completed project — WF-PRJ-03 lists billing, the write-off and its supersession as residual commands, which never reopen one, so though this contract's concurrency line names "a hold, a write-off or a billing correction" as predicate inputs and says "the correction revalidates", only `CorrectBilling`, a hold's set and clear (CM-27) and AX-22 revalidate; a hold and a write-off act on a billed invoice with something outstanding, an unbilled one having no receivable (`BR-FIN-08`); the due date refused before the billing date at its field; the credit's reason in the write-off's audit event, no column existing; money recovered for a replaced invoice counting for its replacement; the billing correction's date prefilled from the act it corrects; the phone's lookup a client filter from the rows in scope, a free-text term staying out of the address (DP-02); "Catat Pembayaran" gated by `BUILT`, appearing with PG-046 (TASK-051), so no dead link ships; M-26's completion synthetic until TASK-055. QS-14's reader is TASK-058's: this Task records the ADM_PLUS and OWNER_ONLY events it will list.
 
 **SAFE NEXT TASK:**
 

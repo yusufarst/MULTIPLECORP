@@ -102,6 +102,18 @@ final class InvoiceInputs
         return self::ids(DB::table('payments')->where('company_id', $companyId)->whereIn('public_id', $publicIds)->pluck('id')->all());
     }
 
+    /** A write-off of the invoice by the handle PG-043 shows. */
+    public function writeoffId(int $invoiceId, string $handle): ?int
+    {
+        foreach (self::ids(DB::table('receivable_writeoffs')->where('invoice_id', $invoiceId)->pluck('id')->all()) as $id) {
+            if (hash_equals(RowHandle::of('receivable_writeoffs', $id), $handle)) {
+                return $id;
+            }
+        }
+
+        return null;
+    }
+
     /** @return array{public_id: string, legal_name: string}|null The company a C-10 refusal names. */
     public function company(int $companyId): ?array
     {

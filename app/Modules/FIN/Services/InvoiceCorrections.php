@@ -9,11 +9,13 @@ use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\DOC\Services\DocumentSubjects;
 use App\Modules\DOC\Services\DocumentVoiding;
 use App\Modules\FIN\Data\InvoiceCorrection;
+use App\Modules\FIN\Data\InvoiceDocuments;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Models\InvoiceBalance;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Services\DemandPosting;
+use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
@@ -25,7 +27,6 @@ use App\Support\GuardUpdate;
 use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -54,6 +55,7 @@ final class InvoiceCorrections
         private readonly DocumentSubjects $subjects,
         private readonly CorrectionCases $cases,
         private readonly PrepaymentKuitansi $kuitansi,
+        private readonly Revalidation $revalidation,
     ) {}
 
     /**
@@ -90,13 +92,16 @@ final class InvoiceCorrections
             $set = $set->add('money_fact_balances', ['receivable_writeoff_id' => $id]);
         }
 
-        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
+        foreach ($this->chain->ofInvoice($invoice->id, [...InvoiceSubjects::LAYOUTS, InvoiceDocuments::REQUEST]) as $document) {
             $issued = $this->chain->issuedOf($document->id);
             $set = $set->union($this->chain->locks($document, $issued === null ? [] : [$issued->id]));
 
             if ($issued !== null) {
                 $set = $set->union($this->chain->participantLocks($this->chain->change(DocumentChange::DOCUMENT_VOIDED, $document, $issued->id, null)));
-                $set = $set->union($this->issuing->numberLocks($invoice->company_id, $document->document_type_code, $input->businessDate));
+
+                if ($document->document_type_code !== InvoiceDocuments::REQUEST) {
+                    $set = $set->union($this->issuing->numberLocks($invoice->company_id, $document->document_type_code, $input->businessDate));
+                }
             }
         }
 
@@ -122,8 +127,9 @@ final class InvoiceCorrections
         }
 
         foreach (DB::table('receivable_writeoffs as w')->where('w.invoice_id', $invoiceId)->leftJoin('money_fact_balances as m', 'm.receivable_writeoff_id', '=', 'w.id')
-            ->whereRaw('coalesce(m.contra_amount, 0) < w.amount')->orderBy('w.id')->get(['w.id', 'w.amount']) as $row) {
-            $found['writeoffs'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'amount')];
+            ->whereRaw('coalesce(m.contra_amount, 0) < w.amount')->orderBy('w.id')->selectRaw('w.id, w.amount - coalesce(m.contra_amount, 0) as standing')->get() as $row) {
+            // What still stands: a part superseded for recovered money is already gone (L-17).
+            $found['writeoffs'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'standing')];
         }
 
         return $found;
@@ -181,7 +187,8 @@ final class InvoiceCorrections
 
         DB::table('invoice_versions')->where('id', $invoice->current_version_id)->update(['state' => 'VOIDED', 'updated_at' => $now]);
 
-        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
+        // A voided invoice's payment request voids with it: nothing asks for money the invoice no longer claims.
+        foreach ($this->chain->ofInvoice($invoice->id, [...InvoiceSubjects::LAYOUTS, InvoiceDocuments::REQUEST]) as $document) {
             $issued = $this->chain->issuedOf($document->id);
 
             if ($issued !== null) {
@@ -201,6 +208,8 @@ final class InvoiceCorrections
             $linkage = $linkage->link(AuditRelation::Supersedes, 'invoices', is_string($publicId) ? $publicId : '');
         }
 
+        // A correction on a completed project: a material one returns it to ACTIVE (SF-REVAL; M-26).
+        $this->revalidation->revalidate($context, $project->id, "FIN.InvoiceVoided:{$invoice->public_id}");
         $this->records->record($context, 'FIN.InvoiceVoided', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['state' => 'VOIDED', 'basis' => $input->basis, 'dispositions' => self::named($input)], ['state' => 'ISSUED', 'sales_value' => $sales], $linkage);
 
@@ -281,6 +290,7 @@ final class InvoiceCorrections
         }
 
         $this->kuitansi->reconcile($context, $invoice->id, 'invoices.unlink.corrected');
+        $this->revalidation->revalidate($context, $project->id, "FIN.InvoiceRevisedDown:{$invoice->public_id}");
         $this->records->record($context, 'FIN.InvoiceRevisedDown', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['sales_value' => $sales, 'output_tax_value' => $tax, 'basis' => $input->basis, 'dispositions' => self::named($input)], ['sales_value' => Row::text($balance, 'sales_value'), 'output_tax_value' => Row::text($balance, 'output_tax_value')]);
 
@@ -372,15 +382,10 @@ final class InvoiceCorrections
         }
     }
 
-    /** DIR-092 (2): an entry error stands on evidence already linked to the invoice's records — its project, or a confirmation of it, as `evidence_links` holds no invoice target; the check reads, it links nothing. */
+    /** DIR-092 (2): an entry error stands on evidence linked to the invoice's records. */
     private static function ensureEvidence(Invoice $invoice, InvoiceCorrection $input): void
     {
-        if (! in_array($input->basis, ['ENTRY_ERROR', 'ENTRY_ERROR_REPLACED'], true)) {
-            return;
-        }
-
-        if ($input->evidenceId === null || ! DB::table('evidence_links')->where('evidence_document_id', $input->evidenceId)->whereNull('unlinked_at')
-            ->where(fn (Builder $link) => $link->where('project_id', $invoice->project_id)->orWhereIn('commercial_confirmation_id', DB::table('commercial_confirmations')->where('project_id', $invoice->project_id)->select('id')))->exists()) {
+        if (in_array($input->basis, ['ENTRY_ERROR', 'ENTRY_ERROR_REPLACED'], true) && ! InvoiceEvidence::linked($invoice, $input->evidenceId)) {
             throw Refused::rejected('CM-24', ['reason' => 'evidence']);
         }
     }
@@ -491,6 +496,8 @@ final class InvoiceCorrections
             }
         }
 
+        $rerecorded = Money::zero();
+
         foreach ($input->writeoffs as $id => $action) {
             $amount = Money::of($current['writeoffs'][$id]['amount']);
             self::add($old, 'written_off_amount', $amount->negated());
@@ -499,15 +506,21 @@ final class InvoiceCorrections
             GuardUpdate::apply($context->connection, 'money_fact_balances', [['key' => ['receivable_writeoff_id' => $id], 'deltas' => ['contra_amount' => $amount->toString()]]]);
 
             if ($action === InvoiceCorrection::RERECORD) {
-                $target = $replacement ?? $invoice->id;
-                $written = DB::table('receivable_writeoffs')->insertGetId(['company_id' => $invoice->company_id, 'invoice_id' => $target, 'amount' => $amount->toString(), 'reason' => $reason,
-                    'outstanding_before' => $amount->toString(), 'outstanding_after' => '0.00', 'decided_by' => $actor, 'business_date' => $input->businessDate, 'command_id' => $commandId, 'command_line_no' => $line, 'recorded_at' => $now, 'recorded_by' => $actor]);
-                GuardUpdate::bear($context->connection, 'money_fact_balances', ['receivable_writeoff_id' => $written], ['company_id' => $invoice->company_id, 'fact_kind' => 'WRITEOFF', 'amount' => $amount->toString(), 'recorded_at' => $now]);
-                if ($target === $invoice->id) {
-                    self::add($old, 'written_off_amount', $amount);
-                } else {
-                    self::add($new, 'written_off_amount', $amount);
-                }
+                $rerecorded = $rerecorded->plus($amount);
+            }
+        }
+
+        // What is re-recorded is one new write-off of the sum: one per invoice and command (DATABASE §4.12).
+        if ($rerecorded->isPositive()) {
+            $target = $replacement ?? $invoice->id;
+            $written = DB::table('receivable_writeoffs')->insertGetId(['company_id' => $invoice->company_id, 'invoice_id' => $target, 'amount' => $rerecorded->toString(), 'reason' => $reason,
+                'outstanding_before' => $rerecorded->toString(), 'outstanding_after' => '0.00', 'decided_by' => $actor, 'business_date' => $input->businessDate, 'command_id' => $commandId, 'command_line_no' => ++$line, 'recorded_at' => $now, 'recorded_by' => $actor]);
+            GuardUpdate::bear($context->connection, 'money_fact_balances', ['receivable_writeoff_id' => $written], ['company_id' => $invoice->company_id, 'fact_kind' => 'WRITEOFF', 'amount' => $rerecorded->toString(), 'recorded_at' => $now]);
+
+            if ($target === $invoice->id) {
+                self::add($old, 'written_off_amount', $rerecorded);
+            } else {
+                self::add($new, 'written_off_amount', $rerecorded);
             }
         }
 

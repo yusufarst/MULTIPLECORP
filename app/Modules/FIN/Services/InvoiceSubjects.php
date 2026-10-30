@@ -5,11 +5,13 @@ namespace App\Modules\FIN\Services;
 use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Services\PaperFormat;
 use App\Modules\FIN\Data\InvoiceDocuments;
 use App\Modules\IAM\Data\Authority;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
+use App\Support\Money;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
 use Illuminate\Support\Facades\DB;
@@ -31,9 +33,11 @@ final class InvoiceSubjects implements DocumentSubjectProvider
 
     public const LAYOUTS = InvoiceDocuments::LAYOUTS;
 
+    public const REQUEST = InvoiceDocuments::REQUEST;
+
     public function types(): array
     {
-        return [self::INVOICE => ['STANDARD'], self::NOTA => ['STANDARD'], self::KUITANSI => ['PRE_PAYMENT']];
+        return [self::INVOICE => ['STANDARD'], self::NOTA => ['STANDARD'], self::KUITANSI => ['PRE_PAYMENT'], self::REQUEST => ['STANDARD']];
     }
 
     public function subject(Authority $viewer, string $typeCode, string $mode, array $records): ?DocumentSubject
@@ -63,6 +67,11 @@ final class InvoiceSubjects implements DocumentSubjectProvider
     {
         if (DB::table('invoices')->where('id', self::invoice($subject))->value('state') !== 'ISSUED') {
             throw Refused::rejected('WF-DOC-01', ['reason' => 'invoice_not_issued']);
+        }
+
+        // A payment request asks for what is still owed.
+        if ($subject->typeCode === self::REQUEST && ! Money::of(PrepaymentKuitansi::outstanding(self::invoice($subject)))->isPositive()) {
+            throw Refused::rejected('WF-DOC-01', ['reason' => 'nothing_outstanding']);
         }
     }
 
@@ -98,6 +107,10 @@ final class InvoiceSubjects implements DocumentSubjectProvider
             );
         }
 
+        if ($subject->typeCode === self::REQUEST) {
+            return self::requestFacts($invoice, $recipient, $references, Row::nullable($version, 'title'));
+        }
+
         $lines = DB::table('invoice_version_lines as l')->leftJoin('units as u', 'u.id', '=', 'l.entered_unit_id')->where('l.invoice_version_id', (int) Row::text($version, 'id'))->orderBy('l.id')
             ->get(['l.description', 'l.entered_qty', 'u.code', 'l.unit_price', 'l.line_sales_value'])->all();
         $taxes = DB::table('invoice_tax_components as t')->join('tax_types as y', 'y.id', '=', 't.tax_type_id')->where('t.invoice_version_id', (int) Row::text($version, 'id'))->orderBy('y.code')
@@ -121,6 +134,45 @@ final class InvoiceSubjects implements DocumentSubjectProvider
                 ['label' => 'Total', 'amount' => Row::text($version, 'gross_value'), 'grand' => true],
             ],
             renders: ['invoice_version_id' => (int) Row::text($version, 'id')],
+        );
+    }
+
+    /**
+     * DOC-13 from the invoice and its billing data, read from the record and never a payload (DATABASE §10; BR-DOC-04): what was billed, what is already reduced, what is asked.
+     *
+     * @param  array{name: string, lines: list<string>}  $recipient
+     * @param  list<array{label: string, value: string}>  $references
+     */
+    private static function requestFacts(int $invoice, array $recipient, array $references, ?string $title): DocumentFacts
+    {
+        $number = self::number($invoice);
+        $balance = ReceivablePosting::balance($invoice);
+        $act = $balance === null || Row::nullable($balance, 'current_billing_act_id') === null ? null : DB::table('invoice_billing_acts')->where('id', (int) Row::text($balance, 'current_billing_act_id'))->first(['billed_at', 'due_date']);
+        $gross = $balance === null ? '0.00' : Row::text($balance, 'gross_value');
+        $outstanding = $balance === null ? '0.00' : Row::text($balance, 'outstanding');
+        $reduced = Money::of($gross)->minus(Money::of($outstanding));
+        $references = [...$references, ['label' => 'No. Invoice', 'value' => $number ?? '—']];
+
+        if ($act !== null) {
+            $references[] = ['label' => 'Tanggal Tagihan', 'value' => PaperFormat::date(Row::text($act, 'billed_at'))];
+            $due = Row::nullable($act, 'due_date');
+
+            if ($due !== null) {
+                $references[] = ['label' => 'Jatuh Tempo', 'value' => PaperFormat::date($due)];
+            }
+        }
+
+        return new DocumentFacts(
+            recipient: $recipient,
+            references: $references,
+            subject: 'Pembayaran invoice '.($number ?? '').($title === null ? '' : ' — '.$title),
+            totals: [
+                ['label' => 'Nilai Tagihan', 'amount' => $gross, 'grand' => false],
+                ...($reduced->isPositive() ? [['label' => 'Sudah Diterima atau Dikurangi', 'amount' => $reduced->toString(), 'grand' => false]] : []),
+                ['label' => 'Sisa Tagihan', 'amount' => $outstanding, 'grand' => true],
+            ],
+            amount: $outstanding,
+            parentNumber: $number,
         );
     }
 
