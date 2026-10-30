@@ -47,6 +47,8 @@ final class SyntheticSubjects implements DocumentSubjectProvider
 
         // The engine's tests issue DOC-09 through this synthetic subject: PRJ's company SPK (TASK-034) stays out of them.
         app()->instance(SpkSubjects::class, new SilentSubjects);
+        // And DOC-08 too: FUL's BAST of a recorded handover (TASK-047) stays out of them.
+        app()->instance(ServiceHandoverSubjects::class, new SilentSubjects);
 
         foreach (app()->tagged(DocumentSubjectProvider::TAG) as $provider) {
             if ($provider instanceof self) {

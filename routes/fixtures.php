@@ -14,6 +14,7 @@ use Tests\Support\Fixtures\DocumentFixture;
 use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
+use Tests\Support\Fixtures\HandoverFixture;
 use Tests\Support\Fixtures\LogsFixture;
 use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
@@ -111,6 +112,9 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-038): a confirmed project of one warehouse line, an opening lot of its product, reserved when asked.
     Route::post('__fixtures/reservasi', [ReservationFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-047): a confirmed service-only project, the BAST's numbering, a delivery proof, a handover recorded when asked.
+    Route::post('__fixtures/serah-terima', [HandoverFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-061): a page and more of the run's company's audit events, one without a company, the security events a notice opens.
     Route::post('__fixtures/log', [LogsFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
