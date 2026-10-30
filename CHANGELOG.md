@@ -719,3 +719,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-047 squash-merged by the executor into `main` as `ac3a6d6` (pull request #46); TASK-049 started.
 - Built TASK-049 on its branch `task/TASK-049-invoices`: `FIN SaveInvoiceDraft`, `IssueInvoice`, `VoidInvoice`, `ReviseInvoiceDown`, `IssuePrepaymentKuitansi` and `LinkPrepaymentKuitansi` (AX-16; AX-22; AX-31) with their refusals, PG-041–PG-043 with the composer beside its live paper, the pre-payment Kuitansi's issue from PG-036, DOC-04, DOC-05 and DOC-06's subjects, the journey's Invoice stage, and the reconciliation of the invoice and commercial guards; the phone's menu and select sheets back on screen, `DecimalInput` following a value the page set.
 - Every check passed in fresh CI on `3ed85a5`. TASK-049 DONE — progress 41 / 87 —; TASK-050 READY next.
+
+## Unreleased — 2026-10-31, TASK-050 — Billing, receivables, dispute hold and Owner write-off
+
+- TASK-049 squash-merged by the executor into `main` as `5255b32` (pull request #47); TASK-050 started.
+- Built TASK-050 on its branch `task/TASK-050-billing`: `FIN BillInvoice`, `CorrectBilling` (AX-17), `SetDisputeHold`, `ClearDisputeHold` (NX-09), the Owner's `WriteOffReceivable` and `SupersedeWriteOff` (AX-24) with their refusals, PG-044 *Piutang* with a subtotal per company and its ageing buckets, PG-043's billing, dispute and write-off controls, the `AgingCalculator`, DOC-13's subject, FIN's completion predicates, and the reconciliation of what stands written off; TASK-049's corrections now revalidating a completed project.
+- Every check passed in fresh CI on `ca1fca2`. TASK-050 DONE — progress 42 / 87 —; TASK-051 READY next.
