@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Services;
 
+use App\Modules\FIN\Models\InvoiceBalance;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -21,6 +22,14 @@ use Illuminate\Support\Facades\DB;
 final class PrepaymentKuitansi
 {
     public function __construct(private readonly AuditRecorder $audit) {}
+
+    /** What the invoice's guard says is outstanding. */
+    public static function outstanding(int $invoiceId): string
+    {
+        $balance = InvoiceBalance::query()->toBase()->where('invoice_id', $invoiceId)->value('outstanding');
+
+        return is_scalar($balance) ? (string) $balance : '0.00';
+    }
 
     /** Σ open pre-payment Kuitansi on the invoice, without the chain being issued. */
     public static function openTotal(int $invoiceId, ?int $exceptDocumentId = null): string

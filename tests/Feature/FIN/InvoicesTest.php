@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\DOC\Jobs\RenderDocument;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Support\BusinessDate;
@@ -10,6 +11,7 @@ use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
@@ -426,3 +428,21 @@ it('leads the journey\'s Invoice stage to PG-042 for a holder of invoice.issue (
 
     $this->actingAs($this->actor)->get("/proyek/{$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('journey.current', 'invoice')->where('journey.next.href', '/keuangan/invoice/baru?'.http_build_query(['proyek' => $this->project->public_id])));
 });
+
+it('hands the correcting command\'s issued layouts to the render job: the replacement\'s and the revision\'s, never one from a refused command (SF-RENDER; IP-12)', function () {
+    $id = $this->world->issued($this->project, '1000000');
+    Queue::fake();
+
+    correctInvoice($this, $id, ['aksi' => 'REVISI', 'dasar' => 'ENTRY_ERROR', 'isi' => invoiceContent('900000')]);
+    expect(invoiceAnswer()['code'])->toBe('CM-24');
+    Queue::assertNotPushed(RenderDocument::class);
+
+    correctInvoice($this, $id, ['aksi' => 'REVISI', 'dasar' => 'ENTRY_ERROR', 'bukti' => invoiceEvidence($this), 'isi' => invoiceContent('900000')]);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED');
+    Queue::assertPushed(RenderDocument::class, 1);
+
+    correctInvoice($this, $id, ['aksi' => 'BATAL', 'dasar' => 'ENTRY_ERROR_REPLACED', 'bukti' => invoiceEvidence($this), 'isi' => invoiceContent('800000')]);
+    expect(invoiceAnswer()['kind'])->toBe('COMMITTED');
+    Queue::assertPushed(RenderDocument::class, 2);
+});
+

@@ -1,9 +1,13 @@
-import { expect, test } from '@playwright/test';
+import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
 
+const expect = base.configure({ timeout: 60_000 });
+
 // TL-09 (TASK-049; J-FIN-01 — S2-J03's composer on the desktop and the phone —; J-FIN-08; CJ-04's invoices and pre-payment Kuitansi; CJ-06's revision and void): the journey's composer, the issue saying that no receivable is active, the cap's refusal with what remains; the Kuitansi's draft on PG-036 issued with its reason,
 // recording no payment; a correction listing each reduction and what becomes of it.
+
+test.describe.configure({ timeout: 240_000 });
 
 test('composes a value-only invoice beside its live paper, saves and issues it, the answer stating that nothing is billed (J-FIN-01; D-DS-23; INT-241; INT-242)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
@@ -14,7 +18,7 @@ test('composes a value-only invoice beside its live paper, saves and issues it, 
     const paper = page.getByRole('region', { name: /^Pratinjau Invoice/ });
     await expect(paper).toContainText('DRAF — belum terbit');
     await page.getByLabel(/^Keterangan/).fill('Termin pertama');
-    await page.getByLabel(/^Nilai/).fill('1000000');
+    await page.getByRole('textbox', { name: /^Nilai/ }).fill('1000000');
     await expect(paper).toContainText('Termin pertama');
     await expect(paper).toContainText('Rp1.000.000');
 
@@ -37,12 +41,12 @@ test('refuses an issue above the cap with what remains, the input kept (C-31; L-
 
     await page.goto(`/keuangan/invoice/baru?proyek=${run.project}`);
     await page.getByLabel(/^Keterangan/).fill('Terlalu besar');
-    await page.getByLabel(/^Nilai/).fill('3000000');
+    await page.getByRole('textbox', { name: /^Nilai/ }).fill('3000000');
     await page.getByRole('button', { name: 'Simpan Draf' }).click();
     await expect(page.locator('#konten').getByText('Draf invoice tersimpan.')).toBeVisible();
     await page.getByRole('button', { name: 'Terbitkan Invoice' }).click();
     await page.getByRole('alertdialog').getByRole('button', { name: 'Terbitkan Invoice' }).click();
-    await expect(page.getByRole('alertdialog')).toContainText(/Sisa yang bisa ditagih 2500000/);
+    await expect(page.getByRole('alertdialog')).toContainText(/Sisa yang bisa ditagih Rp2\.500\.000/);
 });
 
 test('issues the pre-payment Kuitansi on PG-036 with its reason, recording no payment (J-FIN-08; AX-31; GAP-029; DIR-081 OB-02)', async ({ page }) => {

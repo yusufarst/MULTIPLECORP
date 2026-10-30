@@ -12,6 +12,7 @@ use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Models\Project;
 use App\Support\BusinessDate;
 use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -42,6 +43,10 @@ final class InvoiceFixture
         foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW']] as [$type, $prefix]) {
             Numbering::scheme($company, $type, "{$year}-01-01", 'YEAR', "UJI/{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($company, $type, $start);
+        }
+
+        foreach (['DOC-04', 'DOC-05', 'DOC-06'] as $layout) {
+            DocumentTypeFactory::ensure($layout);
         }
 
         $client = Projects::client();

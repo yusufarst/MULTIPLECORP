@@ -6,6 +6,7 @@ use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Modules\PRJ\Data\ProjectRef;
+use App\Modules\PRJ\Services\DemandPosting;
 use App\Support\Audit\AuthorityClass;
 use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
@@ -63,7 +64,7 @@ final class SaveInvoiceDraft
                     throw Refused::rejected('L-11', ['reason' => 'closed']);
                 }
 
-                if (! DB::table('project_commercial_balances')->where('project_id', $project->id)->exists()) {
+                if (DemandPosting::commercial($project->id) === null) {
                     throw Refused::rejected('L-16', ['reason' => 'unconfirmed']);
                 }
 

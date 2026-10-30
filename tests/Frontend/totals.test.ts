@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 
-import { provisionalTotals } from '../../resources/js/lib/decimal.ts';
+import { multiply, provisionalTotals, quotient } from '../../resources/js/lib/decimal.ts';
 
 type Case = { lines: [string, string][]; tax_percent: string; subtotal: string; tax: string; total: string };
 
@@ -23,3 +23,18 @@ void test('provisional totals: each case of the shared list, line by line, to th
 void test('provisional totals: no line is a zero subtotal and no tax', () => {
     assert.deepEqual(provisionalTotals([], '11'), { lines: [], subtotal: '0.00', tax: '0.00', total: '0.00' });
 });
+
+// The invoice's proposed tax: the same cases as tests/Unit/FIN/InvoiceValuesTest (TASK-049; FS-13), exact where a float is not.
+for (const [base, rate, numerator, denominator, mode, tax] of [
+    ['1000000.00', '11.000000', '1', '1', 'HALF_UP', '110000.00'],
+    ['1000000.00', '12.000000', '11', '12', 'HALF_UP', '110000.00'],
+    ['100.05', '11.000000', '1', '1', 'HALF_UP', '11.01'],
+    ['100.05', '11.000000', '1', '1', 'DOWN', '11.00'],
+    ['1.15', '50.000000', '1', '1', 'HALF_UP', '0.58'],
+    ['99999999999.99', '11.000000', '1', '1', 'DOWN', '10999999999.99'],
+] as const) {
+    void test(`proposes ${tax} on ${base} at ${rate}% × ${numerator}/${denominator} by ${mode}`, () => {
+        assert.equal(quotient(multiply(multiply(base, rate), numerator), multiply(denominator, '100'), 2, mode), tax);
+    });
+}
+

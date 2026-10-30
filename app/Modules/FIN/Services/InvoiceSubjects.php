@@ -5,6 +5,7 @@ namespace App\Modules\FIN\Services;
 use App\Modules\DOC\Contracts\DocumentSubjectProvider;
 use App\Modules\DOC\Data\DocumentFacts;
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\FIN\Data\InvoiceDocuments;
 use App\Modules\IAM\Data\Authority;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
@@ -22,13 +23,13 @@ use Illuminate\Support\Facades\DB;
  */
 final class InvoiceSubjects implements DocumentSubjectProvider
 {
-    public const INVOICE = 'DOC-06';
+    public const INVOICE = InvoiceDocuments::INVOICE;
 
-    public const NOTA = 'DOC-04';
+    public const NOTA = InvoiceDocuments::NOTA;
 
-    public const KUITANSI = 'DOC-05';
+    public const KUITANSI = InvoiceDocuments::KUITANSI;
 
-    public const LAYOUTS = [self::INVOICE, self::NOTA];
+    public const LAYOUTS = InvoiceDocuments::LAYOUTS;
 
     public function types(): array
     {

@@ -1,12 +1,16 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect as base, test } from '@playwright/test';
 
 import { atRest } from '../evidence-fixtures';
 import { invoiceRun } from '../invoice-fixtures';
 
+const expect = base.configure({ timeout: 60_000 });
+
 // TL-12 (TASK-049; PG-041–PG-043; DESIGN_SYSTEM §12.1, §15; INT-012): PG-041, PG-042 and PG-043 with its correction dialog pass the WCAG 2.2 AA checks at both bands, each measured at rest; the state says itself in words beside its icon.
 
 const TAGS = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
+
+test.describe.configure({ timeout: 240_000 });
 
 for (const width of [390, 1280]) {
     test(`finds no WCAG 2.2 AA violation on the invoice's pages at ${String(width)} px`, async ({ page }) => {

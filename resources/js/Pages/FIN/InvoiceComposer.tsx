@@ -22,6 +22,7 @@ import { type Paper } from '@/features/doc/paper';
 import { type InvoiceTax, liveInvoice, proposedTax } from '@/features/fin/invoice';
 import AppShell from '@/layouts/AppShell';
 import { add, multiply, round } from '@/lib/decimal';
+import { money } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
@@ -134,7 +135,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
         <div className="flex min-w-0 flex-col gap-6">
             <FormSection title={t('invoices.composer.from_project')}>
                 <p className="text-body text-text-primary">{`${project.title} · ${project.client}`}</p>
-                <p className="text-body text-text-secondary">{t('invoices.composer.confirmed', { nilai: `Rp${confirmed}`, sisa: `Rp${remaining}` })}</p>
+                <p className="text-body text-text-secondary">{t('invoices.composer.confirmed', { nilai: money(confirmed), sisa: money(remaining) })}</p>
             </FormSection>
             <FormSection title={t('invoices.composer.entered')}>
                 <BusinessDateControl today={today} value={date} onChange={(next) => { setDate(next); touch(); }} />

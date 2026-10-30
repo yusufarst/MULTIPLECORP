@@ -3,7 +3,6 @@
 namespace App\Modules\FIN\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Queries\EvidenceList;
 use App\Modules\FIN\Actions\IssueInvoice;
 use App\Modules\FIN\Actions\IssuePrepaymentKuitansi;
@@ -12,21 +11,20 @@ use App\Modules\FIN\Actions\ReviseInvoiceDown;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
 use App\Modules\FIN\Actions\VoidInvoice;
 use App\Modules\FIN\Data\InvoiceCorrection;
-use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Data\InvoiceDocuments;
 use App\Modules\FIN\Queries\InvoiceComposer;
 use App\Modules\FIN\Queries\InvoiceDetail;
+use App\Modules\FIN\Queries\InvoiceInputs;
 use App\Modules\FIN\Queries\InvoiceList;
-use App\Modules\FIN\Services\InvoiceCorrections;
-use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Queries\ProjectWorkspace;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
+use App\Support\Localization\Formats;
 use App\Support\Money;
 use App\Support\RowHandle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -46,6 +44,7 @@ final class InvoicesController extends Controller
         private readonly InvoiceList $list,
         private readonly InvoiceComposer $composer,
         private readonly InvoiceDetail $detail,
+        private readonly InvoiceInputs $inputs,
         private readonly ProjectWorkspace $projects,
         private readonly EvidenceList $evidence,
     ) {}
@@ -62,7 +61,7 @@ final class InvoicesController extends Controller
         $actor = self::actor($request);
         $draft = self::query($request, 'invoice');
         $invoice = $draft === null ? null : ($this->detail->find($actor, $draft) ?? throw new NotFoundHttpException);
-        $project = $invoice !== null ? $this->projectOf($actor, $invoice) : ($this->projects->reference($actor, self::query($request, 'proyek') ?? '') ?? throw new NotFoundHttpException);
+        $project = $invoice !== null ? $this->projectOf($actor, $invoice->project_id) : ($this->projects->reference($actor, self::query($request, 'proyek') ?? '') ?? throw new NotFoundHttpException);
 
         return Inertia::render('FIN/InvoiceComposer', $this->composer->screen($actor, $project, $invoice));
     }
@@ -91,11 +90,11 @@ final class InvoicesController extends Controller
             ...self::contentRules(),
         ]);
         $invoice = isset($input['invoice']) ? ($this->detail->find($actor, self::text($input['invoice'])) ?? throw new NotFoundHttpException) : null;
-        $project = $invoice !== null ? $this->projectOf($actor, $invoice) : ($this->projects->reference($actor, self::text($input['proyek'] ?? '')) ?? throw new NotFoundHttpException);
+        $project = $invoice !== null ? $this->projectOf($actor, $invoice->project_id) : ($this->projects->reference($actor, self::text($input['proyek'] ?? '')) ?? throw new NotFoundHttpException);
         $entered = $this->content($project, $input, 'isi.');
         $outcome = $save->run(self::text($input['command_id']), $actor, $project, $invoice, isset($input['lock_version']) ? (int) self::text($input['lock_version']) : null, $entered, array_diff_key($input, ['command_id' => true]));
         $to = $outcome->kind === Outcome::COMMITTED && $outcome->resultId !== null
-            ? '/keuangan/invoice/baru?'.http_build_query(['invoice' => $invoice !== null ? $invoice->public_id : DB::table('invoices')->where('id', $outcome->resultId)->value('public_id')])
+            ? '/keuangan/invoice/baru?'.http_build_query(['invoice' => $invoice !== null ? $invoice->public_id : $this->inputs->publicId($outcome->resultId)])
             : ($invoice !== null ? '/keuangan/invoice/baru?'.http_build_query(['invoice' => $invoice->public_id]) : '/keuangan/invoice/baru?'.http_build_query(['proyek' => $project->publicId]));
 
         return $this->answer($outcome, 'saved', $to, $entered['business_date'], $project->companyId);
@@ -108,12 +107,12 @@ final class InvoicesController extends Controller
         $invoice = $this->detail->find($actor, $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, [
             'lock_version' => ['required', 'integer', 'min:0'],
-            'tata' => ['required', Rule::in(InvoiceSubjects::LAYOUTS)],
+            'tata' => ['required', Rule::in(InvoiceDocuments::LAYOUTS)],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],
             'isi' => ['nullable', 'string', 'size:64'],
         ]);
-        $project = $this->projectOf($actor, $invoice);
+        $project = $this->projectOf($actor, $invoice->project_id);
         $outcome = $issue->run(self::text($input['command_id']), $actor, $project, $invoice, (int) self::text($input['lock_version']), self::text($input['tata']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['isi'] ?? null));
 
         return $this->answer($outcome, 'issued', '/keuangan/invoice/baru?'.http_build_query(['invoice' => $invoice->public_id]), self::text($input['tanggal']), $invoice->company_id, self::text($input['tata']));
@@ -149,25 +148,25 @@ final class InvoicesController extends Controller
             'disposisi.hapus.*.id' => ['required', 'string', 'size:32'],
             'disposisi.hapus.*.tindakan' => ['required', Rule::in([InvoiceCorrection::SUPERSEDE, InvoiceCorrection::RERECORD])],
         ]);
-        $evidence = isset($input['bukti']) ? ($this->evidence->idOf($actor, self::text($input['bukti']), $invoice->company_id, InvoiceCorrections::EVIDENCE)
+        $evidence = isset($input['bukti']) ? ($this->evidence->idOf($actor, self::text($input['bukti']), $invoice->company_id, InvoiceCorrection::EVIDENCE)
             ?? throw ValidationException::withMessages(['bukti' => self::say('invoices.validation.evidence')])) : null;
-        $project = $invoice->project_id === null ? null : $this->projectOf($actor, $invoice);
+        $project = $invoice->project_id === null ? null : $this->projectOf($actor, $invoice->project_id);
         $content = $project !== null && is_array($input['isi'] ?? null) ? $this->content($project, $input, 'isi.') : null;
-        $reductions = InvoiceCorrections::reductions($invoice->id);
+        $reductions = $this->inputs->reductionIds($invoice->id);
         $correction = new InvoiceCorrection(
             basis: self::text($input['dasar']),
             reason: trim(self::text($input['alasan'])),
             businessDate: self::text($input['tanggal']),
             prefilled: $request->boolean('tanggal_otomatis'),
-            caseId: self::rowOf('correction_cases', self::nullable($input['kasus'] ?? null), DB::table('correction_cases')->where('company_id', $invoice->company_id)->pluck('id')->all()),
-            confirmationId: self::rowOf('commercial_confirmations', self::nullable($input['konfirmasi'] ?? null), DB::table('commercial_confirmations')->where('project_id', $invoice->project_id ?? 0)->pluck('id')->all()),
-            cancellationId: self::rowOf('line_scope_cancellations', self::nullable($input['pembatalan'] ?? null), DB::table('line_scope_cancellations as c')->join('project_lines as l', 'l.id', '=', 'c.project_line_id')->where('l.project_id', $invoice->project_id ?? 0)->pluck('c.id')->all()),
-            transitionId: self::rowOf('project_state_transitions', self::nullable($input['transisi'] ?? null), DB::table('project_state_transitions')->where('project_id', $invoice->project_id ?? 0)->pluck('id')->all()),
+            caseId: self::rowOf('correction_cases', self::nullable($input['kasus'] ?? null), $this->inputs->caseIds($invoice->company_id)),
+            confirmationId: self::rowOf('commercial_confirmations', self::nullable($input['konfirmasi'] ?? null), $this->inputs->confirmationIds($invoice->project_id)),
+            cancellationId: self::rowOf('line_scope_cancellations', self::nullable($input['pembatalan'] ?? null), $this->inputs->cancellationIds($invoice->project_id)),
+            transitionId: self::rowOf('project_state_transitions', self::nullable($input['transisi'] ?? null), $this->inputs->transitionIds($invoice->project_id)),
             evidenceId: $evidence,
             content: $content,
-            applications: self::dispositions($input, 'aplikasi', 'payment_applications', array_keys($reductions['applications'])),
-            settlements: self::dispositions($input, 'potongan', 'deduction_settlements', array_keys($reductions['settlements'])),
-            writeoffs: self::dispositions($input, 'hapus', 'receivable_writeoffs', array_keys($reductions['writeoffs'])),
+            applications: self::dispositions($input, 'aplikasi', 'payment_applications', $reductions['applications']),
+            settlements: self::dispositions($input, 'potongan', 'deduction_settlements', $reductions['settlements']),
+            writeoffs: self::dispositions($input, 'hapus', 'receivable_writeoffs', $reductions['writeoffs']),
         );
         $payload = array_diff_key($input, ['command_id' => true]);
         $lockVersion = (int) self::text($input['lock_version']);
@@ -192,42 +191,35 @@ final class InvoicesController extends Controller
             'isi' => ['nullable', 'string', 'size:64'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
         ]);
-        $document = self::kuitansiOf($invoice, self::text($input['dokumen']));
-        $outcome = $issue->run(self::text($input['command_id']), $actor, $invoice, $document, (int) self::text($input['lock_version']), self::text($input['draf']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['isi'] ?? null), trim(self::text($input['alasan'])));
+        $document = $this->inputs->kuitansi(self::text($input['dokumen']), $invoice->id) ?? throw new NotFoundHttpException;
+        $outcome = $issue->run(self::text($input['command_id']), $actor, $invoice, $document['id'], (int) self::text($input['lock_version']), self::text($input['draf']), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::nullable($input['isi'] ?? null), trim(self::text($input['alasan'])));
 
-        return $this->answer($outcome, 'kuitansi_issued', "/dokumen/{$document->public_id}", self::text($input['tanggal']), $invoice->company_id, 'DOC-05');
+        return $this->answer($outcome, 'kuitansi_issued', "/dokumen/{$document['public_id']}", self::text($input['tanggal']), $invoice->company_id, 'DOC-05');
     }
 
     /** ROUTE-250 "Tautkan Kuitansi". */
     public function link(Request $request, LinkPrepaymentKuitansi $link, string $id): RedirectResponse
     {
         $actor = self::actor($request);
-        $document = Document::query()->where('public_id', strtolower($id))->where('document_type_code', 'DOC-05')->where('mode', 'PRE_PAYMENT')->first() ?? throw new NotFoundHttpException;
-        $invoice = $this->detail->find($actor, self::text(DB::table('invoices')->where('id', $document->invoice_id)->value('public_id'))) ?? throw new NotFoundHttpException;
+        $document = $this->inputs->kuitansi($id, null) ?? throw new NotFoundHttpException;
+        $invoice = $this->detail->find($actor, $this->inputs->publicId($document['invoice_id'])) ?? throw new NotFoundHttpException;
         $input = self::validated($request, ['pembayaran' => ['required', 'array', 'min:1', 'max:50'], 'pembayaran.*' => ['required', 'uuid']]);
         $publicIds = array_values(array_map(self::text(...), is_array($input['pembayaran']) ? $input['pembayaran'] : []));
         sort($publicIds);
-        $payments = array_values(array_map(fn (mixed $payment): int => is_numeric($payment) ? (int) $payment : 0, DB::table('payments')->where('company_id', $invoice->company_id)->whereIn('public_id', $publicIds)->pluck('id')->all()));
+        $payments = $this->inputs->paymentIds($invoice->company_id, $publicIds);
 
         if (count($payments) !== count(array_unique($publicIds))) {
             throw ValidationException::withMessages(['pembayaran' => self::say('invoices.validation.payment')]);
         }
 
-        $outcome = $link->run(self::text($input['command_id']), $actor, $invoice, $document, $payments, implode(',', $publicIds));
+        $outcome = $link->run(self::text($input['command_id']), $actor, $invoice, $document['id'], $payments, implode(',', $publicIds));
 
         return $this->answer($outcome, 'kuitansi_linked', "/keuangan/invoice/{$invoice->public_id}", BusinessDate::today(), $invoice->company_id);
     }
 
-    private function projectOf(int $actor, Invoice $invoice): ProjectRef
+    private function projectOf(int $actor, ?int $projectId): ProjectRef
     {
-        $publicId = DB::table('projects')->where('id', $invoice->project_id)->value('public_id');
-
-        return $this->projects->reference($actor, is_string($publicId) ? $publicId : '') ?? throw new NotFoundHttpException;
-    }
-
-    private static function kuitansiOf(Invoice $invoice, string $publicId): Document
-    {
-        return Document::query()->where('public_id', strtolower($publicId))->where('invoice_id', $invoice->id)->where('document_type_code', 'DOC-05')->where('mode', 'PRE_PAYMENT')->first() ?? throw new NotFoundHttpException;
+        return $this->projects->reference($actor, $this->inputs->projectPublicId($projectId)) ?? throw new NotFoundHttpException;
     }
 
     /** @return array<string, list<mixed>> */
@@ -258,14 +250,7 @@ final class InvoicesController extends Controller
     {
         $content = is_array($input['isi'] ?? null) ? $input['isi'] : [];
         $kind = self::text($content['jenis'] ?? '');
-        $handles = [];
-
-        foreach (DB::table('project_lines')->where('project_id', $project->id)->pluck('id') as $id) {
-            if (is_numeric($id)) {
-                $handles[RowHandle::of('project_lines', (int) $id)] = (int) $id;
-            }
-        }
-
+        $handles = $this->inputs->lineHandles($project->id);
         $lines = [];
 
         foreach (is_array($content['baris'] ?? null) ? array_values($content['baris']) : [] as $index => $line) {
@@ -275,7 +260,7 @@ final class InvoicesController extends Controller
                 $id = $handles[self::text($line['baris'] ?? '')] ?? throw ValidationException::withMessages(["{$prefix}baris.{$index}.baris" => self::say('fulfilment.validation.line')]);
                 $quantity = self::text($line['jumlah'] ?? '');
 
-                if ($quantity === '' || (float) $quantity <= 0) {
+                if (preg_match('/[1-9]/', $quantity) !== 1) {
                     throw ValidationException::withMessages(["{$prefix}baris.{$index}.jumlah" => self::say('invoices.validation.quantity')]);
                 }
 
@@ -364,7 +349,7 @@ final class InvoicesController extends Controller
         }
 
         $state = $outcome->state;
-        $numbering = $outcome->code === 'C-10' ? $this->numberingOf($companyId, $type ?? InvoiceSubjects::INVOICE) : null;
+        $numbering = $outcome->code === 'C-10' ? $this->numberingOf($companyId, $type ?? InvoiceDocuments::INVOICE) : null;
         [$cause, $text] = match ($outcome->kind) {
             Outcome::COMMITTED => [null, self::say("invoices.answer.{$done}")],
             Outcome::REJECTED => [null, self::refusal($outcome, $numbering, $type)],
@@ -390,9 +375,9 @@ final class InvoicesController extends Controller
         $reason = self::text($state['reason'] ?? '');
 
         return match ($outcome->code) {
-            'C-10' => self::say(($numbering['numbering'] ?? null) !== null ? 'invoices.refusal.numbering_owner' : 'messages.msg_17', ['jenis' => self::say('documents.'.strtolower(str_replace('-', '_', $type ?? InvoiceSubjects::INVOICE))), 'periode' => self::text($state['periode'] ?? ''), 'perusahaan' => $numbering['company'] ?? '']),
+            'C-10' => self::say(($numbering['numbering'] ?? null) !== null ? 'invoices.refusal.numbering_owner' : 'messages.msg_17', ['jenis' => self::say('documents.'.strtolower(str_replace('-', '_', $type ?? InvoiceDocuments::INVOICE))), 'periode' => self::text($state['periode'] ?? ''), 'perusahaan' => $numbering['company'] ?? '']),
             'C-54' => self::say('projects.refusal.company_inactive'),
-            'C-31' => self::say('invoices.refusal.cap', ['sisa' => self::text($state['remaining'] ?? '0')]),
+            'C-31' => self::say('invoices.refusal.cap', ['sisa' => self::money($state['remaining'] ?? '0')]),
             'L-11' => self::say('projects.refusal.closed'),
             'L-16' => self::say(in_array($reason, ['unconfirmed', 'no_value', 'unconfirmed_line'], true) ? "invoices.refusal.{$reason}" : 'messages.msg_04'),
             'CM-24' => self::say('invoices.refusal.evidence'),
@@ -400,13 +385,13 @@ final class InvoicesController extends Controller
             'C-56' => self::say(in_array($reason, ['billed', 'basis_row', 'basis'], true) ? "invoices.refusal.basis_{$reason}" : 'invoices.refusal.basis_basis'),
             'C-17' => self::say('invoices.refusal.replacement'),
             'C-16', 'C-15' => self::say('invoices.refusal.undisposed'),
-            'C-22' => self::say('invoices.refusal.collected', ['jumlah' => self::text($state['amount'] ?? '')]),
+            'C-22' => self::say('invoices.refusal.collected', ['jumlah' => self::money($state['amount'] ?? '0')]),
             'OD-07' => self::say('invoices.refusal.writeoff'),
             'C-43' => match ($reason) {
-                'amount_differs' => self::say('invoices.refusal.link_differs', ['kuitansi' => self::text($state['kuitansi'] ?? ''), 'tertaut' => self::text($state['linked'] ?? '')]),
+                'amount_differs' => self::say('invoices.refusal.link_differs', ['kuitansi' => self::money($state['kuitansi'] ?? '0'), 'tertaut' => self::money($state['linked'] ?? '0')]),
                 'already_linked' => self::say('invoices.refusal.link_taken'),
                 'no_application' => self::say('invoices.refusal.link_no_application'),
-                default => self::say('invoices.refusal.kuitansi_cap', ['sisa' => self::text($state['outstanding'] ?? ''), 'terbuka' => self::text($state['open'] ?? ''), 'jumlah' => self::text($state['amount'] ?? '')]),
+                default => self::say('invoices.refusal.kuitansi_cap', ['sisa' => self::money($state['outstanding'] ?? '0'), 'terbuka' => self::money($state['open'] ?? '0'), 'jumlah' => self::money($state['amount'] ?? '0')]),
             },
             'WF-DOC-01' => self::say('invoices.refusal.not_issued'),
             default => self::say('messages.msg_04'),
@@ -416,12 +401,12 @@ final class InvoicesController extends Controller
     /** @return array{company: string, numbering: ?string} The C-10 refusal's company and, for the Owner, PG-061. */
     private function numberingOf(int $companyId, string $type): array
     {
-        $company = DB::table('companies')->where('id', $companyId)->first(['public_id', 'legal_name']);
+        $company = $this->inputs->company($companyId);
         $owner = $this->projects->viewer(self::actor(request()))->ownerRole;
 
         return [
-            'company' => is_object($company) && is_string($company->legal_name ?? null) ? $company->legal_name : '',
-            'numbering' => $owner && is_object($company) ? '/pengaturan/penomoran?'.http_build_query(['perusahaan' => $company->public_id ?? '', 'jenis' => strtolower($type)]) : null,
+            'company' => $company['legal_name'] ?? '',
+            'numbering' => $owner && $company !== null ? '/pengaturan/penomoran?'.http_build_query(['perusahaan' => $company['public_id'], 'jenis' => strtolower($type)]) : null,
         ];
     }
 
@@ -474,6 +459,11 @@ final class InvoicesController extends Controller
         $id = $request->user()?->getAuthIdentifier();
 
         return is_int($id) ? $id : throw new NotFoundHttpException;
+    }
+
+    private static function money(mixed $amount): string
+    {
+        return Formats::money(self::text($amount));
     }
 
     private static function text(mixed $value): string

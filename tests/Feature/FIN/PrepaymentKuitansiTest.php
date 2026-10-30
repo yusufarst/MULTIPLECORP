@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\IAM\Models\User;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -184,3 +185,22 @@ it('never recognizes the same money twice: a linked Kuitansi moves no balance (G
         ->and((array) DB::table('application_source_balances')->where('payment_id', $payment->id)->first())->toBe($source)
         ->and(DB::table('payments')->count())->toBe(1);
 });
+
+it('renders DOC-04, DOC-05 and DOC-06 in Indonesian whatever the interface language (LOCALIZATION §3.4; DOD-16; TL-10)', function () {
+    $document = kuitansiDraft($this, '400000');
+    kuitansiIssue($this, $document);
+    $nota = $this->world->issued($this->project, '1000', 'DOC-04');
+    $paperOf = fn (int $documentId): array => json_decode((string) DB::table('document_versions')->where('document_id', $documentId)->where('state', 'ISSUED')->value('payload'), true)['paper'];
+    $rendered = [
+        'DOC-04' => $paperOf((int) DB::table('documents')->where('invoice_id', $nota)->value('id')),
+        'DOC-05' => $paperOf($document->id),
+        'DOC-06' => $paperOf((int) DB::table('documents')->where('invoice_id', $this->invoice)->where('document_type_code', 'DOC-06')->value('id')),
+    ];
+
+    app()->setLocale('en');
+
+    expect(MustacheTemplates::render('DOC-05', $rendered['DOC-05']))->toContain('Sudah terima dari')->toContain('belum menyatakan')
+        ->and(MustacheTemplates::render('DOC-04', $rendered['DOC-04']))->toContain('Kepada Yth')
+        ->and(MustacheTemplates::render('DOC-06', $rendered['DOC-06']))->toContain('Kepada Yth');
+});
+

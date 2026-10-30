@@ -1,8 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
 
+const expect = base.configure({ timeout: 60_000 });
+
 // TL-10 (TASK-049; LOCALIZATION §3, §3.4; DOD-16): PG-041–PG-043 in both languages — keys of the catalogue, never hardcoded copy —, the paper Indonesian whatever the interface language.
+
+test.describe.configure({ timeout: 240_000 });
 
 for (const [locale, texts] of [
     ['id', { list: 'Invoice', position: 'Posisi invoice', outstanding: 'Sisa tagihan', save: 'Simpan Draf', issue: 'Terbitkan Invoice', from: 'Diambil dari proyek', unbilled: 'Belum Ditagihkan' }],

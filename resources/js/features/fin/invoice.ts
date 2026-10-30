@@ -1,7 +1,7 @@
 // The invoice's live paper (PG-042; DESIGN_SYSTEM §14.3; INT-012): the draft's paper from the page's props with what the composer holds now — its date, lines, and the tax proposed from the
 // rate in force, or the tax document's own amount where the actor stated it. Totals are labelled *perkiraan* until saved; nothing is written, and the paper stays Indonesian (LOCALIZATION §3.4).
 import { type Paper } from '@/features/doc/paper';
-import { add, multiply, round } from '@/lib/decimal';
+import { add, multiply, quotient, round } from '@/lib/decimal';
 import { dateLong, money, percent, quantity } from '@/lib/format';
 
 export type InvoiceTax = { code: string; rate: string; numerator: string; denominator: string; rounding: string; evidence_required: boolean };
@@ -10,10 +10,7 @@ export type PaperLine = { description: string; quantity: string | null; unit: st
 
 /** The proposal the server also makes: `base × rate% × numerator ÷ denominator`, by the configured mode. */
 export function proposedTax(base: string, tax: InvoiceTax): string {
-    const scaled = Number(multiply(multiply(base, tax.rate), tax.numerator)) / (Number(tax.denominator) * 100);
-    const cents = tax.rounding === 'DOWN' ? Math.trunc(scaled * 100 + 1e-9) : Math.round(scaled * 100);
-
-    return (cents / 100).toFixed(2);
+    return quotient(multiply(multiply(base, tax.rate), tax.numerator), multiply(tax.denominator, '100'), 2, tax.rounding === 'DOWN' ? 'DOWN' : 'HALF_UP');
 }
 
 export function liveInvoice(paper: Paper, lines: PaperLine[], taxes: { code: string; rate: string; amount: string }[], date: string): Paper {

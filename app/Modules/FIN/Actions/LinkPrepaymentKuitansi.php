@@ -2,7 +2,6 @@
 
 namespace App\Modules\FIN\Actions;
 
-use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceRecords;
@@ -41,8 +40,9 @@ final class LinkPrepaymentKuitansi
     ) {}
 
     /** @param  list<int>  $paymentIds */
-    public function run(string $commandId, int $actorUserId, Invoice $invoice, Document $document, array $paymentIds, string $paymentsKey): Outcome
+    public function run(string $commandId, int $actorUserId, Invoice $invoice, int $documentId, array $paymentIds, string $paymentsKey): Outcome
     {
+        $document = $this->chain->document($documentId);
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $invoice->company_id, self::CAPABILITY,
             Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($invoice->company_id), ['document' => $document->public_id, 'payments' => $paymentsKey]));
 

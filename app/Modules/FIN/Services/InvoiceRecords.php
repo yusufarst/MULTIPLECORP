@@ -170,9 +170,7 @@ final class InvoiceRecords
      */
     public static function commercial(int $projectId): array
     {
-        $row = DB::table('project_commercial_balances')->where('project_id', $projectId)->first(['confirmed_sales_value', 'invoiced_sales_value']);
-
-        return ['confirmed' => $row === null ? '0.00' : Row::text($row, 'confirmed_sales_value'), 'invoiced' => $row === null ? '0.00' : Row::text($row, 'invoiced_sales_value')];
+        return DemandPosting::commercial($projectId) ?? ['confirmed' => '0.00', 'invoiced' => '0.00'];
     }
 
     /** @return array<string, ?string> The organization, unit, address and PIC as used (AC-02; DATABASE §14). */

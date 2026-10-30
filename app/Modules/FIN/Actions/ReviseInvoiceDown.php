@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Actions;
 
+use App\Modules\DOC\Actions\IssueDocument;
 use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceCorrections;
@@ -39,7 +40,13 @@ final class ReviseInvoiceDown
         return $this->envelope->run($request, function (CommandContext $context) use ($invoice, $lockVersion, $input): CommandResult {
             $context->lock($this->corrections->locks($invoice, $input));
 
-            return new CommandResult('invoice', $this->corrections->revise($context, $invoice, $lockVersion, $input));
+            $done = $this->corrections->revise($context, $invoice, $lockVersion, $input);
+
+            foreach ($done['versions'] as $version) {
+                IssueDocument::renderVersion($context, $version);
+            }
+
+            return new CommandResult('invoice', $done['invoice']);
         });
     }
 }

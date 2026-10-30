@@ -4,7 +4,6 @@ namespace Tests\Support;
 
 use App\Modules\DOC\Actions\SaveDocumentDraft as SaveDocument;
 use App\Modules\DOC\Data\DocumentSubject;
-use App\Modules\DOC\Models\Document;
 use App\Modules\FIN\Actions\IssueInvoice;
 use App\Modules\FIN\Actions\IssuePrepaymentKuitansi;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
@@ -270,7 +269,7 @@ final class InvoiceWorld
     {
         $draft = DB::table('document_versions')->where('document_id', $documentId)->where('state', 'DRAFT')->sole();
 
-        return self::word(app(IssuePrepaymentKuitansi::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), Document::query()->findOrFail($documentId), (int) $draft->lock_version, (string) $draft->public_id, $date, false, null, 'Proses pembayaran klien'));
+        return self::word(app(IssuePrepaymentKuitansi::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), $documentId, (int) $draft->lock_version, (string) $draft->public_id, $date, false, null, 'Proses pembayaran klien'));
     }
 
     public static function word(Outcome $outcome): string

@@ -38,7 +38,7 @@ export function SelectContent({ className, children, ...props }: SelectPrimitive
             <SelectPrimitive.Positioner
                 sideOffset={4}
                 alignItemWithTrigger={false}
-                className="z-(--z-popover) outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:translate-none! max-md:w-full!"
+                className="z-(--z-popover) outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:w-full!"
             >
                 <SelectPrimitive.Popup
                     data-slot="select-content"

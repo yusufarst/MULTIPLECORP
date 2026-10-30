@@ -13,7 +13,6 @@ use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\DocumentVersionFactory;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Database\Events\QueryExecuted;
-use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
@@ -212,7 +211,7 @@ it('holds the Kuitansi cap for two Kuitansi of different numbering periods racin
     $actor = $this->world->actorId;
     $thisYear = InvoiceWorld::prepareKuitansi($actor, $id, '700000');
     // ROUTE-221 keeps one open draft per invoice; a second one stands beside it the way a Kuitansi's revision does.
-    $lastYear = DocumentFactory::new()->createOne(['company_id' => $this->world->company->id, 'document_type_code' => 'DOC-05', 'mode' => 'PRE_PAYMENT', 'invoice_id' => $id])->id;
+    $lastYear = DocumentFactory::new()->createOne(['company_id' => $this->world->company->id, 'document_type_code' => 'DOC-05', 'mode' => 'PRE_PAYMENT', 'project_id' => null, 'invoice_id' => $id])->id;
     DocumentVersionFactory::new()->createOne(['document_id' => $lastYear, 'company_id' => $this->world->company->id, 'document_type_code' => 'DOC-05', 'version_no' => 1, 'state' => 'DRAFT', 'business_date' => BusinessDate::today(), 'kuitansi_amount' => '700000.00']);
     $today = BusinessDate::today();
     $old = ($year - 1).'-06-15';
@@ -256,6 +255,6 @@ it('commits a replacement with its inherited act at a real commit, and refuses a
     // The deferred trigger itself: an entry-error void that names no replacement never reaches a commit.
     $other = $this->world->issued($this->project, '100000');
     InvoiceWorld::bill($other, BusinessDate::today(), '2099-12-31');
-    expect(fn () => DB::transaction(fn () => DB::table('invoices')->where('id', $other)->update(['state' => 'VOIDED', 'voided_by' => $this->world->actorId, 'voided_at' => now(), 'voided_reason' => 'Salah catat', 'void_basis' => 'ENTRY_ERROR_REPLACED'])))->toThrow(QueryException::class, 'commits only with the replacement');
+    expect(fn () => DB::transaction(fn () => DB::table('invoices')->where('id', $other)->update(['state' => 'VOIDED', 'voided_by' => $this->world->actorId, 'voided_at' => now(), 'voided_reason' => 'Salah catat', 'void_basis' => 'ENTRY_ERROR_REPLACED'])))->toThrow(PDOException::class, 'commits only with the replacement');
     expect(DB::table('invoices')->where('id', $other)->value('state'))->toBe('ISSUED');
 });

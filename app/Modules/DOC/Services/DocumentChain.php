@@ -23,6 +23,20 @@ final class DocumentChain
 {
     public function __construct(private readonly Renditions $renditions, private readonly EvidenceUse $use) {}
 
+    public function document(int $id): Document
+    {
+        return Document::query()->findOrFail($id);
+    }
+
+    /**
+     * @param  list<string>  $types
+     * @return list<Document> The invoice's chains of those types, oldest first.
+     */
+    public function ofInvoice(int $invoiceId, array $types): array
+    {
+        return array_values(Document::query()->where('invoice_id', $invoiceId)->whereIn('document_type_code', $types)->orderBy('id')->get()->all());
+    }
+
     public function draftOf(int $documentId): ?DocumentVersion
     {
         return DocumentVersion::query()->where('document_id', $documentId)->where('state', 'DRAFT')->first();

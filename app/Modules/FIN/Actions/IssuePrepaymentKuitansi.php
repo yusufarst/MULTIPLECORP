@@ -4,7 +4,6 @@ namespace App\Modules\FIN\Actions;
 
 use App\Modules\DOC\Actions\IssueDocument;
 use App\Modules\DOC\Data\DocumentSubject;
-use App\Modules\DOC\Models\Document;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\DOC\Services\DocumentSubjects;
@@ -46,8 +45,9 @@ final class IssuePrepaymentKuitansi
         private readonly InvoiceRecords $records,
     ) {}
 
-    public function run(string $commandId, int $actorUserId, Invoice $invoice, Document $document, int $lockVersion, string $draftId, string $businessDate, bool $prefilled, ?string $factsDigest, string $reason): Outcome
+    public function run(string $commandId, int $actorUserId, Invoice $invoice, int $documentId, int $lockVersion, string $draftId, string $businessDate, bool $prefilled, ?string $factsDigest, string $reason): Outcome
     {
+        $document = $this->chain->document($documentId);
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $invoice->company_id, self::CAPABILITY,
             Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($invoice->company_id), ['document' => $document->public_id, 'draft' => $draftId, 'lock_version' => $lockVersion, 'business_date' => $businessDate, 'prefilled' => $prefilled, 'facts' => $factsDigest, 'reason' => $reason]));
 
@@ -60,8 +60,7 @@ final class IssuePrepaymentKuitansi
             $draft = $this->chain->draftOf($document->id);
 
             if ($draft !== null && $draft->kuitansi_amount !== null) {
-                $balance = DB::table('invoice_balances')->where('invoice_id', $invoice->id)->value('outstanding');
-                $outstanding = is_scalar($balance) ? (string) $balance : '0.00';
+                $outstanding = PrepaymentKuitansi::outstanding($invoice->id);
                 $open = PrepaymentKuitansi::openTotal($invoice->id, $document->id);
 
                 // C-43 under LK-25: both issue modes hold the invoice's guard, so different numbering periods cannot race past it.

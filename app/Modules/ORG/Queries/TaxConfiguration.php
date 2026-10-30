@@ -108,37 +108,6 @@ final class TaxConfiguration
         return TreatmentPrecedence::choose(array_values($rules), $companyId);
     }
 
-    /**
-     * The output taxes in force for a sales invoice of the company on a day: each with its rate and the treatment rule that resolves it —
-     * the company's over the global one —, the snapshot's source (C-52; DATABASE §12). None configured, none (FS-13).
-     *
-     * @return list<array{tax_type_id: int, code: string, rate_percent: string, numerator: string, denominator: string, rounding: string, rule_id: int, treatment: string, evidence_required: bool}>
-     */
-    public function outputTaxes(int $companyId, string $day): array
-    {
-        $taxes = [];
-
-        foreach (DB::select(<<<'SQL'
-            select t.id, t.code, r.rate_percent, r.base_numerator, r.base_denominator, r.rounding_mode, u.id as rule_id, u.treatment, u.evidence_required
-            from tax_types t
-            join tax_rate_versions r on r.tax_type_id = t.id and r.effective @> ?::date
-            join lateral (
-                select id, treatment, evidence_required from tax_treatment_rules u
-                where u.tax_type_id = t.id and u.transaction_context = 'SALES_INVOICE' and u.effective @> ?::date and (u.company_id = ? or u.company_id is null)
-                order by u.company_id nulls last limit 1
-            ) u on true
-            where t.category = 'OUTPUT_TAX' and t.is_active
-            order by t.code
-            SQL, [$day, $day, $companyId]) as $row) {
-            if (is_object($row)) {
-                $taxes[] = ['tax_type_id' => self::int($row->id ?? null), 'code' => self::text($row->code ?? null), 'rate_percent' => self::text($row->rate_percent ?? null), 'numerator' => self::text($row->base_numerator ?? null),
-                    'denominator' => self::text($row->base_denominator ?? null), 'rounding' => self::text($row->rounding_mode ?? null), 'rule_id' => self::int($row->rule_id ?? null), 'treatment' => self::text($row->treatment ?? null), 'evidence_required' => ($row->evidence_required ?? false) === true];
-            }
-        }
-
-        return $taxes;
-    }
-
     private static function day(mixed $value): ?string
     {
         return is_string($value) ? substr($value, 0, 10) : null;

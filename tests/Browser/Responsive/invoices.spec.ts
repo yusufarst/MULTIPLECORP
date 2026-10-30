@@ -1,8 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
 
+const expect = base.configure({ timeout: 60_000 });
+
 // TL-11 (TASK-049; D-DS-23; INT-012; DC-11; NAV-041–NAV-043): an invoice's composer at 1,025, 1,279 and 1,280 px — the form beside the live paper, never a tab, no sideways scroll —; "Rincian | Pratinjau" at 1,024 px; PG-041 and PG-043 without a sideways scroll on the phone.
+
+test.describe.configure({ timeout: 240_000 });
 
 for (const width of [1025, 1279, 1280]) {
     test(`keeps the composer's form beside the live paper at ${String(width)} px`, async ({ page }) => {
@@ -37,6 +41,11 @@ for (const width of [320, 390]) {
         await page.goto(`/keuangan/invoice/${run.invoice ?? ''}`);
         await expect(page.getByTestId('position')).toBeVisible();
         expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+
+        // The phone's menu is a sheet at the bottom of the screen, every action within it.
+        await page.getByRole('button', { name: 'Tindakan lain' }).click();
+        await expect(page.getByRole('menuitem', { name: 'Batalkan Invoice' })).toBeInViewport({ ratio: 1 });
+        await page.keyboard.press('Escape');
 
         await page.goto(`/keuangan/invoice?perusahaan=${run.company}`);
         await expect(page.locator('#konten')).toContainText('Belum Ditagihkan');

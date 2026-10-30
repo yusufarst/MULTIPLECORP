@@ -3,7 +3,7 @@
 namespace App\Modules\FIN\Services;
 
 use App\Modules\FIN\Data\InvoiceValues;
-use App\Modules\ORG\Queries\TaxConfiguration;
+use App\Modules\ORG\Services\OutputTaxes;
 use App\Support\Money;
 use App\Support\Search\Row;
 use Illuminate\Support\Facades\DB;
@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
  */
 final class InvoiceTaxes
 {
-    public function __construct(private readonly TaxConfiguration $configuration) {}
+    public function __construct(private readonly OutputTaxes $outputTaxes) {}
 
     /**
      * The components of a value on a day.
@@ -29,7 +29,7 @@ final class InvoiceTaxes
     {
         $components = [];
 
-        foreach ($this->configuration->outputTaxes($companyId, $day) as $rule) {
+        foreach ($this->outputTaxes->inForce($companyId, $day) as $rule) {
             $termin = $kind === 'VALUE_ONLY' && $projectId !== null ? self::terminTax($projectId, $rule['code'], $sales, $exceptInvoiceId) : null;
             $components[] = [
                 'tax_type_id' => $rule['tax_type_id'],

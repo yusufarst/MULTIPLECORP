@@ -8,6 +8,9 @@ namespace App\Modules\FIN\Data;
  */
 final class InvoiceCorrection
 {
+    /** The evidence types an entry error may rest on (DIR-092 (2)). */
+    public const EVIDENCE = ['CLIENT_SPK', 'CLIENT_ORDER', 'SIPLAH_ORDER', 'TAX_INVOICE', 'OTHER'];
+
     public const RELEASE = 'RELEASE';
 
     public const RETARGET = 'RETARGET';

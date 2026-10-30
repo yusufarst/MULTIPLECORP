@@ -12,7 +12,7 @@ use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\IAM\Services\EffectiveCapabilities;
-use App\Modules\ORG\Queries\TaxConfiguration;
+use App\Modules\ORG\Services\OutputTaxes;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -30,7 +30,7 @@ final class InvoiceComposer
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly IssuerIdentity $identity,
-        private readonly TaxConfiguration $taxes,
+        private readonly OutputTaxes $outputTaxes,
         private readonly InvoiceSubjects $subjects,
     ) {}
 
@@ -66,7 +66,7 @@ final class InvoiceComposer
             ], $lines)),
             'confirmed' => $commercial['confirmed'],
             'remaining' => InvoiceValues::remaining($commercial['confirmed'], $commercial['invoiced']),
-            'taxes' => array_map(fn (array $rule): array => ['code' => $rule['code'], 'rate' => $rule['rate_percent'], 'numerator' => $rule['numerator'], 'denominator' => $rule['denominator'], 'rounding' => $rule['rounding'], 'evidence_required' => $rule['evidence_required']], $this->taxes->outputTaxes($project->companyId, $today)),
+            'taxes' => array_map(fn (array $rule): array => ['code' => $rule['code'], 'rate' => $rule['rate_percent'], 'numerator' => $rule['numerator'], 'denominator' => $rule['denominator'], 'rounding' => $rule['rounding'], 'evidence_required' => $rule['evidence_required']], $this->outputTaxes->inForce($project->companyId, $today)),
             'paper' => $paper,
             'draft' => $draft === null || $draft->state !== 'DRAFT' ? null : $this->draft($draft),
             'issued' => $draft === null || $draft->state === 'DRAFT' ? null : ['id' => $draft->public_id, 'number' => InvoiceSubjects::number($draft->id)],

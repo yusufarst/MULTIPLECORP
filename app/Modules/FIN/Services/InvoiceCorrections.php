@@ -2,17 +2,15 @@
 
 namespace App\Modules\FIN\Services;
 
-use App\Modules\DOC\Actions\IssueDocument;
 use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\DOC\Data\DocumentSubject;
-use App\Modules\DOC\Models\Document;
-use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Services\DocumentChain;
 use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\DOC\Services\DocumentSubjects;
 use App\Modules\DOC\Services\DocumentVoiding;
 use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Models\Invoice;
+use App\Modules\FIN\Models\InvoiceBalance;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Services\DemandPosting;
@@ -42,7 +40,7 @@ use Illuminate\Support\Facades\DB;
 final class InvoiceCorrections
 {
     /** The evidence an entry error may rest on (DIR-092 (2); CM-24). */
-    public const EVIDENCE = ['CLIENT_SPK', 'CLIENT_ORDER', 'SIPLAH_ORDER', 'TAX_INVOICE', 'OTHER'];
+    public const EVIDENCE = InvoiceCorrection::EVIDENCE;
 
     public function __construct(
         private readonly InvoiceRecords $records,
@@ -90,7 +88,7 @@ final class InvoiceCorrections
             $set = $set->add('money_fact_balances', ['receivable_writeoff_id' => $id]);
         }
 
-        foreach (self::layouts($invoice->id) as $document) {
+        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
             $issued = $this->chain->issuedOf($document->id);
             $set = $set->union($this->chain->locks($document, $issued === null ? [] : [$issued->id]));
 
@@ -101,7 +99,7 @@ final class InvoiceCorrections
         }
 
         // The replacement's layout draws its number too (LK-31), the first draw this command makes after its clock.
-        return $input->content === null ? $set : $set->union($this->issuing->numberLocks($invoice->company_id, self::layouts($invoice->id)[0]->document_type_code ?? InvoiceSubjects::INVOICE, $input->businessDate));
+        return $input->content === null ? $set : $set->union($this->issuing->numberLocks($invoice->company_id, $this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS)[0]->document_type_code ?? InvoiceSubjects::INVOICE, $input->businessDate));
     }
 
     /**
@@ -132,10 +130,11 @@ final class InvoiceCorrections
     /**
      * Voids the invoice; its value leaves, or moves to the replacement named here (L-30).
      *
-     * @return int the invoice
+     * @return array{invoice: int, versions: list<int>} the invoice, and the layouts' versions the command issued, for the action to hand to the render job
      */
-    public function void(CommandContext $context, Invoice $invoice, int $lockVersion, InvoiceCorrection $input): int
+    public function void(CommandContext $context, Invoice $invoice, int $lockVersion, InvoiceCorrection $input): array
     {
+        $versions = [];
         [$project, $balance] = $this->admitted($context, $invoice, $lockVersion, $input);
         // C-17, C-44 and C-56 read the void, its replacement and the re-targeted applications together: deferred checks, held to the commit's `set constraints all immediate` whatever an earlier statement set.
         $context->connection->statement('set constraints invoices_c17_inherits_current_act, invoice_billing_acts_c17_inherits_current_act, invoices_c56_replaced_with_replacement, payment_applications_c44_superseded_by_successor deferred');
@@ -146,7 +145,7 @@ final class InvoiceCorrections
         $sales = Row::text($balance, 'sales_value');
         $now = $context->now();
         $replacement = null;
-        $layout = self::layouts($invoice->id)[0]->document_type_code ?? InvoiceSubjects::INVOICE;
+        $layout = $this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS)[0]->document_type_code ?? InvoiceSubjects::INVOICE;
 
         if ($input->content !== null) {
             $replacement = $this->records->create($context, $project, $invoice->client_organization_id, $input->content, $invoice->id, 'INITIAL', 2);
@@ -180,7 +179,7 @@ final class InvoiceCorrections
 
         DB::table('invoice_versions')->where('id', $invoice->current_version_id)->update(['state' => 'VOIDED', 'updated_at' => $now]);
 
-        foreach (self::layouts($invoice->id) as $document) {
+        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
             $issued = $this->chain->issuedOf($document->id);
 
             if ($issued !== null) {
@@ -189,7 +188,7 @@ final class InvoiceCorrections
         }
 
         if ($replacement !== null) {
-            $this->issueLayout($context, $replacement, $layout, $input->businessDate, $input->prefilled);
+            $versions[] = $this->issueLayout($context, $replacement, $layout, $input->businessDate, $input->prefilled);
         }
 
         $this->kuitansi->reconcile($context, $invoice->id, 'invoices.unlink.corrected');
@@ -203,17 +202,18 @@ final class InvoiceCorrections
         $this->records->record($context, 'FIN.InvoiceVoided', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['state' => 'VOIDED', 'basis' => $input->basis, 'dispositions' => self::named($input)], ['state' => 'ISSUED', 'sales_value' => $sales], $linkage);
 
-        return $invoice->id;
+        return ['invoice' => $invoice->id, 'versions' => $versions];
     }
 
     /**
      * Revises the invoice down: a new version of its record with its typed basis, the guard's gross lowered with the dispositions, never
      * below what stays applied (C-16); its layouts revised under their numbering rule.
      *
-     * @return int the invoice
+     * @return array{invoice: int, versions: list<int>} the invoice, and the layouts' versions the command issued, for the action to hand to the render job
      */
-    public function revise(CommandContext $context, Invoice $invoice, int $lockVersion, InvoiceCorrection $input): int
+    public function revise(CommandContext $context, Invoice $invoice, int $lockVersion, InvoiceCorrection $input): array
     {
+        $versions = [];
         [$project, $balance] = $this->admitted($context, $invoice, $lockVersion, $input);
 
         if ($input->content === null) {
@@ -263,11 +263,18 @@ final class InvoiceCorrections
         ]);
         $this->demand->invoiced($context, $project->id, Money::of($sales)->minus(Money::of(Row::text($balance, 'sales_value')))->toString());
 
-        foreach (self::layouts($invoice->id) as $document) {
+        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
             $issued = $this->chain->issuedOf($document->id);
 
             if ($issued !== null) {
-                $this->reviseLayout($context, $document, $issued, $input->businessDate, $input->prefilled);
+                $subject = DocumentSubject::of($document);
+                $provider = $this->subjects->of($subject);
+
+                if ($this->chain->draftOf($document->id) === null) {
+                    $this->issuing->revisionDraft($context, $document, $issued);
+                }
+
+                $versions[] = $this->issuing->issue($context, $document, $subject, $provider, null, $input->businessDate, $input->prefilled, null, authorized: true, held: true)->id;
             }
         }
 
@@ -275,7 +282,7 @@ final class InvoiceCorrections
         $this->records->record($context, 'FIN.InvoiceRevisedDown', $input->writeoffs === [] ? AuthorityClass::AdmPlus : AuthorityClass::OwnerOnly, $invoice->id, $input->reason, $input->businessDate,
             ['sales_value' => $sales, 'output_tax_value' => $tax, 'basis' => $input->basis, 'dispositions' => self::named($input)], ['sales_value' => Row::text($balance, 'sales_value'), 'output_tax_value' => Row::text($balance, 'output_tax_value')]);
 
-        return $invoice->id;
+        return ['invoice' => $invoice->id, 'versions' => $versions];
     }
 
     /**
@@ -313,7 +320,7 @@ final class InvoiceCorrections
             throw Refused::rejected('OD-07', ['reason' => 'writeoff_standing']);
         }
 
-        $balance = DB::table('invoice_balances')->where('invoice_id', $invoice->id)->first();
+        $balance = InvoiceBalance::query()->toBase()->where('invoice_id', $invoice->id)->first();
         $publicId = DB::table('projects')->where('id', $invoice->project_id)->value('public_id');
 
         return [new ProjectRef($invoice->project_id, $invoice->company_id, is_string($publicId) ? $publicId : ''), $balance ?? throw Refused::rejected('CM-23', ['reason' => 'not_issued'])];
@@ -529,7 +536,7 @@ final class InvoiceCorrections
 
         if ($collected) {
             $carried = Money::of($new['collected_tax_settled_amount'] ?? '0')->plus(Money::of($amount));
-            $tax = DB::table('invoice_balances')->where('invoice_id', $replacement)->value('output_tax_value');
+            $tax = InvoiceBalance::query()->toBase()->where('invoice_id', $replacement)->value('output_tax_value');
 
             if ($carried->compareTo(Money::of(is_string($tax) ? $tax : '0')) > 0) {
                 throw Refused::rejected('C-22', ['reason' => 'collected_above_tax', 'amount' => $amount]);
@@ -571,31 +578,14 @@ final class InvoiceCorrections
     }
 
     /** The layout of a replacement issued in the correcting command (FU-12), its number drawn last (LK-31; NM-03; C-10). */
-    private function issueLayout(CommandContext $context, int $invoiceId, string $layout, string $businessDate, bool $prefilled): void
+    private function issueLayout(CommandContext $context, int $invoiceId, string $layout, string $businessDate, bool $prefilled): int
     {
         $company = DB::table('invoices')->where('id', $invoiceId)->value('company_id');
         $subject = new DocumentSubject($layout, 'STANDARD', is_numeric($company) ? (int) $company : 0, ['invoice_id' => $invoiceId]);
         $provider = $this->subjects->of($subject);
         $document = $this->issuing->openDraft($context, $subject, null);
-        IssueDocument::render($context, $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true, held: true));
-    }
 
-    private function reviseLayout(CommandContext $context, Document $document, DocumentVersion $issued, string $businessDate, bool $prefilled): void
-    {
-        $subject = DocumentSubject::of($document);
-        $provider = $this->subjects->of($subject);
-
-        if ($this->chain->draftOf($document->id) === null) {
-            $this->issuing->revisionDraft($context, $document, $issued);
-        }
-
-        IssueDocument::render($context, $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true, held: true));
-    }
-
-    /** @return list<Document> The invoice's layouts with a chain, oldest first. */
-    private static function layouts(int $invoiceId): array
-    {
-        return array_values(Document::query()->where('invoice_id', $invoiceId)->whereIn('document_type_code', InvoiceSubjects::LAYOUTS)->orderBy('id')->get()->all());
+        return $this->issuing->issue($context, $document, $subject, $provider, null, $businessDate, $prefilled, null, authorized: true, held: true)->id;
     }
 
     /** @return array<string, array<string, string>> */
