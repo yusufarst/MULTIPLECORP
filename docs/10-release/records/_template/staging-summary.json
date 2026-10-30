@@ -2,6 +2,20 @@
     "critical_journeys": { "total": null, "passed": null, "failed": null },
     "ui_ux": { "missing_translations": null, "redundant_critical_actions": null, "failed_checks": null },
     "browser": { "console_errors": null, "failed_requests": null },
-    "performance": { "cases": null, "within_target": null, "outside_target": null },
+    "performance": {
+        "PFM-01 projects list": null,
+        "PFM-01 project detail": null,
+        "PFM-01 inventory": null,
+        "PFM-01 scanner lookup": null,
+        "PFM-01 receivables": null,
+        "PFM-01 invoice detail": null,
+        "PFM-01 dashboard": null,
+        "PFM-02 every page": null,
+        "PFM-08": null,
+        "PFM-13": null,
+        "PFM-16": null,
+        "PFM-20": null,
+        "PFM-03 plans": null
+    },
     "integrity": { "differences": null }
 }

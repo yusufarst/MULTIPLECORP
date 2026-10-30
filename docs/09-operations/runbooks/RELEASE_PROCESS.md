@@ -47,8 +47,8 @@ Each release follows REL-01–REL-13 in order; a failed step stops the release f
 ## 4. Compiling the report
 
 1. When the tag is pushed, the gate accepts it and `release.yml` downloads its CI run's evidence — each job's `summary-*.txt` kept 90 days — and uploads `release-integrity-report.md` as the run's artifact. Before staging its staging sections read NOT RUN, so its status is FAIL: that is expected and is not the release's report.
-2. After REL-03–REL-05 the operator writes `docs/10-release/records/<tag>/staging-summary.json` — whole counts only, no secret, host detail or real data; a count left `null`, as the template's are, keeps its section NOT RUN, and CRITICAL JOURNEYS needs all 22 of CJ-01–CJ-22 counted — and the executor commits it with `declarations.json`.
-3. The executor compiles the release's report from the same CI run's evidence:
+2. After REL-03–REL-05 the operator writes `docs/10-release/records/<tag>/staging-summary.json` — whole counts only, no secret, host detail or real data; a count left `null`, as the template's are, keeps its section NOT RUN; CRITICAL JOURNEYS needs all 22 of CJ-01–CJ-22 counted, and PERFORMANCE each case of PERFORMANCE_TARGETS §4's release-critical set — the count of its measurements outside target —, PFM-03's plans too when the release changes the schema — and the executor commits it with `declarations.json`.
+3. The executor compiles the release's report from the same CI run's evidence — the gate's accepted run, whose summaries name the release commit; a check whose summary names another commit reads NOT RUN, so evidence downloaded for the wrong run never passes:
 
    ```sh
    gh run download <ci-run> --repo <owner>/<repository> --dir evidence

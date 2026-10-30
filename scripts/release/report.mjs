@@ -1,8 +1,9 @@
 // The release integrity report (RELEASE_PLAN §11; PRQ-11; REL-06; TASK-073): compiled by script from the evidence —
 // the Task plan's counters, the CI runs' verification summaries (scripts/verify.sh writes one per layer set), TOOLCHAIN's
 // rows, the release's declarations and the operator's staging summary entered without secrets (TEST_STRATEGY §16) —,
-// never typed by hand. A section with a nonzero failure count is FAIL; a section with no run's evidence is NOT RUN,
-// never PASS (GAP-017); RELEASE STATUS is PASS only when every section is.
+// never typed by hand. A section with a nonzero failure count is FAIL; a section with no run's evidence — a check
+// whose run tested another commit than `--commit` included — is NOT RUN, never PASS (GAP-017); RELEASE STATUS is PASS
+// only when every section is.
 //
 //   node scripts/release/report.mjs --evidence <dir> [--staging <json>] [--declarations <json>] [--plan <md>]
 //        [--toolchain <md>] [--commit <sha>] [--tag <tag>] [--out <md>]
@@ -23,7 +24,10 @@ const CHECKS = {
     SECURITY: [/^TL-06 /, /^TL-14 /],
 };
 
-/** Every `NAME: STATUS — Evidence: …` line of the summaries under a directory, the latest of a name winning. */
+/**
+ * Every `NAME: STATUS — Evidence: <commit>, …` line of the summaries under a directory, the latest of a name winning,
+ * with the commit its run tested.
+ */
 export function readSummaries(directory) {
     const checks = new Map();
     const walk = (path) => {
@@ -34,7 +38,7 @@ export function readSummaries(directory) {
             else if (/^summary.*\.txt$/.test(entry)) {
                 for (const line of readFileSync(full, 'utf8').split('\n')) {
                     const match = /^(.+?): (PASS|FAIL|NOT RUN|EMPTY)[^—]*(?:— Evidence: (.*))?$/.exec(line.trim());
-                    if (match) checks.set(match[1], { status: match[2], evidence: match[3] ?? '' });
+                    if (match) checks.set(match[1], { status: match[2], evidence: match[3] ?? '', commit: (/^([0-9a-f]{7,40}),/.exec(match[3] ?? '') ?? [])[1] ?? null });
                 }
             }
         }
@@ -72,16 +76,24 @@ export function readToolchain(text) {
 const notRun = (reason) => ({ status: 'NOT RUN', failures: null, detail: reason });
 const counted = (failures, detail) => ({ status: failures === 0 ? 'PASS' : 'FAIL', failures, detail });
 
-/** A section read from verification checks: each must have run and passed; one that never ran keeps the section NOT RUN. */
-function fromChecks(checks, patterns) {
-    const found = [...checks.entries()].filter(([name]) => patterns.some((pattern) => pattern.test(name)));
-    const missing = patterns.filter((pattern) => !found.some(([name]) => pattern.test(name)));
+/** The same commit: one hash a prefix of the other, at least seven hex digits each. */
+const sameCommit = (a, b) => typeof a === 'string' && typeof b === 'string' && /^[0-9a-f]{7,40}$/.test(a) && /^[0-9a-f]{7,40}$/.test(b) && (a.startsWith(b) || b.startsWith(a));
+
+/**
+ * A section read from verification checks: each must have run and passed on the release's commit; one that never ran,
+ * or whose run tested another commit — evidence downloaded for the wrong run —, keeps the section NOT RUN.
+ */
+function fromChecks(checks, patterns, commit) {
+    const named = [...checks.entries()].filter(([name]) => patterns.some((pattern) => pattern.test(name)));
+    const found = named.filter(([, check]) => sameCommit(check.commit, commit));
+    const stale = named.filter(([, check]) => !sameCommit(check.commit, commit)).map(([name, check]) => `${name} (tested ${check.commit ?? 'no commit'}, not ${commit ?? 'the release commit'})`);
+    const missing = patterns.filter((pattern) => !named.some(([name]) => pattern.test(name)));
     const notRunNames = found.filter(([, check]) => check.status === 'NOT RUN' || check.status === 'EMPTY').map(([name]) => name);
     const failed = found.filter(([, check]) => check.status === 'FAIL').map(([name]) => name);
 
     if (failed.length > 0) return counted(failed.length, `failed: ${failed.join('; ')}`);
-    if (missing.length > 0 || notRunNames.length > 0 || found.length === 0) {
-        return notRun(`no run's evidence for ${[...missing.map((pattern) => pattern.source.replace(/[\^\\]/g, '').trim()), ...notRunNames].join('; ')}`);
+    if (missing.length > 0 || notRunNames.length > 0 || stale.length > 0 || found.length === 0) {
+        return notRun(`no run's evidence for ${[...missing.map((pattern) => pattern.source.replace(/[\^\\]/g, '').trim()), ...notRunNames, ...stale].join('; ')}`);
     }
 
     return counted(0, found.map(([name, check]) => `${name} — ${check.evidence}`).join('; '));
@@ -89,6 +101,14 @@ function fromChecks(checks, patterns) {
 
 /** CJ-01–CJ-22: the journeys a release's Layer 3 runs (TEST_STRATEGY §7). */
 const JOURNEYS = 22;
+
+/**
+ * PERFORMANCE_TARGETS §4's release-critical set, each case's count of measurements outside its target; PFM-03's plans
+ * too when the release changes the schema (a registered query's change adds them by the operator's count).
+ */
+const PERFORMANCE = ['PFM-01 projects list', 'PFM-01 project detail', 'PFM-01 inventory', 'PFM-01 scanner lookup', 'PFM-01 receivables',
+    'PFM-01 invoice detail', 'PFM-01 dashboard', 'PFM-02 every page', 'PFM-08', 'PFM-13', 'PFM-16', 'PFM-20'];
+const PLANS = 'PFM-03 plans';
 
 const isCount = (value) => Number.isInteger(value) && value >= 0;
 
@@ -120,7 +140,7 @@ function declared(value, approval, exception, label) {
  * BLOCKED and VERIFYING counters and the release's own Tasks — `declarations.tasks`, as the record lists them —, each
  * DONE in the plan's table ("required todo 0"); a Task outside the release, a later one still TODO, is not counted.
  */
-export function compile({ plan, checks, toolchain, declarations, staging }) {
+export function compile({ plan, checks, toolchain, declarations, staging, commit }) {
     const sections = {};
     const tasks = Array.isArray(declarations?.tasks) ? declarations.tasks : [];
 
@@ -131,12 +151,12 @@ export function compile({ plan, checks, toolchain, declarations, staging }) {
         sections.TASKS = counted(plan.blocked + plan.verifying + open.length,
             `total ${plan.total}, done ${plan.done}; blocked ${plan.blocked}, verifying ${plan.verifying}; the release's ${tasks.length} Tasks, not DONE ${open.length}${open.length > 0 ? `: ${open.join(', ')}` : ''}`);
     }
-    sections.ROUTES = fromChecks(checks, CHECKS.ROUTES);
-    sections.INTERACTIONS = fromChecks(checks, CHECKS.INTERACTIONS);
+    sections.ROUTES = fromChecks(checks, CHECKS.ROUTES, commit);
+    sections.INTERACTIONS = fromChecks(checks, CHECKS.INTERACTIONS, commit);
     sections['CRITICAL JOURNEYS'] = fromStaging(staging, 'critical_journeys', ['total', 'passed', 'failed'], (part) => part.failed + (part.total - part.passed - part.failed),
         (part) => `CJ-01–CJ-22 at Layer 3: total ${part.total}, passed ${part.passed}, failed ${part.failed}`,
         (part) => (part.total !== JOURNEYS ? `CJ-01–CJ-22 are ${JOURNEYS} journeys; the staging summary counts ${part.total}` : part.passed + part.failed > part.total ? 'passed and failed exceed the total' : null));
-    const browserUi = fromChecks(checks, CHECKS['UI/UX']);
+    const browserUi = fromChecks(checks, CHECKS['UI/UX'], commit);
     const stagingUi = fromStaging(staging, 'ui_ux', ['missing_translations', 'redundant_critical_actions', 'failed_checks'],
         (part) => part.missing_translations + part.redundant_critical_actions + part.failed_checks,
         (part) => `Layer 3: missing translations ${part.missing_translations}, redundant critical actions ${part.redundant_critical_actions}, failed checks ${part.failed_checks}`);
@@ -156,11 +176,15 @@ export function compile({ plan, checks, toolchain, declarations, staging }) {
     sections.DATABASE = db === null || mutation === undefined || mutation === null
         ? notRun('no database declaration (RL-03)')
         : counted(db.failures + (mutation === 'NO' ? 0 : 1), `${db.detail}; direct production DB mutation by a coding agent: ${mutation}`);
-    sections.BUILD = fromChecks(checks, CHECKS.BUILD);
-    sections.SECURITY = fromChecks(checks, CHECKS.SECURITY);
-    sections.PERFORMANCE = fromStaging(staging, 'performance', ['cases', 'within_target', 'outside_target'], (part) => part.outside_target + (part.cases - part.within_target - part.outside_target),
-        (part) => `PERFORMANCE_TARGETS §4's release-critical set: ${part.within_target} of ${part.cases} within target`,
-        (part) => (part.cases === 0 ? 'no release-critical case measured' : part.within_target + part.outside_target > part.cases ? 'within and outside the target exceed the cases' : null));
+    sections.BUILD = fromChecks(checks, CHECKS.BUILD, commit);
+    sections.SECURITY = fromChecks(checks, CHECKS.SECURITY, commit);
+    const measured = [...PERFORMANCE, ...(declarations?.db === 'APPROVED CONTROLLED MIGRATION' || isCount(staging?.performance?.[PLANS]) ? [PLANS] : [])];
+    sections.PERFORMANCE = fromStaging(staging, 'performance', measured, (part) => measured.reduce((sum, name) => sum + part[name], 0),
+        (part) => {
+            const outside = measured.filter((name) => part[name] > 0);
+
+            return `PERFORMANCE_TARGETS §4's release-critical set: ${measured.length} cases, outside target ${outside.length}${outside.length > 0 ? `: ${outside.join(', ')}` : ''}`;
+        });
     sections.INTEGRITY = fromStaging(staging, 'integrity', ['differences'], (part) => part.differences, (part) => `ReconcileGuards after Layer 3: ${part.differences} differences`);
 
     return { sections, status: SECTIONS.every((name) => sections[name].status === 'PASS') ? 'PASS' : 'FAIL' };
@@ -203,14 +227,16 @@ function selfTest() {
     const toolchain = '| Capability | Preferred tool | Project status | Verified by |\n| --- | --- | --- | --- |\n| Browser E2E (§5.3) | Playwright | Verified by TASK-003 | TASK-003 |\n';
     const lines = ['TL-06 Authorization', 'TL-07 Route integrity', 'TL-08 Interaction', 'TL-10 Localization', 'TL-11 Responsive', 'TL-12 Accessibility', 'TL-13 Frontend build', 'TL-14 Secret-like scan (SX-06)'];
     const summary = (status) => lines.map((name) => `${name}: ${status(name)} — Evidence: abc1234, CI ubuntu-24.04 run 1, command, log`).join('\n');
+    const performance = Object.fromEntries(PERFORMANCE.map((name) => [name, 0]));
     const staging = { critical_journeys: { total: 22, passed: 22, failed: 0 }, ui_ux: { missing_translations: 0, redundant_critical_actions: 0, failed_checks: 0 },
-        browser: { console_errors: 0, failed_requests: 0 }, performance: { cases: 5, within_target: 5, outside_target: 0 }, integrity: { differences: 0 } };
+        browser: { console_errors: 0, failed_requests: 0 }, performance, integrity: { differences: 0 } };
     const declarations = { tasks: ['TASK-001', 'TASK-002'], db: 'NONE', db_approval: null, cost: 'NONE', cost_approval: null, agent_production_db_mutation: 'NO' };
-    const run = (status, stagingSummary, planText = plan, declared = declarations) => {
+    const tested = `abc1234${'e'.repeat(33)}`;
+    const run = (status, stagingSummary, planText = plan, declared = declarations, commit = tested) => {
         const dir = mkdtempSync(join(root, 'e-'));
         writeFileSync(join(dir, 'summary-local.txt'), summary(status));
 
-        return compile({ plan: readPlan(planText), checks: readSummaries(dir), toolchain: readToolchain(toolchain), declarations: declared, staging: stagingSummary });
+        return compile({ plan: readPlan(planText), checks: readSummaries(dir), toolchain: readToolchain(toolchain), declarations: declared, staging: stagingSummary, commit });
     };
     const template = (name) => JSON.parse(readFileSync(new URL(`../../docs/10-release/records/_template/${name}`, import.meta.url), 'utf8'));
     const failures = [];
@@ -252,7 +278,15 @@ function selfTest() {
     expect('five of the twenty-two journeys', run(() => 'PASS', { ...staging, critical_journeys: { total: 5, passed: 5, failed: 0 } }).sections['CRITICAL JOURNEYS'].status, 'NOT RUN');
     expect('a negative count', run(() => 'PASS', { ...staging, browser: { console_errors: 2, failed_requests: -2 } }).sections.BROWSER.status, 'NOT RUN');
     expect('a count given as text', run(() => 'PASS', { ...staging, integrity: { differences: '0' } }).sections.INTEGRITY.status, 'NOT RUN');
-    expect('no performance case measured', run(() => 'PASS', { ...staging, performance: { cases: 0, within_target: 0, outside_target: 0 } }).sections.PERFORMANCE.status, 'NOT RUN');
+    expect('one passing performance case of the set', run(() => 'PASS', { ...staging, performance: { 'PFM-01 projects list': 0 } }).sections.PERFORMANCE.status, 'NOT RUN');
+    expect('a release-critical case outside its target', run(() => 'PASS', { ...staging, performance: { ...performance, 'PFM-20': 1 } }).sections.PERFORMANCE.status, 'FAIL');
+    const plans = { ...declarations, db: 'APPROVED CONTROLLED MIGRATION', db_approval: 'APPR-0xx' };
+    expect('a schema change without PFM-03\'s plans', run(() => 'PASS', staging, plan, plans).sections.PERFORMANCE.status, 'NOT RUN');
+    expect('a schema change with them', run(() => 'PASS', { ...staging, performance: { ...performance, [PLANS]: 0 } }, plan, plans).sections.PERFORMANCE.status, 'PASS');
+    const stale = run(() => 'PASS', staging, plan, declarations, `fff9999${'e'.repeat(33)}`);
+    ['ROUTES', 'INTERACTIONS', 'UI/UX', 'BUILD', 'SECURITY'].forEach((name) => expect(`${name} from another commit's evidence`, stale.sections[name].status, 'NOT RUN'));
+    expect('a release on another commit\'s evidence', stale.status, 'FAIL');
+    expect('no release commit given', run(() => 'PASS', staging, plan, declarations, null).sections.BUILD.status, 'NOT RUN');
     expect('a Layer 3 translation missing', run(() => 'PASS', { ...staging, ui_ux: { ...staging.ui_ux, missing_translations: 1 } }).sections['UI/UX'].status, 'FAIL');
 
     const migration = { ...declarations, db: 'APPROVED CONTROLLED MIGRATION' };
@@ -260,7 +294,7 @@ function selfTest() {
     expect('a migration with it', run(() => 'PASS', staging, plan, { ...migration, db_approval: 'APPR-0xx' }).sections.DATABASE.status, 'PASS');
     expect('a paid exception without approval', run(() => 'PASS', staging, plan, { ...declarations, cost: 'APPROVED EXCEPTION' }).sections.COST.status, 'FAIL');
 
-    const absent = compile({ plan: readPlan(plan), checks: new Map(), toolchain: readToolchain(toolchain), declarations: null, staging });
+    const absent = compile({ plan: readPlan(plan), checks: new Map(), toolchain: readToolchain(toolchain), declarations: null, staging, commit: tested });
     expect('no verification evidence at all', absent.sections.BUILD.status, 'NOT RUN');
     expect('no declarations', absent.sections.DATABASE.status, 'NOT RUN');
 
@@ -275,7 +309,7 @@ function selfTest() {
         process.exit(1);
     }
 
-    console.log(`PASS: the report's section rules hold on fixture evidence (${SECTIONS.length} sections; a pass, a failure, a missing run, the untouched template)`);
+    console.log(`PASS: the report's section rules hold on fixture evidence (${SECTIONS.length} sections; a pass, a failure, a missing run, the untouched template, another commit's evidence)`);
 }
 
 if (process.argv.includes('--self-test')) {
@@ -296,6 +330,7 @@ if (process.argv.includes('--self-test')) {
         toolchain: existsSync(toolchainPath) ? readToolchain(readFileSync(toolchainPath, 'utf8')) : null,
         declarations: json(argument('--declarations')),
         staging: json(argument('--staging')),
+        commit: argument('--commit'),
     });
     const text = render(report, { commit: argument('--commit'), tag: argument('--tag') });
     const out = argument('--out');
