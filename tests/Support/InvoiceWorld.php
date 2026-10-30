@@ -5,17 +5,24 @@ namespace Tests\Support;
 use App\Modules\DOC\Actions\SaveDocumentDraft as SaveDocument;
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\FIN\Actions\BillInvoice;
+use App\Modules\FIN\Actions\CorrectBilling;
 use App\Modules\FIN\Actions\IssueInvoice;
 use App\Modules\FIN\Actions\IssuePrepaymentKuitansi;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
+use App\Modules\FIN\Actions\SetDisputeHold;
+use App\Modules\FIN\Actions\SupersedeWriteOff;
 use App\Modules\FIN\Actions\VoidInvoice;
+use App\Modules\FIN\Actions\WriteOffReceivable;
 use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Models\ProjectStateTransition;
 use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
@@ -46,7 +53,7 @@ use RuntimeException;
  */
 final class InvoiceWorld
 {
-    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload'];
+    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload', 'billing.record', 'billing.correct', 'receivables.dispute'];
 
     public ReservationWorld $base;
 
@@ -124,7 +131,7 @@ final class InvoiceWorld
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
 
-        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW']] as [$type, $prefix]) {
+        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
             Numbering::scheme($this->company, $type, "{$year}-01-01", 'YEAR', "{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($this->company, $type, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
         }
@@ -177,10 +184,10 @@ final class InvoiceWorld
     }
 
     /** A payment of the invoice's client with its source guard, as TASK-051 will post it. */
-    public static function payment(int $invoiceId, string $amount, string $claimed = '0.00'): Payment
+    public static function payment(int $invoiceId, string $amount, string $claimed = '0.00', ?int $recoveryFor = null): Payment
     {
         $invoice = Invoice::query()->findOrFail($invoiceId);
-        $payment = PaymentFactory::new()->createOne(['company_id' => $invoice->company_id, 'client_organization_id' => $invoice->client_organization_id, 'amount' => $amount, 'business_date' => BusinessDate::today()]);
+        $payment = PaymentFactory::new()->createOne(['company_id' => $invoice->company_id, 'client_organization_id' => $invoice->client_organization_id, 'amount' => $amount, 'recovery_for_invoice_id' => $recoveryFor, 'business_date' => BusinessDate::today()]);
         DB::table('application_source_balances')->insert(['payment_id' => $payment->id, 'company_id' => $invoice->company_id, 'client_organization_id' => $invoice->client_organization_id, 'gross_amount' => $amount, 'claimed_deductions_amount' => $claimed, 'recorded_at' => now()]);
 
         return $payment;
@@ -264,6 +271,67 @@ final class InvoiceWorld
     public static function hold(Closure $command, string $point): string
     {
         return ReservationWorld::hold($command, $point);
+    }
+
+    /** A payment recorded for a written-off invoice, unapplied: credit linked to it (WF-FIN-05; QS-12), as TASK-051 will record it; its row. */
+    public static function recovery(int $invoiceId, string $amount): Payment
+    {
+        return self::payment($invoiceId, $amount, '0.00', $invoiceId);
+    }
+
+    /** ROUTE-243's action as its own command, for the race tests; its word. */
+    public static function billInCommand(int $actorUserId, int $invoiceId, string $billedAt, string $dueDate): string
+    {
+        return self::word(app(BillInvoice::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), $billedAt, $dueDate, false));
+    }
+
+    /** ROUTE-244's action as its own command, for the race tests; its word. */
+    public static function correctBillingInCommand(int $actorUserId, int $invoiceId, int $evidenceId, string $billedAt, string $dueDate): string
+    {
+        return self::word(app(CorrectBilling::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), $evidenceId, $billedAt, $dueDate, false, 'Tanggal salah catat'));
+    }
+
+    /** ROUTE-246's set as its own command, for the race tests; its word. */
+    public static function holdInCommand(int $actorUserId, int $invoiceId): string
+    {
+        return self::word(app(SetDisputeHold::class)->run((string) Str::uuid(), $actorUserId, Invoice::query()->findOrFail($invoiceId), 'Klien membantah'));
+    }
+
+    /** ROUTE-247's action as its own command, for the race tests; its word. */
+    public static function writeOffInCommand(int $ownerId, int $invoiceId, string $amount, string $businessDate): string
+    {
+        return self::word(app(WriteOffReceivable::class)->run((string) Str::uuid(), $ownerId, Invoice::query()->findOrFail($invoiceId), $amount, 'Klien tidak dapat ditagih', null, $businessDate, false));
+    }
+
+    /** ROUTE-248's action as its own command, for the race tests; its word. */
+    public static function supersedeInCommand(int $ownerId, int $invoiceId, int $writeoffId, int $paymentId, string $amount, string $businessDate): string
+    {
+        return self::word(app(SupersedeWriteOff::class)->run((string) Str::uuid(), $ownerId, Invoice::query()->findOrFail($invoiceId), $writeoffId, $paymentId, $amount, 'Klien membayar kembali', $businessDate, false));
+    }
+
+    /**
+     * A completion's reading of FIN's predicates under the project's LK-01, standing in for TASK-055's AX-25 (M-26): an unmet one REJECTED C-39, else the project completed; its word.
+     */
+    public static function completeInCommand(int $actorUserId, int $projectId): string
+    {
+        $project = Project::query()->findOrFail($projectId);
+        $request = new CommandRequest((string) Str::uuid(), 'PRJ.SyntheticCompletion', $actorUserId, $project->company_id, 'finance.view', Fingerprint::of('PRJ.SyntheticCompletion', 'test', ['project' => $projectId]));
+
+        return self::word(app(CommandEnvelope::class)->run($request, function (CommandContext $context) use ($project, $projectId, $actorUserId): CommandResult {
+            $context->lock((new LockSet)->add('projects', ['id' => $projectId]));
+
+            foreach (app(ReceivablePredicate::class)->states([$projectId], true)[$projectId] ?? [] as $state) {
+                if (! $state->met()) {
+                    throw Refused::rejected('C-39', ['reason' => 'predicate']);
+                }
+            }
+
+            $from = DB::table('projects')->where('id', $projectId)->value('state');
+            DB::table('projects')->where('id', $projectId)->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
+            ProjectStateTransition::factory()->create(['project_id' => $projectId, 'from_state' => $from, 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $actorUserId, 'company_id' => $project->company_id]);
+
+            return new CommandResult('project', $projectId);
+        }));
     }
 
     /** A registered evidence linked to the project, as ROUTE-* LinkEvidence leaves it; its row. */

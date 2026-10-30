@@ -9,6 +9,7 @@ use App\Modules\DOC\Services\DocumentIssuing;
 use App\Modules\DOC\Services\DocumentSubjects;
 use App\Modules\DOC\Services\DocumentVoiding;
 use App\Modules\FIN\Data\InvoiceCorrection;
+use App\Modules\FIN\Data\InvoiceDocuments;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Models\InvoiceBalance;
 use App\Modules\OPS\Services\CorrectionCases;
@@ -25,7 +26,6 @@ use App\Support\GuardUpdate;
 use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -90,13 +90,16 @@ final class InvoiceCorrections
             $set = $set->add('money_fact_balances', ['receivable_writeoff_id' => $id]);
         }
 
-        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
+        foreach ($this->chain->ofInvoice($invoice->id, [...InvoiceSubjects::LAYOUTS, InvoiceDocuments::REQUEST]) as $document) {
             $issued = $this->chain->issuedOf($document->id);
             $set = $set->union($this->chain->locks($document, $issued === null ? [] : [$issued->id]));
 
             if ($issued !== null) {
                 $set = $set->union($this->chain->participantLocks($this->chain->change(DocumentChange::DOCUMENT_VOIDED, $document, $issued->id, null)));
-                $set = $set->union($this->issuing->numberLocks($invoice->company_id, $document->document_type_code, $input->businessDate));
+
+                if ($document->document_type_code !== InvoiceDocuments::REQUEST) {
+                    $set = $set->union($this->issuing->numberLocks($invoice->company_id, $document->document_type_code, $input->businessDate));
+                }
             }
         }
 
@@ -122,8 +125,9 @@ final class InvoiceCorrections
         }
 
         foreach (DB::table('receivable_writeoffs as w')->where('w.invoice_id', $invoiceId)->leftJoin('money_fact_balances as m', 'm.receivable_writeoff_id', '=', 'w.id')
-            ->whereRaw('coalesce(m.contra_amount, 0) < w.amount')->orderBy('w.id')->get(['w.id', 'w.amount']) as $row) {
-            $found['writeoffs'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'amount')];
+            ->whereRaw('coalesce(m.contra_amount, 0) < w.amount')->orderBy('w.id')->selectRaw('w.id, w.amount - coalesce(m.contra_amount, 0) as standing')->get() as $row) {
+            // What still stands: a part superseded for recovered money is already gone (L-17).
+            $found['writeoffs'][(int) Row::text($row, 'id')] = ['amount' => Row::text($row, 'standing')];
         }
 
         return $found;
@@ -181,7 +185,8 @@ final class InvoiceCorrections
 
         DB::table('invoice_versions')->where('id', $invoice->current_version_id)->update(['state' => 'VOIDED', 'updated_at' => $now]);
 
-        foreach ($this->chain->ofInvoice($invoice->id, InvoiceSubjects::LAYOUTS) as $document) {
+        // A voided invoice's payment request voids with it: nothing asks for money the invoice no longer claims.
+        foreach ($this->chain->ofInvoice($invoice->id, [...InvoiceSubjects::LAYOUTS, InvoiceDocuments::REQUEST]) as $document) {
             $issued = $this->chain->issuedOf($document->id);
 
             if ($issued !== null) {
@@ -372,15 +377,10 @@ final class InvoiceCorrections
         }
     }
 
-    /** DIR-092 (2): an entry error stands on evidence already linked to the invoice's records — its project, or a confirmation of it, as `evidence_links` holds no invoice target; the check reads, it links nothing. */
+    /** DIR-092 (2): an entry error stands on evidence linked to the invoice's records. */
     private static function ensureEvidence(Invoice $invoice, InvoiceCorrection $input): void
     {
-        if (! in_array($input->basis, ['ENTRY_ERROR', 'ENTRY_ERROR_REPLACED'], true)) {
-            return;
-        }
-
-        if ($input->evidenceId === null || ! DB::table('evidence_links')->where('evidence_document_id', $input->evidenceId)->whereNull('unlinked_at')
-            ->where(fn (Builder $link) => $link->where('project_id', $invoice->project_id)->orWhereIn('commercial_confirmation_id', DB::table('commercial_confirmations')->where('project_id', $invoice->project_id)->select('id')))->exists()) {
+        if (in_array($input->basis, ['ENTRY_ERROR', 'ENTRY_ERROR_REPLACED'], true) && ! InvoiceEvidence::linked($invoice, $input->evidenceId)) {
             throw Refused::rejected('CM-24', ['reason' => 'evidence']);
         }
     }

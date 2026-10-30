@@ -9,11 +9,15 @@ use App\Modules\FIN\Data\InvoicePosition;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceCorrections;
 use App\Modules\FIN\Services\InvoiceSubjects;
+use App\Modules\FIN\Services\MoneyPosting;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\BusinessDate;
+use App\Support\Finance\AgingCalculator;
+use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\JoinClause;
@@ -56,6 +60,13 @@ final class InvoiceDetail
         $issued = $header !== null && Row::text($header, 'state') === 'ISSUED';
         $correct = $issued && $invoice->origin === 'LIVE' && $viewer->allows('invoice.correct', $company);
         $version = $header === null ? 0 : (int) Row::text($header, 'version');
+        $billed = $header !== null && Row::nullable($header, 'current_billing_act_id') !== null;
+        $outstanding = $header === null ? '0.00' : (Row::nullable($header, 'outstanding') ?? '0.00');
+        $owing = $issued && Money::of($outstanding)->isPositive();
+        $canWriteOff = $billed && $owing && $viewer->allows('receivables.write_off', $company);
+        $writeoffs = self::writeoffs($invoice->id);
+        $canSupersede = $issued && $writeoffs !== [] && $viewer->allows('writeoff.supersede', $company);
+        $reductions = self::reductions($invoice->id, $writeoffs);
 
         return [
             'invoice' => $header === null ? null : [
@@ -99,12 +110,17 @@ final class InvoiceDetail
             ], DB::table('invoice_version_lines as l')->leftJoin('units as u', 'u.id', '=', 'l.entered_unit_id')->where('l.invoice_version_id', $version)->orderBy('l.id')->get(['l.description', 'l.entered_qty', 'u.code', 'l.unit_price', 'l.line_sales_value'])->all())),
             'taxes' => array_values(array_map(fn (object $tax): array => ['code' => Row::text($tax, 'code'), 'rate' => Row::text($tax, 'rate_percent'), 'base' => Row::text($tax, 'base_amount'), 'amount' => Row::text($tax, 'amount')],
                 DB::table('invoice_tax_components as t')->join('tax_types as y', 'y.id', '=', 't.tax_type_id')->where('t.invoice_version_id', $version)->orderBy('y.code')->get(['y.code', 't.rate_percent', 't.base_amount', 't.amount'])->all())),
-            'reductions' => self::reductions($invoice->id),
+            'reductions' => $reductions,
+            'billing' => self::billing($invoice->id, $header === null ? null : Row::nullable($header, 'current_billing_act_id'), $today),
+            'hold' => ($header->on_hold ?? false) === true ? self::hold($invoice->id, $outstanding) : null,
+            'writeoffs' => $writeoffs,
+            'credit' => $canWriteOff ? MoneyPosting::availableCredit($company, $invoice->client_organization_id) : null,
+            'recoveries' => $canSupersede ? self::recoveries($invoice->id) : [],
             'documents' => self::documents($invoice->id),
             'kuitansi' => self::kuitansi($invoice->id),
             'payments' => $viewer->allows('payment.record', $company) ? self::linkable($invoice->id) : [],
             'bases' => $correct ? self::bases($invoice) : ['cases' => [], 'confirmations' => [], 'cancellations' => [], 'transitions' => []],
-            'evidence' => $correct ? self::evidence($viewer, $company, $invoice->project_id ?? 0) : [],
+            'evidence' => $correct || ($billed && $issued && $viewer->allows('billing.correct', $company)) ? self::evidence($viewer, $company, $invoice->project_id ?? 0) : [],
             'today' => $today,
             'can' => [
                 'correct' => $correct,
@@ -112,6 +128,12 @@ final class InvoiceDetail
                 'kuitansi' => $issued && DocumentAccess::mayIssue($viewer, InvoiceSubjects::KUITANSI, $company),
                 'link' => $issued && $viewer->allows('payment.record', $company),
                 'nota' => $issued && DocumentAccess::mayIssue($viewer, InvoiceSubjects::NOTA, $company),
+                'bill' => $issued && ! $billed && $viewer->allows('billing.record', $company),
+                'correct_billing' => $issued && $billed && $viewer->allows('billing.correct', $company),
+                'dispute' => $issued && $viewer->allows('receivables.dispute', $company) && ($owing && $billed || ($header->on_hold ?? false) === true),
+                'write_off' => $canWriteOff,
+                'recover' => $canSupersede,
+                'request' => $issued && $owing && DocumentAccess::mayIssue($viewer, InvoiceSubjects::REQUEST, $company),
             ],
         ];
     }
@@ -119,9 +141,10 @@ final class InvoiceDetail
     /**
      * What a correction must dispose, each by the handle PG-043 shows (ST-07).
      *
+     * @param  list<array{handle: string, amount: string, standing: string, reason: string, date: string, before: string, after: string}>  $writeoffs
      * @return array{applications: list<array<string, mixed>>, settlements: list<array<string, mixed>>, writeoffs: list<array<string, mixed>>}
      */
-    public static function reductions(int $invoiceId): array
+    private static function reductions(int $invoiceId, array $writeoffs): array
     {
         $applications = [];
 
@@ -135,14 +158,72 @@ final class InvoiceDetail
             $settlements[] = ['handle' => RowHandle::of('deduction_settlements', (int) Row::text($row, 'id')), 'amount' => Row::text($row, 'amount'), 'date' => Row::text($row, 'business_date'), 'class' => Row::text($row, 'settlement_class'), 'direction' => Row::nullable($row, 'tax_direction')];
         }
 
-        $writeoffs = [];
+        $standing = array_values(array_filter($writeoffs, fn (array $row): bool => Money::of($row['standing'])->isPositive()));
 
-        foreach (array_keys(InvoiceCorrections::reductions($invoiceId)['writeoffs']) as $id) {
-            $row = DB::table('receivable_writeoffs')->where('id', $id)->first(['amount', 'business_date']);
-            $writeoffs[] = ['handle' => RowHandle::of('receivable_writeoffs', $id), 'amount' => is_object($row) ? Row::text($row, 'amount') : '0.00', 'date' => is_object($row) ? Row::text($row, 'business_date') : ''];
+        return ['applications' => $applications, 'settlements' => $settlements, 'writeoffs' => array_map(fn (array $row): array => ['handle' => $row['handle'], 'amount' => $row['standing'], 'date' => $row['date']], $standing)];
+    }
+
+    /**
+     * Every write-off of the invoice, kept as disposed history whatever has been superseded since (BR-FIN-08; L-17; FS-08).
+     *
+     * @return list<array{handle: string, amount: string, standing: string, reason: string, date: string, before: string, after: string}>
+     */
+    private static function writeoffs(int $invoiceId): array
+    {
+        $rows = [];
+
+        foreach (DB::table('receivable_writeoffs as w')->where('w.invoice_id', $invoiceId)->leftJoin('money_fact_balances as m', 'm.receivable_writeoff_id', '=', 'w.id')->orderBy('w.id')
+            ->selectRaw('w.id, w.amount, w.amount - coalesce(m.contra_amount, 0) as standing, w.reason, w.business_date, w.outstanding_before, w.outstanding_after')->get() as $row) {
+            $rows[] = ['handle' => RowHandle::of('receivable_writeoffs', (int) Row::text($row, 'id')), 'amount' => Row::text($row, 'amount'), 'standing' => Row::text($row, 'standing'), 'reason' => Row::text($row, 'reason'),
+                'date' => Row::text($row, 'business_date'), 'before' => Row::text($row, 'outstanding_before'), 'after' => Row::text($row, 'outstanding_after')];
         }
 
-        return ['applications' => $applications, 'settlements' => $settlements, 'writeoffs' => $writeoffs];
+        return $rows;
+    }
+
+    /**
+     * The billing act in force and the chain it supersedes, oldest first, the superseded dates staying visible (CM-25); its age (CALC-07).
+     *
+     * @return array{current: array<string, mixed>|null, history: list<array<string, mixed>>, days_past: int, bucket: ?string}
+     */
+    private static function billing(int $invoiceId, ?string $currentAct, string $today): array
+    {
+        $current = null;
+        $history = [];
+
+        foreach (DB::table('invoice_billing_acts')->where('invoice_id', $invoiceId)->orderBy('id')->get(['id', 'billed_at', 'due_date', 'kind', 'reason']) as $row) {
+            $act = ['billed_at' => Row::text($row, 'billed_at'), 'due_date' => Row::nullable($row, 'due_date'), 'kind' => Row::text($row, 'kind'), 'reason' => Row::nullable($row, 'reason')];
+
+            if (Row::text($row, 'id') === $currentAct) {
+                $current = $act;
+            } else {
+                $history[] = $act;
+            }
+        }
+
+        $due = $current['due_date'] ?? null;
+
+        return ['current' => $current, 'history' => $history, 'days_past' => $current !== null && is_string($due) ? AgingCalculator::daysPast($due, $today) : 0, 'bucket' => $current === null ? null : AgingCalculator::bucket(is_string($due) ? $due : null, $today)];
+    }
+
+    /** @return array{reason: string, set_at: string, lapsed: bool}|null The uncleared hold; it lapses at zero outstanding (L-17). */
+    private static function hold(int $invoiceId, string $outstanding): ?array
+    {
+        $hold = DB::table('receivable_dispute_holds')->where('invoice_id', $invoiceId)->whereNull('cleared_at')->first(['reason', 'set_at']);
+
+        return $hold === null ? null : ['reason' => Row::text($hold, 'reason'), 'set_at' => BusinessDate::of(CarbonImmutable::parse(Row::text($hold, 'set_at'))), 'lapsed' => ! Money::of($outstanding)->isPositive()];
+    }
+
+    /** @return list<array{id: string, amount: string, date: string}> Money recovered for this invoice, its unapplied part: credit linked to it (QS-12; QS-14). */
+    private static function recoveries(int $invoiceId): array
+    {
+        $rows = [];
+
+        foreach (DB::table('payments as p')->where('p.recovery_for_invoice_id', $invoiceId)->join('application_source_balances as s', 's.payment_id', '=', 'p.id')->where('s.capacity_amount', '>', 0)->orderBy('p.id')->get(['p.public_id', 's.capacity_amount', 'p.business_date']) as $row) {
+            $rows[] = ['id' => Row::text($row, 'public_id'), 'amount' => Row::text($row, 'capacity_amount'), 'date' => Row::text($row, 'business_date')];
+        }
+
+        return $rows;
     }
 
     /** @return list<array<string, mixed>> The layouts' documents with their current state. */
@@ -150,7 +231,7 @@ final class InvoiceDetail
     {
         $documents = [];
 
-        foreach (DB::table('documents as d')->where('d.invoice_id', $invoiceId)->whereIn('d.document_type_code', InvoiceSubjects::LAYOUTS)
+        foreach (DB::table('documents as d')->where('d.invoice_id', $invoiceId)->whereIn('d.document_type_code', [...InvoiceSubjects::LAYOUTS, InvoiceSubjects::REQUEST])
             ->leftJoin('document_versions as v', fn (JoinClause $join) => $join->on('v.document_id', '=', 'd.id')->whereIn('v.state', ['ISSUED', 'DRAFT']))->orderBy('d.id')
             ->get(['d.public_id', 'd.document_type_code', 'v.state', 'v.formatted_number']) as $row) {
             $documents[] = ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'document_type_code'), 'state' => Row::nullable($row, 'state') ?? 'VOIDED', 'number' => Row::nullable($row, 'formatted_number')];
