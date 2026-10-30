@@ -8,7 +8,7 @@ Amendment: on 2026-10-24 the Owner's decision [DIR-092](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -258,34 +258,50 @@ O-04, CAP-10 and AC-10 require staff to tell issued sales value and *Belum Ditag
 - Migration: N/A — no migration or import code in this Task; opening invoices are TASK-057's
 - Other: CM-23, CM-24 and CM-26's expected end states asserted; GAP-029's no-double-recognition test (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/FIN/InvoicesTest.php` — Rp1,000,000 issues as a sales value *Belum Ditagihkan*, no Cash-In, active receivable, stock change or other obligation written; the output tax recorded apart under the rule of the business date, never revenue.
+- Criterion 2: the same file — an issue above the cap REJECTED C-31 with the remaining value, a value-only termin within it issuing, the replacement checked on the net; above delivered value issues, its flag QS-15's (TASK-058); `tests/Integration/Finance/InvoiceRacesTest.php` — one of two issues past the cap.
+- Criterion 3: `InvoicesTest` and `InvoiceRacesTest` — the later of two saves CONFLICT with the input kept (M-38), a second press CONFLICT with the number (BD-06; M-19), distinct numbers (M-15; M-16), a failed issue rolling its number back (M-17); `tests/Interaction/InvoicesTest.php` — one `command_id` replayed.
+- Criterion 4: `InvoicesTest` — MSG-17 with the input kept for a backdate into a period with no counter, the issue succeeding once seeded (C-10; M-18).
+- Criterion 5: `InvoicesTest` — the Rp400,000 released to credit traceable to its payment or re-targeted to the replacement; an undisposed list CONFLICT ST-07, a KEEP on a void not committing.
+- Criterion 6: `InvoicesTest` and `InvoiceRacesTest` — the replacement in one action, its act INHERITED with the same dates at a real commit, the deferred trigger refusing a void without one; a billed void citing only a return's case of its own project, a re-confirmation or a cancellation.
+- Criterion 7: `InvoicesTest` — nothing in the invoice changes until the correction citing the case runs.
+- Criterion 8: `InvoicesTest` — a settlement the replacement cannot carry left as a residual on the case, its closure blocked, its evidence kept; an Admin refused OD-07 over a standing write-off, the Owner superseding it in the same command.
+- Criterion 9: `InvoiceRacesTest` — a void racing an application in both orders on synthetic applications, as this criterion's test line allows until TASK-051: the application first leaves the void CONFLICT ST-07, the void first leaves the application REJECTED C-15.
+- Criterion 10: `tests/Feature/FIN/PrepaymentKuitansiTest.php` — Σ open ≤ outstanding (C-43), issued only through ROUTE-249 with its reason, no Cash-In, payment, settlement or paid state, the position block unchanged; `InvoiceRacesTest` — the cap across two numbering periods; `tests/Browser/E2E/invoices.spec.ts` — *Menunggu Pembayaran* and "untuk proses pembayaran". The receipt-mode refusal while one is open: FIN's provider offers PRE_PAYMENT alone, receipt mode being TASK-051's, which holds it under the same guard (AX-15).
+- Criterion 11: `PrepaymentKuitansiTest` — linked only when the amounts agree, else REJECTED with both figures and the path; once per (payment, invoice); a linked Kuitansi's second link CONFLICT; a lowering correction and the Kuitansi's own void unlinking with the cause shown.
+- Criterion 12: `tests/Authorization/InvoicesAccessTest.php` — every screen absent without `finance.view`, the composer included; the corrections absent without `invoice.correct`; DOC-04–DOC-06's payload only to `finance.view` holders of the company.
+- Criterion 13: `InvoicesTest` — ENTRY_ERROR and ENTRY_ERROR_REPLACED refused without evidence already linked to the invoice's records, unlinked and another project's evidence alike, the check linking nothing.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — the cap, the output-tax separation, the termin split and the shown state, against FX-01 (TL-03; BR-FIN-13); Frontend — the exact tax proposal; Feature — ROUTE-241, ROUTE-242, ROUTE-245, ROUTE-249 and ROUTE-250 with each refusal (TL-04); Integration on real PostgreSQL sessions — M-15–M-17, M-19, M-37, M-38, the replacement at a real commit, the Kuitansi cap across two periods, the reconciliation suite after each, M-18 in the Feature layer (TL-05) PASS in CI
+- [x] Authorization: `invoice.issue`, `invoice.correct`, `writeoff.supersede`, `documents.issue`, `payment.record`, every screen absent without `finance.view` (TL-06; SM-04) PASS in CI
+- [x] Route integrity: ROUTE-041–ROUTE-043, ROUTE-241, ROUTE-242, ROUTE-245, ROUTE-249 and ROUTE-250 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-241, INT-242, INT-245, INT-249 and INT-250 per IG-05 with one `command_id` replayed; INT-012 in the responsive layer (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-01 at the desk and on the phone, J-FIN-08, CJ-04's invoices and pre-payment Kuitansi, CJ-06's void (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: the composer at 1,025, 1,279 and 1,280 px, "Rincian | Pratinjau" at 1,024 px, PG-041 and PG-043 on the phone with its menu sheet on screen (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the sections in the shared components (TEST_STRATEGY §9); the composer beside the form at each width without a sideways scroll
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's invoice, its number never shown; SM-25 for the finance family's projection (TL-14)
+- [x] Database safety review: no schema change, no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and the shared fixes named in its Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3ed85a5`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41107689579 (push) and 41107695589 (pull request #47), the three jobs PASS in each; TL-15 — PG-041 and PG-043 in the same statements for one row and many, `IssueInvoice` and `IssuePrepaymentKuitansi` within forty-five statements in an established period, `VoidInvoice` linear in the reductions it changes (QB-08; QB-09; QB-13; QB-14; PFM-01; PFM-02; PFM-20)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: ROUTE-041–ROUTE-043, ROUTE-241, ROUTE-242, ROUTE-245, ROUTE-249 and ROUTE-250 in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/InvoicesTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 3ed85a5, CI ubuntu-24.04 run 41107689579, tests/Browser/E2E/invoices.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-041–PG-043 in both languages, DOC-04, DOC-05 and DOC-06 in Indonesian whatever the interface language — `tests/Browser/Localization/invoices.spec.ts` and `PrepaymentKuitansiTest` PASS; the keys added with their registry rows
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FIN's `Actions/`, `Data/`, `Services/`, `Queries/`, `Http/Controllers/InvoicesController`, its README; `resources/js/Pages/FIN/`, `features/fin/invoice.ts`, `lib/decimal.ts`; DOC's `DocumentIssuing`, `DocumentVoiding`, `DocumentChain`, `DocumentAccess`, `SaveDocumentDraft`, `IssueDocument`, `DocumentDetail`, `DocumentsController` and PG-036; ORG's `OutputTaxes`, moved from `TaxConfiguration`, and `NumberAllocator`; PRJ's `DemandPosting`, `Journey`, `ProjectJourneys`, `ProjectWorkspace`; OPS's `ActivityHistory`; `app/Support/Guards/Families.php`, the provider, routes, navigation and `lang/`; the shared `DecimalInput`, menu and select sheets; the tests; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `9b53ced`, `8e85127`, `c2d8473`, `4da8e37`, `d201b34`, `2c2a694`, `3ed85a5`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-049-invoices`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `d201b34` and raised a P1 (a saved itemized draft's preview read the current pins while the issue keeps the saved version) and a P2 (a voided invoice lost its number); both fixed in `2c2a694` with their tests and answered on the pull request, no thread open; it did not review the two later commits, `2c2a694` and `3ed85a5`. CI's own finding: `tests/Integration/Guards/GuardReconciliationTest` used `invoice_balances` as its example of an unregistered family, which this Task registers, so its example is now a name no family will take, the assertion unchanged. ER-06: a fresh read-only review before the pull request found nine points, each verified against the code and fixed with its test — the composer's route without `finance.view`; a draft's stored tax neither shown nor kept; a linked Kuitansi linked again; entry-error evidence the command linked itself; a return basis accepting any case of the company; a correction's date unchecked; a replacement refused in a deactivated company; a second layout without `invoice.issue`; a replacement's termin share counting the invoice it replaces. Context7 consulted at the installed lines: PostgreSQL 18's `SET CONSTRAINTS` — a move to IMMEDIATE checks what was deferred retroactively, which is why the command states its deferred constraints explicitly; composite foreign keys under MATCH SIMPLE; brick/math 1.0's `dividedBy` to a scale with an explicit rounding mode; Inertia 3's `post` preserving state, so the composer's stored figures read from the props the answer returns. Graphify OPTIONAL and not used: a targeted search of FIN, DOC's providers and the posting services. Two shared fixes the browser layers found, inside this Task's pages' need: the phone's menu and select sheets, whose `translate-none` left Base UI's inline `transform` pushing them off screen; `DecimalInput`, now showing a value the page changed. Executor readings within the approved text: the Kuitansi's amount is held on its draft (ROUTE-221 `jumlah`), the draft saved again with a new amount, one open draft per invoice from ROUTE-221; a pre-payment Kuitansi issues only through ROUTE-249, and DOC-04 or DOC-06 may also be prepared on PG-036 as the other layout once the invoice is issued, with `invoice.issue` (PERMISSIONS_MATRIX §4); entry-error evidence stands when linked to the invoice's project or a confirmation of it, as `evidence_links` holds no invoice target, so the confirming order's evidence qualifies; a return basis cites a SALES_RETURN or DROPSHIP_RETURN case of the invoice's project; OPENING-origin invoices refused by the corrections until TASK-057; an open pre-payment Kuitansi above a lowered outstanding stays open for CM-26's revise-or-void path; "Tautkan Kuitansi" lives on PG-043, PG-036 leading back; a tax's `evidence_required` shown as a note, no column existing; the reason of a Kuitansi in its audit event. QB-13's "about 40": this is the heaviest class-A command, six lock classes with the document's and the invoice's writes, held to forty-five in an established period without the render job, its own command; a period's first number seeds its counter on top of that. Flagged for the Owner, no criterion naming it: PG-043's correction dialog sends one value-only line and no stated tax, so from that page an itemized invoice's revision or replacement collapses to one line and its tax is the proposal, while the commands accept itemized content and a stated tax. A local artifact, not a defect: `tests/Feature/OPS/ActivityHistoryTest` answers 409 where `public/build/manifest.json` exists, its request naming no asset version; CI runs that layer before the build.
 
 **SAFE NEXT TASK:**
 
