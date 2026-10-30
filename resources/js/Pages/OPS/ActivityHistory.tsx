@@ -151,11 +151,12 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
                         </div>
                     )}
                 </div>
-                {shown.length === 0 && !cursorFailed ? (
+                {/* Empty only when nothing is left to read: a bounded read that found none yet still offers "Muat Lagi" (PF-42). */}
+                {shown.length === 0 && !cursorFailed && next === null ? (
                     <RegionEmpty text={t('activity.empty')} />
                 ) : (
                     <>
-                        <DataList<Row>
+                        {shown.length > 0 && <DataList<Row>
                             caption={t('pages.pg_063.title')}
                             rows={shown}
                             rowKey={(row) => row.key}
@@ -175,7 +176,7 @@ export default function ActivityHistory({ companies, actors, filters, record, ro
                                 secondary: `${actor(row)} · ${row.company ?? t('activity.filter.no_company')}`,
                                 status: <DateTimeText value={row.at} className="text-m-meta text-text-tertiary" />,
                             })}
-                        />
+                        />}
                         <div className="print:hidden">
                             <ListContinuation state={state} loading={appending} onLoadMore={loadMore} onReload={() => { visit({}); }} />
                         </div>
