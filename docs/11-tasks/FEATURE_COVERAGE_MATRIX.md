@@ -1,10 +1,12 @@
 # Feature coverage matrix
 
-Status: APPROVED | Updated: 2026-10-20 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-31 | Owner: Planning
 
 Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved), explicit Owner approval on 2026-10-20 (DIR-085 OF-07) of this document as committed in the first execution session's approval commit; the approved file hash and the verified conditions are recorded there. Approval changes lifecycle only, not implementation authorization.
 
 Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISION_LOG.md#dir-088--task-005s-discoveries-the-forward-foreign-keys-ix-13s-deferred-indexes-and-the-export-identifier) maps IX-13 also to TASK-058, which builds its two partial indexes TASK-005 could not; no other row changes and the entry count is unchanged. It is a Level 1 record under CHANGE_CONTROL, as the Owner directs.
+
+Amendment: on 2026-10-31, under [DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit), Change 4 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its eighteen entries and the counts they change. It takes effect at the Owner's merge.
 
 Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); the Owner approved it with P11 at OG-4 (DIR-085 OF-07), which satisfies PRQ-13. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
 
@@ -38,9 +40,9 @@ Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISI
 | AX- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 37 |
 | QS- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 24 |
 | L- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 50 |
-| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 210 |
+| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 218 |
 | RC- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 6 |
-| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 165 |
+| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 174 |
 | IG- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 5 |
 | D-DB- | [DATABASE](../04-architecture/DATABASE/README.md) | 14 |
 | C- | [DATABASE](../04-architecture/DATABASE/README.md) | 65 |
@@ -140,7 +142,7 @@ Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISI
 | component (DESIGN_SYSTEM §10) | [DESIGN_SYSTEM](../07-ux-design/DESIGN_SYSTEM.md) | 44 |
 | localization rule | [LOCALIZATION](../07-ux-design/LOCALIZATION.md) | 14 |
 | localization key group | [LOCALIZATION](../07-ux-design/LOCALIZATION.md) | 7 |
-| GAP- (OPEN) | [GAP_REGISTER](../00-governance/GAP_REGISTER.md) | 46 |
+| GAP- (OPEN) | [GAP_REGISTER](../00-governance/GAP_REGISTER.md) | 47 |
 
 ### 1.2 Families left out, with their reason
 
@@ -798,6 +800,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-175 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | ROUTE-176 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
 | ROUTE-177 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
+| ROUTE-178 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
+| ROUTE-179 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | ROUTE-181 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | ROUTE-183 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | ROUTE-184 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-038 |
@@ -820,11 +824,13 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-212 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-040 |
 | ROUTE-213 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-057 |
 | ROUTE-214 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-057 |
+| ROUTE-215 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-043 |
 | ROUTE-201 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | ROUTE-203 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | ROUTE-204 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | ROUTE-205 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | ROUTE-206 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
+| ROUTE-216 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | ROUTE-207 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | ROUTE-208 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-047 |
 | ROUTE-209 | ROUTE- | ROUTE_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-047 |
@@ -858,11 +864,15 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-260 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
 | ROUTE-261 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | ROUTE-262 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
+| ROUTE-263 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
 | ROUTE-271 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-031 |
 | ROUTE-272 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-273 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-274 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-275 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
+| ROUTE-276 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
+| ROUTE-277 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-072 |
+| ROUTE-278 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-072 |
 | ROUTE-281 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-016, TASK-059 |
 | ROUTE-282 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-039, TASK-059 |
 | ROUTE-283 | ROUTE- | ROUTE_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
@@ -966,6 +976,8 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-175 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | INT-176 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
 | INT-177 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
+| INT-178 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
+| INT-179 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | INT-181 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | INT-221 | INT- | INTERACTION_CONTRACTS · Documents, files and evidence (DOC; PG-035, PG-036, PG-038; WF-DOC-01, WF-DOC-02) | TASK-029 |
 | INT-183 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
@@ -989,11 +1001,14 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-212 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-040 |
 | INT-213 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-057 |
 | INT-214 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-057 |
+| INT-215 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-043 |
+| INT-217 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-043 |
 | INT-201 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | INT-203 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | INT-204 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-045 |
 | INT-205 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | INT-206 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
+| INT-216 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | INT-207 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-046 |
 | INT-208 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-047 |
 | INT-209 | INT- | INTERACTION_CONTRACTS · Fulfilment — deliveries, direct shipments, handovers and client returns (FUL; PG-030–PG-03 | TASK-047 |
@@ -1028,11 +1043,15 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-260 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
 | INT-261 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | INT-262 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
+| INT-263 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
 | INT-271 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-031 |
 | INT-272 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-273 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-274 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-275 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
+| INT-276 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
+| INT-277 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-072 |
+| INT-278 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-072 |
 | INT-281 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-016, TASK-059 |
 | INT-282 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-039, TASK-059 |
 | INT-283 | INT- | INTERACTION_CONTRACTS · Reading, search, scanning and exports (Reporting; PG-009, PG-051–PG-053) | TASK-060 |
@@ -3393,6 +3412,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | GAP-066 | GAP- | GAP_REGISTER · Route and interaction rows the specifications require | TASK-037, TASK-043, TASK-046, TASK-052, TASK-053, TASK-055, TASK-057, TASK-072 |
 | GAP-067 | GAP- | GAP_REGISTER · Approved statements that disagree | TASK-020, TASK-039, TASK-043, TASK-045, TASK-046, TASK-053, TASK-054, TASK-057, TASK-069 |
 | GAP-068 | GAP- | GAP_REGISTER · Facts the specifications use but do not define | TASK-037, TASK-043, TASK-077 |
+| GAP-071 | GAP- | GAP_REGISTER · The credit hold's capability and column | TASK-053, TASK-055 |
 
 ## 3. Non-Task dispositions
 
@@ -3445,27 +3465,27 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-034 | Commercial confirmation and fulfillment planning | 80 |
 | TASK-035 | Administrative checklist and document readiness | 36 |
 | TASK-036 | Costing foundations — lot cost basis, charge allocation and HPP attribution | 25 |
-| TASK-037 | Purchases — project and replenishment purchases | 82 |
+| TASK-037 | Purchases — project and replenishment purchases | 86 |
 | TASK-038 | Reservations | 98 |
 | TASK-039 | Receiving (Barang Masuk) | 118 |
 | TASK-040 | Stock views, stock history and movement reversal | 48 |
 | TASK-041 | Dispatch (Barang Keluar) and inter-company allocation | 129 |
 | TASK-042 | Condition, location moves, adjustments and losses | 86 |
-| TASK-043 | Stock count (opname) and discrepancies | 110 |
+| TASK-043 | Stock count (opname) and discrepancies | 113 |
 | TASK-044 | Purchase return to supplier | 40 |
 | TASK-045 | Deliveries (Pengiriman) and delivery closure | 52 |
-| TASK-046 | Direct shipment (drop-ship) | 36 |
+| TASK-046 | Direct shipment (drop-ship) | 38 |
 | TASK-047 | Service fulfillment and handover | 24 |
 | TASK-048 | Client returns (sales return) | 46 |
 | TASK-049 | Invoices and the pre-payment Kuitansi | 148 |
 | TASK-050 | Billing, receivables, dispute hold and Owner write-off | 101 |
 | TASK-051 | Payments, applications and bank statement lines | 142 |
-| TASK-052 | Deduction settlements and contras | 93 |
-| TASK-053 | Customer credit and refunds | 83 |
+| TASK-052 | Deduction settlements and contras | 95 |
+| TASK-053 | Customer credit and refunds | 84 |
 | TASK-054 | Expenses, disbursements and other cash | 86 |
-| TASK-055 | Project completion and Force Complete | 56 |
+| TASK-055 | Project completion and Force Complete | 57 |
 | TASK-056 | Project cancellation | 35 |
-| TASK-057 | Opening import — preparation, dry run, sign-off and commit | 68 |
+| TASK-057 | Opening import — preparation, dry run, sign-off and commit | 70 |
 | TASK-058 | Home, Work and Review — signals and the action queue | 72 |
 | TASK-059 | Search and scanning | 44 |
 | TASK-060 | Reports, the consolidated report and exports | 67 |
@@ -3480,7 +3500,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-069 | Security test matrix, route integrity and zero dead interactions | 173 |
 | TASK-070 | Full release regression and the device UAT's preparation | 88 |
 | TASK-071 | The operator's inputs before staging | 20 |
-| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 56 |
+| TASK-072 | Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards | 60 |
 | TASK-073 | Release process — branch protection, release tags, the release record and integrity report | 27 |
 | TASK-074 | Backup tooling, the off-server copy and the drill procedures | 46 |
 | TASK-075 | Monitoring — the business heartbeat, alerts and the uptime check | 18 |
@@ -3499,10 +3519,11 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 
 ## 5. Checks
 
-- **Entries:** 3237, in 125 family-and-document pairs.
-- **Mapped:** 3237 of 3237 — 3188 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
+- **Entries:** 3255, in 125 family-and-document pairs.
+- **Mapped:** 3255 of 3255 — 3206 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2116 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
+- **Method:** 2134 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
 - **After OG-4:** GAP-066, GAP-067 and GAP-068, OPEN since the Owner's answers to P11Q-02–P11Q-04 ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization)), entered by the explicit rule for the OPEN gaps with the Tasks their register entries name — TASK_PLAN's Change 3, which re-checked this section by script.
+- **Change 4 ([DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit)):** eighteen entries added by the explicit rule, ROUTE-178, ROUTE-179, ROUTE-215, ROUTE-216, ROUTE-263, ROUTE-276–ROUTE-278, their INT-, INT-217 and GAP-071; GAP-066 and GAP-067 stay mapped, closed at its merge.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).

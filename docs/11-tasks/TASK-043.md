@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-02, P11Q-04
+**STATUS:** BLOCKED — waiting on P11Q-04
 
 **RISK CLASS:** HIGH
 
@@ -23,7 +23,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 **DEPENDS ON:**
 
 - TASK-042 — Condition, location moves, adjustments and losses
-- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — P11Q-02's done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-215 · INT-215 and §4's print with INT-217; P11Q-04's BLOCKED until the Owner approves [OF04_FACTS_DRAFT](OF04_FACTS_DRAFT.md)
 
 **BLOCKS:**
 
@@ -73,7 +73,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - [DESIGN_SYSTEM §12.1](../07-ux-design/DESIGN_SYSTEM.md#121-status-system) the count, finding and pending-case families; [§14.2](../07-ux-design/DESIGN_SYSTEM.md#142-inventory); [§13.2](../07-ux-design/DESIGN_SYSTEM.md#132-scanner); [§17](../07-ux-design/DESIGN_SYSTEM.md#17-print-views)
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-05; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs); [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-05; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-05, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-009--dispatch-locks-alone-do-not-protect-stock-counts-and-serial-scans) GAP-009; [GAP-030](../00-governance/GAP_REGISTER.md#gap-030--an-unexplained-fungible-loss-across-companies-needs-an-owner-before-cost-moves)
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (110): O-02; CAP-06; AC-06; AC-16; AC-22; OS-02; REF-027; IMG-03–IMG-04; OWN-01; OWN-04–OWN-05; BR-INV-01–BR-INV-13; CALC-01; CALC-09; CALC-11; FS-01; WF-MD-04; WF-INV-05; SF-UNATTRIBUTED; CM-09; CM-27–CM-28; CM-34; CM-36; AX-06–AX-07; AX-33; AX-37; L-03; L-06–L-07; L-13–L-15; L-31; L-35–L-36; L-40; L-42; L-44; L-48; ROUTE-026; ROUTE-029; ROUTE-191–ROUTE-195; ROUTE-197–ROUTE-200; INT-191–INT-195; INT-197–INT-200; C-01–C-04; C-07–C-09; C-24; C-28; C-33–C-35; C-47; C-61; NX-05; BD-09; BD-12–BD-13; M-04; M-06; M-30; HO-12; PG-026; PG-029; SCR-24; SCR-27; J-INV-04–J-INV-05; UXS-39; NAV-026; NAV-029; GAP-009; GAP-030; GAP-066–GAP-068
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (113): O-02; CAP-06; AC-06; AC-16; AC-22; OS-02; REF-027; IMG-03–IMG-04; OWN-01; OWN-04–OWN-05; BR-INV-01–BR-INV-13; CALC-01; CALC-09; CALC-11; FS-01; WF-MD-04; WF-INV-05; SF-UNATTRIBUTED; CM-09; CM-27–CM-28; CM-34; CM-36; AX-06–AX-07; AX-33; AX-37; L-03; L-06–L-07; L-13–L-15; L-31; L-35–L-36; L-40; L-42; L-44; L-48; ROUTE-026; ROUTE-029; ROUTE-191–ROUTE-195; ROUTE-197–ROUTE-200; ROUTE-215; INT-191–INT-195; INT-197–INT-200; INT-215; INT-217; C-01–C-04; C-07–C-09; C-24; C-28; C-33–C-35; C-47; C-61; NX-05; BD-09; BD-12–BD-13; M-04; M-06; M-30; HO-12; PG-026; PG-029; SCR-24; SCR-27; J-INV-04–J-INV-05; UXS-39; NAV-026; NAV-029; GAP-009; GAP-030; GAP-066–GAP-068
 
 **EXPECTED MODULES / FILE AREAS:**
 

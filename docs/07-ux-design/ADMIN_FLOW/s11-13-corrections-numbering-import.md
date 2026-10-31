@@ -30,7 +30,7 @@ Principle (WORKFLOWS §8): establish what really happened, then use the matching
 | CM-33 | the opening fact on its record: "Koreksi Data Awal" | `stock.reverse`, `finance.contra` | never a re-import; the form says so |
 | CM-36 | the dispatch: "Koreksi Nomor Seri atau Lot" | `stock.reverse`; `stock.allocate_intercompany` when the lot actually shipped is another company's | evidence required; quantities and shipment stay unchanged — stated on the form |
 | CM-37 | the restoration or return: "Balikkan (Tercatat Keliru)" | `stock.reverse` | re-establishes the consumption; never a loss |
-| CM-38 | the disbursement, expense or refund on PG-049 or PG-048: "Batalkan Catatan (Kontra)" | `finance.contra` | — |
+| CM-38 | the disbursement, expense or refund on PG-049 (ROUTE-260; `DIR-100`): "Batalkan Catatan (Kontra)" | `finance.contra` | — |
 
 A correction case (PG-040) collects its linked corrections and shows its open residuals — an unbacked refund, an unresolved deduction, an unaccounted returned cost — as the reason it cannot be closed yet; "Tutup Kasus" (`cases.close`) is offered only when none remains, and the server decides (C-46).
 
