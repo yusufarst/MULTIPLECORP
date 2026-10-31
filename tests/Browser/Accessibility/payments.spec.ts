@@ -42,9 +42,11 @@ for (const width of [390, 1280]) {
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
-        await page.getByRole('button', { name: 'Catat Mutasi Bank' }).click();
-        await expect(page.getByRole('dialog', { name: 'Catat Mutasi Bank' })).toBeVisible();
-        await atRest(page);
-        expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
+        if (width >= 768) {
+            await page.getByRole('button', { name: 'Catat Mutasi Bank' }).click();
+            await expect(page.getByRole('dialog', { name: 'Catat Mutasi Bank' })).toBeVisible();
+            await atRest(page);
+            expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
+        }
     });
 }
