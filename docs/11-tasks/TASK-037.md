@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-04
+**STATUS:** READY
 
 **RISK CLASS:** HIGH
 
@@ -27,7 +27,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - TASK-029 — Document engine — drafts, issue, revision, void, renditions and the composer
 - TASK-034 — Commercial confirmation and fulfillment planning
 - TASK-036 — Costing foundations — lot cost basis, charge allocation and HPP attribution
-- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — P11Q-02's done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-178 · INT-178 and ROUTE-179 · INT-179; P11Q-04's BLOCKED until the Owner approves [OF04_FACTS_DRAFT](OF04_FACTS_DRAFT.md)
+- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — P11Q-02's done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-178 · INT-178 and ROUTE-179 · INT-179; P11Q-04's done: the Owner's approval (DIR-101, APPR-027), ROUTE-180 · INT-180
 
 **BLOCKS:**
 
@@ -79,7 +79,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - [TEST_STRATEGY §7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-01, CJ-02; [§5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-03, FX-04; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-027--purchase-charges-needed-an-acquisition-cost-rule) GAP-027
 - Architecture challenge — the sequences 1a, 2a, 2b, 2c of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (86): O-01; CAP-02; CAP-05; SH-01; DOC-02; DOC-14; AC-02; AC-05; REF-009–REF-011; REF-016; REF-019–REF-020; IMG-01; IMG-03; IMG-06; BR-DOC-04; BR-PUR-01–BR-PUR-05; CALC-03; CALC-09; WF-PUR-01–WF-PUR-02; SF-CHARGE; CM-17–CM-18; CM-27; CM-30; CM-35; AX-12; AX-29; AX-32; AX-34; L-19; L-26; L-43; L-47; ROUTE-015–ROUTE-017; ROUTE-171–ROUTE-175; ROUTE-178–ROUTE-179; INT-171–INT-175; INT-178–INT-179; C-20–C-21; C-57; NX-04; BD-17; M-07; M-09; M-15; M-36; PG-015–PG-017; SCR-15–SCR-17; J-INV-01; J-MD-03; J-MD-05; J-PUR-01–J-PUR-03; UXS-35; NAV-015–NAV-017; GAP-027; GAP-066; GAP-068
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (88): O-01; CAP-02; CAP-05; SH-01; DOC-02; DOC-14; AC-02; AC-05; REF-009–REF-011; REF-016; REF-019–REF-020; IMG-01; IMG-03; IMG-06; BR-DOC-04; BR-PUR-01–BR-PUR-05; CALC-03; CALC-09; WF-PUR-01–WF-PUR-02; SF-CHARGE; CM-17–CM-18; CM-27; CM-30; CM-35; AX-12; AX-29; AX-32; AX-34; L-19; L-26; L-43; L-47; ROUTE-015–ROUTE-017; ROUTE-171–ROUTE-175; ROUTE-178–ROUTE-180; INT-171–INT-175; INT-178–INT-180; C-20–C-21; C-57; NX-04; BD-17; M-07; M-09; M-15; M-36; PG-015–PG-017; SCR-15–SCR-17; J-INV-01; J-MD-03; J-MD-05; J-PUR-01–J-PUR-03; UXS-35; NAV-015–NAV-017; GAP-027; GAP-066; GAP-068
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -132,7 +132,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
+- Schema change: one column, `purchase_lines.performed_at`, with its CHECK, its grant and the trigger's exception, by an expand-only migration (DIR-101)
 - Migration required: NO
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -277,6 +277,7 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - Performance: PFM-01 and PFM-02 for PG-015 and PG-016, PG-015 read one company at a time (PF-13); PFM-20 for a ten-line ROUTE-171; QB-14 for ROUTE-174 and ROUTE-175 (TL-15)
 - Migration: N/A — no migration or import code in this Task; opening purchases are TASK-057's
 - Other: FX-03's duplicate bills and remainder closure and FX-04's price and charge correction between partial receipts, run again end to end with TASK-039; DOC-02's layout compared with its preview (DOCUMENT_PREVIEW_PRODUCER §4) and its sample listed for the Owner's content validation (GAP-019)
+- The Owner's required verification (DIR-101): F1 — ROUTE-180's mark and its taking back with each capability, "Batalkan Pembelian" refused for a performed line and for a paid one and allowed after an unpaid line's mark is taken back, no cost posted by the mark.
 
 **TEST CHECKLIST:**
 

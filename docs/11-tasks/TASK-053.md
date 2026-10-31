@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-07
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -25,7 +25,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - TASK-048 — Client returns (sales return)
 - TASK-051 — Payments, applications and bank statement lines
 - TASK-052 — Deduction settlements and contras
-- the Owner's answer to P11Q-07 recorded and the credit hold's row and column made, which P11Q-02 (a) leaves to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-07 recorded and the credit hold's row and column made, which P11Q-02 (a) leaves to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: DIR-101, ROUTE-264 · INT-264, `projects.credit_held_amount`
 
 **BLOCKS:**
 
@@ -66,7 +66,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - [NAVIGATION_CONTRACTS §2.5](../07-ux-design/NAVIGATION_CONTRACTS.md#25-finance) NAV-048; [INFORMATION_ARCHITECTURE §8.5](../07-ux-design/INFORMATION_ARCHITECTURE.md#85-finance) PG-048; [§8.7](../07-ux-design/INFORMATION_ARCHITECTURE.md#87-the-approved-screens-scr-01scr-60-and-their-pages) SCR-44
 - [ADMIN_FLOW J-FIN-06](../07-ux-design/ADMIN_FLOW/s10-b-journeys.md#106-finance); [§11](../07-ux-design/ADMIN_FLOW/s11-13-corrections-numbering-import.md#11-corrections-and-reversals) CM-20, CM-21, CM-38; [IP-08](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-08--confirming-an-irreversible-command); [IP-09](../07-ux-design/ADMIN_FLOW/s05-command-model.md#ip-09--corrections-closures-and-destructive-actions); [IP-16](../07-ux-design/ADMIN_FLOW/s06-09-session-forms-lists.md#ip-16--evidence-upload)
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-01 3, FX-03's refunds and reallocation, FX-04's Rp1 refund-shortfall attack; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs); [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-04; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-07, PFM-20
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (84): O-04; CAP-10; AC-10; AC-16; OS-02; REF-041–REF-043; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-06; CM-13; CM-19–CM-21; CM-38; AX-23; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-048; ROUTE-256; INT-256; C-13–C-15; C-18; C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; BD-02; BD-14; M-14; PG-048; SCR-44; J-FIN-06; NAV-048; GAP-066; GAP-071–GAP-067
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (86): O-04; CAP-10; AC-10; AC-16; OS-02; REF-041–REF-043; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-06; CM-13; CM-19–CM-21; CM-38; AX-23; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-048; ROUTE-256; INT-256; C-13–C-15; C-18; C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; BD-02; BD-14; M-14; PG-048; SCR-44; J-FIN-06; NAV-048; GAP-066; GAP-071; ROUTE-264; INT-264–GAP-067
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -108,7 +108,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
+- Schema change: one column, `projects.credit_held_amount`, by an expand-only migration (DIR-101)
 - Migration required: NO
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -242,6 +242,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - Performance: PFM-01 and PFM-02 for PG-048; PFM-07 for QS-12's bounded statement; PFM-20 with QB-14 for AX-23 (TL-15)
 - Migration: N/A — no migration or import code in this Task; opening credits are TASK-057's
 - Other: CM-13's credit after a return following payment asserted with TASK-048's case (TEST_STRATEGY §5)
+- The Owner's required verification (DIR-101): the hold — `refund.record` present and absent; the reason, the project and the payments on the audit event; the amount the attribution gives, never typed; a payment across two projects attributed once and never held twice; the amount a project shows never above what is attributed.
 
 **TEST CHECKLIST:**
 

@@ -17,20 +17,20 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 43
-READY: 1
+READY: 2
 IN_PROGRESS: 0
-BLOCKED: 10
+BLOCKED: 5
 VERIFYING: 0
-TODO: 33
+TODO: 37
 SUPERSEDED: 0
 
 Progress:
 43 / 87
 Percentage: 49.4 %
 
-CURRENT TASK: none in progress — Change 4 (§7) on its own branch `change/CHANGE-004-contract-rows`, waiting on the Owner's merge (record 84 ER-09); TASK-051 — Payments, applications and bank statement lines DONE on its branch `task/TASK-051-payments`, CI PASS on `3daa4ea`, its pull request #49 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-052 — Deduction settlements and contras, READY from Change 4's merge, not before (DIR-085 OF-02; ER-09); TASK-053 then waits on P11Q-07; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
-LAST TASK PLAN CHANGE: Change 4 of 2026-10-31 — DIR-085 OF-02's rows, OF-03's consistency edit and OF-04's REVIEW draft, recorded under DIR-100
+CURRENT TASK: none in progress — Change 4 merged by the Owner as `be53504` (pull request #50), Change 15 recording the Owner's decisions (DIR-101); TASK-051 — Payments, applications and bank statement lines DONE on its branch `task/TASK-051-payments`, CI PASS on `3daa4ea`, its pull request #49 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-052 — Deduction settlements and contras, READY, taken first as the Owner directs (DIR-101), then TASK-037 — Purchases, READY; TASK-053 follows TASK-052; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+LAST TASK PLAN CHANGE: Change 15 of 2026-10-31 — DIR-101, the Owner's decisions on P11Q-07, OF-04 and the labels, integrated into the canonical documents
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
 ```
@@ -177,13 +177,13 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | DONE | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | DONE | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
-| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | BLOCKED — P11Q-04 | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
+| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | READY | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
 | [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | DONE | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
 | [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
 | [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 042, 044, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-041](TASK-041.md) | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | TODO | 029, 038, 039 | 045, 056 | NO | AGENT | NONE | YES |
 | [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | TODO | 031, 036, 039, 040 | 043, 048, 057 | NO | AGENT | NONE | YES |
-| [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | BLOCKED — P11Q-04 | 042 | 055, 058 | NO | AGENT | NONE | YES |
+| [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | TODO | 042 | 055, 058 | NO | AGENT | NONE | YES |
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
 | [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
 | [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | TODO | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
@@ -193,9 +193,9 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | DONE | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | DONE | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | READY | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | BLOCKED — P11Q-07 | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
+| [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | TODO | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
-| [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | BLOCKED — P11Q-07 | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
+| [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | TODO | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
 | [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | TODO | 038, 041, 046, 047, 049, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | TODO | 022, 026, 027, 028, 030, 032, 034, 037, 039, 040, 042, 050, 052, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
 | [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | TODO | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 075 | NO | AGENT | PROPOSED | YES |
@@ -217,7 +217,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-074](TASK-074.md) | Backup tooling, the off-server copy and the drill procedures | Release · Release | HIGH | TODO | 013, 018, 021, 022, 029, 072 | 075, 076, 079, 081, 084 | NO | AGENT | NONE | NO |
 | [TASK-075](TASK-075.md) | Monitoring — the business heartbeat, alerts and the uptime check | Release · Release | HIGH | BLOCKED — OPI-05 | 010, 013, 022, 058, 071, 072, 074 | 080 | NO | AGENT | NONE | NO |
 | [TASK-076](TASK-076.md) | Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation | Release · Release | HIGH | TODO | 013, 020, 021, 074 | 081, 083 | NO | AGENT | NONE | NO |
-| [TASK-077](TASK-077.md) | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | BLOCKED — P11Q-04 | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
+| [TASK-077](TASK-077.md) | Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure | Release · Release | HIGH | TODO | 021, 057, 072 | 081, 087 | NO | AGENT | NONE | NO |
 | [TASK-078](TASK-078.md) | Staging stack, the two applications' isolation and the provider features | Operations · Operations | HIGH | TODO | 071, 072 | 079, 080, 081, 082, 086 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-079](TASK-079.md) | Staging measurements — capacity, Argon2id, durations and the disk budget | Operations · Operations | HIGH | TODO | 068, 074, 078 | 084 | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-080](TASK-080.md) | Alert channel adopted and monitoring live | Operations · Operations | HIGH | TODO | 075, 078 | 081, 083 | NO | HUMAN OPERATOR | NONE | NO |
@@ -284,6 +284,8 @@ No milestone has a date; none reduces scope or skips a check to be reached.
 
 **Change 14, 2026-10-27 (TASK-022's execution discovery; [DIR-099](../00-governance/DECISION_LOG.md#dir-099--task-022s-choices)).** *Reason:* TASK-022 found that the row locks of LK-30 on `documents`, of LK-08 on `document_types` and of LK-26 on `opening_customer_credits` cannot be taken by the runtime role, which §28 gives no `UPDATE` on those tables, decided by the Owner at one checkpoint with TASK-022's choices under DEP-07 and one reading. *Change:* DATABASE §28 gives the runtime role `UPDATE` of one column of each for its lock alone, a trigger on each refusing every update of its rows; TASK-022's DATABASE IMPACT ASSESSMENT says so; no status, dependency, risk class or count changes. *Approval:* the Owner's decision DIR-099 and APPR-026's canonical text, a Level 1 record under CHANGE_CONTROL.
 
+**Change 15, 2026-10-31 (the Owner's decisions after Change 4; [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels)).** *Reason:* the Owner chose P11Q-07 (a), approved OF-04's F1–F3 and four labels (APPR-027). *Change:* the definitions integrated into WORKFLOWS, DATABASE §§4.5–4.7, 5.3, 8 and 28, CONCURRENCY_IDEMPOTENCY §7, PERMISSIONS_MATRIX, INFRASTRUCTURE §4.2 and BACKUP_RECOVERY §4; ROUTE-180 · INT-180 (TASK-037) and ROUTE-264 · INT-264 (TASK-053), three keys; the Owner's verifications added to TASK-037, TASK-043, TASK-053, TASK-055 and TASK-077 with their schema changes. *Affected Tasks:* those five. *New Tasks:* none. *Totals:* baseline 87, previous current 87, new current 87. *Dependencies updated:* none. *Statuses:* TASK-037 READY; TASK-043, TASK-053, TASK-055 and TASK-077 TODO. *Matrix:* four new entries, ROUTE-180, INT-180, ROUTE-264, INT-264; 3259 entries. *Approval:* the Owner's decision, source record 98.
+
 ## 8. Owner questions
 
 P11's Owner questions, P11Q-nn, each with its options and one recommendation; nothing waits on an answer to keep planning. The Owner answered P11Q-01–P11Q-06 at OG-4 (DIR-085 OF-01–OF-06); each answer follows its question. A Task BLOCKED on a question becomes READY only once the Owner's answer is recorded and what it calls for is done — the step run, or the narrow amendment approved and the Task's contract updated to build what the answer adds, each held item already stated in the contract as a conditional IN SCOPE item with its acceptance criterion and tests (§2).
@@ -315,6 +317,7 @@ P11's Owner questions, P11Q-nn, each with its options and one recommendation; no
 - **Options.** (a) One narrow amendment defining each — the performed fact and its column, the registration count's movement and serial transition, the setting's store and the event's actor —, drafted by Planning and approved by the Owner before the affected Tasks start; (b) the Owner decides each differently.
 - **Recommendation.** (a). TASK-037, TASK-043 and TASK-077 are BLOCKED on it; each contract states the held fact's use as a conditional IN SCOPE item with its acceptance criterion and tests. Its gap: [GAP-068](../00-governance/GAP_REGISTER.md#gap-068--facts-a-rule-depends-on-that-no-approved-document-defines).
 - **Decided — DIR-085 OF-04.** Option (a): the executor drafts, with OF-02's change, one narrow REVIEW amendment defining the three facts — the performed fact of a non-stock purchase line and its column, the registration count's movement and serial transition, the go-live setting's store and its event's actor —, each the minimum its cited rules need; it takes effect only on the Owner's separate approval of its text, given before TASK-037, TASK-043 or TASK-077 starts, and those three Tasks stay BLOCKED until then; nothing else waits on it. GAP-068 OPEN. **The draft:** [OF04_FACTS_DRAFT](OF04_FACTS_DRAFT.md), REVIEW, Change 4 (§7; DIR-100).
+- **Approved — [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) APPR-027.** The Owner approved F1, F2 and F3 on 2026-10-31; the definitions are in the canonical documents and GAP-068 is CLOSED.
 
 ### P11Q-05 — Recording the operator's facts in approved documents
 
@@ -335,3 +338,4 @@ P11's Owner questions, P11Q-nn, each with its options and one recommendation; no
 - **Question.** WF-FIN-06 makes "hold with reason" the third disposition of project-originated credit, and WF-PRJ-03's predicate 9 reads it, but no approved rule says who may hold it, on which record the reason lies, or which credit counts as project-originated. PERMISSIONS_MATRIX §4's `payment.apply` covers new applications and `refund.record` AX-23's refund; neither names a hold. OF-02 made this row an Owner question when its rule makes no choice ([GAP-071](../00-governance/GAP_REGISTER.md#gap-071--the-credit-holds-capability-and-its-column-are-not-stated)).
 - **Options.** (a) ROUTE-264 · INT-264, PG-048 "Tahan Kredit" with its reason (IP-09), under `refund.record` (ADM+), family NX-03 under the project's LK-01; one column, `projects.credit_held_amount`, the reason on its audit event as every reason step's is (LG-01); credit project-originated when it is the rest of a payment with an application, ACTIVE or ended, to an invoice of the project, counted for each project it touches; predicate 9 met when that credit is no more than the amount held, so credit arising later blocks again, and applying or refunding stays open, a hold never reducing what may be spent. (b) The same under `payment.apply` (ADM), so that either Admin may hold. (c) The Owner takes the hold out of V1 (OE-20), apply and refund being the only dispositions.
 - **Recommendation.** (a) — a hold lets normal completion pass with the client's money still here, so it takes the stricter of the two capabilities, and one amount on the project ties the hold to what was held without touching a rebuildable balance (DATABASE §3). TASK-053 and TASK-055 are BLOCKED on it, and TASK-057 and the Tasks after them wait through their dependencies.
+- **Decided — [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels).** Option (a), `refund.record` (ADM+), with the Owner's condition that a payment across projects never yields a double hold or a misleading completion. That condition replaces option (a)'s "counted for each project it touches": each rupiah of a payment's rest belongs to exactly one project (WF-FIN-06). GAP-071 is CLOSED.

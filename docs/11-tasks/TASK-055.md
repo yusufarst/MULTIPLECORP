@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-07
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -34,7 +34,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
 - TASK-054 — Expenses, disbursements and other cash
-- the Owner's answer to P11Q-07 recorded and the credit hold's row and column made, which P11Q-02 (a) leaves to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-07 recorded and the credit hold's row and column made, which P11Q-02 (a) leaves to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: DIR-101, ROUTE-264 · INT-264, `projects.credit_held_amount`
 
 **BLOCKS:**
 
@@ -261,6 +261,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - Performance: PFM-02 — PG-012's query count independent of the project's lines, the predicates as set queries (PF-24); PFM-20 for the two class-A commands; PFM-14's project-row contention (TL-15)
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-022's cases — missing confirmation, reason or audit, a forged Admin or API override, duplicate and concurrent requests, post-completion returns and corrections
+- The Owner's required verification (DIR-101): predicate 9 — credit attributed to the project and not held blocks, including credit arising after a hold; a hold on another project never meets it; a payment across two projects does not let either complete on the other's hold.
 
 **TEST CHECKLIST:**
 

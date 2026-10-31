@@ -14,7 +14,7 @@ Predicates are derived on demand and re-read inside the completion command (BR-P
 | 6 | Billing | every issued non-void invoice billed or voided |
 | 7 | Receivable | each invoice's outstanding = 0 through applications and fee/tax settlements, or Owner-disposed; no dispute hold |
 | 8 | Stock | no active reservation; no open project-linked purchase remainder without closure; no open count finding or restoration touching the project; no unresolved unusable units and no pending unexplained-loss case whose causal project is this one (L-38; DIR-026) |
-| 9 | Payment | no open payment/disbursement correction case; project-originated credit dispositioned; no pre-payment Kuitansi left unlinked and unvoided |
+| 9 | Payment | no open payment/disbursement correction case; project-originated credit dispositioned — what is attributed to this project applied, refunded or held (WF-FIN-06; `DIR-101`); no pre-payment Kuitansi left unlinked and unvoided |
 | 10 | Audit | every committed command audited; required evidence present (payment, delivery, closure, settlement); no flagged unevidenced payment |
 
 - **Normal completion (AX-25):** an explicit decision by OWN or ADM when all ten predicates are true at commit (L-12); never automatic; delivery or full payment alone never completes.

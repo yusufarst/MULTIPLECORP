@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-04
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -25,7 +25,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 - TASK-021 — Numbering, its settings page and the Owner's raise after a restore
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-072 — Deployment definition, health and smoke checks, maintenance mode and mixed-version safeguards
-- the Owner's answer to P11Q-04 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-04 recorded, with what it calls for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: the Owner's approval (DIR-101, APPR-027), INFRASTRUCTURE §4.2 and RG-11
 
 **BLOCKS:**
 
@@ -236,6 +236,7 @@ Opening stock and open receivables can be counted twice at migration, and a movi
 - Performance: PFM-03's plans re-checked on the imported fixture at 10x and 100x through the refresh's report (TL-15)
 - Migration: TL-16 — the opening import's dry run and commit on FX-09 with go-live after the commit (TEST_STRATEGY §15)
 - Other: GAP-010's reconciliation after the rehearsal's commit — stock per company equal to its opening lots, receivables to the imported remainders, credits to the signed opening evidence — with `ReconcileGuards` clean
+- The Owner's required verification (DIR-101): F3 — the setting survives a restart and a database restore; a failed commit is repaired by running again, with one event; a second recording refused and writing nothing; no web request or job can change it; the event carries the operator's identity with no application actor.
 
 **TEST CHECKLIST:**
 
