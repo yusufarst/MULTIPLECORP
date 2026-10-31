@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -258,34 +258,49 @@ CAP-10, CAP-11 and AC-10 require actual payments to create Cash-In and reduce th
 - Migration: N/A — no migration or import code in this Task; opening credits are TASK-057's
 - Other: CM-19 and CM-21's expected end states asserted, each also under concurrency (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/FIN/PaymentsTest.php` — Rp300,000 then Rp700,000 on a billed Rp1,000,000 invoice leave Rp700,000 then nothing; Rp1,200,000 applies Rp1,000,000 and leaves Rp200,000 as credit; zero and negative refused at the field; `tests/Unit/FIN/PaymentValuesTest.php` — FX-01 1–5.
+- Criterion 2: `tests/Integration/Finance/PaymentRacesTest.php` — two applications past a payment or an invoice at real commits, the second REJECTED with the figure, the guards reconciled.
+- Criterion 3: `PaymentsTest` — another client's invoice REJECTED C-14, another company's unknown at the field and never offered on PG-046.
+- Criterion 4: `PaymentsTest` and `PaymentRacesTest` — M-11's line, M-12's two Admins, the override naming the match, another match REJECTED again; `tests/Browser/E2E/payments.spec.ts` — the warning and its override.
+- Criterion 5: `tests/Interaction/PaymentsTest.php` and `PaymentRacesTest` — M-08–M-10, the answer lost and the session gone; `tests/Authorization/PaymentsAccessTest.php` — M-13; `payments.spec.ts` — CJ-21's lost answer.
+- Criterion 6: `PaymentsTest` — annex 4's move, a refund-consumed application offering none, anchored settlements moved or kept, a stale list a CONFLICT, on synthetic refunds and settlements as this Task's OUT OF SCOPE allows until TASK-052 and TASK-053 re-run them.
+- Criterion 7: `PaymentsTest` and `PaymentRacesTest` — the disposition of everything active, ST-07, the Rp1 attack refused every way and the one committable disposition, a legitimate shortfall on the case resolved by real money, a settlement moved or left residual on its project's case; M-14 both orders; `PaymentValuesTest` — FX-04.
+- Criterion 8: `PaymentsTest` — a billed void with a real payment's Rp400,000 re-targeted and an unbilled one's released, nothing orphaned; `PaymentRacesTest` — M-37 both orders.
+- Criterion 9: `PaymentsTest` — proof or its reason, *Tanpa Bukti* until a proof is linked or a line cited, FIN's audit predicate failing until then, a company-issued rendition refused as a proof and as a statement. That such credit is not refundable is TASK-053's refund command to refuse (its criterion 2), reading the flag this Task derives.
+- Criterion 10: `PaymentsTest` — a line voided only while uncited, a flagged payment cited when its line arrives, a citation corrected moving both guards and no contra, a claimed deduction superseded never below what is settled; `PaymentRacesTest` — both lines at a real commit.
+- Criterion 11: `tests/Feature/FIN/PaymentDocumentsTest.php` — DOC-05 and DOC-07 through ROUTE-221 and ROUTE-222, refused without money applied, while a pre-payment Kuitansi is open and for money already linked; the Lampiran voided with its Kuitansi; a lowered linked total unlinking.
+- Criterion 12: `PaymentsAccessTest` — each capability by class, the corrections absent and asking their reason, the pages showing nothing without `finance.view`.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — capacity, credit and the source's rules against FX-01 1–5 and FX-04, the typed exits (TL-03); Feature — ROUTE-251–ROUTE-254, ROUTE-261 and ROUTE-262 with each refusal (TL-04); Integration on real PostgreSQL sessions — M-08–M-14, M-28, M-37, the Rp1 attack with synthetic refunds until TASK-053, anchored settlements with synthetic settlements until TASK-052, the reconciliation after each (TL-05) PASS in CI
+- [x] Authorization: `payment.record`, `payment.apply`, `payment.reallocate`, `finance.contra`, `bank_statement.record`, `cash.correct`, `warnings.override` by class; the replay after a revocation answered as AZ-11 (TL-06; SM-04; SM-13) PASS in CI
+- [x] Route integrity: ROUTE-045, ROUTE-046, ROUTE-050, ROUTE-251–ROUTE-254, ROUTE-261, ROUTE-262 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-251–INT-254, INT-261, INT-262 per IG-05 with one `command_id` replayed; INT-015's override with and without the capability (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-03 and S2-J06 on the phone and the desk, CJ-04's partial and overpayment, credit and the duplicate, CJ-21's lost answer, J-FIN-07's lines (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: PG-045, PG-046 and PG-050 at 320, 390 and 1,280 px, PG-046's applications beside the payment at the desk and below it on the phone (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the lists, the payment's sheet and the form in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's payment, invoice and statement line; SM-12 for an evidence oracle; SM-25 (TL-14)
+- [x] Database safety review: no schema change, no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and the corrections named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3daa4ea`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41171425816 (push) and 41171428060 (pull request #49), the three jobs PASS in each; TL-15 — PG-045 in at most four statements and PG-050 in a bounded number, the same for one row and many (QB-12); AX-18 of ten applications within the reference budget, one more per locked row (QB-13); AX-19 within forty; AX-20 proportional to its rows (QB-14; PFM-01; PFM-02; PFM-20)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: ROUTE-045, ROUTE-046, ROUTE-050, ROUTE-251–ROUTE-254, ROUTE-261 and ROUTE-262 in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/PaymentsTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 3daa4ea, CI ubuntu-24.04 run 41171425816, tests/Browser/E2E/payments.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-045, PG-046 and PG-050 in both languages — `tests/Browser/Localization/payments.spec.ts` PASS; DOC-05 and DOC-07 Indonesian whatever the language — `PaymentDocumentsTest` PASS; the keys added with their registry rows
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FIN's `Actions/` (`RecordPayment`, `ApplyPayment`, `ReallocateApplication`, `ContraPayment`, `CorrectBankCitation`, `SupersedeClaimedDeduction`), `Services/` (`PaymentApplications`, `PaymentCorrections`, `PaymentCitations`, `PaymentDuplicates`, `PaymentRecords`, `PaymentPredicate`, `SettlementMoves`, `ReceiptSubjects`, `MoneyPosting`, `ReceivablePosting`, `InvoiceCorrections`, `InvoiceDocumentChanges`), `Data/`, `Queries/`, `Http/Controllers/`, its README; DOC's `RecordBankStatementLine`, `VoidBankStatementLine`, `BankLineCitations`, `EvidenceGuard`, `EvidenceController`, `DocumentsController`, `EvidenceList`, `SaveDocumentDraft`; PRJ's `Journey`, `ProjectJourneys`, `ProjectWorkspace`; `app/Support/Guards/Families.php`; `resources/js/Pages/FIN/` (`Payments`, `RecordPayment`, `BankStatement`), `features/fin/` (`payment-dialogs`, `proof-sheet`, `finance-nav`), `lib/use-upload.ts`; the provider, routes, navigation and `lang/`; `package.json`, `package-lock.json`, `.github/workflows/ci.yml`; the tests; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `c7c9b1e`, `21fc3bc`, `9cba5dc`, `49386f7`, `01fea6d`, `20652e9`, `80d3b2d`, `3daa4ea`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-051-payments`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `49386f7` within the policy's ten minutes and raised a P1 (a company-issued rendition accepted behind a statement line, which a citing payment then took as proof) and a P2 (correction handles unresolved past the newest 5,000 lines), both fixed in `01fea6d` and answered on their threads; no finding open. ER-06: a fresh read-only review before the pull request found these, each verified against the code and specification and fixed — a contra moving a settlement failing on its own command line; a re-recording skipping BD-02 for a payment that still stands; the audit and payment predicates not provided, and *Tanpa Bukti* outlasting its proof, so ROUTE-231 now also links a proof to a payment; a contra not revalidating a completed project whose case changed, and a residual on a second project blocking neither; a flagged payment named twice citing twice; a stale re-record link blocking every contra; an opening credit's application unaudited; replayed refusals answering without their figures; new credit in a deactivated company; field errors on the wrong invoice; a hidden reason field; success answers lost with their sheet; PG-046's Kuitansi link; and a stale settlement silently dropped. Context7 consulted at the installed line: PostgreSQL 18's deferrable constraint triggers under `SET CONSTRAINTS` and a row's conditional end. Graphify OPTIONAL and not used: a targeted search of FIN, DOC's evidence and the money posting. Corrections outside the Task's own files, each small and forced: `package.json` overrides the linters' `minimatch` to 11.0.3, past advisory GHSA-g3hv-75wg-m249 published during this Task, which failed TL-14's audit on every branch while `eslint` and `typescript-eslint` still pin `^10`; the browser job's `timeout-minutes` goes from 30 to 45, this Task's layers taking the suite past the old budget; the numbering fixture's random company code widened after a collision in CI; `FinanceNav` joins PG-041 and PG-044, which had no way to reach each other. Executor readings within the approved text: `DOC RecordBankStatementLine` sets flagged payments' citations through a new inversion contract `BankLineCitations`, DOC being tier 1; a first citation of a payment recorded after its line exists goes through ROUTE-262's `CorrectBankCitation` with its reason; a cited line counts as proof (WF-FIN-03's preconditions); ROUTE-262's `{id}` is the line's handle for a void and the payment for a citation or a claim; BD-02 skips a wholly contra'd payment, no real receipt any more, so a re-recording of one that still stands is warned and overridden like any other; a contra revalidates every project its source touches; its case names the first project and the next as causal, a residual settlement on any other project opening a case of its own; "Tautkan Kuitansi" on PG-046, where no payment exists yet, is a link to PG-043 beside the invoice, the control itself on PG-045's sheet and PG-043; a revised Kuitansi's Lampiran opens its revision draft for PG-036 rather than drawing a number in the Kuitansi's command; the first DOC-05 and DOC-07 issue through TASK-029's ROUTE-221 and ROUTE-222. QS-12's bank-line row is TASK-058's to render. Later adding a claimed deduction to a recorded payment has no route of its own: only its supersession is contracted here.
 
 **SAFE NEXT TASK:**
 
