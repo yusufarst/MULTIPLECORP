@@ -697,7 +697,6 @@
     "actions.abort_batch": "Abort batch",
     "actions.mark_performed": "Mark performed",
     "actions.undo_performed": "Undo performed mark",
-    "actions.hold_credit": "Hold credit",
     "actions.record_adjustment": "Record stock adjustment",
     "actions.record_bank_line": "Record bank statement line",
     "actions.record_cash_disbursement": "Record cash disbursement",

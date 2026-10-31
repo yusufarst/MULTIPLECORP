@@ -697,7 +697,6 @@
     "actions.abort_batch": "Batalkan Batch",
     "actions.mark_performed": "Tandai Terlaksana",
     "actions.undo_performed": "Batalkan Tanda Terlaksana",
-    "actions.hold_credit": "Tahan Kredit",
     "actions.record_adjustment": "Catat Penyesuaian Stok",
     "actions.record_bank_line": "Catat Mutasi Bank",
     "actions.record_cash_disbursement": "Catat Pengeluaran Kas",

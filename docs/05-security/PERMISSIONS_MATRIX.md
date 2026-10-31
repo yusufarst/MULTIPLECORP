@@ -10,7 +10,7 @@ Amendment: on 2026-10-03, under [DIR-043](../00-governance/DECISION_LOG.md#dir-0
 
 Amendment: on 2026-10-18 run PC-2 drafted this revision under [CHANGE_CONTROL](../00-governance/CHANGE_CONTROL.md#decision-authority) and [DIR-078](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) SP-65, with only the narrow amendments the Owner's CP-A decisions require ([DIR-077](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts) CA-07, CA-08 and CA-10): section 7.4's RD-02 serves QS-24, the dispatch-ready lines, its project parts under RD-03 as QS-01–QS-04's (CA-07); QS-23, the overdue projects, is served under RD-09 and PJ-13 makes it Owner-only (CA-10). OD-01's list of what an account changes itself gains its own display language (CA-08; SECURITY AU-13). PJ-18's "purchase number" is unchanged: under CA-09 it is the purchase's business number. Each changed statement is marked `DIR-077`. The revision before it — APPROVED under APPR-006, with the amended revisions its approval and amendment paragraphs above record — stayed in force until APPR-011; its SHA-256, each change with its reason and impact, and the statements a scripted search examined are recorded in [TECH-037](../00-governance/DECISION_LOG.md#dir-077-dir-078-obs-030-and-tech-037--p7-ux-re-baseline-cp-a-decisions-run-pc-2-with-p9s-drafting-baseline-and-drafts), and the amended revision is approved under [APPR-011](../00-governance/DECISION_LOG.md#appr-011--p7-ux-re-baseline-approved).
 
-Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), the Owner's decisions on P11Q-07 and OF-04 (APPR-027) and Change 15 of [TASK_PLAN §7](../11-tasks/TASK_PLAN.md#7-controlled-task-plan-changes), only the catalogue rows of `purchase.manage`, `purchase.correct_cost` and `refund.record`, RG-11 and row 28. Each changed statement is marked `DIR-101`.
+Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), the Owner's decisions on P11Q-07 and OF-04 (APPR-027) and Change 15 of [TASK_PLAN §7](../11-tasks/TASK_PLAN.md#7-controlled-task-plan-changes), only the catalogue rows of `purchase.manage`, `purchase.correct_cost` and `refund.record`, and RG-11. Each changed statement is marked `DIR-101`.
 
 Authority: P5 — Security & Authorization, authorized by the Owner's fast-track directive [DIR-031](../00-governance/DECISION_LOG.md#dir-031-obs-010-and-tech-020--p5-authorization-entry-baseline-and-security-documentation) (twenty-seventh source record). This document owns **authorization truth**: the capability catalogue and authority classes, the role and grant model, company-scope rules, the resource and field projection matrix, cross-company link authorization, Owner-only denials, Owner review-queue access and the data-path coverage matrix. Security mechanisms — authentication, sessions, credentials, input, files, logging, secrets and the threat model — are owned by [SECURITY](SECURITY.md); phase evidence by [P5_QUALITY_GATE](evidence/P5_QUALITY_GATE.md).
 
@@ -138,7 +138,7 @@ Prerequisites (RG-06) are listed per capability; "grant" means at least one comp
 | `warnings.override` | ADM_PLUS | W4-18 | the record's view capability | Duplicate-payment and duplicate-evidence warning overrides (QS-21; DP-13) |
 | `cash.correct` | ADM_PLUS | W4-18 | `finance.view` | Bank-line void, bank-citation correction, claimed-deduction supersession |
 | `purchase.cancel` | ADM_PLUS | W4-19 | `cost.view` | AX-12 purchase cancellation |
-| `refund.record` | ADM_PLUS | W4-20 | `finance.view` | AX-23 refund disbursement; the hold of project-originated credit (ROUTE-264; WF-FIN-06; `DIR-101`) |
+| `refund.record` | ADM_PLUS | W4-20 | `finance.view` | AX-23 refund disbursement; the hold of project-originated credit (WF-FIN-06; `DIR-101`; its row waits on P11Q-08) |
 | `settlement.record` | ADM_PLUS | W4-20 | `finance.view`, `evidence.view` | AX-21 fee and tax settlements and the resolution of a residual settlement |
 | `stock.adjust` | ADM_PLUS | W4-21 | `stock.view` | Adjustment decrease, disposal and loss recognition (AX-06/30), including a pending unexplained-loss case (SF-UNATTRIBUTED) |
 | `stock.condition` | ADM_PLUS | W4-21 | `stock.view` | Condition change and re-inspection (WF-INV-04), including a pending condition-change case |
@@ -247,7 +247,7 @@ Each of the 125 tables of [DATABASE §4](../04-architecture/DATABASE/s04-00-modu
 | 25 | `product_barcodes` | MASTER | S0 | ALL |
 | 26 | `product_price_history` | MASTER | S3 | PURCHASE_DEFAULT CV(any); SELLING_DEFAULT and SPJ_REFERENCE FV(any) (PJ-14) |
 | 27 | `product_images` | MASTER | S0 | ALL (stored stripped, FL-03) |
-| 28 | `projects` | PROJECT | S2 | PV(c); linked project per XL-4; `credit_held_amount` FV(c) (`DIR-101`) |
+| 28 | `projects` | PROJECT | S2 | PV(c); linked project per XL-4 |
 | 29 | `project_siplah_details` | PROJECT | S2 / S3 | PV(c); money columns FV(c) |
 | 30 | `project_lines` | PROJECT | S2 / S3 | PV(c); draft prices FV(c) |
 | 31 | `commercial_confirmations` | PROJECT | S2 | PV(c) |

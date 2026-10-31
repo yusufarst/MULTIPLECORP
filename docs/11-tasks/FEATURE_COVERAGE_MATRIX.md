@@ -8,7 +8,7 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Amendment: on 2026-10-31, under [DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit), Change 4 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its eighteen entries and the counts they change. It takes effect at the Owner's merge.
 
-Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), Change 15 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its four entries and the counts they change.
+Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), Change 15 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its two entries and the counts they change.
 
 Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); the Owner approved it with P11 at OG-4 (DIR-085 OF-07), which satisfies PRQ-13. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
 
@@ -42,9 +42,9 @@ Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISI
 | AX- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 37 |
 | QS- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 24 |
 | L- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 50 |
-| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 220 |
+| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 219 |
 | RC- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 6 |
-| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 176 |
+| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 175 |
 | IG- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 5 |
 | D-DB- | [DATABASE](../04-architecture/DATABASE/README.md) | 14 |
 | C- | [DATABASE](../04-architecture/DATABASE/README.md) | 65 |
@@ -868,7 +868,6 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-261 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | ROUTE-262 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | ROUTE-263 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
-| ROUTE-264 | ROUTE- | ROUTE_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-053 |
 | ROUTE-271 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-031 |
 | ROUTE-272 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | ROUTE-273 | ROUTE- | ROUTE_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
@@ -1049,7 +1048,6 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-261 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | INT-262 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-051 |
 | INT-263 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-052 |
-| INT-264 | INT- | INTERACTION_CONTRACTS · Finance — invoices, payments, deductions, credit, other cash and bank statements (FIN; PG- | TASK-053 |
 | INT-271 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-031 |
 | INT-272 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
 | INT-273 | INT- | INTERACTION_CONTRACTS · Operations — correction cases and the opening import (OPS; PG-040, PG-058; WF-MIG-01) | TASK-057 |
@@ -3487,7 +3485,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-050 | Billing, receivables, dispute hold and Owner write-off | 101 |
 | TASK-051 | Payments, applications and bank statement lines | 142 |
 | TASK-052 | Deduction settlements and contras | 95 |
-| TASK-053 | Customer credit and refunds | 86 |
+| TASK-053 | Customer credit and refunds | 84 |
 | TASK-054 | Expenses, disbursements and other cash | 86 |
 | TASK-055 | Project completion and Force Complete | 57 |
 | TASK-056 | Project cancellation | 35 |
@@ -3525,12 +3523,12 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 
 ## 5. Checks
 
-- **Entries:** 3259, in 125 family-and-document pairs.
-- **Mapped:** 3259 of 3259 — 3210 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
+- **Entries:** 3257, in 125 family-and-document pairs.
+- **Mapped:** 3257 of 3257 — 3208 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2138 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
+- **Method:** 2136 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
 - **After OG-4:** GAP-066, GAP-067 and GAP-068, OPEN since the Owner's answers to P11Q-02–P11Q-04 ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization)), entered by the explicit rule for the OPEN gaps with the Tasks their register entries name — TASK_PLAN's Change 3, which re-checked this section by script.
 - **Change 4 ([DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit)):** eighteen entries added by the explicit rule, ROUTE-178, ROUTE-179, ROUTE-215, ROUTE-216, ROUTE-263, ROUTE-276–ROUTE-278, their INT-, INT-217 and GAP-071; GAP-066 and GAP-067 stay mapped, closed at its merge.
-- **Change 15 ([DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels)):** four entries added by the explicit rule, ROUTE-180, INT-180, ROUTE-264 and INT-264; GAP-068 and GAP-071 stay mapped, closed.
+- **Change 15 ([DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels)):** two entries added by the explicit rule, ROUTE-180 and INT-180; GAP-068 stays mapped, closed.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).
