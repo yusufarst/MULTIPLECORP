@@ -449,6 +449,57 @@ final class CostPosting
     }
 
     /**
+     * A cancelled purchase's non-stock line as never bought (AX-12; L-18): each component of its direct HPP contra'd where it sits, on the project it was attributed to; its goods and tax returned for PUR to lower the line's posted values,
+     * its charge parts leaving the guards they came from and expensed, no line of a cancelled purchase being a target (DATABASE §6.1). The caller has moved the purchase to CANCELLED first.
+     */
+    public function nonStockCancelled(CommandContext $context, int $purchaseLineId, string $businessDate): ReceiptPosted
+    {
+        $context->require(self::purchaseLocks(self::purchaseOf($purchaseLineId)));
+        $initial = DB::table('cost_attributions')->where('purchase_line_id', $purchaseLineId)->where('cause', 'INITIAL')->orderBy('id')->first(['id', 'bearer_company_id', 'bearer_project_id']);
+
+        if (! is_object($initial)) {
+            return ReceiptPosted::none();
+        }
+
+        $project = (int) Row::text($initial, 'bearer_project_id');
+        $base = ['purchase_line_id' => $purchaseLineId, 'cost_class' => 'HPP', 'cause' => 'COST_CORRECTION', 'bearer_company_id' => (int) Row::text($initial, 'bearer_company_id'), 'bearer_project_id' => $project,
+            'reverses_attribution_id' => (int) Row::text($initial, 'id'), 'business_date' => $businessDate];
+        $ledger = new CostLedger($context);
+        $posted = ReceiptPosted::none();
+        $respreads = [];
+        $total = Money::zero();
+
+        foreach (self::directGroups('purchase_line_id', $purchaseLineId, 'HPP') as $group) {
+            $part = $group['net'];
+            $total = $total->plus($part);
+            $ledger->attribution([...$base, ...$group['references'], 'cost_component' => $group['component'], 'amount' => $part->negated()->toString()]);
+            $posted = $posted->plus(match ($group['component']) {
+                'GOODS' => new ReceiptPosted($part->negated(), Money::zero()),
+                'NONCREDITABLE_TAX' => new ReceiptPosted(Money::zero(), $part->negated()),
+                default => ReceiptPosted::none(),
+            });
+
+            if ($group['component'] === 'CHARGE') {
+                $charge = $group['references']['purchase_charge_id'];
+                $own = isset($group['references']['purchase_charge_line_share_id']);
+                $source = $own ? $purchaseLineId : $group['references']['respread_from_purchase_line_id'];
+                $ledger->move('purchase_charge_share_balances', ['purchase_charge_id' => $charge, 'purchase_line_id' => $source], [$own ? 'posted_amount' : 'respread_out_amount' => $part->negated()->toString()]);
+                $ledger->move('purchase_charge_balances', ['purchase_charge_id' => $charge], ['allocated_amount' => $part->negated()->toString()]);
+                $respreads[] = [$charge, $source, $group['references']['allocation_version'], $part];
+            }
+        }
+
+        foreach ($respreads as [$charge, $source, $version, $part]) {
+            $this->respread($context, $ledger, $charge, $source, $version, $part, $businessDate);
+        }
+
+        $ledger->flush();
+        $this->corrected($context, self::moved(self::none(), 'projects', (string) $project, $total), "purchase_line:{$purchaseLineId}:cancelled");
+
+        return $posted;
+    }
+
+    /**
      * The system-created expense of a settlement (BR-FIN-09; BR-FIN-16; C-23; DATABASE §11.4): a fee's, or a tax's under a rule that says so, with its money-fact guard, in a category no manual
      * entry may use. The evidence's expensed amount is the settling command's, which moves it where the expense is new and leaves it where the expense only moves with its settlement.
      */
@@ -833,9 +884,9 @@ final class CostPosting
      * drop-ship lines and — for a non-stock line — the line itself, in id order by cumulative rounding of their net
      * quantities as COST_CORRECTION rows, each holder's part passed on to its dependents (step 3), the cases' replacements
      * corrected with them, the cases reopened (step 4) and the completed projects revalidated where material (step 5).
-     * The caller has moved the line's value by the adjustment's delta.
+     * The caller has moved the line's value by the adjustment's delta, or, when a lowered value could not stand beside what is still posted (C-57), names it as `$corrected` and moves both together afterwards.
      */
-    public function lineCorrected(CommandContext $context, int $adjustmentId, string $businessDate): ReceiptPosted
+    public function lineCorrected(CommandContext $context, int $adjustmentId, string $businessDate, ?Money $corrected = null): ReceiptPosted
     {
         $adjustment = DB::table('purchase_line_adjustments')->where('id', $adjustmentId)->first(['purchase_line_id', 'kind'])
             ?? throw new InvalidArgumentException("No purchase line adjustment {$adjustmentId}.");
@@ -848,7 +899,7 @@ final class CostPosting
         $context->require(self::purchaseLocks(self::purchaseOf($lineId)));
         $line = self::lineBalance($lineId);
         [$value, $postedColumn] = $component === 'GOODS' ? ['goods_value', 'posted_goods_value'] : ['noncreditable_tax_value', 'posted_noncreditable_tax_value'];
-        $delta = CostSplitter::target(Money::of(Row::text($line, $value)), self::received($line), Row::text($line, 'ordered_qty_base'))->minus(Money::of(Row::text($line, $postedColumn)));
+        $delta = CostSplitter::target($corrected ?? Money::of(Row::text($line, $value)), self::received($line), Row::text($line, 'ordered_qty_base'))->minus(Money::of(Row::text($line, $postedColumn)));
         $ledger = new CostLedger($context);
         $affected = self::none();
 
@@ -1381,8 +1432,10 @@ final class CostPosting
     /** The source bill's cap (C-20; L-43): Σ charges and expenses citing it never above its total. */
     private function cite(CommandContext $context, int $billId, Money $amount): void
     {
-        if ($amount->compareTo(Money::of($this->evidence->uncited($context, $billId))) > 0) {
-            throw Refused::rejected('C-20', ['bill' => $billId, 'amount' => $amount->toString()]);
+        $uncited = $this->evidence->uncited($context, $billId);
+
+        if ($amount->compareTo(Money::of($uncited)) > 0) {
+            throw Refused::rejected('C-20', ['bill' => $billId, 'amount' => $amount->toString(), 'uncited' => $uncited]);
         }
 
         $this->evidence->cite($context, $billId, 'CHARGE_SOURCE_BILL', $amount->toString());

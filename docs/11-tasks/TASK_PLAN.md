@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 44
-READY: 1
-IN_PROGRESS: 0
+READY: 0
+IN_PROGRESS: 1
 BLOCKED: 7
 VERIFYING: 0
 TODO: 35
@@ -28,8 +28,8 @@ Progress:
 44 / 87
 Percentage: 50.6 %
 
-CURRENT TASK: none in progress — TASK-052 — Deduction settlements and contras DONE on its branch `task/TASK-052-settlements`, CI PASS on `7692674`, its pull request #52 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-037 — Purchases, READY; TASK-053 and TASK-055 wait on P11Q-08; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-037 — Purchases — project and replenishment purchases, IN PROGRESS on its branch `task/TASK-037-purchases` from the merged `main` `ffc4e3f` (DIR-096); TASK-052 DONE and squash-merged
+NEXT READY TASK: none READY until TASK-037 is merged, its DONE re-checking the gates of the Tasks it unblocks (DIR-096); TASK-053 and TASK-055 wait on P11Q-08; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 15 of 2026-10-31 — DIR-101, the Owner's decisions on P11Q-07, OF-04 and the labels; the credit hold's attribution raised as P11Q-08
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -177,7 +177,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | DONE | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | DONE | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
-| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | READY | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
+| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | IN_PROGRESS | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
 | [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | DONE | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
 | [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
 | [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 042, 044, 057, 059 | NO | AGENT | NONE | YES |

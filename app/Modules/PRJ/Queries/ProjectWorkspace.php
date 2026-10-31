@@ -6,6 +6,7 @@ use App\Modules\DOC\Queries\ProjectDocuments;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Queries\CorrectionTrail;
+use App\Modules\PRJ\Contracts\ProjectPartProvider;
 use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Data\ProjectInput;
 use App\Modules\PRJ\Data\ProjectRef;
@@ -65,6 +66,28 @@ final class ProjectWorkspace
         $project = $this->lookup($viewerId, $publicId);
 
         return $project === null ? null : new ProjectRef($project->id, $project->company_id, $project->public_id);
+    }
+
+    /**
+     * The parts of higher tiers on *Rincian proyek* — *Pengadaan* — each from its own module (ARCHITECTURE §3; §13.7), a part the viewer's family does not admit absent.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    public function parts(int $viewerId, Project $project): array
+    {
+        $parts = [];
+
+        foreach ($this->app->tagged(ProjectPartProvider::TAG) as $provider) {
+            if ($provider instanceof ProjectPartProvider) {
+                $part = $provider->part($this->viewer($viewerId), $project->id, $project->company_id);
+
+                if ($part !== null) {
+                    $parts[$provider->key()] = $part;
+                }
+            }
+        }
+
+        return $parts;
     }
 
     /**

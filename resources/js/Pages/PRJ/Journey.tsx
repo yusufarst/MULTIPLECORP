@@ -60,6 +60,7 @@ type Props = {
     financial: { confirmed: string; invoiced: string } | null;
     can: { edit: boolean; discard: boolean };
     fulfilment: Fulfilment & { today: string };
+    parts?: { procurement?: { purchases: { id: string; number: string; supplier: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; date: string; remaining: string }[]; can_create: boolean } };
     predicates?: JourneyShape | null | Failed;
     documents?: Documents | Failed;
     history?: History | Failed;
@@ -101,7 +102,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
-export default function Journey({ project, journey, financial, can, fulfilment, predicates, documents, history }: Props) {
+export default function Journey({ project, journey, financial, can, fulfilment, parts, predicates, documents, history }: Props) {
     const { t } = useTranslation();
     const [discarding, setDiscarding] = useState(false);
     const discard = useCommand<Record<string, never>>(() => `/proyek/${project.id}/hapus-draf`, 'post');
@@ -224,6 +225,27 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
                     </Section>
                 </div>
                 {/* The confirmation and *Item dan pemenuhan* (J-PRJ-02; J-FUL-01; TASK-034). */}
+                {parts?.procurement !== undefined && (
+                    <section data-slot="procurement" className="flex min-w-0 flex-col gap-3">
+                        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                            <h2 className="text-subhead">{t('purchases.project.title')}</h2>
+                            {parts.procurement.can_create && <Button variant="outline" size="sm" render={<a href={`/pembelian/baru?proyek=${project.id}`} />}>{t('actions.create_purchase')}</Button>}
+                        </div>
+                        {parts.procurement.purchases.length === 0 ? <p className="text-body text-text-secondary">{t('purchases.project.empty')}</p> : (
+                            <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
+                                {parts.procurement.purchases.map((purchase) => (
+                                    <li key={purchase.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 py-2 text-body">
+                                        <a className="min-w-0 underline" href={`/pembelian/${purchase.id}`}>{`${purchase.number} · ${purchase.supplier}`}</a>
+                                        <span className="flex flex-wrap items-center gap-3 text-caption text-text-secondary">
+                                            {t('purchases.project.remaining', { sisa: purchase.remaining.replace(/\.?0+$/, '') === '' ? '0' : purchase.remaining.replace(/\.?0+$/, '') })}
+                                            <StatusBadge family="purchase" state={purchase.state} size="sm" />
+                                        </span>
+                                    </li>
+                                ))}
+                            </ul>
+                        )}
+                    </section>
+                )}
                 <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
                 {financial !== null && (
                     <Section title={t('journey.financial')}>
