@@ -4,7 +4,7 @@ import { invoiceRun, type InvoiceRun } from '../invoice-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
-// TL-09 (TASK-051; J-FIN-03; S2-J06; CJ-04's partial, full and overpayment, credit and the duplicate; CJ-21's lost answer and retry; J-FIN-07's statement lines): a payment with its proof and one application on the phone; several applications and the statement line at the desk, the recorded payment first on PG-045; "Terapkan", "Pindahkan Penerapan"
+// TL-09 (TASK-051; J-FIN-03; S2-J06; CJ-04's partial, full and overpayment, credit and the duplicate; CJ-21's lost answer and retry; J-FIN-07's statement lines): a payment with its proof and one application on the phone; several applications and the statement line at the desk, the recorded payment first on PG-045; "Terapkan"
 // and the contra in place; a likely duplicate's warning and override; a line recorded, a flagged payment citing it and a mistyped one voided.
 
 test.describe.configure({ timeout: 240_000 });
@@ -95,7 +95,7 @@ test('warns on a likely duplicate, the override naming the match with its reason
     await expect(page).toHaveURL(/tercatat=/);
 });
 
-test('applies money left unapplied, moves an application and contras the payment in place, both records visible (INT-252; INT-253; INT-254; CM-19; CM-21)', async ({ page }) => {
+test('applies money left unapplied and contras the payment in place, both records visible (INT-252; INT-254; CM-19)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await invoiceRun(page, `bayar-koreksi-${String(Date.now())}`, { stage: 'issued', billed: true, bank: true, paid: '400000' });
 
@@ -118,7 +118,7 @@ test('applies money left unapplied, moves an application and contras the payment
     await contra.getByRole('button', { name: 'Batalkan Catatan Pembayaran (Kontra)' }).click();
     await expect(page.locator('#konten').getByText(/Kontra tercatat/)).toBeVisible();
 
-    await page.getByRole('table', { name: 'Pembayaran' }).getByRole('button').first().click();
+    // The payment's sheet stays open behind the form, its rows refreshed in place.
     await expect(page.getByTestId('payment').locator('[data-status="payment.CONTRA_D"]')).toBeVisible();
     await expect(page.getByTestId('payment-application')).toContainText('Dilepas karena pembayaran dikontra');
     await page.goto(`/keuangan/invoice/${run.invoice ?? ''}`);
