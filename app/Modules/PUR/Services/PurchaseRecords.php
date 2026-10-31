@@ -301,6 +301,13 @@ final class PurchaseRecords
 
         // A charge committed while this command waited names rows it does not hold (§5 steps 3–4).
         $context->require(self::amendLocks($purchase->id));
+        // Read before the lines change: each charge's basis as it stands, a corrected one's too.
+        $bases = [];
+
+        foreach (DB::table('purchase_charges')->where('purchase_id', $purchase->id)->where('classification', PurchaseEntry::ATTRIBUTABLE)->get(['id', 'allocation_basis']) as $charge) {
+            $bases[(int) Row::text($charge, 'id')] = self::effectiveBasis((int) Row::text($charge, 'id'), $purchase->id, Row::text($charge, 'allocation_basis'));
+        }
+
         $existing = [];
 
         foreach (DB::table('purchase_lines as l')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')->where('l.purchase_id', $purchase->id)->where('l.kind', PurchaseEntry::GOODS)->orderBy('l.line_no')->get(['l.id', 'l.line_no', 'l.entered_qty', 'l.unit_price', 'l.line_value', 'b.ordered_qty_base', 'b.goods_value', 'b.noncreditable_tax_value']) as $row) {
@@ -352,14 +359,18 @@ final class PurchaseRecords
         }
 
         $this->insertLines($context, $purchase->id, $purchase->company_id, $new, $lastLine);
-        $this->reallocate($context, $purchase, $entry->businessDate);
+        $this->reallocate($context, $purchase, $bases, $entry->businessDate);
         DB::table('purchases')->where('id', $purchase->id)->update(['lock_version' => $lockVersion + 1, 'updated_at' => $now]);
         $this->audit->record(action: 'PUR.PurchaseAmended', authorityClass: AuthorityClass::Adm, actorUserId: $context->request->actorUserId, companyId: $purchase->company_id, entityType: 'purchase', entityId: $purchase->id, entityPublicId: $purchase->public_id, reason: null, commandId: $context->request->commandId,
             change: AuditChange::updated(['lines' => count($existing), 'changed' => $before], ['lines' => count($prepared), 'changed' => $after]));
     }
 
-    /** Each attributable charge's shares by the lines' new figures, a new version with its cascade (CM-35; DATABASE §6.3 step 2). */
-    private function reallocate(CommandContext $context, Purchase $purchase, string $businessDate): void
+    /**
+     * Each attributable charge's shares by the lines' new figures, a new version with its cascade (CM-35; DATABASE §6.3 step 2).
+     *
+     * @param  array<int, string>  $bases  charge => its basis as it stood before the lines changed
+     */
+    private function reallocate(CommandContext $context, Purchase $purchase, array $bases, string $businessDate): void
     {
         $position = 0;
 
@@ -367,7 +378,7 @@ final class PurchaseRecords
             $id = (int) Row::text($charge, 'id');
             $version = self::latestVersion($id);
             $amount = DB::table('purchase_charge_balances')->where('purchase_charge_id', $id)->value('amount');
-            $this->insertShares($context, $id, $purchase->company_id, $purchase->id, Money::of(is_string($amount) ? $amount : Row::text($charge, 'amount')), Row::text($charge, 'allocation_basis'), self::keptBasis($id, $purchase->id), $version + 1, ++$position * self::SHARE_ROWS);
+            $this->insertShares($context, $id, $purchase->company_id, $purchase->id, Money::of(is_string($amount) ? $amount : Row::text($charge, 'amount')), $bases[$id] ?? Row::text($charge, 'allocation_basis'), self::keptBasis($id, $purchase->id), $version + 1, ++$position * self::SHARE_ROWS);
             // The set was required whole above; what it names now beyond that is what this command inserted: its new lines and an earlier charge's guards on them.
             $context->created(CostPosting::purchaseLocks($purchase->id));
             $this->cost->chargeCorrected($context, $id, null, $businessDate);
@@ -386,6 +397,37 @@ final class PurchaseRecords
             ->where('l.purchase_id', $purchaseId)->orderBy('l.line_no')->pluck('s.basis_value')->all();
 
         return array_values(array_map(fn (mixed $value): ?string => is_string($value) ? $value : null, $kept));
+    }
+
+    /**
+     * The charge's basis as it stands: `purchase_charges` keeps what was recorded (AF), a correction lives in the shares' versions (CM-35), so the latest version's values say it. Values that are the lines' own figures are that figure's basis, the recorded one first where both fit; any others, entered by hand, stand as entered.
+     */
+    public static function effectiveBasis(int $chargeId, int $purchaseId, string $recorded): string
+    {
+        if (self::latestVersion($chargeId) <= 1) {
+            return $recorded;
+        }
+
+        $kept = self::keptBasis($chargeId, $purchaseId);
+        $lines = DB::table('purchase_lines')->where('purchase_id', $purchaseId)->orderBy('line_no')->get(['line_value', 'qty_base'])->all();
+        $matches = function (string $column) use ($kept, $lines): bool {
+            foreach ($lines as $position => $line) {
+                if (! BigDecimal::of($kept[$position] ?? '0')->isEqualTo(Row::text($line, $column))) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+        $figures = ['LINE_VALUE' => 'line_value', 'QUANTITY' => 'qty_base'];
+
+        foreach (array_unique([$recorded, ...array_keys($figures)]) as $basis) {
+            if (isset($figures[$basis]) && $matches($figures[$basis])) {
+                return $basis;
+            }
+        }
+
+        return in_array($recorded, ['WEIGHT', 'EXPLICIT'], true) ? $recorded : 'EXPLICIT';
     }
 
     public static function latestVersion(int $chargeId): int

@@ -638,3 +638,32 @@ it('names the bill\'s remaining figure in C-20 (L-43)', function () {
 
     expect(purchaseAnswer()['code'])->toBe('C-20')->and(purchaseAnswer()['text'])->toContain('100');
 });
+
+it('keeps a corrected basis through a later amount correction and amendment (CM-17; CM-35; DATABASE §6.3 step 2)', function () {
+    $bill = PurchaseWorld::bill($this->company->id);
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods, '10', '100'), PurchaseWorld::line(Projects::product(), '30', '100')], ['biaya' => [['tagihan' => $bill, 'klasifikasi' => 'ATTRIBUTABLE', 'jumlah' => '1000', 'dasar' => 'LINE_VALUE']]]);
+    [$a, $b] = PurchaseWorld::lines($purchase);
+    $charge = (int) DB::table('purchase_charges')->where('purchase_id', $purchase->id)->value('id');
+    $handle = RowHandle::of('purchase_charges', $charge);
+    $share = fn ($line) => DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $charge)->where('purchase_line_id', $line->id)->value('share_amount');
+
+    // Prices that make the two bases differ only in what an explicit split can say: 1:1 by hand against 1:3 by value.
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-dasar-alokasi", reasoned($this, ['catatan' => $handle, 'dasar' => 'EXPLICIT', 'nilai_dasar' => ['1', '1']]));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('500.00')->and($share($b))->toBe('500.00');
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-biaya", reasoned($this, ['jenis' => 'CHARGE_CORRECTION', 'catatan' => $handle, 'nilai' => '2000']));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('1000.00')->and($share($b))->toBe('1000.00');
+    $this->actingAs($this->actor)->get("/pembelian/{$purchase->public_id}")->assertInertia(fn ($page) => $page->where('charges.0.basis', 'EXPLICIT')->etc());
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-dasar-alokasi", reasoned($this, ['catatan' => $handle, 'dasar' => 'QUANTITY']));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('500.00')->and($share($b))->toBe('1500.00');
+    $this->actingAs($this->actor)->get("/pembelian/{$purchase->public_id}")->assertInertia(fn ($page) => $page->where('charges.0.basis', 'QUANTITY')->etc());
+
+    // Amended before its first effect: the quantity basis follows the new quantities, though the line value would not.
+    $body = ['command_id' => (string) Str::uuid(), 'lock_version' => $purchase->fresh()->lock_version, 'baris' => [
+        ['handle' => RowHandle::of('purchase_lines', $a->id), ...PurchaseWorld::line($this->goods, '30', '10')],
+        ['handle' => RowHandle::of('purchase_lines', $b->id), 'jenis' => 'GOODS', 'produk' => DB::table('products')->where('id', $b->product_id)->value('public_id'), 'satuan' => DB::table('units')->where('id', $b->entered_unit_id)->value('code'), 'jumlah' => '10', 'harga' => '1000'],
+    ]];
+    $this->actingAs($this->actor)->put("/pembelian/{$purchase->public_id}", $body);
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('1500.00')->and($share($b))->toBe('500.00');
+});

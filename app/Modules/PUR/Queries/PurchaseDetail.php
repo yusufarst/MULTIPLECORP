@@ -7,6 +7,7 @@ use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Services\PurchaseCorrections;
+use App\Modules\PUR\Services\PurchaseRecords;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -123,7 +124,7 @@ final class PurchaseDetail
             $shares = DB::table('purchase_charge_share_balances as b')->join('purchase_lines as l', 'l.id', '=', 'b.purchase_line_id')->where('b.purchase_charge_id', $id)->orderBy('l.line_no')->get(['l.line_no', 'b.share_amount', 'b.posted_amount', 'b.respread_out_amount', 'b.expensed_out_amount']);
             $current = Row::nullable($row, 'current') ?? Row::text($row, 'amount');
             $charges[] = [
-                'handle' => RowHandle::of('purchase_charges', $id), 'classification' => Row::text($row, 'classification'), 'basis' => Row::nullable($row, 'allocation_basis'), 'amount' => $current, 'allocated' => Row::nullable($row, 'allocated_amount') ?? '0', 'expensed' => Row::nullable($row, 'expensed_amount') ?? '0',
+                'handle' => RowHandle::of('purchase_charges', $id), 'classification' => Row::text($row, 'classification'), 'basis' => Row::nullable($row, 'allocation_basis') === null ? null : PurchaseRecords::effectiveBasis($id, $purchase->id, Row::text($row, 'allocation_basis')), 'amount' => $current, 'allocated' => Row::nullable($row, 'allocated_amount') ?? '0', 'expensed' => Row::nullable($row, 'expensed_amount') ?? '0',
                 'bill' => Row::text($row, 'bill'), 'issuer' => Row::text($row, 'declared_issuer'), 'reference' => Row::nullable($row, 'issuer_reference'),
                 'shares' => array_values(array_map(fn (object $share): array => ['line' => (int) Row::text($share, 'line_no'), 'share' => Row::text($share, 'share_amount'), 'posted' => Row::text($share, 'posted_amount')], $shares->all())),
             ];

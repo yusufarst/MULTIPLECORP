@@ -110,3 +110,14 @@ it('never accepts company, number, state or posted values from the payload (DP-0
 
     expect($saved->purchase_number)->not->toBe('PALSU')->and($saved->state)->toBe('OPEN')->and($saved->company_id)->toBe($this->company->id);
 });
+
+it('gives supplier bills only with evidence.view: purchase.manage and cost.view alone see none (PJ-08)', function () {
+    PurchaseWorld::bill($this->company->id);
+    $without = Authorization::admin([$this->company->id], ['cost.view', 'purchase.manage']);
+    $with = Authorization::admin([$this->company->id], ['cost.view', 'purchase.manage', 'evidence.view']);
+
+    $this->actingAs($without)->get("/pembelian/baru?perusahaan={$this->company->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('bills', [])->etc());
+    $this->actingAs($without)->get("/pembelian/{$this->purchase->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('bills', [])->etc());
+    $this->actingAs($with)->get("/pembelian/baru?perusahaan={$this->company->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->has('bills', 1)->etc());
+    $this->actingAs($with)->get("/pembelian/{$this->purchase->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->has('bills', 1)->etc());
+});

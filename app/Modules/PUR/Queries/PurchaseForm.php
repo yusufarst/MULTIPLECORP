@@ -2,6 +2,7 @@
 
 namespace App\Modules\PUR\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\PUR\Services\PurchaseTaxes;
@@ -55,7 +56,7 @@ final class PurchaseForm
             'prefill' => $chosenProject['shortage'] ?? [],
             'product' => $products[$product === null ? '' : strtolower($product)] ?? null,
             'taxes' => $internal === null ? [] : $this->taxes($internal),
-            'bills' => $internal === null ? [] : $this->bills($internal),
+            'bills' => $internal === null || ! EvidenceTypes::mayView($viewer, 'SUPPLIER_BILL', $internal) ? [] : $this->bills($internal),
             'today' => BusinessDate::today(),
             'can' => ['new_supplier' => $viewer->allows('parties.manage'), 'bill' => $internal !== null && $viewer->allows('evidence.upload', $internal)],
         ];

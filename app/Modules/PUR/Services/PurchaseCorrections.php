@@ -289,6 +289,7 @@ final class PurchaseCorrections
             throw Refused::rejected('CM-35', ['reason' => 'not_attributable']);
         }
 
+        $effective = PurchaseRecords::effectiveBasis($chargeId, $purchase->id, Row::text($charge, 'allocation_basis'));
         $current = Money::of(Row::text($charge, 'amount'));
         $target = $amount === null ? $current : Money::of($amount);
         $delta = $target->minus($current);
@@ -299,11 +300,11 @@ final class PurchaseCorrections
         }
 
         $version = PurchaseRecords::latestVersion($chargeId) + 1;
-        // An amount alone keeps the basis as it stands, a weight's or an explicit split's values with it.
-        $this->records->insertShares($context, $chargeId, $purchase->company_id, $purchase->id, $target, $basis ?? Row::text($charge, 'allocation_basis'), $basis === null ? PurchaseRecords::keptBasis($chargeId, $purchase->id) : $entered, $version, PurchaseRecords::SHARE_ROWS);
+        // An amount alone keeps the latest version's basis values as they stand, whichever basis gave them.
+        $this->records->insertShares($context, $chargeId, $purchase->company_id, $purchase->id, $target, $basis ?? 'EXPLICIT', $basis === null ? PurchaseRecords::keptBasis($chargeId, $purchase->id) : $entered, $version, PurchaseRecords::SHARE_ROWS);
         $this->cost->chargeCorrected($context, $chargeId, $adjustment, $businessDate);
         $this->corrections->record($context, 'PUR.CostCorrected', AuthorityClass::AdmPlus, $purchase->company_id, 'purchase', $purchase->id, $purchase->public_id, AuditRelation::Revises, 'purchase', $purchase->public_id, $reason,
-            AuditChange::updated(['amount' => $current->toString(), 'basis' => Row::nullable($charge, 'allocation_basis')], ['amount' => $target->toString(), 'basis' => $basis, 'charge' => RowHandle::of('purchase_charges', $chargeId)]), null, ['business_date' => $businessDate]);
+            AuditChange::updated(['amount' => $current->toString(), 'basis' => $effective], ['amount' => $target->toString(), 'basis' => $basis ?? $effective, 'charge' => RowHandle::of('purchase_charges', $chargeId)]), null, ['business_date' => $businessDate]);
     }
 
     /** `DIR-101` F1: a non-stock line's performed mark, or its taking back when recorded in error. No cost posted, no first effect. */
