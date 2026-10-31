@@ -48,7 +48,13 @@ final class PaymentInputs
     /** One of the company's statement lines by its handle, in any state: a stale page's voided one is the command's refusal, a replay the command's recorded answer. */
     public function lineId(int $companyId, string $handle): ?int
     {
-        return self::byHandle('bank_statement_lines', DB::table('bank_statement_lines')->where('company_id', $companyId)->orderByDesc('id')->limit(2000)->pluck('id')->all(), $handle);
+        foreach (DB::table('bank_statement_lines')->where('company_id', $companyId)->select('id')->lazyByIdDesc(1000) as $row) {
+            if (hash_equals(RowHandle::of('bank_statement_lines', (int) Row::text($row, 'id')), $handle)) {
+                return (int) Row::text($row, 'id');
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -67,7 +73,7 @@ final class PaymentInputs
             }
         }
 
-        foreach (DB::table('bank_statement_lines')->whereIn('company_id', $companies)->orderByDesc('id')->limit(5000)->get(['id', 'company_id']) as $row) {
+        foreach (DB::table('bank_statement_lines')->whereIn('company_id', $companies)->select(['id', 'company_id'])->lazyByIdDesc(1000) as $row) {
             if (hash_equals(RowHandle::of('bank_statement_lines', (int) Row::text($row, 'id')), $handle)) {
                 return ['id' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id')];
             }
@@ -130,7 +136,7 @@ final class PaymentInputs
 
         $viewer = $this->viewer($viewerId);
 
-        foreach ($viewer->scope->apply(DB::table('opening_customer_credits'), 'company_id')->orderBy('id')->limit(5000)->get(['id', 'company_id', 'client_organization_id']) as $row) {
+        foreach ($viewer->scope->apply(DB::table('opening_customer_credits'), 'company_id')->select(['id', 'company_id', 'client_organization_id'])->lazyById(1000) as $row) {
             if (hash_equals(RowHandle::of('opening_customer_credits', (int) Row::text($row, 'id')), $id) && $viewer->allows('finance.view', (int) Row::text($row, 'company_id'))) {
                 return ['payment' => null, 'credit' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id'), 'client' => (int) Row::text($row, 'client_organization_id'), 'name' => $id];
             }

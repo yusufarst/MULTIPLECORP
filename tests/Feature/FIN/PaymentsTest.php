@@ -12,6 +12,8 @@ use App\Support\Guards\Families;
 use App\Support\Guards\Reconciler;
 use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
+use Database\Factories\DOC\EvidenceDocumentVersionFactory;
+use Database\Factories\DOC\FileObjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
@@ -559,4 +561,39 @@ it('answers a replayed refusal with the current figure (CI-05; M-10; ER-06)', fu
     expect(paymentAnswer()['state']['capacity'])->toBe('300000.00');
     $this->actingAs($this->actor)->post("/keuangan/pembayaran/{$payment->public_id}/terapkan", $body);
     expect(paymentAnswer()['code'])->toBe('C-13')->and(paymentAnswer()['state']['capacity'])->toBe('300000.00')->and(paymentAnswer()['text'])->toContain('Rp300.000');
+});
+
+it('takes no company-issued rendition as a statement or a proof: a cited line stands as proof of receipt (L-29; FL-05; Codex)', function () {
+    $admin = User::query()->findOrFail(Authorization::admin([$this->company->id], [...InvoiceWorld::CAPABILITIES, 'bank_statement.record', 'cash.correct'])->id);
+    $reproduction = function (string $type): object {
+        $evidence = PaymentWorld::proof($this->company->id, $type);
+        $version = EvidenceDocumentVersionFactory::new()->createOne(['evidence_document_id' => $evidence->id]);
+        DB::table('evidence_documents')->where('id', $evidence->id)->update(['current_version_id' => $version->id]);
+        FileObjectFactory::new()->create(['purpose' => 'RENDITION', 'company_id' => $this->company->id, 'sha256' => DB::table('file_objects')->where('id', $version->file_object_id)->value('sha256')]);
+
+        return $evidence;
+    };
+
+    $statement = $reproduction('BANK_STATEMENT');
+    $this->actingAs($admin)->post('/keuangan/mutasi-bank', ['command_id' => (string) Str::uuid(), 'perusahaan' => $this->companyKey, 'rekening' => PaymentWorld::accountHandle($this->account), 'bukti' => $statement->public_id, 'tanggal' => $this->today, 'jumlah' => '500000', 'referensi' => 'TRX-K']);
+    expect(paymentAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'L-29'])->and(paymentAnswer()['text'])->toContain('bukan bukti penerimaan')->and(DB::table('bank_statement_lines')->count())->toBe(0);
+
+    $this->actingAs($this->actor)->post('/keuangan/pembayaran', paymentBody($this, '500000', ['bukti' => [$reproduction('PAYMENT_PROOF')->public_id]]));
+    expect(paymentAnswer())->toMatchArray(['kind' => 'REJECTED', 'code' => 'L-29'])->and(DB::table('payments')->count())->toBe(0);
+});
+
+it('resolves a correction\'s handle however old its line is, past any page of newest rows (AGENTS no dead interaction; Codex)', function () {
+    $admin = User::query()->findOrFail(Authorization::admin([$this->company->id], [...InvoiceWorld::CAPABILITIES, 'bank_statement.record', 'cash.correct'])->id);
+    $oldest = PaymentWorld::line($this->company->id, $this->account, '1000', 'TRX-LAMA');
+    $evidence = (int) DB::table('bank_statement_lines')->where('id', $oldest)->value('statement_evidence_id');
+    $rows = [];
+
+    foreach (range(1, 2100) as $step) {
+        $rows[] = ['company_id' => $this->company->id, 'company_bank_account_id' => $this->account, 'statement_evidence_id' => $evidence, 'statement_evidence_type' => 'BANK_STATEMENT', 'business_date' => $this->today, 'amount' => '1000', 'line_reference' => "TRX-{$step}", 'state' => 'ACTIVE', 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => $this->world->actorId];
+    }
+
+    DB::table('bank_statement_lines')->insert($rows);
+
+    $this->actingAs($admin)->post('/keuangan/mutasi-bank/'.RowHandle::of('bank_statement_lines', $oldest).'/koreksi', ['command_id' => (string) Str::uuid(), 'aksi' => 'BATAL', 'alasan' => 'Salah ketik']);
+    expect(paymentAnswer()['kind'])->toBe('COMMITTED')->and(DB::table('bank_statement_lines')->where('id', $oldest)->value('state'))->toBe('VOIDED');
 });

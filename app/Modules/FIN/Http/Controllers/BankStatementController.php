@@ -151,6 +151,7 @@ final class BankStatementController extends Controller
             },
             'C-22' => $reason === 'unchanged' ? self::say('receivables.refusal.unchanged') : self::say('payments.refusal.below_settled', ['jumlah' => self::money($state['settled'] ?? '0')]),
             'C-32' => self::say('payments.refusal.account'),
+            'L-29' => self::say('payments.refusal.company_issued'),
             default => self::say('messages.msg_04'),
         };
     }

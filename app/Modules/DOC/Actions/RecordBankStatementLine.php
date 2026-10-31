@@ -62,6 +62,11 @@ final class RecordBankStatementLine
                 throw Refused::conflict('C-19', ['reason' => 'identity']);
             }
 
+            // A cited line stands as proof of receipt: never on a document the company issued itself (L-29; FL-05).
+            if (EvidenceGuard::companyIssued([$evidenceId])) {
+                throw Refused::rejected('L-29', ['reason' => 'company_issued']);
+            }
+
             $now = $context->now();
             $id = DB::table('bank_statement_lines')->insertGetId([
                 'company_id' => $companyId, 'company_bank_account_id' => $accountId, 'statement_evidence_id' => $evidenceId, 'statement_evidence_type' => 'BANK_STATEMENT', 'business_date' => $businessDate,
