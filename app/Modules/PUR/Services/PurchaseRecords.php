@@ -266,7 +266,7 @@ final class PurchaseRecords
 
         $shares = ChargeAllocator::shares($amount, $positive);
         // A new version names every line of the old one, a line the charge no longer covers at a zero share (DATABASE §6.3 step 2).
-        $covered = DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $chargeId)->pluck('purchase_line_id')->map(fn (mixed $line): int => is_numeric($line) ? (int) $line : 0)->all();
+        $covered = DB::table('purchase_charge_share_balances as b')->where('purchase_charge_id', $chargeId)->pluck('purchase_line_id')->map(fn (mixed $line): int => is_numeric($line) ? (int) $line : 0)->all();
         $row = $after;
 
         foreach ($values as $line => $value) {
@@ -377,7 +377,7 @@ final class PurchaseRecords
         foreach (DB::table('purchase_charges')->where('purchase_id', $purchase->id)->where('classification', PurchaseEntry::ATTRIBUTABLE)->orderBy('id')->get(['id', 'amount', 'allocation_basis']) as $charge) {
             $id = (int) Row::text($charge, 'id');
             $version = self::latestVersion($id);
-            $amount = DB::table('purchase_charge_balances')->where('purchase_charge_id', $id)->value('amount');
+            $amount = DB::table('purchase_charge_balances as b')->where('purchase_charge_id', $id)->value('amount');
             $this->insertShares($context, $id, $purchase->company_id, $purchase->id, Money::of(is_string($amount) ? $amount : Row::text($charge, 'amount')), $bases[$id] ?? Row::text($charge, 'allocation_basis'), self::keptBasis($id, $purchase->id), $version + 1, ++$position * self::SHARE_ROWS);
             // The set was required whole above; what it names now beyond that is what this command inserted: its new lines and an earlier charge's guards on them.
             $context->created(CostPosting::purchaseLocks($purchase->id));

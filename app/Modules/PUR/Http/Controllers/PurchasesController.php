@@ -11,14 +11,12 @@ use App\Modules\PUR\Actions\MarkLinePerformed;
 use App\Modules\PUR\Actions\RecordPurchase;
 use App\Modules\PUR\Actions\RecordPurchaseCharge;
 use App\Modules\PUR\Data\PurchaseEntry;
-use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Queries\PurchaseDetail;
 use App\Modules\PUR\Queries\PurchaseForm;
 use App\Modules\PUR\Queries\PurchaseInputs;
 use App\Modules\PUR\Queries\PurchaseList;
 use App\Support\Command\Outcome;
 use App\Support\Localization\Formats;
-use App\Support\Search\Row;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -110,7 +108,7 @@ final class PurchasesController extends Controller
         if ($outcome->kind === Outcome::COMMITTED && $outcome->resultId !== null) {
             Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => null, 'text' => self::say('purchases.answer.recorded')]);
 
-            return redirect()->to('/pembelian/'.$this->publicId($outcome->resultId), 303);
+            return redirect()->to(self::back($this->inputs->publicId($outcome->resultId)), 303);
         }
 
         return $this->answer($outcome, 'recorded', redirect()->back(303)->getTargetUrl(), self::text($input['tanggal']), $this->inputs->companyName($company));
@@ -125,7 +123,7 @@ final class PurchasesController extends Controller
         $entry = new PurchaseEntry($purchase->company_id, $purchase->project_id, $purchase->supplier_id, $purchase->business_date->format('Y-m-d'), false, $purchase->supplier_reference, $this->lines($input, $purchase->project_id, true), []);
         $outcome = $amend->run(self::text($input['command_id']), $actor, $purchase, (int) self::text($input['lock_version']), $entry, array_diff_key($input, ['command_id' => 1, 'lock_version' => 1]));
 
-        return $this->answer($outcome, 'amended', self::back($purchase));
+        return $this->answer($outcome, 'amended', self::back($purchase->public_id));
     }
 
     /** ROUTE-173. */
@@ -136,7 +134,7 @@ final class PurchasesController extends Controller
         $input = self::validated($request, self::reasoned());
         $outcome = $cancel->run(self::text($input['command_id']), $actor, $purchase, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
 
-        return $this->answer($outcome, 'cancelled', self::back($purchase), self::text($input['tanggal']));
+        return $this->answer($outcome, 'cancelled', self::back($purchase->public_id), self::text($input['tanggal']));
     }
 
     /** ROUTE-174. */
@@ -159,7 +157,7 @@ final class PurchasesController extends Controller
 
         $outcome = $close->run(self::text($input['command_id']), $actor, $purchase, $closures, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
 
-        return $this->answer($outcome, 'closed', self::back($purchase), self::text($input['tanggal']));
+        return $this->answer($outcome, 'closed', self::back($purchase->public_id), self::text($input['tanggal']));
     }
 
     /** ROUTE-175. */
@@ -183,7 +181,7 @@ final class PurchasesController extends Controller
             $outcome = $correct->line(self::text($input['command_id']), $actor, $purchase, $line, $kind, self::text($input['nilai']), trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
         }
 
-        return $this->answer($outcome, 'corrected', self::back($purchase), self::text($input['tanggal']));
+        return $this->answer($outcome, 'corrected', self::back($purchase->public_id), self::text($input['tanggal']));
     }
 
     /** ROUTE-179. */
@@ -202,7 +200,7 @@ final class PurchasesController extends Controller
         $values = self::basisValues($input['nilai_dasar'] ?? []);
         $outcome = $correct->charge(self::text($input['command_id']), $actor, $purchase, $charge, null, self::text($input['dasar']), $values, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'));
 
-        return $this->answer($outcome, 'corrected', self::back($purchase), self::text($input['tanggal']));
+        return $this->answer($outcome, 'corrected', self::back($purchase->public_id), self::text($input['tanggal']));
     }
 
     /** ROUTE-178. */
@@ -225,7 +223,7 @@ final class PurchasesController extends Controller
         $charge = ['bill' => $bill, 'classification' => self::text($input['klasifikasi']), 'amount' => self::text($input['jumlah']), 'basis' => $attributable ? self::nullable($input['dasar'] ?? null) : null, 'values' => self::basisValues($input['nilai_dasar'] ?? [])];
         $outcome = $record->run(self::text($input['command_id']), $actor, $purchase, $charge, self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1]));
 
-        return $this->answer($outcome, 'charged', self::back($purchase), self::text($input['tanggal']));
+        return $this->answer($outcome, 'charged', self::back($purchase->public_id), self::text($input['tanggal']));
     }
 
     /** ROUTE-180. */
@@ -241,7 +239,7 @@ final class PurchasesController extends Controller
         $lineId = $this->inputs->line($purchase->id, $line) ?? throw new NotFoundHttpException;
         $outcome = $mark->run(self::text($input['command_id']), $actor, $purchase, $lineId, $performed, $performed ? null : trim(self::text($input['alasan'] ?? '')));
 
-        return $this->answer($outcome, $performed ? 'marked' : 'unmarked', self::back($purchase));
+        return $this->answer($outcome, $performed ? 'marked' : 'unmarked', self::back($purchase->public_id));
     }
 
     /** @return array<string, list<mixed>> */
@@ -394,14 +392,9 @@ final class PurchasesController extends Controller
         return array_values(array_map(fn (mixed $value): ?string => is_scalar($value) && (string) $value !== '' ? (string) $value : null, is_array($values) ? $values : []));
     }
 
-    private static function back(Purchase $purchase): string
+    private static function back(string $publicId): string
     {
-        return '/pembelian/'.$purchase->public_id;
-    }
-
-    private function publicId(int $id): string
-    {
-        return Row::text(Purchase::query()->toBase()->where('id', $id)->first(['public_id']) ?? (object) ['public_id' => ''], 'public_id');
+        return '/pembelian/'.$publicId;
     }
 
     /** The command's answer as flash data, the input kept in place; a future date at its field (C-50; IP-14). */
@@ -476,7 +469,8 @@ final class PurchasesController extends Controller
         $rules = ['command_id' => ['required', 'uuid'], ...$rules];
 
         /** @var array<string, mixed> $valid */
-        $valid = Validator::make($request->all(), $rules, [
+        $fields = array_values(array_unique(array_map(fn (string $field): string => explode('.', $field)[0], array_keys($rules))));
+        $valid = Validator::make($request->only($fields), $rules, [
             'required' => __('projects.validation.required'),
             'required_if' => __('projects.validation.required'),
             'required_without' => __('projects.validation.required'),

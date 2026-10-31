@@ -52,6 +52,13 @@ final class PurchaseInputs
         return is_numeric($id) && $this->capabilities->for($viewerId)->allows($capability, (int) $id) ? (int) $id : null;
     }
 
+    public function publicId(int $purchaseId): string
+    {
+        $id = DB::table('purchases')->where('id', $purchaseId)->value('public_id');
+
+        return is_string($id) ? $id : '';
+    }
+
     public function companyName(int $companyId): string
     {
         $name = DB::table('companies')->where('id', $companyId)->value('legal_name');

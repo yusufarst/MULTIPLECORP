@@ -196,7 +196,7 @@ final class PurchaseCorrections
         }
 
         $lineId = (int) Row::text($closure, 'purchase_line_id');
-        $shares = DB::table('purchase_charge_share_balances')->where('purchase_line_id', $lineId)->orderBy('purchase_charge_id')->get(['purchase_charge_id', 'expensed_out_amount']);
+        $shares = DB::table('purchase_charge_share_balances as b')->where('purchase_line_id', $lineId)->orderBy('purchase_charge_id')->get(['purchase_charge_id', 'expensed_out_amount']);
 
         if ($shares->contains(fn (object $share): bool => Money::of(Row::text($share, 'expensed_out_amount'))->isPositive())) {
             throw Refused::rejected('C-21', ['reason' => 'closure_expensed']);
