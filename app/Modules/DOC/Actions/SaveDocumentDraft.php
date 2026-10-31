@@ -86,6 +86,13 @@ final class SaveDocumentDraft
                 }
             }
 
+            $kuitansi = $subject->typeCode === 'DOC-05' ? ($amount ?? $provider->facts($subject)->kuitansiAmount) : null;
+
+            // A Kuitansi states real money or a typed amount: without either there is nothing to state (BR-DOC-04).
+            if ($subject->typeCode === 'DOC-05' && $kuitansi === null) {
+                throw Refused::rejected('WF-DOC-01', ['reason' => 'no_payment']);
+            }
+
             $now = $context->now();
 
             if ($document === null) {
@@ -105,7 +112,7 @@ final class SaveDocumentDraft
                 'version_no' => DocumentChain::nextVersionNo($document->id),
                 'state' => 'DRAFT',
                 'business_date' => BusinessDate::of($now),
-                'kuitansi_amount' => $subject->typeCode === 'DOC-05' ? ($amount ?? $provider->facts($subject)->kuitansiAmount) : null,
+                'kuitansi_amount' => $kuitansi,
                 'company_bank_account_id' => in_array($subject->typeCode, DocumentPaper::BANK_LAYOUTS, true) && $accounts !== [] ? $accounts[0]['id'] : null,
                 'recorded_at' => $now,
                 'recorded_by' => $context->request->actorUserId,

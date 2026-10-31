@@ -26,10 +26,11 @@ final class Journey
      * @param  ?string  $editHref  "Ubah proyek" for an account that may amend the project, which a DRAFT's missing details lead to
      * @param  ?string  $quotationHref  PG-014 for an account that may open the project's quotation, which the agreement's next step leads to
      * @param  ?string  $serviceHref  PG-033 for an account that may record the handover, which the *Jasa* stage's next step leads to
+     * @param  ?string  $paymentHref  PG-046 for an account that may record the project's payment, which the *Pembayaran* stage's next step leads to (NAV-046)
      * @param  ?string  $invoiceHref  PG-042 for an account that may issue the project's invoice, which the *Invoice* stage's next step leads to
      * @return array{outcome: ?string, stages: list<array{key: string, state: string}>, not_needed: list<string>, current: ?string, position: ?int, blocked: bool, blockers: list<array<string, mixed>>, next: ?array<string, mixed>, remaining: list<array{predicate: string, items: list<array<string, mixed>>}>}
      */
-    public static function derive(JourneyFacts $facts, array $predicates, bool $money, ?string $editHref = null, ?string $quotationHref = null, ?string $serviceHref = null, ?string $invoiceHref = null): array
+    public static function derive(JourneyFacts $facts, array $predicates, bool $money, ?string $editHref = null, ?string $quotationHref = null, ?string $serviceHref = null, ?string $invoiceHref = null, ?string $paymentHref = null): array
     {
         $states = [];
 
@@ -81,7 +82,7 @@ final class Journey
         }
 
         $position = $current === null ? null : array_search($current, $applicable, true) + 1;
-        $next = self::next($facts, $states, $current, $money, $editHref, $quotationHref, $serviceHref, $invoiceHref);
+        $next = self::next($facts, $states, $current, $money, $editHref, $quotationHref, $serviceHref, $invoiceHref, $paymentHref);
 
         return [
             'outcome' => null,
@@ -153,7 +154,7 @@ final class Journey
      *
      * @param  array<string, PredicateState>  $p
      */
-    private static function next(JourneyFacts $facts, array $p, ?string $current, bool $money, ?string $editHref, ?string $quotationHref, ?string $serviceHref, ?string $invoiceHref): ?JourneyItem
+    private static function next(JourneyFacts $facts, array $p, ?string $current, bool $money, ?string $editHref, ?string $quotationHref, ?string $serviceHref, ?string $invoiceHref, ?string $paymentHref): ?JourneyItem
     {
         if ($facts->state === 'DRAFT' && $facts->detailsMissing) {
             return new JourneyItem('projects.next.details', [], 'agreement', false, false, $editHref);
@@ -184,11 +185,17 @@ final class Journey
             'documents' => $first(Predicates::DOCUMENTS, Predicates::ADMINISTRATION) ?? new JourneyItem('projects.next.documents', [], 'documents'),
             'invoice' => new JourneyItem('projects.next.invoice', [], 'invoice', false, true, $invoiceHref),
             'billing' => $first(Predicates::BILLING) ?? new JourneyItem('projects.next.billing', [], 'billing'),
-            'payment' => $first(Predicates::RECEIVABLE, Predicates::PAYMENT) ?? new JourneyItem('projects.next.payment', [], 'payment'),
+            'payment' => self::leadingTo($first(Predicates::RECEIVABLE, Predicates::PAYMENT) ?? new JourneyItem('projects.next.payment', [], 'payment'), $paymentHref),
             'completion' => $first(...Predicates::ALL) ?? new JourneyItem('projects.next.complete', [], 'completion'),
             default => null,
         };
 
         return $item === null || ($item->money && ! $money) ? null : $item;
+    }
+
+    /** The stage's next step leading to its page where the predicate named none. */
+    private static function leadingTo(JourneyItem $item, ?string $href): JourneyItem
+    {
+        return $item->href !== null || $href === null ? $item : new JourneyItem($item->key, $item->params, $item->stage, $item->blocker, $item->money, $href);
     }
 }

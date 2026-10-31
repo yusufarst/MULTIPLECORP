@@ -86,3 +86,12 @@ it('treats a predicate without a provider as having no facts to judge (Completio
         ->and($journey['current'])->toBe('completion')
         ->and($journey['next']['key'])->toBe('projects.next.complete');
 });
+
+it('leads the *Pembayaran* stage\'s next step to PG-046 for an account that may record the payment (NAV-046; IA §8.7; TASK-051)', function () {
+    $billed = [Predicates::BILLING => new PredicateState(false), Predicates::RECEIVABLE => new PredicateState(true, [new JourneyItem('projects.next.payment', [], 'payment')]), Predicates::PAYMENT => new PredicateState(false)];
+    $facts = facts(confirmed: true, invoiced: true);
+    $next = Journey::derive($facts, $billed, true, null, null, null, null, '/keuangan/pembayaran/baru?proyek=x')['next'];
+
+    expect($next['stage'])->toBe('payment')->and($next['href'])->toBe('/keuangan/pembayaran/baru?proyek=x')
+        ->and(Journey::derive($facts, $billed, true)['next']['href'])->toBeNull();
+});

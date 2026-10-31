@@ -193,7 +193,8 @@ final class DocumentsController extends Controller
             'C-54' => self::say('documents.refusal.company_inactive'),
             'L-25', 'CM-23' => self::say('documents.refusal.corrected_at_record'),
             'NX-12' => self::say('documents.refusal.not_issued'),
-            'WF-DOC-01' => self::say('documents.refusal.no_subject'),
+            'WF-DOC-01' => self::say(($state['reason'] ?? null) === 'no_payment' ? 'documents.refusal.no_payment' : 'documents.refusal.no_subject'),
+            'C-43' => self::say(($state['reason'] ?? null) === 'prepayment_open' ? 'documents.refusal.prepayment_open' : (($state['reason'] ?? null) === 'already_linked' ? 'documents.refusal.already_linked' : 'documents.refusal.precondition')),
             default => self::say('documents.refusal.precondition'),
         };
     }

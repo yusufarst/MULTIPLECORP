@@ -11436,6 +11436,1170 @@
             "source": "LG-01; L-17",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "payments.nav_label": {
+            "task": "TASK-051",
+            "source": "IA §5.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.section.fact": {
+            "task": "TASK-051",
+            "source": "J-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.section.more": {
+            "task": "TASK-051",
+            "source": "J-FIN-03; WF-FIN-05; CM-19; XL-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.company": {
+            "task": "TASK-051",
+            "source": "CS-03; PG-046",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.client": {
+            "task": "TASK-051",
+            "source": "WF-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.line_help": {
+            "task": "TASK-051",
+            "source": "QS-12; DATABASE §11.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.no_line": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.proof_help": {
+            "task": "TASK-051",
+            "source": "L-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.no_proof": {
+            "task": "TASK-051",
+            "source": "L-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.intermediary": {
+            "task": "TASK-051",
+            "source": "WF-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.intermediary_help": {
+            "task": "TASK-051",
+            "source": "WF-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.recovery": {
+            "task": "TASK-051",
+            "source": "WF-FIN-05; QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.recovery_help": {
+            "task": "TASK-051",
+            "source": "WF-FIN-05; QS-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.replacing": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.replacing_help": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.transfer": {
+            "task": "TASK-051",
+            "source": "BR-FIN-07; XL-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.transfer_help": {
+            "task": "TASK-051",
+            "source": "BR-FIN-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.field.none": {
+            "task": "TASK-051",
+            "source": "J-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.option": {
+            "task": "TASK-051",
+            "source": "BD-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.statement": {
+            "task": "TASK-051",
+            "source": "NX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.statement_help": {
+            "task": "TASK-051",
+            "source": "NX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.reference": {
+            "task": "TASK-051",
+            "source": "L-45",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.reference_help": {
+            "task": "TASK-051",
+            "source": "L-45; DATABASE §4.10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.citing": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.citing_help": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.voided": {
+            "task": "TASK-051",
+            "source": "C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.uncited": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.line.cited": {
+            "task": "TASK-051",
+            "source": "L-22",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.method.TRANSFER": {
+            "task": "TASK-051",
+            "source": "DATABASE §4.12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.method.CASH": {
+            "task": "TASK-051",
+            "source": "DATABASE §4.12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.method.VIRTUAL_ACCOUNT": {
+            "task": "TASK-051",
+            "source": "DATABASE §4.12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.method.OTHER": {
+            "task": "TASK-051",
+            "source": "DATABASE §4.12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.upload_proof": {
+            "task": "TASK-051",
+            "source": "IP-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.apply": {
+            "task": "TASK-051",
+            "source": "INT-252",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.move": {
+            "task": "TASK-051",
+            "source": "INT-253; CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.contra": {
+            "task": "TASK-051",
+            "source": "INT-254; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.receipt": {
+            "task": "TASK-051",
+            "source": "BR-DOC-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.open_receipt": {
+            "task": "TASK-051",
+            "source": "BR-DOC-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.link": {
+            "task": "TASK-051",
+            "source": "J-FIN-08; ROUTE-250",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.record_line": {
+            "task": "TASK-051",
+            "source": "INT-261",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.upload_statement": {
+            "task": "TASK-051",
+            "source": "IP-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.void_line": {
+            "task": "TASK-051",
+            "source": "INT-262; C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.correct_citation_of": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.cite": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.action.supersede": {
+            "task": "TASK-051",
+            "source": "INT-262; DATABASE §11.4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.help": {
+            "task": "TASK-051",
+            "source": "J-FIN-03; L-28; QS-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.class": {
+            "task": "TASK-051",
+            "source": "DATABASE §4.12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.FEE": {
+            "task": "TASK-051",
+            "source": "BR-FIN-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.TAX": {
+            "task": "TASK-051",
+            "source": "BR-FIN-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.tax_type": {
+            "task": "TASK-051",
+            "source": "BR-FIN-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.fee_type": {
+            "task": "TASK-051",
+            "source": "BR-FIN-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.add": {
+            "task": "TASK-051",
+            "source": "J-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.claim.gross": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.applications.choose": {
+            "task": "TASK-051",
+            "source": "J-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.applications.none": {
+            "task": "TASK-051",
+            "source": "SF-APPLY; BR-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.applications.above": {
+            "task": "TASK-051",
+            "source": "BR-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.invoice.unnumbered": {
+            "task": "TASK-051",
+            "source": "SF-APPLY",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.invoice.billed": {
+            "task": "TASK-051",
+            "source": "SF-APPLY",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.invoice.unbilled": {
+            "task": "TASK-051",
+            "source": "SF-APPLY; annex 2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.invoice.outstanding": {
+            "task": "TASK-051",
+            "source": "CALC-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.invoice.kuitansi": {
+            "task": "TASK-051",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.position.title": {
+            "task": "TASK-051",
+            "source": "PT-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.position.contra": {
+            "task": "TASK-051",
+            "source": "SF-CONTRA",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.confirm.title": {
+            "task": "TASK-051",
+            "source": "MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.confirm.consequence": {
+            "task": "TASK-051",
+            "source": "MSG-39; IP-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.apply.line": {
+            "task": "TASK-051",
+            "source": "INT-252",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.apply.invoice": {
+            "task": "TASK-051",
+            "source": "INT-252",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.apply.shortfalls": {
+            "task": "TASK-051",
+            "source": "L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.apply.shortfall": {
+            "task": "TASK-051",
+            "source": "L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.line": {
+            "task": "TASK-051",
+            "source": "INT-253",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.target": {
+            "task": "TASK-051",
+            "source": "CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.amount": {
+            "task": "TASK-051",
+            "source": "CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.settlements": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.settlement_move": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.move.settlement_keep": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.settlement.line": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.line": {
+            "task": "TASK-051",
+            "source": "SF-CONTRA",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.help": {
+            "task": "TASK-051",
+            "source": "ADMIN_FLOW §11; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.amount": {
+            "task": "TASK-051",
+            "source": "AX-20",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.applications": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.refund": {
+            "task": "TASK-051",
+            "source": "L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.invoice": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.part": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.part_help": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.settlements": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.no_rerecord": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.credit": {
+            "task": "TASK-051",
+            "source": "BR-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.total": {
+            "task": "TASK-051",
+            "source": "SF-CONTRA",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.contra.reload": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.disposition.KEEP": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.disposition.RELEASE": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.disposition.MOVE": {
+            "task": "TASK-051",
+            "source": "CM-19; L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.disposition.SHORTFALL": {
+            "task": "TASK-051",
+            "source": "L-46; C-44",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.disposition.RESIDUAL": {
+            "task": "TASK-051",
+            "source": "C-45; CM-24",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.tab.semua": {
+            "task": "TASK-051",
+            "source": "PG-045",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.tab.kredit": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.tab.tanpa_bukti": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.empty.semua": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.empty.kredit": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.empty.tanpa_bukti": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.title": {
+            "task": "TASK-051",
+            "source": "PG-045",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.flagged": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.claimed": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.open_proof": {
+            "task": "TASK-051",
+            "source": "PJ-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.recovery": {
+            "task": "TASK-051",
+            "source": "WF-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.rerecords": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.rerecorded": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.no_proof": {
+            "task": "TASK-051",
+            "source": "L-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.no_applications": {
+            "task": "TASK-051",
+            "source": "BR-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.refund": {
+            "task": "TASK-051",
+            "source": "L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.refund_final": {
+            "task": "TASK-051",
+            "source": "L-46; CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.settlements": {
+            "task": "TASK-051",
+            "source": "L-28",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.end_reason.REALLOCATED": {
+            "task": "TASK-051",
+            "source": "CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.end_reason.INVOICE_CORRECTED": {
+            "task": "TASK-051",
+            "source": "AX-22",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.end_reason.SOURCE_CONTRA": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.end_reason.RE_RECORDED": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.end_reason.REFUND_CONTRA": {
+            "task": "TASK-051",
+            "source": "CM-38",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_tab.mutasi": {
+            "task": "TASK-051",
+            "source": "PG-050",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_tab.belum": {
+            "task": "TASK-051",
+            "source": "QS-12",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_tab.potongan": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_empty.mutasi": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_empty.belum": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.bank_empty.potongan": {
+            "task": "TASK-051",
+            "source": "PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.BATAL": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.BATAL_line": {
+            "task": "TASK-051",
+            "source": "C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.KUTIPAN": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.KUTIPAN_line": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.3",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.POTONGAN": {
+            "task": "TASK-051",
+            "source": "INT-262",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.POTONGAN_line": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.new_amount": {
+            "task": "TASK-051",
+            "source": "DATABASE §11.4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.correct.confirm": {
+            "task": "TASK-051",
+            "source": "IP-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.recorded": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.applied": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.reallocated": {
+            "task": "TASK-051",
+            "source": "annex 4",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.contraed": {
+            "task": "TASK-051",
+            "source": "SF-CONTRA; SF-CASE",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.line_recorded": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.line_voided": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.citation_corrected": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.answer.deduction_superseded": {
+            "task": "TASK-051",
+            "source": "MSG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.validation.proof": {
+            "task": "TASK-051",
+            "source": "L-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.validation.no_proof_reason": {
+            "task": "TASK-051",
+            "source": "L-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.validation.invoice_twice": {
+            "task": "TASK-051",
+            "source": "SF-APPLY",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.validation.statement": {
+            "task": "TASK-051",
+            "source": "NX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.duplicate_no_authority": {
+            "task": "TASK-051",
+            "source": "MSG-15; UXS-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.undisposed": {
+            "task": "TASK-051",
+            "source": "C-13; AX-20",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_application": {
+            "task": "TASK-051",
+            "source": "C-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_capacity": {
+            "task": "TASK-051",
+            "source": "C-13; BR-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.other_party": {
+            "task": "TASK-051",
+            "source": "C-14; BR-FIN-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.voided": {
+            "task": "TASK-051",
+            "source": "C-15; M-37",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_outstanding": {
+            "task": "TASK-051",
+            "source": "C-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.line_cited": {
+            "task": "TASK-051",
+            "source": "C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.same_line": {
+            "task": "TASK-051",
+            "source": "C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_line": {
+            "task": "TASK-051",
+            "source": "C-19; BD-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.line": {
+            "task": "TASK-051",
+            "source": "C-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.line_exists": {
+            "task": "TASK-051",
+            "source": "C-19; L-45",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_claimed": {
+            "task": "TASK-051",
+            "source": "C-22",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.below_settled": {
+            "task": "TASK-051",
+            "source": "C-22",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.account": {
+            "task": "TASK-051",
+            "source": "C-32",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_shortfall": {
+            "task": "TASK-051",
+            "source": "C-44",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.shortfall_with_money": {
+            "task": "TASK-051",
+            "source": "C-44; L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.settlements": {
+            "task": "TASK-051",
+            "source": "C-45",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.above_net": {
+            "task": "TASK-051",
+            "source": "C-45",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.not_written_off": {
+            "task": "TASK-051",
+            "source": "L-17; WF-FIN-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.company_issued": {
+            "task": "TASK-051",
+            "source": "L-29; FL-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.not_rerecorded": {
+            "task": "TASK-051",
+            "source": "L-46; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.refund_consumed": {
+            "task": "TASK-051",
+            "source": "L-46",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.not_issued": {
+            "task": "TASK-051",
+            "source": "BR-FIN-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.transfer_capacity": {
+            "task": "TASK-051",
+            "source": "BR-FIN-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.same_invoice": {
+            "task": "TASK-051",
+            "source": "CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.transfer_scope": {
+            "task": "TASK-051",
+            "source": "XL-5",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.rerecords": {
+            "task": "TASK-051",
+            "source": "CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.already_rerecorded": {
+            "task": "TASK-051",
+            "source": "CM-19; C-59",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.stale_list": {
+            "task": "TASK-051",
+            "source": "ST-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "evidence.action.register": {
+            "task": "TASK-051",
+            "source": "IP-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.prepayment_open": {
+            "task": "TASK-051",
+            "source": "C-43; WF-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.already_linked": {
+            "task": "TASK-051",
+            "source": "C-43",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "documents.refusal.no_payment": {
+            "task": "TASK-051",
+            "source": "BR-DOC-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PaymentRecorded": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PaymentDuplicateOverridden": {
+            "task": "TASK-051",
+            "source": "LG-01; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PaymentReRecorded": {
+            "task": "TASK-051",
+            "source": "LG-01; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PaymentApplied": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.ApplicationReallocated": {
+            "task": "TASK-051",
+            "source": "LG-01; CM-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.PaymentContraed": {
+            "task": "TASK-051",
+            "source": "LG-01; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.BankCitationSet": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.BankCitationCorrected": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.ClaimedDeductionSuperseded": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.BankLineRecorded": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.DOC.BankLineVoided": {
+            "task": "TASK-051",
+            "source": "LG-01",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.refusal.company_inactive": {
+            "task": "TASK-051",
+            "source": "BR-ACC-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.kuitansi_amounts": {
+            "task": "TASK-051",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.payment_corrections": {
+            "task": "TASK-051",
+            "source": "BR-PRJ-02; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.payments_unevidenced": {
+            "task": "TASK-051",
+            "source": "L-29; BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.payment_correction": {
+            "task": "TASK-051",
+            "source": "BR-PRJ-02; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.payment_evidence": {
+            "task": "TASK-051",
+            "source": "L-29; BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

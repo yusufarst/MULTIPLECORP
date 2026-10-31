@@ -64,7 +64,7 @@ final class NumberingFixture
             return response()->json(['armed' => true]);
         }
 
-        $code = 'U'.Str::upper(Str::random(6));
+        $code = 'U'.Str::upper(Str::random(9));
         $company = Company::factory()->create(['code' => $code, 'legal_name' => "CV Uji Penomoran {$code}"]);
 
         return response()->json(['company' => $company->public_id, 'code' => $code]);

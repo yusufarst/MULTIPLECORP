@@ -11,6 +11,7 @@ import { StatusBadge } from '@/components/status-badge';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
 import { Code, DateText, Money } from '@/components/values';
+import { FinanceNav } from '@/features/fin/finance-nav';
 import { type InvoiceState } from '@/features/fin/invoice';
 import { Answered, BillDialog, type Payload } from '@/features/fin/invoice-receivable';
 import AppShell from '@/layouts/AppShell';
@@ -73,6 +74,7 @@ export default function Receivables({ branches, branch, tab, client, clients, su
         <AppShell title={t('pages.pg_044.title')}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_044.title')} />
+                <FinanceNav current="receivables" />
                 <Answered command={bill} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (

@@ -3,11 +3,13 @@
 namespace App\Modules\DOC\Services;
 
 use App\Modules\DOC\Data\EvidenceTypes;
+use App\Modules\DOC\Models\EvidenceBalance;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
 use App\Support\GuardUpdate;
 use App\Support\Search\Row;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -37,6 +39,65 @@ final class EvidenceGuard
         $balance = DB::selectOne('select proven_amount - cited_amount as uncited from evidence_balances where evidence_document_id = ?', [$evidenceId]);
 
         return is_object($balance) ? Row::text($balance, 'uncited') : '0.00';
+    }
+
+    /**
+     * Whether any of these is, by its bytes, a rendition the company issued itself: never proof that money was received (L-29; FL-05).
+     *
+     * @param  list<int>  $evidenceIds
+     */
+    public static function companyIssued(array $evidenceIds): bool
+    {
+        return DB::table('evidence_documents as e')->whereIn('e.id', $evidenceIds)
+            ->join('evidence_document_versions as v', 'v.id', '=', 'e.current_version_id')->join('file_objects as f', 'f.id', '=', 'v.file_object_id')
+            ->whereExists(fn (Builder $rendition) => $rendition->from('file_objects as r')->whereColumn('r.sha256', 'f.sha256')->where('r.purpose', 'RENDITION'))
+            ->exists();
+    }
+
+    /** A bank statement line and its guard at LK-29, BD-03's anchor (C-19). */
+    public static function lineLocks(int $lineId): LockSet
+    {
+        return (new LockSet)->add('bank_statement_lines', ['id' => $lineId])->add('evidence_balances', ['bank_statement_line_id' => $lineId]);
+    }
+
+    /** A line's guard born with it, proving its amount (L-22; DATABASE §4.10). */
+    public function bearLine(CommandContext $context, int $lineId, string $amount): void
+    {
+        GuardUpdate::bear($context->connection, 'evidence_balances', ['bank_statement_line_id' => $lineId], ['proven_amount' => $amount, 'recorded_at' => $context->now()]);
+    }
+
+    /** What of a line its Cash-In facts cite now, net of their contras. */
+    public function lineCited(int $lineId): string
+    {
+        $cited = EvidenceBalance::query()->toBase()->where('bank_statement_line_id', $lineId)->value('cited_amount');
+
+        return is_scalar($cited) ? (string) $cited : '0.00';
+    }
+
+    /** What of a line no Cash-In cites yet, its proof less its citations: nothing once voided. */
+    public function lineUncited(int $lineId): string
+    {
+        $row = EvidenceBalance::query()->toBase()->where('bank_statement_line_id', $lineId)->selectRaw('proven_amount - cited_amount as uncited')->first();
+
+        return is_object($row) ? Row::text($row, 'uncited') : '0.00';
+    }
+
+    /**
+     * Lines' guards moved in one statement, its CHECK keeping Σ Cash-In per line within the line (BD-03; C-19).
+     *
+     * @param  array<int, array<string, string>>  $moves  line => column => signed decimal, each row the same columns
+     */
+    public function moveLines(CommandContext $context, array $moves): void
+    {
+        $rows = [];
+
+        foreach ($moves as $line => $deltas) {
+            $rows[] = ['key' => ['bank_statement_line_id' => $line], 'deltas' => $deltas];
+        }
+
+        if ($rows !== []) {
+            GuardUpdate::apply($context->connection, 'evidence_balances', $rows);
+        }
     }
 
     /** Cites `$amount` of the evidence in the role — a negative amount releases a citation. */

@@ -6,6 +6,7 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Data\FileFamilies;
 use App\Modules\DOC\Data\LinkHandle;
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\DOC\Services\EvidenceGuard;
 use App\Modules\DOC\Services\EvidenceUse;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
@@ -195,6 +196,21 @@ final class EvidenceList
         $evidence = $this->find($this->capabilities->for($viewerId), $publicId);
 
         return $evidence !== null && $evidence->company_id === $companyId && in_array($evidence->evidence_type, $types, true) ? $evidence->id : null;
+    }
+
+    /**
+     * The payment a proof may be linked to, of the evidence's company, the viewer holding `finance.view` of it: never a type that proves no receipt, nor a document the company issued (L-29); else unknown (AZ-11).
+     */
+    public function paymentOf(int $viewerId, string $publicId, EvidenceDocument $evidence): int
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $id = preg_match(self::UUID, $publicId) === 1 ? DB::table('payments')->where('public_id', strtolower($publicId))->where('company_id', $evidence->company_id)->value('id') : null;
+
+        if (! is_numeric($id) || $evidence->company_id === null || ! $viewer->allows('finance.view', $evidence->company_id) || ! in_array($evidence->evidence_type, ['PAYMENT_PROOF', 'TRANSFER_PROOF', 'BANK_STATEMENT'], true) || EvidenceGuard::companyIssued([$evidence->id])) {
+            throw new ModelNotFoundException;
+        }
+
+        return (int) $id;
     }
 
     /** The evidence by public identifier, when the viewer may see it (PJ-08; AZ-11). */

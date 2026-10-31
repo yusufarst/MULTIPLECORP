@@ -725,3 +725,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-049 squash-merged by the executor into `main` as `5255b32` (pull request #47); TASK-050 started.
 - Built TASK-050 on its branch `task/TASK-050-billing`: `FIN BillInvoice`, `CorrectBilling` (AX-17), `SetDisputeHold`, `ClearDisputeHold` (NX-09), the Owner's `WriteOffReceivable` and `SupersedeWriteOff` (AX-24) with their refusals, PG-044 *Piutang* with a subtotal per company and its ageing buckets, PG-043's billing, dispute and write-off controls, the `AgingCalculator`, DOC-13's subject, FIN's completion predicates, and the reconciliation of what stands written off; TASK-049's corrections now revalidating a completed project.
 - Every check passed in fresh CI on `ca1fca2`. TASK-050 DONE — progress 42 / 87 —; TASK-051 READY next.
+
+## Unreleased — 2026-10-31, TASK-051 — Payments, applications and bank statement lines
+
+- TASK-050 squash-merged by the executor into `main` as `59a6597` (pull request #48); TASK-051 started.
+- Built TASK-051 on its branch `task/TASK-051-payments`: `FIN RecordPayment` (AX-18), `ApplyPayment` and `ReallocateApplication` (AX-19), `ContraPayment` (AX-20), `CorrectBankCitation`, `SupersedeClaimedDeduction` and `DOC RecordBankStatementLine`, `VoidBankStatementLine` (NX-08) with their refusals, PG-045 *Pembayaran*, PG-046 *Catat Pembayaran* and PG-050 *Mutasi Bank*, the receipt-mode DOC-05 and DOC-07, FIN's payment and audit predicates, and the reconciliation of sources, bank lines and money facts; the linters' `minimatch` past GHSA-g3hv-75wg-m249, the browser job's budget at 45 minutes.
+- Every check passed in fresh CI on `3daa4ea`. TASK-051 DONE — progress 43 / 87 —; no Task READY next: TASK-052 waits on Change 4 (P11Q-02).
