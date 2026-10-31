@@ -57,6 +57,13 @@ export function usePartySearch(type: 'client' | 'supplier' | 'product' | 'projec
             return;
         }
 
+        // The field resynchronizing to a row just chosen asks nothing: thirty lines by keyboard stay within WS-12's limit.
+        if (answer?.rows.some((row) => `${row.code ?? ''} ${row.label}`.trim() === text.trim()) === true) {
+            setAnswer({ ...answer, term: text.trim() });
+
+            return;
+        }
+
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             void search(text, [type], controller.signal).then((outcome) => {

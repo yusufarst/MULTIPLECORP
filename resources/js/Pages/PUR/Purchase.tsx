@@ -267,7 +267,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                     )}
                 </FormSection>
                 <FormSection title={t('purchases.section.timeline')}>
-                    <Timeline label={t('purchases.section.timeline')} entries={timeline.map((entry, index) => ({ id: String(index), sequence: timeline.length - index, recordedAt: entry.at, actor: entry.by, sentence: t(`purchases.timeline.${entry.action.replace('PUR.', '')}` as TranslationKey), ...(entry.reason !== null ? { reason: entry.reason } : {}) }))} />
+                    <Timeline label={t('purchases.section.timeline')} entries={timeline.map((entry, index) => ({ id: String(index), sequence: timeline.length - index, recordedAt: entry.at, actor: entry.by, sentence: t(`activity.action.${entry.action}` as TranslationKey), ...(entry.reason !== null ? { reason: entry.reason } : {}) }))} />
                 </FormSection>
             </div>
             {face !== undefined && dialog !== null && (

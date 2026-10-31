@@ -33,7 +33,8 @@ final class PurchaseSubjects implements DocumentSubjectProvider
         $purchase = is_string($publicId) && preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 && count($records) === 1
             ? DB::table('purchases')->where('public_id', strtolower($publicId))->first(['id', 'company_id']) : null;
 
-        if ($purchase === null || ! $viewer->allows('cost.view', (int) Row::text($purchase, 'company_id'))) {
+        // The company in scope, or unknown (CS-04); the command then asks the family's `cost.view` itself (PJ-15).
+        if ($purchase === null || ! $viewer->allows('documents.issue', (int) Row::text($purchase, 'company_id'))) {
             return null;
         }
 

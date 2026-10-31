@@ -13615,54 +13615,6 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
-        "purchases.timeline.PurchaseRecorded": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.PurchaseAmended": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.PurchaseCancelled": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.RemainderClosed": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.RemainderClosureSuperseded": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.CostCorrected": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.LinePerformed": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
-        "purchases.timeline.LinePerformedTakenBack": {
-            "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
-            "indonesian": "proposed",
-            "english": "proposed"
-        },
         "purchases.project.title": {
             "task": "TASK-037",
             "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
@@ -13696,6 +13648,54 @@
         "purchases.refusal.amend_nonstock": {
             "task": "TASK-037",
             "source": "L-23; CM-35 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.PurchaseRecorded": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.PurchaseAmended": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.PurchaseCancelled": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.RemainderClosed": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.RemainderClosureSuperseded": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.CostCorrected": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.LinePerformed": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.LinePerformedTakenBack": {
+            "task": "TASK-037",
+            "source": "PT-18; BR-XC-01 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
         }
