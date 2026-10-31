@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-04
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -23,7 +23,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 **DEPENDS ON:**
 
 - TASK-042 — Condition, location moves, adjustments and losses
-- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — P11Q-02's done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-215 · INT-215 and §4's print with INT-217; P11Q-04's BLOCKED until the Owner approves [OF04_FACTS_DRAFT](OF04_FACTS_DRAFT.md)
+- the Owner's answers to P11Q-02 and P11Q-04 recorded, with what they call for done ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — P11Q-02's done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-215 · INT-215 and §4's print with INT-217; P11Q-04's done: the Owner's approval (DIR-101, APPR-027), DATABASE §§4.7, 5.3, 8; AX-06
 
 **BLOCKS:**
 
@@ -128,7 +128,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
+- Schema change: `stock_counts.purpose` and its NULL location and condition, `stock_count_lines.lot_id` and the movement type SERIAL_REGISTRATION in its CHECKs and net-zero group, by expand-only migrations (DIR-101)
 - Migration required: NO
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -270,6 +270,7 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - Performance: PFM-01 and PFM-02 for PG-026 and PG-029; PFM-20 with QB-14 for the class-B commands AX-06, AX-07 and AX-37 (TL-15)
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-009's count-versus-dispatch and duplicate-scan proofs and GAP-030's fixtures recorded as their evidence; the registration count of L-35 limited to its lines until Planning states how serials are assigned
+- The Owner's required verification (DIR-101): F2 — a registration count changes no quantity, lot or cost; every unit gets one serial on its named lot; a difference, a serial already IN_STOCK and a non-integral quantity are refused; the count, the serials and the policy commit in one transaction or none; a racing dispatch or receipt meets the scope guards.
 
 **TEST CHECKLIST:**
 

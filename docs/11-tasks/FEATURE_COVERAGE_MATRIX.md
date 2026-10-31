@@ -8,6 +8,8 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Amendment: on 2026-10-31, under [DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit), Change 4 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its eighteen entries and the counts they change. It takes effect at the Owner's merge.
 
+Amendment: on 2026-10-31, under [DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), Change 15 of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) adds its two entries and the counts they change.
+
 Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-95 and SP-97, P11 being authorized by the Owner at OG-3 (DIR-083 OE-19); the Owner approved it with P11 at OG-4 (DIR-085 OF-07), which satisfies PRQ-13. It is the FEATURE_COVERAGE_MATRIX that P11 creates before the planning freeze ([REFERENCE_COVERAGE](../01-product/REFERENCE_COVERAGE.md); [AGENT_OPERATING_MODEL](../00-governance/AGENT_OPERATING_MODEL.md#terminology); RELEASE_PLAN PRQ-13): every requirement that an approved document of P1–P10 defines by an identifier, inventoried by script by the method of §1, mapped to the Task or Tasks of the [Task plan](TASK_PLAN.md) that build or verify it, or to a recorded non-Task disposition with its reason — never "N/A" alone. A requirement stated only in prose is carried by the identified rows of its section and by the Tasks that cite that section; one found without a contract is raised to the Owner, as P11Q-02 is ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)). The normative rule stays in its source; this matrix only says where each one is built.
 
 ## 1. The requirement inventory (SP-95)
@@ -40,9 +42,9 @@ Run PC-5 wrote this matrix on 2026-10-19 under [DIR-084](../00-governance/DECISI
 | AX- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 37 |
 | QS- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 24 |
 | L- | [WORKFLOWS](../03-workflows/WORKFLOWS/README.md) | 50 |
-| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 218 |
+| ROUTE- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 219 |
 | RC- | [ROUTE_CONTRACTS](../03-workflows/ROUTE_CONTRACTS.md) | 6 |
-| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 174 |
+| INT- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 175 |
 | IG- | [INTERACTION_CONTRACTS](../03-workflows/INTERACTION_CONTRACTS.md) | 5 |
 | D-DB- | [DATABASE](../04-architecture/DATABASE/README.md) | 14 |
 | C- | [DATABASE](../04-architecture/DATABASE/README.md) | 65 |
@@ -802,6 +804,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | ROUTE-177 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
 | ROUTE-178 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | ROUTE-179 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
+| ROUTE-180 | ROUTE- | ROUTE_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | ROUTE-181 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | ROUTE-183 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | ROUTE-184 | ROUTE- | ROUTE_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-038 |
@@ -978,6 +981,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | INT-177 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-044 |
 | INT-178 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | INT-179 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
+| INT-180 | INT- | INTERACTION_CONTRACTS · Purchases — *Buat Pembelian* and *Detail Pembelian* (PUR; PG-016, PG-017; WF-PUR-01–WF-PUR | TASK-037 |
 | INT-181 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
 | INT-221 | INT- | INTERACTION_CONTRACTS · Documents, files and evidence (DOC; PG-035, PG-036, PG-038; WF-DOC-01, WF-DOC-02) | TASK-029 |
 | INT-183 | INT- | INTERACTION_CONTRACTS · Warehouse — receiving, reservations, dispatch, counts, adjustments and discrepancies (INV; | TASK-039 |
@@ -3465,7 +3469,7 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 | TASK-034 | Commercial confirmation and fulfillment planning | 80 |
 | TASK-035 | Administrative checklist and document readiness | 36 |
 | TASK-036 | Costing foundations — lot cost basis, charge allocation and HPP attribution | 25 |
-| TASK-037 | Purchases — project and replenishment purchases | 86 |
+| TASK-037 | Purchases — project and replenishment purchases | 88 |
 | TASK-038 | Reservations | 98 |
 | TASK-039 | Receiving (Barang Masuk) | 118 |
 | TASK-040 | Stock views, stock history and movement reversal | 48 |
@@ -3519,11 +3523,12 @@ By script, in this order: **structural rules** — a page (PG-) to the Task that
 
 ## 5. Checks
 
-- **Entries:** 3255, in 125 family-and-document pairs.
-- **Mapped:** 3255 of 3255 — 3206 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
+- **Entries:** 3257, in 125 family-and-document pairs.
+- **Mapped:** 3257 of 3257 — 3208 to one or more Tasks and 49 to a recorded disposition; unmapped: 0.
 - **Tasks:** 87 of 87 map at least one entry; orphan Tasks: none.
-- **Method:** 2134 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
+- **Method:** 2136 entries by an explicit rule, 934 derived from the identifiers their own row cites, 138 by their family's default when their row cites none that resolves, 49 by a disposition.
 - **After OG-4:** GAP-066, GAP-067 and GAP-068, OPEN since the Owner's answers to P11Q-02–P11Q-04 ([DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization)), entered by the explicit rule for the OPEN gaps with the Tasks their register entries name — TASK_PLAN's Change 3, which re-checked this section by script.
 - **Change 4 ([DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit)):** eighteen entries added by the explicit rule, ROUTE-178, ROUTE-179, ROUTE-215, ROUTE-216, ROUTE-263, ROUTE-276–ROUTE-278, their INT-, INT-217 and GAP-071; GAP-066 and GAP-067 stay mapped, closed at its merge.
+- **Change 15 ([DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels)):** two entries added by the explicit rule, ROUTE-180 and INT-180; GAP-068 stays mapped, closed.
 
 Every count above is computed by script from the matrix in §2 and the Task list of [TASK_PLAN](TASK_PLAN.md#4-the-task-list).

@@ -1,0 +1,42 @@
+Owner decisions received in session during execution, 2026-10-31 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received, after the Owner's manual merge of pull request #50 (Change 4).
+
+OWNER DECISION — MULTIPLECORP CHANGE 4 AND EXECUTION CONTINUATION
+
+Saya telah melakukan merge PR #50 secara manual. Verifikasi terlebih dahulu bahwa merge benar-benar tercatat pada remote "main".
+
+1. P11Q-07: Saya memilih opsi A.
+
+Gunakan kapabilitas "refund.record" (ADM+) untuk penahanan kredit proyek.
+
+Pastikan otorisasi, audit alasan, identitas proyek, konsistensi jumlah, serta pembayaran lintas proyek ditangani dengan benar. Satu kredit tidak boleh secara keliru menghasilkan penahanan ganda atau penyelesaian proyek yang menyesatkan.
+
+2. OF-04: Saya menyetujui definisi F1, F2, dan F3 dalam draf Change 4.
+
+Catat persetujuan ini melalui mekanisme governance yang berlaku dan integrasikan definisinya ke dokumen kanonis sesuai change control.
+
+Pada implementasi nanti, wajib verifikasi:
+
+- F1: perilaku terlaksana dan pembatalan non-stok.
+- F2: integritas kuantitas, serial, lot, biaya, transaksi atomik dan konkurensi.
+- F3: persistensi go-live, pemulihan kegagalan, pencegahan pencatatan ganda dan audit operator.
+
+Apabila ditemukan kontradiksi material dengan aturan yang telah disetujui, jangan mengubah makna bisnis secara diam-diam.
+
+3. Label UI: Saya menyetujui empat usulan berikut:
+
+- Cetak Lembar Hitung.
+- Catat Biaya Susulan.
+- Batalkan Hitungan.
+- Selesaikan Sisa Potongan.
+
+4. Kelanjutan eksekusi
+
+Setelah seluruh keputusan dicatat, kontrak diperbarui secara sah, dan prasyarat TASK-052 terpenuhi, lanjutkan eksekusi otonom MULTIPLECORP sesuai DIR-096.
+
+Gunakan prosedur change control dan review yang sudah disetujui. Jangan mengulangi review penuh tanpa perubahan risiko yang material.
+
+Tetap pertahankan satu watcher, seluruh quality gate, isolasi proyek, dan laporan progres dalam Bahasa Indonesia.
+
+Tidak perlu meminta persetujuan rutin untuk TASK berikutnya sepanjang berada dalam otorisasi yang berlaku.
+
+LANJUTKAN EKSEKUSI.

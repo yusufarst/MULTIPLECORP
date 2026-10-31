@@ -44,7 +44,7 @@ Each workflow uses one template: purpose; actors/trigger; preconditions; main pa
 
 - **Main path:** create product or service (the goods/service flag decides stock applicability) → SKU → base unit = the smallest unit in which the product is counted or sold, with alternate units as exact multiples (L-31) → barcode: manufacturer code if present, otherwise generate an internal code → serial policy → purchase/selling/SPJ-reference price defaults with history → images → activate.
 - **Branches:** an unknown barcode scanned during work is offered to an authorized user for registration, never auto-created or auto-selected; a barcode already resolving to another active product is rejected (BR-INV-09); internal barcodes can be printed as labels (method validated under DEP-03).
-- **Changes:** ratio and price changes never rewrite committed snapshots (BR-INV-03; BR-SN-01); switching a product to serialized requires zero on-hand stock or a registration count that assigns a serial to every on-hand unit; switching it off keeps serial history (L-35, PLANNER-DETERMINED).
+- **Changes:** ratio and price changes never rewrite committed snapshots (BR-INV-03; BR-SN-01); switching a product to serialized requires zero on-hand stock or a registration count that assigns a serial to every on-hand unit, changing no quantity and no cost and turning the policy on in one command (AX-06; DATABASE §5.3; `DIR-101`); switching it off keeps serial history (L-35, PLANNER-DETERMINED).
 - **Archive with live history:** not selectable for new demand or purchases; confirmed demand stays fulfillable; stock stays countable.
 - **Traceability:** CAP-03; AC-03/16; REF-012–015; GAP-020/025.
 

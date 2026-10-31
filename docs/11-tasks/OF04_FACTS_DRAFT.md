@@ -1,8 +1,8 @@
 # OF-04 facts draft
 
-Status: REVIEW | Updated: 2026-10-31 | Owner: Planning
+Status: APPROVED | Updated: 2026-10-31 | Owner: Planning
 
-**A draft, not in force.** Under [DIR-085](../00-governance/DECISION_LOG.md#dir-085-dir-086-obs-034-and-tech-041--og-4-decisions-appr-016-the-planning-freeze-and-the-execution-authorization) OF-04 and record 84 ER-09, the executor drafted with Change 4 ([DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit)) one narrow amendment defining the three facts of [P11Q-04](TASK_PLAN.md#p11q-04--facts-the-approved-documents-use-but-do-not-define) and [GAP-068](../00-governance/GAP_REGISTER.md#gap-068--facts-a-rule-depends-on-that-no-approved-document-defines), each the minimum its cited rules need. It takes effect only on the Owner's separate approval of this text. TASK-037, TASK-043 and TASK-077 stay BLOCKED until then, and nothing else waits on it. On approval each definition is copied into the document named under it, marked with its decision.
+**Approved by the Owner on 2026-10-31 ([DIR-101](../00-governance/DECISION_LOG.md#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels), APPR-027).** This is the text the Owner approved, kept as written under DIR-085 OF-04 and Change 4 ([DIR-100](../00-governance/DECISION_LOG.md#dir-100--change-4-the-contract-rows-and-the-consistency-edit)) for the three facts of [P11Q-04](TASK_PLAN.md#p11q-04--facts-the-approved-documents-use-but-do-not-define) and [GAP-068](../00-governance/GAP_REGISTER.md#gap-068--facts-a-rule-depends-on-that-no-approved-document-defines). The binding statements are now in the documents each definition names, marked `DIR-101`; where they and this record differ, they govern. Each "alternative" below was not chosen.
 
 ## F1 — The performed fact of a non-stock purchase line
 

@@ -48,6 +48,7 @@
 - **Refund (AX-23, ADM+):** a refund disbursement (Cash-Out) consuming one application of evidenced credit, with transfer evidence; never negative Cash-In, never cost. The consumed application is final while the disbursement stands: no reallocation (CM-21) supersedes, releases or re-targets it; only a contra of the refund disbursement (CM-38: entry error, or the transfer came back) releases it to credit (L-46).
 - **Unbacked refund:** when a payment contra (CM-19) leaves a refund disbursement not fully backed by applications of real payments of the same client and company, the shortfall is an explicit residual on the correction case (QS-07/QS-14); it blocks case closure and normal completion until a later real payment of that client and company is applied to the refund disbursement or the disbursement itself is contra'd as an entry error (L-46).
 - **Rules:** credit is never revenue or profit (FS-08); project-originated credit needs a disposition (apply, refund, or hold with reason) before normal completion.
+- **The hold (`DIR-101`):** under `refund.record` (ADM+). Which project a credit belongs to, and what a hold covers, are P11Q-08's; no control is built until it is answered.
 - **Traceability:** CAP-10; AC-10; REF-042.
 
 #### WF-FIN-07 — Expenses, disbursements and other cash `[desk]`
