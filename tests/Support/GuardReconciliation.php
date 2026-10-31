@@ -13,7 +13,8 @@ use PHPUnit\Framework\AssertionFailedError;
  * and any difference between a guard and its facts fails the test; ARCHITECTURE §7's ReconcileGuards
  * families are reconciled after each such test that has a database. Two directories are not reconciled:
  * Integration/Schema, whose tests write guard and fact rows directly to prove each constraint, and
- * Integration/Command, whose test commands move guards with no facts to prove the envelope (TASK-013).
+ * Integration/Command, whose test commands move guards with no facts to prove the envelope (TASK-013). Nor is
+ * EvidenceGuardTest, whose commands cite a guard with no fact to prove its cap (TASK-030), now that TASK-052's family reads a document's citing facts.
  */
 final class GuardReconciliation
 {
@@ -50,7 +51,7 @@ final class GuardReconciliation
     }
 
     /** The directories, under tests/, whose tests are not reconciled. */
-    private const UNRECONCILED = ['Integration/Schema/', 'Integration/Command/'];
+    private const UNRECONCILED = ['Integration/Schema/', 'Integration/Command/', 'Integration/Evidence/EvidenceGuardTest.php'];
 
     /**
      * Fails on any difference: those of the registered checks, and — for an integration test with a database

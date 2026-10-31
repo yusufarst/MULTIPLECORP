@@ -20,7 +20,7 @@ export type Settlement = { handle: string; invoice: string | null; number: strin
 export type Payment = {
     id: string; date: string; company: string; client: string; amount: string; net: string; contra: string; capacity: string; method: string; account: string | null; reference: string | null; intermediary: string | null; unevidenced: string | null; without_proof: boolean; line: string | null; flagged: boolean; recovery: boolean; proof: string | null;
     claimed: string; settled: string; rerecords: string | null; rerecorded_by: string | null; rerecorded_capacity: string | null; rerecorded_same_client: boolean; applications: Application[]; settlements: Settlement[];
-    can: { apply: boolean; reallocate: boolean; contra: boolean; kuitansi: boolean; link: boolean; attach: boolean };
+    can: { apply: boolean; reallocate: boolean; contra: boolean; kuitansi: boolean; link: boolean; attach: boolean; settle: boolean };
 };
 export type TargetInvoice = { id: string; number: string | null; project_number: string | null; outstanding: string; billed: boolean; kuitansi: boolean };
 export type Targets = { invoices: TargetInvoice[]; shortfalls: { handle: string; shortfall: string }[] };

@@ -66,7 +66,7 @@ final class Families
             new Family(
                 'invoice_balances',
                 ['invoice_id'],
-                ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount', 'written_off_amount'],
+                ['gross_value', 'sales_value', 'output_tax_value', 'applied_amount', 'fee_settled_amount', 'tax_settled_amount', 'collected_tax_settled_amount', 'written_off_amount'],
                 <<<'SQL'
                     select b.invoice_id,
                         case when i.state = 'ISSUED' then v.gross_value else 0 end as gross_value,
@@ -75,6 +75,7 @@ final class Families
                         coalesce((select sum(a.amount) from payment_applications a where a.invoice_id = b.invoice_id and a.state = 'ACTIVE'), 0) as applied_amount,
                         coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'FEE'), 0) as fee_settled_amount,
                         coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'TAX'), 0) as tax_settled_amount,
+                        coalesce((select sum(s.amount) from deduction_settlements s where s.invoice_id = b.invoice_id and s.state = 'ACTIVE' and s.settlement_class = 'TAX' and s.tax_direction = 'COLLECTED'), 0) as collected_tax_settled_amount,
                         coalesce((select sum(w.amount) from receivable_writeoffs w where w.invoice_id = b.invoice_id), 0)
                             - coalesce((select sum(c.amount) from financial_contras c join receivable_writeoffs w on w.id = c.receivable_writeoff_id where w.invoice_id = b.invoice_id), 0) as written_off_amount
                     from invoice_balances b join invoices i on i.id = b.invoice_id join invoice_versions v on v.id = i.current_version_id
@@ -101,23 +102,29 @@ final class Families
                     SQL,
                 null,
             ),
-            // TASK-051 (C-19; L-22; DATABASE §4.10): a bank line's guard proves its amount while ACTIVE and holds its citing Cash-In, net of contras. An evidence document's guard is its citing Tasks' to register.
+            // TASK-051, TASK-052 (C-18; C-19; C-23; L-22; DATABASE §4.10): a bank line's guard proves its amount while ACTIVE and holds its citing Cash-In, net of contras; a document's holds its settlements — a residual keeps its citation —, its charges, bills and remittances net of contras, and its expenses. An evidence document's guard is its citing Tasks' to register.
             new Family(
                 'evidence_balances',
                 ['id'],
-                ['proven_amount', 'cited_amount'],
+                ['proven_amount', 'cited_amount', 'expensed_amount'],
                 <<<'SQL'
                     select g.id,
                         case when l.id is null then g.proven_amount when l.state = 'ACTIVE' then l.amount else 0 end as proven_amount,
-                        case when l.id is null then g.cited_amount else
+                        case when l.id is null then
+                            coalesce((select sum(s.amount) from deduction_settlements s where s.evidence_document_id = g.evidence_document_id and s.state in ('ACTIVE', 'RESIDUAL')), 0)
+                            + coalesce((select sum(b.amount) from purchase_charges c join purchase_charge_balances b on b.purchase_charge_id = c.id where c.source_bill_evidence_id = g.evidence_document_id), 0)
+                            + coalesce((select sum(x.amount - coalesce((select sum(f.amount) from financial_contras f where f.expense_id = x.id), 0)) from expenses x where x.source_bill_evidence_id = g.evidence_document_id), 0)
+                            + coalesce((select sum(d.amount - coalesce((select sum(f.amount) from financial_contras f where f.disbursement_id = d.id), 0)) from disbursements d where d.tax_evidence_id = g.evidence_document_id), 0)
+                        else
                             coalesce((select sum(p.amount) from payments p where p.bank_statement_line_id = l.id), 0)
                             - coalesce((select sum(x.amount) from financial_contras x join payments p on p.id = x.payment_id where p.bank_statement_line_id = l.id), 0)
                             + coalesce((select sum(r.amount) from other_cash_receipts r where r.bank_statement_line_id = l.id), 0)
                             - coalesce((select sum(x.amount) from financial_contras x join other_cash_receipts r on r.id = x.other_cash_receipt_id where r.bank_statement_line_id = l.id), 0)
-                        end as cited_amount
+                        end as cited_amount,
+                        coalesce((select sum(x.amount - coalesce((select sum(f.amount) from financial_contras f where f.expense_id = x.id), 0)) from expenses x where x.evidence_document_id = g.evidence_document_id), 0) as expensed_amount
                     from evidence_balances g left join bank_statement_lines l on l.id = g.bank_statement_line_id
                     union all
-                    select -l.id, l.amount, 0 from bank_statement_lines l where not exists (select 1 from evidence_balances g where g.bank_statement_line_id = l.id)
+                    select -l.id, l.amount, 0, 0 from bank_statement_lines l where not exists (select 1 from evidence_balances g where g.bank_statement_line_id = l.id)
                     SQL,
                 null,
             ),

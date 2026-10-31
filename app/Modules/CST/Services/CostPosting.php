@@ -448,6 +448,28 @@ final class CostPosting
         return $this->direct($context, $purchaseLineId, ['purchase_line_id' => $purchaseLineId], (int) Row::text($line, 'company_id'), $bearerProjectId, $businessDate);
     }
 
+    /**
+     * The system-created expense of a settlement (BR-FIN-09; BR-FIN-16; C-23; DATABASE §11.4): a fee's, or a tax's under a rule that says so, with its money-fact guard, in a category no manual
+     * entry may use. The evidence's expensed amount is the settling command's, which moves it where the expense is new and leaves it where the expense only moves with its settlement.
+     */
+    public function settlementExpense(CommandContext $context, int $settlementId, string $kind, ?int $projectId, string $businessDate): int
+    {
+        $settlement = DB::table('deduction_settlements')->where('id', $settlementId)->first(['company_id', 'amount', 'evidence_document_id', 'evidence_type']);
+
+        if (! is_object($settlement) || ! in_array($kind, ['FEE_DEDUCTION', 'TAX_TREATMENT'], true)) {
+            throw new InvalidArgumentException("Settlement {$settlementId} has no {$kind} expense.");
+        }
+
+        $ledger = new CostLedger($context);
+        $id = $ledger->expense([
+            'company_id' => (int) Row::text($settlement, 'company_id'), 'project_id' => $projectId, 'kind' => $kind, 'category' => $kind, 'amount' => Row::text($settlement, 'amount'), 'business_date' => $businessDate,
+            'deduction_settlement_id' => $settlementId, 'evidence_document_id' => (int) Row::text($settlement, 'evidence_document_id'), 'evidence_type' => Row::text($settlement, 'evidence_type'),
+        ]);
+        GuardUpdate::bear($context->connection, 'money_fact_balances', ['expense_id' => $id], ['company_id' => (int) Row::text($settlement, 'company_id'), 'fact_kind' => 'EXPENSE', 'amount' => Row::text($settlement, 'amount'), 'recorded_at' => $context->now()]);
+
+        return $id;
+    }
+
     /*
      * Consumption.
      */

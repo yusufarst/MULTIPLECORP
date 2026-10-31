@@ -54,7 +54,7 @@ final class CostFigures
         $row = $viewer->scope->apply(DB::table('projects as p'), 'p.company_id')->where('p.id', $projectId)->selectRaw(<<<'SQL'
             coalesce((select sum(a.amount) from cost_attributions a where a.bearer_project_id = p.id and a.cost_class = 'HPP'), 0.00) as hpp,
             coalesce((select sum(a.amount) from cost_attributions a where a.bearer_project_id = p.id and a.cost_class = 'LOSS'), 0.00) as loss,
-            coalesce((select sum(x.amount) from expenses x where x.project_id = p.id), 0.00) as expenses
+            coalesce((select sum(x.amount - coalesce((select sum(c.amount) from financial_contras c where c.expense_id = x.id), 0)) from expenses x where x.project_id = p.id), 0.00) as expenses
             SQL)->first();
 
         if (! is_object($row)) {
@@ -83,7 +83,7 @@ final class CostFigures
         $rows = $viewer->scope->apply(DB::table('companies as c'), 'c.id')->orderBy('c.id')->selectRaw(<<<'SQL'
             c.id,
             coalesce((select sum(a.amount) from cost_attributions a where a.bearer_company_id = c.id and a.bearer_project_id is null and a.cost_class = 'LOSS'), 0.00) as losses,
-            coalesce((select sum(x.amount) from expenses x where x.company_id = c.id and x.project_id is null), 0.00) as expenses
+            coalesce((select sum(x.amount - coalesce((select sum(f.amount) from financial_contras f where f.expense_id = x.id), 0)) from expenses x where x.company_id = c.id and x.project_id is null), 0.00) as expenses
             SQL)->get();
         $figures = [];
 

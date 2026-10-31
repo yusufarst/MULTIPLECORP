@@ -12600,6 +12600,366 @@
             "source": "L-29; BR-PRJ-02",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "deductions.answer.recorded": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.answer.contraed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.answer.resolved": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.action.contra": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.line": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.no_evidence": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.deduction": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.choose": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.direction": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.outstanding": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.room": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.proven": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.direction.WITHHELD": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.direction.COLLECTED": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.confirm.record": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.confirm.contra": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.confirm.resolve": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.line": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.choice": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.rerecord": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.contra": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.issuer_evidence": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.waiting.title": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.waiting.figures": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.tab.semua": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.tab.sisa": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.empty.semua": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.empty.sisa": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.state.ACTIVE": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.state.RESIDUAL": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.state.CONTRAED": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.validation.direction": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.validation.evidence": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.duplicate": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.stale": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.above_outstanding": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.above_evidence": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.above_claimed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.collected_above_tax": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.amount": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.above_expensed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.expense_not_manual": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.unbacked": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.payment_contraed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.transfer_cited": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.residual": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.not_residual": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.no_rule": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.DeductionSettled": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.SettlementContraed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.ResidualSettlementResolved": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.SettlementEvidenceReplaced": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.DisbursementContraed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.ExpenseContraed": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.payment": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.same_payment": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.expense_paid": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.resolve.no_payment": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.form.claim_room": {
+            "task": "TASK-052",
+            "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.refusal.expense_above_net": {
+            "task": "TASK-052",
+            "source": "PERMISSIONS_MATRIX row 78 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

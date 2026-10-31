@@ -86,7 +86,7 @@ final class InvoiceCorrections
         }
 
         foreach ($reductions['settlements'] as $id => $row) {
-            $set = $set->add('application_source_balances', ['payment_id' => $row['payment_id']])->add('money_fact_balances', ['deduction_settlement_id' => $id])->add('evidence_documents', ['id' => $row['evidence_id']]);
+            $set = $set->add('application_source_balances', ['payment_id' => $row['payment_id']])->union(SettlementMoves::locks($id))->add('evidence_documents', ['id' => $row['evidence_id']]);
         }
 
         foreach (array_keys($reductions['writeoffs']) as $id) {
