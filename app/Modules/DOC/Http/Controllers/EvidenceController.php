@@ -205,7 +205,7 @@ final class EvidenceController extends Controller
 
         // IP-16 inside a form (PG-046; PG-050): the proof registered, the form stays with its input (NV-04).
         $back = request()->input('kembali');
-        $inPlace = is_string($back) && preg_match('/^\/keuangan\/(pembayaran|pembayaran\/baru|mutasi-bank)(\?[A-Za-z0-9=&_%-]*)?$/', $back) === 1 ? $back : null;
+        $inPlace = is_string($back) && preg_match('/^\/keuangan\/(pembayaran|pembayaran\/baru|mutasi-bank|potongan)(\?[A-Za-z0-9=&_%-]*)?$/', $back) === 1 ? $back : null;
 
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text,
             'state' => [...array_intersect_key($state, array_flip(['matches', 'override', 'labels', 'evidence', 'reason'])), ...($inPlace !== null && $outcome->kind === Outcome::COMMITTED ? ['registered' => $evidence] : [])]]);

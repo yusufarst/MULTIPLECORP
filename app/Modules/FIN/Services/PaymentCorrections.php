@@ -56,7 +56,7 @@ final class PaymentCorrections
             ->add('payment_applications', ['id' => $applicationId]);
 
         foreach ($settlementIds as $settlement) {
-            $set = $set->add('deduction_settlements', ['id' => $settlement])->add('money_fact_balances', ['deduction_settlement_id' => $settlement]);
+            $set = $set->union(SettlementMoves::locks($settlement));
         }
 
         return $set;
@@ -179,7 +179,7 @@ final class PaymentCorrections
 
         foreach (SettlementMoves::anchored($payment->id) as $id => $row) {
             $invoices[] = $row['invoice'];
-            $set = $set->add('money_fact_balances', ['deduction_settlement_id' => $id]);
+            $set = $set->union(SettlementMoves::locks($id));
         }
 
         $set = $set->union(PaymentApplications::invoiceLocks(array_values(array_unique($invoices))));

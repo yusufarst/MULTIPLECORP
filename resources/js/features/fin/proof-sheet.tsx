@@ -2,7 +2,7 @@
 // duplicate is IP-05's warning, an identity already registered named in the answer; the evidence's full handling stays PG-038's.
 import { useState } from 'react';
 
-import { FormField, FormSection } from '@/components/form';
+import { DecimalInput, FormField, FormSection } from '@/components/form';
 import { UploadField } from '@/components/notices';
 import { CommandAnswer } from '@/components/parties';
 import { Button } from '@/components/ui/button';
@@ -15,13 +15,14 @@ import { useUpload } from '@/lib/use-upload';
 
 const ACCEPT = 'application/pdf,image/jpeg,image/png,image/webp';
 
-export function ProofSheet({ open, onOpenChange, company, types, today, back, onRegistered }: { open: boolean; onOpenChange: (open: boolean) => void; company: string; types: string[]; today: string; back: string; onRegistered: (evidence: string) => void }) {
+export function ProofSheet({ open, onOpenChange, company, types, proven = false, today, back, onRegistered }: { open: boolean; onOpenChange: (open: boolean) => void; company: string; types: string[]; proven?: boolean; today: string; back: string; onRegistered: (evidence: string) => void }) {
     const { t } = useTranslation();
     const upload = useUpload((): Record<string, string> => ({ purpose: 'bukti', company }));
     const [type, setType] = useState(types[0] ?? '');
     const [issuer, setIssuer] = useState('');
     const [reference, setReference] = useState('');
     const [date, setDate] = useState(today);
+    const [amount, setAmount] = useState('');
     const register = useCommand<Record<string, string | boolean | string[] | null>>(() => '/bukti', 'post');
 
     return (
@@ -39,7 +40,7 @@ export function ProofSheet({ open, onOpenChange, company, types, today, back, on
 
                         if (upload.file === null) return;
 
-                        register.submit({ file: upload.file, company, pool: false, pool_confirmed: false, type, issuer, reference: reference === '' ? null : reference, date, amount: null, deliverer: null, received: null, acknowledged: [], reason: null, kembali: back }, (state) => {
+                        register.submit({ file: upload.file, company, pool: false, pool_confirmed: false, type, issuer, reference: reference === '' ? null : reference, date, amount: proven ? amount : null, deliverer: null, received: null, acknowledged: [], reason: null, kembali: back }, (state) => {
                             upload.reset();
 
                             if (typeof state.registered === 'string') onRegistered(state.registered);
@@ -66,6 +67,11 @@ export function ProofSheet({ open, onOpenChange, company, types, today, back, on
                         <FormField label={t('evidence.field.date')} required error={register.errors.date}>
                             {(control) => <Input {...control} type="date" value={date} onChange={(event) => { setDate(event.target.value); }} />}
                         </FormField>
+                        {proven && (
+                            <FormField label={t('deductions.form.proven')} required error={register.errors.amount}>
+                                {(control) => <DecimalInput {...control} scale={2} value={amount} onValueChange={(value) => { setAmount(value ?? ''); }} />}
+                            </FormField>
+                        )}
                     </FormSection>
                     {register.answer !== null && <CommandAnswer command={register} />}
                     <div className="flex flex-wrap justify-end gap-2">

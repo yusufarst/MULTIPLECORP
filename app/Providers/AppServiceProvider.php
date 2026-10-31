@@ -15,6 +15,7 @@ use App\Modules\DOC\Queries\RenditionStatus;
 use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\DOC\Services\WeasyPrintRenderer;
 use App\Modules\FIN\Services\InvoiceDocumentChanges;
+use App\Modules\FIN\Services\SettlementDocumentChanges;
 use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\FIN\Services\PaymentCitations;
 use App\Modules\FIN\Services\PaymentPredicate;
@@ -84,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
         // FIN's part of a statement line's arrival (TASK-051): the flagged payments it cites, set in its own command.
         $this->app->bindIf(BankLineCitations::class, PaymentCitations::class);
 
-        $this->app->tag([InvoiceDocumentChanges::class], DocumentChangeParticipant::TAG);
+        $this->app->tag([InvoiceDocumentChanges::class, SettlementDocumentChanges::class], DocumentChangeParticipant::TAG);
         $this->app->tag([ReceivablePredicate::class, PaymentPredicate::class], CompletionPredicateProvider::TAG);
 
         // FUL's parts (TASK-047): the BAST's subject, a recorded handover, and the fulfilment predicate's service lines.

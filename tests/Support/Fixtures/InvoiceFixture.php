@@ -23,6 +23,7 @@ use Tests\Support\InvoiceWorld;
 use Tests\Support\Numbering;
 use Tests\Support\PaymentWorld;
 use Tests\Support\Projects;
+use Tests\Support\SettlementWorld;
 
 /**
  * TASK-049's browser fixture (TL-09–TL-12; ROUTE-041–ROUTE-043; J-FIN-01; J-FIN-08): for the run's company — whose go-live the numbering fixture armed —, a project of `lines` service lines of ten at Rp250,000 confirmed through ROUTE-158's own action, the layouts' numbering started, a
@@ -160,6 +161,20 @@ final class InvoiceFixture
 
                 if ($outcome->kind !== 'COMMITTED') {
                     return response()->json(['error' => "paid {$outcome->kind} {$outcome->code}"], 500);
+                }
+
+                // TASK-052: a fee claimed on the payment, its advice to choose and, when asked, part of it settled through its own command.
+                $claim = $request->input('claim');
+                $proven = $request->input('proven');
+
+                if (is_string($claim) && is_string($proven) && is_int($outcome->resultId)) {
+                    SettlementWorld::claimFee($outcome->resultId, $claim);
+                    $advice = SettlementWorld::evidence($company->id, 'FEE_ADVICE', $proven);
+                    $settled = $request->input('settled');
+
+                    if (is_string($settled)) {
+                        SettlementWorld::fee($actor, $invoice->id, $outcome->resultId, $settled, $advice->id, 'BIAYA_BANK');
+                    }
                 }
             }
         }

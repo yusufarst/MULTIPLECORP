@@ -234,6 +234,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                             <div className="flex flex-wrap gap-2">
                                 {current.can.apply && <Button onClick={() => { setApplying(current.id); }}>{t('payments.action.apply')}</Button>}
                                 {current.can.contra && <Button variant="outline" onClick={() => { setContraing(current.id); }}>{t('payments.action.contra')}</Button>}
+                                {current.can.settle && positive(current.claimed) && <Button variant="outline" onClick={() => { router.visit(`/keuangan/potongan?pembayaran=${current.id}`); }}>{t('actions.record_deduction')}</Button>}
                             </div>
                         </div>
                     </SheetContent>

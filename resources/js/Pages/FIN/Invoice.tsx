@@ -47,7 +47,7 @@ type Props = {
     writeoffs: WriteoffRow[];
     credit: string | null;
     recoveries: Recovery[];
-    can: { correct: boolean; supersede: boolean; kuitansi: boolean; link: boolean; nota: boolean; bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; pay: boolean; request: boolean };
+    can: { correct: boolean; supersede: boolean; settle: boolean; kuitansi: boolean; link: boolean; nota: boolean; bill: boolean; correct_billing: boolean; dispute: boolean; write_off: boolean; recover: boolean; pay: boolean; request: boolean };
 };
 type Correcting = 'REVISI' | 'BATAL';
 type Payload = Record<string, FormDataConvertible>;
@@ -209,6 +209,7 @@ export default function Invoice({ invoice, position, lines, taxes, reductions, d
                     ))}
                 </FormSection>
                 <FormSection title={t('invoices.detail.reductions')}>
+                    {can.settle && <a href={`/keuangan/potongan?invoice=${invoice.id}`} className="inline-flex min-h-touch items-center self-start text-body text-accent-link underline underline-offset-2">{t('actions.record_deduction')}</a>}
                     {noReductions ? <RegionEmpty text={t('invoices.detail.no_reductions')} /> : (
                         <ul role="list" data-testid="reductions" className="flex min-w-0 flex-col gap-2 text-body text-text-primary">
                             {reductions.applications.map((row) => <li key={row.handle} className="flex justify-between gap-3"><span>{t('invoices.detail.application', { tanggal: dateLong(row.date) })}</span><Money value={row.amount} /></li>)}

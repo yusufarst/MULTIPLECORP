@@ -27,7 +27,7 @@ export type Entry = {
 /** The pages built so far, by PG-; a page Task adds its own when its route exists. */
 // ROUTE-108's logout is TASK-017's: the account menu's "Keluar".
 // PG-061 *Penomoran Dokumen* is TASK-021's; PG-060 *Pengguna & Akses* TASK-024's.
-export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-033', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-041', 'PG-042', 'PG-043', 'PG-044', 'PG-045', 'PG-046', 'PG-050', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-063', 'PG-064', 'PG-065', 'ROUTE-118']);
+export const BUILT: ReadonlySet<string> = new Set<string>(['ROUTE-108', 'PG-010', 'PG-011', 'PG-013', 'PG-014', 'PG-025', 'PG-033', 'PG-035', 'PG-036', 'PG-037', 'PG-038', 'PG-040', 'PG-041', 'PG-042', 'PG-043', 'PG-044', 'PG-045', 'PG-046', 'PG-047', 'PG-050', 'PG-054', 'PG-055', 'PG-056', 'PG-057', 'PG-059', 'PG-060', 'PG-061', 'PG-062', 'PG-063', 'PG-064', 'PG-065', 'ROUTE-118']);
 
 const has =
     (...capabilities: string[]) =>
@@ -67,7 +67,7 @@ export const MODULES: Entry[] = [
         // PG-025 *Reservasi* (TASK-038): `stock.reserve` with a company in scope (CS-05).
         subpages: [{ pg: 'PG-025', href: '/gudang/reservasi', allowed: scoped('stock.reserve') }],
     },
-    { key: 'keuangan', pg: 'PG-041', label: 'glossary.gl_016', href: '/keuangan/invoice', icon: Wallet, allowed: scoped('finance.view'), subpages: [{ pg: 'PG-044', href: '/keuangan/piutang' }, { pg: 'PG-045', href: '/keuangan/pembayaran' }, { pg: 'PG-050', href: '/keuangan/mutasi-bank', allowed: scoped('bank_statement.record') }] },
+    { key: 'keuangan', pg: 'PG-041', label: 'glossary.gl_016', href: '/keuangan/invoice', icon: Wallet, allowed: scoped('finance.view'), subpages: [{ pg: 'PG-044', href: '/keuangan/piutang' }, { pg: 'PG-045', href: '/keuangan/pembayaran' }, { pg: 'PG-047', href: '/keuangan/potongan' }, { pg: 'PG-050', href: '/keuangan/mutasi-bank', allowed: scoped('bank_statement.record') }] },
     {
         key: 'dokumen',
         pg: 'PG-035',

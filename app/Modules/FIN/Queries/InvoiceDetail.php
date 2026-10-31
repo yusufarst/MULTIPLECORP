@@ -125,6 +125,7 @@ final class InvoiceDetail
             'can' => [
                 'correct' => $correct,
                 'supersede' => $correct && $viewer->allows('writeoff.supersede', $company),
+                'settle' => $issued && $viewer->allows('settlement.record', $company),
                 'kuitansi' => $issued && DocumentAccess::mayIssue($viewer, InvoiceSubjects::KUITANSI, $company),
                 'link' => $issued && $viewer->allows('payment.record', $company),
                 'nota' => $issued && DocumentAccess::mayIssue($viewer, InvoiceSubjects::NOTA, $company),

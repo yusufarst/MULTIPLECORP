@@ -108,6 +108,20 @@ final class TaxConfiguration
         return TreatmentPrecedence::choose(array_values($rules), $companyId);
     }
 
+    /**
+     * The rule row a settlement snapshots (DATABASE §12): the company's over the global one, or none configured (FS-13).
+     *
+     * @return array{id: int, treatment: string}|null
+     */
+    public function treatmentRule(int $companyId, string $context, int $taxTypeId, string $day): ?array
+    {
+        $row = DB::table('tax_treatment_rules')->where('transaction_context', $context)->where('tax_type_id', $taxTypeId)
+            ->whereRaw('effective @> ?::date', [$day])->whereRaw('(company_id is null or company_id = ?)', [$companyId])
+            ->orderByRaw('company_id is null')->first(['id', 'treatment']);
+
+        return $row === null ? null : ['id' => self::int($row->id), 'treatment' => self::text($row->treatment)];
+    }
+
     private static function day(mixed $value): ?string
     {
         return is_string($value) ? substr($value, 0, 10) : null;

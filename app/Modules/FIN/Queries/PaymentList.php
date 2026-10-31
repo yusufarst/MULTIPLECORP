@@ -202,6 +202,7 @@ final class PaymentList
                     'kuitansi' => $viewer->allows('documents.issue', $company),
                     'link' => $viewer->allows('payment.record', $company),
                     'attach' => EvidenceTypes::mayHandle($viewer, 'PAYMENT_PROOF', $company),
+                    'settle' => $viewer->allows('settlement.record', $company),
                 ],
             ];
         }
