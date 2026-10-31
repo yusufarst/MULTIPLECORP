@@ -468,8 +468,9 @@ final class PurchasesController extends Controller
     {
         $rules = ['command_id' => ['required', 'uuid'], ...$rules];
 
-        /** @var array<string, mixed> $valid */
         $fields = array_values(array_unique(array_map(fn (string $field): string => explode('.', $field)[0], array_keys($rules))));
+
+        /** @var array<string, mixed> $valid */
         $valid = Validator::make($request->only($fields), $rules, [
             'required' => __('projects.validation.required'),
             'required_if' => __('projects.validation.required'),
