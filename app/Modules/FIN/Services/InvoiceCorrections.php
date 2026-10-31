@@ -56,6 +56,7 @@ final class InvoiceCorrections
         private readonly CorrectionCases $cases,
         private readonly PrepaymentKuitansi $kuitansi,
         private readonly Revalidation $revalidation,
+        private readonly SettlementMoves $settlements,
     ) {}
 
     /**
@@ -552,17 +553,7 @@ final class InvoiceCorrections
             }
         }
 
-        $now = $context->now();
-        $commandId = $context->request->commandId;
-        DB::table('deduction_settlements')->where('id', $id)->where('state', 'ACTIVE')->update(['state' => 'CONTRAED']);
-        DB::table('financial_contras')->insert(['company_id' => $companyId, 'deduction_settlement_id' => $id, 'amount' => $amount, 'reason' => $reason, 'business_date' => $businessDate,
-            'recorded_by' => $context->request->actorUserId, 'command_id' => $commandId, 'command_line_no' => $line, 'recorded_at' => $now]);
-        GuardUpdate::apply($context->connection, 'money_fact_balances', [['key' => ['deduction_settlement_id' => $id], 'deltas' => ['contra_amount' => $amount]]]);
-        $moved = DB::table('deduction_settlements')->insertGetId(['company_id' => $companyId, 'client_organization_id' => (int) Row::text($row, 'client_organization_id'), 'invoice_id' => $replacement, 'payment_id' => (int) Row::text($row, 'payment_id'),
-            'settlement_class' => Row::text($row, 'settlement_class'), 'tax_type_id' => self::id(Row::nullable($row, 'tax_type_id')), 'fee_type' => Row::nullable($row, 'fee_type'), 'tax_direction' => Row::nullable($row, 'tax_direction'),
-            'specific_type_key' => Row::text($row, 'specific_type_key'), 'treatment_rule_id' => self::id(Row::nullable($row, 'treatment_rule_id')), 'amount' => $amount, 'evidence_document_id' => (int) Row::text($row, 'evidence_document_id'), 'evidence_type' => Row::text($row, 'evidence_type'),
-            'business_date' => $businessDate, 'state' => 'ACTIVE', 'command_id' => $commandId, 'command_line_no' => $line, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId]);
-        GuardUpdate::bear($context->connection, 'money_fact_balances', ['deduction_settlement_id' => $moved], ['company_id' => $companyId, 'fact_kind' => 'SETTLEMENT', 'amount' => $amount, 'recorded_at' => $now]);
+        $this->settlements->rerecord($context, $companyId, $id, $replacement, (int) Row::text($row, 'payment_id'), $reason, $businessDate, $line);
     }
 
     /**

@@ -13,7 +13,7 @@ import { DataList, ListContinuation } from '@/components/data-list';
 import { FileThumbnail } from '@/components/file-thumbnail';
 import { DecimalInput, FormField, FormSection } from '@/components/form';
 import { Lookup, type LookupGroup, type LookupResult } from '@/components/lookup';
-import { DuplicateWarning, type DuplicateMatch, UploadField, type UploadState } from '@/components/notices';
+import { DuplicateWarning, type DuplicateMatch, UploadField } from '@/components/notices';
 import { type Answer, OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
@@ -27,11 +27,11 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { Textarea } from '@/components/ui/textarea';
 import { DateText, Money } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
-import { uploadFile } from '@/lib/file-upload';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import type { AccountHints } from '@/lib/navigation';
 import { search } from '@/lib/search-client';
 import { useCommand } from '@/lib/use-command';
+import { useUpload } from '@/lib/use-upload';
 
 type Branch = { id: string; code: string | null; name: string | null; types: string[] };
 type Row = { id: string; type: string; issuer: string; reference: string | null; date: string; amount: string | null; version: number | null; versions: number; links: number; image: boolean; reproduction: boolean };
@@ -61,52 +61,6 @@ function visit(query: Record<string, string | null>) {
     }
 
     router.get(`/dokumen/bukti${params.size > 0 ? `?${params.toString()}` : ''}`, {}, { preserveScroll: true, preserveState: true });
-}
-
-/** ROUTE-228's upload of one file for evidence of the branch, its state for IP-16's field. */
-function useUpload(fields: () => Record<string, string>) {
-    const { t } = useTranslation();
-    const [state, setState] = useState<UploadState>({ phase: 'idle' });
-    const [file, setFile] = useState<string | null>(null);
-    const abort = useRef<AbortController | null>(null);
-    const last = useRef<File | null>(null);
-
-    const choose = (chosen: File) => {
-        last.current = chosen;
-        abort.current = new AbortController();
-        setFile(null);
-        setState({ phase: 'uploading', progress: 0 });
-        void uploadFile('/berkas', chosen, 'file', (progress) => {
-            setState({ phase: 'uploading', progress });
-        }, abort.current.signal, fields()).then((answer) => {
-            if (answer.kind === 'stored') {
-                setFile(answer.id);
-                setState({ phase: 'done', name: answer.name });
-            } else if (answer.kind === 'refused') {
-                setState({ phase: 'error', message: answer.message });
-            } else if (answer.kind === 'cancelled') {
-                setState({ phase: 'idle' });
-            } else {
-                setState({ phase: 'error', message: t('messages.msg_07') });
-            }
-        });
-    };
-
-    return {
-        state,
-        file,
-        choose,
-        cancel: () => abort.current?.abort(),
-        reset: () => {
-            setFile(null);
-            setState({ phase: 'idle' });
-        },
-        retry: () => {
-            if (last.current !== null) {
-                choose(last.current);
-            }
-        },
-    };
 }
 
 /** A command's answer in place (IP-01), with "Coba Lagi" sending the same `command_id` and payload again while its outcome

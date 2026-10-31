@@ -81,6 +81,63 @@ final class Families
                     SQL,
                 null,
             ),
+            // TASK-051 (C-13; C-44; C-45; L-28; DATABASE §11.3): a source's guard is its recorded amount, its contras, its ACTIVE applications by target, its current claims and ACTIVE settlements; a payment
+            // with no guard answers under its negated id. Shortfall and release are posted figures with no row of their own to sum: they stay the posting's, and the refund's fact carries their conservation (C-44).
+            new Family(
+                'application_source_balances',
+                ['id'],
+                ['gross_amount', 'contra_amount', 'invoice_applied_amount', 'refund_backed_amount', 'claimed_deductions_amount', 'settled_amount'],
+                <<<'SQL'
+                    select b.id,
+                        coalesce(p.amount, c.amount) as gross_amount,
+                        coalesce((select sum(x.amount) from financial_contras x where x.payment_id = b.payment_id or x.opening_customer_credit_id = b.opening_customer_credit_id), 0) as contra_amount,
+                        coalesce((select sum(a.amount) from payment_applications a where (a.payment_id = b.payment_id or a.opening_customer_credit_id = b.opening_customer_credit_id) and a.state = 'ACTIVE' and a.target_kind = 'INVOICE'), 0) as invoice_applied_amount,
+                        coalesce((select sum(a.amount) from payment_applications a where (a.payment_id = b.payment_id or a.opening_customer_credit_id = b.opening_customer_credit_id) and a.state = 'ACTIVE' and a.target_kind = 'REFUND'), 0) as refund_backed_amount,
+                        coalesce((select sum(d.claimed_amount) from payment_claimed_deductions d where d.payment_id = b.payment_id and not exists (select 1 from payment_claimed_deductions n where n.supersedes_claimed_deduction_id = d.id)), 0) as claimed_deductions_amount,
+                        coalesce((select sum(s.amount) from deduction_settlements s where s.payment_id = b.payment_id and s.state = 'ACTIVE'), 0) as settled_amount
+                    from application_source_balances b left join payments p on p.id = b.payment_id left join opening_customer_credits c on c.id = b.opening_customer_credit_id
+                    union all
+                    select -p.id, p.amount, 0, 0, 0, 0, 0 from payments p where not exists (select 1 from application_source_balances b where b.payment_id = p.id)
+                    SQL,
+                null,
+            ),
+            // TASK-051 (C-19; L-22; DATABASE §4.10): a bank line's guard proves its amount while ACTIVE and holds its citing Cash-In, net of contras. An evidence document's guard is its citing Tasks' to register.
+            new Family(
+                'evidence_balances',
+                ['id'],
+                ['proven_amount', 'cited_amount'],
+                <<<'SQL'
+                    select g.id,
+                        case when l.id is null then g.proven_amount when l.state = 'ACTIVE' then l.amount else 0 end as proven_amount,
+                        case when l.id is null then g.cited_amount else
+                            coalesce((select sum(p.amount) from payments p where p.bank_statement_line_id = l.id), 0)
+                            - coalesce((select sum(x.amount) from financial_contras x join payments p on p.id = x.payment_id where p.bank_statement_line_id = l.id), 0)
+                            + coalesce((select sum(r.amount) from other_cash_receipts r where r.bank_statement_line_id = l.id), 0)
+                            - coalesce((select sum(x.amount) from financial_contras x join other_cash_receipts r on r.id = x.other_cash_receipt_id where r.bank_statement_line_id = l.id), 0)
+                        end as cited_amount
+                    from evidence_balances g left join bank_statement_lines l on l.id = g.bank_statement_line_id
+                    union all
+                    select -l.id, l.amount, 0 from bank_statement_lines l where not exists (select 1 from evidence_balances g where g.bank_statement_line_id = l.id)
+                    SQL,
+                null,
+            ),
+            // TASK-051 (C-44; C-45; BR-FIN-07 b): a money fact's contras, a refund's ACTIVE backing, a transfer-out's citing Cash-In net of its contras.
+            new Family(
+                'money_fact_balances',
+                ['id'],
+                ['contra_amount', 'backed_amount', 'transfer_cited_amount'],
+                <<<'SQL'
+                    select m.id,
+                        coalesce((select sum(x.amount) from financial_contras x where x.disbursement_id = m.disbursement_id or x.other_cash_receipt_id = m.other_cash_receipt_id or x.expense_id = m.expense_id or x.deduction_settlement_id = m.deduction_settlement_id or x.receivable_writeoff_id = m.receivable_writeoff_id), 0) as contra_amount,
+                        coalesce((select sum(a.amount) from payment_applications a where a.refund_disbursement_id = m.disbursement_id and a.state = 'ACTIVE'), 0) as backed_amount,
+                        coalesce((select sum(p.amount) from payments p where p.transfer_from_disbursement_id = m.disbursement_id), 0)
+                            - coalesce((select sum(x.amount) from financial_contras x join payments p on p.id = x.payment_id where p.transfer_from_disbursement_id = m.disbursement_id), 0)
+                            + coalesce((select sum(r.amount) from other_cash_receipts r where r.transfer_from_disbursement_id = m.disbursement_id), 0)
+                            - coalesce((select sum(x.amount) from financial_contras x join other_cash_receipts r on r.id = x.other_cash_receipt_id where r.transfer_from_disbursement_id = m.disbursement_id), 0) as transfer_cited_amount
+                    from money_fact_balances m
+                    SQL,
+                null,
+            ),
             new Family(
                 'project_commercial_balances',
                 ['project_id'],

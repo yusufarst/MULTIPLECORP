@@ -9,7 +9,9 @@ use App\Modules\CAT\Http\Controllers\ProductsController;
 use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
+use App\Modules\FIN\Http\Controllers\BankStatementController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
+use App\Modules\FIN\Http\Controllers\PaymentsController;
 use App\Modules\FIN\Http\Controllers\ReceivablesController;
 use App\Modules\FUL\Http\Controllers\HandoverController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
@@ -155,6 +157,18 @@ Route::post('/keuangan/invoice/{id}/sengketa', [ReceivablesController::class, 'h
 Route::post('/keuangan/invoice/{id}/hapuskan', [ReceivablesController::class, 'writeOff'])->whereUuid('id')->middleware(['auth', 'capability:receivables.write_off'])->name('fin.receivables.write_off');
 Route::post('/keuangan/invoice/{id}/cabut-penghapusan', [ReceivablesController::class, 'supersede'])->whereUuid('id')->middleware(['auth', 'capability:writeoff.supersede'])->name('fin.receivables.supersede');
 Route::post('/keuangan/kuitansi/{id}/tautkan', [InvoicesController::class, 'link'])->whereUuid('id')->middleware(['auth', 'capability:payment.record'])->name('fin.kuitansi.link');
+
+// TASK-051 — PG-045 *Pembayaran*, PG-046 *Catat Pembayaran* and PG-050 *Mutasi Bank* (WF-FIN-03; AX-18–AX-20; NX-08): ROUTE-045 `finance.view`, ROUTE-046 and ROUTE-251 `payment.record`, ROUTE-252 `payment.apply` — its `{id}` a payment or,
+// for PG-048, an opening credit's handle —, ROUTE-253 `payment.reallocate`, ROUTE-254 `finance.contra`, ROUTE-050 and ROUTE-261 `bank_statement.record`, ROUTE-262 `cash.correct`, its `{id}` what its action corrects.
+Route::get('/keuangan/pembayaran', [PaymentsController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.payments');
+Route::get('/keuangan/pembayaran/baru', [PaymentsController::class, 'create'])->middleware(['auth', 'capability:payment.record'])->name('fin.payments.create');
+Route::post('/keuangan/pembayaran', [PaymentsController::class, 'record'])->middleware(['auth', 'capability:payment.record'])->name('fin.payments.record');
+Route::post('/keuangan/pembayaran/{id}/terapkan', [PaymentsController::class, 'apply'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:payment.apply'])->name('fin.payments.apply');
+Route::post('/keuangan/pembayaran/{id}/realokasi', [PaymentsController::class, 'reallocate'])->whereUuid('id')->middleware(['auth', 'capability:payment.reallocate'])->name('fin.payments.reallocate');
+Route::post('/keuangan/pembayaran/{id}/kontra', [PaymentsController::class, 'contra'])->whereUuid('id')->middleware(['auth', 'capability:finance.contra'])->name('fin.payments.contra');
+Route::get('/keuangan/mutasi-bank', [BankStatementController::class, 'index'])->middleware(['auth', 'capability:bank_statement.record'])->name('fin.bank-statement');
+Route::post('/keuangan/mutasi-bank', [BankStatementController::class, 'record'])->middleware(['auth', 'capability:bank_statement.record'])->name('fin.bank-statement.record');
+Route::post('/keuangan/mutasi-bank/{id}/koreksi', [BankStatementController::class, 'correct'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:cash.correct'])->name('fin.bank-statement.correct');
 
 // TASK-047 — PG-033 *Serah Terima Jasa* and its commands (WF-FUL-04; AX-09): ROUTE-033 and ROUTE-208 `handover.record`, ROUTE-209
 // `fulfillment.correct` (ADM+), each with its prerequisite `projects.view` (PERMISSIONS_MATRIX §4); the BAST through ROUTE-221 and ROUTE-222.

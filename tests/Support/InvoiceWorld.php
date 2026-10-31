@@ -53,7 +53,7 @@ use RuntimeException;
  */
 final class InvoiceWorld
 {
-    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload', 'billing.record', 'billing.correct', 'receivables.dispute'];
+    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload', 'billing.record', 'billing.correct', 'receivables.dispute', 'payment.apply', 'payment.reallocate', 'finance.contra'];
 
     public ReservationWorld $base;
 

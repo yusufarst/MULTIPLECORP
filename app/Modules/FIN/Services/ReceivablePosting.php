@@ -79,6 +79,33 @@ final class ReceivablePosting
         return $balance;
     }
 
+    /**
+     * Several invoices moved in one statement, each by its net deltas (GU-01; C-15): their columns made alike.
+     *
+     * @param  array<int, array<string, string>>  $moves  invoice => amount column => signed decimal
+     */
+    public function moveAll(CommandContext $context, array $moves): void
+    {
+        $columns = [];
+
+        foreach ($moves as $deltas) {
+            foreach (array_keys($deltas) as $column) {
+                $columns[$column] = '0.00';
+            }
+        }
+
+        ksort($columns);
+        $rows = [];
+
+        foreach ($moves as $invoice => $deltas) {
+            $rows[] = ['key' => ['invoice_id' => $invoice], 'deltas' => array_replace($columns, $deltas)];
+        }
+
+        if ($rows !== [] && $columns !== []) {
+            GuardUpdate::apply($context->connection, 'invoice_balances', $rows);
+        }
+    }
+
     /** @param  array<string, string>  $deltas  amount column => signed decimal */
     public function move(CommandContext $context, int $invoiceId, array $deltas): void
     {

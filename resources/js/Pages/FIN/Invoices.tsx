@@ -15,6 +15,7 @@ import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText, Money } from '@/components/values';
 import { type InvoiceState } from '@/features/fin/invoice';
+import { FinanceNav } from '@/features/fin/finance-nav';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 
@@ -61,6 +62,7 @@ export default function Invoices({ branches, branch, number, rows, more, can }: 
         <AppShell title={t('pages.pg_041.title')}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_041.title')} />
+                <FinanceNav current="invoices" />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
                         <FormField label={t('invoices.field.branch')} className="min-w-0 sm:w-80">
