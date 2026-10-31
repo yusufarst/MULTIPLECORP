@@ -173,6 +173,29 @@ final class PaymentApplications
     }
 
     /**
+     * A replayed C-15's current figure: the first target its amount is above now, else the first's (CI-05).
+     *
+     * @param  array<int, string>  $amounts  invoice => amount
+     * @return array<string, string>|null
+     */
+    public static function outstandingRefusal(array $amounts): ?array
+    {
+        $found = null;
+
+        foreach ($amounts as $id => $amount) {
+            $outstanding = PrepaymentKuitansi::outstanding($id);
+            $state = ['reason' => 'above_outstanding', 'outstanding' => $outstanding, 'invoice' => InvoiceSubjects::number($id) ?? ''];
+            $found ??= $state;
+
+            if (Money::of($amount)->compareTo(Money::of($outstanding)) > 0) {
+                return $state;
+            }
+        }
+
+        return $found;
+    }
+
+    /**
      * The refund's open shortfall this money may back: an application a source's contra ended, of the same client and company (C-14; C-44).
      *
      * @return array{refund: int, case: int, source: array<string, int>}

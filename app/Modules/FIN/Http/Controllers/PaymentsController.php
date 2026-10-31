@@ -385,6 +385,7 @@ final class PaymentsController extends Controller
             },
             'C-22' => $reason === 'unchanged' ? self::say('receivables.refusal.unchanged') : ($reason === 'above_claimed' ? self::say('payments.refusal.above_claimed') : self::say('payments.refusal.below_settled', ['jumlah' => self::money($state['settled'] ?? '0')])),
             'C-32' => self::say('payments.refusal.account'),
+            'C-54' => self::say('payments.refusal.company_inactive'),
             'C-44' => $reason === 'above_shortfall' ? self::say('payments.refusal.above_shortfall', ['jumlah' => self::money($state['shortfall'] ?? '0')]) : self::say('payments.refusal.shortfall_with_money', ['jumlah' => self::money($state['applied'] ?? '0')]),
             'C-45' => $reason === 'settlements' ? self::say('payments.refusal.settlements', ['jumlah' => self::money($state['settled'] ?? '0')]) : self::say('payments.refusal.above_net', ['jumlah' => self::money($state['net'] ?? '0')]),
             'L-17' => self::say('payments.refusal.not_written_off'),

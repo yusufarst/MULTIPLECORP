@@ -41,6 +41,6 @@ final class ContraPayment
             $this->corrections->contra($context, $fresh, $entry);
 
             return new CommandResult('payment', $fresh->id);
-        });
+        }, null, fn (Outcome $outcome): ?array => PaymentCorrections::replayState($outcome, $payment->id));
     }
 }

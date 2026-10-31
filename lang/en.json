@@ -2981,5 +2981,11 @@
     "activity.action.FIN.BankCitationCorrected": "Corrected a citation",
     "activity.action.FIN.ClaimedDeductionSuperseded": "Corrected a claimed deduction",
     "activity.action.DOC.BankLineRecorded": "Recorded a statement line",
-    "activity.action.DOC.BankLineVoided": "Voided a statement line"
+    "activity.action.DOC.BankLineVoided": "Voided a statement line",
+    "payments.refusal.company_inactive": "This company is deactivated: only a payment on an existing receivable can still be recorded.",
+    "payments.detail.kuitansi_amounts": "Kuitansi :kuitansi · this application :diterapkan. It must equal the total linked.",
+    "projects.item.payment_corrections": ":jumlah payment corrections still open",
+    "projects.item.payments_unevidenced": ":jumlah payments have no proof yet",
+    "projects.next.payment_correction": "Finish the payment correction",
+    "projects.next.payment_evidence": "Provide the payment proof"
 }

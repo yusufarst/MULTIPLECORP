@@ -74,6 +74,14 @@ final class EvidenceGuard
         return is_scalar($cited) ? (string) $cited : '0.00';
     }
 
+    /** What of a line no Cash-In cites yet, its proof less its citations: nothing once voided. */
+    public function lineUncited(int $lineId): string
+    {
+        $row = EvidenceBalance::query()->toBase()->where('bank_statement_line_id', $lineId)->selectRaw('proven_amount - cited_amount as uncited')->first();
+
+        return is_object($row) ? Row::text($row, 'uncited') : '0.00';
+    }
+
     /**
      * Lines' guards moved in one statement, its CHECK keeping Σ Cash-In per line within the line (BD-03; C-19).
      *

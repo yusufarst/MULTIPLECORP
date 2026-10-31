@@ -12,6 +12,7 @@ use App\Modules\FIN\Services\PaymentRecords;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\OPS\Services\Corrections;
+use App\Modules\ORG\Services\CompanyGuard;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditLinkage;
@@ -52,6 +53,7 @@ final class RecordPayment
         private readonly EvidenceGuard $evidence,
         private readonly Corrections $corrections,
         private readonly EffectiveCapabilities $capabilities,
+        private readonly CompanyGuard $guard,
     ) {}
 
     /** @param  array<string, mixed>  $payload  the validated request, the command's fingerprint */
@@ -62,10 +64,17 @@ final class RecordPayment
         return $this->envelope->run($request, function (CommandContext $context) use ($entry): CommandResult {
             $context->lock($this->locks($entry));
             BusinessDateRule::check($entry->businessDate, $entry->prefilled);
+            // Collection continues in a deactivated company (BR-ACC-03): new credit with no receivable behind it does not.
+            if ($entry->applications === [] && $entry->resolves === [] && $entry->recoveryFor === null) {
+                $this->guard->ensureOpenForNewBusiness($context, $entry->companyId);
+            }
+
             $this->ensureDestination($entry);
-            $overridden = self::duplicates($context, $entry);
             $reason = self::ensureProof($entry);
             self::ensureLinks($context, $entry);
+            self::ensureApplications($entry);
+            // The warning last: an override is asked only of a payment that would otherwise commit (IP-05).
+            $overridden = self::duplicates($context, $entry);
             $claimed = Money::zero();
 
             foreach ($entry->claimed as $deduction) {
@@ -107,9 +116,42 @@ final class RecordPayment
             $this->audit($context, $payment, $entry, $overridden, $amount, $claimed);
 
             return new CommandResult('payment', $payment->id);
-        }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED && $outcome->code === 'L-22' && $entry->accountId !== null
-            ? ['matches' => PaymentDuplicates::matches($entry->accountId, Money::of($entry->amount)->toString(), $entry->businessDate, $entry->rerecords), 'override' => $this->capabilities->for($actorUserId)->allows('warnings.override', $entry->companyId)]
-            : null);
+        }, null, fn (Outcome $outcome): ?array => $this->replayState($outcome, $entry, $actorUserId));
+    }
+
+    /**
+     * A replayed refusal's current state (CI-05): a warning's current matches, the figure its rule concerns.
+     *
+     * @return array<string, mixed>|null
+     */
+    private function replayState(Outcome $outcome, PaymentEntry $entry, int $actorUserId): ?array
+    {
+        if ($outcome->kind !== Outcome::REJECTED) {
+            return null;
+        }
+
+        return match ($outcome->code) {
+            'L-22' => $entry->accountId === null ? null : ['matches' => PaymentDuplicates::matches($entry->accountId, Money::of($entry->amount)->toString(), $entry->businessDate), 'override' => $this->capabilities->for($actorUserId)->allows('warnings.override', $entry->companyId)],
+            'C-13' => ['reason' => 'above_capacity', 'capacity' => Money::of($entry->amount)->toString()],
+            'C-15' => PaymentApplications::outstandingRefusal($entry->applications),
+            'C-19' => $entry->lineId === null ? null : ['reason' => 'above_line', 'uncited' => $this->evidence->lineUncited($entry->lineId)],
+            default => null,
+        };
+    }
+
+    /** AX-18's applications read before anything is written, the refusal naming the figure: each target, and Σ within the payment (BR-FIN-03; C-13–C-15). */
+    private static function ensureApplications(PaymentEntry $entry): void
+    {
+        PaymentApplications::ensureTargets($entry->applications, $entry->companyId, $entry->clientId);
+        $total = Money::zero();
+
+        foreach ([...array_values($entry->applications), ...array_values($entry->resolves)] as $amount) {
+            $total = $total->plus(Money::of($amount));
+        }
+
+        if ($total->compareTo(Money::of($entry->amount)) > 0) {
+            throw Refused::rejected('C-13', ['reason' => 'above_capacity', 'capacity' => Money::of($entry->amount)->toString(), 'amount' => $total->toString()]);
+        }
     }
 
     /** AX-18's set: the account at LK-07 (BD-02's anchor), the line and proofs at LK-29 (BD-03), the targets, a resolved shortfall's guards and case, a cited transfer-out's fact, a re-recorded payment's case. */
@@ -131,6 +173,10 @@ final class RecordPayment
 
         if ($entry->transferFrom !== null) {
             $set = $set->add('money_fact_balances', ['disbursement_id' => $entry->transferFrom]);
+        }
+
+        if ($entry->applications === [] && $entry->resolves === [] && $entry->recoveryFor === null) {
+            $set = $set->union(CompanyGuard::locks($entry->companyId));
         }
 
         $case = $entry->rerecords === null ? null : self::caseOf($entry->rerecords);
@@ -163,7 +209,7 @@ final class RecordPayment
             throw Refused::rejected('C-19', ['reason' => 'line']);
         }
 
-        $uncited = Money::of(Row::text($line, 'amount'))->minus(Money::of($this->evidence->lineCited($entry->lineId)));
+        $uncited = Money::of($this->evidence->lineUncited($entry->lineId));
 
         if (Money::of($entry->amount)->compareTo($uncited) > 0) {
             throw Refused::rejected('C-19', ['reason' => 'above_line', 'uncited' => $uncited->toString(), 'amount' => Money::of($entry->amount)->toString()]);
@@ -181,7 +227,7 @@ final class RecordPayment
             return [];
         }
 
-        $matches = PaymentDuplicates::matches($entry->accountId, Money::of($entry->amount)->toString(), $entry->businessDate, $entry->rerecords);
+        $matches = PaymentDuplicates::matches($entry->accountId, Money::of($entry->amount)->toString(), $entry->businessDate);
 
         if ($matches === []) {
             return [];

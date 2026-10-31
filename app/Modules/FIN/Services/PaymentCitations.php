@@ -34,6 +34,7 @@ final class PaymentCitations implements BankLineCitations
 
     public function arrived(CommandContext $context, int $lineId, int $accountId, string $amount, array $facts): void
     {
+        $facts = array_values(array_unique($facts));
         $carried = Money::zero();
 
         foreach ($facts as $payment) {

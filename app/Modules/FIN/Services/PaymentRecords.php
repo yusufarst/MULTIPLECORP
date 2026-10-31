@@ -16,6 +16,28 @@ final class PaymentRecords
     public function __construct(private readonly AuditRecorder $audit) {}
 
     /**
+     * An opening credit's application: the credit has no public id, its event its own entity.
+     *
+     * @param  array<string, mixed>  $after
+     */
+    public function recordCredit(CommandContext $context, int $creditId, int $companyId, string $businessDate, array $after): void
+    {
+        $this->audit->record(
+            action: 'FIN.PaymentApplied',
+            authorityClass: AuthorityClass::Adm,
+            actorUserId: $context->request->actorUserId,
+            companyId: $companyId,
+            entityType: 'opening_customer_credit',
+            entityId: $creditId,
+            entityPublicId: null,
+            reason: null,
+            commandId: $context->request->commandId,
+            change: AuditChange::created($after),
+            businessDate: $businessDate,
+        );
+    }
+
+    /**
      * @param  array<string, mixed>  $after
      * @param  array<string, mixed>  $before
      * @param  array<string, mixed>  $metadata

@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\BusinessDate;
@@ -20,6 +21,9 @@ final class PaymentList
     public const PAGE = 50;
 
     public const TABS = ['semua', 'kredit', 'tanpa_bukti'];
+
+    /** Flagged until evidenced (L-29; J-FIN-03): its reason stands, no line cited, no proof linked. */
+    public const WITHOUT_PROOF = "p.unevidenced_reason is not null and p.bank_statement_line_id is null and not exists (select 1 from evidence_links k join evidence_documents e on e.id = k.evidence_document_id where k.payment_id = p.id and k.unlinked_at is null and e.evidence_type in ('PAYMENT_PROOF', 'TRANSFER_PROOF', 'BANK_STATEMENT'))";
 
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
@@ -144,12 +148,12 @@ final class PaymentList
             ->leftJoin('payments as o2', 'o2.id', '=', 'p.rerecords_payment_id')
             ->when($client !== null, fn (Builder $where) => $where->where('o.public_id', $client))
             ->when($tab === 'kredit', fn (Builder $where) => $where->where('b.capacity_amount', '>', 0))
-            ->when($tab === 'tanpa_bukti', fn (Builder $where) => $where->whereNotNull('p.unevidenced_reason'))
+            ->when($tab === 'tanpa_bukti', fn (Builder $where) => $where->whereRaw(self::WITHOUT_PROOF))
             ->when($after !== null, fn (Builder $where) => $where->whereRaw('(p.business_date, p.id) < (select c.business_date, c.id from payments c where c.public_id = ? and c.company_id = any(?::bigint[]))', [$after, '{'.implode(',', $companies).'}']))
             ->orderByRaw($pinned === null ? 'p.business_date desc, p.id desc' : 'p.public_id = ? desc, p.business_date desc, p.id desc', $pinned === null ? [] : [$pinned])
             ->limit(self::PAGE + 1)
             ->selectRaw('p.id, p.public_id, p.company_id, p.business_date, p.amount, p.method, p.reference, p.payer_intermediary, p.unevidenced_reason, p.recovery_for_invoice_id, p.bank_statement_line_id,
-                o.name as client, ba.bank_name, ba.account_number, l.line_reference, b.net_amount, b.contra_amount, b.capacity_amount, b.claimed_deductions_amount, b.settled_amount, r.public_id as rerecorded_by, rb.capacity_amount as rerecorded_capacity, o2.public_id as rerecords,
+                o.name as client, ba.bank_name, ba.account_number, l.line_reference, b.net_amount, b.contra_amount, b.capacity_amount, b.claimed_deductions_amount, b.settled_amount, r.public_id as rerecorded_by, rb.capacity_amount as rerecorded_capacity, r.client_organization_id = p.client_organization_id as rerecorded_same_client, o2.public_id as rerecords, ('.self::WITHOUT_PROOF.') as without_proof,
                 (select e.public_id from evidence_links k join evidence_documents e on e.id = k.evidence_document_id where k.payment_id = p.id and k.unlinked_at is null order by k.id limit 1) as proof')
             ->get()->all();
         $more = count($found) > self::PAGE;
@@ -178,6 +182,7 @@ final class PaymentList
                 'reference' => Row::nullable($row, 'reference'),
                 'intermediary' => Row::nullable($row, 'payer_intermediary'),
                 'unevidenced' => Row::nullable($row, 'unevidenced_reason'),
+                'without_proof' => ($row->without_proof ?? false) === true,
                 'line' => Row::nullable($row, 'line_reference'),
                 'flagged' => Row::nullable($row, 'bank_name') !== null && Row::nullable($row, 'bank_statement_line_id') === null,
                 'recovery' => Row::nullable($row, 'recovery_for_invoice_id') !== null,
@@ -187,6 +192,7 @@ final class PaymentList
                 'rerecords' => Row::nullable($row, 'rerecords'),
                 'rerecorded_by' => Row::nullable($row, 'rerecorded_by'),
                 'rerecorded_capacity' => Row::nullable($row, 'rerecorded_capacity'),
+                'rerecorded_same_client' => ($row->rerecorded_same_client ?? false) === true,
                 'applications' => array_map(fn (array $application): array => [...$application, 'can_move' => $reallocate && $application['state'] === 'ACTIVE' && $application['target'] === 'INVOICE'], $dependents['applications'][$id] ?? []),
                 'settlements' => $dependents['settlements'][$id] ?? [],
                 'can' => [
@@ -195,6 +201,7 @@ final class PaymentList
                     'contra' => $viewer->allows('finance.contra', $company) && self::positive(Row::text($row, 'net_amount')),
                     'kuitansi' => $viewer->allows('documents.issue', $company),
                     'link' => $viewer->allows('payment.record', $company),
+                    'attach' => EvidenceTypes::mayHandle($viewer, 'PAYMENT_PROOF', $company),
                 ],
             ];
         }
@@ -225,12 +232,14 @@ final class PaymentList
                 (select d.public_id from documents d where d.payment_id = a.payment_id and d.invoice_id = a.invoice_id and d.document_type_code = 'DOC-05' and d.mode = 'RECEIPT' limit 1) as receipt,
                 (select k.public_id from documents k join document_versions kv on kv.document_id = k.id and kv.state = 'ISSUED' where k.invoice_id = a.invoice_id and k.document_type_code = 'DOC-05' and k.mode = 'PRE_PAYMENT'
                     and not exists (select 1 from prepayment_kuitansi_links l where l.document_id = k.id and l.state = 'LINKED') order by k.id limit 1) as kuitansi,
+                (select kv.kuitansi_amount from documents k join document_versions kv on kv.document_id = k.id and kv.state = 'ISSUED' where k.invoice_id = a.invoice_id and k.document_type_code = 'DOC-05' and k.mode = 'PRE_PAYMENT'
+                    and not exists (select 1 from prepayment_kuitansi_links l where l.document_id = k.id and l.state = 'LINKED') order by k.id limit 1) as kuitansi_amount,
                 null::text as settlement_class
             from payment_applications a left join invoices i on i.id = a.invoice_id where a.payment_id = any(?::bigint[])
             union all
             select 'S', s.id, s.payment_id, null, s.amount, s.state, null, s.business_date, i.public_id,
                 (select n.formatted_number from documents d join document_versions n on n.document_id = d.id where d.invoice_id = s.invoice_id and d.document_type_code in ('DOC-04', 'DOC-06') and n.formatted_number is not null order by n.state = 'ISSUED' desc, d.id, n.id desc limit 1),
-                null, null, s.settlement_class
+                null, null, null, s.settlement_class
             from deduction_settlements s join invoices i on i.id = s.invoice_id where s.payment_id = any(?::bigint[])
             order by 1, 2
             SQL, [$ids, $ids]);
@@ -244,7 +253,7 @@ final class PaymentList
             $id = (int) Row::text($row, 'id');
 
             if (Row::text($row, 'kind') === 'A') {
-                $found['applications'][$payment][] = ['handle' => RowHandle::of('payment_applications', $id), 'target' => Row::text($row, 'target'), 'invoice' => Row::nullable($row, 'invoice'), 'number' => Row::nullable($row, 'number'), 'amount' => Row::text($row, 'amount'), 'state' => Row::text($row, 'state'), 'end_reason' => Row::nullable($row, 'end_reason'), 'date' => Row::text($row, 'business_date'), 'receipt' => Row::nullable($row, 'receipt'), 'kuitansi' => Row::nullable($row, 'kuitansi')];
+                $found['applications'][$payment][] = ['handle' => RowHandle::of('payment_applications', $id), 'target' => Row::text($row, 'target'), 'invoice' => Row::nullable($row, 'invoice'), 'number' => Row::nullable($row, 'number'), 'amount' => Row::text($row, 'amount'), 'state' => Row::text($row, 'state'), 'end_reason' => Row::nullable($row, 'end_reason'), 'date' => Row::text($row, 'business_date'), 'receipt' => Row::nullable($row, 'receipt'), 'kuitansi' => Row::nullable($row, 'kuitansi'), 'kuitansi_amount' => Row::nullable($row, 'kuitansi_amount')];
             } else {
                 $found['settlements'][$payment][] = ['handle' => RowHandle::of('deduction_settlements', $id), 'invoice' => Row::nullable($row, 'invoice'), 'number' => Row::nullable($row, 'number'), 'class' => Row::text($row, 'settlement_class'), 'amount' => Row::text($row, 'amount'), 'state' => Row::text($row, 'state')];
             }

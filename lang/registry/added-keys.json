@@ -12564,6 +12564,42 @@
             "source": "LG-01",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "payments.refusal.company_inactive": {
+            "task": "TASK-051",
+            "source": "BR-ACC-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "payments.detail.kuitansi_amounts": {
+            "task": "TASK-051",
+            "source": "J-FIN-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.payment_corrections": {
+            "task": "TASK-051",
+            "source": "BR-PRJ-02; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.payments_unevidenced": {
+            "task": "TASK-051",
+            "source": "L-29; BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.payment_correction": {
+            "task": "TASK-051",
+            "source": "BR-PRJ-02; CM-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.payment_evidence": {
+            "task": "TASK-051",
+            "source": "L-29; BR-PRJ-02",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

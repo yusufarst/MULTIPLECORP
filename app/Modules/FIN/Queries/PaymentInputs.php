@@ -3,7 +3,6 @@
 namespace App\Modules\FIN\Queries;
 
 use App\Modules\FIN\Models\Payment;
-use App\Modules\FIN\Services\SettlementMoves;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\RowHandle;
@@ -152,10 +151,10 @@ final class PaymentInputs
         return self::byHandle('payment_applications', DB::table('payment_applications')->where('company_id', $companyId)->where('client_organization_id', $clientId)->where('end_reason', 'SOURCE_CONTRA')->whereNotNull('refund_disbursement_id')->pluck('id')->all(), $handle);
     }
 
-    /** A settlement of the payment by its handle. */
+    /** A settlement of the payment by its handle, in any state: a stale list is the command's CONFLICT (ST-07), never a silent drop. */
     public function settlementId(int $paymentId, string $handle): ?int
     {
-        return self::byHandle('deduction_settlements', array_keys(SettlementMoves::anchored($paymentId)), $handle);
+        return self::byHandle('deduction_settlements', DB::table('deduction_settlements')->where('payment_id', $paymentId)->pluck('id')->all(), $handle);
     }
 
     /** A claimed deduction of the payment by its handle. */

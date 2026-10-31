@@ -67,6 +67,7 @@ final class BankStatementController extends Controller
             $citing[] = $this->inputs->paymentOf($company, self::text($payment)) ?? throw ValidationException::withMessages(['pembayaran' => self::say('projects.validation.unknown')]);
         }
 
+        $citing = array_values(array_unique($citing));
         $outcome = $record->run(self::text($input['command_id']), $actor, $company, $account, $evidence, self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::text($input['jumlah']), trim(self::text($input['referensi'])), $citing, array_diff_key($input, ['command_id' => 1]));
 
         return $this->answer($outcome, 'line_recorded', '/keuangan/mutasi-bank?'.http_build_query(['perusahaan' => self::text($input['perusahaan'])]), self::text($input['tanggal']));

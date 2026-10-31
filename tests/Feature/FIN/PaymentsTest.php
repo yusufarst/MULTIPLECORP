@@ -2,8 +2,10 @@
 
 use App\Modules\FIN\Data\ContraEntry;
 use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Services\PaymentPredicate;
 use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PRJ\Data\Predicates;
 use App\Modules\PTY\Models\ClientOrganization;
 use App\Support\BusinessDate;
 use App\Support\Guards\Families;
@@ -469,4 +471,92 @@ it('keeps the cursor in the address and answers a failed one as MSG-26 (NV-05; I
     $middle = DB::table('payments')->orderByDesc('id')->value('public_id');
     $this->actingAs($this->actor)->get("/keuangan/pembayaran?setelah={$middle}")->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 2)->where('after', $middle)->where('cursor_failed', false));
     $this->actingAs($this->actor)->get('/keuangan/pembayaran?setelah=bukan-cursor')->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0)->where('cursor_failed', true));
+});
+
+it('disposes a contra\'s settlements: moved to the re-recorded payment, or a residual on the case of their own project (criterion 7; AX-20; C-45; C-46; ER-06)', function () {
+    $payment = PaymentWorld::paid($this->world->actorId, $this->invoice, '500000', '500000');
+    $model = Payment::query()->findOrFail($payment->id);
+    PaymentWorld::claim($payment->id, '60000');
+    $moved = InvoiceWorld::settle($this->invoice, $model, '50000');
+    $application = (int) DB::table('payment_applications')->where('payment_id', $payment->id)->value('id');
+
+    // Fully contra'd, the settlement left standing: refused (C-45).
+    expect(PaymentWorld::contraInCommand($this->world->actorId, $payment->id, '500000', [$application => ['action' => ContraEntry::RELEASE, 'amount' => null]], [$moved => ContraEntry::KEEP]))->toBe('REJECTED C-45');
+
+    $rerecorded = PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '500000', ['rerecords' => $payment->id, 'claimed' => [['class' => 'FEE', 'tax_type' => null, 'fee_type' => 'BIAYA_TRANSFER', 'amount' => '50000']]])->resultId;
+    expect(PaymentWorld::contraInCommand($this->world->actorId, $payment->id, '500000', [$application => ['action' => ContraEntry::RELEASE, 'amount' => null]], [$moved => ContraEntry::MOVE], $rerecorded))->toBe('COMMITTED')
+        ->and(DB::table('deduction_settlements')->where('id', $moved)->value('state'))->toBe('CONTRAED')
+        ->and(DB::table('deduction_settlements')->where('payment_id', $rerecorded)->where('state', 'ACTIVE')->value('amount'))->toBe('50000.00')
+        ->and(DB::table('application_source_balances')->where('payment_id', $rerecorded)->value('settled_amount'))->toBe('50000.00')
+        ->and(DB::table('invoice_balances')->where('invoice_id', $this->invoice)->value('fee_settled_amount'))->toBe('50000.00')
+        ->and(paymentDifferences())->toBe([]);
+
+    $second = PaymentWorld::paid($this->world->actorId, $this->invoice, '400000', '400000');
+    PaymentWorld::claim($second->id, '30000');
+    $residual = InvoiceWorld::settle($this->invoice, Payment::query()->findOrFail($second->id), '30000');
+    $secondApplication = (int) DB::table('payment_applications')->where('payment_id', $second->id)->value('id');
+    expect(PaymentWorld::contraInCommand($this->world->actorId, $second->id, '400000', [$secondApplication => ['action' => ContraEntry::RELEASE, 'amount' => null]], [$residual => ContraEntry::RESIDUAL]))->toBe('COMMITTED');
+    $case = (int) DB::table('deduction_settlements')->where('id', $residual)->value('correction_case_id');
+    expect(DB::table('deduction_settlements')->where('id', $residual)->value('state'))->toBe('RESIDUAL')
+        ->and(DB::table('correction_cases')->where('id', $case)->value('residual_settlement_amount'))->toBe('30000.00')
+        ->and((int) DB::table('correction_cases')->where('id', $case)->value('project_id'))->toBe($this->project->id)
+        ->and(paymentDifferences())->toBe([]);
+});
+
+it('still warns on a re-recording of a payment that stands, not on one wholly contra\'d (BD-02; L-22; ER-06)', function () {
+    $first = PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '500000', ['accountId' => $this->account]);
+    expect(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '500000', ['accountId' => $this->account, 'rerecords' => $first->resultId])->code)->toBe('L-22');
+
+    expect(PaymentWorld::contraInCommand($this->world->actorId, $first->resultId, '500000'))->toBe('COMMITTED');
+    expect(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '500000', ['accountId' => $this->account, 'rerecords' => $first->resultId])->kind)->toBe('COMMITTED');
+});
+
+it('fails the audit predicate until a flagged payment is evidenced, by a proof linked or a line cited, and shows a payment correction open (criterion 9; L-29; BR-PRJ-02; ER-06)', function () {
+    $predicate = app(PaymentPredicate::class);
+    $flagged = PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '100000', ['accountId' => $this->account, 'applications' => [$this->invoice => '100000']]);
+    $key = DB::table('payments')->where('id', $flagged->resultId)->value('public_id');
+    expect($predicate->states([$this->project->id], true)[$this->project->id][Predicates::AUDIT]->met())->toBeFalse();
+    $this->actingAs($this->actor)->get('/keuangan/pembayaran')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.without_proof', true));
+
+    // ROUTE-231 links a proof to the payment; a document of no proving type answers as unknown.
+    $other = PaymentWorld::proof($this->company->id, 'OTHER');
+    expect($this->actingAs($this->actor)->post("/bukti/{$other->public_id}/tautan", ['command_id' => (string) Str::uuid(), 'action' => 'link', 'payment' => $key, 'role' => 'PRIMARY_PROOF'])->status())->toBe(404);
+    $proof = PaymentWorld::proof($this->company->id);
+    $this->actingAs($this->actor)->post("/bukti/{$proof->public_id}/tautan", ['command_id' => (string) Str::uuid(), 'action' => 'link', 'payment' => $key, 'role' => 'PRIMARY_PROOF', 'kembali' => '/keuangan/pembayaran']);
+    expect(paymentAnswer()['kind'])->toBe('COMMITTED')->and($predicate->states([$this->project->id], true)[$this->project->id][Predicates::AUDIT]->met())->toBeTrue();
+    $this->actingAs($this->actor)->get('/keuangan/pembayaran')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.without_proof', false));
+
+    expect(PaymentWorld::contraInCommand($this->world->actorId, $flagged->resultId, '100000', [(int) DB::table('payment_applications')->where('payment_id', $flagged->resultId)->value('id') => ['action' => ContraEntry::RELEASE, 'amount' => null]]))->toBe('COMMITTED');
+});
+
+it('takes new credit in a deactivated company only behind an existing receivable (BR-ACC-03; CS-03; ER-06)', function () {
+    DB::table('companies')->where('id', $this->company->id)->update(['is_active' => false, 'deactivated_at' => now(), 'deactivated_by' => $this->world->actorId, 'deactivated_reason' => 'Tutup']);
+
+    expect(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '100000')->code)->toBe('C-54')
+        ->and(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '100000', ['applications' => [$this->invoice => '100000']])->kind)->toBe('COMMITTED');
+});
+
+it('asks for an override only of a payment that would otherwise commit (IP-05; ER-06)', function () {
+    PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '2000000', ['accountId' => $this->account]);
+    expect(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '2000000', ['accountId' => $this->account, 'applications' => [$this->invoice => '1500000']])->code)->toBe('C-15')
+        ->and(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '2000000', ['accountId' => $this->account])->code)->toBe('L-22');
+});
+
+it('cites each flagged payment once however often it is named (C-19; HO-12; ER-06)', function () {
+    $admin = User::query()->findOrFail(Authorization::admin([$this->company->id], [...InvoiceWorld::CAPABILITIES, 'bank_statement.record', 'cash.correct'])->id);
+    $flagged = PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '400000', ['accountId' => $this->account])->resultId;
+    $key = DB::table('payments')->where('id', $flagged)->value('public_id');
+    $statement = PaymentWorld::proof($this->company->id, 'BANK_STATEMENT');
+    $this->actingAs($admin)->post('/keuangan/mutasi-bank', ['command_id' => (string) Str::uuid(), 'perusahaan' => $this->companyKey, 'rekening' => PaymentWorld::accountHandle($this->account), 'bukti' => $statement->public_id, 'tanggal' => $this->today, 'jumlah' => '1000000', 'referensi' => 'TRX-3', 'pembayaran' => [$key, $key]]);
+    $line = (int) DB::table('payments')->where('id', $flagged)->value('bank_statement_line_id');
+    expect(DB::table('evidence_balances')->where('bank_statement_line_id', $line)->value('cited_amount'))->toBe('400000.00')->and(paymentDifferences())->toBe([]);
+});
+
+it('answers a replayed refusal with the current figure (CI-05; M-10; ER-06)', function () {
+    $payment = PaymentWorld::paid($this->world->actorId, $this->invoice, '300000');
+    $body = ['command_id' => (string) Str::uuid(), 'tanggal' => $this->today, 'penerapan' => [['invoice' => $this->invoiceKey, 'jumlah' => '400000']]];
+    $this->actingAs($this->actor)->post("/keuangan/pembayaran/{$payment->public_id}/terapkan", $body);
+    expect(paymentAnswer()['state']['capacity'])->toBe('300000.00');
+    $this->actingAs($this->actor)->post("/keuangan/pembayaran/{$payment->public_id}/terapkan", $body);
+    expect(paymentAnswer()['code'])->toBe('C-13')->and(paymentAnswer()['state']['capacity'])->toBe('300000.00')->and(paymentAnswer()['text'])->toContain('Rp300.000');
 });

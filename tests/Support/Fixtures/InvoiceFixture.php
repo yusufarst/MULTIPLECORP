@@ -145,8 +145,8 @@ final class InvoiceFixture
 
         if ($request->boolean('bank')) {
             $account = PaymentWorld::account($company->id);
-            PaymentWorld::proof($company->id, 'PAYMENT_PROOF')->forceFill(['declared_issuer' => 'Bank Uji '.$company->code])->save();
-            PaymentWorld::proof($company->id, 'BANK_STATEMENT')->forceFill(['declared_issuer' => 'Rekening Koran '.$company->code])->save();
+            PaymentWorld::proof($company->id, 'PAYMENT_PROOF', 'Bank Uji '.$company->code);
+            PaymentWorld::proof($company->id, 'BANK_STATEMENT', 'Rekening Koran '.$company->code);
             $lineAmount = $request->input('line');
 
             if (is_string($lineAmount)) {

@@ -16,6 +16,7 @@ use App\Support\Audit\AuthorityClass;
 use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
+use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
 use App\Support\Money;
 use App\Support\RowHandle;
@@ -218,8 +219,10 @@ final class PaymentCorrections
         }
 
         $rerecorded = $entry->rerecordedId === null ? null : DB::table('payments')->where('id', $entry->rerecordedId)->where('rerecords_payment_id', $payment->id)->first(['id', 'client_organization_id']);
+        $moving = array_filter($entry->applications, fn (array $disposition): bool => $disposition['action'] === ContraEntry::MOVE) !== [] || in_array(ContraEntry::MOVE, $entry->settlements, true);
 
-        if ($entry->rerecordedId !== null && ($rerecorded === null || (int) Row::text($rerecorded, 'client_organization_id') !== $payment->client_organization_id)) {
+        // What moves, moves only to the payment that re-records this one, of the same client and company (L-46; CM-19).
+        if ($entry->rerecordedId !== null && $rerecorded === null || $moving && ($rerecorded === null || (int) Row::text($rerecorded, 'client_organization_id') !== $payment->client_organization_id)) {
             throw Refused::rejected('L-46', ['reason' => 'not_rerecorded']);
         }
 
@@ -231,14 +234,17 @@ final class PaymentCorrections
         $commandId = $context->request->commandId;
         $actor = $context->request->actorUserId;
         $now = $context->now();
-        $case = $this->cases->open($context, AuthorityClass::AdmPlus, $payment->company_id, 'PAYMENT_CORRECTION', $entry->reason, count($projects) === 1 ? $projects[0] : null, null, null, $entry->rerecordedId === null ? ['payment_rerecord'] : []);
+        // The case names the source's first project and the next as causal (XL-3); a residual settlement on any other project stands on a case of its own, so it blocks that project's completion too (C-46).
+        $case = $this->cases->open($context, AuthorityClass::AdmPlus, $payment->company_id, 'PAYMENT_CORRECTION', $entry->reason, $projects[0] ?? null, $projects[1] ?? null, null, $entry->rerecordedId === null ? ['payment_rerecord'] : []);
         $contra = DB::table('financial_contras')->insertGetId(['company_id' => $payment->company_id, 'payment_id' => $payment->id, 'amount' => $amount->toString(), 'reason' => $entry->reason, 'business_date' => $entry->businessDate, 'correction_case_id' => $case->id,
             'recorded_by' => $actor, 'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now]);
         $base = ['company_id' => $payment->company_id, 'client_organization_id' => $payment->client_organization_id, 'business_date' => $entry->businessDate, 'reason' => $entry->reason, 'command_id' => $commandId, 'recorded_at' => $now, 'recorded_by' => $actor];
-        $line = 0;
+        // The contra itself is line 1 of its table.
+        $line = 1;
         $facts = [];
         $invoiceMoves = [];
-        $residual = Money::zero();
+        $residual = [];
+        $casesByProject = $projects === [] ? [] : [$projects[0] => $case->id];
 
         foreach ($entry->applications as $id => $disposition) {
             $row = $applications[$id];
@@ -281,9 +287,12 @@ final class PaymentCorrections
             }
 
             if ($action === ContraEntry::RESIDUAL) {
-                DB::table('deduction_settlements')->where('id', $id)->where('state', 'ACTIVE')->update(['state' => 'RESIDUAL', 'correction_case_id' => $case->id]);
+                $project = DB::table('invoices')->where('id', $row['invoice'])->value('project_id');
+                $project = is_numeric($project) ? (int) $project : null;
+                $carrier = $project === null ? $case->id : ($casesByProject[$project] ??= $this->cases->open($context, AuthorityClass::AdmPlus, $payment->company_id, 'PAYMENT_CORRECTION', $entry->reason, $project)->id);
+                DB::table('deduction_settlements')->where('id', $id)->where('state', 'ACTIVE')->update(['state' => 'RESIDUAL', 'correction_case_id' => $carrier]);
                 self::addSettled($invoiceMoves[$row['invoice']], $row, $part->negated());
-                $residual = $residual->plus($part);
+                $residual[$carrier] = ($residual[$carrier] ?? Money::zero())->plus($part);
             }
         }
 
@@ -311,8 +320,8 @@ final class PaymentCorrections
             $this->cases->post($context, $carrier, ['unbacked_refund_amount' => $part->toString()], $entry->reason);
         }
 
-        if ($residual->isPositive()) {
-            $this->cases->post($context, $case->id, ['residual_settlement_amount' => $residual->toString()], $entry->reason);
+        foreach ($residual as $carrier => $part) {
+            $this->cases->post($context, $carrier, ['residual_settlement_amount' => $part->toString()], $entry->reason);
         }
 
         $this->receivable->moveAll($context, array_filter($invoiceMoves, fn (array $moves): bool => $moves !== []));
@@ -329,11 +338,29 @@ final class PaymentCorrections
             $this->kuitansi->reconcile($context, $invoice, 'invoices.unlink.corrected');
         }
 
-        $this->revalidate($context, array_keys(array_filter($invoiceMoves, fn (array $moves): bool => $moves !== [])), "FIN.PaymentContraed:{$payment->public_id}");
+        // A contra and the case it opens are predicate inputs of every project the source touches (SF-REVAL; L-11).
+        $this->revalidate($context, $plan['invoices'], "FIN.PaymentContraed:{$payment->public_id}");
         $this->corrections->record($context, 'FIN.PaymentContraed', AuthorityClass::AdmPlus, $payment->company_id, 'payment', $payment->id, $payment->public_id, AuditRelation::Reverses, 'payment', $payment->public_id, $entry->reason,
             AuditChange::updated(['net_amount' => $net->toString()], ['net_amount' => $net->minus($amount)->toString(), 'contra' => $amount->toString(), 'dispositions' => self::named($entry)]), $case->public_id, ['business_date' => $entry->businessDate], $entry->rerecordedId === null ? null : 'payment_rerecord');
 
         return ['case' => $case->id, 'contra' => $contra];
+    }
+
+    /**
+     * A replayed contra's current state (CI-05): the list that stands now for a stale one, the figure its rule concerns.
+     *
+     * @return array<string, mixed>|null
+     */
+    public static function replayState(Outcome $outcome, int $paymentId): ?array
+    {
+        $source = MoneyPosting::source(['payment_id' => $paymentId]);
+
+        return match ($outcome->code) {
+            'ST-07' => ['applications' => array_map(fn (int $id): string => RowHandle::of('payment_applications', $id), array_keys(self::activeApplications($paymentId))), 'settlements' => array_map(fn (int $id): string => RowHandle::of('deduction_settlements', $id), array_keys(SettlementMoves::anchored($paymentId)))],
+            'C-45' => $source === null ? null : ['reason' => 'above_net', 'net' => Row::text($source, 'net_amount')],
+            'C-13' => $source === null ? null : ['reason' => 'above_capacity', 'capacity' => Row::text($source, 'capacity_amount')],
+            default => null,
+        };
     }
 
     /**

@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTab } from '@/components/ui/tabs';
 import { Code, DateText, Money } from '@/components/values';
 import { FinanceNav } from '@/features/fin/finance-nav';
 import { Answered, type Payload } from '@/features/fin/invoice-receivable';
+import { ProofSheet } from '@/features/fin/proof-sheet';
 import { type Application, ApplySheet, ContraSheet, MoveSheet, type Payment, type Targets } from '@/features/fin/payment-dialogs';
 import AppShell from '@/layouts/AppShell';
 import { add } from '@/lib/decimal';
@@ -37,7 +38,7 @@ const positive = (value: string) => /[1-9]/.test(value);
 function States({ payment }: { payment: Payment }) {
     return (
         <span className="flex flex-wrap gap-1">
-            {payment.unevidenced !== null && <StatusBadge family="payment" state="WITHOUT_PROOF" size="sm" />}
+            {payment.without_proof && <StatusBadge family="payment" state="WITHOUT_PROOF" size="sm" />}
             {positive(payment.contra) && <StatusBadge family="payment" state="CONTRA_D" size="sm" />}
         </span>
     );
@@ -56,6 +57,9 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
     const [contraing, setContraing] = useState<string | null>(null);
     const [kuitansi, setKuitansi] = useState<{ payment: string; invoice: string } | null>(null);
     const [linking, setLinking] = useState<string | null>(null);
+    const [attaching, setAttaching] = useState<string | null>(null);
+    const [proof, setProof] = useState('');
+    const attach = useCommand<Payload>(() => `/bukti/${proof}/tautan`, 'post');
     const prepare = useCommand<Payload>(() => '/dokumen', 'post');
     const link = useCommand<Payload>(() => `/keuangan/kuitansi/${linking ?? ''}/tautkan`, 'post');
 
@@ -95,15 +99,17 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
         ...(row.can.contra ? [{ label: t('payments.action.contra'), tone: 'danger' as const, onSelect: () => { setContraing(row.id); } }] : []),
     ];
     const applied = (row: Payment) => row.applications.filter((application) => application.state === 'ACTIVE');
+    const branchOf = (id: string) => branches.find((option) => option.code === find(id)?.company)?.id ?? null;
 
     return (
         <AppShell title={t('pages.pg_045.title')}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_045.title')} primary={can.record ? <Button onClick={() => { router.visit('/keuangan/pembayaran/baru'); }}><Icon icon={Plus} size="sm" />{t('actions.record_payment')}</Button> : undefined} />
                 <FinanceNav current="payments" />
-                {recorded !== null && arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
+                {arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
                 <Answered command={prepare} />
                 <Answered command={link} />
+                <Answered command={attach} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">
                     {branches.length > 1 && (
                         <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">
@@ -183,6 +189,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                                 {current.rerecords !== null && <div className="sm:col-span-2"><dd>{t('payments.detail.rerecords')}</dd></div>}
                                 {current.rerecorded_by !== null && <div className="sm:col-span-2"><dd>{t('payments.detail.rerecorded')}</dd></div>}
                                 {current.unevidenced !== null && <div className="sm:col-span-2"><dt className="text-text-secondary">{t('payments.detail.no_proof')}</dt><dd>{current.unevidenced}</dd></div>}
+                                {current.without_proof && current.can.attach && <div className="sm:col-span-2"><dd><Button variant="outline" size="sm" onClick={() => { setAttaching(current.id); }}>{t('payments.action.upload_proof')}</Button></dd></div>}
                             </dl>
                             <section aria-label={t('pages.pg_046.applications')} className="flex min-w-0 flex-col gap-2">
                                 <h3 className="text-heading-sm font-semibold text-text-primary">{t('pages.pg_046.applications')}</h3>
@@ -203,6 +210,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
                                                     {row.can_move && current.can.reallocate && <Button variant="ghost" size="sm" onClick={() => { setMoving({ payment: current.id, application: row }); }}>{t('payments.action.move')}</Button>}
                                                     {row.receipt !== null ? <a href={`/dokumen/${row.receipt}`} className="inline-flex min-h-touch items-center text-body text-accent-link underline underline-offset-2">{t('payments.action.open_receipt')}</a>
                                                         : current.can.kuitansi && row.kuitansi === null && row.invoice !== null && <Button variant="ghost" size="sm" pending={prepare.pending && kuitansi?.invoice === row.invoice} onClick={() => { setKuitansi({ payment: current.id, invoice: row.invoice ?? '' }); prepare.submit({ jenis: 'DOC-05', mode: 'RECEIPT', subjek: { payment_id: current.id, invoice_id: row.invoice ?? '' } }); }}>{t('payments.action.receipt')}</Button>}
+                                                    {row.kuitansi !== null && row.kuitansi_amount !== null && <p className="w-full text-caption text-text-secondary">{t('payments.detail.kuitansi_amounts', { kuitansi: money(row.kuitansi_amount), diterapkan: money(row.amount) })}</p>}
                                                     {row.kuitansi !== null && current.can.link && <Button variant="ghost" size="sm" pending={link.pending && linking === row.kuitansi} onClick={() => { setLinking(row.kuitansi); link.submit({ pembayaran: [current.id] }); }}>{t('payments.action.link')}</Button>}
                                                 </div>
                                             )}
@@ -233,6 +241,15 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
             )}
             {applyingRow !== null && <ApplySheet key={applyingRow.id} payment={applyingRow} targets={targets} today={today} back={back} onClose={() => { setApplying(null); }} />}
             {moving !== null && movingRow !== null && <MoveSheet key={moving.application.handle} payment={movingRow} application={moving.application} targets={targets} today={today} back={back} onClose={() => { setMoving(null); }} />}
+            {attaching !== null && branchOf(attaching) !== null && (
+                <ProofSheet open onOpenChange={(open) => { if (!open) setAttaching(null); }} company={branchOf(attaching) ?? ''} types={['PAYMENT_PROOF', 'TRANSFER_PROOF']} today={today} back={back} onRegistered={(id) => {
+                    const payment = attaching;
+                    setProof(id);
+                    setAttaching(null);
+                    // The second of two steps, with its own answer (IP-19): the proof registered, then linked.
+                    window.setTimeout(() => { attach.submit({ action: 'link', payment, role: 'PRIMARY_PROOF', kembali: back }); }, 0);
+                }} />
+            )}
             {contraRow !== null && <ContraSheet key={contraRow.id} payment={contraRow} today={today} back={back} onClose={() => { setContraing(null); }} />}
         </AppShell>
     );

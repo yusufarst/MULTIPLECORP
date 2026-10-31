@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Actions;
 
+use App\Modules\FIN\Services\MoneyPosting;
 use App\Modules\FIN\Services\PaymentApplications;
 use App\Modules\FIN\Services\PaymentRecords;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
@@ -15,6 +16,7 @@ use App\Support\Command\Fingerprint;
 use App\Support\Command\LockSet;
 use App\Support\Command\Outcome;
 use App\Support\RowHandle;
+use App\Support\Search\Row;
 
 /**
  * `FIN ApplyPayment` (ROUTE-252; INT-252; AX-19; SF-APPLY; BR-FIN-03; BR-FIN-07; M-14) — "Terapkan" on money left unapplied, a payment's or an opening credit's under the same laws, the same route PG-048's
@@ -49,11 +51,21 @@ final class ApplyPayment
             BusinessDateRule::check($businessDate, $prefilled);
             $this->applications->apply($context, $key, $source['company'], $source['client'], $applications, $resolves, $businessDate, null);
 
+            $after = ['invoices' => array_map(fn (int $invoice): string => RowHandle::of('invoices', $invoice), array_keys($applications)), 'amounts' => array_values($applications), 'refund_shortfalls' => count($resolves)];
+
             if ($source['payment'] !== null) {
-                $this->records->record($context, 'FIN.PaymentApplied', AuthorityClass::Adm, $source['payment'], null, $businessDate, ['invoices' => array_map(fn (int $invoice): string => RowHandle::of('invoices', $invoice), array_keys($applications)), 'amounts' => array_values($applications), 'refund_shortfalls' => count($resolves)]);
+                $this->records->record($context, 'FIN.PaymentApplied', AuthorityClass::Adm, $source['payment'], null, $businessDate, $after);
+
+                return new CommandResult('payment', $source['payment']);
             }
 
-            return new CommandResult('payment', $source['payment'] ?? (int) $source['credit']);
+            $this->records->recordCredit($context, (int) $source['credit'], $source['company'], $businessDate, $after);
+
+            return new CommandResult('opening_customer_credit', (int) $source['credit']);
+        }, null, fn (Outcome $outcome): ?array => match ($outcome->kind === Outcome::REJECTED ? $outcome->code : null) {
+            'C-13' => ['reason' => 'above_capacity', 'capacity' => Row::text(MoneyPosting::source($key) ?? (object) ['capacity_amount' => '0.00'], 'capacity_amount')],
+            'C-15' => PaymentApplications::outstandingRefusal($applications),
+            default => null,
         });
     }
 }

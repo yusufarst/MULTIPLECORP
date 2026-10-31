@@ -128,11 +128,16 @@ export default function RecordPayment({ companies, company, client, origin, invo
         setLine('');
         setProof('');
         setApplied({});
+        setRecovery('');
+        setReplacing('');
+        setTransfer('');
         refresh({ perusahaan: value });
     };
     const chooseClient = (next: LookupResult | null) => {
         setChosenClient(next);
         setApplied({});
+        setRecovery('');
+        setReplacing('');
         refresh({ klien: next?.id ?? '' });
     };
     const submit = () => {
@@ -232,7 +237,7 @@ export default function RecordPayment({ companies, company, client, origin, invo
                                     {t('payments.action.upload_proof')}
                                 </Button>
                             )}
-                            {proof === '' && line === '' && (
+                            {proof === '' && (line === '' || cash) && (
                                 <FormField label={t('pages.pg_046.no_proof_reason')} required error={record.errors.alasan_tanpa_bukti}>
                                     {(control) => <Textarea {...control} rows={2} value={noProof} maxLength={500} onChange={(event) => { setNoProof(event.target.value); }} />}
                                 </FormField>
@@ -323,15 +328,15 @@ export default function RecordPayment({ companies, company, client, origin, invo
                                 <RegionEmpty text={t('payments.applications.none')} />
                             ) : (
                                 <ul role="list" aria-label={t('pages.pg_046.applications')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                                    {invoices.map((invoice, index) => (
+                                    {invoices.map((invoice) => (
                                         <li key={invoice.id} data-testid="application" className="grid min-w-0 gap-2 py-3 sm:grid-cols-2 sm:items-center">
                                             <div className="flex min-w-0 flex-col gap-1">
                                                 <Code>{invoiceName(invoice)}</Code>
                                                 <span className="text-caption text-text-secondary">{`${invoice.project_number === null ? '' : `${invoice.project_number} · `}${t(invoice.billed ? 'payments.invoice.billed' : 'payments.invoice.unbilled')}`}</span>
                                                 <span className="text-body text-text-secondary">{t('payments.invoice.outstanding', { jumlah: money(invoice.outstanding) })}</span>
-                                                {invoice.kuitansi && <span className="text-caption text-text-secondary">{t('payments.invoice.kuitansi')}</span>}
+                                                {invoice.kuitansi && <a href={`/keuangan/invoice/${invoice.id}`} className="text-caption text-accent-link underline underline-offset-2">{t('payments.invoice.kuitansi')}</a>}
                                             </div>
-                                            <FormField label={t('pages.pg_046.col_applied')} error={record.errors[`penerapan.${String(index)}.invoice`] ?? record.errors[`penerapan.${String(index)}.jumlah`]}>
+                                            <FormField label={t('pages.pg_046.col_applied')} error={record.errors[`penerapan.${String(applications.indexOf(invoice))}.invoice`] ?? record.errors[`penerapan.${String(applications.indexOf(invoice))}.jumlah`]}>
                                                 {(control) => <DecimalInput {...control} scale={2} value={applied[invoice.id] ?? ''} onValueChange={(value) => { setApplied((current) => ({ ...current, [invoice.id]: value ?? '' })); }} />}
                                             </FormField>
                                         </li>

@@ -3,6 +3,7 @@
 namespace App\Modules\FIN\Actions;
 
 use App\Modules\FIN\Models\Payment;
+use App\Modules\FIN\Services\PaymentApplications;
 use App\Modules\FIN\Services\PaymentCorrections;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Support\Command\CommandContext;
@@ -39,6 +40,6 @@ final class ReallocateApplication
             $context->lock(PaymentCorrections::reallocationLocks($payment->id, $applicationId, $targetInvoiceId, array_keys($settlements)));
 
             return new CommandResult('payment', $this->corrections->reallocate($context, $payment, $applicationId, $targetInvoiceId, $amount, $settlements, $businessDate, $prefilled, $reason));
-        });
+        }, null, fn (Outcome $outcome): ?array => $outcome->code === 'C-15' ? PaymentApplications::outstandingRefusal([$targetInvoiceId => $amount]) : null);
     }
 }

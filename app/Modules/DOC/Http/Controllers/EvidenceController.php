@@ -166,7 +166,8 @@ final class EvidenceController extends Controller
         $input = $this->validated($request, [
             'command_id' => ['required', 'uuid'],
             'action' => ['required', Rule::in(['link', 'unlink', 'replace'])],
-            'project' => ['required_if:action,link', 'nullable', 'uuid'],
+            'project' => ['nullable', 'uuid'],
+            'payment' => ['nullable', 'uuid'],
             'role' => ['required_if:action,link', 'nullable', Rule::in(['PRIMARY_PROOF', 'SUPPORTING', 'CLIENT_ORIGINAL', 'REVIEWED'])],
             'link' => ['required_if:action,unlink', 'nullable', 'string'],
             'version' => ['required_if:action,replace', 'nullable', 'integer', 'min:1'],
@@ -178,8 +179,10 @@ final class EvidenceController extends Controller
         $commandId = self::text($input['command_id']);
 
         [$outcome, $done] = match ($input['action']) {
-            'link' => [$link->run($commandId, $actor, $evidence, $company, 'project_id',
-                $this->evidence->projectOf($actor, self::text($input['project']), $evidence->company_id), self::text($input['project']), self::text($input['role'])), 'evidence.answer.linked'],
+            'link' => [is_string($input['payment'] ?? null)
+                ? $link->run($commandId, $actor, $evidence, $company, 'payment_id', $this->evidence->paymentOf($actor, $input['payment'], $evidence), $input['payment'], self::text($input['role']))
+                : $link->run($commandId, $actor, $evidence, $company, 'project_id',
+                    $this->evidence->projectOf($actor, self::text($input['project'] ?? ''), $evidence->company_id), self::text($input['project'] ?? ''), self::text($input['role'])), 'evidence.answer.linked'],
             'unlink' => [LinkHandle::valid(self::text($input['link']))
                 ? $unlink->run($commandId, $actor, $evidence, $company, self::text($input['link']), self::text($input['reason']))
                 : throw new NotFoundHttpException, 'evidence.answer.unlinked'],
@@ -202,7 +205,7 @@ final class EvidenceController extends Controller
 
         // IP-16 inside a form (PG-046; PG-050): the proof registered, the form stays with its input (NV-04).
         $back = request()->input('kembali');
-        $inPlace = is_string($back) && preg_match('/^\/keuangan\/(pembayaran\/baru|mutasi-bank)(\?[A-Za-z0-9=&_%-]*)?$/', $back) === 1 ? $back : null;
+        $inPlace = is_string($back) && preg_match('/^\/keuangan\/(pembayaran|pembayaran\/baru|mutasi-bank)(\?[A-Za-z0-9=&_%-]*)?$/', $back) === 1 ? $back : null;
 
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text,
             'state' => [...array_intersect_key($state, array_flip(['matches', 'override', 'labels', 'evidence', 'reason'])), ...($inPlace !== null && $outcome->kind === Outcome::COMMITTED ? ['registered' => $evidence] : [])]]);

@@ -15,12 +15,12 @@ import { money } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
-export type Application = { handle: string; target: 'INVOICE' | 'REFUND'; invoice: string | null; number: string | null; amount: string; state: string; end_reason: string | null; date: string; receipt: string | null; kuitansi: string | null; can_move: boolean };
+export type Application = { handle: string; target: 'INVOICE' | 'REFUND'; invoice: string | null; number: string | null; amount: string; state: string; end_reason: string | null; date: string; receipt: string | null; kuitansi: string | null; kuitansi_amount: string | null; can_move: boolean };
 export type Settlement = { handle: string; invoice: string | null; number: string | null; class: string; amount: string; state: string };
 export type Payment = {
-    id: string; date: string; company: string; client: string; amount: string; net: string; contra: string; capacity: string; method: string; account: string | null; reference: string | null; intermediary: string | null; unevidenced: string | null; line: string | null; flagged: boolean; recovery: boolean; proof: string | null;
-    claimed: string; settled: string; rerecords: string | null; rerecorded_by: string | null; rerecorded_capacity: string | null; applications: Application[]; settlements: Settlement[];
-    can: { apply: boolean; reallocate: boolean; contra: boolean; kuitansi: boolean; link: boolean };
+    id: string; date: string; company: string; client: string; amount: string; net: string; contra: string; capacity: string; method: string; account: string | null; reference: string | null; intermediary: string | null; unevidenced: string | null; without_proof: boolean; line: string | null; flagged: boolean; recovery: boolean; proof: string | null;
+    claimed: string; settled: string; rerecords: string | null; rerecorded_by: string | null; rerecorded_capacity: string | null; rerecorded_same_client: boolean; applications: Application[]; settlements: Settlement[];
+    can: { apply: boolean; reallocate: boolean; contra: boolean; kuitansi: boolean; link: boolean; attach: boolean };
 };
 export type TargetInvoice = { id: string; number: string | null; project_number: string | null; outstanding: string; billed: boolean; kuitansi: boolean };
 export type Targets = { invoices: TargetInvoice[]; shortfalls: { handle: string; shortfall: string }[] };
@@ -60,8 +60,8 @@ export function ApplySheet({ payment, targets, today, back, onClose }: { payment
                     {apply.errors.tanggal !== undefined && <p className="text-body text-danger">{apply.errors.tanggal}</p>}
                     <FormSection title={t('pages.pg_046.applications')}>
                         {invoices.length === 0 && <p className="text-body text-text-secondary">{t('payments.applications.none')}</p>}
-                        {invoices.map((invoice, index) => (
-                            <FormField key={invoice.id} label={t('payments.apply.invoice', { nomor: invoice.number ?? t('payments.invoice.unnumbered'), sisa: money(invoice.outstanding) })} error={apply.errors[`penerapan.${String(index)}.jumlah`] ?? apply.errors[`penerapan.${String(index)}.invoice`]}>
+                        {invoices.map((invoice) => (
+                            <FormField key={invoice.id} label={t('payments.apply.invoice', { nomor: invoice.number ?? t('payments.invoice.unnumbered'), sisa: money(invoice.outstanding) })} error={apply.errors[`penerapan.${String(filled.indexOf(invoice))}.jumlah`] ?? apply.errors[`penerapan.${String(filled.indexOf(invoice))}.invoice`]}>
                                 {(control) => <DecimalInput {...control} scale={2} value={entered[invoice.id] ?? ''} onValueChange={(value) => { setEntered((current) => ({ ...current, [invoice.id]: value ?? '' })); }} />}
                             </FormField>
                         ))}
@@ -163,7 +163,8 @@ export function ContraSheet({ payment, today, back, onClose }: { payment: Paymen
     const [settled, setSettled] = useState<Record<string, string>>({});
     const contra = useCommand<Payload>(() => `/keuangan/pembayaran/${payment.id}/kontra`, 'post');
     const stale = contra.answer?.kind === 'CONFLICT' && contra.answer.cause === 'stale';
-    const moving = payment.rerecorded_by !== null;
+    const moving = payment.rerecorded_by !== null && payment.rerecorded_same_client;
+    const sendsMove = Object.values(actions).includes('MOVE') || Object.values(settled).includes('MOVE');
 
     return (
         <Sheet open onOpenChange={(open) => { if (!open) onClose(); }}>
@@ -175,7 +176,7 @@ export function ContraSheet({ payment, today, back, onClose }: { payment: Paymen
                 <form className="flex min-w-0 flex-col gap-6" noValidate onSubmit={(event) => {
                     event.preventDefault();
                     contra.submit({
-                        jumlah: amount, tanggal: date.date, tanggal_otomatis: !date.chosen, alasan: reason, pengganti: payment.rerecorded_by, kembali: back,
+                        jumlah: amount, tanggal: date.date, tanggal_otomatis: !date.chosen, alasan: reason, pengganti: sendsMove ? payment.rerecorded_by : null, kembali: back,
                         penerapan: applications.map((row) => ({ baris: row.handle, aksi: actions[row.handle] ?? 'KEEP', jumlah: parts[row.handle] ?? null })),
                         potongan: settlements.map((row) => ({ baris: row.handle, aksi: settled[row.handle] ?? 'KEEP' })),
                     }, onClose);

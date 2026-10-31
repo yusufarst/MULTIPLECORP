@@ -1,6 +1,6 @@
 // PG-050 *Mutasi Bank* (ROUTE-050, ROUTE-261, ROUTE-262; NAV-050; SCR-46; J-FIN-07; L-22; QS-12; TASK-051): dense, at the desk, one branch at a time: the statement lines with what cites them, the bank payments flagged until cited, the current claimed deductions. "Catat Mutasi Bank" with its BANK_STATEMENT evidence and the
 // flagged payments this line answers; a line's void, a citation's correction and a claimed deduction's supersession each with its reason (IP-09), present only with `cash.correct`. "Kembali" → PG-041. Tab and cursor in the address (IP-18).
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { Plus, Upload } from 'lucide-react';
 import { useState } from 'react';
 
@@ -8,6 +8,7 @@ import { ConfirmCommand } from '@/components/confirm-dialog';
 import { DataList, ListContinuation } from '@/components/data-list';
 import { BusinessDateControl, type BusinessDate } from '@/components/date-field';
 import { DecimalInput, FormField, FormSection } from '@/components/form';
+import { OutcomeMessage } from '@/components/outcome-message';
 import { type MenuAction, PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
 import { Button } from '@/components/ui/button';
@@ -115,6 +116,7 @@ function RecordLine({ branch, accounts, evidence, flagged, today, back, onClose 
 
 export default function BankStatement({ branches, branch, tab, rows, more, after, cursor_failed: cursorFailed, accounts, open_lines: openLines, flagged, evidence, today, can }: Props) {
     const { t } = useTranslation();
+    const arrived = (usePage().flash as { answer?: { kind?: string; text?: string } }).answer;
     const [base, setBase] = useState(rows);
     const [shown, setShown] = useState(rows);
     const [next, setNext] = useState(more);
@@ -182,6 +184,7 @@ export default function BankStatement({ branches, branch, tab, rows, more, after
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_050.title')} back={{ label: t('dialogs.back'), href: '/keuangan/invoice' }} primary={branch !== null ? <Button onClick={() => { setRecording(true); }}><Icon icon={Plus} size="sm" />{t('payments.action.record_line')}</Button> : undefined} />
                 <FinanceNav current="bank" />
+                {correct.answer === null && arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
                 <Answered command={correct} />
                 {branches.length > 1 && (
                     <FormField label={t('receivables.field.branch')} className="min-w-0 sm:w-80">

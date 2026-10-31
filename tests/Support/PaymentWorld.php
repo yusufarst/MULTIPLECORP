@@ -38,9 +38,9 @@ final class PaymentWorld
         return RowHandle::of('company_bank_accounts', $accountId);
     }
 
-    public static function proof(int $companyId, string $type = 'PAYMENT_PROOF'): EvidenceDocument
+    public static function proof(int $companyId, string $type = 'PAYMENT_PROOF', ?string $issuer = null): EvidenceDocument
     {
-        return EvidenceDocumentFactory::new()->createOne(['company_id' => $companyId, 'evidence_type' => $type]);
+        return EvidenceDocumentFactory::new()->createOne(['company_id' => $companyId, 'evidence_type' => $type, ...($issuer === null ? [] : ['declared_issuer' => $issuer])]);
     }
 
     /** A statement line on the account, its guard born as NX-08 bears it; its id. */
@@ -161,6 +161,13 @@ final class PaymentWorld
         DB::table('application_source_balances')->where('payment_id', $paymentId)->update(['refund_backed_amount' => DB::raw("refund_backed_amount + {$amount}")]);
 
         return ['refund' => $refund, 'application' => $application];
+    }
+
+    /** A claimed deduction on the payment, its guard raised as AX-18 raises it. */
+    public static function claim(int $paymentId, string $amount): void
+    {
+        DB::table('payment_claimed_deductions')->insert(['payment_id' => $paymentId, 'deduction_class' => 'FEE', 'fee_type' => 'BIAYA_TRANSFER', 'claimed_amount' => $amount, 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => DB::table('users')->orderBy('id')->value('id')]);
+        DB::table('application_source_balances')->where('payment_id', $paymentId)->update(['claimed_deductions_amount' => DB::raw("claimed_deductions_amount + {$amount}")]);
     }
 
     /** The disposition of every active row as KEEP, for a contra that needs none (ST-07). */

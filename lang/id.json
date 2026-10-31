@@ -2981,5 +2981,11 @@
     "activity.action.FIN.BankCitationCorrected": "Mengoreksi kutipan mutasi",
     "activity.action.FIN.ClaimedDeductionSuperseded": "Mengoreksi potongan yang diklaim",
     "activity.action.DOC.BankLineRecorded": "Mencatat baris mutasi",
-    "activity.action.DOC.BankLineVoided": "Membatalkan baris mutasi"
+    "activity.action.DOC.BankLineVoided": "Membatalkan baris mutasi",
+    "payments.refusal.company_inactive": "Perusahaan ini sudah dinonaktifkan: hanya pembayaran atas piutang yang ada yang masih dapat dicatat.",
+    "payments.detail.kuitansi_amounts": "Kuitansi :kuitansi · penerapan ini :diterapkan. Jumlahnya harus sama dengan total yang ditautkan.",
+    "projects.item.payment_corrections": ":jumlah koreksi pembayaran masih terbuka",
+    "projects.item.payments_unevidenced": ":jumlah pembayaran belum ada buktinya",
+    "projects.next.payment_correction": "Selesaikan koreksi pembayaran",
+    "projects.next.payment_evidence": "Lengkapi bukti pembayaran"
 }

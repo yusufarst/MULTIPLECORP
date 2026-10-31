@@ -27,7 +27,7 @@ test('records a payment with its proof and one application on the phone, PG-045 
     await page.goto(`/keuangan/pembayaran/baru?invoice=${run.invoice ?? ''}`);
     await page.getByLabel(/^Jumlah/).fill('300000');
     await page.getByLabel(/^Rekening perusahaan/).selectOption({ index: 1 });
-    await page.getByLabel(/^Bukti/).selectOption({ index: 1 });
+    await page.getByRole('combobox', { name: /^Bukti/ }).selectOption({ index: 1 });
     await page.getByTestId('application').getByLabel(/^Diterapkan/).fill('300000');
     await expect(page.getByText('Rp700.000').first()).toBeHidden();
     await record(page);
@@ -83,7 +83,7 @@ test('warns on a likely duplicate, the override naming the match with its reason
     await page.goto(`/keuangan/pembayaran/baru?invoice=${run.invoice ?? ''}`);
     await page.getByLabel(/^Jumlah/).fill('500000');
     await page.getByLabel(/^Rekening perusahaan/).selectOption({ index: 1 });
-    await page.getByLabel(/^Bukti/).selectOption({ index: 1 });
+    await page.getByRole('combobox', { name: /^Bukti/ }).selectOption({ index: 1 });
     await record(page);
 
     const warning = page.locator('[data-slot="duplicate-warning"]');
@@ -167,7 +167,7 @@ test('answers CJ-21\'s lost answer by retrying the same identifier, one payment 
     await page.goto(`/keuangan/pembayaran/baru?invoice=${run.invoice ?? ''}`);
     await page.getByLabel(/^Jumlah/).fill('150000');
     await page.getByLabel(/^Rekening perusahaan/).selectOption({ index: 1 });
-    await page.getByLabel(/^Bukti/).selectOption({ index: 1 });
+    await page.getByRole('combobox', { name: /^Bukti/ }).selectOption({ index: 1 });
 
     let dropped = false;
     await page.route('**/keuangan/pembayaran', async (route) => {
