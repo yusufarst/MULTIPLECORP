@@ -137,7 +137,7 @@ it('refuses an invoice of another client, and answers one of a company out of sc
     expect(DB::table('payments')->count())->toBe(0);
 
     $this->actingAs($this->actor)->get("/keuangan/pembayaran/baru?perusahaan={$this->companyKey}&klien={$this->clientKey}")
-        ->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/RecordPayment')->where('invoices', fn ($rows) => collect($rows)->pluck('id')->doesntContain(DB::table('invoices')->where('id', $foreign)->value('public_id'))));
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/RecordPayment', false)->where('invoices', fn ($rows) => collect($rows)->pluck('id')->doesntContain(DB::table('invoices')->where('id', $foreign)->value('public_id'))));
 
     $person = PaymentWorld::record($this->world->actorId, $this->company->id, $otherClient->id, '100000', ['applications' => [$this->invoice => '100000']]);
     expect($person->kind)->toBe('REJECTED')->and($person->code)->toBe('C-14');
@@ -399,7 +399,7 @@ it('sets a flagged payment\'s citation when its line arrives, and corrects a wro
     $admin = User::query()->findOrFail(Authorization::admin([$this->company->id], [...InvoiceWorld::CAPABILITIES, 'bank_statement.record', 'cash.correct'])->id);
     $flagged = PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '300000', ['accountId' => $this->account])->resultId;
     $publicId = DB::table('payments')->where('id', $flagged)->value('public_id');
-    $this->actingAs($admin)->get('/keuangan/mutasi-bank?tab=belum')->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/BankStatement')->has('rows', 1)->where('rows.0.id', $publicId));
+    $this->actingAs($admin)->get('/keuangan/mutasi-bank?tab=belum')->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/BankStatement', false)->has('rows', 1)->where('rows.0.id', $publicId));
 
     $statement = PaymentWorld::proof($this->company->id, 'BANK_STATEMENT');
     $this->actingAs($admin)->post('/keuangan/mutasi-bank', ['command_id' => (string) Str::uuid(), 'perusahaan' => $this->companyKey, 'rekening' => PaymentWorld::accountHandle($this->account), 'bukti' => $statement->public_id, 'tanggal' => $this->today, 'jumlah' => '300000', 'referensi' => 'TRX-1', 'pembayaran' => [$publicId]]);
@@ -456,7 +456,7 @@ it('shows the pages by branch, the payment just recorded first, nothing without 
     PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '100001', ['businessDate' => $this->today]);
     $first = DB::table('payments')->where('id', $older->resultId)->value('public_id');
 
-    $this->actingAs($this->actor)->get("/keuangan/pembayaran?tercatat={$first}")->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/Payments')->where('rows.0.id', $first)->has('rows', 2));
+    $this->actingAs($this->actor)->get("/keuangan/pembayaran?tercatat={$first}")->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/Payments', false)->where('rows.0.id', $first)->has('rows', 2));
 
     $stranger = User::query()->findOrFail(Authorization::admin([Company::factory()->createOne()->id], ['finance.view'])->id);
     $this->actingAs($stranger)->get('/keuangan/pembayaran')->assertInertia(fn (AssertableInertia $page) => $page->has('rows', 0));

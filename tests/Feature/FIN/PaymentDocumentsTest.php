@@ -178,7 +178,7 @@ it('keeps collection open on an existing receivable of a deactivated company, th
 });
 
 it('prefills PG-046 from its origin record, one company being no choice, several never from a filter (CS-03; NAV-046; J-FIN-03)', function () {
-    $this->actingAs($this->actor)->get("/keuangan/pembayaran/baru?invoice={$this->invoiceKey}")->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/RecordPayment')->where('company', $this->company->public_id)->where('client.name', fn (string $name) => $name !== '')->where('invoices.0.id', $this->invoiceKey));
+    $this->actingAs($this->actor)->get("/keuangan/pembayaran/baru?invoice={$this->invoiceKey}")->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/RecordPayment', false)->where('company', $this->company->public_id)->where('client.name', fn (string $name) => $name !== '')->where('invoices.0.id', $this->invoiceKey));
     $this->actingAs($this->actor)->get("/keuangan/pembayaran/baru?proyek={$this->project->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('company', $this->company->public_id)->has('invoices', 1)->where('origin', null));
     $this->actingAs($this->actor)->get('/keuangan/pembayaran/baru')->assertInertia(fn (AssertableInertia $page) => $page->where('company', $this->company->public_id)->where('client', null)->has('invoices', 0));
 

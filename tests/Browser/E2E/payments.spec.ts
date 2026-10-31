@@ -16,6 +16,8 @@ async function chooseClient(page: Page, run: InvoiceRun) {
 }
 
 async function record(page: Page) {
+    // A previous confirmation has left the page before the form's own button is pressed again.
+    await expect(page.getByRole('alertdialog')).toHaveCount(0);
     await page.getByRole('button', { name: 'Catat Pembayaran' }).click();
     await page.getByRole('alertdialog').getByRole('button', { name: 'Catat Pembayaran' }).click();
 }
