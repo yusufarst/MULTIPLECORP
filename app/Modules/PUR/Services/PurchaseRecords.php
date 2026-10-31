@@ -209,6 +209,8 @@ final class PurchaseRecords
     public function recordCharges(CommandContext $context, int $purchaseId, int $companyId, array $charges, string $businessDate): void
     {
         foreach ($charges as $index => $charge) {
+            // The purchase is this command's own, so every row its set names is too (§5).
+            $context->created(CostPosting::purchaseLocks($purchaseId));
             $this->recordCharge($context, $purchaseId, $companyId, $charge, $businessDate, $index + 1);
         }
     }
@@ -234,7 +236,6 @@ final class PurchaseRecords
             $this->insertShares($context, $id, $companyId, $purchaseId, $amount, (string) $charge['basis'], $charge['values'], 1, $line * self::SHARE_ROWS);
         }
 
-        $context->created(CostPosting::chargeLocks($id));
         $this->cost->chargeRecorded($context, $id, $businessDate);
 
         return $id;
@@ -298,9 +299,11 @@ final class PurchaseRecords
             throw Refused::rejected('L-23', ['reason' => 'first_effect']);
         }
 
+        // A charge committed while this command waited names rows it does not hold (§5 steps 3–4).
+        $context->require(self::amendLocks($purchase->id));
         $existing = [];
 
-        foreach (DB::table('purchase_lines as l')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')->where('l.purchase_id', $purchase->id)->where('l.kind', PurchaseEntry::GOODS)->orderBy('l.line_no')->get(['l.id', 'b.ordered_qty_base', 'b.goods_value', 'b.noncreditable_tax_value']) as $row) {
+        foreach (DB::table('purchase_lines as l')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')->where('l.purchase_id', $purchase->id)->where('l.kind', PurchaseEntry::GOODS)->orderBy('l.line_no')->get(['l.id', 'l.line_no', 'l.entered_qty', 'l.unit_price', 'l.line_value', 'b.ordered_qty_base', 'b.goods_value', 'b.noncreditable_tax_value']) as $row) {
             $existing[RowHandle::of('purchase_lines', (int) Row::text($row, 'id'))] = $row;
         }
 
@@ -317,9 +320,9 @@ final class PurchaseRecords
         }
 
         $prepared = $this->prepared($entry, $rules);
-        $changes = [];
-        $updated = 0;
-        $after = is_numeric($last = DB::table('purchase_lines')->where('purchase_id', $purchase->id)->max('line_no')) ? (int) $last : 0;
+        $before = [];
+        $after = [];
+        $lastLine = is_numeric($last = DB::table('purchase_lines')->where('purchase_id', $purchase->id)->max('line_no')) ? (int) $last : 0;
         $now = $context->now();
         $new = [];
 
@@ -338,21 +341,21 @@ final class PurchaseRecords
             $id = (int) Row::text($row, 'id');
             DB::table('purchase_lines')->where('id', $id)->update(['product_id' => $line['product'], 'quantity_scale' => $line['scale'], 'project_line_id' => $line['line'], 'delivery_mode' => $line['mode'], 'entered_qty' => $line['quantity'], 'entered_unit_id' => $line['unit'], 'ratio_to_base' => $line['ratio'], 'qty_base' => $line['base'], 'unit_price' => $line['price'], 'line_value' => $value->toString(), 'description' => $line['description'], 'updated_at' => $now]);
             DB::table('purchase_line_tax_components')->where('purchase_line_id', $id)->delete();
-            $this->taxes->insert($context, $id, $line['tax_rows'], $line['scale'] + ++$updated * 20);
+            $this->taxes->insert($context, $id, $line['tax_rows'], ((int) Row::text($row, 'line_no') - 1) * 20);
             $this->posting->move($context, $id, [
                 'ordered_qty_base' => (string) BigDecimal::of($line['base'])->minus(Row::text($row, 'ordered_qty_base')),
                 'goods_value' => $value->minus(Money::of(Row::text($row, 'goods_value')))->toString(),
                 'noncreditable_tax_value' => $noncreditable->minus(Money::of(Row::text($row, 'noncreditable_tax_value')))->toString(),
             ]);
-            $changes[$handle] = ['quantity' => $line['quantity'], 'price' => $line['price'], 'value' => $value->toString()];
+            $before[$handle] = ['quantity' => Row::text($row, 'entered_qty'), 'price' => Row::text($row, 'unit_price'), 'value' => Row::text($row, 'line_value')];
+            $after[$handle] = ['quantity' => $line['quantity'], 'price' => $line['price'], 'value' => $value->toString()];
         }
 
-        $this->insertLines($context, $purchase->id, $purchase->company_id, $new, $after);
-        $context->created(CostPosting::purchaseLocks($purchase->id));
+        $this->insertLines($context, $purchase->id, $purchase->company_id, $new, $lastLine);
         $this->reallocate($context, $purchase, $entry->businessDate);
         DB::table('purchases')->where('id', $purchase->id)->update(['lock_version' => $lockVersion + 1, 'updated_at' => $now]);
         $this->audit->record(action: 'PUR.PurchaseAmended', authorityClass: AuthorityClass::Adm, actorUserId: $context->request->actorUserId, companyId: $purchase->company_id, entityType: 'purchase', entityId: $purchase->id, entityPublicId: $purchase->public_id, reason: null, commandId: $context->request->commandId,
-            change: AuditChange::updated(['lines' => count($existing)], ['lines' => count($prepared), 'changed' => $changes]));
+            change: AuditChange::updated(['lines' => count($existing), 'changed' => $before], ['lines' => count($prepared), 'changed' => $after]));
     }
 
     /** Each attributable charge's shares by the lines' new figures, a new version with its cascade (CM-35; DATABASE §6.3 step 2). */
@@ -363,12 +366,26 @@ final class PurchaseRecords
         foreach (DB::table('purchase_charges')->where('purchase_id', $purchase->id)->where('classification', PurchaseEntry::ATTRIBUTABLE)->orderBy('id')->get(['id', 'amount', 'allocation_basis']) as $charge) {
             $id = (int) Row::text($charge, 'id');
             $version = self::latestVersion($id);
-            $kept = DB::table('purchase_lines as l')->leftJoin('purchase_charge_line_shares as s', fn (JoinClause $join) => $join->on('s.purchase_line_id', '=', 'l.id')->where('s.purchase_charge_id', $id)->where('s.allocation_version', $version))
-                ->where('l.purchase_id', $purchase->id)->orderBy('l.line_no')->pluck('s.basis_value')->all();
             $amount = DB::table('purchase_charge_balances')->where('purchase_charge_id', $id)->value('amount');
-            $this->insertShares($context, $id, $purchase->company_id, $purchase->id, Money::of(is_string($amount) ? $amount : Row::text($charge, 'amount')), Row::text($charge, 'allocation_basis'), array_values(array_map(fn (mixed $value): ?string => is_string($value) ? $value : null, $kept)), $version + 1, ++$position * self::SHARE_ROWS);
+            $this->insertShares($context, $id, $purchase->company_id, $purchase->id, Money::of(is_string($amount) ? $amount : Row::text($charge, 'amount')), Row::text($charge, 'allocation_basis'), self::keptBasis($id, $purchase->id), $version + 1, ++$position * self::SHARE_ROWS);
+            // The set was required whole above; what it names now beyond that is what this command inserted: its new lines and an earlier charge's guards on them.
+            $context->created(CostPosting::purchaseLocks($purchase->id));
             $this->cost->chargeCorrected($context, $id, null, $businessDate);
         }
+    }
+
+    /**
+     * The basis values of the charge's latest version, in line order; a line it does not cover has none.
+     *
+     * @return list<?string>
+     */
+    public static function keptBasis(int $chargeId, int $purchaseId): array
+    {
+        $version = self::latestVersion($chargeId);
+        $kept = DB::table('purchase_lines as l')->leftJoin('purchase_charge_line_shares as s', fn (JoinClause $join) => $join->on('s.purchase_line_id', '=', 'l.id')->where('s.purchase_charge_id', $chargeId)->where('s.allocation_version', $version))
+            ->where('l.purchase_id', $purchaseId)->orderBy('l.line_no')->pluck('s.basis_value')->all();
+
+        return array_values(array_map(fn (mixed $value): ?string => is_string($value) ? $value : null, $kept));
     }
 
     public static function latestVersion(int $chargeId): int

@@ -1,10 +1,17 @@
 <?php
 
 use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\DOC\Models\Document;
+use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\IAM\Models\User;
+use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Models\TaxType;
+use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
+use App\Modules\PRJ\Data\JourneyItem;
 use App\Modules\PRJ\Data\Predicates;
+use App\Modules\PRJ\Data\PredicateState;
+use App\Modules\PRJ\Queries\ProjectJourneys;
 use App\Modules\PUR\Actions\SupersedeRemainderClosure;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Services\PurchaseCorrections;
@@ -13,12 +20,15 @@ use App\Modules\PUR\Services\PurchaseSubjects;
 use App\Support\BusinessDate;
 use App\Support\Money;
 use App\Support\RowHandle;
+use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\ORG\CompanyBankAccountFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\Numbering;
 use Tests\Support\Projects;
 use Tests\Support\PurchaseWorld;
 use Tests\Support\RefreshDatabase;
@@ -304,7 +314,7 @@ it('corrects after a receipt, listing what it re-attributes, Σ attributed = the
     $lot = $cost->receive($line, '10');
     $cost->dispatch($lot, '4', $project);
     $this->actingAs($this->actor)->get("/pembelian/{$purchase->public_id}")->assertInertia(fn ($page) => $page->component('PUR/Purchase', false)
-        ->where('cascade.consumptions', 1)->where('cascade.lots', fn ($lots) => count($lots) === 1)->where('cascade.projects', fn ($projects) => in_array($project->project_number, $projects->all(), true)));
+        ->where('cascade.consumptions.0.project', $project->project_number)->where('cascade.consumptions.0.line', 1)->has('cascade.consumptions', 1)->has('cascade.lots', 1)->where('cascade.lots.0.line', 1)->where('cascade.projects', fn ($projects) => $projects->pluck('number')->contains($project->project_number)));
 
     $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-biaya", reasoned($this, ['jenis' => 'PRICE_CORRECTION', 'catatan' => $handle, 'nilai' => '12000']));
     expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()));
@@ -499,4 +509,132 @@ it('CM-27: supersedes a closure with the exact inverse posting, both rows kept (
         ->and(DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost'))->toBe($before)
         ->and(DB::table('purchase_charge_balances')->where('purchase_charge_id', $charge)->value('allocated_amount'))->toBe('60000.00')
         ->and(DB::table('purchase_line_closures')->where('purchase_line_id', $line->id)->count())->toBe(2);
+});
+
+it('hears every module on predicate 8: a met purchase part never hides another module\'s open item (WF-PRJ-03; ER-06)', function () {
+    $project = $this->world->project(['WAREHOUSE'], '5');
+    $this->actingAs($this->actor)->post('/pembelian', PurchaseWorld::payload($this->supplier, [PurchaseWorld::line($this->goods, '4', '100')], ['proyek' => $project->public_id]));
+    $line = PurchaseWorld::lines(PurchaseWorld::latest($this->company->id))[0];
+    $reservation = new class implements CompletionPredicateProvider
+    {
+        public int $project = 0;
+
+        public function predicates(): array
+        {
+            return [Predicates::STOCK];
+        }
+
+        public function states(array $projectIds, bool $money): array
+        {
+            return [$this->project => [Predicates::STOCK => new PredicateState(true, [new JourneyItem('projects.item.reservations_active', ['jumlah' => '1'], 'warehouse', true)])]];
+        }
+    };
+    $reservation->project = $project->id;
+    $this->app->instance('test.stock', $reservation);
+    $this->app->tag(['test.stock'], CompletionPredicateProvider::TAG);
+    $stock = fn () => app(ProjectJourneys::class)->predicates([$project->id], true)[$project->id][Predicates::STOCK];
+
+    expect(array_map(fn ($item) => $item->key, $stock()->items))->toContain('projects.item.purchase_remainders')->toContain('projects.item.reservations_active');
+
+    $purchase = PurchaseWorld::latest($this->company->id);
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/tutup-sisa", reasoned($this, ['baris' => [['baris' => RowHandle::of('purchase_lines', $line->id), 'jumlah' => '4']]]));
+    expect(array_map(fn ($item) => $item->key, $stock()->items))->toBe(['projects.item.reservations_active']);
+});
+
+it('voids the issued PO in the cancellation\'s transaction (AX-12; DATABASE §25; criterion 11)', function () {
+    $year = substr($this->today, 0, 4);
+    Numbering::scheme($this->company, SequenceType::Doc02, "{$year}-01-01");
+    Numbering::started($this->company, SequenceType::Doc02, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+    DocumentTypeFactory::ensure('DOC-02');
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods, '3', '2500')]);
+    $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-02', 'subjek' => ['purchase_id' => $purchase->public_id]])->assertRedirect();
+    $document = Document::query()->where('purchase_id', $purchase->id)->firstOrFail();
+    $draft = DocumentVersion::query()->where('document_id', $document->id)->where('state', 'DRAFT')->firstOrFail();
+    $this->actingAs($this->actor)->post("/dokumen/{$document->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'lock_version' => $draft->lock_version, 'draf' => $draft->public_id, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
+    expect(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('ISSUED', json_encode(purchaseAnswer()));
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/batalkan", reasoned($this));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))
+        ->and(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('VOIDED')
+        ->and(DB::table('document_versions')->where('document_id', $document->id)->value('voided_reason'))->toBe('Salah catat di awal');
+
+    // Nothing more is issued from a cancelled purchase (WF-DOC-01).
+    DatabaseFactoriesDOCDocumentTypeFactory::ensure('DOC-14');
+    TestsSupportNumbering::scheme($this->company, AppModulesORGEnumsSequenceType::Doc14, "{$year}-01-01");
+    TestsSupportNumbering::started($this->company, AppModulesORGEnumsSequenceType::Doc14, CarbonCarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+    $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-14', 'subjek' => ['purchase_id' => $purchase->public_id]]);
+    $order = AppModulesDOCModelsDocument::query()->where('purchase_id', $purchase->id)->where('document_type_code', 'DOC-14')->firstOrFail();
+    $orderDraft = AppModulesDOCModelsDocumentVersion::query()->where('document_id', $order->id)->where('state', 'DRAFT')->firstOrFail();
+    $this->actingAs($this->actor)->post("/dokumen/{$order->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'lock_version' => $orderDraft->lock_version, 'draf' => $orderDraft->public_id, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
+    expect(purchaseAnswer()['kind'])->toBe('REJECTED')->and(purchaseAnswer()['code'])->toBe('WF-DOC-01');
+});
+
+it('corrects the amount of a weighted charge by its kept values, and refuses an expensed charge by rule (CM-17; CM-35; DATABASE §6.3 step 2)', function () {
+    $bill = PurchaseWorld::bill($this->company->id, '50000');
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods, '10', '1000'), PurchaseWorld::line(Projects::product(), '10', '1000')], ['biaya' => [
+        ['tagihan' => $bill, 'klasifikasi' => 'ATTRIBUTABLE', 'jumlah' => '1000', 'dasar' => 'WEIGHT', 'nilai_dasar' => ['1', '3']],
+        ['tagihan' => $bill, 'klasifikasi' => 'NON_ATTRIBUTABLE', 'jumlah' => '100'],
+    ]]);
+    [$a, $b] = PurchaseWorld::lines($purchase);
+    $weighted = (int) DB::table('purchase_charges')->where('purchase_id', $purchase->id)->where('classification', 'ATTRIBUTABLE')->value('id');
+    $expensed = (int) DB::table('purchase_charges')->where('purchase_id', $purchase->id)->where('classification', 'NON_ATTRIBUTABLE')->value('id');
+    $share = fn ($line) => DB::table('purchase_charge_share_balances')->where('purchase_charge_id', $weighted)->where('purchase_line_id', $line->id)->value('share_amount');
+    expect($share($a))->toBe('250.00')->and($share($b))->toBe('750.00');
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-biaya", reasoned($this, ['jenis' => 'CHARGE_CORRECTION', 'catatan' => RowHandle::of('purchase_charges', $weighted), 'nilai' => '2000']));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and($share($a))->toBe('500.00')->and($share($b))->toBe('1500.00');
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/koreksi-biaya", reasoned($this, ['jenis' => 'CHARGE_CORRECTION', 'catatan' => RowHandle::of('purchase_charges', $expensed), 'nilai' => '200']))->assertRedirect();
+    expect(purchaseAnswer()['code'])->toBe('CM-35')->and(DB::table('purchase_line_adjustments')->where('purchase_charge_id', $expensed)->count())->toBe(0);
+});
+
+it('amends taxed lines, adds a taxed line and re-spreads two charges over them, the old figures on the audit event (INT-172; L-23; TASK-037 AUDIT)', function () {
+    $tax = PurchaseWorld::tax($this->company->id, 'INPUT_TO_ACQUISITION_COST');
+    $bill = PurchaseWorld::bill($this->company->id);
+    $taxed = fn (string $amount) => ['pajak' => [['kode' => $tax, 'tarif' => '10', 'nilai' => $amount]]];
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods, '10', '100', $taxed('100'))], ['biaya' => [
+        ['tagihan' => $bill, 'klasifikasi' => 'ATTRIBUTABLE', 'jumlah' => '300', 'dasar' => 'LINE_VALUE'],
+        ['tagihan' => $bill, 'klasifikasi' => 'ATTRIBUTABLE', 'jumlah' => '500', 'dasar' => 'QUANTITY'],
+    ]]);
+    $first = PurchaseWorld::lines($purchase)[0];
+    $added = Projects::product();
+
+    $this->actingAs($this->actor)->put("/pembelian/{$purchase->public_id}", ['command_id' => (string) Str::uuid(), 'lock_version' => $purchase->lock_version, 'baris' => [
+        ['handle' => RowHandle::of('purchase_lines', $first->id), ...PurchaseWorld::line($this->goods, '20', '100', $taxed('200'))],
+        PurchaseWorld::line($added, '20', '100', $taxed('200')),
+    ]]);
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()));
+    [$one, $two] = PurchaseWorld::lines($purchase->fresh());
+
+    expect(DB::table('purchase_line_tax_components')->count())->toBe(2)
+        ->and(purchaseBalance($one->id)->noncreditable_tax_value)->toBe('200.00')->and(purchaseBalance($two->id)->noncreditable_tax_value)->toBe('200.00')
+        ->and(DB::table('purchase_charge_share_balances')->where('purchase_line_id', $two->id)->orderBy('purchase_charge_id')->pluck('share_amount')->all())->toBe(['150.00', '250.00']);
+
+    expect(json_encode(DB::table('audit_events')->where('action', 'PUR.PurchaseAmended')->first()))->toContain('10.000')->toContain('1000.00');
+});
+
+it('cancels after a partial closure with nothing received, closed to the ordered quantity (AX-12 §7.2; criterion 12)', function () {
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods, '100', '10')]);
+    $line = PurchaseWorld::lines($purchase)[0];
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/tutup-sisa", reasoned($this, ['baris' => [['baris' => RowHandle::of('purchase_lines', $line->id), 'jumlah' => '40']]]));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED');
+    $this->actingAs($this->actor)->get("/pembelian/{$purchase->public_id}")->assertInertia(fn ($page) => $page->where('can.cancel', true)->etc());
+
+    $this->actingAs($this->actor)->post("/pembelian/{$purchase->public_id}/batalkan", reasoned($this));
+    expect(purchaseAnswer()['kind'])->toBe('COMMITTED', json_encode(purchaseAnswer()))->and(purchaseBalance($line->id)->closed_qty_base)->toBe('100.000')->and($purchase->fresh()->state)->toBe('CANCELLED');
+});
+
+it('opens a supplementary purchase on its origin\'s company and supplier (criterion 10; ROUTE_CONTRACTS §4)', function () {
+    $purchase = savePurchase($this, [PurchaseWorld::line($this->goods)]);
+    $other = InvoiceWorld::make();
+    $both = User::query()->findOrFail(Authorization::admin([$other->company->id, $this->company->id], PurchaseWorld::CAPABILITIES)->id);
+
+    $this->actingAs($both)->get("/pembelian/baru?dari={$purchase->public_id}")->assertInertia(fn ($page) => $page->component('PUR/RecordPurchase', false)->where('company', $this->company->public_id)->where('supplement.number', $purchase->purchase_number)->where('supplement.supplier.id', $this->supplier->public_id)->etc());
+});
+
+it('names the bill\'s remaining figure in C-20 (L-43)', function () {
+    $bill = PurchaseWorld::bill($this->company->id, '100');
+    $this->actingAs($this->actor)->post('/pembelian', PurchaseWorld::payload($this->supplier, [PurchaseWorld::line($this->goods)], ['perusahaan' => $this->company->public_id, 'biaya' => [['tagihan' => $bill, 'klasifikasi' => 'NON_ATTRIBUTABLE', 'jumlah' => '500']]]));
+
+    expect(purchaseAnswer()['code'])->toBe('C-20')->and(purchaseAnswer()['text'])->toContain('100');
 });

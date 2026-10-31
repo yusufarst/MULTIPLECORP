@@ -103,7 +103,7 @@ export function useLineProducts(setLines: (update: (current: Line[]) => Line[]) 
                 const found = (visited.props as unknown as { product: Product | null }).product;
 
                 if (found === null) return;
-                setLines((current) => current.map((line) => (line.key === key ? { ...line, product: found, unit: found.units[0]?.code ?? '', kind: found.kind === 'SERVICE' ? 'NONSTOCK' : line.kind, direct: found.kind === 'SERVICE' ? false : line.direct, description: found.name } : line)));
+                setLines((current) => current.map((line) => (line.key === key ? { ...line, product: found, unit: found.units[0]?.code ?? '', kind: found.kind === 'SERVICE' ? 'NONSTOCK' : line.kind, direct: found.kind === 'SERVICE' ? false : line.direct, demand: '', description: found.name } : line)));
             },
         });
     };

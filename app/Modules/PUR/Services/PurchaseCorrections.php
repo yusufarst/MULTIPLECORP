@@ -67,11 +67,13 @@ final class PurchaseCorrections
             throw Refused::conflict('ST-02', ['state' => $purchase->state]);
         }
 
+        // A document issued while this command waited names rows it does not hold (§5 steps 3–4; LK-30).
+        $context->require($this->cancelLocks($purchase));
         $lines = DB::table('purchase_lines as l')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')->where('l.purchase_id', $purchase->id)->orderBy('l.line_no')
             ->get(['l.id', 'l.kind', 'l.performed_at', 'b.ordered_qty_base', 'b.normal_received_net_qty_base', 'b.closed_qty_base', 'b.dropship_confirmed_net_qty_base', 'b.replacement_received_net_qty_base']);
 
         foreach ($lines as $line) {
-            foreach (['normal_received_net_qty_base', 'dropship_confirmed_net_qty_base', 'replacement_received_net_qty_base', 'closed_qty_base'] as $column) {
+            foreach (['normal_received_net_qty_base', 'dropship_confirmed_net_qty_base', 'replacement_received_net_qty_base'] as $column) {
                 if (BigDecimal::of(Row::text($line, $column))->isPositive()) {
                     throw Refused::rejected('C-29', ['reason' => 'received']);
                 }
@@ -97,11 +99,15 @@ final class PurchaseCorrections
         foreach ($lines as $line) {
             $id = (int) Row::text($line, 'id');
 
+            // Closed to its ordered quantity, what an earlier closure closed already counted, in one statement (C-29; GU-01).
+            $deltas = ['closed_qty_base' => (string) BigDecimal::of(Row::text($line, 'ordered_qty_base'))->minus(Row::text($line, 'closed_qty_base'))];
+
             if (Row::text($line, 'kind') === 'NONSTOCK') {
-                $this->posting->posted($context, $id, $this->cost->nonStockCancelled($context, $id, $businessDate));
+                $posted = $this->cost->nonStockCancelled($context, $id, $businessDate);
+                $deltas += ['posted_goods_value' => $posted->goods->toString(), 'posted_noncreditable_tax_value' => $posted->tax->toString()];
             }
 
-            $this->posting->move($context, $id, ['closed_qty_base' => Row::text($line, 'ordered_qty_base')]);
+            $this->posting->move($context, $id, $deltas);
             $this->cost->remainderEnded($context, $id, $businessDate);
         }
 
@@ -133,6 +139,7 @@ final class PurchaseCorrections
         }
 
         $line = 0;
+        $before = [];
 
         foreach ($closures as $id => $quantity) {
             $row = DB::table('purchase_lines as l')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')->where('l.id', $id)->where('l.purchase_id', $purchase->id)
@@ -148,6 +155,7 @@ final class PurchaseCorrections
                 throw Refused::rejected('C-29', ['reason' => 'above_open', 'open' => (string) $open]);
             }
 
+            $before[RowHandle::of('purchase_lines', $id)] = Row::text($row, 'closed_qty_base');
             DB::table('purchase_line_closures')->insert(['purchase_line_id' => $id, 'company_id' => (int) Row::text($row, 'company_id'), 'product_id' => (int) Row::text($row, 'product_id'), 'quantity_scale' => (int) Row::text($row, 'quantity_scale'), 'closed_qty_base' => $quantity, 'reason' => $reason, 'decided_by' => $context->request->actorUserId, 'business_date' => $businessDate,
                 'command_id' => $context->request->commandId, 'command_line_no' => ++$line, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
             $this->posting->move($context, $id, ['closed_qty_base' => $quantity]);
@@ -162,7 +170,7 @@ final class PurchaseCorrections
         }
 
         $this->corrections->record($context, 'PUR.RemainderClosed', AuthorityClass::AdmPlus, $purchase->company_id, 'purchase', $purchase->id, $purchase->public_id, AuditRelation::Supersedes, 'purchase', $purchase->public_id, $reason,
-            AuditChange::updated([], ['closed' => array_map(fn (string $quantity): string => $quantity, array_combine(array_map(fn (int $id): string => RowHandle::of('purchase_lines', $id), array_keys($closures)), array_values($closures)))]), null, ['business_date' => $businessDate]);
+            AuditChange::updated(['closed' => $before], ['closed' => array_combine(array_map(fn (int $id): string => RowHandle::of('purchase_lines', $id), array_keys($closures)), array_values($closures))]), null, ['business_date' => $businessDate]);
     }
 
     /**
@@ -276,7 +284,8 @@ final class PurchaseCorrections
             throw Refused::rejected('C-14', ['reason' => 'other_charge']);
         }
 
-        if (Row::text($charge, 'classification') !== 'ATTRIBUTABLE' && $basis !== null) {
+        // An expensed charge holds no allocation: its correction is the expense's (DATABASE §6.3; TASK-054's contra).
+        if (Row::text($charge, 'classification') !== 'ATTRIBUTABLE') {
             throw Refused::rejected('CM-35', ['reason' => 'not_attributable']);
         }
 
@@ -289,11 +298,9 @@ final class PurchaseCorrections
             throw Refused::rejected('AX-34', ['reason' => 'unchanged']);
         }
 
-        if (Row::text($charge, 'classification') === 'ATTRIBUTABLE') {
-            $version = PurchaseRecords::latestVersion($chargeId) + 1;
-            $this->records->insertShares($context, $chargeId, $purchase->company_id, $purchase->id, $target, $basis ?? Row::text($charge, 'allocation_basis'), $entered, $version, PurchaseRecords::SHARE_ROWS);
-        }
-
+        $version = PurchaseRecords::latestVersion($chargeId) + 1;
+        // An amount alone keeps the basis as it stands, a weight's or an explicit split's values with it.
+        $this->records->insertShares($context, $chargeId, $purchase->company_id, $purchase->id, $target, $basis ?? Row::text($charge, 'allocation_basis'), $basis === null ? PurchaseRecords::keptBasis($chargeId, $purchase->id) : $entered, $version, PurchaseRecords::SHARE_ROWS);
         $this->cost->chargeCorrected($context, $chargeId, $adjustment, $businessDate);
         $this->corrections->record($context, 'PUR.CostCorrected', AuthorityClass::AdmPlus, $purchase->company_id, 'purchase', $purchase->id, $purchase->public_id, AuditRelation::Revises, 'purchase', $purchase->public_id, $reason,
             AuditChange::updated(['amount' => $current->toString(), 'basis' => Row::nullable($charge, 'allocation_basis')], ['amount' => $target->toString(), 'basis' => $basis, 'charge' => RowHandle::of('purchase_charges', $chargeId)]), null, ['business_date' => $businessDate]);

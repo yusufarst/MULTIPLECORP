@@ -36,7 +36,7 @@ final class PurchaseForm
             }
         }
 
-        $chosen = $chosenProject['company'] ?? ($company ?? ($companies[0]['id'] ?? null));
+        $chosen = $chosenProject['company'] ?? ($company ?? ($origin['company'] ?? ($companies[0]['id'] ?? null)));
         $internal = null;
 
         foreach ($companies as $candidate) {
@@ -104,17 +104,17 @@ final class PurchaseForm
         return $products;
     }
 
-    /** @return array{project: ?string, number: string, supplier: array{id: string, name: string}}|null */
+    /** @return array{project: ?string, company: string, number: string, supplier: array{id: string, name: string}}|null */
     private function origin(Authority $viewer, string $publicId): ?array
     {
-        $row = preg_match(self::UUID, $publicId) === 1 ? DB::table('purchases as x')->join('suppliers as s', 's.id', '=', 'x.supplier_id')->leftJoin('projects as p', 'p.id', '=', 'x.project_id')->where('x.public_id', strtolower($publicId))
-            ->first(['x.company_id', 'x.purchase_number', 's.public_id as supplier', 's.name', 'p.public_id as project']) : null;
+        $row = preg_match(self::UUID, $publicId) === 1 ? DB::table('purchases as x')->join('suppliers as s', 's.id', '=', 'x.supplier_id')->join('companies as c', 'c.id', '=', 'x.company_id')->leftJoin('projects as p', 'p.id', '=', 'x.project_id')->where('x.public_id', strtolower($publicId))
+            ->first(['x.company_id', 'c.public_id as company', 'x.purchase_number', 's.public_id as supplier', 's.name', 'p.public_id as project']) : null;
 
         if ($row === null || ! $viewer->allows('purchase.manage', (int) Row::text($row, 'company_id'))) {
             return null;
         }
 
-        return ['project' => Row::nullable($row, 'project'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => ['id' => Row::text($row, 'supplier'), 'name' => Row::text($row, 'name')]];
+        return ['project' => Row::nullable($row, 'project'), 'company' => Row::text($row, 'company'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => ['id' => Row::text($row, 'supplier'), 'name' => Row::text($row, 'name')]];
     }
 
     /** @return array<string, mixed>|null */

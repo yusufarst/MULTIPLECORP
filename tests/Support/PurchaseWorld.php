@@ -8,6 +8,8 @@ use App\Modules\IAM\Models\User;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PTY\Models\Supplier;
+use App\Modules\PUR\Actions\RecordPurchase;
+use App\Modules\PUR\Data\PurchaseEntry;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseLine;
 use App\Support\BusinessDate;
@@ -96,6 +98,25 @@ final class PurchaseWorld
     public static function lines(Purchase $purchase): array
     {
         return array_values(PurchaseLine::query()->where('purchase_id', $purchase->id)->orderBy('line_no')->get()->all());
+    }
+
+    /**
+     * A replenishment purchase's entry of one line, for a session.
+     *
+     * @param  list<array{bill: int, classification: string, amount: string, basis: ?string, values: list<?string>}>  $charges
+     */
+    public static function entry(int $company, int $supplier, int $product, int $unit, string $today, array $charges = [], string $qty = '10', string $price = '1000'): PurchaseEntry
+    {
+        return new PurchaseEntry($company, null, $supplier, $today, false, null, [['handle' => null, 'kind' => 'GOODS', 'product' => $product, 'line' => null, 'mode' => 'WAREHOUSE', 'quantity' => $qty, 'unit' => $unit, 'price' => $price, 'description' => 'Barang uji', 'taxes' => []]], $charges);
+    }
+
+    /** ROUTE-171's action as its own command; its outcome as text. */
+    public static function save(int $actor, PurchaseEntry $entry): string
+    {
+        // Go-live is bound per process (Numbering::goLive), and a session is its own.
+        Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
+
+        return InvoiceWorld::word(app(RecordPurchase::class)->run((string) Str::uuid(), $actor, $entry, ['run' => (string) Str::uuid()]));
     }
 
     /** CostWorld's synthetic receipts and draws on the line's product, until TASK-039 and TASK-041 exist. */

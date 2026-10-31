@@ -422,7 +422,7 @@ final class PurchasesController extends Controller
             },
             default => ['not_processed', self::say('messages.msg_06')],
         };
-        Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'state' => array_intersect_key($state, ['reason' => 1])]);
+        Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'state' => array_intersect_key($state, ['reason' => 1, 'uncited' => 1])]);
 
         return redirect()->to($to, 303);
     }
@@ -448,7 +448,12 @@ final class PurchasesController extends Controller
             'C-09' => self::say('purchases.refusal.conversion'),
             'J-MD-03' => self::say('purchases.refusal.supplier_inactive'),
             'L-05' => self::say('projects.validation.unknown'),
-            'L-23' => self::say($reason === 'edit_instead' ? 'purchases.refusal.edit_instead' : 'purchases.refusal.first_effect'),
+            'L-23' => self::say(match ($reason) {
+                'edit_instead' => 'purchases.refusal.edit_instead',
+                'lines' => 'purchases.refusal.lines_kept',
+                'nonstock' => 'purchases.refusal.amend_nonstock',
+                default => 'purchases.refusal.first_effect',
+            }),
             'L-43' => self::say('purchases.refusal.source_bill'),
             'SF-CHARGE' => self::say('purchases.refusal.basis'),
             'AX-34' => self::say('purchases.refusal.unchanged'),

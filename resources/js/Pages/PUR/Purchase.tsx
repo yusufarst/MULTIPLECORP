@@ -32,7 +32,7 @@ type Props = {
     receipts: { line: number; quantity: string; date: string; lot: string | null }[];
     disbursements: { id: string; amount: string; date: string }[] | null;
     documents: { id: string; type: string; state: string | null; number: string | null }[];
-    cascade: { lots: string[]; consumptions: number; projects: string[] };
+    cascade: { lots: { code: string; line: number | null }[]; consumptions: { lot: string; line: number | null; kind: string; quantity: string; project: string | null }[]; projects: { number: string; line: number | null }[] };
     timeline: { action: string; by: string | null; at: string; reason: string | null }[];
     bills: Bill[];
     taxes: Tax[];
@@ -41,7 +41,7 @@ type Props = {
     today: string;
     can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean };
 };
-type Dialog = { kind: 'cancel' } | { kind: 'close' } | { kind: 'correct'; target: string; correction: 'PRICE_CORRECTION' | 'TAX_CORRECTION' | 'CHARGE_CORRECTION'; label: string; current: string } | { kind: 'basis'; charge: string } | { kind: 'unmark'; line: string };
+type Dialog = { kind: 'cancel' } | { kind: 'close' } | { kind: 'correct'; target: string; correction: 'PRICE_CORRECTION' | 'TAX_CORRECTION' | 'CHARGE_CORRECTION'; label: string; current: string; line: number | null } | { kind: 'basis'; charge: string } | { kind: 'unmark'; line: string };
 
 const positive = (value: string): boolean => !/^0*(\.0*)?$/.test(value);
 
@@ -51,20 +51,27 @@ function Answered({ command }: { command: { answer: Answer | null; unknown: bool
     return command.answer === null ? null : <OutcomeMessage answer={command.answer} action={command.unknown ? <Button variant="outline" size="sm" onClick={command.retry}>{t('actions.try_again')}</Button> : undefined} />;
 }
 
-/** What a correction re-attributes, before it is sent (ADMIN_FLOW §11; criterion 14). */
-function Cascade({ cascade }: { cascade: Props['cascade'] }) {
+/** What a correction re-attributes, before it is sent: for a line, its holders and whatever depends on them; for a charge, all of them (ADMIN_FLOW §11; criterion 14). */
+function Cascade({ cascade, line }: { cascade: Props['cascade']; line: number | null }) {
     const { t } = useTranslation();
+    const reaches = (row: { line: number | null }) => line === null || row.line === null || row.line === line;
+    const lots = cascade.lots.filter(reaches);
+    const consumptions = cascade.consumptions.filter(reaches);
+    const projects = cascade.projects.filter(reaches);
 
     return (
-        <dl className="flex min-w-0 flex-col gap-1 text-caption">
-            <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.lots')}</dt><dd>{cascade.lots.length === 0 ? '—' : cascade.lots.join(', ')}</dd></div>
-            <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.consumptions')}</dt><dd>{cascade.consumptions}</dd></div>
-            <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.projects')}</dt><dd>{cascade.projects.length === 0 ? '—' : cascade.projects.join(', ')}</dd></div>
+        <dl data-slot="purchase-cascade" className="flex min-w-0 flex-col gap-1 text-caption">
+            <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.lots')}</dt><dd>{lots.length === 0 ? '—' : lots.map((lot) => lot.code).join(', ')}</dd></div>
+            <div className="flex flex-col gap-1">
+                <dt className="text-text-secondary">{t('purchases.cascade.consumptions')}</dt>
+                {consumptions.length === 0 ? <dd>—</dd> : consumptions.map((row, index) => <dd key={index}>{`${row.lot} · ${row.quantity.replace(/\.?0+$/, '')}${row.project === null ? '' : ` · ${row.project}`}`}</dd>)}
+            </div>
+            <div className="flex flex-wrap gap-2"><dt className="text-text-secondary">{t('purchases.cascade.projects')}</dt><dd>{projects.length === 0 ? '—' : projects.map((project) => project.number).join(', ')}</dd></div>
         </dl>
     );
 }
 
-export default function Purchase({ purchase, lines, charges, receipts, disbursements, documents, cascade, timeline, bills, taxes, today, can }: Props) {
+export default function Purchase({ purchase, lines, charges, receipts, disbursements, documents, cascade, timeline, bills, taxes, first_effect, today, can }: Props) {
     const { t } = useTranslation();
     const base = `/pembelian/${purchase.id}`;
     const [dialog, setDialog] = useState<Dialog | null>(null);
@@ -182,8 +189,8 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                 <div className="flex min-w-0 flex-wrap gap-2">
                                     {line.kind === 'NONSTOCK' && line.performed === null && can.mark && <Button variant="outline" size="sm" pending={mark.pending && marking === line.handle} pendingLabel={t('actions.mark_performed')} onClick={() => { setMarking(line.handle); window.setTimeout(() => { (mark.submit as unknown as (value: unknown, done: () => void) => void)({}, () => { router.reload(); }); }, 0); }}>{t('actions.mark_performed')}</Button>}
                                     {line.kind === 'NONSTOCK' && line.performed !== null && can.unmark && <Button variant="outline" size="sm" onClick={() => { open({ kind: 'unmark', line: line.handle }); }}>{t('actions.undo_performed')}</Button>}
-                                    {can.correct && (line.kind === 'NONSTOCK' || positive(line.received) || !can.amend) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'PRICE_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.value }); }}>{t('purchases.action.correct_price')}</Button>}
-                                    {can.correct && (line.kind === 'NONSTOCK' || positive(line.received) || !can.amend) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'TAX_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.tax }); }}>{t('purchases.action.correct_tax')}</Button>}
+                                    {can.correct && (line.kind === 'NONSTOCK' || first_effect) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'PRICE_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.value, line: line.no }); }}>{t('purchases.action.correct_price')}</Button>}
+                                    {can.correct && (line.kind === 'NONSTOCK' || first_effect) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'TAX_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.tax, line: line.no }); }}>{t('purchases.action.correct_tax')}</Button>}
                                 </div>
                             </li>
                         ))}
@@ -204,10 +211,10 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                             {row.shares.map((share) => <span key={share.line}>{`${t('purchases.charge.share_of', { baris: String(share.line) })}: `}<Money value={share.share} /></span>)}
                                         </p>
                                     )}
-                                    {can.correct && (
+                                    {can.correct && row.classification === 'ATTRIBUTABLE' && (
                                         <div className="flex flex-wrap gap-2">
-                                            <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: row.handle, correction: 'CHARGE_CORRECTION', label: row.issuer, current: row.amount }); }}>{t('purchases.action.correct_charge')}</Button>
-                                            {row.classification === 'ATTRIBUTABLE' && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'basis', charge: row.handle }); }}>{t('actions.correct_allocation_basis')}</Button>}
+                                            <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: row.handle, correction: 'CHARGE_CORRECTION', label: row.issuer, current: row.amount, line: null }); }}>{t('purchases.action.correct_charge')}</Button>
+                                            <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'basis', charge: row.handle }); }}>{t('actions.correct_allocation_basis')}</Button>
                                         </div>
                                     )}
                                 </li>
@@ -278,7 +285,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                     <FormField label={t(dialog.correction === 'PRICE_CORRECTION' ? 'purchases.correct.goods_value' : dialog.correction === 'TAX_CORRECTION' ? 'purchases.correct.tax_value' : 'purchases.correct.charge_value', { baris: dialog.label })} error={send.errors.nilai}>
                                         {(control) => <DecimalInput {...control} kind="money" scale={2} value={value} onValueChange={(next) => { setValue(next ?? ''); }} />}
                                     </FormField>
-                                    <Cascade cascade={cascade} />
+                                    <Cascade cascade={cascade} line={dialog.line} />
                                 </>
                             )}
                             {dialog.kind === 'basis' && (
@@ -291,7 +298,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                         )}
                                     </FormField>
                                     {(basis === 'WEIGHT' || basis === 'EXPLICIT') && <BasisValues charge={{ key: 'x', bill: '', classification: 'ATTRIBUTABLE', amount: '', basis, values: basisValues }} lines={chargeLabels} onChange={setBasisValues} />}
-                                    <Cascade cascade={cascade} />
+                                    <Cascade cascade={cascade} line={null} />
                                 </>
                             )}
                         </div>

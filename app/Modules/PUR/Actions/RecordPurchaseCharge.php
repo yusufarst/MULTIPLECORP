@@ -39,6 +39,8 @@ final class RecordPurchaseCharge
 
         return $this->envelope->run($request, function (CommandContext $context) use ($purchase, $charge, $businessDate, $prefilled): CommandResult {
             $context->lock(PurchaseRecords::amendLocks($purchase->id)->union(EvidenceGuard::locks($charge['bill'])));
+            // A receipt or charge committed while this command waited names rows it does not hold (§5 steps 3–4; LK-22; LK-23).
+            $context->require(PurchaseRecords::amendLocks($purchase->id));
             BusinessDateRule::check($businessDate, $prefilled);
             $purchase->refresh();
 

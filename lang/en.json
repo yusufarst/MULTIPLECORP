@@ -3083,7 +3083,7 @@
     "purchases.refusal.unchanged": "The value equals the recorded one; nothing to correct.",
     "purchases.refusal.not_nonstock": "Only a non-stock line can be marked as performed.",
     "purchases.refusal.not_open": "This purchase is no longer open.",
-    "purchases.refusal.not_attributable": "An expensed charge has no allocation basis.",
+    "purchases.refusal.not_attributable": "An expensed charge is not allocated. Correct it on its expense.",
     "purchases.refusal.no_tax_rule": "No tax treatment is set for this company and date.",
     "purchases.refusal.project_state": "A project purchase can be recorded only while the project is active.",
     "purchases.refusal.service_as_goods": "A service is recorded as a non-stock line, not goods.",
@@ -3176,5 +3176,7 @@
     "purchases.project.title": "Procurement",
     "purchases.project.empty": "No purchases for this project yet.",
     "purchases.project.remaining": "Remaining :sisa",
-    "projects.item.purchase_remainders": ":jumlah purchase lines have a remainder not closed"
+    "projects.item.purchase_remainders": ":jumlah purchase lines have a remainder not closed",
+    "purchases.refusal.lines_kept": "Every goods line of the purchase must stay. Reload and edit again.",
+    "purchases.refusal.amend_nonstock": "A non-stock line cannot be edited or added here. Use a cost correction or a follow-up purchase."
 }

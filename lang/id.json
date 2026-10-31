@@ -3083,7 +3083,7 @@
     "purchases.refusal.unchanged": "Nilainya sama dengan yang tercatat, tidak ada yang dikoreksi.",
     "purchases.refusal.not_nonstock": "Hanya baris non-stok yang dapat ditandai terlaksana.",
     "purchases.refusal.not_open": "Pembelian ini sudah tidak terbuka.",
-    "purchases.refusal.not_attributable": "Biaya berjenis Beban tidak memiliki dasar alokasi.",
+    "purchases.refusal.not_attributable": "Biaya berjenis Beban tidak dialokasikan. Koreksinya dilakukan pada bebannya.",
     "purchases.refusal.no_tax_rule": "Perlakuan pajak ini belum ditetapkan untuk perusahaan dan tanggal tersebut.",
     "purchases.refusal.project_state": "Pembelian proyek hanya dapat dicatat saat proyek aktif.",
     "purchases.refusal.service_as_goods": "Jasa dicatat sebagai baris non-stok, bukan barang.",
@@ -3176,5 +3176,7 @@
     "purchases.project.title": "Pengadaan",
     "purchases.project.empty": "Belum ada pembelian untuk proyek ini.",
     "purchases.project.remaining": "Sisa :sisa",
-    "projects.item.purchase_remainders": ":jumlah baris pembelian masih memiliki sisa yang belum ditutup"
+    "projects.item.purchase_remainders": ":jumlah baris pembelian masih memiliki sisa yang belum ditutup",
+    "purchases.refusal.lines_kept": "Setiap baris barang pembelian harus tetap ada. Muat ulang, lalu ubah kembali.",
+    "purchases.refusal.amend_nonstock": "Baris non-stok tidak dapat diubah atau ditambahkan di sini. Gunakan koreksi biaya atau pembelian susulan."
 }

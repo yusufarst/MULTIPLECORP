@@ -2,6 +2,7 @@
 
 namespace App\Modules\PUR\Queries;
 
+use App\Modules\CST\Services\CostPosting;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\PUR\Models\Purchase;
@@ -9,7 +10,7 @@ use App\Modules\PUR\Services\PurchaseCorrections;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -59,7 +60,7 @@ final class PurchaseDetail
             'receipts' => $this->receipts($purchase),
             'disbursements' => $viewer->allows('finance.view', $company) ? $this->disbursements($purchase) : null,
             'documents' => $this->documents($purchase),
-            'cascade' => $viewer->allows('purchase.correct_cost', $company) ? $this->cascade($purchase) : ['lots' => [], 'consumptions' => 0, 'projects' => []],
+            'cascade' => $viewer->allows('purchase.correct_cost', $company) ? $this->cascade($purchase) : ['lots' => [], 'consumptions' => [], 'projects' => []],
             'timeline' => $this->timeline($purchase, $viewer),
             'bills' => $viewer->allows('purchase.manage', $company) ? $this->formBills($viewerId, $purchase) : [],
             'taxes' => $viewer->allows('purchase.manage', $company) ? ($this->form->screen($viewerId, null, self::companyKey($company), null, null)['taxes'] ?? []) : [],
@@ -169,22 +170,54 @@ final class PurchaseDetail
     }
 
     /**
-     * AC-14: every lot, consumption and project a cost correction would re-attribute, listed first (ADMIN_FLOW §11).
+     * Criterion 14: every lot, consumption and project a cost correction would re-attribute, listed first (ADMIN_FLOW §11), from the holders CST's own cascade locks (§6.3 step 3): a return's or a replacement's lot among them. A row of one line names it, for a correction of that line; one reached through a dependent names none and is always listed.
      *
-     * @return array{lots: list<string>, consumptions: int, projects: list<string>}
+     * @return array{lots: list<array{code: string, line: ?int}>, consumptions: list<array{lot: string, line: ?int, kind: string, quantity: string, project: ?string}>, projects: list<array{number: string, line: ?int}>}
      */
     private function cascade(Purchase $purchase): array
     {
-        $lots = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->where('l.purchase_id', $purchase->id)->orderBy('i.id')->limit(100)->get(['i.id', 'i.lot_code']);
-        $ids = array_map(fn (object $lot): int => (int) Row::text($lot, 'id'), $lots->all());
-        $consumptions = $ids === [] ? 0 : DB::table('stock_consumptions')->whereIn('lot_id', $ids)->count();
-        $projects = DB::table('projects as p')->where(function (Builder $query) use ($purchase, $ids): void {
-            $query->where('p.id', $purchase->project_id ?? 0)
-                ->orWhereIn('p.id', DB::table('stock_consumptions')->whereIn('lot_id', $ids === [] ? [0] : $ids)->whereNotNull('bearer_project_id')->select('bearer_project_id'))
-                ->orWhereIn('p.id', DB::table('cost_attributions as a')->join('purchase_lines as l', 'l.id', '=', 'a.purchase_line_id')->where('l.purchase_id', $purchase->id)->whereNotNull('a.bearer_project_id')->select('a.bearer_project_id'));
-        })->orderBy('p.project_number')->limit(100)->pluck('p.project_number')->all();
+        $ids = [];
+        $bearers = [];
 
-        return ['lots' => array_values(array_map(fn (object $lot): string => Row::text($lot, 'lot_code'), $lots->all())), 'consumptions' => $consumptions, 'projects' => array_values(array_map(fn (mixed $number): string => is_string($number) ? $number : '', $projects))];
+        foreach (CostPosting::purchaseLocks($purchase->id)->ordered() as $row) {
+            if ($row['table'] === 'lot_cost_balances') {
+                $ids[] = (int) $row['key']['lot_id'];
+            }
+
+            if ($row['table'] === 'projects') {
+                $bearers[] = (int) $row['key']['id'];
+            }
+        }
+
+        $lines = [];
+        $lots = [];
+
+        foreach (DB::table('inventory_lots as i')->leftJoin('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->leftJoin('purchase_lines as l', fn (JoinClause $join) => $join->on('l.id', '=', 'r.purchase_line_id')->where('l.purchase_id', $purchase->id))->whereIn('i.id', $ids)->orderBy('i.id')->get(['i.id', 'i.lot_code', 'l.line_no']) as $lot) {
+            $line = Row::nullable($lot, 'line_no');
+            $lines[(int) Row::text($lot, 'id')] = [Row::text($lot, 'lot_code'), $line === null ? null : (int) $line];
+            $lots[] = ['code' => Row::text($lot, 'lot_code'), 'line' => $line === null ? null : (int) $line];
+        }
+
+        $consumptions = [];
+        $projects = [];
+
+        foreach (DB::table('stock_consumptions as c')->leftJoin('projects as p', 'p.id', '=', 'c.bearer_project_id')->whereIn('c.lot_id', $ids)->orderBy('c.id')->get(['c.lot_id', 'c.kind', 'c.qty_base', 'p.project_number']) as $row) {
+            [$code, $line] = $lines[(int) Row::text($row, 'lot_id')] ?? ['', null];
+            $number = Row::nullable($row, 'project_number');
+            $consumptions[] = ['lot' => $code, 'line' => $line, 'kind' => Row::text($row, 'kind'), 'quantity' => Row::text($row, 'qty_base'), 'project' => $number];
+
+            if ($number !== null) {
+                $projects[$number] = isset($projects[$number]) && $projects[$number]['line'] !== $line ? ['number' => $number, 'line' => null] : ['number' => $number, 'line' => $line];
+            }
+        }
+
+        foreach (DB::table('projects')->whereIn('id', $bearers)->orderBy('project_number')->pluck('project_number') as $number) {
+            if (is_string($number) && ! isset($projects[$number])) {
+                $projects[$number] = ['number' => $number, 'line' => null];
+            }
+        }
+
+        return ['lots' => $lots, 'consumptions' => $consumptions, 'projects' => array_values($projects)];
     }
 
     /** @return list<array{action: string, by: ?string, at: string, reason: ?string}> */

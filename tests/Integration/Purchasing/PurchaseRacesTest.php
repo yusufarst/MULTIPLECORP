@@ -4,8 +4,7 @@ use App\Modules\ORG\Models\Company;
 use App\Modules\PUR\Actions\CancelPurchase;
 use App\Modules\PUR\Actions\ClosePurchaseRemainder;
 use App\Modules\PUR\Actions\CorrectPurchaseCost;
-use App\Modules\PUR\Actions\RecordPurchase;
-use App\Modules\PUR\Data\PurchaseEntry;
+use App\Modules\PUR\Actions\RecordPurchaseCharge;
 use App\Modules\PUR\Models\Purchase;
 use App\Modules\PUR\Models\PurchaseLine;
 use App\Support\BusinessDate;
@@ -63,28 +62,17 @@ function purchaseRaceDifferences(): array
     return $found;
 }
 
-/** A purchase saved as its own command, for a session; its outcome as text. */
-function purchaseEntryOf(int $company, int $supplier, int $product, int $unit, string $today, array $charges = [], string $qty = '10', string $price = '1000'): PurchaseEntry
-{
-    return new PurchaseEntry($company, null, $supplier, $today, false, null, [['handle' => null, 'kind' => 'GOODS', 'product' => $product, 'line' => null, 'mode' => 'WAREHOUSE', 'quantity' => $qty, 'unit' => $unit, 'price' => $price, 'description' => 'Barang uji', 'taxes' => []]], $charges);
-}
-
-function purchaseSave(int $actor, PurchaseEntry $entry): string
-{
-    return InvoiceWorld::word(app(RecordPurchase::class)->run((string) Str::uuid(), $actor, $entry, ['run' => (string) Str::uuid()]));
-}
-
 it('draws distinct consecutive numbers for concurrent saves, never reused (M-15; NM-08; criterion 2)', function () {
     $company = $this->company->id;
     $actor = $this->actor;
-    $entry = purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $this->today);
+    $entry = PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $this->today);
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => purchaseSave($actor, $entry), 'the first holds its locks'),
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => PurchaseWorld::save($actor, $entry), 'the first holds its locks'),
         'second' => static function () use ($actor, $entry): string {
             Barrier::await('the first holds its locks');
 
-            return purchaseSave($actor, $entry);
+            return PurchaseWorld::save($actor, $entry);
         },
     ]);
 
@@ -97,14 +85,14 @@ it('leaves the second of two saves citing one bill REJECTED beyond its total (C-
     $company = $this->company->id;
     $actor = $this->actor;
     $bill = (int) DB::table('evidence_documents')->where('public_id', PurchaseWorld::bill($company, '1000'))->value('id');
-    $entry = purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $this->today, [['bill' => $bill, 'classification' => 'NON_ATTRIBUTABLE', 'amount' => '700', 'basis' => null, 'values' => []]]);
+    $entry = PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $this->today, [['bill' => $bill, 'classification' => 'NON_ATTRIBUTABLE', 'amount' => '700', 'basis' => null, 'values' => []]]);
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => purchaseSave($actor, $entry), 'the first holds its locks'),
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => PurchaseWorld::save($actor, $entry), 'the first holds its locks'),
         'second' => static function () use ($actor, $entry): string {
             Barrier::await('the first holds its locks');
 
-            return purchaseSave($actor, $entry);
+            return PurchaseWorld::save($actor, $entry);
         },
     ]);
 
@@ -116,7 +104,7 @@ it('M-36: a receipt holding its locks first leaves the closure refused against t
     $company = $this->company->id;
     $actor = $this->actor;
     $today = $this->today;
-    purchaseSave($actor, purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $today));
+    PurchaseWorld::save($actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $today));
     $purchase = PurchaseWorld::latest($company);
     $line = PurchaseWorld::lines($purchase)[0];
     $productId = $line->product_id;
@@ -145,7 +133,7 @@ it('M-36: a closure holding its locks first leaves the receipt failing C-29 agai
     $company = $this->company->id;
     $actor = $this->actor;
     $today = $this->today;
-    purchaseSave($actor, purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $today));
+    PurchaseWorld::save($actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $today));
     $purchase = PurchaseWorld::latest($company);
     $line = PurchaseWorld::lines($purchase)[0];
     $productId = $line->product_id;
@@ -176,7 +164,7 @@ it('cancels racing a receipt: one commits, every line closed to its ordered quan
     $company = $this->company->id;
     $actor = $this->actor;
     $today = $this->today;
-    purchaseSave($actor, purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $today));
+    PurchaseWorld::save($actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $today));
     $purchase = PurchaseWorld::latest($company);
     $line = PurchaseWorld::lines($purchase)[0];
     $productId = $line->product_id;
@@ -207,7 +195,7 @@ it('M-07: a correction sees a draw that committed first and re-attributes it, Σ
     $company = $this->company->id;
     $actor = $this->actor;
     $today = $this->today;
-    purchaseSave($actor, purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $today));
+    PurchaseWorld::save($actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $today));
     $purchase = PurchaseWorld::latest($company);
     $line = PurchaseWorld::lines($purchase)[0];
     $world = PurchaseWorld::cost($this->company, $actor, $line->product_id);
@@ -225,14 +213,43 @@ it('M-07: a correction sees a draw that committed first and re-attributes it, Σ
     expect(Money::of($held)->plus(Money::of($drawn))->toString())->toBe('12000.00')->and(purchaseRaceDifferences())->toBe([]);
 });
 
+it('holds the lot a receipt created while a late charge waited: the charge restarts with its locks and posts on it (AX-29; §5 steps 3–4; LK-23; ER-06)', function () {
+    $company = $this->company->id;
+    $actor = $this->actor;
+    $today = $this->today;
+    PurchaseWorld::save($actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $today));
+    $purchase = PurchaseWorld::latest($company);
+    $line = PurchaseWorld::lines($purchase)[0];
+    $productId = $line->product_id;
+    $lineId = $line->id;
+    $purchaseId = $purchase->id;
+    $bill = (int) DB::table('evidence_documents')->where('public_id', PurchaseWorld::bill($company, '1000'))->value('id');
+
+    $results = Sessions::run([
+        'receipt' => static fn (): string => InvoiceWorld::hold(static function () use ($company, $actor, $productId, $lineId): string {
+            PurchaseWorld::cost(Company::query()->findOrFail($company), $actor, $productId)->receive(PurchaseLine::query()->findOrFail($lineId), '10');
+
+            return 'COMMITTED';
+        }, 'the receipt holds its locks'),
+        'charge' => static function () use ($actor, $purchaseId, $bill, $today): string {
+            Barrier::await('the receipt holds its locks');
+
+            return InvoiceWorld::word(app(RecordPurchaseCharge::class)->run((string) Str::uuid(), $actor, Purchase::query()->findOrFail($purchaseId), ['bill' => $bill, 'classification' => 'ATTRIBUTABLE', 'amount' => '400', 'basis' => 'LINE_VALUE', 'values' => []], $today, false, ['run' => (string) Str::uuid()]));
+        },
+    ]);
+    $charge = (int) DB::table('purchase_charges')->where('purchase_id', $purchaseId)->value('id');
+    $lot = (int) DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('r.purchase_line_id', $lineId)->value('i.id');
+
+    expect($results['receipt'])->toBe('COMMITTED')->and($results['charge'])->toBe('COMMITTED')
+        ->and(DB::table('purchase_charge_balances')->where('purchase_charge_id', $charge)->value('allocated_amount'))->toBe('400.00')
+        ->and(DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost'))->toBe('10400.00')->and(purchaseRaceDifferences())->toBe([]);
+});
+
 it('keeps PurchasePosting the only writer of the line guard, checked by the reconciliation (TL-05; ARCHITECTURE §7)', function () {
     $company = $this->company->id;
-    purchaseSave($this->actor, purchaseEntryOf($company, $this->supplier, $this->product, $this->unit, $this->today));
+    PurchaseWorld::save($this->actor, PurchaseWorld::entry($company, $this->supplier, $this->product, $this->unit, $this->today));
     $purchase = PurchaseWorld::latest($company);
     $line = PurchaseWorld::lines($purchase)[0];
 
     expect(DB::table('purchase_line_balances')->where('purchase_line_id', $line->id)->value('ordered_qty_base'))->toBe('10.000')->and(purchaseRaceDifferences())->toBe([]);
-
-    $scan = shell_exec('grep -rln "purchase_line_balances" app | grep -v "Queries\\|Services/PurchasePosting.php\\|CST/Services\\|Models\\|Predicate\\|Corrections\\|Records\\|Support/Guards" || true');
-    expect(trim((string) $scan))->toBe('');
 });

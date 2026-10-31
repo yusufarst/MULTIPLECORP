@@ -1432,8 +1432,10 @@ final class CostPosting
     /** The source bill's cap (C-20; L-43): Σ charges and expenses citing it never above its total. */
     private function cite(CommandContext $context, int $billId, Money $amount): void
     {
-        if ($amount->compareTo(Money::of($this->evidence->uncited($context, $billId))) > 0) {
-            throw Refused::rejected('C-20', ['bill' => $billId, 'amount' => $amount->toString()]);
+        $uncited = $this->evidence->uncited($context, $billId);
+
+        if ($amount->compareTo(Money::of($uncited)) > 0) {
+            throw Refused::rejected('C-20', ['bill' => $billId, 'amount' => $amount->toString(), 'uncited' => $uncited]);
         }
 
         $this->evidence->cite($context, $billId, 'CHARGE_SOURCE_BILL', $amount->toString());

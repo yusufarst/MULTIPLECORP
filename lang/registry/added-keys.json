@@ -13125,7 +13125,7 @@
         },
         "purchases.refusal.not_attributable": {
             "task": "TASK-037",
-            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "source": "L-23; CM-35 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
         },
@@ -13684,6 +13684,18 @@
         "projects.item.purchase_remainders": {
             "task": "TASK-037",
             "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.lines_kept": {
+            "task": "TASK-037",
+            "source": "L-23; CM-35 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.amend_nonstock": {
+            "task": "TASK-037",
+            "source": "L-23; CM-35 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
         }

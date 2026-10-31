@@ -148,7 +148,9 @@ final class ProjectJourneys
             foreach ($provider->states($projectIds, $money) as $project => $predicates) {
                 foreach ($predicates as $key => $state) {
                     if (in_array($key, $provider->predicates(), true)) {
-                        $states[$project][$key] = $state;
+                        // Several modules answer one predicate (predicate 8: reservations, purchase remainders): it holds only when all of them do.
+                        $known = $states[$project][$key] ?? null;
+                        $states[$project][$key] = $known === null ? $state : new PredicateState($known->applies || $state->applies, [...$known->items, ...$state->items]);
                     }
                 }
             }
