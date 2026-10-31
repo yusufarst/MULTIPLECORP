@@ -31,9 +31,13 @@ use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
 use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
 use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
+use App\Modules\PRJ\Contracts\ProjectPartProvider;
 use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Modules\PRJ\Services\SpkSubjects;
+use App\Modules\PUR\Queries\PurchaseProject;
+use App\Modules\PUR\Services\PurchasePredicate;
+use App\Modules\PUR\Services\PurchaseSubjects;
 use App\Support\Localization\Locales;
 use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -91,6 +95,11 @@ class AppServiceProvider extends ServiceProvider
         // FUL's parts (TASK-047): the BAST's subject, a recorded handover, and the fulfilment predicate's service lines.
         $this->app->tag([ServiceHandoverSubjects::class], DocumentSubjectProvider::TAG);
         $this->app->tag([HandoverPredicate::class], CompletionPredicateProvider::TAG);
+
+        // PUR's parts (TASK-037): the purchase as the subject of its PO and Surat Pesanan, predicate 8's remainders, PG-011's *Pengadaan*.
+        $this->app->tag([PurchaseSubjects::class], DocumentSubjectProvider::TAG);
+        $this->app->tag([PurchasePredicate::class], CompletionPredicateProvider::TAG);
+        $this->app->tag([PurchaseProject::class], ProjectPartProvider::TAG);
     }
 
     private static function scalar(mixed $value): string

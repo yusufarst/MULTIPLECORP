@@ -12960,6 +12960,732 @@
             "source": "PERMISSIONS_MATRIX row 78 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "purchases.answer.recorded": {
+            "task": "TASK-037",
+            "source": "J-PUR-01; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.amended": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.cancelled": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.closed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.corrected": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.charged": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.marked": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.answer.unmarked": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.stale": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.other_record": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.above_bill": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.charge_conserved": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.cancel_received": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.cancel_performed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.cancel_paid": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.above_open": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.quantity": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.company_inactive": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.conversion": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.supplier_inactive": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.edit_instead": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.first_effect": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.source_bill": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.basis": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.unchanged": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.not_nonstock": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.not_open": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.not_attributable": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.no_tax_rule": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.project_state": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.service_as_goods": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.no_lines": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.nonstock_replenishment": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.refusal.dropship": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.company": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.state": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.number": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.supplier": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.project": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.date": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.field.form": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.list.all_states": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.list.empty": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.list.replenishment": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.form.source": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.form.supplement": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.form.replenishment": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.form.estimate": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.form.other": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.previous": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.new": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.nonstock": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.direct": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.description": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.nonstock_toggle": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.demand": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.no_demand": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.rate": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.tax_amount": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.remove_tax": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.entered": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.ordered": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.received": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.closed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.for_demand": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.line.performed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.basis_value": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.choose_bill": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.upload_bill": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.basis": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.remove": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.add": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.none": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.charge.share_of": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.basis.LINE_VALUE": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.basis.QUANTITY": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.basis.WEIGHT": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.basis.EXPLICIT": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cascade.lots": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cascade.consumptions": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cascade.projects": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cancel.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cancel.consequence": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cancel.points_to_closure": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.cancel.reason_line": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.close.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.close.consequence": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.close.open_of": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.correct.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.correct.consequence": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.correct.goods_value": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.correct.tax_value": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.correct.charge_value": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.basis_correct.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.unmark.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.unmark.consequence": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.issue_order": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.amend": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.amend_save": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.correct_price": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.correct_tax": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.action.correct_charge": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.receipts": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.no_receipts": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.disbursements": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.no_disbursements": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.documents": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.no_documents": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.section.timeline": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.PurchaseRecorded": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.PurchaseAmended": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.PurchaseCancelled": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.RemainderClosed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.RemainderClosureSuperseded": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.CostCorrected": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.LinePerformed": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.timeline.LinePerformedTakenBack": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.project.title": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.project.empty": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "purchases.project.remaining": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.purchase_remainders": {
+            "task": "TASK-037",
+            "source": "WF-PUR-01; J-PUR-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

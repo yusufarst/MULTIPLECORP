@@ -72,6 +72,15 @@ final class CommandContext
         return $this->stamp ??= CarbonImmutable::now();
     }
 
+    /**
+     * Rows this command itself inserted: no other transaction sees them before it commits, so nothing has to be waited
+     * for, and a set re-derived under the locks that names them is covered. Never for a row that existed before it.
+     */
+    public function created(LockSet $set): void
+    {
+        $this->derived = $this->derived->union($set);
+    }
+
     /** §5 step 3–4: the set re-derived under the locks must be held, or the action restarts with the union. */
     public function require(LockSet $required): void
     {
