@@ -154,6 +154,7 @@ export default function RecordPayment({ companies, company, client, origin, invo
             pemulihan: recovery === '' ? null : recovery,
             mengganti: replacing === '' ? null : replacing,
             transfer: transfer === '' ? null : transfer,
+            kembali: `${window.location.pathname}${window.location.search}`,
             ...(warned ? { acknowledged, reason: overrideReason } : {}),
         }, () => { departing.current = true; });
         setConfirming(false);

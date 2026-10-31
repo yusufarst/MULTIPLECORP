@@ -11,6 +11,7 @@ use App\Modules\PRJ\Actions\ConfirmWithoutQuotation;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Models\Project;
 use App\Support\BusinessDate;
+use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\EvidenceDocumentFactory;
@@ -20,6 +21,7 @@ use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\Numbering;
+use Tests\Support\PaymentWorld;
 use Tests\Support\Projects;
 
 /**
@@ -40,12 +42,12 @@ final class InvoiceFixture
         Numbering::scheme($company, SequenceType::Project, "{$year}-01-01", 'YEAR', 'UJI/PRJ/{tahun}/{nomor:4}');
         Numbering::started($company, SequenceType::Project, $start);
 
-        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
+        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
             Numbering::scheme($company, $type, "{$year}-01-01", 'YEAR', "UJI/{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($company, $type, $start);
         }
 
-        foreach (['DOC-04', 'DOC-05', 'DOC-06', 'DOC-13'] as $layout) {
+        foreach (['DOC-04', 'DOC-05', 'DOC-06', 'DOC-07', 'DOC-13'] as $layout) {
             DocumentTypeFactory::ensure($layout);
         }
 
@@ -138,6 +140,30 @@ final class InvoiceFixture
             }
         }
 
-        return response()->json(['code' => $company->code, 'project' => $project->public_id, 'number' => $project->project_number, 'invoice' => $invoice?->public_id, 'evidence' => $evidence->public_id]);
+        // TASK-051's stages: the company's account, a statement line waiting, a proof to choose, a payment recorded through its own command.
+        $line = null;
+
+        if ($request->boolean('bank')) {
+            $account = PaymentWorld::account($company->id);
+            PaymentWorld::proof($company->id, 'PAYMENT_PROOF')->forceFill(['declared_issuer' => 'Bank Uji '.$company->code])->save();
+            PaymentWorld::proof($company->id, 'BANK_STATEMENT')->forceFill(['declared_issuer' => 'Rekening Koran '.$company->code])->save();
+            $lineAmount = $request->input('line');
+
+            if (is_string($lineAmount)) {
+                $line = RowHandle::of('bank_statement_lines', PaymentWorld::line($company->id, $account, $lineAmount, 'TRX-'.$company->code));
+            }
+
+            $paid = $request->input('paid');
+
+            if (is_string($paid) && $invoice !== null) {
+                $outcome = PaymentWorld::record($actor, $company->id, $invoice->client_organization_id, $paid, ['accountId' => $account, 'applications' => $request->boolean('apply') ? [$invoice->id => $paid] : []]);
+
+                if ($outcome->kind !== 'COMMITTED') {
+                    return response()->json(['error' => "paid {$outcome->kind} {$outcome->code}"], 500);
+                }
+            }
+        }
+
+        return response()->json(['code' => $company->code, 'project' => $project->public_id, 'number' => $project->project_number, 'invoice' => $invoice?->public_id, 'evidence' => $evidence->public_id, 'client' => $client['organization']->public_id, 'client_name' => 'SMA Uji '.$company->code, 'line' => $line]);
     }
 }

@@ -79,7 +79,7 @@ final class PaymentForm
             'tax_types' => $chosen === null ? [] : self::taxTypes(),
             'recoveries' => $chosen === null || $clientId === null ? [] : self::recoveries($chosen, $clientId),
             'rerecordable' => $chosen === null || $clientId === null ? [] : self::rerecordable($chosen, $clientId),
-            'transfers' => $chosen === null ? [] : self::transfers($viewer->scope->all ? null : array_keys($companies), $chosen),
+            'transfers' => $chosen === null ? [] : self::transfers($viewer->scope->all ? null : $viewer->scope->companyIds, $chosen),
             'today' => BusinessDate::today(),
             'can' => ['upload' => $chosen !== null && EvidenceTypes::mayHandle($viewer, 'PAYMENT_PROOF', $chosen), 'override' => $chosen !== null && $viewer->allows('warnings.override', $chosen)],
         ];

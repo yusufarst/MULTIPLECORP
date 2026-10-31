@@ -1,11 +1,12 @@
 // PG-045 *Pembayaran* (ROUTE-045; NAV-045; SCR-41; WF-FIN-03; J-FIN-03; TASK-051): by branch, newest first, the payment just recorded first (S2-J06); tabs, client and cursor in the address (IP-18); never a total across companies (CS-08). A row opens the payment in a sheet: its fact, *Tanpa Bukti* and *Dikontra*,
 // its citation, applications and settlements, both sides of any correction visible (SF-CONTRA). "Terapkan", "Pindahkan Penerapan" and the contra in place, the Kuitansi on PG-036 (INT-221); a refund-consumed application offers no move, the row saying why (L-46). No control deletes a payment (FS-02).
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
 
 import { DataList, ListContinuation } from '@/components/data-list';
 import { FormField } from '@/components/form';
+import { OutcomeMessage } from '@/components/outcome-message';
 import { type MenuAction, PageHeader } from '@/components/page-header';
 import { PositionBlock } from '@/components/record-blocks';
 import { RegionEmpty } from '@/components/region-state';
@@ -44,6 +45,7 @@ function States({ payment }: { payment: Payment }) {
 
 export default function Payments({ branches, branch, tab, client, clients, rows, more, after, cursor_failed: cursorFailed, recorded, today, can, targets }: Props) {
     const { t } = useTranslation();
+    const arrived = (usePage().flash as { answer?: { kind?: string; text?: string } }).answer;
     const [base, setBase] = useState(rows);
     const [shown, setShown] = useState(rows);
     const [next, setNext] = useState(more);
@@ -99,6 +101,7 @@ export default function Payments({ branches, branch, tab, client, clients, rows,
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_045.title')} primary={can.record ? <Button onClick={() => { router.visit('/keuangan/pembayaran/baru'); }}><Icon icon={Plus} size="sm" />{t('actions.record_payment')}</Button> : undefined} />
                 <FinanceNav current="payments" />
+                {recorded !== null && arrived?.kind === 'COMMITTED' && arrived.text !== undefined && <OutcomeMessage answer={{ kind: 'COMMITTED', text: arrived.text }} />}
                 <Answered command={prepare} />
                 <Answered command={link} />
                 <div className="flex min-w-0 flex-wrap items-end gap-4">

@@ -4,6 +4,7 @@ namespace App\Modules\FIN\Services;
 
 use App\Modules\DOC\Services\EvidenceGuard;
 use App\Modules\FIN\Data\ContraEntry;
+use App\Modules\FIN\Data\SourcePosition;
 use App\Modules\FIN\Models\MoneyFactBalance;
 use App\Modules\FIN\Models\Payment;
 use App\Modules\OPS\Services\CorrectionCases;
@@ -111,7 +112,7 @@ final class PaymentCorrections
             }
         }
 
-        PaymentApplications::ensureTarget($targetInvoiceId, $payment->company_id, $payment->client_organization_id, $moved->plus($carried));
+        PaymentApplications::ensureTargets([$targetInvoiceId => $moved->plus($carried)->toString()], $payment->company_id, $payment->client_organization_id);
         // C-44 reads the ended application with its successor: deferred, held to the commit's `set constraints all immediate` whatever an earlier statement set.
         $context->connection->statement('set constraints payment_applications_c44_superseded_by_successor deferred');
         self::addMove($old, 'applied_amount', $moved->negated());
@@ -432,21 +433,11 @@ final class PaymentCorrections
             $movedSettled = $action === ContraEntry::MOVE ? $movedSettled->plus(Money::of($row['amount'])) : $movedSettled;
         }
 
-        $gross = Money::of(Row::text($guard, 'gross_amount'));
-        $contra = Money::of(Row::text($guard, 'contra_amount'))->plus($amount);
-        $net = $gross->minus($contra);
-        $capacity = $net->minus($invoiceApplied)->minus($refundBacked);
+        $position = new SourcePosition(Money::of(Row::text($guard, 'gross_amount')), Money::of(Row::text($guard, 'contra_amount'))->plus($amount), $invoiceApplied, $refundBacked, $shortfall, $settled);
+        $breach = $position->breach();
 
-        if ($capacity->isNegative()) {
-            throw Refused::rejected('C-13', ['reason' => 'undisposed', 'short' => $capacity->negated()->toString()]);
-        }
-
-        if ($shortfall->isPositive() && (! $invoiceApplied->isZero() || ! $capacity->isZero())) {
-            throw Refused::rejected('C-44', ['reason' => 'shortfall_with_money', 'applied' => $invoiceApplied->toString(), 'capacity' => $capacity->toString()]);
-        }
-
-        if ($net->isZero() && ! $settled->isZero()) {
-            throw Refused::rejected('C-45', ['reason' => 'settlements', 'settled' => $settled->toString()]);
+        if ($breach !== null) {
+            throw Refused::rejected($breach['rule'], $breach['state']);
         }
 
         $rerecorded = ['invoice_applied_amount' => $movedApplied->toString(), 'refund_backed_amount' => $movedRefund->toString(), 'settled_amount' => $movedSettled->toString()];

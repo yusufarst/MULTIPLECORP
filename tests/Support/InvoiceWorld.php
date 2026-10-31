@@ -131,7 +131,7 @@ final class InvoiceWorld
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
 
-        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
+        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
             Numbering::scheme($this->company, $type, "{$year}-01-01", 'YEAR', "{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($this->company, $type, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
         }

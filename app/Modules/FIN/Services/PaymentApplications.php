@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Services;
 
+use App\Modules\FIN\Models\InvoiceBalance;
 use App\Modules\FIN\Models\MoneyFactBalance;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Support\Command\CommandContext;
@@ -84,10 +85,11 @@ final class PaymentApplications
         $moves = [];
         $applied = Money::zero();
 
+        self::ensureTargets($applications, $companyId, $clientId);
+
         foreach ($applications as $invoice => $amount) {
-            $moved = self::ensureTarget($invoice, $companyId, $clientId, Money::of($amount));
-            $applied = $applied->plus($moved);
-            $moves[$invoice] = ['applied_amount' => $moved->toString()];
+            $applied = $applied->plus(Money::of($amount));
+            $moves[$invoice] = ['applied_amount' => Money::of($amount)->toString()];
         }
 
         $total = $total->plus($applied);
@@ -106,8 +108,14 @@ final class PaymentApplications
         $line = 0;
         $base = [...$source, 'company_id' => $companyId, 'client_organization_id' => $clientId, 'business_date' => $businessDate, 'reason' => $reason, 'command_id' => $context->request->commandId, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId];
 
+        $rows = [];
+
         foreach ($applications as $invoice => $amount) {
-            DB::table('payment_applications')->insert([...$base, 'command_line_no' => ++$line, 'invoice_id' => $invoice, 'target_kind' => 'INVOICE', 'amount' => Money::of($amount)->toString()]);
+            $rows[] = [...$base, 'command_line_no' => ++$line, 'invoice_id' => $invoice, 'target_kind' => 'INVOICE', 'amount' => Money::of($amount)->toString()];
+        }
+
+        if ($rows !== []) {
+            DB::table('payment_applications')->insert($rows);
         }
 
         $backed = Money::zero();
@@ -126,30 +134,42 @@ final class PaymentApplications
         $this->receivable->moveAll($context, $moves);
     }
 
-    /** The invoice takes this money: its client's and company's (C-14), issued (BR-FIN-03), its outstanding at least the amount (C-15). */
-    public static function ensureTarget(int $invoiceId, int $companyId, int $clientId, Money $amount): Money
+    /**
+     * The invoices take this money, read in two statements however many there are: each its client's and company's (C-14), issued (BR-FIN-03), its outstanding at least its amount (C-15).
+     *
+     * @param  array<int, string>  $amounts  invoice => amount
+     */
+    public static function ensureTargets(array $amounts, int $companyId, int $clientId): void
     {
-        $invoice = DB::table('invoices')->where('id', $invoiceId)->first(['state', 'company_id', 'client_organization_id']);
-
-        if ($invoice === null || (int) Row::text($invoice, 'company_id') !== $companyId || (int) Row::text($invoice, 'client_organization_id') !== $clientId) {
-            throw Refused::rejected('C-14', ['reason' => 'other_party']);
+        if ($amounts === []) {
+            return;
         }
 
-        if (Row::text($invoice, 'state') === 'VOIDED') {
-            throw Refused::rejected('C-15', ['reason' => 'voided', 'outstanding' => '0.00']);
+        $invoices = DB::table('invoices')->whereIn('id', array_keys($amounts))->get(['id', 'state', 'company_id', 'client_organization_id'])->keyBy('id');
+        $balances = InvoiceBalance::query()->toBase()->whereIn('invoice_id', array_keys($amounts))->pluck('outstanding', 'invoice_id');
+
+        foreach ($amounts as $id => $amount) {
+            $invoice = $invoices->get($id);
+
+            if (! is_object($invoice) || (int) Row::text($invoice, 'company_id') !== $companyId || (int) Row::text($invoice, 'client_organization_id') !== $clientId) {
+                throw Refused::rejected('C-14', ['reason' => 'other_party']);
+            }
+
+            if (Row::text($invoice, 'state') === 'VOIDED') {
+                throw Refused::rejected('C-15', ['reason' => 'voided', 'outstanding' => '0.00']);
+            }
+
+            if (Row::text($invoice, 'state') !== 'ISSUED') {
+                throw Refused::rejected('BR-FIN-03', ['reason' => 'not_issued']);
+            }
+
+            $outstanding = $balances->get($id);
+            $outstanding = is_scalar($outstanding) ? (string) $outstanding : '0.00';
+
+            if (Money::of($amount)->compareTo(Money::of($outstanding)) > 0) {
+                throw Refused::rejected('C-15', ['reason' => 'above_outstanding', 'outstanding' => $outstanding, 'invoice' => InvoiceSubjects::number($id) ?? '']);
+            }
         }
-
-        if (Row::text($invoice, 'state') !== 'ISSUED') {
-            throw Refused::rejected('BR-FIN-03', ['reason' => 'not_issued']);
-        }
-
-        $outstanding = PrepaymentKuitansi::outstanding($invoiceId);
-
-        if ($amount->compareTo(Money::of($outstanding)) > 0) {
-            throw Refused::rejected('C-15', ['reason' => 'above_outstanding', 'outstanding' => $outstanding, 'invoice' => InvoiceSubjects::number($invoiceId) ?? '']);
-        }
-
-        return $amount;
     }
 
     /**

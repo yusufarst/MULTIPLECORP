@@ -93,6 +93,7 @@ final class PaymentsController extends Controller
             'acknowledged' => ['nullable', 'array', 'max:50'],
             'acknowledged.*' => ['uuid'],
             'reason' => ['nullable', 'string', 'max:500'],
+            'kembali' => ['nullable', 'string', 'max:300', 'regex:/^\/keuangan\/pembayaran\/baru(\?[A-Za-z0-9=&_%-]*)?$/'],
         ]);
         $company = $this->inputs->companyId($actor, self::text($input['perusahaan']), RecordPayment::CAPABILITY) ?? throw ValidationException::withMessages(['perusahaan' => self::say('projects.validation.unknown')]);
         $client = $this->inputs->clientId(self::text($input['klien'])) ?? throw ValidationException::withMessages(['klien' => self::say('projects.validation.unknown')]);
@@ -164,7 +165,7 @@ final class PaymentsController extends Controller
         $acknowledged = array_values(array_map(fn (mixed $id): string => strtolower(self::text($id)), self::list($input['acknowledged'] ?? [])));
         $entry = new PaymentEntry($company, $client, self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), self::text($input['jumlah']), $method, $accountId, $lineId, self::nullable($input['referensi'] ?? null), self::nullable($input['perantara'] ?? null),
             $evidence, $reason, $claimed, $applications, $resolves, $recoveryId, $transferId, $replacingId, $acknowledged, self::nullable($input['reason'] ?? null));
-        $outcome = $record->run(self::text($input['command_id']), $actor, $entry, array_diff_key($input, ['command_id' => 1]));
+        $outcome = $record->run(self::text($input['command_id']), $actor, $entry, array_diff_key($input, ['command_id' => 1, 'kembali' => 1]));
         $payment = $outcome->kind === Outcome::COMMITTED && $outcome->resultId !== null ? $this->inputs->paymentPublicId($outcome->resultId) : null;
 
         if ($payment !== null) {
@@ -173,7 +174,7 @@ final class PaymentsController extends Controller
             return redirect()->to('/keuangan/pembayaran?'.http_build_query(['perusahaan' => self::text($input['perusahaan']), 'tercatat' => $payment]), 303);
         }
 
-        return $this->answer($outcome, 'recorded', url()->previous(), self::text($input['tanggal']), self::text($input['perusahaan']));
+        return $this->answer($outcome, 'recorded', self::nullable($input['kembali'] ?? null) ?? '/keuangan/pembayaran/baru?'.http_build_query(['perusahaan' => self::text($input['perusahaan']), 'klien' => self::text($input['klien'])]), self::text($input['tanggal']), self::text($input['perusahaan']));
     }
 
     /** ROUTE-252 "Terapkan": on PG-045, and PG-048 where TASK-053 places it. */

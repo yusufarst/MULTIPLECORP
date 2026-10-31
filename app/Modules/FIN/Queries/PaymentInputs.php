@@ -46,10 +46,10 @@ final class PaymentInputs
         return self::byHandle('company_bank_accounts', DB::table('company_bank_accounts')->where('company_id', $companyId)->pluck('id')->all(), $handle);
     }
 
-    /** One of the company's statement lines by its handle. */
+    /** One of the company's statement lines by its handle, in any state: a stale page's voided one is the command's refusal, a replay the command's recorded answer. */
     public function lineId(int $companyId, string $handle): ?int
     {
-        return self::byHandle('bank_statement_lines', DB::table('bank_statement_lines')->where('company_id', $companyId)->where('state', 'ACTIVE')->orderByDesc('id')->limit(2000)->pluck('id')->all(), $handle);
+        return self::byHandle('bank_statement_lines', DB::table('bank_statement_lines')->where('company_id', $companyId)->orderByDesc('id')->limit(2000)->pluck('id')->all(), $handle);
     }
 
     /**
@@ -68,7 +68,7 @@ final class PaymentInputs
             }
         }
 
-        foreach (DB::table('bank_statement_lines')->whereIn('company_id', $companies)->where('state', 'ACTIVE')->orderByDesc('id')->limit(5000)->get(['id', 'company_id']) as $row) {
+        foreach (DB::table('bank_statement_lines')->whereIn('company_id', $companies)->orderByDesc('id')->limit(5000)->get(['id', 'company_id']) as $row) {
             if (hash_equals(RowHandle::of('bank_statement_lines', (int) Row::text($row, 'id')), $handle)) {
                 return ['id' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id')];
             }
