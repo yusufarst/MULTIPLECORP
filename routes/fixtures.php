@@ -19,6 +19,7 @@ use Tests\Support\Fixtures\InvoiceFixture;
 use Tests\Support\Fixtures\LogsFixture;
 use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
+use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ShellFixture;

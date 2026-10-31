@@ -559,12 +559,12 @@ it('voids the issued PO in the cancellation\'s transaction (AX-12; DATABASE §25
         ->and(DB::table('document_versions')->where('document_id', $document->id)->value('voided_reason'))->toBe('Salah catat di awal');
 
     // Nothing more is issued from a cancelled purchase (WF-DOC-01).
-    DatabaseFactoriesDOCDocumentTypeFactory::ensure('DOC-14');
-    TestsSupportNumbering::scheme($this->company, AppModulesORGEnumsSequenceType::Doc14, "{$year}-01-01");
-    TestsSupportNumbering::started($this->company, AppModulesORGEnumsSequenceType::Doc14, CarbonCarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+    DocumentTypeFactory::ensure('DOC-14');
+    Numbering::scheme($this->company, SequenceType::Doc14, "{$year}-01-01");
+    Numbering::started($this->company, SequenceType::Doc14, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
     $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-14', 'subjek' => ['purchase_id' => $purchase->public_id]]);
-    $order = AppModulesDOCModelsDocument::query()->where('purchase_id', $purchase->id)->where('document_type_code', 'DOC-14')->firstOrFail();
-    $orderDraft = AppModulesDOCModelsDocumentVersion::query()->where('document_id', $order->id)->where('state', 'DRAFT')->firstOrFail();
+    $order = Document::query()->where('purchase_id', $purchase->id)->where('document_type_code', 'DOC-14')->firstOrFail();
+    $orderDraft = DocumentVersion::query()->where('document_id', $order->id)->where('state', 'DRAFT')->firstOrFail();
     $this->actingAs($this->actor)->post("/dokumen/{$order->public_id}/terbitkan", ['command_id' => (string) Str::uuid(), 'lock_version' => $orderDraft->lock_version, 'draf' => $orderDraft->public_id, 'tanggal' => $this->today, 'tanggal_otomatis' => true]);
     expect(purchaseAnswer()['kind'])->toBe('REJECTED')->and(purchaseAnswer()['code'])->toBe('WF-DOC-01');
 });

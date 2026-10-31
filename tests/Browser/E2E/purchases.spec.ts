@@ -105,18 +105,16 @@ test('cancels with its reason, its number kept; closes a remainder; marks and ta
 
     const line = page.locator('[data-line="2"]');
     await line.getByRole('button', { name: 'Tandai Terlaksana' }).click();
-    await expect(line).toContainText('Terlaksana');
-
-    await page.getByRole('button', { name: 'Batalkan Pembelian' }).click();
-    await page.getByRole('alertdialog').getByLabel(/^Alasan/).fill('Tidak jadi');
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Batalkan Pembelian' }).click();
-    await expect(page.getByRole('alertdialog')).toContainText('sudah terlaksana');
-    await page.getByRole('alertdialog').getByRole('button', { name: 'Kembali' }).click();
+    await expect(line.getByRole('button', { name: 'Batalkan Tanda Terlaksana' })).toBeVisible();
+    // A performed line: the cancellation offered no more, the closure in its place (ADMIN_FLOW §11).
+    await expect(page.getByRole('button', { name: 'Batalkan Pembelian' })).toHaveCount(0);
+    await expect(page.getByText('Pembelian ini tidak dapat dibatalkan.')).toBeVisible();
 
     await line.getByRole('button', { name: 'Batalkan Tanda Terlaksana' }).click();
     await page.getByRole('alertdialog').getByLabel(/^Alasan/).fill('Salah tandai');
     await page.getByRole('alertdialog').getByRole('button', { name: 'Batalkan Tanda Terlaksana' }).click();
     await expect(line.getByRole('button', { name: 'Tandai Terlaksana' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Batalkan Pembelian' })).toBeVisible();
 
     await page.getByRole('button', { name: 'Tutup Sisa Pembelian' }).click();
     const closure = page.getByRole('alertdialog');

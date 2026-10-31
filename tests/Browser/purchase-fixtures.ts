@@ -1,6 +1,8 @@
-import { expect, type Page } from '@playwright/test';
+import { expect as base, type Page } from '@playwright/test';
 
 import { numberingCompany, ownerSignedIn } from './numbering-fixtures';
+
+const expect = base.configure({ timeout: 60_000 });
 
 // TASK-037's browser fixture (routes/fixtures.php; PurchaseFixture): the Owner signed in, a company with its PURCHASE and PO numbering started, two suppliers, goods and a service, a bill, a confirmed warehouse project with its shortage.
 

@@ -1,6 +1,6 @@
 // PG-016 *Detail Pembelian* (ROUTE-016, ROUTE-172–ROUTE-175, ROUTE-178–ROUTE-180; NAV-016; SCR-16; CALC-03; J-PUR-01–J-PUR-03; TASK-037): its lines with ordered, received and remaining quantities, charges with their allocation, receipts, disbursements with `finance.view` and documents; "Terbitkan PO" opening PG-036 with the draft (`DIR-081` OB-02); the amendment before the first effect, "Batalkan Pembelian" only with nothing received, confirmed, performed or paid, otherwise "Tutup Sisa Pembelian"; each correction listing what it re-attributes, with its reason (IP-09). A control without its capability is absent (H7-03); a control without its route is never shown (RC-06): "Terima Barang" and "Retur ke Pemasok" arrive with TASK-039 and TASK-044.
-import { router } from '@inertiajs/react';
-import { useState } from 'react';
+import { router, usePage } from '@inertiajs/react';
+import { useRef, useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
 import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
@@ -48,7 +48,14 @@ const positive = (value: string): boolean => !/^0*(\.0*)?$/.test(value);
 function Answered({ command }: { command: { answer: Answer | null; unknown: boolean; retry: () => void } }) {
     const { t } = useTranslation();
 
-    return command.answer === null ? null : <OutcomeMessage answer={command.answer} action={command.unknown ? <Button variant="outline" size="sm" onClick={command.retry}>{t('actions.try_again')}</Button> : undefined} />;
+    return command.answer === null || command.answer.kind === 'COMMITTED' ? null : <OutcomeMessage answer={command.answer} action={command.unknown ? <Button variant="outline" size="sm" onClick={command.retry}>{t('actions.try_again')}</Button> : undefined} />;
+}
+
+/** The answer a command brought back to this page — the saved purchase's, the amendment's, a correction's — in place (NV-03). */
+function Arrived() {
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
+
+    return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
 /** What a correction re-attributes, before it is sent: for a line, its holders and whatever depends on them; for a charge, all of them (ADMIN_FLOW §11; criterion 14). */
@@ -85,8 +92,10 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
     const [late, setLate] = useState<Charge | null>(null);
     const [uploading, setUploading] = useState(false);
     const send = useCommand<Record<string, never>>(() => (dialog?.kind === 'cancel' ? `${base}/batalkan` : dialog?.kind === 'close' ? `${base}/tutup-sisa` : dialog?.kind === 'correct' ? `${base}/koreksi-biaya` : dialog?.kind === 'basis' ? `${base}/koreksi-dasar-alokasi` : `${base}/baris/${dialog?.kind === 'unmark' ? dialog.line : ''}/terlaksana`), 'post');
-    const mark = useCommand<Record<string, never>>(() => `${base}/baris/${marking}/terlaksana`, 'post');
-    const [marking, setMarking] = useState('');
+    // The line being marked, read when the request is sent: one command form serves every line.
+    const marking = useRef('');
+    const [markingLine, setMarkingLine] = useState('');
+    const mark = useCommand<Record<string, never>>(() => `${base}/baris/${marking.current}/terlaksana`, 'post');
     const amend = useCommand<Record<string, never>>(() => base, 'put');
     const charge = useCommand<Record<string, never>>(() => `${base}/biaya`, 'post');
     const prepare = useCommand<Record<string, never>>(() => '/dokumen', 'post');
@@ -103,7 +112,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
         setBasisValues([]);
         setDialog(next);
     };
-    const finish = () => { setDialog(null); router.reload(); };
+    const finish = () => { setDialog(null); };
     const when = { tanggal: date.date, tanggal_otomatis: !date.chosen };
     const confirm = () => {
         if (dialog === null) return;
@@ -134,6 +143,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                     title={<span className="flex min-w-0 flex-wrap items-center gap-3"><Code>{purchase.number}</Code><StatusBadge family="purchase" state={purchase.state} /></span>}
                     crumbs={[{ label: t('pages.pg_015.title'), href: '/pembelian' }]}
                 />
+                <Arrived />
                 <Answered command={mark} />
                 <Answered command={prepare} />
                 <FactsList facts={[
@@ -161,7 +171,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                         <Answered command={amend} />
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" onClick={() => { setAmending(null); amend.clear(); }}>{t('dialogs.back')}</Button>
-                            <Button pending={amend.pending} pendingLabel={t('purchases.action.amend_save')} onClick={() => { (amend.submit as unknown as (value: unknown, done: () => void) => void)({ lock_version: purchase.lock_version, baris: linePayload(amending) }, () => { setAmending(null); router.reload(); }); }}>{t('purchases.action.amend_save')}</Button>
+                            <Button pending={amend.pending} pendingLabel={t('purchases.action.amend_save')} onClick={() => { (amend.submit as unknown as (value: unknown, done: () => void) => void)({ lock_version: purchase.lock_version, baris: linePayload(amending) }, () => { setAmending(null); }); }}>{t('purchases.action.amend_save')}</Button>
                         </div>
                     </FormSection>
                 )}
@@ -187,7 +197,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                     {line.performed !== null && <span className="font-medium text-text-primary">{t('purchases.line.performed')}</span>}
                                 </div>
                                 <div className="flex min-w-0 flex-wrap gap-2">
-                                    {line.kind === 'NONSTOCK' && line.performed === null && can.mark && <Button variant="outline" size="sm" pending={mark.pending && marking === line.handle} pendingLabel={t('actions.mark_performed')} onClick={() => { setMarking(line.handle); window.setTimeout(() => { (mark.submit as unknown as (value: unknown, done: () => void) => void)({}, () => { router.reload(); }); }, 0); }}>{t('actions.mark_performed')}</Button>}
+                                    {line.kind === 'NONSTOCK' && line.performed === null && can.mark && <Button variant="outline" size="sm" pending={mark.pending && markingLine === line.handle} pendingLabel={t('actions.mark_performed')} onClick={() => { marking.current = line.handle; setMarkingLine(line.handle); (mark.submit as unknown as (value: unknown) => void)({}); }}>{t('actions.mark_performed')}</Button>}
                                     {line.kind === 'NONSTOCK' && line.performed !== null && can.unmark && <Button variant="outline" size="sm" onClick={() => { open({ kind: 'unmark', line: line.handle }); }}>{t('actions.undo_performed')}</Button>}
                                     {can.correct && (line.kind === 'NONSTOCK' || first_effect) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'PRICE_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.value, line: line.no }); }}>{t('purchases.action.correct_price')}</Button>}
                                     {can.correct && (line.kind === 'NONSTOCK' || first_effect) && <Button variant="ghost" size="sm" onClick={() => { open({ kind: 'correct', target: line.handle, correction: 'TAX_CORRECTION', label: `${String(line.no)}. ${line.product.name}`, current: line.tax, line: line.no }); }}>{t('purchases.action.correct_tax')}</Button>}
@@ -228,7 +238,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                             <Answered command={charge} />
                             <div className="flex flex-wrap gap-2">
                                 <Button variant="outline" onClick={() => { setLate(null); }}>{t('dialogs.back')}</Button>
-                                <Button pending={charge.pending} pendingLabel={t('actions.record_late_charge')} onClick={() => { const { tagihan, klasifikasi, jumlah, dasar, nilai_dasar: nilai } = chargePayload(late); (charge.submit as unknown as (value: unknown, done: () => void) => void)({ ...when, tagihan, klasifikasi, jumlah, dasar, nilai_dasar: nilai }, () => { setLate(null); router.reload(); }); }}>{t('actions.record_late_charge')}</Button>
+                                <Button pending={charge.pending} pendingLabel={t('actions.record_late_charge')} onClick={() => { const { tagihan, klasifikasi, jumlah, dasar, nilai_dasar: nilai } = chargePayload(late); (charge.submit as unknown as (value: unknown, done: () => void) => void)({ ...when, tagihan, klasifikasi, jumlah, dasar, nilai_dasar: nilai }, () => { setLate(null); }); }}>{t('actions.record_late_charge')}</Button>
                             </div>
                         </div>
                     )}
