@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -252,34 +252,48 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 - Migration: N/A — no migration or import code in this Task
 - Other: CM-22 and CM-38's expected end states asserted, each also under concurrency (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/FIN/DeductionsTest.php` — a net remittance with one verified fee closing the receivable and one project expense, no formula; `tests/Unit/FIN/SettlementValuesTest.php` — FX-01 6; `tests/Browser/E2E/deductions.spec.ts` — J-FIN-04 and CJ-08 through the page.
+- Criterion 2: `DeductionsTest` — a tax collected and one withheld leaving nothing outstanding, no revenue, payment or expense; `SettlementValuesTest` — FX-01 13.
+- Criterion 3: `DeductionsTest` — beyond the evidence C-18 with the figure, the wrong type C-58, above the claim C-22, a second settlement of one key CONFLICT BD-08 even when it would also exceed the room left; `tests/Integration/Finance/SettlementRacesTest.php` — one evidence from two payments, one key from two sessions.
+- Criterion 4: `DeductionsTest` — payment + settlements held to the claim, collected tax to the invoice's tax component.
+- Criterion 5: `DeductionsTest` — a fee expensed once, at most its evidence, across a contra, a re-recording, a reallocation and a residual's resolution; a contra of a settlement's expense alone refused. The manual category's refusal at entry is TASK-054's expense command (its OUT OF SCOPE here).
+- Criterion 6: `DeductionsTest` and the page — claimed − evidenced listed per payment; the form has no field for a short payment and says so.
+- Criterion 7: `DeductionsTest` — invoice and payment legs, citation and expense reversed, both records visible, re-recorded with its evidence.
+- Criterion 8: `DeductionsTest` — a disbursement and a manual expense within their net, a refund's shortfall resolved first and its backing released up to its amount, on synthetic refunds until TASK-053; `SettlementRacesTest` — M-14.
+- Criterion 9: `DeductionsTest` — replacing the evidence re-evaluates its settlements inside the replacement's transaction, on the review trail.
+- Criterion 10: `tests/Authorization/DeductionsAccessTest.php` — each capability separately granted, PG-047 absent without `evidence.view`, another company's identifiers answered alike, no expense figure without `cost.view`.
+- Criterion 11: `DeductionsTest` and `tests/Interaction/DeductionsTest.php` — a residual re-recorded or contra'd on the issuer's evidence, the case falling, a second resolution refused.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit — FX-01 6 and 13, the legs, types and keys (TL-03); Feature — ROUTE-255, ROUTE-260, ROUTE-263 with each refusal (TL-04); Integration on real PostgreSQL sessions — two settlements on one evidence, one key, M-37, the contra twice, M-14 with synthetic refunds until TASK-053, the reconciliation after each (TL-05) PASS in CI
+- [x] Authorization: `settlement.record` and `finance.contra` separately granted; SM-01; SM-25 (TL-06; SM-04) PASS in CI
+- [x] Route integrity: ROUTE-047, ROUTE-255, ROUTE-260, ROUTE-263 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-255, INT-260, INT-263 per IG-05 with one `command_id` replayed, refusals replayed with their figures (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-04, CJ-08's net settlement, the contra in place, a refusal keeping the input (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: PG-047 at 320, 390 and 1,280 px (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's payment, invoice, evidence and fact; SM-25 for the expense's figures (TL-14)
+- [x] Database safety review: no schema change, no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and the corrections named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `7692674`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41203993046 (push) and 41203996800 (pull request #52), the three jobs PASS in each; TL-15 — PG-047 in at most four statements, the same for one row and many (QB-12; PFM-07); AX-21 within forty statements (QB-13); AX-33's settlement contra within fifty, proportional to its rows (QB-14; PFM-01; PFM-02; PFM-20)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: ROUTE-047, ROUTE-255, ROUTE-260 and ROUTE-263 in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/DeductionsTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 7692674, CI ubuntu-24.04 run 41203993046, tests/Browser/E2E/deductions.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-047 in both languages — `tests/Browser/Localization/deductions.spec.ts` PASS; the keys added with their registry rows, the four labels the Owner validated (DIR-101)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FIN's `Actions/` (`RecordDeductionSettlement`, `RecordContra`, `ResolveResidualSettlement`), `Services/` (`SettlementPosting`, `ContraPosting`, `SettlementDocumentChanges`, `SettlementMoves`, `InvoiceCorrections`, `PaymentCorrections`), `Data/SettlementEntry`, `Queries/` (`DeductionList`, `DeductionInputs`, `PaymentList`, `InvoiceDetail`), `Http/Controllers/DeductionsController`, its README; CST's `CostPosting` and `CostFigures`; ORG's `TaxConfiguration`; DOC's `EvidenceController`; `app/Support/Guards/Families.php`; `resources/js/Pages/FIN/` (`Deductions`, `Payments`, `Invoice`), `features/fin/` (`proof-sheet`, `finance-nav`, `payment-dialogs`); the provider, routes, navigation and `lang/`; the tests; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `45b7bc1`, `7692674`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-052-settlements`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `45b7bc1` within the policy's ten minutes and raised one P2: an expense's figure stated in a contra's refusal to a holder of `finance.contra` without `cost.view` (row 78), fixed in `7692674` with its test, the thread answered. ER-06: a fresh read-only review before the pull request found these, each verified against the code and specification and fixed — the form's options lost after a refusal; a contra'd company-level expense still counted in CALC-11; BD-08 masked by the amounts' refusals; replayed refusals without their reasons or figures; the issuer's evidence unlocked and any type accepted; a manual expense's source bill not released and a paid one contra'd; the reconciliation missing the collected tax and a document's cited and expensed amounts; a seeded invoice of another client sent; a residual with no payment to choose; a residual's settlement not re-evaluated on a replacement. Context7 consulted at the installed line: PostgreSQL 18's transition triggers and partial UNIQUE keys. Graphify OPTIONAL and not used: a targeted search of FIN, the money posting and DOC's evidence. Executor readings within the approved text: the specific type comes from the payment's claims, a tax's direction chosen beside it, so one type is one key and nothing settles beyond a claim; no case opens on a settlement's contra, QS-13 listing what waits to be re-recorded, while a residual's resolution cites its case; a settlement's and an expense's correction audit their corrected record through the payment, the project or the company, as neither has a public identifier; an expense moves with its settlement as a contra and a new row, the evidence's expensed amount untouched; a manual expense's contra is refused while a standing disbursement pays it; PG-049's control is TASK-054's, this Task providing ROUTE-260 for its facts, exercised on synthetic rows. `tests/Support/GuardReconciliation` no longer reconciles `EvidenceGuardTest`, whose commands cite a guard with no fact to prove its cap, now that the family reads a document's citing facts. Local runs of `EvidenceRacesTest` answered TX-01 on a loaded workstation, in code this Task does not touch; it passes in CI.
 
 **SAFE NEXT TASK:**
 

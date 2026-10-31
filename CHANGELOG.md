@@ -731,3 +731,9 @@ This is a change summary; current state and approval authority live in their [ow
 - TASK-050 squash-merged by the executor into `main` as `59a6597` (pull request #48); TASK-051 started.
 - Built TASK-051 on its branch `task/TASK-051-payments`: `FIN RecordPayment` (AX-18), `ApplyPayment` and `ReallocateApplication` (AX-19), `ContraPayment` (AX-20), `CorrectBankCitation`, `SupersedeClaimedDeduction` and `DOC RecordBankStatementLine`, `VoidBankStatementLine` (NX-08) with their refusals, PG-045 *Pembayaran*, PG-046 *Catat Pembayaran* and PG-050 *Mutasi Bank*, the receipt-mode DOC-05 and DOC-07, FIN's payment and audit predicates, and the reconciliation of sources, bank lines and money facts; the linters' `minimatch` past GHSA-g3hv-75wg-m249, the browser job's budget at 45 minutes.
 - Every check passed in fresh CI on `3daa4ea`. TASK-051 DONE — progress 43 / 87 —; no Task READY next: TASK-052 waits on Change 4 (P11Q-02).
+
+## Unreleased — 2026-10-31, TASK-052 — Deduction settlements and contras
+
+- Change 4 merged by the Owner as `be53504` (pull request #50); Change 15 squash-merged as `a91782f` (pull request #51), recording the Owner's decisions (DIR-101, APPR-027); TASK-052 started.
+- Built TASK-052 on its branch `task/TASK-052-settlements`: `FIN RecordDeductionSettlement` (AX-21), `RecordContra` and `ResolveResidualSettlement` (AX-33) with their refusals, a settlement's expense moving once, FIN's part of an evidence replacement (L-41), PG-047 *Potongan*, and the reconciliation of the collected tax and a document's cited and expensed amounts.
+- Every check passed in fresh CI on `7692674`. TASK-052 DONE — progress 44 / 87 —; TASK-037 READY next.

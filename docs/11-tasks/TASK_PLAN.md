@@ -16,19 +16,19 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 43
+DONE: 44
 READY: 1
-IN_PROGRESS: 1
+IN_PROGRESS: 0
 BLOCKED: 7
 VERIFYING: 0
 TODO: 35
 SUPERSEDED: 0
 
 Progress:
-43 / 87
-Percentage: 49.4 %
+44 / 87
+Percentage: 50.6 %
 
-CURRENT TASK: TASK-052 — Deduction settlements and contras, IN PROGRESS on its branch `task/TASK-052-settlements` from the merged `main` `a91782f` (DIR-096; DIR-101)
+CURRENT TASK: none in progress — TASK-052 — Deduction settlements and contras DONE on its branch `task/TASK-052-settlements`, CI PASS on `7692674`, its pull request #52 squash-merged by the executor once eligible (DIR-096)
 NEXT READY TASK: TASK-037 — Purchases, READY; TASK-053 and TASK-055 wait on P11Q-08; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 15 of 2026-10-31 — DIR-101, the Owner's decisions on P11Q-07, OF-04 and the labels; the credit hold's attribution raised as P11Q-08
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
@@ -100,7 +100,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-049](TASK-049.md) — Invoices and the pre-payment Kuitansi
 - [x] [TASK-050](TASK-050.md) — Billing, receivables, dispute hold and Owner write-off
 - [x] [TASK-051](TASK-051.md) — Payments, applications and bank statement lines
-- [ ] [TASK-052](TASK-052.md) — Deduction settlements and contras
+- [x] [TASK-052](TASK-052.md) — Deduction settlements and contras
 - [ ] [TASK-053](TASK-053.md) — Customer credit and refunds
 - [ ] [TASK-054](TASK-054.md) — Expenses, disbursements and other cash
 - [ ] [TASK-055](TASK-055.md) — Project completion and Force Complete
@@ -192,7 +192,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | DONE | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | DONE | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
-| [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | IN_PROGRESS | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
+| [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | DONE | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | BLOCKED — P11Q-08 | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
 | [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | BLOCKED — P11Q-08 | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
