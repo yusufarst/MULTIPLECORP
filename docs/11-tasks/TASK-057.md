@@ -8,7 +8,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-02
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -38,7 +38,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - TASK-050 — Billing, receivables, dispute hold and Owner write-off
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
-- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-276 · INT-276
 
 **BLOCKS:**
 
@@ -94,7 +94,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - [TEST_STRATEGY §15](../08-testing/TEST_STRATEGY.md#15-migration-backup-and-restore-tests) the opening import's tests; [§4](../08-testing/TEST_STRATEGY.md#4-environments-and-data) FX-09; [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-04, SM-09, SM-12, SM-23
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-010--opening-stock-and-open-receivables-can-be-counted-twice-at-migration) GAP-010; [GAP-058](../00-governance/GAP_REGISTER.md#gap-058--an-imported-purchases-number-is-undefined)
 - Architecture challenge — the sequences 11b, 11c, 14a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (68): O-07; CAP-15; DEP-05; AC-17; OS-02; REF-051; WF-MIG-01; CM-33; AX-28; ROUTE-058; ROUTE-213–ROUTE-214; ROUTE-272–ROUTE-275; INT-213–INT-214; INT-272–INT-275; C-47; NX-11; NX-13; BD-11; M-18; M-33–M-34; HO-18–HO-19; HO-32–HO-33; PG-058; SCR-58; UXI-32; J-MIG-01; UXS-19; NAV-058; IMP-01–IMP-13; PRQ-06; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10; GAP-010; GAP-034; GAP-058; GAP-066–GAP-067
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (70): O-07; CAP-15; DEP-05; AC-17; OS-02; REF-051; WF-MIG-01; CM-33; AX-28; ROUTE-058; ROUTE-213–ROUTE-214; ROUTE-272–ROUTE-276; INT-213–INT-214; INT-272–INT-276; C-47; NX-11; NX-13; BD-11; M-18; M-33–M-34; HO-18–HO-19; HO-32–HO-33; PG-058; SCR-58; UXI-32; J-MIG-01; UXS-19; NAV-058; IMP-01–IMP-13; PRQ-06; migration-rule DB24-01; migration-rule DB24-02; migration-rule DB24-03; migration-rule DB24-04; migration-rule DB24-05; migration-rule DB24-06; migration-rule DB24-07; migration-rule DB24-08; migration-rule DB24-09; migration-rule DB24-10; GAP-010; GAP-034; GAP-058; GAP-066–GAP-067
 
 **EXPECTED MODULES / FILE AREAS:**
 
@@ -128,7 +128,7 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 - NX-13 for preparation, the dry-run result, sign-off and the commit request: lock set LK-00, LK-03, LK-06, LK-09; the commit request locks the batch scope's company rows (LK-06), checks the seed rows of the cutoff's periods, records `committed_by/at` on the SIGNED_OFF batch and starts JB-07; a resume is a further commit request that clears the refusal or failure recorded on its row (CONCURRENCY_IDEMPOTENCY §7.3)
 - each row is AX-28: STATIC lock set LK-00, LK-01, LK-03, LK-09, LK-13, LK-14, LK-15, LK-17, LK-31, first-use rows FU-01, FU-02, FU-04, FU-07 and FU-13, LK-01 for an existing project the row refers to; re-read under lock: the batch SIGNED_OFF with its commit request, the row VALID and not COMMITTED, the import identity free, NM-03's period rule for a seed row and a drawing purchase, a kept legacy number below its period's committed seed (NM-08); REJECTED C-10, CONFLICT BD-11; retry class C (§7.1, §7.2; RY-02)
 - the deterministic version-5 `command_id` `import:{batch public id}:{row number}:{import identity}` (CI-01); only a COMMITTED outcome recorded, a refusal rolled back and written on the import row so the row can run again once its cause is removed (CI-08); BD-11's committed import identity and `import_row_id` on every created fact make a rerun find the row done (C-47; M-33); JB-05, JB-07 and JB-09 sweep a lost dispatch or a dead chunk (M-34)
-- ROUTE-213 and ROUTE-214 are NX-11 as ROUTE_CONTRACTS names them — its lock set holds LK-10–LK-24, capped by LK-16 or the case counters, data-dependent for a reversed movement of a pending case, a count or a finding, FU-03 (§7.3); ROUTE-214's contra of an opening receivable or credit also takes LK-25, LK-26 and LK-27 in the order of §4 — AX-20's and AX-33's classes for the facts it writes, which NX-11's set does not list —, the stricter reading P11Q-03 asks the Owner to confirm (GAP-067)
+- ROUTE-213 and ROUTE-214 are NX-11 as ROUTE_CONTRACTS names them — its lock set holds LK-10–LK-24, capped by LK-16 or the case counters, data-dependent for a reversed movement of a pending case, a count or a finding, FU-03 (§7.3); ROUTE-214's contra of an opening receivable or credit also takes LK-25, LK-26, LK-27 and LK-29 in the order of §4 (DIR-100) — AX-20's and AX-33's classes for the facts it writes, which NX-11's set does not list —, the stricter reading P11Q-03 asks the Owner to confirm (GAP-067)
 
 **AUDIT:**
 

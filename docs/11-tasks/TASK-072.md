@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W4 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on OPI-03, P11Q-02
+**STATUS:** BLOCKED — waiting on OPI-03
 
 **RISK CLASS:** HIGH
 
@@ -27,7 +27,7 @@ RELEASE_PLAN PRQ-01–PRQ-05 ask P11 for the deployment definition and release r
 - TASK-022 — Jobs, files and the document renderer
 - TASK-071 — The operator's inputs before staging
 - the operator's or the Owner's input OPI-03 recorded ([RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist)) — BLOCKED until recorded
-- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-277 · INT-277 and ROUTE-278 · INT-278
 
 **BLOCKS:**
 
@@ -81,7 +81,7 @@ RELEASE_PLAN PRQ-01–PRQ-05 ask P11 for the deployment definition and release r
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-012--rolling-code-changes-may-leave-workers-executing-incompatible-jobs) GAP-012, GAP-013, GAP-031
 - [DIR-083](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) OE-07, OE-08, OE-13
 - Architecture challenge — the sequences 11a, 16a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (56): BK-03; WS-06; WS-08; WS-10–WS-11; SX-01; SX-03; TM-01; TM-07; TM-27–TM-28; TM-48; TM-50; TM-65; H8-20; H9-01–H9-02; H9-04; H9-08–H9-09; HO-21–HO-31; HO-34; UXH-09; INF-07; TT-F10; REL-01–REL-13; PRQ-01–PRQ-05; GAP-012; GAP-031; GAP-066
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (60): BK-03; WS-06; WS-08; WS-10–WS-11; SX-01; SX-03; TM-01; TM-07; TM-27–TM-28; TM-48; TM-50; TM-65; H8-20; H9-01–H9-02; H9-04; H9-08–H9-09; HO-21–HO-31; HO-34; UXH-09; INF-07; TT-F10; REL-01–REL-13; PRQ-01–PRQ-05; ROUTE-277–ROUTE-278; INT-277–INT-278; GAP-012; GAP-031; GAP-066
 
 **EXPECTED MODULES / FILE AREAS:**
 

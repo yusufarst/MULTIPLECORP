@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-02
+**STATUS:** BLOCKED — waiting on P11Q-07
 
 **RISK CLASS:** HIGH
 
@@ -34,7 +34,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
 - TASK-054 — Expenses, disbursements and other cash
-- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-07 recorded and the credit hold's row and column made, which P11Q-02 (a) leaves to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
 
 **BLOCKS:**
 
@@ -52,7 +52,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - SF-REVAL, PRJ's revalidation service: the materiality test — a correction is material when it changes a predicate input or a project CALC value —; a material correction on a COMPLETED_NORMAL or COMPLETED_FORCED project returns it to ACTIVE inside the correcting command's transaction with a REVALIDATE transition linked to the correction, one per affected project, the completion or Force Complete record kept (BR-CR-05; CM-32; DATABASE §9); a CANCELLED project stays CANCELLED; a residual command never triggers it (L-11); called by each module's correcting commands — CM-17's cost cascade across several projects among them (AX-34) — and run for a document void, a revision's issue or an evidence replacement through PRJ's part of DOC's `DocumentChangeParticipant` (L-41; architecture challenge 7b), with ADM's reopening of requirements running through `ProjectLifecycleParticipant` (TASK-035)
 - the closed residual-command list of WF-PRJ-03 and L-11 as PRJ's state precondition that every project-bound command reads under LK-01 (UXI-40), for the completed states — the CANCELLED state reads the same list (TASK-056) —: on COMPLETED_* projects only the listed commands that reduce residual obligations are accepted without reopening; anything that would raise the project's outstanding or change a completed result is a correction (SF-REVAL); anything else REJECTED; PG-011 offering after completion only those commands (J-PRJ-03), each module's command applying the precondition in its own Task
 - the projects' completion states on the journey: COMPLETED_NORMAL and COMPLETED_FORCED distinguishable, a force-completed project's unmet conditions and residual obligations kept visible on PG-011 (BR-PRJ-04; AC-21)
-- **Held for the Owner's answer to P11Q-02, built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), predicate 9's "project-originated credit dispositioned" counts credit held with its reason — the disposition TASK-053 records once the amendment adds it — as dispositioned, beside credit applied or refunded (WF-PRJ-03 predicate 9; WF-FIN-06); under option (b), only apply and refund dispose of it, as the answer records (DIR-083 OE-20)
+- **Held for the Owner's answer to P11Q-07, to which P11Q-02 (a) leaves the credit hold (DIR-100), built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), predicate 9's "project-originated credit dispositioned" counts credit held with its reason — the disposition TASK-053 records once the amendment adds it — as dispositioned, beside credit applied or refunded (WF-PRJ-03 predicate 9; WF-FIN-06); under option (b), only apply and refund dispose of it, as the answer records (DIR-083 OE-20)
 
 **OUT OF SCOPE:**
 
@@ -79,7 +79,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) C-38, C-39 and the acceptance contracts; [§6](../08-testing/TEST_STRATEGY.md#6-concurrency-and-failure-proofs) M-26, M-27; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-17; [SECURITY_TEST_MATRIX §3](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-04, SM-05
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-022--completion-can-hide-unresolved-obligations-or-become-stale-after-correction) GAP-022
 - Architecture challenge — the sequences 4a, 7b of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (56): CAP-18; AC-21; IMG-05; IMG-08–IMG-09; OWN-03; BR-XD-01–BR-XD-07; BR-PRJ-01–BR-PRJ-06; WF-PRJ-03; SF-REVAL; CM-17; CM-32; AX-25–AX-26; L-01; L-10–L-12; L-20–L-21; L-39; L-49–L-50; ROUTE-012; ROUTE-161–ROUTE-162; INT-161–INT-162; C-38–C-39; C-51; BD-10; BD-13; M-26–M-27; PG-012; SCR-14; UXI-24; UXI-26; UXI-40; J-PRJ-03; UXS-37; NAV-012; GAP-022; GAP-066
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (57): CAP-18; AC-21; IMG-05; IMG-08–IMG-09; OWN-03; BR-XD-01–BR-XD-07; BR-PRJ-01–BR-PRJ-06; WF-PRJ-03; SF-REVAL; CM-17; CM-32; AX-25–AX-26; L-01; L-10–L-12; L-20–L-21; L-39; L-49–L-50; ROUTE-012; ROUTE-161–ROUTE-162; INT-161–INT-162; C-38–C-39; C-51; BD-10; BD-13; M-26–M-27; PG-012; SCR-14; UXI-24; UXI-26; UXI-40; J-PRJ-03; UXS-37; NAV-012; GAP-022; GAP-066; GAP-071
 
 **EXPECTED MODULES / FILE AREAS:**
 

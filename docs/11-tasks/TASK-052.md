@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-02
+**STATUS:** READY
 
 **RISK CLASS:** HIGH
 
@@ -23,7 +23,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 **DEPENDS ON:**
 
 - TASK-051 — Payments, applications and bank statement lines
-- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-02 recorded, with what it calls for done — a step run or a narrow amendment approved ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — done: DIR-085 OF-02 and Change 4 (DIR-100), ROUTE-263 · INT-263 under `settlement.record` (PERMISSIONS_MATRIX §4)
 
 **BLOCKS:**
 
@@ -69,7 +69,7 @@ Government treasurers, SIPLAH operators and other intermediaries remit net of fe
 - [TEST_STRATEGY §5](../08-testing/TEST_STRATEGY.md#5-domain-and-data-integrity) FX-01 6 and 13, FX-03's tax and fee on one payment, voids with settlements and duplicate evidence, FX-04's residual settlements; [§7](../08-testing/TEST_STRATEGY.md#7-browser-end-to-end-tests-and-critical-journeys) CJ-08; [SECURITY_TEST_MATRIX](../08-testing/SECURITY_TEST_MATRIX.md#3-the-matrix) SM-01, SM-04, SM-25; [PERFORMANCE_TARGETS §3](../08-testing/PERFORMANCE_TARGETS.md#3-the-measured-targets) PFM-01, PFM-02, PFM-07, PFM-20
 - [GAP_REGISTER](../00-governance/GAP_REGISTER.md#gap-026--taxes-withheld-or-collected-at-payment-had-no-settlement-path) GAP-026; [GAP-004](../00-governance/GAP_REGISTER.md#gap-004--exact-arithmetic-does-not-define-managerial-financial-meaning)
 - Architecture challenge — the sequences 6d, 9a, 20a of the [P11 gate record](evidence/P11_QUALITY_GATE.md#whole-system-architecture-challenge-sp-98), their assertions carried into this Task's acceptance criteria and tests
-- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (93): O-04; CAP-10; CAP-12; AC-10; AC-15; OS-02; REF-016; REF-038; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-04; SF-CONTRA; SF-SETTLE; CM-19; CM-21–CM-22; CM-24; CM-38; AX-21; AX-33; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-047; ROUTE-255; ROUTE-260; INT-255; INT-260; C-13–C-15; C-18; C-22–C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; C-60; BD-02; BD-08; BD-14; M-14; M-37; PG-047; SCR-43; J-FIN-04; NAV-047; GAP-004; GAP-026; GAP-066
+- Coverage — the [FEATURE_COVERAGE_MATRIX](FEATURE_COVERAGE_MATRIX.md) entries mapped to this Task (95): O-04; CAP-10; CAP-12; AC-10; AC-15; OS-02; REF-016; REF-038; IMG-07; OWN-01; BR-FIN-01–BR-FIN-17; CALC-05–CALC-08; CALC-11; FS-13; WF-FIN-04; SF-CONTRA; SF-SETTLE; CM-19; CM-21–CM-22; CM-24; CM-38; AX-21; AX-33; L-05–L-08; L-12; L-16–L-18; L-22; L-26; L-28–L-31; L-43; L-45–L-47; L-50; ROUTE-047; ROUTE-255; ROUTE-260; ROUTE-263; INT-255; INT-260; INT-263; C-13–C-15; C-18; C-22–C-23; C-25–C-26; C-41–C-42; C-47; C-52; C-57; C-60; BD-02; BD-08; BD-14; M-14; M-37; PG-047; SCR-43; J-FIN-04; NAV-047; GAP-004; GAP-026; GAP-066
 
 **EXPECTED MODULES / FILE AREAS:**
 

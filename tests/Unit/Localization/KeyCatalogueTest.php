@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\App;
 
-// TL-03/TL-10 (TASK-014; acceptance criteria 1 and 3): the 889 keys of LOCALIZATION §6 in both languages, each
+// TL-03/TL-10 (TASK-014; acceptance criteria 1 and 3): the 895 keys of LOCALIZATION §6 in both languages, each
 // with the text §6 gives, read the way §6 states — `{name}` the placeholder `:name`, several words joined by
 // `_`, the number of a counted string `:count`, its English forms separated by `|`, `\\|` a literal bar —; no
 // key missing or empty in either language, the two languages with the same keys and placeholders; and the
@@ -49,7 +49,7 @@ function catalogue(string $locale): array
 it('holds every key of §6 in both languages with the text §6 gives (criterion 1)', function () {
     $inventory = inventory();
 
-    expect($inventory)->toHaveCount(889)
+    expect($inventory)->toHaveCount(895)
         ->and(array_intersect_key(catalogue('id'), $inventory))->toBe(array_map(fn (array $row): string => $row['id'], $inventory))
         ->and(array_intersect_key(catalogue('en'), $inventory))->toBe(array_map(fn (array $row): string => $row['en'], $inventory));
 });
