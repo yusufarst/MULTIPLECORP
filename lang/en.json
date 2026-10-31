@@ -3054,5 +3054,6 @@
     "deductions.resolve.same_payment": "The original payment",
     "deductions.refusal.expense_paid": "Cannot be processed: this expense has been paid. Contra its disbursement first.",
     "deductions.resolve.no_payment": "No payment of this client has an open claim. Record the payment first, or choose the contra.",
-    "deductions.form.claim_room": ":sisa of the claim left"
+    "deductions.form.claim_room": ":sisa of the claim left",
+    "deductions.refusal.expense_above_net": "Cannot be processed: above what stands of the expense."
 }

@@ -99,7 +99,10 @@ final class DeductionsController extends Controller
         $fact = $this->inputs->fact($actor, $table, self::text($input['catatan']), RecordContra::CAPABILITY) ?? throw new NotFoundHttpException;
         $outcome = $contra->run(self::text($input['command_id']), $actor, $fact['company'], $kind, $fact['id'], self::nullable($input['jumlah'] ?? null), trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'kembali' => 1]));
 
-        return $this->answer($outcome, 'contraed', self::nullable($input['kembali'] ?? null) ?? '/keuangan/potongan', self::text($input['tanggal']));
+        // Row 78: an expense's figures stay on the cost side, refused or replayed (SM-25).
+        $masked = $kind === RecordContra::EXPENSE && ! $this->inputs->seesCost($actor, $fact['company']);
+
+        return $this->answer($outcome, 'contraed', self::nullable($input['kembali'] ?? null) ?? '/keuangan/potongan', self::text($input['tanggal']), $masked);
     }
 
     /** ROUTE-263. */
@@ -141,7 +144,7 @@ final class DeductionsController extends Controller
     }
 
     /** The command's answer as flash data, the input kept in place; a future date at its field (C-50; IP-14). */
-    private function answer(Outcome $outcome, string $done, string $to, string $sent): RedirectResponse
+    private function answer(Outcome $outcome, string $done, string $to, string $sent, bool $masked = false): RedirectResponse
     {
         if ($outcome->kind === Outcome::REJECTED && $outcome->code === 'C-50') {
             throw ValidationException::withMessages(['tanggal' => self::say('projects.validation.future')]);
@@ -150,7 +153,7 @@ final class DeductionsController extends Controller
         $state = $outcome->state;
         [$cause, $text] = match ($outcome->kind) {
             Outcome::COMMITTED => [null, self::say("deductions.answer.{$done}")],
-            Outcome::REJECTED => [null, self::refusal($outcome)],
+            Outcome::REJECTED => [null, $masked && $outcome->code === 'C-45' ? self::say('deductions.refusal.expense_above_net') : self::refusal($outcome)],
             Outcome::CONFLICT => match ($outcome->code) {
                 'BD-08' => ['recorded', self::say('deductions.refusal.duplicate')],
                 'ST-07', 'ST-02' => ['stale', self::say('deductions.refusal.stale')],
@@ -159,7 +162,7 @@ final class DeductionsController extends Controller
             },
             default => ['not_processed', self::say('messages.msg_06')],
         };
-        Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'state' => array_intersect_key($state, ['reason' => 1, 'outstanding' => 1, 'uncited' => 1, 'claimed' => 1, 'room' => 1, 'net' => 1])]);
+        Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'state' => array_intersect_key($state, $masked ? ['reason' => 1] : ['reason' => 1, 'outstanding' => 1, 'uncited' => 1, 'claimed' => 1, 'room' => 1, 'net' => 1])]);
 
         return redirect()->to($to, 303);
     }

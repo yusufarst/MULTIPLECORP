@@ -3054,5 +3054,6 @@
     "deductions.resolve.same_payment": "Pembayaran semula",
     "deductions.refusal.expense_paid": "Tidak dapat diproses: beban ini sudah dibayar. Kontra dulu pengeluaran kasnya.",
     "deductions.resolve.no_payment": "Belum ada pembayaran klien ini dengan klaim yang masih terbuka. Catat dulu pembayarannya, atau pilih kontra.",
-    "deductions.form.claim_room": "sisa klaim :sisa"
+    "deductions.form.claim_room": "sisa klaim :sisa",
+    "deductions.refusal.expense_above_net": "Tidak dapat diproses: melebihi nilai beban yang masih berlaku."
 }

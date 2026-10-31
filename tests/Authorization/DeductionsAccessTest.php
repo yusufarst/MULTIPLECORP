@@ -84,3 +84,19 @@ it('keeps the fee\'s expense on the cost side, the page holding no cost figure (
 
     $this->actingAs($settler)->get('/keuangan/potongan')->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->missing('rows.0.expense')->missing('rows.0.cost'));
 });
+
+it('states no expense figure to a holder of finance.contra without cost.view, refused or replayed (SM-25; row 78)', function () {
+    $manual = SettlementWorld::manualExpense($this->company->id, null, '50000');
+    $contra = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'finance.contra']);
+    $body = ['command_id' => (string) Str::uuid(), 'jenis' => RecordContra::EXPENSE, 'catatan' => RowHandle::of('expenses', $manual), 'jumlah' => '50001', 'tanggal' => $this->today, 'alasan' => 'Salah catat'];
+
+    foreach ([1, 2] as $send) {
+        $this->actingAs($contra)->post('/keuangan/kontra', $body)->assertRedirect();
+        $answer = session('inertia.flash_data')['answer'];
+        expect($answer['code'])->toBe('C-45')->and($answer['state'])->not->toHaveKey('net')->and($answer['text'])->not->toContain('50.000');
+    }
+
+    $seer = Authorization::admin([$this->company->id], ['projects.view', 'finance.view', 'finance.contra', 'cost.view']);
+    $this->actingAs($seer)->post('/keuangan/kontra', [...$body, 'command_id' => (string) Str::uuid()])->assertRedirect();
+    expect(session('inertia.flash_data')['answer']['state']['net'])->toBe('50000.00');
+});

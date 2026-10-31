@@ -12954,6 +12954,12 @@
             "source": "J-FIN-04; WF-FIN-04 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "deductions.refusal.expense_above_net": {
+            "task": "TASK-052",
+            "source": "PERMISSIONS_MATRIX row 78 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

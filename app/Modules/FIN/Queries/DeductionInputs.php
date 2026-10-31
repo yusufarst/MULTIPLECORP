@@ -97,6 +97,12 @@ final class DeductionInputs
         return null;
     }
 
+    /** Whether the viewer sees the cost side in the company (row 78; SM-25). */
+    public function seesCost(int $viewerId, int $companyId): bool
+    {
+        return $this->capabilities->for($viewerId)->allows('cost.view', $companyId);
+    }
+
     public function companyPublicId(int $companyId): string
     {
         $id = DB::table('companies')->where('id', $companyId)->value('public_id');
