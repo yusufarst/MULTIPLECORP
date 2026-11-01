@@ -1,0 +1,60 @@
+OWNER DIRECTIVE — ELIMINATE AVOIDABLE CI DELAYS IN FAST BUILD
+Saya tidak puas dengan lamanya siklus TASK MULTIPLECORP. Prioritaskan pengurangan durasi end-to-end secara nyata, tanpa menurunkan quality gate.
+Temuan Second Review:
+
+* Commit kode TASK-039 `bf42119` sudah PASS seluruh tiga job pada CI 41286166058.
+* Commit dokumentasi `66cbc5d` kemudian memicu kembali verifikasi.
+* Workflow `ci.yml` menjalankan tiga job pada setiap push dan PR, termasuk build Docker dan Browser yang mahal.
+
+Lakukan hal berikut:
+
+1. Selesaikan PR #54 terlebih dahulu. Bila seluruh mandatory checks pada HEAD terakhir dan seluruh review gate sudah terpenuhi, segera merge sesuai DIR-096. Jangan menambah commit atau siklus review tanpa kebutuhan nyata.
+2. Optimalkan pola commit berikutnya. Siapkan completion evidence dan dokumentasi sebelum verifikasi final sejauh memungkinkan. Hindari commit administratif terpisah setelah CI kode hijau apabila hal itu memaksa pengulangan seluruh CI. Jangan mencatat DONE atau MERGED sebelum faktanya benar.
+3. Audit terarah efisiensi CI. Identifikasi caching Composer, npm, Docker, Playwright, pembagian Browser jobs, dan eliminasi setup yang berulang. Usulkan atau implementasikan hanya optimasi yang diizinkan governance dan tetap mempertahankan semua required checks. Jangan melewati CI final HEAD secara sepihak.
+4. Kurangi siklus push. Lakukan targeted local checks, perbaiki semua kegagalan yang sudah diketahui, lalu push satu perubahan final yang koheren. Jangan memaksakan satu push bila temuan baru memang mengharuskan koreksi.
+5. Hilangkan waktu tunggu yang tidak perlu. Jangan memulai ulang independent review penuh untuk perbaikan minor kecuali diwajibkan. Gunakan satu watcher dan jangan menunggu review yang belum benar-benar dimulai seolah-olah sedang aktif.
+6. Setelah TASK-039 merged, mulai TASK-040 segera. Terapkan optimasi tersebut pada seluruh TASK berikutnya.
+
+Pertahankan standar keamanan, integritas database, concurrency, accessibility, CI, Codex, dan change control.
+Target tetap FAST BUILD 48H, tetapi percepat proses melalui pengurangan pekerjaan berulang, bukan melewati pengujian.
+Jangan berhenti hanya pada laporan analisis. Lanjutkan eksekusi yang sah secara otomatis.
+Laporkan secara ringkas durasi CI sebelum dan sesudah optimasi berdasarkan data nyata, dan tampilkan progres TASK pada setiap respons.
+Semua komunikasi dalam Bahasa Indonesia.
+
+---
+
+OWNER DIRECTIVE — DIR-103 FAST BUILD OPTIMIZATION
+Saya menyetujui arah optimasi DIR-103 dengan persyaratan berikut.
+1. Parallel Browser CI
+
+* Jalankan TL-09 E2E, TL-10 Localization, TL-11 Responsive, dan TL-12 Accessibility secara paralel pada runner terisolasi.
+* Pertahankan pengujian Chromium dan WebKit pada seluruh layer yang diwajibkan.
+* Pertahankan nama required check Browser yang sudah berlaku.
+* Aggregator wajib FAIL jika ada job gagal, cancelled, skipped, atau evidence wajib tidak tersedia.
+* Pastikan kompatibilitas dengan release integrity report, identitas commit SHA, dan artefak CI.
+* Ukur penghematan waktu berdasarkan run nyata, bukan estimasi.
+
+2. Optimasi pencatatan DONE
+Saya menyetujui tujuan menghilangkan pengulangan CI penuh akibat commit administratif terpisah.
+Namun:
+
+* Jangan mencatat DONE sebelum seluruh gate terpenuhi.
+* Jangan mengklaim PR merged sebelum GitHub mengonfirmasinya.
+* Jangan membiarkan `main`, TASK_PLAN, CURRENT_HANDOFF, dan dependency status menjadi tidak konsisten.
+* Jangan mengandalkan TASK berikutnya sebagai satu-satunya cara merekonsiliasi TASK sebelumnya.
+* Siapkan perubahan governance sempit sesuai CHANGE_CONTROL jika mekanisme baru berbeda dari DEFINITION_OF_DONE.
+
+Pilih solusi paling sederhana yang tetap mempertahankan bukti DONE yang akurat.
+3. Urutan pelaksanaan
+
+* Selesaikan TASK-039 / PR #54 terlebih dahulu.
+* Jangan menambah commit pada PR #54 hanya untuk perubahan CI ini.
+* Setelah merge sah, terapkan optimasi melalui alur perubahan yang sesuai otorisasi.
+* Lanjutkan TASK-040 dan TASK READY berikutnya secara otomatis.
+* Jangan mengulangi review penuh tanpa perubahan risiko material.
+
+4. FAST BUILD 48H tetap aktif
+Prioritaskan pengurangan durasi per TASK, terutama waktu tunggu CI, pengujian berulang, dan overhead administrasi.
+Pertahankan semua mandatory quality gates, DIR-096, satu executor utama, satu watcher, serta isolasi proyek.
+Terima instruksi ini sekarang, tetapi jangan mengganggu CI PR #54 yang sedang berjalan. Lanjutkan eksekusi secara otomatis.
+Tampilkan progres TASK dalam setiap respons menggunakan Bahasa Indonesia.

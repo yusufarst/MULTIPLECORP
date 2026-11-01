@@ -1,7 +1,7 @@
 # The CI of TEST_STRATEGY §17 (TASK-003, grown from TASK-001's minimal CI): on every push to a branch and
 # every pull request — a pushed tag runs the release gate, never a second CI run (TASK-073) —, on a fresh runner, the Docker Compose stack of DEVELOPMENT.md runs the verification command —
 # the repository gates, TL-01–TL-08, TL-13 and TL-14 —, the browser suite of TL-09–TL-12 on Chromium and
-# WebKit, and TL-15 and TL-16; a failing check fails its job. No secret but the CI's own token, read-only,
+# WebKit — each layer on a runner of its own, the required check its aggregator (DIR-103) —, and TL-15 and TL-16; a failing check fails its job. No secret but the CI's own token, read-only,
 # for Composer's downloads from GitHub; the one action, GitHub's own artifact upload, pinned to a commit
 # (SECURITY SX-05; SECURITY_TEST_MATRIX SM-15). Each job keeps its verification summary for 90 days, the evidence the
 # release integrity report of a later tag reads (RELEASE_PLAN §11; TASK-073); CI tests and reports, and never deploys (RL-01).
@@ -89,10 +89,14 @@ jobs:
         if: always()
         run: docker compose down -v
 
-  browser:
-    name: Browser — TL-09–TL-12 on Chromium and WebKit
+  browser-layer:
+    name: Browser layer — ${{ matrix.layer }}
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        layer: [e2e, localization, responsive, accessibility]
     steps:
       - name: Check out the tested commit
         run: |
@@ -123,8 +127,8 @@ jobs:
           docker compose run --rm node npm ci
           docker compose run --rm node npm run build
 
-      - name: The browser suite
-        run: sh scripts/verify.sh browser
+      - name: The browser layer
+        run: sh scripts/verify.sh browser-${{ matrix.layer }}
 
       - name: Stack logs
         if: failure()
@@ -134,7 +138,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: browser-evidence
+          name: browser-evidence-${{ matrix.layer }}
           path: |
             storage/logs/verify/
             storage/test-results/browser/
@@ -143,6 +147,50 @@ jobs:
       - name: Stop the stack
         if: always()
         run: docker compose down -v
+
+  # The required check, by the name BRANCH_PROTECTION's runbook gives it: FAIL unless every layer's job succeeded and its
+  # evidence says PASS on this commit (DIR-103).
+  browser:
+    name: Browser — TL-09–TL-12 on Chromium and WebKit
+    needs: browser-layer
+    if: always()
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      actions: read
+    env:
+      GH_TOKEN: ${{ github.token }}
+      LAYERS_RESULT: ${{ needs.browser-layer.result }}
+    steps:
+      - name: Check out the tested commit
+        run: |
+          git init -q .
+          git remote add origin "https://github.com/${GITHUB_REPOSITORY}.git"
+          git fetch -q --no-tags --depth=1 origin "${GITHUB_SHA}"
+          git checkout -q --detach FETCH_HEAD
+          git log -1 --format='Tested commit: %H'
+
+      - name: Fetch each layer's summary from this run
+        if: needs.browser-layer.result == 'success'
+        run: |
+          mkdir -p evidence
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" --jq '.artifacts[] | select(.name | startswith("browser-evidence-")) | "\(.id) \(.name)"' |
+            while read -r id name; do
+              gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "evidence/${name}.zip"
+              unzip -q -o "evidence/${name}.zip" '*summary*.txt' -d "evidence/${name}"
+            done
+
+      - name: Every layer passed on this commit
+        run: node scripts/ci/check-browser-evidence.mjs --result "$LAYERS_RESULT" --commit "$GITHUB_SHA" --evidence evidence --out storage/logs/verify/summary-browser.txt
+
+      - name: Keep the evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: browser-evidence
+          path: storage/logs/verify/
+          retention-days: 90
 
   performance-and-migration:
     name: Performance and migration — TL-15, TL-16

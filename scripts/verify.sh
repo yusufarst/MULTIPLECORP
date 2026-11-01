@@ -5,6 +5,7 @@
 #
 #   sh scripts/verify.sh               the repository gates, TL-01–TL-08, TL-13 and TL-14
 #   sh scripts/verify.sh browser       TL-09–TL-12 on Chromium and WebKit
+#   sh scripts/verify.sh browser-e2e   one of them: browser-e2e, browser-localization, browser-responsive, browser-accessibility (CI's parallel layers; DIR-103)
 #   sh scripts/verify.sh performance   TL-15, with the load tool's smoke run
 #   sh scripts/verify.sh migration     TL-16, on a fresh database only
 #
@@ -79,6 +80,7 @@ local_layers() {
     check 'Commit messages (AGENTS.md)' sh -c "sh scripts/ci/check-commit-messages.sh --self-test && sh scripts/ci/check-commit-messages.sh $range"
     check 'Task plan integrity (PMC-15)' $node_run sh -c 'node scripts/ci/check-plan.mjs --self-test && node scripts/ci/check-plan.mjs'
     check 'Release gate and report rules (PRQ-11; INF-03)' $node_run sh -c 'node scripts/release/gate.mjs --self-test && node scripts/release/report.mjs --self-test'
+    check 'Browser check rules (DIR-103)' $node_run node scripts/ci/check-browser-evidence.mjs --self-test
     check 'TL-01 Pint' $php_run vendor/bin/pint --test
     check 'TL-01 ESLint' $node_run npm run lint
     check 'TL-02 Larastan/PHPStan' $php_run vendor/bin/phpstan analyse --no-progress --memory-limit=1G
@@ -104,14 +106,24 @@ local_layers() {
     esac
 }
 
-browser_layers() {
+browser_stack() {
     check 'Stack' docker compose up -d --wait
     # The stack of DEVELOPMENT.md is migrated: a page of the web group keeps its session in the database.
     check 'Stack database (DEVELOPMENT.md)' $php_run php artisan migrate --database=migration --force
-    slot 'TL-09 E2E/browser' tests/Browser/E2E '*.spec.ts' TASK-062 $(browser E2E)
-    slot 'TL-10 Localization' tests/Browser/Localization '*.spec.ts' 'the first page with copy' $(browser Localization)
-    slot 'TL-11 Responsive' tests/Browser/Responsive '*.spec.ts' 'the first page' $(browser Responsive)
-    slot 'TL-12 Accessibility' tests/Browser/Accessibility '*.spec.ts' 'the first page' $(browser Accessibility)
+}
+
+browser_layer() {
+    case $1 in
+        e2e) slot 'TL-09 E2E/browser' tests/Browser/E2E '*.spec.ts' TASK-062 $(browser E2E) ;;
+        localization) slot 'TL-10 Localization' tests/Browser/Localization '*.spec.ts' 'the first page with copy' $(browser Localization) ;;
+        responsive) slot 'TL-11 Responsive' tests/Browser/Responsive '*.spec.ts' 'the first page' $(browser Responsive) ;;
+        accessibility) slot 'TL-12 Accessibility' tests/Browser/Accessibility '*.spec.ts' 'the first page' $(browser Accessibility) ;;
+    esac
+}
+
+browser_layers() {
+    browser_stack
+    for layer in e2e localization responsive accessibility; do browser_layer "$layer"; done
 }
 
 performance_layers() {
@@ -140,9 +152,10 @@ for section in "$@"; do
     case $section in
         local) local_layers ;;
         browser) browser_layers ;;
+        browser-e2e | browser-localization | browser-responsive | browser-accessibility) browser_stack; browser_layer "${section#browser-}" ;;
         performance) performance_layers ;;
         migration) migration_layers ;;
-        *) echo "usage: sh scripts/verify.sh [local] [browser] [performance] [migration]" >&2; exit 2 ;;
+        *) echo "usage: sh scripts/verify.sh [local] [browser] [browser-<layer>] [performance] [migration]" >&2; exit 2 ;;
     esac
 done
 
