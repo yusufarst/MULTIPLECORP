@@ -24,6 +24,7 @@ use Tests\Support\Fixtures\QuotationFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ShellFixture;
+use Tests\Support\Fixtures\StockFixture;
 
 // The local stack's fixture pages for the browser suite (TEST_STRATEGY §7), loaded only in the `local`
 // environment (bootstrap/app.php): no ROUTE_CONTRACTS row, never in testing, staging or production. Each serves
@@ -127,6 +128,11 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-039): over the purchase fixture, the Nota's numbering, a rack, a serialized purchase and a purchase of the project's demand.
     Route::post('__fixtures/receiving', [ReceivingFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-040): the four quantities at a rack, a movement to reverse, another company's lot, a pending case, a Company-A-only Admin.
+    Route::post('__fixtures/stock', [StockFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/stock/pending', [StockFixture::class, 'pending'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/stock/grant', [StockFixture::class, 'grant'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-061): a page and more of the run's company's audit events, one without a company, the security events a notice opens.
     Route::post('__fixtures/log', [LogsFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

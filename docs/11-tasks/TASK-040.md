@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -248,34 +248,54 @@ Staff must know quantities on hand, reserved, unusable and available, where they
 - Migration: N/A — no migration or import code in this Task
 - Other: the physical-only query classes checked never to join a cost table (SM-03); GAP-009's history after concurrent movements
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/INV/StockViewsTest.php` and `tests/Browser/E2E/stock.spec.ts` — 10, 3, 2, 5 with the formula per product; per rack and condition the quantity at that place beside the product's four quantities (see Notes).
+- Criterion 2: `StockViewsTest`, `tests/Authorization/StockAccessTest.php`, the E2E spec — another company's lot by its code, quantity, rack and condition and the marker alone; no `stock.view`, no view, facet or prop.
+- Criterion 3: `StockViewsTest` — source, kind, date and acquired quantity in scope; cost and flagged basis only with `cost.view` of that company; no cost in any prop, partial reload or deferred group.
+- Criterion 4: `StockViewsTest` — each company's own lots, labelled, no total.
+- Criterion 5: `StockViewsTest`, the E2E spec — the pending line with MSG-41; a company's own exposure, once per overlap group and per product.
+- Criterion 6: `StockViewsTest`, the E2E spec — the advice over usable availability, the link only with `purchase.manage`; QS-17's filter.
+- Criterion 7: `StockViewsTest`, `StockAccessTest` — company and pool movements itemized, project and purchase by their capabilities, another company's never, no cost.
+- Criterion 8: `StockViewsTest` — on the oldest lot holding usable units, never on unusable ones.
+- Criterion 9: `StockViewsTest` — a service never listed; a drop-ship has no warehouse event to list.
+- Criterion 10: `tests/Integration/Inventory/MovementReversalTest.php` — equal and opposite on the same lot and condition, a serial with it, a second REJECTED C-55, two racing leaving one.
+- Criterion 11: `MovementReversalTest` — an adjustment decrease, a loss and a count's loss restored within their caps, the loss to 0.00, never a MOVEMENT_REVERSAL.
+- Criterion 12: `MovementReversalTest`, `StockAccessTest` — C-06 without the cut, committed with it, another company's reservation refused and routed.
+- Criterion 13: `StockAccessTest` — absent without `stock.reverse`, ROUTE-212 refused, ADM_PLUS on the audit event; a surplus attribution's OWNER_ONLY.
+- Criterion 14: `tests/Interaction/StockTest.php` — one `command_id` replayed, a changed payload CONFLICT.
+- Criterion 15: `StockViewsTest`, the E2E spec — both records kept, each a link opening the other.
+- Criterion 16: `StockWorld::ledgerDifferences` after each reversal scenario — the product, lot and lot-cost families, and the scope, reversal and consumption guards each against the ledger.
+- Criterion 17: `StockViewsTest` — the commands absent, their Tasks not built.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions — each reversible type, a pending case's recognition, finding and conversion, serials, AZ-08, SF-REVAL, the race (TL-05); PASS in CI
+- [x] Authorization: `stock.view`, `stock.reverse`, AZ-08, OD-15, SM-23 (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-018–ROUTE-020, ROUTE-212 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-212 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: PG-018–PG-020, "Balikkan" (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-23, SM-25 as above (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `195c2b1`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41306607286 (push) and 41306609496 (pull request #57), every job PASS in each; TL-15 — each page and each partial reload within QB-05 at the page itself, the same for one row and many, ROUTE-212 bounded — `tests/Performance/StockQueriesTest.php`
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/StockTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 195c2b1, CI ubuntu-24.04 run 41306607286, tests/Browser/E2E/stock.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-018–PG-020 in both languages — `tests/Browser/Localization/stock.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Services/MovementReversal`, `Services/InventoryPosting`, `Actions/ReverseMovement`, `Data/StockFigures`, `Queries/StockViews`, `Queries/MovementHistory`, `Queries/StockCursor`, `Queries/ReceivingQueries`, `Http/Controllers/StockController`, ROUTE-183's return address in `ReceivingController`, its README; CST's `CostFigures`; `resources/js/Pages/INV/`, `features/inv/`, `Pages/PUR/Purchase.tsx`; the routes, navigation and `lang/`; the tests and fixtures; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `195c2b1`, `07a20e1`, `a9133a0`, `e7a8e1d`, `ceb1177`, `28d9bf4`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-040-stock-views`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `a9133a0` and raised two P2s: a new search keeping an older cursor, and "Balikkan" hidden after a first reversal though a reopened case leaves more to reverse; both fixed in `07a20e1` with their test and answered on the pull request. CI's first runs showed the fixture's factory users, the specs' search step and the Localization spec's English word, fixed in `07a20e1` and `195c2b1`. ER-06: a fresh read-only review before the pull request found 5 P1 and 19 P2 points, every one fixed with its test or named here. Fixed: a pending condition change's and a conversion's reversal, a finding reversed beyond itself, a surplus unit left in stock, a serial's condition unchecked, AZ-08 on a loss reversal, SF-REVAL, the lock set, QB-05 read at the pages, PF-14's bound cursors, the cut block lost after a refusal, a refusal swallowed on PG-020, filters lost after a reversal, unlinked corrections, PG-018's filter sheet and a search term in the address, "Ambil Lebih Dulu" on unusable units, lists silently cut, an overstated exposure, tests that skipped the guards. Left for Planning, none changing business meaning here: (1) criterion 1 asks the four quantities per rack and condition, while a reservation binds only to the product (DATABASE §5.5), so a rack row shows the quantity at that place beside the product's four quantities, labelled so; (2) ROUTE-212 gives `stock.reverse` a surplus attribution while OD-15 keeps it to the Owner: both hold, the route refusing anyone else; (3) a surplus reversal leaves its finding ATTRIBUTED, its lot keyed to it once (C-08), so a corrected attribution has no path back to QS-18: TASK-043, which builds AX-07, raises it; (4) `stock_movements.unattributed_case_id` and the case's `recognition_movement_id` are immediate keys and the header is never updated, so a movement and its case must be written by one statement: TASK-043 meets this, the fixture does it so; (5) the scope, reversal and consumption guards have no family in `Families`, reconciled in this Task's test until they are registered; (6) a cut chooses among a product's 200 largest active reservations. A count's recognition and its variance are separate movements, reversed separately. Fixture movements are posted by `StockWorld` until TASK-042 and TASK-043 record them, each re-run end to end by that Task. Local run: the PHP layers, Architecture, Localization, TypeScript and ESLint passed locally; Docker Desktop then stopped responding with the machine's memory nearly full, and it was not restarted, so PHPStan, Pint, the build and the browser layers rest on CI. The browser fixture's 500s, locally and in CI, were `users_email_lower_unique`: a factory's user created per PHP process, so `StockWorld::lot` now posts as the signed-in Owner and the other company's lot is a real receipt; the local 504s had no application log and did not recur in CI. CI's first run also showed the aggregator's stale-artifact defect, fixed apart as DIR-105. Context7 and Graphify not used: a targeted search of INV, CST and the specifications.
 
 **SAFE NEXT TASK:**
 

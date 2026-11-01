@@ -22,7 +22,10 @@ final class ReceivingQueries
 
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
-    public function __construct(private readonly EffectiveCapabilities $capabilities) {}
+    public function __construct(
+        private readonly EffectiveCapabilities $capabilities,
+        private readonly StockViews $views,
+    ) {}
 
     /**
      * The companies whose receipts the viewer may record, each a group of its own (NAV-021).
@@ -238,6 +241,38 @@ final class ReceivingQueries
         }
 
         return null;
+    }
+
+    /**
+     * What "Balikkan Penerimaan" offers on PG-020: the lot's unconsumed places and serials, the available supply, the reservations by `stock.reserve` (CM-02; IP-20).
+     *
+     * @return array<string, mixed>|null
+     */
+    public function reversalOf(int $viewerId, string $handle): ?array
+    {
+        $lot = $this->lot($viewerId, $handle);
+
+        if ($lot === null) {
+            return null;
+        }
+
+        $viewer = $this->capabilities->for($viewerId);
+        $places = [];
+
+        foreach (DB::table('stock_lot_balances as b')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.lot_id', $lot['id'])->where('b.qty', '>', 0)->orderBy('l.code')->get(['b.location_id', 'l.code', 'b.condition', 'b.qty']) as $place) {
+            $places[] = ['location' => RowHandle::of('locations', (int) Row::text($place, 'location_id')), 'code' => Row::text($place, 'code'), 'condition' => Row::text($place, 'condition'), 'qty' => Row::text($place, 'qty')];
+        }
+
+        $serials = [];
+
+        foreach (DB::table('serial_units')->where('current_lot_id', $lot['id'])->where('state', 'IN_STOCK')->orderBy('serial_number')->get(['id', 'serial_number', 'current_location_id', 'current_condition']) as $serial) {
+            $serials[] = ['handle' => RowHandle::of('serial_units', (int) Row::text($serial, 'id')), 'serial' => Row::text($serial, 'serial_number'), 'location' => RowHandle::of('locations', (int) Row::text($serial, 'current_location_id')), 'condition' => Row::text($serial, 'current_condition')];
+        }
+
+        $stock = DB::table('stock_product_balances as b')->where('product_id', $lot['product'])->selectRaw('on_hand_qty - unusable_qty - reserved_qty as available')->first();
+        $mayCut = $viewer->allows('stock.reserve', $lot['company']);
+
+        return ['handle' => $handle, 'places' => $places, 'serials' => $serials, 'available' => is_object($stock) ? Row::text($stock, 'available') : '0', 'reservations' => $mayCut ? $this->views->reservations($viewer, $lot['product']) : [], 'may_cut' => $mayCut, 'consumed' => DB::table('stock_consumptions')->where('lot_id', $lot['id'])->exists()];
     }
 
     /** A serial this lot has held, by its handle, in whatever state: the command re-reads it under its lock (C-02), and a replay still finds its answer (CI-05). */
