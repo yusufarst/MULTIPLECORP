@@ -3342,7 +3342,7 @@
     "stock.filter.condition": "Condition",
     "stock.filter.all_conditions": "All conditions",
     "stock.place.here": "At this rack",
-    "stock.place.product_figures": "Physical stock, Reserved, Unusable and Available are the product's figures across all racks: a reservation binds to the product, not to a rack.",
+    "stock.place.product_figures": "On hand, Reserved, Unusable and Available are the product's figures across all racks: a reservation binds to the product, not to a rack.",
     "stock.history.all_movements": "Show all movements",
     "activity.action.INV.MovementReversalRouted": "Routed a stock movement reversal"
 }

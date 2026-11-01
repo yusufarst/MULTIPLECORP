@@ -16,8 +16,8 @@ for (const width of [320, 390, 768, 1280]) {
         await page.setViewportSize({ width, height: 844 });
 
         await page.goto('/gudang/stok');
-        await page.getByLabel('Cari produk').fill(run.name);
-        await page.getByRole('button', { name: 'Cari', exact: true }).click();
+        await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
+        await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
         await expect(page.locator('#konten')).toContainText(run.name);
         expect(await fits()).toBe(true);
 

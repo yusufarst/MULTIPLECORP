@@ -9,8 +9,8 @@ const expect = base.configure({ timeout: 60_000 });
 test.describe.configure({ timeout: 240_000 });
 
 for (const [locale, texts] of [
-    ['id', { stock: 'Stok', detail: 'Stok fisik', history: 'Riwayat Stok', places: 'Per Rak', products: 'Per Produk', section: 'Lot', reverse: 'Balikkan', title: 'Balikkan pergerakan ini?' }],
-    ['en', { stock: 'Stock', detail: 'Physical stock', history: 'Stock history', places: 'By Rack', products: 'By Product', section: 'Lots', reverse: 'Reverse', title: 'Reverse this movement?' }],
+    ['id', { stock: 'Stok', detail: ['Stok fisik', 'Direservasi', 'Tidak layak pakai', 'Tersedia'], history: 'Riwayat Stok', places: 'Per Rak', products: 'Per Produk', section: 'Lot', reverse: 'Balikkan', title: 'Balikkan pergerakan ini?' }],
+    ['en', { stock: 'Stock', detail: ['On hand', 'Reserved', 'Unusable', 'Available'], history: 'Stock history', places: 'By Rack', products: 'By Product', section: 'Lots', reverse: 'Reverse', title: 'Reverse this movement?' }],
 ] as const) {
     test(`shows PG-018–PG-020 in ${locale}`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });
@@ -22,7 +22,7 @@ for (const [locale, texts] of [
         await expect(page.getByRole('button', { name: texts.products })).toBeVisible();
 
         await page.goto(`/gudang/stok/${run.product}`);
-        await expect(page.locator('[data-slot="inventory-block"]')).toContainText(texts.detail);
+        for (const label of texts.detail) await expect(page.locator('[data-slot="inventory-block"]')).toContainText(label);
         await expect(page.getByRole('heading', { name: texts.section, exact: true })).toBeVisible();
 
         await page.goto(`/gudang/riwayat-stok?produk=${run.product}&jenis=CONDITION_CHANGE`);
