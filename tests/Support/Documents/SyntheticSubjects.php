@@ -20,8 +20,8 @@ use Illuminate\Support\Facades\DB;
  */
 final class SyntheticSubjects implements DocumentSubjectProvider
 {
-    /** The types a module's own provider supplies (QuotationSubjects; FUL's ServiceHandoverSubjects; PUR's PurchaseSubjects). */
-    public const SUPPLIED = ['DOC-01', 'DOC-02', 'DOC-14', 'DOC-04', 'DOC-05', 'DOC-06', 'DOC-07', 'DOC-08', 'DOC-11', 'DOC-12', 'DOC-13'];
+    /** The types a module's own provider supplies (QuotationSubjects; FUL's ServiceHandoverSubjects; PUR's PurchaseSubjects; INV's DispatchSubjects). */
+    public const SUPPLIED = ['DOC-01', 'DOC-02', 'DOC-03', 'DOC-14', 'DOC-04', 'DOC-05', 'DOC-06', 'DOC-07', 'DOC-08', 'DOC-11', 'DOC-12', 'DOC-13'];
 
     private const TABLES = [
         'project_id' => 'projects', 'purchase_id' => 'purchases', 'dispatch_movement_id' => 'stock_movements', 'dropship_confirmation_id' => 'dropship_confirmations',

@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -267,34 +267,58 @@ Dispatch is the single physical subtraction for warehouse fulfilment — deliver
 - Migration: N/A — no migration or import code in this Task
 - Other: FX-03's serial substitution and cross-company scenarios; GAP-003's and GAP-023's evidence recorded; DOC-03's layout compared with its preview (DOCUMENT_PREVIEW_PRODUCER §4) and its sample listed for content validation (GAP-019)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Inventory/DispatchTest.php` — 10, 5, 2 becomes 5, 0, 2, the reservation CONSUMED. Delivery's own subtraction is absent by construction and TASK-045 builds on it.
+- Criterion 2: `DispatchTest` — no reservation, and a partial one, both from AVAILABLE in one action.
+- Criterion 3: `DispatchTest` — the last unit raced in both orders for a quantity product and once for a serialized one, on real sessions: one COMMITTED, one REJECTED C-04, never negative.
+- Criterion 4: `DispatchTest` — racing the reservation's owner and afterwards, the other line takes only what is AVAILABLE.
+- Criterion 5: `DispatchTest` — a serial absent, unusable or at another rack refused; one serial from two commands leaves one success.
+- Criterion 6: `DispatchTest` — 41,667 and 58,333 in sequence and raced, the lot exactly zero.
+- Criterion 7: `DispatchTest` — the one allocated consumption and 72,000; each side's view through `CostFigures`, the other side masked; 4 units left on A's lot.
+- Criterion 8: `DispatchTest`, `tests/Interaction/DispatchTest.php`, `tests/Browser/E2E/dispatch.spec.ts` — no authority and no reason each REJECTED, routed with MSG-14, one event per company, nothing else committed; the grant on the consuming company alone suffices.
+- Criterion 9: `DispatchTest`, the E2E spec — MSG-15 with its match, committed with the reason, a new match refused again.
+- Criterion 10: `DispatchTest` — the condition chosen per unit, the contra, the allocation reversed with it, CONSUMED kept, a new reservation in the same command; the E2E spec.
+- Criterion 11: `DispatchTest` — C-30 by net dispatched − net delivered, C-27 on a second restoration, raced too; the E2E spec.
+- Criterion 12: `DispatchTest` — the partial share and the residual on the zeroing restoration.
+- Criterion 13: `DispatchTest` — serial and lot, onto and off another company's lot, HPP and allocation re-attributed, the line and quantities unchanged, the Surat Jalan naming the unit shipped; a shipped unit not in stock refused; the E2E spec with its proof. An issued Surat Jalan is revised, voided or kept with its reason in the correction's own transaction, `DispatchPagesTest`; a substitution reaching a delivery is TASK-045's to meet (see Notes).
+- Criterion 14: `tests/Feature/INV/DispatchPagesTest.php` — the draft opened, issued only by its own route and replayed once, no delivery and no stock changed, the number from DOC-03's scheme; the facts net of what came back.
+- Criterion 15: `DispatchTest` — ROUTE-175's action in the three timings over the real dispatch, Σ attributed = the corrected cost.
+- Criterion 16: `DispatchTest` — a pending case blocks nothing the guards allow.
+- Criterion 17: `DispatchPagesTest` — a drop-ship or service line not offered and refused at the route; a closed project refused.
+- Criterion 18: `DispatchPagesTest` — the pages and commands by `stock.dispatch`, `stock.reverse` and `stock.reserve`; no cost in any prop.
+- Criterion 19: `tests/Interaction/DispatchTest.php` — ROUTE-186, ROUTE-188 and ROUTE-189 replayed after re-authentication with one effect, a refusal with its current figure, a changed payload CONFLICT; ROUTE-187 replayed in `DispatchPagesTest`.
+- Criterion 20: `StockWorld::ledgerDifferences` and C-28's DQ after each scenario through `clean()` in `DispatchTest`.
+- Criterion 21: `DispatchPagesTest` — a foreign project, line and movement answer like a nonexistent one; another company's lot enters only as an XL-1 allocation.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `stock.dispatch`, `stock.allocate_intercompany`, `stock.reverse`, `stock.reserve`, `documents.issue`, the routed refusal's events (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-023, ROUTE-024, ROUTE-186–ROUTE-189 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-186–INT-189 replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-INV-03, CJ-01, CJ-06, CJ-07, CJ-09 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-12, SM-25 as above and as Notes state of LG-07 (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3580f5c`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41341295797 (push) and 41341300538 (pull request #59), every job PASS in each; TL-15 — PG-023 one statement a group, PG-024 within QB-05's four, the same for one dispatch and several, a dispatch bounded for one lot and three — `tests/Performance/DispatchQueriesTest.php`
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/DispatchTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 3580f5c, CI ubuntu-24.04 run 41341295797, tests/Browser/E2E/dispatch.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-023 and PG-024 in both languages — `tests/Browser/Localization/dispatch.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/Dispatch`, `ReverseDispatch`, `SubstituteDispatchIdentity`, `Data/DispatchEntry`, `Data/DocumentDisposition`, `Data/StockFigures`, `Services/DispatchPosting`, `DispatchRestoration`, `IdentitySubstitution`, `DispatchDocuments`, `DispatchSubjects`, `InventoryPosting`, `Queries/DispatchQueries`, `Http/Controllers/DispatchController`, its README; PRJ's `DemandPosting` and `ProjectFulfilment`; DOC's `EvidenceController`, `DocumentChain`, `ReviseDocument` and the extracted `DocumentRevising`; `resources/js/Pages/INV/`, `features/inv/`, PG-011's link in `Pages/PRJ/Journey.tsx` and `features/prj/fulfilment.tsx`; the routes, navigation and `lang/`; the tests and fixtures; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `bbb6a97`, `dab3936`, `8c50249`, `dbb3e0d`, `3580f5c`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-041-dispatch`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed three heads of pull request #59 and raised two P1s and one P2, all fixed with tests: an issued Surat Jalan left undisposed by a correction, a substitution form blocked without upload authority, and a voided Surat Jalan on a completed project not revalidated; its review of `3580f5c` raised nothing new. ER-06: a fresh read-only review before the pull request found 4 P1 and 10 P2 points, each fixed with its test: a serial restored or substituted against a consumption it had already left; "Terbitkan Surat Jalan" tied to `stock.reverse`; the Surat Jalan printing gross quantities and every serial, now net of what came back, in the dispatch's unit when it divides and otherwise in the base unit; a substitution's AZ-08 not routed; a likely duplicate's dead end on a restoration and hidden behind the confirmation; recorded corrections' answers lost with their dialog; ST-09 absent on AX-10 and AX-35; scans of a line not yet loaded or beyond the list, stale across async scans and never setting the quantity; refusal figures at the raw scale; floating-point sums and invisible validation errors; QB-05 at six statements, now four; ROUTE-189 from PG-011; and the missing tests. Its P3s fixed too: BD-13 on AX-10 keyed by the project line, the `reclassified` quantity in BD-13 and the Surat Jalan's precondition, replay states, MSG-14 for a missing allocation reason as criterion 8 states, the dispatches' keyset continuation, `reservasi`'s scale, the date control, "Kembali" to the origin, MSG-15's labels. **Found while testing and fixed outside this Task's module:** the evidence controller's in-place return accepted finance pages only, so a proof registered from PG-022 (TASK-039) or PG-024 left the page and lost the form's input; it now accepts both, tested. **Named, for Planning:** (1) ROUTE-189 "also from *Rincian proyek*": PG-011's button opens the dispatch records of PG-024, where the correction runs, and shows only to a viewer who may open that page (`stock.dispatch` with `stock.reverse`), since PRJ reads nothing of INV (ARCHITECTURE §3); (2) LG-07's signal on repeated single-unit allocations and allocations reversed soon after: this Task records what it reads — `allocated` and `allocation_reversed` on the audit event, its ADM_PLUS class —; the signal's delivery is TASK-075's (H9-10), BLOCKED on OPI-05; (3) a non-serialized substitution returns its units to the consumption's first rack, a physical difference corrected by TASK-042's location move; (4) the correction dialogs enter a restoration in the base unit, the service also taking the dispatch line's unit at its snapshot (L-31), tested; (5) PG-022 still registers its proofs only through IP-16's sheet, while PG-024's substitution also picks from what is registered; (6) ROUTE-187 is ROUTE-182's document issue on the Surat Jalan's own address, with no INV action of its own; (7) a restoration always asks the issued Surat Jalan's fate, a substitution only for a serial, since the paper names serials and not lots; a delivery and its documents following a substituted identity is TASK-045's (architecture challenge 3c); (8) a revision or a void needs `documents.correct` beside `stock.reverse`, keeping with a reason does not. **Verification:** the PHP dispatch layers, Localization, BootTest, PHPStan on INV and PRJ's queries, Pint, TypeScript, ESLint and the build ran locally; the full Architecture suite and the browser layers rest on CI, as the machine fell to about 200 MB free, single requests took 13–44 s and one reached PHP's 30 s limit, so local E2E failed on time and not on flow; Docker was not restarted (DIR-105). Three real defects in the tests themselves were fixed on the way: the plain account was a factory user (`users_email_lower_unique`), now the signed-in account; a filter on the company's code instead of the marker; a test helper unavailable inside a parallel session; `SyntheticSubjects` still claiming DOC-03 once INV supplied it; `date()` in UTC where the business date had already turned. Context7 and Graphify not used: a targeted search of INV, CST and the specifications.
 
 **SAFE NEXT TASK:**
 

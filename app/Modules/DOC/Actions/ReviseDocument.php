@@ -4,16 +4,10 @@ namespace App\Modules\DOC\Actions;
 
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\DOC\Models\Document;
-use App\Modules\DOC\Models\DocumentVersion;
 use App\Modules\DOC\Services\DocumentAccess;
 use App\Modules\DOC\Services\DocumentChain;
+use App\Modules\DOC\Services\DocumentRevising;
 use App\Modules\DOC\Services\DocumentSubjects;
-use App\Support\Audit\AuditChange;
-use App\Support\Audit\AuditLinkage;
-use App\Support\Audit\AuditRecorder;
-use App\Support\Audit\AuditRelation;
-use App\Support\Audit\AuthorityClass;
-use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -36,9 +30,9 @@ final class ReviseDocument
 
     public function __construct(
         private readonly CommandEnvelope $envelope,
-        private readonly AuditRecorder $audit,
         private readonly DocumentSubjects $subjects,
         private readonly DocumentChain $chain,
+        private readonly DocumentRevising $revising,
     ) {}
 
     /** @param  ?string  $versionId  the issued version the page showed and the actor confirmed to revise (ST-02) */
@@ -74,36 +68,7 @@ final class ReviseDocument
                 throw Refused::conflict('ST-02', ['state' => 'DRAFT']);
             }
 
-            $now = $context->now();
-            $draft = new DocumentVersion;
-            $draft->forceFill([
-                'document_id' => $document->id,
-                'company_id' => $document->company_id,
-                'document_type_code' => $document->document_type_code,
-                'version_no' => DocumentChain::nextVersionNo($document->id),
-                'state' => 'DRAFT',
-                'business_date' => BusinessDate::of($now),
-                'kuitansi_amount' => $issued->kuitansi_amount,
-                'company_bank_account_id' => $issued->company_bank_account_id,
-                'supersedes_version_id' => $issued->id,
-                'recorded_at' => $now,
-                'recorded_by' => $context->request->actorUserId,
-            ])->save();
-
-            $this->audit->record(
-                action: 'DOC.DocumentRevisionDrafted',
-                authorityClass: AuthorityClass::AdmPlus,
-                actorUserId: $context->request->actorUserId,
-                companyId: $document->company_id,
-                entityType: 'document_version',
-                entityId: $draft->id,
-                entityPublicId: $draft->public_id,
-                reason: trim($reason),
-                commandId: $context->request->commandId,
-                change: AuditChange::created(['version_no' => $draft->version_no, 'supersedes' => $issued->formatted_number]),
-                linkage: AuditLinkage::make()->link(AuditRelation::Revises, 'document_version', $issued->public_id),
-                metadata: ['document_type' => $document->document_type_code, 'version_no' => $draft->version_no],
-            );
+            $this->revising->draft($context, $document, $issued, $reason);
 
             return new CommandResult('document', $document->id);
         });

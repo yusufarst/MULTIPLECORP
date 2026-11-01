@@ -34,4 +34,16 @@ final class StockFigures
     {
         return self::plain((string) BigDecimal::of($base)->dividedBy($ratio, 3, RoundingMode::Down));
     }
+
+    /** The first figure less the others, plain (PT-17). */
+    public static function remainder(string $from, string ...$less): string
+    {
+        $left = BigDecimal::of($from);
+
+        foreach ($less as $part) {
+            $left = $left->minus($part);
+        }
+
+        return self::plain((string) $left);
+    }
 }

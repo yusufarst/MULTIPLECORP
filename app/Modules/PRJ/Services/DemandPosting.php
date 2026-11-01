@@ -45,6 +45,20 @@ final class DemandPosting
     }
 
     /**
+     * A dispatch's or a restoration's line guard in one statement (GU-01): the net dispatched with the reserved part it consumed.
+     */
+    public function dispatched(CommandContext $context, int $lineId, string $dispatched, string $reserved = '0'): void
+    {
+        $deltas = ['dispatched_net_qty_base' => $dispatched];
+
+        if (! BigDecimal::of($reserved)->isZero()) {
+            $deltas['reserved_qty_base'] = $reserved;
+        }
+
+        GuardUpdate::apply($context->connection, 'project_line_balances', [['key' => ['project_line_id' => $lineId], 'deltas' => $deltas]]);
+    }
+
+    /**
      * The service lines' handed-over quantities moved by their net deltas (L-39; C-30).
      *
      * @param  array<int, string>  $deltas  project line => signed base quantity

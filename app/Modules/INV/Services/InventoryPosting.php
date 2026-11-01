@@ -257,6 +257,20 @@ final class InventoryPosting
      */
     public function consume(CommandContext $context, int $lineId, string $qty, int $dispatchLineId): string
     {
+        $take = $this->consumeHeld($context, $lineId, $qty, $dispatchLineId);
+
+        if (BigDecimal::of($take)->isPositive()) {
+            $this->demand->reserved($context, [$lineId => '-'.$take]);
+        }
+
+        return $take;
+    }
+
+    /**
+     * The line's own reservation lowered by what the dispatch takes, with its CONSUME event; the quantity for the caller's one statement on each guard (GU-01).
+     */
+    public function consumeHeld(CommandContext $context, int $lineId, string $qty, int $dispatchLineId): string
+    {
         $context->require(self::lineLocks($lineId));
         $active = DB::table('reservations')->where('project_line_id', $lineId)->where('state', 'ACTIVE')->value('id');
 
@@ -272,7 +286,6 @@ final class InventoryPosting
         }
 
         $this->lower($context, $reservation, (string) $take, 'CONSUME', null, $dispatchLineId, null);
-        $this->demand->reserved($context, [$lineId => '-'.$take]);
 
         return (string) $take;
     }

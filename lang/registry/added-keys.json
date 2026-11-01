@@ -14694,6 +14694,420 @@
             "source": "AZ-08; SQ-23",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "dispatch.list.empty": {
+            "task": "TASK-041",
+            "source": "NAV-023; PT-19",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.list.no_lines": {
+            "task": "TASK-041",
+            "source": "NAV-024",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.title": {
+            "task": "TASK-041",
+            "source": "SCR-22",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.reserved": {
+            "task": "TASK-041",
+            "source": "CALC-02",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.quantity": {
+            "task": "TASK-041",
+            "source": "ROUTE-186",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.unit": {
+            "task": "TASK-041",
+            "source": "ROUTE-186",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.lots": {
+            "task": "TASK-041",
+            "source": "J-INV-03; L-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.serials": {
+            "task": "TASK-041",
+            "source": "J-INV-03; L-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.field.take": {
+            "task": "TASK-041",
+            "source": "J-INV-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.line.figures": {
+            "task": "TASK-041",
+            "source": "PX-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.line.no_stock": {
+            "task": "TASK-041",
+            "source": "REF-024",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.confirm.consequence": {
+            "task": "TASK-041",
+            "source": "IP-08; MSG-39",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.answer.dispatched": {
+            "task": "TASK-041",
+            "source": "INT-186",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.answer.reversed": {
+            "task": "TASK-041",
+            "source": "INT-188",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.answer.substituted": {
+            "task": "TASK-041",
+            "source": "INT-189",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.unconfirmed": {
+            "task": "TASK-041",
+            "source": "PX-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.above_remainder": {
+            "task": "TASK-041",
+            "source": "PX-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.supply": {
+            "task": "TASK-041",
+            "source": "C-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.picks": {
+            "task": "TASK-041",
+            "source": "L-13",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.lot_short": {
+            "task": "TASK-041",
+            "source": "C-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.serial": {
+            "task": "TASK-041",
+            "source": "C-02; BR-INV-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.same_product": {
+            "task": "TASK-041",
+            "source": "C-07; AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.above_open": {
+            "task": "TASK-041",
+            "source": "C-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.above_undelivered": {
+            "task": "TASK-041",
+            "source": "PX-08; C-30",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.project_state": {
+            "task": "TASK-041",
+            "source": "L-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.not_warehouse": {
+            "task": "TASK-041",
+            "source": "BR-INV-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.line.more": {
+            "task": "TASK-041",
+            "source": "PF-13; IP-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.line.find": {
+            "task": "TASK-041",
+            "source": "PF-13; IP-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.line.find_action": {
+            "task": "TASK-041",
+            "source": "PF-13; IP-15",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.issued": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.choice": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.KEEP": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.REVISE": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.VOID": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.reason": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.records.note": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.document_disposition": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.document_authority": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.existing_evidence": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.evidence_uploaded": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.find_evidence": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.find_evidence_help": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.records.title": {
+            "task": "TASK-041",
+            "source": "D-IA-16",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.records.done": {
+            "task": "TASK-041",
+            "source": "NAV-024",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.cancel": {
+            "task": "TASK-041",
+            "source": "CM-05; TASK-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.returned": {
+            "task": "TASK-041",
+            "source": "CM-06; TASK-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.consequence": {
+            "task": "TASK-041",
+            "source": "SF-RESTORE; L-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.undelivered": {
+            "task": "TASK-041",
+            "source": "PX-08",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.quantity": {
+            "task": "TASK-041",
+            "source": "L-31",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.reserve": {
+            "task": "TASK-041",
+            "source": "CM-05; AX-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.reverse.reserve_help": {
+            "task": "TASK-041",
+            "source": "CM-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.action": {
+            "task": "TASK-041",
+            "source": "CM-36; TASK-041",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.consequence": {
+            "task": "TASK-041",
+            "source": "ADMIN_FLOW §11; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.recorded": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.recorded_serial": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.shipped_serial": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.shipped_lot": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.choose": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.evidence": {
+            "task": "TASK-041",
+            "source": "CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.evidence_needed": {
+            "task": "TASK-041",
+            "source": "CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.evidence_ready": {
+            "task": "TASK-041",
+            "source": "CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.scan.serial_absent": {
+            "task": "TASK-041",
+            "source": "C-02; UXS-34",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.scan.not_on_project": {
+            "task": "TASK-041",
+            "source": "UXS-34",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.GoodsDispatched": {
+            "task": "TASK-041",
+            "source": "AX-03",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.GoodsDispatchDuplicateConfirmed": {
+            "task": "TASK-041",
+            "source": "L-49; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.AllocationRouted": {
+            "task": "TASK-041",
+            "source": "AZ-08; SQ-23",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.DispatchReversed": {
+            "task": "TASK-041",
+            "source": "AX-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.DispatchReversalDuplicateConfirmed": {
+            "task": "TASK-041",
+            "source": "L-49; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.DispatchIdentitySubstituted": {
+            "task": "TASK-041",
+            "source": "AX-35",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

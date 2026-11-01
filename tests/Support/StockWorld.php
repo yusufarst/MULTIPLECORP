@@ -192,9 +192,24 @@ final class StockWorld
                 SQL),
             ...DB::select(<<<'SQL'
                 select 'consumption' as guard, b.stock_consumption_id from stock_consumption_balances b
-                where b.stock_consumption_id is not null and b.restored_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind = 'LOSS_REVERSAL'), 0)
+                where b.stock_consumption_id is not null and (b.restored_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind <> 'SUBSTITUTION'), 0) or b.substituted_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind = 'SUBSTITUTION'), 0))
                 SQL),
         ];
+    }
+
+    /** An opening lot with its basis through the ledger, every guard moved (AX-28); the lot. */
+    public static function opening(int $actor, Company $company, int $product, int $rack, string $qty, string $cost): int
+    {
+        $lot = 0;
+        self::post($actor, $company, $product, $rack, new LockSet, function (CommandContext $context) use ($company, $product, $rack, $qty, $cost, &$lot): void {
+            $movement = StockMovementFactory::post('OPENING', $company->id);
+            $row = InventoryLot::factory()->create(['acquisition_kind' => 'OPENING', 'source_company_id' => $company->id, 'product_id' => $product, 'quantity_scale' => 0, 'entered_qty' => $qty, 'acquired_qty_base' => $qty, 'business_date' => BusinessDate::today()]);
+            $lot = $row->id;
+            app(CostPosting::class)->basis($context, $lot, 'OPENING_COST', Money::of($cost), BusinessDate::today(), ['import_row_id' => (int) $row->import_row_id]);
+            app(InventoryPosting::class)->ledger($context, $movement, 'OPENING', [['lot' => $lot, 'product' => $product, 'scale' => 0, 'location' => $rack, 'condition' => 'USABLE', 'qty' => $qty]]);
+        });
+
+        return $lot;
     }
 
     /** A surplus attributed to the company: a flagged lot with its basis, its finding ATTRIBUTED (AX-07); the movement. */
