@@ -737,3 +737,9 @@ This is a change summary; current state and approval authority live in their [ow
 - Change 4 merged by the Owner as `be53504` (pull request #50); Change 15 squash-merged as `a91782f` (pull request #51), recording the Owner's decisions (DIR-101, APPR-027); TASK-052 started.
 - Built TASK-052 on its branch `task/TASK-052-settlements`: `FIN RecordDeductionSettlement` (AX-21), `RecordContra` and `ResolveResidualSettlement` (AX-33) with their refusals, a settlement's expense moving once, FIN's part of an evidence replacement (L-41), PG-047 *Potongan*, and the reconciliation of the collected tax and a document's cited and expensed amounts.
 - Every check passed in fresh CI on `7692674`. TASK-052 DONE — progress 44 / 87 —; TASK-037 READY next.
+
+## Unreleased — 2026-11-01, TASK-037 — Purchases
+
+- Built TASK-037 on its branch `task/TASK-037-purchases`: purchases with their lines, tax components and charges (ROUTE-171), the amendment before the first effect, cancellation, remainder closure, cost and basis correction, the late charge and the performed mark (ROUTE-172–ROUTE-175, ROUTE-178–ROUTE-180), PG-015–PG-017, the PO and Surat Pesanan subjects, predicate 8's purchase part and PG-011's *Pengadaan*.
+- Every provider of a completion predicate is now merged, not overwritten. GAP-072 raised: ROUTE-169 names no remainder closure.
+- Every check passed in fresh CI on `2a0043e`. TASK-037 DONE — progress 45 / 87 —; TASK-039 and TASK-046 READY next.

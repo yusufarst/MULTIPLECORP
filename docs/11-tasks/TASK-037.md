@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -279,34 +279,58 @@ CAP-05 and AC-05 require purchases with actual supplier, quantities, prices, tax
 - Other: FX-03's duplicate bills and remainder closure and FX-04's price and charge correction between partial receipts, run again end to end with TASK-039; DOC-02's layout compared with its preview (DOCUMENT_PREVIEW_PRODUCER §4) and its sample listed for the Owner's content validation (GAP-019)
 - The Owner's required verification (DIR-101): F1 — ROUTE-180's mark and its taking back with each capability, "Batalkan Pembelian" refused for a performed line and for a paid one and allowed after an unpaid line's mark is taken back, no cost posted by the mark.
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PUR/PurchasesTest.php` — an OPEN purchase with its number, lines and charges, no disbursement, movement, lot or reservation, the answer saying so; `tests/Browser/E2E/purchases.spec.ts` shows it on the page.
+- Criterion 2: `PurchasesTest` — C-10 with MSG-17 and nothing committed; `tests/Integration/Purchasing/PurchaseRacesTest.php` — concurrent saves on real sessions draw numbers 1 and 2 (M-15).
+- Criterion 3: `PurchasesTest` and the E2E spec — two suppliers on one demand line, the demand unchanged, no document needed.
+- Criterion 4: `PurchasesTest` — a foreign project, demand line and bill answered at their fields alike; `tests/Authorization/PurchasesAccessTest.php` — a foreign purchase 404 on every route.
+- Criterion 5: `PurchasesTest` — goods only, a non-attributable charge a company expense, a deactivated company and an archived supplier refused.
+- Criterion 6: `PurchasesTest` — annex 14's shares of 25,000 and 75,000, the fee an expense only, above the bill C-20 with the figure left; `PurchaseRacesTest` — two saves citing one bill (BD-17); `tests/Unit/PUR/PurchaseValuesTest.php`.
+- Criterion 7: `PurchasesTest` and `PurchaseValuesTest` — each component under its treatment, only the non-creditable part on the guard, no rule refused.
+- Criterion 8: `PurchasesTest` — attributed at the save, lowered only by CM-17 with its value and posted figure moving together.
+- Criterion 9: `PurchasesTest` — a project and a goods line required. Never offered for receiving is TASK-039's.
+- Criterion 10: `PurchasesTest` and `tests/Interaction/PurchasesTest.php` — amended in place, the stale form CONFLICT ST-01, L-23 after a receipt, taxed lines with an added line and two charges re-spread; the supplementary purchase opening on its origin's company and supplier.
+- Criterion 11: `PurchasesTest` — CANCELLED with its number and reason, non-stock HPP contra'd, charges expensed, the issued PO VOIDED, nothing more issued from it; with a receipt C-29.
+- Criterion 12: `PurchaseRacesTest` — a closure and a receipt racing both ways, a cancellation winning over a receipt, never beyond the ordered quantity; a cancellation after a partial closure closes to the ordered quantity.
+- Criterion 13: `PurchasesTest` — ordered 100, 60 received, 41 refused, 40 closed, the pending share on the lot, allocated = the charge, the header *Sisa Ditutup*.
+- Criterion 14: `PurchasesTest` — the lots, consumptions and projects listed first, Σ attributed = the corrected cost, the bill's cap, before any receipt the edit instead; `PurchaseRacesTest` sequentially, and M-07's three timings stand in TASK-036's `tests/Integration/Costing/CostingRacesTest.php`.
+- Criterion 15: `PurchasesTest`, `PurchasesAccessTest` and the E2E spec — the previous price and date per company with `cost.view`, no score, rank or choice.
+- Criterion 16: `PurchasesAccessTest` — each capability apart, its control absent and its route refused, *Pengadaan* absent without `cost.view`, bills only with `evidence.view`.
+- Criterion 17: `PurchasesTest` — two layouts of one record, the supplier its recipient, no stock or cash; the E2E spec opens PG-036 from "Terbitkan PO".
+- Criterion 18: `tests/Interaction/PurchasesTest.php` — ROUTE-171–ROUTE-175 and ROUTE-178–ROUTE-180 replayed, a changed payload CONFLICT.
+- Criterion 19: the E2E spec — the disabled save with its reason, thirty lines by keyboard on Chromium and WebKit.
+- Criterion 20: `PurchasesTest` — a late charge with its LATE_CHARGE draws, one with nothing received and nothing open expensed, CM-35 from its own route; F1 below; `PurchaseRacesTest` — a late charge holding a lot a receipt created while it waited.
+- DIR-101 F1: `PurchasesTest` — the mark and its taking back each under its own capability, no cost posted and no first effect, "Batalkan Pembelian" refused for a performed line and for a paid one, allowed once an unpaid line's mark is taken back; the E2E spec walks it.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit, the tax treatment and basis values (TL-03); Feature, the routes with each refusal (TL-04); Integration on real PostgreSQL sessions, M-15, C-20, M-36 both ways, AX-12 and a late charge against a receipt (TL-05); PASS in CI
+- [x] Authorization: each capability separately granted, `cost.view` as prerequisite, SM-01, SM-25, PJ-08, PJ-09 (TL-06; SM-04) PASS in CI
+- [x] Route integrity: ROUTE-015–ROUTE-017, ROUTE-171–ROUTE-175, ROUTE-178–ROUTE-180 audited (TL-07; SM-02) PASS in CI
+- [x] Interaction behavior: INT-171–INT-175, INT-178–INT-180 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-PUR-01, J-PUR-02, CJ-02, CJ-01's purchase step, UXS-35's thirty lines, F1 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: PG-015–PG-017 at 320, 390, 768 and 1,280 px (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: one expand-only column, `purchase_lines.performed_at`, with its CHECK, grant and the trigger's exception (DIR-101); production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and the corrections named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `2a0043e`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41253564238 (push) and 41253568511 (pull request #53), the three jobs PASS in each; TL-15 — PG-015 and PG-016 the same statements for one row and a full page, ROUTE-171's ten lines, ROUTE-174 and ROUTE-175 bounded — `tests/Performance/PurchaseQueriesTest.php`
+- Build result: TL-13 PASS in the same runs
+- Route evidence: the routes in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/PurchasesTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 2a0043e, CI ubuntu-24.04 run 41253564238, tests/Browser/E2E/purchases.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-015–PG-017 in both languages, DOC-02's paper Indonesian — `tests/Browser/Localization/purchases.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: PUR's `Actions/`, `Services/`, `Queries/`, `Data/`, `Http/Controllers/PurchasesController`, its README; the migration; CST's `CostPosting`; PRJ's `ProjectPartProvider`, `ProjectWorkspace`, `ProjectJourneys`, `ProjectsController`; `app/Support/Command/CommandContext.php`; `resources/js/Pages/PUR/`, `features/pur/`, `Pages/PRJ/Journey.tsx`, `components/parties.tsx`; the provider, routes, navigation and `lang/`; `phpunit.xml`; the tests and fixtures; GAP_REGISTER; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `66a16c9`, `bf968ad`, `c0c8e85`, `6fc0779`, `b8c10a3`, `cd078d4`, `2a0043e`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-037-purchases`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `c0c8e85` within the policy's ten minutes and raised two P1s, both fixed in `6fc0779` with their tests and their threads answered: supplier bills projected to a holder without `evidence.view` (PJ-08), and an amount correction reverting a corrected allocation basis. Its review completed on that commit; the later commits are the fixes CI's first runs asked for. ER-06: a fresh read-only review before the pull request found 2 P1, 9 P2 and 8 P3 points. Fixed: PUR's predicate overwriting INV's reservations (`ProjectJourneys` now merges every provider of a predicate); a late charge posting on a lot it did not hold (`CommandContext::created` now only for a command's own rows, the set required whole first); a weighted charge's amount correction refused; an expensed charge's correction answering 500; taxed lines colliding in an amendment; a cancellation voiding a document it did not hold; the cancellation offered and refused after a partial closure; a supplementary purchase opening on the wrong company; the audit events losing their old figures; the cascade's list incomplete; and the tests they lacked. Left, each for the Owner or Planning: GAP-072 — ROUTE-169 names no remainder closure, so `PUR SupersedeRemainderClosure` is built and tested but no control reaches it (RC-06); an expensed charge's amount is refused on PG-016, its correction being the expense's in TASK-054; a paid goods-only purchase can be cancelled, following AX-12's "paid non-stock line" and DIR-101, while CM-18 and criterion 11 read "nothing paid" without that qualifier; `line_value` and `unit_price` keep their saved figures after a price correction and LINE_VALUE shares, the PO and SH-01 read them, DATABASE not stating otherwise. Known small limits: the disabled save uses the repository's native `disabled`, so a keyboard user does not reach its reason on the button, though it stands beside it; a replay re-resolves its references first, so a unit deactivated since the save answers validation rather than the recorded outcome. Executor readings: CLOSED is set when a closure leaves no goods line open and undone by the closure's supersession, as *Sisa Ditutup* says; a corrected basis is read from the latest version's values, `purchase_charges` being append-only (`PurchaseRecords::effectiveBasis`). `lineCorrected` takes the corrected value, because a lowered value could not stand beside its old posted figure (C-57). `phpunit.xml`'s memory limit rose from 512M to 768M: the architecture suite reads every class and crossed it in one worker, each of its tests passing alone. `usePartySearch` no longer searches when a field resynchronizes to a row just chosen; the keyboard spec failed at line 30, consistent with WS-12's 60 a minute at two searches a line, and passes since. DOC-02's and DOC-14's papers use TASK-029's one template per layout, the composer and the renderer reading it, tested in `tests/Unit/DOC/DocumentPaperTest.php`; their samples are listed for the Owner's content validation (GAP-019; TASK-086). FX-03's and FX-04's end-to-end run stays with TASK-039, receipts here being synthetic. Context7 and Graphify OPTIONAL and not used: a targeted search of PUR, CST and DOC.
 
 **SAFE NEXT TASK:**
 

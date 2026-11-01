@@ -36,6 +36,7 @@ use App\Modules\PRJ\Http\Controllers\ProjectsController;
 use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
 use App\Modules\PTY\Http\Controllers\SuppliersController;
+use App\Modules\PUR\Http\Controllers\PurchasesController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -162,6 +163,19 @@ Route::post('/keuangan/kuitansi/{id}/tautkan', [InvoicesController::class, 'link
 // TASK-051 — PG-045 *Pembayaran*, PG-046 *Catat Pembayaran* and PG-050 *Mutasi Bank* (WF-FIN-03; AX-18–AX-20; NX-08): ROUTE-045 `finance.view`, ROUTE-046 and ROUTE-251 `payment.record`, ROUTE-252 `payment.apply` — its `{id}` a payment or,
 // for PG-048, an opening credit's handle —, ROUTE-253 `payment.reallocate`, ROUTE-254 `finance.contra`, ROUTE-050 and ROUTE-261 `bank_statement.record`, ROUTE-262 `cash.correct`, its `{id}` what its action corrects.
 Route::get('/keuangan/pembayaran', [PaymentsController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.payments');
+// PG-015–PG-017 and their commands (TASK-037): "/pembelian/baru" before "/pembelian/{id}".
+Route::get('/pembelian', [PurchasesController::class, 'index'])->middleware(['auth', 'capability:cost.view'])->name('pur.purchases');
+Route::get('/pembelian/baru', [PurchasesController::class, 'create'])->middleware(['auth', 'capability:purchase.manage'])->name('pur.purchases.create');
+Route::post('/pembelian', [PurchasesController::class, 'store'])->middleware(['auth', 'capability:purchase.manage'])->name('pur.purchases.store');
+Route::get('/pembelian/{id}', [PurchasesController::class, 'show'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:cost.view'])->name('pur.purchases.show');
+Route::put('/pembelian/{id}', [PurchasesController::class, 'amend'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.manage'])->name('pur.purchases.amend');
+Route::post('/pembelian/{id}/batalkan', [PurchasesController::class, 'cancel'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.cancel'])->name('pur.purchases.cancel');
+Route::post('/pembelian/{id}/tutup-sisa', [PurchasesController::class, 'close'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.close_remainder'])->name('pur.purchases.close');
+Route::post('/pembelian/{id}/koreksi-biaya', [PurchasesController::class, 'correct'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.correct_cost'])->name('pur.purchases.correct');
+Route::post('/pembelian/{id}/koreksi-dasar-alokasi', [PurchasesController::class, 'correctBasis'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.correct_cost'])->name('pur.purchases.correct_basis');
+Route::post('/pembelian/{id}/biaya', [PurchasesController::class, 'charge'])->where('id', '[0-9a-fA-F-]{36}')->middleware(['auth', 'capability:purchase.manage'])->name('pur.purchases.charge');
+// ROUTE-180 asks one of two capabilities by what it does, each with `cost.view` as its prerequisite: the action decides under the one it needs (AZ-01).
+Route::post('/pembelian/{id}/baris/{line}/terlaksana', [PurchasesController::class, 'mark'])->where(['id' => '[0-9a-fA-F-]{36}', 'line' => '[0-9a-f]{32}'])->middleware(['auth', 'capability:cost.view'])->name('pur.purchases.mark');
 Route::get('/keuangan/pembayaran/baru', [PaymentsController::class, 'create'])->middleware(['auth', 'capability:payment.record'])->name('fin.payments.create');
 Route::post('/keuangan/pembayaran', [PaymentsController::class, 'record'])->middleware(['auth', 'capability:payment.record'])->name('fin.payments.record');
 Route::post('/keuangan/pembayaran/{id}/terapkan', [PaymentsController::class, 'apply'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:payment.apply'])->name('fin.payments.apply');
