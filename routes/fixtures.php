@@ -21,6 +21,7 @@ use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\DispatchFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ShellFixture;
@@ -133,6 +134,10 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/stock', [StockFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/stock/pending', [StockFixture::class, 'pending'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/stock/grant', [StockFixture::class, 'grant'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-041): DOC-03's numbering; a Company-A-only Admin without the inter-company authority.
+    Route::post('__fixtures/dispatch', [DispatchFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-061): a page and more of the run's company's audit events, one without a company, the security events a notice opens.
     Route::post('__fixtures/log', [LogsFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
