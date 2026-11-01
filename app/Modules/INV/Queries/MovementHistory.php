@@ -108,12 +108,12 @@ final class MovementHistory
 
         $union->orderBy('business_date', $direction)->orderBy('movement_id', $direction)->orderBy('entry_id', $direction)->limit($limit + 1);
 
-        return DB::query()->fromSub($union, 't')->join('stock_movement_entries as e', 'e.id', '=', 't.entry_id')->join('stock_movements as m', 'm.id', '=', 't.movement_id')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')
+        return array_values(DB::query()->fromSub($union, 't')->join('stock_movement_entries as e', 'e.id', '=', 't.entry_id')->join('stock_movements as m', 'm.id', '=', 't.movement_id')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')
             ->join('locations as l', 'l.id', '=', 'e.location_id')->leftJoin('inventory_lots as i', 'i.id', '=', 'e.lot_id')->leftJoin('serial_units as s', 's.id', '=', 'e.serial_unit_id')->leftJoin('users as a', 'a.id', '=', 'm.recorded_by')
             ->leftJoin('companies as c', 'c.id', '=', 'm.company_id')->leftJoin('projects as pr', 'pr.id', '=', 'm.project_id')->leftJoin('purchases as x', 'x.id', '=', 'm.purchase_id')->leftJoin('stock_movements as o', 'o.id', '=', 'm.reverses_movement_id')
             ->orderBy('t.business_date', $direction)->orderBy('t.movement_id', $direction)->orderBy('t.entry_id', $direction)
             ->select(['t.entry_id', 't.movement_id', 't.business_date', 'm.public_id', 'e.movement_type', 'm.reason', 'm.company_id', 'm.supplier_delivery_reference', 'e.qty_delta_base', 'e.condition', 'e.lot_id', 'i.lot_code', 'i.receiving_line_id', 's.serial_number', 'l.code as rack', 'p.public_id as product', 'p.name as product_name', 'u.code as unit', 'a.name as actor', 'c.code as company_code', 'pr.public_id as project', 'pr.project_number', 'x.public_id as purchase', 'x.purchase_number', 'o.public_id as corrects', 'o.movement_type as corrects_type', 'o.business_date as corrects_date'])
-            ->get()->all();
+            ->get()->all());
     }
 
     /**
@@ -143,8 +143,8 @@ final class MovementHistory
     private static function rows(Authority $viewer, array $page): array
     {
         $ids = array_values(array_unique(array_map(fn (object $row): int => (int) Row::text($row, 'movement_id'), $page)));
-        $corrected = self::correctedBy($ids);
-        $restoring = self::restoring($ids);
+        [$corrected, $restoring] = self::links($ids);
+        $open = self::stillReversible($ids);
         $seen = [];
         $rows = [];
 
@@ -166,7 +166,7 @@ final class MovementHistory
                 'purchase' => $companyId !== null && Row::nullable($row, 'purchase') !== null && $viewer->allows('cost.view', $companyId) ? ['label' => Row::text($row, 'purchase_number'), 'href' => '/pembelian/'.Row::text($row, 'purchase')] : null,
                 'reference' => $companyId !== null && ($viewer->allows('projects.view', $companyId) || $viewer->allows('stock.receive', $companyId)) ? Row::nullable($row, 'supplier_delivery_reference') : null,
                 'corrected_by' => $corrected[$movement] ?? null, 'corrects' => $corrects === null ? ($restoring[$movement] ?? null) : self::link($corrects, Row::text($row, 'corrects_type'), Row::text($row, 'corrects_date')),
-                'reversible' => $firstOfMovement && $mayReverse && MovementReversal::reversible($type) && ! isset($corrected[$movement]) && ($type !== 'SURPLUS_ATTRIBUTION' || $viewer->ownerRole),
+                'reversible' => $firstOfMovement && $mayReverse && MovementReversal::reversible($type) && isset($open[$movement]) && ($type !== 'SURPLUS_ATTRIBUTION' || $viewer->ownerRole),
                 'receipt' => $firstOfMovement && $type === 'RECEIPT' && $mayReverse && Row::nullable($row, 'receiving_line_id') !== null ? RowHandle::of('receiving_lines', (int) Row::text($row, 'receiving_line_id')) : null,
             ];
         }
@@ -181,35 +181,73 @@ final class MovementHistory
     }
 
     /**
-     * The page's movements' reversals: a MOVEMENT_REVERSAL or RECEIPT_REVERSAL naming each, or the restorations of its consumptions ("Dikoreksi oleh").
+     * The page's movements' links in one statement: what corrects each — a MOVEMENT_REVERSAL or RECEIPT_REVERSAL naming it, or the restorations of its consumptions ("Dikoreksi oleh") — and what a restoration movement corrects, through its consumptions ("Mengoreksi").
      *
      * @param  list<int>  $ids
-     * @return array<int, array{movement: string, type: string, date: string, href: string}>
+     * @return array{array<int, array{movement: string, type: string, date: string, href: string}>, array<int, array{movement: string, type: string, date: string, href: string}>}
      */
-    private static function correctedBy(array $ids): array
+    private static function links(array $ids): array
     {
-        $found = [];
+        $corrected = [];
+        $restoring = [];
 
-        foreach ($ids === [] ? [] : DB::table('stock_movements')->whereIn('reverses_movement_id', $ids)->select(['reverses_movement_id as original', 'public_id', 'movement_type', 'business_date'])
-            ->unionAll(DB::table('stock_consumptions as c')->join('stock_restorations as r', 'r.stock_consumption_id', '=', 'c.id')->join('stock_movements as m', 'm.id', '=', 'r.stock_movement_id')->whereIn('c.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->select(['c.stock_movement_id as original', 'm.public_id', 'm.movement_type', 'm.business_date']))->get() as $row) {
-            $found[(int) Row::text($row, 'original')] = self::link(Row::text($row, 'public_id'), Row::text($row, 'movement_type'), Row::text($row, 'business_date'));
+        if ($ids === []) {
+            return [$corrected, $restoring];
         }
 
-        return $found;
+        $found = DB::table('stock_movements')->whereIn('reverses_movement_id', $ids)->selectRaw("'by' as side, reverses_movement_id as owner, public_id, movement_type, business_date")
+            ->unionAll(DB::table('stock_consumptions as c')->join('stock_restorations as r', 'r.stock_consumption_id', '=', 'c.id')->join('stock_movements as m', 'm.id', '=', 'r.stock_movement_id')->whereIn('c.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->selectRaw("'by' as side, c.stock_movement_id as owner, m.public_id, m.movement_type, m.business_date"))
+            ->unionAll(DB::table('stock_restorations as r')->join('stock_consumptions as c', 'c.id', '=', 'r.stock_consumption_id')->join('stock_movements as m', 'm.id', '=', 'c.stock_movement_id')->whereIn('r.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->selectRaw("'of' as side, r.stock_movement_id as owner, m.public_id, m.movement_type, m.business_date"))
+            ->get();
+
+        foreach ($found as $row) {
+            $link = self::link(Row::text($row, 'public_id'), Row::text($row, 'movement_type'), Row::text($row, 'business_date'));
+
+            if (Row::text($row, 'side') === 'by') {
+                $corrected[(int) Row::text($row, 'owner')] = $link;
+            } else {
+                $restoring[(int) Row::text($row, 'owner')] = $link;
+            }
+        }
+
+        return [$corrected, $restoring];
     }
 
     /**
-     * A restoration movement's original, through its consumptions ("Mengoreksi").
+     * The page's movements with something still to reverse, as ROUTE-212 would cap it (C-55; DATABASE §5.3; §5.8): a lot key above its reversal guard; lot-less entries each above what they have given back with their case's counter open; a consumption not yet wholly restored. A later correction can reopen a case, so a reversal alone never ends it.
      *
      * @param  list<int>  $ids
-     * @return array<int, array{movement: string, type: string, date: string, href: string}>
+     * @return array<int, true>
      */
-    private static function restoring(array $ids): array
+    private static function stillReversible(array $ids): array
     {
+        if ($ids === []) {
+            return [];
+        }
+
+        $in = implode(', ', array_fill(0, count($ids), '?'));
         $found = [];
 
-        foreach ($ids === [] ? [] : DB::table('stock_restorations as r')->join('stock_consumptions as c', 'c.id', '=', 'r.stock_consumption_id')->join('stock_movements as m', 'm.id', '=', 'c.stock_movement_id')->whereIn('r.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->get(['r.stock_movement_id', 'm.public_id', 'm.movement_type', 'm.business_date']) as $row) {
-            $found[(int) Row::text($row, 'stock_movement_id')] = self::link(Row::text($row, 'public_id'), Row::text($row, 'movement_type'), Row::text($row, 'business_date'));
+        foreach (DB::select(<<<SQL
+            select e.stock_movement_id as id from stock_movement_entries e
+            where e.stock_movement_id in ({$in}) and e.lot_id is not null
+            group by e.stock_movement_id, e.lot_id, e.location_id, e.condition
+            having abs(sum(e.qty_delta_base)) > coalesce((select g.reversed_qty_base from stock_reversal_balances g where g.reversed_movement_id = e.stock_movement_id and g.lot_id = e.lot_id and g.location_id = e.location_id and g.condition = e.condition), 0)
+            union
+            select e.stock_movement_id from stock_movement_entries e join unattributed_loss_cases k on k.id = e.unattributed_case_id
+            where e.stock_movement_id in ({$in})
+            group by e.stock_movement_id
+            having bool_and(
+                abs(e.qty_delta_base) > coalesce((select abs(sum(r.qty_delta_base)) from stock_movement_entries r join stock_movements rm on rm.id = r.stock_movement_id where rm.reverses_movement_id = e.stock_movement_id and r.unattributed_case_id = e.unattributed_case_id and r.location_id = e.location_id and r.condition = e.condition), 0)
+                and case when e.movement_type = 'UNATTRIBUTED_FOUND' then k.found_qty_base > 0 when e.movement_type = 'UNATTRIBUTED_CONVERSION' then k.converted_from_case_id is null or k.pending_qty_base > 0 else k.pending_qty_base > 0 end
+            )
+            union
+            select e.stock_movement_id from stock_movement_entries e join stock_consumption_balances b on b.stock_consumption_id = e.stock_consumption_id
+            where e.stock_movement_id in ({$in}) and b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base > 0
+            SQL, [...$ids, ...$ids, ...$ids]) as $row) {
+            if (is_object($row)) {
+                $found[(int) Row::text($row, 'id')] = true;
+            }
         }
 
         return $found;

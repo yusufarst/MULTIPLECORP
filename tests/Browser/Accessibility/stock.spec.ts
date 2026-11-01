@@ -20,7 +20,7 @@ for (const width of [390, 1280]) {
 
         await page.goto('/gudang/stok');
         await page.getByLabel('Cari produk').fill(run.name);
-        await page.getByRole('button', { name: { name: 'Cari', exact: true } }).click();
+        await page.getByRole('button', { name: 'Cari', exact: true }).click();
         await expect(page.locator('#konten')).toContainText(run.name);
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);

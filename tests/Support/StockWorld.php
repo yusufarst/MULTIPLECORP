@@ -35,7 +35,7 @@ final class StockWorld
     /** A lot of `qty` received at the rack through ROUTE-181's action. */
     public static function lot(int $actor, Company $company, int $product, int $unit, int $rack, string $qty = '10', string $price = '1000'): int
     {
-        $purchase = ReceivingWorld::purchase($company, $product, $unit, $qty, $price);
+        $purchase = ReceivingWorld::purchase($company, $product, $unit, $qty, $price, actor: $actor);
         $line = ReceivingWorld::line($purchase);
         $word = ReceivingWorld::receive($actor, $company->id, $purchase->id, $line->id, $unit, $rack, $qty);
 
@@ -89,11 +89,11 @@ final class StockWorld
     public static function recognition(int $actor, Company $company, int $product, int $lot, int $rack, string $qty, string $exposure, ?int $group = null): int
     {
         $movement = 0;
-        self::post($actor, $company, $product, $rack, new LockSet, function (CommandContext $context) use ($company, $product, $lot, $rack, $qty, $exposure, $group, &$movement): void {
+        self::post($actor, $company, $product, $rack, new LockSet, function (CommandContext $context) use ($actor, $company, $product, $lot, $rack, $qty, $exposure, $group, &$movement): void {
             // A test's one transaction keeps an earlier command's `set constraints all immediate`: C-36 reads the rows written together.
             DB::statement('set constraints all deferred');
             $movement = StockMovementFactory::post('UNATTRIBUTED_RECOGNITION', null);
-            $case = UnattributedLossCase::factory()->create(['case_kind' => 'LOSS', 'product_id' => $product, 'quantity_scale' => 0, 'location_id' => $rack, 'condition' => 'USABLE', 'recognized_qty_base' => $qty, 'exposure_qty_base' => $exposure, 'recognition_movement_id' => $movement, 'exposure_group_case_id' => $group])->id;
+            $case = UnattributedLossCase::factory()->create(['case_kind' => 'LOSS', 'product_id' => $product, 'quantity_scale' => 0, 'location_id' => $rack, 'condition' => 'USABLE', 'recognized_qty_base' => $qty, 'exposure_qty_base' => $exposure, 'recognition_movement_id' => $movement, 'exposure_group_case_id' => $group, 'recognized_by' => $actor])->id;
             UnattributedLossCaseFactory::expose($case, $company->id, $exposure);
             UnattributedLossCandidate::factory()->create(['unattributed_loss_case_id' => $case, 'lot_id' => $lot, 'candidate_company_id' => $company->id, 'qty_in_scope_at_recognition' => $exposure]);
             app(InventoryPosting::class)->ledger($context, $movement, 'UNATTRIBUTED_RECOGNITION', [['lot' => null, 'case' => $case, 'product' => $product, 'scale' => 0, 'location' => $rack, 'condition' => 'USABLE', 'qty' => '-'.$qty, 'pending' => ['pending_reduction_qty' => $qty]]]);

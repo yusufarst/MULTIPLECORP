@@ -95,7 +95,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
         event.preventDefault();
         const typed = term.trim();
         setSearched(typed);
-        router.reload({ only: ['list'], data: { cari: typed }, preserveUrl: true });
+        router.reload({ only: ['list'], data: { cari: typed, setelah: '' }, preserveUrl: true });
     };
     const more = () => {
         if (list.more === null) return;

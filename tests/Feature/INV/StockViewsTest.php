@@ -307,3 +307,26 @@ it('counts a company\'s exposure once per overlap group and per product (UXS-39;
         ->and($exposures->firstWhere('product', $this->product->name)['qty'])->toBe('5.000')
         ->and($exposures->firstWhere('product', $another['product']->name)['qty'])->toBe('4.000');
 });
+
+it('keeps "Balikkan" while a case\'s reopening leaves something to reverse, and starts a search from its first page (CM-28; C-55; INT-007)', function () {
+    $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack);
+    $recognition = StockWorld::recognition($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '6', '10');
+    $case = (int) DB::table('unattributed_loss_cases')->where('recognition_movement_id', $recognition)->value('id');
+    $finding = StockWorld::found($this->actor->id, $this->company, $this->product->id, $this->rack, $case, '2');
+    $offered = function (int $movement): bool {
+        $public = DB::table('stock_movements')->where('id', $movement)->value('public_id');
+
+        return collect(app(MovementHistory::class)->page($this->actor->id, MovementHistory::filters([]))['rows'])->firstWhere('movement', $public)['reversible'];
+    };
+
+    expect($offered($recognition))->toBeTrue();
+    expect(StockWorld::reverse($this->actor->id, null, $recognition))->toBe('COMMITTED');
+    expect($offered($recognition))->toBeFalse()->and($offered($finding))->toBeTrue();
+    expect(StockWorld::reverse($this->actor->id, null, $finding))->toBe('COMMITTED');
+    expect($offered($finding))->toBeFalse()->and($offered($recognition))->toBeTrue();
+    expect(StockWorld::reverse($this->actor->id, null, $recognition))->toBe('COMMITTED');
+    expect($offered($recognition))->toBeFalse()->and(DB::table('unattributed_loss_cases')->where('id', $case)->value('reversed_qty_base'))->toBe('6.000');
+
+    $search = $this->actingAs($this->viewer)->get('/gudang/stok?setelah=&cari='.urlencode($this->product->name))->viewData('page')['props']['list'];
+    expect($search['cursor_failed'])->toBeFalse()->and(collect($search['rows'])->pluck('id')->all())->toContain($this->product->public_id);
+});

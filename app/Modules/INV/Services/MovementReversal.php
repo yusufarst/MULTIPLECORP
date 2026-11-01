@@ -442,12 +442,11 @@ final class MovementReversal
 
         $ids = array_values(array_unique(array_map(fn (object $entry): int => (int) Row::text($entry, 'unattributed_case_id'), $rows)));
         $cases = DB::table('unattributed_loss_cases')->whereIn('id', $ids)->get(['id', 'case_kind', 'condition', 'pending_qty_base', 'found_qty_base', 'converted_from_case_id'])->keyBy('id')->all();
-        $take = null;
+        $caps = [];
 
         foreach ($rows as $entry) {
             $key = self::key((int) Row::text($entry, 'unattributed_case_id'), (int) Row::text($entry, 'location_id'), Row::text($entry, 'condition'));
-            $room = BigDecimal::of(Row::text($entry, 'qty_delta_base'))->abs()->minus($given[$key] ?? BigDecimal::zero());
-            $take = $take === null ? $room : BigDecimal::min($take, $room);
+            $caps[] = BigDecimal::of(Row::text($entry, 'qty_delta_base'))->abs()->minus($given[$key] ?? BigDecimal::zero());
         }
 
         foreach ($cases as $case) {
@@ -457,10 +456,15 @@ final class MovementReversal
                 Row::nullable($case, 'converted_from_case_id') !== null => Row::text($case, 'pending_qty_base'),
                 default => null,
             };
-            $take = $counter === null || $take === null ? $take : BigDecimal::min($take, $counter);
+
+            if ($counter !== null) {
+                $caps[] = BigDecimal::of($counter);
+            }
         }
 
-        if ($take === null || ! $take->isPositive()) {
+        $take = BigDecimal::min(...$caps);
+
+        if (! $take->isPositive()) {
             return [[], [], '0'];
         }
 
@@ -510,28 +514,32 @@ final class MovementReversal
         $arriving = [];
 
         foreach ($entries as $entry) {
-            if (isset($entry['serial'])) {
+            $serial = $entry['serial'] ?? null;
+
+            if (is_int($serial)) {
                 if (BigDecimal::of(self::scalar($entry['qty']))->isNegative()) {
-                    $leaving[$entry['serial']] = $entry['condition'];
+                    $leaving[$serial] = self::scalar($entry['condition']);
                 } else {
-                    $arriving[$entry['serial']] = true;
+                    $arriving[$serial] = true;
                 }
             }
         }
 
         foreach ($entries as $index => $entry) {
-            if (! isset($entry['serial'])) {
+            $serial = $entry['serial'] ?? null;
+
+            if (! is_int($serial)) {
                 continue;
             }
 
-            $unit = DB::table('serial_units')->where('id', $entry['serial'])->where('state', 'IN_STOCK')->where('current_lot_id', $entry['lot'])->where('current_location_id', $entry['location']);
+            $unit = DB::table('serial_units')->where('id', $serial)->where('state', 'IN_STOCK')->where('current_lot_id', $entry['lot'])->where('current_location_id', $entry['location']);
 
-            if (isset($arriving[$entry['serial']])) {
-                $moved = BigDecimal::of(self::scalar($entry['qty']))->isPositive()
-                    ? $unit->when(isset($leaving[$entry['serial']]), fn ($query) => $query->where('current_condition', $leaving[$entry['serial']]))->update(['current_condition' => $entry['condition'], 'last_entry_id' => $ids[$index]])
-                    : 1;
-            } else {
+            if (! isset($arriving[$serial])) {
                 $moved = $unit->where('current_condition', $entry['condition'])->update(['state' => 'NEVER_RECEIVED', 'current_lot_id' => null, 'current_location_id' => null, 'current_condition' => null, 'last_entry_id' => $ids[$index]]);
+            } elseif (BigDecimal::of(self::scalar($entry['qty']))->isPositive()) {
+                $moved = (isset($leaving[$serial]) ? $unit->where('current_condition', $leaving[$serial]) : $unit)->update(['current_condition' => $entry['condition'], 'last_entry_id' => $ids[$index]]);
+            } else {
+                $moved = 1;
             }
 
             if ($moved !== 1) {

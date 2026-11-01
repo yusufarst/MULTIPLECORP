@@ -93,10 +93,10 @@ final class CostFigures
     {
         $rows = [];
         $alone = DB::table('unattributed_loss_exposures as x')->join('unattributed_loss_cases as k', 'k.id', '=', 'x.unattributed_loss_case_id')->whereIn('x.company_id', $companies)->where('k.pending_qty_base', '>', 0)->whereNull('k.exposure_group_case_id')
-            ->whereNotExists(fn ($member) => $member->from('unattributed_loss_cases as m')->whereColumn('m.exposure_group_case_id', 'k.id'))
+            ->whereNotExists(fn (Builder $member) => $member->from('unattributed_loss_cases as m')->whereColumn('m.exposure_group_case_id', 'k.id'))
             ->selectRaw('x.company_id, k.product_id, x.exposure_qty_base - x.assigned_net_qty_base as qty');
         $grouped = DB::table('unattributed_loss_group_exposures as g')->join('unattributed_loss_cases as k', 'k.id', '=', 'g.exposure_group_case_id')->whereIn('g.company_id', $companies)
-            ->whereExists(fn ($member) => $member->from('unattributed_loss_cases as m')->whereRaw('coalesce(m.exposure_group_case_id, m.id) = g.exposure_group_case_id')->where('m.pending_qty_base', '>', 0))
+            ->whereExists(fn (Builder $member) => $member->from('unattributed_loss_cases as m')->whereRaw('coalesce(m.exposure_group_case_id, m.id) = g.exposure_group_case_id')->where('m.pending_qty_base', '>', 0))
             ->selectRaw('g.company_id, k.product_id, g.bound_qty_base - g.assigned_net_qty_base as qty');
 
         foreach (DB::query()->fromSub($alone->unionAll($grouped), 'e')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('e.qty', '>', 0)->groupBy('e.company_id', 'p.name', 'u.code')->orderBy('p.name')->selectRaw('e.company_id, p.name, u.code, sum(e.qty) as qty')->get() as $row) {

@@ -31,6 +31,11 @@ final class StockViews
 
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
+    /** A product's largest alternate unit, in its own head's one statement. */
+    private const ALTERNATE_UNIT = '(select au.code from product_units pu join units au on au.id = pu.unit_id where pu.product_id = p.id and pu.is_base = false and pu.is_active = true order by pu.ratio_to_base desc limit 1) as alternate_unit';
+
+    private const ALTERNATE_RATIO = '(select pu.ratio_to_base from product_units pu where pu.product_id = p.id and pu.is_base = false and pu.is_active = true order by pu.ratio_to_base desc limit 1) as alternate_ratio';
+
     private const RESERVATION = ['r.id', 'r.company_id', 'r.remaining_qty_base', 'p.project_number', 'p.public_id'];
 
     public function __construct(private readonly EffectiveCapabilities $capabilities) {}
@@ -108,9 +113,8 @@ final class StockViews
      */
     public function product(string $publicId): ?array
     {
-        $alternate = fn (string $column): Expression => DB::raw("(select {$column} from product_units pu join units au on au.id = pu.unit_id where pu.product_id = p.id and pu.is_base = false and pu.is_active = true order by pu.ratio_to_base desc limit 1) as alternate_".($column === 'au.code' ? 'unit' : 'ratio'));
         $product = preg_match(self::UUID, $publicId) === 1 ? DB::table('products as p')->leftJoin('stock_product_balances as b', 'b.product_id', '=', 'p.id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('p.public_id', strtolower($publicId))->where('p.kind', 'GOODS')
-            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn(), $alternate('au.code'), $alternate('pu.ratio_to_base')]) : null;
+            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn(), DB::raw(self::ALTERNATE_UNIT), DB::raw(self::ALTERNATE_RATIO)]) : null;
 
         if ($product === null) {
             return null;
@@ -129,8 +133,8 @@ final class StockViews
      */
     public function placesOf(int $productId): array
     {
-        return array_map(fn (object $row): array => ['rack' => Row::text($row, 'code'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty'))],
-            DB::table('stock_scope_balances as s')->join('locations as l', 'l.id', '=', 's.location_id')->where('s.product_id', $productId)->where('s.qty', '<>', 0)->orderBy('l.code')->orderBy('s.condition')->limit(self::LOTS)->get(['l.code', 's.condition', 's.qty'])->all());
+        return array_values(array_map(fn (object $row): array => ['rack' => Row::text($row, 'code'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty'))],
+            DB::table('stock_scope_balances as s')->join('locations as l', 'l.id', '=', 's.location_id')->where('s.product_id', $productId)->where('s.qty', '<>', 0)->orderBy('l.code')->orderBy('s.condition')->limit(self::LOTS)->get(['l.code', 's.condition', 's.qty'])->all()));
     }
 
     /**
@@ -215,7 +219,7 @@ final class StockViews
      */
     public function reservations(Authority $viewer, int $productId): array
     {
-        return array_map(fn (object $row): array => self::reservationRow($viewer, $row), self::active($productId)->orderByDesc('r.remaining_qty_base')->orderBy('r.id')->limit(self::CUT_CHOICES)->get(self::RESERVATION)->all());
+        return array_values(array_map(fn (object $row): array => self::reservationRow($viewer, $row), self::active($productId)->orderByDesc('r.remaining_qty_base')->orderBy('r.id')->limit(self::CUT_CHOICES)->get(self::RESERVATION)->all()));
     }
 
     private static function active(int $productId): Builder

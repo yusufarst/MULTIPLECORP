@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
-use Tests\Support\CostWorld;
 use Tests\Support\Numbering;
 use Tests\Support\ReservationWorld;
 use Tests\Support\StockWorld;
@@ -48,7 +47,7 @@ final class StockFixture
             return response()->json(['error' => $reserved], 500);
         }
 
-        CostWorld::resume(['company' => $other->id, 'product' => $product, 'location' => $rack->id, 'actor' => $actor])->openingLot('4', '40000.00');
+        StockWorld::lot($actor, $other, $product, (int) $unit, $rack->id, '4', '10000');
         DB::table('products')->where('id', $product)->update(['min_stock_qty_base' => '50']);
         $row = DB::table('products')->where('id', $product)->first(['public_id', 'name', 'sku']);
         $movement = DB::table('stock_movements')->where('id', $change)->value('public_id');
