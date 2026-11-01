@@ -85,21 +85,22 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
 test('counts a serial scanned twice once, refuses one in stock at the scan, marks one damaged (CJ-07; BR-INV-09; MSG-36; criterion 6)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const run = await receivingRun(page, `terima-seri-${String(Date.now())}`);
+    const serial = `SN-UJI-${String(Date.now())}`;
 
     await page.goto(`/gudang/barang-masuk/${run.serial_purchase}`);
     await expect(currentLine(page)).toContainText(run.serial_name);
-    await scan(page, 'SN-UJI-1');
-    await expect(currentLine(page).locator('[data-slot="line-serials"]')).toContainText('SN-UJI-1');
-    await scan(page, 'SN-UJI-1');
-    await expect(page.getByRole('alert').filter({ hasText: 'Nomor seri SN-UJI-1 sudah dipindai.' }).locator('visible=true')).toBeVisible();
+    await scan(page, serial);
+    await expect(currentLine(page).locator('[data-slot="line-serials"]')).toContainText(serial);
+    await scan(page, serial);
+    await expect(page.getByRole('alert').filter({ hasText: `Nomor seri ${serial} sudah dipindai.` }).locator('visible=true')).toBeVisible();
     await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(1);
 
     await currentLine(page).getByRole('combobox', { name: 'Rak' }).selectOption({ index: 1 });
     await record(page);
     await expect(currentLine(page).getByText('Barang masuk tercatat.')).toBeVisible();
 
-    await scan(page, 'SN-UJI-1');
-    await expect(page.getByRole('alert').filter({ hasText: 'Nomor seri SN-UJI-1 sudah ada di stok.' }).locator('visible=true')).toBeVisible();
+    await scan(page, serial);
+    await expect(page.getByRole('alert').filter({ hasText: `Nomor seri ${serial} sudah ada di stok.` }).locator('visible=true')).toBeVisible();
     await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(0);
 });
 
@@ -197,9 +198,11 @@ test('asks MSG-35 before leaving with an unsent line, keeping it on staying (NAV
 test('reverses one chosen serial on PG-016, the other staying in stock (CM-03; C-02; criterion 11)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await receivingRun(page, `terima-balik-seri-${String(Date.now())}`);
+    const first = `SN-BALIK-${String(Date.now())}-1`;
+    const second = `SN-BALIK-${String(Date.now())}-2`;
     await page.goto(`/gudang/barang-masuk/${run.serial_purchase}`);
-    await scan(page, 'SN-BALIK-1');
-    await scan(page, 'SN-BALIK-2');
+    await scan(page, first);
+    await scan(page, second);
     await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(2);
     await currentLine(page).getByRole('combobox', { name: 'Rak' }).selectOption({ index: 1 });
     await record(page);
@@ -211,12 +214,12 @@ test('reverses one chosen serial on PG-016, the other staying in stock (CM-03; C
     await dialog.getByRole('textbox').last().fill('Seri ini salah');
     const confirm = dialog.getByRole('button', { name: 'Balikkan Penerimaan' });
     await expect(confirm).toBeDisabled();
-    await dialog.getByRole('checkbox', { name: /SN-BALIK-1/ }).check();
+    await dialog.getByRole('checkbox', { name: new RegExp(first) }).check();
     await confirm.click();
     await expect(dialog).toHaveCount(0);
 
     await page.locator('[data-slot="purchase-receipts"]').getByRole('button', { name: 'Balikkan Penerimaan' }).click();
     const again = page.getByRole('alertdialog', { name: 'Balikkan penerimaan ini?' });
     await expect(again.getByRole('checkbox')).toHaveCount(1);
-    await expect(again).toContainText('SN-BALIK-2');
+    await expect(again).toContainText(second);
 });

@@ -10,6 +10,7 @@ use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -97,7 +98,7 @@ final class ReceivingQueries
         return [
             'purchase' => $purchase === null ? null : ['id' => Row::text($purchase, 'public_id'), 'number' => Row::text($purchase, 'purchase_number'), 'state' => Row::text($purchase, 'state'), 'supplier' => is_array($supplier) && is_string($supplier['name'] ?? null) ? $supplier['name'] : '', 'company' => Row::text($purchase, 'code'), 'company_id' => Row::text($purchase, 'company'), 'project' => Row::nullable($purchase, 'project'), 'project_number' => Row::nullable($purchase, 'project_number')],
             'lines' => $lines,
-            'cases' => array_filter($lines, fn (array $line): bool => BigDecimal::of($line['replacement'])->isPositive()) !== [] ? $this->cases($purchaseId, $companyId) : [],
+            'cases' => array_filter($lines, fn (array $line): bool => is_string($line['replacement']) && BigDecimal::of($line['replacement'])->isPositive()) !== [] ? $this->cases($purchaseId, $companyId) : [],
             'receipts' => $this->receipts($purchaseId),
             'locations' => array_values(array_map(fn (object $row): array => ['id' => (int) Row::text($row, 'id') > 0 ? RowHandle::of('locations', (int) Row::text($row, 'id')) : '', 'code' => Row::text($row, 'code'), 'name' => Row::text($row, 'name')], DB::table('locations')->where('is_active', true)->orderBy('code')->get(['id', 'code', 'name'])->all())),
             'today' => BusinessDate::today(),
@@ -141,7 +142,7 @@ final class ReceivingQueries
         $cases = [];
 
         foreach (DB::table('correction_cases as c')->leftJoin('inventory_lots as i', 'i.id', '=', 'c.source_lot_id')->leftJoin('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->leftJoin('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')
-            ->where('c.company_id', $companyId)->where('c.case_kind', 'PURCHASE_RETURN')->where('c.state', 'OPEN')->where(fn ($where) => $where->whereNull('c.source_lot_id')->orWhere('l.purchase_id', $purchaseId))->orderBy('c.id')->limit(50)->get(['c.public_id', 'c.reason']) as $row) {
+            ->where('c.company_id', $companyId)->where('c.case_kind', 'PURCHASE_RETURN')->where('c.state', 'OPEN')->where(fn (Builder $where) => $where->whereNull('c.source_lot_id')->orWhere('l.purchase_id', $purchaseId))->orderBy('c.id')->limit(50)->get(['c.public_id', 'c.reason']) as $row) {
             $cases[] = ['id' => Row::text($row, 'public_id'), 'label' => Row::nullable($row, 'reason') ?? Row::text($row, 'public_id')];
         }
 
