@@ -256,7 +256,7 @@ final class ReceivingController extends Controller
     {
         $back = $request->input('kembali');
 
-        return is_string($back) && preg_match('/^\/(pembelian|gudang)\/[A-Za-z0-9\/_-]*$/', $back) === 1 ? $back : $fallback;
+        return is_string($back) && preg_match('/^\/(pembelian|gudang)\/[A-Za-z0-9\/_-]*(\?[A-Za-z0-9=&%_.-]*)?$/', $back) === 1 ? $back : $fallback;
     }
 
     /**

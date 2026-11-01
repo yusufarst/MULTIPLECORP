@@ -4,6 +4,7 @@ namespace App\Modules\CST\Queries;
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Money;
+use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,74 @@ final class CostFigures
             ->where('l.id', $lotId)->first(['b.remaining_qty_base', 'b.remaining_cost']);
 
         return is_object($row) ? ['remaining_qty' => Row::text($row, 'remaining_qty_base'), 'remaining_cost' => Row::text($row, 'remaining_cost')] : null;
+    }
+
+    /**
+     * PG-019's lots' cost and flagged basis, only those of a source company whose `cost.view` the viewer holds, in scope (PJ-02; rows 73, 74).
+     *
+     * @return array<string, array{cost: string, flagged: ?string}>
+     */
+    public function lotsOfProduct(int $viewerId, int $productId): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $figures = [];
+
+        if (! $viewer->has('cost.view')) {
+            return $figures;
+        }
+
+        foreach ($viewer->scope->apply(DB::table('inventory_lots as l'), 'l.source_company_id')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->where('l.product_id', $productId)
+            ->get(['l.id', 'l.source_company_id', 'b.remaining_cost', DB::raw("(select sum(e.amount) from lot_cost_entries e where e.lot_id = l.id and e.entry_kind = 'SURPLUS_FLAGGED_BASIS') as flagged")]) as $row) {
+            if ($viewer->allows('cost.view', (int) Row::text($row, 'source_company_id'))) {
+                $figures[RowHandle::of('inventory_lots', (int) Row::text($row, 'id'))] = ['cost' => Row::text($row, 'remaining_cost'), 'flagged' => Row::nullable($row, 'flagged')];
+            }
+        }
+
+        return $figures;
+    }
+
+    /**
+     * PG-018's stock value: each company in scope whose `cost.view` the viewer holds, its own lots only, labelled per company and never a total across them; with its own exposure on a pending case, never the case's pending quantity or another candidate (PJ-22; CS-08; UXS-39).
+     *
+     * @return list<array{company: string, name: string, value: string, exposures: list<array{qty: string, unit: string}>}>
+     */
+    public function stockValues(int $viewerId): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+
+        if (! $viewer->has('cost.view')) {
+            return [];
+        }
+
+        $companies = array_values(array_filter($viewer->scope->apply(DB::table('companies as c'), 'c.id')->orderBy('c.code')->get(['c.id', 'c.code', 'c.legal_name'])->all(), fn (object $company): bool => $viewer->allows('cost.view', (int) Row::text($company, 'id'))));
+        $ids = array_map(fn (object $company): int => (int) Row::text($company, 'id'), $companies);
+        $totals = $ids === [] ? [] : DB::table('inventory_lots as l')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->whereIn('l.source_company_id', $ids)->groupBy('l.source_company_id')->selectRaw('l.source_company_id, coalesce(sum(b.remaining_cost), 0.00)::text as total')->pluck('total', 'l.source_company_id')->all();
+        $exposures = $ids === [] ? [] : self::exposures($ids);
+
+        return array_map(fn (object $company): array => ['company' => Row::text($company, 'code'), 'name' => Row::text($company, 'legal_name'), 'value' => is_string($totals[(int) Row::text($company, 'id')] ?? null) ? $totals[(int) Row::text($company, 'id')] : '0.00', 'exposures' => $exposures[(int) Row::text($company, 'id')] ?? []], $companies);
+    }
+
+    /**
+     * Each company's own exposure to what still waits on the Owner (UXS-39; PJ-07; PJ-22), per product and never a case's pending quantity or another company's: an overlap group's members hold one snapshot of the same claims, so a group counts once, by its bound less what it has assigned (DATABASE §5.8); a case alone by its own row.
+     *
+     * @param  list<int>  $companies
+     * @return array<int, list<array{product: string, qty: string, unit: string}>>
+     */
+    private static function exposures(array $companies): array
+    {
+        $rows = [];
+        $alone = DB::table('unattributed_loss_exposures as x')->join('unattributed_loss_cases as k', 'k.id', '=', 'x.unattributed_loss_case_id')->whereIn('x.company_id', $companies)->where('k.pending_qty_base', '>', 0)->whereNull('k.exposure_group_case_id')
+            ->whereNotExists(fn (Builder $member) => $member->from('unattributed_loss_cases as m')->whereColumn('m.exposure_group_case_id', 'k.id'))
+            ->selectRaw('x.company_id, k.product_id, x.exposure_qty_base - x.assigned_net_qty_base as qty');
+        $grouped = DB::table('unattributed_loss_group_exposures as g')->join('unattributed_loss_cases as k', 'k.id', '=', 'g.exposure_group_case_id')->whereIn('g.company_id', $companies)
+            ->whereExists(fn (Builder $member) => $member->from('unattributed_loss_cases as m')->whereRaw('coalesce(m.exposure_group_case_id, m.id) = g.exposure_group_case_id')->where('m.pending_qty_base', '>', 0))
+            ->selectRaw('g.company_id, k.product_id, g.bound_qty_base - g.assigned_net_qty_base as qty');
+
+        foreach (DB::query()->fromSub($alone->unionAll($grouped), 'e')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('e.qty', '>', 0)->groupBy('e.company_id', 'p.name', 'u.code')->orderBy('p.name')->selectRaw('e.company_id, p.name, u.code, sum(e.qty) as qty')->get() as $row) {
+            $rows[(int) Row::text($row, 'company_id')][] = ['product' => Row::text($row, 'name'), 'qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
+        }
+
+        return $rows;
     }
 
     /**

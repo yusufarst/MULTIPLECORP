@@ -220,6 +220,7 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | DIR-102 | 2026-11-01 | The Owner's FAST BUILD directive: as many Tasks as possible within 48 hours by a faster way of working under DIR-096, no gate lowered, one executor and one active Task | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_FAST-BUILD_2026-11-01.txt) — [details](#dir-102--the-owners-fast-build-directive) |
 | DIR-103 | 2026-11-01 | The Owner's directives on avoidable CI delays: TL-09–TL-12 in parallel on runners of their own under the Browser check's name, the DONE record's accuracy kept, no required check passed over | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVES_CI_2026-11-01.txt) — [details](#dir-103--the-owners-directives-on-avoidable-ci-delays) |
 | DIR-104 | 2026-11-01 | Owner decision — P11Q-08 option (a), one project for each rupiah of a payment's rest, what a hold covers; Change 16 | [Exact transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt) — [details](#dir-104--the-owners-decision-on-p11q-08) |
+| DIR-105 | 2026-11-01 | The Owner's directive on the CI root causes: each browser layer's evidence is the artifact of its latest job on the tested commit, fail-closed; the stock specs' selector and label | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt) — [details](#dir-105--the-owners-directive-on-the-ci-root-causes) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 | APPR-028 | 2026-11-01 | Explicit Owner approval — P11Q-08 option (a), the attribution rule of TASK_PLAN §8 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt), item 1 — [details](#dir-104--the-owners-decision-on-p11q-08) |
 
@@ -2664,6 +2665,15 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **APPR-026 — the canonical text, approved by the Owner after it was shown (part 3):** W1–W4 — DATABASE §28's runtime privileges and its header's amendment line; TASK-022's amendment line and DATABASE IMPACT ASSESSMENT; TASK_PLAN's Change 14. Level 1 under CHANGE_CONTROL — locks made available to the role that must take them, no table, column, behaviour, visibility or V1 requirement changed —, approved by the Owner on 2026-10-27.
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
+
+## DIR-105 — The Owner's directive on the CI root causes
+
+- **Source/date:** [EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt](sources/EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt), the Owner's message received in session on 2026-11-01 (WIB), transcribed as received.
+- **The defect:** DIR-103's aggregator fetched every artifact whose name starts `browser-evidence-`. A rerun keeps the earlier attempt's artifact of the same name in the run, so run 41300377368 held two `browser-evidence-e2e`, and the older failing summary could overwrite the rerun's passing one: the layers PASS, the check FAIL. It failed closed, but on a false reason.
+- **The fix, Level 1 under CHANGE_CONTROL:** `scripts/ci/select-browser-evidence.mjs` names each layer's artifact: the one its latest job uploaded, read from the run's jobs with `filter=latest`, created while that job ran, of this run and this head, not expired, the job a success. Anything else fails the check, with no fallback to an older attempt. `check-browser-evidence.mjs` still reads the summaries as before, each line PASS on the tested commit. Its self-test runs with the Verify job's others.
+- **What it does not change:** the required check's name, its other rules, DEFINITION_OF_DONE or any gate. No test is weakened.
+- **The specs, in TASK-040's pull request:** their search step scoped to the page's own form, the shell's bottom navigation holding another "Cari"; the Localization spec's English word corrected to the catalogue's: GL-076 ON HAND is "On hand", validated at PC-3, and the page already followed it.
+- **The amendments:** this entry and its register row, a Level 1 record of an Owner directive. No Task is added, no V1 requirement dropped.
 
 ## DIR-104 — The Owner's decision on P11Q-08
 
