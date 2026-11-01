@@ -32,12 +32,15 @@ final class ReceivingRecords
     /** FU-13: a lot code regenerated at most this many times (H6-10). */
     public const LOT_CODE_TRIES = 5;
 
+    private const REPLACEMENT_REVERSED = 'A replacement receipt was reversed (AX-05; DATABASE §3.1).';
+
     public function __construct(
         private readonly InventoryPosting $inventory,
         private readonly PurchasePosting $purchases,
         private readonly CostPosting $cost,
         private readonly AuditRecorder $audit,
         private readonly Corrections $corrections,
+        private readonly CorrectionCases $cases,
     ) {}
 
     /** AX-04's set (CONCURRENCY_IDEMPOTENCY §7.1): the purchase with its cost locks, the product, its scopes and serials; the case of a replacement; the reservation's rows of an offer. */
@@ -83,7 +86,7 @@ final class ReceivingRecords
             throw Refused::rejected('C-14', ['reason' => 'other_line']);
         }
 
-        if (Row::text($purchase, 'state') !== 'OPEN' && $entry->kind !== ReceiptEntry::REPLACEMENT) {
+        if (Row::text($purchase, 'state') !== 'OPEN') {
             throw Refused::conflict('ST-02', ['state' => Row::text($purchase, 'state')]);
         }
 
@@ -105,6 +108,10 @@ final class ReceivingRecords
 
         if ($accepted->isPositive() && $entry->locationId === null) {
             throw Refused::rejected('WF-INV-01', ['reason' => 'no_rack']);
+        }
+
+        if ($entry->locationId !== null && ! DB::table('locations')->where('id', $entry->locationId)->where('is_active', true)->exists()) {
+            throw Refused::rejected('C-14', ['reason' => 'rack']);
         }
 
         // The same delivery answers "Sudah Tercatat" even on a line already full (BD-01; IP-03).
@@ -132,22 +139,26 @@ final class ReceivingRecords
             'qty_base' => (string) $arrived, 'usable_qty_base' => (string) $usable, 'damaged_qty_base' => (string) $damaged, 'rejected_qty_base' => (string) $rejected, 'receipt_kind' => $entry->kind, 'corrects_receiving_line_id' => $entry->correctsReceivingLineId, 'correction_case_id' => $entry->caseId,
             'supplier_delivery_reference' => $entry->deliveryReference, 'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
         ]);
-        $lot = null;
+        // The offer's reserved quantity moves with ON HAND in the ledger's one statement on the product guard (GU-01).
+        $reserved = $entry->reserve !== null && BigDecimal::of($entry->reserve)->isPositive() ? $this->reserve($context, $line, $usable, $entry->reserve) : null;
 
         // Rejected at the door: recorded on the line, no stock event, the remainder staying open (L-13).
         if ($accepted->isPositive()) {
             $lot = $this->createLot($context, $product, $scale, $company, $receiving, $entry, $accepted, $ratio);
-            $location = (int) $entry->locationId;
-            $this->inventory->ledger($context, $movement, 'RECEIPT', $this->entries($context, $lot, $product, $scale, $location, $usable, $damaged, $entry, $serials));
+            $rows = $this->entries($context, $lot, $product, $scale, (int) $entry->locationId, $usable, $damaged, $entry, $serials);
+            $ids = $this->inventory->ledger($context, $movement, 'RECEIPT', $rows, $reserved);
+
+            foreach ($rows as $index => $row) {
+                if (isset($row['serial'])) {
+                    DB::table('serial_units')->where('id', $row['serial'])->update(['last_entry_id' => $ids[$index]]);
+                }
+            }
+
             $this->postCost($context, $entry, $lot, $accepted);
         }
 
         foreach ($entry->evidence as $position => $evidence) {
             $this->linkEvidence($context, $evidence, $movement, $position === 0 ? 'PRIMARY_PROOF' : 'SUPPORTING', $position + 1);
-        }
-
-        if ($entry->reserve !== null && BigDecimal::of($entry->reserve)->isPositive()) {
-            $this->reserve($context, $line, $usable, $entry->reserve);
         }
 
         $this->audit->record(action: 'INV.GoodsReceived', authorityClass: AuthorityClass::Adm, actorUserId: $actor, companyId: $company, entityType: 'stock_movement', entityId: $movement, entityPublicId: $publicId, commandId: $commandId,
@@ -157,7 +168,7 @@ final class ReceivingRecords
     }
 
     /**
-     * AX-05's set, re-derived under the locks (§5): the purchase's cost cascade, the product with the lot's scopes and places, its serials, the reservations cut.
+     * AX-05's set, re-derived under the locks (§5): the purchase's cost cascade, the product with the lot's scopes and places, its serials, the reservations cut, the return case of a replacement.
      *
      * @param  array<int, string>  $cuts  reservation => quantity
      */
@@ -179,6 +190,12 @@ final class ReceivingRecords
             $set->add('serial_units', ['product_id' => $product, 'serial_key' => Row::text($serial, 'serial_key')]);
         }
 
+        $case = Row::nullable($lot, 'correction_case_id');
+
+        if ($case !== null) {
+            $set = $set->union(CorrectionCases::locks((int) $case));
+        }
+
         return $cuts === [] ? $set : $set->union(InventoryPosting::cutLocks($product, array_keys($cuts)));
     }
 
@@ -196,16 +213,28 @@ final class ReceivingRecords
         $lot = self::lot($lotId);
         $product = (int) Row::text($lot, 'product_id');
         $scale = max(0, (int) Row::text($lot, 'quantity_scale'));
+        $serialized = (bool) DB::table('products')->where('id', $product)->value('is_serialized');
         $total = BigDecimal::zero();
         $usable = BigDecimal::zero();
         $entries = [];
+        $taken = [];
+        $named = [];
 
         foreach ($removals as $removal) {
             $held = DB::table('stock_lot_balances as b')->where('lot_id', $lotId)->where('location_id', $removal['location'])->where('condition', $removal['condition'])->value('qty');
             $qty = BigDecimal::of($removal['qty']);
+            $place = "{$removal['location']}|{$removal['condition']}";
+            $taken[$place] = BigDecimal::of($taken[$place] ?? '0')->plus($qty);
 
-            if (! $qty->isPositive() || ! is_string($held) || $qty->isGreaterThan($held)) {
+            if (! $qty->isPositive() || ! is_string($held) || $taken[$place]->isGreaterThan($held)) {
                 throw Refused::rejected('C-03', ['reason' => 'above_unconsumed', 'available' => is_string($held) ? $held : '0']);
+            }
+
+            if ($serialized) {
+                self::ensureSerial($removal, $lotId, $qty, $named);
+                $named[(int) $removal['serial']] = true;
+            } elseif ($removal['serial'] !== null) {
+                throw Refused::rejected('C-02', ['reason' => 'serial_reversal']);
             }
 
             $entries[] = ['lot' => $lotId, 'product' => $product, 'scale' => $scale, 'location' => $removal['location'], 'condition' => $removal['condition'], 'qty' => (string) $qty->negated(), ...($removal['serial'] === null ? [] : ['serial' => $removal['serial']])];
@@ -233,8 +262,9 @@ final class ReceivingRecords
         $entryIds = $this->inventory->ledger($context, $movement, 'RECEIPT_REVERSAL', $entries, $reserved);
 
         foreach ($entries as $index => $entry) {
-            if (isset($entry['serial'])) {
-                DB::table('serial_units')->where('id', $entry['serial'])->update(['state' => 'NEVER_RECEIVED', 'current_lot_id' => null, 'current_location_id' => null, 'current_condition' => null, 'last_entry_id' => $entryIds[$index]]);
+            // Conditional on what it was just read to be (DATABASE §8): never two reversals of one serial (C-02; BR-INV-09).
+            if (isset($entry['serial']) && DB::table('serial_units')->where('id', $entry['serial'])->where('state', 'IN_STOCK')->where('current_lot_id', $lotId)->update(['state' => 'NEVER_RECEIVED', 'current_lot_id' => null, 'current_location_id' => null, 'current_condition' => null, 'last_entry_id' => $entryIds[$index]]) !== 1) {
+                throw Refused::rejected('C-02', ['reason' => 'serial_reversal']);
             }
         }
 
@@ -243,10 +273,40 @@ final class ReceivingRecords
         $this->purchases->move($context, (int) Row::text($lot, 'purchase_line_id'), [$column => (string) $total->negated()]);
         $posted = $this->cost->reverseReceipt($context, $lotId, (string) $total, $businessDate);
         $this->purchases->posted($context, (int) Row::text($lot, 'purchase_line_id'), $posted);
+        $case = Row::nullable($lot, 'correction_case_id');
+
+        if ($column === 'replacement_received_net_qty_base' && $case !== null) {
+            $this->replacementReversed($context, $lotId, (int) $case);
+        }
+
         $this->corrections->record($context, 'INV.ReceiptReversed', AuthorityClass::AdmPlus, (int) Row::text($lot, 'source_company_id'), 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($lot, 'movement_public_id'), $reason,
-            AuditChange::updated(['quantity' => Row::text($lot, 'acquired_qty_base')], ['reversed' => (string) $total]), null, ['business_date' => $businessDate]);
+            AuditChange::updated(['quantity' => Row::text($lot, 'acquired_qty_base')], ['reversed' => (string) $total]), null, ['business_date' => $businessDate, 'cuts' => $cuts]);
 
         return $movement;
+    }
+
+    /**
+     * A serial named by a reversal, read under its lock (DATABASE §8; C-02): one unit, this lot's, in stock at the place and condition removed, named once.
+     *
+     * @param  array{location: int, condition: string, qty: string, serial: ?int}  $removal
+     * @param  array<int, true>  $named
+     */
+    private static function ensureSerial(array $removal, int $lotId, BigDecimal $qty, array $named): void
+    {
+        $serial = $removal['serial'];
+
+        if ($serial === null || ! $qty->isEqualTo(1) || isset($named[$serial])
+            || ! DB::table('serial_units')->where('id', $serial)->where('state', 'IN_STOCK')->where('current_lot_id', $lotId)->where('current_location_id', $removal['location'])->where('current_condition', $removal['condition'])->exists()) {
+            throw Refused::rejected('C-02', ['reason' => 'serial_reversal']);
+        }
+    }
+
+    /** The return case's replaced value lowered by what the reversal drew from the replacement lot, reopened when closed (DATABASE §3.1; AX-05). */
+    private function replacementReversed(CommandContext $context, int $lotId, int $case): void
+    {
+        $drawn = DB::table('lot_cost_entries')->where('lot_id', $lotId)->where('entry_kind', 'RECEIPT_REVERSAL')->where('command_id', $context->request->commandId)->selectRaw('coalesce(sum(amount), 0)::text as total')->value('total');
+
+        $this->cases->post($context, $case, ['replaced_value' => Money::of(is_string($drawn) ? $drawn : '0')->toString()], self::REPLACEMENT_REVERSED);
     }
 
     /** The product's policy as the form read it (ST-09; L-35). */
@@ -263,9 +323,11 @@ final class ReceivingRecords
     private function ensureCap(ReceiptEntry $entry, object $line, BigDecimal $accepted): void
     {
         if ($entry->kind === ReceiptEntry::REPLACEMENT) {
-            $state = $entry->caseId === null ? null : DB::table('correction_cases')->where('id', $entry->caseId)->value('state');
+            $case = $entry->caseId === null ? null : DB::table('correction_cases')->where('id', $entry->caseId)->first(['state', 'case_kind', 'source_lot_id']);
+            $source = $case === null ? null : Row::nullable($case, 'source_lot_id');
+            $sourceLine = $source === null ? null : DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('i.id', (int) $source)->value('r.purchase_line_id');
 
-            if ($state !== 'OPEN') {
+            if ($case === null || Row::text($case, 'state') !== 'OPEN' || Row::text($case, 'case_kind') !== 'PURCHASE_RETURN' || ($source !== null && (int) (is_numeric($sourceLine) ? $sourceLine : 0) !== $entry->lineId)) {
                 throw Refused::rejected('C-59', ['reason' => 'case_not_open']);
             }
         }
@@ -417,8 +479,11 @@ final class ReceivingRecords
     {
         if ($entry->kind === ReceiptEntry::REPLACEMENT) {
             $case = (int) $entry->caseId;
+            // Over the units still expected before this receipt: read before the guard moves.
+            $basis = $this->replacementBasis($case, $entry->lineId, $accepted);
             $this->purchases->move($context, $entry->lineId, ['replacement_received_net_qty_base' => (string) $accepted]);
-            $this->cost->basis($context, $lot, 'REPLACEMENT_BASIS', $this->replacementBasis($case, $entry->lineId, $accepted), $entry->businessDate, ['correction_case_id' => $case]);
+            $this->cost->basis($context, $lot, 'REPLACEMENT_BASIS', $basis, $entry->businessDate, ['correction_case_id' => $case]);
+            $this->cases->post($context, $case, ['replaced_value' => $basis->toString()], self::REPLACEMENT_REVERSED);
 
             return;
         }
@@ -455,8 +520,8 @@ final class ReceivingRecords
         DB::table('evidence_links')->insert(['evidence_document_id' => $evidence, 'evidence_scope' => Row::text($row, 'evidence_scope'), 'company_id' => Row::nullable($row, 'company_id'), 'role' => $role, 'stock_movement_id' => $movement, 'command_id' => $context->request->commandId, 'command_line_no' => $line, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
     }
 
-    /** The same-action offer (AX-04; D-UX-12; BR-RSV-03): at most the usable units and the line's unreserved confirmed demand, through TASK-038's service. */
-    private function reserve(CommandContext $context, object $line, BigDecimal $usable, string $qty): void
+    /** The same-action offer (AX-04; D-UX-12; BR-RSV-03): at most the usable units and the line's unreserved confirmed demand, through TASK-038's service; the quantity for the product guard's one statement. */
+    private function reserve(CommandContext $context, object $line, BigDecimal $usable, string $qty): string
     {
         $demand = Row::nullable($line, 'project_line_id');
 
@@ -475,7 +540,7 @@ final class ReceivingRecords
             throw Refused::rejected('AZ-01', ['reason' => 'reserve']);
         }
 
-        $this->inventory->reserve($context, (int) $demand, $qty);
+        return $this->inventory->reserveReceived($context, (int) $demand, $qty, (string) $usable);
     }
 
     /** The base quantity of an entered one, exact and never rounded (C-09; L-31). */
@@ -512,7 +577,7 @@ final class ReceivingRecords
     private static function lot(int $lotId): object
     {
         return DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->join('purchases as p', 'p.id', '=', 'l.purchase_id')->join('stock_movements as m', 'm.id', '=', 'r.stock_movement_id')->where('i.id', $lotId)
-            ->first(['i.id', 'i.product_id', 'i.quantity_scale', 'i.source_company_id', 'i.acquired_qty_base', 'r.purchase_line_id', 'r.receipt_kind', 'r.stock_movement_id', 'l.purchase_id', 'p.project_id', 'm.public_id as movement_public_id'])
+            ->first(['i.id', 'i.product_id', 'i.quantity_scale', 'i.source_company_id', 'i.acquired_qty_base', 'r.purchase_line_id', 'r.receipt_kind', 'r.stock_movement_id', 'r.correction_case_id', 'l.purchase_id', 'p.project_id', 'm.public_id as movement_public_id'])
             ?? throw Refused::rejected('C-14', ['reason' => 'other_lot']);
     }
 }

@@ -122,6 +122,29 @@ final class InventoryPosting
      */
     public function reserve(CommandContext $context, int $lineId, string $qty): int
     {
+        [$id, $product] = $this->bind($context, $lineId, $qty, '0');
+        GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $product], 'deltas' => ['reserved_qty' => $qty]]]);
+
+        return $id;
+    }
+
+    /**
+     * AX-04's same-action offer (D-UX-12): the reservation bound against the supply with the receipt's usable units already counted; the quantity is returned for the receipt's one statement on the product guard with its on-hand move (GU-01), whose CHECK holds it to the end state (C-04).
+     */
+    public function reserveReceived(CommandContext $context, int $lineId, string $qty, string $usable): string
+    {
+        $this->bind($context, $lineId, $qty, $usable);
+
+        return $qty;
+    }
+
+    /**
+     * The reservation and its event, the line guard and the audit; the product guard is the caller's.
+     *
+     * @return array{int, int} the reservation and its product
+     */
+    private function bind(CommandContext $context, int $lineId, string $qty, string $incoming): array
+    {
         $context->require(self::lineLocks($lineId));
         $line = self::line($lineId);
 
@@ -133,7 +156,7 @@ final class InventoryPosting
             throw Refused::rejected('BR-RSV-01', ['reason' => 'mode']);
         }
 
-        $available = self::available((int) Row::text($line, 'product_id'));
+        $available = self::available((int) Row::text($line, 'product_id'))->plus($incoming);
 
         if (BigDecimal::of($qty)->isGreaterThan($available)) {
             throw Refused::rejected('C-04', ['available' => (string) $available->toScale(max(0, (int) Row::text($line, 'quantity_scale')))]);
@@ -162,7 +185,6 @@ final class InventoryPosting
         }
 
         $this->event($context, $id, $line, is_object($active) ? 'INCREASE' : 'CREATE', $qty, null);
-        GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => (int) Row::text($line, 'product_id')], 'deltas' => ['reserved_qty' => $qty]]]);
         $this->demand->reserved($context, [$lineId => $qty]);
         $this->audit->record(
             action: is_object($active) ? 'INV.ReservationIncreased' : 'INV.ReservationCreated',
@@ -177,7 +199,7 @@ final class InventoryPosting
             metadata: ['project' => Row::text($line, 'project_public_id'), 'line' => Row::text($line, 'line_no'), 'quantity' => $qty],
         );
 
-        return $id;
+        return [$id, (int) Row::text($line, 'product_id')];
     }
 
     /**

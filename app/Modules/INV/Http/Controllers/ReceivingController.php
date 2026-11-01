@@ -3,7 +3,6 @@
 namespace App\Modules\INV\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Actions\ReceiveGoods;
 use App\Modules\INV\Actions\ReverseReceipt;
 use App\Modules\INV\Data\ReceiptEntry;
@@ -33,19 +32,25 @@ final class ReceivingController extends Controller
 
     public function __construct(
         private readonly ReceivingQueries $queries,
-        private readonly EffectiveCapabilities $capabilities,
     ) {}
 
     /** ROUTE-021: each company its own deferred group, with its own error and retry (NAV-021). */
     public function worklist(Request $request): Response
     {
         $actor = self::actor($request);
-        $groups = $this->queries->groups($actor);
-        $props = ['groups' => array_map(fn (array $group): array => array_diff_key($group, ['internal' => 1]), $groups)];
+        $all = $this->queries->groups($actor);
+        $chosen = self::query($request, 'perusahaan');
+        $groups = array_values(array_filter($all, fn (array $group): bool => $chosen === null || $group['id'] === $chosen));
+        $closed = array_values(array_filter(explode(',', self::query($request, 'tutup') ?? ''), fn (string $id): bool => $id !== ''));
+        $props = ['groups' => array_map(fn (array $group): array => array_diff_key($group, ['internal' => 1]), $groups), 'companies' => array_map(fn (array $group): array => array_diff_key($group, ['internal' => 1]), $all), 'chosen' => $chosen, 'closed' => $closed];
         $after = self::query($request, 'setelah');
         $only = self::query($request, 'kelompok');
 
         foreach ($groups as $group) {
+            if (in_array($group['id'], $closed, true)) {
+                continue;
+            }
+
             $props['group_'.$group['id']] = Inertia::defer(self::group(fn (): array => $this->queries->worklist($actor, $group['internal'], $only === $group['id'] ? $after : null)), 'group_'.$group['id']);
         }
 
@@ -148,14 +153,14 @@ final class ReceivingController extends Controller
             $rack = $this->queries->location(self::text($place['rak'] ?? '')) ?? throw ValidationException::withMessages(["tempat.{$position}.rak" => $unknown]);
             $serialHandle = self::nullable($place['seri'] ?? null);
             $serial = $serialHandle === null ? null : ($this->queries->serialOfLot($lot['id'], $serialHandle) ?? throw ValidationException::withMessages(["tempat.{$position}.seri" => $unknown]));
-            $removals[] = ['location' => $rack, 'condition' => self::text($place['kondisi'] ?? ''), 'qty' => self::text($place['jumlah'] ?? ''), 'serial' => $serial === null ? null : $serial['id']];
+            $removals[] = ['location' => $rack, 'condition' => self::text($place['kondisi'] ?? ''), 'qty' => self::text($place['jumlah'] ?? ''), 'serial' => $serial];
         }
 
         $cuts = [];
 
         foreach (is_array($input['potong'] ?? null) ? $input['potong'] : [] as $position => $cut) {
             $cut = is_array($cut) ? $cut : [];
-            $reservation = $this->queries->reservation(self::text($cut['reservasi'] ?? '')) ?? throw ValidationException::withMessages(["potong.{$position}.reservasi" => $unknown]);
+            $reservation = $this->queries->reservation($lot['product'], self::text($cut['reservasi'] ?? '')) ?? throw ValidationException::withMessages(["potong.{$position}.reservasi" => $unknown]);
             $cuts[$reservation] = self::text($cut['jumlah'] ?? '');
         }
 
@@ -173,7 +178,7 @@ final class ReceivingController extends Controller
             return response()->json(['message' => self::say('projects.validation.required')], 422);
         }
 
-        return response()->json($lookup->find($this->capabilities->for(self::actor($request)), $code));
+        return response()->json($lookup->find(self::actor($request), $code));
     }
 
     /** The command's answer as flash data, the input kept in place; a future date at its field (C-50; IP-14). */
@@ -208,7 +213,11 @@ final class ReceivingController extends Controller
 
         return match ($outcome->code) {
             'C-29' => self::say('receiving.refusal.above_remainder', ['sisa' => self::text($state['remainder'] ?? '0')]),
-            'C-02' => $reason === 'in_stock' ? self::say('receiving.refusal.serial_in_stock', ['seri' => self::text($state['serial'] ?? '')]) : self::say('receiving.refusal.serial_count'),
+            'C-02' => match ($reason) {
+                'in_stock' => self::say('receiving.refusal.serial_in_stock', ['seri' => self::text($state['serial'] ?? '')]),
+                'serial_reversal' => self::say('receiving.refusal.serial_reversal'),
+                default => self::say('receiving.refusal.serial_count'),
+            },
             'C-03' => self::say('receiving.refusal.above_unconsumed', ['sisa' => self::text($state['available'] ?? '0')]),
             'C-06', 'AZ-08' => self::say('receiving.refusal.reservations'),
             'C-09' => self::say('receiving.refusal.quantity'),

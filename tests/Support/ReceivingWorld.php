@@ -97,6 +97,27 @@ final class ReceivingWorld
         return InvoiceWorld::word(app(ReverseReceipt::class)->run((string) Str::uuid(), $actor, $company, $lot, [['location' => $rack, 'condition' => 'USABLE', 'qty' => $qty, 'serial' => null]], [], 'Salah barang', BusinessDate::today(), false));
     }
 
+    /** ROUTE-183's action naming one serial, for the race tests; its word. */
+    public static function reverseSerial(int $actor, int $company, int $lot, int $rack, int $serial): string
+    {
+        Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
+
+        return InvoiceWorld::word(app(ReverseReceipt::class)->run((string) Str::uuid(), $actor, $company, $lot, [['location' => $rack, 'condition' => 'USABLE', 'qty' => '1', 'serial' => $serial]], [], 'Salah barang', BusinessDate::today(), false));
+    }
+
+    /**
+     * Serial-state reconciliation (FX-04 scenario 14; C-02; BR-INV-08; AC-17): each serialized lot's place holds exactly its serials in stock, each with the entry that put it there.
+     *
+     * @return list<object>
+     */
+    public static function serialDifferences(): array
+    {
+        return [
+            ...DB::select("select b.lot_id, b.location_id, b.condition, b.qty, count(s.id) as serials from stock_lot_balances b join products p on p.id = b.product_id and p.is_serialized left join serial_units s on s.current_lot_id = b.lot_id and s.current_location_id = b.location_id and s.current_condition = b.condition and s.state = 'IN_STOCK' group by b.lot_id, b.location_id, b.condition, b.qty having b.qty <> count(s.id)"),
+            ...DB::select("select s.id, s.serial_number, s.state from serial_units s left join stock_movement_entries e on e.id = s.last_entry_id where (s.state = 'IN_STOCK' or s.last_entry_id is not null) and (e.id is null or e.serial_unit_id <> s.id or (s.state = 'IN_STOCK' and (e.lot_id <> s.current_lot_id or e.qty_delta_base <= 0)))"),
+        ];
+    }
+
     public static function lotOf(int $lineId): int
     {
         $lot = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('r.purchase_line_id', $lineId)->orderByDesc('i.id')->value('i.id');

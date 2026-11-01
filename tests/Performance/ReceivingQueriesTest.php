@@ -46,14 +46,15 @@ function receivingPurchase(object $test, string $qty = '10'): Purchase
     return ReceivingWorld::purchase($test->company, $test->goods['product']->id, $test->goods['base']->id, $qty);
 }
 
-it('reads the scan lookup in few statements, none scanning a table (QB-06; PFM-01; WS-12)', function () {
-    $authority = app(EffectiveCapabilities::class)->for($this->actor->id);
+it('reads the scan lookup within QB-06\'s two statements (QB-06; PFM-01; WS-12)', function () {
+    // The capability middleware has read the viewer's grants by the time a lookup runs.
+    app(EffectiveCapabilities::class)->for($this->actor->id);
     $lookup = app(ScanLookup::class);
 
-    $found = receivingStatements(fn () => $lookup->find($authority, $this->goods['product']->sku));
-    $none = receivingStatements(fn () => $lookup->find($authority, 'TIDAK-ADA'));
+    $found = receivingStatements(fn () => $lookup->find($this->actor->id, $this->goods['product']->sku));
+    $none = receivingStatements(fn () => $lookup->find($this->actor->id, 'TIDAK-ADA'));
 
-    expect($found)->toBeLessThanOrEqual(5)->and($none)->toBeLessThanOrEqual(5);
+    expect($found)->toBeLessThanOrEqual(2)->and($none)->toBeLessThanOrEqual(2);
 });
 
 it('reads the worklist in the same statements for one row and a full page, one company at a time (QB-05; PFM-01; PF-13; QS-05)', function () {
@@ -66,7 +67,7 @@ it('reads the worklist in the same statements for one row and a full page, one c
     }
 
     $many = receivingStatements(fn () => $queries->worklist($this->actor->id, $this->company->id, null));
-    expect($many)->toBe($one)->and($one)->toBeLessThanOrEqual(6);
+    expect($many)->toBe($one)->and($one)->toBeLessThanOrEqual(4);
 
     DB::flushQueryLog();
     DB::enableQueryLog();

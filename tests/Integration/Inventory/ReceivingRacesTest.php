@@ -185,6 +185,32 @@ it('M-05: two commands receiving one serial leave one success, the serial in sto
         ->and(DB::table('serial_units')->where('serial_key', 'sn-race')->value('state'))->toBe('IN_STOCK')
         ->and(DB::table('stock_movement_entries')->whereNotNull('serial_unit_id')->count())->toBe(1)
         ->and(DB::table('stock_product_balances')->where('product_id', $this->product)->value('on_hand_qty'))->toBe('1.000')
+        ->and(ReceivingWorld::serialDifferences())->toBe([])
+        ->and(receivingRaceDifferences())->toBe([]);
+});
+
+it('M-05: two reversals naming one serial leave one, the other refused under the locks, no unit lost beside it (C-02; AX-05; DATABASE §8; F2)', function () {
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $purchase = ReceivingWorld::purchase($this->company, $this->product, $this->unit, '5');
+    $line = ReceivingWorld::line($purchase);
+    expect(ReceivingWorld::receive($this->actor, $this->company->id, $purchase->id, $line->id, $this->unit, $this->rack, '2', serials: [['serial' => 'SN-A', 'damaged' => false], ['serial' => 'SN-B', 'damaged' => false]]))->toBe('COMMITTED');
+    $lot = ReceivingWorld::lotOf($line->id);
+    $serial = (int) DB::table('serial_units')->where('serial_key', 'sn-a')->value('id');
+    $args = [$this->actor, $this->company->id, $lot, $this->rack, $serial];
+
+    $results = Sessions::run([
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => ReceivingWorld::reverseSerial(...$args), 'the first holds its locks'),
+        'second' => static function () use ($args): string {
+            Barrier::await('the first holds its locks');
+
+            return ReceivingWorld::reverseSerial(...$args);
+        },
+    ]);
+
+    expect($results['first'])->toBe('COMMITTED')->and($results['second'])->toContain('C-02')
+        ->and(DB::table('stock_lot_balances')->where('lot_id', $lot)->sum('qty'))->toEqual(1)
+        ->and(DB::table('serial_units')->where('serial_key', 'sn-b')->value('state'))->toBe('IN_STOCK')
+        ->and(ReceivingWorld::serialDifferences())->toBe([])
         ->and(receivingRaceDifferences())->toBe([]);
 });
 

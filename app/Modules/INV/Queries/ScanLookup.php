@@ -2,10 +2,8 @@
 
 namespace App\Modules\INV\Queries;
 
-use App\Modules\IAM\Data\Authority;
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Search\Row;
-use Illuminate\Database\Query\Builder;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -16,24 +14,31 @@ final class ScanLookup
     /** The candidates listed for an ambiguous code at most (UXS-34). */
     public const ROWS = 10;
 
+    public function __construct(private readonly EffectiveCapabilities $capabilities) {}
+
     /** @return array{kind: string, code: string, matches: list<array<string, mixed>>, register: bool} */
-    public function find(Authority $viewer, string $code): array
+    public function find(int $viewerId, string $code): array
     {
         $term = trim($code);
         $key = mb_strtoupper((string) preg_replace('/\s+/u', '', $term));
         $matches = [];
 
-        foreach (DB::table('products as p')->leftJoin('product_barcodes as b', fn (JoinClause $join) => $join->on('b.product_id', '=', 'p.id')->where('b.is_active', true)->where('b.code_key', $key))
-            ->where('p.is_active', true)->where(fn (Builder $where) => $where->whereRaw('upper(p.sku) = ?', [$key])->orWhereNotNull('b.id'))->orderBy('p.name')->limit(self::ROWS + 1)->distinct()->get(['p.public_id', 'p.name', 'p.sku', 'p.is_serialized']) as $row) {
+        $products = DB::table('products as p')->where('p.is_active', true)->whereRaw('lower(p.sku) = ?', [mb_strtolower($key)])->select(['p.public_id', 'p.name', 'p.sku', 'p.is_serialized'])
+            ->union(DB::table('product_barcodes as b')->join('products as p', 'p.id', '=', 'b.product_id')->where('b.is_active', true)->where('b.code_key', $key)->where('p.is_active', true)->select(['p.public_id', 'p.name', 'p.sku', 'p.is_serialized']));
+
+        foreach ($products->orderBy('name')->limit(self::ROWS + 1)->get() as $row) {
             $matches[] = ['kind' => 'product', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'sku' => Row::nullable($row, 'sku'), 'serialized' => (bool) $row->is_serialized];
         }
 
-        foreach (DB::table('serial_units as s')->join('products as p', 'p.id', '=', 's.product_id')->where('s.serial_key', mb_strtolower((string) preg_replace('/\s+/u', '', $term)))->orderBy('p.name')->limit(self::ROWS + 1)->get(['s.serial_number', 's.state', 'p.public_id', 'p.name']) as $row) {
-            $matches[] = ['kind' => 'serial', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'serial' => Row::text($row, 'serial_number'), 'state' => Row::text($row, 'state')];
-        }
+        $units = DB::table('serial_units as s')->join('products as p', 'p.id', '=', 's.product_id')->where('s.serial_key', mb_strtolower((string) preg_replace('/\s+/u', '', $term)))->selectRaw("'serial' as kind, s.serial_number as code, s.state = 'IN_STOCK' as in_stock, p.public_id, p.name")
+            ->unionAll(DB::table('inventory_lots as l')->join('products as p', 'p.id', '=', 'l.product_id')->where('l.lot_code', $key)->selectRaw("'lot' as kind, l.lot_code as code, false as in_stock, p.public_id, p.name"));
 
-        foreach (DB::table('inventory_lots as l')->join('products as p', 'p.id', '=', 'l.product_id')->where('l.lot_code', $key)->limit(self::ROWS + 1)->get(['l.lot_code', 'p.public_id', 'p.name']) as $row) {
-            $matches[] = ['kind' => 'lot', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'lot' => Row::text($row, 'lot_code')];
+        foreach ($units->limit(self::ROWS + 1)->get() as $row) {
+            $code = Row::text($row, 'code');
+            // Whether it is in stock, no more: any other state is said only beside the movement explaining it (PERMISSIONS_MATRIX row 49).
+            $matches[] = Row::text($row, 'kind') === 'serial'
+                ? ['kind' => 'serial', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'serial' => $code, 'in_stock' => (bool) $row->in_stock]
+                : ['kind' => 'lot', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'lot' => $code];
         }
 
         $matches = array_slice($matches, 0, self::ROWS);
@@ -42,6 +47,6 @@ final class ScanLookup
             0 => 'unknown',
             1 => 'match',
             default => 'ambiguous',
-        }, 'code' => $term, 'matches' => $matches, 'register' => $matches === [] && $viewer->allows('products.edit')];
+        }, 'code' => $term, 'matches' => $matches, 'register' => $matches === [] && $this->capabilities->for($viewerId)->allows('products.edit')];
     }
 }

@@ -5,6 +5,7 @@ use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Services\ReceivingSubjects;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Support\BusinessDate;
+use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
@@ -51,7 +52,7 @@ it('renders the committed receipt with its supplier reference, its damaged and r
         ->and($printed)->not->toContain('1000');
 });
 
-it('opens the draft from the receipt, opens it on PG-036 and issues it numbered, no stock changed (ROUTE-221; ROUTE-182; AX-15; criterion 14)', function () {
+it('opens the draft from the receipt on PG-036, no stock changed; its issue walked by the browser journey (ROUTE-221; ROUTE-182; AX-15; criterion 14)', function () {
     $year = substr(BusinessDate::today(), 0, 4);
     Numbering::goLive("{$year}-01-01");
     Numbering::scheme($this->company, SequenceType::Doc12, "{$year}-01-01", 'YEAR', 'UJI/NTB/{tahun}/{nomor:4}');
@@ -67,7 +68,7 @@ it('opens the draft from the receipt, opens it on PG-036 and issues it numbered,
         ->and(DB::table('stock_movements')->count())->toBe(1);
 });
 
-it('answers a reversal movement or an unknown id as no subject (WF-DOC-01; BR-DOC-04)', function () {
+it('answers an unknown id or other records as no subject (WF-DOC-01; BR-DOC-04)', function () {
     $authority = app(EffectiveCapabilities::class)->for($this->actor->id);
     $subjects = app(ReceivingSubjects::class);
 
@@ -75,4 +76,15 @@ it('answers a reversal movement or an unknown id as no subject (WF-DOC-01; BR-DO
         ->and($subjects->subject($authority, 'DOC-12', 'STANDARD', ['receiving_movement_id' => 'bukan']))->toBeNull()
         ->and($subjects->subject($authority, 'DOC-12', 'STANDARD', ['receiving_movement_id' => $this->movement->public_id, 'lain' => 'x']))->toBeNull()
         ->and($subjects->subject($authority, 'DOC-12', 'STANDARD', ['receiving_movement_id' => $this->movement->public_id]))->not->toBeNull();
+});
+
+it('opens no note of a receipt reversed whole, its button gone, its units never received (BR-DOC-04; WF-DOC-01)', function () {
+    $handle = RowHandle::of('receiving_lines', (int) DB::table('receiving_lines')->value('id'));
+    $rack = RowHandle::of('locations', $this->rack);
+    $this->actingAs($this->actor)->post("/gudang/penerimaan/{$handle}/balikkan", ['command_id' => (string) Str::uuid(), 'tempat' => [['rak' => $rack, 'kondisi' => 'USABLE', 'jumlah' => '8'], ['rak' => $rack, 'kondisi' => 'UNUSABLE', 'jumlah' => '1']], 'alasan' => 'Barang salah', 'tanggal' => BusinessDate::today()]);
+    expect(DB::table('stock_movements')->where('movement_type', 'RECEIPT_REVERSAL')->count())->toBe(1);
+
+    $this->actingAs($this->actor)->get("/gudang/barang-masuk/{$this->purchase->public_id}")->assertInertia(fn ($page) => $page->where('receipts.0.reversed', true)->etc());
+    $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-12', 'subjek' => ['receiving_movement_id' => $this->movement->public_id]])->assertNotFound();
+    expect(DB::table('documents')->where('document_type_code', 'DOC-12')->count())->toBe(0);
 });

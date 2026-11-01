@@ -10,6 +10,7 @@ use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use App\Support\Command\Refused;
 use App\Support\Search\Row;
+use Brick\Math\BigDecimal;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -30,7 +31,7 @@ final class ReceivingSubjects implements DocumentSubjectProvider
         $movement = is_string($publicId) && preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 && count($records) === 1
             ? DB::table('stock_movements')->where('public_id', strtolower($publicId))->where('movement_type', 'RECEIPT')->first(['id', 'company_id']) : null;
 
-        if ($movement === null || Row::nullable($movement, 'company_id') === null || ! $viewer->allows('documents.issue', (int) Row::text($movement, 'company_id'))) {
+        if ($movement === null || Row::nullable($movement, 'company_id') === null || ! $viewer->allows('documents.issue', (int) Row::text($movement, 'company_id')) || self::reversedWhole((int) Row::text($movement, 'id'))) {
             return null;
         }
 
@@ -48,6 +49,10 @@ final class ReceivingSubjects implements DocumentSubjectProvider
     {
         if (! DB::table('receiving_lines')->where('stock_movement_id', self::movement($subject))->exists()) {
             throw Refused::rejected('WF-DOC-01', ['reason' => 'no_subject']);
+        }
+
+        if (self::reversedWhole(self::movement($subject))) {
+            throw Refused::rejected('WF-DOC-01', ['reason' => 'reversed']);
         }
     }
 
@@ -88,6 +93,15 @@ final class ReceivingSubjects implements DocumentSubjectProvider
             subject: 'Nota Terima Barang '.Row::text($movement, 'purchase_number'),
             lines: $lines,
         );
+    }
+
+    /** A receipt reversed whole is units recorded as never received: its note would be fictitious (BR-DOC-04). */
+    private static function reversedWhole(int $movementId): bool
+    {
+        $lot = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('r.stock_movement_id', $movementId)->first(['i.id', 'i.acquired_qty_base']);
+        $reversed = $lot === null ? null : DB::table('stock_movement_entries')->where('lot_id', (int) Row::text($lot, 'id'))->where('movement_type', 'RECEIPT_REVERSAL')->selectRaw('coalesce(sum(-qty_delta_base), 0)::text as reversed')->value('reversed');
+
+        return $lot !== null && is_string($reversed) && BigDecimal::of($reversed)->isGreaterThanOrEqualTo(Row::text($lot, 'acquired_qty_base'));
     }
 
     private static function movement(DocumentSubject $subject): int

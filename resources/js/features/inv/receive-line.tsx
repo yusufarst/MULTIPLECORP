@@ -15,19 +15,22 @@ import * as decimal from '@/lib/decimal';
 import { useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
-export type ReceiveLine = { handle: string; no: number; description: string; product: string; name: string; sku: string | null; serialized: boolean; scale: number; ordered: string; received: string; closed: string; remaining: string; reservable: string | null; units: { code: string; name: string; ratio: number }[] };
-export type Receipt = { handle: string; movement: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null };
+export type ReceiveLine = { handle: string; no: number; description: string; product: string; name: string; sku: string | null; serialized: boolean; scale: number; ordered: string; received: string; closed: string; remaining: string; replacement: string; reservable: string | null; units: { code: string; name: string; ratio: number }[] };
+export type Receipt = { handle: string; movement: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversed: boolean };
+export type ReturnCase = { id: string; label: string };
 export type Rack = { id: string; code: string; name: string };
 export type ScannedSerial = { serial: string; damaged: boolean };
 
 export const plain = (value: string): string => (value.includes('.') ? value.replace(/\.?0+$/, '') : value);
 
-export function LineForm({ line, url, company, racks, receipts, today, canEvidence, serials, onSerials, hidden, onUnsent }: {
+export function LineForm({ line, url, company, racks, receipts, cases, closed, today, canEvidence, serials, onSerials, hidden, onUnsent }: {
     line: ReceiveLine;
     url: string;
     company: string;
     racks: Rack[];
     receipts: Receipt[];
+    cases: ReturnCase[];
+    closed: boolean;
     today: string;
     canEvidence: boolean;
     serials: ScannedSerial[];
@@ -45,12 +48,14 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
     const [reference, setReference] = useState('');
     const [kind, setKind] = useState('ORIGINAL');
     const [cited, setCited] = useState('');
+    const [returnCase, setReturnCase] = useState('');
     const [reserve, setReserve] = useState('');
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [evidence, setEvidence] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
     const [confirming, setConfirming] = useState(false);
-    const frozen = command.pending || command.unknown;
+    const frozen = command.pending || command.unknown || closed;
+    const expected = Number(line.replacement) > 0;
     const error = (field: string) => command.errors[field];
     const ownReceipts = receipts.filter((receipt) => receipt.line === line.no);
     const usableCount = line.serialized ? String(serials.filter((serial) => !serial.damaged).length) : usable;
@@ -73,6 +78,7 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
         setReserve('');
         setKind('ORIGINAL');
         setCited('');
+        setReturnCase('');
         setEvidence([]);
         onSerials([]);
         setConfirming(false);
@@ -80,7 +86,7 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
     const send = () => {
         command.submit({
             baris: line.handle, jenis: kind, satuan: unit, layak: usableCount === '' ? '0' : usableCount, rusak: damagedCount === '' ? '0' : damagedCount, tolak: rejected === '' ? '0' : rejected,
-            rak: rack === '' ? null : rack, referensi: reference === '' ? null : reference, mengoreksi: cited === '' ? null : cited, reservasi: reserve === '' ? null : reserve, bukti: evidence,
+            rak: rack === '' ? null : rack, referensi: reference === '' ? null : reference, mengoreksi: cited === '' || kind === 'REPLACEMENT' ? null : cited, kasus: returnCase === '' || kind !== 'REPLACEMENT' ? null : returnCase, reservasi: reserve === '' ? null : reserve, bukti: evidence,
             seri: serials.map((serial) => ({ nomor: serial.serial, rusak: serial.damaged })), kebijakan_seri: line.serialized, kebijakan_skala: line.scale, tanggal: date.date, tanggal_otomatis: !date.chosen,
         }, reset);
     };
@@ -89,6 +95,8 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
         <div data-slot="receive-line" data-line={line.no} hidden={hidden} className="flex min-w-0 flex-col gap-4">
             <h2 className="text-subhead">{line.name}</h2>
             <p className="text-body text-text-secondary">{t('receiving.line.remaining', { sisa: plain(line.remaining) })}</p>
+            {expected && <p className="text-body text-text-secondary">{t('receiving.line.replacement', { jumlah: plain(line.replacement) })}</p>}
+            {closed && <p className="text-body text-text-secondary">{t('receiving.refusal.purchase_state')}</p>}
             <BusinessDateControl today={today} value={date} onChange={setDate} />
             <div className="flex min-w-0 flex-wrap items-start gap-4">
                 <FormField label={t('pt10.columns.unit')} error={error('satuan')} className="w-32">
@@ -142,7 +150,7 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
                     )}
                 </div>
             )}
-            {ownReceipts.length > 0 && (
+            {(ownReceipts.length > 0 || expected) && (
                 <div className="flex min-w-0 flex-wrap items-start gap-4">
                     <FormField label={t('receiving.line.kind')} className="min-w-0 sm:w-64">
                         {(control) => (
@@ -150,10 +158,21 @@ export function LineForm({ line, url, company, racks, receipts, today, canEviden
                                 <option value="ORIGINAL">{t('receiving.kind.ORIGINAL')}</option>
                                 <option value="SUPPLEMENT">{t('receiving.kind.SUPPLEMENT')}</option>
                                 <option value="RE_RECEIPT">{t('receiving.kind.RE_RECEIPT')}</option>
+                                {expected && <option value="REPLACEMENT">{t('receiving.kind.REPLACEMENT')}</option>}
                             </NativeSelect>
                         )}
                     </FormField>
-                    {kind !== 'ORIGINAL' && (
+                    {kind === 'REPLACEMENT' && (
+                        <FormField label={t('receiving.line.case')} error={error('kasus')} className="min-w-0 sm:w-80">
+                            {(control) => (
+                                <NativeSelect {...control} value={returnCase} disabled={frozen} onChange={(event) => { setReturnCase(event.target.value); }}>
+                                    <option value="">{t('receiving.line.choose_case')}</option>
+                                    {cases.map((option) => <option key={option.id} value={option.id}>{option.label}</option>)}
+                                </NativeSelect>
+                            )}
+                        </FormField>
+                    )}
+                    {(kind === 'SUPPLEMENT' || kind === 'RE_RECEIPT') && (
                         <FormField label={t('receiving.line.cited')} error={error('mengoreksi')} className="min-w-0 sm:w-80">
                             {(control) => (
                                 <NativeSelect {...control} value={cited} disabled={frozen} onChange={(event) => { setCited(event.target.value); }}>

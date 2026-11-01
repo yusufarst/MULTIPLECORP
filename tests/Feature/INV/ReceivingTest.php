@@ -9,6 +9,7 @@ use App\Support\RowHandle;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Database\Factories\CAT\ProductBarcodeFactory;
+use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -271,4 +272,98 @@ it('lists open warehouse remainders per company on PG-021, none of another compa
     $stranger = ReceivingWorld::actor($other->company);
     $this->actingAs($stranger)->get($this->url)->assertNotFound();
     $this->actingAs($stranger)->post("{$this->url}/terima", ReceivingWorld::request($this->line, $this->unit, $this->rack, '1'))->assertNotFound();
+});
+
+it('links a receipt\'s evidence to the movement it proves (IP-16; SF-EVIDENCE; criterion 1)', function () {
+    $proof = EvidenceDocumentFactory::new()->createOne(['company_id' => $this->company->id, 'evidence_type' => 'DELIVERY_PROOF']);
+
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '2', more: ['bukti' => [$proof->public_id]]))['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()));
+    $link = DB::table('evidence_links')->where('evidence_document_id', $proof->id)->sole();
+    expect($link->stock_movement_id)->toBe(DB::table('stock_movements')->where('movement_type', 'RECEIPT')->value('id'))->and($link->role)->toBe('PRIMARY_PROOF');
+});
+
+it('reverses a serial only as itself: this lot\'s, at its place and condition, then NEVER_RECEIVED and receivable again (C-02; BR-INV-09; DATABASE §8; AX-05; criterion 11)', function () {
+    Product::query()->whereKey($this->line->product_id)->toBase()->update(['is_serialized' => true]);
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '1', '1', more: ['seri' => [['nomor' => 'SN-1'], ['nomor' => 'SN-2', 'rusak' => true]]]))['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()));
+    expect(ReceivingWorld::serialDifferences())->toBe([]);
+    $receipt = DB::table('receiving_lines')->value('id');
+    $handle = RowHandle::of('receiving_lines', (int) $receipt);
+    $rack = RowHandle::of('locations', $this->rack);
+    $first = (int) DB::table('serial_units')->where('serial_key', 'sn-1')->value('id');
+    $reverse = fn (array $place, ?string $command = null) => $this->actingAs($this->actor)->post("/gudang/penerimaan/{$handle}/balikkan", ['command_id' => $command ?? (string) Str::uuid(), 'tempat' => [$place], 'alasan' => 'Seri salah', 'tanggal' => $this->today]);
+
+    // The wrong condition, and no serial at all: the guards and the serial rows would disagree.
+    $reverse(['rak' => $rack, 'kondisi' => 'UNUSABLE', 'jumlah' => '1', 'seri' => RowHandle::of('serial_units', $first)]);
+    expect(receivingAnswer()['code'])->toBe('C-02');
+    $reverse(['rak' => $rack, 'kondisi' => 'USABLE', 'jumlah' => '1']);
+    expect(receivingAnswer()['code'])->toBe('C-02')->and(DB::table('stock_movements')->where('movement_type', 'RECEIPT_REVERSAL')->count())->toBe(0);
+
+    $command = (string) Str::uuid();
+    $body = ['rak' => $rack, 'kondisi' => 'USABLE', 'jumlah' => '1', 'seri' => RowHandle::of('serial_units', $first)];
+    $reverse($body, $command);
+    expect(receivingAnswer()['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()))->and(DB::table('serial_units')->where('id', $first)->value('state'))->toBe('NEVER_RECEIVED')
+        ->and(DB::table('serial_units')->where('serial_key', 'sn-2')->value('state'))->toBe('IN_STOCK')->and(ReceivingWorld::serialDifferences())->toBe([])->and(receivingDifferences())->toBe([]);
+
+    // The lost answer's retry finds its record, though the serial is no longer in stock (CI-05).
+    $reverse($body, $command)->assertRedirect();
+    expect(receivingAnswer()['kind'])->toBe('COMMITTED')->and(DB::table('stock_movements')->where('movement_type', 'RECEIPT_REVERSAL')->count())->toBe(1);
+
+    // Twice, now as a stale form: its place holds nothing more.
+    $reverse($body);
+    expect(receivingAnswer()['code'])->toBe('C-03');
+
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '1', more: ['jenis' => 'RE_RECEIPT', 'mengoreksi' => $handle, 'seri' => [['nomor' => 'SN-1']]]))['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()));
+    expect(DB::table('serial_units')->where('id', $first)->value('state'))->toBe('IN_STOCK')->and(ReceivingWorld::serialDifferences())->toBe([]);
+});
+
+it('costs a replacement from its case over the units still expected, moving the case\'s replaced value both ways, the normal remainder untouched (C-29; C-57; C-59; PX-03; FX-04 scenario 5; criterion 4)', function () {
+    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->company->id, 'case_kind' => 'PURCHASE_RETURN', 'returned_cost' => '1000.00']);
+    DB::table('purchase_line_balances')->where('purchase_line_id', $this->line->id)->update(['replacement_expected_qty_base' => '10']);
+    $replacement = fn (string $qty): array => received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, $qty, more: ['jenis' => 'REPLACEMENT', 'kasus' => $case->public_id]));
+    $replaced = fn (): string => (string) DB::table('correction_cases')->where('id', $case->id)->value('replaced_value');
+    $cost = fn (): string => (string) DB::table('lot_cost_balances')->where('lot_id', DB::table('inventory_lots')->max('id'))->value('remaining_cost');
+
+    $this->actingAs($this->actor)->get($this->url)->assertInertia(fn ($page) => $page->where('lines.0.replacement', '10.000')->where('cases.0.id', $case->public_id)->etc());
+
+    expect($replacement('4')['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()))->and($cost())->toBe('400.00')->and($replaced())->toBe('400.00');
+    expect($replacement('6')['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()))->and($cost())->toBe('600.00')->and($replaced())->toBe('1000.00');
+    expect($replacement('1')['code'])->toBe('C-29');
+    $balance = ReceivingWorld::balance($this->line->id);
+    expect($balance->replacement_received_net_qty_base)->toBe('10.000')->and($balance->normal_received_net_qty_base)->toBe('0.000')->and($balance->posted_goods_value)->toBe('0.00');
+
+    $handle = RowHandle::of('receiving_lines', (int) DB::table('receiving_lines')->max('id'));
+    $this->actingAs($this->actor)->post("/gudang/penerimaan/{$handle}/balikkan", ['command_id' => (string) Str::uuid(), 'tempat' => [['rak' => RowHandle::of('locations', $this->rack), 'kondisi' => 'USABLE', 'jumlah' => '6']], 'alasan' => 'Pengganti salah', 'tanggal' => $this->today]);
+    expect(receivingAnswer()['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()))->and($replaced())->toBe('400.00')
+        ->and(ReceivingWorld::balance($this->line->id)->replacement_received_net_qty_base)->toBe('4.000');
+});
+
+it('refuses a replacement citing a closed case, a case of another kind, or a purchase no longer open (C-59; AX-04)', function () {
+    DB::table('purchase_line_balances')->where('purchase_line_id', $this->line->id)->update(['replacement_expected_qty_base' => '10']);
+    $other = CorrectionCaseFactory::new()->createOne(['company_id' => $this->company->id, 'case_kind' => 'OTHER']);
+
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '1', more: ['jenis' => 'REPLACEMENT', 'kasus' => $other->public_id]))['code'])->toBe('C-59');
+
+    $case = CorrectionCaseFactory::new()->createOne(['company_id' => $this->company->id, 'case_kind' => 'PURCHASE_RETURN']);
+    DB::table('purchases')->where('id', $this->purchase->id)->update(['state' => 'CANCELLED', 'cancelled_by' => $this->actor->id, 'cancelled_at' => now(), 'cancelled_reason' => 'Batal']);
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '1', more: ['jenis' => 'REPLACEMENT', 'kasus' => $case->public_id]))['code'])->toBe('ST-02');
+});
+
+it('refuses a rack no longer active, though a replay still finds its answer (C-14; CI-05)', function () {
+    $body = ReceivingWorld::request($this->line, $this->unit, $this->rack, '2');
+    expect(received($this, $body)['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()));
+    DB::table('locations')->where('id', $this->rack)->update(['is_active' => false]);
+
+    expect(received($this, $body)['kind'])->toBe('COMMITTED')->and(DB::table('receiving_lines')->count())->toBe(1);
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '2'))['code'])->toBe('C-14');
+});
+
+it('holds the company filter and the closed groups in the address (NAV-021)', function () {
+    $other = InvoiceWorld::make()->company;
+    $both = ReceivingWorld::actor($this->company);
+    $grant = Authorization::admin([$this->company->id, $other->id], ReceivingWorld::CAPABILITIES);
+    unset($both);
+
+    $this->actingAs($grant)->get('/gudang/barang-masuk')->assertInertia(fn ($page) => $page->component('INV/ReceivingWorklist', false)->has('groups', 2)->has('companies', 2)->where('chosen', null)->etc());
+    $this->actingAs($grant)->get("/gudang/barang-masuk?perusahaan={$other->public_id}")->assertInertia(fn ($page) => $page->has('groups', 1)->has('companies', 2)->where('groups.0.id', $other->public_id)->where('chosen', $other->public_id)->etc());
+    $this->actingAs($grant)->get("/gudang/barang-masuk?tutup={$other->public_id}")->assertInertia(fn ($page) => $page->has('groups', 2)->where('closed', [$other->public_id])->etc());
 });

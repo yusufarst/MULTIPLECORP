@@ -102,7 +102,7 @@ it('needs stock.reserve for the offer and for a reversal\'s cut (D-UX-12; IP-20;
     $reservation = RowHandle::of('reservations', (int) DB::table('reservations')->value('id'));
 
     $this->actingAs($without)->post("/gudang/penerimaan/{$handle}/balikkan", ['command_id' => (string) Str::uuid(), 'tempat' => [['rak' => RowHandle::of('locations', $this->rack), 'kondisi' => 'USABLE', 'jumlah' => '3']], 'potong' => [['reservasi' => $reservation, 'jumlah' => '3']], 'alasan' => 'Salah barang', 'tanggal' => $this->today]);
-    expect(receiptAnswer()['kind'])->not->toBe('COMMITTED')->and(DB::table('reservations')->value('remaining_qty_base'))->toBe('5.000')
+    expect(receiptAnswer()['code'])->toBe('AZ-08')->and(DB::table('audit_events')->where('action', 'INV.ReservationCutRouted')->count())->toBe(1)->and(DB::table('reservations')->value('remaining_qty_base'))->toBe('5.000')
         ->and(DB::table('stock_movements')->where('movement_type', 'RECEIPT_REVERSAL')->count())->toBe(0);
 });
 
@@ -170,4 +170,31 @@ it('keeps a new lot\'s code opaque and the receipt\'s scan to stock.view (PJ-23;
 
     receiptHandle($this);
     expect(DB::table('inventory_lots')->value('lot_code'))->toMatch('/^LOT-[A-Z0-9]{12}$/');
+});
+
+it('names another company\'s reservation on PG-016 by its relation marker only, offers no cut without stock.reserve, and hides the reference and the lot code without their capabilities (IP-20; PJ-01; PJ-03; PJ-04; CS-07; IG-01)', function () {
+    $foreign = InvoiceWorld::make();
+    $foreignActor = ReceivingWorld::actor($foreign->company);
+    $project = $foreign->project(['WAREHOUSE'], '20');
+    $demand = DB::table('project_lines')->where('project_id', $project->id)->first();
+    $unit = DB::table('product_units as pu')->join('units as u', 'u.id', '=', 'pu.unit_id')->where('pu.product_id', $demand->product_id)->where('pu.is_base', true)->first(['u.id', 'u.code']);
+    $theirs = ReceivingWorld::purchase($foreign->company, $demand->product_id, $unit->id, '20', '500', $project->id, $demand->id);
+    $this->actingAs($foreignActor)->post("/gudang/barang-masuk/{$theirs->public_id}/terima", ReceivingWorld::request(ReceivingWorld::line($theirs), $unit->code, $this->rack, '5', more: ['reservasi' => '5']));
+    expect(receiptAnswer()['kind'])->toBe('COMMITTED', json_encode(receiptAnswer()));
+
+    $ours = ReceivingWorld::purchase($this->company, $demand->product_id, $unit->id);
+    $this->actingAs($this->actor)->post("/gudang/barang-masuk/{$ours->public_id}/terima", ReceivingWorld::request(ReceivingWorld::line($ours), $unit->code, $this->rack, '5', more: ['referensi' => 'SJ-KITA']));
+    expect(receiptAnswer()['kind'])->toBe('COMMITTED', json_encode(receiptAnswer()));
+    $url = "/pembelian/{$ours->public_id}";
+
+    $cutter = Authorization::admin([$this->company->id], ['cost.view', 'purchase.manage', 'projects.view', 'stock.view', 'stock.reverse', 'stock.reserve']);
+    $screen = $this->actingAs($cutter)->get($url)->assertInertia(fn (AssertableInertia $page) => $page->where('receipts.0.reversal.may_cut', true)->has('receipts.0.reversal.reservations', 1)->where('receipts.0.reversal.reservations.0.project', null)->etc())->viewData('page');
+    expect(json_encode($screen['props']))->not->toContain($project->project_number)->not->toContain($project->public_id);
+
+    $plain = Authorization::admin([$this->company->id], ['cost.view', 'purchase.manage', 'stock.view', 'stock.reverse']);
+    $this->actingAs($plain)->get($url)->assertInertia(fn (AssertableInertia $page) => $page->where('receipts.0.reversal.may_cut', false)->where('receipts.0.reversal.reservations', [])->etc());
+
+    $buyer = Authorization::admin([$this->company->id], ['cost.view', 'purchase.manage']);
+    $this->actingAs($buyer)->get($url)->assertInertia(fn (AssertableInertia $page) => $page->where('receipts.0.reference', null)->where('receipts.0.lot', null)->etc());
+    $this->actingAs($this->actor)->get("/gudang/barang-masuk/{$ours->public_id}")->assertInertia(fn (AssertableInertia $page) => $page->where('receipts.0.reference', 'SJ-KITA')->etc());
 });

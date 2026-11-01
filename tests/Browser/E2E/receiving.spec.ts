@@ -23,7 +23,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await expect(page.locator('#konten')).not.toContainText('Rp');
 
         const field = page.getByRole('textbox', { name: 'Pindai atau ketik kode' });
-        await expect(field).toBeVisible();
+        await expect(field).toBeFocused();
 
         await scan(page, 'TIDAK-ADA-1');
         await expect(page.getByRole('alert').filter({ hasText: 'Kode TIDAK-ADA-1 tidak dikenal.' }).locator('visible=true')).toBeVisible();
@@ -192,4 +192,31 @@ test('asks MSG-35 before leaving with an unsent line, keeping it on staying (NAV
     await dialog.getByRole('button', { name: 'Tinggalkan Halaman' }).click();
     await page.waitForURL('**/pembelian');
     await expect(page.getByRole('heading', { name: 'Pembelian', exact: true })).toBeVisible();
+});
+
+test('reverses one chosen serial on PG-016, the other staying in stock (CM-03; C-02; criterion 11)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await receivingRun(page, `terima-balik-seri-${String(Date.now())}`);
+    await page.goto(`/gudang/barang-masuk/${run.serial_purchase}`);
+    await scan(page, 'SN-BALIK-1');
+    await scan(page, 'SN-BALIK-2');
+    await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(2);
+    await currentLine(page).getByRole('combobox', { name: 'Rak' }).selectOption({ index: 1 });
+    await record(page);
+    await expect(currentLine(page).getByText('Barang masuk tercatat.')).toBeVisible();
+
+    await page.goto(`/pembelian/${run.serial_purchase}`);
+    await page.locator('[data-slot="purchase-receipts"]').getByRole('button', { name: 'Balikkan Penerimaan' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Balikkan penerimaan ini?' });
+    await dialog.getByRole('textbox').last().fill('Seri ini salah');
+    const confirm = dialog.getByRole('button', { name: 'Balikkan Penerimaan' });
+    await expect(confirm).toBeDisabled();
+    await dialog.getByRole('checkbox', { name: /SN-BALIK-1/ }).check();
+    await confirm.click();
+    await expect(dialog).toHaveCount(0);
+
+    await page.locator('[data-slot="purchase-receipts"]').getByRole('button', { name: 'Balikkan Penerimaan' }).click();
+    const again = page.getByRole('alertdialog', { name: 'Balikkan penerimaan ini?' });
+    await expect(again.getByRole('checkbox')).toHaveCount(1);
+    await expect(again).toContainText('SN-BALIK-2');
 });

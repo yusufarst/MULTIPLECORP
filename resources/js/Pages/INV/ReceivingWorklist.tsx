@@ -1,11 +1,15 @@
-// PG-021 *Barang Masuk* (ROUTE-021; NAV-021; SCR-21; QS-05; PJ-18; TASK-039): the open warehouse remainders of OPEN purchases of the companies in scope, grouped, each group with its own error and retry, leading to PG-022 of the purchase chosen; "Muat Lagi" (IP-18). The receiving projection: never a price, tax, charge or cost. `[floor]`, the phone first.
+// PG-021 *Barang Masuk* (ROUTE-021; NAV-021; SCR-21; QS-05; PJ-18; TASK-039): the open warehouse remainders of OPEN purchases of the companies in scope, grouped, each group with its own error and retry, leading to PG-022 of the purchase chosen; the open groups and the company filter in the address; "Muat Lagi" (IP-18). The receiving projection: never a price, tax, charge or cost. `[floor]`, the phone first.
 import { Deferred, router, usePage } from '@inertiajs/react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useState } from 'react';
 
 import { DataList, ListContinuation } from '@/components/data-list';
+import { FormField } from '@/components/form';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty, RegionLoading } from '@/components/region-state';
 import { Button } from '@/components/ui/button';
+import { Icon } from '@/components/ui/icon';
+import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
@@ -13,7 +17,7 @@ import { useTranslation } from '@/lib/i18n';
 type Group = { id: string; code: string; name: string };
 type Row = { id: string; number: string; supplier: string; project: string | null; date: string; lines: number; remaining: string; href: string };
 type Page = { rows: Row[]; more: string | null } | { failed: true };
-type Props = { groups: Group[] };
+type Props = { groups: Group[]; companies: Group[]; chosen: string | null; closed: string[] };
 
 function quantity(value: string): string {
     return value.includes('.') ? value.replace(/\.?0+$/, '') : value;
@@ -71,21 +75,45 @@ function GroupRows({ group }: { group: Group }) {
     );
 }
 
-export default function ReceivingWorklist({ groups }: Props) {
+export default function ReceivingWorklist({ groups, companies, chosen, closed }: Props) {
     const { t } = useTranslation();
+    const visit = (perusahaan: string | null, tutup: string[]) => {
+        router.get('/gudang/barang-masuk', { ...(perusahaan === null ? {} : { perusahaan }), ...(tutup.length === 0 ? {} : { tutup: tutup.join(',') }) }, { preserveScroll: true });
+    };
 
     return (
         <AppShell title={t('pages.pg_021.title')}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_021.title')} />
-                {groups.length === 0 ? <RegionEmpty text={t('receiving.list.empty')} /> : groups.map((group) => (
-                    <section key={group.id} data-slot="receiving-group" className="flex min-w-0 flex-col gap-3">
-                        <h2 className="text-subhead">{`${group.code} · ${group.name}`}</h2>
-                        <Deferred data={`group_${group.id}`} fallback={<RegionLoading />}>
-                            <GroupRows group={group} />
-                        </Deferred>
-                    </section>
-                ))}
+                {companies.length > 1 && (
+                    <FormField label={t('receiving.list.filter')} className="min-w-0 sm:w-80">
+                        {(control) => (
+                            <NativeSelect {...control} value={chosen ?? ''} onChange={(event) => { visit(event.target.value === '' ? null : event.target.value, closed); }}>
+                                <option value="">{t('receiving.list.all')}</option>
+                                {companies.map((company) => <option key={company.id} value={company.id}>{`${company.code} · ${company.name}`}</option>)}
+                            </NativeSelect>
+                        )}
+                    </FormField>
+                )}
+                {groups.length === 0 ? <RegionEmpty text={t('receiving.list.empty')} /> : groups.map((group) => {
+                    const isClosed = closed.includes(group.id);
+
+                    return (
+                        <section key={group.id} data-slot="receiving-group" className="flex min-w-0 flex-col gap-3">
+                            <h2 className="text-subhead">
+                                <button type="button" aria-expanded={!isClosed} className="flex min-h-floor min-w-0 items-center gap-2 text-left" onClick={() => { visit(chosen, isClosed ? closed.filter((id) => id !== group.id) : [...closed, group.id]); }}>
+                                    <Icon icon={isClosed ? ChevronRight : ChevronDown} size="sm" />
+                                    <span className="min-w-0">{`${group.code} · ${group.name}`}</span>
+                                </button>
+                            </h2>
+                            {!isClosed && (
+                                <Deferred data={`group_${group.id}`} fallback={<RegionLoading />}>
+                                    <GroupRows group={group} />
+                                </Deferred>
+                            )}
+                        </section>
+                    );
+                })}
             </div>
         </AppShell>
     );

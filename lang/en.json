@@ -3232,5 +3232,17 @@
     "receiving.reverse.consequence": "The unconsumed units leave stock, their cost is reversed and the purchase remainder reopens.",
     "receiving.reverse.consumed": "Some units are consumed: only the rest can be reversed. Consumed units need their restoration first, or Open a Case.",
     "receiving.reverse.held": "Unconsumed :sisa",
-    "receiving.reverse.shortfall": ":kurang units short for the reservations. Choose which to cut."
+    "receiving.reverse.shortfall": ":kurang units short for the reservations. Choose which to cut.",
+    "receiving.refusal.serial_reversal": "This serial is no longer at that place. Reload and choose again.",
+    "receiving.reverse.serials": "Choose the serials to reverse",
+    "receiving.reverse.choose": "Choose what to reverse.",
+    "receiving.reverse.no_cut": ":kurang units short for the reservations. Cutting a reservation needs the stock reservation permission.",
+    "receiving.reverse.all_consumed": "Every unit is consumed: it needs its restoration first, or Open a Case.",
+    "receiving.reverse.cases": "Open a Case",
+    "receiving.list.filter": "Company",
+    "receiving.list.all": "All companies",
+    "receiving.line.case": "Return case",
+    "receiving.line.choose_case": "Choose a case",
+    "receiving.line.replacement": "Replacement still expected :jumlah",
+    "receiving.kind.REPLACEMENT": "Replacement of a return"
 }

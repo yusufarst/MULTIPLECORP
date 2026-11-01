@@ -12,6 +12,7 @@ import { FactsList, Timeline } from '@/components/record-blocks';
 import { RegionEmpty } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText, Money, Quantity } from '@/components/values';
 import { ProofSheet } from '@/features/fin/proof-sheet';
@@ -42,7 +43,7 @@ type Props = {
     today: string;
     can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean; receive: boolean; reverse: boolean };
 };
-type Receipt = { handle: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversal: { places: { location: string; code: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[]; serials: { handle: string; serial: string; location: string; condition: 'USABLE' | 'UNUSABLE' }[]; available: string; reservations: Reservation[]; consumed: boolean } | null };
+type Receipt = { handle: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversal: { places: { location: string; code: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[]; serials: { handle: string; serial: string; location: string; condition: 'USABLE' | 'UNUSABLE' }[]; available: string; reservations: Reservation[]; may_cut: boolean; consumed: boolean } | null };
 type Dialog = { kind: 'cancel' } | { kind: 'close' } | { kind: 'correct'; target: string; correction: 'PRICE_CORRECTION' | 'TAX_CORRECTION' | 'CHARGE_CORRECTION'; label: string; current: string; line: number | null } | { kind: 'basis'; charge: string } | { kind: 'unmark'; line: string };
 
 const positive = (value: string): boolean => !/^0*(\.0*)?$/.test(value);
@@ -105,17 +106,32 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
     const [reverseReason, setReverseReason] = useState('');
     const [reverseQty, setReverseQty] = useState<Record<string, string>>({});
     const [reverseCuts, setReverseCuts] = useState<Record<string, string>>({});
+    const [reverseSerials, setReverseSerials] = useState<string[]>([]);
     const reverse = useCommand<Record<string, never>>(() => `/gudang/penerimaan/${reversing?.handle ?? ''}/balikkan`, 'post');
-    const reverseUsable = reversing?.reversal === null || reversing === null ? 0 : reversing.reversal.places.filter((place) => place.condition === 'USABLE').reduce((sum, place) => sum + Number(reverseQty[`${place.location}|${place.condition}`] ?? 0), 0);
-    const reverseShortfall = reversing?.reversal === null || reversing === null ? 0 : Math.max(0, reverseUsable - Number(reversing.reversal.available));
+    const reversal = reversing?.reversal ?? null;
+    const reverseFrozen = reverse.pending || reverse.unknown;
+    const placeKey = (place: { location: string; condition: string }) => `${place.location}|${place.condition}`;
+    // A serialized lot is reversed serial by serial, each one chosen (CM-03; C-02); any other place by its quantity.
+    const chosenSerials = (reversal?.serials ?? []).filter((serial) => reverseSerials.includes(serial.handle));
+    const reverseUsable = reversal === null ? 0 : reversal.serials.length > 0
+        ? chosenSerials.filter((serial) => serial.condition === 'USABLE').length
+        : reversal.places.filter((place) => place.condition === 'USABLE').reduce((sum, place) => sum + Number(reverseQty[placeKey(place)] ?? 0), 0);
+    const reverseShortfall = reversal === null ? 0 : Math.max(0, reverseUsable - Number(reversal.available));
     const sendReversal = () => {
-        const places = reversing?.reversal?.places ?? [];
-        const serials = reversing?.reversal?.serials ?? [];
-        const tempat = serials.length > 0
-            ? serials.filter((serial) => Number(reverseQty[`${serial.location}|${serial.condition}`] ?? 0) > 0).map((serial) => ({ rak: serial.location, kondisi: serial.condition, jumlah: '1', seri: serial.handle }))
-            : places.filter((place) => Number(reverseQty[`${place.location}|${place.condition}`] ?? 0) > 0).map((place) => ({ rak: place.location, kondisi: place.condition, jumlah: reverseQty[`${place.location}|${place.condition}`] ?? '0' }));
+        const tempat = (reversal?.serials.length ?? 0) > 0
+            ? chosenSerials.map((serial) => ({ rak: serial.location, kondisi: serial.condition, jumlah: '1', seri: serial.handle }))
+            : (reversal?.places ?? []).filter((place) => Number(reverseQty[placeKey(place)] ?? 0) > 0).map((place) => ({ rak: place.location, kondisi: place.condition, jumlah: reverseQty[placeKey(place)] ?? '0' }));
         const potong = Object.entries(reverseCuts).filter(([, qty]) => Number(qty) > 0).map(([reservasi, jumlah]) => ({ reservasi, jumlah }));
         (reverse.submit as unknown as (value: unknown, done: () => void) => void)({ tempat, potong, alasan: reverseReason, tanggal: today, tanggal_otomatis: true, kembali: base }, () => { setReversing(null); });
+    };
+    const openReversal = (row: Receipt) => {
+        // Another receipt is another record: an earlier open intent is left, never retried against this one (IP-02).
+        reverse.leave();
+        setReversing(row);
+        setReverseReason('');
+        setReverseQty(Object.fromEntries(row.reversal?.places.map((place) => [placeKey(place), place.qty.replace(/\.?0+$/, '')]) ?? []));
+        setReverseSerials([]);
+        setReverseCuts({});
     };
     const chooseProduct = useLineProducts((update) => { setAmending((current) => (current === null ? current : update(current))); });
     const goodsLines = lines.filter((line) => line.kind === 'GOODS');
@@ -268,7 +284,8 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                             {receipts.map((row) => (
                                 <li key={row.handle} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-2">
                                     <span className="min-w-0">{t('receiving.summary.line', { baris: String(row.line), layak: row.usable.replace(/\.?0+$/, '') || '0', rusak: row.damaged.replace(/\.?0+$/, '') || '0', tolak: row.rejected.replace(/\.?0+$/, '') || '0' })}{row.reference === null ? '' : ` · ${row.reference}`}</span>
-                                    {can.reverse && row.reversal !== null && row.reversal.places.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setReversing(row); setReverseReason(''); setReverseQty(Object.fromEntries(row.reversal?.places.map((place) => [`${place.location}|${place.condition}`, place.qty.replace(/\.?0+$/, '')]) ?? [])); setReverseCuts({}); reverse.clear(); }}>{t('actions.reverse_receipt')}</Button>}
+                                    {can.reverse && row.reversal !== null && row.reversal.places.length > 0 && <Button variant="ghost" size="sm" onClick={() => { openReversal(row); }}>{t('actions.reverse_receipt')}</Button>}
+                                    {can.reverse && row.reversal !== null && row.reversal.places.length === 0 && row.reversal.consumed && <span className="flex min-w-0 flex-wrap items-center gap-2 text-caption text-text-secondary">{t('receiving.reverse.all_consumed')}<a className="underline" href="/dokumen/kasus">{t('receiving.reverse.cases')}</a></span>}
                                 </li>
                             ))}
                         </ul>
@@ -339,26 +356,43 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                     )}
                 />
             )}
-            {reversing !== null && reversing.reversal !== null && (
+            {reversing !== null && reversal !== null && (
                 <ConfirmCommand
                     open
                     onOpenChange={(next) => { if (!next) setReversing(null); }}
                     title={t('receiving.reverse.title')}
-                    consequence={reversing.reversal.consumed ? t('receiving.reverse.consumed') : t('receiving.reverse.consequence')}
+                    consequence={reversal.consumed ? t('receiving.reverse.consumed') : t('receiving.reverse.consequence')}
                     confirmLabel={t('actions.reverse_receipt')}
                     destructive
                     pending={reverse.pending}
                     answer={reverse.answer}
                     reason={{ value: reverseReason, onChange: setReverseReason, error: reverse.errors.alasan ?? null }}
+                    blocked={reversal.serials.length > 0 && reverseSerials.length === 0}
                     onConfirm={sendReversal}
                     items={(
                         <div className="flex min-w-0 flex-col gap-3">
-                            {reversing.reversal.places.map((place) => (
-                                <FormField key={`${place.location}|${place.condition}`} label={`${place.code} · ${t(place.condition === 'USABLE' ? 'pages.pg_022.usable' : 'pages.pg_022.damaged')}`} help={t('receiving.reverse.held', { sisa: place.qty.replace(/\.?0+$/, '') })}>
-                                    {(control) => <DecimalInput {...control} scale={3} value={reverseQty[`${place.location}|${place.condition}`] ?? ''} onValueChange={(next) => { setReverseQty({ ...reverseQty, [`${place.location}|${place.condition}`]: next ?? '' }); }} />}
+                            {reversal.consumed && <a className="self-start text-caption underline" href="/dokumen/kasus">{t('receiving.reverse.cases')}</a>}
+                            {reversal.serials.length > 0 ? (
+                                <fieldset className="flex min-w-0 flex-col gap-2" disabled={reverseFrozen}>
+                                    <legend className="text-body font-medium">{t('receiving.reverse.serials')}</legend>
+                                    {reverseSerials.length === 0 && <p className="text-caption text-text-secondary">{t('receiving.reverse.choose')}</p>}
+                                    {reversal.serials.map((serial) => (
+                                        <label key={serial.handle} className="flex min-w-0 items-center gap-2 text-body">
+                                            <Checkbox checked={reverseSerials.includes(serial.handle)} disabled={reverseFrozen} onCheckedChange={(checked) => { setReverseSerials((all) => (checked ? [...all, serial.handle] : all.filter((other) => other !== serial.handle))); }} />
+                                            <span className="min-w-0 font-mono">{serial.serial}</span>
+                                            <span className="min-w-0 text-text-secondary">{`${reversal.places.find((place) => place.location === serial.location)?.code ?? ''} · ${t(serial.condition === 'USABLE' ? 'pages.pg_022.usable' : 'pages.pg_022.damaged')}`}</span>
+                                        </label>
+                                    ))}
+                                </fieldset>
+                            ) : reversal.places.map((place) => (
+                                <FormField key={placeKey(place)} label={`${place.code} · ${t(place.condition === 'USABLE' ? 'pages.pg_022.usable' : 'pages.pg_022.damaged')}`} help={t('receiving.reverse.held', { sisa: place.qty.replace(/\.?0+$/, '') })}>
+                                    {(control) => <DecimalInput {...control} scale={3} disabled={reverseFrozen} value={reverseQty[placeKey(place)] ?? ''} onValueChange={(next) => { setReverseQty({ ...reverseQty, [placeKey(place)]: next ?? '' }); }} />}
                                 </FormField>
                             ))}
-                            {reverseShortfall > 0 && <ReservationCut shortfall={t('receiving.reverse.shortfall', { kurang: String(reverseShortfall) })} unit="" reservations={reversing.reversal.reservations} cuts={reverseCuts} onCut={(id, value) => { setReverseCuts({ ...reverseCuts, [id]: value ?? '' }); }} scale={3} />}
+                            {reverse.errors.tempat !== undefined && <p role="alert" className="text-body font-medium text-danger-fg">{reverse.errors.tempat}</p>}
+                            {reverseShortfall > 0 && (reversal.may_cut
+                                ? <ReservationCut shortfall={t('receiving.reverse.shortfall', { kurang: String(reverseShortfall) })} unit="" reservations={reversal.reservations} cuts={reverseCuts} onCut={(id, value) => { setReverseCuts({ ...reverseCuts, [id]: value ?? '' }); }} scale={3} />
+                                : <p role="alert" className="text-body font-medium text-danger-fg">{t('receiving.reverse.no_cut', { kurang: String(reverseShortfall) })}</p>)}
                         </div>
                     )}
                 />

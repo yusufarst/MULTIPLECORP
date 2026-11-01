@@ -14,18 +14,19 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { Code, DateText } from '@/components/values';
-import { LineForm, plain, type Rack, type Receipt, type ReceiveLine, type ScannedSerial } from '@/features/inv/receive-line';
+import { LineForm, plain, type Rack, type Receipt, type ReceiveLine, type ReturnCase, type ScannedSerial } from '@/features/inv/receive-line';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 import { cn } from '@/lib/utils';
 
-type Match = { kind: 'product' | 'serial' | 'lot'; product: string; name: string; sku?: string | null; serial?: string; state?: string; lot?: string };
+type Match = { kind: 'product' | 'serial' | 'lot'; product: string; name: string; sku?: string | null; serial?: string; in_stock?: boolean; lot?: string };
 type Scan = { kind: 'match' | 'unknown' | 'ambiguous'; code: string; matches: Match[]; register: boolean };
 type Props = {
     purchase: { id: string; number: string; state: string; supplier: string; company: string; company_id: string; project: string | null; project_number: string | null };
     lines: ReceiveLine[];
+    cases: ReturnCase[];
     receipts: Receipt[];
     locations: Rack[];
     today: string;
@@ -48,9 +49,9 @@ async function lookUp(code: string): Promise<Scan | null> {
     }
 }
 
-export default function ReceiveGoods({ purchase, lines, receipts, locations, today, can }: Props) {
+export default function ReceiveGoods({ purchase, lines, cases, receipts, locations, today, can }: Props) {
     const { t } = useTranslation();
-    const open = lines.filter((line) => Number(line.remaining) > 0);
+    const open = lines.filter((line) => Number(line.remaining) > 0 || Number(line.replacement) > 0);
     const [current, setCurrent] = useState(open[0]?.handle ?? lines[0]?.handle ?? '');
     const [code, setCode] = useState('');
     const [result, setResult] = useState<string | null>(null);
@@ -64,8 +65,19 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
     const departing = useRef(false);
     const dirty = Object.values(unsent).some(Boolean);
     const scanRef = useRef<HTMLInputElement>(null);
+    // Lookups answer out of order: each serial reads and writes the list as it is by then, never as it was when its scan began (BD-18).
+    const scannedSerials = useRef<Record<string, ScannedSerial[]>>({});
+    const replaceSerials = (handle: string, next: ScannedSerial[]) => {
+        scannedSerials.current = { ...scannedSerials.current, [handle]: next };
+        setSerials(scannedSerials.current);
+    };
     const prepare = useCommand<Record<string, FormDataConvertible>>(() => '/dokumen', 'post');
     const guard = useScanGuard({ hasScanField: true });
+
+    // IP-15: one scan target, focused on entering the step.
+    useEffect(() => {
+        scanRef.current?.focus();
+    }, []);
 
     // NAV-022; NV-05: leaving with an unsent line asks MSG-35.
     useEffect(() => {
@@ -95,10 +107,12 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
     const recorded = lines.length - open.length;
     const shown = filter === null || filter === '' ? lines : lines.filter((line) => `${line.name} ${line.sku ?? ''} ${line.description}`.toLowerCase().includes(filter.toLowerCase()));
     const currentLine = lines.find((line) => line.handle === current);
+    // The same product on several lines opens the first with something left to receive.
+    const lineOf = (product: string) => lines.find((line) => line.product === product && open.includes(line)) ?? lines.find((line) => line.product === product);
     const clear = () => { setResult(null); setScanError(null); setCandidates([]); setRegister(null); };
     const open_ = (line: ReceiveLine) => { setCurrent(line.handle); setResult(t('receiving.scan.opened', { barang: line.name })); };
     const addSerial = (line: ReceiveLine, serial: string) => {
-        const own = serials[line.handle] ?? [];
+        const own = scannedSerials.current[line.handle] ?? [];
 
         if (own.some((other) => other.serial.toLowerCase() === serial.toLowerCase())) {
             setScanError(t('messages.msg_36', { seri: serial }));
@@ -106,9 +120,19 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
             return;
         }
 
-        setSerials({ ...serials, [line.handle]: [...own, { serial, damaged: false }] });
+        replaceSerials(line.handle, [...own, { serial, damaged: false }]);
         setCurrent(line.handle);
         setResult(t('receiving.scan.serial_added', { seri: serial }));
+    };
+    // The note opens PG-036: a POST the visit guard does not see, so an unsent line asks MSG-35 here (NV-05).
+    const issueNote = (movement: string) => {
+        const go = () => { prepare.submit({ jenis: 'DOC-12', subjek: { receiving_movement_id: movement } }); };
+
+        if (dirty) {
+            setLeaving(() => go);
+        } else {
+            go();
+        }
     };
     const scanned = (typed: string) => {
         clear();
@@ -142,16 +166,23 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
                 return;
             }
 
-            const line = lines.find((other) => other.product === match.product);
+            const line = lineOf(match.product);
 
             if (line === undefined) {
+                // A serial is unique per product: another product's same text is still a new unit of a serialized line in progress.
+                if (match.kind === 'serial' && currentLine?.serialized === true) {
+                    addSerial(currentLine, match.serial ?? scan.code);
+
+                    return;
+                }
+
                 setScanError(t('receiving.scan.not_on_purchase', { barang: match.name }));
 
                 return;
             }
 
             if (match.kind === 'serial') {
-                if (match.state === 'IN_STOCK') {
+                if (match.in_stock === true) {
                     setScanError(t('receiving.scan.serial_in_stock', { seri: match.serial ?? scan.code }));
 
                     return;
@@ -198,8 +229,8 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
                         </div>
                         <div className="min-w-0 md:col-span-2">
                             {lines.map((line) => (
-                                <LineForm key={line.handle} line={line} url={`/gudang/barang-masuk/${purchase.id}/terima`} company={purchase.company_id} racks={locations} receipts={receipts} today={today} canEvidence={can.evidence}
-                                    serials={serials[line.handle] ?? []} onSerials={(next) => { setSerials((all) => ({ ...all, [line.handle]: next })); }} hidden={line.handle !== current} onUnsent={(next) => { setUnsent((all) => (all[line.handle] === next ? all : { ...all, [line.handle]: next })); }} />
+                                <LineForm key={line.handle} line={line} url={`/gudang/barang-masuk/${purchase.id}/terima`} company={purchase.company_id} racks={locations} receipts={receipts} cases={cases} closed={purchase.state !== 'OPEN'} today={today} canEvidence={can.evidence}
+                                    serials={serials[line.handle] ?? []} onSerials={(next) => { replaceSerials(line.handle, next); }} hidden={line.handle !== current} onUnsent={(next) => { setUnsent((all) => (all[line.handle] === next ? all : { ...all, [line.handle]: next })); }} />
                             ))}
                         </div>
                     </div>
@@ -209,11 +240,15 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
                         {candidates.map((candidate) => (
                             <li key={`${candidate.kind}-${candidate.product}-${candidate.serial ?? ''}`}>
                                 <Button variant="outline" size="sm" onClick={() => {
-                                    const line = lines.find((other) => other.product === candidate.product);
+                                    const line = lineOf(candidate.product);
                                     clear();
 
                                     if (line === undefined) {
                                         setScanError(t('receiving.scan.not_on_purchase', { barang: candidate.name }));
+                                    } else if (candidate.kind === 'serial' && candidate.in_stock === true) {
+                                        setScanError(t('receiving.scan.serial_in_stock', { seri: candidate.serial ?? '' }));
+                                    } else if (candidate.kind === 'serial') {
+                                        addSerial(line, candidate.serial ?? '');
                                     } else {
                                         open_(line);
                                     }
@@ -235,7 +270,7 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
                                         <DateText value={receipt.date} />
                                         {receipt.reference !== null && <span className="text-text-secondary">{receipt.reference}</span>}
                                     </span>
-                                    {can.note && <Button variant="outline" size="sm" disabled={prepare.pending} onClick={() => { prepare.submit({ jenis: 'DOC-12', subjek: { receiving_movement_id: receipt.movement } }); }}>{t('actions.issue_ntb')}</Button>}
+                                    {can.note && !receipt.reversed && <Button variant="outline" size="sm" disabled={prepare.pending} onClick={() => { issueNote(receipt.movement); }}>{t('actions.issue_ntb')}</Button>}
                                 </li>
                             ))}
                         </ul>

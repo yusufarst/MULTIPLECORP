@@ -3232,5 +3232,17 @@
     "receiving.reverse.consequence": "Unit yang belum terpakai keluar dari stok, biayanya dibalik, dan sisa pembelian terbuka kembali.",
     "receiving.reverse.consumed": "Sebagian unit sudah terpakai: hanya yang belum terpakai dapat dibalikkan. Yang terpakai perlu pemulihan lebih dahulu atau Buka Kasus.",
     "receiving.reverse.held": "Belum terpakai :sisa",
-    "receiving.reverse.shortfall": "Kurang :kurang unit untuk reservasi yang ada. Pilih reservasi yang dikurangi."
+    "receiving.reverse.shortfall": "Kurang :kurang unit untuk reservasi yang ada. Pilih reservasi yang dikurangi.",
+    "receiving.refusal.serial_reversal": "Nomor seri ini tidak lagi berada di tempat itu. Muat ulang, lalu pilih kembali.",
+    "receiving.reverse.serials": "Pilih nomor seri yang dibalikkan",
+    "receiving.reverse.choose": "Pilih yang dibalikkan.",
+    "receiving.reverse.no_cut": "Kurang :kurang unit untuk reservasi yang ada. Pengurangan reservasi perlu izin reservasi stok.",
+    "receiving.reverse.all_consumed": "Semua unit sudah terpakai: perlu pemulihan lebih dahulu, atau Buka Kasus.",
+    "receiving.reverse.cases": "Buka Kasus",
+    "receiving.list.filter": "Perusahaan",
+    "receiving.list.all": "Semua perusahaan",
+    "receiving.line.case": "Kasus retur",
+    "receiving.line.choose_case": "Pilih kasus",
+    "receiving.line.replacement": "Pengganti yang masih ditunggu :jumlah",
+    "receiving.kind.REPLACEMENT": "Barang pengganti retur"
 }
