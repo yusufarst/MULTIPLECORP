@@ -32,6 +32,7 @@ export function ConfirmCommand({
     destructive = false,
     pending = false,
     answer,
+    blocked = false,
     onConfirm,
 }: {
     open: boolean;
@@ -48,13 +49,15 @@ export function ConfirmCommand({
     destructive?: boolean;
     pending?: boolean;
     answer?: Answer | null;
+    /** Nothing is chosen yet: the confirming button waits, its reason said in `items`. */
+    blocked?: boolean;
     onConfirm: () => void;
 }) {
     const { t } = useTranslation();
     const back = useRef<HTMLButtonElement>(null);
     const first = useRef<HTMLTextAreaElement>(null);
     const reasonId = useId();
-    const ready = (reason === undefined || reason.value.trim() !== '') && ticks.every((tick) => tick.checked);
+    const ready = !blocked && (reason === undefined || reason.value.trim() !== '') && ticks.every((tick) => tick.checked);
 
     return (
         <AlertDialog

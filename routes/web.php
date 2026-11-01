@@ -25,6 +25,7 @@ use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\INV\Http\Controllers\LocationsController;
+use App\Modules\INV\Http\Controllers\ReceivingController;
 use App\Modules\INV\Http\Controllers\ReservationsController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\OPS\Http\Controllers\LogsController;
@@ -139,6 +140,15 @@ Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->mi
 
 // TASK-038 — PG-025 *Reservasi* and its commands (WF-INV-02; AX-01; AX-02): ROUTE-025, ROUTE-184 and ROUTE-185, `stock.reserve`
 // with its prerequisites `stock.view` and `projects.view` (PERMISSIONS_MATRIX §4).
+// PG-021, PG-022 and their commands (TASK-039).
+Route::get('/gudang/barang-masuk', [ReceivingController::class, 'worklist'])->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving');
+Route::get('/gudang/barang-masuk/{id}', [ReceivingController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving.show');
+Route::post('/gudang/barang-masuk/{id}/terima', [ReceivingController::class, 'receive'])->whereUuid('id')->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving.receive');
+// ROUTE-182 is PG-036's issue of the note, `{id}` the note's document (AX-15; `DIR-081` OB-02).
+Route::post('/gudang/barang-masuk/{id}/nota', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('inv.receiving.note');
+Route::post('/gudang/penerimaan/{id}/balikkan', [ReceivingController::class, 'reverse'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:stock.reverse'])->name('inv.receiving.reverse');
+// ROUTE-282 `INV ScanLookup`: read-only, the scanner's burst-sized limiter apart from search (WS-12); it reads the session and never writes it back.
+Route::post('/gudang/pindai', ['uses' => ReceivingController::class.'@scan', BackgroundRequest::READS_SESSION_ONLY => true])->middleware(['auth', 'capability:stock.view', 'throttle:scanner'])->name('inv.scan');
 Route::get('/gudang/reservasi', [ReservationsController::class, 'index'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations');
 Route::post('/gudang/reservasi', [ReservationsController::class, 'store'])->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reserve');
 Route::post('/gudang/reservasi/{id}/kurangi', [ReservationsController::class, 'reduce'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:stock.reserve'])->name('inv.reservations.reduce');

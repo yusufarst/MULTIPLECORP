@@ -1,0 +1,198 @@
+OWNER DIRECTIVE — MULTIPLECORP FAST BUILD 48H
+PRIORITY: MAXIMUM SAFE EXECUTION SPEED
+Saya menetapkan target operasional baru:
+Selesaikan sebanyak mungkin TASK MULTIPLECORP dalam 48 jam ke depan, dengan target ideal seluruh TASK yang tersisa mencapai DONE.
+Aktifkan pendekatan FAST BUILD PER TASK mulai dari TASK aktif sekarang dan terus terapkan pada TASK berikutnya.
+Ini adalah instruksi optimasi pelaksanaan DIR-096, bukan izin untuk melewati governance, mengubah ruang lingkup V1, atau menurunkan standar kualitas.
+1. KONDISI AWAL
+Status terakhir yang diketahui:
+
+* 45/87 TASK DONE (51,7%).
+* TASK-039 sedang dikerjakan.
+* PR #54 sudah terbuka.
+* Commit terakhir yang diamati: `1ae4ab0`.
+* TASK-046 merupakan READY Task lainnya.
+* Beberapa TASK masih BLOCKED oleh keputusan Owner, dependensi atau tindakan operator.
+
+Verifikasi status terbaru terlebih dahulu. Jangan mengasumsikan snapshot tersebut belum berubah.
+Jangan mengulang pekerjaan yang sudah selesai.
+2. FAST BUILD PER TASK — WAJIB
+Mulai sekarang, untuk setiap TASK:
+A. Minimal Context
+Baca hanya:
+
+* Instruksi agent dan execution context.
+* Current handoff.
+* TASK aktif.
+* Kontrak spesifikasi yang dirujuk TASK.
+* Source code yang relevan.
+
+Jangan membaca ulang seluruh repository atau semua dokumen P0–P11.
+B. Implementasi langsung
+
+* Tentukan impact surface.
+* Gunakan komponen dan layanan yang sudah ada.
+* Implementasikan semua acceptance criteria.
+* Hindari refactor yang tidak berkaitan.
+* Jangan membangun arsitektur baru jika arsitektur yang sudah disetujui mencukupi.
+* Jangan membuat fitur opsional di luar scope.
+* Jangan membuat dokumentasi panjang yang tidak diperlukan.
+
+Utamakan kode yang sederhana, lengkap, dapat diuji, dan sesuai kontrak.
+C. Pengujian cepat dan terarah
+Gunakan urutan:
+
+1. Static check pada perubahan terkait.
+2. Unit/feature tests terkait.
+3. Authorization, interaction, concurrency, dan architecture tests yang relevan.
+4. Frontend typecheck, lint, dan browser smoke tests bila relevan.
+5. Mandatory final CI.
+
+Jangan menjalankan seluruh test suite berulang kali setelah setiap edit kecil.
+Jangan menjalankan dua suite yang memodifikasi database tes yang sama secara bersamaan.
+Jangan menghapus tes, melemahkan assertion, atau mengabaikan valid failure demi kecepatan.
+D. Review efisien
+Ikuti semua review gate wajib.
+Untuk independent review:
+
+* Satu review substantif sesuai risiko TASK.
+* Perbaiki temuan yang valid.
+* Gunakan targeted delta verification bila memadai.
+* Full re-review hanya jika ada perubahan risiko material atau diwajibkan kontrak.
+
+Jangan mengulang review lengkap hanya karena perubahan minor.
+P0/P1 dan P2 yang melanggar kontrak tetap blocking.
+E. Git dan CI efisien
+
+* Lakukan pre-push checks yang relevan.
+* Commit dengan cakupan jelas.
+* Push dan buka PR melalui alur resmi.
+* Gunakan watcher yang sudah ada.
+* Baca log CI hanya bila gagal.
+* Perbaiki akar masalah, bukan sekadar rerun.
+* Jangan push berulang hanya untuk memicu CI yang sama.
+* Setelah seluruh gate terpenuhi, lakukan merge jika diotorisasi.
+* Verifikasi remote main.
+* Rekonsiliasi status DONE.
+* Langsung lanjut TASK READY berikutnya.
+
+Jangan menunggu persetujuan Owner untuk tindakan rutin yang sudah diotorisasi DIR-096.
+Tetap hormati pengecualian Owner-merge dan seluruh aturan change control yang berlaku.
+3. OPTIMALKAN WAKTU 48 JAM
+Buat analisis internal singkat tentang critical path seluruh TASK tersisa.
+Prioritaskan TASK yang:
+
+* Sudah READY.
+* Membuka banyak dependensi.
+* Dapat diselesaikan tanpa keputusan baru.
+* Memberikan progres nyata terhadap selesainya V1.
+
+Jangan mengubah urutan atau status TASK yang sudah mengikat tanpa mengikuti aturan repository.
+Hindari fase persiapan berulang untuk setiap TASK.
+Gunakan hasil tes, komponen, fixture, dan keputusan teknis yang masih valid sebagai dasar TASK selanjutnya.
+Catat durasi aktual coding, verification, review, CI, dan menunggu untuk mendeteksi bottleneck terbesar. Gunakan catatan ringkas, bukan dashboard baru.
+Jika sebuah TASK memakan waktu terlalu lama, evaluasi penyebabnya dan lakukan optimasi yang aman. Jangan membatalkan proses sehat hanya karena melewati estimasi waktu.
+Jangan mengklaim TASK selesai sebelum seluruh gate terpenuhi.
+4. NO UNNECESSARY WAITING
+Jangan mengakhiri turn hanya dengan kalimat "selanjutnya saya akan mengerjakan..." apabila pekerjaan aktif masih dapat dilanjutkan.
+Gunakan mekanisme kelanjutan yang benar-benar didukung oleh Claude Code Desktop.
+Pertahankan tepat satu watcher.
+Watcher harus membedakan:
+
+* Executor aktif.
+* Background verification.
+* Menunggu CI.
+* Menunggu review.
+* Genuine idle.
+* Blocked.
+* Task selesai.
+
+Jangan membuat duplicate executor, duplicate watcher, atau pemanggilan model berkala yang membuang token.
+Jika platform tidak dapat membangunkan sesi yang telah selesai, catat keterbatasan itu secara jujur.
+5. BLOCKER MANAGEMENT
+Jangan membiarkan satu TASK BLOCKED menghentikan semua pekerjaan independen.
+Lakukan pemeriksaan dependensi dan pilih TASK READY lainnya ketika diizinkan.
+Kumpulkan keputusan Owner yang benar-benar diperlukan dalam satu ringkasan singkat.
+Termasuk P11Q-08 dan input OPI/DEP yang masih pending.
+Jangan mengarang persetujuan atau mengisi data institusional yang belum diberikan.
+TASK HUMAN OPERATOR dan OWNER tidak boleh dijalankan atau dinyatakan DONE oleh executor tanpa bukti dari pihak yang berwenang.
+6. FAST BUILD QUALITY RULES
+Kecepatan tidak boleh mengorbankan:
+
+* Keamanan dan otorisasi.
+* Company isolation.
+* Integritas keuangan.
+* Kebenaran stok dan serial.
+* Idempotency.
+* Concurrency.
+* Audit trail.
+* Database constraints.
+* Functional UI.
+* Accessibility.
+* Mandatory CI.
+* Valid Codex findings.
+* Production safety.
+
+Semua interaksi yang diwajibkan harus berfungsi.
+Jangan membuat implementasi dummy, tombol mati, atau mengabaikan acceptance criteria.
+Jangan mengubah approved V1 scope tanpa persetujuan Owner.
+7. PARALLEL EXECUTION
+Saya ingin total durasi penyelesaian serendah mungkin.
+Tetapi jangan langsung membuat executor tambahan.
+Aturan saat ini tetap berlaku: satu primary executor dan satu TASK aktif.
+Jika parallel execution terbukti dapat mempercepat penyelesaian secara material, siapkan usulan change control yang ringkas dan spesifik.
+Usulan harus mencakup TASK mana yang aman, file ownership, database isolation, Git worktree, CI, risiko integrasi, biaya dan kebutuhan persetujuan.
+Jangan mengubah `PARALLEL SAFE: NO` atau menjalankan dua TASK bersamaan secara sepihak.
+8. TOKEN EFFICIENCY
+Kurangi pemakaian token dengan:
+
+* Targeted repository search.
+* Minimal task context.
+* Reuse verified knowledge.
+* Ringkasan hasil alat, bukan output log panjang.
+* Subagent hanya jika benar-benar diperlukan.
+* Tidak membuat laporan panjang setiap langkah.
+* Tidak melakukan audit menyeluruh tanpa trigger.
+* Native context compaction bila tersedia.
+* Durable handoff hanya pada checkpoint yang bermakna.
+
+Jangan mengorbankan informasi penting hanya untuk menghemat token.
+9. CONTINUOUS EXECUTION
+Setelah setiap TASK:
+
+1. Pastikan seluruh gate wajib telah terpenuhi.
+2. Verifikasi status PR dan merge.
+3. Update completion evidence.
+4. Rekonsiliasi TASK_PLAN dan handoff.
+5. Pilih NEXT READY TASK.
+6. Langsung implementasikan.
+
+Ulangi sampai seluruh TASK agent yang eligible selesai atau terdapat blocker yang memang tidak dapat diselesaikan dalam otorisasi yang ada.
+Jangan berhenti untuk meminta persetujuan rutin.
+FAST BUILD bukan SAFE SHUTDOWN.
+SHUTDOWN_HOLD harus tetap mengikuti status Owner yang sebenarnya.
+Jangan menghentikan sesi, watcher atau Docker hanya karena target 48 jam terlewati.
+10. LAPORAN PROGRES WAJIB
+Pada akhir setiap respons ke Owner:
+MULTIPLECORP — FAST BUILD PROGRESS
+
+* DONE: XX/87 (XX.X%)
+* TASK AKTIF: TASK-XXX
+* PR/CI: status terbaru
+* REVIEW: status terbaru
+* BOTTLENECK: singkat
+* NEXT TASK: TASK-XXX
+* MODE: FAST BUILD — AUTONOMOUS ACTIVE
+* TARGET 48H: pencapaian terverifikasi, bukan klaim estimasi sebagai fakta
+
+Laporan singkat saja.
+Jangan mengirim turn tambahan semata-mata untuk mengulang progres yang tidak berubah.
+11. PERINTAH FINAL
+Lanjutkan TASK-039 dari posisi aktual tanpa mengulang pekerjaan.
+Selesaikan review dan CI yang belum selesai.
+Setelah merge yang sah, segera mulai TASK READY berikutnya dengan strategi FAST BUILD.
+Saya menginginkan implementasi cepat, review yang proporsional, CI yang efisien, dan progres yang konsisten.
+Target dua hari merupakan sasaran percepatan, bukan izin melewati quality gate atau membuat klaim DONE palsu.
+Pertahankan seluruh aturan yang lebih ketat apabila berlaku.
+Aktifkan FAST BUILD 48H sekarang dan lanjutkan pekerjaan aktual. Jangan berhenti setelah hanya membuat rencana optimasi.
+Seluruh komunikasi kepada saya harus menggunakan Bahasa Indonesia.

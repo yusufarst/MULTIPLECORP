@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -266,34 +266,55 @@ Receiving is where physical stock and its provenance begin: every acquisition cr
 - Migration: N/A — no migration or import code in this Task; opening lots are TASK-057's
 - Other: M-04's receipt racing a count, run with TASK-043; the real USB scanners at Layer 3 (TEST_STRATEGY §12; GAP-020); DOC-12's layout compared with its preview (DOCUMENT_PREVIEW_PRODUCER §4) and its sample listed for content validation (GAP-019)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/INV/ReceivingTest.php` — 2 and then 3 of 5, two events, two lots, remainder 3 then 0; a receipt's evidence linked to its movement.
+- Criterion 2: `ReceivingTest` — 55 usable at the rack, 5 straight into UNUSABLE on one lot, 40 open.
+- Criterion 3: `ReceivingTest` — rejected on the line, no entry and no lot, the remainder open.
+- Criterion 4: `ReceivingTest` — above the remainder C-29 with it in words; a replacement only against its own cap, costed from its case over the units still expected, the case's replaced value moved both ways; `tests/Unit/INV/ReceivingRulesTest.php` — each kind's room.
+- Criterion 5: `ReceivingTest` and `tests/Authorization/ReceivingAccessTest.php` — the purchase's company, keyed to the line, the line's cost, an opaque code, nothing taken from the payload.
+- Criterion 6: `ReceivingTest` — a double scan counted once, one in stock refused; `tests/Integration/Inventory/ReceivingRacesTest.php` — M-05 on real sessions, a receipt and a reversal; `tests/Browser/E2E/receiving.spec.ts` — MSG-36 at the scan in both forms.
+- Criterion 7: `ReceivingTest` and the E2E spec — MSG-25 with "Daftarkan Barcode" only with `products.edit`, registered in place through ROUTE-147 and the scan continuing; an ambiguous code selecting none; a typed SKU with "Cari Produk".
+- Criterion 8: `ReceivingTest`, `ReceivingRacesTest` — a duplicate ORIGINAL CONFLICT, also on a full line, a SUPPLEMENT citing its receipt, concurrent partial receipts to the cap (M-35), FX-04 scenario 10.
+- Criterion 9: `ReceivingTest`, `ReceivingAccessTest`, the E2E spec — one command with its reservation, one statement on the product guard (GU-01), absent without `stock.reserve` and on a project no longer running.
+- Criterion 10: `ReceivingRacesTest` — M-36 both ways with a closure, and with a cancellation.
+- Criterion 11: `ReceivingTest`, `ReceivingRacesTest`, the E2E spec — only the unconsumed units, a serial only as itself and chosen one by one, the charge re-spread over a consumed lot, the actor's cut, AZ-08 routed.
+- Criterion 12: `ReceivingTest`, `ReceivingRacesTest` — a RE_RECEIPT citing the reversed receipt with its own lot.
+- Criterion 13: `ReceivingTest`, `ReceivingAccessTest`, `tests/Feature/INV/ReceivingNoteTest.php` — no price, tax, charge or cost on PG-021, PG-022, the scan or the note's facts.
+- Criterion 14: `ReceivingNoteTest` and the E2E spec — the draft from the receipt, the phone's Edit, Preview and Finalize, issued after its confirmation with its number, the supplier's reference printed, no stock changed.
+- Criterion 15: `tests/Interaction/ReceivingTest.php`, the E2E spec — each line its own answer, "Coba Lagi" under one `command_id`, a replay after re-authentication one effect, the scanner stopped at a line in doubt.
+- Criterion 16: `ReceivingTest` — a changed policy or scale CONFLICT ST-09; a lot's reversal following its tracked units after a policy change.
+- Criterion 17: `ReceivingRacesTest` and `ReceivingTest` — the product, scope, lot, purchase-line and lot-cost families reconciled after every scenario, `ReceivingWorld::serialDifferences` for the serial states.
+- DIR-101 F2: quantity, serial, lot and cost integrity, atomic commands and concurrency walked by the suites above; no contradiction with an approved rule was found. The F2 verification named for TASK-043 stays with it.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions — M-05, M-30, M-35, M-36, AX-05 with a re-spread over a consumed lot, the guard CHECKs by violating writes, FX-04 scenarios 1 and 10 (TL-05); PASS in CI
+- [x] Authorization: `stock.receive`, `stock.reserve`, `stock.reverse`, `documents.issue`, the receiving projection, SM-01, SM-04, SM-25 (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-021, ROUTE-022, ROUTE-181–ROUTE-183, ROUTE-282 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-181–INT-183, INT-282 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-INV-01 on the phone and the desktop, CJ-07's scanner flow, CJ-01's receive step, the Nota (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: PG-021 and PG-022 at 320, 390, 768 and 1,280 px, a coarse pointer's touch sizes (TL-11) PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring and the corrections named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `bf42119`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41286161753 (push) and 41286166058 (pull request #54), the three jobs PASS in each; TL-15 — the scan within QB-06's two statements, the worklist within QB-05's four and the same for one row and a full page, one line's receipt bounded — `tests/Performance/ReceivingQueriesTest.php`
+- Build result: TL-13 PASS in the same runs
+- Route evidence: the routes in `tests/Routes` and `tests/Feature/BootTest.php`, PASS
+- Interaction evidence: `tests/Interaction/ReceivingTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: bf42119, CI ubuntu-24.04 run 41286161753, tests/Browser/E2E/receiving.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-021 and PG-022 in both languages, the language switch keeping the unsent line, DOC-12's paper Indonesian — `tests/Browser/Localization/receiving.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/`, `Services/`, `Queries/`, `Data/`, `Http/Controllers/ReceivingController`, its README; PUR's `PurchaseDetail`; `resources/js/Pages/INV/`, `features/inv/`, `Pages/PUR/Purchase.tsx`, `components/scan-field.tsx`, `components/confirm-dialog.tsx`, the navigation; the provider, routes and `lang/`; the tests and fixtures; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF; DECISION_LOG with DIR-102's source record
+- Commit SHA: `6ae6f61`, `d7d384b`, `19974cf`, `75588ae`, `f39f025`, `236f706`, `549fd0f`, `dc65577`, `1ae4ab0`, `545d1e0`, `bf42119`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-039-receiving`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed `dc65577` within the policy's ten minutes and raised three P1s and one P2, all fixed in `1ae4ab0` with their tests and their threads answered: a reversal following the product's policy instead of the lot's tracked units, a serial scanned at a line whose answer was lost, "Daftarkan Barcode" leading nowhere, and a serialized line's alternate unit. Its review completed on that commit; the later commits are what CI's Browser runs asked for: PG-021's groups, one request and one prop per company, passed WebKit's limit on history writes and then a request header's size at the CI stack's hundreds of companies, and now read together under one deferred prop. ER-06: a fresh read-only review before the pull request found 5 P1 and 15 P2 points. Fixed with their tests: a replacement lot costed after its guard moved and `replaced_value` never posted; a reversal's serials not read under lock and the page reversing every serial at a place; PG-016's reservations unscoped, its reference and lot code ungated; a replay stopped by resolvers filtering on current state; another receipt retrying an unknown intent; fast scans losing a serial; the scan field unfocused; a note of a receipt reversed whole; QB-06 and QB-05 loosened in their test; the serial state said to any `stock.view` holder; `last_entry_id` unset; MSG-35 passed by the Nota; PG-021's filter and groups out of the address; REPLACEMENT out of the page. Left, each for the Owner or Planning: GU-01 — a receipt and a reversal write the purchase-line guard in two statements, `move` then `posted`, because `CostPosting` reads the guard after the move (TASK-036's contract), no data effect; `replaced_value` is posted and tested here but its reconciliation formula stays unregistered in `Families` until TASK-044 and TASK-046 build the rest of it; `ReceivingRecords` writes the movement, receiving line, lot and serial rows inside INV beside `InventoryPosting`, whose `ledger` writes the entries and every guard, while this contract reads "through `InventoryPosting`"; TASK-031 built no route opening a free-standing case, so "Buka Kasus" leads to the case list; a partly reversed receipt's note prints its original event; PG-016's breadcrumb is a plain link, so leaving by it meets the browser's own prompt and not MSG-35, as on every page with PageHeader; the same-action reservation keeps its own business audit event beside the receipt's. C-21 is mapped to its words but no receiving path raises it: a re-spread with nothing received expenses instead (L-47). Read from code, not walked: PG-017's MSG-35 may ask twice, its `RecordPurchase` lacking the departing flag `RecordPayment` has; TASK-037's, left out of this change. One 500 on PG-021 and one reset on a fixture during a local run came with no application log, did not recur, and read as local Docker load. Durations, roughly: the build and the first test layers about a day of session time across two laptop restarts; ER-06 ten minutes and its fixes about one hour; each CI about 22 minutes (the record's own commit runs it again). Context7 and Graphify not used: a targeted search of INV, PUR and CST. Real scanners stay at Layer 3 (GAP-020); DOC-12's sample is listed for the Owner's content validation (GAP-019; TASK-086).
 
 **SAFE NEXT TASK:**
 
