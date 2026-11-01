@@ -17,6 +17,7 @@ import { Code, DateText } from '@/components/values';
 import { LineForm, plain, type Rack, type Receipt, type ReceiveLine, type ScannedSerial } from '@/features/inv/receive-line';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
+import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 import { cn } from '@/lib/utils';
 
@@ -60,6 +61,7 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
     const [serials, setSerials] = useState<Record<string, ScannedSerial[]>>({});
     const [unsent, setUnsent] = useState<Record<string, boolean>>({});
     const [leaving, setLeaving] = useState<(() => void) | null>(null);
+    const departing = useRef(false);
     const dirty = Object.values(unsent).some(Boolean);
     const scanRef = useRef<HTMLInputElement>(null);
     const prepare = useCommand<Record<string, FormDataConvertible>>(() => '/dokumen', 'post');
@@ -70,7 +72,7 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
         const off = router.on('before', (event) => {
             const visit = event.detail.visit;
 
-            if (!dirty || visit.method !== 'get' || visit.only.length > 0) {
+            if (!dirty || departing.current || visit.method !== 'get' || visit.only.length > 0 || isBackground(visit)) {
                 return;
             }
 
@@ -80,7 +82,7 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
             return false;
         });
         const unload = (event: BeforeUnloadEvent) => {
-            if (dirty) event.preventDefault();
+            if (dirty && !departing.current) event.preventDefault();
         };
         window.addEventListener('beforeunload', unload);
 
@@ -242,7 +244,7 @@ export default function ReceiveGoods({ purchase, lines, receipts, locations, tod
                 )}
             </div>
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
-                onLeave={() => { const go = leaving; setUnsent({}); setLeaving(null); go?.(); }} />
+                onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
             <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} onSearch={() => { setFilter((value) => (value === null ? '' : null)); }} result={result} error={scanError} />
         </AppShell>
     );

@@ -16,6 +16,7 @@ use App\Support\RowHandle;
 use Database\Factories\INV\LocationFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
  * TASK-039's world (TL-04–TL-08): a purchase through ROUTE-171's own action, a rack, and ROUTE-181's request. Static, so the closures of the two-connection harness can call them (Sessions::run).
@@ -36,16 +37,20 @@ final class ReceivingWorld
     }
 
     /** A purchase of one goods line of the product in its base unit, optionally for a project and its demand line. */
-    public static function purchase(Company $company, int $productId, int $unitId, string $qty = '100', string $price = '1000', ?int $project = null, ?int $demand = null): Purchase
+    public static function purchase(Company $company, int $productId, int $unitId, string $qty = '100', string $price = '1000', ?int $project = null, ?int $demand = null, ?int $actor = null): Purchase
     {
         if (! DB::table('numbering_schemes')->where('company_id', $company->id)->where('sequence_type', 'PURCHASE')->exists()) {
             PurchaseWorld::numbered($company);
         }
 
-        $actor = PurchaseWorld::actor($company)->id;
+        $actor ??= PurchaseWorld::actor($company)->id;
         $supplier = PurchaseWorld::supplier()->id;
         $entry = new PurchaseEntry($company->id, $project, $supplier, BusinessDate::today(), false, null, [['handle' => null, 'kind' => 'GOODS', 'product' => $productId, 'line' => $demand, 'mode' => 'WAREHOUSE', 'quantity' => $qty, 'unit' => $unitId, 'price' => $price, 'description' => 'Barang uji', 'taxes' => []]], []);
-        expect(PurchaseWorld::save($actor, $entry))->toBe('COMMITTED');
+        $saved = PurchaseWorld::save($actor, $entry);
+
+        if ($saved !== 'COMMITTED') {
+            throw new RuntimeException("The purchase was {$saved}.");
+        }
 
         return PurchaseWorld::latest($company->id);
     }

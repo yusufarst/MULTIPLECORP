@@ -39,69 +39,73 @@ export function ScanField({
     const ref = inputRef ?? own;
 
     return (
-        <div
-            data-slot="scan-field"
-            className={cn(
-                'flex min-w-0 flex-col gap-2 bg-surface',
-                dock && 'max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(var(--m-action-bar-h)+var(--safe-bottom))] max-md:z-(--z-bar) max-md:border-t max-md:border-border max-md:px-m-gutter max-md:py-3',
-            )}
-        >
-            <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 md:hidden">
-                <ReadyText />
-                <ResultLine result={result} error={error} />
-            </div>
-            <div className="flex min-w-0 items-center gap-2">
-                <InputGroup className="flex-1 max-md:h-floor">
-                    <InputGroupAddon divider>
-                        <Icon icon={ScanBarcode} size="row" />
-                        <span className="text-label whitespace-nowrap text-text-tertiary max-md:hidden">{t('pt20.ready')}</span>
-                    </InputGroupAddon>
-                    <InputGroupInput
-                        ref={ref}
-                        id={id}
-                        {...{ [SCAN_TARGET]: 'scan-field' }}
-                        aria-label={t('pt20.placeholder')}
-                        aria-invalid={error !== undefined && error !== null ? true : undefined}
-                        placeholder={t('pt20.placeholder')}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        autoCapitalize="off"
-                        spellCheck={false}
-                        enterKeyHint="search"
-                        maxLength={100}
-                        data-code
-                        value={value}
-                        onChange={(event) => {
-                            onValueChange(event.target.value);
-                        }}
-                        onKeyDown={(event) => {
-                            if (event.key !== 'Enter') {
-                                return;
-                            }
-
-                            event.preventDefault();
-                            const code = value.trim();
-
-                            if (code !== '') {
-                                onLookup(code);
-                                onValueChange('');
-                            }
-
-                            ref.current?.focus();
-                        }}
-                    />
-                </InputGroup>
-                {onSearch !== undefined && (
-                    <Button variant="outline" size="md" className="max-md:h-floor" onClick={onSearch}>
-                        <Icon icon={Search} size="sm" />
-                        <span>{t('pt20.search')}</span>
-                    </Button>
+        <>
+            {/* The dock is out of the flow on the phone: this holds its height, so the page's last control scrolls clear of it (D-DS-08). */}
+            {dock && <div aria-hidden className="h-18 md:hidden" />}
+            <div
+                data-slot="scan-field"
+                className={cn(
+                    'flex min-w-0 flex-col gap-2 bg-surface',
+                    dock && 'max-md:fixed max-md:inset-x-0 max-md:bottom-[calc(var(--m-action-bar-h)+var(--safe-bottom))] max-md:z-(--z-bar) max-md:border-t max-md:border-border max-md:px-m-gutter max-md:py-3',
                 )}
+            >
+                <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 md:hidden">
+                    <ReadyText />
+                    <ResultLine result={result} error={error} />
+                </div>
+                <div className="flex min-w-0 items-center gap-2">
+                    <InputGroup className="flex-1 max-md:h-floor">
+                        <InputGroupAddon divider>
+                            <Icon icon={ScanBarcode} size="row" />
+                            <span className="text-label whitespace-nowrap text-text-tertiary max-md:hidden">{t('pt20.ready')}</span>
+                        </InputGroupAddon>
+                        <InputGroupInput
+                            ref={ref}
+                            id={id}
+                            {...{ [SCAN_TARGET]: 'scan-field' }}
+                            aria-label={t('pt20.placeholder')}
+                            aria-invalid={error !== undefined && error !== null ? true : undefined}
+                            placeholder={t('pt20.placeholder')}
+                            autoComplete="off"
+                            autoCorrect="off"
+                            autoCapitalize="off"
+                            spellCheck={false}
+                            enterKeyHint="search"
+                            maxLength={100}
+                            data-code
+                            value={value}
+                            onChange={(event) => {
+                                onValueChange(event.target.value);
+                            }}
+                            onKeyDown={(event) => {
+                                if (event.key !== 'Enter') {
+                                    return;
+                                }
+
+                                event.preventDefault();
+                                const code = value.trim();
+
+                                if (code !== '') {
+                                    onLookup(code);
+                                    onValueChange('');
+                                }
+
+                                ref.current?.focus();
+                            }}
+                        />
+                    </InputGroup>
+                    {onSearch !== undefined && (
+                        <Button variant="outline" size="md" className="max-md:h-floor" onClick={onSearch}>
+                            <Icon icon={Search} size="sm" />
+                            <span>{t('pt20.search')}</span>
+                        </Button>
+                    )}
+                </div>
+                <div className="max-md:hidden">
+                    <ResultLine result={result} error={error} />
+                </div>
             </div>
-            <div className="max-md:hidden">
-                <ResultLine result={result} error={error} />
-            </div>
-        </div>
+        </>
     );
 }
 

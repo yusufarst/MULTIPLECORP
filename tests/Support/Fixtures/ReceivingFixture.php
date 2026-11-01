@@ -26,6 +26,8 @@ final class ReceivingFixture
     public static function create(Request $request): JsonResponse
     {
         $company = Company::query()->where('public_id', (string) $request->input('company'))->firstOrFail();
+        $actor = $request->user()?->getAuthIdentifier();
+        $actor = is_int($actor) ? $actor : 0;
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
         Numbering::scheme($company, SequenceType::Doc12, "{$year}-01-01", 'YEAR', 'UJI/NTB/{tahun}/{nomor:4}');
@@ -37,7 +39,7 @@ final class ReceivingFixture
         $serial = Projects::product();
         $serial['product']->forceFill(['name' => "Barang Berseri {$tag}"])->save();
         Product::query()->whereKey($serial['product']->id)->toBase()->update(['is_serialized' => true]);
-        $serialPurchase = ReceivingWorld::purchase($company, $serial['product']->id, $serial['base']->id, '2', '5000');
+        $serialPurchase = ReceivingWorld::purchase($company, $serial['product']->id, $serial['base']->id, '2', '5000', actor: $actor);
 
         $project = Project::query()->where('public_id', (string) $request->input('project'))->firstOrFail();
         $demand = DB::table('project_lines')->where('project_id', $project->id)->orderBy('line_no')->first(['id', 'product_id']);
@@ -47,7 +49,7 @@ final class ReceivingFixture
             return response()->json(['error' => 'no demand'], 500);
         }
 
-        $projectPurchase = ReceivingWorld::purchase($company, (int) $demand->product_id, (int) $unit, '10', '1000', $project->id, (int) $demand->id);
+        $projectPurchase = ReceivingWorld::purchase($company, (int) $demand->product_id, (int) $unit, '10', '1000', $project->id, (int) $demand->id, $actor);
         $sku = DB::table('products')->where('id', $demand->product_id)->value('sku');
 
         return response()->json([

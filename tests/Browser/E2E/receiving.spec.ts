@@ -17,7 +17,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await expect(page.getByRole('heading', { name: 'Barang Masuk', exact: true })).toBeVisible();
         await expect(page.locator('#konten')).toContainText(run.supplier);
         await expect(page.locator('#konten')).not.toContainText('Rp');
-        await page.locator('#konten').locator(`a[href="/gudang/barang-masuk/${run.purchase}"]`).first().click();
+        await page.locator('#konten').locator(`a[href="/gudang/barang-masuk/${run.purchase}"]:visible`).first().click();
         await page.waitForURL(`**/gudang/barang-masuk/${run.purchase}`);
         await expect(page.getByRole('heading', { name: 'Terima Barang', exact: true })).toBeVisible();
         await expect(page.locator('#konten')).not.toContainText('Rp');
@@ -26,7 +26,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await expect(field).toBeVisible();
 
         await scan(page, 'TIDAK-ADA-1');
-        await expect(page.getByText('Kode TIDAK-ADA-1 tidak dikenal.').first()).toBeVisible();
+        await expect(page.getByRole('alert').filter({ hasText: 'Kode TIDAK-ADA-1 tidak dikenal.' }).locator('visible=true')).toBeVisible();
         await expect(page.getByRole('link', { name: 'Daftarkan Barcode' })).toBeVisible();
         await expect(field).toHaveValue('');
         await expect(field).toBeFocused();
@@ -57,9 +57,28 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
 
         await summary.getByRole('button', { name: 'Terbitkan Nota Terima Barang' }).first().click();
         await page.waitForURL('**/dokumen/**');
-        await expect(page.locator('#konten')).toContainText('Nota Terima Barang');
-        await expect(page.locator('#konten')).toContainText('SJ-1');
-        await expect(page.locator('#konten')).not.toContainText('Rp');
+        await expect(page.getByRole('heading', { name: 'Nota Terima Barang', level: 1 })).toBeVisible();
+
+        // On the phone Edit → Preview → Finalize, the floor step (DC-11; AN-6).
+        if (name === 'phone') {
+            await expect(page.locator('[data-slot="document-composer"]')).toHaveAttribute('data-band', 'phone');
+            await page.getByRole('button', { name: 'Pratinjau', exact: true }).click();
+        }
+
+        const paper = page.getByRole('region', { name: /^Pratinjau Nota Terima Barang/ });
+        await expect(paper).toContainText('SJ-1');
+        await expect(paper).toContainText(run.supplier);
+        await expect(paper).not.toContainText('Rp');
+
+        if (name === 'phone') {
+            await page.getByRole('button', { name: 'Lanjut' }).click();
+        }
+
+        await page.locator('#konten').getByRole('button', { name: 'Terbitkan Nota Terima Barang' }).click();
+        const confirm = page.getByRole('alertdialog', { name: 'Terbitkan Nota Terima Barang?' });
+        await expect(confirm).toBeVisible();
+        await confirm.getByRole('button', { name: 'Terbitkan Nota Terima Barang' }).click();
+        await expect(page.locator('#konten')).toContainText('UJI/NTB/');
     });
 }
 
@@ -72,7 +91,7 @@ test('counts a serial scanned twice once, refuses one in stock at the scan, mark
     await scan(page, 'SN-UJI-1');
     await expect(currentLine(page).locator('[data-slot="line-serials"]')).toContainText('SN-UJI-1');
     await scan(page, 'SN-UJI-1');
-    await expect(page.getByText('Nomor seri SN-UJI-1 sudah dipindai.').first()).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Nomor seri SN-UJI-1 sudah dipindai.' }).locator('visible=true')).toBeVisible();
     await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(1);
 
     await currentLine(page).getByRole('combobox', { name: 'Rak' }).selectOption({ index: 1 });
@@ -80,7 +99,7 @@ test('counts a serial scanned twice once, refuses one in stock at the scan, mark
     await expect(currentLine(page).getByText('Barang masuk tercatat.')).toBeVisible();
 
     await scan(page, 'SN-UJI-1');
-    await expect(page.getByText('Nomor seri SN-UJI-1 sudah ada di stok.').first()).toBeVisible();
+    await expect(page.getByRole('alert').filter({ hasText: 'Nomor seri SN-UJI-1 sudah ada di stok.' }).locator('visible=true')).toBeVisible();
     await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(0);
 });
 
@@ -161,10 +180,16 @@ test('asks MSG-35 before leaving with an unsent line, keeping it on staying (NAV
     await page.goto(`/gudang/barang-masuk/${run.purchase}`);
     await currentLine(page).getByRole('textbox', { name: 'Layak pakai' }).fill('4');
 
-    await page.locator('nav').getByRole('link', { name: 'Barang Masuk' }).first().click();
-    const dialog = page.getByRole('alertdialog');
-    await expect(dialog).toBeVisible();
-    await dialog.getByRole('button').first().click();
+    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Isian yang belum dikirim' });
+    await expect(dialog.getByText('Isian yang belum dikirim akan hilang. Tetap tinggalkan halaman?')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Kembali' }).click();
     await expect(page).toHaveURL(new RegExp(`/gudang/barang-masuk/${run.purchase}$`));
     await expect(currentLine(page).getByRole('textbox', { name: 'Layak pakai' })).toHaveValue('4');
+
+    // "Tinggalkan Halaman" goes, asked once.
+    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    await dialog.getByRole('button', { name: 'Tinggalkan Halaman' }).click();
+    await page.waitForURL('**/pembelian');
+    await expect(page.getByRole('heading', { name: 'Pembelian', exact: true })).toBeVisible();
 });
