@@ -40,7 +40,8 @@ test('keeps the unsent input, the scan field and the line in progress across a l
     await page.goto(`/gudang/barang-masuk/${run.purchase}`);
     await currentLine(page).getByRole('textbox', { name: 'Layak pakai' }).fill('4');
 
-    await page.getByRole('button', { name: 'EN' }).click();
+    await page.getByRole('button', { name: /Menu akun/ }).click();
+    await page.getByRole('menuitemcheckbox', { name: 'English' }).click();
     await expect(page.getByRole('heading', { name: 'Receive goods', exact: true })).toBeVisible();
     await expect(currentLine(page).getByRole('textbox', { name: 'Usable' })).toHaveValue('4');
 });

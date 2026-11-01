@@ -35,10 +35,30 @@ for (const width of [320, 390, 768, 1280]) {
             expect(await field.evaluate((element) => getComputedStyle(element).position)).toBe('fixed');
             expect((box?.y ?? 0) + (box?.height ?? 0)).toBeLessThanOrEqual(844);
             expect(list?.y ?? 0).toBeLessThan(form?.y ?? 0);
-            const record = currentLine(page).getByRole('button', { name: 'Catat Barang Masuk' });
-            expect((await record.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
         } else {
             expect((list?.x ?? 0) + (list?.width ?? 0)).toBeLessThanOrEqual(form?.x ?? 0);
         }
     });
 }
+
+test.describe('with a coarse pointer', () => {
+    test.use({ hasTouch: true, isMobile: true, viewport: { width: 390, height: 844 } });
+
+    test('gives the line\'s controls a touch size, the last one clear of the scan field (UXS-35; GR-07; D-DS-19)', async ({ page }) => {
+        const run = await receivingRun(page, `terima-sentuh-${String(Date.now())}`);
+        await page.goto(`/gudang/barang-masuk/${run.purchase}`);
+        expect(await page.evaluate(() => window.matchMedia('(pointer: coarse)').matches)).toBe(true);
+
+        const record = currentLine(page).getByRole('button', { name: 'Catat Barang Masuk' });
+        await record.scrollIntoViewIfNeeded();
+        expect((await record.boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+        expect((await currentLine(page).getByRole('textbox', { name: 'Layak pakai' }).boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+        expect((await page.getByRole('button', { name: 'Cari Produk' }).boundingBox())?.height ?? 0).toBeGreaterThanOrEqual(44);
+
+        // Scrolled to the end, the action sits above the docked field.
+        await page.evaluate(() => { window.scrollTo(0, document.documentElement.scrollHeight); });
+        const bottom = await record.boundingBox();
+        const dock = await page.locator('[data-slot="scan-field"]').boundingBox();
+        expect((bottom?.y ?? 0) + (bottom?.height ?? 0)).toBeLessThanOrEqual(dock?.y ?? 0);
+    });
+});
