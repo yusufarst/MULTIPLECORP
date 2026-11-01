@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 44
-READY: 0
-IN_PROGRESS: 1
+DONE: 45
+READY: 2
+IN_PROGRESS: 0
 BLOCKED: 7
 VERIFYING: 0
-TODO: 35
+TODO: 33
 SUPERSEDED: 0
 
 Progress:
-44 / 87
-Percentage: 50.6 %
+45 / 87
+Percentage: 51.7 %
 
-CURRENT TASK: TASK-037 — Purchases — project and replenishment purchases, IN PROGRESS on its branch `task/TASK-037-purchases` from the merged `main` `ffc4e3f` (DIR-096); TASK-052 DONE and squash-merged
-NEXT READY TASK: none READY until TASK-037 is merged, its DONE re-checking the gates of the Tasks it unblocks (DIR-096); TASK-053 and TASK-055 wait on P11Q-08; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-037 — Purchases DONE on its branch `task/TASK-037-purchases`, CI PASS on `2a0043e`, its pull request #53 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-039 — Receiving (Barang Masuk), READY, then TASK-046 — Direct shipment (drop-ship), READY; TASK-053 and TASK-055 wait on P11Q-08; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-059 waits on TASK-040; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 15 of 2026-10-31 — DIR-101, the Owner's decisions on P11Q-07, OF-04 and the labels; the credit hold's attribution raised as P11Q-08
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -85,7 +85,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-034](TASK-034.md) — Commercial confirmation and fulfillment planning
 - [x] [TASK-035](TASK-035.md) — Administrative checklist and document readiness
 - [x] [TASK-036](TASK-036.md) — Costing foundations — lot cost basis, charge allocation and HPP attribution
-- [ ] [TASK-037](TASK-037.md) — Purchases — project and replenishment purchases
+- [x] [TASK-037](TASK-037.md) — Purchases — project and replenishment purchases
 - [x] [TASK-038](TASK-038.md) — Reservations
 - [ ] [TASK-039](TASK-039.md) — Receiving (Barang Masuk)
 - [ ] [TASK-040](TASK-040.md) — Stock views, stock history and movement reversal
@@ -177,16 +177,16 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-034](TASK-034.md) | Commercial confirmation and fulfillment planning | Module · PRJ | HIGH | DONE | 030, 033 | 035, 037, 038, 046, 047, 049, 057 | NO | AGENT | NONE | YES |
 | [TASK-035](TASK-035.md) | Administrative checklist and document readiness | Module · ADM | HIGH | DONE | 030, 032, 034 | 055 | NO | AGENT | NONE | YES |
 | [TASK-036](TASK-036.md) | Costing foundations — lot cost basis, charge allocation and HPP attribution | Module · CST | HIGH | DONE | 008, 013, 030 | 037, 042, 054 | NO | AGENT | NONE | NO |
-| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | IN_PROGRESS | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
+| [TASK-037](TASK-037.md) | Purchases — project and replenishment purchases | Module · PUR | HIGH | DONE | 026, 027, 029, 034, 036 | 039, 044, 046, 054, 057, 060 | NO | AGENT | NONE | YES |
 | [TASK-038](TASK-038.md) | Reservations | Module · INV | HIGH | DONE | 028, 034 | 039, 041, 056 | NO | AGENT | NONE | YES |
-| [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | TODO | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
+| [TASK-039](TASK-039.md) | Receiving (Barang Masuk) | Module · INV | HIGH | READY | 029, 031, 037, 038 | 040, 041, 042, 044, 057 | NO | AGENT | NONE | YES |
 | [TASK-040](TASK-040.md) | Stock views, stock history and movement reversal | Module · INV | HIGH | TODO | 039 | 042, 044, 057, 059 | NO | AGENT | NONE | YES |
 | [TASK-041](TASK-041.md) | Dispatch (Barang Keluar) and inter-company allocation | Module · INV | HIGH | TODO | 029, 038, 039 | 045, 056 | NO | AGENT | NONE | YES |
 | [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | TODO | 031, 036, 039, 040 | 043, 048, 057 | NO | AGENT | NONE | YES |
 | [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | TODO | 042 | 055, 058 | NO | AGENT | NONE | YES |
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | TODO | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
 | [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | TODO | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
-| [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | TODO | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
+| [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | READY | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
 | [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
