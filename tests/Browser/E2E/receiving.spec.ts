@@ -133,7 +133,7 @@ test('commits the receipt and "Reservasi untuk Proyek Ini" as one command at the
     await record(page);
     await expect(line.getByText('Barang masuk tercatat.')).toBeVisible();
 
-    await page.goto('/gudang/reservasi');
+    await page.goto(`/gudang/reservasi?cabang=${run.company}&tab=aktif`);
     await expect(page.locator('#konten')).toContainText(run.project_number);
 });
 

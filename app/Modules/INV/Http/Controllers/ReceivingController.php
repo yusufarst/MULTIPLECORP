@@ -34,7 +34,7 @@ final class ReceivingController extends Controller
         private readonly ReceivingQueries $queries,
     ) {}
 
-    /** ROUTE-021: each company its own deferred group, with its own error and retry (NAV-021). */
+    /** ROUTE-021: each company its own group with its own error and retry (NAV-021), fetched together in one deferred request: one request per company would pass a browser's limit on history writes at a scale of companies (WebKit's hundred in ten seconds). */
     public function worklist(Request $request): Response
     {
         $actor = self::actor($request);
@@ -51,7 +51,7 @@ final class ReceivingController extends Controller
                 continue;
             }
 
-            $props['group_'.$group['id']] = Inertia::defer(self::group(fn (): array => $this->queries->worklist($actor, $group['internal'], $only === $group['id'] ? $after : null)), 'group_'.$group['id']);
+            $props['group_'.$group['id']] = Inertia::defer(self::group(fn (): array => $this->queries->worklist($actor, $group['internal'], $only === $group['id'] ? $after : null)), 'groups');
         }
 
         return Inertia::render('INV/ReceivingWorklist', $props);
