@@ -41,13 +41,15 @@ final class StockController extends Controller
         $view = self::query($request, 'tampil') === 'rak' ? 'rak' : 'produk';
         $after = self::query($request, 'setelah');
         $search = self::query($request, 'cari');
+        $below = self::query($request, 'saring') === StockViews::BELOW_MINIMUM;
+        $condition = in_array(self::query($request, 'kondisi'), StockViews::CONDITIONS, true) ? self::query($request, 'kondisi') : null;
 
         return Inertia::render('INV/Stock', [
             'view' => $view,
-            'search' => $search,
-            'list' => $view === 'rak' ? $this->stock->places($after) : $this->stock->products($search, $after),
+            'filters' => ['saring' => $below ? StockViews::BELOW_MINIMUM : null, 'kondisi' => $condition],
+            'list' => fn (): array => $view === 'rak' ? $this->stock->places($actor, $search, $condition, $after) : $this->stock->products($actor, $search, $below, $after),
             'values' => Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))),
-            'can' => ['purchase' => $this->history->mayPurchase($actor)],
+            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor)],
         ]);
     }
 
@@ -55,18 +57,17 @@ final class StockController extends Controller
     public function show(Request $request, string $id): Response
     {
         $actor = self::actor($request);
-        $screen = $this->stock->product($actor, $id) ?? throw new NotFoundHttpException;
-        $product = is_array($screen['product']) ? $screen['product'] : [];
-        $internal = is_int($product['internal'] ?? null) ? $product['internal'] : 0;
-        unset($product['internal']);
+        $screen = $this->stock->product($id) ?? throw new NotFoundHttpException;
+        $internal = $screen['internal'];
 
         return Inertia::render('INV/ProductStock', [
-            ...$screen,
-            'product' => $product,
-            'group' => Inertia::defer(self::group(fn (): array => $this->stock->group($actor, $internal))),
-            'movements' => Inertia::defer(self::group(fn (): array => $this->history->page($actor, ['produk' => $id], 10)['rows']), 'movements'),
+            'product' => $screen['product'],
+            'places' => fn (): array => $this->stock->placesOf($internal),
+            'reservations' => fn (): array => $this->stock->reservationPage($actor, $internal, self::query($request, 'reservasi_setelah')),
+            'group' => Inertia::defer(self::group(fn (): array => $this->stock->group($actor, $internal, self::query($request, 'lot_setelah'), self::query($request, 'seri_setelah')))),
+            'movements' => Inertia::defer(self::group(fn (): array => $this->history->recent($actor, $internal)), 'movements'),
             'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lotsOfProduct($actor, $internal)), 'costs'),
-            'can' => ['purchase' => $this->history->mayPurchase($actor)],
+            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor)],
         ]);
     }
 
@@ -74,13 +75,13 @@ final class StockController extends Controller
     public function historyPage(Request $request): Response
     {
         $actor = self::actor($request);
-        $filters = ['produk' => self::query($request, 'produk'), 'jenis' => self::query($request, 'jenis'), 'dari' => self::query($request, 'dari'), 'sampai' => self::query($request, 'sampai'), 'urut' => self::query($request, 'urut'), 'setelah' => self::query($request, 'setelah')];
+        $filters = MovementHistory::filters(['produk' => self::query($request, 'produk'), 'jenis' => self::query($request, 'jenis'), 'dari' => self::query($request, 'dari'), 'sampai' => self::query($request, 'sampai'), 'urut' => self::query($request, 'urut'), 'gerakan' => self::query($request, 'gerakan')]);
         $movement = self::query($request, 'gerak');
         $receipt = self::query($request, 'terima');
 
         return Inertia::render('INV/StockHistory', [
-            'filters' => array_diff_key($filters, ['setelah' => 1]),
-            'list' => $this->history->page($actor, $filters),
+            'filters' => $filters,
+            'list' => fn (): array => $this->history->page($actor, $filters, self::query($request, 'setelah')),
             'types' => MovementHistory::TYPES,
             'today' => BusinessDate::today(),
             'cut' => Inertia::optional(fn (): ?array => $movement === null ? null : $this->history->cutOf($actor, $movement)),
@@ -139,9 +140,12 @@ final class StockController extends Controller
             Outcome::COMMITTED => [null, self::say('stock.answer.reversed')],
             Outcome::REJECTED => [null, match ($outcome->code) {
                 'C-55' => self::say('stock.refusal.reversed'),
-                'C-03' => self::say('stock.refusal.moved_on', ['sisa' => self::text($state['available'] ?? '0')]),
+                // A replay names the refusal, not what stood at the rack then (CI-05).
+                'C-03' => isset($state['available']) ? self::say('stock.refusal.moved_on', ['sisa' => self::text($state['available'])]) : self::say('stock.refusal.moved_on_plain'),
                 'C-02' => self::say('receiving.refusal.serial_reversal'),
-                'C-05', 'C-06', 'AZ-08' => self::say('receiving.refusal.reservations'),
+                'OD-15' => self::say('stock.refusal.owner_only'),
+                'AZ-08' => ($state['reason'] ?? null) === 'bearer' ? self::say('stock.refusal.other_company') : self::say('receiving.refusal.reservations'),
+                'C-05', 'C-06' => self::say('receiving.refusal.reservations'),
                 default => self::say('messages.msg_04'),
             }],
             Outcome::CONFLICT => match ($outcome->code) {
@@ -152,7 +156,8 @@ final class StockController extends Controller
         };
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, 'state' => array_intersect_key($state, ['reason' => 1, 'shortfall' => 1, 'available' => 1])]);
 
-        return redirect()->to('/gudang/riwayat-stok', 303);
+        // In place, the list's filters kept (IP-18; NV-03).
+        return redirect()->back(303, [], '/gudang/riwayat-stok');
     }
 
     private static function group(Closure $read): Closure

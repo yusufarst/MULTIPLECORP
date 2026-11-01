@@ -16,7 +16,7 @@ for (const [locale, texts] of [
         await page.setViewportSize({ width: 1280, height: 900 });
         const run = await stockRun(page, `stok-${locale}-${String(Date.now())}`, locale);
 
-        await page.goto(`/gudang/stok?cari=${encodeURIComponent(run.name)}`);
+        await page.goto('/gudang/stok');
         await expect(page.getByRole('heading', { name: texts.stock, exact: true })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.places })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.products })).toBeVisible();

@@ -3332,5 +3332,17 @@
     "stock.movement.DROPSHIP_RETURN_RECEIPT": "Retur kirim langsung",
     "stock.movement.MOVEMENT_REVERSAL": "Pembalikan pergerakan",
     "stock.movement.SERIAL_REGISTRATION": "Pendaftaran nomor seri",
-    "stock.movement.IDENTITY_SUBSTITUTION": "Penggantian identitas"
+    "stock.movement.IDENTITY_SUBSTITUTION": "Penggantian identitas",
+    "stock.refusal.moved_on_plain": "Unitnya sudah berpindah atau terpakai.",
+    "stock.refusal.owner_only": "Penetapan surplus hanya dapat dibalikkan oleh Owner.",
+    "stock.refusal.other_company": "Kerugian ini ditanggung perusahaan di luar akses Anda. Minta pemegang akses perusahaan itu untuk membalikkannya.",
+    "stock.filter.label": "Saring stok",
+    "stock.filter.all": "Semua produk",
+    "stock.filter.below_minimum": "Di bawah minimum",
+    "stock.filter.condition": "Kondisi",
+    "stock.filter.all_conditions": "Semua kondisi",
+    "stock.place.here": "Di rak ini",
+    "stock.place.product_figures": "Stok fisik, Direservasi, Tidak layak pakai, dan Tersedia adalah angka produk di semua rak: reservasi terikat pada produk, bukan pada rak.",
+    "stock.history.all_movements": "Tampilkan semua pergerakan",
+    "activity.action.INV.MovementReversalRouted": "Meneruskan pembalikan pergerakan stok"
 }

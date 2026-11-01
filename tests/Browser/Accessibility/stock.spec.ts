@@ -18,7 +18,9 @@ for (const width of [390, 1280]) {
         const run = await stockRun(page, `stok-a11y-${String(width)}-${String(Date.now())}`);
         await page.setViewportSize({ width, height: 900 });
 
-        await page.goto(`/gudang/stok?cari=${encodeURIComponent(run.name)}`);
+        await page.goto('/gudang/stok');
+        await page.getByLabel('Cari produk').fill(run.name);
+        await page.getByRole('button', { name: { name: 'Cari', exact: true } }).click();
         await expect(page.locator('#konten')).toContainText(run.name);
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);

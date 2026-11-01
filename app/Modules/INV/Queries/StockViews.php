@@ -21,121 +21,226 @@ final class StockViews
 
     public const LOTS = 100;
 
+    /** A cut chooses among all of a product's reservations (IP-20): the largest first, within a bound no product's reservations reach. */
+    public const CUT_CHOICES = 200;
+
+    /** QS-17's filter: the products under their minimum over usable availability (BR-INV-10). */
+    public const BELOW_MINIMUM = 'di_bawah_minimum';
+
+    public const CONDITIONS = ['USABLE', 'UNUSABLE'];
+
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
+
+    private const RESERVATION = ['r.id', 'r.company_id', 'r.remaining_qty_base', 'p.project_number', 'p.public_id'];
 
     public function __construct(private readonly EffectiveCapabilities $capabilities) {}
 
     /**
-     * PG-018 per product: the four quantities, the pending line, the restock advice over usable availability (BR-INV-10); keyset by name.
+     * PG-018 per product: the four quantities, the pending line, the restock advice over usable availability (BR-INV-10); keyset by name. Goods with nothing on hand stay: their shortage is what the advice is for.
      *
-     * @return array{rows: list<array<string, mixed>>, more: ?string}
+     * @return array{rows: list<array<string, mixed>>, more: ?string, cursor_failed: bool}
      */
-    public function products(?string $search, ?string $after): array
+    public function products(int $viewerId, ?string $search, bool $below, ?string $after): array
     {
-        $cursor = is_string($after) && preg_match(self::UUID, $after) === 1 ? DB::table('products')->where('public_id', strtolower($after))->first(['id', 'name']) : null;
-        $term = $search === null ? null : '%'.addcslashes(mb_strtolower(trim($search)), '%_\\').'%';
-        $found = DB::table('stock_product_balances as b')->join('products as p', 'p.id', '=', 'b.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('p.kind', 'GOODS')
-            ->when($term !== null, fn (Builder $where) => $where->where(fn (Builder $any) => $any->whereRaw('lower(p.name) like ?', [$term])->orWhereRaw('lower(p.sku) like ?', [$term])))
-            ->when(is_object($cursor), fn (Builder $where) => $where->whereRaw('(lower(p.name), p.id) > (lower(?), ?)', is_object($cursor) ? [Row::text($cursor, 'name'), (int) Row::text($cursor, 'id')] : []))
+        $viewer = $this->capabilities->for($viewerId);
+        $binding = ['list' => 'products', 'search' => $search, 'below' => $below];
+        $key = $after === null ? null : StockCursor::read($viewer, $after, $binding, 2);
+
+        if ($after !== null && $key === null) {
+            return ['rows' => [], 'more' => null, 'cursor_failed' => true];
+        }
+
+        $term = self::term($search);
+        $found = DB::table('products as p')->leftJoin('stock_product_balances as b', 'b.product_id', '=', 'p.id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('p.kind', 'GOODS')
+            ->where(fn (Builder $live) => $live->where('p.is_active', true)->orWhere('b.on_hand_qty', '<>', 0))
+            ->when($term !== null, fn (Builder $where) => self::matching($where, (string) $term))
+            ->when($below, fn (Builder $where) => $where->whereRaw('coalesce(b.on_hand_qty, 0) - coalesce(b.reserved_qty, 0) - coalesce(b.unusable_qty, 0) < p.min_stock_qty_base'))
+            ->when($key !== null, fn (Builder $where) => $where->whereRaw('(lower(p.name), p.id) > (lower(?), ?::bigint)', $key ?? []))
             ->orderByRaw('lower(p.name)')->orderBy('p.id')->limit(self::PAGE + 1)
             ->get(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn()])->all();
         $page = array_slice($found, 0, self::PAGE);
         $alternates = self::alternates(array_map(fn (object $row): int => (int) Row::text($row, 'id'), $page));
         $rows = array_map(fn (object $row): array => self::productRow($row, $alternates[(int) Row::text($row, 'id')] ?? null), $page);
+        $last = $page === [] ? null : $page[count($page) - 1];
 
-        return ['rows' => $rows, 'more' => count($found) > self::PAGE && $page !== [] ? Row::text($page[count($page) - 1], 'public_id') : null];
+        return ['rows' => $rows, 'more' => count($found) > self::PAGE && $last !== null ? StockCursor::of($viewer, [Row::text($last, 'name'), (int) Row::text($last, 'id')], $binding) : null, 'cursor_failed' => false];
     }
 
     /**
-     * PG-018 per rack and condition (D-IA-17); keyset by rack, product and condition.
+     * PG-018 per rack and condition (D-IA-17; IX-12): what stands at that rack in that condition, beside the product's own four quantities — a reservation binds to the product, never to a rack (DATABASE §5.5) —; keyset by rack, product and condition.
      *
-     * @return array{rows: list<array<string, mixed>>, more: ?string}
+     * @return array{rows: list<array<string, mixed>>, more: ?string, cursor_failed: bool}
      */
-    public function places(?string $after): array
+    public function places(int $viewerId, ?string $search, ?string $condition, ?string $after): array
     {
-        $parts = is_string($after) ? explode('|', $after, 3) : [];
-        $found = DB::table('stock_scope_balances as s')->join('products as p', 'p.id', '=', 's.product_id')->join('locations as l', 'l.id', '=', 's.location_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('s.qty', '<>', 0)
-            ->when(count($parts) === 3, fn (Builder $where) => $where->whereRaw('(l.code, p.public_id::text, s.condition) > (?, ?, ?)', $parts))
+        $viewer = $this->capabilities->for($viewerId);
+        $binding = ['list' => 'places', 'search' => $search, 'condition' => $condition];
+        $key = $after === null ? null : StockCursor::read($viewer, $after, $binding, 3);
+
+        if ($after !== null && $key === null) {
+            return ['rows' => [], 'more' => null, 'cursor_failed' => true];
+        }
+
+        $term = self::term($search);
+        $found = DB::table('stock_scope_balances as s')->join('products as p', 'p.id', '=', 's.product_id')->join('locations as l', 'l.id', '=', 's.location_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->leftJoin('stock_product_balances as b', 'b.product_id', '=', 'p.id')->where('s.qty', '<>', 0)
+            ->when($term !== null, fn (Builder $where) => self::matching($where, (string) $term))
+            ->when($condition !== null, fn (Builder $where) => $where->where('s.condition', $condition))
+            ->when($key !== null, fn (Builder $where) => $where->whereRaw('(l.code, p.public_id::text, s.condition) > (?, ?, ?)', $key ?? []))
             ->orderBy('l.code')->orderByRaw('p.public_id::text')->orderBy('s.condition')->limit(self::PAGE + 1)
-            ->get(['l.code as rack', 'p.public_id', 'p.name', 'p.sku', 's.condition', 's.qty', 'u.code as unit'])->all();
-        $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'rack' => Row::text($row, 'rack'), 'name' => Row::text($row, 'name'), 'sku' => Row::nullable($row, 'sku'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'unit' => Row::text($row, 'unit'), 'href' => '/gudang/stok/'.Row::text($row, 'public_id')], array_slice($found, 0, self::PAGE));
-        $last = $rows === [] ? null : $rows[count($rows) - 1];
+            ->get(['p.id', 'l.code as rack', 'p.public_id', 'p.name', 'p.sku', 's.condition', 's.qty', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty'])->all();
+        $page = array_slice($found, 0, self::PAGE);
+        $alternates = self::alternates(array_map(fn (object $row): int => (int) Row::text($row, 'id'), $page));
+        $rows = array_map(function (object $row) use ($alternates): array {
+            $alternate = $alternates[(int) Row::text($row, 'id')] ?? null;
 
-        return ['rows' => $rows, 'more' => count($found) > self::PAGE && $last !== null ? "{$last['rack']}|{$last['id']}|{$last['condition']}" : null];
+            return ['id' => Row::text($row, 'public_id'), 'rack' => Row::text($row, 'rack'), 'name' => Row::text($row, 'name'), 'sku' => Row::nullable($row, 'sku'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'unit' => Row::text($row, 'unit'),
+                'figures' => StockFigures::of(Row::nullable($row, 'on_hand_qty') ?? '0', Row::nullable($row, 'reserved_qty') ?? '0', Row::nullable($row, 'unusable_qty') ?? '0', Row::text($row, 'unit'), $alternate['unit'] ?? null, $alternate['ratio'] ?? null), 'href' => '/gudang/stok/'.Row::text($row, 'public_id')];
+        }, $page);
+        $last = $page === [] ? null : $page[count($page) - 1];
+
+        return ['rows' => $rows, 'more' => count($found) > self::PAGE && $last !== null ? StockCursor::of($viewer, [Row::text($last, 'rack'), Row::text($last, 'public_id'), Row::text($last, 'condition')], $binding) : null, 'cursor_failed' => false];
     }
 
     /**
-     * PG-019's head: the product's figures, its racks, its pending line and reservations; an unknown id null (AZ-11; IP-21).
+     * PG-019's head in one statement, the product's figures and pending line with its internal key for the page's other reads; an unknown id null (AZ-11; IP-21).
      *
-     * @return array<string, mixed>|null
+     * @return array{internal: int, product: array<string, mixed>}|null
      */
-    public function product(int $viewerId, string $publicId): ?array
+    public function product(string $publicId): ?array
     {
+        $alternate = fn (string $column): Expression => DB::raw("(select {$column} from product_units pu join units au on au.id = pu.unit_id where pu.product_id = p.id and pu.is_base = false and pu.is_active = true order by pu.ratio_to_base desc limit 1) as alternate_".($column === 'au.code' ? 'unit' : 'ratio'));
         $product = preg_match(self::UUID, $publicId) === 1 ? DB::table('products as p')->leftJoin('stock_product_balances as b', 'b.product_id', '=', 'p.id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('p.public_id', strtolower($publicId))->where('p.kind', 'GOODS')
-            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn()]) : null;
+            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn(), $alternate('au.code'), $alternate('pu.ratio_to_base')]) : null;
 
         if ($product === null) {
             return null;
         }
 
-        $viewer = $this->capabilities->for($viewerId);
-        $id = (int) Row::text($product, 'id');
-        $alternate = self::alternates([$id])[$id] ?? null;
+        $unit = Row::nullable($product, 'alternate_unit');
+        $ratio = Row::nullable($product, 'alternate_ratio');
 
-        return [
-            'product' => [...self::productRow($product, $alternate), 'serialized' => (bool) $product->is_serialized, 'internal' => $id],
-            'places' => array_map(fn (object $row): array => ['rack' => Row::text($row, 'code'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty'))],
-                DB::table('stock_scope_balances as s')->join('locations as l', 'l.id', '=', 's.location_id')->where('s.product_id', $id)->where('s.qty', '<>', 0)->orderBy('l.code')->orderBy('s.condition')->get(['l.code', 's.condition', 's.qty'])->all()),
-            'reservations' => $viewer->has('stock.view') ? $this->reservations($viewer, $id) : [],
-        ];
+        return ['internal' => (int) Row::text($product, 'id'), 'product' => [...self::productRow($product, $unit === null || $ratio === null ? null : ['unit' => $unit, 'ratio' => (int) $ratio]), 'serialized' => (bool) $product->is_serialized]];
     }
 
     /**
-     * PG-019's deferred group (QB-05): lots with their oldest-first picking aid (BR-INV-04) and serials with their presence, at most three queries.
+     * The product's racks and conditions.
      *
-     * @return array{lots: list<array<string, mixed>>, serials: array<int, array<string, string>>}
+     * @return list<array{rack: string, condition: string, qty: string}>
      */
-    public function group(int $viewerId, int $productId): array
+    public function placesOf(int $productId): array
+    {
+        return array_map(fn (object $row): array => ['rack' => Row::text($row, 'code'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty'))],
+            DB::table('stock_scope_balances as s')->join('locations as l', 'l.id', '=', 's.location_id')->where('s.product_id', $productId)->where('s.qty', '<>', 0)->orderBy('l.code')->orderBy('s.condition')->limit(self::LOTS)->get(['l.code', 's.condition', 's.qty'])->all());
+    }
+
+    /**
+     * PG-019's deferred group (QB-05): lots with their oldest-first picking aid on the oldest lot holding usable units (BR-INV-04; PT-17) and serials with their presence, each list continued by its own cursor (PF-13; IP-18); at most three statements with the page's own head.
+     *
+     * @return array{lots: list<array<string, mixed>>, lots_more: ?string, serials: list<array<string, string>>, serials_more: ?string, cursor_failed: bool}
+     */
+    public function group(int $viewerId, int $productId, ?string $lotAfter = null, ?string $serialAfter = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
-        $lots = [];
-        $first = true;
+        $lotBinding = ['list' => 'lots', 'product' => $productId];
+        $serialBinding = ['list' => 'serials', 'product' => $productId];
+        $lotKey = $lotAfter === null ? null : StockCursor::read($viewer, $lotAfter, $lotBinding, 4);
+        $serialKey = $serialAfter === null ? null : StockCursor::read($viewer, $serialAfter, $serialBinding, 1);
 
-        foreach (DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->join('companies as c', 'c.id', '=', 'i.source_company_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)
-            ->orderBy('i.business_date')->orderBy('i.id')->orderBy('l.code')->limit(self::LOTS)
-            ->get(['i.id', 'i.lot_code', 'i.source_company_id', 'i.acquisition_kind', 'i.business_date', 'i.acquired_qty_base', 'b.qty', 'b.condition', 'l.code as rack', 'c.code as company_code', 'c.legal_name']) as $row) {
+        if (($lotAfter !== null && $lotKey === null) || ($serialAfter !== null && $serialKey === null)) {
+            return ['lots' => [], 'lots_more' => null, 'serials' => [], 'serials_more' => null, 'cursor_failed' => true];
+        }
+
+        $rank = "case when b.condition = 'USABLE' then 0 else 1 end";
+        $found = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->join('companies as c', 'c.id', '=', 'i.source_company_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)
+            ->when($lotKey !== null, fn (Builder $where) => $where->whereRaw("(i.business_date, i.id, {$rank}, l.code) > (?::date, ?::bigint, ?::int, ?)", $lotKey ?? []))
+            ->orderBy('i.business_date')->orderBy('i.id')->orderByRaw($rank)->orderBy('l.code')->limit(self::LOTS + 1)
+            ->get(['i.id', 'i.lot_code', 'i.source_company_id', 'i.acquisition_kind', 'i.business_date', 'i.acquired_qty_base', 'b.qty', 'b.condition', 'l.code as rack', 'c.code as company_code', 'c.legal_name'])->all();
+        $page = array_slice($found, 0, self::LOTS);
+        $lots = [];
+        $unflagged = $lotAfter === null;
+
+        foreach ($page as $row) {
             $id = (int) Row::text($row, 'id');
-            $physical = ['id' => RowHandle::of('inventory_lots', $id), 'code' => Row::text($row, 'lot_code'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'oldest' => $first];
-            $first = false;
+            $condition = Row::text($row, 'condition');
+            $oldest = $unflagged && $condition === 'USABLE';
+            $unflagged = $unflagged && ! $oldest;
+            $physical = ['id' => RowHandle::of('inventory_lots', $id), 'code' => Row::text($row, 'lot_code'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'rack' => Row::text($row, 'rack'), 'condition' => $condition, 'oldest' => $oldest];
             $lots[] = $viewer->scope->includes((int) Row::text($row, 'source_company_id'))
                 ? [...$physical, 'other' => false, 'company' => Row::text($row, 'company_code').' · '.Row::text($row, 'legal_name'), 'kind' => Row::text($row, 'acquisition_kind'), 'date' => Row::text($row, 'business_date'), 'acquired' => StockFigures::plain(Row::text($row, 'acquired_qty_base'))]
                 : [...$physical, 'other' => true];
         }
 
-        $serials = array_map(fn (object $row): array => ['serial' => Row::text($row, 'serial_number'), 'lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'current_condition')],
-            DB::table('serial_units as s')->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->join('locations as l', 'l.id', '=', 's.current_location_id')->where('s.product_id', $productId)->where('s.state', 'IN_STOCK')->orderBy('s.serial_number')->limit(self::LOTS)
-                ->get(['s.serial_number', 'i.lot_code', 'l.code as rack', 's.current_condition'])->all());
+        $lastLot = $page === [] ? null : $page[count($page) - 1];
+        $foundSerials = DB::table('serial_units as s')->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->join('locations as l', 'l.id', '=', 's.current_location_id')->where('s.product_id', $productId)->where('s.state', 'IN_STOCK')
+            ->when($serialKey !== null, fn (Builder $where) => $where->whereRaw('s.serial_number > ?', $serialKey ?? []))->orderBy('s.serial_number')->limit(self::LOTS + 1)
+            ->get(['s.serial_number', 'i.lot_code', 'l.code as rack', 's.current_condition'])->all();
+        $serials = array_map(fn (object $row): array => ['serial' => Row::text($row, 'serial_number'), 'lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'current_condition')], array_slice($foundSerials, 0, self::LOTS));
+        $lastSerial = $serials === [] ? null : $serials[count($serials) - 1];
 
-        return ['lots' => $lots, 'serials' => $serials];
+        return [
+            'lots' => $lots,
+            'lots_more' => count($found) > self::LOTS && $lastLot !== null ? StockCursor::of($viewer, [Row::text($lastLot, 'business_date'), (int) Row::text($lastLot, 'id'), Row::text($lastLot, 'condition') === 'USABLE' ? 0 : 1, Row::text($lastLot, 'rack')], $lotBinding) : null,
+            'serials' => $serials,
+            'serials_more' => count($foundSerials) > self::LOTS && $lastSerial !== null ? StockCursor::of($viewer, [$lastSerial['serial']], $serialBinding) : null,
+            'cursor_failed' => false,
+        ];
     }
 
     /**
-     * The product's active reservations: a project named with `projects.view` where its company is in scope, otherwise the quantity and the relation marker only (row 61; PJ-04; IP-20).
+     * PG-019's reservations, continued by a cursor (PF-13; IP-18).
      *
-     * @return list<array{id: string, reserved: string, project: array{label: string, href: string}|null}>
+     * @return array{rows: list<array<string, mixed>>, more: ?string, cursor_failed: bool}
+     */
+    public function reservationPage(int $viewerId, int $productId, ?string $after): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $binding = ['list' => 'reservations', 'product' => $productId];
+        $key = $after === null ? null : StockCursor::read($viewer, $after, $binding, 1);
+
+        if ($after !== null && $key === null) {
+            return ['rows' => [], 'more' => null, 'cursor_failed' => true];
+        }
+
+        $found = self::active($productId)->when($key !== null, fn (Builder $where) => $where->where('r.id', '>', $key[0] ?? 0))->orderBy('r.id')->limit(self::PAGE + 1)->get(self::RESERVATION)->all();
+        $page = array_slice($found, 0, self::PAGE);
+        $last = $page === [] ? null : $page[count($page) - 1];
+
+        return ['rows' => array_map(fn (object $row): array => self::reservationRow($viewer, $row), $page), 'more' => count($found) > self::PAGE && $last !== null ? StockCursor::of($viewer, [(int) Row::text($last, 'id')], $binding) : null, 'cursor_failed' => false];
+    }
+
+    /**
+     * The product's active reservations for a cut (IP-20), the largest first: a project named with `projects.view` where its company is in scope, otherwise the quantity and, for another company's, the relation marker only (row 61; PJ-04).
+     *
+     * @return list<array{id: string, reserved: string, other: bool, project: array{label: string, href: string}|null}>
      */
     public function reservations(Authority $viewer, int $productId): array
     {
-        $rows = [];
+        return array_map(fn (object $row): array => self::reservationRow($viewer, $row), self::active($productId)->orderByDesc('r.remaining_qty_base')->orderBy('r.id')->limit(self::CUT_CHOICES)->get(self::RESERVATION)->all());
+    }
 
-        foreach (DB::table('reservations as r')->join('project_lines as l', 'l.id', '=', 'r.project_line_id')->join('projects as p', 'p.id', '=', 'l.project_id')->where('r.product_id', $productId)->where('r.state', 'ACTIVE')->orderBy('r.id')->limit(self::PAGE)
-            ->get(['r.id', 'r.company_id', 'r.remaining_qty_base', 'p.project_number', 'p.public_id']) as $row) {
-            $company = (int) Row::text($row, 'company_id');
-            $rows[] = ['id' => RowHandle::of('reservations', (int) Row::text($row, 'id')), 'reserved' => StockFigures::plain(Row::text($row, 'remaining_qty_base')),
-                'project' => $viewer->scope->includes($company) && $viewer->allows('projects.view', $company) ? ['label' => Row::text($row, 'project_number'), 'href' => '/proyek/'.Row::text($row, 'public_id')] : null];
-        }
+    private static function active(int $productId): Builder
+    {
+        return DB::table('reservations as r')->join('project_lines as l', 'l.id', '=', 'r.project_line_id')->join('projects as p', 'p.id', '=', 'l.project_id')->where('r.product_id', $productId)->where('r.state', 'ACTIVE');
+    }
 
-        return $rows;
+    /** @return array{id: string, reserved: string, other: bool, project: array{label: string, href: string}|null} */
+    private static function reservationRow(Authority $viewer, object $row): array
+    {
+        $company = (int) Row::text($row, 'company_id');
+        $inScope = $viewer->scope->includes($company);
+
+        return ['id' => RowHandle::of('reservations', (int) Row::text($row, 'id')), 'reserved' => StockFigures::plain(Row::text($row, 'remaining_qty_base')), 'other' => ! $inScope,
+            'project' => $inScope && $viewer->allows('projects.view', $company) ? ['label' => Row::text($row, 'project_number'), 'href' => '/proyek/'.Row::text($row, 'public_id')] : null];
+    }
+
+    private static function term(?string $search): ?string
+    {
+        return $search === null ? null : '%'.addcslashes(mb_strtolower(trim($search)), '%_\\').'%';
+    }
+
+    private static function matching(Builder $where, string $term): Builder
+    {
+        return $where->where(fn (Builder $any) => $any->whereRaw('lower(p.name) like ?', [$term])->orWhereRaw('lower(p.sku) like ?', [$term]));
     }
 
     /** The pending quantity of the product's LOSS cases, outside every company's figures (DIR-027; UXS-39; PJ-07). */

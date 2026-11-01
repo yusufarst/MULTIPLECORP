@@ -15,7 +15,9 @@ for (const width of [320, 390, 768, 1280]) {
         const fits = () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth);
         await page.setViewportSize({ width, height: 844 });
 
-        await page.goto(`/gudang/stok?cari=${encodeURIComponent(run.name)}`);
+        await page.goto('/gudang/stok');
+        await page.getByLabel('Cari produk').fill(run.name);
+        await page.getByRole('button', { name: { name: 'Cari', exact: true } }).click();
         await expect(page.locator('#konten')).toContainText(run.name);
         expect(await fits()).toBe(true);
 

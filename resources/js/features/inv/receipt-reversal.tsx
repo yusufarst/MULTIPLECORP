@@ -53,10 +53,11 @@ export function ReceiptReversal({ handle, figures, today, back, onClose }: { han
             pending={reverse.pending}
             answer={reverse.answer}
             reason={{ value: reason, onChange: setReason, error: reverse.errors.alasan ?? null }}
-            blocked={serialized && chosen.length === 0}
+            blocked={figures.places.length === 0 || (serialized && chosen.length === 0)}
             onConfirm={send}
             items={(
                 <div className="flex min-w-0 flex-col gap-3">
+                    {figures.places.length === 0 && <p role="status" className="text-body text-text-secondary">{t('receiving.reverse.all_consumed')}</p>}
                     {figures.consumed && <a className="self-start text-caption underline" href="/dokumen/kasus">{t('receiving.reverse.cases')}</a>}
                     {serialized ? (
                         <fieldset className="flex min-w-0 flex-col gap-2" disabled={frozen}>

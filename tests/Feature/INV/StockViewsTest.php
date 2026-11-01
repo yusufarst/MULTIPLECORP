@@ -5,6 +5,7 @@ use App\Modules\INV\Queries\MovementHistory;
 use App\Modules\INV\Queries\StockViews;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
@@ -154,7 +155,7 @@ it('itemizes a movement in scope and a pool movement, its project only with proj
     $row = collect($this->actingAs($wide)->get('/gudang/riwayat-stok')->viewData('page')['props']['list']['rows'])->firstWhere('type', 'RECEIPT');
     expect($row['project']['label'])->toBe($project->project_number)->and($row['purchase']['label'])->toBe($purchase->purchase_number)->and($row['reference'])->toBe('SJ-7');
 
-    $none = app(MovementHistory::class)->page(Authorization::admin([$this->other->id], ['stock.view'])->id, ['produk' => $this->goods['product']->public_id]);
+    $none = app(MovementHistory::class)->page(Authorization::admin([$this->other->id], ['stock.view'])->id, MovementHistory::filters(['produk' => $this->goods['product']->public_id]));
     expect($none['rows'])->toHaveCount(1)->and($none['rows'][0]['company'])->toBe($this->other->code);
 });
 
@@ -170,7 +171,7 @@ it('never shows a service on the stock views, a drop-ship having no warehouse ev
     $service = Projects::product('SERVICE');
     DB::table('stock_product_balances')->insertOrIgnore(['product_id' => $service['product']->id, 'recorded_at' => now()]);
 
-    expect(collect(app(StockViews::class)->products(null, null)['rows'])->pluck('id')->all())->not->toContain($service['product']->public_id);
+    expect(collect(app(StockViews::class)->products($this->actor->id, null, false, null)['rows'])->pluck('id')->all())->not->toContain($service['product']->public_id);
     $this->actingAs($this->viewer)->get("/gudang/stok/{$service['product']->public_id}")->assertNotFound();
 });
 
@@ -179,20 +180,20 @@ it('keeps both records in the history, linked by "Dikoreksi oleh" and "Mengoreks
     $change = StockWorld::conditionChange($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '2');
     $decrease = StockWorld::decrease($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1');
     expect(StockWorld::reverse($this->actor->id, $this->company->id, $change))->toBe('COMMITTED')->and(StockWorld::reverse($this->actor->id, $this->company->id, $decrease))->toBe('COMMITTED');
-    $rows = collect(app(MovementHistory::class)->page($this->actor->id, [])['rows']);
+    $rows = collect(app(MovementHistory::class)->page($this->actor->id, MovementHistory::filters([]))['rows']);
     $publicOf = fn (int $id) => DB::table('stock_movements')->where('id', $id)->value('public_id');
     $correcting = $rows->firstWhere('type', 'MOVEMENT_REVERSAL');
     $restoring = $rows->firstWhere('type', 'RESTORATION');
 
-    expect($rows->firstWhere('movement', $publicOf($change))['corrected_by'])->toBe($correcting['movement'])->and($correcting['corrects'])->toBe($publicOf($change))
-        ->and($rows->firstWhere('movement', $publicOf($decrease))['corrected_by'])->toBe($restoring['movement'])->and($restoring['corrects'])->toBe($publicOf($decrease))
+    expect($rows->firstWhere('movement', $publicOf($change))['corrected_by']['movement'])->toBe($correcting['movement'])->and($correcting['corrects']['movement'])->toBe($publicOf($change))
+        ->and($rows->firstWhere('movement', $publicOf($decrease))['corrected_by']['movement'])->toBe($restoring['movement'])->and($restoring['corrects']['movement'])->toBe($publicOf($decrease))
         ->and($rows->firstWhere('movement', $publicOf($change))['reversible'])->toBeFalse();
 });
 
 it('offers "Balikkan" only on a reversible movement, "Balikkan Penerimaan" on a receipt, the receipt\'s figures on request (CM-28; ROUTE-183; IP-20)', function () {
     $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack);
     $change = StockWorld::conditionChange($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '2');
-    $rows = collect(app(MovementHistory::class)->page($this->actor->id, [])['rows']);
+    $rows = collect(app(MovementHistory::class)->page($this->actor->id, MovementHistory::filters([]))['rows']);
     $receipt = $rows->firstWhere('type', 'RECEIPT');
 
     expect($receipt['reversible'])->toBeFalse()->and($receipt['receipt'])->not->toBeNull()
@@ -212,4 +213,97 @@ it('keeps the commands PG-019 hosts absent until their routes exist (RC-06; IG-0
     expect(Route::has('inv.stock.move'))->toBeFalse();
     $source = file_get_contents(resource_path('js/Pages/INV/ProductStock.tsx'));
     expect($source)->not->toContain('Pindah Lokasi')->not->toContain('/gudang/stok-opname');
+});
+
+it('flags "Ambil Lebih Dulu" on the oldest lot holding usable units, never on unusable ones (BR-INV-04; PT-17; criterion 8)', function () {
+    $older = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '2');
+    StockWorld::conditionChange($this->actor->id, $this->company, $this->product->id, $older, $this->rack, '2');
+    StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '3');
+
+    $group = deferred($this, $this->viewer, "/gudang/stok/{$this->product->public_id}", 'INV/ProductStock', 'group')['group'];
+
+    expect(collect($group['lots'])->where('oldest', true))->toHaveCount(1)
+        ->and(collect($group['lots'])->firstWhere('oldest', true)['condition'])->toBe('USABLE')
+        ->and(collect($group['lots'])->firstWhere('oldest', true)['qty'])->toBe('3');
+});
+
+it('continues each long list, a cursor made for other filters or another scope refused and never a silent first page (PF-13; PF-14; INT-008; MSG-26)', function () {
+    foreach (range(1, 3) as $ignored) {
+        StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '1');
+    }
+
+    $history = app(MovementHistory::class);
+    $newest = MovementHistory::filters([]);
+    $first = $history->page($this->actor->id, $newest, null, 2);
+    expect($first['rows'])->toHaveCount(2)->and($first['more'])->toBeString()->and($first['cursor_failed'])->toBeFalse();
+    $second = $history->page($this->actor->id, $newest, $first['more'], 2);
+    expect(collect($second['rows'])->pluck('id')->intersect(collect($first['rows'])->pluck('id')))->toBeEmpty()->and($second['cursor_failed'])->toBeFalse();
+
+    $other = $history->page($this->actor->id, MovementHistory::filters(['urut' => 'terlama']), $first['more'], 2);
+    expect($other['cursor_failed'])->toBeTrue()->and($other['rows'])->toBe([]);
+    expect($history->page($this->actor->id, $newest, 'bukan-kursor', 2)['cursor_failed'])->toBeTrue();
+    expect($history->page(Authorization::admin([$this->other->id], ['stock.view'])->id, $newest, $first['more'], 2)['cursor_failed'])->toBeTrue();
+
+    $page = $this->actingAs($this->viewer)->get('/gudang/riwayat-stok?setelah=bukan-kursor')->assertOk()->viewData('page')['props']['list'];
+    expect($page['cursor_failed'])->toBeTrue()->and($page['rows'])->toBe([]);
+    expect($this->actingAs($this->viewer)->get('/gudang/stok?setelah=bukan-kursor')->viewData('page')['props']['list']['cursor_failed'])->toBeTrue();
+    expect($this->actingAs($this->viewer)->get('/gudang/stok?tampil=rak&setelah=bukan-kursor')->viewData('page')['props']['list']['cursor_failed'])->toBeTrue();
+});
+
+it('filters PG-018 under its minimum and by condition, a search on either tab, a value outside the whitelist ignored (QS-17; BR-INV-10; INT-007)', function () {
+    $low = Projects::product();
+    DB::table('products')->where('id', $low['product']->id)->update(['min_stock_qty_base' => '50']);
+    StockWorld::lot($this->actor->id, $this->company, $low['product']->id, $low['base']->id, $this->rack, '1');
+    $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '5');
+    StockWorld::conditionChange($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1');
+    $rows = fn (string $url) => collect($this->actingAs($this->viewer)->get($url)->assertOk()->viewData('page')['props']['list']['rows']);
+
+    expect($rows('/gudang/stok?saring=di_bawah_minimum')->pluck('id')->all())->toContain($low['product']->public_id)->not->toContain($this->product->public_id)
+        ->and($rows('/gudang/stok?saring=semua')->pluck('id')->all())->toContain($this->product->public_id);
+    expect($rows('/gudang/stok?tampil=rak&kondisi=UNUSABLE')->pluck('condition')->unique()->all())->toBe(['UNUSABLE'])
+        ->and($rows('/gudang/stok?tampil=rak&kondisi=RUSAK')->pluck('condition')->unique()->sort()->values()->all())->toBe(['UNUSABLE', 'USABLE']);
+    expect($rows('/gudang/stok?tampil=rak&cari='.urlencode($low['product']->name))->pluck('id')->unique()->all())->toBe([$low['product']->public_id]);
+    expect($rows('/gudang/stok?tampil=rak')->firstWhere('id', $this->product->public_id)['figures'])->toMatchArray(['physical' => '5', 'unusable' => '1', 'available' => '4']);
+
+    // The history: an unknown type ignored, an impossible date never a failure.
+    $this->actingAs($this->viewer)->get('/gudang/riwayat-stok?jenis=TIDAK_ADA&dari=2026-13-45&sampai=semalam&urut=acak')->assertOk();
+});
+
+it('answers a reversal in place, the list\'s filters kept (IP-18; NV-03; NAV-020)', function () {
+    $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '5');
+    $change = StockWorld::conditionChange($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1');
+    $public = DB::table('stock_movements')->where('id', $change)->value('public_id');
+    $address = '/gudang/riwayat-stok?jenis=CONDITION_CHANGE';
+
+    $this->actingAs($this->actor)->from($address)->post("/gudang/riwayat-stok/{$public}/balikkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Keliru dicatat', 'tanggal' => date('Y-m-d')])->assertRedirect($address);
+    $row = collect($this->actingAs($this->actor)->get($address)->viewData('page')['props']['list']['rows'])->firstWhere('movement', $public);
+    expect($row['corrected_by']['href'])->toStartWith('/gudang/riwayat-stok?gerakan=')->and($row['corrected_by']['type'])->toBe('MOVEMENT_REVERSAL');
+
+    $only = collect($this->actingAs($this->actor)->get($row['corrected_by']['href'])->viewData('page')['props']['list']['rows']);
+    expect($only->pluck('type')->unique()->all())->toBe(['MOVEMENT_REVERSAL'])->and($only->first()['corrects']['movement'])->toBe($public);
+});
+
+it('offers "Balikkan" on a surplus attribution to the Owner alone, and names the movement its cut block is for (OD-15; IP-20)', function () {
+    $surplus = StockWorld::surplus($this->actor->id, $this->company, $this->product->id, $this->rack, '2', '5000');
+    $public = DB::table('stock_movements')->where('id', $surplus)->value('public_id');
+    $row = fn (object $user) => collect($this->actingAs($user)->get('/gudang/riwayat-stok?jenis=SURPLUS_ATTRIBUTION')->viewData('page')['props']['list']['rows'])->firstWhere('movement', $public);
+
+    expect($row($this->actor)['reversible'])->toBeFalse()->and($row(Authorization::owner())['reversible'])->toBeTrue();
+    expect(app(MovementHistory::class)->cutOf($this->actor->id, $public)['movement'])->toBe($public);
+});
+
+it('counts a company\'s exposure once per overlap group and per product (UXS-39; PJ-07; PJ-22; §5.8)', function () {
+    $lot = StockWorld::lot($this->actor->id, $this->company, $this->product->id, $this->unit, $this->rack, '5');
+    $first = StockWorld::recognition($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1', '5');
+    $founder = (int) DB::table('unattributed_loss_cases')->where('recognition_movement_id', $first)->value('id');
+    StockWorld::recognition($this->actor->id, $this->company, $this->product->id, $lot, $this->rack, '1', '5', $founder);
+    DB::table('unattributed_loss_group_exposures')->insert(['exposure_group_case_id' => $founder, 'company_id' => $this->company->id, 'bound_qty_base' => '5']);
+    $another = Projects::product();
+    $anotherLot = StockWorld::lot($this->actor->id, $this->company, $another['product']->id, $another['base']->id, $this->rack, '4');
+    StockWorld::recognition($this->actor->id, $this->company, $another['product']->id, $anotherLot, $this->rack, '1', '4');
+
+    $exposures = collect(collect(app(CostFigures::class)->stockValues($this->actor->id))->firstWhere('company', $this->company->code)['exposures']);
+    expect($exposures)->toHaveCount(2)
+        ->and($exposures->firstWhere('product', $this->product->name)['qty'])->toBe('5.000')
+        ->and($exposures->firstWhere('product', $another['product']->name)['qty'])->toBe('4.000');
 });

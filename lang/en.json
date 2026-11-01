@@ -3332,5 +3332,17 @@
     "stock.movement.DROPSHIP_RETURN_RECEIPT": "Drop-ship return",
     "stock.movement.MOVEMENT_REVERSAL": "Movement reversal",
     "stock.movement.SERIAL_REGISTRATION": "Serial registration",
-    "stock.movement.IDENTITY_SUBSTITUTION": "Identity substitution"
+    "stock.movement.IDENTITY_SUBSTITUTION": "Identity substitution",
+    "stock.refusal.moved_on_plain": "The units have moved on or been used.",
+    "stock.refusal.owner_only": "Only the Owner can reverse a surplus attribution.",
+    "stock.refusal.other_company": "This loss is borne by a company outside your access. Ask a holder of that company's access to reverse it.",
+    "stock.filter.label": "Filter stock",
+    "stock.filter.all": "All products",
+    "stock.filter.below_minimum": "Below minimum",
+    "stock.filter.condition": "Condition",
+    "stock.filter.all_conditions": "All conditions",
+    "stock.place.here": "At this rack",
+    "stock.place.product_figures": "Physical stock, Reserved, Unusable and Available are the product's figures across all racks: a reservation binds to the product, not to a rack.",
+    "stock.history.all_movements": "Show all movements",
+    "activity.action.INV.MovementReversalRouted": "Routed a stock movement reversal"
 }

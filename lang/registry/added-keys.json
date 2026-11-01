@@ -14622,6 +14622,78 @@
             "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "stock.refusal.moved_on_plain": {
+            "task": "TASK-040",
+            "source": "CM-28; C-03; CI-05",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.refusal.owner_only": {
+            "task": "TASK-040",
+            "source": "OD-15; CM-27",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.refusal.other_company": {
+            "task": "TASK-040",
+            "source": "AZ-08; XL-1",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.filter.label": {
+            "task": "TASK-040",
+            "source": "IA §8.3 PG-018; QS-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.filter.all": {
+            "task": "TASK-040",
+            "source": "IA §8.3 PG-018",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.filter.below_minimum": {
+            "task": "TASK-040",
+            "source": "QS-17; BR-INV-10",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.filter.condition": {
+            "task": "TASK-040",
+            "source": "IA §8.3 PG-018",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.filter.all_conditions": {
+            "task": "TASK-040",
+            "source": "IA §8.3 PG-018",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.place.here": {
+            "task": "TASK-040",
+            "source": "D-IA-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.place.product_figures": {
+            "task": "TASK-040",
+            "source": "DATABASE §5.5; D-IA-17",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.all_movements": {
+            "task": "TASK-040",
+            "source": "BR-CR-02; ADMIN_FLOW §11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.MovementReversalRouted": {
+            "task": "TASK-040",
+            "source": "AZ-08; SQ-23",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -75,28 +75,32 @@ final class CostFigures
             return [];
         }
 
-        $values = [];
+        $companies = array_values(array_filter($viewer->scope->apply(DB::table('companies as c'), 'c.id')->orderBy('c.code')->get(['c.id', 'c.code', 'c.legal_name'])->all(), fn (object $company): bool => $viewer->allows('cost.view', (int) Row::text($company, 'id'))));
+        $ids = array_map(fn (object $company): int => (int) Row::text($company, 'id'), $companies);
+        $totals = $ids === [] ? [] : DB::table('inventory_lots as l')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->whereIn('l.source_company_id', $ids)->groupBy('l.source_company_id')->selectRaw('l.source_company_id, coalesce(sum(b.remaining_cost), 0.00)::text as total')->pluck('total', 'l.source_company_id')->all();
+        $exposures = $ids === [] ? [] : self::exposures($ids);
 
-        foreach ($viewer->scope->apply(DB::table('companies as c'), 'c.id')->orderBy('c.code')->get(['c.id', 'c.code', 'c.legal_name']) as $company) {
-            $id = (int) Row::text($company, 'id');
-
-            if ($viewer->allows('cost.view', $id)) {
-                $value = DB::table('inventory_lots as l')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->where('l.source_company_id', $id)->selectRaw('coalesce(sum(b.remaining_cost), 0.00)::text as total')->value('total');
-                $values[] = ['company' => Row::text($company, 'code'), 'name' => Row::text($company, 'legal_name'), 'value' => is_string($value) ? $value : '0.00', 'exposures' => $this->exposures($id)];
-            }
-        }
-
-        return $values;
+        return array_map(fn (object $company): array => ['company' => Row::text($company, 'code'), 'name' => Row::text($company, 'legal_name'), 'value' => is_string($totals[(int) Row::text($company, 'id')] ?? null) ? $totals[(int) Row::text($company, 'id')] : '0.00', 'exposures' => $exposures[(int) Row::text($company, 'id')] ?? []], $companies);
     }
 
-    /** @return list<array{qty: string, unit: string}> */
-    private function exposures(int $companyId): array
+    /**
+     * Each company's own exposure to what still waits on the Owner (UXS-39; PJ-07; PJ-22), per product and never a case's pending quantity or another company's: an overlap group's members hold one snapshot of the same claims, so a group counts once, by its bound less what it has assigned (DATABASE §5.8); a case alone by its own row.
+     *
+     * @param  list<int>  $companies
+     * @return array<int, list<array{product: string, qty: string, unit: string}>>
+     */
+    private static function exposures(array $companies): array
     {
         $rows = [];
+        $alone = DB::table('unattributed_loss_exposures as x')->join('unattributed_loss_cases as k', 'k.id', '=', 'x.unattributed_loss_case_id')->whereIn('x.company_id', $companies)->where('k.pending_qty_base', '>', 0)->whereNull('k.exposure_group_case_id')
+            ->whereNotExists(fn ($member) => $member->from('unattributed_loss_cases as m')->whereColumn('m.exposure_group_case_id', 'k.id'))
+            ->selectRaw('x.company_id, k.product_id, x.exposure_qty_base - x.assigned_net_qty_base as qty');
+        $grouped = DB::table('unattributed_loss_group_exposures as g')->join('unattributed_loss_cases as k', 'k.id', '=', 'g.exposure_group_case_id')->whereIn('g.company_id', $companies)
+            ->whereExists(fn ($member) => $member->from('unattributed_loss_cases as m')->whereRaw('coalesce(m.exposure_group_case_id, m.id) = g.exposure_group_case_id')->where('m.pending_qty_base', '>', 0))
+            ->selectRaw('g.company_id, k.product_id, g.bound_qty_base - g.assigned_net_qty_base as qty');
 
-        foreach (DB::table('unattributed_loss_exposures as x')->join('unattributed_loss_cases as k', 'k.id', '=', 'x.unattributed_loss_case_id')->join('products as p', 'p.id', '=', 'k.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')
-            ->where('x.company_id', $companyId)->where('k.pending_qty_base', '>', 0)->whereRaw('x.exposure_qty_base > x.assigned_net_qty_base')->groupBy('u.code')->selectRaw('u.code, sum(x.exposure_qty_base - x.assigned_net_qty_base) as qty')->get() as $row) {
-            $rows[] = ['qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
+        foreach (DB::query()->fromSub($alone->unionAll($grouped), 'e')->join('products as p', 'p.id', '=', 'e.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('e.qty', '>', 0)->groupBy('e.company_id', 'p.name', 'u.code')->orderBy('p.name')->selectRaw('e.company_id, p.name, u.code, sum(e.qty) as qty')->get() as $row) {
+            $rows[(int) Row::text($row, 'company_id')][] = ['product' => Row::text($row, 'name'), 'qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
         }
 
         return $rows;

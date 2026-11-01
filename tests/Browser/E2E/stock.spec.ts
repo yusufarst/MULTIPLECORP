@@ -13,7 +13,9 @@ test('shows the four quantities with the formula, per product and per rack, the 
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await stockRun(page, `stok-${String(Date.now())}`);
 
-    await page.goto(`/gudang/stok?cari=${encodeURIComponent(run.name)}`);
+    await page.goto('/gudang/stok');
+    await page.getByLabel('Cari produk').fill(run.name);
+    await page.getByRole('button', { name: { name: 'Cari', exact: true } }).click();
     await expect(page.getByRole('heading', { name: 'Stok', exact: true })).toBeVisible();
     await expect(page.locator('[data-slot="stock-formula"]')).toContainText('Tersedia');
     const row = page.getByRole('row').filter({ hasText: run.name });
@@ -82,7 +84,9 @@ test('shows a pending quantity as its own line on PG-018 and PG-019 (UXS-39; PJ-
     const pending = await page.request.post('/__fixtures/stock/pending', { data: { company: run.company, product: run.product, lot: run.lot, rack: run.rack } });
     expect(pending.ok()).toBe(true);
 
-    await page.goto(`/gudang/stok?cari=${encodeURIComponent(run.name)}`);
+    await page.goto('/gudang/stok');
+    await page.getByLabel('Cari produk').fill(run.name);
+    await page.getByRole('button', { name: { name: 'Cari', exact: true } }).click();
     await expect(page.locator('[data-slot="stock-pending"]').first()).toContainText('menunggu penetapan Owner');
     await page.goto(`/gudang/stok/${run.product}`);
     await expect(page.locator('[data-slot="stock-pending"]')).toContainText('menunggu penetapan Owner');

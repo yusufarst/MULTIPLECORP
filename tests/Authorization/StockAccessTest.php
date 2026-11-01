@@ -85,7 +85,22 @@ it('offers another company\'s reservation by its quantity and marker alone, and 
     expect(ReservationWorld::reserve($foreignActor->id, $demand->id, '5'))->toBe('COMMITTED');
     $public = DB::table('products')->where('id', $demand->product_id)->value('public_id');
 
-    $row = $this->actingAs($this->actor)->get("/gudang/stok/{$public}")->viewData('page')['props']['reservations'][0];
-    expect($row['reserved'])->toBe('5')->and($row['project'])->toBeNull();
+    $row = $this->actingAs($this->actor)->get("/gudang/stok/{$public}")->viewData('page')['props']['reservations']['rows'][0];
+    expect($row['reserved'])->toBe('5')->and($row['project'])->toBeNull()->and($row['other'])->toBeTrue();
     expect(json_encode($this->actingAs($this->actor)->get("/gudang/stok/{$public}")->viewData('page')['props']))->not->toContain($project->project_number);
+
+    // A re-inspection whose reversal would lower usable supply below that company's reservation: the cut refused and routed, nothing recorded (AZ-08; IP-20).
+    $product = (int) $demand->product_id;
+    $lot = StockWorld::lot($this->actor->id, $this->company, $product, $unit, $this->rack, '3');
+    StockWorld::conditionChange($this->actor->id, $this->company, $product, $lot, $this->rack, '2');
+    $inspection = StockWorld::conditionChange($this->actor->id, $this->company, $product, $lot, $this->rack, '2', 'UNUSABLE');
+    expect(ReservationWorld::reserve($foreignActor->id, $demand->id, '3'))->toBe('COMMITTED');
+    $movement = DB::table('stock_movements')->where('id', $inspection)->value('public_id');
+    $cut = $this->actingAs($this->actor)->get('/gudang/riwayat-stok?gerak='.$movement, ['X-Inertia' => 'true', 'X-Inertia-Version' => (string) $this->actingAs($this->actor)->get('/gudang/riwayat-stok')->viewData('page')['version'], 'X-Inertia-Partial-Component' => 'INV/StockHistory', 'X-Inertia-Partial-Data' => 'cut'])->json('props.cut');
+    expect($cut['movement'])->toBe($movement)->and($cut['shortfall'])->toBe('2');
+    $handle = $cut['reservations'][0]['id'];
+    $refused = $this->actingAs($this->actor)->post("/gudang/riwayat-stok/{$movement}/balikkan", [...($this->body)(), 'potong' => [['reservasi' => $handle, 'jumlah' => '2']]]);
+    expect($refused->getSession()->get('inertia.flash_data.answer')['code'] ?? $refused->getSession()->get('flash.answer.code') ?? 'seen')->not->toBe('COMMITTED')
+        ->and(DB::table('stock_movements')->where('reverses_movement_id', $inspection)->count())->toBe(0)
+        ->and(DB::table('audit_events')->where('action', 'INV.ReservationCutRouted')->where('company_id', $foreign->company->id)->count())->toBe(1);
 });
