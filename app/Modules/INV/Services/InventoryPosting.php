@@ -56,6 +56,56 @@ final class InventoryPosting
         return $set;
     }
 
+    /**
+     * A movement's ledger rows and their guards (DATABASE §5.2; GU-01; FU-01; FU-02): each entry inserted, then each lot, scope and product guard moved once by its net delta, a first-use row born first. The guards' CHECKs read the end state (C-03; C-04). Returns the entries' ids, in order.
+     *
+     * @param  list<array{lot: int, product: int, scale: int, location: int, condition: string, qty: string, serial?: int}>  $entries
+     * @return list<int>
+     */
+    public function ledger(CommandContext $context, int $movementId, string $type, array $entries): array
+    {
+        $ids = [];
+        $now = $context->now();
+        $lots = [];
+        $scopes = [];
+        $products = [];
+
+        foreach ($entries as $number => $entry) {
+            $ids[] = (int) DB::table('stock_movement_entries')->insertGetId([
+                'stock_movement_id' => $movementId, 'movement_type' => $type, 'product_id' => $entry['product'], 'quantity_scale' => $entry['scale'], 'location_id' => $entry['location'], 'condition' => $entry['condition'],
+                'lot_id' => $entry['lot'], 'serial_unit_id' => $entry['serial'] ?? null, 'qty_delta_base' => $entry['qty'], 'command_id' => $context->request->commandId, 'command_line_no' => $number + 1, 'recorded_at' => $now,
+            ]);
+            $lotKey = "{$entry['lot']}|{$entry['location']}|{$entry['condition']}";
+            $scopeKey = "{$entry['product']}|{$entry['location']}|{$entry['condition']}";
+            $lots[$lotKey] = ['entry' => $entry, 'qty' => BigDecimal::of($lots[$lotKey]['qty'] ?? '0')->plus($entry['qty'])];
+            $scopes[$scopeKey] = ['entry' => $entry, 'qty' => BigDecimal::of($scopes[$scopeKey]['qty'] ?? '0')->plus($entry['qty'])];
+            $hand = BigDecimal::of($products[$entry['product']]['on_hand_qty'] ?? '0')->plus($entry['qty']);
+            $unusable = BigDecimal::of($products[$entry['product']]['unusable_qty'] ?? '0')->plus($entry['condition'] === 'UNUSABLE' ? $entry['qty'] : '0');
+            $products[$entry['product']] = ['on_hand_qty' => $hand, 'unusable_qty' => $unusable];
+        }
+
+        foreach ($lots as $row) {
+            $entry = $row['entry'];
+            $key = ['lot_id' => $entry['lot'], 'location_id' => $entry['location'], 'condition' => $entry['condition']];
+            $context->connection->table('stock_lot_balances')->insertOrIgnore([...$key, 'product_id' => $entry['product'], 'recorded_at' => $now]);
+            GuardUpdate::apply($context->connection, 'stock_lot_balances', [['key' => $key, 'deltas' => ['qty' => (string) $row['qty']]]]);
+        }
+
+        foreach ($scopes as $row) {
+            $entry = $row['entry'];
+            $key = ['product_id' => $entry['product'], 'location_id' => $entry['location'], 'condition' => $entry['condition']];
+            $context->connection->table('stock_scope_balances')->insertOrIgnore([...$key, 'recorded_at' => $now]);
+            GuardUpdate::apply($context->connection, 'stock_scope_balances', [['key' => $key, 'deltas' => ['claims_qty' => (string) $row['qty'], 'version' => '1']]]);
+        }
+
+        foreach ($products as $product => $deltas) {
+            $context->connection->table('stock_product_balances')->insertOrIgnore(['product_id' => $product, 'recorded_at' => $now]);
+            GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $product], 'deltas' => array_filter(['on_hand_qty' => (string) $deltas['on_hand_qty'], 'unusable_qty' => (string) $deltas['unusable_qty'], 'version' => '1'], fn (string $delta): bool => ! BigDecimal::of($delta)->isZero())]]);
+        }
+
+        return $ids;
+    }
+
     /** The line a reservation binds. */
     public static function lineOf(int $reservationId): int
     {
