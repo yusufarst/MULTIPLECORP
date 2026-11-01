@@ -367,3 +367,31 @@ it('holds the company filter and the closed groups in the address (NAV-021)', fu
     $this->actingAs($grant)->get("/gudang/barang-masuk?perusahaan={$other->public_id}")->assertInertia(fn ($page) => $page->has('groups', 1)->has('companies', 2)->where('groups.0.id', $other->public_id)->where('chosen', $other->public_id)->etc());
     $this->actingAs($grant)->get("/gudang/barang-masuk?tutup={$other->public_id}")->assertInertia(fn ($page) => $page->has('groups', 2)->where('closed', [$other->public_id])->etc());
 });
+
+it('reverses a lot by its tracked units after the product\'s serial policy was switched off (C-02; L-35)', function () {
+    Product::query()->whereKey($this->line->product_id)->toBase()->update(['is_serialized' => true]);
+    expect(received($this, ReceivingWorld::request($this->line, $this->unit, $this->rack, '2', more: ['seri' => [['nomor' => 'SN-K1'], ['nomor' => 'SN-K2']]]))['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()));
+    Product::query()->whereKey($this->line->product_id)->toBase()->update(['is_serialized' => false]);
+    $handle = RowHandle::of('receiving_lines', (int) DB::table('receiving_lines')->value('id'));
+    $rack = RowHandle::of('locations', $this->rack);
+    $serial = (int) DB::table('serial_units')->where('serial_key', 'sn-k1')->value('id');
+    $reverse = fn (array $place) => $this->actingAs($this->actor)->post("/gudang/penerimaan/{$handle}/balikkan", ['command_id' => (string) Str::uuid(), 'tempat' => [$place], 'alasan' => 'Seri salah', 'tanggal' => $this->today]);
+
+    $reverse(['rak' => $rack, 'kondisi' => 'USABLE', 'jumlah' => '1']);
+    expect(receivingAnswer()['code'])->toBe('C-02')->and(DB::table('stock_lot_balances')->value('qty'))->toBe('2.000');
+
+    $reverse(['rak' => $rack, 'kondisi' => 'USABLE', 'jumlah' => '1', 'seri' => RowHandle::of('serial_units', $serial)]);
+    expect(receivingAnswer()['kind'])->toBe('COMMITTED', json_encode(receivingAnswer()))->and(DB::table('serial_units')->where('id', $serial)->value('state'))->toBe('NEVER_RECEIVED')
+        ->and(DB::table('stock_lot_balances')->value('qty'))->toBe('1.000');
+});
+
+it('registers an unknown code from the scan inline, on PG-022, and the scan then finds it (ROUTE-147; INT-147; IP-15)', function () {
+    $code = 'KODE-'.Str::upper(Str::random(6));
+    $editor = ReceivingWorld::actor($this->company, ['products.edit']);
+
+    expect($this->actingAs($editor)->post('/gudang/pindai', ['kode' => $code])->json('kind'))->toBe('unknown');
+    $this->actingAs($editor)->from($this->url)->post("/data-master/produk/{$this->goods['product']->public_id}/barcode", ['command_id' => (string) Str::uuid(), 'kind' => 'MANUFACTURER', 'code' => $code, 'inline' => true])->assertRedirect($this->url);
+
+    $found = $this->actingAs($editor)->post('/gudang/pindai', ['kode' => $code])->json();
+    expect($found['kind'])->toBe('match')->and($found['matches'][0]['product'])->toBe($this->goods['product']->public_id);
+});

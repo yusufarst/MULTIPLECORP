@@ -3244,5 +3244,8 @@
     "receiving.line.case": "Kasus retur",
     "receiving.line.choose_case": "Pilih kasus",
     "receiving.line.replacement": "Pengganti yang masih ditunggu :jumlah",
-    "receiving.kind.REPLACEMENT": "Barang pengganti retur"
+    "receiving.kind.REPLACEMENT": "Barang pengganti retur",
+    "receiving.scan.line_busy": "Baris ini sedang menunggu jawaban. Nomor seri :seri belum ditambahkan; selesaikan dulu pencatatannya.",
+    "receiving.register.consequence": "Kode :kode didaftarkan sebagai barcode produk yang dipilih. Kekeliruan diperbaiki di Data Master.",
+    "receiving.register.product": "Produk"
 }

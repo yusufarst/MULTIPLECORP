@@ -3244,5 +3244,8 @@
     "receiving.line.case": "Return case",
     "receiving.line.choose_case": "Choose a case",
     "receiving.line.replacement": "Replacement still expected :jumlah",
-    "receiving.kind.REPLACEMENT": "Replacement of a return"
+    "receiving.kind.REPLACEMENT": "Replacement of a return",
+    "receiving.scan.line_busy": "This line is waiting for its answer. Serial :seri was not added; finish recording it first.",
+    "receiving.register.consequence": "Code :kode is registered as the chosen product's barcode. A mistake is corrected in Master Data.",
+    "receiving.register.product": "Product"
 }

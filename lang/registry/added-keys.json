@@ -14094,6 +14094,24 @@
             "source": "WF-INV-01; IP-20; CM-02; NAV-021 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "receiving.scan.line_busy": {
+            "task": "TASK-039",
+            "source": "IP-15; ROUTE-147; IP-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.register.consequence": {
+            "task": "TASK-039",
+            "source": "IP-15; ROUTE-147; IP-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.register.product": {
+            "task": "TASK-039",
+            "source": "IP-15; ROUTE-147; IP-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -25,15 +25,29 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         const field = page.getByRole('textbox', { name: 'Pindai atau ketik kode' });
         await expect(field).toBeFocused();
 
-        await scan(page, 'TIDAK-ADA-1');
-        await expect(page.getByRole('alert').filter({ hasText: 'Kode TIDAK-ADA-1 tidak dikenal.' }).locator('visible=true')).toBeVisible();
-        await expect(page.getByRole('link', { name: 'Daftarkan Barcode' })).toBeVisible();
+        const unknown = `KODE-${String(Date.now())}`;
+        await scan(page, unknown);
+        await expect(page.getByRole('alert').filter({ hasText: `Kode ${unknown} tidak dikenal.` }).locator('visible=true')).toBeVisible();
         await expect(field).toHaveValue('');
         await expect(field).toBeFocused();
 
         // A scan only looks up: nothing recorded, the line opened.
         await scan(page, run.sku);
         await expect(page.locator('[data-slot="receive-summary"]')).toHaveCount(0);
+        await expect(page.getByRole('status').filter({ hasText: 'dibuka' }).locator('visible=true')).toBeVisible();
+
+        // "Daftarkan Barcode": its own command in place, the unsent input kept, and the scan continues (ROUTE-147; IP-15).
+        await currentLine(page).getByRole('textbox', { name: 'Ditolak' }).fill('1');
+        await scan(page, unknown);
+        await page.getByRole('button', { name: 'Daftarkan Barcode' }).click();
+        const register = page.getByRole('alertdialog', { name: 'Daftarkan Barcode' });
+        await expect(register).toContainText(unknown);
+        await register.getByRole('button', { name: 'Daftarkan Barcode' }).click();
+        await expect(register).toHaveCount(0);
+        await expect(page.getByRole('status').filter({ hasText: 'dibuka' }).locator('visible=true')).toBeVisible();
+        await expect(page.getByRole('button', { name: 'Daftarkan Barcode' })).toHaveCount(0);
+        await expect(currentLine(page).getByRole('textbox', { name: 'Ditolak' })).toHaveValue('1');
+        await currentLine(page).getByRole('textbox', { name: 'Ditolak' }).fill('');
 
         await page.getByRole('button', { name: 'Cari Produk' }).click();
         await page.getByRole('textbox', { name: 'Cari Produk' }).fill('tidak-ada-barang');
@@ -89,6 +103,8 @@ test('counts a serial scanned twice once, refuses one in stock at the scan, mark
 
     await page.goto(`/gudang/barang-masuk/${run.serial_purchase}`);
     await expect(currentLine(page)).toContainText(run.serial_name);
+    // Serials are single units: no alternate unit to choose.
+    await expect(currentLine(page).getByRole('combobox', { name: 'Satuan' })).toHaveCount(0);
     await scan(page, serial);
     await expect(currentLine(page).locator('[data-slot="line-serials"]')).toContainText(serial);
     await scan(page, serial);
@@ -222,4 +238,39 @@ test('reverses one chosen serial on PG-016, the other staying in stock (CM-03; C
     const again = page.getByRole('alertdialog', { name: 'Balikkan penerimaan ini?' });
     await expect(again.getByRole('checkbox')).toHaveCount(1);
     await expect(again).toContainText(second);
+});
+
+test('stops the scanner at a line whose answer is lost, no serial silently dropped by the retry (IP-02; IP-04; BD-18)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const run = await receivingRun(page, `terima-seri-putus-${String(Date.now())}`);
+    const first = `SN-PUTUS-${String(Date.now())}-1`;
+    const second = `SN-PUTUS-${String(Date.now())}-2`;
+    await page.goto(`/gudang/barang-masuk/${run.serial_purchase}`);
+    await scan(page, first);
+    await currentLine(page).getByRole('combobox', { name: 'Rak' }).selectOption({ index: 1 });
+
+    let cut = true;
+    await page.route('**/gudang/barang-masuk/*/terima', async (route) => {
+        if (cut && route.request().method() === 'POST') {
+            cut = false;
+            await route.fetch();
+            await route.abort('connectionreset');
+
+            return;
+        }
+
+        await route.continue();
+    });
+    await record(page);
+    const retry = currentLine(page).getByRole('button', { name: 'Coba Lagi' });
+    await expect(retry).toBeVisible();
+
+    await scan(page, second);
+    await expect(page.getByRole('alert').filter({ hasText: second }).locator('visible=true')).toBeVisible();
+    await expect(currentLine(page).locator('[data-slot="line-serials"] li')).toHaveCount(1);
+
+    await retry.click();
+    await expect(currentLine(page).getByText('Barang masuk tercatat.')).toBeVisible();
+    await scan(page, second);
+    await expect(currentLine(page).locator('[data-slot="line-serials"]')).toContainText(second);
 });

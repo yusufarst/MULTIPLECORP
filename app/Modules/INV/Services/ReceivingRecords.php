@@ -213,7 +213,8 @@ final class ReceivingRecords
         $lot = self::lot($lotId);
         $product = (int) Row::text($lot, 'product_id');
         $scale = max(0, (int) Row::text($lot, 'quantity_scale'));
-        $serialized = (bool) DB::table('products')->where('id', $product)->value('is_serialized');
+        // The lot's own tracked units decide, not the product's policy today: its serials stay identities through a policy change (L-35; C-02).
+        $serialized = DB::table('stock_movement_entries')->where('lot_id', $lotId)->whereNotNull('serial_unit_id')->exists();
         $total = BigDecimal::zero();
         $usable = BigDecimal::zero();
         $entries = [];

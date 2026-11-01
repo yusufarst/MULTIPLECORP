@@ -23,7 +23,7 @@ export type ScannedSerial = { serial: string; damaged: boolean };
 
 export const plain = (value: string): string => (value.includes('.') ? value.replace(/\.?0+$/, '') : value);
 
-export function LineForm({ line, url, company, racks, receipts, cases, closed, today, canEvidence, serials, onSerials, hidden, onUnsent }: {
+export function LineForm({ line, url, company, racks, receipts, cases, closed, today, canEvidence, serials, onSerials, hidden, onUnsent, onBusy }: {
     line: ReceiveLine;
     url: string;
     company: string;
@@ -37,6 +37,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
     onSerials: (next: ScannedSerial[]) => void;
     hidden: boolean;
     onUnsent: (unsent: boolean) => void;
+    onBusy: (busy: boolean) => void;
 }) {
     const { t } = useTranslation();
     const command = useCommand<Record<string, FormDataConvertible>>(() => url, 'post');
@@ -56,6 +57,13 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
     const [confirming, setConfirming] = useState(false);
     const frozen = command.pending || command.unknown || closed;
     const expected = Number(line.replacement) > 0;
+    const busy = command.pending || command.unknown;
+
+    // A retry resends what was confirmed: a serial scanned meanwhile would be cleared with it, never received (IP-02; IP-04).
+    useEffect(() => {
+        onBusy(busy);
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- only the line's own change reports it
+    }, [busy]);
     const error = (field: string) => command.errors[field];
     const ownReceipts = receipts.filter((receipt) => receipt.line === line.no);
     const usableCount = line.serialized ? String(serials.filter((serial) => !serial.damaged).length) : usable;
@@ -85,7 +93,7 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
     };
     const send = () => {
         command.submit({
-            baris: line.handle, jenis: kind, satuan: unit, layak: usableCount === '' ? '0' : usableCount, rusak: damagedCount === '' ? '0' : damagedCount, tolak: rejected === '' ? '0' : rejected,
+            baris: line.handle, jenis: kind, satuan: line.serialized ? (line.units[0]?.code ?? unit) : unit, layak: usableCount === '' ? '0' : usableCount, rusak: damagedCount === '' ? '0' : damagedCount, tolak: rejected === '' ? '0' : rejected,
             rak: rack === '' ? null : rack, referensi: reference === '' ? null : reference, mengoreksi: cited === '' || kind === 'REPLACEMENT' ? null : cited, kasus: returnCase === '' || kind !== 'REPLACEMENT' ? null : returnCase, reservasi: reserve === '' ? null : reserve, bukti: evidence,
             seri: serials.map((serial) => ({ nomor: serial.serial, rusak: serial.damaged })), kebijakan_seri: line.serialized, kebijakan_skala: line.scale, tanggal: date.date, tanggal_otomatis: !date.chosen,
         }, reset);
@@ -99,15 +107,15 @@ export function LineForm({ line, url, company, racks, receipts, cases, closed, t
             {closed && <p className="text-body text-text-secondary">{t('receiving.refusal.purchase_state')}</p>}
             <BusinessDateControl today={today} value={date} onChange={setDate} />
             <div className="flex min-w-0 flex-wrap items-start gap-4">
-                <FormField label={t('pt10.columns.unit')} error={error('satuan')} className="w-32">
-                    {(control) => (
-                        <NativeSelect {...control} value={unit} disabled={frozen} onChange={(event) => { setUnit(event.target.value); }}>
-                            {line.units.map((option) => <option key={option.code} value={option.code}>{option.code}</option>)}
-                        </NativeSelect>
-                    )}
-                </FormField>
                 {!line.serialized && (
                     <>
+                        <FormField label={t('pt10.columns.unit')} error={error('satuan')} className="w-32">
+                            {(control) => (
+                                <NativeSelect {...control} value={unit} disabled={frozen} onChange={(event) => { setUnit(event.target.value); }}>
+                                    {line.units.map((option) => <option key={option.code} value={option.code}>{option.code}</option>)}
+                                </NativeSelect>
+                            )}
+                        </FormField>
                         <FormField label={t('pages.pg_022.usable')} error={error('layak')} className="w-32">
                             {(control) => <DecimalInput {...control} scale={3} value={usable} disabled={frozen} onValueChange={(value) => { setUsable(value ?? ''); }} />}
                         </FormField>

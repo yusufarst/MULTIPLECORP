@@ -4,6 +4,8 @@ import { router } from '@inertiajs/react';
 import { Check } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+import { ConfirmCommand } from '@/components/confirm-dialog';
+import { FormField } from '@/components/form';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { FactsList } from '@/components/record-blocks';
@@ -13,6 +15,7 @@ import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
+import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText } from '@/components/values';
 import { LineForm, plain, type Rack, type Receipt, type ReceiveLine, type ReturnCase, type ScannedSerial } from '@/features/inv/receive-line';
 import AppShell from '@/layouts/AppShell';
@@ -67,11 +70,15 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
     const scanRef = useRef<HTMLInputElement>(null);
     // Lookups answer out of order: each serial reads and writes the list as it is by then, never as it was when its scan began (BD-18).
     const scannedSerials = useRef<Record<string, ScannedSerial[]>>({});
+    const busyLines = useRef<Record<string, boolean>>({});
     const replaceSerials = (handle: string, next: ScannedSerial[]) => {
         scannedSerials.current = { ...scannedSerials.current, [handle]: next };
         setSerials(scannedSerials.current);
     };
     const prepare = useCommand<Record<string, FormDataConvertible>>(() => '/dokumen', 'post');
+    const [registering, setRegistering] = useState(false);
+    const [registerProduct, setRegisterProduct] = useState('');
+    const registration = useCommand<Record<string, FormDataConvertible>>(() => `/data-master/produk/${registerProduct}/barcode`, 'post');
     const guard = useScanGuard({ hasScanField: true });
 
     // IP-15: one scan target, focused on entering the step.
@@ -112,6 +119,12 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
     const clear = () => { setResult(null); setScanError(null); setCandidates([]); setRegister(null); };
     const open_ = (line: ReceiveLine) => { setCurrent(line.handle); setResult(t('receiving.scan.opened', { barang: line.name })); };
     const addSerial = (line: ReceiveLine, serial: string) => {
+        if (busyLines.current[line.handle] === true) {
+            setScanError(t('receiving.scan.line_busy', { seri: serial }));
+
+            return;
+        }
+
         const own = scannedSerials.current[line.handle] ?? [];
 
         if (own.some((other) => other.serial.toLowerCase() === serial.toLowerCase())) {
@@ -230,7 +243,7 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
                         <div className="min-w-0 md:col-span-2">
                             {lines.map((line) => (
                                 <LineForm key={line.handle} line={line} url={`/gudang/barang-masuk/${purchase.id}/terima`} company={purchase.company_id} racks={locations} receipts={receipts} cases={cases} closed={purchase.state !== 'OPEN'} today={today} canEvidence={can.evidence}
-                                    serials={serials[line.handle] ?? []} onSerials={(next) => { replaceSerials(line.handle, next); }} hidden={line.handle !== current} onUnsent={(next) => { setUnsent((all) => (all[line.handle] === next ? all : { ...all, [line.handle]: next })); }} />
+                                    serials={serials[line.handle] ?? []} onSerials={(next) => { replaceSerials(line.handle, next); }} hidden={line.handle !== current} onUnsent={(next) => { setUnsent((all) => (all[line.handle] === next ? all : { ...all, [line.handle]: next })); }} onBusy={(next) => { busyLines.current[line.handle] = next; }} />
                             ))}
                         </div>
                     </div>
@@ -257,7 +270,7 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
                         ))}
                     </ul>
                 )}
-                {register !== null && can.barcode && <Button variant="outline" className="self-start" render={<a href={`/data-master/produk?barcode=${encodeURIComponent(register)}`} />}>{t('receiving.scan.register')}</Button>}
+                {register !== null && can.barcode && <Button variant="outline" className="self-start" onClick={() => { registration.clear(); setRegisterProduct(lines[0]?.product ?? ''); setRegistering(true); }}>{t('receiving.scan.register')}</Button>}
                 {receipts.length > 0 && (
                     <section data-slot="receive-summary" className="flex min-w-0 flex-col gap-3">
                         <h2 className="text-subhead">{t('pages.pg_022.summary')}</h2>
@@ -278,6 +291,31 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
                     </section>
                 )}
             </div>
+            {register !== null && (
+                <ConfirmCommand
+                    open={registering}
+                    onOpenChange={setRegistering}
+                    title={t('receiving.scan.register')}
+                    consequence={t('receiving.register.consequence', { kode: register })}
+                    confirmLabel={t('receiving.scan.register')}
+                    pending={registration.pending}
+                    answer={registration.answer}
+                    blocked={registerProduct === ''}
+                    onConfirm={() => {
+                        const code = register;
+                        registration.submit({ kind: 'MANUFACTURER', code, inline: true }, () => { setRegistering(false); scanned(code); });
+                    }}
+                    items={(
+                        <FormField label={t('receiving.register.product')} error={registration.errors.code}>
+                            {(control) => (
+                                <NativeSelect {...control} value={registerProduct} disabled={registration.pending} onChange={(event) => { setRegisterProduct(event.target.value); }}>
+                                    {lines.map((line) => <option key={line.handle} value={line.product}>{`${String(line.no)}. ${line.name}`}</option>)}
+                                </NativeSelect>
+                            )}
+                        </FormField>
+                    )}
+                />
+            )}
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
             <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} onSearch={() => { setFilter((value) => (value === null ? '' : null)); }} result={result} error={scanError} />
