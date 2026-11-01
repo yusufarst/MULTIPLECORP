@@ -13806,6 +13806,222 @@
             "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "receiving.list.group_failed": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.list.reload": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.list.empty": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.list.no_lines": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.field.purchase": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.field.supplier": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.field.project": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.field.date": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.field.company": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.remaining": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.serials": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.scan_serials": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.remove_serial": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.kind": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.cited": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.choose_cited": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.evidence": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.line.evidence_count": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.kind.ORIGINAL": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.kind.SUPPLEMENT": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.kind.RE_RECEIPT": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.confirm.title": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.confirm.consequence": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.progress": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.scan.opened": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.scan.serial_added": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.scan.serial_in_stock": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.scan.not_on_purchase": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.scan.register": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.summary.line": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.summary.done": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.reverse.title": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.reverse.consequence": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.reverse.consumed": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.reverse.held": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.reverse.shortfall": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

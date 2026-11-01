@@ -4,6 +4,9 @@ namespace Tests\Support;
 
 use App\Modules\CAT\Models\Product;
 use App\Modules\IAM\Models\User;
+use App\Modules\INV\Actions\ReceiveGoods;
+use App\Modules\INV\Actions\ReverseReceipt;
+use App\Modules\INV\Data\ReceiptEntry;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PUR\Data\PurchaseEntry;
 use App\Modules\PUR\Models\Purchase;
@@ -64,6 +67,36 @@ final class ReceivingWorld
 
         return ['command_id' => (string) Str::uuid(), 'baris' => RowHandle::of('purchase_lines', $line->id), 'jenis' => 'ORIGINAL', 'satuan' => $unit, 'layak' => $usable, 'rusak' => $damaged, 'tolak' => $rejected, 'rak' => RowHandle::of('locations', $rack),
             'kebijakan_seri' => (bool) $product->is_serialized, 'kebijakan_skala' => $product->quantity_scale, 'tanggal' => BusinessDate::today(), ...$more];
+    }
+
+    /**
+     * ROUTE-181's action as its own command, for the race tests; its word.
+     *
+     * @param  list<array{serial: string, damaged: bool}>  $serials
+     */
+    public static function receive(int $actor, int $company, int $purchase, int $line, int $unit, int $rack, string $usable, ?string $reference = null, array $serials = [], string $kind = ReceiptEntry::ORIGINAL, ?int $cites = null): string
+    {
+        // Go-live is bound per process (Numbering::goLive), and a session is its own.
+        Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
+        $product = DB::table('purchase_lines as l')->join('products as p', 'p.id', '=', 'l.product_id')->where('l.id', $line)->first(['p.is_serialized', 'p.quantity_scale']);
+        $entry = new ReceiptEntry($purchase, $line, $kind, $unit, $usable, '0', '0', $rack, $serials, $reference, $cites, null, null, [], BusinessDate::today(), false, (bool) ($product->is_serialized ?? false), (int) ($product->quantity_scale ?? 0));
+
+        return InvoiceWorld::word(app(ReceiveGoods::class)->run((string) Str::uuid(), $actor, $company, $entry, ['run' => (string) Str::uuid()]));
+    }
+
+    /** ROUTE-183's action as its own command, usable units of the rack; its word. */
+    public static function reverse(int $actor, int $company, int $lot, int $rack, string $qty): string
+    {
+        Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
+
+        return InvoiceWorld::word(app(ReverseReceipt::class)->run((string) Str::uuid(), $actor, $company, $lot, [['location' => $rack, 'condition' => 'USABLE', 'qty' => $qty, 'serial' => null]], [], 'Salah barang', BusinessDate::today(), false));
+    }
+
+    public static function lotOf(int $lineId): int
+    {
+        $lot = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('r.purchase_line_id', $lineId)->orderByDesc('i.id')->value('i.id');
+
+        return is_numeric($lot) ? (int) $lot : 0;
     }
 
     public static function balance(int $lineId): object

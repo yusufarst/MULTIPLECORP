@@ -20,6 +20,7 @@ use App\Support\Money;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
+use Closure;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -106,8 +107,9 @@ final class ReceivingRecords
             throw Refused::rejected('WF-INV-01', ['reason' => 'no_rack']);
         }
 
-        $this->ensureCap($entry, $line, $accepted);
+        // The same delivery answers "Sudah Tercatat" even on a line already full (BD-01; IP-03).
         $this->ensureDelivery($entry);
+        $this->ensureCap($entry, $line, $accepted);
         $serialized = (bool) DB::table('products')->where('id', $product)->value('is_serialized');
         $serials = $this->uniqueSerials($entry);
 
@@ -260,23 +262,27 @@ final class ReceivingRecords
     /** The cap of the receipt's kind on the line guard (C-29; PX-03): the remainder in words when exceeded; a replacement only against its separate cap, with its OPEN case (C-59). */
     private function ensureCap(ReceiptEntry $entry, object $line, BigDecimal $accepted): void
     {
-        $ordered = BigDecimal::of(Row::text($line, 'ordered_qty_base'));
-
         if ($entry->kind === ReceiptEntry::REPLACEMENT) {
             $state = $entry->caseId === null ? null : DB::table('correction_cases')->where('id', $entry->caseId)->value('state');
 
             if ($state !== 'OPEN') {
                 throw Refused::rejected('C-59', ['reason' => 'case_not_open']);
             }
-
-            $room = BigDecimal::of(Row::text($line, 'replacement_expected_qty_base'))->minus(Row::text($line, 'replacement_received_net_qty_base'));
-        } else {
-            $room = $ordered->minus(Row::text($line, 'normal_received_net_qty_base'))->minus(Row::text($line, 'closed_qty_base'))->minus(Row::text($line, 'dropship_confirmed_net_qty_base'));
         }
+
+        $room = self::room($entry->kind, $line);
 
         if ($accepted->isGreaterThan($room)) {
             throw Refused::rejected('C-29', ['reason' => 'above_remainder', 'remainder' => (string) $room]);
         }
+    }
+
+    /** The room of a receipt's kind on the line's guard: a replacement counted only against its separate cap (C-29; PX-03). */
+    public static function room(string $kind, object $line): BigDecimal
+    {
+        return $kind === ReceiptEntry::REPLACEMENT
+            ? BigDecimal::of(Row::text($line, 'replacement_expected_qty_base'))->minus(Row::text($line, 'replacement_received_net_qty_base'))
+            : BigDecimal::of(Row::text($line, 'ordered_qty_base'))->minus(Row::text($line, 'normal_received_net_qty_base'))->minus(Row::text($line, 'closed_qty_base'))->minus(Row::text($line, 'dropship_confirmed_net_qty_base'));
     }
 
     /** BD-01: one ORIGINAL per line and supplier delivery reference; a corrective kind cites its receipt of the same line (C-59; CM-02; CM-04). */
@@ -321,18 +327,28 @@ final class ReceivingRecords
     {
         $now = $context->now();
 
+        $code = self::withLotCode(fn (string $code): int => $context->connection->table('inventory_lots')->insertOrIgnore([
+            'lot_code' => $code, 'product_id' => $product, 'quantity_scale' => $scale, 'source_company_id' => $company, 'acquisition_kind' => 'RECEIPT', 'receiving_line_id' => $receiving,
+            'entered_qty' => (string) BigDecimal::of($entry->usable)->plus($entry->damaged), 'entered_unit_id' => $entry->unitId, 'ratio_to_base' => $ratio, 'acquired_qty_base' => (string) $accepted, 'business_date' => $entry->businessDate,
+            'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
+        ]));
+        $id = DB::table('inventory_lots')->where('lot_code', $code)->value('id');
+
+        return is_numeric($id) ? (int) $id : throw Refused::rejected('FU-13', []);
+    }
+
+    /**
+     * FU-13: a generated code tried until one inserts, at most LOT_CODE_TRIES times; the code taken.
+     *
+     * @param  Closure(string): int  $insert  the rows the code inserted
+     */
+    public static function withLotCode(Closure $insert): string
+    {
         for ($try = 0; $try < self::LOT_CODE_TRIES; $try++) {
             $code = self::lotCode();
-            $created = $context->connection->table('inventory_lots')->insertOrIgnore([
-                'lot_code' => $code, 'product_id' => $product, 'quantity_scale' => $scale, 'source_company_id' => $company, 'acquisition_kind' => 'RECEIPT', 'receiving_line_id' => $receiving,
-                'entered_qty' => (string) BigDecimal::of($entry->usable)->plus($entry->damaged), 'entered_unit_id' => $entry->unitId, 'ratio_to_base' => $ratio, 'acquired_qty_base' => (string) $accepted, 'business_date' => $entry->businessDate,
-                'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
-            ]);
 
-            if ($created === 1) {
-                $id = DB::table('inventory_lots')->where('lot_code', $code)->value('id');
-
-                return is_numeric($id) ? (int) $id : throw Refused::rejected('FU-13', []);
+            if ($insert($code) === 1) {
+                return $code;
             }
         }
 
@@ -462,7 +478,8 @@ final class ReceivingRecords
         $this->inventory->reserve($context, (int) $demand, $qty);
     }
 
-    private static function base(string $entered, int $ratio, int $scale): BigDecimal
+    /** The base quantity of an entered one, exact and never rounded (C-09; L-31). */
+    public static function base(string $entered, int $ratio, int $scale): BigDecimal
     {
         $base = BigDecimal::of($entered)->multipliedBy($ratio);
 

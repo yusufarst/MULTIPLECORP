@@ -7,6 +7,7 @@ import { type BusinessDate, BusinessDateControl } from '@/components/date-field'
 import { DecimalInput, FormField, FormSection } from '@/components/form';
 import { OutcomeMessage, type Answer } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
+import { ReservationCut, type Reservation } from '@/components/notices';
 import { FactsList, Timeline } from '@/components/record-blocks';
 import { RegionEmpty } from '@/components/region-state';
 import { StatusBadge } from '@/components/status-badge';
@@ -29,7 +30,7 @@ type Props = {
     purchase: { id: string; company_id: string; number: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; lock_version: number; date: string; company: string; supplier: string; reference: string | null; project: { id: string; number: string; title: string } | null; cancelled_reason: string | null; cancelled_at: string | null };
     lines: LineRow[];
     charges: ChargeRow[];
-    receipts: { line: number; quantity: string; date: string; lot: string | null }[];
+    receipts: Receipt[];
     disbursements: { id: string; amount: string; date: string }[] | null;
     documents: { id: string; type: string; state: string | null; number: string | null }[];
     cascade: { lots: { code: string; line: number | null }[]; consumptions: { lot: string; line: number | null; kind: string; quantity: string; project: string | null }[]; projects: { number: string; line: number | null }[] };
@@ -39,8 +40,9 @@ type Props = {
     product?: Product | null;
     first_effect: boolean;
     today: string;
-    can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean };
+    can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean; receive: boolean; reverse: boolean };
 };
+type Receipt = { handle: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversal: { places: { location: string; code: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[]; serials: { handle: string; serial: string; location: string; condition: 'USABLE' | 'UNUSABLE' }[]; available: string; reservations: Reservation[]; consumed: boolean } | null };
 type Dialog = { kind: 'cancel' } | { kind: 'close' } | { kind: 'correct'; target: string; correction: 'PRICE_CORRECTION' | 'TAX_CORRECTION' | 'CHARGE_CORRECTION'; label: string; current: string; line: number | null } | { kind: 'basis'; charge: string } | { kind: 'unmark'; line: string };
 
 const positive = (value: string): boolean => !/^0*(\.0*)?$/.test(value);
@@ -99,6 +101,22 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
     const amend = useCommand<Record<string, never>>(() => base, 'put');
     const charge = useCommand<Record<string, never>>(() => `${base}/biaya`, 'post');
     const prepare = useCommand<Record<string, never>>(() => '/dokumen', 'post');
+    const [reversing, setReversing] = useState<Receipt | null>(null);
+    const [reverseReason, setReverseReason] = useState('');
+    const [reverseQty, setReverseQty] = useState<Record<string, string>>({});
+    const [reverseCuts, setReverseCuts] = useState<Record<string, string>>({});
+    const reverse = useCommand<Record<string, never>>(() => `/gudang/penerimaan/${reversing?.handle ?? ''}/balikkan`, 'post');
+    const reverseUsable = reversing?.reversal === null || reversing === null ? 0 : reversing.reversal.places.filter((place) => place.condition === 'USABLE').reduce((sum, place) => sum + Number(reverseQty[`${place.location}|${place.condition}`] ?? 0), 0);
+    const reverseShortfall = reversing?.reversal === null || reversing === null ? 0 : Math.max(0, reverseUsable - Number(reversing.reversal.available));
+    const sendReversal = () => {
+        const places = reversing?.reversal?.places ?? [];
+        const serials = reversing?.reversal?.serials ?? [];
+        const tempat = serials.length > 0
+            ? serials.filter((serial) => Number(reverseQty[`${serial.location}|${serial.condition}`] ?? 0) > 0).map((serial) => ({ rak: serial.location, kondisi: serial.condition, jumlah: '1', seri: serial.handle }))
+            : places.filter((place) => Number(reverseQty[`${place.location}|${place.condition}`] ?? 0) > 0).map((place) => ({ rak: place.location, kondisi: place.condition, jumlah: reverseQty[`${place.location}|${place.condition}`] ?? '0' }));
+        const potong = Object.entries(reverseCuts).filter(([, qty]) => Number(qty) > 0).map(([reservasi, jumlah]) => ({ reservasi, jumlah }));
+        (reverse.submit as unknown as (value: unknown, done: () => void) => void)({ tempat, potong, alasan: reverseReason, tanggal: today, tanggal_otomatis: true, kembali: base }, () => { setReversing(null); });
+    };
     const chooseProduct = useLineProducts((update) => { setAmending((current) => (current === null ? current : update(current))); });
     const goodsLines = lines.filter((line) => line.kind === 'GOODS');
     const openLines = goodsLines.filter((line) => positive(line.remaining));
@@ -154,6 +172,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                     { label: t('pages.pg_017.supplier_quote'), value: purchase.reference ?? '—' },
                 ]} />
                 <div className="flex min-w-0 flex-wrap gap-2" data-slot="purchase-actions">
+                    {can.receive && <Button render={<a href={`/gudang/barang-masuk/${purchase.id}`} />}>{t('pages.pg_022.title')}</Button>}
                     {can.issue && <Button variant="outline" disabled={prepare.pending} onClick={() => { (prepare.submit as unknown as (value: unknown) => void)({ jenis: 'DOC-02', subjek: { purchase_id: purchase.id } }); }}>{t('actions.issue_po')}</Button>}
                     {can.issue && <Button variant="outline" disabled={prepare.pending} onClick={() => { (prepare.submit as unknown as (value: unknown) => void)({ jenis: 'DOC-14', subjek: { purchase_id: purchase.id } }); }}>{t('purchases.action.issue_order')}</Button>}
                     {can.amend && amending === null && <Button variant="outline" onClick={startAmend}>{t('purchases.action.amend')}</Button>}
@@ -245,8 +264,13 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                 </FormSection>
                 <FormSection title={t('purchases.section.receipts')}>
                     {receipts.length === 0 ? <RegionEmpty text={t('purchases.section.no_receipts')} /> : (
-                        <ul role="list" className="flex flex-col gap-1 text-body">
-                            {receipts.map((row, index) => <li key={index}>{t('purchases.charge.share_of', { baris: String(row.line) })}: <Quantity value={row.quantity} unit="" /></li>)}
+                        <ul role="list" data-slot="purchase-receipts" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
+                            {receipts.map((row) => (
+                                <li key={row.handle} className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-2">
+                                    <span className="min-w-0">{t('receiving.summary.line', { baris: String(row.line), layak: row.usable.replace(/\.?0+$/, '') || '0', rusak: row.damaged.replace(/\.?0+$/, '') || '0', tolak: row.rejected.replace(/\.?0+$/, '') || '0' })}{row.reference === null ? '' : ` · ${row.reference}`}</span>
+                                    {can.reverse && row.reversal !== null && row.reversal.places.length > 0 && <Button variant="ghost" size="sm" onClick={() => { setReversing(row); setReverseReason(''); setReverseQty(Object.fromEntries(row.reversal?.places.map((place) => [`${place.location}|${place.condition}`, place.qty.replace(/\.?0+$/, '')]) ?? [])); setReverseCuts({}); reverse.clear(); }}>{t('actions.reverse_receipt')}</Button>}
+                                </li>
+                            ))}
                         </ul>
                     )}
                 </FormSection>
@@ -311,6 +335,30 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                                     <Cascade cascade={cascade} line={null} />
                                 </>
                             )}
+                        </div>
+                    )}
+                />
+            )}
+            {reversing !== null && reversing.reversal !== null && (
+                <ConfirmCommand
+                    open
+                    onOpenChange={(next) => { if (!next) setReversing(null); }}
+                    title={t('receiving.reverse.title')}
+                    consequence={reversing.reversal.consumed ? t('receiving.reverse.consumed') : t('receiving.reverse.consequence')}
+                    confirmLabel={t('actions.reverse_receipt')}
+                    destructive
+                    pending={reverse.pending}
+                    answer={reverse.answer}
+                    reason={{ value: reverseReason, onChange: setReverseReason, error: reverse.errors.alasan ?? null }}
+                    onConfirm={sendReversal}
+                    items={(
+                        <div className="flex min-w-0 flex-col gap-3">
+                            {reversing.reversal.places.map((place) => (
+                                <FormField key={`${place.location}|${place.condition}`} label={`${place.code} · ${t(place.condition === 'USABLE' ? 'pages.pg_022.usable' : 'pages.pg_022.damaged')}`} help={t('receiving.reverse.held', { sisa: place.qty.replace(/\.?0+$/, '') })}>
+                                    {(control) => <DecimalInput {...control} scale={3} value={reverseQty[`${place.location}|${place.condition}`] ?? ''} onValueChange={(next) => { setReverseQty({ ...reverseQty, [`${place.location}|${place.condition}`]: next ?? '' }); }} />}
+                                </FormField>
+                            ))}
+                            {reverseShortfall > 0 && <ReservationCut shortfall={t('receiving.reverse.shortfall', { kurang: String(reverseShortfall) })} unit="" reservations={reversing.reversal.reservations} cuts={reverseCuts} onCut={(id, value) => { setReverseCuts({ ...reverseCuts, [id]: value ?? '' }); }} scale={3} />}
                         </div>
                     )}
                 />

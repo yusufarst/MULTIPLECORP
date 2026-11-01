@@ -21,6 +21,7 @@ use Tests\Support\Fixtures\NumberingFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ShellFixture;
 
@@ -123,6 +124,9 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-037): a company with its PURCHASE and PO numbering, suppliers, goods, a bill and a confirmed project with its shortage.
     Route::post('__fixtures/purchase', [PurchaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-039): over the purchase fixture, the Nota's numbering, a rack, a serialized purchase and a purchase of the project's demand.
+    Route::post('__fixtures/receiving', [ReceivingFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-061): a page and more of the run's company's audit events, one without a company, the security events a notice opens.
     Route::post('__fixtures/log', [LogsFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

@@ -7,6 +7,7 @@ use App\Support\Guards\Families;
 use App\Support\Guards\Reconciler;
 use App\Support\RowHandle;
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Database\Factories\CAT\ProductBarcodeFactory;
 use Database\Factories\OPS\CorrectionCaseFactory;
 use Illuminate\Support\Facades\DB;
@@ -89,7 +90,7 @@ it('records two events and two lots for a line of 5 received in batches of 2 and
 
 function bcsubLocal(string $a, string $b): string
 {
-    return (string) BigDecimal::of($a)->minus($b)->toScale(0, Brick\Math\RoundingMode::Down);
+    return (string) BigDecimal::of($a)->minus($b)->toScale(0, RoundingMode::Down);
 }
 
 it('puts 55 usable at the rack and 5 straight into UNUSABLE on one lot, AVAILABLE up by 55, 40 open (PX-06; L-13; BR-INV-01; criterion 2)', function () {

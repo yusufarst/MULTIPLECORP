@@ -58,7 +58,7 @@ final class PurchaseDetail
             ],
             'lines' => $lines,
             'charges' => $this->charges($purchase),
-            'receipts' => $this->receipts($purchase),
+            'receipts' => $this->receipts($purchase, $viewer->allows('stock.reverse', $company)),
             'disbursements' => $viewer->allows('finance.view', $company) ? $this->disbursements($purchase) : null,
             'documents' => $this->documents($purchase),
             'cascade' => $viewer->allows('purchase.correct_cost', $company) ? $this->cascade($purchase) : ['lots' => [], 'consumptions' => [], 'projects' => []],
@@ -78,6 +78,8 @@ final class PurchaseDetail
                 'correct' => $purchase->state !== 'CANCELLED' && $viewer->allows('purchase.correct_cost', $company),
                 'issue' => $purchase->state !== 'CANCELLED' && $viewer->allows('documents.issue', $company),
                 'evidence' => $viewer->allows('evidence.upload', $company),
+                'receive' => $purchase->state === 'OPEN' && $viewer->allows('stock.receive', $company),
+                'reverse' => $viewer->allows('stock.reverse', $company),
             ],
         ];
     }
@@ -133,16 +135,48 @@ final class PurchaseDetail
         return $charges;
     }
 
-    /** @return list<array{line: int, quantity: string, date: string, lot: ?string}> */
-    private function receipts(Purchase $purchase): array
+    /**
+     * The purchase's receipts with what each lot still holds place by place: "Balikkan Penerimaan" offers only that (CM-02; CM-03), the product's reservations for its cut (IP-20).
+     *
+     * @return list<array<string, mixed>>
+     */
+    private function receipts(Purchase $purchase, bool $reversal): array
     {
         $receipts = [];
 
-        foreach (DB::table('receiving_lines as r')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->join('inventory_lots as i', 'i.receiving_line_id', '=', 'r.id')->where('l.purchase_id', $purchase->id)->orderBy('r.id')->limit(100)->get(['l.line_no', 'i.acquired_qty_base', 'i.recorded_at']) as $row) {
-            $receipts[] = ['line' => (int) Row::text($row, 'line_no'), 'quantity' => Row::text($row, 'acquired_qty_base'), 'date' => Row::text($row, 'recorded_at'), 'lot' => null];
+        foreach (DB::table('receiving_lines as r')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->leftJoin('inventory_lots as i', 'i.receiving_line_id', '=', 'r.id')->where('l.purchase_id', $purchase->id)->orderBy('r.id')->limit(100)
+            ->get(['r.id', 'r.receipt_kind', 'r.usable_qty_base', 'r.damaged_qty_base', 'r.rejected_qty_base', 'r.supplier_delivery_reference', 'r.recorded_at', 'r.product_id', 'l.line_no', 'i.id as lot', 'i.lot_code']) as $row) {
+            $lot = Row::nullable($row, 'lot');
+            $receipts[] = ['handle' => RowHandle::of('receiving_lines', (int) Row::text($row, 'id')), 'line' => (int) Row::text($row, 'line_no'), 'kind' => Row::text($row, 'receipt_kind'), 'usable' => Row::text($row, 'usable_qty_base'), 'damaged' => Row::text($row, 'damaged_qty_base'), 'rejected' => Row::text($row, 'rejected_qty_base'), 'reference' => Row::nullable($row, 'supplier_delivery_reference'), 'date' => Row::text($row, 'recorded_at'), 'lot' => Row::nullable($row, 'lot_code'),
+                'reversal' => $reversal && $lot !== null ? $this->reversal((int) $lot, (int) Row::text($row, 'product_id')) : null];
         }
 
         return $receipts;
+    }
+
+    /** @return array<string, mixed> */
+    private function reversal(int $lotId, int $productId): array
+    {
+        $places = [];
+
+        foreach (DB::table('stock_lot_balances as b')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.lot_id', $lotId)->where('b.qty', '>', 0)->orderBy('l.code')->get(['b.location_id', 'l.code', 'b.condition', 'b.qty']) as $place) {
+            $places[] = ['location' => RowHandle::of('locations', (int) Row::text($place, 'location_id')), 'code' => Row::text($place, 'code'), 'condition' => Row::text($place, 'condition'), 'qty' => Row::text($place, 'qty')];
+        }
+
+        $serials = [];
+
+        foreach (DB::table('serial_units')->where('current_lot_id', $lotId)->where('state', 'IN_STOCK')->orderBy('serial_number')->get(['id', 'serial_number', 'current_location_id', 'current_condition']) as $serial) {
+            $serials[] = ['handle' => RowHandle::of('serial_units', (int) Row::text($serial, 'id')), 'serial' => Row::text($serial, 'serial_number'), 'location' => RowHandle::of('locations', (int) Row::text($serial, 'current_location_id')), 'condition' => Row::text($serial, 'current_condition')];
+        }
+
+        $stock = DB::table('stock_product_balances as b')->where('product_id', $productId)->selectRaw('on_hand_qty - unusable_qty - reserved_qty as available')->first();
+        $reservations = [];
+
+        foreach (DB::table('reservations as r')->join('project_lines as l', 'l.id', '=', 'r.project_line_id')->join('projects as p', 'p.id', '=', 'l.project_id')->where('r.product_id', $productId)->where('r.state', 'ACTIVE')->orderBy('r.id')->get(['r.id', 'r.remaining_qty_base', 'p.project_number', 'p.public_id']) as $reservation) {
+            $reservations[] = ['id' => RowHandle::of('reservations', (int) Row::text($reservation, 'id')), 'reserved' => Row::text($reservation, 'remaining_qty_base'), 'project' => ['label' => Row::text($reservation, 'project_number'), 'href' => '/proyek/'.Row::text($reservation, 'public_id')]];
+        }
+
+        return ['places' => $places, 'serials' => $serials, 'available' => is_object($stock) ? Row::text($stock, 'available') : '0', 'reservations' => $reservations, 'consumed' => DB::table('stock_consumptions')->where('lot_id', $lotId)->exists()];
     }
 
     /** @return list<array{id: string, amount: string, date: string}> */
