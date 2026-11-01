@@ -395,3 +395,22 @@ it('registers an unknown code from the scan inline, on PG-022, and the scan then
     $found = $this->actingAs($editor)->post('/gudang/pindai', ['kode' => $code])->json();
     expect($found['kind'])->toBe('match')->and($found['matches'][0]['product'])->toBe($this->goods['product']->public_id);
 });
+
+it('reads every open group under one deferred prop, a reload of one group answering that group alone (NAV-021; IP-18)', function () {
+    $other = InvoiceWorld::make()->company;
+    $grant = Authorization::admin([$this->company->id, $other->id], ReceivingWorld::CAPABILITIES);
+
+    $all = $this->actingAs($grant)->get('/gudang/barang-masuk')->assertOk()->viewData('page');
+    expect($all['deferredProps']['default'] ?? [])->toBe(['worklists']);
+    $headers = ['X-Inertia' => 'true', 'X-Inertia-Version' => (string) $all['version'], 'X-Inertia-Partial-Component' => 'INV/ReceivingWorklist', 'X-Inertia-Partial-Data' => 'worklists'];
+
+    $both = $this->actingAs($grant)->get('/gudang/barang-masuk', $headers)->assertOk()->json('props.worklists');
+    expect(array_keys($both))->toEqualCanonicalizing([$this->company->public_id, $other->public_id])
+        ->and($both[$this->company->public_id]['rows'][0]['id'])->toBe($this->purchase->public_id)->and($both[$other->public_id]['rows'])->toBe([]);
+
+    $one = $this->actingAs($grant)->get("/gudang/barang-masuk?kelompok={$this->company->public_id}", $headers)->assertOk()->json('props.worklists');
+    expect(array_keys($one))->toBe([$this->company->public_id]);
+
+    $open = $this->actingAs($grant)->get("/gudang/barang-masuk?tutup={$other->public_id}", $headers)->assertOk()->json('props.worklists');
+    expect(array_keys($open))->toBe([$this->company->public_id]);
+});

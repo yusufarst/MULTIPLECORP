@@ -25,17 +25,23 @@ function quantity(value: string): string {
 
 function GroupRows({ group }: { group: Group }) {
     const { t } = useTranslation();
-    const key = `group_${group.id}`;
-    const page = (usePage().props as unknown as Record<string, Page | undefined>)[key];
+    // One prop for every group: a reload of one group answers that group alone, the others keep what they have.
+    const fresh = (usePage().props as unknown as { worklists?: Record<string, Page | undefined> }).worklists?.[group.id];
     const [shown, setShown] = useState<Row[]>([]);
     const [seen, setSeen] = useState<Page | undefined>(undefined);
     const [appending, setAppending] = useState(false);
 
-    if (page !== undefined && page !== seen && !('failed' in page)) {
-        setSeen(page);
-        setShown(appending ? [...shown, ...page.rows.filter((row) => !shown.some((known) => known.id === row.id))] : page.rows);
+    if (fresh !== undefined && fresh !== seen) {
+        setSeen(fresh);
+
+        if (!('failed' in fresh)) {
+            setShown(appending ? [...shown, ...fresh.rows.filter((row) => !shown.some((known) => known.id === row.id))] : fresh.rows);
+        }
+
         setAppending(false);
     }
+
+    const page = fresh ?? seen;
 
     if (page === undefined) return <RegionLoading />;
 
@@ -43,7 +49,7 @@ function GroupRows({ group }: { group: Group }) {
         return (
             <div className="flex flex-wrap items-center gap-3 text-body text-text-secondary" role="status">
                 {t('receiving.list.group_failed')}
-                <Button variant="outline" size="sm" onClick={() => { router.reload({ only: [key] }); }}>{t('receiving.list.reload')}</Button>
+                <Button variant="outline" size="sm" onClick={() => { router.reload({ only: ['worklists'], data: { kelompok: group.id }, preserveUrl: true }); }}>{t('receiving.list.reload')}</Button>
             </div>
         );
     }
@@ -51,7 +57,7 @@ function GroupRows({ group }: { group: Group }) {
     const loadMore = () => {
         if (page.more === null) return;
         setAppending(true);
-        router.reload({ only: [key], data: { kelompok: group.id, setelah: page.more }, preserveUrl: true });
+        router.reload({ only: ['worklists'], data: { kelompok: group.id, setelah: page.more }, preserveUrl: true });
     };
 
     return shown.length === 0 ? <RegionEmpty text={t('receiving.list.empty')} /> : (
@@ -107,7 +113,7 @@ export default function ReceivingWorklist({ groups, companies, chosen, closed }:
                                 </button>
                             </h2>
                             {!isClosed && (
-                                <Deferred data={`group_${group.id}`} fallback={<RegionLoading />}>
+                                <Deferred data="worklists" fallback={<RegionLoading />}>
                                     <GroupRows group={group} />
                                 </Deferred>
                             )}

@@ -34,7 +34,7 @@ final class ReceivingController extends Controller
         private readonly ReceivingQueries $queries,
     ) {}
 
-    /** ROUTE-021: each company its own group with its own error and retry (NAV-021), fetched together in one deferred request: one request per company would pass a browser's limit on history writes at a scale of companies (WebKit's hundred in ten seconds). */
+    /** ROUTE-021: each company its own group with its own error and retry (NAV-021), read together under one deferred prop: a prop or a request per company would pass a request header's size and a browser's limit on history writes at a scale of companies. */
     public function worklist(Request $request): Response
     {
         $actor = self::actor($request);
@@ -42,19 +42,27 @@ final class ReceivingController extends Controller
         $chosen = self::query($request, 'perusahaan');
         $groups = array_values(array_filter($all, fn (array $group): bool => $chosen === null || $group['id'] === $chosen));
         $closed = array_values(array_filter(explode(',', self::query($request, 'tutup') ?? ''), fn (string $id): bool => $id !== ''));
-        $props = ['groups' => array_map(fn (array $group): array => array_diff_key($group, ['internal' => 1]), $groups), 'companies' => array_map(fn (array $group): array => array_diff_key($group, ['internal' => 1]), $all), 'chosen' => $chosen, 'closed' => $closed];
         $after = self::query($request, 'setelah');
         $only = self::query($request, 'kelompok');
+        $strip = fn (array $group): array => array_diff_key($group, ['internal' => 1]);
 
-        foreach ($groups as $group) {
-            if (in_array($group['id'], $closed, true)) {
-                continue;
-            }
+        return Inertia::render('INV/ReceivingWorklist', [
+            'groups' => array_map($strip, $groups),
+            'companies' => array_map($strip, $all),
+            'chosen' => $chosen,
+            'closed' => $closed,
+            'worklists' => Inertia::defer(function () use ($actor, $groups, $closed, $only, $after): array {
+                $pages = [];
 
-            $props['group_'.$group['id']] = Inertia::defer(self::group(fn (): array => $this->queries->worklist($actor, $group['internal'], $only === $group['id'] ? $after : null)), 'groups');
-        }
+                foreach ($groups as $group) {
+                    if (! in_array($group['id'], $closed, true) && ($only === null || $only === $group['id'])) {
+                        $pages[$group['id']] = self::group(fn (): array => $this->queries->worklist($actor, $group['internal'], $only === $group['id'] ? $after : null))();
+                    }
+                }
 
-        return Inertia::render('INV/ReceivingWorklist', $props);
+                return $pages;
+            }),
+        ]);
     }
 
     /** ROUTE-022. */
