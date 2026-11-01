@@ -286,6 +286,33 @@ it('asks the Surat Jalan\'s fate of a serial\'s substitution, whose paper names 
         ->and(DB::table('serial_units')->where('id', $shipped)->value('state'))->toBe('DISPATCHED');
 });
 
+it('returns a completed project to ACTIVE when a correction voids its Surat Jalan or restores goods, cost unchanged or not, and not when it keeps the paper (SF-REVAL; WF-PRJ-03; CM-32)', function () {
+    $evidence = DispatchWorld::evidence($this->company);
+    $correcting = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, 'documents.correct']);
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    [$first, $second, $third] = [StockWorld::serial($this->product, $this->lot, $this->rack), StockWorld::serial($this->product, $this->lot, $this->rack), StockWorld::serial($this->product, $this->lot, $this->rack)];
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($this->lot, $this->rack, '1', $first)]))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+    dispatchIssuedNote($this, $row->movement);
+    $state = fn (): string => (string) DB::table('projects')->where('id', $this->demand['project']->id)->value('state');
+    DB::table('projects')->where('id', $this->demand['project']->id)->update(['state' => 'COMPLETED_NORMAL']);
+
+    // The same lot, so the same cost: keeping the paper changes no predicate.
+    expect(DispatchWorld::substitute($correcting->id, $this->company->id, $row->consumption, '1', $first, $this->lot, $this->rack, $second, $evidence, document: new DocumentDisposition('KEEP', 'Ditandatangani klien')))->toBe('COMMITTED')
+        ->and($state())->toBe('COMPLETED_NORMAL');
+
+    $next = (int) DB::table('stock_consumptions')->where('dispatch_line_id', $row->dispatch)->orderByDesc('id')->value('id');
+    expect(DispatchWorld::substitute($correcting->id, $this->company->id, $next, '1', $second, $this->lot, $this->rack, $third, $evidence, document: new DocumentDisposition('VOID', 'Surat jalan salah')))->toBe('COMMITTED')
+        ->and($state())->toBe('ACTIVE')
+        ->and(DB::table('project_state_transitions')->where('project_id', $this->demand['project']->id)->where('transition_kind', 'REVALIDATE')->count())->toBe(1);
+
+    // A restoration lowers net dispatched, a predicate's input, even at no cost.
+    DB::table('projects')->where('id', $this->demand['project']->id)->update(['state' => 'COMPLETED_NORMAL']);
+    $last = (int) DB::table('stock_consumptions')->where('dispatch_line_id', $row->dispatch)->orderByDesc('id')->value('id');
+    expect(DispatchWorld::restore($correcting->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', [DispatchWorld::item($last, $this->rack, '1', 'USABLE', $third)]))->toBe('COMMITTED')
+        ->and($state())->toBe('ACTIVE');
+});
+
 it('offers the proofs a viewer may see for a substitution, the company\'s and the pool\'s, narrowed when asked, so no upload authority is needed (PJ-08; CM-36; AGENTS rule 12)', function () {
     $own = DB::table('evidence_documents')->where('id', DispatchWorld::evidence($this->company, ['evidence_type' => 'DELIVERY_PROOF', 'declared_issuer' => 'Gudang Uji']))->value('public_id');
     $pool = DB::table('evidence_documents')->where('id', DispatchWorld::evidence($this->company, ['evidence_type' => 'WAREHOUSE_RECORD', 'evidence_scope' => 'POOL', 'company_id' => null]))->value('public_id');

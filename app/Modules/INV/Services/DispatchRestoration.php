@@ -169,7 +169,8 @@ final class DispatchRestoration
             'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
         ]);
         $entries = [];
-        $projects = [];
+        // Net dispatched is a completion predicate's input (WF-PRJ-03), so the line's project revalidates whatever the cost did.
+        $projects = [$project => true];
         $number = 0;
 
         foreach ($rows as $row) {

@@ -153,6 +153,12 @@ final class IdentitySubstitution
         DB::table('evidence_links')->insert(['evidence_document_id' => $evidence, 'evidence_scope' => Row::text($proof, 'evidence_scope'), 'company_id' => Row::nullable($proof, 'company_id'), 'role' => 'PRIMARY_PROOF', 'stock_movement_id' => $movement, 'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor]);
         // The Surat Jalan names the serials, not the lots: only a serial's substitution affects what it says.
         $disposed = $recordedSerial === null ? null : $this->documents->dispose($context, (int) Row::text($old, 'stock_movement_id'), $document);
+
+        // A voided document is a completion predicate's input (WF-PRJ-03), whatever the cost did: SF-REVAL.
+        if ($disposed !== null && $disposed['disposition'] === 'VOID') {
+            $this->revalidation->revalidate($context, $project, $publicId);
+        }
+
         $this->corrections->record($context, 'INV.DispatchIdentitySubstituted', AuthorityClass::AdmPlus, $company, 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($old, 'movement_public_id'), $reason,
             AuditChange::updated(['lot' => (int) Row::text($old, 'lot_id')], ['lot' => $shippedLot, 'quantity' => (string) $qty, ...($crossed ? ['allocated' => true] : []), ...($disposed === null ? [] : ['document' => $disposed])]), null, ['business_date' => $businessDate]);
 

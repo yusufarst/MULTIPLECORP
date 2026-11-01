@@ -2,6 +2,7 @@
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Queries\DispatchQueries;
+use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -63,7 +64,7 @@ it('records a dispatch in bounded statements, the same bound for one lot and thr
     $project = DB::table('projects')->where('id', $this->demand['project']->id)->value('public_id');
     $handle = fn (int $lot, string $qty): array => ['lot' => RowHandle::of('inventory_lots', $lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => $qty];
     $line = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$project}")->viewData('page')['props']['lines'][0];
-    $body = fn (string $qty, array $lots): array => ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => $lots, 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => App\Support\BusinessDate::today()];
+    $body = fn (string $qty, array $lots): array => ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => $lots, 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => BusinessDate::today()];
     $count = dispatchStatements(fn () => $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$project}/keluarkan", $body('1', [$handle($this->lot, '1')])));
 
     $more = [StockWorld::lot($this->actor->id, $this->company, $this->demand['product'], $this->demand['unit'], $this->rack, '1'), StockWorld::lot($this->actor->id, $this->company, $this->demand['product'], $this->demand['unit'], $this->rack, '1')];
