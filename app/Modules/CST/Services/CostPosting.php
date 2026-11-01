@@ -718,6 +718,32 @@ final class CostPosting
     }
 
     /**
+     * The exact inverse of a reclassification (CM-07's goods found; CM-34): the pair LOSS −a and HPP +a, a the proportional
+     * share of the consumption's net LOSS over what was reclassified, the event zeroing it taking what is left; no stock
+     * movement, the allocation kept.
+     */
+    public function reverseReclassification(CommandContext $context, int $consumptionId, string $qty, string $reclassified, string $businessDate): void
+    {
+        $consumption = self::consumption($consumptionId);
+
+        if (Row::text($consumption, 'kind') !== 'DISPATCH') {
+            throw new InvalidArgumentException("Consumption {$consumptionId} is no dispatch: only a dispatch's units are reclassified.");
+        }
+
+        $context->require(self::consumptionLocks($consumptionId));
+        $amount = ProportionalContra::of(self::net($consumptionId, 'LOSS'), $qty, $reclassified);
+
+        if ($amount->isZero()) {
+            return;
+        }
+
+        $ledger = new CostLedger($context);
+        $row = [...self::drawOf($consumption), 'cause' => 'RECLASSIFICATION', 'reverses_attribution_id' => self::initialOf($consumptionId), 'business_date' => $businessDate];
+        $ledger->attribution([...$row, 'cost_class' => 'LOSS', 'amount' => $amount->negated()->toString()]);
+        $ledger->attribution([...$row, 'cost_class' => 'HPP', 'amount' => $amount->toString()]);
+    }
+
+    /**
      * A supplier return's unrecovered share (DATABASE §6.1; AX-11; L-44): the pair SUPPLIER_RETURN −u / LOSS +u on the
      * purchase-return consumption with cause RETURN_SETTLEMENT, borne by the case's causal project — a cost-only
      * allocation with its reason when that is another company's — and the case's unrecovered figure moved.

@@ -14947,6 +14947,330 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "adjustments.answer.changed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.answer.reinspected": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.answer.adjusted": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.answer.loss_reversed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.answer.moved": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.lost_once": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.same_rack": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.several_companies": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.validation.confirm_lot": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.reverse.action": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.reverse.consequence": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.loss_statement": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.action": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.kind": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.serials": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.lots": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.quantity": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.case": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.proof": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.kind.DISPOSAL": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.kind.SHRINKAGE": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.kind.OTHER": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.no_case": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.none": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.unidentified": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.confirm_lot": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.scan.absent": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.scan.same_product": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.confirm.condition": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.confirm.reinspect": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.confirm.adjust": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.choose_product": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.no_product": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.not_allowed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.losses.title": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.move.line": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.move.from": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.move.to": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.move.quantity": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.unusable_units": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ConditionChanged": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ConditionChangedDuplicateConfirmed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnitsReinspected": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnitsReinspectedDuplicateConfirmed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LocationMoved": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.StockAdjusted": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.StockAdjustedDuplicateConfirmed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LossRecognized": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LossRecognizedDuplicateConfirmed": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.LossRouted": {
+            "task": "TASK-042",
+            "source": "WF-INV-04; WF-INV-06; J-INV-04; J-INV-06",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.case_required": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.disposal_usable": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.all_lots": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.scan.lot_opened": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "dispatch.records.title": {
             "task": "TASK-041",
             "source": "D-IA-16",

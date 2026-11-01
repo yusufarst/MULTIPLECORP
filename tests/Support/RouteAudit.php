@@ -51,8 +51,10 @@ final class RouteAudit
             [$kind, $argument] = explode(':', $declarations[0], 2) + [1 => ''];
             $parameters = explode(',', $argument);
 
-            if ($kind === 'capability' && ! CapabilityCatalogue::has($parameters[0])) {
-                $violations[] = "{$name}: {$parameters[0]} is not a catalogue capability";
+            foreach ($kind === 'capability' ? $parameters : [] as $parameter) {
+                if (! CapabilityCatalogue::has($parameter)) {
+                    $violations[] = "{$name}: {$parameter} is not a catalogue capability";
+                }
             }
 
             if ($kind === 'access' && ! in_array($parameters[0], DeclareAccess::REQUIREMENTS, true)) {

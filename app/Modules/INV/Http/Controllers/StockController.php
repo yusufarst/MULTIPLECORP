@@ -5,6 +5,7 @@ namespace App\Modules\INV\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Modules\CST\Queries\CostFigures;
 use App\Modules\INV\Actions\ReverseMovement;
+use App\Modules\INV\Queries\AdjustmentQueries;
 use App\Modules\INV\Queries\MovementHistory;
 use App\Modules\INV\Queries\ReceivingQueries;
 use App\Modules\INV\Queries\StockViews;
@@ -32,6 +33,7 @@ final class StockController extends Controller
         private readonly MovementHistory $history,
         private readonly CostFigures $costs,
         private readonly ReceivingQueries $receiving,
+        private readonly AdjustmentQueries $adjustments,
     ) {}
 
     /** ROUTE-018: per product or per rack and condition, the stock value of a holder's own companies deferred (PJ-22). */
@@ -49,7 +51,7 @@ final class StockController extends Controller
             'filters' => ['saring' => $below ? StockViews::BELOW_MINIMUM : null, 'kondisi' => $condition],
             'list' => fn (): array => $view === 'rak' ? $this->stock->places($actor, $search, $condition, $after) : $this->stock->products($actor, $search, $below, $after),
             'values' => Inertia::defer(self::group(fn (): array => $this->costs->stockValues($actor))),
-            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor)],
+            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), 'move' => $this->adjustments->can($actor)['move']],
         ]);
     }
 
@@ -67,7 +69,10 @@ final class StockController extends Controller
             'group' => Inertia::defer(self::group(fn (): array => $this->stock->group($actor, $internal, self::query($request, 'lot_setelah'), self::query($request, 'seri_setelah')))),
             'movements' => Inertia::defer(self::group(fn (): array => $this->history->recent($actor, $internal)), 'movements'),
             'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lotsOfProduct($actor, $internal)), 'costs'),
-            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor)],
+            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), ...$this->adjustments->can($actor)],
+            'moving' => Inertia::optional(fn (): array => ['units' => $this->adjustments->screen($actor, $internal), 'racks' => $this->adjustments->racks()]),
+            'today' => BusinessDate::today(),
+            'scale' => $screen['scale'],
         ]);
     }
 

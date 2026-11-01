@@ -6,6 +6,7 @@ import { DecimalInput, FormField, FormSection } from '@/components/form';
 import { UploadField } from '@/components/notices';
 import { CommandAnswer } from '@/components/parties';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
@@ -15,9 +16,10 @@ import { useUpload } from '@/lib/use-upload';
 
 const ACCEPT = 'application/pdf,image/jpeg,image/png,image/webp';
 
-export function ProofSheet({ open, onOpenChange, company, types, proven = false, today, back, onRegistered }: { open: boolean; onOpenChange: (open: boolean) => void; company: string; types: string[]; proven?: boolean; today: string; back: string; onRegistered: (evidence: string) => void }) {
+export function ProofSheet({ open, onOpenChange, company, pool = false, types, proven = false, today, back, onRegistered }: { open: boolean; onOpenChange: (open: boolean) => void; company: string | null; pool?: boolean; types: string[]; proven?: boolean; today: string; back: string; onRegistered: (evidence: string) => void }) {
     const { t } = useTranslation();
-    const upload = useUpload((): Record<string, string> => ({ purpose: 'bukti', company }));
+    const upload = useUpload((): Record<string, string> => (pool ? { purpose: 'bukti', pool: '1' } : { purpose: 'bukti', company: company ?? '' }));
+    const [ticked, setTicked] = useState(false);
     const [type, setType] = useState(types[0] ?? '');
     const [issuer, setIssuer] = useState('');
     const [reference, setReference] = useState('');
@@ -40,7 +42,7 @@ export function ProofSheet({ open, onOpenChange, company, types, proven = false,
 
                         if (upload.file === null) return;
 
-                        register.submit({ file: upload.file, company, pool: false, pool_confirmed: false, type, issuer, reference: reference === '' ? null : reference, date, amount: proven ? amount : null, deliverer: null, received: null, acknowledged: [], reason: null, kembali: back }, (state) => {
+                        register.submit({ file: upload.file, company: pool ? null : company, pool, pool_confirmed: pool ? ticked : false, type, issuer, reference: reference === '' ? null : reference, date, amount: proven ? amount : null, deliverer: null, received: null, acknowledged: [], reason: null, kembali: back }, (state) => {
                             upload.reset();
 
                             if (typeof state.registered === 'string') onRegistered(state.registered);
@@ -50,6 +52,12 @@ export function ProofSheet({ open, onOpenChange, company, types, proven = false,
                     <FormSection title={t('evidence.section.file')}>
                         <UploadField label={t('glossary.gl_123')} accept={ACCEPT} limits={t('evidence.limits')} state={upload.state} onChoose={upload.choose} onCancel={upload.cancel} onRemove={upload.reset} onRetry={upload.retry} />
                     </FormSection>
+                    {pool && (
+                        <label className="flex min-w-0 items-start gap-2 text-body">
+                            <Checkbox checked={ticked} onCheckedChange={setTicked} />
+                            {t('messages.msg_32')}
+                        </label>
+                    )}
                     <FormSection title={t('evidence.section.identity')}>
                         <FormField label={t('evidence.field.type')} required error={register.errors.type}>
                             {(control) => (
@@ -76,7 +84,7 @@ export function ProofSheet({ open, onOpenChange, company, types, proven = false,
                     {register.answer !== null && <CommandAnswer command={register} />}
                     <div className="flex flex-wrap justify-end gap-2">
                         <Button variant="outline" onClick={() => { onOpenChange(false); }}>{t('actions.cancel')}</Button>
-                        <Button type="submit" pending={register.pending} disabled={upload.file === null}>{t('evidence.action.register')}</Button>
+                        <Button type="submit" pending={register.pending} disabled={upload.file === null || (pool && !ticked)}>{t('evidence.action.register')}</Button>
                     </div>
                 </form>
             </SheetContent>

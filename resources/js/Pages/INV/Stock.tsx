@@ -27,7 +27,7 @@ type Props = {
     filters: Filters;
     list: { rows: (ProductRow | PlaceRow)[]; more: string | null; cursor_failed: boolean };
     values?: Value[] | { failed: true };
-    can: { purchase: boolean };
+    can: { purchase: boolean; move: boolean };
 };
 
 const BELOW_MINIMUM = 'di_bawah_minimum';
@@ -188,6 +188,7 @@ export default function Stock({ view, filters, list, values, can }: Props) {
                             { key: 'reserved', header: t('glossary.gl_077'), numeric: true, priority: 'low', cell: (row) => figure(row.figures, 'reserved') },
                             { key: 'unusable', header: t('glossary.gl_078'), numeric: true, priority: 'low', cell: (row) => figure(row.figures, 'unusable') },
                             { key: 'available', header: t('glossary.gl_079'), numeric: true, priority: 'low', cell: (row) => <strong>{figure(row.figures, 'available')}</strong> },
+                            ...(can.move ? [{ key: 'move', header: '', cell: (row: PlaceRow) => <a className="underline" href={`${row.href}?pindah=1`}>{t('actions.move_location')}</a> }] : []),
                         ]}
                         dense={(row) => ({ title: row.name, secondary: <span className="flex flex-col gap-1"><span>{`${row.rack} · ${t(`stock.condition.${row.condition}`)}`}</span><span>{`${t('glossary.gl_076')} ${row.figures.physical} · ${t('glossary.gl_077')} ${row.figures.reserved} · ${t('glossary.gl_078')} ${row.figures.unusable} · ${t('glossary.gl_079')} ${row.figures.available}`}</span></span>, status: <Quantity value={row.qty} unit={row.unit} /> })}
                     />
