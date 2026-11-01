@@ -59,14 +59,13 @@ final class StockController extends Controller
         $product = is_array($screen['product']) ? $screen['product'] : [];
         $internal = is_int($product['internal'] ?? null) ? $product['internal'] : 0;
         unset($product['internal']);
-        $group = fn (): array => $this->stock->group($actor, $internal);
 
         return Inertia::render('INV/ProductStock', [
             ...$screen,
             'product' => $product,
-            'movements' => $this->history->page($actor, ['produk' => $id], 10)['rows'],
-            'group' => Inertia::defer(self::group(fn (): array => array_diff_key($group(), ['internal' => 1]))),
-            'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lots($actor, $group()['internal'])), 'costs'),
+            'group' => Inertia::defer(self::group(fn (): array => $this->stock->group($actor, $internal))),
+            'movements' => Inertia::defer(self::group(fn (): array => $this->history->page($actor, ['produk' => $id], 10)['rows']), 'movements'),
+            'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lotsOfProduct($actor, $internal)), 'costs'),
             'can' => ['purchase' => $this->history->mayPurchase($actor)],
         ]);
     }

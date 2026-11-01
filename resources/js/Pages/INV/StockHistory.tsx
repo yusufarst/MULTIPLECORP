@@ -15,10 +15,11 @@ import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText } from '@/components/values';
 import { ReceiptReversal, type ReceiptReversalFigures } from '@/features/inv/receipt-reversal';
 import AppShell from '@/layouts/AppShell';
-import { useTranslation } from '@/lib/i18n';
+import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
 type Link = { label: string; href: string };
+const movementLabel = (type: string): TranslationKey => `stock.movement.${type}` as TranslationKey;
 type Row = { id: string; movement: string; direction: 'IN' | 'OUT'; type: string; date: string; product: string; product_href: string; lot: string | null; rack: string; condition: 'USABLE' | 'UNUSABLE'; qty: string; unit: string; serial: string | null; reason: string | null; actor: string | null; company: string | null; project: Link | null; purchase: Link | null; reference: string | null; corrected_by: string | null; corrects: string | null; reversible: boolean; receipt: string | null };
 type Cut = { shortfall: string | null; may_cut: boolean; reservations: Reservation[] };
 type Filters = { produk: string | null; jenis: string | null; dari: string | null; sampai: string | null; urut: string | null };
@@ -116,7 +117,7 @@ export default function StockHistory({ filters, list, types, today, cut, reversa
                         {(control) => (
                             <NativeSelect {...control} value={draft.jenis ?? ''} onChange={(event) => { setDraft({ ...draft, jenis: event.target.value }); }}>
                                 <option value="">{t('stock.history.all_types')}</option>
-                                {types.map((type) => <option key={type} value={type}>{t(`stock.movement.${type}`)}</option>)}
+                                {types.map((type) => <option key={type} value={type}>{t(movementLabel(type))}</option>)}
                             </NativeSelect>
                         )}
                     </FormField>
@@ -144,7 +145,7 @@ export default function StockHistory({ filters, list, types, today, cut, reversa
                         rowHref={() => null}
                         columns={[
                             { key: 'date', header: t('stock.column.date'), cell: (row) => <DateText value={row.date} /> },
-                            { key: 'type', header: t('stock.column.type'), cell: (row) => `${t(`stock.direction.${row.direction}`)} · ${t(`stock.movement.${row.type}`)}` },
+                            { key: 'type', header: t('stock.column.type'), cell: (row) => `${t(`stock.direction.${row.direction}`)} · ${t(movementLabel(row.type))}` },
                             { key: 'product', header: t('stock.column.product'), cell: (row) => <a className="underline" href={row.product_href}>{row.product}</a> },
                             { key: 'lot', header: t('stock.column.lot'), priority: 'low', cell: (row) => (row.lot === null ? '—' : <Code>{row.lot}</Code>) },
                             { key: 'place', header: t('stock.column.rack'), priority: 'low', cell: (row) => `${row.rack} · ${t(`stock.condition.${row.condition}`)}` },
@@ -152,7 +153,7 @@ export default function StockHistory({ filters, list, types, today, cut, reversa
                             { key: 'notes', header: t('stock.column.reason'), cell: (row) => notes(row) },
                             { key: 'actions', header: '', cell: (row) => actions(row) },
                         ]}
-                        dense={(row) => ({ title: `${row.direction === 'OUT' ? '−' : '+'}${row.qty} ${row.unit} · ${row.product}`, secondary: <span className="flex flex-col gap-1"><span>{`${t(`stock.movement.${row.type}`)} · ${row.rack}`}</span>{notes(row)}{actions(row)}</span>, status: <DateText value={row.date} /> })}
+                        dense={(row) => ({ title: `${row.direction === 'OUT' ? '−' : '+'}${row.qty} ${row.unit} · ${row.product}`, secondary: <span className="flex flex-col gap-1"><span>{`${t(movementLabel(row.type))} · ${row.rack}`}</span>{notes(row)}{actions(row)}</span>, status: <DateText value={row.date} /> })}
                     />
                 )}
                 <ListContinuation state={list.more === null ? 'end' : 'more'} loading={appending} onLoadMore={more} onReload={more} />

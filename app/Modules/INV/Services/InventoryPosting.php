@@ -64,6 +64,8 @@ final class InventoryPosting
      */
     public function ledger(CommandContext $context, int $movementId, string $type, array $entries, ?string $reservedDelta = null): array
     {
+        // C-07 reads a movement's entries together: deferred, held to the commit's `set constraints all immediate` whatever an earlier statement set.
+        $context->connection->statement('set constraints stock_movement_entries_c07_movement_balanced deferred');
         $ids = [];
         $now = $context->now();
         $lots = [];

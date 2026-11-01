@@ -88,12 +88,6 @@ final class MovementReversal
             }
         }
 
-        foreach (DB::table('inventory_lots as i')->join('stock_movement_entries as e', 'e.lot_id', '=', 'i.id')->where('e.stock_movement_id', $movementId)->whereNotNull('i.stock_count_finding_id')->distinct()->pluck('i.stock_count_finding_id') as $finding) {
-            if (is_numeric($finding)) {
-                $set->add('stock_count_findings', ['id' => (int) $finding]);
-            }
-        }
-
         foreach (array_keys($products) as $product) {
             if ($cuts !== []) {
                 $set = $set->union(InventoryPosting::cutLocks($product, array_keys($cuts)));
@@ -404,14 +398,12 @@ final class MovementReversal
         }
     }
 
-    /** A surplus attribution undone: the lot's flagged basis leaves with its units, the finding open again (DATABASE §5.3; AX-07). */
+    /** A surplus attribution undone: the lot's flagged basis leaves with its units (DATABASE §5.3). The finding stays as decided: its lot is keyed to it, once (C-08). */
     private function surplusUndone(CommandContext $context, int $movementId, string $businessDate): void
     {
         foreach (DB::table('inventory_lots as i')->join('stock_movement_entries as e', 'e.lot_id', '=', 'i.id')->where('e.stock_movement_id', $movementId)->whereNotNull('i.stock_count_finding_id')
-            ->groupBy('i.id', 'i.stock_count_finding_id')->selectRaw('i.id, i.stock_count_finding_id, sum(e.qty_delta_base) as qty')->get() as $lot) {
+            ->groupBy('i.id')->selectRaw('i.id, sum(e.qty_delta_base) as qty')->get() as $lot) {
             $this->cost->reverseBasis($context, (int) Row::text($lot, 'id'), Row::text($lot, 'qty'), $businessDate);
-            DB::table('stock_count_findings')->where('id', (int) Row::text($lot, 'stock_count_finding_id'))->where('state', 'ATTRIBUTED')
-                ->update(['state' => 'OPEN', 'attributed_company_id' => null, 'flagged_cost_basis' => null, 'updated_at' => $context->now()]);
         }
     }
 
@@ -433,7 +425,7 @@ final class MovementReversal
     /** @return list<object> */
     private static function entries(int $movementId): array
     {
-        return DB::table('stock_movement_entries as e')->leftJoin('serial_units as s', 's.id', '=', 'e.serial_unit_id')->where('e.stock_movement_id', $movementId)->orderBy('e.id')
-            ->get(['e.id', 'e.product_id', 'e.quantity_scale', 'e.location_id', 'e.condition', 'e.lot_id', 'e.unattributed_case_id', 'e.serial_unit_id', 'e.qty_delta_base', 'e.stock_consumption_id', 's.serial_key'])->values()->all();
+        return array_values(DB::table('stock_movement_entries as e')->leftJoin('serial_units as s', 's.id', '=', 'e.serial_unit_id')->where('e.stock_movement_id', $movementId)->orderBy('e.id')
+            ->get(['e.id', 'e.product_id', 'e.quantity_scale', 'e.location_id', 'e.condition', 'e.lot_id', 'e.unattributed_case_id', 'e.serial_unit_id', 'e.qty_delta_base', 'e.stock_consumption_id', 's.serial_key'])->values()->all());
     }
 }

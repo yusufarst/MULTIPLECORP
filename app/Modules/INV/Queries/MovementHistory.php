@@ -139,12 +139,9 @@ final class MovementHistory
     {
         $found = [];
 
-        foreach ($ids === [] ? [] : DB::table('stock_movements')->whereIn('reverses_movement_id', $ids)->orderBy('id')->get(['reverses_movement_id', 'public_id']) as $row) {
-            $found[(int) Row::text($row, 'reverses_movement_id')] = Row::text($row, 'public_id');
-        }
-
-        foreach ($ids === [] ? [] : DB::table('stock_consumptions as c')->join('stock_restorations as r', 'r.stock_consumption_id', '=', 'c.id')->join('stock_movements as m', 'm.id', '=', 'r.stock_movement_id')->whereIn('c.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->orderBy('r.id')->get(['c.stock_movement_id', 'm.public_id']) as $row) {
-            $found[(int) Row::text($row, 'stock_movement_id')] = Row::text($row, 'public_id');
+        foreach ($ids === [] ? [] : DB::table('stock_movements')->whereIn('reverses_movement_id', $ids)->select(['reverses_movement_id as original', 'public_id'])
+            ->unionAll(DB::table('stock_consumptions as c')->join('stock_restorations as r', 'r.stock_consumption_id', '=', 'c.id')->join('stock_movements as m', 'm.id', '=', 'r.stock_movement_id')->whereIn('c.stock_movement_id', $ids)->where('r.kind', 'LOSS_REVERSAL')->select(['c.stock_movement_id as original', 'm.public_id']))->get() as $row) {
+            $found[(int) Row::text($row, 'original')] = Row::text($row, 'public_id');
         }
 
         return $found;

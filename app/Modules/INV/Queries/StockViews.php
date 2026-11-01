@@ -93,13 +93,12 @@ final class StockViews
     /**
      * PG-019's deferred group (QB-05): lots with their oldest-first picking aid (BR-INV-04) and serials with their presence, at most three queries.
      *
-     * @return array{lots: list<array<string, mixed>>, serials: array<int, array<string, string>>, internal: list<int>}
+     * @return array{lots: list<array<string, mixed>>, serials: array<int, array<string, string>>}
      */
     public function group(int $viewerId, int $productId): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $lots = [];
-        $internal = [];
         $first = true;
 
         foreach (DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->join('companies as c', 'c.id', '=', 'i.source_company_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)
@@ -108,7 +107,6 @@ final class StockViews
             $id = (int) Row::text($row, 'id');
             $physical = ['id' => RowHandle::of('inventory_lots', $id), 'code' => Row::text($row, 'lot_code'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'oldest' => $first];
             $first = false;
-            $internal[] = $id;
             $lots[] = $viewer->scope->includes((int) Row::text($row, 'source_company_id'))
                 ? [...$physical, 'other' => false, 'company' => Row::text($row, 'company_code').' · '.Row::text($row, 'legal_name'), 'kind' => Row::text($row, 'acquisition_kind'), 'date' => Row::text($row, 'business_date'), 'acquired' => StockFigures::plain(Row::text($row, 'acquired_qty_base'))]
                 : [...$physical, 'other' => true];
@@ -118,7 +116,7 @@ final class StockViews
             DB::table('serial_units as s')->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->join('locations as l', 'l.id', '=', 's.current_location_id')->where('s.product_id', $productId)->where('s.state', 'IN_STOCK')->orderBy('s.serial_number')->limit(self::LOTS)
                 ->get(['s.serial_number', 'i.lot_code', 'l.code as rack', 's.current_condition'])->all());
 
-        return ['lots' => $lots, 'serials' => $serials, 'internal' => $internal];
+        return ['lots' => $lots, 'serials' => $serials];
     }
 
     /**

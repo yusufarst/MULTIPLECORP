@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Code, DateText, Money } from '@/components/values';
 import AppShell from '@/layouts/AppShell';
-import { useTranslation } from '@/lib/i18n';
+import { type TranslationKey, useTranslation } from '@/lib/i18n';
 
 type Lot = { id: string; code: string; qty: string; rack: string; condition: 'USABLE' | 'UNUSABLE'; oldest: boolean; other: boolean; company?: string; kind?: string; date?: string; acquired?: string };
 type Serial = { serial: string; lot: string; rack: string; condition: 'USABLE' | 'UNUSABLE' };
@@ -20,7 +20,6 @@ type Props = {
     product: { id: string; name: string; sku: string | null; figures: StockFigures; pending: string | null; below: string | null; serialized: boolean };
     places: { rack: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[];
     reservations: { id: string; reserved: string; project: { label: string; href: string } | null }[];
-    movements: Movement[];
     can: { purchase: boolean };
 };
 
@@ -48,7 +47,7 @@ function Lots() {
                                         {lot.oldest && <Badge>{t('stock.lot.oldest')}</Badge>}
                                         {lot.other && <RelationMarker />}
                                     </span>
-                                    {!lot.other && <span className="text-caption text-text-secondary">{t('stock.lot.source', { perusahaan: lot.company ?? '' })} · {t('stock.lot.acquired', { jenis: t(`stock.lot.kind.${lot.kind ?? 'RECEIPT'}`), tanggal: lot.date ?? '', jumlah: lot.acquired ?? '' })}</span>}
+                                    {!lot.other && <span className="text-caption text-text-secondary">{t('stock.lot.source', { perusahaan: lot.company ?? '' })} · {t('stock.lot.acquired', { jenis: t(`stock.lot.kind.${lot.kind ?? 'RECEIPT'}` as TranslationKey), tanggal: lot.date ?? '', jumlah: lot.acquired ?? '' })}</span>}
                                     {cost !== undefined && <span className="flex flex-wrap items-center gap-2 text-caption text-text-secondary">{t('stock.lot.cost', { nilai: '' })}<Money value={cost.cost} />{cost.flagged !== null && <>{t('stock.lot.flagged', { nilai: '' })}<Money value={cost.flagged} /></>}</span>}
                                 </li>
                             );
@@ -73,7 +72,31 @@ function Lots() {
     );
 }
 
-export default function ProductStock({ product, places, reservations, movements, can }: Props) {
+function Movements({ product }: { product: string }) {
+    const { t } = useTranslation();
+    const { movements } = usePage().props as unknown as { movements?: Movement[] | { failed: true } };
+
+    if (movements === undefined) return <RegionLoading />;
+    if ('failed' in movements) return <p role="status" className="text-body text-text-secondary">{t('stock.group_failed')}</p>;
+    if (movements.length === 0) return null;
+
+    return (
+        <section data-slot="product-movements" className="flex min-w-0 flex-col gap-2">
+            <h2 className="text-subhead">{t('stock.section.movements')}</h2>
+            <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
+                {movements.map((movement) => (
+                    <li key={movement.id} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
+                        <DateText value={movement.date} />
+                        <span>{`${t(`stock.direction.${movement.direction}`)} · ${t(`stock.movement.${movement.type}` as TranslationKey)} · ${movement.qty} ${movement.unit} · ${movement.rack}`}</span>
+                    </li>
+                ))}
+            </ul>
+            <a className="self-start text-body underline" href={`/gudang/riwayat-stok?produk=${product}`}>{t('stock.history_link')}</a>
+        </section>
+    );
+}
+
+export default function ProductStock({ product, places, reservations, can }: Props) {
     const { t } = useTranslation();
 
     return (
@@ -107,20 +130,9 @@ export default function ProductStock({ product, places, reservations, movements,
                         </ul>
                     </section>
                 )}
-                {movements.length > 0 && (
-                    <section data-slot="product-movements" className="flex min-w-0 flex-col gap-2">
-                        <h2 className="text-subhead">{t('stock.section.movements')}</h2>
-                        <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle text-body">
-                            {movements.map((movement) => (
-                                <li key={movement.id} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
-                                    <DateText value={movement.date} />
-                                    <span>{`${t(`stock.direction.${movement.direction}`)} · ${t(`stock.movement.${movement.type}`)} · ${movement.qty} ${movement.unit} · ${movement.rack}`}</span>
-                                </li>
-                            ))}
-                        </ul>
-                        <a className="self-start text-body underline" href={`/gudang/riwayat-stok?produk=${product.id}`}>{t('stock.history_link')}</a>
-                    </section>
-                )}
+                <Deferred data="movements" fallback={<RegionLoading />}>
+                    <Movements product={product.id} />
+                </Deferred>
             </div>
         </AppShell>
     );

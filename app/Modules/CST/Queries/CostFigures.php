@@ -41,19 +41,18 @@ final class CostFigures
     /**
      * PG-019's lots' cost and flagged basis, only those of a source company whose `cost.view` the viewer holds, in scope (PJ-02; rows 73, 74).
      *
-     * @param  list<int>  $lotIds
      * @return array<string, array{cost: string, flagged: ?string}>
      */
-    public function lots(int $viewerId, array $lotIds): array
+    public function lotsOfProduct(int $viewerId, int $productId): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $figures = [];
 
-        if ($lotIds === [] || ! $viewer->has('cost.view')) {
+        if (! $viewer->has('cost.view')) {
             return $figures;
         }
 
-        foreach ($viewer->scope->apply(DB::table('inventory_lots as l'), 'l.source_company_id')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->whereIn('l.id', $lotIds)
+        foreach ($viewer->scope->apply(DB::table('inventory_lots as l'), 'l.source_company_id')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->where('l.product_id', $productId)
             ->get(['l.id', 'l.source_company_id', 'b.remaining_cost', DB::raw("(select sum(e.amount) from lot_cost_entries e where e.lot_id = l.id and e.entry_kind = 'SURPLUS_FLAGGED_BASIS') as flagged")]) as $row) {
             if ($viewer->allows('cost.view', (int) Row::text($row, 'source_company_id'))) {
                 $figures[RowHandle::of('inventory_lots', (int) Row::text($row, 'id'))] = ['cost' => Row::text($row, 'remaining_cost'), 'flagged' => Row::nullable($row, 'flagged')];

@@ -94,7 +94,8 @@ export default function Stock({ view, search, list, values, can }: Props) {
     return (
         <AppShell title={t('pages.pg_018.title')}>
             <div className="flex min-w-0 flex-col gap-6">
-                <PageHeader title={t('pages.pg_018.title')} actions={<Button variant="outline" render={<a href="/gudang/riwayat-stok" />}>{t('stock.history_link')}</Button>} />
+                <PageHeader title={t('pages.pg_018.title')} />
+                <Button variant="outline" className="self-start" render={<a href="/gudang/riwayat-stok" />}>{t('stock.history_link')}</Button>
                 <ScanNotice notice={guard.notice} />
                 <ScanField inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />
                 <form className="flex min-w-0 flex-wrap items-end gap-3" onSubmit={(event) => { event.preventDefault(); visit({ cari: term }); }}>
