@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-08
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -34,7 +34,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - TASK-052 — Deduction settlements and contras
 - TASK-053 — Customer credit and refunds
 - TASK-054 — Expenses, disbursements and other cash
-- the Owner's answer to P11Q-08 recorded and the credit hold's row made, which P11Q-02 (a) and P11Q-07 leave to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-08 recorded and the credit hold's row made — DONE by Change 16 (DIR-104, APPR-028; [TASK_PLAN §8](TASK_PLAN.md#8-owner-questions))
 
 **BLOCKS:**
 
@@ -52,7 +52,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - SF-REVAL, PRJ's revalidation service: the materiality test — a correction is material when it changes a predicate input or a project CALC value —; a material correction on a COMPLETED_NORMAL or COMPLETED_FORCED project returns it to ACTIVE inside the correcting command's transaction with a REVALIDATE transition linked to the correction, one per affected project, the completion or Force Complete record kept (BR-CR-05; CM-32; DATABASE §9); a CANCELLED project stays CANCELLED; a residual command never triggers it (L-11); called by each module's correcting commands — CM-17's cost cascade across several projects among them (AX-34) — and run for a document void, a revision's issue or an evidence replacement through PRJ's part of DOC's `DocumentChangeParticipant` (L-41; architecture challenge 7b), with ADM's reopening of requirements running through `ProjectLifecycleParticipant` (TASK-035)
 - the closed residual-command list of WF-PRJ-03 and L-11 as PRJ's state precondition that every project-bound command reads under LK-01 (UXI-40), for the completed states — the CANCELLED state reads the same list (TASK-056) —: on COMPLETED_* projects only the listed commands that reduce residual obligations are accepted without reopening; anything that would raise the project's outstanding or change a completed result is a correction (SF-REVAL); anything else REJECTED; PG-011 offering after completion only those commands (J-PRJ-03), each module's command applying the precondition in its own Task
 - the projects' completion states on the journey: COMPLETED_NORMAL and COMPLETED_FORCED distinguishable, a force-completed project's unmet conditions and residual obligations kept visible on PG-011 (BR-PRJ-04; AC-21)
-- **Held for the Owner's answer to P11Q-08, to which P11Q-02 (a) and P11Q-07 leave the credit hold (DIR-100; DIR-101), built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), predicate 9's "project-originated credit dispositioned" counts credit held with its reason — the disposition TASK-053 records once the amendment adds it — as dispositioned, beside credit applied or refunded (WF-PRJ-03 predicate 9; WF-FIN-06); under option (b), only apply and refund dispose of it, as the answer records (DIR-083 OE-20)
+- predicate 9's "project-originated credit dispositioned" (DIR-101; DIR-104; APPR-028): met when no credit is left for the project, or when nothing has arisen for it beyond `projects.credit_held_amount` — the disposition TASK-053 records —, read through FIN's `CompletionPredicateProvider` part in QS-15's set-query form (WF-PRJ-03 predicate 9; WF-FIN-06)
 
 **OUT OF SCOPE:**
 
@@ -239,14 +239,14 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 11. A project served from stock without a purchase, a service-only project and a drop-ship project each complete on the predicates their lines' modes need, with no dummy purchase, receipt or warehouse movement (BR-XD-02; BR-XD-03).
 12. A draft, a voided version or a failed rendition never satisfies the documents predicate (BR-XD-04; predicate 4).
 13. The same `command_id` replayed for either command returns its recorded outcome and never writes a second transition (CI-05; INT-161; INT-162).
-14. Once the row and column of P11Q-02 (a) are approved, a project whose project-originated credit is held with its reason meets predicate 9's credit condition, and credit neither applied, refunded nor held is one blocker (WF-PRJ-03 predicate 9; WF-FIN-06; TASK_PLAN §8).
+14. A project with no credit left, or with nothing arisen beyond what its hold covers, meets predicate 9's credit condition; credit neither applied, refunded nor held is one blocker, credit arising after a hold is one blocker even after the held credit was spent, and a payment across projects blocks only the project its rest counts for (WF-PRJ-03 predicate 9; WF-FIN-06; DIR-104; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the materiality test; the canonical snapshot serialization and its hash, an amount change changing the hash (TL-03; ST-04)
-- Feature: ROUTE-012, ROUTE-161 and ROUTE-162 with each refusal; one blocker per condition; the residual-command precondition on each state; predicate 9 with held credit once the hold exists (TL-04)
+- Feature: ROUTE-012, ROUTE-161 and ROUTE-162 with each refusal; one blocker per condition; the residual-command precondition on each state; predicate 9 with held credit (TL-04)
 - Integration: M-26 in both orders and M-27 on real PostgreSQL; revalidation inside a correction's, a document void's and an evidence replacement's transaction; C-38 and C-39 refusals; `ReconcileGuards` clean after each (TL-05)
 - Authorization: `projects.view`, `projects.complete` and the Owner's `projects.force_complete`; the Admin and API denials (TL-06)
 - Route integrity: ROUTE-012, ROUTE-161 and ROUTE-162 audited (TL-07)
@@ -262,6 +262,7 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-022's cases — missing confirmation, reason or audit, a forged Admin or API override, duplicate and concurrent requests, post-completion returns and corrections
 - The Owner's required verification (DIR-101): predicate 9 — credit neither disposed nor held blocks, including credit arising after a hold whose credit was spent; a payment across projects never yields a misleading completion.
+- The Owner's required verification (DIR-104): integrity — predicate 9 over each attribution case of TASK-053, a source with no application blocking nothing; concurrency — a completion racing a release on the project under LK-01, never completing on credit that arose first; regression — the other nine predicates unchanged.
 
 **TEST CHECKLIST:**
 
