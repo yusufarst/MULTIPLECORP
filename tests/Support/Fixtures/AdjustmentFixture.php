@@ -20,7 +20,7 @@ final class AdjustmentFixture
     {
         $tag = Str::upper(Str::random(5));
         $rack = LocationFactory::new()->createOne(['code' => "RAK-{$tag}", 'name' => "Rak Tujuan {$tag}"]);
-        EvidenceDocument::factory()->create(['company_id' => null, 'evidence_scope' => 'POOL', 'evidence_type' => 'WAREHOUSE_RECORD', 'declared_issuer' => "Gudang {$tag}"]);
+        EvidenceDocument::factory()->create(['company_id' => null, 'evidence_scope' => 'POOL', 'evidence_type' => 'WAREHOUSE_RECORD', 'declared_issuer' => "Gudang {$tag}", 'issuer_reference' => "CAT/{$tag}", 'identity_key' => "gudang {$tag}|WAREHOUSE_RECORD|cat/{$tag}|2026-10-01"]);
 
         return response()->json(['target' => $rack->code, 'proof' => "Gudang {$tag}"]);
     }

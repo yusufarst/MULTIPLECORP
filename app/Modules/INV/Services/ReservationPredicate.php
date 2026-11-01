@@ -30,7 +30,7 @@ final class ReservationPredicate implements CompletionPredicateProvider
             join inventory_lots i on i.receiving_line_id = g.id
             where pr.project_id = l.project_id
                 and g.damaged_qty_base > coalesce((select sum(b.qty_base - b.restored_qty_base) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.lot_id = i.id and c.kind = 'LOSS' and c.bearer_project_id = pr.project_id), 0)
-                    + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e where e.movement_type = 'CONDITION_CHANGE' and e.lot_id = i.id and e.condition = 'USABLE' and e.qty_delta_base > 0), 0)
+                    + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_movements m on m.id = e.stock_movement_id where e.lot_id = i.id and e.condition = 'USABLE' and ((m.movement_type = 'CONDITION_CHANGE' and e.qty_delta_base > 0) or (m.movement_type = 'MOVEMENT_REVERSAL' and m.reverses_movement_type = 'CONDITION_CHANGE' and e.qty_delta_base < 0))), 0)
         ) causal where exists (select 1 from stock_lot_balances u where u.lot_id = causal.lot_id and u.condition = 'UNUSABLE' and u.qty > 0)) as unusable
         SQL;
 

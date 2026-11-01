@@ -313,7 +313,11 @@ final class LossPosting
 
         $project = (int) Row::text($row, 'project_id');
         $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.lot_id', $lot)->where('c.kind', 'LOSS')->where('c.bearer_project_id', $project)->sum(DB::raw('b.qty_base - b.restored_qty_base'));
-        $repaired = DB::table('stock_movement_entries')->where('movement_type', 'CONDITION_CHANGE')->where('lot_id', $lot)->where('condition', 'USABLE')->where('qty_delta_base', '>', 0)->sum('qty_delta_base');
+        // A re-inspection's usable units, net of its linked reversal (C-55): undone, they are damage again.
+        $repaired = DB::table('stock_movement_entries as e')->join('stock_movements as m', 'm.id', '=', 'e.stock_movement_id')->where('e.lot_id', $lot)->where('e.condition', 'USABLE')
+            ->where(fn (Builder $where) => $where->where(fn (Builder $change) => $change->where('m.movement_type', 'CONDITION_CHANGE')->where('e.qty_delta_base', '>', 0))
+                ->orWhere(fn (Builder $undone) => $undone->where('m.movement_type', 'MOVEMENT_REVERSAL')->where('m.reverses_movement_type', 'CONDITION_CHANGE')->where('e.qty_delta_base', '<', 0)))
+            ->sum('e.qty_delta_base');
 
         return ['project' => $project, 'company' => (int) Row::text($row, 'company_id'), 'open' => BigDecimal::of(Row::text($row, 'damaged_qty_base'))->minus((string) $lost)->minus((string) $repaired)];
     }

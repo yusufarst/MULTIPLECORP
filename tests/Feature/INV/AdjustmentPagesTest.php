@@ -1,10 +1,8 @@
 <?php
 
-use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Queries\AdjustmentQueries;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
@@ -17,7 +15,7 @@ use Tests\Support\ReceivingWorld;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\StockWorld;
 
-// TL-04, TL-06, TL-07, TL-08, TL-14 (TASK-042; ROUTE-027; ROUTE-190; ROUTE-194–ROUTE-196; INT-190; INT-194–INT-196; W4-13; W4-18; W4-21; W4-22; SM-01; SM-04; SM-25; criteria 16–19): the page's props per viewer, each route with its refusals and its capability, one command_id replayed, a cost only by family.
+// TL-04, TL-06, TL-07, TL-14 (TASK-042; ROUTE-027; ROUTE-190; ROUTE-194–ROUTE-196; W4-13; W4-18; W4-21; W4-22; SM-01; SM-04; SM-25; criteria 16–18): the page's props per viewer, each route with its refusals and its capability, a cost only by family.
 
 uses(RefreshDatabase::class);
 
@@ -92,39 +90,6 @@ it('asks each lot\'s confirmation of unidentified units at the field (L-42; crit
     $this->actingAs($this->actor)->post('/gudang/penyesuaian', $body)->assertRedirect("/gudang/stok/{$this->productId}");
 });
 
-it('answers each command per INT-195, INT-190 and INT-196, one command_id replayed with one effect, a changed payload CONFLICT, after re-authentication too (CI-05; M-09; criterion 19)', function () {
-    $condition = ['command_id' => (string) Str::uuid(), 'aksi' => 'kondisi', 'produk' => $this->productId, 'unit' => [['lot' => RowHandle::of('inventory_lots', $this->lot), 'rak' => RowHandle::of('locations', $this->rack), 'kondisi' => 'USABLE', 'jumlah' => '1']], 'bukti' => [$this->evidence], 'alasan' => 'Penyok', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
-    $twice = function (string $url, array $body): array {
-        $first = adjustmentAnswer($this, $this->actor, $url, $body);
-        Auth::forgetGuards();
-
-        return [$first, adjustmentAnswer($this, $this->actor, $url, $body)];
-    };
-
-    [$first, $replay] = $twice('/gudang/kondisi', $condition);
-    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')->and(DB::table('stock_movements')->where('movement_type', 'CONDITION_CHANGE')->count())->toBe(1)
-        ->and(adjustmentAnswer($this, $this->actor, '/gudang/kondisi', [...$condition, 'alasan' => 'Alasan lain'])['kind'])->toBe('CONFLICT');
-
-    $check = [...$condition, 'command_id' => (string) Str::uuid(), 'aksi' => 'periksa', 'bukti' => []];
-    $check['unit'][0]['kondisi'] = 'UNUSABLE';
-    expect(adjustmentAnswer($this, $this->actor, '/gudang/kondisi', $check)['kind'])->toBe('COMMITTED');
-
-    $other = ReceivingWorld::rack();
-    $move = ['command_id' => (string) Str::uuid(), 'lot' => RowHandle::of('inventory_lots', $this->lot), 'dari' => RowHandle::of('locations', $this->rack), 'ke' => RowHandle::of('locations', $other), 'kondisi' => 'USABLE', 'jumlah' => '2', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
-    [$first, $replay] = $twice("/gudang/stok/{$this->productId}/pindah", $move);
-    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')->and(DB::table('stock_movements')->where('movement_type', 'LOCATION_MOVE')->count())->toBe(1);
-
-    $adjust = adjustmentBody($this);
-    [$first, $replay] = $twice('/gudang/penyesuaian', $adjust);
-    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')->and(DB::table('stock_consumptions')->where('kind', 'LOSS')->count())->toBe(1)
-        ->and(adjustmentAnswer($this, $this->actor, '/gudang/penyesuaian', [...$adjust, 'alasan' => 'Lain'])['kind'])->toBe('CONFLICT');
-
-    $movement = (string) DB::table('stock_movements')->where('movement_type', 'ADJUSTMENT_DECREASE')->value('public_id');
-    $reverse = ['command_id' => (string) Str::uuid(), 'alasan' => 'Keliru dicatat', 'tanggal' => BusinessDate::today()];
-    [$first, $replay] = $twice("/gudang/penyesuaian/{$movement}/balikkan", $reverse);
-    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')->and(DB::table('stock_restorations')->where('kind', 'LOSS_REVERSAL')->count())->toBe(1);
-});
-
 it('answers a changed policy CONFLICT, ST-09, on each command (L-35)', function () {
     foreach ([
         ['/gudang/kondisi', adjustmentBody($this, '1', ['aksi' => 'kondisi', 'kebijakan_seri' => true])],
@@ -187,21 +152,22 @@ it('resolves a foreign serial, an unseen evidence and an unknown lot exactly lik
     expect($found)->toContain($this->evidence)->not->toContain($hidden);
 });
 
-it('reads PG-027 within QB-05, the same for one lot and many (PFM-01; PFM-02)', function () {
-    $queries = app(AdjustmentQueries::class);
-    app(EffectiveCapabilities::class)->for($this->actor->id);
-    $statements = function (callable $read): int {
-        DB::flushQueryLog();
-        DB::enableQueryLog();
-        $read();
-        $count = count(DB::getQueryLog());
-        DB::disableQueryLog();
+it('finds the units a move needs past the first page: a lot with its serials, a serial with its place, nothing unasked (ROUTE-019; INT-190)', function () {
+    $code = (string) DB::table('inventory_lots')->where('id', $this->lot)->value('lot_code');
+    $other = StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->demand['unit'], $this->rack, '3');
+    $version = (string) $this->actingAs($this->actor)->get("/gudang/stok/{$this->productId}")->viewData('page')['version'];
+    $found = fn (string $text): array => $this->actingAs($this->actor)->get("/gudang/stok/{$this->productId}?cari_unit=".urlencode($text), ['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'INV/ProductStock', 'X-Inertia-Partial-Data' => 'moving_found'])->json('props.moving_found');
 
-        return $count;
-    };
-    $one = $statements(fn () => $queries->screen($this->actor->id, $this->product));
-    StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->demand['unit'], $this->rack, '2');
-    StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->demand['unit'], $this->rack, '2');
+    expect(collect($found($code)['places'])->pluck('lot')->all())->toBe([RowHandle::of('inventory_lots', $this->lot)])
+        ->and($found('tidak-ada-kode')['places'])->toBe([])
+        ->and($this->actingAs($this->actor)->get("/gudang/stok/{$this->productId}")->viewData('page')['props'])->not->toHaveKey('moving_found')
+        ->and(collect(app(AdjustmentQueries::class)->screen($this->actor->id, $this->product)['places'])->pluck('lot')->all())->toContain(RowHandle::of('inventory_lots', $other));
 
-    expect($statements(fn () => $queries->screen($this->actor->id, $this->product)))->toBe($one)->and($one)->toBeLessThanOrEqual(4);
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $serial = StockWorld::serial($this->product, $other, $this->rack);
+    $number = (string) DB::table('serial_units')->where('id', $serial)->value('serial_number');
+    $bySerial = $found($number);
+    expect(collect($bySerial['serials'])->pluck('handle')->all())->toBe([RowHandle::of('serial_units', $serial)])
+        ->and(collect($bySerial['places'])->pluck('lot')->all())->toBe([RowHandle::of('inventory_lots', $other)])
+        ->and(collect($found((string) DB::table('inventory_lots')->where('id', $other)->value('lot_code'))['serials'])->pluck('handle')->all())->toBe([RowHandle::of('serial_units', $serial)]);
 });

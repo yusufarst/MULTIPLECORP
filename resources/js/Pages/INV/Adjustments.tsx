@@ -392,7 +392,7 @@ export default function Adjustments({ product, action, lot, search, found, units
                             <Form key={current} product={product} action={current} lot={lot} units={units} cases={loaded<Case[]>(cases) ?? []} proofs={loaded<Proofs>(proofs)} proofsFailed={proofs !== undefined && 'failed' in proofs} today={today} can={can} origin={origin} onLeaveGuard={setDirty} />
                         ))}
                         {shownLosses !== null && shownLosses.length > 0 && (
-                            <section data-slot="adjustment-losses" className="flex min-w-0 flex-col gap-2">
+                            <section data-slot="adjustment-losses" className="flex min-w-0 flex-col gap-2 max-md:pb-18">
                                 <h2 className="text-subhead">{t('adjustments.losses.title')}</h2>
                                 <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
                                     {shownLosses.map((loss) => <LossRecord key={loss.id} loss={loss} today={today} canReverse={can.reverse} />)}

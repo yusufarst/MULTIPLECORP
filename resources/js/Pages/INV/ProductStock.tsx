@@ -191,6 +191,16 @@ export default function ProductStock({ product, places, reservations, can, movin
         setKnown(moving);
     }
 
+    const findUnits = (text: string, then: (units: Moving['units'] | null) => void) => {
+        let found: Moving['units'] | null = null;
+
+        router.reload({
+            only: ['moving_found'],
+            data: { cari_unit: text },
+            onSuccess: (page) => { found = (page.props as unknown as { moving_found?: Moving['units'] }).moving_found ?? null; },
+            onFinish: () => { then(found); },
+        });
+    };
     const openMove = () => {
         setMoveOpen(true);
         router.reload({ only: ['moving'] });
@@ -231,7 +241,7 @@ export default function ProductStock({ product, places, reservations, can, movin
                     <Movements product={product.id} />
                 </Deferred>
             </div>
-            {can.move && <MoveSheet open={moveOpen} onOpenChange={setMoveOpen} product={product.id} serialized={product.serialized} scale={scale} moving={known} today={today} onMoved={() => { setMoveOpen(false); }} />}
+            {can.move && <MoveSheet open={moveOpen} onOpenChange={setMoveOpen} product={product.id} serialized={product.serialized} scale={scale} moving={known} onFind={findUnits} today={today} onMoved={() => { setMoveOpen(false); }} />}
         </AppShell>
     );
 }

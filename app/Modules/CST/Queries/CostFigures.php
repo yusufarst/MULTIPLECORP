@@ -53,7 +53,7 @@ final class CostFigures
             return $figures;
         }
 
-        foreach (DB::table('cost_attributions as a')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->whereIn('c.stock_movement_id', $movementIds)->where('a.cost_class', 'LOSS')->groupBy('c.stock_movement_id', 'a.bearer_company_id')
+        foreach ($viewer->scope->apply(DB::table('cost_attributions as a'), 'a.bearer_company_id')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->whereIn('c.stock_movement_id', $movementIds)->where('a.cost_class', 'LOSS')->groupBy('c.stock_movement_id', 'a.bearer_company_id')
             ->selectRaw('c.stock_movement_id, a.bearer_company_id, sum(a.amount) as amount')->get() as $row) {
             if ($viewer->allows('cost.view', (int) Row::text($row, 'bearer_company_id'))) {
                 $movement = (int) Row::text($row, 'stock_movement_id');

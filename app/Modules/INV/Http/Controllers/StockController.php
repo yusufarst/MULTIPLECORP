@@ -71,6 +71,7 @@ final class StockController extends Controller
             'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lotsOfProduct($actor, $internal)), 'costs'),
             'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), ...$this->adjustments->can($actor)],
             'moving' => Inertia::optional(fn (): array => ['units' => $this->adjustments->screen($actor, $internal), 'racks' => $this->adjustments->racks()]),
+            'moving_found' => Inertia::optional(fn (): array => $this->adjustments->screen($actor, $internal, self::query($request, 'cari_unit'))),
             'today' => BusinessDate::today(),
             'scale' => $screen['scale'],
         ]);

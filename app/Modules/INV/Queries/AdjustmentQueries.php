@@ -62,7 +62,7 @@ final class AdjustmentQueries
         $viewer = $this->capabilities->for($viewerId);
         $like = $find === null ? null : '%'.addcslashes(mb_strtolower($find), '%_\\').'%';
         $foundPlaces = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)
-            ->when($like !== null, fn (Builder $where) => $where->whereRaw('lower(i.lot_code) like ?', [$like]))
+            ->when($like !== null, fn (Builder $where) => $where->whereRaw("(lower(i.lot_code) like ? or exists (select 1 from serial_units f where f.current_lot_id = i.id and f.current_location_id = b.location_id and f.current_condition = b.condition and f.state = 'IN_STOCK' and lower(f.serial_number) like ?))", [$like, $like]))
             ->orderBy('i.business_date')->orderBy('i.id')->orderBy('l.code')->limit(self::CHOICES + 1)->get(['i.id', 'i.lot_code', 'i.source_company_id', 'b.qty', 'b.location_id', 'b.condition', 'l.code as rack'])->all();
         $places = [];
         $unflagged = $find === null;
@@ -74,7 +74,7 @@ final class AdjustmentQueries
         }
 
         $foundSerials = DB::table('serial_units as s')->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->join('locations as l', 'l.id', '=', 's.current_location_id')->where('s.product_id', $productId)->where('s.state', 'IN_STOCK')
-            ->when($like !== null, fn (Builder $where) => $where->whereRaw('lower(s.serial_number) like ?', [$like]))
+            ->when($like !== null, fn (Builder $where) => $where->whereRaw('(lower(s.serial_number) like ? or lower(i.lot_code) like ?)', [$like, $like]))
             ->orderBy('s.serial_number')->limit(self::CHOICES + 1)->get(['s.id', 's.serial_number', 's.current_lot_id', 's.current_location_id', 's.current_condition', 'i.lot_code', 'i.source_company_id', 'l.code as rack'])->all();
         $serials = array_map(fn (object $row): array => ['handle' => RowHandle::of('serial_units', (int) Row::text($row, 'id')), 'serial' => Row::text($row, 'serial_number'), 'lot' => RowHandle::of('inventory_lots', (int) Row::text($row, 'current_lot_id')), 'location' => RowHandle::of('locations', (int) Row::text($row, 'current_location_id')), 'condition' => Row::text($row, 'current_condition'), 'code' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'other' => ! $viewer->scope->includes((int) Row::text($row, 'source_company_id'))],
             array_slice($foundSerials, 0, self::CHOICES));

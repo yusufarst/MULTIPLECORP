@@ -292,6 +292,21 @@ it('spends a receipt\'s damage once across the racks picked, and a repaired unit
     adjustmentClean();
 });
 
+it('counts a re-inspection undone by its reversal as the project\'s damage again, for the loss and for completion (L-38; C-55; criterion 8)', function () {
+    $project = $this->demand['project']->id;
+    $lot = AdjustmentWorld::damagedReceipt($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '2', '1000', $project, $this->line);
+    $items = fn (): array => array_map(fn ($item): string => $item->key, app(ReservationPredicate::class)->states([$project], false)[$project][Predicates::STOCK]->items);
+
+    expect(AdjustmentWorld::reinspect($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '2', 'UNUSABLE')])))->toBe('COMMITTED')
+        ->and($items())->not->toContain('projects.item.unusable_units')
+        ->and(StockWorld::reverse($this->actor, null, (int) DB::table('stock_movements')->where('movement_type', 'CONDITION_CHANGE')->value('id')))->toBe('COMMITTED')
+        ->and($items())->toContain('projects.item.unusable_units')
+        ->and(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '2', 'UNUSABLE')], evidence: [$this->evidence]), 'DISPOSAL'))->toBe('COMMITTED')
+        ->and(lossOn($project))->toBe('2000.00')
+        ->and($items())->not->toContain('projects.item.unusable_units');
+    adjustmentClean();
+});
+
 it('changes a serial\'s condition with its unit, one change from two commands leaving one, and refuses disposing of usable units (C-02; L-13; WF-INV-06)', function () {
     $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2');
     DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
