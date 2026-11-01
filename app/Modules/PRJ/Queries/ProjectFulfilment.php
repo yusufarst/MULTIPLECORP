@@ -64,6 +64,8 @@ final class ProjectFulfilment
             && $viewer->allows('projects.confirm', $company) && $viewer->allows('projects.view', $company);
 
         return [
+            // ROUTE-189 "also from *Rincian proyek*": the correction runs on the dispatch record, PG-024's, which this opens.
+            'correct_dispatch' => $viewer->allows('stock.reverse', $company) && $viewer->allows('stock.dispatch', $company) && array_filter($lines, fn (object $line): bool => BigDecimal::of(Row::text($line, 'dispatched_net_qty_base'))->isPositive()) !== [],
             'confirmation' => $confirmation === null ? null : [
                 'kind' => Row::text($confirmation, 'kind'),
                 'business_date' => Row::text($confirmation, 'business_date'),

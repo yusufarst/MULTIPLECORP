@@ -4,6 +4,7 @@ import { router } from '@inertiajs/react';
 import { Check } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { ListContinuation } from '@/components/data-list';
 import { OutcomeMessage } from '@/components/outcome-message';
 import { PageHeader } from '@/components/page-header';
 import { FactsList } from '@/components/record-blocks';
@@ -18,6 +19,7 @@ import { type DispatchRecord, ReverseDispatchDialog, SubstituteDialog } from '@/
 import { lookUp } from '@/features/inv/scan-client';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
+import { previousPage } from '@/lib/previous-page';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 import { cn } from '@/lib/utils';
@@ -27,6 +29,8 @@ type Props = {
     project: { id: string; number: string; title: string; state: string; company: string; company_id: string };
     lines: DispatchLine[];
     dispatches: DispatchRecord[];
+    older: string | null;
+    older_failed: boolean;
     locations: Rack[];
     today: string;
     choices?: Choices | null;
@@ -34,12 +38,33 @@ type Props = {
 };
 type Correction = { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN' | 'SUBSTITUTION' };
 
-export default function DispatchGoods({ project, lines, dispatches, locations, today, choices, can }: Props) {
+// What the server answered replaces what the line knew; a narrowed answer adds to it. A row the list no longer reaches stays while it is chosen or the list is cut.
+function merged(previous: Choices | undefined, next: Choices, chosen: string[]): Choices {
+    if (previous === undefined) return next;
+
+    const lots = next.lots.map((lot) => `${lot.lot}|${lot.location}`);
+    const serials = next.serials.map((serial) => serial.handle);
+    const narrowed = next.find !== null;
+
+    return {
+        ...next,
+        lots: [...next.lots, ...previous.lots.filter((lot) => (narrowed || next.more) && !lots.includes(`${lot.lot}|${lot.location}`))],
+        serials: [...next.serials, ...previous.serials.filter((serial) => (narrowed || next.more || chosen.includes(serial.handle)) && !serials.includes(serial.handle))],
+        more: narrowed ? previous.more : next.more,
+    };
+}
+
+export default function DispatchGoods({ project, lines, dispatches, older, older_failed: olderFailed, locations, today, choices, can }: Props) {
     const { t } = useTranslation();
     const open = lines.filter((line) => Number(line.remaining) > 0);
     const [current, setCurrent] = useState(open[0]?.handle ?? lines[0]?.handle ?? '');
     const [known, setKnown] = useState<Record<string, Choices>>({});
+    const [absorbed, setAbsorbed] = useState<Choices | null>(null);
+    const [unread, setUnread] = useState<Record<string, boolean>>({});
     const [chosen, setChosen] = useState<Record<string, string[]>>({});
+    const [earlier, setEarlier] = useState<DispatchRecord[]>([]);
+    const [done, setDone] = useState<string | null>(null);
+    const [origin] = useState(() => previousPage() ?? '/gudang/barang-keluar');
     const [code, setCode] = useState('');
     const [result, setResult] = useState<string | null>(null);
     const [scanError, setScanError] = useState<string | null>(null);
@@ -48,24 +73,59 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
     const [correction, setCorrection] = useState<Correction | null>(null);
     const departing = useRef(false);
     const busy = useRef<Record<string, boolean>>({});
+    const chosenNow = useRef<Record<string, string[]>>({});
+    const knownNow = useRef<Record<string, Choices>>({});
+    const waiting = useRef<{ line: string; serial: string }[]>([]);
     const scanRef = useRef<HTMLInputElement>(null);
     const dirty = Object.values(unsent).some(Boolean);
     const prepare = useCommand<Record<string, FormDataConvertible>>(() => '/dokumen', 'post');
     const guard = useScanGuard({ hasScanField: true });
     const closed = project.state !== 'ACTIVE';
 
-    if (choices !== undefined && choices !== null && known[choices.line] !== choices) {
-        setKnown({ ...known, [choices.line]: choices });
+    if (choices !== undefined && choices !== null && absorbed !== choices) {
+        setAbsorbed(choices);
+        setUnread({ ...unread, [choices.line]: false });
+        setKnown({ ...known, [choices.line]: merged(known[choices.line], choices, chosen[choices.line] ?? []) });
     }
 
-    const load = useCallback((handle: string) => {
-        router.reload({ only: ['choices'], data: { baris: handle }, preserveUrl: true });
+    const load = useCallback((handle: string, find?: string) => {
+        const failed = () => { setUnread((all) => ({ ...all, [handle]: true })); };
+
+        router.reload({ only: ['choices'], data: { baris: handle, ...(find === undefined ? {} : { cari: find }) }, preserveUrl: true, async: true, onHttpException: () => { failed(); return false; }, onNetworkError: () => { failed(); return false; } });
     }, []);
+    const replaceChosen = useCallback((handle: string, next: string[]) => {
+        chosenNow.current = { ...chosenNow.current, [handle]: next };
+        setChosen(chosenNow.current);
+    }, []);
+    const records = [...dispatches, ...earlier.filter((one) => !dispatches.some((record) => record.id === one.id))].sort((a, b) => b.id.localeCompare(a.id));
 
     // The chosen line's lots on request; read again after each answer, what the pool holds having changed.
     useEffect(() => {
         if (current !== '') load(current);
     }, [current, dispatches, load]);
+
+    // A refused or failed Surat Jalan stays on the page, whose guard stays on.
+    useEffect(() => {
+        if (prepare.answer !== null) departing.current = false;
+    }, [prepare.answer]);
+
+    useEffect(() => {
+        knownNow.current = known;
+    }, [known]);
+
+    // A scanned unit the line's list did not hold is asked of the server; added here when its answer arrives.
+    useEffect(() => {
+        if (absorbed === null || absorbed.find === null) return;
+
+        const answered = waiting.current.filter((one) => one.line === absorbed.line && one.serial === absorbed.find);
+        waiting.current = waiting.current.filter((one) => !answered.includes(one));
+        const line = lines.find((one) => one.handle === absorbed.line);
+
+        if (line !== undefined) {
+            for (const one of answered) addSerial(line, one.serial, true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new answer settles a waiting scan
+    }, [absorbed]);
 
     // IP-15: one scan target, focused on entering the step.
     useEffect(() => {
@@ -102,8 +162,8 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
     }, []);
     const lineOf = (product: string) => lines.find((line) => line.product === product && open.includes(line)) ?? lines.find((line) => line.product === product);
     const clear = () => { setResult(null); setScanError(null); };
-    const addSerial = (line: DispatchLine, serial: string) => {
-        const row = known[line.handle]?.serials.find((one) => one.serial.toLowerCase() === serial.toLowerCase());
+    function addSerial(line: DispatchLine, serial: string, settled = false) {
+        const row = knownNow.current[line.handle]?.serials.find((one) => one.serial.toLowerCase() === serial.toLowerCase());
 
         if (busy.current[line.handle] === true) {
             setScanError(t('receiving.scan.line_busy', { seri: serial }));
@@ -113,12 +173,18 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
 
         if (row === undefined) {
             setCurrent(line.handle);
-            setScanError(t('dispatch.scan.serial_absent', { seri: serial }));
+
+            if (settled) {
+                setScanError(t('dispatch.scan.serial_absent', { seri: serial }));
+            } else {
+                waiting.current = [...waiting.current, { line: line.handle, serial }];
+                load(line.handle, serial);
+            }
 
             return;
         }
 
-        const own = chosen[line.handle] ?? [];
+        const own = chosenNow.current[line.handle] ?? [];
 
         if (own.includes(row.handle)) {
             setScanError(t('messages.msg_36', { seri: serial }));
@@ -126,10 +192,10 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
             return;
         }
 
-        setChosen({ ...chosen, [line.handle]: [...own, row.handle] });
+        replaceChosen(line.handle, [...own, row.handle]);
         setCurrent(line.handle);
         setResult(t('receiving.scan.serial_added', { seri: serial }));
-    };
+    }
     const scanned = (typed: string) => {
         clear();
         void lookUp(typed).then((scan) => {
@@ -183,7 +249,7 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
     };
 
     return (
-        <AppShell title={t('pages.pg_024.title')} back={{ href: '/gudang/barang-keluar', label: t('pages.pg_023.title') }}>
+        <AppShell title={t('pages.pg_024.title')} back={{ href: origin, label: t('dialogs.back') }}>
             <div className="flex min-w-0 flex-col gap-6 pb-18 md:pb-8">
                 <PageHeader title={t('pages.pg_024.title')} crumbs={[{ label: t('pages.pg_023.title'), href: '/gudang/barang-keluar' }]} />
                 <ScanNotice notice={guard.notice} />
@@ -210,43 +276,50 @@ export default function DispatchGoods({ project, lines, dispatches, locations, t
                         </ul>
                         <div className="min-w-0 md:col-span-2">
                             {lines.map((line) => (
-                                <DispatchLineForm key={line.handle} line={line} url={`/gudang/barang-keluar/${project.id}/keluarkan`} closed={closed} today={today} choices={known[line.handle] ?? null}
-                                    chosen={chosen[line.handle] ?? []} onChosen={(next) => { setChosen((all) => ({ ...all, [line.handle]: next })); }} hidden={line.handle !== current}
+                                <DispatchLineForm key={line.handle} line={line} url={`/gudang/barang-keluar/${project.id}/keluarkan`} closed={closed} today={today} choices={known[line.handle] ?? null} failed={unread[line.handle] === true} onRetry={() => { load(line.handle); }}
+                                    chosen={chosen[line.handle] ?? []} onChosen={(next) => { replaceChosen(line.handle, next); }} hidden={line.handle !== current} onFind={(text) => { load(line.handle, text); }}
                                     onUnsent={(next) => { setUnsentOf(line.handle, next); }} onBusy={(next) => { busy.current[line.handle] = next; }} />
                             ))}
                         </div>
                     </div>
                 )}
-                {dispatches.length > 0 && (
-                    <section data-slot="dispatch-records" className="flex min-w-0 flex-col gap-3">
+                {(records.length > 0 || olderFailed) && (
+                    <section id="barang-keluar-tercatat" data-slot="dispatch-records" className="flex min-w-0 flex-col gap-3">
                         <h2 className="text-subhead">{t('dispatch.records.title')}</h2>
+                        {done !== null && <OutcomeMessage answer={{ kind: 'COMMITTED', text: done }} />}
                         {prepare.answer !== null && prepare.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={prepare.answer} />}
                         <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                            {dispatches.map((record) => (
+                            {records.map((record) => (
                                 <li key={record.id} data-slot="dispatch-record" className="flex min-w-0 flex-col gap-2 py-3 text-body">
                                     <span className="flex min-w-0 flex-wrap items-center gap-3">
                                         <DateText value={record.date} />
                                         <span>{`${String(record.line)}. ${record.name} · ${record.qty} ${record.unit ?? ''}`}</span>
                                     </span>
                                     <span className="flex min-w-0 flex-wrap items-center gap-2">
-                                        {can.note && record.reversible && <Button variant="outline" size="sm" disabled={prepare.pending} onClick={() => { issueNote(record.id); }}>{t('actions.issue_surat_jalan')}</Button>}
+                                        {can.note && record.issuable && <Button variant="outline" size="sm" disabled={prepare.pending} onClick={() => { issueNote(record.id); }}>{t('actions.issue_surat_jalan')}</Button>}
                                         {record.reversible && (
                                             <>
-                                                <Button variant="ghost" size="sm" onClick={() => { setCorrection({ record, kind: 'DISPATCH_REVERSAL' }); }}>{t('dispatch.reverse.cancel')}</Button>
-                                                <Button variant="ghost" size="sm" onClick={() => { setCorrection({ record, kind: 'UNDELIVERED_RETURN' }); }}>{t('dispatch.reverse.returned')}</Button>
-                                                <Button variant="ghost" size="sm" onClick={() => { setCurrent(record.handle); setCorrection({ record, kind: 'SUBSTITUTION' }); }}>{t('dispatch.substitute.action')}</Button>
+                                                <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCorrection({ record, kind: 'DISPATCH_REVERSAL' }); }}>{t('dispatch.reverse.cancel')}</Button>
+                                                <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCorrection({ record, kind: 'UNDELIVERED_RETURN' }); }}>{t('dispatch.reverse.returned')}</Button>
+                                                <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCurrent(record.handle); setCorrection({ record, kind: 'SUBSTITUTION' }); }}>{t('dispatch.substitute.action')}</Button>
                                             </>
                                         )}
                                     </span>
                                 </li>
                             ))}
                         </ul>
+                        {(older !== null || olderFailed) && (
+                            <ListContinuation state={olderFailed ? 'cursor_failed' : 'more'} onLoadMore={() => {
+                                setEarlier(records);
+                                router.reload({ only: ['dispatches', 'older', 'older_failed'], data: { riwayat: older }, preserveUrl: true });
+                            }} onReload={() => { router.visit(window.location.pathname); }} />
+                        )}
                         {open.length === 0 && <Button className="self-start" render={<a href="/gudang/barang-keluar" />}>{t('dispatch.records.done')}</Button>}
                     </section>
                 )}
             </div>
-            {correction !== null && correction.kind !== 'SUBSTITUTION' && <ReverseDispatchDialog key={correction.record.id} record={correction.record} kind={correction.kind} racks={locations} today={today} canReserve={can.reserve} onClose={() => { setCorrection(null); }} />}
-            {correction !== null && correction.kind === 'SUBSTITUTION' && <SubstituteDialog key={correction.record.id} record={correction.record} choices={known[correction.record.handle] ?? null} company={project.company_id} canEvidence={can.evidence} today={today} onClose={() => { setCorrection(null); }} />}
+            {correction !== null && correction.kind !== 'SUBSTITUTION' && <ReverseDispatchDialog key={correction.record.id} record={correction.record} kind={correction.kind} racks={locations} today={today} canReserve={can.reserve} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.reversed')); }} />}
+            {correction !== null && correction.kind === 'SUBSTITUTION' && <SubstituteDialog key={correction.record.id} record={correction.record} choices={known[correction.record.handle] ?? null} company={project.company_id} canEvidence={can.evidence} today={today} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.substituted')); }} onFind={(text) => { load(correction.record.handle, text); }} />}
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
             <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />

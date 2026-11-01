@@ -4,9 +4,11 @@ namespace App\Modules\INV\Services;
 
 use App\Modules\CST\Services\CostPosting;
 use App\Modules\DOC\Services\EvidenceGuard;
+use App\Modules\INV\Data\StockFigures;
 use App\Modules\OPS\Services\Corrections;
 use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuditChange;
+use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\BusinessDateRule;
@@ -16,6 +18,7 @@ use App\Support\Command\Refused;
 use App\Support\GuardUpdate;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
+use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -29,6 +32,7 @@ final class IdentitySubstitution
         private readonly CostPosting $cost,
         private readonly Corrections $corrections,
         private readonly Revalidation $revalidation,
+        private readonly AuditRecorder $audit,
     ) {}
 
     /** AX-35's set: the product, both places' scopes and lots, both serials, both lots' cost guards with the bearer project, the consumption's guard, the evidence. */
@@ -56,18 +60,23 @@ final class IdentitySubstitution
     }
 
     /** ROUTE-189: the substitution committed; its movement. */
-    public function substitute(CommandContext $context, int $consumptionId, string $quantity, ?int $recordedSerial, int $shippedLot, int $shippedLocation, ?int $shippedSerial, ?string $allocationReason, int $evidence, string $reason, string $businessDate, bool $prefilled): int
+    public function substitute(CommandContext $context, int $consumptionId, string $quantity, ?int $recordedSerial, int $shippedLot, int $shippedLocation, ?int $shippedSerial, ?string $allocationReason, int $evidence, string $reason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen): int
     {
         BusinessDateRule::check($businessDate, $prefilled);
         $context->require($this->locks($consumptionId, $shippedLot, $shippedLocation, $recordedSerial, $shippedSerial, $evidence));
         $old = self::consumption($consumptionId);
+
+        if ((bool) Row::text($old, 'is_serialized') !== $serializedSeen || (int) Row::text($old, 'product_scale') !== $scaleSeen) {
+            throw Refused::conflict('ST-09', ['serialized' => (bool) Row::text($old, 'is_serialized'), 'scale' => (int) Row::text($old, 'product_scale')]);
+        }
+
         $product = (int) Row::text($old, 'product_id');
         $scale = max(0, (int) Row::text($old, 'quantity_scale'));
         $qty = ReceivingRecords::base($quantity, 1, $scale);
         $open = BigDecimal::of(Row::text($old, 'qty_base'))->minus(Row::text($old, 'restored_qty_base'))->minus(Row::text($old, 'reclassified_qty_base'))->minus(Row::text($old, 'substituted_qty_base'));
 
         if (! $qty->isPositive() || $qty->isGreaterThan($open)) {
-            throw Refused::rejected('C-27', ['reason' => 'above_open', 'open' => (string) $open]);
+            throw Refused::rejected('C-27', ['reason' => 'above_open', 'open' => StockFigures::plain((string) $open)]);
         }
 
         $shipped = DB::table('inventory_lots')->where('id', $shippedLot)->first(['product_id', 'source_company_id']);
@@ -86,7 +95,7 @@ final class IdentitySubstitution
         $source = (int) Row::text($shipped, 'source_company_id');
         $this->ensureSerials($consumptionId, $product, $qty, $recordedSerial, $shippedSerial, $shippedLot, $shippedLocation);
         $crossed = $source !== $bearer;
-        $this->ensureAllocation($context, $bearer, $crossed, $allocationReason);
+        $this->ensureAllocation($context, $bearer, (int) Row::text($old, 'project_id'), $source, $crossed, $allocationReason);
         $place = DB::table('stock_movement_entries')->where('stock_consumption_id', $consumptionId)->where('qty_delta_base', '<', 0)->when($recordedSerial !== null, fn ($where) => $where->where('serial_unit_id', $recordedSerial))->orderBy('id')->first(['location_id', 'condition']);
 
         if ($place === null) {
@@ -134,11 +143,12 @@ final class IdentitySubstitution
         $drawn = $this->cost->draw($context, $new, $businessDate);
         $net = DB::table('cost_attributions')->whereIn('id', array_values(array_filter([$contra, $drawn], fn (?int $id): bool => $id !== null)))->sum('amount');
 
-        if (! BigDecimal::of(is_numeric($net) ? (string) $net : '0')->isZero()) {
+        if (! BigDecimal::of((string) $net)->isZero()) {
             $this->revalidation->revalidate($context, $project, $publicId);
         }
 
-        DB::table('evidence_links')->insert(['evidence_document_id' => $evidence, 'evidence_scope' => 'COMPANY', 'company_id' => $company, 'role' => 'PRIMARY_PROOF', 'stock_movement_id' => $movement, 'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor]);
+        $proof = DB::table('evidence_documents')->where('id', $evidence)->first(['evidence_scope', 'company_id']) ?? throw Refused::rejected('C-14', ['reason' => 'evidence']);
+        DB::table('evidence_links')->insert(['evidence_document_id' => $evidence, 'evidence_scope' => Row::text($proof, 'evidence_scope'), 'company_id' => Row::nullable($proof, 'company_id'), 'role' => 'PRIMARY_PROOF', 'stock_movement_id' => $movement, 'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor]);
         $this->corrections->record($context, 'INV.DispatchIdentitySubstituted', AuthorityClass::AdmPlus, $company, 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($old, 'movement_public_id'), $reason,
             AuditChange::updated(['lot' => (int) Row::text($old, 'lot_id')], ['lot' => $shippedLot, 'quantity' => (string) $qty, ...($crossed ? ['allocated' => true] : [])]), null, ['business_date' => $businessDate]);
 
@@ -155,7 +165,7 @@ final class IdentitySubstitution
             throw Refused::rejected('C-02', ['reason' => 'serial_count']);
         }
 
-        if ($recordedSerial !== null && (! DB::table('stock_movement_entries')->where('stock_consumption_id', $consumptionId)->where('serial_unit_id', $recordedSerial)->exists() || DB::table('serial_units')->where('id', $recordedSerial)->value('state') !== 'DISPATCHED')) {
+        if ($recordedSerial !== null && ! DispatchRestoration::stillOut($consumptionId, $recordedSerial)) {
             throw Refused::rejected('C-02', ['reason' => 'recorded_not_dispatched']);
         }
 
@@ -164,8 +174,8 @@ final class IdentitySubstitution
         }
     }
 
-    /** XL-1: a substitution onto another company's lot is a new allocation, its authority needed again. */
-    private function ensureAllocation(CommandContext $context, int $bearer, bool $crossed, ?string $reason): void
+    /** XL-1: a substitution onto another company's lot is a new allocation, its authority needed again; otherwise refused and routed, one audit event per affected company committed with the refusal (AZ-08; SQ-23). */
+    private function ensureAllocation(CommandContext $context, int $bearer, int $project, int $source, bool $crossed, ?string $reason): void
     {
         if (! $crossed) {
             return;
@@ -173,15 +183,23 @@ final class IdentitySubstitution
 
         $authority = $context->authority();
 
-        if ($authority === null || ! $authority->scope->includes($bearer) || ! $authority->allows('stock.allocate_intercompany', $bearer) || $reason === null || trim($reason) === '') {
-            throw Refused::rejected('AZ-08', ['routed' => true, 'reason' => 'allocation']);
+        if ($authority !== null && $authority->scope->includes($bearer) && $authority->allows('stock.allocate_intercompany', $bearer) && $reason !== null && trim($reason) !== '') {
+            return;
         }
+
+        $actor = $context->request->actorUserId;
+        $command = $context->request->commandId;
+
+        throw Refused::rejected('AZ-08', ['routed' => true, 'reason' => 'allocation'], function (ConnectionInterface $connection) use ($bearer, $project, $source, $actor, $command): void {
+            $this->audit->record(action: 'INV.AllocationRouted', authorityClass: AuthorityClass::System, actorUserId: $actor, companyId: $bearer, entityType: 'project', entityId: $project, commandId: $command, metadata: ['routed_action' => 'INV.SubstituteDispatchIdentity'], connection: $connection);
+            $this->audit->record(action: 'INV.AllocationRouted', authorityClass: AuthorityClass::System, actorUserId: $actor, companyId: $source, entityType: 'company', entityId: $source, commandId: $command, metadata: ['routed_action' => 'INV.SubstituteDispatchIdentity'], connection: $connection);
+        });
     }
 
     private static function consumption(int $consumptionId): object
     {
         return DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->join('dispatch_lines as d', 'd.id', '=', 'c.dispatch_line_id')->join('stock_movements as m', 'm.id', '=', 'd.stock_movement_id')->join('products as p', 'p.id', '=', 'c.product_id')->where('c.id', $consumptionId)
-            ->first(['c.id', 'c.lot_id', 'c.source_company_id', 'c.product_id', 'c.quantity_scale', 'c.dispatch_line_id', 'c.bearer_company_id', 'b.qty_base', 'b.restored_qty_base', 'b.reclassified_qty_base', 'b.substituted_qty_base', 'd.company_id', 'd.project_id', 'd.entered_unit_id', 'd.ratio_to_base', 'm.public_id as movement_public_id', 'p.base_unit_id'])
+            ->first(['c.id', 'c.lot_id', 'c.source_company_id', 'c.product_id', 'c.quantity_scale', 'c.dispatch_line_id', 'c.bearer_company_id', 'b.qty_base', 'b.restored_qty_base', 'b.reclassified_qty_base', 'b.substituted_qty_base', 'd.company_id', 'd.project_id', 'd.entered_unit_id', 'd.ratio_to_base', 'm.public_id as movement_public_id', 'p.base_unit_id', 'p.is_serialized', 'p.quantity_scale as product_scale'])
             ?? throw Refused::rejected('C-14', ['reason' => 'consumption']);
     }
 }

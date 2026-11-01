@@ -30,14 +30,14 @@ final class ReverseDispatch
      * @param  list<string>  $acknowledged
      * @param  array<string, mixed>  $payload  the validated request, the command's fingerprint
      */
-    public function run(string $commandId, int $actorUserId, int $companyId, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, array $payload): Outcome
+    public function run(string $commandId, int $actorUserId, int $companyId, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, array $payload): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companyId, self::CAPABILITY, Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($companyId), $payload));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen): CommandResult {
             $context->lock($this->restoration->locks($dispatchLineId, $items));
 
-            return new CommandResult('stock_movement', $this->restoration->restore($context, $dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled));
-        });
+            return new CommandResult('stock_movement', $this->restoration->restore($context, $dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen));
+        }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED ? DispatchRestoration::refusalState($outcome->code, $dispatchLineId, $items, $businessDate) : null);
     }
 }

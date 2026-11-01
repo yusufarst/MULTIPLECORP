@@ -1,12 +1,23 @@
 <?php
 
+use App\Modules\DOC\Data\DocumentSubject;
+use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Queries\DispatchQueries;
+use App\Modules\INV\Services\DispatchSubjects;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\PRJ\Models\Project;
+use App\Modules\PRJ\Queries\ProjectFulfilment;
+use App\Support\RowHandle;
+use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\DispatchWorld;
+use Tests\Support\Evidence;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\Numbering;
 use Tests\Support\ReceivingWorld;
@@ -43,7 +54,7 @@ function dispatchBody(object $test, string $qty = '2', array $extra = []): array
     $page = $test->actingAs($test->actor)->get("/gudang/barang-keluar/{$test->project}")->assertOk()->viewData('page')['props'];
     $line = $page['lines'][0];
 
-    return ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => App\Support\RowHandle::of('inventory_lots', $test->lot), 'rak' => App\Support\RowHandle::of('locations', $test->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d'), ...$extra];
+    return ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => RowHandle::of('inventory_lots', $test->lot), 'rak' => RowHandle::of('locations', $test->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d'), ...$extra];
 }
 
 it('lists the remaining reservations of ACTIVE projects by company on PG-023, a bad cursor refused and never a silent first page (CALC-02; PF-14; NAV-023)', function () {
@@ -101,7 +112,7 @@ it('answers a foreign project, line and movement exactly like a nonexistent one,
 
     // A line of another project of this company is refused like one that does not exist.
     $other = DispatchWorld::demand($this->world);
-    $body = dispatchBody($this, '1', ['baris' => App\Support\RowHandle::of('project_lines', $other['line'])]);
+    $body = dispatchBody($this, '1', ['baris' => RowHandle::of('project_lines', $other['line'])]);
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$this->project}/keluarkan", $body)->assertSessionHasErrors('baris');
 });
 
@@ -115,7 +126,8 @@ it('keeps the pages and commands to their capabilities: stock.dispatch, stock.re
     $movement = DB::table('stock_movements')->where('movement_type', 'DISPATCH')->value('public_id');
     $dispatcher = Authorization::admin([$this->company->id], ['stock.view', 'projects.view', 'stock.dispatch']);
     $page = $this->actingAs($dispatcher)->get("/gudang/barang-keluar/{$this->project}")->assertOk()->viewData('page')['props'];
-    expect($page['can']['reverse'])->toBeFalse()->and($page['dispatches'][0]['reversible'])->toBeFalse();
+    // The Surat Jalan is `documents.issue`'s, on what is still out, whoever may reverse (ROUTE-187; W4-18).
+    expect($page['can']['reverse'])->toBeFalse()->and($page['dispatches'][0]['reversible'])->toBeFalse()->and($page['dispatches'][0]['issuable'])->toBeTrue();
     $this->actingAs($dispatcher)->post("/gudang/barang-keluar/{$movement}/balikkan", [])->assertForbidden();
     $this->actingAs($dispatcher)->post("/gudang/barang-keluar/{$movement}/ganti-identitas", [])->assertForbidden();
 
@@ -138,8 +150,9 @@ it('never offers a drop-ship or service line and refuses it at the route; a clos
 });
 
 it('opens the Surat Jalan\'s draft from the committed dispatch, no second delivery and no stock changed; a dispatch wholly restored has none (DOC-03; L-19; AX-15; criterion 14)', function () {
-    Numbering::scheme($this->company, App\Modules\ORG\Enums\SequenceType::Doc03, date('Y').'-01-01', 'YEAR', 'UJI/SJ/{tahun}/{nomor:4}');
-    Database\Factories\DOC\DocumentTypeFactory::ensure('DOC-03');
+    Numbering::scheme($this->company, SequenceType::Doc03, date('Y').'-01-01', 'YEAR', 'UJI/SJ/{tahun}/{nomor:4}');
+    Numbering::started($this->company, SequenceType::Doc03, CarbonImmutable::parse(((int) date('Y') - 1).'-12-31 03:00:00', 'UTC'));
+    DocumentTypeFactory::ensure('DOC-03');
     expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '2', [DispatchWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
     $movement = (string) DB::table('stock_movements')->where('movement_type', 'DISPATCH')->value('public_id');
     $before = DB::table('stock_product_balances as b')->where('product_id', $this->product)->value('on_hand_qty');
@@ -149,5 +162,74 @@ it('opens the Surat Jalan\'s draft from the committed dispatch, no second delive
     $document = DB::table('documents')->whereNotNull('dispatch_movement_id')->first();
     expect($document)->not->toBeNull()->and((int) $document->dispatch_movement_id)->toBe((int) DB::table('stock_movements')->where('public_id', $movement)->value('id'))
         ->and(DB::table('stock_product_balances as b')->where('product_id', $this->product)->value('on_hand_qty'))->toBe($before)
-        ->and(DB::table('stock_movements')->where('movement_type', 'DISPATCH')->count())->toBe(1);
+        ->and(DB::table('stock_movements')->where('movement_type', 'DISPATCH')->count())->toBe(1)
+        ->and(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('DRAFT');
+
+    // Issued only by its own route, after the confirmation; replayed, one number; no second delivery and no stock changed.
+    Queue::fake();
+    $draft = DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->first();
+    $issue = ['command_id' => (string) Str::uuid(), 'lock_version' => $draft->lock_version, 'draf' => $draft->public_id, 'tanggal' => date('Y-m-d'), 'tanggal_otomatis' => true];
+    $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$document->public_id}/surat-jalan", $issue)->assertRedirect();
+    $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$document->public_id}/surat-jalan", $issue)->assertRedirect();
+    expect(DB::table('document_versions')->where('document_id', $document->id)->pluck('state')->all())->toBe(['ISSUED'])
+        ->and(DB::table('document_versions')->where('document_id', $document->id)->value('formatted_number'))->toStartWith('UJI/SJ/')
+        ->and(DB::table('stock_product_balances as b')->where('product_id', $this->product)->value('on_hand_qty'))->toBe($before)
+        ->and(DB::table('delivery_lines')->count())->toBe(0);
+});
+
+it('prints what is still out and offers no Surat Jalan once wholly restored, whatever way it left (BR-DOC-04; ER-06)', function () {
+    DocumentTypeFactory::ensure('DOC-03');
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '5', [DispatchWorld::pick($this->lot, $this->rack, '5')]))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+    $subjects = app(DispatchSubjects::class);
+    $subject = new DocumentSubject('DOC-03', 'STANDARD', $this->company->id, ['dispatch_movement_id' => $row->movement]);
+    $public = (string) DB::table('stock_movements')->where('id', $row->movement)->value('public_id');
+    $viewer = app(EffectiveCapabilities::class)->for($this->actor->id);
+
+    expect(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', [DispatchWorld::item($row->consumption, $this->rack, '2')]))->toBe('COMMITTED');
+    expect($subjects->facts($subject)->lines[0]['quantity'])->toBe('3')->and($subjects->subject($viewer, 'DOC-03', 'STANDARD', ['dispatch_movement_id' => $public]))->not->toBeNull();
+
+    expect(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', [DispatchWorld::item($row->consumption, $this->rack, '3')]))->toBe('COMMITTED');
+    $page = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$this->project}")->viewData('page')['props'];
+    expect($page['dispatches'][0]['issuable'])->toBeFalse()->and($page['dispatches'][0]['reversible'])->toBeFalse()
+        ->and($subjects->subject($viewer, 'DOC-03', 'STANDARD', ['dispatch_movement_id' => $public]))->toBeNull();
+});
+
+it('narrows the line\'s choices to what is looked for and tells a list it cut; the dispatches continue by a keyset, a bad cursor refused (PF-13; PF-14; IP-15; ER-06)', function () {
+    $queries = app(DispatchQueries::class);
+    $handle = $queries->screen($this->actor->id, $this->demand['project']->id, $this->company->id)['lines'][0]['handle'];
+    $code = (string) DB::table('inventory_lots')->where('id', $this->lot)->value('lot_code');
+
+    expect($queries->choices($this->demand['project']->id, $this->company->id, $handle))->toMatchArray(['find' => null, 'more' => false])
+        ->and($queries->choices($this->demand['project']->id, $this->company->id, $handle, strtolower($code))['lots'])->toHaveCount(1)
+        ->and($queries->choices($this->demand['project']->id, $this->company->id, $handle, 'tidak-ada')['lots'])->toBe([]);
+
+    $failed = $queries->screen($this->actor->id, $this->demand['project']->id, $this->company->id, 'bukan-kursor');
+    expect($failed['older_failed'])->toBeTrue()->and($failed['dispatches'])->toBe([]);
+
+});
+
+it('keeps PG-022\'s and PG-024\'s forms in place when a proof is registered from them, and answers with the evidence (IP-16; NV-04; ROUTE-229; ER-06)', function () {
+    $uploader = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, 'evidence.upload', 'evidence.view']);
+    $company = (string) DB::table('companies')->where('id', $this->company->id)->value('public_id');
+    $file = fn (string $marker) => Evidence::upload($uploader, $this->company->id, Evidence::pdf($marker));
+
+    foreach (["/gudang/barang-keluar/{$this->project}", "/gudang/barang-masuk/{$this->project}"] as $back) {
+        $this->actingAs($uploader)->post('/bukti', Evidence::registration($file($back), $company, ['type' => 'DELIVERY_PROOF', 'reference' => $back, 'kembali' => $back]))->assertRedirect($back);
+    }
+
+    // Any other address is no return address.
+    $this->actingAs($uploader)->post('/bukti', Evidence::registration($file('luar'), $company, ['type' => 'DELIVERY_PROOF', 'reference' => 'luar', 'kembali' => 'https://contoh.test/gudang/barang-keluar/'.$this->project]))->assertRedirectContains('/dokumen/bukti');
+});
+
+it('opens the dispatch record from *Rincian proyek* for who may correct it once something left (ROUTE-189; INT-189; ER-06)', function () {
+    $fulfilment = app(ProjectFulfilment::class);
+    $capabilities = app(EffectiveCapabilities::class);
+    $project = Project::query()->findOrFail($this->demand['project']->id);
+    expect($fulfilment->of($capabilities->for($this->actor->id), $project)['correct_dispatch'])->toBeFalse();
+
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($this->lot, $this->rack, '1')]))->toBe('COMMITTED');
+    $plain = Authorization::admin([$this->company->id], ['stock.view', 'projects.view', 'stock.dispatch']);
+    expect($fulfilment->of($capabilities->for($this->actor->id), $project)['correct_dispatch'])->toBeTrue()
+        ->and($fulfilment->of($capabilities->for($plain->id), $project)['correct_dispatch'])->toBeFalse();
 });

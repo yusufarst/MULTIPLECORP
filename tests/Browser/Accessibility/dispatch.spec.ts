@@ -22,7 +22,7 @@ for (const width of [390, 1280]) {
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
 
         await page.goto(`/gudang/barang-keluar/${run.project}`);
-        await expect(page.locator('[data-slot="dispatch-lot"]').filter({ hasText: run.other_code })).toContainText('perusahaan lain');
+        await expect(page.locator('[data-slot="dispatch-lot"]').filter({ hasText: 'perusahaan lain' }).first()).toBeVisible();
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
     });
 }

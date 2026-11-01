@@ -2,6 +2,7 @@
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Queries\DispatchQueries;
+use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
@@ -55,15 +56,18 @@ it('reads PG-023 in one statement a group and PG-024 in QB-05\'s bound, the same
         expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->demand['line'], $this->demand['unit'], $qty, [DispatchWorld::pick($this->lot, $this->rack, $qty)]))->toBe('COMMITTED');
     }
 
-    expect(dispatchStatements(fn () => $queries->screen($this->actor->id, $this->demand['project']->id, $this->company->id)))->toBe($one)->and($one)->toBeLessThanOrEqual(6);
+    expect(dispatchStatements(fn () => $queries->screen($this->actor->id, $this->demand['project']->id, $this->company->id)))->toBe($one)->and($one)->toBeLessThanOrEqual(4);
 });
 
-it('records a dispatch in bounded statements, the same for one lot and three (PFM-20; QB-13)', function () {
+it('records a dispatch in bounded statements, the same bound for one lot and three (PFM-20; QB-13)', function () {
     $project = DB::table('projects')->where('id', $this->demand['project']->id)->value('public_id');
-    $handle = fn (int $lot, string $qty): array => ['lot' => App\Support\RowHandle::of('inventory_lots', $lot), 'rak' => App\Support\RowHandle::of('locations', $this->rack), 'jumlah' => $qty];
+    $handle = fn (int $lot, string $qty): array => ['lot' => RowHandle::of('inventory_lots', $lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => $qty];
     $line = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$project}")->viewData('page')['props']['lines'][0];
     $body = fn (string $qty, array $lots): array => ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => $lots, 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d')];
     $count = dispatchStatements(fn () => $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$project}/keluarkan", $body('1', [$handle($this->lot, '1')])));
 
-    expect(DB::table('dispatch_lines')->count())->toBe(1)->and($count)->toBeLessThan(90);
+    $more = [StockWorld::lot($this->actor->id, $this->company, $this->demand['product'], $this->demand['unit'], $this->rack, '1'), StockWorld::lot($this->actor->id, $this->company, $this->demand['product'], $this->demand['unit'], $this->rack, '1')];
+    $three = dispatchStatements(fn () => $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$project}/keluarkan", $body('3', [$handle($this->lot, '1'), $handle($more[0], '1'), $handle($more[1], '1')])));
+
+    expect(DB::table('dispatch_lines')->count())->toBe(2)->and($count)->toBeLessThan(90)->and($three)->toBeLessThan(120);
 });

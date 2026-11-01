@@ -4,6 +4,7 @@ namespace App\Modules\INV\Services;
 
 use App\Modules\CST\Services\CostPosting;
 use App\Modules\INV\Data\DispatchEntry;
+use App\Modules\INV\Data\StockFigures;
 use App\Modules\PRJ\Services\DemandPosting;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
@@ -35,7 +36,8 @@ final class DispatchPosting
     public function locks(DispatchEntry $entry): LockSet
     {
         $set = InventoryPosting::lineLocks($entry->lineId);
-        $product = (int) DB::table('project_lines')->where('id', $entry->lineId)->value('product_id');
+        $product = DB::table('project_lines')->where('id', $entry->lineId)->value('product_id');
+        $product = is_numeric($product) ? (int) $product : 0;
         $set->add('stock_product_balances', ['product_id' => $product]);
         $serials = [];
 
@@ -64,7 +66,7 @@ final class DispatchPosting
         $line = self::line($entry->lineId);
         $product = (int) Row::text($line, 'product_id');
         $scale = max(0, (int) Row::text($line, 'quantity_scale'));
-        $serialized = (bool) $line->is_serialized;
+        $serialized = (bool) Row::text($line, 'is_serialized');
 
         if ($serialized !== $entry->serializedSeen || (int) Row::text($line, 'product_scale') !== $entry->scaleSeen) {
             throw Refused::conflict('ST-09', ['serialized' => $serialized, 'scale' => (int) Row::text($line, 'product_scale')]);
@@ -98,18 +100,17 @@ final class DispatchPosting
         $remainder = BigDecimal::of(Row::text($line, 'demand'))->minus(Row::text($line, 'dispatched'))->minus(Row::text($line, 'cancelled'));
 
         if ($base->isGreaterThan($remainder)) {
-            throw Refused::rejected('PX-03', ['reason' => 'above_remainder', 'remainder' => (string) $remainder]);
+            throw Refused::rejected('PX-03', ['reason' => 'above_remainder', 'remainder' => StockFigures::plain((string) $remainder)]);
         }
 
         // The line's own reservation first, the rest from AVAILABLE: another project's reserved supply is never taken (M-03; BR-RSV-02).
         $reservation = DB::table('reservations')->where('project_line_id', $entry->lineId)->where('state', 'ACTIVE')->first(['id', 'remaining_qty_base']);
         $own = $reservation === null ? BigDecimal::zero() : BigDecimal::of(Row::text($reservation, 'remaining_qty_base'));
-        $reservedPart = BigDecimal::min($base, $own);
-        $unreservedPart = $base->minus($reservedPart);
+        [$reservedPart, $unreservedPart] = DispatchEntry::parts($base, $own);
         $available = InventoryPosting::available($product);
 
         if ($unreservedPart->isGreaterThan($available)) {
-            throw Refused::rejected('C-04', ['available' => (string) $available->plus($own)]);
+            throw Refused::rejected('C-04', ['available' => StockFigures::plain((string) $available->plus($own))]);
         }
 
         $company = (int) Row::text($line, 'company_id');
@@ -207,7 +208,7 @@ final class DispatchPosting
             $held = DB::table('stock_lot_balances as b')->where('lot_id', $pick['lot'])->where('location_id', $pick['location'])->where('condition', 'USABLE')->value('qty');
 
             if (! is_string($held) || $places[$place]->isGreaterThan($held)) {
-                throw Refused::rejected('C-03', ['reason' => 'lot_short', 'available' => is_string($held) ? $held : '0']);
+                throw Refused::rejected('C-03', ['reason' => 'lot_short', 'available' => is_string($held) ? StockFigures::plain($held) : '0']);
             }
 
             if ($serialized !== ($pick['serial'] !== null)) {
@@ -257,7 +258,7 @@ final class DispatchPosting
         $command = $context->request->commandId;
         $sources = array_values(array_unique(array_map(fn (array $lot): int => $lot['company'], $crossing)));
 
-        throw Refused::rejected('AZ-08', ['routed' => true, 'reason' => $reason === '' && $authority !== null && $authority->allows('stock.allocate_intercompany', $company) ? 'allocation_reason' : 'allocation'], function (ConnectionInterface $connection) use ($sources, $company, $project, $actor, $command): void {
+        throw Refused::rejected('AZ-08', ['routed' => true, 'reason' => 'allocation'], function (ConnectionInterface $connection) use ($sources, $company, $project, $actor, $command): void {
             $this->audit->record(action: 'INV.AllocationRouted', authorityClass: AuthorityClass::System, actorUserId: $actor, companyId: $company, entityType: 'project', entityId: $project, commandId: $command, metadata: ['routed_action' => 'INV.Dispatch'], connection: $connection);
 
             foreach ($sources as $source) {
@@ -278,7 +279,7 @@ final class DispatchPosting
         foreach (DB::select(<<<'SQL'
             select m.public_id from dispatch_lines d join stock_movements m on m.id = d.stock_movement_id
             where d.project_line_id = ? and d.qty_base = ?::numeric and m.business_date = ?::date
-                and exists (select 1 from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id and b.qty_base - b.restored_qty_base - b.substituted_qty_base > 0)
+                and exists (select 1 from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id and b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base > 0)
             order by m.public_id
             SQL, [$lineId, $base, $businessDate]) as $row) {
             if (is_object($row)) {
@@ -301,10 +302,29 @@ final class DispatchPosting
 
         return match ($code) {
             'L-49' => ['matches' => self::likelyDuplicates($entry->lineId, (string) BigDecimal::of($entry->quantity)->multipliedBy(is_numeric($ratio) ? (int) $ratio : 1), $entry->businessDate)],
-            'PX-03' => ['remainder' => (string) BigDecimal::of(Row::nullable($line, 'demand') ?? '0')->minus(Row::nullable($line, 'dispatched') ?? '0')->minus(Row::nullable($line, 'cancelled') ?? '0')],
-            'C-04' => ['available' => (string) InventoryPosting::available((int) Row::text($line, 'product_id'))->plus(Row::nullable($line, 'reserved') ?? '0')],
+            'PX-03' => ['remainder' => StockFigures::remainder(Row::nullable($line, 'demand') ?? '0', Row::nullable($line, 'dispatched') ?? '0', Row::nullable($line, 'cancelled') ?? '0')],
+            'C-04' => ['available' => StockFigures::plain((string) InventoryPosting::available((int) Row::text($line, 'product_id'))->plus(Row::nullable($line, 'reserved') ?? '0'))],
+            'C-03' => self::shortOf($entry),
             default => null,
         };
+    }
+
+    /**
+     * C-03's current state: the first place short of what the operator picked, otherwise picks that do not add up.
+     *
+     * @return array<string, string>
+     */
+    private static function shortOf(DispatchEntry $entry): array
+    {
+        foreach ($entry->picks as $pick) {
+            $held = DB::table('stock_lot_balances as b')->where('lot_id', $pick['lot'])->where('location_id', $pick['location'])->where('condition', 'USABLE')->value('qty');
+
+            if (! is_string($held) || BigDecimal::of($pick['qty'])->isGreaterThan($held)) {
+                return ['reason' => 'lot_short', 'available' => is_string($held) ? StockFigures::plain($held) : '0'];
+            }
+        }
+
+        return ['reason' => 'picks'];
     }
 
     private static function line(int $lineId): object

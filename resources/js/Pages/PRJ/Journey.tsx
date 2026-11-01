@@ -271,6 +271,7 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
                         }]),
                     ]} />
                     {project.link?.reason != null && <p className="text-body text-text-secondary">{t('projects.link.reason', { alasan: project.link.reason })}</p>}
+                    {fulfilment.correct_dispatch && <Button variant="outline" size="sm" className="self-start" render={<a href={`/gudang/barang-keluar/${project.id}#barang-keluar-tercatat`} />}>{t('dispatch.substitute.action')}</Button>}
                     {project.siplah !== null && (
                         <Disclosure title={t('projects.siplah.title')} defaultOpen>
                             <FactsList facts={[

@@ -1,31 +1,37 @@
-// The dispatch's corrections on PG-024 (ROUTE-188; ROUTE-189; INT-188; INT-189; CM-05; CM-06; CM-36; IP-09; IP-19): "Batalkan Barang Keluar (Belum Berangkat)" and "Catat Barang Kembali Tanpa Terkirim" — each lot's or unit's quantity, the condition and rack it returns to, a new reservation with `stock.reserve`, the consumed one never reactivated —; "Koreksi Nomor Seri atau Lot" — quantities and the shipment stay unchanged —, each with its reason and answer in place. Never a cost.
+// The dispatch's corrections on PG-024 (ROUTE-188; ROUTE-189; INT-188; INT-189; CM-05; CM-06; CM-36; IP-05; IP-09; IP-19): "Batalkan Barang Keluar (Belum Berangkat)" and "Catat Barang Kembali Tanpa Terkirim" — each lot's or unit's quantity, the condition and rack it returns to, a new reservation with `stock.reserve`, the consumed one never reactivated —; "Koreksi Nomor Seri atau Lot" — quantities and the shipment stay unchanged —, each with its reason; a refusal answers in the dialog, a recorded one on the page. Never a cost.
 import type { FormDataConvertible } from '@inertiajs/core';
 import { useState } from 'react';
 
 import { RelationMarker } from '@/components/company';
 import { ConfirmCommand } from '@/components/confirm-dialog';
+import { type BusinessDate, BusinessDateControl } from '@/components/date-field';
 import { DecimalInput, FormField } from '@/components/form';
+import { DuplicateWarning, type DuplicateMatch } from '@/components/notices';
 import { RegionLoading } from '@/components/region-state';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code } from '@/components/values';
 import { ProofSheet } from '@/features/fin/proof-sheet';
-import { type Choices } from '@/features/inv/dispatch-line';
+import { ChoicesFind, type Choices } from '@/features/inv/dispatch-line';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
 export type Consumption = { handle: string; lot: string; other: boolean; open: string; location: string | null; serials: { handle: string; serial: string }[] };
-export type DispatchRecord = { id: string; date: string; line: number; handle: string; name: string; qty: string; unit: string | null; base: string; serialized: boolean; undelivered: string; consumptions: Consumption[]; reversible: boolean };
+export type DispatchRecord = { id: string; date: string; line: number; handle: string; name: string; qty: string; unit: string | null; base: string; serialized: boolean; scale: number; undelivered: string; consumptions: Consumption[]; issuable: boolean; reversible: boolean };
 type Rack = { id: string; code: string; name: string };
 type Entered = { qty: string; condition: 'USABLE' | 'UNUSABLE'; rack: string };
 type ReturnRow = { key: string; consumption: Consumption; serial: string | null; label: string; unitOnly: boolean };
 
-export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, onClose }: { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN'; racks: Rack[]; today: string; canReserve: boolean; onClose: () => void }) {
+export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, onClose, onDone }: { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN'; racks: Rack[]; today: string; canReserve: boolean; onClose: () => void; onDone: () => void }) {
     const { t } = useTranslation();
     const [reason, setReason] = useState('');
     const [reserve, setReserve] = useState('');
     const [entered, setEntered] = useState<Record<string, Entered>>({});
+    const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
+    const [acknowledged, setAcknowledged] = useState<string[]>([]);
+    const [duplicateReason, setDuplicateReason] = useState('');
+    const [sentAs, setSentAs] = useState('');
     const reverse = useCommand<Record<string, FormDataConvertible>>(() => `/gudang/barang-keluar/${record.id}/balikkan`, 'post');
     const frozen = reverse.pending || reverse.unknown;
     const rows = record.consumptions.filter((one) => one.open !== '0').flatMap((one): ReturnRow[] => (one.serials.length > 0
@@ -33,13 +39,19 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
         : [{ key: one.handle, consumption: one, serial: null, label: one.lot, unitOnly: false }]));
     const value = (key: string, fallback: string | null): Entered => entered[key] ?? { qty: '', condition: 'USABLE', rack: fallback ?? racks[0]?.id ?? '' };
     const chosen = rows.filter((row) => Number(value(row.key, row.consumption.location).qty) > 0);
+    const matches = Array.isArray(reverse.state.matches) ? (reverse.state.matches as DuplicateMatch[]) : [];
+    const signature = JSON.stringify([entered, reserve, date.date]);
+    const matched = reverse.answer?.kind === 'REJECTED' && matches.length > 0;
+    // A likely duplicate answers what was sent: once the entry changes, it is asked again.
+    const warned = matched && sentAs === signature;
     const send = () => {
         const unit = chosen.map((row) => {
             const one = value(row.key, row.consumption.location);
 
             return { konsumsi: row.consumption.handle, jumlah: one.qty, satuan_dasar: true, kondisi: one.condition, rak: one.rack, ...(row.serial === null ? {} : { seri: row.serial }) };
         });
-        reverse.submit({ jenis: kind, unit, ...(reserve === '' ? {} : { reservasi: reserve }), alasan: reason, tanggal: today, tanggal_otomatis: true }, onClose);
+        setSentAs(signature);
+        reverse.submit({ jenis: kind, unit, ...(reserve === '' ? {} : { reservasi: reserve }), alasan: reason, ...(warned ? { duplikat: acknowledged, alasan_duplikat: duplicateReason } : {}), kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
     };
     const title: TranslationKey = kind === 'DISPATCH_REVERSAL' ? 'dispatch.reverse.cancel' : 'dispatch.reverse.returned';
 
@@ -52,13 +64,18 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
             confirmLabel={t(title)}
             destructive
             pending={reverse.pending}
-            answer={reverse.answer}
-            blocked={chosen.length === 0}
+            answer={matched ? null : reverse.answer}
+            blocked={chosen.length === 0 || (warned && (!matches.every((match) => acknowledged.includes(match.id)) || duplicateReason.trim() === ''))}
             reason={{ value: reason, onChange: setReason, error: reverse.errors.alasan ?? null }}
             onConfirm={send}
             items={(
                 <div className="flex min-w-0 flex-col gap-4">
+                    {warned && (
+                        <DuplicateWarning matches={matches} message={reverse.answer?.text} acknowledged={acknowledged} onAcknowledge={setAcknowledged} canContinue
+                            reason={{ value: duplicateReason, onChange: setDuplicateReason, error: reverse.errors.alasan_duplikat ?? null }} />
+                    )}
                     <p className="text-caption text-text-secondary">{t('dispatch.reverse.undelivered', { sisa: record.undelivered })}</p>
+                    <BusinessDateControl today={today} value={date} onChange={setDate} />
                     {rows.map((row) => {
                         const one = value(row.key, row.consumption.location);
                         const set = (patch: Partial<Entered>) => { setEntered({ ...entered, [row.key]: { ...one, ...patch } }); };
@@ -67,7 +84,7 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
                             <fieldset key={row.key} disabled={frozen} data-slot="reverse-row" className="flex min-w-0 flex-col gap-2 border-t border-border-subtle pt-3">
                                 <legend className="flex min-w-0 flex-wrap items-center gap-2 text-body font-medium"><Code>{row.label}</Code>{row.consumption.other && <RelationMarker />}</legend>
                                 <FormField label={t('dispatch.reverse.quantity', { sisa: row.unitOnly ? '1' : row.consumption.open })}>
-                                    {(control) => <DecimalInput {...control} scale={3} value={one.qty} onValueChange={(next) => { set({ qty: next ?? '' }); }} />}
+                                    {(control) => <DecimalInput {...control} scale={record.scale} value={one.qty} onValueChange={(next) => { set({ qty: next ?? '' }); }} />}
                                 </FormField>
                                 <FormField label={t('stock.column.condition')}>
                                     {(control) => (
@@ -89,17 +106,17 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
                     })}
                     {canReserve && (
                         <FormField label={t('dispatch.reverse.reserve')} help={t('dispatch.reverse.reserve_help')} error={reverse.errors.reservasi}>
-                            {(control) => <DecimalInput {...control} scale={3} disabled={frozen} value={reserve} onValueChange={(next) => { setReserve(next ?? ''); }} />}
+                            {(control) => <DecimalInput {...control} scale={record.scale} disabled={frozen} value={reserve} onValueChange={(next) => { setReserve(next ?? ''); }} />}
                         </FormField>
                     )}
-                    {Object.entries(reverse.errors).filter(([field]) => field.startsWith('unit') || field === 'tanggal').slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
+                    {Object.entries(reverse.errors).filter(([field]) => !['alasan', 'alasan_duplikat', 'reservasi'].includes(field)).slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
                 </div>
             )}
         />
     );
 }
 
-export function SubstituteDialog({ record, choices, company, canEvidence, today, onClose }: { record: DispatchRecord; choices: Choices | null; company: string; canEvidence: boolean; today: string; onClose: () => void }) {
+export function SubstituteDialog({ record, choices, company, canEvidence, today, onClose, onDone, onFind }: { record: DispatchRecord; choices: Choices | null; company: string; canEvidence: boolean; today: string; onClose: () => void; onDone: () => void; onFind: (text: string) => void }) {
     const { t } = useTranslation();
     const open = record.consumptions.filter((one) => one.open !== '0');
     const [reason, setReason] = useState('');
@@ -111,22 +128,24 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
     const [allocation, setAllocation] = useState('');
     const [evidence, setEvidence] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const substitute = useCommand<Record<string, FormDataConvertible>>(() => `/gudang/barang-keluar/${record.id}/ganti-identitas`, 'post');
     const frozen = substitute.pending || substitute.unknown;
     const current = open.find((one) => one.handle === consumption);
     const lots = choices?.lots ?? [];
     const chosenSerial = choices?.serials.find((one) => one.handle === serial);
-    const place = record.serialized && chosenSerial !== undefined ? lots.find((lot) => lot.lot === chosenSerial.lot && lot.location === chosenSerial.location) : lots.find((lot) => `${lot.lot}|${lot.location}` === shipped);
+    const place = record.serialized ? chosenSerial : lots.find((lot) => `${lot.lot}|${lot.location}` === shipped);
     const ready = place !== undefined && quantity !== '' && evidence !== null && (!record.serialized || recorded !== '') && (!place.other || allocation.trim() !== '');
     const send = () => {
         if (place === undefined || evidence === null) return;
-        substitute.submit({ konsumsi: consumption, jumlah: quantity, ...(recorded === '' ? {} : { seri_tercatat: recorded }), lot: place.lot, rak: place.location, ...(serial === '' ? {} : { seri_terkirim: serial }), ...(place.other ? { alasan_alokasi: allocation } : {}), bukti: evidence, alasan: reason, tanggal: today, tanggal_otomatis: true }, onClose);
+        substitute.submit({ konsumsi: consumption, jumlah: quantity, ...(recorded === '' ? {} : { seri_tercatat: recorded }), lot: place.lot, rak: place.location, ...(serial === '' ? {} : { seri_terkirim: serial }), ...(place.other ? { alasan_alokasi: allocation } : {}), bukti: evidence, alasan: reason, kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
     };
 
     return (
         <>
+            {/* The proof's sheet takes this dialog's place while it is open, each modal in turn; what was entered stays. */}
             <ConfirmCommand
-                open
+                open={!uploading}
                 onOpenChange={(next) => { if (!next) onClose(); }}
                 title={t('dispatch.substitute.action')}
                 consequence={t('dispatch.substitute.consequence')}
@@ -138,6 +157,7 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
                 onConfirm={send}
                 items={choices === null ? <RegionLoading /> : (
                     <fieldset disabled={frozen} className="flex min-w-0 flex-col gap-3">
+                        <BusinessDateControl today={today} value={date} onChange={setDate} />
                         <FormField label={t('dispatch.substitute.recorded')}>
                             {(control) => (
                                 <NativeSelect {...control} value={consumption} onChange={(event) => { setConsumption(event.target.value); setRecorded(''); }}>
@@ -145,6 +165,7 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
                                 </NativeSelect>
                             )}
                         </FormField>
+                        {choices.more && <ChoicesFind disabled={frozen} onFind={onFind} />}
                         {record.serialized ? (
                             <>
                                 <FormField label={t('dispatch.substitute.recorded_serial')}>
@@ -159,7 +180,7 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
                                     {(control) => (
                                         <NativeSelect {...control} value={serial} onChange={(event) => { setSerial(event.target.value); }}>
                                             <option value="">{t('dispatch.substitute.choose')}</option>
-                                            {choices.serials.map((one) => <option key={one.handle} value={one.handle}>{one.serial}</option>)}
+                                            {choices.serials.map((one) => <option key={one.handle} value={one.handle}>{`${one.serial} · ${one.code} · ${one.rack}`}</option>)}
                                         </NativeSelect>
                                     )}
                                 </FormField>
@@ -167,7 +188,7 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
                         ) : (
                             <>
                                 <FormField label={t('dispatch.field.quantity')}>
-                                    {(control) => <DecimalInput {...control} scale={3} value={quantity} onValueChange={(next) => { setQuantity(next ?? ''); }} />}
+                                    {(control) => <DecimalInput {...control} scale={record.scale} value={quantity} onValueChange={(next) => { setQuantity(next ?? ''); }} />}
                                 </FormField>
                                 <FormField label={t('dispatch.substitute.shipped_lot')}>
                                     {(control) => (

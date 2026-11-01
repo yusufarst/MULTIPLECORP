@@ -71,10 +71,11 @@ final class DispatchController extends Controller
         $actor = self::actor($request);
         $project = $this->queries->project($actor, $id) ?? throw new NotFoundHttpException;
         $line = self::query($request, 'baris');
+        $find = self::query($request, 'cari');
 
         return Inertia::render('INV/DispatchGoods', [
-            ...$this->queries->screen($actor, $project['id'], $project['company']),
-            'choices' => Inertia::optional(fn (): ?array => $line === null ? null : $this->queries->choices($project['id'], $project['company'], $line)),
+            ...$this->queries->screen($actor, $project['id'], $project['company'], self::query($request, 'riwayat')),
+            'choices' => Inertia::optional(fn (): ?array => $line === null ? null : $this->queries->choices($project['id'], $project['company'], $line, $find)),
         ]);
     }
 
@@ -141,6 +142,8 @@ final class DispatchController extends Controller
             'duplikat' => ['nullable', 'array', 'max:20'],
             'duplikat.*' => ['required', 'uuid'],
             'alasan_duplikat' => ['nullable', 'string', 'max:500'],
+            'kebijakan_seri' => ['required', 'boolean'],
+            'kebijakan_skala' => ['required', 'integer', 'min:0', 'max:3'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],
         ]);
@@ -156,7 +159,7 @@ final class DispatchController extends Controller
             $items[] = ['consumption' => $consumption, 'qty' => self::text($unit['jumlah'] ?? ''), 'base_unit' => filter_var($unit['satuan_dasar'] ?? false, FILTER_VALIDATE_BOOLEAN), 'condition' => self::text($unit['kondisi'] ?? ''), 'location' => $rack, 'serial' => $serial];
         }
 
-        $outcome = $reverse->run(self::text($input['command_id']), $actor, $dispatch['company'], $dispatch['line'], self::text($input['jenis']), $items, self::nullable($input['reservasi'] ?? null), trim(self::text($input['alasan'])), self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $reverse->run(self::text($input['command_id']), $actor, $dispatch['company'], $dispatch['line'], self::text($input['jenis']), $items, self::nullable($input['reservasi'] ?? null), trim(self::text($input['alasan'])), self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'reversed', '/gudang/barang-keluar/'.$dispatch['project'], self::text($input['tanggal']));
     }
@@ -176,6 +179,8 @@ final class DispatchController extends Controller
             'alasan_alokasi' => ['nullable', 'string', 'max:500'],
             'bukti' => ['required', 'uuid'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
+            'kebijakan_seri' => ['required', 'boolean'],
+            'kebijakan_skala' => ['required', 'integer', 'min:0', 'max:3'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],
         ]);
@@ -188,7 +193,7 @@ final class DispatchController extends Controller
         $shippedHandle = self::nullable($input['seri_terkirim'] ?? null);
         $shipped = $shippedHandle === null ? null : ($this->queries->serial($dispatch['product'], $shippedHandle) ?? throw ValidationException::withMessages(['seri_terkirim' => $unknown]));
         $evidence = $this->queries->evidence($actor, $dispatch['company'], self::text($input['bukti'])) ?? throw ValidationException::withMessages(['bukti' => $unknown]);
-        $outcome = $substitute->run(self::text($input['command_id']), $actor, $dispatch['company'], $consumption, self::text($input['jumlah']), $recorded, $lot, $rack, $shipped, self::nullable($input['alasan_alokasi'] ?? null), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $substitute->run(self::text($input['command_id']), $actor, $dispatch['company'], $consumption, self::text($input['jumlah']), $recorded, $lot, $rack, $shipped, self::nullable($input['alasan_alokasi'] ?? null), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'substituted', '/gudang/barang-keluar/'.$dispatch['project'], self::text($input['tanggal']));
     }
@@ -237,7 +242,7 @@ final class DispatchController extends Controller
             'L-11' => self::say('dispatch.refusal.project_state'),
             'BR-INV-11' => self::say('dispatch.refusal.not_warehouse'),
             'BR-RSV-01', 'BR-RSV-03', 'AZ-01', 'C-05' => self::say('receiving.refusal.reservation'),
-            'AZ-08' => $reason === 'allocation_reason' ? self::say('dispatch.refusal.allocation_reason') : self::say('messages.msg_14'),
+            'AZ-08' => self::say('messages.msg_14'),
             default => self::say('messages.msg_04'),
         };
     }

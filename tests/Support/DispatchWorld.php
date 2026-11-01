@@ -8,6 +8,8 @@ use App\Modules\INV\Actions\ReverseDispatch;
 use App\Modules\INV\Actions\SubstituteDispatchIdentity;
 use App\Modules\INV\Data\DispatchEntry;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PUR\Actions\CorrectPurchaseCost;
+use App\Modules\PUR\Models\Purchase;
 use App\Support\BusinessDate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -59,7 +61,9 @@ final class DispatchWorld
      */
     public static function restore(int $actor, int $company, int $dispatchLine, string $kind, array $items, ?string $reserve = null, array $acknowledged = [], ?string $duplicateReason = null): string
     {
-        return InvoiceWorld::word(app(ReverseDispatch::class)->run((string) Str::uuid(), $actor, $company, $dispatchLine, $kind, $items, $reserve, 'Barang tidak jadi berangkat', $acknowledged, $duplicateReason, BusinessDate::today(), false, ['line' => $dispatchLine, 'items' => $items, 'reserve' => $reserve, 'acknowledged' => $acknowledged]));
+        [$serialized, $scale] = self::policy(DB::table('dispatch_lines')->where('id', $dispatchLine)->value('product_id'));
+
+        return InvoiceWorld::word(app(ReverseDispatch::class)->run((string) Str::uuid(), $actor, $company, $dispatchLine, $kind, $items, $reserve, 'Barang tidak jadi berangkat', $acknowledged, $duplicateReason, BusinessDate::today(), false, $serialized, $scale, ['line' => $dispatchLine, 'items' => $items, 'reserve' => $reserve, 'acknowledged' => $acknowledged]));
     }
 
     /** @return array{consumption: int, qty: string, base_unit: bool, condition: string, location: int, serial: ?int} */
@@ -70,7 +74,26 @@ final class DispatchWorld
 
     public static function substitute(int $actor, int $company, int $consumption, string $qty, ?int $recorded, int $lot, int $rack, ?int $shipped, int $evidence, ?string $allocation = null): string
     {
-        return InvoiceWorld::word(app(SubstituteDispatchIdentity::class)->run((string) Str::uuid(), $actor, $company, $consumption, $qty, $recorded, $lot, $rack, $shipped, $allocation, $evidence, 'Nomor keliru dicatat', BusinessDate::today(), false, ['consumption' => $consumption, 'qty' => $qty, 'lot' => $lot, 'rack' => $rack, 'recorded' => $recorded, 'shipped' => $shipped]));
+        [$serialized, $scale] = self::policy(DB::table('stock_consumptions')->where('id', $consumption)->value('product_id'));
+
+        return InvoiceWorld::word(app(SubstituteDispatchIdentity::class)->run((string) Str::uuid(), $actor, $company, $consumption, $qty, $recorded, $lot, $rack, $shipped, $allocation, $evidence, 'Nomor keliru dicatat', BusinessDate::today(), false, $serialized, $scale, ['consumption' => $consumption, 'qty' => $qty, 'lot' => $lot, 'rack' => $rack, 'recorded' => $recorded, 'shipped' => $shipped]));
+    }
+
+    /** @return array{bool, int} the product's serial and scale policy, as the page read it (ST-09) */
+    private static function policy(mixed $product): array
+    {
+        $row = DB::table('products')->where('id', $product)->first(['is_serialized', 'quantity_scale']);
+
+        return [(bool) $row->is_serialized, (int) $row->quantity_scale];
+    }
+
+    /** ROUTE-175's action on the lot's purchase line, the goods value corrected (M-07). */
+    public static function correctLotCost(int $actor, int $lot, string $value): string
+    {
+        $line = (int) DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->where('i.id', $lot)->value('r.purchase_line_id');
+        $purchase = Purchase::query()->findOrFail(DB::table('purchase_lines')->where('id', $line)->value('purchase_id'));
+
+        return InvoiceWorld::word(app(CorrectPurchaseCost::class)->line((string) Str::uuid(), $actor, $purchase, $line, 'PRICE_CORRECTION', $value, 'Harga keliru', BusinessDate::today(), false));
     }
 
     public static function evidence(Company $company): int

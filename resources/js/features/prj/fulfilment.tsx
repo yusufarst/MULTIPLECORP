@@ -47,6 +47,7 @@ export type FulfilmentLine = {
     can: { reserve: boolean; cancel: boolean; replan: boolean };
 };
 export type Fulfilment = {
+    correct_dispatch: boolean;
     confirmation: { kind: 'QUOTATION_APPROVAL' | 'NO_QUOTATION' | 'MIGRATION'; business_date: string; decided_by: string | null; reason: string | null; evidence: { id: string; type: string } | null } | null;
     lines: FulfilmentLine[];
     can: { confirm: boolean; spk: boolean };
