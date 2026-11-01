@@ -1,0 +1,29 @@
+Owner directive received in session during execution, 2026-11-01 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — MULTIPLECORP CI ROOT-CAUSE CORRECTION / FAST BUILD
+Second Review ChatGPT telah memeriksa langsung log GitHub Actions PR #56 dan PR #57.
+PR #56 — Run 41300377368
+Seluruh layer Browser pada attempt terbaru PASS, tetapi aggregator FAIL.
+Ditemukan dua artefak `browser-evidence-e2e` dalam satu workflow run, masing-masing dari percobaan awal dan rerun. Skrip aggregator mengambil semua artefak berdasarkan prefix nama, dan file evidence lama dapat menimpa evidence terbaru.
+Perbaiki pemilihan evidence secara deterministik agar hanya menggunakan hasil yang sah dari attempt/job terbaru untuk commit yang diuji.
+Tetap FAIL-CLOSED untuk evidence yang tidak lengkap, SHA berbeda, job gagal, atau hasil yang tidak valid. Jangan melewati required check.
+PR #57 — Run 41303173753
+
+* Verify, Performance, dan E2E PASS.
+* Accessibility dan Responsive gagal karena tombol `Cari` dalam konten utama dan navigasi bawah menghasilkan selector ambigu. Perbaiki scope selector Playwright agar memilih tombol formulir yang benar.
+* Localization gagal karena tes mengharapkan `Physical stock` di `inventory-block`, sedangkan UI menampilkan `Available`, `On hand`, `Reserved`, dan `Unusable`. Periksa kontrak bahasa dan UI, kemudian perbaiki kode atau assertion yang benar-benar keliru.
+* Jangan melemahkan tes atau menghilangkan cakupan yang diwajibkan.
+
+Tindak lanjut:
+
+1. Verifikasi status HEAD dan CI terbaru sebelum mengubah apa pun.
+2. Perbaiki akar masalah secara terarah, melalui branch dan change control yang sesuai.
+3. Jalankan targeted verification.
+4. Push dan tunggu mandatory CI terbaru.
+5. Rekonsiliasi review Codex dan temuan ER-06.
+6. Merge hanya setelah seluruh gate terpenuhi.
+7. Lanjutkan TASK-041 secara otomatis setelah TASK-040 sah menjadi DONE.
+
+Docker Desktop lokal tidak boleh di-restart secara global atau mengganggu proyek lain. Gunakan CI sebagai jalur verifikasi bila Docker lokal tidak tersedia.
+Tetap jalankan FAST BUILD, DIR-096, satu executor utama, satu watcher, dan laporan progres ringkas.
+Jangan mengulang investigasi yang sudah terbukti. Fokus pada perbaikan dan penyelesaian TASK-040.

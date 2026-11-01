@@ -171,15 +171,20 @@ jobs:
           git checkout -q --detach FETCH_HEAD
           git log -1 --format='Tested commit: %H'
 
-      - name: Fetch each layer's summary from this run
+      # A rerun keeps the earlier attempt's artifact of the same name: each layer's is the one its latest job uploaded (DIR-105).
+      - name: Fetch each layer's summary from its latest job
         if: needs.browser-layer.result == 'success'
+        env:
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: |
           mkdir -p evidence
-          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts" --jq '.artifacts[] | select(.name | startswith("browser-evidence-")) | "\(.id) \(.name)"' |
-            while read -r id name; do
-              gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "evidence/${name}.zip"
-              unzip -q -o "evidence/${name}.zip" '*summary*.txt' -d "evidence/${name}"
-            done
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/artifacts?per_page=100" --jq '.artifacts[]' > browser-artifacts.ndjson
+          gh api --paginate "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs?filter=latest&per_page=100" --jq '.jobs[]' > browser-jobs.ndjson
+          node scripts/ci/select-browser-evidence.mjs --artifacts browser-artifacts.ndjson --jobs browser-jobs.ndjson --run "${GITHUB_RUN_ID}" --head "${HEAD_SHA}" > browser-chosen.txt
+          while read -r id name; do
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${id}/zip" > "evidence/${name}.zip"
+            unzip -q "evidence/${name}.zip" '*summary*.txt' -d "evidence/${name}"
+          done < browser-chosen.txt
 
       - name: Every layer passed on this commit
         run: node scripts/ci/check-browser-evidence.mjs --result "$LAYERS_RESULT" --commit "$GITHUB_SHA" --evidence evidence --out storage/logs/verify/summary-browser.txt

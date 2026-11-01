@@ -753,3 +753,7 @@ This is a change summary; current state and approval authority live in their [ow
 ## Unreleased — 2026-11-01, DIR-103 — Browser layers in parallel
 
 - TL-09–TL-12 run on runners of their own; `Browser — TL-09–TL-12 on Chromium and WebKit` stays the required check as their aggregator, failing on a layer failed, cancelled or skipped or on evidence missing or of another commit.
+
+## Unreleased — 2026-11-01, DIR-105 — A browser layer's evidence from its latest job
+
+- The Browser check reads each layer's artifact from its latest job on the tested commit, so a rerun's result is the one that counts; anything else fails the check, with no fallback to an older attempt.
