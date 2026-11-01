@@ -14869,6 +14869,84 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "dispatch.document.issued": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.choice": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.KEEP": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.REVISE": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.VOID": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.document.reason": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.records.note": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.document_disposition": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.refusal.document_authority": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.existing_evidence": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.evidence_uploaded": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.find_evidence": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dispatch.substitute.find_evidence_help": {
+            "task": "TASK-041",
+            "source": "WORKFLOWS §8; CM-36",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "dispatch.records.title": {
             "task": "TASK-041",
             "source": "D-IA-16",

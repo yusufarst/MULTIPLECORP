@@ -7,6 +7,7 @@ use App\Modules\INV\Actions\Dispatch;
 use App\Modules\INV\Actions\ReverseDispatch;
 use App\Modules\INV\Actions\SubstituteDispatchIdentity;
 use App\Modules\INV\Data\DispatchEntry;
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PUR\Actions\CorrectPurchaseCost;
 use App\Modules\PUR\Models\Purchase;
@@ -59,11 +60,11 @@ final class DispatchWorld
      * @param  list<array{consumption: int, qty: string, base_unit: bool, condition: string, location: int, serial: ?int}>  $items
      * @param  list<string>  $acknowledged
      */
-    public static function restore(int $actor, int $company, int $dispatchLine, string $kind, array $items, ?string $reserve = null, array $acknowledged = [], ?string $duplicateReason = null): string
+    public static function restore(int $actor, int $company, int $dispatchLine, string $kind, array $items, ?string $reserve = null, array $acknowledged = [], ?string $duplicateReason = null, ?DocumentDisposition $document = null): string
     {
         [$serialized, $scale] = self::policy(DB::table('dispatch_lines')->where('id', $dispatchLine)->value('product_id'));
 
-        return InvoiceWorld::word(app(ReverseDispatch::class)->run((string) Str::uuid(), $actor, $company, $dispatchLine, $kind, $items, $reserve, 'Barang tidak jadi berangkat', $acknowledged, $duplicateReason, BusinessDate::today(), false, $serialized, $scale, ['line' => $dispatchLine, 'items' => $items, 'reserve' => $reserve, 'acknowledged' => $acknowledged]));
+        return InvoiceWorld::word(app(ReverseDispatch::class)->run((string) Str::uuid(), $actor, $company, $dispatchLine, $kind, $items, $reserve, 'Barang tidak jadi berangkat', $acknowledged, $duplicateReason, BusinessDate::today(), false, $serialized, $scale, $document, ['document' => $document?->choice, 'line' => $dispatchLine, 'items' => $items, 'reserve' => $reserve, 'acknowledged' => $acknowledged]));
     }
 
     /** @return array{consumption: int, qty: string, base_unit: bool, condition: string, location: int, serial: ?int} */
@@ -72,11 +73,11 @@ final class DispatchWorld
         return ['consumption' => $consumption, 'qty' => $qty, 'base_unit' => true, 'condition' => $condition, 'location' => $rack, 'serial' => $serial];
     }
 
-    public static function substitute(int $actor, int $company, int $consumption, string $qty, ?int $recorded, int $lot, int $rack, ?int $shipped, int $evidence, ?string $allocation = null): string
+    public static function substitute(int $actor, int $company, int $consumption, string $qty, ?int $recorded, int $lot, int $rack, ?int $shipped, int $evidence, ?string $allocation = null, ?DocumentDisposition $document = null): string
     {
         [$serialized, $scale] = self::policy(DB::table('stock_consumptions')->where('id', $consumption)->value('product_id'));
 
-        return InvoiceWorld::word(app(SubstituteDispatchIdentity::class)->run((string) Str::uuid(), $actor, $company, $consumption, $qty, $recorded, $lot, $rack, $shipped, $allocation, $evidence, 'Nomor keliru dicatat', BusinessDate::today(), false, $serialized, $scale, ['consumption' => $consumption, 'qty' => $qty, 'lot' => $lot, 'rack' => $rack, 'recorded' => $recorded, 'shipped' => $shipped]));
+        return InvoiceWorld::word(app(SubstituteDispatchIdentity::class)->run((string) Str::uuid(), $actor, $company, $consumption, $qty, $recorded, $lot, $rack, $shipped, $allocation, $evidence, 'Nomor keliru dicatat', BusinessDate::today(), false, $serialized, $scale, $document, ['document' => $document?->choice, 'consumption' => $consumption, 'qty' => $qty, 'lot' => $lot, 'rack' => $rack, 'recorded' => $recorded, 'shipped' => $shipped]));
     }
 
     /** @return array{bool, int} the product's serial and scale policy, as the page read it (ST-09) */
@@ -96,8 +97,9 @@ final class DispatchWorld
         return InvoiceWorld::word(app(CorrectPurchaseCost::class)->line((string) Str::uuid(), $actor, $purchase, $line, 'PRICE_CORRECTION', $value, 'Harga keliru', BusinessDate::today(), false));
     }
 
-    public static function evidence(Company $company): int
+    /** @param  array<string, mixed>  $attributes */
+    public static function evidence(Company $company, array $attributes = []): int
     {
-        return (int) EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY'])->id;
+        return (int) EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY', ...$attributes])->id;
     }
 }

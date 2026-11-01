@@ -18,12 +18,38 @@ import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { useCommand } from '@/lib/use-command';
 
 export type Consumption = { handle: string; lot: string; other: boolean; open: string; location: string | null; serials: { handle: string; serial: string }[] };
-export type DispatchRecord = { id: string; date: string; line: number; handle: string; name: string; qty: string; unit: string | null; base: string; serialized: boolean; scale: number; undelivered: string; consumptions: Consumption[]; issuable: boolean; reversible: boolean };
+export type DispatchRecord = { id: string; date: string; line: number; handle: string; name: string; qty: string; unit: string | null; base: string; serialized: boolean; scale: number; undelivered: string; consumptions: Consumption[]; note: IssuedNote | null; issuable: boolean; reversible: boolean };
+export type IssuedNote = { id: string; number: string };
+export type Proofs = { rows: { id: string; label: string }[]; more: boolean };
 type Rack = { id: string; code: string; name: string };
 type Entered = { qty: string; condition: 'USABLE' | 'UNUSABLE'; rack: string };
 type ReturnRow = { key: string; consumption: Consumption; serial: string | null; label: string; unitOnly: boolean };
+type Disposition = 'KEEP' | 'REVISE' | 'VOID';
 
-export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, onClose, onDone }: { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN'; racks: Rack[]; today: string; canReserve: boolean; onClose: () => void; onDone: () => void }) {
+// WORKFLOWS §8: the correction revises, voids or keeps with its reason the issued Surat Jalan it affects, in its own transaction.
+function NoteDisposition({ note, canCorrect, choice, reason, disabled, errors, onChoice, onReason }: { note: IssuedNote; canCorrect: boolean; choice: Disposition; reason: string; disabled: boolean; errors: Record<string, string>; onChoice: (next: Disposition) => void; onReason: (next: string) => void }) {
+    const { t } = useTranslation();
+
+    return (
+        <fieldset disabled={disabled} data-slot="note-disposition" className="flex min-w-0 flex-col gap-2 border-t border-border-subtle pt-3">
+            <legend className="text-body font-medium">{t('dispatch.document.issued', { nomor: note.number })}</legend>
+            <FormField label={t('dispatch.document.choice')} error={errors.dokumen}>
+                {(control) => (
+                    <NativeSelect {...control} value={choice} onChange={(event) => { onChoice(event.target.value === 'REVISE' ? 'REVISE' : event.target.value === 'VOID' ? 'VOID' : 'KEEP'); }}>
+                        <option value="KEEP">{t('dispatch.document.KEEP')}</option>
+                        {canCorrect && <option value="REVISE">{t('dispatch.document.REVISE')}</option>}
+                        {canCorrect && <option value="VOID">{t('dispatch.document.VOID')}</option>}
+                    </NativeSelect>
+                )}
+            </FormField>
+            <FormField label={t('dispatch.document.reason')} required error={errors.alasan_dokumen}>
+                {(control) => <Input {...control} value={reason} maxLength={500} onChange={(event) => { onReason(event.target.value); }} />}
+            </FormField>
+        </fieldset>
+    );
+}
+
+export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, canCorrect, onClose, onDone }: { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN'; racks: Rack[]; today: string; canReserve: boolean; canCorrect: boolean; onClose: () => void; onDone: () => void }) {
     const { t } = useTranslation();
     const [reason, setReason] = useState('');
     const [reserve, setReserve] = useState('');
@@ -32,6 +58,8 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
     const [acknowledged, setAcknowledged] = useState<string[]>([]);
     const [duplicateReason, setDuplicateReason] = useState('');
     const [sentAs, setSentAs] = useState('');
+    const [disposition, setDisposition] = useState<Disposition>('KEEP');
+    const [documentReason, setDocumentReason] = useState('');
     const reverse = useCommand<Record<string, FormDataConvertible>>(() => `/gudang/barang-keluar/${record.id}/balikkan`, 'post');
     const frozen = reverse.pending || reverse.unknown;
     const rows = record.consumptions.filter((one) => one.open !== '0').flatMap((one): ReturnRow[] => (one.serials.length > 0
@@ -51,7 +79,7 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
             return { konsumsi: row.consumption.handle, jumlah: one.qty, satuan_dasar: true, kondisi: one.condition, rak: one.rack, ...(row.serial === null ? {} : { seri: row.serial }) };
         });
         setSentAs(signature);
-        reverse.submit({ jenis: kind, unit, ...(reserve === '' ? {} : { reservasi: reserve }), alasan: reason, ...(warned ? { duplikat: acknowledged, alasan_duplikat: duplicateReason } : {}), kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
+        reverse.submit({ jenis: kind, unit, ...(reserve === '' ? {} : { reservasi: reserve }), alasan: reason, ...(warned ? { duplikat: acknowledged, alasan_duplikat: duplicateReason } : {}), ...(record.note === null ? {} : { dokumen: disposition, alasan_dokumen: documentReason }), kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
     };
     const title: TranslationKey = kind === 'DISPATCH_REVERSAL' ? 'dispatch.reverse.cancel' : 'dispatch.reverse.returned';
 
@@ -65,7 +93,7 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
             destructive
             pending={reverse.pending}
             answer={matched ? null : reverse.answer}
-            blocked={chosen.length === 0 || (warned && (!matches.every((match) => acknowledged.includes(match.id)) || duplicateReason.trim() === ''))}
+            blocked={chosen.length === 0 || (record.note !== null && documentReason.trim() === '') || (warned && (!matches.every((match) => acknowledged.includes(match.id)) || duplicateReason.trim() === ''))}
             reason={{ value: reason, onChange: setReason, error: reverse.errors.alasan ?? null }}
             onConfirm={send}
             items={(
@@ -109,14 +137,15 @@ export function ReverseDispatchDialog({ record, kind, racks, today, canReserve, 
                             {(control) => <DecimalInput {...control} scale={record.scale} disabled={frozen} value={reserve} onValueChange={(next) => { setReserve(next ?? ''); }} />}
                         </FormField>
                     )}
-                    {Object.entries(reverse.errors).filter(([field]) => !['alasan', 'alasan_duplikat', 'reservasi'].includes(field)).slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
+                    {record.note !== null && <NoteDisposition note={record.note} canCorrect={canCorrect} choice={disposition} reason={documentReason} disabled={frozen} errors={reverse.errors} onChoice={setDisposition} onReason={setDocumentReason} />}
+                    {Object.entries(reverse.errors).filter(([field]) => !['alasan', 'alasan_duplikat', 'reservasi', 'dokumen', 'alasan_dokumen'].includes(field)).slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
                 </div>
             )}
         />
     );
 }
 
-export function SubstituteDialog({ record, choices, company, canEvidence, today, onClose, onDone, onFind }: { record: DispatchRecord; choices: Choices | null; company: string; canEvidence: boolean; today: string; onClose: () => void; onDone: () => void; onFind: (text: string) => void }) {
+export function SubstituteDialog({ record, choices, proofs, company, canEvidence, canCorrect, today, onClose, onDone, onFind, onFindProof }: { record: DispatchRecord; choices: Choices | null; proofs: Proofs | null; company: string; canEvidence: boolean; canCorrect: boolean; today: string; onClose: () => void; onDone: () => void; onFind: (text: string) => void; onFindProof: (text: string) => void }) {
     const { t } = useTranslation();
     const open = record.consumptions.filter((one) => one.open !== '0');
     const [reason, setReason] = useState('');
@@ -127,7 +156,10 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
     const [serial, setSerial] = useState('');
     const [allocation, setAllocation] = useState('');
     const [evidence, setEvidence] = useState<string | null>(null);
+    const [uploaded, setUploaded] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [disposition, setDisposition] = useState<Disposition>('KEEP');
+    const [documentReason, setDocumentReason] = useState('');
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const substitute = useCommand<Record<string, FormDataConvertible>>(() => `/gudang/barang-keluar/${record.id}/ganti-identitas`, 'post');
     const frozen = substitute.pending || substitute.unknown;
@@ -135,10 +167,12 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
     const lots = choices?.lots ?? [];
     const chosenSerial = choices?.serials.find((one) => one.handle === serial);
     const place = record.serialized ? chosenSerial : lots.find((lot) => `${lot.lot}|${lot.location}` === shipped);
-    const ready = place !== undefined && quantity !== '' && evidence !== null && (!record.serialized || recorded !== '') && (!place.other || allocation.trim() !== '');
+    // The Surat Jalan names the serials: only a serial's substitution affects what it says.
+    const affects = record.note !== null && record.serialized;
+    const ready = place !== undefined && quantity !== '' && evidence !== null && (!record.serialized || recorded !== '') && (!place.other || allocation.trim() !== '') && (!affects || documentReason.trim() !== '');
     const send = () => {
         if (place === undefined || evidence === null) return;
-        substitute.submit({ konsumsi: consumption, jumlah: quantity, ...(recorded === '' ? {} : { seri_tercatat: recorded }), lot: place.lot, rak: place.location, ...(serial === '' ? {} : { seri_terkirim: serial }), ...(place.other ? { alasan_alokasi: allocation } : {}), bukti: evidence, alasan: reason, kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
+        substitute.submit({ konsumsi: consumption, jumlah: quantity, ...(recorded === '' ? {} : { seri_tercatat: recorded }), lot: place.lot, rak: place.location, ...(serial === '' ? {} : { seri_terkirim: serial }), ...(place.other ? { alasan_alokasi: allocation } : {}), bukti: evidence, alasan: reason, ...(affects ? { dokumen: disposition, alasan_dokumen: documentReason } : {}), kebijakan_seri: record.serialized, kebijakan_skala: record.scale, tanggal: date.date, tanggal_otomatis: !date.chosen }, onDone);
     };
 
     return (
@@ -205,13 +239,26 @@ export function SubstituteDialog({ record, choices, company, canEvidence, today,
                                 {(control) => <Input {...control} value={allocation} maxLength={500} onChange={(event) => { setAllocation(event.target.value); }} />}
                             </FormField>
                         )}
+                        {proofs?.more === true && <ChoicesFind disabled={frozen} onFind={onFindProof} label={t('dispatch.substitute.find_evidence')} help={t('dispatch.substitute.find_evidence_help')} />}
+                        {proofs === null ? <RegionLoading /> : (
+                            <FormField label={t('dispatch.substitute.existing_evidence')} error={substitute.errors.bukti}>
+                                {(control) => (
+                                    <NativeSelect {...control} value={evidence ?? ''} onChange={(event) => { setEvidence(event.target.value === '' ? null : event.target.value); }}>
+                                        <option value="">{t('dispatch.substitute.choose')}</option>
+                                        {uploaded !== null && <option value={uploaded}>{t('dispatch.substitute.evidence_uploaded')}</option>}
+                                        {proofs.rows.filter((row) => row.id !== uploaded).map((row) => <option key={row.id} value={row.id}>{row.label}</option>)}
+                                    </NativeSelect>
+                                )}
+                            </FormField>
+                        )}
                         {canEvidence && <Button variant="outline" className="self-start" onClick={() => { setUploading(true); }}>{t('dispatch.substitute.evidence')}</Button>}
                         <p className="text-caption text-text-secondary">{evidence === null ? t('dispatch.substitute.evidence_needed') : t('dispatch.substitute.evidence_ready')}</p>
-                        {Object.entries(substitute.errors).filter(([field]) => field !== 'alasan' && field !== 'alasan_alokasi').slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
+                        {affects && record.note !== null && <NoteDisposition note={record.note} canCorrect={canCorrect} choice={disposition} reason={documentReason} disabled={frozen} errors={substitute.errors} onChoice={setDisposition} onReason={setDocumentReason} />}
+                        {Object.entries(substitute.errors).filter(([field]) => !['alasan', 'alasan_alokasi', 'bukti', 'dokumen', 'alasan_dokumen'].includes(field)).slice(0, 1).map(([field, message]) => <p key={field} role="alert" className="text-body font-medium text-danger-fg">{message}</p>)}
                     </fieldset>
                 )}
             />
-            {canEvidence && <ProofSheet open={uploading} onOpenChange={setUploading} company={company} types={['DELIVERY_PROOF', 'WAREHOUSE_RECORD']} today={today} back={window.location.pathname} onRegistered={(id) => { setEvidence(id); setUploading(false); }} />}
+            {canEvidence && <ProofSheet open={uploading} onOpenChange={setUploading} company={company} types={['DELIVERY_PROOF', 'WAREHOUSE_RECORD']} today={today} back={window.location.pathname} onRegistered={(id) => { setUploaded(id); setEvidence(id); setUploading(false); }} />}
         </>
     );
 }

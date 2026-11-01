@@ -35,6 +35,12 @@ final class DispatchQueries
     /** The serials still out on this consumption: those whose last entry is its own (AX-10; AX-35). */
     private const OUT = "(select coalesce(json_agg(json_build_object('handle', s.id, 'serial', s.serial_number) order by s.serial_number), '[]') from stock_movement_entries e join serial_units s on s.last_entry_id = e.id where e.stock_consumption_id = c.id and s.state = 'DISPATCHED') as serials";
 
+    /** The dispatch's issued Surat Jalan, which a correction disposes of (WORKFLOWS §8). */
+    private const NOTE = "(select json_build_object('id', n.public_id, 'number', v.formatted_number) from documents n join document_versions v on v.document_id = n.id and v.state = 'ISSUED' where n.dispatch_movement_id = d.stock_movement_id and n.document_type_code = 'DOC-03' limit 1) as note";
+
+    /** The proofs a substitution may cite: a delivery proof, a warehouse record or another document (CM-36). */
+    private const PROOFS = ['DELIVERY_PROOF', 'WAREHOUSE_RECORD', 'OTHER'];
+
     /** @var array<string, array<string, int>> each list's handles, computed once a request (QB-13) */
     private array $handles = [];
 
@@ -138,7 +144,7 @@ final class DispatchQueries
             'older_failed' => $records['cursor_failed'],
             'locations' => array_values(array_map(fn (array $rack): array => ['id' => RowHandle::of('locations', is_numeric($rack['id'] ?? null) ? (int) $rack['id'] : 0), 'code' => is_string($rack['code'] ?? null) ? $rack['code'] : '', 'name' => is_string($rack['name'] ?? null) ? $rack['name'] : ''], array_filter(is_array($racks) ? $racks : [], is_array(...)))),
             'today' => BusinessDate::today(),
-            'can' => ['allocate' => $viewer->allows('stock.allocate_intercompany', $companyId), 'reverse' => $viewer->allows('stock.reverse', $companyId), 'reserve' => $viewer->allows('stock.reserve', $companyId), 'note' => DocumentAccess::mayIssue($viewer, 'DOC-03', $companyId), 'evidence' => $viewer->allows('evidence.upload', $companyId)],
+            'can' => ['allocate' => $viewer->allows('stock.allocate_intercompany', $companyId), 'reverse' => $viewer->allows('stock.reverse', $companyId), 'reserve' => $viewer->allows('stock.reserve', $companyId), 'note' => DocumentAccess::mayIssue($viewer, 'DOC-03', $companyId), 'evidence' => $viewer->allows('evidence.upload', $companyId), 'correct_document' => DocumentAccess::mayCorrect($viewer, 'DOC-03', $companyId)],
         ];
     }
 
@@ -177,7 +183,7 @@ final class DispatchQueries
 
         $found = DB::table('dispatch_lines as d')->join('stock_movements as m', 'm.id', '=', 'd.stock_movement_id')->join('project_lines as l', 'l.id', '=', 'd.project_line_id')->join('products as x', 'x.id', '=', 'd.product_id')->join('project_line_balances as g', 'g.project_line_id', '=', 'd.project_line_id')->leftJoin('units as u', 'u.id', '=', 'd.entered_unit_id')
             ->where('d.project_id', $projectId)->when($key !== null, fn (Builder $where) => $where->where('d.id', '<', $key[0] ?? 0))->orderByDesc('d.id')->limit(self::PAGE + 1)
-            ->get(['d.id', 'd.project_line_id', 'd.qty_base', 'd.entered_qty', 'u.code as unit', 'm.public_id', 'm.business_date', 'l.line_no', 'x.name', 'x.is_serialized', 'x.quantity_scale', 'g.dispatched_net_qty_base', 'g.delivered_net_qty_base'])->all();
+            ->get(['d.id', 'd.project_line_id', 'd.qty_base', 'd.entered_qty', 'u.code as unit', 'm.public_id', 'm.business_date', 'l.line_no', 'x.name', 'x.is_serialized', 'x.quantity_scale', 'g.dispatched_net_qty_base', 'g.delivered_net_qty_base', DB::raw(self::NOTE)])->all();
         $rows = array_slice($found, 0, self::PAGE);
         $last = $rows === [] ? null : $rows[count($rows) - 1];
         $ids = array_map(fn (object $row): int => (int) Row::text($row, 'id'), $rows);
@@ -203,6 +209,7 @@ final class DispatchQueries
             'id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'line' => (int) Row::text($row, 'line_no'), 'handle' => RowHandle::of('project_lines', (int) Row::text($row, 'project_line_id')), 'name' => Row::text($row, 'name'), 'qty' => StockFigures::plain(Row::text($row, 'entered_qty')), 'unit' => Row::nullable($row, 'unit'), 'base' => StockFigures::plain(Row::text($row, 'qty_base')), 'serialized' => (bool) $row->is_serialized, 'scale' => (int) Row::text($row, 'quantity_scale'),
             'undelivered' => StockFigures::remainder(Row::text($row, 'dispatched_net_qty_base'), Row::text($row, 'delivered_net_qty_base')),
             'consumptions' => $consumptions[(int) Row::text($row, 'id')] ?? [],
+            'note' => self::noteOf($row),
             'issuable' => $stillOut($row),
             'reversible' => $mayReverse && $stillOut($row),
         ], $rows), 'more' => count($found) > self::PAGE && $last !== null ? StockCursor::of($viewer, [(int) Row::text($last, 'id')], $binding) : null, 'cursor_failed' => false];
@@ -302,9 +309,40 @@ final class DispatchQueries
     /** An evidence of the company the viewer may see, by public id (PJ-08; CS-04). */
     public function evidence(int $viewerId, int $companyId, string $publicId): ?int
     {
-        $row = preg_match(self::UUID, $publicId) === 1 ? DB::table('evidence_documents')->where('company_id', $companyId)->where('public_id', strtolower($publicId))->first(['id', 'evidence_type']) : null;
+        $row = preg_match(self::UUID, $publicId) === 1 ? DB::table('evidence_documents')->where(fn (Builder $where) => $where->where('company_id', $companyId)->orWhere('evidence_scope', 'POOL'))->where('public_id', strtolower($publicId))->first(['id', 'evidence_type', 'company_id']) : null;
 
-        return $row !== null && EvidenceTypes::mayView($this->capabilities->for($viewerId), Row::text($row, 'evidence_type'), $companyId) ? (int) Row::text($row, 'id') : null;
+        return $row !== null && EvidenceTypes::mayView($this->capabilities->for($viewerId), Row::text($row, 'evidence_type'), Row::nullable($row, 'company_id') === null ? null : $companyId) ? (int) Row::text($row, 'id') : null;
+    }
+
+    /**
+     * The evidence already registered that a substitution may cite, newest first, for a viewer who may see it (PJ-08; CM-36): the company's and the pool's, narrowed by issuer or reference when the list is cut. No file is needed to correct on a proof that exists.
+     *
+     * @return array{rows: list<array{id: string, label: string}>, more: bool}
+     */
+    public function proofs(int $viewerId, int $companyId, ?string $find = null): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $like = $find === null ? null : '%'.addcslashes(mb_strtolower($find), '%_\\').'%';
+        $found = DB::table('evidence_documents')->whereIn('evidence_type', self::PROOFS)->where(fn (Builder $where) => $where->where('company_id', $companyId)->orWhere('evidence_scope', 'POOL'))
+            ->when($like !== null, fn (Builder $where) => $where->whereRaw("lower(declared_issuer || ' ' || coalesce(issuer_reference, '')) like ?", [$like]))
+            ->orderByDesc('id')->limit(self::PAGE + 1)->get(['public_id', 'evidence_type', 'company_id', 'declared_issuer', 'issuer_reference', 'document_date'])->all();
+        $rows = [];
+
+        foreach (array_slice($found, 0, self::PAGE) as $row) {
+            if (EvidenceTypes::mayView($viewer, Row::text($row, 'evidence_type'), Row::nullable($row, 'company_id') === null ? null : $companyId)) {
+                $rows[] = ['id' => Row::text($row, 'public_id'), 'label' => implode(' · ', array_filter([self::word('evidence.type.'.Row::text($row, 'evidence_type')), Row::nullable($row, 'declared_issuer'), Row::nullable($row, 'issuer_reference'), Row::nullable($row, 'document_date')], fn (?string $part): bool => $part !== null && $part !== ''))];
+            }
+        }
+
+        return ['rows' => $rows, 'more' => count($found) > self::PAGE];
+    }
+
+    /** @return array{id: string, number: string}|null */
+    private static function noteOf(object $row): ?array
+    {
+        $note = json_decode(Row::nullable($row, 'note') ?? 'null', true);
+
+        return is_array($note) && is_string($note['id'] ?? null) && is_string($note['number'] ?? null) ? ['id' => $note['id'], 'number' => $note['number']] : null;
     }
 
     /** @param  Closure(): array<int|string, mixed>  $ids */

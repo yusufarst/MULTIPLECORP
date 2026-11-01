@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -48,7 +49,7 @@ it('INT-186: a route answer carries its refusal with the line\'s remainder, and 
     $project = DB::table('projects')->where('id', $this->demand['project']->id)->value('public_id');
     $page = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$project}")->viewData('page')['props'];
     $line = $page['lines'][0];
-    $body = fn (string $qty): array => ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => RowHandle::of('inventory_lots', $this->lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d')];
+    $body = fn (string $qty): array => ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => RowHandle::of('inventory_lots', $this->lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => BusinessDate::today()];
 
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$project}/keluarkan", $body('2'))->assertRedirect();
     $answer = $this->actingAs($this->actor)->followingRedirects()->post("/gudang/barang-keluar/{$project}/keluarkan", $body('2'))->viewData('page')['flash']['answer'];
@@ -64,7 +65,7 @@ it('INT-186: another company\'s lot without its reason answers MSG-14 like one w
     $allowed = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, 'stock.allocate_intercompany']);
     $project = DB::table('projects')->where('id', $this->demand['project']->id)->value('public_id');
     $line = $this->actingAs($allowed)->get("/gudang/barang-keluar/{$project}")->viewData('page')['props']['lines'][0];
-    $answer = $this->actingAs($allowed)->followingRedirects()->post("/gudang/barang-keluar/{$project}/keluarkan", ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => '1', 'lot' => [['lot' => RowHandle::of('inventory_lots', $lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => '1']], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d')])->viewData('page')['flash']['answer'];
+    $answer = $this->actingAs($allowed)->followingRedirects()->post("/gudang/barang-keluar/{$project}/keluarkan", ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => '1', 'lot' => [['lot' => RowHandle::of('inventory_lots', $lot), 'rak' => RowHandle::of('locations', $this->rack), 'jumlah' => '1']], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => BusinessDate::today()])->viewData('page')['flash']['answer'];
 
     expect($answer['code'])->toBe('AZ-08')->and($answer['text'])->toBe(__('messages.msg_14'));
 });
@@ -75,7 +76,7 @@ it('INT-186, INT-188 and INT-189: a product whose serial or scale policy changed
     expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->demand['line'], $this->demand['unit'], '2', [DispatchWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
     $row = DispatchWorld::last($this->demand['line']);
     $movement = DB::table('stock_movements')->where('id', $row->movement)->value('public_id');
-    $seen = ['kebijakan_seri' => true, 'kebijakan_skala' => 0, 'tanggal' => date('Y-m-d')];
+    $seen = ['kebijakan_seri' => true, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
     $consumption = RowHandle::of('stock_consumptions', $row->consumption);
     $rack = RowHandle::of('locations', $this->rack);
     $lot = RowHandle::of('inventory_lots', $this->lot);
@@ -98,7 +99,7 @@ it('INT-186, INT-188 and INT-189: a lost answer replayed after re-authentication
     $line = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$project}")->viewData('page')['props']['lines'][0];
     $rack = RowHandle::of('locations', $this->rack);
     $lot = RowHandle::of('inventory_lots', $this->lot);
-    $seen = ['kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d')];
+    $seen = ['kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => BusinessDate::today()];
     $twice = function (string $url, array $body): array {
         $body = ['command_id' => (string) Str::uuid(), ...$body];
         $first = $this->actingAs($this->actor)->followingRedirects()->post($url, $body)->viewData('page')['flash']['answer'];
@@ -132,7 +133,7 @@ it('INT-188 and INT-189: a restoration and a substitution each answer once under
     $movement = DB::table('stock_movements')->where('id', $row->movement)->value('public_id');
     $command = (string) Str::uuid();
     $unit = ['konsumsi' => RowHandle::of('stock_consumptions', $row->consumption), 'jumlah' => '1', 'satuan_dasar' => true, 'kondisi' => 'USABLE', 'rak' => RowHandle::of('locations', $this->rack)];
-    $body = ['command_id' => $command, 'jenis' => 'DISPATCH_REVERSAL', 'unit' => [$unit], 'alasan' => 'Tidak jadi berangkat', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => date('Y-m-d')];
+    $body = ['command_id' => $command, 'jenis' => 'DISPATCH_REVERSAL', 'unit' => [$unit], 'alasan' => 'Tidak jadi berangkat', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
 
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$movement}/balikkan", $body)->assertRedirect();
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$movement}/balikkan", $body)->assertRedirect();

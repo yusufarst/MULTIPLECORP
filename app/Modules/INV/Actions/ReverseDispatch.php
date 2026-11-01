@@ -2,6 +2,7 @@
 
 namespace App\Modules\INV\Actions;
 
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\INV\Services\DispatchRestoration;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Support\Command\CommandContext;
@@ -20,6 +21,8 @@ final class ReverseDispatch
 
     public const CAPABILITY = 'stock.reverse';
 
+    public const KINDS = DispatchRestoration::KINDS;
+
     public function __construct(
         private readonly CommandEnvelope $envelope,
         private readonly DispatchRestoration $restoration,
@@ -30,14 +33,14 @@ final class ReverseDispatch
      * @param  list<string>  $acknowledged
      * @param  array<string, mixed>  $payload  the validated request, the command's fingerprint
      */
-    public function run(string $commandId, int $actorUserId, int $companyId, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, array $payload): Outcome
+    public function run(string $commandId, int $actorUserId, int $companyId, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, ?DocumentDisposition $document, array $payload): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companyId, self::CAPABILITY, Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($companyId), $payload));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen, $document): CommandResult {
             $context->lock($this->restoration->locks($dispatchLineId, $items));
 
-            return new CommandResult('stock_movement', $this->restoration->restore($context, $dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen));
+            return new CommandResult('stock_movement', $this->restoration->restore($context, $dispatchLineId, $kind, $items, $reserve, $reason, $acknowledged, $duplicateReason, $businessDate, $prefilled, $serializedSeen, $scaleSeen, $document));
         }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED ? DispatchRestoration::refusalState($outcome->code, $dispatchLineId, $items, $businessDate) : null);
     }
 }

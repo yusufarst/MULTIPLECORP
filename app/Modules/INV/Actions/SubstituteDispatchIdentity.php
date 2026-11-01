@@ -2,6 +2,7 @@
 
 namespace App\Modules\INV\Actions;
 
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\INV\Services\DispatchRestoration;
 use App\Modules\INV\Services\IdentitySubstitution;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
@@ -27,14 +28,14 @@ final class SubstituteDispatchIdentity
     ) {}
 
     /** @param  array<string, mixed>  $payload  the validated request, the command's fingerprint */
-    public function run(string $commandId, int $actorUserId, int $companyId, int $consumptionId, string $quantity, ?int $recordedSerial, int $shippedLot, int $shippedLocation, ?int $shippedSerial, ?string $allocationReason, int $evidence, string $reason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, array $payload): Outcome
+    public function run(string $commandId, int $actorUserId, int $companyId, int $consumptionId, string $quantity, ?int $recordedSerial, int $shippedLot, int $shippedLocation, ?int $shippedSerial, ?string $allocationReason, int $evidence, string $reason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, ?DocumentDisposition $document, array $payload): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companyId, self::CAPABILITY, Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($companyId), $payload));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($consumptionId, $quantity, $recordedSerial, $shippedLot, $shippedLocation, $shippedSerial, $allocationReason, $evidence, $reason, $businessDate, $prefilled, $serializedSeen, $scaleSeen): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($consumptionId, $quantity, $recordedSerial, $shippedLot, $shippedLocation, $shippedSerial, $allocationReason, $evidence, $reason, $businessDate, $prefilled, $serializedSeen, $scaleSeen, $document): CommandResult {
             $context->lock($this->substitution->locks($consumptionId, $shippedLot, $shippedLocation, $recordedSerial, $shippedSerial, $evidence));
 
-            return new CommandResult('stock_movement', $this->substitution->substitute($context, $consumptionId, $quantity, $recordedSerial, $shippedLot, $shippedLocation, $shippedSerial, $allocationReason, $evidence, $reason, $businessDate, $prefilled, $serializedSeen, $scaleSeen));
+            return new CommandResult('stock_movement', $this->substitution->substitute($context, $consumptionId, $quantity, $recordedSerial, $shippedLot, $shippedLocation, $shippedSerial, $allocationReason, $evidence, $reason, $businessDate, $prefilled, $serializedSeen, $scaleSeen, $document));
         }, null, fn (Outcome $outcome): ?array => $outcome->kind === Outcome::REJECTED && $outcome->code === 'C-27' ? ['open' => DispatchRestoration::openOf($consumptionId)] : null);
     }
 }

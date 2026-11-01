@@ -10,7 +10,7 @@ test.describe.configure({ timeout: 240_000 });
 
 for (const [locale, texts] of [
     ['id', { list: 'Barang Keluar', page: 'Keluarkan Barang', quantity: 'Jumlah keluar', lots: 'Lot yang diambil', action: 'Catat Barang Keluar' }],
-    ['en', { list: 'Dispatch', page: 'Dispatch Goods', quantity: 'Quantity out', lots: 'Lots taken', action: 'Record Dispatch' }],
+    ['en', { list: 'Goods dispatch', page: 'Dispatch goods', quantity: 'Quantity out', lots: 'Lots taken', action: 'Record goods dispatch' }],
 ] as const) {
     test(`shows PG-023 and PG-024 in ${locale}`, async ({ page }) => {
         await page.setViewportSize({ width: 1280, height: 900 });

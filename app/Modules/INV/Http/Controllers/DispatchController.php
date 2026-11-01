@@ -7,8 +7,8 @@ use App\Modules\INV\Actions\Dispatch;
 use App\Modules\INV\Actions\ReverseDispatch;
 use App\Modules\INV\Actions\SubstituteDispatchIdentity;
 use App\Modules\INV\Data\DispatchEntry;
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\INV\Queries\DispatchQueries;
-use App\Modules\INV\Services\DispatchRestoration;
 use App\Support\Command\Outcome;
 use Closure;
 use Illuminate\Http\RedirectResponse;
@@ -29,6 +29,8 @@ use Throwable;
 final class DispatchController extends Controller
 {
     private const QUANTITY = 'regex:/^\d{1,15}(\.\d{1,3})?$/';
+
+    private const DOCUMENT = ['dokumen' => ['nullable', 'string', 'in:KEEP,REVISE,VOID'], 'alasan_dokumen' => ['nullable', 'string', 'max:500']];
 
     public function __construct(
         private readonly DispatchQueries $queries,
@@ -76,6 +78,7 @@ final class DispatchController extends Controller
         return Inertia::render('INV/DispatchGoods', [
             ...$this->queries->screen($actor, $project['id'], $project['company'], self::query($request, 'riwayat')),
             'choices' => Inertia::optional(fn (): ?array => $line === null ? null : $this->queries->choices($project['id'], $project['company'], $line, $find)),
+            'proofs' => Inertia::optional(fn (): array => $this->queries->proofs($actor, $project['company'], self::query($request, 'cari_bukti'))),
         ]);
     }
 
@@ -129,7 +132,7 @@ final class DispatchController extends Controller
         $actor = self::actor($request);
         $dispatch = $this->queries->dispatch($actor, $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, [
-            'jenis' => ['required', Rule::in(DispatchRestoration::KINDS)],
+            'jenis' => ['required', Rule::in(ReverseDispatch::KINDS)],
             'unit' => ['required', 'array', 'min:1', 'max:500'],
             'unit.*.konsumsi' => ['required', 'string', 'size:32'],
             'unit.*.jumlah' => ['required', self::QUANTITY],
@@ -142,6 +145,7 @@ final class DispatchController extends Controller
             'duplikat' => ['nullable', 'array', 'max:20'],
             'duplikat.*' => ['required', 'uuid'],
             'alasan_duplikat' => ['nullable', 'string', 'max:500'],
+            ...self::DOCUMENT,
             'kebijakan_seri' => ['required', 'boolean'],
             'kebijakan_skala' => ['required', 'integer', 'min:0', 'max:3'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
@@ -159,7 +163,7 @@ final class DispatchController extends Controller
             $items[] = ['consumption' => $consumption, 'qty' => self::text($unit['jumlah'] ?? ''), 'base_unit' => filter_var($unit['satuan_dasar'] ?? false, FILTER_VALIDATE_BOOLEAN), 'condition' => self::text($unit['kondisi'] ?? ''), 'location' => $rack, 'serial' => $serial];
         }
 
-        $outcome = $reverse->run(self::text($input['command_id']), $actor, $dispatch['company'], $dispatch['line'], self::text($input['jenis']), $items, self::nullable($input['reservasi'] ?? null), trim(self::text($input['alasan'])), self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $reverse->run(self::text($input['command_id']), $actor, $dispatch['company'], $dispatch['line'], self::text($input['jenis']), $items, self::nullable($input['reservasi'] ?? null), trim(self::text($input['alasan'])), self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), self::disposition($input), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'reversed', '/gudang/barang-keluar/'.$dispatch['project'], self::text($input['tanggal']));
     }
@@ -179,6 +183,7 @@ final class DispatchController extends Controller
             'alasan_alokasi' => ['nullable', 'string', 'max:500'],
             'bukti' => ['required', 'uuid'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
+            ...self::DOCUMENT,
             'kebijakan_seri' => ['required', 'boolean'],
             'kebijakan_skala' => ['required', 'integer', 'min:0', 'max:3'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
@@ -193,7 +198,7 @@ final class DispatchController extends Controller
         $shippedHandle = self::nullable($input['seri_terkirim'] ?? null);
         $shipped = $shippedHandle === null ? null : ($this->queries->serial($dispatch['product'], $shippedHandle) ?? throw ValidationException::withMessages(['seri_terkirim' => $unknown]));
         $evidence = $this->queries->evidence($actor, $dispatch['company'], self::text($input['bukti'])) ?? throw ValidationException::withMessages(['bukti' => $unknown]);
-        $outcome = $substitute->run(self::text($input['command_id']), $actor, $dispatch['company'], $consumption, self::text($input['jumlah']), $recorded, $lot, $rack, $shipped, self::nullable($input['alasan_alokasi'] ?? null), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $substitute->run(self::text($input['command_id']), $actor, $dispatch['company'], $consumption, self::text($input['jumlah']), $recorded, $lot, $rack, $shipped, self::nullable($input['alasan_alokasi'] ?? null), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), self::disposition($input), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'substituted', '/gudang/barang-keluar/'.$dispatch['project'], self::text($input['tanggal']));
     }
@@ -241,7 +246,9 @@ final class DispatchController extends Controller
             'L-49' => self::say('messages.msg_15', ['daftar_catatan_yang_cocok' => implode('; ', array_column($matches ?? [], 'label'))]),
             'L-11' => self::say('dispatch.refusal.project_state'),
             'BR-INV-11' => self::say('dispatch.refusal.not_warehouse'),
-            'BR-RSV-01', 'BR-RSV-03', 'AZ-01', 'C-05' => self::say('receiving.refusal.reservation'),
+            'WF-DOC-01' => self::say('dispatch.refusal.document_disposition'),
+            'AZ-01' => $reason === 'document' ? self::say('dispatch.refusal.document_authority') : self::say('receiving.refusal.reservation'),
+            'BR-RSV-01', 'BR-RSV-03', 'C-05' => self::say('receiving.refusal.reservation'),
             'AZ-08' => self::say('messages.msg_14'),
             default => self::say('messages.msg_04'),
         };
@@ -285,6 +292,14 @@ final class DispatchController extends Controller
         ])->validate();
 
         return $valid;
+    }
+
+    /** @param  array<string, mixed>  $input */
+    private static function disposition(array $input): ?DocumentDisposition
+    {
+        $choice = self::nullable($input['dokumen'] ?? null);
+
+        return $choice === null ? null : new DocumentDisposition($choice, self::text($input['alasan_dokumen'] ?? ''));
     }
 
     /** @return list<string> */

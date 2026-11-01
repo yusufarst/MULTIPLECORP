@@ -37,6 +37,12 @@ final class DocumentChain
         return array_values(Document::query()->where('invoice_id', $invoiceId)->whereIn('document_type_code', $types)->orderBy('id')->get()->all());
     }
 
+    /** A dispatch's document of the type: one chain per subject and type (DATABASE §4.10). */
+    public function ofDispatch(int $movementId, string $typeCode): ?Document
+    {
+        return Document::query()->where('dispatch_movement_id', $movementId)->where('document_type_code', $typeCode)->first();
+    }
+
     public function draftOf(int $documentId): ?DocumentVersion
     {
         return DocumentVersion::query()->where('document_id', $documentId)->where('state', 'DRAFT')->first();

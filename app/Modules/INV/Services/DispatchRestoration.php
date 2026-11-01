@@ -3,6 +3,7 @@
 namespace App\Modules\INV\Services;
 
 use App\Modules\CST\Services\CostPosting;
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\INV\Data\StockFigures;
 use App\Modules\OPS\Services\Corrections;
 use App\Modules\PRJ\Services\DemandPosting;
@@ -34,6 +35,7 @@ final class DispatchRestoration
         private readonly DemandPosting $demand,
         private readonly Corrections $corrections,
         private readonly Revalidation $revalidation,
+        private readonly DispatchDocuments $documents,
     ) {}
 
     /**
@@ -46,6 +48,7 @@ final class DispatchRestoration
         $line = self::dispatchLine($dispatchLineId);
         $product = (int) Row::text($line, 'product_id');
         $set = InventoryPosting::lineLocks((int) Row::text($line, 'project_line_id'))->add('stock_product_balances', ['product_id' => $product]);
+        $set = $set->union($this->documents->locks((int) Row::text($line, 'stock_movement_id')));
         $serials = [];
 
         foreach ($items as $item) {
@@ -74,7 +77,7 @@ final class DispatchRestoration
      * @param  list<array{consumption: int, qty: string, base_unit: bool, condition: string, location: int, serial: ?int}>  $items
      * @param  list<string>  $acknowledged  the likely duplicates the actor confirms (L-49)
      */
-    public function restore(CommandContext $context, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen): int
+    public function restore(CommandContext $context, int $dispatchLineId, string $kind, array $items, ?string $reserve, string $reason, array $acknowledged, ?string $duplicateReason, string $businessDate, bool $prefilled, bool $serializedSeen, int $scaleSeen, ?DocumentDisposition $document = null): int
     {
         BusinessDateRule::check($businessDate, $prefilled);
         $context->require($this->locks($dispatchLineId, $items));
@@ -203,8 +206,10 @@ final class DispatchRestoration
             $this->revalidation->revalidate($context, $bearer, $publicId);
         }
 
+        $disposed = $this->documents->dispose($context, (int) Row::text($line, 'stock_movement_id'), $document);
+
         $this->corrections->record($context, $matches === [] ? 'INV.DispatchReversed' : 'INV.DispatchReversalDuplicateConfirmed', AuthorityClass::AdmPlus, $company, 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($line, 'movement_public_id'), $reason,
-            AuditChange::updated(['quantity' => Row::text($line, 'qty_base')], ['restored' => (string) $total, 'kind' => $kind, ...(array_filter($rows, fn (array $row): bool => $row['source'] !== $company) === [] ? [] : ['allocation_reversed' => true]), ...($matches === [] ? [] : ['matches' => $matches])]), null, ['business_date' => $businessDate, 'reserved' => $reserved]);
+            AuditChange::updated(['quantity' => Row::text($line, 'qty_base')], ['restored' => (string) $total, 'kind' => $kind, ...(array_filter($rows, fn (array $row): bool => $row['source'] !== $company) === [] ? [] : ['allocation_reversed' => true]), ...($disposed === null ? [] : ['document' => $disposed]), ...($matches === [] ? [] : ['matches' => $matches])]), null, ['business_date' => $businessDate, 'reserved' => $reserved]);
 
         return $movement;
     }
@@ -273,7 +278,7 @@ final class DispatchRestoration
     private static function dispatchLine(int $dispatchLineId): object
     {
         return DB::table('dispatch_lines as d')->join('stock_movements as m', 'm.id', '=', 'd.stock_movement_id')->leftJoin('project_line_balances as b', 'b.project_line_id', '=', 'd.project_line_id')->where('d.id', $dispatchLineId)
-            ->first(['d.id', 'd.project_line_id', 'd.project_id', 'd.company_id', 'd.product_id', 'd.quantity_scale', 'd.entered_unit_id', 'd.ratio_to_base', 'd.qty_base', 'm.public_id as movement_public_id', 'b.dispatched_net_qty_base as dispatched', 'b.delivered_net_qty_base as delivered'])
+            ->first(['d.id', 'd.stock_movement_id', 'd.project_line_id', 'd.project_id', 'd.company_id', 'd.product_id', 'd.quantity_scale', 'd.entered_unit_id', 'd.ratio_to_base', 'd.qty_base', 'm.public_id as movement_public_id', 'b.dispatched_net_qty_base as dispatched', 'b.delivered_net_qty_base as delivered'])
             ?? throw Refused::rejected('C-14', ['reason' => 'dispatch']);
     }
 }

@@ -52,14 +52,14 @@ function dispatchGuard(int $product): array
     return [$row->on_hand_qty, $row->reserved_qty, $row->unusable_qty];
 }
 
-function lineGuard(int $line): array
+function dispatchLineGuard(int $line): array
 {
     $row = DB::table('project_line_balances as b')->where('project_line_id', $line)->first(['reserved_qty_base', 'dispatched_net_qty_base']);
 
     return [$row->reserved_qty_base, $row->dispatched_net_qty_base];
 }
 
-function clean(): void
+function dispatchClean(): void
 {
     expect(StockWorld::ledgerDifferences())->toBe([])
         // C-28's DQ: a consumption across companies carries its reason and authorizing actor.
@@ -70,7 +70,7 @@ function clean(): void
 }
 
 /** Σ attributed + what the lot still carries (M-07). */
-function lotCostTotal(int $lot): string
+function dispatchLotCostTotal(int $lot): string
 {
     $held = (string) DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost');
     $drawn = (string) DB::table('cost_attributions')->whereIn('stock_consumption_id', DB::table('stock_consumptions')->where('lot_id', $lot)->pluck('id'))->sum('amount');
@@ -86,12 +86,12 @@ it('dispatches the reserved units as one physical effect: 10, 5, 2 becomes 5, 0,
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '5', [DispatchWorld::pick($lot, $this->rack, '5')]))->toBe('COMMITTED');
 
     expect(dispatchGuard($this->product))->toBe(['5.000', '0.000', '2.000'])
-        ->and(lineGuard($this->line))->toBe(['0.000', '5.000'])
+        ->and(dispatchLineGuard($this->line))->toBe(['0.000', '5.000'])
         ->and(DB::table('reservations')->where('project_line_id', $this->line)->value('state'))->toBe('CONSUMED')
         ->and(DB::table('reservation_events')->where('kind', 'CONSUME')->value('qty_delta_base'))->toBe('-5.000');
     $dispatch = DB::table('dispatch_lines')->where('project_line_id', $this->line)->sole();
     expect($dispatch->reserved_qty_base)->toBe('5.000')->and($dispatch->unreserved_qty_base)->toBe('0.000')->and($dispatch->reservation_id)->not->toBeNull();
-    clean();
+    dispatchClean();
 });
 
 it('takes a line with no reservation from AVAILABLE in the same action, the rest of a partial reservation too (WF-INV-03; BR-XD-02; AC-20; criterion 2)', function () {
@@ -104,8 +104,8 @@ it('takes a line with no reservation from AVAILABLE in the same action, the rest
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '4', [DispatchWorld::pick($lot, $this->rack, '4')]))->toBe('COMMITTED');
     $second = DB::table('dispatch_lines')->where('project_line_id', $this->line)->orderByDesc('id')->first();
     expect($second->reserved_qty_base)->toBe('2.000')->and($second->unreserved_qty_base)->toBe('2.000');
-    expect(dispatchGuard($this->product))->toBe(['3.000', '0.000', '0.000'])->and(lineGuard($this->line))->toBe(['0.000', '7.000']);
-    clean();
+    expect(dispatchGuard($this->product))->toBe(['3.000', '0.000', '0.000'])->and(dispatchLineGuard($this->line))->toBe(['0.000', '7.000']);
+    dispatchClean();
 });
 
 it('refuses above the line\'s remainder, above the supply, and picks that do not add up, committing nothing (PX-03; C-04; C-03; L-04)', function () {
@@ -141,7 +141,7 @@ it('takes only its own line\'s reservation: another project\'s reserved supply i
 
     expect($results['owner'])->toBe('COMMITTED')->and($results['other'])->toContain('C-04')->and(dispatchGuard($this->product))->toBe(['1.000', '0.000', '0.000']);
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($lot, $this->rack, '1')]))->toBe('COMMITTED');
-    clean();
+    dispatchClean();
 
     // Reserved supply untouched by a line that has none of it.
     $more = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '5');
@@ -190,7 +190,7 @@ it('leaves one of two dispatches racing for the last unit, in both orders, the l
 
     expect($results['first'])->toBe('COMMITTED')->and($results['second'])->toContain('C-04')
         ->and(dispatchGuard($this->product))->toBe(['0.000', '0.000', '0.000']);
-    clean();
+    dispatchClean();
 })->with(['this line first' => false, 'the other first' => true]);
 
 it('refuses a serial absent, unusable or at another lot or rack; one serial dispatched by two commands leaves one success (C-02; M-05; BR-INV-09; criterion 5)', function () {
@@ -216,7 +216,7 @@ it('refuses a serial absent, unusable or at another lot or rack; one serial disp
 
     expect($results['first'])->toBe('COMMITTED')->and($results['second'])->toContain('C-02')
         ->and(DB::table('serial_units')->where('id', $good)->value('state'))->toBe('DISPATCHED');
-    clean();
+    dispatchClean();
 });
 
 it('attributes 41,667 and 58,333 of a box of 12 for 100,000, the zeroing draw taking the residual (annex 10; BR-FIN-12; BR-FIN-13; criterion 6)', function () {
@@ -230,7 +230,7 @@ it('attributes 41,667 and 58,333 of a box of 12 for 100,000, the zeroing draw ta
 
     expect($hpp($this->demand['project']->id))->toBe('41667.00')->and($hpp($other->id))->toBe('58333.00')
         ->and(DB::table('lot_cost_balances as b')->where('lot_id', $lot)->value('remaining_cost'))->toBe('0.00');
-    clean();
+    dispatchClean();
 });
 
 it('takes each unit\'s HPP once under two dispatches racing for one lot (LK-23; architecture challenge 18a; criterion 6)', function () {
@@ -251,9 +251,9 @@ it('takes each unit\'s HPP once under two dispatches racing for one lot (LK-23; 
 
     expect($results)->toBe(['first' => 'COMMITTED', 'second' => 'COMMITTED'])
         ->and($hpp($this->demand['project']->id))->toBe('41667.00')->and($hpp($other->id))->toBe('58333.00')
-        ->and(lotCostTotal($lot))->toBe('100000.00')
+        ->and(dispatchLotCostTotal($lot))->toBe('100000.00')
         ->and(DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost'))->toBe('0.00');
-    clean();
+    dispatchClean();
 });
 
 it('ends a cost correction and a dispatch of its lot with Σ attributed = the corrected cost in each timing (M-07; ROUTE-175; architecture challenge 2b; criterion 15)', function (string $timing) {
@@ -294,10 +294,10 @@ it('ends a cost correction and a dispatch of its lot with Σ attributed = the co
 
     $consumption = DispatchWorld::last($this->line)->consumption;
 
-    expect(lotCostTotal($lot))->toBe('132000.00')
+    expect(dispatchLotCostTotal($lot))->toBe('132000.00')
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->sum('amount'))->toBe('22000.00')
         ->and(DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost'))->toBe('110000.00');
-    clean();
+    dispatchClean();
 })->with(['dispatched before', 'dispatch holds the lot', 'correction holds the lot']);
 
 it('carries another company\'s lot as one allocated consumption: source A, bearer B\'s project, reason and actor, HPP on B\'s project (annex 12; XL-1; C-28; L-44; criterion 7)', function () {
@@ -314,7 +314,7 @@ it('carries another company\'s lot as one allocated consumption: source A, beare
         ->and(DB::table('stock_consumptions')->where('dispatch_line_id', $row->dispatch)->count())->toBe(1)
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $row->consumption)->where('cost_class', 'HPP')->sum('amount'))->toBe('72000.00')
         ->and(DB::table('lot_cost_balances as b')->where('lot_id', $lot)->first(['remaining_qty_base'])->remaining_qty_base)->toBe('4.000');
-    clean();
+    dispatchClean();
 
     // Each side sees the draw as its own: B its cost with A masked, A the draw with B's project masked (PJ-05; PJ-06; SM-12; TM-25; TM-53).
     $figures = app(CostFigures::class);
@@ -334,7 +334,7 @@ it('carries another company\'s lot as one allocated consumption: source A, beare
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $row->consumption)->sum('amount'))->toBe('0.00')
         ->and(DB::table('lot_cost_balances')->where('lot_id', $lot)->value('remaining_cost'))->toBe('120000.00')
         ->and(DB::table('stock_lot_balances as b')->where('lot_id', $lot)->where('condition', 'USABLE')->value('qty'))->toBe('10.000');
-    clean();
+    dispatchClean();
 });
 
 it('refuses and routes another company\'s lot without the authority, without a grant on the consuming company or without the reason, one event per affected company and nothing else (XL-1; AZ-08; SQ-23; UXS-22; criterion 8)', function () {
@@ -363,7 +363,7 @@ it('refuses a likely duplicate with its matches and commits it only with the act
 
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '2', $pick, null, [$first], 'Lagi'))->toContain('L-49')
         ->and(DB::table('dispatch_lines')->where('project_line_id', $this->line)->count())->toBe(2);
-    clean();
+    dispatchClean();
 });
 
 it('restores units to their lot in the condition chosen at the contra of their HPP, the consumed reservation staying CONSUMED, a new one in the same command (CM-05; SF-RESTORE; L-07; criterion 10)', function () {
@@ -374,12 +374,12 @@ it('restores units to their lot in the condition chosen at the contra of their H
 
     expect(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', [DispatchWorld::item($row->consumption, $this->rack, '3'), DispatchWorld::item($row->consumption, $this->rack, '2', 'UNUSABLE')], '3'))->toBe('COMMITTED');
 
-    expect(dispatchGuard($this->product))->toBe(['10.000', '3.000', '2.000'])->and(lineGuard($this->line))->toBe(['3.000', '0.000'])
+    expect(dispatchGuard($this->product))->toBe(['10.000', '3.000', '2.000'])->and(dispatchLineGuard($this->line))->toBe(['3.000', '0.000'])
         ->and(DB::table('reservations')->where('project_line_id', $this->line)->orderBy('id')->pluck('state')->all())->toBe(['CONSUMED', 'ACTIVE'])
         ->and(DB::table('stock_restorations')->where('stock_consumption_id', $row->consumption)->pluck('kind')->unique()->all())->toBe(['DISPATCH_REVERSAL'])
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $row->consumption)->sum('amount'))->toBe('0.00')
         ->and(DB::table('stock_consumption_balances as b')->where('stock_consumption_id', $row->consumption)->value('restored_qty_base'))->toBe('5.000');
-    clean();
+    dispatchClean();
 });
 
 it('restores at most what is undelivered and open, a second restoration refused; a partial one its share, the zeroing one the residual (CM-06; PX-08; C-27; L-31; DATABASE §6.2; criteria 11, 12)', function () {
@@ -394,7 +394,7 @@ it('restores at most what is undelivered and open, a second restoration refused;
     expect(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($row->consumption, $this->rack, '2')]))->toBe('COMMITTED');
     expect($net())->toBe('0.00')->and(DB::table('lot_cost_balances as b')->where('lot_id', $lot)->value('remaining_cost'))->toBe('100.00');
     expect(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($row->consumption, $this->rack, '1')]))->toContain('C-27');
-    clean();
+    dispatchClean();
 });
 
 it('caps a restoration by net dispatched − net delivered, and refuses a likely duplicate unless its reason names the match (PX-08; C-30; L-49; BD-13)', function () {
@@ -408,7 +408,7 @@ it('caps a restoration by net dispatched − net delivered, and refuses a likely
     expect(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'UNDELIVERED_RETURN', $one))->toContain('L-49')
         ->and(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'UNDELIVERED_RETURN', $one, null, [$first], 'Kembali lagi siang ini'))->toBe('COMMITTED')
         ->and(DB::table('audit_events')->where('action', 'INV.DispatchReversalDuplicateConfirmed')->count())->toBe(1);
-    clean();
+    dispatchClean();
 
     // A later dispatch of the same project line meets the same BD-13 key.
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '2', [DispatchWorld::pick($lot, $this->rack, '2')]))->toBe('COMMITTED');
@@ -431,7 +431,7 @@ it('converts a restoration entered in the dispatch line\'s unit at its snapshot 
     $back = DB::table('stock_restorations')->where('stock_consumption_id', $row->consumption)->sole();
 
     expect($back->qty_base)->toBe('12.000')->and((int) $back->ratio_to_base)->toBe(12)->and((int) $back->cited_ratio_to_base)->toBe(12)->and((int) $back->entered_unit_id)->toBe($box);
-    clean();
+    dispatchClean();
 });
 
 it('refuses a serial against a consumption it already left, and the pages and the Surat Jalan name only what is still out (AX-10; AX-35; BR-DOC-04; ER-06)', function () {
@@ -454,7 +454,7 @@ it('refuses a serial against a consumption it already left, and the pages and th
 
     $facts = app(DispatchSubjects::class)->facts(new DocumentSubject('DOC-03', 'STANDARD', $this->company->id, ['dispatch_movement_id' => $first->movement]));
     expect($facts->lines[0]['quantity'])->toBe('1')->and($facts->lines[0]['note'])->toBe('No. Seri: '.$number($stays));
-    clean();
+    dispatchClean();
 });
 
 it('leaves one of two restorations of the same goods racing (C-27; architecture challenge 3b)', function () {
@@ -475,7 +475,7 @@ it('leaves one of two restorations of the same goods racing (C-27; architecture 
     ]);
 
     expect($results['first'])->toBe('COMMITTED')->and($results['second'])->toContain('C-27')->and(dispatchGuard($this->product))->toBe(['10.000', '0.000', '0.000']);
-    clean();
+    dispatchClean();
 });
 
 it('moves a consumption from the recorded serial to the one shipped, HPP re-attributed, the line and quantities unchanged; a shipped unit not in stock refused (CM-36; AX-35; C-27; C-02; criterion 13)', function () {
@@ -487,7 +487,7 @@ it('moves a consumption from the recorded serial to the one shipped, HPP re-attr
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($old, $this->rack, '1', $recorded)]))->toBe('COMMITTED');
     $row = DispatchWorld::last($this->line);
     $evidence = DispatchWorld::evidence($this->company);
-    $before = [dispatchGuard($this->product), lineGuard($this->line)];
+    $before = [dispatchGuard($this->product), dispatchLineGuard($this->line)];
 
     expect(DispatchWorld::substitute($this->actor, $this->company->id, $row->consumption, '1', $recorded, $new, ReceivingWorld::rack(), $shipped, $evidence))->toContain('C-');
     expect(DispatchWorld::substitute($this->actor, $this->company->id, $row->consumption, '1', $recorded, $new, $this->rack, $shipped, $evidence))->toBe('COMMITTED');
@@ -496,13 +496,13 @@ it('moves a consumption from the recorded serial to the one shipped, HPP re-attr
     expect($consumptions)->toHaveCount(2)->and($consumptions[1]->lot_id)->toBe($new)
         ->and(DB::table('stock_consumption_balances as b')->where('stock_consumption_id', $row->consumption)->value('substituted_qty_base'))->toBe('1.000')
         ->and(DB::table('serial_units')->where('id', $recorded)->value('state'))->toBe('IN_STOCK')->and(DB::table('serial_units')->where('id', $shipped)->value('state'))->toBe('DISPATCHED')
-        ->and([dispatchGuard($this->product), lineGuard($this->line)])->toBe($before)
+        ->and([dispatchGuard($this->product), dispatchLineGuard($this->line)])->toBe($before)
         ->and((string) DB::table('cost_attributions')->where('bearer_project_id', $this->demand['project']->id)->where('cost_class', 'HPP')->sum('amount'))->toBe('1500.00')
         ->and(DB::table('stock_restorations')->where('stock_consumption_id', $row->consumption)->value('kind'))->toBe('SUBSTITUTION')
         // The Surat Jalan of the shipment names the unit actually shipped; the movement is net zero, its evidence linked.
         ->and(app(DispatchSubjects::class)->facts(new DocumentSubject('DOC-03', 'STANDARD', $this->company->id, ['dispatch_movement_id' => $row->movement]))->lines[0]['note'])->toBe('No. Seri: '.DB::table('serial_units')->where('id', $shipped)->value('serial_number'))
         ->and(DB::table('evidence_links')->where('evidence_document_id', $evidence)->whereNotNull('stock_movement_id')->count())->toBe(1);
-    clean();
+    dispatchClean();
 
     expect(DispatchWorld::substitute($this->actor, $this->company->id, $consumptions[1]->id, '1', $shipped, $old, $this->rack, $shipped, $evidence))->toContain('C-02');
 });
@@ -526,14 +526,14 @@ it('needs its authority again to substitute onto another company\'s lot (XL-1; A
         ->and(DispatchWorld::substitute($allowed, $this->company->id, $row->consumption, '1', null, $lot, $this->rack, null, $evidence, 'Yang terkirim lot perusahaan lain'))->toBe('COMMITTED');
     $onto = DB::table('stock_consumptions')->where('dispatch_line_id', $row->dispatch)->orderByDesc('id')->first();
     expect($onto->lot_id)->toBe($lot)->and($onto->source_company_id)->toBe($foreign->company->id)->and($onto->allocation_reason)->toBe('Yang terkirim lot perusahaan lain')->and($onto->allocation_authorized_by)->toBe($allowed);
-    clean();
+    dispatchClean();
 
     expect(DispatchWorld::substitute($allowed, $this->company->id, $onto->id, '1', null, $own, $this->rack, null, $evidence))->toBe('COMMITTED');
     $off = DB::table('stock_consumptions')->where('dispatch_line_id', $row->dispatch)->orderByDesc('id')->first();
     expect($off->source_company_id)->toBe($this->company->id)->and($off->allocation_reason)->toBeNull()->and($off->allocation_authorized_by)->toBeNull()
-        ->and(lineGuard($this->line))->toBe(['0.000', '1.000'])
+        ->and(dispatchLineGuard($this->line))->toBe(['0.000', '1.000'])
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $onto->id)->sum('amount'))->toBe('0.00');
-    clean();
+    dispatchClean();
 });
 
 it('holds the guards by their CHECKs against violating writes, a dispatch recognizing no loss (C-02; C-03; C-04; C-08; C-09; C-24)', function () {
@@ -547,7 +547,7 @@ it('holds the guards by their CHECKs against violating writes, a dispatch recogn
         ->and(fn () => DB::table('serial_units')->where('id', StockWorld::serial($this->product, $lot, $this->rack))->update(['current_lot_id' => null]))->toThrow(QueryException::class, 'serial_units_c02_in_stock')
         ->and(fn () => DB::table('inventory_lots')->where('id', $lot)->update(['source_company_id' => InvoiceWorld::make()->company->id]))->toThrow(QueryException::class)
         ->and(DB::table('cost_attributions')->where('stock_consumption_id', $row->consumption)->where('cost_class', 'LOSS')->count())->toBe(0);
-    clean();
+    dispatchClean();
 });
 
 it('lets a pending unexplained loss block no dispatch the normal guards allow (DIR-027; M-06; criterion 16)', function () {
@@ -557,5 +557,5 @@ it('lets a pending unexplained loss block no dispatch the normal guards allow (D
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '8', [DispatchWorld::pick($lot, $this->rack, '8')]))->toBe('COMMITTED')
         ->and(dispatchGuard($this->product))->toBe(['0.000', '0.000', '0.000'])
         ->and(DB::table('unattributed_loss_cases')->value('pending_qty_base'))->toBe('2.000');
-    clean();
+    dispatchClean();
 });

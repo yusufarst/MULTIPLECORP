@@ -2,11 +2,13 @@
 
 use App\Modules\DOC\Data\DocumentSubject;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Data\DocumentDisposition;
 use App\Modules\INV\Queries\DispatchQueries;
 use App\Modules\INV\Services\DispatchSubjects;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Queries\ProjectFulfilment;
+use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
 use Database\Factories\DOC\DocumentTypeFactory;
@@ -54,7 +56,7 @@ function dispatchBody(object $test, string $qty = '2', array $extra = []): array
     $page = $test->actingAs($test->actor)->get("/gudang/barang-keluar/{$test->project}")->assertOk()->viewData('page')['props'];
     $line = $page['lines'][0];
 
-    return ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => RowHandle::of('inventory_lots', $test->lot), 'rak' => RowHandle::of('locations', $test->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => date('Y-m-d'), ...$extra];
+    return ['command_id' => (string) Str::uuid(), 'baris' => $line['handle'], 'satuan' => $line['units'][0]['code'], 'jumlah' => $qty, 'lot' => [['lot' => RowHandle::of('inventory_lots', $test->lot), 'rak' => RowHandle::of('locations', $test->rack), 'jumlah' => $qty]], 'kebijakan_seri' => $line['serialized'], 'kebijakan_skala' => $line['scale'], 'tanggal' => BusinessDate::today(), ...$extra];
 }
 
 it('lists the remaining reservations of ACTIVE projects by company on PG-023, a bad cursor refused and never a silent first page (CALC-02; PF-14; NAV-023)', function () {
@@ -168,7 +170,7 @@ it('opens the Surat Jalan\'s draft from the committed dispatch, no second delive
     // Issued only by its own route, after the confirmation; replayed, one number; no second delivery and no stock changed.
     Queue::fake();
     $draft = DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->first();
-    $issue = ['command_id' => (string) Str::uuid(), 'lock_version' => $draft->lock_version, 'draf' => $draft->public_id, 'tanggal' => date('Y-m-d'), 'tanggal_otomatis' => true];
+    $issue = ['command_id' => (string) Str::uuid(), 'lock_version' => $draft->lock_version, 'draf' => $draft->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true];
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$document->public_id}/surat-jalan", $issue)->assertRedirect();
     $this->actingAs($this->actor)->post("/gudang/barang-keluar/{$document->public_id}/surat-jalan", $issue)->assertRedirect();
     expect(DB::table('document_versions')->where('document_id', $document->id)->pluck('state')->all())->toBe(['ISSUED'])
@@ -207,6 +209,97 @@ it('narrows the line\'s choices to what is looked for and tells a list it cut; t
     $failed = $queries->screen($this->actor->id, $this->demand['project']->id, $this->company->id, 'bukan-kursor');
     expect($failed['older_failed'])->toBeTrue()->and($failed['dispatches'])->toBe([]);
 
+});
+
+/** The dispatch's Surat Jalan issued through its own route; its document. */
+function dispatchIssuedNote(object $test, int $movement): object
+{
+    if (! isset($test->noteNumbered)) {
+        Numbering::scheme($test->company, SequenceType::Doc03, date('Y').'-01-01', 'YEAR', 'UJI/SJ/{tahun}/{nomor:4}');
+        Numbering::started($test->company, SequenceType::Doc03, CarbonImmutable::parse(((int) date('Y') - 1).'-12-31 03:00:00', 'UTC'));
+        $test->noteNumbered = true;
+    }
+
+    DocumentTypeFactory::ensure('DOC-03');
+    Queue::fake();
+    $public = (string) DB::table('stock_movements')->where('id', $movement)->value('public_id');
+    $test->actingAs($test->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-03', 'subjek' => ['dispatch_movement_id' => $public]])->assertRedirect();
+    $document = DB::table('documents')->where('dispatch_movement_id', $movement)->sole();
+    $draft = DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->sole();
+    $test->actingAs($test->actor)->post("/gudang/barang-keluar/{$document->public_id}/surat-jalan", ['command_id' => (string) Str::uuid(), 'lock_version' => $draft->lock_version, 'draf' => $draft->public_id, 'tanggal' => BusinessDate::today(), 'tanggal_otomatis' => true])->assertRedirect();
+    expect(DB::table('document_versions')->where('document_id', $document->id)->value('state'))->toBe('ISSUED');
+
+    return $document;
+}
+
+it('makes a correction revise, void or keep with its reason the issued Surat Jalan it affects, in its own transaction (WORKFLOWS §8; CM-05; CM-36; C-11; criterion 13)', function () {
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '6', [DispatchWorld::pick($this->lot, $this->rack, '6')]))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+    $document = dispatchIssuedNote($this, $row->movement);
+    $item = fn (string $qty): array => [DispatchWorld::item($row->consumption, $this->rack, $qty)];
+    $keep = new DocumentDisposition('KEEP', 'Kertas sudah di tangan klien');
+    $versions = fn (): array => DB::table('document_versions')->where('document_id', $document->id)->orderBy('id')->pluck('state')->all();
+    $correcting = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, 'documents.correct']);
+    $page = $this->actingAs($this->actor)->get("/gudang/barang-keluar/{$this->project}")->viewData('page')['props'];
+    expect($page['dispatches'][0]['note']['id'])->toBe($document->public_id)->and($page['dispatches'][0]['note']['number'])->toStartWith('UJI/SJ/');
+
+    // Nothing is corrected until the document's fate is chosen, with its reason.
+    expect(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('1')))->toContain('WF-DOC-01')
+        ->and(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('1'), document: new DocumentDisposition('KEEP', ' ')))->toContain('WF-DOC-01')
+        ->and(DB::table('stock_restorations')->count())->toBe(0);
+
+    expect(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('1'), document: $keep))->toBe('COMMITTED')
+        ->and($versions())->toBe(['ISSUED']);
+    $after = json_decode(DB::table('audit_events')->where('action', 'INV.DispatchReversed')->value('after'), true);
+    expect($after['document']['disposition'])->toBe('KEEP')->and($after['document']['reason'])->toBe('Kertas sudah di tangan klien')->and($after['document']['number'])->toStartWith('UJI/SJ/');
+
+    // A revision's draft or a void is `documents.correct`'s; refused, the correction with it.
+    expect(DispatchWorld::restore($this->actor->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('2'), document: new DocumentDisposition('REVISE', 'Jumlah berubah')))->toContain('AZ-01')
+        ->and(DB::table('stock_restorations')->count())->toBe(1);
+    expect(DispatchWorld::restore($correcting->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('2'), document: new DocumentDisposition('REVISE', 'Jumlah berubah')))->toBe('COMMITTED')
+        ->and($versions())->toBe(['ISSUED', 'DRAFT'])
+        ->and(DB::table('document_versions')->where('document_id', $document->id)->where('state', 'DRAFT')->value('supersedes_version_id'))->toBe(DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->value('id'))
+        ->and(DB::table('audit_events')->where('action', 'DOC.DocumentRevisionDrafted')->count())->toBe(1);
+
+    // The rest back: the Surat Jalan voided with it, its number retired, its revision's draft gone.
+    expect(DispatchWorld::restore($correcting->id, $this->company->id, $row->dispatch, 'DISPATCH_REVERSAL', $item('3'), document: new DocumentDisposition('VOID', 'Tidak jadi dikirim')))->toBe('COMMITTED')
+        ->and($versions())->toBe(['VOIDED']);
+});
+
+it('asks the Surat Jalan\'s fate of a serial\'s substitution, whose paper names it, and not of a lot\'s (CM-36; architecture challenge 3c)', function () {
+    $evidence = DispatchWorld::evidence($this->company);
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($this->lot, $this->rack, '1')]))->toBe('COMMITTED');
+    $plain = DispatchWorld::last($this->line);
+    dispatchIssuedNote($this, $plain->movement);
+    $second = StockWorld::lot($this->actor->id, $this->company, $this->product, $this->unit, $this->rack, '2');
+    expect(DispatchWorld::substitute($this->actor->id, $this->company->id, $plain->consumption, '1', null, $second, $this->rack, null, $evidence))->toBe('COMMITTED');
+
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    [$recorded, $shipped] = [StockWorld::serial($this->product, $this->lot, $this->rack), StockWorld::serial($this->product, $this->lot, $this->rack)];
+    expect(DispatchWorld::dispatch($this->actor->id, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($this->lot, $this->rack, '1', $recorded)], null, DB::table('stock_movements')->where('movement_type', 'DISPATCH')->pluck('public_id')->all(), 'Kiriman kedua'))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+    dispatchIssuedNote($this, $row->movement);
+
+    expect(DispatchWorld::substitute($this->actor->id, $this->company->id, $row->consumption, '1', $recorded, $this->lot, $this->rack, $shipped, $evidence))->toContain('WF-DOC-01')
+        ->and(DB::table('serial_units')->where('id', $recorded)->value('state'))->toBe('DISPATCHED')
+        ->and(DispatchWorld::substitute($this->actor->id, $this->company->id, $row->consumption, '1', $recorded, $this->lot, $this->rack, $shipped, $evidence, document: new DocumentDisposition('KEEP', 'Ditandatangani klien')))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->where('id', $shipped)->value('state'))->toBe('DISPATCHED');
+});
+
+it('offers the proofs a viewer may see for a substitution, the company\'s and the pool\'s, narrowed when asked, so no upload authority is needed (PJ-08; CM-36; AGENTS rule 12)', function () {
+    $own = DB::table('evidence_documents')->where('id', DispatchWorld::evidence($this->company, ['evidence_type' => 'DELIVERY_PROOF', 'declared_issuer' => 'Gudang Uji']))->value('public_id');
+    $pool = DB::table('evidence_documents')->where('id', DispatchWorld::evidence($this->company, ['evidence_type' => 'WAREHOUSE_RECORD', 'evidence_scope' => 'POOL', 'company_id' => null]))->value('public_id');
+    $foreign = InvoiceWorld::make();
+    $other = DB::table('evidence_documents')->where('id', DispatchWorld::evidence($foreign->company, ['evidence_type' => 'DELIVERY_PROOF']))->value('public_id');
+    $viewer = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, 'evidence.view']);
+    $queries = app(DispatchQueries::class);
+    $found = collect($queries->proofs($viewer->id, $this->company->id)['rows'])->pluck('id')->all();
+
+    expect($found)->toContain($own)->toContain($pool)->not->toContain($other)
+        ->and($queries->proofs($viewer->id, $this->company->id, 'gudang uji')['rows'])->toHaveCount(1)
+        ->and($queries->proofs($viewer->id, $this->company->id, 'tidak ada')['rows'])->toBe([])
+        ->and($queries->evidence($viewer->id, $this->company->id, (string) $own))->toBeInt()
+        ->and($queries->evidence($viewer->id, $this->company->id, (string) $other))->toBeNull();
 });
 
 it('keeps PG-022\'s and PG-024\'s forms in place when a proof is registered from them, and answers with the evidence (IP-16; NV-04; ROUTE-229; ER-06)', function () {

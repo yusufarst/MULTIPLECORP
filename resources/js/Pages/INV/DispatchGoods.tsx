@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { Code, DateText } from '@/components/values';
 import { type Choices, type DispatchLine, DispatchLineForm } from '@/features/inv/dispatch-line';
-import { type DispatchRecord, ReverseDispatchDialog, SubstituteDialog } from '@/features/inv/dispatch-record';
+import { type DispatchRecord, type Proofs, ReverseDispatchDialog, SubstituteDialog } from '@/features/inv/dispatch-record';
 import { lookUp } from '@/features/inv/scan-client';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
@@ -34,7 +34,8 @@ type Props = {
     locations: Rack[];
     today: string;
     choices?: Choices | null;
-    can: { allocate: boolean; reverse: boolean; reserve: boolean; note: boolean; evidence: boolean };
+    proofs?: Proofs;
+    can: { allocate: boolean; reverse: boolean; reserve: boolean; note: boolean; evidence: boolean; correct_document: boolean };
 };
 type Correction = { record: DispatchRecord; kind: 'DISPATCH_REVERSAL' | 'UNDELIVERED_RETURN' | 'SUBSTITUTION' };
 
@@ -54,7 +55,7 @@ function merged(previous: Choices | undefined, next: Choices, chosen: string[]):
     };
 }
 
-export default function DispatchGoods({ project, lines, dispatches, older, older_failed: olderFailed, locations, today, choices, can }: Props) {
+export default function DispatchGoods({ project, lines, dispatches, older, older_failed: olderFailed, locations, today, choices, proofs, can }: Props) {
     const { t } = useTranslation();
     const open = lines.filter((line) => Number(line.remaining) > 0);
     const [current, setCurrent] = useState(open[0]?.handle ?? lines[0]?.handle ?? '');
@@ -93,6 +94,9 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
 
         router.reload({ only: ['choices'], data: { baris: handle, ...(find === undefined ? {} : { cari: find }) }, preserveUrl: true, async: true, onHttpException: () => { failed(); return false; }, onNetworkError: () => { failed(); return false; } });
     }, []);
+    const loadProofs = (find?: string) => {
+        router.reload({ only: ['proofs'], data: find === undefined ? {} : { cari_bukti: find }, preserveUrl: true, async: true });
+    };
     const replaceChosen = useCallback((handle: string, next: string[]) => {
         chosenNow.current = { ...chosenNow.current, [handle]: next };
         setChosen(chosenNow.current);
@@ -294,6 +298,7 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                                     <span className="flex min-w-0 flex-wrap items-center gap-3">
                                         <DateText value={record.date} />
                                         <span>{`${String(record.line)}. ${record.name} · ${record.qty} ${record.unit ?? ''}`}</span>
+                                        {record.note !== null && <a href={`/dokumen/${record.note.id}`} className="text-accent-link underline underline-offset-2">{t('dispatch.records.note', { nomor: record.note.number })}</a>}
                                     </span>
                                     <span className="flex min-w-0 flex-wrap items-center gap-2">
                                         {can.note && record.issuable && <Button variant="outline" size="sm" disabled={prepare.pending} onClick={() => { issueNote(record.id); }}>{t('actions.issue_surat_jalan')}</Button>}
@@ -301,7 +306,7 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                                             <>
                                                 <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCorrection({ record, kind: 'DISPATCH_REVERSAL' }); }}>{t('dispatch.reverse.cancel')}</Button>
                                                 <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCorrection({ record, kind: 'UNDELIVERED_RETURN' }); }}>{t('dispatch.reverse.returned')}</Button>
-                                                <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCurrent(record.handle); setCorrection({ record, kind: 'SUBSTITUTION' }); }}>{t('dispatch.substitute.action')}</Button>
+                                                <Button variant="ghost" size="sm" onClick={() => { setDone(null); setCurrent(record.handle); loadProofs(); setCorrection({ record, kind: 'SUBSTITUTION' }); }}>{t('dispatch.substitute.action')}</Button>
                                             </>
                                         )}
                                     </span>
@@ -318,8 +323,8 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                     </section>
                 )}
             </div>
-            {correction !== null && correction.kind !== 'SUBSTITUTION' && <ReverseDispatchDialog key={correction.record.id} record={correction.record} kind={correction.kind} racks={locations} today={today} canReserve={can.reserve} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.reversed')); }} />}
-            {correction !== null && correction.kind === 'SUBSTITUTION' && <SubstituteDialog key={correction.record.id} record={correction.record} choices={known[correction.record.handle] ?? null} company={project.company_id} canEvidence={can.evidence} today={today} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.substituted')); }} onFind={(text) => { load(correction.record.handle, text); }} />}
+            {correction !== null && correction.kind !== 'SUBSTITUTION' && <ReverseDispatchDialog key={correction.record.id} record={correction.record} kind={correction.kind} racks={locations} today={today} canReserve={can.reserve} canCorrect={can.correct_document} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.reversed')); }} />}
+            {correction !== null && correction.kind === 'SUBSTITUTION' && <SubstituteDialog key={correction.record.id} record={correction.record} choices={known[correction.record.handle] ?? null} proofs={proofs ?? null} company={project.company_id} canEvidence={can.evidence} canCorrect={can.correct_document} today={today} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.substituted')); }} onFind={(text) => { load(correction.record.handle, text); }} onFindProof={loadProofs} />}
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
             <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />
