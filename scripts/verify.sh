@@ -81,6 +81,7 @@ local_layers() {
     check 'Task plan integrity (PMC-15)' $node_run sh -c 'node scripts/ci/check-plan.mjs --self-test && node scripts/ci/check-plan.mjs'
     check 'Release gate and report rules (PRQ-11; INF-03)' $node_run sh -c 'node scripts/release/gate.mjs --self-test && node scripts/release/report.mjs --self-test'
     check 'Browser check rules (DIR-103)' $node_run node scripts/ci/check-browser-evidence.mjs --self-test
+    check 'Browser evidence selection (DIR-105)' $node_run node scripts/ci/select-browser-evidence.mjs --self-test
     check 'TL-01 Pint' $php_run vendor/bin/pint --test
     check 'TL-01 ESLint' $node_run npm run lint
     check 'TL-02 Larastan/PHPStan' $php_run vendor/bin/phpstan analyse --no-progress --memory-limit=1G
