@@ -743,3 +743,9 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-037 on its branch `task/TASK-037-purchases`: purchases with their lines, tax components and charges (ROUTE-171), the amendment before the first effect, cancellation, remainder closure, cost and basis correction, the late charge and the performed mark (ROUTE-172–ROUTE-175, ROUTE-178–ROUTE-180), PG-015–PG-017, the PO and Surat Pesanan subjects, predicate 8's purchase part and PG-011's *Pengadaan*.
 - Every provider of a completion predicate is now merged, not overwritten. GAP-072 raised: ROUTE-169 names no remainder closure.
 - Every check passed in fresh CI on `2a0043e`. TASK-037 DONE — progress 45 / 87 —; TASK-039 and TASK-046 READY next.
+
+## Unreleased — 2026-11-01, TASK-039 — Receiving (Barang Masuk)
+
+- Built TASK-039 on its branch `task/TASK-039-receiving`: a receipt per purchase line with one lot, serials, evidence and the same-action reservation (ROUTE-181), the Nota Terima Barang (ROUTE-182), the reversal of unconsumed units (ROUTE-183), the exact scan lookup (ROUTE-282), PG-021, PG-022 and the shared scan field.
+- DIR-102 recorded: the Owner's FAST BUILD directive of 2026-11-01, an optimization of DIR-096 lowering no gate.
+- Every check passed in fresh CI on `bf42119`. TASK-039 DONE — progress 46 / 87 —; TASK-040 and TASK-041 READY beside TASK-046.

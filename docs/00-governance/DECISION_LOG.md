@@ -217,6 +217,7 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | APPR-026 | 2026-10-27 | Explicit Owner approval — the narrow amendments of DATABASE §28 and its header, TASK-022 and TASK_PLAN that DIR-099 needs (W1–W4) | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_TASK-022_2026-10-27.txt), part 3, after the text was shown — [details](#dir-099--task-022s-choices) |
 | DIR-100 | 2026-10-31 | Change 4 under DIR-085 OF-02, OF-03 and OF-04 and record 84 ER-09, merged by the Owner as `be53504` (pull request #50) | [Details](#dir-100--change-4-the-contract-rows-and-the-consistency-edit) |
 | DIR-101 | 2026-10-31 | Owner decision — `refund.record` for the credit hold (P11Q-07, its attribution raised as P11Q-08), F1–F3 of OF-04, four labels, continuation under DIR-096 | [Exact transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt) — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
+| DIR-102 | 2026-11-01 | The Owner's FAST BUILD directive: as many Tasks as possible within 48 hours by a faster way of working under DIR-096, no gate lowered, one executor and one active Task | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_FAST-BUILD_2026-11-01.txt) — [details](#dir-102--the-owners-fast-build-directive) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 
 ## Approval register
@@ -2660,6 +2661,13 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **APPR-026 — the canonical text, approved by the Owner after it was shown (part 3):** W1–W4 — DATABASE §28's runtime privileges and its header's amendment line; TASK-022's amendment line and DATABASE IMPACT ASSESSMENT; TASK_PLAN's Change 14. Level 1 under CHANGE_CONTROL — locks made available to the role that must take them, no table, column, behaviour, visibility or V1 requirement changed —, approved by the Owner on 2026-10-27.
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
+
+## DIR-102 — The Owner's FAST BUILD directive
+
+- **Source/date:** [EXECUTION_OWNER_DIRECTIVE_FAST-BUILD_2026-11-01.txt](sources/EXECUTION_OWNER_DIRECTIVE_FAST-BUILD_2026-11-01.txt), the Owner's message received in session on 2026-11-01 (WIB), transcribed as received.
+- **What it is:** an optimization of DIR-096's execution: minimal context per Task, one substantive review by risk then targeted delta verification, targeted tests then the mandatory final CI, the next READY Task right after a verified merge, a short progress block in each reply. The target of 48 hours is an aim, never a reason to claim DONE.
+- **What it does not change:** every gate, V1's scope, `PARALLEL SAFE`, one primary executor and one active Task, one watcher, the Owner's merge exceptions and change control. A proposal for parallel execution comes to the Owner as a change control and starts nothing by itself.
+- **The amendments:** this entry and its index row, a Level 1 record of an Owner directive under CHANGE_CONTROL. No Task is added, no V1 requirement dropped.
 
 ## DIR-101 — The Owner's decisions on P11Q-07, OF-04 and the labels
 
