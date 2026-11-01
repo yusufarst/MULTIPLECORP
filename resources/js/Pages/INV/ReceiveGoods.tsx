@@ -17,6 +17,7 @@ import { Icon } from '@/components/ui/icon';
 import { Input } from '@/components/ui/input';
 import { NativeSelect } from '@/components/ui/native-select';
 import { Code, DateText } from '@/components/values';
+import { lookUp, type ScanMatch } from '@/features/inv/scan-client';
 import { LineForm, plain, type Rack, type Receipt, type ReceiveLine, type ReturnCase, type ScannedSerial } from '@/features/inv/receive-line';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
@@ -24,8 +25,6 @@ import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 import { cn } from '@/lib/utils';
 
-type Match = { kind: 'product' | 'serial' | 'lot'; product: string; name: string; sku?: string | null; serial?: string; in_stock?: boolean; lot?: string };
-type Scan = { kind: 'match' | 'unknown' | 'ambiguous'; code: string; matches: Match[]; register: boolean };
 type Props = {
     purchase: { id: string; number: string; state: string; supplier: string; company: string; company_id: string; project: string | null; project_number: string | null };
     lines: ReceiveLine[];
@@ -36,22 +35,6 @@ type Props = {
     can: { reserve: boolean; note: boolean; evidence: boolean; barcode: boolean };
 };
 
-async function lookUp(code: string): Promise<Scan | null> {
-    try {
-        const token = document.querySelector<HTMLMetaElement>('meta[name="csrf-token"]')?.content;
-        const response = await fetch('/gudang/pindai', {
-            method: 'POST',
-            credentials: 'same-origin',
-            headers: { Accept: 'application/json', 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest', ...(token === undefined ? {} : { 'X-CSRF-TOKEN': token }) },
-            body: JSON.stringify({ kode: code }),
-        });
-
-        return response.ok ? (await response.json()) as Scan : null;
-    } catch {
-        return null;
-    }
-}
-
 export default function ReceiveGoods({ purchase, lines, cases, receipts, locations, today, can }: Props) {
     const { t } = useTranslation();
     const open = lines.filter((line) => Number(line.remaining) > 0 || Number(line.replacement) > 0);
@@ -59,7 +42,7 @@ export default function ReceiveGoods({ purchase, lines, cases, receipts, locatio
     const [code, setCode] = useState('');
     const [result, setResult] = useState<string | null>(null);
     const [scanError, setScanError] = useState<string | null>(null);
-    const [candidates, setCandidates] = useState<Match[]>([]);
+    const [candidates, setCandidates] = useState<ScanMatch[]>([]);
     const [register, setRegister] = useState<string | null>(null);
     const [filter, setFilter] = useState<string | null>(null);
     const [serials, setSerials] = useState<Record<string, ScannedSerial[]>>({});

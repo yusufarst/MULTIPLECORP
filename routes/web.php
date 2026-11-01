@@ -27,6 +27,7 @@ use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
 use App\Modules\INV\Http\Controllers\LocationsController;
 use App\Modules\INV\Http\Controllers\ReceivingController;
 use App\Modules\INV\Http\Controllers\ReservationsController;
+use App\Modules\INV\Http\Controllers\StockController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\OPS\Http\Controllers\LogsController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
@@ -141,6 +142,10 @@ Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->mi
 // TASK-038 — PG-025 *Reservasi* and its commands (WF-INV-02; AX-01; AX-02): ROUTE-025, ROUTE-184 and ROUTE-185, `stock.reserve`
 // with its prerequisites `stock.view` and `projects.view` (PERMISSIONS_MATRIX §4).
 // PG-021, PG-022 and their commands (TASK-039).
+Route::get('/gudang/stok', [StockController::class, 'index'])->middleware(['auth', 'capability:stock.view'])->name('inv.stock');
+Route::get('/gudang/stok/{id}', [StockController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:stock.view'])->name('inv.stock.show');
+Route::get('/gudang/riwayat-stok', [StockController::class, 'historyPage'])->middleware(['auth', 'capability:stock.view'])->name('inv.history');
+Route::post('/gudang/riwayat-stok/{id}/balikkan', [StockController::class, 'reverse'])->whereUuid('id')->middleware(['auth', 'capability:stock.reverse'])->name('inv.history.reverse');
 Route::get('/gudang/barang-masuk', [ReceivingController::class, 'worklist'])->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving');
 Route::get('/gudang/barang-masuk/{id}', [ReceivingController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving.show');
 Route::post('/gudang/barang-masuk/{id}/terima', [ReceivingController::class, 'receive'])->whereUuid('id')->middleware(['auth', 'capability:stock.receive'])->name('inv.receiving.receive');

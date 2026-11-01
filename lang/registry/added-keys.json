@@ -14112,6 +14112,516 @@
             "source": "IP-15; ROUTE-147; IP-04 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "activity.action.INV.MovementReversed": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.answer.reversed": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.refusal.reversed": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.refusal.moved_on": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.tab.products": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.tab.places": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.search": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.search_action": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history_link": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.empty": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.empty_product": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history_empty": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.group_failed": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reload": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.restock": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.value.title": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.value.line": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.product": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.rack": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.condition": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.quantity": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.date": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.direction": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.type": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.lot": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.serial": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.reason": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.column.actor": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.condition.USABLE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.condition.UNUSABLE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.direction.IN": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.direction.OUT": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.section.places": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.section.lots": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.section.serials": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.section.reservations": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.section.movements": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.oldest": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.source": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.acquired": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.cost": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.flagged": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.kind.RECEIPT": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.kind.OPENING": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.kind.RESTORATION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.kind.SURPLUS": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.lot.kind.DROPSHIP_RETURN": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.serial.present": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.filter_type": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.all_types": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.from": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.to": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.sort": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.newest": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.oldest": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.apply": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.corrected_by": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.corrects": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.history.reference": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reverse.action": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reverse.title": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reverse.consequence": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reverse.shortfall": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.reverse.no_cut": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.RECEIPT": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.RECEIPT_REVERSAL": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.CONDITION_CHANGE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.LOCATION_MOVE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.ADJUSTMENT_DECREASE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.LOSS": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.COUNT_VARIANCE": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.SURPLUS_ATTRIBUTION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.UNATTRIBUTED_RECOGNITION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.UNATTRIBUTED_CONVERSION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.UNATTRIBUTED_FOUND": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.UNATTRIBUTED_RESOLUTION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.UNATTRIBUTED_RESOLUTION_REVERSAL": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.DISPATCH": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.RESTORATION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.PURCHASE_RETURN": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.OPENING": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.DROPSHIP_RETURN_RECEIPT": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.MOVEMENT_REVERSAL": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.SERIAL_REGISTRATION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "stock.movement.IDENTITY_SUBSTITUTION": {
+            "task": "TASK-040",
+            "source": "PG-018–PG-020; CM-28; DESIGN_SYSTEM §14.2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

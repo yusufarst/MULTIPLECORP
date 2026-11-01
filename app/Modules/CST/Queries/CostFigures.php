@@ -4,6 +4,7 @@ namespace App\Modules\CST\Queries;
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\Money;
+use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -35,6 +36,71 @@ final class CostFigures
             ->where('l.id', $lotId)->first(['b.remaining_qty_base', 'b.remaining_cost']);
 
         return is_object($row) ? ['remaining_qty' => Row::text($row, 'remaining_qty_base'), 'remaining_cost' => Row::text($row, 'remaining_cost')] : null;
+    }
+
+    /**
+     * PG-019's lots' cost and flagged basis, only those of a source company whose `cost.view` the viewer holds, in scope (PJ-02; rows 73, 74).
+     *
+     * @param  list<int>  $lotIds
+     * @return array<string, array{cost: string, flagged: ?string}>
+     */
+    public function lots(int $viewerId, array $lotIds): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $figures = [];
+
+        if ($lotIds === [] || ! $viewer->has('cost.view')) {
+            return $figures;
+        }
+
+        foreach ($viewer->scope->apply(DB::table('inventory_lots as l'), 'l.source_company_id')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->whereIn('l.id', $lotIds)
+            ->get(['l.id', 'l.source_company_id', 'b.remaining_cost', DB::raw("(select sum(e.amount) from lot_cost_entries e where e.lot_id = l.id and e.entry_kind = 'SURPLUS_FLAGGED_BASIS') as flagged")]) as $row) {
+            if ($viewer->allows('cost.view', (int) Row::text($row, 'source_company_id'))) {
+                $figures[RowHandle::of('inventory_lots', (int) Row::text($row, 'id'))] = ['cost' => Row::text($row, 'remaining_cost'), 'flagged' => Row::nullable($row, 'flagged')];
+            }
+        }
+
+        return $figures;
+    }
+
+    /**
+     * PG-018's stock value: each company in scope whose `cost.view` the viewer holds, its own lots only, labelled per company and never a total across them; with its own exposure on a pending case, never the case's pending quantity or another candidate (PJ-22; CS-08; UXS-39).
+     *
+     * @return list<array{company: string, name: string, value: string, exposures: list<array{qty: string, unit: string}>}>
+     */
+    public function stockValues(int $viewerId): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+
+        if (! $viewer->has('cost.view')) {
+            return [];
+        }
+
+        $values = [];
+
+        foreach ($viewer->scope->apply(DB::table('companies as c'), 'c.id')->orderBy('c.code')->get(['c.id', 'c.code', 'c.legal_name']) as $company) {
+            $id = (int) Row::text($company, 'id');
+
+            if ($viewer->allows('cost.view', $id)) {
+                $value = DB::table('inventory_lots as l')->join('lot_cost_balances as b', 'b.lot_id', '=', 'l.id')->where('l.source_company_id', $id)->selectRaw('coalesce(sum(b.remaining_cost), 0.00)::text as total')->value('total');
+                $values[] = ['company' => Row::text($company, 'code'), 'name' => Row::text($company, 'legal_name'), 'value' => is_string($value) ? $value : '0.00', 'exposures' => $this->exposures($id)];
+            }
+        }
+
+        return $values;
+    }
+
+    /** @return list<array{qty: string, unit: string}> */
+    private function exposures(int $companyId): array
+    {
+        $rows = [];
+
+        foreach (DB::table('unattributed_loss_exposures as x')->join('unattributed_loss_cases as k', 'k.id', '=', 'x.unattributed_loss_case_id')->join('products as p', 'p.id', '=', 'k.product_id')->join('units as u', 'u.id', '=', 'p.base_unit_id')
+            ->where('x.company_id', $companyId)->where('k.pending_qty_base', '>', 0)->whereRaw('x.exposure_qty_base > x.assigned_net_qty_base')->groupBy('u.code')->selectRaw('u.code, sum(x.exposure_qty_base - x.assigned_net_qty_base) as qty')->get() as $row) {
+            $rows[] = ['qty' => Row::text($row, 'qty'), 'unit' => Row::text($row, 'code')];
+        }
+
+        return $rows;
     }
 
     /**
