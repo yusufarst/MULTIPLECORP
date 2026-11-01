@@ -218,6 +218,7 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | DIR-100 | 2026-10-31 | Change 4 under DIR-085 OF-02, OF-03 and OF-04 and record 84 ER-09, merged by the Owner as `be53504` (pull request #50) | [Details](#dir-100--change-4-the-contract-rows-and-the-consistency-edit) |
 | DIR-101 | 2026-10-31 | Owner decision — `refund.record` for the credit hold (P11Q-07, its attribution raised as P11Q-08), F1–F3 of OF-04, four labels, continuation under DIR-096 | [Exact transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt) — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 | DIR-102 | 2026-11-01 | The Owner's FAST BUILD directive: as many Tasks as possible within 48 hours by a faster way of working under DIR-096, no gate lowered, one executor and one active Task | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_FAST-BUILD_2026-11-01.txt) — [details](#dir-102--the-owners-fast-build-directive) |
+| DIR-103 | 2026-11-01 | The Owner's directives on avoidable CI delays: TL-09–TL-12 in parallel on runners of their own under the Browser check's name, the DONE record's accuracy kept, no required check passed over | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVES_CI_2026-11-01.txt) — [details](#dir-103--the-owners-directives-on-avoidable-ci-delays) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 
 ## Approval register
@@ -2661,6 +2662,14 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **APPR-026 — the canonical text, approved by the Owner after it was shown (part 3):** W1–W4 — DATABASE §28's runtime privileges and its header's amendment line; TASK-022's amendment line and DATABASE IMPACT ASSESSMENT; TASK_PLAN's Change 14. Level 1 under CHANGE_CONTROL — locks made available to the role that must take them, no table, column, behaviour, visibility or V1 requirement changed —, approved by the Owner on 2026-10-27.
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
+
+## DIR-103 — The Owner's directives on avoidable CI delays
+
+- **Source/date:** [EXECUTION_OWNER_DIRECTIVES_CI_2026-11-01.txt](sources/EXECUTION_OWNER_DIRECTIVES_CI_2026-11-01.txt), the Owner's two messages received in session on 2026-11-01 (WIB), transcribed as received.
+- **The audit:** in run 41286166058, Verify took 8 minutes, Performance and migration 4, Browser 26 — its setup 1½, its four layers 24½ in sequence on one runner. Caching Composer, npm or Docker could save about a minute per job and would need an action beyond the one pinned (SM-15), so none is added. Push and pull request runs are parallel and cost no wall-clock.
+- **The change:** TL-09, TL-10, TL-11 and TL-12 run in parallel on runners of their own, on Chromium and WebKit as before. `Browser — TL-09–TL-12 on Chromium and WebKit` stays the required check, as the aggregator: FAIL on a layer failed, cancelled or skipped, or on a summary missing, EMPTY or of another commit (`scripts/ci/check-browser-evidence.mjs`, its fixtures run with the repository's gates). The release integrity report reads the same summaries, each naming its commit.
+- **The DONE record:** DEFINITION_OF_DONE is unchanged. The record is committed once the code's CI is green, so code and status reach `main` together in one squash, and no merge is claimed before GitHub confirms it. The executor does not wait idle through that commit's CI: it prepares the next READY Task locally. A narrower check for a record-only commit would be a governance change, proposed to the Owner with measured data if this proves too slow.
+- **The amendments, Level 1 under CHANGE_CONTROL:** this entry and its index row, the workflow, `scripts/verify.sh`, the check and BRANCH_PROTECTION's row. No required check is dropped, no test skipped, no Task added.
 
 ## DIR-102 — The Owner's FAST BUILD directive
 

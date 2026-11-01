@@ -749,3 +749,7 @@ This is a change summary; current state and approval authority live in their [ow
 - Built TASK-039 on its branch `task/TASK-039-receiving`: a receipt per purchase line with one lot, serials, evidence and the same-action reservation (ROUTE-181), the Nota Terima Barang (ROUTE-182), the reversal of unconsumed units (ROUTE-183), the exact scan lookup (ROUTE-282), PG-021, PG-022 and the shared scan field.
 - DIR-102 recorded: the Owner's FAST BUILD directive of 2026-11-01, an optimization of DIR-096 lowering no gate.
 - Every check passed in fresh CI on `bf42119`. TASK-039 DONE — progress 46 / 87 —; TASK-040 and TASK-041 READY beside TASK-046.
+
+## Unreleased — 2026-11-01, DIR-103 — Browser layers in parallel
+
+- TL-09–TL-12 run on runners of their own; `Browser — TL-09–TL-12 on Chromium and WebKit` stays the required check as their aggregator, failing on a layer failed, cancelled or skipped or on evidence missing or of another commit.

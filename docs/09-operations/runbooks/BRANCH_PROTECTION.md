@@ -15,7 +15,7 @@ In the repository's settings, a branch protection rule — or a ruleset targetin
 | Required approvals | 1 — the Owner's approval of the pull request | RELEASE_PLAN §2; GLC-12 |
 | Dismiss stale approvals when new commits are pushed | on | the approval covers the commit merged |
 | Require status checks to pass before merging | on | TEST_STRATEGY Layer 1 |
-| Required checks, by their exact names | `Verify — gates, TL-01–TL-08, TL-13, TL-14`; `Browser — TL-09–TL-12 on Chromium and WebKit`; `Performance and migration — TL-15, TL-16` | the three jobs of `.github/workflows/ci.yml` (TASK-003) |
+| Required checks, by their exact names | `Verify — gates, TL-01–TL-08, TL-13, TL-14`; `Browser — TL-09–TL-12 on Chromium and WebKit`; `Performance and migration — TL-15, TL-16` | the three required checks of `.github/workflows/ci.yml` (TASK-003), the Browser check the aggregator of its four layers' jobs, failing on any of them failed, cancelled or skipped or on evidence missing (DIR-103) |
 | Require branches to be up to date before merging | on | the checks ran on what is merged |
 | Allow force pushes | off | no rewritten history on `main` |
 | Allow deletions | off | `main` is the one long-lived branch |
