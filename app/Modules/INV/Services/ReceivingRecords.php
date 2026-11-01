@@ -206,7 +206,7 @@ final class ReceivingRecords
                 throw Refused::rejected('C-03', ['reason' => 'above_unconsumed', 'available' => is_string($held) ? $held : '0']);
             }
 
-            $entries[] = ['lot' => $lotId, 'product' => $product, 'scale' => $scale, 'location' => $removal['location'], 'condition' => $removal['condition'], 'qty' => (string) $qty->negated(), 'serial' => $removal['serial']];
+            $entries[] = ['lot' => $lotId, 'product' => $product, 'scale' => $scale, 'location' => $removal['location'], 'condition' => $removal['condition'], 'qty' => (string) $qty->negated(), ...($removal['serial'] === null ? [] : ['serial' => $removal['serial']])];
             $total = $total->plus($qty);
             $usable = $removal['condition'] === 'USABLE' ? $usable->plus($qty) : $usable;
         }
@@ -222,18 +222,16 @@ final class ReceivingRecords
             'reverses_movement_id' => (int) Row::text($lot, 'stock_movement_id'), 'reverses_movement_type' => 'RECEIPT', 'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId,
         ]);
 
-        if ($usable->isPositive()) {
-            $shortfall = InventoryPosting::shortfall($product, (string) $usable);
+        $reserved = null;
 
-            if ($shortfall->isPositive() || $cuts !== []) {
-                $this->inventory->cut($context, $product, $cuts, (string) $usable, $movement, 'INV.ReverseReceipt');
-            }
+        if ($usable->isPositive() && (InventoryPosting::shortfall($product, (string) $usable)->isPositive() || $cuts !== [])) {
+            $reserved = $this->inventory->cut($context, $product, $cuts, (string) $usable, $movement, 'INV.ReverseReceipt');
         }
 
-        $entryIds = $this->inventory->ledger($context, $movement, 'RECEIPT_REVERSAL', array_values(array_map(fn (array $entry): array => array_filter($entry, fn (mixed $value): bool => $value !== null), $entries)));
+        $entryIds = $this->inventory->ledger($context, $movement, 'RECEIPT_REVERSAL', $entries, $reserved);
 
         foreach ($entries as $index => $entry) {
-            if ($entry['serial'] !== null) {
+            if (isset($entry['serial'])) {
                 DB::table('serial_units')->where('id', $entry['serial'])->update(['state' => 'NEVER_RECEIVED', 'current_lot_id' => null, 'current_location_id' => null, 'current_condition' => null, 'last_entry_id' => $entryIds[$index]]);
             }
         }
@@ -373,8 +371,10 @@ final class ReceivingRecords
             throw Refused::rejected('C-02', ['reason' => 'serial_condition']);
         }
 
+        $line = 0;
+
         foreach ($serials as $key => $serial) {
-            $id = $this->registerSerial($context, $product, $key, $serial['serial'], $lot, $location, $serial['damaged'] ? 'UNUSABLE' : 'USABLE');
+            $id = $this->registerSerial($context, $product, $key, $serial['serial'], $lot, $location, $serial['damaged'] ? 'UNUSABLE' : 'USABLE', ++$line);
             $rows[] = [...$base, 'condition' => $serial['damaged'] ? 'UNUSABLE' : 'USABLE', 'qty' => '1', 'serial' => $id];
         }
 
@@ -382,9 +382,9 @@ final class ReceivingRecords
     }
 
     /** FU-04: the serial's row found or born NEVER_RECEIVED, then its conditional transition into stock; in stock already refused (BR-INV-09; C-02; M-05). */
-    private function registerSerial(CommandContext $context, int $product, string $key, string $number, int $lot, int $location, string $condition): int
+    private function registerSerial(CommandContext $context, int $product, string $key, string $number, int $lot, int $location, string $condition, int $line): int
     {
-        $context->connection->table('serial_units')->insertOrIgnore(['product_id' => $product, 'serial_number' => $number, 'serial_key' => $key, 'state' => 'NEVER_RECEIVED', 'command_id' => $context->request->commandId, 'command_line_no' => null, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
+        $context->connection->table('serial_units')->insertOrIgnore(['product_id' => $product, 'serial_number' => $number, 'serial_key' => $key, 'state' => 'NEVER_RECEIVED', 'command_id' => $context->request->commandId, 'command_line_no' => $line, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
         $moved = DB::table('serial_units')->where('product_id', $product)->where('serial_key', $key)->where('state', '<>', 'IN_STOCK')->update(['state' => 'IN_STOCK', 'current_lot_id' => $lot, 'current_location_id' => $location, 'current_condition' => $condition]);
 
         if ($moved !== 1) {

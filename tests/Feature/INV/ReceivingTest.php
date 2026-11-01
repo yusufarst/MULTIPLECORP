@@ -89,7 +89,7 @@ it('records two events and two lots for a line of 5 received in batches of 2 and
 
 function bcsubLocal(string $a, string $b): string
 {
-    return (string) BigDecimal::of($a)->minus($b)->stripTrailingZeros();
+    return (string) BigDecimal::of($a)->minus($b)->toScale(0, Brick\Math\RoundingMode::Down);
 }
 
 it('puts 55 usable at the rack and 5 straight into UNUSABLE on one lot, AVAILABLE up by 55, 40 open (PX-06; L-13; BR-INV-01; criterion 2)', function () {
@@ -156,7 +156,7 @@ it('answers a scan: a product by barcode or SKU, an unknown code with its offer 
     $editor = ReceivingWorld::actor($this->company, ['products.edit']);
     $this->actingAs($editor)->postJson('/gudang/pindai', ['kode' => 'TIDAK-ADA'])->assertJsonPath('register', true);
 
-    ProductBarcodeFactory::new()->createOne(['product_id' => $product->id, 'code' => 'KODE-1', 'code_key' => 'KODE-1']);
+    ProductBarcodeFactory::new()->createOne(['product_id' => $product->id, 'code' => 'KODE-1']);
     $other = Projects::product();
     DB::table('products')->where('id', $other['product']->id)->update(['sku' => 'KODE-1']);
     $this->actingAs($this->actor)->postJson('/gudang/pindai', ['kode' => 'kode-1'])->assertJsonPath('kind', 'ambiguous')->assertJsonCount(2, 'matches');

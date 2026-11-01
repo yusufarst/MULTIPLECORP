@@ -13698,6 +13698,114 @@
             "source": "PT-18; BR-XC-01 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "receiving.answer.received": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.answer.reversed": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.duplicate": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.policy": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.purchase_state": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.above_remainder": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.serial_in_stock": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.serial_count": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.above_unconsumed": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.reservations": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.quantity": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.charge": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.cited_receipt": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.not_warehouse": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.reservation": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "receiving.refusal.no_rack": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.GoodsReceived": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReceiptReversed": {
+            "task": "TASK-039",
+            "source": "WF-INV-01; J-INV-01; PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

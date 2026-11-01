@@ -4,6 +4,8 @@ namespace App\Modules\INV\Queries;
 
 use App\Modules\IAM\Data\Authority;
 use App\Support\Search\Row;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -21,8 +23,8 @@ final class ScanLookup
         $key = mb_strtoupper((string) preg_replace('/\s+/u', '', $term));
         $matches = [];
 
-        foreach (DB::table('products as p')->leftJoin('product_barcodes as b', fn ($join) => $join->on('b.product_id', '=', 'p.id')->where('b.is_active', true)->where('b.code_key', $key))
-            ->where('p.is_active', true)->where(fn ($where) => $where->whereRaw('upper(p.sku) = ?', [$key])->orWhereNotNull('b.id'))->orderBy('p.name')->limit(self::ROWS + 1)->distinct()->get(['p.public_id', 'p.name', 'p.sku', 'p.is_serialized']) as $row) {
+        foreach (DB::table('products as p')->leftJoin('product_barcodes as b', fn (JoinClause $join) => $join->on('b.product_id', '=', 'p.id')->where('b.is_active', true)->where('b.code_key', $key))
+            ->where('p.is_active', true)->where(fn (Builder $where) => $where->whereRaw('upper(p.sku) = ?', [$key])->orWhereNotNull('b.id'))->orderBy('p.name')->limit(self::ROWS + 1)->distinct()->get(['p.public_id', 'p.name', 'p.sku', 'p.is_serialized']) as $row) {
             $matches[] = ['kind' => 'product', 'product' => Row::text($row, 'public_id'), 'name' => Row::text($row, 'name'), 'sku' => Row::nullable($row, 'sku'), 'serialized' => (bool) $row->is_serialized];
         }
 

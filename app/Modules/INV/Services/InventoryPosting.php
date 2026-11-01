@@ -57,12 +57,12 @@ final class InventoryPosting
     }
 
     /**
-     * A movement's ledger rows and their guards (DATABASE §5.2; GU-01; FU-01; FU-02): each entry inserted, then each lot, scope and product guard moved once by its net delta, a first-use row born first. The guards' CHECKs read the end state (C-03; C-04). Returns the entries' ids, in order.
+     * A movement's ledger rows and their guards (DATABASE §5.2; GU-01; FU-01; FU-02): each entry inserted, then each lot, scope and product guard moved once by its net delta, a first-use row born first, a cut's RESERVED with ON HAND in one statement. The guards' CHECKs read the end state (C-03; C-04). Returns the entries' ids, in order.
      *
      * @param  list<array{lot: int, product: int, scale: int, location: int, condition: string, qty: string, serial?: int}>  $entries
      * @return list<int>
      */
-    public function ledger(CommandContext $context, int $movementId, string $type, array $entries): array
+    public function ledger(CommandContext $context, int $movementId, string $type, array $entries, ?string $reservedDelta = null): array
     {
         $ids = [];
         $now = $context->now();
@@ -100,7 +100,7 @@ final class InventoryPosting
 
         foreach ($products as $product => $deltas) {
             $context->connection->table('stock_product_balances')->insertOrIgnore(['product_id' => $product, 'recorded_at' => $now]);
-            GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $product], 'deltas' => array_filter(['on_hand_qty' => (string) $deltas['on_hand_qty'], 'unusable_qty' => (string) $deltas['unusable_qty'], 'version' => '1'], fn (string $delta): bool => ! BigDecimal::of($delta)->isZero())]]);
+            GuardUpdate::apply($context->connection, 'stock_product_balances', [['key' => ['product_id' => $product], 'deltas' => array_filter(['on_hand_qty' => (string) $deltas['on_hand_qty'], 'unusable_qty' => (string) $deltas['unusable_qty'], 'reserved_qty' => $reservedDelta ?? '0', 'version' => '1'], fn (string $delta): bool => ! BigDecimal::of($delta)->isZero())]]);
         }
 
         return $ids;
