@@ -307,6 +307,29 @@ it('counts a re-inspection undone by its reversal as the project\'s damage again
     adjustmentClean();
 });
 
+it('charges a serial by its own history: the unit damaged at the receipt its project, another marked unusable later the owning company (L-38; criterion 8)', function () {
+    $project = $this->demand['project']->id;
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $lot = AdjustmentWorld::damagedReceipt($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '1', '1000', $project, $this->line, [['serial' => 'SN-RUSAK', 'damaged' => true], ['serial' => 'SN-LAYAK', 'damaged' => false]]);
+    $damaged = (int) DB::table('serial_units')->where('serial_key', 'sn-rusak')->value('id');
+    $sound = (int) DB::table('serial_units')->where('serial_key', 'sn-layak')->value('id');
+    $items = fn (): array => array_map(fn ($item): string => $item->key, app(ReservationPredicate::class)->states([$project], false)[$project][Predicates::STOCK]->items);
+    $change = fn (): string => AdjustmentWorld::change($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'USABLE', $sound)], evidence: [$this->evidence]));
+
+    // The sound unit repaired says nothing of the damaged one.
+    expect($change())->toBe('COMMITTED')
+        ->and(AdjustmentWorld::reinspect($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'UNUSABLE', $sound)])))->toBe('COMMITTED')
+        ->and($items())->toContain('projects.item.unusable_units')
+        ->and($change())->toBe('COMMITTED')
+        ->and(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'UNUSABLE', $sound)], evidence: [$this->evidence]), 'DISPOSAL'))->toBe('COMMITTED')
+        ->and(DB::table('stock_consumptions')->where('bearer_project_id', $project)->count())->toBe(0)
+        ->and($items())->toContain('projects.item.unusable_units')
+        ->and(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'UNUSABLE', $damaged)], evidence: [$this->evidence]), 'DISPOSAL'))->toBe('COMMITTED')
+        ->and(lossOn($project))->toBe('1000.00')
+        ->and($items())->not->toContain('projects.item.unusable_units');
+    adjustmentClean();
+});
+
 it('changes a serial\'s condition with its unit, one change from two commands leaving one, and refuses disposing of usable units (C-02; L-13; WF-INV-06)', function () {
     $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2');
     DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);

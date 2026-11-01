@@ -136,6 +136,12 @@ it('offers the units physically, another company\'s with the marker, and a loss\
     expect($losses($outsider))->toBe([]);
     $history = fn (object $viewer): string => json_encode($this->actingAs($viewer)->get('/gudang/riwayat-stok')->assertOk()->viewData('page')['props']['list']);
     expect($history($this->actor))->toContain('Susut terhitung')->and($history($outsider))->not->toContain('Susut terhitung');
+
+    // Nor the reason of its reversal, a movement of the pool like the loss.
+    $movement = (string) DB::table('stock_movements')->where('movement_type', 'ADJUSTMENT_DECREASE')->value('public_id');
+    expect($this->actingAs($this->actor)->post("/gudang/penyesuaian/{$movement}/balikkan", ['command_id' => (string) Str::uuid(), 'alasan' => 'Salah hitung rak', 'tanggal' => BusinessDate::today()])->isRedirect())->toBeTrue()
+        ->and($history($this->actor))->toContain('Salah hitung rak')
+        ->and($history($outsider))->not->toContain('Salah hitung rak');
 });
 
 it('resolves a foreign serial, an unseen evidence and an unknown lot exactly like nonexistent ones (CS-04; PJ-08; SM-01)', function () {

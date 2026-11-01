@@ -89,7 +89,7 @@ test('refuses and routes a loss of another company\'s lot with MSG-14, nothing r
     const run = await adjustmentRun(page, `sesuai-rute-${String(Date.now())}`);
     const context = await browser.newContext({ baseURL: test.info().project.use.baseURL, ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });
     const admin = await context.newPage();
-    await signedIn(admin, 'sesuai-admin', { plain: true });
+    await signedIn(admin, 'sesuai-admin');
     expect((await admin.request.post('/__fixtures/adjustments/plain', { data: { company: run.company } })).ok()).toBe(true);
 
     await admin.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);

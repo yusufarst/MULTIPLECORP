@@ -23,7 +23,7 @@ test('names the units, the proof and the reason on PG-027, the relation marker a
 
     const context = await browser.newContext({ baseURL: test.info().project.use.baseURL, ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });
     const admin = await context.newPage();
-    await signedIn(admin, 'sesuai-a11y-admin', { plain: true });
+    await signedIn(admin, 'sesuai-a11y-admin');
     expect((await admin.request.post('/__fixtures/adjustments/plain', { data: { company: run.company } })).ok()).toBe(true);
     await admin.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=kondisi`);
     await expect(admin.locator('[data-slot="adjustment-lot"]').filter({ hasText: 'perusahaan lain' }).first()).toBeVisible();

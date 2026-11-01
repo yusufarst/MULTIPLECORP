@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 
 /**
- * TL-09–TL-12 (TASK-042): over StockFixture's world, a second rack to move to and a pool proof to cite; the signed-in plain account as a Company-A-only Admin with `stock.adjust` and `stock.condition`, for the routed loss (UXS-22). Synthetic data only.
+ * TL-09–TL-12 (TASK-042): over StockFixture's world, a second rack to move to and a pool proof to cite; the signed-in account, with its confirmed TOTP as these ADM_PLUS capabilities ask, as a Company-A-only Admin with `stock.adjust` and `stock.condition`, for the routed loss (UXS-22). Synthetic data only.
  */
 final class AdjustmentFixture
 {

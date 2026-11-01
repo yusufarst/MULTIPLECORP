@@ -73,14 +73,18 @@ final class AdjustmentWorld
         return InvoiceWorld::word(app(ReverseLoss::class)->run((string) Str::uuid(), $actor, $company, $movement, 'Kerugian keliru dicatat', BusinessDate::today(), false));
     }
 
-    /** A lot received with `damaged` of its units UNUSABLE at the receipt of the purchase line; the lot. */
-    public static function damagedReceipt(int $actor, Company $company, int $product, int $unit, int $rack, string $usable, string $damaged, string $price, int $project, int $demand): int
+    /**
+     * A lot received with `damaged` of its units UNUSABLE at the receipt of the purchase line; the lot.
+     *
+     * @param  list<array{serial: string, damaged: bool}>  $serials
+     */
+    public static function damagedReceipt(int $actor, Company $company, int $product, int $unit, int $rack, string $usable, string $damaged, string $price, int $project, int $demand, array $serials = []): int
     {
         $total = (string) ((int) $usable + (int) $damaged);
         $purchase = ReceivingWorld::purchase($company, $product, $unit, $total, $price, $project, $demand, $actor);
         $line = ReceivingWorld::line($purchase);
         Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
-        $entry = new ReceiptEntry($purchase->id, $line->id, ReceiptEntry::ORIGINAL, $unit, $usable, $damaged, '0', $rack, [], null, null, null, null, [], BusinessDate::today(), false, false, 0);
+        $entry = new ReceiptEntry($purchase->id, $line->id, ReceiptEntry::ORIGINAL, $unit, $usable, $damaged, '0', $rack, $serials, null, null, null, null, [], BusinessDate::today(), false, $serials !== [], 0);
         $word = InvoiceWorld::word(app(ReceiveGoods::class)->run((string) Str::uuid(), $actor, $company->id, $entry, ['run' => (string) Str::uuid()]));
 
         if ($word !== 'COMMITTED') {

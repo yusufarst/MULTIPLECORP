@@ -233,9 +233,9 @@ final class LossPosting
                 $kase['open'] = $kase['open']->minus($spent['case'.$kase['id']] ?? BigDecimal::zero());
             }
 
-            $receipt = $pick['condition'] === 'UNUSABLE' ? self::receiptDamage($pick['lot']) : null;
+            $receipt = $pick['condition'] === 'UNUSABLE' ? self::receiptDamage($pick['lot'], $pick['serial']) : null;
 
-            if ($receipt !== null) {
+            if ($receipt !== null && $pick['serial'] === null) {
                 $receipt['open'] = $receipt['open']->minus($spent['lot'.$pick['lot']] ?? BigDecimal::zero());
             }
 
@@ -298,11 +298,11 @@ final class LossPosting
     }
 
     /**
-     * The damage at the receipt of a project-linked line not yet lost on that project, nor repaired by a re-inspection (L-38).
+     * The damage at the receipt of a project-linked line not yet lost on that project, nor repaired by a re-inspection (L-38): a serial by its own history, the unit itself damaged at the receipt and not repaired since.
      *
      * @return array{project: int, company: int, open: BigDecimal}|null
      */
-    private static function receiptDamage(int $lot): ?array
+    private static function receiptDamage(int $lot, ?int $serial = null): ?array
     {
         $row = DB::table('inventory_lots as i')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as pl', 'pl.id', '=', 'r.purchase_line_id')->join('project_lines as l', 'l.id', '=', 'pl.project_line_id')->where('i.id', $lot)->where('r.damaged_qty_base', '>', 0)
             ->first(['r.damaged_qty_base', 'l.project_id', 'l.company_id']);
@@ -312,12 +312,20 @@ final class LossPosting
         }
 
         $project = (int) Row::text($row, 'project_id');
-        $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.lot_id', $lot)->where('c.kind', 'LOSS')->where('c.bearer_project_id', $project)->sum(DB::raw('b.qty_base - b.restored_qty_base'));
         // A re-inspection's usable units, net of its linked reversal (C-55): undone, they are damage again.
         $repaired = DB::table('stock_movement_entries as e')->join('stock_movements as m', 'm.id', '=', 'e.stock_movement_id')->where('e.lot_id', $lot)->where('e.condition', 'USABLE')
+            ->when($serial !== null, fn (Builder $where) => $where->where('e.serial_unit_id', $serial))
             ->where(fn (Builder $where) => $where->where(fn (Builder $change) => $change->where('m.movement_type', 'CONDITION_CHANGE')->where('e.qty_delta_base', '>', 0))
                 ->orWhere(fn (Builder $undone) => $undone->where('m.movement_type', 'MOVEMENT_REVERSAL')->where('m.reverses_movement_type', 'CONDITION_CHANGE')->where('e.qty_delta_base', '<', 0)))
             ->sum('e.qty_delta_base');
+
+        if ($serial !== null) {
+            $damaged = DB::table('stock_movement_entries')->where('serial_unit_id', $serial)->where('lot_id', $lot)->where('movement_type', 'RECEIPT')->where('condition', 'UNUSABLE')->exists();
+
+            return ['project' => $project, 'company' => (int) Row::text($row, 'company_id'), 'open' => $damaged && ! BigDecimal::of((string) $repaired)->isPositive() ? BigDecimal::one() : BigDecimal::zero()];
+        }
+
+        $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.lot_id', $lot)->where('c.kind', 'LOSS')->where('c.bearer_project_id', $project)->sum(DB::raw('b.qty_base - b.restored_qty_base'));
 
         return ['project' => $project, 'company' => (int) Row::text($row, 'company_id'), 'open' => BigDecimal::of(Row::text($row, 'damaged_qty_base'))->minus((string) $lost)->minus((string) $repaired)];
     }

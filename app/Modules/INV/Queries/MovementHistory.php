@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\DB;
 final class MovementHistory
 {
     /** A pool movement's loss bearers, which its reason follows. */
-    private const BEARERS = "(select string_agg(distinct c.bearer_company_id::text, ',') from stock_consumptions c where c.stock_movement_id = m.id and c.kind = 'LOSS' and m.company_id is null) as bearers";
+    private const BEARERS = "(select string_agg(distinct c.bearer_company_id::text, ',') from stock_consumptions c where c.kind = 'LOSS' and m.company_id is null and (c.stock_movement_id = m.id or c.id in (select r.stock_consumption_id from stock_restorations r where r.stock_movement_id = m.id))) as bearers";
 
     public const PAGE = 50;
 
@@ -339,7 +339,7 @@ final class MovementHistory
         }, DB::table('stock_movements')->whereIn('public_id', $publicIds)->orderBy('id')->get(['public_id', 'business_date', 'movement_type'])->all()));
     }
 
-    /** A loss on a movement of the pool says its reason to a holder of its bearer's side only (PJ-05; PJ-06). */
+    /** A loss on a movement of the pool, and its reversal, say their reason to a holder of its bearer's side only (PJ-05; PJ-06). */
     private static function reasonFor(Authority $viewer, object $row): ?string
     {
         $bearers = Row::nullable($row, 'bearers');
