@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** BLOCKED — waiting on P11Q-08
+**STATUS:** TODO
 
 **RISK CLASS:** HIGH
 
@@ -25,7 +25,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - TASK-048 — Client returns (sales return)
 - TASK-051 — Payments, applications and bank statement lines
 - TASK-052 — Deduction settlements and contras
-- the Owner's answer to P11Q-08 recorded and the credit hold's row made, which P11Q-02 (a) and P11Q-07 leave to it ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)) — BLOCKED until then
+- the Owner's answer to P11Q-08 recorded and the credit hold's row made — DONE by Change 16 (DIR-104, APPR-028; [TASK_PLAN §8](TASK_PLAN.md#8-owner-questions))
 
 **BLOCKS:**
 
@@ -43,13 +43,13 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - the unbacked refund: its shortfall shown on its case and on PG-048, blocking the case's closure and normal completion until a later real payment of that client and company is applied to the refund disbursement, resolving it, or the disbursement is contra'd as an entry error (WF-FIN-06; QS-07; QS-14; C-44)
 - money received into the wrong company (CM-20, BR-FIN-07 a): the receiving company's refund through this route, the fresh payment to the right one through TASK-051's ROUTE-251, each its own command (ADMIN_FLOW §11)
 - PG-048 with NAV-048 and ROUTE-048 (SCR-44; J-FIN-06): credit per client and company with its sources, refunds and their state, "Terapkan ke Invoice" and "Kembalikan Dana" by capability
-- **Held for the Owner's answer to P11Q-08, to which P11Q-02 (a) and P11Q-07 leave the credit hold (DIR-100; DIR-101), built here once the answer and its row are approved, which comes before this Task is READY** ([TASK_PLAN §8](TASK_PLAN.md#8-owner-questions)): under option (a), once the narrow amendment adds its row, capability and column, the third disposition of project-originated credit, "hold with reason", recorded on PG-048 with its reason and audit (WF-FIN-06), the disposition completion predicate 9 reads through TASK-055; under option (b), if the Owner takes it out of V1, it is not built, as the answer records (DIR-083 OE-20)
+- the credit hold (DIR-101; DIR-104; APPR-028): WF-FIN-06's rule of which project each rupiah of a source's rest counts for, derived and never stored, and what has arisen for a project; ROUTE-264 · INT-264, "Tahan Kredit" on PG-048 under `refund.record` with its reason and audit — the reason, the project, the amount and the sources on the event (LG-01) —, setting `projects.credit_held_amount` to what has arisen so far; PG-048 shows, per project, its credit left, what has arisen and what is held. The disposition completion predicate 9 reads through TASK-055
 
 **OUT OF SCOPE:**
 
 - payments, applications, reallocations and the payment's contra (ROUTE-251–ROUTE-254; TASK-051); the refund's contra and its control (ROUTE-260; TASK-052)
 - opening customer credit's import and its correction (CM-33; ROUTE-214; TASK-057)
-- the credit hold if the Owner's answer to P11Q-02 takes it out of V1 (option (b)), and, until its row, capability and column exist, any control for it — never built without its route (RC-06); apply and refund are in scope regardless
+- a way to lower a hold, or any spending control a hold would add: applying and refunding stay open whatever is held (WF-FIN-06; DIR-104)
 - the completion predicate that reads credit dispositions and unbacked refunds (TASK-055); the cashflow reports (CALC-14; TASK-060)
 
 **REFERENCES:**
@@ -108,7 +108,7 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 
 **DATABASE IMPACT ASSESSMENT:**
 
-- Schema change: as P11Q-08's answer states for the credit hold; otherwise NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
+- Schema change: `projects.credit_held_amount` by an expand-only migration, its column grant with it (DATABASE §4.5; DIR-104); otherwise NONE — uses the tables of TASK-005–TASK-009; a missing column is an executor discovery (AGENT_OPERATING_MODEL)
 - Migration required: NO
 - Existing data transformation: NONE
 - Direct production DB access: FORBIDDEN
@@ -220,18 +220,18 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 5. Credit is applied only to an issued invoice of the same client and company; never to another company's invoice (BR-FIN-07; C-14).
 6. A refund racing a contra or application on the same source leaves the source's capacity never above its real money; one `command_id` replayed refunds once (M-14; CI-05; AC-16).
 7. Credit and refunds show nothing without `finance.view`, and "Kembalikan Dana" is absent without `refund.record` (AZ-01; SM-04; SM-25).
-8. Once the row and column of P11Q-02 (a) are approved, project-originated credit is held with its reason from PG-048, audited, and counts as dispositioned for completion predicate 9; credit neither applied, refunded nor held still blocks it (WF-FIN-06; WF-PRJ-03; TASK_PLAN §8).
+8. Each rupiah of a source's rest counts for exactly one project (WF-FIN-06; DIR-104): a payment across two projects blocks only the project its rest counts for, and one credit is never held twice; a source with no application counts for none; project-originated credit held with its reason from PG-048, audited, counts as dispositioned for completion predicate 9, and credit arising afterwards blocks again, even after the held credit was spent; credit neither applied, refunded nor held still blocks it (WF-FIN-06; WF-PRJ-03; TASK_PLAN §8).
 
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: the derived credit per client and company, zero on a source with a shortfall, against FX-01 3 (TL-03)
-- Feature: ROUTE-256 with each refusal; the credit view's figures; the credit hold once its row and column exist (TL-04)
+- Feature: ROUTE-256 and ROUTE-264 with each refusal; the credit view's figures, per project (TL-04)
 - Integration: M-14 with real sessions, both orders; FX-04's Rp1 refund-shortfall attack and its legitimate-shortfall contrast; FX-03's refunds and reallocation; a refund's typed exits each once; the reconciliation suite after each (TL-05; TEST_STRATEGY §5, §6)
 - Authorization: `refund.record` as a separately granted ADM_PLUS capability; `payment.apply` for the application (TL-06; SM-04)
-- Route integrity: ROUTE-048 and ROUTE-256 audited, and the hold's route once its row exists (TL-07; SM-02)
-- Interaction: INT-256, and the hold's INT- row once it exists, per IG-05, with one `command_id` replayed (TL-08)
+- Route integrity: ROUTE-048, ROUTE-256 and ROUTE-264 audited (TL-07; SM-02)
+- Interaction: INT-256 and INT-264 per IG-05, with one `command_id` replayed (TL-08)
 - Browser E2E: J-FIN-06; CJ-04's credit and refund (TL-09)
 - Localization/language switch: both languages on PG-048 (TL-10)
 - Visual breathing room/density: TEST_STRATEGY §9
@@ -240,9 +240,10 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 - Production build: TL-13
 - Security: SM-01 for another company's credit; SM-25 (TL-14)
 - Performance: PFM-01 and PFM-02 for PG-048; PFM-07 for QS-12's bounded statement; PFM-20 with QB-14 for AX-23 (TL-15)
-- Migration: N/A — no migration or import code in this Task; opening credits are TASK-057's
+- Migration: the expand-only column; no import code in this Task — opening credits are TASK-057's, their attribution tested here on a fixture opening credit
 - Other: CM-13's credit after a return following payment asserted with TASK-048's case (TEST_STRATEGY §5)
 - The Owner's required verification (DIR-101): the hold — `refund.record` present and absent; the reason, the project and the payments on the audit event; amounts consistent with the credit they cover; a payment across projects never yielding a double hold.
+- The Owner's required verification (DIR-104): integrity — the attribution replayed against each scenario, a source with no application, a payment across two projects, an application RELEASED by an invoice's correction, one ended by its source's contra, a partial reallocation, a refund and its contra, an opening credit; each rupiah counted for one project, the sum over projects never above the source's rest. Authorization — `refund.record` present and absent, another company's project. Transaction — the hold and its audit event together, a refused hold writing nothing. Concurrency — a hold racing a release on its project under LK-01, the later credit never taken as covered. Idempotency — one `command_id` replayed, a changed payload CONFLICT. Regression — applying and refunding unchanged whatever is held, CALC-06 unchanged.
 
 **TEST CHECKLIST:**
 

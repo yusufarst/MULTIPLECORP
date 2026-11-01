@@ -1,0 +1,34 @@
+Owner decision received in session during execution, 2026-11-01 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DECISION — MULTIPLECORP P11Q-08 AND FAST BUILD CONTINUATION
+Saya telah mempertimbangkan P11Q-08 dan memilih OPSI A — satu pemilik proyek untuk setiap rupiah sisa kredit pembayaran.
+1. Keputusan P11Q-08
+Setujui aturan atribusi sesuai opsi A pada TASK_PLAN:
+
+* Setiap rupiah sisa kredit pembayaran hanya boleh diatribusikan kepada satu proyek.
+* Gunakan aturan atribusi dari aplikasi RELEASED, proyek dari aplikasi paling awal untuk sisa yang belum teratribusi, dan urutan penggunaan tertua terlebih dahulu sebagaimana kontrak P11Q-08.
+* Tidak boleh ada penghitungan kredit maupun penahanan ganda pada pembayaran lintas proyek.
+* Penahanan kredit tetap menggunakan `refund.record` (ADM+) sesuai keputusan P11Q-07.
+* Kredit baru tidak boleh otomatis dianggap sudah ditahan oleh penahanan kredit sebelumnya.
+* Penggunaan, pengembalian, koreksi, pembatalan, dan realokasi harus mempertahankan jejak sumber dana.
+* Proyek tidak boleh dinyatakan memenuhi syarat penyelesaian berdasarkan perhitungan kredit yang menyesatkan.
+
+Pastikan kasus pembayaran yang belum memiliki aplikasi, pembayaran lintas proyek, koreksi aplikasi, serta sumber kredit hasil impor ditangani secara deterministik sesuai kontrak yang disetujui.
+Tambahkan pengujian integritas, otorisasi, transaksi, concurrency, idempotency, dan regresi yang relevan.
+2. Change control
+P11Q-08 merupakan keputusan bisnis Level 2. Catat keputusan ini melalui mekanisme CHANGE_CONTROL yang berlaku.
+Siapkan perubahan kontrak secara sempit, menjaga kesesuaian TASK-053, TASK-055, TASK_PLAN, dan dokumen sumber terkait.
+Jangan memperluas scope V1 atau mengubah aturan keuangan lain tanpa otorisasi. Jika perubahan masih memerlukan approval artefak yang spesifik, ikuti gate tersebut tanpa menganggap instruksi ini menyetujui perubahan tambahan yang belum ditampilkan.
+Perbarui status BLOCKED hanya setelah prasyarat administratif dan teknis yang sebenarnya terpenuhi.
+3. Input operator
+Untuk OPI-26, OPI-03, OPI-04, OPI-28, OPI-31, OPI-32, dan DEP-05, jangan mengarang data atau melakukan perubahan ke infrastruktur yang belum diotorisasi.
+OPI-05: Telegram bot gratis boleh dievaluasi sebagai kandidat kanal alert, tetapi belum dianggap telah disediakan, diuji, atau diaktifkan.
+Siapkan satu checklist ringkas yang dapat saya teruskan kepada operator atau pihak pemegang akses ketika diperlukan. Jangan meminta kredensial disimpan dalam chat atau repository.
+4. FAST BUILD 48H
+TASK-040 harus tetap berjalan tanpa gangguan.
+Setelah TASK-040 selesai dan merged secara sah, lanjutkan TASK READY berikutnya secara otomatis.
+Jangan melakukan full planning review berulang. Gunakan review perubahan kontrak yang terarah dan seluruh mandatory quality gate.
+Pertahankan DIR-096, DIR-102, DIR-103, satu executor, satu watcher, isolasi proyek, dan efisiensi CI.
+Target saya tetap mempercepat penyelesaian sebanyak mungkin TASK dalam 48 jam.
+Catat keputusan ini, teruskan pekerjaan yang sudah berjalan, dan jangan menghentikan eksekusi hanya untuk menunggu input operator yang belum menjadi dependensi TASK aktif.
+Seluruh komunikasi dalam Bahasa Indonesia dengan progress report singkat pada setiap respons.
