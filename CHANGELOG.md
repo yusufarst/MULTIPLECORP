@@ -762,3 +762,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-040 on its branch `task/TASK-040-stock-views`: PG-018, PG-019 and PG-020 over physical query classes with cost by family, and "Balikkan" (ROUTE-212): a linked MOVEMENT_REVERSAL or capped restorations with the loss reversed exactly, the actor's cut, AZ-08 and SF-REVAL.
 - Every check passed in fresh CI on `195c2b1`. TASK-040 DONE — progress 47 / 87 —; TASK-042, TASK-044 and TASK-059 READY beside TASK-041 and TASK-046.
+
+## Unreleased — 2026-11-02, TASK-041 — Dispatch (Barang Keluar) and inter-company allocation
+
+- Built TASK-041 on its branch `task/TASK-041-dispatch`: PG-023 and the scan-led PG-024; ROUTE-186 with HPP at each lot's cost and the allocation overlay; the Surat Jalan, DOC-03; SF-RESTORE on a dispatch (ROUTE-188); the identity substitution (ROUTE-189). A proof registered from PG-022 or PG-024 now keeps the form in place.
+- Every check passed in fresh CI on `3580f5c`. TASK-041 DONE — progress 48 / 87 —; TASK-045 READY beside TASK-042, TASK-044, TASK-046 and TASK-059.
