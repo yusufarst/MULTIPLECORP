@@ -782,3 +782,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-044 on its branch `task/TASK-044-purchase-return`: PG-028 *Retur ke Pemasok* with "Retur ke Pemasok" (ROUTE-176), opened from the purchase on PG-016 or the lot on PG-019; ROUTE-177's outcome — replacement, refund expected, evidenced supplier credit, unrecovered share on its bearer — and its correction; the case's figures and "Tutup Kasus" through ROUTE-271 once it balances.
 - Every check passed in fresh CI on `4d558c2`. TASK-044 DONE — progress 51 / 87 —; TASK-045, TASK-046 and TASK-059 READY.
+
+## Unreleased — 2026-11-03, TASK-045 — Deliveries (Pengiriman) and delivery closure
+
+- Built TASK-045 on its branch `task/TASK-045-deliveries`: PG-030 *Pengiriman* and PG-031 *Catat Pengiriman* — the delivery per shipment line with recipient, condition and proof, a difference opening its case (ROUTE-201); "Tutup Pengiriman" and "Catat Hilang di Perjalanan" (ROUTE-203); "Koreksi Catatan Pengiriman" (ROUTE-204); DOC-08 and DOC-10 from the recorded facts (ROUTE-202).
+- Every check passed in fresh CI on `72a33e4`. TASK-045 DONE — progress 52 / 87 —; TASK-046 and TASK-059 READY.
