@@ -79,12 +79,12 @@ final class ReceivingWorld
      *
      * @param  list<array{serial: string, damaged: bool}>  $serials
      */
-    public static function receive(int $actor, int $company, int $purchase, int $line, int $unit, int $rack, string $usable, ?string $reference = null, array $serials = [], string $kind = ReceiptEntry::ORIGINAL, ?int $cites = null): string
+    public static function receive(int $actor, int $company, int $purchase, int $line, int $unit, int $rack, string $usable, ?string $reference = null, array $serials = [], string $kind = ReceiptEntry::ORIGINAL, ?int $cites = null, ?int $case = null): string
     {
         // Go-live is bound per process (Numbering::goLive), and a session is its own.
         Numbering::goLive(substr(BusinessDate::today(), 0, 4).'-01-01');
         $product = DB::table('purchase_lines as l')->join('products as p', 'p.id', '=', 'l.product_id')->where('l.id', $line)->first(['p.is_serialized', 'p.quantity_scale']);
-        $entry = new ReceiptEntry($purchase, $line, $kind, $unit, $usable, '0', '0', $rack, $serials, $reference, $cites, null, null, [], BusinessDate::today(), false, (bool) ($product->is_serialized ?? false), (int) ($product->quantity_scale ?? 0));
+        $entry = new ReceiptEntry($purchase, $line, $kind, $unit, $usable, '0', '0', $rack, $serials, $reference, $cites, $case, null, [], BusinessDate::today(), false, (bool) ($product->is_serialized ?? false), (int) ($product->quantity_scale ?? 0));
 
         return InvoiceWorld::word(app(ReceiveGoods::class)->run((string) Str::uuid(), $actor, $company, $entry, ['run' => (string) Str::uuid()]));
     }

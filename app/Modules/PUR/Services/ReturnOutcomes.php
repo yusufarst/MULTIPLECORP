@@ -17,6 +17,7 @@ use App\Support\Command\Refused;
 use App\Support\Money;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
+use Brick\Math\RoundingMode;
 use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\DB;
 
@@ -127,7 +128,7 @@ final class ReturnOutcomes
             throw Refused::rejected('C-29', ['reason' => 'nothing_open']);
         }
 
-        if ($wanted->stripTrailingZeros()->getScale() > $line['scale']) {
+        if (! $wanted->isEqualTo($wanted->toScale($line['scale'], RoundingMode::Down))) {
             throw Refused::rejected('C-09', ['reason' => 'scale']);
         }
 

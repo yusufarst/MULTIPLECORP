@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\FIN\Models\FinancialContra;
 use App\Modules\INV\Data\ReceiptEntry;
 use App\Modules\OPS\Models\CorrectionCase;
 use App\Modules\PUR\Models\PurchaseLine;
@@ -157,7 +158,7 @@ it('receives the replacement the case declared, never above it, into the case\'s
     $purchase = ReturnWorld::purchaseOf($this->lot);
     $line = (int) DB::table('purchase_lines')->where('purchase_id', $purchase)->value('id');
     $half = (string) BigDecimal::of(ReturnWorld::figures($case)['returned'])->dividedBy('2', 2, RoundingMode::Down);
-    $receive = fn (string $qty): string => ReceivingWorld::receive($this->actor, $this->company->id, $purchase, $line, $this->unit, $this->rack, $qty, kind: ReceiptEntry::REPLACEMENT, cites: $case);
+    $receive = fn (string $qty): string => ReceivingWorld::receive($this->actor, $this->company->id, $purchase, $line, $this->unit, $this->rack, $qty, kind: ReceiptEntry::REPLACEMENT, case: $case);
 
     // One unit's cost unrecovered first: the replacement takes what stays open over the units it awaits.
     expect(ReturnWorld::outcome($this->actor, $case, 'UNRECOVERED', amount: $half))->toBe('COMMITTED')
@@ -204,6 +205,7 @@ it('caps a supplier credit at the purchase value still unpaid, a reversed paymen
 
     // Part of the payment reversed: that part is unpaid again (ContraPosting::disbursement; C-45).
     DB::table('money_fact_balances')->insert(['company_id' => $this->company->id, 'disbursement_id' => $payment, 'fact_kind' => 'OTHER_DISBURSEMENT', 'amount' => $paid, 'contra_amount' => '500.00', 'recorded_at' => now()]);
+    FinancialContra::factory()->create(['company_id' => $this->company->id, 'payment_id' => null, 'disbursement_id' => $payment, 'amount' => '500.00']);
 
     expect(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '500.01', evidence: $evidence))->toContain('C-46')
         ->and(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '500.00', evidence: $evidence))->toBe('COMMITTED')
