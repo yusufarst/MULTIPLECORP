@@ -201,6 +201,11 @@ final class CountApplication
         $reduced = BigDecimal::zero();
         $picks = [...$entry->picks, ...$missing];
 
+        // A serial seen again comes back first: an exchange of identities moves no usable supply, so no reservation is cut for it (SF-RSV-CUT; L-48).
+        if ($lost !== []) {
+            $this->giveBack($context, $entry, $lost);
+        }
+
         if ($variance->isNegative() || $shortage->isPositive()) {
             $split = CountVariance::shortage($variance->isNegative() ? $variance->negated() : BigDecimal::zero(), $finding);
             $this->settleFinding($context, $entry, $open, $split['withdrawn'], $split['remaining'], $product, $scale, $location, $condition);
@@ -209,9 +214,7 @@ final class CountApplication
         }
 
         if ($variance->isPositive()) {
-            $this->surplus($context, $entry, $variance, $open !== null, $product, $scale, $location, $condition, $lost);
-        } elseif ($lost !== []) {
-            $this->giveBack($context, $entry, $lost);
+            $this->surplus($context, $entry, $variance, $open !== null, $product, $scale, $location, $condition);
         }
 
         $this->audit->record(
@@ -296,10 +299,8 @@ final class CountApplication
 
     /**
      * A surplus: the scope's pending cases found first, exactly; the losses it identifies; the rest one open finding, its units not added to stock (AX-06; L-15; C-34).
-     *
-     * @param  list<array{consumption: int, qty: string}>  $lost
      */
-    private function surplus(CommandContext $context, CountEntry $entry, BigDecimal $variance, bool $hasFinding, int $product, int $scale, int $location, string $condition, array $lost): void
+    private function surplus(CommandContext $context, CountEntry $entry, BigDecimal $variance, bool $hasFinding, int $product, int $scale, int $location, string $condition): void
     {
         $pending = [];
 
@@ -326,7 +327,7 @@ final class CountApplication
             $this->ensureIdentified($item['consumption'], $product, $location, $condition, $entry->evidence !== []);
         }
 
-        $this->giveBack($context, $entry, [...$lost, ...$entry->restored]);
+        $this->giveBack($context, $entry, $entry->restored);
 
         if ($order['finding']->isPositive()) {
             $this->writeFinding($context, $entry, $order['finding'], $product, $scale, $location, $condition);

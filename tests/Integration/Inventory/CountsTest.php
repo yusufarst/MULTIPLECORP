@@ -859,3 +859,21 @@ it('reads OD-10 (b) from the proofs still linked to the case: an unlinked one au
         ->and(DB::table('unattributed_loss_resolutions')->where('unattributed_loss_case_id', $case)->exists())->toBeFalse();
     countClean();
 });
+
+it('brings a serial seen again back before losing the unseen one, so an exchange of identities cuts no reservation (SF-RSV-CUT; L-48)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $keys = array_map(fn (int $serial): string => (string) DB::table('serial_units')->where('id', $serial)->value('serial_key'), [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)]);
+    $first = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1', $keys[0]))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($first, evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and(ReservationWorld::reserve($this->actor, $this->line, '1'))->toBe('COMMITTED');
+
+    // The one in stock is gone, the lost one is back: usable supply stays one, the reservation covered.
+    $second = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', $keys[1]))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($second, evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and(countGuard($this->product))->toBe(['1.000', '1.000', '0.000'])
+        ->and(DB::table('serial_units')->where('serial_key', $keys[1])->value('state'))->toBe('IN_STOCK');
+    countClean();
+});

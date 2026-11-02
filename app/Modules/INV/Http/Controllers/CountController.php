@@ -120,8 +120,8 @@ final class CountController extends Controller
         $actor = self::actor($request);
         $count = $this->queries->internal($id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, [
-            // As many lots as PG-026 offers, applied together (SF-LOSS).
-            'unit' => ['nullable', 'array', 'max:'.CountQueries::LINES],
+            // Every lot the applier names, past one page's list, applied together (SF-LOSS).
+            'unit' => ['nullable', 'array', 'max:'.CountQueries::PICKS],
             'unit.*.lot' => ['required', 'string', 'size:32'],
             'unit.*.jumlah' => ['required', self::QUANTITY],
             'unit.*.dikonfirmasi' => ['nullable', 'boolean'],

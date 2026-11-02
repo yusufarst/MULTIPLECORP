@@ -240,7 +240,10 @@ function Apply({ count, proofs, proofsFailed, reservations, available, today, ca
     // The basis carries an open finding, and a shortage takes it back first (WF-INV-05).
     const raw = Number(variance) < 0 ? variance.replace('-', '') : '0';
     const short = Number(raw) > Number(count.finding) ? decimal.add(raw, `-${count.finding}`) : '0';
-    const picks = count.places.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0);
+    // A lot named before a lot code search narrowed the list stays named: the whole split is sent together (SF-LOSS).
+    const [kept, setKept] = useState<Record<string, Place>>({});
+    const listed = [...count.places, ...Object.values(kept).filter((one) => !count.places.some((place) => placeKey(place) === placeKey(one)))];
+    const picks = listed.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0);
     const named = decimal.add('0', ...picks.map((place) => figure(quantities[placeKey(place)] ?? '')));
     const converted = decimal.add('0', ...Object.values(conversions).map(figure));
     const covered = decimal.add(named, figure(pending), converted);
@@ -321,8 +324,9 @@ function Apply({ count, proofs, proofsFailed, reservations, available, today, ca
                                 {t('adjustments.unidentified')}
                             </label>
                         )}
+                    {(count.places_more || count.places_find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['count'], data: { cari_lot: text }, preserveUrl: true }); }} />}
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                        {count.places.map((place) => {
+                        {listed.map((place) => {
                             const key = placeKey(place);
 
                             return (
@@ -334,7 +338,7 @@ function Apply({ count, proofs, proofsFailed, reservations, available, today, ca
                                         {place.other && <RelationMarker />}
                                     </span>
                                     <FormField label={t('adjustments.field.quantity', { kode: place.code, rak: place.rack })} className="w-40">
-                                        {(control) => <DecimalInput {...control} scale={count.product.scale} value={quantities[key] ?? ''} onValueChange={(next) => { setQuantities({ ...quantities, [key]: next ?? '' }); }} />}
+                                        {(control) => <DecimalInput {...control} scale={count.product.scale} value={quantities[key] ?? ''} onValueChange={(next) => { setQuantities({ ...quantities, [key]: next ?? '' }); setKept({ ...kept, [key]: place }); }} />}
                                     </FormField>
                                     {unidentified && Number(figure(quantities[key] ?? '')) > 0 && (
                                         <label className="flex min-h-floor items-center gap-2">

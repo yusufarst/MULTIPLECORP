@@ -328,16 +328,35 @@ it('reaches every lot holding the product in a registration count, by lot code p
         ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('data: { cari_lot: text }');
 });
 
-it('takes as many named lots in one application as PG-026 offers, and no more (SF-LOSS; QB-05)', function () {
+it('takes a split past one page\'s list in one application, up to its bound (SF-LOSS; QB-05)', function () {
     $public = (string) DB::table('stock_counts')->where('id', CountWorld::open($this->applier->id, $this->product, $this->rack))->value('public_id');
     $body = fn (int $lots): array => ['command_id' => (string) Str::uuid(), 'unit' => array_fill(0, $lots, ['lot' => RowHandle::of('inventory_lots', $this->lot), 'jumlah' => '1']), 'alasan' => 'Selisih', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
 
-    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES))->assertSessionDoesntHaveErrors('unit');
-    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES + 1))->assertSessionHasErrors('unit');
+    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES + 1))->assertSessionDoesntHaveErrors('unit');
+    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::PICKS + 1))->assertSessionHasErrors('unit');
 });
 
 it('offers a retry at PG-029\'s case and resolution rows when an outcome is unknown, as at its findings (IP-02)', function () {
     $source = file_get_contents(resource_path('js/Pages/INV/Discrepancies.tsx'));
 
     expect($source)->toContain('onClick={owner.unknown ? owner.retry : proof.retry}')->toContain('onClick={reverse.retry}')->toContain('onClick={command.retry}');
+});
+
+it('reaches every lot of an ordinary count\'s scope by lot code past the bound, and keeps a named lot across searches (WF-INV-05; QB-05)', function () {
+    $last = null;
+
+    foreach (InventoryLot::factory()->count(CountQueries::LINES)->create(['product_id' => $this->product, 'source_company_id' => $this->company->id]) as $filler) {
+        DB::table('stock_lot_balances')->insert(['lot_id' => $filler->id, 'product_id' => $this->product, 'location_id' => $this->rack, 'condition' => 'USABLE', 'qty' => '1']);
+        $last = $filler;
+    }
+
+    $public = (string) DB::table('stock_counts')->where('id', CountWorld::open($this->applier->id, $this->product, $this->rack))->value('public_id');
+    $count = fn (string $query = ''): array => $this->actingAs($this->applier)->get("/gudang/stok-opname?hitungan={$public}{$query}")->assertOk()->viewData('page')['props']['count'];
+    $code = (string) DB::table('inventory_lots')->where('id', $this->lot)->value('lot_code');
+
+    // The fillers are older: the fixture's own lot is the one past the bound.
+    expect($count()['places'])->toHaveCount(CountQueries::LINES)->and($count()['places_more'])->toBeTrue()
+        ->and(collect($count()['places'])->pluck('code')->all())->not->toContain($code)
+        ->and(collect($count('&cari_lot='.urlencode($code))['places'])->pluck('code')->all())->toBe([$code])
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('setKept({ ...kept, [key]: place })');
 });

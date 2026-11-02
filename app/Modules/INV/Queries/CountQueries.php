@@ -22,6 +22,9 @@ final class CountQueries
 
     public const LINES = 500;
 
+    /** A count's split: every lot of a scope its applier names, sent together whatever one page lists (SF-LOSS). */
+    public const PICKS = 5000;
+
     private const STATES = ['OPEN', 'APPLIED', 'STALE', 'CANCELLED'];
 
     public function __construct(
@@ -104,7 +107,7 @@ final class CountQueries
             'product' => $info === null ? null : ['id' => Row::text($info, 'public_id'), 'name' => Row::text($info, 'name'), 'sku' => Row::nullable($info, 'sku'), 'unit' => Row::text($info, 'unit'), 'serialized' => (bool) Row::text($info, 'is_serialized'), 'scale' => (int) Row::text($info, 'quantity_scale')],
             'scopes' => $scopes,
             'lines' => array_values(array_map(fn (object $line): array => self::line($line), $lines)),
-            ...($ordinary ? ['places' => $this->places($viewerId, $product, (int) $location, $condition), 'places_more' => false, 'places_find' => null] : $this->allPlaces($viewerId, $product, $lotFind)),
+            ...($ordinary ? $this->places($viewerId, $product, (int) $location, $condition, $lotFind) : $this->allPlaces($viewerId, $product, $lotFind)),
             'across' => $ordinary && UnattributedCases::acrossCompanies($product, (int) $location, $condition),
             'pending' => $ordinary ? StockFigures::plain((string) DB::table('unattributed_loss_cases')->where('product_id', $product)->where('location_id', (int) $location)->where('condition', $condition)->where('case_kind', 'LOSS')->sum('pending_qty_base')) : '0',
             'changes' => $ordinary && $condition === 'UNUSABLE' ? $this->pendingChanges($product, (int) $location) : [],
@@ -169,20 +172,22 @@ final class CountQueries
     /**
      * The lots in the scope, oldest first as a picking aid only (L-42), another company's by its marker alone (PJ-04).
      *
-     * @return list<array<string, mixed>>
+     * @return array{places: list<array<string, mixed>>, places_more: bool, places_find: ?string}
      */
-    private function places(int $viewerId, int $product, int $location, string $condition): array
+    private function places(int $viewerId, int $product, int $location, string $condition, ?string $find): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $places = [];
-        $first = true;
+        $first = $find === null;
+        $found = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $product)->where('b.location_id', $location)->where('b.condition', $condition)->where('b.qty', '>', 0)
+            ->when($find !== null, fn (Builder $code) => $code->where('i.lot_code', 'ilike', '%'.addcslashes((string) $find, '%_\\').'%'))->orderBy('i.business_date')->orderBy('i.id')->limit(self::LINES + 1)->get(['b.lot_id', 'b.qty', 'i.lot_code', 'i.source_company_id', 'l.code as rack'])->all();
 
-        foreach (DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $product)->where('b.location_id', $location)->where('b.condition', $condition)->where('b.qty', '>', 0)->orderBy('i.business_date')->orderBy('i.id')->limit(self::LINES)->get(['b.lot_id', 'b.qty', 'i.lot_code', 'i.source_company_id', 'l.code as rack']) as $row) {
+        foreach (array_slice($found, 0, self::LINES) as $row) {
             $places[] = ['lot' => RowHandle::of('inventory_lots', (int) Row::text($row, 'lot_id')), 'code' => Row::text($row, 'lot_code'), 'location' => RowHandle::of('locations', $location), 'rack' => Row::text($row, 'rack'), 'condition' => $condition, 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'other' => ! $viewer->scope->includes((int) Row::text($row, 'source_company_id')), 'oldest' => $first];
             $first = false;
         }
 
-        return $places;
+        return ['places' => $places, 'places_more' => count($found) > self::LINES, 'places_find' => $find];
     }
 
     /**
