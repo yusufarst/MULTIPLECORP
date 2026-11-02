@@ -173,6 +173,11 @@ final class UnattributedCases
             throw Refused::rejected('C-07', ['reason' => 'mixed']);
         }
 
+        // A conversion disposes of units: a loss entry's alone, under its own capability, never a condition change's (AZ-08; §5.8).
+        if ($kind !== 'LOSS' && $entry->conversions !== []) {
+            throw Refused::rejected('C-14', ['reason' => 'conversion']);
+        }
+
         if ($entry->serializedSeen) {
             throw Refused::rejected('C-02', ['reason' => 'serial']);
         }

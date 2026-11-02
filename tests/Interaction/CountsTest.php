@@ -167,3 +167,18 @@ it('replays an application that converted a condition change in full with its re
         ->and((string) DB::table('unattributed_loss_cases')->where('id', $case)->value('pending_qty_base'))->toBe('0.000')
         ->and(DB::table('unattributed_loss_cases')->where('converted_from_case_id', $case)->count())->toBe(1);
 });
+
+it('refuses a conversion sent with a condition change: a holder of stock.condition alone disposes of nothing (AZ-08; §5.8)', function () {
+    StockWorld::lot(ReceivingWorld::actor($this->foreign->company, DispatchWorld::CAPABILITIES)->id, $this->foreign->company, $this->product, $this->demand['unit'], $this->rack, '5', '12000');
+    $both = Authorization::admin([$this->company->id, $this->foreign->company->id], [...CountWorld::CAPABILITIES, 'stock.condition']);
+    $evidence = (int) DB::table('evidence_documents')->where('public_id', $this->evidence)->value('id');
+    expect(CountWorld::pendingCondition($both->id, $this->product, $this->rack, '2', $evidence))->toBe('COMMITTED');
+    $case = (int) DB::table('unattributed_loss_cases')->where('case_kind', 'CONDITION_CHANGE')->value('id');
+    $conditionOnly = Authorization::admin([$this->company->id, $this->foreign->company->id], ['stock.view', 'stock.condition', 'evidence.view']);
+    $body = ['command_id' => (string) Str::uuid(), 'aksi' => 'kondisi', 'produk' => $this->productId, 'konversi' => [['kasus' => RowHandle::of('unattributed_loss_cases', $case), 'jumlah' => '2']], 'bukti' => [$this->evidence], 'alasan' => 'Dibuang', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
+
+    $answer = countAnswer($this, $conditionOnly, '/gudang/kondisi', $body);
+    expect($answer['kind'])->toBe('REJECTED')->and($answer['code'])->toBe('C-14')
+        ->and((string) DB::table('unattributed_loss_cases')->where('id', $case)->value('pending_qty_base'))->toBe('2.000')
+        ->and(DB::table('unattributed_loss_cases')->where('converted_from_case_id', $case)->exists())->toBeFalse();
+});
