@@ -4,6 +4,7 @@ namespace App\Modules\INV\Queries;
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Data\StockFigures;
+use App\Modules\INV\Services\CountApplication;
 use App\Modules\INV\Services\InventoryPosting;
 use App\Modules\INV\Services\LossRestorations;
 use App\Modules\INV\Services\UnattributedCases;
@@ -117,6 +118,8 @@ final class CountQueries
             'missing' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? $this->missing($id, $product, (int) $location, $condition) : [],
             // Every unseen serial is lost and may need a cut, however many the bounded list shows (SF-RSV-CUT).
             'missing_total' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? self::unseen($id, $product, (int) $location, $condition)->count() : 0,
+            // The lost serials the count saw come back with it, before any loss: they offset the cut (SF-RSV-CUT; L-48).
+            'returning' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? count(CountApplication::lostSerials($id, $product)) : 0,
         ];
     }
 

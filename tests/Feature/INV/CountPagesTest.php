@@ -360,3 +360,19 @@ it('reaches every lot of an ordinary count\'s scope by lot code past the bound, 
         ->and(collect($count('&cari_lot='.urlencode($code))['places'])->pluck('code')->all())->toBe([$code])
         ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('setKept({ ...kept, [key]: place })');
 });
+
+it('offsets a serialized count\'s cut by the lost serials it brings back, as the application does (SF-RSV-CUT; L-48)', function () {
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $keys = array_map(fn (int $serial): string => (string) DB::table('serial_units')->where('id', $serial)->value('serial_key'), [StockWorld::serial($this->product, $this->lot, $this->rack), StockWorld::serial($this->product, $this->lot, $this->rack)]);
+    $first = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $first, $this->product, $this->rack, '1', $keys[0]))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($first, evidence: [$this->evidence])))->toBe('COMMITTED');
+
+    $second = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $second, $this->product, $this->rack, '1', $keys[1]))->toBe('COMMITTED');
+    $public = (string) DB::table('stock_counts')->where('id', $second)->value('public_id');
+    $count = $this->actingAs($this->applier)->get("/gudang/stok-opname?hitungan={$public}")->assertOk()->viewData('page')['props']['count'];
+
+    expect($count['missing_total'])->toBe(1)->and($count['returning'])->toBe(1)
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('Math.max(0, count.missing_total - count.returning)');
+});

@@ -520,11 +520,11 @@ final class CountApplication
     }
 
     /**
-     * Serials the count saw that were recorded lost at this scope: the serial identifies the unit, so its loss is reversed (AX-06).
+     * Serials the count saw that were recorded lost at this scope: the serial identifies the unit, so its loss is reversed (AX-06). PG-026 counts them for its cut.
      *
      * @return list<array{consumption: int, qty: string}>
      */
-    private static function lostSerials(int $count, int $product): array
+    public static function lostSerials(int $count, int $product): array
     {
         $row = DB::table('stock_counts')->where('id', $count)->first(['location_id', 'condition', 'purpose']);
 
