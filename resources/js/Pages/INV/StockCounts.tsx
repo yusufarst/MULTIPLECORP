@@ -46,6 +46,7 @@ type Count = {
     losses: { id: string; date: string; code: string; open: string }[];
     losses_across: boolean;
     missing: { serial: string; code: string }[];
+    missing_total: number;
 };
 type ListRow = { id: string; state: Count['state']; purpose: Count['purpose']; product: string; rack: string | null; condition: Condition | null; started: string; lines: number };
 type Proofs = { find: string | null; rows: { id: string; label: string }[]; more: boolean };
@@ -242,7 +243,7 @@ function Apply({ count, proofs, proofsFailed, reservations, available, today, ca
     const covered = decimal.add(named, figure(pending), converted);
     const serialized = count.product.serialized;
     const balanced = serialized || Number(short) === 0 || Number(covered) === Number(short);
-    const usable = scope?.condition !== 'USABLE' ? '0' : serialized ? String(count.missing.length) : decimal.add(named, figure(pending));
+    const usable = scope?.condition !== 'USABLE' ? '0' : serialized ? String(count.missing_total) : decimal.add(named, figure(pending));
     const need = decimal.add(usable, `-${available}`);
     const needsCut = Number(need) > 0;
     const cut = decimal.add('0', ...Object.values(cuts).map(figure));

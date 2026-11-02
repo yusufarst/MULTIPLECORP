@@ -7,8 +7,11 @@ export async function openCount(page: Page, product: string, rack: string): Prom
     const form = page.locator('[data-slot="count-open"]');
     const rackField = form.getByLabel('Rak');
     await rackField.selectOption({ value: (await rackField.locator('option', { hasText: rack }).getAttribute('value')) ?? '' });
+    // The count's proofs are deferred and land after it shows; the journey types into the settled page, as WebKit lost a value filled while they landed.
+    const settled = page.waitForResponse(async (response) => response.url().includes('hitungan=') && (await response.request().headerValue('x-inertia-partial-data')) === 'proofs');
     await form.getByRole('button', { name: 'Mulai Hitungan', exact: true }).click();
     await expect(page.locator('[data-slot="count-detail"]')).toBeVisible();
+    await settled;
 }
 
 export async function countLine(page: Page, quantity: string): Promise<void> {

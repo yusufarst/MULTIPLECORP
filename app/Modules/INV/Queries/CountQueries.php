@@ -112,6 +112,8 @@ final class CountQueries
             'losses' => $ordinary && $viewer->has('stock.count_apply') ? $this->identifiable($viewerId, $product, (int) $location, $condition) : [],
             'losses_across' => $ordinary && LossRestorations::acrossCompanies($product, (int) $location, $condition),
             'missing' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? $this->missing($id, $product, (int) $location, $condition) : [],
+            // Every unseen serial is lost and may need a cut, however many the bounded list shows (SF-RSV-CUT).
+            'missing_total' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? self::unseen($id, $product, (int) $location, $condition)->count() : 0,
         ];
     }
 
@@ -138,11 +140,12 @@ final class CountQueries
         return StockFigures::plain((string) InventoryPosting::available($product));
     }
 
-    /** A loss of the product the viewer may reverse: the bearer in scope (AZ-08). */
+    /** A loss of the product the viewer may reverse, among every open one however old: the bearer in scope (AZ-08). */
     public function consumption(int $viewerId, int $product, string $handle): ?int
     {
-        foreach ($this->capabilities->for($viewerId)->scope->apply(DB::table('stock_consumptions as c'), 'c.bearer_company_id')->where('c.product_id', $product)->whereIn('c.kind', ['LOSS', 'UNATTRIBUTED_LOSS'])->orderByDesc('c.id')->limit(500)->pluck('c.id') as $id) {
-            if (is_numeric($id) && RowHandle::of('stock_consumptions', (int) $id) === $handle) {
+        foreach ($this->capabilities->for($viewerId)->scope->apply(DB::table('stock_consumptions as c'), 'c.bearer_company_id')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.product_id', $product)->whereIn('c.kind', ['LOSS', 'UNATTRIBUTED_LOSS'])
+            ->whereRaw('b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base > 0')->orderByDesc('c.id')->pluck('c.id') as $id) {
+            if (is_numeric($id) && hash_equals(RowHandle::of('stock_consumptions', (int) $id), $handle)) {
                 return (int) $id;
             }
         }
@@ -234,8 +237,14 @@ final class CountQueries
     private function missing(int $count, int $product, int $location, string $condition): array
     {
         return array_values(array_map(fn (object $row): array => ['serial' => Row::text($row, 'serial_number'), 'code' => Row::text($row, 'lot_code')],
-            DB::table('serial_units as s')->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->where('s.product_id', $product)->where('s.state', 'IN_STOCK')->where('s.current_location_id', $location)->where('s.current_condition', $condition)
-                ->whereNotExists(fn (Builder $seen) => $seen->from('stock_count_lines as x')->where('x.stock_count_id', $count)->whereColumn('x.serial_unit_id', 's.id'))->orderBy('s.serial_number')->limit(self::LINES)->get(['s.serial_number', 'i.lot_code'])->all()));
+            self::unseen($count, $product, $location, $condition)->join('inventory_lots as i', 'i.id', '=', 's.current_lot_id')->orderBy('s.serial_number')->limit(self::LINES)->get(['s.serial_number', 'i.lot_code'])->all()));
+    }
+
+    /** The serials in stock here the count has not seen. */
+    private static function unseen(int $count, int $product, int $location, string $condition): Builder
+    {
+        return DB::table('serial_units as s')->where('s.product_id', $product)->where('s.state', 'IN_STOCK')->where('s.current_location_id', $location)->where('s.current_condition', $condition)
+            ->whereNotExists(fn (Builder $seen) => $seen->from('stock_count_lines as x')->where('x.stock_count_id', $count)->whereColumn('x.serial_unit_id', 's.id'));
     }
 
     /** @return array<string, mixed> */

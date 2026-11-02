@@ -3,6 +3,7 @@
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\StockCountFinding;
+use App\Modules\INV\Queries\CountQueries;
 use App\Modules\INV\Queries\DiscrepancyQueries;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -279,4 +280,30 @@ it('refuses a restoration through ROUTE-197 of a loss at another rack than the f
     expect(CountWorld::attribute($this->owner->id, $finding, $this->company->id, '10000', [['consumption' => $consumption, 'qty' => '1']]))->toContain('C-14')
         ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('0.000')
         ->and(DB::table('stock_count_findings')->where('id', $finding)->value('state'))->toBe('OPEN');
+});
+
+it('resolves an open loss\'s handle for ROUTE-193 however many later losses the product has (AZ-08; L-31)', function () {
+    $count = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $count, $this->product, $this->rack, '9'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($count, [AdjustmentWorld::pick($this->lot, $this->rack, '1')], evidence: [$this->evidence])))->toBe('COMMITTED');
+    $open = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $row = (array) DB::table('stock_consumptions')->where('id', $open)->first();
+    unset($row['id']);
+    // Later losses of the product, none of them open.
+    DB::table('stock_consumptions')->insert(array_fill(0, 500, [...$row, 'command_id' => null, 'command_line_no' => null]));
+
+    expect(app(CountQueries::class)->consumption($this->applier->id, $this->product, RowHandle::of('stock_consumptions', $open)))->toBe($open);
+});
+
+it('gives a serialized count its whole missing total for the cut, apart from the bounded list (SF-RSV-CUT; QB-05)', function () {
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $serial = (array) DB::table('serial_units')->where('id', StockWorld::serial($this->product, $this->lot, $this->rack))->first();
+    unset($serial['id']);
+    DB::table('serial_units')->insert(array_map(fn (int $n): array => [...$serial, 'serial_number' => "SN-BATAS-{$n}", 'serial_key' => "sn-batas-{$n}", 'command_id' => null, 'command_line_no' => null], range(1, CountQueries::LINES)));
+    $count = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    $public = (string) DB::table('stock_counts')->where('id', $count)->value('public_id');
+    $page = $this->actingAs($this->applier)->get("/gudang/stok-opname?hitungan={$public}")->assertOk()->viewData('page')['props']['count'];
+
+    expect($page['missing'])->toHaveCount(CountQueries::LINES)->and($page['missing_total'])->toBe(CountQueries::LINES + 1)
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('String(count.missing_total)');
 });
