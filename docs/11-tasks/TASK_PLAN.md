@@ -28,7 +28,7 @@ Progress:
 50 / 87
 Percentage: 57.5 %
 
-CURRENT TASK: none in progress — TASK-043 — Stock count (opname) and discrepancies DONE on its branch `task/TASK-043-stock-count`, CI PASS on `52825e0`, its pull request #61 squash-merged by the executor once eligible (DIR-096)
+CURRENT TASK: none in progress — TASK-043 — Stock count (opname) and discrepancies DONE on its branch `task/TASK-043-stock-count`, CI PASS on `9843a17`, its pull request #61 squash-merged by the executor once eligible (DIR-096)
 NEXT READY TASK: TASK-044 — Purchase return to supplier, READY, TASK-045 — Deliveries (Pengiriman) and delivery closure, READY, TASK-046 — Direct shipment (drop-ship), READY, and TASK-059 — Search and scanning, READY; TASK-053 and TASK-055 wait on their dependencies; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)

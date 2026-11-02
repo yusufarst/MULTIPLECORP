@@ -776,4 +776,4 @@ This is a change summary; current state and approval authority live in their [ow
 ## Unreleased — 2026-11-02, TASK-043 — Stock count (opname) and discrepancies
 
 - Built TASK-043 on its branch `task/TASK-043-stock-count`: PG-026 with "Mulai Hitungan", the counted lines and "Terapkan Selisih" (ROUTE-191–ROUTE-193), "Batalkan Hitungan" and the count sheet's print (ROUTE-215; INT-217), the registration count of `DIR-101` F2; PG-029 with "Tetapkan Surplus", "Tetapkan Perusahaan", "Tetapkan dengan Bukti" and "Balikkan Penetapan" (ROUTE-197–ROUTE-200); SF-UNATTRIBUTED with its snapshot, found stock, conversion and bounds; PG-027's pending branch.
-- Every check passed in fresh CI on `52825e0`. TASK-043 DONE — progress 50 / 87 —; TASK-044, TASK-045, TASK-046 and TASK-059 READY.
+- Every check passed in fresh CI on `9843a17`. TASK-043 DONE — progress 50 / 87 —; TASK-044, TASK-045, TASK-046 and TASK-059 READY.
