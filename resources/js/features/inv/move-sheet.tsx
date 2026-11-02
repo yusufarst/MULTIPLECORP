@@ -59,6 +59,9 @@ export function MoveSheet({ open, onOpenChange, product, serialized, scale, movi
 
         if (lot === undefined) return false;
 
+        // Another place starts the choice again: the units chosen were of the place left.
+        if (placeKey(lot) !== place) setChosen([]);
+
         setPlace(placeKey(lot));
         setResult(t('adjustments.scan.lot_opened', { kode: lot.code }));
 
