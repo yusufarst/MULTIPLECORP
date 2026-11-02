@@ -877,3 +877,25 @@ it('brings a serial seen again back before losing the unseen one, so an exchange
         ->and(DB::table('serial_units')->where('serial_key', $keys[1])->value('state'))->toBe('IN_STOCK');
     countClean();
 });
+
+it('never brings back a loss recorded before the product was serialized: no unit comes back without its serial (L-35; L-48; `DIR-101` F2)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    $first = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($first, [AdjustmentWorld::pick($lot, $this->rack, '1')], evidence: [$this->evidence])))->toBe('COMMITTED');
+    $loss = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $registrar = Authorization::admin([$this->company->id], [...CountWorld::CAPABILITIES, 'products.edit'])->id;
+    expect(CountWorld::openRegistration($registrar, $this->product))->toBe('COMMITTED');
+    $registration = (int) DB::table('stock_counts')->orderByDesc('id')->value('id');
+    expect(CountWorld::line($registrar, $registration, $this->product, $this->rack, '1', 'SN-A', lot: $lot))->toBe('COMMITTED')
+        ->and(CountWorld::apply($registrar, CountWorld::entry($registration)))->toBe('COMMITTED');
+
+    // The registered unit and an unexpected one: the old loss cannot be what came back.
+    $count = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $count, $this->product, $this->rack, '1', 'SN-A'))->toBe('COMMITTED')
+        ->and(CountWorld::line($this->actor, $count, $this->product, $this->rack, '1', 'SN-B'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($count, restored: [['consumption' => $loss, 'qty' => '1']], evidence: [$this->evidence])))->toContain('C-02')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $loss)->value('restored_qty_base'))->toBe('0.000')
+        ->and(countGuard($this->product)[0])->toBe('1.000');
+    countClean();
+});

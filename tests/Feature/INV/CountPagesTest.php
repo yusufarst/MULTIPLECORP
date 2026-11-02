@@ -376,3 +376,9 @@ it('offsets a serialized count\'s cut by the lost serials it brings back, as the
     expect($count['missing_total'])->toBe(1)->and($count['returning'])->toBe(1)
         ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('Math.max(0, count.missing_total - count.returning)');
 });
+
+it('keeps a resolution\'s chosen lots across PG-029\'s lot searches, the whole resolution sent together (OD-10; QB-05)', function () {
+    $source = file_get_contents(resource_path('js/Pages/INV/Discrepancies.tsx'));
+
+    expect($source)->toContain('setKept({ ...kept, [lot.lot]: lot })')->toContain('const entered = listed.filter(');
+});

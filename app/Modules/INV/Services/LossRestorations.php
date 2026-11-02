@@ -98,6 +98,11 @@ final class LossRestorations
                 throw Refused::rejected('C-27', ['reason' => 'above_open', 'open' => (string) $found['open']]);
             }
 
+            // A unit comes back with its identity: once the product is serialized, a loss recorded without a serial adds no unit a serial does not name (L-35; L-48; `DIR-101` F2).
+            if ($found['serial'] === null && (bool) DB::table('products')->where('id', $found['product'])->value('is_serialized')) {
+                throw Refused::rejected('C-02', ['reason' => 'serial_identity']);
+            }
+
             $unit = DB::table('products')->where('id', $found['product'])->value('base_unit_id');
             $restoration = (int) DB::table('stock_restorations')->insertGetId([
                 'stock_movement_id' => $movement, 'stock_consumption_id' => $item['consumption'], 'source_company_id' => $found['source'], 'product_id' => $found['product'], 'quantity_scale' => $found['scale'],

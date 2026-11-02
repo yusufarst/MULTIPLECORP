@@ -128,7 +128,10 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
     const [confirming, setConfirming] = useState<'owner' | 'evidence' | null>(null);
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const frozen = owner.pending || owner.unknown || proof.pending || proof.unknown;
-    const entered = row.lots.filter((lot) => Number(figure(quantities[lot.lot] ?? '')) > 0);
+    // A lot chosen before a lot code search narrowed the list stays chosen: the whole resolution is sent together.
+    const [kept, setKept] = useState<Record<string, LiveLot>>({});
+    const listed = [...row.lots, ...Object.values(kept).filter((one) => !row.lots.some((lot) => lot.lot === one.lot))];
+    const entered = listed.filter((lot) => Number(figure(quantities[lot.lot] ?? '')) > 0);
     const companies = [...new Map(row.exposures.map((one) => [one.id, one])).values()];
     const answer = owner.answer ?? proof.answer;
     useClosedOnAnswer(answer, () => { setConfirming(null); });
@@ -160,15 +163,15 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
             {row.exposures.length > 0 && <p data-slot="case-exposures" className="text-text-secondary">{row.exposures.map((one) => t('discrepancies.exposure', { perusahaan: one.company, paparan: one.exposure, ditetapkan: one.assigned })).join(' · ')}</p>}
             {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} action={owner.unknown || proof.unknown ? <Button variant="outline" size="sm" onClick={owner.unknown ? owner.retry : proof.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {(can.resolve || can.evidence) && (row.lots_more || row.lots_find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['cases'], data: { kasus_lot: row.id, cari_lot: text }, preserveUrl: true }); }} />}
-            {(can.resolve || can.evidence) && row.lots.length > 0 && (
+            {(can.resolve || can.evidence) && listed.length > 0 && (
                 <fieldset disabled={frozen} data-slot="case-lots" className="flex min-w-0 flex-col gap-2">
                     <legend className="font-medium">{t('discrepancies.field.close')}</legend>
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                        {row.lots.map((lot) => (
+                        {listed.map((lot) => (
                             <li key={lot.lot} data-slot="case-lot" className="flex min-w-0 flex-wrap items-end gap-3 py-2">
                                 <span className="flex min-w-0 flex-1 flex-wrap items-center gap-2"><Code>{lot.code}</Code><span>{lot.company}</span><span>{lot.qty}</span></span>
                                 <FormField label={t('adjustments.field.quantity', { kode: lot.code, rak: row.rack })} className="w-40">
-                                    {(control) => <DecimalInput {...control} scale={3} value={quantities[lot.lot] ?? ''} onValueChange={(next) => { setQuantities({ ...quantities, [lot.lot]: next ?? '' }); }} />}
+                                    {(control) => <DecimalInput {...control} scale={3} value={quantities[lot.lot] ?? ''} onValueChange={(next) => { setQuantities({ ...quantities, [lot.lot]: next ?? '' }); setKept({ ...kept, [lot.lot]: lot }); }} />}
                                 </FormField>
                                 {can.resolve && companies.length > 0 && (
                                     <FormField label={t('discrepancies.field.bearer', { kode: lot.code })} className="min-w-0 sm:w-48">
