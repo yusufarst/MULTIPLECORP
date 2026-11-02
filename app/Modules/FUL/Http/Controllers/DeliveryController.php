@@ -117,12 +117,11 @@ final class DeliveryController extends Controller
         }
 
         $evidence = $this->deliveries->evidenceOf($actor, $shipment['project']->companyId, self::text($input['bukti'])) ?? throw ValidationException::withMessages(['bukti' => self::say('fulfilment.validation.evidence')]);
-        $reason = trim(self::text($input['reason'] ?? ''));
-        /** @var list<string> $acknowledged */
-        $acknowledged = array_values(array_filter(is_array($input['acknowledged'] ?? null) ? $input['acknowledged'] : [], is_string(...)));
+        $reason = self::reason($input);
+        $acknowledged = self::strings($input['acknowledged'] ?? null);
         $outcome = $record->run(self::text($input['command_id']), $actor, $shipment['project'], self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), trim(self::text($input['penerima'])),
             $condition === '' ? null : $condition, $request->boolean('selisih') ? $condition : null, $inspector === '' ? null : ['inspector' => $inspector, 'result' => $result],
-            $lines, $evidence, $acknowledged, $reason === '' ? null : $reason, array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]));
+            $lines, $evidence, $acknowledged, $reason, array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]));
 
         return $this->answer($shipment['project'], strtolower($id), $outcome, 'recorded', self::text($input['tanggal']));
     }
@@ -142,6 +141,9 @@ final class DeliveryController extends Controller
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],
+            'acknowledged' => ['nullable', 'array', 'max:50'],
+            'acknowledged.*' => ['string', 'size:32'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
         $line = $this->deliveries->lineOf($shipment['movement'], self::text($input['baris'])) ?? throw ValidationException::withMessages(['baris' => self::say('fulfilment.validation.line')]);
         /** @var list<string> $handles */
@@ -149,9 +151,9 @@ final class DeliveryController extends Controller
         $serials = $this->deliveries->serialsOf($line, $handles) ?? throw ValidationException::withMessages(['seri' => self::say('projects.validation.unknown')]);
         $supersedes = isset($input['menggantikan']) ? ($this->deliveries->closureOf($line, self::text($input['menggantikan'])) ?? throw ValidationException::withMessages(['menggantikan' => self::say('projects.validation.unknown')])) : null;
         $outcome = $close->run(self::text($input['command_id']), $actor, $shipment['project'], $line, self::text($input['jenis']), self::text($input['jumlah']), $serials, $supersedes,
-            trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]));
+            trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]), self::strings($input['acknowledged'] ?? null), self::reason($input));
 
-        return $this->answer($shipment['project'], strtolower($id), $outcome, self::text($input['jenis']) === 'LOST_IN_TRANSIT' ? 'lost' : 'closed', self::text($input['tanggal']));
+        return $this->answer($shipment['project'], strtolower($id), $outcome, self::text($input['jenis']) === 'LOST_IN_TRANSIT' ? 'lost' : 'closed', self::text($input['tanggal']), $line);
     }
 
     /** ROUTE-204 "Koreksi Catatan Pengiriman": the wrong line reversed exactly, then the correct quantity (CM-08). */
@@ -166,25 +168,33 @@ final class DeliveryController extends Controller
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
             'tanggal' => ['required', 'date_format:Y-m-d'],
             'tanggal_otomatis' => ['nullable', 'boolean'],
+            'acknowledged' => ['nullable', 'array', 'max:50'],
+            'acknowledged.*' => ['uuid'],
+            'reason' => ['nullable', 'string', 'max:500'],
         ]);
         $delivery = $this->deliveries->deliveryOf($shipment['movement'], self::text($input['pengiriman'])) ?? throw ValidationException::withMessages(['pengiriman' => self::say('projects.validation.unknown')]);
         $line = $this->deliveries->deliveryLineOf($delivery, self::text($input['baris'])) ?? throw ValidationException::withMessages(['baris' => self::say('fulfilment.validation.line')]);
         $quantity = self::text($input['jumlah'] ?? '');
         $outcome = $correct->run(self::text($input['command_id']), $actor, $shipment['project'], $delivery, $line, $quantity === '' || ! BigDecimal::of($quantity)->isPositive() ? null : $quantity,
-            trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]));
+            trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => true, 'tanggal_otomatis' => true]), self::strings($input['acknowledged'] ?? null), self::reason($input));
 
         return $this->answer($shipment['project'], strtolower($id), $outcome, 'corrected', self::text($input['tanggal']));
     }
 
-    /** The command's answer as flash data: a recorded delivery on PG-030 (NAV-031), every other answer in place on PG-031. */
-    private function answer(ProjectRef $project, string $shipment, Outcome $outcome, string $done, string $sent): RedirectResponse
+    /**
+     * The command's answer as flash data: a recorded delivery on PG-030 (NAV-031), every other answer in place on PG-031.
+     *
+     * @param  ?int  $closed  the shipment line a closure's likely duplicates stand on, as MSG-15 lists them
+     */
+    private function answer(ProjectRef $project, string $shipment, Outcome $outcome, string $done, string $sent, ?int $closed = null): RedirectResponse
     {
         if ($outcome->kind === Outcome::REJECTED && $outcome->code === 'C-50') {
             throw ValidationException::withMessages(['tanggal' => self::say('projects.validation.future')]);
         }
 
         $state = $outcome->state;
-        $matches = $outcome->code === 'L-49' ? $this->deliveries->matches($project->id, array_values(array_filter(is_array($state['matches'] ?? null) ? $state['matches'] : [], is_string(...)))) : null;
+        $named = self::strings($state['matches'] ?? null);
+        $matches = $outcome->code === 'L-49' ? ($closed === null ? $this->deliveries->matches($project->id, $named) : $this->deliveries->closureMatches($closed, $named)) : null;
         [$cause, $text] = match ($outcome->kind) {
             Outcome::COMMITTED => [null, self::say("deliveries.answer.{$done}")],
             Outcome::REJECTED => [null, $this->refusal($outcome, $matches ?? [])],
@@ -261,6 +271,20 @@ final class DeliveryController extends Controller
         $id = $request->user()?->getAuthIdentifier();
 
         return is_int($id) ? $id : throw new NotFoundHttpException;
+    }
+
+    /** @return list<string> */
+    private static function strings(mixed $values): array
+    {
+        return array_values(array_filter(is_array($values) ? $values : [], is_string(...)));
+    }
+
+    /** @param  array<string, mixed>  $input */
+    private static function reason(array $input): ?string
+    {
+        $reason = trim(self::text($input['reason'] ?? ''));
+
+        return $reason === '' ? null : $reason;
     }
 
     private static function text(mixed $value): string

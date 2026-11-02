@@ -30,7 +30,9 @@ final class DeliverySubjects implements DocumentSubjectProvider
 
     public function subject(Authority $viewer, string $typeCode, string $mode, array $records): ?DocumentSubject
     {
-        return self::find($viewer, $typeCode, $mode, $records['delivery_id'] ?? null);
+        $subject = self::find($viewer, $typeCode, $mode, $records['delivery_id'] ?? null);
+
+        return $subject === null || DeliveryFacts::inspection(self::delivery($subject)) === null ? null : $subject;
     }
 
     public function locks(DocumentSubject $subject): LockSet

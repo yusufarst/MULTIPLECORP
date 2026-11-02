@@ -30,8 +30,8 @@ const CLOSURES = ['REFUSED', 'RETURNED_UNDELIVERED'] as const;
 
 type Line = { id: string; no: number; description: string; unit: string; base_unit: string; ratio: number; scale: number; serialized: boolean; shipped: string; delivered: string; held: string; remainder: string; serials: { id: string; serial: string }[] };
 type DeliveredLine = { id: string; no: number; description: string; quantity: string; unit: string; reversal: boolean; reversed: boolean };
-type Paper = { id: string; type: string; state: string | null; number: string | null };
-type Delivery = { id: string; date: string; recipient: string; condition: string | null; lines: DeliveredLine[]; proof: { id: string; label: string } | null; papers: Paper[]; corrected: boolean };
+type Paper = { id: string; type: string; state: string | null; number: string | null; substituted: boolean };
+type Delivery = { id: string; date: string; recipient: string; condition: string | null; lines: DeliveredLine[]; proof: { id: string; label: string } | null; papers: Paper[]; corrected: boolean; inspected: boolean };
 type Closure = { id: string; line: string; no: number; kind: string; quantity: string; reason: string; date: string; superseded: boolean };
 type Shipment = { id: string; date: string; project: { id: string; number: string; title: string }; client: string | null; lines: Line[]; deliveries: Delivery[]; closures: Closure[]; proofs: { id: string; type: string; label: string }[] };
 type Can = { record: boolean; close: boolean; lost: boolean; correct: boolean; issue: boolean; upload: boolean };
@@ -79,6 +79,9 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
     const [correcting, setCorrecting] = useState<Correcting | null>(null);
     const [rightQty, setRightQty] = useState('');
     const [correctReason, setCorrectReason] = useState('');
+    const [sent, setSent] = useState<{ command: 'close' | 'correct'; payload: Payload } | null>(null);
+    const [ackAgain, setAckAgain] = useState<string[]>([]);
+    const [againReason, setAgainReason] = useState('');
     useClosedOnAnswer(close.answer, () => { setClosing(null); });
     useClosedOnAnswer(correct.answer, () => { setCorrecting(null); });
     const open = shipment.lines.filter((line) => Number(line.remainder) > 0);
@@ -87,6 +90,10 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
     const warned = record.answer?.kind === 'REJECTED' && matches.length > 0;
     const ready = filled.length > 0 && recipient.trim().length >= 3 && proof !== '' && (!discrepancy || condition.trim().length >= 3) && (inspector.trim() === '') === (result.trim() === '');
     const answer = close.answer ?? correct.answer ?? prepare.answer;
+    // A closure's or a correction's likely duplicate is confirmed in place with its reason, the same intent sent again (IP-05; INT-015).
+    const again = sent?.command === 'correct' ? correct : close;
+    const againMatches = Array.isArray(again.state.matches) ? (again.state.matches as DuplicateMatch[]) : [];
+    const againWarned = sent !== null && again.answer?.kind === 'REJECTED' && againMatches.length > 0;
 
     const submit = () => {
         record.submit({
@@ -120,7 +127,14 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                     <p className="text-text-secondary">{shipment.client ?? ''}{shipment.client === null ? '' : ' · '}{t('deliveries.shipped_on')} <DateText value={shipment.date} /></p>
                     <p className="text-text-secondary">{t('deliveries.no_stock')}</p>
                 </section>
-                {answer !== null && answer.kind !== 'COMMITTED' && closing === null && correcting === null && <OutcomeMessage answer={answer} />}
+                {answer !== null && answer.kind !== 'COMMITTED' && closing === null && correcting === null && !againWarned && <OutcomeMessage answer={answer} />}
+                {againWarned && (
+                    <div className="flex min-w-0 flex-col gap-2">
+                        <DuplicateWarning matches={againMatches} message={again.answer?.text} acknowledged={ackAgain} onAcknowledge={setAckAgain}
+                            reason={{ value: againReason, onChange: setAgainReason, error: again.errors.reason ?? null }} canContinue />
+                        <Button className="self-start" pending={again.pending} disabled={again.frozen} onClick={() => { again.submit({ ...sent.payload, acknowledged: ackAgain, reason: againReason }); }}>{t('actions.continue')}</Button>
+                    </div>
+                )}
                 {close.answer?.kind === 'COMMITTED' && <OutcomeMessage answer={close.answer} />}
                 {correct.answer?.kind === 'COMMITTED' && <OutcomeMessage answer={correct.answer} />}
                 <section data-slot="delivery-lines" className="flex min-w-0 flex-col gap-3">
@@ -186,6 +200,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                             <DuplicateWarning matches={matches} message={record.answer?.text} acknowledged={acknowledged} onAcknowledge={setAcknowledged}
                                 reason={{ value: duplicateReason, onChange: setDuplicateReason, error: record.errors.reason ?? null }} canContinue />
                         ) : (record.answer !== null && record.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={record.answer} action={record.unknown ? <Button variant="outline" size="sm" onClick={record.retry}>{t('actions.try_again')}</Button> : undefined} />)}
+                        {(['tanggal', 'baris'] as const).map((field) => (record.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{record.errors[field]}</p>))}
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" render={<a href={origin} />}>{t('actions.cancel')}</Button>
                             <Button pending={record.pending} disabled={!ready || record.frozen} onClick={submit}>{t('deliveries.action.record')}</Button>
@@ -213,10 +228,10 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                                     {delivery.papers.map((paper) => (
                                         <a key={paper.id} className="self-start underline" href={`/dokumen/${paper.id}`}>{`${t(paper.type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08')}${paper.number === null ? '' : ` ${paper.number}`}`}</a>
                                     ))}
-                                    {delivery.corrected && delivery.papers.some((paper) => paper.number !== null) && <p className="text-caption text-text-secondary">{t('deliveries.revise_paper')}</p>}
+                                    {delivery.papers.some((paper) => paper.number !== null && (delivery.corrected || paper.substituted)) && <p className="text-caption text-text-secondary">{t('deliveries.revise_paper')}</p>}
                                     {can.issue && (
                                         <div className="flex flex-wrap gap-2">
-                                            {(['DOC-08', 'DOC-10'] as const).map((type) => (
+                                            {(delivery.inspected ? (['DOC-08', 'DOC-10'] as const) : (['DOC-08'] as const)).map((type) => (
                                                 <Button key={type} variant="outline" size="sm" pending={prepare.pending} disabled={prepare.frozen}
                                                     onClick={() => { prepare.submit({ jenis: type, subjek: { delivery_id: delivery.id } }); }}>
                                                     {t('deliveries.action.issue', { dokumen: t(type === 'DOC-10' ? 'documents.doc_10' : 'documents.doc_08') })}
@@ -267,6 +282,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                                 )}
                             </FormField>
                         )}
+                        {(['seri', 'menggantikan', 'baris', 'tanggal'] as const).map((field) => (close.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{close.errors[field]}</p>))}
                         {closing.lost && closing.line.serialized ? (
                             <fieldset className="flex min-w-0 flex-col gap-1">
                                 <legend className="text-body">{t('deliveries.field.lost_serials')}</legend>
@@ -288,7 +304,7 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                 onConfirm={() => {
                     if (closing === null) return;
                     const serialized = closing.lost && closing.line.serialized;
-                    close.submit({
+                    const payload: Payload = {
                         baris: closing.line.id,
                         jenis: closing.lost ? 'LOST_IN_TRANSIT' : kind,
                         jumlah: serialized ? String(lostSerials.length) : closeQty,
@@ -297,7 +313,11 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                         alasan: closeReason,
                         tanggal: today,
                         tanggal_otomatis: true,
-                    });
+                    };
+                    setSent({ command: 'close', payload });
+                    setAckAgain([]);
+                    setAgainReason('');
+                    close.submit(payload);
                 }}
             />
             <ConfirmCommand
@@ -308,14 +328,21 @@ export default function RecordDelivery({ shipment, today, can }: Props) {
                 confirmLabel={t('actions.correct_delivery_record')}
                 pending={correct.pending}
                 items={correcting === null ? null : (
+                    <div className="flex min-w-0 flex-col gap-2">
+                    {(['pengiriman', 'baris', 'tanggal'] as const).map((field) => (correct.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{correct.errors[field]}</p>))}
                     <FormField label={t('deliveries.field.right_quantity', { satuan: correcting.line.unit })} help={t('deliveries.field.right_quantity_help')} error={correct.errors.jumlah}>
                         {(control) => <DecimalInput {...control} scale={3} value={rightQty} onValueChange={(next) => { setRightQty(next ?? ''); }} />}
                     </FormField>
+                    </div>
                 )}
                 reason={{ value: correctReason, onChange: setCorrectReason, error: correct.errors.alasan ?? null }}
                 onConfirm={() => {
                     if (correcting === null) return;
-                    correct.submit({ pengiriman: correcting.delivery.id, baris: correcting.line.id, jumlah: rightQty, alasan: correctReason, tanggal: today, tanggal_otomatis: true });
+                    const payload: Payload = { pengiriman: correcting.delivery.id, baris: correcting.line.id, jumlah: rightQty, alasan: correctReason, tanggal: today, tanggal_otomatis: true };
+                    setSent({ command: 'correct', payload });
+                    setAckAgain([]);
+                    setAgainReason('');
+                    correct.submit(payload);
                 }}
             />
         </AppShell>

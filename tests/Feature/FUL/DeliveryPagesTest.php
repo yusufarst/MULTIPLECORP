@@ -1,7 +1,9 @@
 <?php
 
+use App\Modules\ORG\Enums\SequenceType;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
+use Carbon\CarbonImmutable;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -10,6 +12,7 @@ use Tests\Support\Authorization;
 use Tests\Support\DeliveryWorld;
 use Tests\Support\DispatchWorld;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\Numbering;
 use Tests\Support\ReceivingWorld;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\StockWorld;
@@ -119,4 +122,18 @@ it('drafts DOC-08 from an accepted delivery and DOC-10 only once its inspection 
 
     expect(DB::table('documents')->where('document_type_code', 'DOC-10')->where('delivery_id', $inspected->delivery)->count())->toBe(1)
         ->and(DB::table('documents')->where('document_type_code', 'DOC-08')->where('delivery_id', $plain->delivery)->count())->toBe(1);
+
+    // ROUTE-202 issues the BAST's draft once; a second issue of it is BD-06's CONFLICT, never a second number.
+    $year = substr(BusinessDate::today(), 0, 4);
+    Numbering::goLive("{$year}-01-01");
+    Numbering::scheme($this->company, SequenceType::Doc08, "{$year}-01-01", 'YEAR', 'BAST/{tahun}/{nomor:4}');
+    Numbering::started($this->company, SequenceType::Doc08, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+    $document = DB::table('documents')->where('document_type_code', 'DOC-08')->where('delivery_id', $plain->delivery)->sole();
+    $version = DB::table('document_versions')->where('document_id', $document->id)->sole();
+    $issue = fn (): mixed => $this->actingAs($this->recorder)->post("/gudang/pengiriman/{$document->public_id}/dokumen", ['command_id' => (string) Str::uuid(), 'draf' => $version->public_id, 'lock_version' => $version->lock_version, 'tanggal' => BusinessDate::today()]);
+    $issue()->assertRedirect();
+    $issue()->assertRedirect();
+
+    expect(DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->count())->toBe(1)
+        ->and((string) DB::table('document_versions')->where('document_id', $document->id)->where('state', 'ISSUED')->value('formatted_number'))->toStartWith('BAST/');
 });

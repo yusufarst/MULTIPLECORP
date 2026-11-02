@@ -8,6 +8,7 @@ use App\Modules\FUL\Actions\RecordDelivery;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\BusinessDate;
+use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -52,11 +53,18 @@ final class DeliveryWorld
      * ROUTE-203's action: its word.
      *
      * @param  list<int>  $serials
+     * @param  list<string>  $acknowledged
      */
-    public static function close(int $actor, int $line, int $shipment, string $kind, string $qty, array $serials = [], ?int $supersedes = null, ?string $commandId = null): string
+    public static function close(int $actor, int $line, int $shipment, string $kind, string $qty, array $serials = [], ?int $supersedes = null, ?string $commandId = null, array $acknowledged = [], ?string $reason = null): string
     {
         return InvoiceWorld::word(app(CloseDelivery::class)->run($commandId ?? (string) Str::uuid(), $actor, self::project($line), $shipment, $kind, $qty, $serials, $supersedes, 'Klien menolak barang', BusinessDate::today(), false,
-            ['kind' => $kind, 'qty' => $qty, 'serials' => $serials, 'supersedes' => $supersedes, 'run' => $commandId ?? (string) Str::uuid()]));
+            ['kind' => $kind, 'qty' => $qty, 'serials' => $serials, 'supersedes' => $supersedes, 'acknowledged' => $acknowledged, 'run' => $commandId ?? (string) Str::uuid()], $acknowledged, $reason));
+    }
+
+    /** The newest closure's handle, as the likely-duplicate warning names it. */
+    public static function closureHandle(): string
+    {
+        return RowHandle::of('delivery_closures', (int) DB::table('delivery_closures')->max('id'));
     }
 
     /** ROUTE-204's action on the delivery's line: its word. */

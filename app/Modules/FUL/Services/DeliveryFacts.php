@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\DB;
 /**
  * The confirmed facts a delivery's BAST (DOC-08) or inspection record (DOC-10) renders (BR-DOC-04; L-19; WF-DOC-01): the
  * recipient, the project and the date as recorded, each line still standing at its entered unit with the serials the
- * shipment actually carries — after an identity substitution the one shipped (AX-35; CM-36) —, and for DOC-10 the client's
+ * shipment actually carries once its line is wholly delivered — after an identity substitution the one shipped (AX-35;
+ * CM-36); a partial delivery records no serial, so its paper names none —, and for DOC-10 the client's
  * inspection as the delivery recorded it. A line reversed as an entry error, and the reversal itself, are no facts of the
  * paper (CM-08). No price, tax or cost (PJ-15).
  */
@@ -32,12 +33,14 @@ final class DeliveryFacts
         }
 
         $lines = [];
+        $shipments = DeliveryPosting::shipments(array_values(array_filter(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, DB::table('delivery_lines')->where('delivery_id', $deliveryId)->pluck('dispatch_line_id')->all()))));
 
         foreach (DB::table('delivery_lines as l')->where('l.delivery_id', $deliveryId)->whereNull('l.reverses_delivery_line_id')
             ->whereRaw('not exists (select 1 from delivery_lines r where r.reverses_delivery_line_id = l.id)')
             ->join('project_lines as pl', 'pl.id', '=', 'l.project_line_id')->join('confirmation_line_pins as pin', 'pin.id', '=', 'pl.current_pin_id')->join('units as u', 'u.id', '=', 'l.entered_unit_id')
-            ->orderBy('l.id')->get(['pin.description', 'l.entered_qty', 'u.code', DB::raw(self::SERIALS)])->all() as $row) {
-            $serials = Row::nullable($row, 'serials');
+            ->orderBy('l.id')->get(['pin.description', 'l.entered_qty', 'u.code', 'l.dispatch_line_id', DB::raw(self::SERIALS)])->all() as $row) {
+            $shipment = $shipments[(int) Row::text($row, 'dispatch_line_id')] ?? null;
+            $serials = $shipment !== null && DeliveryPosting::remainder($shipment)->isZero() && ! DeliveryPosting::held($shipment)->isPositive() ? Row::nullable($row, 'serials') : null;
             $lines[] = ['description' => Row::text($row, 'description'), 'quantity' => Row::text($row, 'entered_qty'), 'unit' => Row::text($row, 'code'), 'unit_price' => null, 'amount' => null, 'note' => $serials === null ? null : 'No. Seri: '.$serials];
         }
 

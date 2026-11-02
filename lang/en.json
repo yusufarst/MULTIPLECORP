@@ -3698,5 +3698,8 @@
     "activity.action.FUL.DeliveryCorrected": "Delivery record corrected",
     "activity.action.FUL.DeliveryClosed": "Delivery closed",
     "activity.action.FUL.DeliveryClosureSuperseded": "Delivery closure superseded",
-    "activity.action.FUL.LossInTransitRecorded": "Loss in transit recorded"
+    "activity.action.FUL.LossInTransitRecorded": "Loss in transit recorded",
+    "activity.action.FUL.DeliveryClosedDuplicateConfirmed": "Delivery closed despite a similar closure",
+    "activity.action.FUL.LossInTransitDuplicateConfirmed": "Loss in transit recorded despite a similar record",
+    "activity.action.FUL.DeliveryCorrectedDuplicateConfirmed": "Delivery record corrected despite a similar record"
 }

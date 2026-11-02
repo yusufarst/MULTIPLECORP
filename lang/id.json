@@ -3698,5 +3698,8 @@
     "activity.action.FUL.DeliveryCorrected": "Catatan pengiriman dikoreksi",
     "activity.action.FUL.DeliveryClosed": "Pengiriman ditutup",
     "activity.action.FUL.DeliveryClosureSuperseded": "Penutupan pengiriman digantikan",
-    "activity.action.FUL.LossInTransitRecorded": "Hilang di perjalanan dicatat"
+    "activity.action.FUL.LossInTransitRecorded": "Hilang di perjalanan dicatat",
+    "activity.action.FUL.DeliveryClosedDuplicateConfirmed": "Pengiriman ditutup meski mirip penutupan lain",
+    "activity.action.FUL.LossInTransitDuplicateConfirmed": "Hilang di perjalanan dicatat meski mirip catatan lain",
+    "activity.action.FUL.DeliveryCorrectedDuplicateConfirmed": "Catatan pengiriman dikoreksi meski mirip catatan lain"
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\FUL\Services\DeliveryFacts;
+use Brick\Math\BigDecimal;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -146,13 +147,60 @@ it('records a loss in transit as one reclassification on the shipment\'s project
         ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'LOST_IN_TRANSIT', '3'))->toContain('C-30')
         ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'LOST_IN_TRANSIT', '1'))->toBe('COMMITTED')
         ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $shipment->consumption)->where('cost_class', 'LOSS')->where('cause', 'RECLASSIFICATION')->sum('amount'))->toBe('1000.00')
-        ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $shipment->consumption)->where('cost_class', 'HPP')->sum('amount'))->toBe((string) Brick\Math\BigDecimal::of($hpp)->minus('1000'))
+        ->and((string) DB::table('cost_attributions')->where('stock_consumption_id', $shipment->consumption)->where('cost_class', 'HPP')->sum('amount'))->toBe((string) BigDecimal::of($hpp)->minus('1000'))
         ->and($total())->toBe($before)
         ->and((string) DB::table('project_line_balances')->where('project_line_id', $this->line)->value('dispatched_net_qty_base'))->toBe('1.000')
         ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $shipment->consumption)->value('reclassified_qty_base'))->toBe('1.000')
         ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '2']], $this->proof))->toContain('C-30')
         ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '1']], $this->proof))->toBe('COMMITTED')
         ->and(DB::table('audit_events')->where('action', 'FUL.LossInTransitRecorded')->where('authority_class', 'ADM_PLUS')->count())->toBe(1);
+    deliveryClean();
+});
+
+it('loses two of three serials shipped from one lot, their one consumption reclassified by their count, each LOST (CM-07; C-02; C-27; criterion 5)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '3', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $serials = [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)];
+    expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '3', array_map(fn (int $serial): array => DispatchWorld::pick($lot, $this->rack, '1', $serial), $serials)))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+
+    expect(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '2', [$serials[1]]))->toContain('C-02')
+        ->and(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '2', [$serials[1], $serials[2]]))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->whereIn('id', [$serials[1], $serials[2]])->where('state', 'LOST')->count())->toBe(2)
+        ->and(DB::table('serial_units')->where('id', $serials[0])->value('state'))->toBe('DISPATCHED')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $row->consumption)->value('reclassified_qty_base'))->toBe('2.000')
+        ->and((string) DB::table('project_line_balances')->where('project_line_id', $this->line)->value('dispatched_net_qty_base'))->toBe('1.000');
+    deliveryClean();
+});
+
+it('rejects a likely duplicate closure with its matches until the actor confirms it with a reason (L-49; BD-13; INT-015; criterion 9)', function () {
+    $shipment = shipped($this, '4');
+    expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1'))->toBe('COMMITTED');
+    $first = DeliveryWorld::closureHandle();
+
+    expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1'))->toContain('L-49')
+        ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1', acknowledged: [$first], reason: 'Dua penolakan terpisah'))->toBe('COMMITTED')
+        ->and(DB::table('audit_events')->where('action', 'FUL.DeliveryClosedDuplicateConfirmed')->count())->toBe(1)
+        ->and(DB::table('delivery_closures')->count())->toBe(2);
+    deliveryClean();
+});
+
+it('holds back only what a closure closed: an undelivered return before the closure brought back other units (PX-08; SF-RESTORE; criterion 4)', function () {
+    $shipment = shipped($this, '5');
+    expect(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '2')]))->toBe('COMMITTED')
+        ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1'))->toBe('COMMITTED')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '3']], $this->proof))->toContain('C-30')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '2']], $this->proof))->toBe('COMMITTED')
+        ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '1')]))->toBe('COMMITTED');
+    deliveryClean();
+});
+
+it('never brings back through a shipment\'s restoration what that shipment delivered, whatever another shipment of the line still holds (PX-08; C-30; architecture challenge 3b)', function () {
+    $first = shipped($this, '2');
+    $second = shipped($this, '3');
+    expect(DeliveryWorld::record($this->actor, $this->line, [[$first->dispatch, '2']], $this->proof))->toBe('COMMITTED')
+        ->and(DispatchWorld::restore($this->actor, $this->company->id, $first->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($first->consumption, $this->rack, '1')]))->toContain('C-30')
+        ->and(DispatchWorld::restore($this->actor, $this->company->id, $second->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($second->consumption, $this->rack, '1')]))->toBe('COMMITTED');
     deliveryClean();
 });
 

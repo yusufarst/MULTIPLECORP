@@ -28,16 +28,19 @@ final class CorrectDelivery
         private readonly DeliveryPosting $deliveries,
     ) {}
 
-    /** @param  array<string, mixed>  $payload  the validated request, the command's fingerprint */
-    public function run(string $commandId, int $actorUserId, ProjectRef $project, int $deliveryId, int $lineId, ?string $quantity, string $reason, string $businessDate, bool $prefilled, array $payload): Outcome
+    /**
+     * @param  array<string, mixed>  $payload  the validated request, the command's fingerprint
+     * @param  list<string>  $acknowledged  the likely duplicates of the correct line the actor confirms (L-49)
+     */
+    public function run(string $commandId, int $actorUserId, ProjectRef $project, int $deliveryId, int $lineId, ?string $quantity, string $reason, string $businessDate, bool $prefilled, array $payload, array $acknowledged = [], ?string $duplicateReason = null): Outcome
     {
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $project->companyId, self::CAPABILITY,
             Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($project->companyId), [...$payload, 'project' => $project->publicId, 'target' => $lineId]));
 
-        return $this->envelope->run($request, function (CommandContext $context) use ($project, $deliveryId, $lineId, $quantity, $reason, $businessDate, $prefilled): CommandResult {
+        return $this->envelope->run($request, function (CommandContext $context) use ($project, $deliveryId, $lineId, $quantity, $reason, $businessDate, $prefilled, $acknowledged, $duplicateReason): CommandResult {
             $context->lock(DeliveryPosting::correctionLocks($project->id, $lineId));
 
-            return new CommandResult('delivery', $this->deliveries->correct($context, $project, $deliveryId, $lineId, $quantity, $reason, $businessDate, $prefilled));
+            return new CommandResult('delivery', $this->deliveries->correct($context, $project, $deliveryId, $lineId, $quantity, $reason, $businessDate, $prefilled, $acknowledged, $duplicateReason));
         });
     }
 }

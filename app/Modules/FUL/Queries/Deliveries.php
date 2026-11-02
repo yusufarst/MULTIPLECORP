@@ -29,25 +29,18 @@ final class Deliveries
     /** The evidence a delivery cites as its proof (L-19; PJ-08). */
     public const EVIDENCE = ['DELIVERY_PROOF', 'OTHER'];
 
-    /** Per shipment line: net shipped, net delivered, closed for refusal or non-delivery, returned undelivered since (PX-08). */
-    private const FIGURES = <<<'SQL'
-        (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id) as shipped,
-        (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id) as delivered,
-        (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)) as closed,
-        (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN') as returned
-        SQL;
-
     /** A shipment line still awaiting: net shipped above net delivered and what closures hold back. */
     private const AWAITING = <<<'SQL'
         exists (select 1 from dispatch_lines d where d.stock_movement_id = m.id and
             (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id)
             > (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id)
             + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
-                - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN')))
+                - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
+                    and r.recorded_at >= (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)))))
         SQL;
 
     /** A paper's latest version state and its issued number. */
-    private const PAPER = "(select v.state from document_versions v where v.document_id = d.id order by v.id desc limit 1) as state, (select v.formatted_number from document_versions v where v.document_id = d.id and v.state = 'ISSUED' order by v.id desc limit 1) as number";
+    private const PAPER = "(select v.state from document_versions v where v.document_id = d.id order by v.id desc limit 1) as state, (select v.formatted_number from document_versions v where v.document_id = d.id and v.state = 'ISSUED' order by v.id desc limit 1) as number, exists (select 1 from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id join delivery_lines dl on dl.dispatch_line_id = c.dispatch_line_id where dl.delivery_id = d.delivery_id and r.kind = 'SUBSTITUTION' and r.recorded_at > (select max(v.recorded_at) from document_versions v where v.document_id = d.id and v.state = 'ISSUED')) as substituted";
 
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
@@ -127,13 +120,17 @@ final class Deliveries
         $company = $found['project']->companyId;
         $header = DB::table('stock_movements as m')->join('projects as p', 'p.id', '=', 'm.project_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
             ->where('m.id', $found['movement'])->first(['m.public_id', 'm.business_date', 'p.public_id as project', 'p.project_number', 'p.title', 'o.name as client']);
-        $lines = $this->lines($found['movement']);
-        $internal = array_column($lines, 'id', 'internal');
+
+        if ($header === null) {
+            return null;
+        }
+
+        [$lines, $internal] = $this->lines($found['movement']);
 
         return [
             'id' => Row::text($header, 'public_id'), 'date' => Row::text($header, 'business_date'),
             'project' => ['id' => Row::text($header, 'project'), 'number' => Row::text($header, 'project_number'), 'title' => Row::text($header, 'title')], 'client' => Row::nullable($header, 'client'),
-            'lines' => array_map(fn (array $line): array => array_diff_key($line, ['internal' => 1]), $lines),
+            'lines' => $lines,
             'deliveries' => $this->deliveries($viewer, $company, $internal),
             'closures' => $this->closures(array_keys($internal)),
             'proofs' => self::proofs($viewer, $company),
@@ -220,14 +217,36 @@ final class Deliveries
             DB::table('deliveries')->where('project_id', $projectId)->whereIn('public_id', $publicIds)->orderBy('id')->get(['public_id', 'business_date', 'recipient_name'])->all()));
     }
 
-    /** @return list<array<string, mixed>> the shipment's lines with their figures in base units */
+    /**
+     * The likely-duplicate closures as MSG-15 lists them: each one's date, kind and quantity.
+     *
+     * @param  list<string>  $handles
+     * @return list<array{id: string, label: string, href: null}>
+     */
+    public function closureMatches(int $dispatchLineId, array $handles): array
+    {
+        $found = [];
+
+        foreach (DB::table('delivery_closures')->where('dispatch_line_id', $dispatchLineId)->orderBy('id')->get(['id', 'business_date', 'closure_kind', 'closed_qty_base'])->all() as $row) {
+            $handle = RowHandle::of('delivery_closures', (int) Row::text($row, 'id'));
+
+            if (in_array($handle, $handles, true)) {
+                $found[] = ['id' => $handle, 'label' => Row::text($row, 'business_date').' · '.Row::text($row, 'closure_kind').' · '.self::plain(Row::text($row, 'closed_qty_base')), 'href' => null];
+            }
+        }
+
+        return $found;
+    }
+
+    /** @return array{0: list<array<string, mixed>>, 1: array<int, string>} the shipment's lines with their figures in base units, and each line's handle by its id */
     private function lines(int $movementId): array
     {
         $lines = [];
+        $internal = [];
         $rows = DB::table('dispatch_lines as d')->join('project_lines as pl', 'pl.id', '=', 'd.project_line_id')->join('confirmation_line_pins as pin', 'pin.id', '=', 'pl.current_pin_id')
             ->join('units as u', 'u.id', '=', 'd.entered_unit_id')->join('products as pr', 'pr.id', '=', 'd.product_id')->join('units as base', 'base.id', '=', 'pr.base_unit_id')
             ->where('d.stock_movement_id', $movementId)->orderBy('pl.line_no')
-            ->get(['d.id', 'pl.line_no', 'pin.description', 'd.ratio_to_base', 'd.quantity_scale', 'pr.is_serialized', 'u.code as unit', 'base.code as base_unit', DB::raw(self::FIGURES)])->all();
+            ->get(['d.id', 'pl.line_no', 'pin.description', 'd.ratio_to_base', 'd.quantity_scale', 'pr.is_serialized', 'u.code as unit', 'base.code as base_unit', DB::raw(ShipmentFigures::SQL)])->all();
         $serials = [];
 
         foreach (DB::table('stock_consumptions as c')->join('stock_movement_entries as e', 'e.stock_consumption_id', '=', 'c.id')->join('serial_units as s', 's.last_entry_id', '=', 'e.id')
@@ -240,15 +259,16 @@ final class Deliveries
             $id = (int) Row::text($row, 'id');
             $held = ShipmentFigures::held(BigDecimal::of(Row::text($row, 'closed')), BigDecimal::of(Row::text($row, 'returned')));
             $remainder = ShipmentFigures::remainder(BigDecimal::of(Row::text($row, 'shipped')), BigDecimal::of(Row::text($row, 'delivered')), $held);
+            $internal[$id] = RowHandle::of('dispatch_lines', $id);
             $lines[] = [
-                'internal' => $id, 'id' => RowHandle::of('dispatch_lines', $id), 'no' => (int) Row::text($row, 'line_no'), 'description' => Row::text($row, 'description'),
+                'id' => $internal[$id], 'no' => (int) Row::text($row, 'line_no'), 'description' => Row::text($row, 'description'),
                 'unit' => Row::text($row, 'unit'), 'base_unit' => Row::text($row, 'base_unit'), 'ratio' => (int) Row::text($row, 'ratio_to_base'), 'scale' => (int) Row::text($row, 'quantity_scale'), 'serialized' => (bool) Row::text($row, 'is_serialized'),
                 'shipped' => self::plain(Row::text($row, 'shipped')), 'delivered' => self::plain(Row::text($row, 'delivered')), 'held' => self::plain((string) $held), 'remainder' => self::plain((string) $remainder),
                 'serials' => $serials[$id] ?? [],
             ];
         }
 
-        return $lines;
+        return [$lines, $internal];
     }
 
     /**
@@ -299,7 +319,14 @@ final class Deliveries
 
         // An issued paper of a delivery an entry error corrected is revised on PG-036 from the facts that stand (CM-08; WORKFLOWS §8).
         foreach (DB::table('documents as d')->whereIn('d.delivery_id', $ids)->orderBy('d.id')->get(['d.delivery_id', 'd.public_id', 'd.document_type_code', DB::raw(self::PAPER)])->all() as $row) {
-            $papers[(int) Row::text($row, 'delivery_id')][] = ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'document_type_code'), 'state' => Row::nullable($row, 'state'), 'number' => Row::nullable($row, 'number')];
+            $papers[(int) Row::text($row, 'delivery_id')][] = ['id' => Row::text($row, 'public_id'), 'type' => Row::text($row, 'document_type_code'), 'state' => Row::nullable($row, 'state'), 'number' => Row::nullable($row, 'number'), 'substituted' => (bool) Row::text($row, 'substituted')];
+        }
+
+        $inspected = [];
+
+        foreach (DB::table('deliveries as v')->whereIn('v.id', $ids)->whereExists(fn (Builder $q) => $q->selectRaw('1')->from('audit_events as a')->whereIn('a.action', ['FUL.DeliveryRecorded', 'FUL.DeliveryDuplicateConfirmed'])
+            ->whereRaw("a.after->'inspection' is not null")->whereRaw("a.metadata->'links' @> jsonb_build_array(jsonb_build_object('entity_type', 'deliveries', 'public_id', v.public_id::text))"))->pluck('v.id')->all() as $id) {
+            $inspected[is_numeric($id) ? (int) $id : 0] = true;
         }
 
         $found = [];
@@ -310,6 +337,7 @@ final class Deliveries
                 'id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'condition' => Row::nullable($row, 'condition_note'),
                 'lines' => $byDelivery[$id] ?? [], 'proof' => $proofs[$id] ?? null, 'papers' => $papers[$id] ?? [],
                 'corrected' => array_filter($byDelivery[$id] ?? [], fn (array $line): bool => $line['reversal']) !== [],
+                'inspected' => isset($inspected[$id]),
             ];
         }
 
@@ -332,11 +360,11 @@ final class Deliveries
             ->get(['k.id', 'k.dispatch_line_id', 'k.closure_kind', 'k.closed_qty_base', 'k.reason', 'k.business_date', 'k.supersedes_id', 'pl.line_no'])->all();
         $superseded = array_flip(array_map(fn (object $row): int => (int) Row::text($row, 'supersedes_id'), array_filter($rows, fn (object $row): bool => Row::nullable($row, 'supersedes_id') !== null)));
 
-        return array_map(fn (object $row): array => [
+        return array_values(array_map(fn (object $row): array => [
             'id' => RowHandle::of('delivery_closures', (int) Row::text($row, 'id')), 'line' => RowHandle::of('dispatch_lines', (int) Row::text($row, 'dispatch_line_id')), 'no' => (int) Row::text($row, 'line_no'),
             'kind' => Row::text($row, 'closure_kind'), 'quantity' => self::plain(Row::text($row, 'closed_qty_base')), 'reason' => Row::text($row, 'reason'), 'date' => Row::text($row, 'business_date'),
             'superseded' => isset($superseded[(int) Row::text($row, 'id')]),
-        ], $rows);
+        ], $rows));
     }
 
     /** @return list<array{id: string, type: string, label: string}> the evidence the form may cite as a delivery's proof, newest first */
@@ -359,7 +387,7 @@ final class Deliveries
         return array_values(array_filter(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, DB::table('companies')->orderBy('id')->pluck('id')->all()), fn (int $id): bool => $viewer->allows('projects.view', $id)));
     }
 
-    /** @param  list<mixed>  $ids */
+    /** @param  array<mixed>  $ids */
     private static function byHandle(string $table, array $ids, string $handle): ?int
     {
         if (! RowHandle::valid($handle)) {

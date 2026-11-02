@@ -33,21 +33,17 @@ use Illuminate\Support\Facades\DB;
  */
 final class DeliveryPosting
 {
-    /** Per shipment line: net shipped, net delivered, closed for refusal or non-delivery, and returned undelivered since (PX-08). */
-    private const FIGURES = <<<'SQL'
-        (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id) as shipped,
-        (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id) as delivered,
-        (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)) as closed,
-        (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN') as returned
-        SQL;
-
     public function __construct(
         private readonly DemandPosting $demand,
         private readonly CorrectionCases $cases,
         private readonly AuditRecorder $audit,
     ) {}
 
-    /** AX-09's set: the project, its lines' guards (LK-19), the proof (LK-29); a discrepancy case is opened under the project's lock. */
+    /**
+     * AX-09's set: the project, its lines' guards (LK-19), the proof (LK-29); a discrepancy case is opened under the project's lock.
+     *
+     * @param  list<int>  $projectLineIds
+     */
     public static function locks(int $projectId, array $projectLineIds, ?int $evidenceId): LockSet
     {
         return LineScope::locks($projectId, array_values(array_unique($projectLineIds)), $evidenceId);
@@ -96,7 +92,8 @@ final class DeliveryPosting
             $rows[] = ['item' => $item, 'line' => $line, 'number' => $number + 1, 'base' => (string) $base];
         }
 
-        DuplicateWarning::check('L-49', self::likelyDuplicates(array_map(fn (array $row): array => ['shipment' => $row['item']['shipment'], 'base' => $row['base']], $rows), $businessDate), $acknowledged, $reason);
+        $matches = self::likelyDuplicates(array_map(fn (array $row): array => ['shipment' => $row['item']['shipment'], 'base' => $row['base']], $rows), $businessDate);
+        DuplicateWarning::check('L-49', $matches, $acknowledged, $reason);
 
         $now = $context->now();
         $actor = $context->request->actorUserId;
@@ -130,20 +127,20 @@ final class DeliveryPosting
 
         // A confirmed likely duplicate commits under the acknowledged variant, listed in QS-21 and the Owner's review (QS-14).
         $this->audit->record(
-            action: $acknowledged === [] ? 'FUL.DeliveryRecorded' : 'FUL.DeliveryDuplicateConfirmed',
+            action: $matches === [] ? 'FUL.DeliveryRecorded' : 'FUL.DeliveryDuplicateConfirmed',
             authorityClass: AuthorityClass::Adm,
             actorUserId: $actor,
             companyId: $project->companyId,
             entityType: 'project',
             entityId: $project->id,
             entityPublicId: $project->publicId,
-            reason: $acknowledged === [] ? null : $reason,
+            reason: $matches === [] ? null : $reason,
             commandId: $commandId,
             change: AuditChange::created([
                 'recipient' => $recipient, 'condition' => $condition, 'lines' => $audited,
                 ...($inspection === null ? [] : ['inspection' => $inspection]),
                 ...($case === null ? [] : ['case' => $case->public_id]),
-                ...($acknowledged === [] ? [] : ['matches' => $acknowledged]),
+                ...($matches === [] ? [] : ['matches' => $matches]),
             ]),
             linkage: AuditLinkage::make()->link(AuditRelation::Affects, 'deliveries', $delivery->public_id),
             businessDate: $businessDate,
@@ -157,9 +154,10 @@ final class DeliveryPosting
      * on the same delivery when there is one — stock untouched, the guard moved by the net difference. An issued BAST or
      * inspection record of the delivery is revised on PG-036 from the facts that stand after it (WORKFLOWS §8).
      *
+     * @param  list<string>  $acknowledged  the likely duplicates of the correct line the actor confirms (L-49)
      * @return int the delivery
      */
-    public function correct(CommandContext $context, ProjectRef $project, int $deliveryId, int $lineId, ?string $quantity, string $reason, string $businessDate, bool $prefilled): int
+    public function correct(CommandContext $context, ProjectRef $project, int $deliveryId, int $lineId, ?string $quantity, string $reason, string $businessDate, bool $prefilled, array $acknowledged = [], ?string $duplicateReason = null): int
     {
         self::open($project->id);
         BusinessDateRule::check($businessDate, $prefilled);
@@ -186,6 +184,9 @@ final class DeliveryPosting
             throw Refused::rejected('C-30', ['reason' => 'remainder', 'line' => Row::text($shipment, 'line_no'), 'remainder' => (string) $remainder]);
         }
 
+        // The correct line is a delivery of its own: a likely duplicate of another one is confirmed first (BD-13; INT-015).
+        $matches = $right === null ? [] : array_values(array_diff(self::likelyDuplicates([['shipment' => $dispatchLine, 'base' => (string) $right]], $businessDate), [Row::text($line, 'public_id')]));
+        DuplicateWarning::check('L-49', $matches, $acknowledged, $duplicateReason);
         $now = $context->now();
         $actor = $context->request->actorUserId;
         $commandId = $context->request->commandId;
@@ -204,7 +205,7 @@ final class DeliveryPosting
 
         $key = 'line_'.Row::text($shipment, 'line_no');
         $this->audit->record(
-            action: 'FUL.DeliveryCorrected',
+            action: $matches === [] ? 'FUL.DeliveryCorrected' : 'FUL.DeliveryCorrectedDuplicateConfirmed',
             authorityClass: AuthorityClass::AdmPlus,
             actorUserId: $actor,
             companyId: $project->companyId,
@@ -213,7 +214,7 @@ final class DeliveryPosting
             entityPublicId: $project->publicId,
             reason: $reason,
             commandId: $commandId,
-            change: AuditChange::updated(['lines' => [$key => (string) $wrong]], ['lines' => [$key => (string) ($right ?? '0')]]),
+            change: AuditChange::updated(['lines' => [$key => (string) $wrong]], ['lines' => [$key => (string) ($right ?? '0')], ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $duplicateReason])]),
             linkage: AuditLinkage::make()->link(AuditRelation::Reverses, 'deliveries', Row::text($line, 'public_id')),
             businessDate: $businessDate,
         );
@@ -236,7 +237,7 @@ final class DeliveryPosting
         $found = [];
 
         foreach (DB::table('dispatch_lines as d')->join('project_lines as pl', 'pl.id', '=', 'd.project_line_id')->whereIn('d.id', array_values(array_unique($dispatchLineIds)))
-            ->get(['d.id', 'd.project_id', 'd.company_id', 'd.project_line_id', 'd.product_id', 'd.quantity_scale', 'd.entered_unit_id', 'd.ratio_to_base', 'pl.line_no', DB::raw(self::FIGURES)])->all() as $row) {
+            ->get(['d.id', 'd.project_id', 'd.company_id', 'd.project_line_id', 'd.product_id', 'd.quantity_scale', 'd.entered_unit_id', 'd.ratio_to_base', 'pl.line_no', DB::raw(ShipmentFigures::SQL)])->all() as $row) {
             $found[(int) Row::text($row, 'id')] = $row;
         }
 

@@ -15,7 +15,7 @@ const PAGE = '/gudang/pengiriman';
 
 type Awaiting = { id: string; date: string; project: string; title: string; client: string | null; company: string | null };
 type Recorded = { id: string; date: string; recipient: string; project: string; company: string | null; shipment: string | null };
-type Props = { list: { tab: 'menunggu' | 'tercatat'; rows: (Awaiting | Recorded)[]; more: boolean; several: boolean } };
+type Props = { list: { tab: 'menunggu' | 'tercatat'; rows: (Awaiting | Recorded)[]; more: boolean; several: boolean }; can: { record: boolean } };
 
 /** A recorded delivery's success, shown on the page its answer opened (IP-01; NAV-031). */
 function PageAnswer() {
@@ -24,7 +24,7 @@ function PageAnswer() {
     return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
 }
 
-export default function Deliveries({ list }: Props) {
+export default function Deliveries({ list, can }: Props) {
     const { t } = useTranslation();
     const awaiting = list.tab === 'menunggu';
 
@@ -48,12 +48,12 @@ export default function Deliveries({ list }: Props) {
                                 <li key={row.id} data-slot="delivery-row" className="flex min-w-0 flex-wrap items-center gap-2 py-2 text-body">
                                     {'recipient' in row ? (
                                         <>
-                                            {row.shipment === null ? <span className="font-medium">{row.recipient}</span> : <a className="font-medium underline" href={`${PAGE}/${row.shipment}`}>{row.recipient}</a>}
+                                            {row.shipment === null || !can.record ? <span className="font-medium">{row.recipient}</span> : <a className="font-medium underline" href={`${PAGE}/${row.shipment}`}>{row.recipient}</a>}
                                             <Code>{row.project}</Code>
                                         </>
                                     ) : (
                                         <>
-                                            <a className="font-medium underline" href={`${PAGE}/${row.id}`}>{row.title}</a>
+                                            {can.record ? <a className="font-medium underline" href={`${PAGE}/${row.id}`}>{row.title}</a> : <span className="font-medium">{row.title}</span>}
                                             <Code>{row.project}</Code>
                                             {row.client !== null && <span className="text-text-secondary">{row.client}</span>}
                                         </>
