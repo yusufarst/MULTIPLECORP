@@ -40,7 +40,7 @@ type Props = {
     product?: Product | null;
     first_effect: boolean;
     today: string;
-    can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean; receive: boolean; reverse: boolean };
+    can: { amend: boolean; supplement: boolean; charge: boolean; mark: boolean; unmark: boolean; cancel: boolean; close: boolean; correct: boolean; issue: boolean; evidence: boolean; receive: boolean; reverse: boolean; return: boolean };
 };
 type Receipt = { handle: string; line: number; kind: string; usable: string; damaged: string; rejected: string; reference: string | null; date: string; lot: string | null; reversal: ReceiptReversalFigures | null };
 type Dialog = { kind: 'cancel' } | { kind: 'close' } | { kind: 'correct'; target: string; correction: 'PRICE_CORRECTION' | 'TAX_CORRECTION' | 'CHARGE_CORRECTION'; label: string; current: string; line: number | null } | { kind: 'basis'; charge: string } | { kind: 'unmark'; line: string };
@@ -158,6 +158,7 @@ export default function Purchase({ purchase, lines, charges, receipts, disbursem
                 ]} />
                 <div className="flex min-w-0 flex-wrap gap-2" data-slot="purchase-actions">
                     {can.receive && <Button render={<a href={`/gudang/barang-masuk/${purchase.id}`} />}>{t('pages.pg_022.title')}</Button>}
+                    {can.return && <Button variant="outline" render={<a href={`/gudang/retur-pemasok?pembelian=${purchase.id}`} />}>{t('pages.pg_028.title')}</Button>}
                     {can.issue && <Button variant="outline" disabled={prepare.pending} onClick={() => { (prepare.submit as unknown as (value: unknown) => void)({ jenis: 'DOC-02', subjek: { purchase_id: purchase.id } }); }}>{t('actions.issue_po')}</Button>}
                     {can.issue && <Button variant="outline" disabled={prepare.pending} onClick={() => { (prepare.submit as unknown as (value: unknown) => void)({ jenis: 'DOC-14', subjek: { purchase_id: purchase.id } }); }}>{t('purchases.action.issue_order')}</Button>}
                     {can.amend && amending === null && <Button variant="outline" onClick={startAmend}>{t('purchases.action.amend')}</Button>}

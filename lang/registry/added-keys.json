@@ -16152,6 +16152,258 @@
             "source": "WF-INV-05; SF-UNATTRIBUTED; L-42; QS-21",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "returns.section.new": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.lot": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.choose_lot": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.units": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.no_lots": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.serials": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.no_units": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.confirm.return": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.causal": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.causal_other": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.balanced": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.open_part": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.section.units": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.section.outcome": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.outcome": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.outcome.REPLACEMENT": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.outcome.REFUND": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.outcome.CREDIT": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.outcome.UNRECOVERED": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.replacement_qty": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.replacement_room": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.expected_refund": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.amount": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.proof": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.action.record_outcome": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.confirm.outcome": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.section.timeline": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.section.list": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.none": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.list.open": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.answer.returned": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.answer.outcome": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.closed": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.mixed_cause": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.one_lot": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.evidence": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.nothing_open": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.replacement_room": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.above_open": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReturnedToSupplier": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.ReturnOutcomeRecorded": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PUR.ReturnOutcomeRouted": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

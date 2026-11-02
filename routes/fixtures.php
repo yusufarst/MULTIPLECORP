@@ -26,6 +26,7 @@ use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
+use Tests\Support\Fixtures\ReturnFixture;
 use Tests\Support\Fixtures\ShellFixture;
 use Tests\Support\Fixtures\StockFixture;
 
@@ -141,6 +142,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/adjustments', [AdjustmentFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/adjustments/plain', [AdjustmentFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/counts/admin', [CountFixture::class, 'admin'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/returns', [ReturnFixture::class, 'grant'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch', [DispatchFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/serials', [DispatchFixture::class, 'serials'])->withoutMiddleware(PreventRequestForgery::class);

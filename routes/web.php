@@ -32,6 +32,7 @@ use App\Modules\INV\Http\Controllers\LocationsController;
 use App\Modules\INV\Http\Controllers\ReceivingController;
 use App\Modules\INV\Http\Controllers\ReservationsController;
 use App\Modules\INV\Http\Controllers\StockController;
+use App\Modules\INV\Http\Controllers\SupplierReturnController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\OPS\Http\Controllers\LogsController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
@@ -165,6 +166,10 @@ Route::post('/gudang/penyesuaian', [AdjustmentController::class, 'adjust'])->mid
 Route::post('/gudang/kondisi', [AdjustmentController::class, 'condition'])->middleware(['auth', 'capability:stock.condition'])->name('inv.condition');
 Route::post('/gudang/penyesuaian/{id}/balikkan', [AdjustmentController::class, 'reverse'])->whereUuid('id')->middleware(['auth', 'capability:stock.reverse'])->name('inv.adjustments.reverse');
 Route::post('/gudang/stok/{id}/pindah', [AdjustmentController::class, 'move'])->whereUuid('id')->middleware(['auth', 'capability:stock.move'])->name('inv.stock.move');
+// PG-028 and its commands (TASK-044): the return from the purchase, its outcome on the case.
+Route::get('/gudang/retur-pemasok', [SupplierReturnController::class, 'show'])->middleware(['auth', 'capability:purchase_return.record'])->name('inv.supplier_returns');
+Route::post('/pembelian/{id}/retur', [SupplierReturnController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:purchase_return.record'])->name('inv.supplier_returns.record');
+Route::post('/pembelian/{id}/retur/{ret}/hasil', [SupplierReturnController::class, 'outcome'])->whereUuid(['id', 'ret'])->middleware(['auth', 'capability:purchase_return.record'])->name('pur.return_outcome');
 Route::get('/gudang/barang-keluar', [DispatchController::class, 'worklist'])->middleware(['auth', 'capability:stock.dispatch'])->name('inv.dispatch');
 Route::get('/gudang/barang-keluar/{id}', [DispatchController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:stock.dispatch'])->name('inv.dispatch.show');
 Route::post('/gudang/barang-keluar/{id}/keluarkan', [DispatchController::class, 'dispatch'])->whereUuid('id')->middleware(['auth', 'capability:stock.dispatch'])->name('inv.dispatch.record');
