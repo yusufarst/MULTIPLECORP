@@ -165,8 +165,11 @@ it('loses two of three serials shipped from one lot, their one consumption recla
     $serials = [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)];
     expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '3', array_map(fn (int $serial): array => DispatchWorld::pick($lot, $this->rack, '1', $serial), $serials)))->toBe('COMMITTED');
     $row = DispatchWorld::last($this->line);
+    $stray = StockWorld::serial($this->product, $lot, $this->rack);
 
-    expect(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '2', [$serials[1]]))->toContain('C-02')
+    // A serial the shipment does not carry is no loss of it.
+    expect(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '1', [$stray]))->toContain('C-02')
+        ->and(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '2', [$serials[1], $stray]))->toContain('C-02')
         ->and(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '2', [$serials[1], $serials[2]]))->toBe('COMMITTED')
         ->and(DB::table('serial_units')->whereIn('id', [$serials[1], $serials[2]])->where('state', 'LOST')->count())->toBe(2)
         ->and(DB::table('serial_units')->where('id', $serials[0])->value('state'))->toBe('DISPATCHED')
