@@ -3441,6 +3441,8 @@
     "adjustments.refusal.case_required": "Beberapa kasus terbuka pada lot ini. Pilih kasus unit ini.",
     "adjustments.refusal.disposal_usable": "Yang dimusnahkan adalah unit tidak layak pakai. Unit layak pakai dicatat sebagai penyusutan atau kehilangan lain.",
     "adjustments.all_lots": "Tampilkan semua lot",
+    "adjustments.all_proofs": "Tampilkan semua bukti",
+    "adjustments.no_proof": "Tidak ada bukti yang cocok.",
     "adjustments.scan.lot_opened": "Lot :kode dipilih.",
     "dispatch.records.title": "Barang yang sudah keluar",
     "dispatch.records.done": "Kembali ke Barang Keluar",

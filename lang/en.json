@@ -3441,6 +3441,8 @@
     "adjustments.refusal.case_required": "Several cases are open on this lot. Choose this unit's case.",
     "adjustments.refusal.disposal_usable": "What is disposed of is unusable. Usable units are recorded as shrinkage or another loss.",
     "adjustments.all_lots": "Show every lot",
+    "adjustments.all_proofs": "Show every proof",
+    "adjustments.no_proof": "No proof matches.",
     "adjustments.scan.lot_opened": "Lot :kode is chosen.",
     "dispatch.records.title": "Goods already out",
     "dispatch.records.done": "Back to Dispatch",

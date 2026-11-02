@@ -36,7 +36,7 @@ type Place = { lot: string; code: string; location: string; rack: string; condit
 type Serial = { handle: string; serial: string; lot: string; location: string; condition: Condition; code: string; rack: string; other: boolean };
 type Units = { find: string | null; places: Place[]; serials: Serial[]; more: boolean; available: string; reservations: Reservation[] };
 type Case = { id: string; kind: string; date: string; lot: string | null; project: string | null; cross: boolean };
-type Proofs = { rows: { id: string; label: string }[]; more: boolean };
+type Proofs = { find: string | null; rows: { id: string; label: string }[]; more: boolean };
 type Loss = { id: string; type: string; date: string; qty: string; open: string; lot: string; amount: string | null };
 type Failed = { failed: true };
 type Can = { condition: boolean; adjust: boolean; move: boolean; reverse: boolean; reserve: boolean; evidence: boolean; allocate: boolean };
@@ -128,6 +128,15 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
         setSeenUnits(units);
         setKnownPlaces((all) => [...all, ...units.places]);
         setKnownSerials((all) => [...all, ...units.serials]);
+    }
+
+    // The proof chosen stays named while a search narrows the list.
+    const [seenProofs, setSeenProofs] = useState(proofs);
+    const [knownProofs, setKnownProofs] = useState(proofs?.rows ?? []);
+
+    if (proofs !== seenProofs) {
+        setSeenProofs(proofs);
+        setKnownProofs((all) => [...all, ...(proofs?.rows ?? [])]);
     }
 
     const offered = (row: { condition: Condition; lot: string }) => (only === null || row.condition === only) && (onlyLot === null || row.lot === onlyLot);
@@ -332,12 +341,14 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
                                 <NativeSelect {...control} value={evidence[0] ?? ''} disabled={frozen} onChange={(event) => { setEvidence(event.target.value === '' ? [] : [event.target.value]); }}>
                                     <option value="">{t('dispatch.substitute.choose')}</option>
                                     {uploaded !== null && <option value={uploaded}>{t('dispatch.substitute.evidence_uploaded')}</option>}
-                                    {proofs.rows.filter((row) => row.id !== uploaded).map((row) => <option key={row.id} value={row.id}>{row.label}</option>)}
+                                    {latest([...knownProofs.filter((row) => evidence.includes(row.id)), ...proofs.rows], (row) => row.id).filter((row) => row.id !== uploaded).map((row) => <option key={row.id} value={row.id}>{row.label}</option>)}
                                 </NativeSelect>
                             )}
                         </FormField>
                     )}
-                    {proofs?.more === true && <ChoicesFind disabled={frozen} label={t('dispatch.substitute.find_evidence')} help={t('dispatch.substitute.find_evidence_help')} onFind={(text) => { router.reload({ only: ['proofs'], data: { cari_bukti: text }, preserveUrl: true }); }} />}
+                    {proofs !== null && proofs.find !== null && proofs.rows.length === 0 && <p role="status" className="text-body text-text-secondary">{t('adjustments.no_proof')}</p>}
+                    {proofs !== null && proofs.find !== null && <Button variant="ghost" size="sm" className="self-start" disabled={frozen} onClick={() => { router.reload({ only: ['proofs'], preserveUrl: true }); }}>{t('adjustments.all_proofs')}</Button>}
+                    {proofs !== null && (proofs.more || proofs.find !== null) && <ChoicesFind disabled={frozen} label={t('dispatch.substitute.find_evidence')} help={t('dispatch.substitute.find_evidence_help')} onFind={(text) => { router.reload({ only: ['proofs'], data: { cari_bukti: text }, preserveUrl: true }); }} />}
                     {can.evidence && <Button variant="outline" className="self-start" disabled={frozen} onClick={() => { setUploading(true); }}>{t('dispatch.substitute.evidence')}</Button>}
                 </div>
             )}

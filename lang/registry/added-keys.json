@@ -15265,6 +15265,18 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "adjustments.all_proofs": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.no_proof": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "adjustments.scan.lot_opened": {
             "task": "TASK-042",
             "source": "WF-INV-06; CM-11",

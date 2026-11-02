@@ -134,7 +134,7 @@ final class AdjustmentQueries
             }
         }
 
-        return ['rows' => $rows, 'more' => count($found) > self::LOSSES * 3];
+        return ['find' => $find, 'rows' => $rows, 'more' => count($found) > self::LOSSES * 3];
     }
 
     /** A pool evidence the viewer may see, by public id (PJ-08; CS-04). */
