@@ -128,7 +128,7 @@ final class ReturnOutcomes
             throw Refused::rejected('C-29', ['reason' => 'nothing_open']);
         }
 
-        if (! $wanted->isEqualTo($wanted->toScale($line['scale'], RoundingMode::Down))) {
+        if (! $wanted->isEqualTo($wanted->toScale(max(0, $line['scale']), RoundingMode::Down))) {
             throw Refused::rejected('C-09', ['reason' => 'scale']);
         }
 
