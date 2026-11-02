@@ -305,7 +305,7 @@ it('gives a serialized count its whole missing total for the cut, apart from the
     $page = $this->actingAs($this->applier)->get("/gudang/stok-opname?hitungan={$public}")->assertOk()->viewData('page')['props']['count'];
 
     expect($page['missing'])->toHaveCount(CountQueries::LINES)->and($page['missing_total'])->toBe(CountQueries::LINES + 1)
-        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('String(count.missing_total)');
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('count.missing_total - count.returning');
 });
 
 it('reaches every lot holding the product in a registration count, by lot code past the bound (`DIR-101` F2; QB-05)', function () {

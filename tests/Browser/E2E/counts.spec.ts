@@ -1,7 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { signedIn } from '../account-fixtures';
-import { adjustmentRun } from '../adjustment-fixtures';
+import { adjustmentRun, settledVisit } from '../adjustment-fixtures';
 import { applyWith, countLine, openCount } from '../count-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -136,7 +136,7 @@ test('opens a pending case through PG-027\'s adjustment across companies, never 
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await adjustmentRun(page, `opname-sesuai-${String(Date.now())}`);
 
-    await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
+    await settledVisit(page, () => page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`));
     await page.getByLabel('Jenis penyesuaian').selectOption({ label: 'Penyusutan' });
     await page.locator('[data-slot="adjustment-lots"]').getByRole('checkbox', { name: 'Lot unit ini tidak dapat dikenali dari bukti' }).check();
     await expect(page.locator('[data-slot="adjustment-pending-note"]')).toContainText('Selisih menunggu penetapan');
