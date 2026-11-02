@@ -330,6 +330,21 @@ it('charges a serial by its own history: the unit damaged at the receipt its pro
     adjustmentClean();
 });
 
+it('counts a serial repaired twice once, its still damaged sibling keeping the project from completion (L-38; WF-PRJ-03 predicate 8)', function () {
+    $project = $this->demand['project']->id;
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $lot = AdjustmentWorld::damagedReceipt($this->actor, $this->company, $this->product, $this->unit, $this->rack, '0', '2', '1000', $project, $this->line, [['serial' => 'SN-SATU', 'damaged' => true], ['serial' => 'SN-DUA', 'damaged' => true]]);
+    $one = (int) DB::table('serial_units')->where('serial_key', 'sn-satu')->value('id');
+    $reinspect = fn (): string => AdjustmentWorld::reinspect($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'UNUSABLE', $one)]));
+
+    expect($reinspect())->toBe('COMMITTED')
+        ->and(AdjustmentWorld::change($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'USABLE', $one)], evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and($reinspect())->toBe('COMMITTED');
+    $items = array_map(fn ($item): string => $item->key, app(ReservationPredicate::class)->states([$project], false)[$project][Predicates::STOCK]->items);
+    expect($items)->toContain('projects.item.unusable_units');
+    adjustmentClean();
+});
+
 it('changes a serial\'s condition with its unit, one change from two commands leaving one, and refuses disposing of usable units (C-02; L-13; WF-INV-06)', function () {
     $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2');
     DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);

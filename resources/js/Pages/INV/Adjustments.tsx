@@ -56,6 +56,7 @@ type Props = {
 
 const placeKey = (place: { lot: string; location: string; condition: string }) => `${place.lot}|${place.location}|${place.condition}`;
 const figure = (value: string) => (/^\d+(\.\d+)?$/.test(value) ? value : '0');
+const latest = <Row,>(rows: Row[], key: (row: Row) => string): Row[] => [...new Map(rows.map((row) => [key(row), row])).values()];
 const POOL_TYPES = ['WAREHOUSE_RECORD', 'OTHER'];
 
 function LossRecord({ loss, today, canReverse }: { loss: Loss; today: string; canReverse: boolean }) {
@@ -118,8 +119,20 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
     const [onlyLot, setOnlyLot] = useState(lot);
     // What is disposed of is unusable (WF-INV-06).
     const only: Condition | null = action === 'penyesuaian' && kind === 'DISPOSAL' ? 'UNUSABLE' : from;
-    const places = units.places.filter((place) => (only === null || place.condition === only) && (onlyLot === null || place.lot === onlyLot));
-    const serials = units.serials.filter((serial) => (only === null || serial.condition === only) && (onlyLot === null || serial.lot === onlyLot));
+    // What a search brought stays while it is entered: a narrower search hides no unit already picked.
+    const [seenUnits, setSeenUnits] = useState(units);
+    const [knownPlaces, setKnownPlaces] = useState(units.places);
+    const [knownSerials, setKnownSerials] = useState(units.serials);
+
+    if (units !== seenUnits) {
+        setSeenUnits(units);
+        setKnownPlaces((all) => [...all, ...units.places]);
+        setKnownSerials((all) => [...all, ...units.serials]);
+    }
+
+    const offered = (row: { condition: Condition; lot: string }) => (only === null || row.condition === only) && (onlyLot === null || row.lot === onlyLot);
+    const places = latest([...knownPlaces.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0), ...units.places], placeKey).filter(offered);
+    const serials = latest([...knownSerials.filter((serial) => chosen.includes(serial.handle)), ...units.serials], (serial) => serial.handle).filter(offered);
     const picks = product.serialized
         ? serials.filter((serial) => chosen.includes(serial.handle)).map((serial) => ({ key: serial.handle, lot: serial.lot, location: serial.location, condition: serial.condition, qty: '1', serial: serial.handle }))
         : places.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0).map((place) => ({ key: placeKey(place), lot: place.lot, location: place.location, condition: place.condition, qty: quantities[placeKey(place)] ?? '0', serial: null as string | null }));
@@ -187,16 +200,33 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
                 router.visit(`/gudang/penyesuaian?produk=${scan.matches[0].product}&aksi=${action}`);
             } else if (scan.matches[0].kind === 'serial') {
                 const number = scan.matches[0].serial ?? scan.code;
-                const row = serials.find((serial) => serial.serial.toLowerCase() === number.toLowerCase());
+                const named = (serial: Serial) => serial.serial.toLowerCase() === number.toLowerCase();
+                const add = (row: Serial | undefined) => {
+                    if (row === undefined) {
+                        setScanError(t('adjustments.scan.absent', { seri: number }));
+                    } else if (chosenNow.current.includes(row.handle)) {
+                        setScanError(t('messages.msg_36', { seri: number }));
+                    } else {
+                        chosenNow.current = [...chosenNow.current, row.handle];
+                        setChosen(chosenNow.current);
+                        setResult(t('receiving.scan.serial_added', { seri: number }));
+                    }
+                };
+                const row = serials.find(named);
 
-                if (row === undefined) {
-                    setScanError(t('adjustments.scan.absent', { seri: number }));
-                } else if (chosenNow.current.includes(row.handle)) {
-                    setScanError(t('messages.msg_36', { seri: number }));
+                // The list is a first page or a search's: ask the server before calling the unit absent.
+                if (row === undefined && (units.more || units.find !== null)) {
+                    let found: Serial | undefined;
+
+                    router.reload({
+                        only: ['units'],
+                        data: { temukan: number },
+                        preserveUrl: true,
+                        onSuccess: (page) => { found = (page.props as unknown as { units?: Units }).units?.serials.filter(offered).find(named); },
+                        onFinish: () => { add(found); },
+                    });
                 } else {
-                    chosenNow.current = [...chosenNow.current, row.handle];
-                    setChosen(chosenNow.current);
-                    setResult(t('receiving.scan.serial_added', { seri: number }));
+                    add(row);
                 }
             } else {
                 setResult(t('adjustments.scan.same_product'));
@@ -222,8 +252,8 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
                     )}
                 </FormField>
             )}
-            {onlyLot !== null && <Button variant="ghost" size="sm" className="self-start" onClick={() => { setOnlyLot(null); }}>{t('adjustments.all_lots')}</Button>}
-            {units.more && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['units'], data: { temukan: text }, preserveUrl: true }); }} />}
+            {(onlyLot !== null || units.find !== null) && <Button variant="ghost" size="sm" className="self-start" disabled={frozen} onClick={() => { setOnlyLot(null); if (units.find !== null) router.reload({ only: ['units'], preserveUrl: true }); }}>{t('adjustments.all_lots')}</Button>}
+            {(units.more || units.find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['units'], data: { temukan: text }, preserveUrl: true }); }} />}
             {product.serialized ? (
                 <fieldset disabled={frozen} data-slot="adjustment-serials" className="flex min-w-0 flex-col gap-2">
                     <legend className="text-body font-medium">{t('adjustments.field.serials')}</legend>

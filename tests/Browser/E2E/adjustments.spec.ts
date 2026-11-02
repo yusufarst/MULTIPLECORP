@@ -93,11 +93,12 @@ test('refuses and routes a loss of another company\'s lot with MSG-14, nothing r
     expect((await admin.request.post('/__fixtures/adjustments/plain', { data: { company: run.company } })).ok()).toBe(true);
 
     await admin.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
+    await admin.getByLabel('Jenis penyesuaian').selectOption({ label: 'Penyusutan' });
     const other = admin.locator('[data-slot="adjustment-lot"]').filter({ hasText: 'perusahaan lain' }).first();
     await other.getByLabel(/Jumlah dari/).fill('1');
     await admin.getByLabel('Bukti', { exact: true }).selectOption({ index: 1 });
     await admin.locator('[data-slot="adjustment-form"]').getByRole('button', { name: 'Catat Penyesuaian Stok' }).click();
-    await admin.getByRole('alertdialog').getByLabel('Alasan').fill('Hilang');
+    await admin.getByRole('alertdialog').getByLabel('Alasan').fill('Susut saat dihitung');
     await admin.getByRole('alertdialog').getByRole('button', { name: 'Catat Penyesuaian Stok' }).click();
     await expect(admin.locator('[data-slot="adjustment-form"]')).toContainText('diteruskan');
     await context.close();
