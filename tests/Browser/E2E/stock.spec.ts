@@ -26,6 +26,10 @@ test('shows the four quantities with the formula, per product and per rack, the 
     await expect(row.getByRole('link', { name: 'Buat Pembelian' })).toHaveAttribute('href', `/pembelian/baru?produk=${run.product}`);
 
     await page.getByRole('button', { name: 'Per Rak' }).click();
+    await expect(page.getByRole('table', { name: 'Per Rak' })).toBeVisible();
+    // The suite shares one database: a rack's random code can sort past the first page.
+    await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
+    await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
     await expect(page.getByRole('row').filter({ hasText: run.rack }).first()).toBeVisible();
 });
 

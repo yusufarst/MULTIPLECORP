@@ -39,6 +39,31 @@ final class CostFigures
     }
 
     /**
+     * The loss each movement recorded, per bearer company and never summed across them (CS-08), only with `cost.view` of that bearer, with no source side (J-INV-06; PJ-06).
+     *
+     * @param  list<int>  $movementIds
+     * @return array<int, list<array{company: string, amount: string}>> movement => its bearers' amounts
+     */
+    public function lossesOf(int $viewerId, array $movementIds): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $figures = [];
+
+        if ($movementIds === [] || ! $viewer->has('cost.view')) {
+            return $figures;
+        }
+
+        foreach ($viewer->scope->apply(DB::table('cost_attributions as a'), 'a.bearer_company_id')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->join('companies as o', 'o.id', '=', 'a.bearer_company_id')->whereIn('c.stock_movement_id', $movementIds)->where('a.cost_class', 'LOSS')
+            ->groupBy('c.stock_movement_id', 'a.bearer_company_id', 'o.code')->orderBy('o.code')->selectRaw('c.stock_movement_id, a.bearer_company_id, o.code, sum(a.amount) as amount')->get() as $row) {
+            if ($viewer->allows('cost.view', (int) Row::text($row, 'bearer_company_id'))) {
+                $figures[(int) Row::text($row, 'stock_movement_id')][] = ['company' => Row::text($row, 'code'), 'amount' => Money::of(Row::text($row, 'amount'))->toString()];
+            }
+        }
+
+        return $figures;
+    }
+
+    /**
      * PG-019's lots' cost and flagged basis, only those of a source company whose `cost.view` the viewer holds, in scope (PJ-02; rows 73, 74).
      *
      * @return array<string, array{cost: string, flagged: ?string}>

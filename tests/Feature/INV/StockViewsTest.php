@@ -210,9 +210,10 @@ it('holds the physical query classes free of any cost table (PJ-01; SM-03; DATAB
 });
 
 it('keeps the commands PG-019 hosts absent until their routes exist (RC-06; IG-01; criterion 17)', function () {
-    expect(Route::has('inv.stock.move'))->toBeFalse();
+    // TASK-042 built the move and the adjustment; the count stays TASK-043's.
+    expect(Route::has('inv.stock.move'))->toBeTrue();
     $source = file_get_contents(resource_path('js/Pages/INV/ProductStock.tsx'));
-    expect($source)->not->toContain('Pindah Lokasi')->not->toContain('/gudang/stok-opname');
+    expect($source)->not->toContain('/gudang/stok-opname');
 });
 
 it('flags "Ambil Lebih Dulu" on the oldest lot holding usable units, never on unusable ones (BR-INV-04; PT-17; criterion 8)', function () {

@@ -1,15 +1,17 @@
-// PG-019 *Detail Stok Produk* (ROUTE-019; NAV-019; SCR-19; UXS-20; UXS-39; PJ-01–PJ-04; BR-INV-04; TASK-040): one product's four quantities, its racks, lots — "Ambil Lebih Dulu" on the oldest holding usable units, as a picking aid only —, serials with their presence, reservations and recent movements, each long list continued (PF-13; IP-18), each deferred group with its own error and retry. A lot of a company in scope names its source, its cost and flagged basis only with `cost.view` of that company; a lot outside scope ends at its code, quantity, rack and condition with the relation marker, and no link. The warehouse commands appear here with their capabilities once their routes exist (RC-06; TASK-042; TASK-043).
+// PG-019 *Detail Stok Produk* (ROUTE-019; NAV-019; SCR-19; UXS-20; UXS-39; PJ-01–PJ-04; BR-INV-04; TASK-040): one product's four quantities, its racks, lots — "Ambil Lebih Dulu" on the oldest holding usable units, as a picking aid only —, serials with their presence, reservations and recent movements, each long list continued (PF-13; IP-18), each deferred group with its own error and retry. A lot of a company in scope names its source, its cost and flagged basis only with `cost.view` of that company; a lot outside scope ends at its code, quantity, rack and condition with the relation marker, and no link. "Ubah Kondisi", "Catat Penyesuaian Stok" and "Pindah Lokasi" appear with their capabilities (TASK-042); PG-027's success lands here with its answer (NAV-027).
 import { Deferred, router, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { RelationMarker } from '@/components/company';
 import { ListContinuation } from '@/components/data-list';
 import { PageHeader } from '@/components/page-header';
+import { OutcomeMessage } from '@/components/outcome-message';
 import { InventoryBlock, type StockFigures } from '@/components/record-blocks';
 import { RegionEmpty, RegionLoading } from '@/components/region-state';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Code, DateText, Money } from '@/components/values';
+import { MoveSheet, type Moving } from '@/features/inv/move-sheet';
 import { stockListAddress } from '@/features/inv/stock-list-address';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
@@ -26,7 +28,10 @@ type Props = {
     product: { id: string; name: string; sku: string | null; figures: StockFigures; pending: string | null; below: string | null; serialized: boolean };
     places: { rack: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[];
     reservations: Reservations;
-    can: { purchase: boolean };
+    can: { purchase: boolean; condition: boolean; adjust: boolean; move: boolean };
+    moving?: Moving;
+    today: string;
+    scale: number;
 };
 
 function Failed({ group }: { group: 'group' | 'movements' }) {
@@ -42,7 +47,7 @@ function Failed({ group }: { group: 'group' | 'movements' }) {
 
 function Lots() {
     const { t } = useTranslation();
-    const { group, costs } = usePage().props as unknown as { group?: Group; costs?: Record<string, Cost> | { failed: true } };
+    const { group, costs, can, product } = usePage().props as unknown as { group?: Group; costs?: Record<string, Cost> | { failed: true }; can: { condition: boolean }; product: { id: string } };
     const [seen, setSeen] = useState<Group | undefined>(undefined);
     const [loading, setLoading] = useState<'lots' | 'serials' | null>(null);
     const [lots, setLots] = useState<Lot[]>([]);
@@ -89,6 +94,7 @@ function Lots() {
                                         <span>{`${lot.qty} · ${lot.rack} · ${t(`stock.condition.${lot.condition}`)}`}</span>
                                         {lot.oldest && <Badge>{t('stock.lot.oldest')}</Badge>}
                                         {lot.other && <RelationMarker />}
+                                        {can.condition && <a className="underline" href={`/gudang/penyesuaian?produk=${product.id}&aksi=${lot.condition === 'USABLE' ? 'kondisi' : 'periksa'}&lot=${lot.id}`}>{t(lot.condition === 'USABLE' ? 'actions.change_condition' : 'actions.reinspect')}</a>}
                                     </span>
                                     {!lot.other && <span className="text-caption text-text-secondary">{t('stock.lot.source', { perusahaan: lot.company ?? '' })} · {t('stock.lot.acquired', { jenis: t(`stock.lot.kind.${lot.kind ?? 'RECEIPT'}` as TranslationKey), tanggal: lot.date ?? '', jumlah: lot.acquired ?? '' })}</span>}
                                     {cost !== undefined && <span className="flex flex-wrap items-center gap-2 text-caption text-text-secondary">{t('stock.lot.cost', { nilai: '' })}<Money value={cost.cost} />{cost.flagged !== null && <>{t('stock.lot.flagged', { nilai: '' })}<Money value={cost.flagged} /></>}</span>}
@@ -107,6 +113,7 @@ function Lots() {
                             <li key={serial.serial} className="flex min-w-0 flex-wrap items-center gap-2 py-2">
                                 <span className="font-mono">{serial.serial}</span>
                                 <span className="text-text-secondary">{`${t('stock.serial.present')} · ${serial.lot} · ${serial.rack} · ${t(`stock.condition.${serial.condition}`)}`}</span>
+                                {can.condition && <a className="underline" href={`/gudang/penyesuaian?produk=${product.id}&aksi=${serial.condition === 'USABLE' ? 'kondisi' : 'periksa'}&temukan=${encodeURIComponent(serial.serial)}`}>{t(serial.condition === 'USABLE' ? 'actions.change_condition' : 'actions.reinspect')}</a>}
                             </li>
                         ))}
                     </ul>
@@ -171,14 +178,50 @@ function Movements({ product }: { product: string }) {
     );
 }
 
-export default function ProductStock({ product, places, reservations, can }: Props) {
+export default function ProductStock({ product, places, reservations, can, moving, today, scale }: Props) {
     const { t } = useTranslation();
     const [list] = useState(stockListAddress);
+    const [wantsMove] = useState(() => new URLSearchParams(window.location.search).get('pindah') === '1');
+    const [moveOpen, setMoveOpen] = useState(can.move && wantsMove);
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
+    // An optional prop is absent from the visit a refused move redirects to: the sheet keeps what it read (NV-04).
+    const [known, setKnown] = useState<Moving | null>(null);
+
+    if (moving !== undefined && known !== moving) {
+        setKnown(moving);
+    }
+
+    const findUnits = (text: string, then: (units: Moving['units'] | null) => void) => {
+        let found: Moving['units'] | null = null;
+
+        router.reload({
+            only: ['moving_found'],
+            data: { cari_unit: text },
+            onSuccess: (page) => { found = (page.props as unknown as { moving_found?: Moving['units'] }).moving_found ?? null; },
+            onFinish: () => { then(found); },
+        });
+    };
+    const openMove = () => {
+        setMoveOpen(true);
+        router.reload({ only: ['moving'] });
+    };
+
+    useEffect(() => {
+        if (can.move && wantsMove) router.reload({ only: ['moving'] });
+    }, [can.move, wantsMove]);
 
     return (
         <AppShell title={t('pages.pg_019.title')} back={{ href: list, label: t('pages.pg_018.title') }}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={product.name} crumbs={[{ label: t('pages.pg_018.title'), href: list }]} />
+                {flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' && <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} />}
+                {(can.condition || can.adjust || can.move) && (
+                    <div data-slot="product-commands" className="flex min-w-0 flex-wrap gap-2">
+                        {can.condition && <Button variant="outline" size="sm" render={<a href={`/gudang/penyesuaian?produk=${product.id}&aksi=kondisi`} />}>{t('actions.change_condition')}</Button>}
+                        {can.adjust && <Button variant="outline" size="sm" render={<a href={`/gudang/penyesuaian?produk=${product.id}&aksi=penyesuaian`} />}>{t('actions.record_adjustment')}</Button>}
+                        {can.move && <Button variant="outline" size="sm" onClick={openMove}>{t('actions.move_location')}</Button>}
+                    </div>
+                )}
                 <InventoryBlock figures={product.figures} belowMinimum={product.below ?? undefined} />
                 {product.below !== null && can.purchase && <Button variant="outline" className="self-start" render={<a href={`/pembelian/baru?produk=${product.id}`} />}>{t('stock.restock')}</Button>}
                 {product.pending !== null && <p data-slot="stock-pending" className="text-body text-text-secondary">{t('messages.msg_41', { jumlah: product.pending, satuan: product.figures.unit })}</p>}
@@ -198,6 +241,7 @@ export default function ProductStock({ product, places, reservations, can }: Pro
                     <Movements product={product.id} />
                 </Deferred>
             </div>
+            {can.move && <MoveSheet open={moveOpen} onOpenChange={setMoveOpen} product={product.id} serialized={product.serialized} scale={scale} moving={known} onFind={findUnits} today={today} onMoved={() => { setMoveOpen(false); }} />}
         </AppShell>
     );
 }

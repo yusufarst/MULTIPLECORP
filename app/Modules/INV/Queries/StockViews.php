@@ -109,12 +109,12 @@ final class StockViews
     /**
      * PG-019's head in one statement, the product's figures and pending line with its internal key for the page's other reads; an unknown id null (AZ-11; IP-21).
      *
-     * @return array{internal: int, product: array<string, mixed>}|null
+     * @return array{internal: int, scale: int, product: array<string, mixed>}|null
      */
     public function product(string $publicId): ?array
     {
         $product = preg_match(self::UUID, $publicId) === 1 ? DB::table('products as p')->leftJoin('stock_product_balances as b', 'b.product_id', '=', 'p.id')->join('units as u', 'u.id', '=', 'p.base_unit_id')->where('p.public_id', strtolower($publicId))->where('p.kind', 'GOODS')
-            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn(), DB::raw(self::ALTERNATE_UNIT), DB::raw(self::ALTERNATE_RATIO)]) : null;
+            ->first(['p.id', 'p.public_id', 'p.name', 'p.sku', 'p.min_stock_qty_base', 'p.is_serialized', 'p.quantity_scale', 'u.code as unit', 'b.on_hand_qty', 'b.reserved_qty', 'b.unusable_qty', self::pendingColumn(), DB::raw(self::ALTERNATE_UNIT), DB::raw(self::ALTERNATE_RATIO)]) : null;
 
         if ($product === null) {
             return null;
@@ -123,7 +123,7 @@ final class StockViews
         $unit = Row::nullable($product, 'alternate_unit');
         $ratio = Row::nullable($product, 'alternate_ratio');
 
-        return ['internal' => (int) Row::text($product, 'id'), 'product' => [...self::productRow($product, $unit === null || $ratio === null ? null : ['unit' => $unit, 'ratio' => (int) $ratio]), 'serialized' => (bool) $product->is_serialized]];
+        return ['internal' => (int) Row::text($product, 'id'), 'scale' => (int) Row::text($product, 'quantity_scale'), 'product' => [...self::productRow($product, $unit === null || $ratio === null ? null : ['unit' => $unit, 'ratio' => (int) $ratio]), 'serialized' => (bool) $product->is_serialized]];
     }
 
     /**

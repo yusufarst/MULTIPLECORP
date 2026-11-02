@@ -20,7 +20,8 @@ use function Illuminate\Support\defer;
  * A route's capability requirement (SECURITY EN-01, EN-03; ROUTE_CONTRACTS RC-03), declared as
  * `capability:<code>` after the authentication middleware: an account without the capability is
  * forbidden (AZ-11), and the denial is an ACCESS_DENIED security event written after the response
- * (LG-02). The route audit reads the declaration (SM-02).
+ * (LG-02). A page its contract opens to either of two capabilities declares both (ROUTE-027). The
+ * route audit reads the declaration (SM-02).
  */
 class RequireCapability
 {
@@ -29,10 +30,12 @@ class RequireCapability
     /**
      * @param  Closure(Request): Response  $next
      */
-    public function handle(Request $request, Closure $next, string $capability): Response
+    public function handle(Request $request, Closure $next, string ...$capabilities): Response
     {
-        if (! CapabilityCatalogue::has($capability)) {
-            throw new LogicException("The route declares {$capability}, which is not a capability of PERMISSIONS_MATRIX §4.");
+        foreach ($capabilities as $declared) {
+            if (! CapabilityCatalogue::has($declared)) {
+                throw new LogicException("The route declares {$declared}, which is not a capability of PERMISSIONS_MATRIX §4.");
+            }
         }
 
         $user = $request->user();
@@ -41,7 +44,9 @@ class RequireCapability
             throw new AuthenticationException;
         }
 
-        if (Gate::forUser($user)->denies($capability)) {
+        $capability = implode(',', $capabilities);
+
+        if (Gate::forUser($user)->none($capabilities)) {
             $route = $request->route()?->getName();
             $userId = $user->getAuthIdentifier();
             defer(fn () => $this->events->record(
@@ -56,7 +61,7 @@ class RequireCapability
 
             // An Owner-only address answers an Admin as the not-found page, identical to an unknown one; any other
             // missing capability is forbidden (INFORMATION_ARCHITECTURE §6.3; UXN-18; IP-21; TASK-016).
-            throw CapabilityCatalogue::isOwnerOnly($capability) ? new NotFoundHttpException : new AuthorizationException;
+            throw CapabilityCatalogue::isOwnerOnly($capabilities[0]) ? new NotFoundHttpException : new AuthorizationException;
         }
 
         return $next($request);

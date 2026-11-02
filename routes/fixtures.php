@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Tests\Support\Fixtures\AccountFixture;
+use Tests\Support\Fixtures\AdjustmentFixture;
 use Tests\Support\Fixtures\AdministrationFixture;
 use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\ConfirmationFixture;
@@ -136,6 +137,8 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/stock/grant', [StockFixture::class, 'grant'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-041): DOC-03's numbering; a Company-A-only Admin without the inter-company authority.
+    Route::post('__fixtures/adjustments', [AdjustmentFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/adjustments/plain', [AdjustmentFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch', [DispatchFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/serials', [DispatchFixture::class, 'serials'])->withoutMiddleware(PreventRequestForgery::class);
