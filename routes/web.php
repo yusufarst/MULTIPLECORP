@@ -241,7 +241,7 @@ Route::get('/proyek/{id}/serah-terima', [HandoverController::class, 'show'])->wh
 Route::post('/proyek/{id}/serah-terima', [HandoverController::class, 'store'])->whereUuid('id')->middleware(['auth', 'capability:handover.record'])->name('ful.handovers.record');
 Route::post('/proyek/{id}/serah-terima/{ho}/balikkan', [HandoverController::class, 'reverse'])->whereUuid('id')->whereUuid('ho')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.handovers.reverse');
 Route::get('/gudang/pengiriman', [DeliveryController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ful.deliveries.index');
-Route::get('/gudang/pengiriman/{id}', [DeliveryController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record'])->name('ful.deliveries.show');
+Route::get('/gudang/pengiriman/{id}', [DeliveryController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record,delivery.close,fulfillment.correct'])->name('ful.deliveries.show');
 Route::post('/gudang/pengiriman/{id}/catat', [DeliveryController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record'])->name('ful.deliveries.record');
 // ROUTE-202: "Terbitkan" of a delivery's DOC-08 or DOC-10 on PG-036, its {id} the document (TASK-029's ROUTE-222).
 Route::post('/gudang/pengiriman/{id}/dokumen', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('ful.deliveries.document');

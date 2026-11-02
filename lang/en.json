@@ -3640,7 +3640,7 @@
     "deliveries.tab.recorded": "Recorded",
     "deliveries.none_awaiting": "No shipment is awaiting delivery.",
     "deliveries.none_recorded": "No delivery recorded yet.",
-    "deliveries.list.more": "Showing the 50 newest.",
+    "deliveries.list.more": "Showing 50 a page.",
     "deliveries.shipped_on": "Shipped",
     "deliveries.no_stock": "A delivery records what reached the client. Stock does not change here.",
     "deliveries.section.lines": "Goods shipped",

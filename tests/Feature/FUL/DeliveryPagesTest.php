@@ -72,6 +72,17 @@ it('lists the shipment awaiting delivery on PG-030, records through ROUTE-201 ba
         ->and(collect($this->actingAs($this->recorder)->get('/gudang/pengiriman?tab=tercatat')->viewData('page')['props']['list']['rows'])->pluck('shipment')->all())->toBe([$this->movement]);
 });
 
+it('continues each PG-030 list after the row a page ended with (D-PF-02; IP-18)', function () {
+    expect(DeliveryWorld::record($this->recorder->id, $this->line, [[$this->shipment->dispatch, '1']], (int) DB::table('evidence_documents')->where('public_id', $this->proof)->value('id')))->toBe('COMMITTED')
+        ->and(DeliveryWorld::record($this->recorder->id, $this->line, [[$this->shipment->dispatch, '2']], (int) DB::table('evidence_documents')->where('public_id', $this->proof)->value('id')))->toBe('COMMITTED');
+    $ids = DB::table('deliveries')->orderBy('id')->pluck('public_id')->all();
+    $rows = fn (string $query): array => collect($this->actingAs($this->recorder)->get('/gudang/pengiriman'.$query)->assertOk()->viewData('page')['props']['list']['rows'])->pluck('id')->all();
+
+    expect($rows('?tab=tercatat'))->toBe(array_reverse($ids))
+        ->and($rows('?tab=tercatat&setelah='.$ids[1]))->toBe([$ids[0]])
+        ->and($rows('?tab=tercatat&setelah='.Str::uuid()))->toBe(array_reverse($ids));
+});
+
 it('answers ROUTE-201 above the shipped quantity in place with the figure (C-30; MSG-02; criterion 2)', function () {
     $this->actingAs($this->recorder)->post("/gudang/pengiriman/{$this->movement}/catat", deliveryBody($this, '4'))->assertRedirect("/gudang/pengiriman/{$this->movement}");
 
@@ -87,6 +98,12 @@ it('shows each command\'s control only with its capability, and answers another 
     expect(shipmentPage($this, $plain)['can'])->toMatchArray(['record' => true, 'close' => false, 'lost' => false, 'correct' => false])
         ->and(shipmentPage($this, $this->recorder)['can'])->toMatchArray(['record' => true, 'close' => true, 'lost' => true, 'correct' => true]);
     $this->actingAs($stocker)->get("/gudang/pengiriman/{$this->movement}")->assertForbidden();
+
+    // The closure alone, or the correction alone, opens PG-031 for its own control (ROUTE-031; RG-06).
+    foreach (['delivery.close', 'fulfillment.correct'] as $capability) {
+        $one = ReceivingWorld::actor($this->company, [...DispatchWorld::CAPABILITIES, $capability]);
+        expect(shipmentPage($this, $one)['can'])->toMatchArray(['record' => false, 'close' => $capability === 'delivery.close', 'correct' => $capability === 'fulfillment.correct']);
+    }
     $this->actingAs($outsider)->get("/gudang/pengiriman/{$this->movement}")->assertNotFound();
     $this->actingAs($plain)->post("/gudang/pengiriman/{$this->movement}/tutup", ['command_id' => (string) Str::uuid()])->assertForbidden();
     $this->actingAs($plain)->post("/gudang/pengiriman/{$this->movement}/koreksi", ['command_id' => (string) Str::uuid()])->assertForbidden();

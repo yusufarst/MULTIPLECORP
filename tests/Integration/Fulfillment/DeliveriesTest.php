@@ -2,6 +2,8 @@
 
 use App\Modules\FUL\Services\DeliveryFacts;
 use Brick\Math\BigDecimal;
+use Database\Factories\CAT\ProductUnitFactory;
+use Database\Factories\CAT\UnitFactory;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\DB;
@@ -169,6 +171,33 @@ it('loses two of three serials shipped from one lot, their one consumption recla
         ->and(DB::table('serial_units')->whereIn('id', [$serials[1], $serials[2]])->where('state', 'LOST')->count())->toBe(2)
         ->and(DB::table('serial_units')->where('id', $serials[0])->value('state'))->toBe('DISPATCHED')
         ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $row->consumption)->value('reclassified_qty_base'))->toBe('2.000')
+        ->and((string) DB::table('project_line_balances')->where('project_line_id', $this->line)->value('dispatched_net_qty_base'))->toBe('1.000');
+    deliveryClean();
+});
+
+it('keeps a restoration\'s credit when the closure it followed is superseded (CM-27; SF-RESTORE; PX-08)', function () {
+    $shipment = shipped($this, '5');
+    expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '3'))->toBe('COMMITTED');
+    $wrong = (int) DB::table('delivery_closures')->max('id');
+
+    expect(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '1')]))->toBe('COMMITTED')
+        ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '2', supersedes: $wrong))->toBe('COMMITTED')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '4']], $this->proof))->toContain('C-30')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '3']], $this->proof))->toBe('COMMITTED');
+    deliveryClean();
+});
+
+it('counts a serialized loss by its serials in base units, whatever unit the shipment was entered in (C-02; C-09; BR-INV-03)', function () {
+    $box = UnitFactory::new()->createOne()->id;
+    ProductUnitFactory::new()->createOne(['product_id' => $this->product, 'unit_id' => $box, 'ratio_to_base' => 2, 'is_base' => false, 'is_active' => true]);
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $serials = [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)];
+    expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $box, '1', array_map(fn (int $serial): array => DispatchWorld::pick($lot, $this->rack, '1', $serial), $serials)))->toBe('COMMITTED');
+    $row = DispatchWorld::last($this->line);
+
+    expect(DeliveryWorld::close($this->actor, $this->line, $row->dispatch, 'LOST_IN_TRANSIT', '1', [$serials[0]]))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->where('id', $serials[0])->value('state'))->toBe('LOST')
         ->and((string) DB::table('project_line_balances')->where('project_line_id', $this->line)->value('dispatched_net_qty_base'))->toBe('1.000');
     deliveryClean();
 });

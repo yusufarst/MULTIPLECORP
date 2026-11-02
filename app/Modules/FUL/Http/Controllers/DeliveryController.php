@@ -36,13 +36,15 @@ final class DeliveryController extends Controller
         private readonly Deliveries $deliveries,
     ) {}
 
-    /** ROUTE-030: the shipments awaiting delivery, or `?tab=tercatat` the deliveries recorded (IP-18). */
+    /** ROUTE-030: the shipments awaiting delivery, or `?tab=tercatat` the deliveries recorded, older ones by `?setelah=` (IP-18). */
     public function index(Request $request): Response
     {
         $actor = self::actor($request);
         $tab = $request->query('tab') === 'tercatat' ? 'tercatat' : 'menunggu';
 
-        return Inertia::render('FUL/Deliveries', ['list' => $this->deliveries->list($actor, $tab), 'can' => $this->deliveries->can($actor)]);
+        $after = $request->query('setelah');
+
+        return Inertia::render('FUL/Deliveries', ['list' => $this->deliveries->list($actor, $tab, is_string($after) ? $after : null), 'can' => $this->deliveries->can($actor)]);
     }
 
     /** ROUTE-031: one shipment with its lines, deliveries and closures. */

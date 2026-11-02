@@ -3640,7 +3640,7 @@
     "deliveries.tab.recorded": "Tercatat",
     "deliveries.none_awaiting": "Tidak ada kiriman yang menunggu diterima klien.",
     "deliveries.none_recorded": "Belum ada pengiriman yang tercatat.",
-    "deliveries.list.more": "Menampilkan 50 terbaru.",
+    "deliveries.list.more": "Menampilkan 50 per halaman.",
     "deliveries.shipped_on": "Dikirim",
     "deliveries.no_stock": "Pengiriman mencatat apa yang diterima klien. Stok tidak berubah di sini.",
     "deliveries.section.lines": "Barang yang dikirim",

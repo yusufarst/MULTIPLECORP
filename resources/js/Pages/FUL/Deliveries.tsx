@@ -15,7 +15,7 @@ const PAGE = '/gudang/pengiriman';
 
 type Awaiting = { id: string; date: string; project: string; title: string; client: string | null; company: string | null };
 type Recorded = { id: string; date: string; recipient: string; project: string; company: string | null; shipment: string | null };
-type Props = { list: { tab: 'menunggu' | 'tercatat'; rows: (Awaiting | Recorded)[]; more: boolean; several: boolean }; can: { record: boolean } };
+type Props = { list: { tab: 'menunggu' | 'tercatat'; rows: (Awaiting | Recorded)[]; more: boolean; several: boolean }; can: { record: boolean; close: boolean; correct: boolean } };
 
 /** A recorded delivery's success, shown on the page its answer opened (IP-01; NAV-031). */
 function PageAnswer() {
@@ -27,6 +27,8 @@ function PageAnswer() {
 export default function Deliveries({ list, can }: Props) {
     const { t } = useTranslation();
     const awaiting = list.tab === 'menunggu';
+    // PG-031 opens for whoever records, closes or corrects a delivery there (ROUTE-031; RG-06).
+    const opens = can.record || can.close || can.correct;
 
     return (
         <AppShell title={t('pages.pg_030.title')}>
@@ -48,12 +50,12 @@ export default function Deliveries({ list, can }: Props) {
                                 <li key={row.id} data-slot="delivery-row" className="flex min-w-0 flex-wrap items-center gap-2 py-2 text-body">
                                     {'recipient' in row ? (
                                         <>
-                                            {row.shipment === null || !can.record ? <span className="font-medium">{row.recipient}</span> : <a className="font-medium underline" href={`${PAGE}/${row.shipment}`}>{row.recipient}</a>}
+                                            {row.shipment === null || !opens ? <span className="font-medium">{row.recipient}</span> : <a className="font-medium underline" href={`${PAGE}/${row.shipment}`}>{row.recipient}</a>}
                                             <Code>{row.project}</Code>
                                         </>
                                     ) : (
                                         <>
-                                            {can.record ? <a className="font-medium underline" href={`${PAGE}/${row.id}`}>{row.title}</a> : <span className="font-medium">{row.title}</span>}
+                                            {opens ? <a className="font-medium underline" href={`${PAGE}/${row.id}`}>{row.title}</a> : <span className="font-medium">{row.title}</span>}
                                             <Code>{row.project}</Code>
                                             {row.client !== null && <span className="text-text-secondary">{row.client}</span>}
                                         </>
@@ -64,7 +66,12 @@ export default function Deliveries({ list, can }: Props) {
                             ))}
                         </ul>
                     )}
-                    {list.more && <p className="text-caption text-text-secondary">{t('deliveries.list.more')}</p>}
+                    {list.more && list.rows.length > 0 && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-caption text-text-secondary">{t('deliveries.list.more')}</span>
+                            <a className="text-body underline" href={`${PAGE}?${new URLSearchParams({ ...(awaiting ? {} : { tab: 'tercatat' }), setelah: list.rows.at(-1)?.id ?? '' }).toString()}`}>{t('actions.load_more')}</a>
+                        </div>
+                    )}
                 </section>
             </div>
         </AppShell>

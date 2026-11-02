@@ -105,8 +105,9 @@ final class DeliveryClosures
         }
 
         $no = Row::text($shipment, 'line_no');
-        $base = ShipmentFigures::base($quantity, (int) Row::text($shipment, 'ratio_to_base'), (int) Row::text($shipment, 'quantity_scale'))
-            ?? throw Refused::rejected('C-09', ['reason' => 'scale', 'line' => $no]);
+        // Lost serials are counted one each in base units, whatever the unit the shipment was entered in.
+        $base = $kind === self::LOST && $serials !== [] ? BigDecimal::of(count(array_unique($serials)))
+            : (ShipmentFigures::base($quantity, (int) Row::text($shipment, 'ratio_to_base'), (int) Row::text($shipment, 'quantity_scale')) ?? throw Refused::rejected('C-09', ['reason' => 'scale', 'line' => $no]));
         $room = DeliveryPosting::remainder($shipment);
 
         // A closure recorded in error gives way to its correct one (CM-27); a loss in transit is reversed only by the goods found (ROUTE-196).

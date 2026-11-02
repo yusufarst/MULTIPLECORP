@@ -36,7 +36,7 @@ final class Deliveries
             > (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id)
             + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
                 - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
-                    and r.recorded_at >= (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)))))
+                    and r.recorded_at >= (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT'))))
         SQL;
 
     /** A paper's latest version state and its issued number. */
@@ -58,19 +58,21 @@ final class Deliveries
     }
 
     /**
-     * PG-030: the shipments awaiting delivery, or the deliveries recorded, newest first, each in the viewer's companies.
+     * PG-030: the shipments awaiting delivery, or the deliveries recorded, newest first, each in the viewer's companies, by
+     * keyset after the row `$after` names (D-PF-02); an unknown one starts from the newest.
      *
      * @return array{tab: string, rows: list<array<string, mixed>>, more: bool, several: bool}
      */
-    public function list(int $viewerId, string $tab): array
+    public function list(int $viewerId, string $tab, ?string $after = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $companies = self::companies($viewer);
         $several = count($companies) > 1;
+        $after = $after !== null && preg_match('/^[0-9a-f-]{36}$/i', $after) === 1 ? strtolower($after) : null;
 
         if ($tab === 'tercatat') {
             $found = DB::table('deliveries as v')->join('projects as p', 'p.id', '=', 'v.project_id')->join('companies as co', 'co.id', '=', 'v.company_id')
-                ->whereIn('v.company_id', $companies)->orderByDesc('v.id')->limit(self::PAGE + 1)
+                ->whereIn('v.company_id', $companies)->when($after !== null, fn (Builder $older) => $older->whereRaw('v.id < coalesce((select a.id from deliveries a where a.public_id = ?), 9223372036854775807)', [$after]))->orderByDesc('v.id')->limit(self::PAGE + 1)
                 ->get(['v.public_id', 'v.business_date', 'v.recipient_name', 'p.project_number', 'co.code as company', DB::raw('(select d.stock_movement_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id where l.delivery_id = v.id order by l.id limit 1) as movement'),
                     DB::raw('(select m.public_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id join stock_movements m on m.id = d.stock_movement_id where l.delivery_id = v.id order by l.id limit 1) as shipment')])->all();
             $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'project' => Row::text($row, 'project_number'), 'company' => $several ? Row::text($row, 'company') : null, 'shipment' => Row::nullable($row, 'shipment')], array_slice($found, 0, self::PAGE));
@@ -79,7 +81,8 @@ final class Deliveries
         }
 
         $found = DB::table('stock_movements as m')->join('projects as p', 'p.id', '=', 'm.project_id')->join('companies as co', 'co.id', '=', 'p.company_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
-            ->where('m.movement_type', 'DISPATCH')->whereIn('p.company_id', $companies)->whereRaw(self::AWAITING)->orderByDesc('m.id')->limit(self::PAGE + 1)
+            ->where('m.movement_type', 'DISPATCH')->whereIn('p.company_id', $companies)->whereRaw(self::AWAITING)
+            ->when($after !== null, fn (Builder $older) => $older->whereRaw('m.id < coalesce((select a.id from stock_movements a where a.public_id = ?), 9223372036854775807)', [$after]))->orderByDesc('m.id')->limit(self::PAGE + 1)
             ->get(['m.public_id', 'm.business_date', 'p.project_number', 'p.title', 'o.name as client', 'co.code as company'])->all();
         $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'project' => Row::text($row, 'project_number'), 'title' => Row::text($row, 'title'), 'client' => Row::nullable($row, 'client'), 'company' => $several ? Row::text($row, 'company') : null], array_slice($found, 0, self::PAGE));
 
