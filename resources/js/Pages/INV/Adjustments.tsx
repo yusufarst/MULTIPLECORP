@@ -237,13 +237,14 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
                 // The list is a first page or a search's: ask the server before calling the unit absent.
                 if (row === undefined && (units.more || units.find !== null)) {
                     let found: Serial | undefined;
+                    let answered = false;
 
                     router.reload({
                         only: ['units'],
                         data: { temukan: number },
                         preserveUrl: true,
-                        onSuccess: (page) => { found = (page.props as unknown as { units?: Units }).units?.serials.filter(offered).find(named); },
-                        onFinish: () => { add(found); },
+                        onSuccess: (page) => { answered = true; found = (page.props as unknown as { units?: Units }).units?.serials.filter(offered).find(named); },
+                        onFinish: () => { if (answered) add(found); else setScanError(t('messages.msg_06')); },
                     });
                 } else {
                     add(row);

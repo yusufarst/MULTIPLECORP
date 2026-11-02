@@ -84,10 +84,35 @@ export function MoveSheet({ open, onOpenChange, product, serialized, scale, movi
         setResult(null);
         setScanError(null);
         void lookUp(typed).then((scan) => {
-            const match = scan?.matches[0];
+            if (scan === null) {
+                setScanError(t('messages.msg_06'));
+
+                return;
+            }
+
+            if (scan.kind === 'ambiguous') {
+                setScanError(t('messages.msg_37', { kode: scan.code }));
+
+                return;
+            }
+
+            const match = scan.matches[0];
+
+            if (scan.kind === 'unknown' || match === undefined || match.product !== product) {
+                setScanError(t('messages.msg_25', { kode: scan.code }));
+
+                return;
+            }
+
+            if (match.kind === 'product') {
+                setResult(t('adjustments.scan.same_product'));
+
+                return;
+            }
+
             // A lot's label names the place to move from; a serial its unit.
-            const lotCode = match?.kind === 'lot' ? match.lot : undefined;
-            const number = match?.serial ?? typed;
+            const lotCode = match.kind === 'lot' ? match.lot : undefined;
+            const number = match.serial ?? typed;
             const settle = (units: Pick<Moving['units'], 'places' | 'serials'>) => (lotCode !== undefined ? openLot(lotCode, units.places) : addSerial(number, units.serials));
             const absent = () => { setScanError(lotCode !== undefined ? t('messages.msg_25', { kode: typed }) : t('adjustments.scan.absent', { seri: number })); };
 
@@ -95,7 +120,7 @@ export function MoveSheet({ open, onOpenChange, product, serialized, scale, movi
 
             // The first page is not all of it: ask the server before calling the unit absent.
             if (moving?.units.more === true) {
-                find(lotCode ?? number, (units) => { if (units === null || !settle(units)) absent(); });
+                find(lotCode ?? number, (units) => { if (units === null) setScanError(t('messages.msg_06')); else if (!settle(units)) absent(); });
             } else {
                 absent();
             }
@@ -125,7 +150,7 @@ export function MoveSheet({ open, onOpenChange, product, serialized, scale, movi
                     <div data-slot="move-form" className="flex min-w-0 flex-col gap-4">
                         {move.answer !== null && <OutcomeMessage answer={move.answer} action={move.unknown ? <Button variant="outline" size="sm" onClick={move.retry}>{t('actions.try_again')}</Button> : undefined} />}
                         {<ScanField inputRef={undefined} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />}
-                        {moving.units.more && <ChoicesFind disabled={frozen} onFind={(text) => { setResult(null); setScanError(null); find(text, (units) => { if (units === null || (units.places.length === 0 && units.serials.length === 0)) setScanError(t('messages.msg_25', { kode: text })); }); }} />}
+                        {moving.units.more && <ChoicesFind disabled={frozen} onFind={(text) => { setResult(null); setScanError(null); find(text, (units) => { if (units === null) setScanError(t('messages.msg_06')); else if (units.places.length === 0 && units.serials.length === 0) setScanError(t('messages.msg_25', { kode: text })); }); }} />}
                         <FormField label={t('adjustments.move.from')}>
                             {(control) => (
                                 <NativeSelect {...control} value={place} disabled={frozen} onChange={(event) => { setPlace(event.target.value); setChosen([]); }}>
