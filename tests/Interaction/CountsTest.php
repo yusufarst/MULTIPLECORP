@@ -133,3 +133,20 @@ it('binds a command_id to its target: the same identifier and body on another co
         ->and(countAnswer($this, $this->actor, "/gudang/stok-opname/{$second}/baris", $line)['kind'])->toBe('CONFLICT')
         ->and(DB::table('stock_count_lines')->count())->toBe(1);
 });
+
+it('replays an application that restored a loss in full with its recorded outcome, never an unknown loss (CI-05; L-31)', function () {
+    $evidence = (int) DB::table('evidence_documents')->where('public_id', $this->evidence)->value('id');
+    $count = CountWorld::open($this->actor->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor->id, $count, $this->product, $this->rack, '8'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor->id, CountWorld::entry($count, [AdjustmentWorld::pick($this->lot, $this->rack, '2')], evidence: [$evidence])))->toBe('COMMITTED');
+    $consumption = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $surplus = CountWorld::open($this->actor->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor->id, $surplus, $this->product, $this->rack, '10'))->toBe('COMMITTED');
+    $public = (string) DB::table('stock_counts')->where('id', $surplus)->value('public_id');
+    $apply = ['command_id' => (string) Str::uuid(), 'pulihkan' => [['konsumsi' => RowHandle::of('stock_consumptions', $consumption), 'jumlah' => '2']], 'alasan' => 'Unit ditemukan kembali', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
+
+    [$first, $replay] = countTwice($this, $this->actor, "/gudang/stok-opname/{$public}/terapkan", $apply);
+    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('2.000')
+        ->and(DB::table('stock_movements')->where('movement_type', 'RESTORATION')->count())->toBe(1);
+});

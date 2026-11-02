@@ -327,3 +327,11 @@ it('reaches every lot holding the product in a registration count, by lot code p
         ->and(collect($count('&cari_lot='.urlencode($code))['places'])->pluck('code')->all())->toBe([$code])
         ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('data: { cari_lot: text }');
 });
+
+it('takes as many named lots in one application as PG-026 offers, and no more (SF-LOSS; QB-05)', function () {
+    $public = (string) DB::table('stock_counts')->where('id', CountWorld::open($this->applier->id, $this->product, $this->rack))->value('public_id');
+    $body = fn (int $lots): array => ['command_id' => (string) Str::uuid(), 'unit' => array_fill(0, $lots, ['lot' => RowHandle::of('inventory_lots', $this->lot), 'jumlah' => '1']), 'alasan' => 'Selisih', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
+
+    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES))->assertSessionDoesntHaveErrors('unit');
+    $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES + 1))->assertSessionHasErrors('unit');
+});

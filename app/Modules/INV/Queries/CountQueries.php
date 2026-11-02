@@ -140,11 +140,10 @@ final class CountQueries
         return StockFigures::plain((string) InventoryPosting::available($product));
     }
 
-    /** A loss of the product the viewer may reverse, among every open one however old: the bearer in scope (AZ-08). */
+    /** A loss of the product the viewer may reverse, however old and however restored — a replay finds its outcome; what is still open the command decides (AZ-08; C-27). */
     public function consumption(int $viewerId, int $product, string $handle): ?int
     {
-        foreach ($this->capabilities->for($viewerId)->scope->apply(DB::table('stock_consumptions as c'), 'c.bearer_company_id')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.product_id', $product)->whereIn('c.kind', ['LOSS', 'UNATTRIBUTED_LOSS'])
-            ->whereRaw('b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base > 0')->orderByDesc('c.id')->pluck('c.id') as $id) {
+        foreach ($this->capabilities->for($viewerId)->scope->apply(DB::table('stock_consumptions as c'), 'c.bearer_company_id')->where('c.product_id', $product)->whereIn('c.kind', ['LOSS', 'UNATTRIBUTED_LOSS'])->orderByDesc('c.id')->pluck('c.id') as $id) {
             if (is_numeric($id) && hash_equals(RowHandle::of('stock_consumptions', (int) $id), $handle)) {
                 return (int) $id;
             }
