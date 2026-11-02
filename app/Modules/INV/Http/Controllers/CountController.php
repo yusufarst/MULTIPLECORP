@@ -45,7 +45,7 @@ final class CountController extends Controller
     {
         $actor = self::actor($request);
         $publicId = self::query($request, 'hitungan');
-        $count = $publicId === null ? null : ($this->queries->count($actor, $publicId) ?? throw new NotFoundHttpException);
+        $count = $publicId === null ? null : ($this->queries->count($actor, $publicId, self::query($request, 'cari_lot')) ?? throw new NotFoundHttpException);
         $productId = self::query($request, 'produk');
         $product = $productId === null ? null : $this->adjustments->product($productId);
         $can = $this->queries->can($actor);

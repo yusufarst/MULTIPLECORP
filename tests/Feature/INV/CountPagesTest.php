@@ -307,3 +307,23 @@ it('gives a serialized count its whole missing total for the cut, apart from the
     expect($page['missing'])->toHaveCount(CountQueries::LINES)->and($page['missing_total'])->toBe(CountQueries::LINES + 1)
         ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('String(count.missing_total)');
 });
+
+it('reaches every lot holding the product in a registration count, by lot code past the bound (`DIR-101` F2; QB-05)', function () {
+    $registrar = Authorization::admin([$this->company->id], [...CountWorld::CAPABILITIES, 'products.edit']);
+    $last = null;
+
+    foreach (InventoryLot::factory()->count(CountQueries::LINES)->create(['product_id' => $this->product, 'source_company_id' => $this->company->id]) as $filler) {
+        DB::table('stock_lot_balances')->insert(['lot_id' => $filler->id, 'product_id' => $this->product, 'location_id' => $this->rack, 'condition' => 'USABLE', 'qty' => '1']);
+        $last = $filler;
+    }
+
+    expect(CountWorld::openRegistration($registrar->id, $this->product))->toBe('COMMITTED');
+    $public = (string) DB::table('stock_counts')->orderByDesc('id')->value('public_id');
+    $count = fn (string $query = ''): array => $this->actingAs($registrar)->get("/gudang/stok-opname?hitungan={$public}{$query}")->assertOk()->viewData('page')['props']['count'];
+    $code = (string) $last?->lot_code;
+
+    expect($count()['places'])->toHaveCount(CountQueries::LINES)->and($count()['places_more'])->toBeTrue()
+        ->and(collect($count()['places'])->pluck('code')->all())->not->toContain($code)
+        ->and(collect($count('&cari_lot='.urlencode($code))['places'])->pluck('code')->all())->toBe([$code])
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain('data: { cari_lot: text }');
+});

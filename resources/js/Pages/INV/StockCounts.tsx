@@ -39,6 +39,8 @@ type Count = {
     scopes: Scope[];
     lines: Line[];
     places: Place[];
+    places_more: boolean;
+    places_find: string | null;
     across: boolean;
     pending: string;
     changes: { id: string; qty: string }[];
@@ -196,6 +198,7 @@ function LineForm({ count }: { count: Count }) {
                     )}
                 </FormField>
             )}
+            {registering && (count.places_more || count.places_find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['count'], data: { cari_lot: text }, preserveUrl: true }); }} />}
             {!serialized && (
                 <div className="flex min-w-0 flex-wrap items-end gap-3">
                     <FormField label={t('counts.field.counted')} error={line.errors.jumlah} className="w-48">

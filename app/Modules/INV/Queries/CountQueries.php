@@ -74,7 +74,7 @@ final class CountQueries
      *
      * @return array<string, mixed>|null
      */
-    public function count(int $viewerId, string $publicId): ?array
+    public function count(int $viewerId, string $publicId, ?string $lotFind = null): ?array
     {
         $viewer = $this->capabilities->for($viewerId);
         $row = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? DB::table('stock_counts')->where('public_id', strtolower($publicId))->first(['id', 'public_id', 'state', 'purpose', 'location_id', 'condition', 'started_at', 'product_ids']) : null;
@@ -104,7 +104,7 @@ final class CountQueries
             'product' => $info === null ? null : ['id' => Row::text($info, 'public_id'), 'name' => Row::text($info, 'name'), 'sku' => Row::nullable($info, 'sku'), 'unit' => Row::text($info, 'unit'), 'serialized' => (bool) Row::text($info, 'is_serialized'), 'scale' => (int) Row::text($info, 'quantity_scale')],
             'scopes' => $scopes,
             'lines' => array_values(array_map(fn (object $line): array => self::line($line), $lines)),
-            'places' => $ordinary ? $this->places($viewerId, $product, (int) $location, $condition) : $this->allPlaces($viewerId, $product),
+            ...($ordinary ? ['places' => $this->places($viewerId, $product, (int) $location, $condition), 'places_more' => false, 'places_find' => null] : $this->allPlaces($viewerId, $product, $lotFind)),
             'across' => $ordinary && UnattributedCases::acrossCompanies($product, (int) $location, $condition),
             'pending' => $ordinary ? StockFigures::plain((string) DB::table('unattributed_loss_cases')->where('product_id', $product)->where('location_id', (int) $location)->where('condition', $condition)->where('case_kind', 'LOSS')->sum('pending_qty_base')) : '0',
             'changes' => $ordinary && $condition === 'UNUSABLE' ? $this->pendingChanges($product, (int) $location) : [],
@@ -187,20 +187,22 @@ final class CountQueries
     }
 
     /**
-     * A registration count's places: every lot of the product, in each place.
+     * A registration count's places: every lot of the product, in each place; past the bound, a lot code finds the rest.
      *
-     * @return list<array<string, mixed>>
+     * @return array{places: list<array<string, mixed>>, places_more: bool, places_find: ?string}
      */
-    private function allPlaces(int $viewerId, int $product): array
+    private function allPlaces(int $viewerId, int $product, ?string $find): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $places = [];
+        $found = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $product)->where('b.qty', '>', 0)
+            ->when($find !== null, fn (Builder $code) => $code->where('i.lot_code', 'ilike', '%'.addcslashes((string) $find, '%_\\').'%'))->orderBy('i.id')->orderBy('l.code')->limit(self::LINES + 1)->get(['b.lot_id', 'b.location_id', 'b.condition', 'b.qty', 'i.lot_code', 'i.source_company_id', 'l.code as rack'])->all();
 
-        foreach (DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $product)->where('b.qty', '>', 0)->orderBy('i.id')->orderBy('l.code')->limit(self::LINES)->get(['b.lot_id', 'b.location_id', 'b.condition', 'b.qty', 'i.lot_code', 'i.source_company_id', 'l.code as rack']) as $row) {
+        foreach (array_slice($found, 0, self::LINES) as $row) {
             $places[] = ['lot' => RowHandle::of('inventory_lots', (int) Row::text($row, 'lot_id')), 'code' => Row::text($row, 'lot_code'), 'location' => RowHandle::of('locations', (int) Row::text($row, 'location_id')), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty')), 'other' => ! $viewer->scope->includes((int) Row::text($row, 'source_company_id')), 'oldest' => false];
         }
 
-        return $places;
+        return ['places' => $places, 'places_more' => count($found) > self::LINES, 'places_find' => $find];
     }
 
     /**
