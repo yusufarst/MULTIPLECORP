@@ -106,11 +106,11 @@ final class SurplusAttribution
             }
         }
 
-        // A loss the finding reverses left from the finding's own scope: its units come back where they were found (AX-07; L-31).
+        // A loss the finding reverses left from the finding's own scope: its units come back where they were found (AX-07; L-31). A serial comes back only by being seen, through its count's line (L-48).
         foreach ($restored as $item) {
             $found = LossRestorations::of($item['consumption']);
 
-            if ($found === null || $found['product'] !== $product || $found['location'] !== $location || $found['condition'] !== $condition) {
+            if ($found === null || $found['serial'] !== null || $found['product'] !== $product || $found['location'] !== $location || $found['condition'] !== $condition) {
                 throw Refused::rejected('C-14', ['reason' => 'consumption']);
             }
         }

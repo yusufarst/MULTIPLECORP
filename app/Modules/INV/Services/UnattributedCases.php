@@ -816,12 +816,12 @@ final class UnattributedCases
         }
     }
 
-    /** OD-10 (b): a pool proof linked to the case with its role, recorded or versioned after the recognition, the actor may see it, and it is no rendition the company issued. */
+    /** OD-10 (b): a pool proof linked to the case with its role and still linked, recorded or versioned after the recognition, the actor may see it, and it is no rendition the company issued. */
     private static function laterProof(CommandContext $context, int $case, string $recognizedAt): bool
     {
         $authority = $context->authority();
 
-        foreach (DB::table('evidence_links as l')->join('evidence_documents as e', 'e.id', '=', 'l.evidence_document_id')->leftJoin('evidence_document_versions as v', 'v.id', '=', 'e.current_version_id')->where('l.unattributed_loss_case_id', $case)->where('l.role', 'PRIMARY_PROOF')->where('e.evidence_scope', 'POOL')->get(['e.id', 'e.evidence_type', 'e.recorded_at', 'v.recorded_at as versioned_at']) as $row) {
+        foreach (DB::table('evidence_links as l')->join('evidence_documents as e', 'e.id', '=', 'l.evidence_document_id')->leftJoin('evidence_document_versions as v', 'v.id', '=', 'e.current_version_id')->where('l.unattributed_loss_case_id', $case)->where('l.role', 'PRIMARY_PROOF')->whereNull('l.unlinked_at')->where('e.evidence_scope', 'POOL')->get(['e.id', 'e.evidence_type', 'e.recorded_at', 'v.recorded_at as versioned_at']) as $row) {
             $later = Row::text($row, 'recorded_at') > $recognizedAt || (Row::nullable($row, 'versioned_at') ?? '') > $recognizedAt;
 
             if ($later && $authority !== null && EvidenceTypes::mayView($authority, Row::text($row, 'evidence_type'), null) && ! EvidenceGuard::companyIssued([(int) Row::text($row, 'id')])) {

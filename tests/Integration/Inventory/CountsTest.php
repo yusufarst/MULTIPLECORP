@@ -806,3 +806,56 @@ it('applies a serialized count where no unit was seen through its observation of
         ->and(countGuard($this->product)[0])->toBe('0.000');
     countClean();
 });
+
+it('commits a serialized count that loses an unseen serial and brings a lost one back with its proof on both movements (L-48; C-48; BR-INV-04)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $keys = array_map(fn (int $serial): string => (string) DB::table('serial_units')->where('id', $serial)->value('serial_key'), [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)]);
+    $first = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1', $keys[0]))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($first, evidence: [$this->evidence])))->toBe('COMMITTED');
+
+    // The first serial is gone now, the lost one is back.
+    $second = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', $keys[1]))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($second, evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->where('serial_key', $keys[0])->value('state'))->toBe('LOST')
+        ->and(DB::table('serial_units')->where('serial_key', $keys[1])->value('state'))->toBe('IN_STOCK')
+        ->and(DB::table('evidence_links')->where('evidence_document_id', $this->evidence)->whereNotNull('stock_movement_id')->count())->toBe(3);
+    countClean();
+});
+
+it('never restores a serial\'s loss through ROUTE-197: the finding\'s serial is what the count saw (L-48; AX-07)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $kept = (string) DB::table('serial_units')->where('id', StockWorld::serial($this->product, $lot, $this->rack))->value('serial_key');
+    StockWorld::serial($this->product, $lot, $this->rack);
+    $first = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1', $kept))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($first, evidence: [$this->evidence])))->toBe('COMMITTED');
+    $lost = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $second = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', $kept))->toBe('COMMITTED')
+        ->and(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', 'SN-B'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($second)))->toBe('COMMITTED');
+    $finding = (int) DB::table('stock_count_findings')->where('state', 'OPEN')->value('id');
+
+    expect(CountWorld::attribute($this->owner->id, $finding, $this->company->id, '500', [['consumption' => $lost, 'qty' => '1']], true))->toContain('C-14')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $lost)->value('restored_qty_base'))->toBe('0.000')
+        ->and(DB::table('stock_count_findings')->where('id', $finding)->value('state'))->toBe('OPEN');
+    countClean();
+});
+
+it('reads OD-10 (b) from the proofs still linked to the case: an unlinked one authorizes nothing (OD-10; DOC.UnlinkEvidence)', function () {
+    [$own] = countAcross($this);
+    $count = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $count, $this->product, $this->rack, '8'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($count, pending: '2', evidence: [$this->evidence])))->toBe('COMMITTED');
+    $case = (int) countCase()->id;
+    $later = AdjustmentWorld::evidence(['recorded_at' => now()->addMinute()]);
+    DB::table('evidence_links')->insert(['evidence_document_id' => $later, 'evidence_scope' => 'POOL', 'company_id' => null, 'role' => 'PRIMARY_PROOF', 'unattributed_loss_case_id' => $case, 'recorded_at' => now()->addMinute(), 'recorded_by' => $this->owner->id, 'unlinked_at' => now()->addMinutes(2), 'unlinked_by' => $this->owner->id, 'unlink_reason' => 'Bukti keliru']);
+
+    expect(CountWorld::resolveEvidence($this->both, $case, [['lot' => $own, 'qty' => '2']], []))->toContain('OD-10')
+        ->and(DB::table('unattributed_loss_resolutions')->where('unattributed_loss_case_id', $case)->exists())->toBeFalse();
+    countClean();
+});

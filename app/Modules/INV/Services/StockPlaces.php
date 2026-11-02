@@ -199,9 +199,12 @@ final class StockPlaces
      */
     public static function linkEvidence(CommandContext $context, array $evidence, int $movement): void
     {
+        // A command may link its proofs to several movements (a count's loss and restoration): numbered after the links it already wrote (C-48).
+        $first = InventoryPosting::lineNo('evidence_links', $context);
+
         foreach (array_values(array_unique($evidence)) as $number => $id) {
             $row = DB::table('evidence_documents')->where('id', $id)->first(['evidence_scope', 'company_id']) ?? throw Refused::rejected('C-14', ['reason' => 'evidence']);
-            DB::table('evidence_links')->insert(['evidence_document_id' => $id, 'evidence_scope' => Row::text($row, 'evidence_scope'), 'company_id' => Row::nullable($row, 'company_id'), 'role' => 'PRIMARY_PROOF', 'stock_movement_id' => $movement, 'command_id' => $context->request->commandId, 'command_line_no' => $number + 1, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
+            DB::table('evidence_links')->insert(['evidence_document_id' => $id, 'evidence_scope' => Row::text($row, 'evidence_scope'), 'company_id' => Row::nullable($row, 'company_id'), 'role' => 'PRIMARY_PROOF', 'stock_movement_id' => $movement, 'command_id' => $context->request->commandId, 'command_line_no' => $first + $number, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
         }
     }
 
