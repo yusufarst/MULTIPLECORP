@@ -145,13 +145,13 @@ final class AdjustmentController extends Controller
         return $this->answer($outcome, 'moved', null, self::text($input['tanggal']), null);
     }
 
-    /** @return list<array<string, mixed>> the recent losses, the amount only with `cost.view` of the bearer (J-INV-06; PJ-06) */
+    /** @return list<array<string, mixed>> the recent losses, each bearer's amount only with `cost.view` of that bearer (J-INV-06; PJ-06; CS-08) */
     private function lossesOf(int $actor, int $productId): array
     {
         $rows = $this->queries->losses($actor, $productId);
         $amounts = $this->costs->lossesOf($actor, array_map(fn (array $row): int => is_int($row['internal']) ? $row['internal'] : 0, $rows));
 
-        return array_map(fn (array $row): array => [...array_diff_key($row, ['internal' => 1]), 'amount' => $amounts[is_int($row['internal']) ? $row['internal'] : 0] ?? null], $rows);
+        return array_map(fn (array $row): array => [...array_diff_key($row, ['internal' => 1]), 'amounts' => $amounts[is_int($row['internal']) ? $row['internal'] : 0] ?? []], $rows);
     }
 
     /** @return array<string, list<mixed>> what every command naming units sends */

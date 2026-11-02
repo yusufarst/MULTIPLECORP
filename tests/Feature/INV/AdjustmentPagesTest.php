@@ -129,8 +129,8 @@ it('offers the units physically, another company\'s with the marker, and a loss\
     $losses = fn (object $viewer): array => $this->actingAs($viewer)->get("/gudang/penyesuaian?produk={$this->productId}", ['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'INV/Adjustments', 'X-Inertia-Partial-Data' => 'losses'])->assertOk()->json('props.losses');
     $costing = Authorization::admin([$this->company->id], [...AdjustmentWorld::CAPABILITIES, 'cost.view']);
 
-    expect($losses($this->actor)[0]['amount'])->toBeNull()->and($losses($this->actor)[0]['open'])->toBe('2')
-        ->and($losses($costing)[0]['amount'])->toBe('20000.00');
+    expect($losses($this->actor)[0]['amounts'])->toBe([])->and($losses($this->actor)[0]['open'])->toBe('2')
+        ->and($losses($costing)[0]['amounts'])->toBe([['company' => $this->company->code, 'amount' => '20000.00']]);
 
     // Another company's Admin sees neither this loss on PG-027 nor its reason on PG-020 (PJ-05; PJ-06).
     $outsider = ReceivingWorld::actor($foreign->company, AdjustmentWorld::CAPABILITIES);

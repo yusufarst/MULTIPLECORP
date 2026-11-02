@@ -39,10 +39,10 @@ final class CostFigures
     }
 
     /**
-     * The loss each movement recorded, only with `cost.view` of its bearer, with no source side (J-INV-06; PJ-06).
+     * The loss each movement recorded, per bearer company and never summed across them (CS-08), only with `cost.view` of that bearer, with no source side (J-INV-06; PJ-06).
      *
      * @param  list<int>  $movementIds
-     * @return array<int, string> movement => amount
+     * @return array<int, list<array{company: string, amount: string}>> movement => its bearers' amounts
      */
     public function lossesOf(int $viewerId, array $movementIds): array
     {
@@ -53,11 +53,10 @@ final class CostFigures
             return $figures;
         }
 
-        foreach ($viewer->scope->apply(DB::table('cost_attributions as a'), 'a.bearer_company_id')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->whereIn('c.stock_movement_id', $movementIds)->where('a.cost_class', 'LOSS')->groupBy('c.stock_movement_id', 'a.bearer_company_id')
-            ->selectRaw('c.stock_movement_id, a.bearer_company_id, sum(a.amount) as amount')->get() as $row) {
+        foreach ($viewer->scope->apply(DB::table('cost_attributions as a'), 'a.bearer_company_id')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->join('companies as o', 'o.id', '=', 'a.bearer_company_id')->whereIn('c.stock_movement_id', $movementIds)->where('a.cost_class', 'LOSS')
+            ->groupBy('c.stock_movement_id', 'a.bearer_company_id', 'o.code')->orderBy('o.code')->selectRaw('c.stock_movement_id, a.bearer_company_id, o.code, sum(a.amount) as amount')->get() as $row) {
             if ($viewer->allows('cost.view', (int) Row::text($row, 'bearer_company_id'))) {
-                $movement = (int) Row::text($row, 'stock_movement_id');
-                $figures[$movement] = Money::of($figures[$movement] ?? '0')->plus(Money::of(Row::text($row, 'amount')))->toString();
+                $figures[(int) Row::text($row, 'stock_movement_id')][] = ['company' => Row::text($row, 'code'), 'amount' => Money::of(Row::text($row, 'amount'))->toString()];
             }
         }
 

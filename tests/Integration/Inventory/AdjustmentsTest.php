@@ -360,6 +360,26 @@ it('keeps a serial damaged at the receipt the project\'s after another unit\'s c
     adjustmentClean();
 });
 
+it('keeps a loss borne by two companies apart for a viewer of both, each only with its own cost.view (CS-08; PJ-06)', function () {
+    $foreign = InvoiceWorld::make();
+    $other = DispatchWorld::demand($foreign);
+    $plain = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '1000');
+    $cased = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '2000');
+    $picks = fn (string $condition): array => [AdjustmentWorld::pick($plain, $this->rack, '1', $condition), AdjustmentWorld::pick($cased, $this->rack, '1', $condition)];
+    expect(AdjustmentWorld::change($this->actor, AdjustmentWorld::entry($this->product, $picks('USABLE'), evidence: [$this->evidence])))->toBe('COMMITTED');
+    CorrectionCase::factory()->create(['company_id' => $foreign->company->id, 'case_kind' => 'DAMAGED_UNIT', 'causal_project_id' => $other['project']->id, 'source_lot_id' => $cased]);
+    $both = Authorization::admin([$this->company->id, $foreign->company->id], [...AdjustmentWorld::CAPABILITIES, 'stock.allocate_intercompany'])->id;
+    expect(AdjustmentWorld::adjust($both, AdjustmentWorld::entry($this->product, $picks('UNUSABLE'), evidence: [$this->evidence]), 'DISPOSAL', null, 'Unit rusak di proyek B'))->toBe('COMMITTED');
+    $movement = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('stock_movement_id');
+    $figures = app(CostFigures::class);
+    $own = ['company' => $this->company->code, 'amount' => '1000.00'];
+    $theirs = ['company' => $foreign->company->code, 'amount' => '2000.00'];
+
+    expect($figures->lossesOf(Authorization::admin([$this->company->id, $foreign->company->id], ['cost.view'])->id, [$movement])[$movement])->toEqualCanonicalizing([$own, $theirs])
+        ->and($figures->lossesOf(Authorization::admin([$this->company->id], ['cost.view'])->id, [$movement])[$movement])->toBe([$own]);
+    adjustmentClean();
+});
+
 it('changes a serial\'s condition with its unit, one change from two commands leaving one, and refuses disposing of usable units (C-02; L-13; WF-INV-06)', function () {
     $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2');
     DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
@@ -423,7 +443,7 @@ it('carries one allocation on a loss charged to another company\'s project, with
     $bearer = Authorization::admin([$foreign->company->id], ['cost.view'])->id;
     $source = Authorization::admin([$this->company->id], ['cost.view'])->id;
     $movement = (int) $consumption->stock_movement_id;
-    expect($figures->lossesOf($bearer, [$movement]))->toBe([$movement => '1000.00'])
+    expect($figures->lossesOf($bearer, [$movement]))->toBe([$movement => [['company' => $foreign->company->code, 'amount' => '1000.00']]])
         ->and($figures->lossesOf($source, [$movement]))->toBe([])
         ->and($figures->lossesOf($this->actor, [$movement]))->toBe([])
         ->and($owner)->toBeInt();

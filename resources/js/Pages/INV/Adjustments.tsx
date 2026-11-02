@@ -38,7 +38,7 @@ type Units = { find: string | null; places: Place[]; serials: Serial[]; more: bo
 type Case = { id: string; kind: string; date: string; lot: string | null; project: string | null; cross: boolean };
 type Cases = { find: string | null; rows: Case[]; more: boolean };
 type Proofs = { find: string | null; rows: { id: string; label: string }[]; more: boolean };
-type Loss = { id: string; type: string; date: string; qty: string; open: string; lot: string; amount: string | null };
+type Loss = { id: string; type: string; date: string; qty: string; open: string; lot: string; amounts: { company: string; amount: string }[] };
 type Failed = { failed: true };
 type Can = { condition: boolean; adjust: boolean; move: boolean; reverse: boolean; reserve: boolean; evidence: boolean; allocate: boolean };
 type Props = {
@@ -70,7 +70,7 @@ function LossRecord({ loss, today, canReverse }: { loss: Loss; today: string; ca
         <li data-slot="loss-record" className="flex min-w-0 flex-wrap items-center gap-2 py-2 text-body">
             <DateText value={loss.date} />
             <span>{`${t(`stock.movement.${loss.type}` as TranslationKey)} · ${loss.qty} · `}<Code>{loss.lot}</Code></span>
-            {loss.amount !== null && <Money value={loss.amount} />}
+            {loss.amounts.map((one) => <span key={one.company} className="inline-flex items-center gap-1">{loss.amounts.length > 1 && <Code>{one.company}</Code>}<Money value={one.amount} /></span>)}
             {reverse.answer?.kind === 'COMMITTED' && <OutcomeMessage answer={reverse.answer} />}
             {canReverse && loss.open !== '0' && <Button variant="ghost" size="sm" onClick={() => { reverse.clear(); setOpen(true); }}>{t('adjustments.reverse.action')}</Button>}
             <ConfirmCommand
