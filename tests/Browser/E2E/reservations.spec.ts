@@ -31,8 +31,12 @@ test('reserves from Item dan pemenuhan, refused above the availability with it i
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await reservationRun(page, `reservasi-${String(Date.now())}`, { stock: '8' });
     const content = page.locator('#konten');
+    // The journey's deferred groups land after each visit of it; a quantity is typed once they have, as WebKit lost one filled while they did.
+    const groups = (): Promise<unknown> => Promise.all(['history', 'predicates', 'documents'].map((group) => page.waitForResponse(async (response) => (await response.request().headerValue('x-inertia-partial-data')) === group)));
+    const loaded = groups();
 
     await page.goto(`/proyek/${run.project}`);
+    await loaded;
     const line = page.getByRole('list', { name: 'Baris terkonfirmasi' }).locator('[data-line="1"]');
     await line.getByRole('button', { name: 'Reservasi' }).click();
     const dialog = page.getByRole('alertdialog');
@@ -40,8 +44,7 @@ test('reserves from Item dan pemenuhan, refused above the availability with it i
     await expect(dialog).toContainText('Tidak ada barang yang bergerak.');
 
     await dialog.getByRole('textbox').fill('9');
-    // The refusal's visit reloads the page's deferred groups; the next quantity is typed once they land, as WebKit lost one filled while they did.
-    const settled = Promise.all(['history', 'predicates', 'documents'].map((group) => page.waitForResponse(async (response) => (await response.request().headerValue('x-inertia-partial-data')) === group)));
+    const settled = groups();
     await dialog.getByRole('button', { name: 'Reservasi' }).click();
     await expect(dialog).toContainText('Stok tersedia tidak cukup. Tersedia saat ini: 8.');
     await settled;

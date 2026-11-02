@@ -227,10 +227,10 @@ final class AdjustmentQueries
             DB::table('unattributed_loss_cases as k')->join('locations as l', 'l.id', '=', 'k.location_id')->where('k.product_id', $productId)->where('k.case_kind', 'CONDITION_CHANGE')->where('k.pending_qty_base', '>', 0)->whereNotExists(fn (Builder $next) => $next->from('unattributed_loss_cases as n')->whereColumn('n.converted_from_case_id', 'k.id'))->orderBy('k.id')->limit(self::LOSSES)->get(['k.id', 'k.pending_qty_base', 'l.code as rack'])->all()));
     }
 
-    /** A pending condition change of the product, a pool record (PJ-07). */
+    /** A condition change of the product, a pool record, however much of it is still pending — a replay finds its outcome; what may still convert the command decides (PJ-07; C-35). */
     public function pendingChange(int $productId, string $handle): ?int
     {
-        return $this->found("changes|{$productId}", 'unattributed_loss_cases', fn (): array => DB::table('unattributed_loss_cases')->where('product_id', $productId)->where('case_kind', 'CONDITION_CHANGE')->where('pending_qty_base', '>', 0)->pluck('id')->all(), $handle);
+        return $this->found("changes|{$productId}", 'unattributed_loss_cases', fn (): array => DB::table('unattributed_loss_cases')->where('product_id', $productId)->where('case_kind', 'CONDITION_CHANGE')->pluck('id')->all(), $handle);
     }
 
     /** An open case of the product's lots within the viewer's scope (CS-04). */

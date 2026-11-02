@@ -335,3 +335,9 @@ it('takes as many named lots in one application as PG-026 offers, and no more (S
     $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES))->assertSessionDoesntHaveErrors('unit');
     $this->actingAs($this->applier)->post("/gudang/stok-opname/{$public}/terapkan", $body(CountQueries::LINES + 1))->assertSessionHasErrors('unit');
 });
+
+it('offers a retry at PG-029\'s case and resolution rows when an outcome is unknown, as at its findings (IP-02)', function () {
+    $source = file_get_contents(resource_path('js/Pages/INV/Discrepancies.tsx'));
+
+    expect($source)->toContain('onClick={owner.unknown ? owner.retry : proof.retry}')->toContain('onClick={reverse.retry}')->toContain('onClick={command.retry}');
+});

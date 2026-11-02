@@ -158,7 +158,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
                 </ul>
             )}
             {row.exposures.length > 0 && <p data-slot="case-exposures" className="text-text-secondary">{row.exposures.map((one) => t('discrepancies.exposure', { perusahaan: one.company, paparan: one.exposure, ditetapkan: one.assigned })).join(' · ')}</p>}
-            {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} />}
+            {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} action={owner.unknown || proof.unknown ? <Button variant="outline" size="sm" onClick={owner.unknown ? owner.retry : proof.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {(can.resolve || can.evidence) && (row.lots_more || row.lots_find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['cases'], data: { kasus_lot: row.id, cari_lot: text }, preserveUrl: true }); }} />}
             {(can.resolve || can.evidence) && row.lots.length > 0 && (
                 <fieldset disabled={frozen} data-slot="case-lots" className="flex min-w-0 flex-col gap-2">
@@ -246,7 +246,7 @@ function ResolutionRow({ row, today }: { row: Resolution; today: string }) {
             <p className="flex min-w-0 flex-wrap items-center gap-2"><span className="font-medium">{row.product}</span><span>{row.rack}</span><span className="text-text-secondary">{row.date}</span><Badge>{t(kind)}</Badge></p>
             {row.lines.length > 0 && <p>{row.lines.map((line) => `${line.company}: ${line.qty}`).join(' · ')}</p>}
             {row.actor !== null && <p className="text-text-secondary">{`${row.actor} · ${row.reason ?? ''}`}</p>}
-            {reverse.answer !== null && reverse.answer.kind !== 'COMMITTED' && !confirming && <OutcomeMessage answer={reverse.answer} />}
+            {reverse.answer !== null && reverse.answer.kind !== 'COMMITTED' && !confirming && <OutcomeMessage answer={reverse.answer} action={reverse.unknown ? <Button variant="outline" size="sm" onClick={reverse.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {row.reversible && <Button variant="outline" size="sm" className="self-start" disabled={reverse.pending} onClick={() => { reverse.clear(); setConfirming(true); }}>{t('actions.reverse_resolution')}</Button>}
             <ConfirmCommand
                 open={confirming}

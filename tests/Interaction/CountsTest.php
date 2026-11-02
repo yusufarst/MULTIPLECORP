@@ -150,3 +150,20 @@ it('replays an application that restored a loss in full with its recorded outcom
         ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('2.000')
         ->and(DB::table('stock_movements')->where('movement_type', 'RESTORATION')->count())->toBe(1);
 });
+
+it('replays an application that converted a condition change in full with its recorded outcome, never an unknown case (CI-05; §5.8)', function () {
+    StockWorld::lot(ReceivingWorld::actor($this->foreign->company, DispatchWorld::CAPABILITIES)->id, $this->foreign->company, $this->product, $this->demand['unit'], $this->rack, '5', '12000');
+    $both = Authorization::admin([$this->company->id, $this->foreign->company->id], [...CountWorld::CAPABILITIES, 'stock.condition']);
+    $evidence = (int) DB::table('evidence_documents')->where('public_id', $this->evidence)->value('id');
+    expect(CountWorld::pendingCondition($both->id, $this->product, $this->rack, '2', $evidence))->toBe('COMMITTED');
+    $case = (int) DB::table('unattributed_loss_cases')->where('case_kind', 'CONDITION_CHANGE')->value('id');
+    $count = CountWorld::open($both->id, $this->product, $this->rack, 'UNUSABLE');
+    expect(CountWorld::line($both->id, $count, $this->product, $this->rack, '0', null, 'UNUSABLE'))->toBe('COMMITTED');
+    $public = (string) DB::table('stock_counts')->where('id', $count)->value('public_id');
+    $apply = ['command_id' => (string) Str::uuid(), 'konversi' => [['kasus' => RowHandle::of('unattributed_loss_cases', $case), 'jumlah' => '2']], 'alasan' => 'Unit rusak dibuang', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
+
+    [$first, $replay] = countTwice($this, $both, "/gudang/stok-opname/{$public}/terapkan", $apply);
+    expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')
+        ->and((string) DB::table('unattributed_loss_cases')->where('id', $case)->value('pending_qty_base'))->toBe('0.000')
+        ->and(DB::table('unattributed_loss_cases')->where('converted_from_case_id', $case)->count())->toBe(1);
+});
