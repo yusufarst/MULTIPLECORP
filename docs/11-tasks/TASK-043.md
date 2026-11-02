@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -272,34 +272,51 @@ CAP-06 and AC-06 require opname within the shared pool, and BR-INV-07 forbids ap
 - Other: GAP-009's count-versus-dispatch and duplicate-scan proofs and GAP-030's fixtures recorded as their evidence; the registration count of L-35 limited to its lines until Planning states how serials are assigned
 - The Owner's required verification (DIR-101): F2 — a registration count changes no quantity, lot or cost; every unit gets one serial on its named lot; a difference, a serial already IN_STOCK and a non-integral quantity are refused; the count, the serials and the policy commit in one transaction or none; a racing dispatch or receipt meets the scope guards.
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Inventory/CountsTest.php` — the scope versions stored at the start; a movement of the scope after it makes the application CONFLICT, the count STALE with its SYSTEM event and no stock row changed, a new count opened; on real sessions against a dispatch and a receipt, in both orders (M-04; GAP-009); `tests/Interaction/CountsTest.php` — MSG-30; `tests/Browser/E2E/counts.spec.ts` — "Hitung Ulang".
+- Criterion 2: `CountsTest` — the named-lot shortage lost once at the lots' net cost on the owning company, a unit under an open case its single outcome; the E2E journey on the phone and the desktop.
+- Criterion 3: `CountsTest` — one company's unidentified shortage only with the actor's lot confirmation; across companies one pending case with its immutable snapshot, no lot, cost or loss moved, a dispatch unblocked and a resolution whose lots it consumed refused with C-37 on real sessions (M-06).
+- Criterion 4: `CountsTest` — the chosen cuts in the same action, for a missing serial too; another company's project's cut without a grant refused and routed with MSG-14.
+- Criterion 5: `CountsTest` — a surplus reversing the pending case exactly first, an identified loss only when identified, any other surplus one open finding not added to ON HAND, a second refused C-34; a later shortage withdrawing what it takes back of an open finding.
+- Criterion 6: `CountsTest`, `tests/Feature/INV/CountPagesTest.php` — only the Owner attributes, one flagged lot with its basis, a count started before it stale; an Admin refused also through a forged request; an identified loss reversed first through ROUTE-197.
+- Criterion 7: `CountsTest` — within each company's recognition exposure and the overlap group's bound (A cannot absorb a sixth unit), its own claims first, a shortfall by the Owner's choice with one allocation, SF-LOSS once; an over-assignment refused; a condition-change case only onto the company's own usable claims; `tests/Unit/INV/CountVarianceTest.php` — the bounds and the transportation argument.
+- Criterion 8: `CountsTest`, `tests/Interaction/CountsTest.php`, the E2E spec — each condition (a)–(f) of OD-10 refused in turn, the company derived from the lots, the resolution in the Owner's review at ADM_PLUS; a reversal by an evidence holder without the company in scope refused and routed.
+- Criterion 9: `CountsTest` — the reversal exact and once, the same pending quantity re-opened, the snapshot unchanged, a corrected attribution citing what it replaces; found units after resolution through the exact loss reversal.
+- Criterion 10: `CountPagesTest` — a `cost.view` holder its own rows, an evidence holder its scope's lots without cost, the Owner all, no other company's number or identity to a non-Owner; a resolution's reason and decider on PG-020 only to the Owner and a `cost.view` holder of the company it charged; the E2E spec as a Company-A-only Admin.
+- Criterion 11: `CountsTest` — a repeated serial counted once by any spelling, an unregistered one a finding only the Owner's attribution registers, a serial recorded elsewhere left to the CM rows; `tests/Interaction/CountsTest.php` — one `command_id` replayed with one effect, the same identifier on another count CONFLICT.
+- Criterion 12: `StockWorld::ledgerDifferences` after each scenario through `countClean()`.
+- Criterion 13: `CountsTest` — PG-027's adjustment and condition change across companies open a pending case, never a named loss, a later disposal converts it, a likely duplicate committed only with the actor's reason under the acknowledged action; the E2E spec.
+- Criterion 14: ROUTE-215 and INT-215 — `CountsTest`, `tests/Interaction/CountsTest.php`; INT-217's print in `StockCounts.tsx`, `CountPagesTest`; the registration count of `DIR-101` F2 — `CountsTest`: no quantity, lot or cost changed, one serial a unit on its lot, a difference, a serial in stock and an open finding refused, the policy on in the same transaction, a racing dispatch on real sessions; its recount a registration count again, `CountPagesTest`.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `stock.count` against `stock.count_apply`, OD-08 and OD-09 for an Admin, OD-10 one by one, AZ-08 (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-026, ROUTE-029, ROUTE-191–ROUTE-193, ROUTE-197–ROUTE-200, ROUTE-215 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-191–INT-193, INT-197–INT-200, INT-215 (TL-08) PASS in CI
+- [x] Browser E2E if required: J-INV-05, CJ-05's pending unattributed loss, PG-029's paths (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-05 (ST-03's SYSTEM event), SM-25 as above (TL-14)
+- [x] Database safety review: migration `2026_11_02_000148`, expand-only; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `52825e0`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41466200882 (push) and 41466213102 (pull request #61), every job PASS in each; TL-15 — PG-026 and PG-029 the same for one row and many, AX-06, AX-07 and AX-37 proportional to their rows — `tests/Performance/CountQueriesTest.php`; PG-027 back within QB-05's four — `tests/Performance/AdjustmentQueriesTest.php`; TL-16 — the migration up on a fresh database
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/CountsTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 52825e0, CI ubuntu-24.04 run 41466200882, tests/Browser/E2E/counts.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-026 and PG-029 in both languages — `tests/Browser/Localization/counts.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/OpenCount`, `RecordCount`, `CancelCount`, `ApplyCountVariance`, `AttributeSurplus`, `ResolveUnattributedLoss`, `ResolveUnattributedLossWithEvidence`, `ReverseUnattributedResolution`, and the pending branch of `AdjustStock`, `RecognizeLoss`, `ChangeCondition`; `Data/CountEntry`, `CountVariance`, `StockPicks`; `Services/StockCounts`, `CountApplication`, `SurplusAttribution`, `UnattributedCases`, `LossRestorations`, `LossPosting`, `StockPlaces`, `InventoryPosting`, `ReceivingRecords`; `Queries/CountQueries`, `DiscrepancyQueries`, `AdjustmentQueries`, `MovementHistory`; `Http/Controllers/CountController`, `DiscrepancyController`, `AdjustmentController`; its README; the migration; `resources/js/Pages/INV/StockCounts.tsx`, `Discrepancies.tsx`, `Adjustments.tsx`, `ProductStock.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixtures and browser specs; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `c094592`, `4e75888`, `475a3d1`, `4081a7a`, `215ce74`, `1f5cc4c`, `97a52aa`, `895e93b`, `6701aa3`, `8e8e829`, `8d27f74`, `3f93ad1`, `52825e0`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-043-stock-count`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed eight times and found 4 P1 and 13 P2, each fixed with its test and answered on the pull request; its review of 8e8e829 did not run (Codex's usage limit), recorded in the pull request and here and never counted as a pass, and a narrow independent check of 6701aa3..8d27f74 found no P1 or P2; its review of 52825e0 COMPLETED with no new finding. ER-06: a fresh read-only review before the pull request found 5 P1 and 12 P2 points, each fixed with its test: named units dropped beside a pending quantity, now refused; an evidence reversal without the charged company in scope, now refused and routed; a serial's loss reversed without the count seeing it, now only by its line; an attribution registering a serial recorded dispatched or lost, now only serials never received; a resolution's reason and decider on PG-020 past PJ-07; an open finding's dead end against a shortage; a serialized cut never offered; ROUTE-197's identified losses unreachable; a repeated scan by spelling; fingerprints without their target; a conversion of another rack; naming across companies without a proof; the pending branch's likely duplicate without its acknowledged action; "Hitung Ulang" opening an ordinary count after a registration count; registration with an open finding; PG-029's lists cut silently; the missing tests. **Found by the first CI run and fixed:** the migration's trigger amended by a string rather than a literal (TL-02), guard tables read without an alias (TL-03's prohibited-pattern scan), PG-019's older assertion that no count link exists, PG-027's two new reads breaking QB-05's four, a fixture product serialized before its second receipt, a model carried into a test session, and the browser locating "Mulai Hitungan" by a part of "Mulai Hitungan Registrasi"'s name. **Found by ER-06's regression for ROUTE-197 and fixed:** a command writing two movements — a restoration and the flagged lot — numbered each movement's entries from one, which C-48's command identity refused; a ledger's entries now continue the command's numbering, as its movements already did. **Found by the second CI run's journeys and fixed:** PG-029's success message unmounted with the row that sent it, now shown on the page (IP-01); a refusal hidden behind a confirmation that stayed open, now closed so the refusal shows at its row; the journey's "later" proof registered in the recognition's own second, which OD-10 (b) rightly does not count as later — the fixture now registers it a minute on, as the integration test does; a WebKit journey lost a quantity filled while the count's deferred proofs landed, so the helpers now wait for them after opening a count and recording a line, and J-INV-02's reservation journey (TASK-038's spec) waits for its page's deferred groups the same way after its refusal. The checkpoint's local timeouts and `migration` connection errors did not recur once the integration file ran alone: they came from two suites on the test databases at once under low memory (DIR-105). **Named, for Planning:** (1) PG-026's movements are pool-wide like PG-027's, the bearer on the consumption; (2) a count's proof is asked where a lot is named and not confirmed (BR-INV-04; L-42), optional for a pending quantity and a surplus; (3) a serial recorded dispatched, lost or at another rack is shown as an unexpected line and corrected through the CM rows (typically CM-36), never a surplus finding — a finding counts only serials never received; (4) an Admin's count whose shortage takes back an open finding withdraws it and opens what remains, which OD-08's "leaves surplus findings OPEN" may not foresee; (5) a condition-change case converts once (UNIQUE `converted_from_case_id`), so a second partial disposal of the same case is refused; (6) no command sets a pending case's causal project, so predicate 8 does not read one yet; (7) **for the Owner, as `DIR-101` asks:** how a serial mistyped in a registration count is corrected once applied — no route undoes a SERIAL_REGISTRATION today; (8) "Mulai Hitungan Registrasi" is proposed copy for the registration count's start, "Catat Tanpa Unit" for a serialized count's observation of none; (9) the registration count is ROUTE-191's and ROUTE-193's under `DIR-101`, the runtime role granted USAGE on two sequences so a case and its header are written in one statement; (10) a count's lots and lines list up to 500 rows, PG-029's findings, cases and resolutions page by cursor; (11) QS-18 and QS-22 stay TASK-058's; (12) OD-10 (b) compares recorded times to the second, so a proof registered within the recognition's own second is not "later". **Verification:** the integration file alone PASS locally with its real-session races through Codex's fifth review (36 tests); the other PHP layers, PHPStan, Pint, TypeScript and ESLint locally; the sixth review's tests, the browser layers and the full suites rest on CI — the machine ran near 200 MB free, and after a power loss Docker Desktop was not running, which was left so rather than started (DIR-105). The pull request run's responsive job on the tested commit failed pulling its image (a registry 502) before any test ran; that job alone was run again. Context7 and Graphify not used: a targeted search of INV, CST and the specifications.
 
 **SAFE NEXT TASK:**
 

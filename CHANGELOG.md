@@ -772,3 +772,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-042 on its branch `task/TASK-042-adjustments`: PG-027 with "Ubah Kondisi", "Periksa Ulang" and "Catat Penyesuaian Stok" (ROUTE-194, ROUTE-195), "Pindah Lokasi" from PG-018 and PG-019 (ROUTE-190), a loss's exact reversal (ROUTE-196), and SF-LOSS as the one loss path; predicate 8 now names a project's unresolved unusable units.
 - Every check passed in fresh CI on `24226f0`. TASK-042 DONE — progress 49 / 87 —; TASK-043 READY beside TASK-044, TASK-045, TASK-046 and TASK-059.
+
+## Unreleased — 2026-11-02, TASK-043 — Stock count (opname) and discrepancies
+
+- Built TASK-043 on its branch `task/TASK-043-stock-count`: PG-026 with "Mulai Hitungan", the counted lines and "Terapkan Selisih" (ROUTE-191–ROUTE-193), "Batalkan Hitungan" and the count sheet's print (ROUTE-215; INT-217), the registration count of `DIR-101` F2; PG-029 with "Tetapkan Surplus", "Tetapkan Perusahaan", "Tetapkan dengan Bukti" and "Balikkan Penetapan" (ROUTE-197–ROUTE-200); SF-UNATTRIBUTED with its snapshot, found stock, conversion and bounds; PG-027's pending branch.
+- Every check passed in fresh CI on `52825e0`. TASK-043 DONE — progress 50 / 87 —; TASK-044, TASK-045, TASK-046 and TASK-059 READY.
