@@ -504,7 +504,7 @@ final class InventoryPosting
         ]);
     }
 
-    private static function lineNo(string $table, CommandContext $context): int
+    public static function lineNo(string $table, CommandContext $context): int
     {
         return DB::table($table)->where('command_id', $context->request->commandId)->count() + 1;
     }

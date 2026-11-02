@@ -15468,6 +15468,684 @@
             "source": "AX-35",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "actions.recount": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.resolve_company": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.resolve_evidence": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "actions.reverse_resolution": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.state.OPEN": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.state.APPLIED": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.state.STALE": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.state.CANCELLED": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.all": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.none": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.no_lines": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.registration": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.registration_note": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.surplus_note": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.found_note": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.identified_losses": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.split": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.split_left": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.across_note": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.pending_help": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.missing": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.unexpected": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.open_finding": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.record_line": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.record_unexpected": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.product": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.rack": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.condition": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.state": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.place": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.counted": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.restore": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.field.conversion": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.section.scope": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.section.lines": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.figure.system": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.figure.counted": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.figure.variance": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.print.write": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.confirm.apply": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.confirm.registration": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.confirm.cancel": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.answer.opened": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.answer.recorded": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.answer.applied": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.answer.cancelled": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.no_lines": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.not_open": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.serial_in_stock": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.registration_difference": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.registration_pending": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.split": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.above_variance": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.one_finding": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.not_identified": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.already_serialized": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.products_edit": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.section.cases": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.section.findings": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.section.resolutions": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.no_cases": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.no_findings": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.state.waiting": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.state.waiting_owner": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.kind.owner": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.kind.evidence": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.exposure": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.field.company": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.field.basis": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.field.close": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.field.bearer": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.confirm.surplus": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.confirm.resolve": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.confirm.evidence": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.confirm.reverse": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.answer.attributed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.answer.resolved": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.answer.reversed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.changed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.finding": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.above_pending": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.above_bound": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.not_candidate": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.own_first": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.lot_short": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.condition_own_only": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.reversed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.evidence_a": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.evidence_b": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.evidence_c": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.evidence_d": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "discrepancies.refusal.evidence_e": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.one_company": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.pending_limit": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.pending_note": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.pending": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.field.conversion": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountOpened": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountLineRecorded": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountCancelled": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountApplied": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountAppliedDuplicateConfirmed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.CountStale": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.SerialsRegistered": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.SurplusAttributed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnattributedRecognized": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnattributedConverted": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnattributedResolved": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnattributedResolutionReversed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.start_registration": {
+            "task": "TASK-043",
+            "source": "DIR-101 F2; L-35",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.refusal.mixed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; L-42; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "counts.refusal.named_evidence": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; L-42; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.UnattributedRecognizedDuplicateConfirmed": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; L-42; QS-21",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

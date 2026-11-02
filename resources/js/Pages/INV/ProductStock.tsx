@@ -28,7 +28,7 @@ type Props = {
     product: { id: string; name: string; sku: string | null; figures: StockFigures; pending: string | null; below: string | null; serialized: boolean };
     places: { rack: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[];
     reservations: Reservations;
-    can: { purchase: boolean; condition: boolean; adjust: boolean; move: boolean };
+    can: { purchase: boolean; condition: boolean; adjust: boolean; move: boolean; count: boolean };
     moving?: Moving;
     today: string;
     scale: number;
@@ -220,6 +220,7 @@ export default function ProductStock({ product, places, reservations, can, movin
                         {can.condition && <Button variant="outline" size="sm" render={<a href={`/gudang/penyesuaian?produk=${product.id}&aksi=kondisi`} />}>{t('actions.change_condition')}</Button>}
                         {can.adjust && <Button variant="outline" size="sm" render={<a href={`/gudang/penyesuaian?produk=${product.id}&aksi=penyesuaian`} />}>{t('actions.record_adjustment')}</Button>}
                         {can.move && <Button variant="outline" size="sm" onClick={openMove}>{t('actions.move_location')}</Button>}
+                        {can.count && <Button variant="outline" size="sm" render={<a href={`/gudang/stok-opname?produk=${product.id}`} />}>{t('actions.start_count')}</Button>}
                     </div>
                 )}
                 <InventoryBlock figures={product.figures} belowMinimum={product.below ?? undefined} />

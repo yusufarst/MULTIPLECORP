@@ -49,13 +49,13 @@ final class AdjustmentQueries
     {
         $viewer = $this->capabilities->for($viewerId);
 
-        return ['condition' => $viewer->has('stock.condition'), 'adjust' => $viewer->has('stock.adjust'), 'move' => $viewer->has('stock.move'), 'reverse' => $viewer->has('stock.reverse'), 'reserve' => $viewer->has('stock.reserve'), 'evidence' => $viewer->has('evidence.upload'), 'allocate' => $viewer->has('stock.allocate_intercompany')];
+        return ['condition' => $viewer->has('stock.condition'), 'adjust' => $viewer->has('stock.adjust'), 'move' => $viewer->has('stock.move'), 'count' => $viewer->has('stock.count'), 'reverse' => $viewer->has('stock.reverse'), 'reserve' => $viewer->has('stock.reserve'), 'evidence' => $viewer->has('evidence.upload'), 'allocate' => $viewer->has('stock.allocate_intercompany')];
     }
 
     /**
      * The product's units in QB-05's bound, the oldest usable lot marked; a list longer than CHOICES says so and is narrowed by what is looked for or scanned.
      *
-     * @return array{find: ?string, places: list<array<string, mixed>>, serials: list<array<string, mixed>>, more: bool, available: string, reservations: list<array<string, mixed>>}
+     * @return array{find: ?string, places: list<array<string, mixed>>, serials: list<array<string, mixed>>, more: bool, scopes: list<array<string, mixed>>, changes: list<array<string, mixed>>, available: string, reservations: list<array<string, mixed>>}
      */
     public function screen(int $viewerId, int $productId, ?string $find = null): array
     {
@@ -84,6 +84,11 @@ final class AdjustmentQueries
             'places' => $places,
             'serials' => $serials,
             'more' => count($foundPlaces) > self::CHOICES || count($foundSerials) > self::CHOICES,
+            // Where the units cannot be tied to one company, as a yes or no: never which or how many (PJ-07; SF-UNATTRIBUTED).
+            'scopes' => array_values(array_map(fn (object $row): array => ['location' => RowHandle::of('locations', (int) Row::text($row, 'location_id')), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(Row::text($row, 'qty'))],
+                DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)->groupBy('b.location_id', 'b.condition', 'l.code')->havingRaw('count(distinct i.source_company_id) > 1')->orderBy('l.code')->selectRaw('b.location_id, b.condition, l.code as rack, sum(b.qty) as qty')->limit(self::CHOICES)->get()->all())),
+            'changes' => array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('unattributed_loss_cases', (int) Row::text($row, 'id')), 'rack' => Row::text($row, 'rack'), 'qty' => StockFigures::plain(Row::text($row, 'pending_qty_base'))],
+                DB::table('unattributed_loss_cases as k')->join('locations as l', 'l.id', '=', 'k.location_id')->where('k.product_id', $productId)->where('k.case_kind', 'CONDITION_CHANGE')->where('k.pending_qty_base', '>', 0)->whereNotExists(fn (Builder $next) => $next->from('unattributed_loss_cases as n')->whereColumn('n.converted_from_case_id', 'k.id'))->orderBy('k.id')->limit(self::LOSSES)->get(['k.id', 'k.pending_qty_base', 'l.code as rack'])->all())),
             'available' => StockFigures::plain((string) InventoryPosting::available($productId)),
             'reservations' => $viewer->has('stock.reserve') ? $this->stock->reservations($viewer, $productId) : [],
         ];
@@ -184,6 +189,12 @@ final class AdjustmentQueries
     public function reservation(int $productId, string $handle): ?int
     {
         return $this->found("reservations|{$productId}", 'reservations', fn (): array => DB::table('reservations')->where('product_id', $productId)->pluck('id')->all(), $handle);
+    }
+
+    /** A pending condition change of the product, a pool record (PJ-07). */
+    public function pendingChange(int $productId, string $handle): ?int
+    {
+        return $this->found("changes|{$productId}", 'unattributed_loss_cases', fn (): array => DB::table('unattributed_loss_cases')->where('product_id', $productId)->where('case_kind', 'CONDITION_CHANGE')->where('pending_qty_base', '>', 0)->pluck('id')->all(), $handle);
     }
 
     /** An open case of the product's lots within the viewer's scope (CS-04). */

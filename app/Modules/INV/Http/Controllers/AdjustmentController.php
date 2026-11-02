@@ -159,7 +159,14 @@ final class AdjustmentController extends Controller
     {
         return [
             'produk' => ['required', 'uuid'],
-            'unit' => ['required', 'array', 'min:1', 'max:200'],
+            'unit' => ['required_without_all:tertunda,konversi', 'array', 'max:200'],
+            'tertunda' => ['nullable', 'array', 'max:20'],
+            'tertunda.*.rak' => ['required', 'string', 'size:32'],
+            'tertunda.*.kondisi' => ['required', Rule::in(['USABLE', 'UNUSABLE'])],
+            'tertunda.*.jumlah' => ['required', self::QUANTITY],
+            'konversi' => ['nullable', 'array', 'max:20'],
+            'konversi.*.kasus' => ['required', 'string', 'size:32'],
+            'konversi.*.jumlah' => ['required', self::QUANTITY],
             'unit.*.lot' => ['required', 'string', 'size:32'],
             'unit.*.rak' => ['required', 'string', 'size:32'],
             'unit.*.kondisi' => ['required', Rule::in(['USABLE', 'UNUSABLE'])],
@@ -194,7 +201,7 @@ final class AdjustmentController extends Controller
         $unidentified = $request->boolean('tanpa_identitas');
         $picks = [];
 
-        foreach (is_array($input['unit']) ? $input['unit'] : [] as $position => $unit) {
+        foreach (is_array($input['unit'] ?? null) ? $input['unit'] : [] as $position => $unit) {
             $unit = is_array($unit) ? $unit : [];
             $lot = $this->queries->lot($product['id'], self::text($unit['lot'] ?? '')) ?? throw ValidationException::withMessages(["unit.{$position}.lot" => $unknown]);
             $rack = $this->queries->location(self::text($unit['rak'] ?? '')) ?? throw ValidationException::withMessages(["unit.{$position}.rak" => $unknown]);
@@ -222,7 +229,21 @@ final class AdjustmentController extends Controller
             $evidence[] = $this->queries->evidence($actor, $publicId) ?? throw ValidationException::withMessages(["bukti.{$position}" => $unknown]);
         }
 
-        return new StockPicks($product['id'], $picks, $cuts, trim(self::text($input['alasan'])), $evidence, $unidentified, self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']));
+        $pending = [];
+
+        foreach (is_array($input['tertunda'] ?? null) ? $input['tertunda'] : [] as $position => $row) {
+            $row = is_array($row) ? $row : [];
+            $pending[] = ['location' => $this->queries->location(self::text($row['rak'] ?? '')) ?? throw ValidationException::withMessages(["tertunda.{$position}.rak" => $unknown]), 'condition' => self::text($row['kondisi'] ?? ''), 'qty' => self::text($row['jumlah'] ?? '')];
+        }
+
+        $conversions = [];
+
+        foreach (is_array($input['konversi'] ?? null) ? $input['konversi'] : [] as $position => $row) {
+            $row = is_array($row) ? $row : [];
+            $conversions[] = ['case' => $this->queries->pendingChange($product['id'], self::text($row['kasus'] ?? '')) ?? throw ValidationException::withMessages(["konversi.{$position}.kasus" => $unknown]), 'qty' => self::text($row['jumlah'] ?? '')];
+        }
+
+        return new StockPicks($product['id'], $picks, $cuts, trim(self::text($input['alasan'])), $evidence, $unidentified, self::strings($input['duplikat'] ?? []), self::nullable($input['alasan_duplikat'] ?? null), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), $pending, $conversions);
     }
 
     /** The answer: a committed command on PG-019 of the product (NAV-027), a refusal in place, the input kept; a future date at its field (C-50; IP-14). */
@@ -264,12 +285,13 @@ final class AdjustmentController extends Controller
             'C-03' => $reason === 'disposal_usable' ? self::say('adjustments.refusal.disposal_usable') : (isset($state['available']) ? self::say('stock.refusal.moved_on', ['sisa' => self::text($state['available'])]) : self::say('stock.refusal.moved_on_plain')),
             'C-02' => self::say('dispatch.refusal.serial'),
             'C-24' => self::say('adjustments.refusal.lost_once'),
-            'C-07' => self::say('adjustments.refusal.same_rack'),
+            'C-07' => $reason === 'mixed' ? self::say('adjustments.refusal.mixed') : self::say('adjustments.refusal.same_rack'),
             'C-09' => self::say('receiving.refusal.quantity'),
             'C-14' => $reason === 'case_required' ? self::say('adjustments.refusal.case_required') : self::say('projects.validation.unknown'),
             'C-05', 'C-06' => self::say('receiving.refusal.reservations'),
             'C-55' => self::say('stock.refusal.reversed'),
-            'L-42' => self::say('adjustments.refusal.several_companies'),
+            'L-42' => $reason === 'one_company' ? self::say('adjustments.refusal.one_company') : self::say('adjustments.refusal.several_companies'),
+            'C-35', 'C-36' => self::say('adjustments.refusal.pending_limit'),
             'L-49' => self::say('messages.msg_15', ['daftar_catatan_yang_cocok' => implode('; ', array_column($matches ?? [], 'label'))]),
             'AZ-08' => $reason === 'bearer' ? self::say('messages.msg_14') : self::say('receiving.refusal.reservations'),
             default => self::say('messages.msg_04'),

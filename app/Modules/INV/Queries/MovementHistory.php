@@ -20,12 +20,14 @@ use Illuminate\Support\Facades\DB;
 final class MovementHistory
 {
     /** A pool movement's loss bearers, which its reason follows. */
-    private const BEARERS = "(select string_agg(distinct c.bearer_company_id::text, ',') from stock_consumptions c where c.kind = 'LOSS' and m.company_id is null and (c.stock_movement_id = m.id or c.id in (select r.stock_consumption_id from stock_restorations r where r.stock_movement_id = m.id))) as bearers";
+    private const ASSIGNED = "(select string_agg(distinct x.assigned_company_id::text, ',') from unattributed_loss_resolutions r join unattributed_loss_resolution_lines x on x.unattributed_loss_resolution_id = r.id where r.stock_movement_id in (m.id, m.reverses_movement_id)) as assigned";
+
+    private const BEARERS = "(select string_agg(distinct c.bearer_company_id::text, ',') from stock_consumptions c where c.kind in ('LOSS', 'UNATTRIBUTED_LOSS') and m.company_id is null and (c.stock_movement_id = m.id or c.id in (select r.stock_consumption_id from stock_restorations r where r.stock_movement_id = m.id))) as bearers";
 
     public const PAGE = 50;
 
     /** The movement types a filter offers. */
-    public const TYPES = ['RECEIPT', 'RECEIPT_REVERSAL', 'CONDITION_CHANGE', 'LOCATION_MOVE', 'ADJUSTMENT_DECREASE', 'LOSS', 'COUNT_VARIANCE', 'SURPLUS_ATTRIBUTION', 'UNATTRIBUTED_RECOGNITION', 'UNATTRIBUTED_CONVERSION', 'UNATTRIBUTED_FOUND', 'DISPATCH', 'RESTORATION', 'PURCHASE_RETURN', 'OPENING', 'MOVEMENT_REVERSAL'];
+    public const TYPES = ['SERIAL_REGISTRATION', 'RECEIPT', 'RECEIPT_REVERSAL', 'CONDITION_CHANGE', 'LOCATION_MOVE', 'ADJUSTMENT_DECREASE', 'LOSS', 'COUNT_VARIANCE', 'SURPLUS_ATTRIBUTION', 'UNATTRIBUTED_RECOGNITION', 'UNATTRIBUTED_CONVERSION', 'UNATTRIBUTED_FOUND', 'DISPATCH', 'RESTORATION', 'PURCHASE_RETURN', 'OPENING', 'MOVEMENT_REVERSAL'];
 
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
@@ -116,7 +118,7 @@ final class MovementHistory
             ->join('locations as l', 'l.id', '=', 'e.location_id')->leftJoin('inventory_lots as i', 'i.id', '=', 'e.lot_id')->leftJoin('serial_units as s', 's.id', '=', 'e.serial_unit_id')->leftJoin('users as a', 'a.id', '=', 'm.recorded_by')
             ->leftJoin('companies as c', 'c.id', '=', 'm.company_id')->leftJoin('projects as pr', 'pr.id', '=', 'm.project_id')->leftJoin('purchases as x', 'x.id', '=', 'm.purchase_id')->leftJoin('stock_movements as o', 'o.id', '=', 'm.reverses_movement_id')
             ->orderBy('t.business_date', $direction)->orderBy('t.movement_id', $direction)->orderBy('t.entry_id', $direction)
-            ->select(['t.entry_id', 't.movement_id', 't.business_date', 'm.public_id', 'e.movement_type', 'm.reason', DB::raw(self::BEARERS), 'm.company_id', 'm.supplier_delivery_reference', 'e.qty_delta_base', 'e.condition', 'e.lot_id', 'i.lot_code', 'i.receiving_line_id', 's.serial_number', 'l.code as rack', 'p.public_id as product', 'p.name as product_name', 'u.code as unit', 'a.name as actor', 'c.code as company_code', 'pr.public_id as project', 'pr.project_number', 'x.public_id as purchase', 'x.purchase_number', 'o.public_id as corrects', 'o.movement_type as corrects_type', 'o.business_date as corrects_date'])
+            ->select(['t.entry_id', 't.movement_id', 't.business_date', 'm.public_id', 'e.movement_type', 'm.reason', DB::raw(self::BEARERS), DB::raw(self::ASSIGNED), 'm.company_id', 'm.supplier_delivery_reference', 'e.qty_delta_base', 'e.condition', 'e.lot_id', 'i.lot_code', 'i.receiving_line_id', 's.serial_number', 'l.code as rack', 'p.public_id as product', 'p.name as product_name', 'u.code as unit', 'a.name as actor', 'c.code as company_code', 'pr.public_id as project', 'pr.project_number', 'x.public_id as purchase', 'x.purchase_number', 'o.public_id as corrects', 'o.movement_type as corrects_type', 'o.business_date as corrects_date'])
             ->get()->all());
     }
 
@@ -165,7 +167,7 @@ final class MovementHistory
             $rows[] = [
                 'id' => RowHandle::of('stock_movement_entries', (int) Row::text($row, 'entry_id')),
                 'movement' => Row::text($row, 'public_id'), 'direction' => str_starts_with($qty, '-') ? 'OUT' : 'IN', 'type' => $type, 'date' => Row::text($row, 'business_date'), 'product' => Row::text($row, 'product_name'), 'product_href' => '/gudang/stok/'.Row::text($row, 'product'),
-                'lot' => Row::nullable($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(ltrim($qty, '-')), 'unit' => Row::text($row, 'unit'), 'serial' => Row::nullable($row, 'serial_number'), 'reason' => self::reasonFor($viewer, $row), 'actor' => Row::nullable($row, 'actor'), 'company' => Row::nullable($row, 'company_code'),
+                'lot' => Row::nullable($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain(ltrim($qty, '-')), 'unit' => Row::text($row, 'unit'), 'serial' => Row::nullable($row, 'serial_number'), 'reason' => self::mayReadDecision($viewer, $row) ? self::reasonFor($viewer, $row) : null, 'actor' => self::mayReadDecision($viewer, $row) ? Row::nullable($row, 'actor') : null, 'company' => Row::nullable($row, 'company_code'),
                 'project' => $companyId !== null && Row::nullable($row, 'project') !== null && $viewer->allows('projects.view', $companyId) ? ['label' => Row::text($row, 'project_number'), 'href' => '/proyek/'.Row::text($row, 'project')] : null,
                 'purchase' => $companyId !== null && Row::nullable($row, 'purchase') !== null && $viewer->allows('cost.view', $companyId) ? ['label' => Row::text($row, 'purchase_number'), 'href' => '/pembelian/'.Row::text($row, 'purchase')] : null,
                 'reference' => $companyId !== null && ($viewer->allows('projects.view', $companyId) || $viewer->allows('stock.receive', $companyId)) ? Row::nullable($row, 'supplier_delivery_reference') : null,
@@ -337,6 +339,14 @@ final class MovementHistory
 
             return ['id' => Row::text($row, 'public_id'), 'label' => CarbonImmutable::parse(Row::text($row, 'business_date'))->format('d/m/Y').' · '.(is_string($word) ? $word : ''), 'href' => null];
         }, DB::table('stock_movements')->whereIn('public_id', $publicIds)->orderBy('id')->get(['public_id', 'business_date', 'movement_type'])->all()));
+    }
+
+    /** A resolution's decider and reason: to the Owner and a `cost.view` holder of an assigned company (PJ-07). */
+    private static function mayReadDecision(Authority $viewer, object $row): bool
+    {
+        $assigned = Row::nullable($row, 'assigned');
+
+        return $assigned === null || $viewer->ownerRole || array_filter(explode(',', $assigned), fn (string $company): bool => $viewer->allows('cost.view', (int) $company)) !== [];
     }
 
     /** A loss on a movement of the pool, and its reversal, say their reason to a holder of its bearer's side only (PJ-05; PJ-06). */

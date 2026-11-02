@@ -5,6 +5,7 @@ namespace App\Modules\INV\Actions;
 use App\Modules\INV\Data\StockPicks;
 use App\Modules\INV\Services\LossPosting;
 use App\Modules\INV\Services\StockPlaces;
+use App\Modules\INV\Services\UnattributedCases;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -23,6 +24,7 @@ final class AdjustStock
 
     public function __construct(
         private readonly CommandEnvelope $envelope,
+        private readonly UnattributedCases $cases,
         private readonly LossPosting $losses,
     ) {}
 
@@ -32,6 +34,13 @@ final class AdjustStock
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, null, self::CAPABILITY, Fingerprint::of(self::TYPE, null, $payload));
 
         return $this->envelope->run($request, function (CommandContext $context) use ($entry, $kind, $case, $allocationReason): CommandResult {
+            // Across companies with no evidence: a pending case, never a named loss (SF-UNATTRIBUTED; Part 4).
+            if ($entry->pending !== [] || $entry->conversions !== []) {
+                $context->lock(UnattributedCases::entryLocks($entry));
+
+                return new CommandResult('stock_movement', $this->cases->recordEntry($context, $entry, 'LOSS', $case));
+            }
+
             $context->lock($this->losses->locks($entry, $case));
 
             return new CommandResult('stock_movement', $this->losses->record($context, $entry, $kind, $case, $allocationReason));

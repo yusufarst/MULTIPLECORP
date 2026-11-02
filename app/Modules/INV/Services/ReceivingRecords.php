@@ -461,7 +461,7 @@ final class ReceivingRecords
     }
 
     /** FU-04: the serial's row found or born NEVER_RECEIVED, then its conditional transition into stock; in stock already refused (BR-INV-09; C-02; M-05). */
-    private function registerSerial(CommandContext $context, int $product, string $key, string $number, int $lot, int $location, string $condition, int $line): int
+    public function registerSerial(CommandContext $context, int $product, string $key, string $number, int $lot, int $location, string $condition, int $line): int
     {
         $context->connection->table('serial_units')->insertOrIgnore(['product_id' => $product, 'serial_number' => $number, 'serial_key' => $key, 'state' => 'NEVER_RECEIVED', 'command_id' => $context->request->commandId, 'command_line_no' => $line, 'recorded_at' => $context->now(), 'recorded_by' => $context->request->actorUserId]);
         $moved = DB::table('serial_units')->where('product_id', $product)->where('serial_key', $key)->where('state', '<>', 'IN_STOCK')->update(['state' => 'IN_STOCK', 'current_lot_id' => $lot, 'current_location_id' => $location, 'current_condition' => $condition]);

@@ -11,6 +11,7 @@ use Tests\Support\Fixtures\AdjustmentFixture;
 use Tests\Support\Fixtures\AdministrationFixture;
 use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\ConfirmationFixture;
+use Tests\Support\Fixtures\CountFixture;
 use Tests\Support\Fixtures\DispatchFixture;
 use Tests\Support\Fixtures\DocumentFixture;
 use Tests\Support\Fixtures\EvidenceFixture;
@@ -139,6 +140,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // TL-09–TL-12 (TASK-041): DOC-03's numbering; a Company-A-only Admin without the inter-company authority.
     Route::post('__fixtures/adjustments', [AdjustmentFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/adjustments/plain', [AdjustmentFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/counts/admin', [CountFixture::class, 'admin'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch', [DispatchFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/serials', [DispatchFixture::class, 'serials'])->withoutMiddleware(PreventRequestForgery::class);
