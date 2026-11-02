@@ -106,6 +106,15 @@ final class SurplusAttribution
             }
         }
 
+        // A loss the finding reverses left from the finding's own scope: its units come back where they were found (AX-07; L-31).
+        foreach ($restored as $item) {
+            $found = LossRestorations::of($item['consumption']);
+
+            if ($found === null || $found['product'] !== $product || $found['location'] !== $location || $found['condition'] !== $condition) {
+                throw Refused::rejected('C-14', ['reason' => 'consumption']);
+            }
+        }
+
         $identified = array_reduce($restored, fn (BigDecimal $sum, array $item): BigDecimal => $sum->plus($item['qty']), BigDecimal::zero());
 
         if ($identified->isGreaterThan($left)) {

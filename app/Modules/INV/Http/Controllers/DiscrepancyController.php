@@ -39,7 +39,7 @@ final class DiscrepancyController extends Controller
 
         return Inertia::render('INV/Discrepancies', [
             'findings' => fn (): array => $this->queries->findings($actor, self::query($request, 'setelah_temuan')),
-            'cases' => fn (): array => $this->queries->cases($actor, self::query($request, 'setelah_kasus')),
+            'cases' => fn (): array => $this->queries->cases($actor, self::query($request, 'setelah_kasus'), self::query($request, 'kasus_lot'), self::query($request, 'cari_lot')),
             'resolutions' => fn (): array => $this->queries->resolutions($actor, self::query($request, 'setelah_penetapan')),
             'companies' => fn (): array => $this->queries->companies($actor),
             'proofs' => fn (): array => $this->adjustments->proofs($actor, self::query($request, 'cari_bukti')),

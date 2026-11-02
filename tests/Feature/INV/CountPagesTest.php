@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Models\InventoryLot;
 use App\Modules\INV\Models\StockCountFinding;
 use App\Modules\INV\Queries\DiscrepancyQueries;
 use App\Support\BusinessDate;
@@ -243,4 +244,39 @@ it('resolves an old finding\'s handle however many findings follow it; a lot onl
     expect($queries->finding(RowHandle::of('stock_count_findings', $old)))->toBe(['id' => $old, 'product' => (int) $this->product])
         ->and($queries->lot((int) $this->product, RowHandle::of('inventory_lots', $this->lot)))->toBe($this->lot)
         ->and($queries->lot((int) $this->product + 1000, RowHandle::of('inventory_lots', $this->lot)))->toBeNull();
+});
+
+it('offers a case\'s lots of the viewer\'s companies before the bound, and finds the rest by lot code (PJ-07; OD-10; QB-05)', function () {
+    $other = countPageAcross($this);
+    // Older lots of the first company fill the first page.
+    foreach (InventoryLot::factory()->count(DiscrepancyQueries::PAGE)->create(['product_id' => $this->product, 'source_company_id' => $this->company->id]) as $filler) {
+        DB::table('stock_lot_balances')->insert(['lot_id' => $filler->id, 'product_id' => $this->product, 'location_id' => $this->rack, 'condition' => 'USABLE', 'qty' => '1']);
+    }
+
+    $resolver = Authorization::admin([$this->foreign->company->id], ['stock.view', 'evidence.view', 'stock.resolve_unattributed_evidence']);
+    $case = countPageProps($this, $resolver)['cases']['rows'][0];
+    expect(collect($case['lots'])->pluck('lot')->all())->toBe([RowHandle::of('inventory_lots', $other)])->and($case['lots_more'])->toBeFalse();
+
+    $all = countPageProps($this, $this->owner)['cases']['rows'][0];
+    $code = (string) DB::table('inventory_lots')->where('id', $other)->value('lot_code');
+    $found = countPageProps($this, $this->owner, "/gudang/selisih-temuan?kasus_lot={$all['id']}&cari_lot=".urlencode($code))['cases']['rows'][0];
+    expect($all['lots'])->toHaveCount(DiscrepancyQueries::PAGE)->and($all['lots_more'])->toBeTrue()
+        ->and(collect($found['lots'])->pluck('lot')->all())->toBe([RowHandle::of('inventory_lots', $other)])->and($found['lots_find'])->toBe($code);
+});
+
+it('refuses a restoration through ROUTE-197 of a loss at another rack than the finding\'s (AX-07; L-31; C-14)', function () {
+    $elsewhere = ReceivingWorld::rack();
+    $lot = StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->unit, $elsewhere, '5', '10000');
+    $count = CountWorld::open($this->applier->id, $this->product, $elsewhere);
+    expect(CountWorld::line($this->applier->id, $count, $this->product, $elsewhere, '4'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($count, [AdjustmentWorld::pick($lot, $elsewhere, '1')], evidence: [$this->evidence])))->toBe('COMMITTED');
+    $consumption = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $surplus = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $surplus, $this->product, $this->rack, '11'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($surplus)))->toBe('COMMITTED');
+    $finding = (int) DB::table('stock_count_findings')->where('state', 'OPEN')->value('id');
+
+    expect(CountWorld::attribute($this->owner->id, $finding, $this->company->id, '10000', [['consumption' => $consumption, 'qty' => '1']]))->toContain('C-14')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('0.000')
+        ->and(DB::table('stock_count_findings')->where('id', $finding)->value('state'))->toBe('OPEN');
 });

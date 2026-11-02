@@ -25,7 +25,7 @@ type Page<Row> = { rows: Row[]; more: string | null; cursor_failed: boolean };
 type Candidate = { lot: string; code: string; company: string; qty: string; cost: string | null };
 type Exposure = { id: string; company: string; exposure: string; assigned: string };
 type LiveLot = { lot: string; code: string; qty: string; company: string; company_id: string };
-type Case = { id: string; kind: 'LOSS' | 'CONDITION_CHANGE'; product: string; unit: string; rack: string; condition: 'USABLE' | 'UNUSABLE'; date: string; reason: string; actor: string; recognized: string; found: string; resolved: string; pending: string; candidates: Candidate[]; exposures: Exposure[]; lots: LiveLot[] };
+type Case = { id: string; kind: 'LOSS' | 'CONDITION_CHANGE'; product: string; unit: string; rack: string; condition: 'USABLE' | 'UNUSABLE'; date: string; reason: string; actor: string; recognized: string; found: string; resolved: string; pending: string; candidates: Candidate[]; exposures: Exposure[]; lots: LiveLot[]; lots_more: boolean; lots_find: string | null };
 type Resolution = { id: string; kind: 'OWNER_ATTRIBUTION' | 'EVIDENCE_IDENTIFIED'; product: string; rack: string; date: string; reason: string | null; actor: string | null; lines: { company: string; qty: string }[]; reversible: boolean };
 type Can = { surplus: boolean; resolve: boolean; evidence: boolean; upload: boolean };
 type Props = {
@@ -159,6 +159,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
             )}
             {row.exposures.length > 0 && <p data-slot="case-exposures" className="text-text-secondary">{row.exposures.map((one) => t('discrepancies.exposure', { perusahaan: one.company, paparan: one.exposure, ditetapkan: one.assigned })).join(' · ')}</p>}
             {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} />}
+            {(can.resolve || can.evidence) && (row.lots_more || row.lots_find !== null) && <ChoicesFind disabled={frozen} onFind={(text) => { router.reload({ only: ['cases'], data: { kasus_lot: row.id, cari_lot: text }, preserveUrl: true }); }} />}
             {(can.resolve || can.evidence) && row.lots.length > 0 && (
                 <fieldset disabled={frozen} data-slot="case-lots" className="flex min-w-0 flex-col gap-2">
                     <legend className="font-medium">{t('discrepancies.field.close')}</legend>

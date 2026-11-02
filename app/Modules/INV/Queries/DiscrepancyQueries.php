@@ -71,7 +71,7 @@ final class DiscrepancyQueries
      *
      * @return array{rows: list<array<string, mixed>>, more: ?string, cursor_failed: bool}
      */
-    public function cases(int $viewerId, ?string $after = null): array
+    public function cases(int $viewerId, ?string $after = null, ?string $lotCase = null, ?string $lotFind = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $key = $after === null ? null : StockCursor::read($viewer, $after, ['list' => 'cases'], 1);
@@ -95,7 +95,7 @@ final class DiscrepancyQueries
                 'recognized' => StockFigures::plain(Row::text($row, 'recognized_qty_base')), 'found' => StockFigures::plain(Row::text($row, 'found_qty_base')), 'resolved' => StockFigures::plain(Row::text($row, 'resolved_qty_base')), 'pending' => StockFigures::plain(Row::text($row, 'pending_qty_base')),
                 'candidates' => $snapshot[$id]['candidates'] ?? [],
                 'exposures' => $snapshot[$id]['exposures'] ?? [],
-                'lots' => $viewer->has('stock.resolve_unattributed') || $viewer->has('stock.resolve_unattributed_evidence') ? $this->liveLots($viewerId, $id) : [],
+                ...($viewer->has('stock.resolve_unattributed') || $viewer->has('stock.resolve_unattributed_evidence') ? $this->liveLots($viewerId, $id, $lotCase === Row::text($row, 'public_id') ? $lotFind : null) : ['lots' => [], 'lots_more' => false, 'lots_find' => null]),
             ];
         }
 
@@ -271,29 +271,29 @@ final class DiscrepancyQueries
     }
 
     /**
-     * The lots still holding claims in the case's scope now: what a resolution closes; another company's identity to the Owner alone (PJ-07).
+     * The lots still holding claims in the case's scope now: what a resolution closes, the viewer's companies' alone before the bound; another company's identity to the Owner alone (PJ-07). Past the bound, a lot code finds the rest.
      *
-     * @return list<array<string, mixed>>
+     * @return array{lots: list<array<string, mixed>>, lots_more: bool, lots_find: ?string}
      */
-    private function liveLots(int $viewerId, int $case): array
+    private function liveLots(int $viewerId, int $case, ?string $find): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $row = DB::table('unattributed_loss_cases')->where('id', $case)->first(['product_id', 'location_id', 'condition']);
 
         if ($row === null) {
-            return [];
+            return ['lots' => [], 'lots_more' => false, 'lots_find' => null];
         }
 
-        $lots = [];
+        $query = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('companies as o', 'o.id', '=', 'i.source_company_id')->where('b.product_id', (int) Row::text($row, 'product_id'))->where('b.location_id', (int) Row::text($row, 'location_id'))->where('b.condition', Row::text($row, 'condition'))->where('b.qty', '>', 0)
+            ->when($find !== null, fn (Builder $code) => $code->where('i.lot_code', 'ilike', '%'.addcslashes((string) $find, '%_\\').'%'));
 
-        foreach (DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('companies as o', 'o.id', '=', 'i.source_company_id')->where('b.product_id', (int) Row::text($row, 'product_id'))->where('b.location_id', (int) Row::text($row, 'location_id'))->where('b.condition', Row::text($row, 'condition'))->where('b.qty', '>', 0)->orderBy('i.business_date')->orderBy('i.id')->limit(self::PAGE)->get(['b.lot_id', 'b.qty', 'i.lot_code', 'i.source_company_id', 'o.code', 'o.public_id']) as $lot) {
-            $company = (int) Row::text($lot, 'source_company_id');
-
-            if ($viewer->ownerRole || $viewer->scope->includes($company)) {
-                $lots[] = ['lot' => RowHandle::of('inventory_lots', (int) Row::text($lot, 'lot_id')), 'code' => Row::text($lot, 'lot_code'), 'qty' => StockFigures::plain(Row::text($lot, 'qty')), 'company' => Row::text($lot, 'code'), 'company_id' => Row::text($lot, 'public_id')];
-            }
+        if (! $viewer->ownerRole) {
+            $viewer->scope->apply($query, 'i.source_company_id');
         }
 
-        return $lots;
+        $found = $query->orderBy('i.business_date')->orderBy('i.id')->limit(self::PAGE + 1)->get(['b.lot_id', 'b.qty', 'i.lot_code', 'o.code', 'o.public_id'])->all();
+        $lots = array_map(fn (object $lot): array => ['lot' => RowHandle::of('inventory_lots', (int) Row::text($lot, 'lot_id')), 'code' => Row::text($lot, 'lot_code'), 'qty' => StockFigures::plain(Row::text($lot, 'qty')), 'company' => Row::text($lot, 'code'), 'company_id' => Row::text($lot, 'public_id')], array_slice($found, 0, self::PAGE));
+
+        return ['lots' => $lots, 'lots_more' => count($found) > self::PAGE, 'lots_find' => $find];
     }
 }
