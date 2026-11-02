@@ -22,6 +22,7 @@ use App\Modules\FIN\Services\ReceiptSubjects;
 use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\FIN\Services\SettlementDocumentChanges;
 use App\Modules\FUL\Services\HandoverPredicate;
+use App\Modules\FUL\Services\DeliverySubjects;
 use App\Modules\FUL\Services\ServiceHandoverSubjects;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
@@ -95,7 +96,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->tag([ReceivablePredicate::class, PaymentPredicate::class], CompletionPredicateProvider::TAG);
 
         // FUL's parts (TASK-047): the BAST's subject, a recorded handover, and the fulfilment predicate's service lines.
-        $this->app->tag([ServiceHandoverSubjects::class], DocumentSubjectProvider::TAG);
+        $this->app->tag([ServiceHandoverSubjects::class, DeliverySubjects::class], DocumentSubjectProvider::TAG);
         $this->app->tag([HandoverPredicate::class], CompletionPredicateProvider::TAG);
 
         // PUR's parts (TASK-037): the purchase as the subject of its PO and Surat Pesanan, predicate 8's remainders, PG-011's *Pengadaan*.
