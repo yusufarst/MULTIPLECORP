@@ -2,6 +2,7 @@
 
 namespace App\Modules\INV\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Data\StockFigures;
@@ -174,13 +175,14 @@ final class SupplierReturnQueries
     public function proofs(int $viewerId, string $casePublicId, ?string $find): array
     {
         $case = $this->caseOf($viewerId, $casePublicId);
+        $types = $case === null ? [] : self::visibleTypes($this->capabilities->for($viewerId), $case['company']);
 
-        if ($case === null) {
+        if ($case === null || $types === []) {
             return ['find' => $find, 'rows' => [], 'more' => false];
         }
 
         $like = $find === null ? null : '%'.addcslashes(mb_strtolower($find), '%_\\').'%';
-        $found = DB::table('evidence_documents as e')->where('e.company_id', $case['company'])->where('e.evidence_scope', 'COMPANY')
+        $found = DB::table('evidence_documents as e')->where('e.company_id', $case['company'])->where('e.evidence_scope', 'COMPANY')->whereIn('e.evidence_type', $types)
             ->when($like !== null, fn (Builder $where) => $where->whereRaw('(lower(e.declared_issuer) like ? or lower(e.issuer_reference) like ?)', [$like, $like]))
             ->orderByDesc('e.id')->limit(self::PROOFS + 1)->get(['e.public_id', 'e.declared_issuer', 'e.issuer_reference', 'e.document_date'])->all();
 
@@ -267,11 +269,17 @@ final class SupplierReturnQueries
     }
 
     /** A proof of the case's company by its public identifier. */
-    public function evidenceOf(int $companyId, string $publicId): ?int
+    public function evidenceOf(int $viewerId, int $companyId, string $publicId): ?int
     {
-        $id = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? DB::table('evidence_documents')->where('public_id', strtolower($publicId))->where('company_id', $companyId)->where('evidence_scope', 'COMPANY')->value('id') : null;
+        $row = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? DB::table('evidence_documents')->where('public_id', strtolower($publicId))->where('company_id', $companyId)->where('evidence_scope', 'COMPANY')->first(['id', 'evidence_type']) : null;
 
-        return is_numeric($id) ? (int) $id : null;
+        return $row !== null && EvidenceTypes::mayView($this->capabilities->for($viewerId), Row::text($row, 'evidence_type'), $companyId) ? (int) Row::text($row, 'id') : null;
+    }
+
+    /** @return list<string> the evidence types the viewer sees in the company: `evidence.view` and the type's family (PJ-08) */
+    private static function visibleTypes(Authority $viewer, int $companyId): array
+    {
+        return array_values(array_filter(EvidenceTypes::TYPES, fn (string $type): bool => EvidenceTypes::mayView($viewer, $type, $companyId)));
     }
 
     /** @param  list<int>|null  $companies */

@@ -157,7 +157,7 @@ final class SupplierReturnController extends Controller
         }
 
         $proof = self::nullable($input['bukti'] ?? null);
-        $evidence = $proof === null ? null : ($this->queries->evidenceOf($case['company'], $proof) ?? throw ValidationException::withMessages(['bukti' => self::say('projects.validation.unknown')]));
+        $evidence = $proof === null ? null : ($this->queries->evidenceOf($actor, $case['company'], $proof) ?? throw ValidationException::withMessages(['bukti' => self::say('projects.validation.unknown')]));
 
         if ($kind === 'CREDIT' && ! $correction && $evidence === null) {
             throw ValidationException::withMessages(['bukti' => self::say('projects.validation.required')]);

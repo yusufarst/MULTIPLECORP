@@ -3,6 +3,7 @@
 namespace App\Modules\PUR\Services;
 
 use App\Modules\CST\Services\CostPosting;
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Services\EvidenceGuard;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\PUR\Data\ReturnSettlement;
@@ -30,6 +31,9 @@ final class ReturnOutcomes
 
     /** The purchase value its lines carry: goods and non-creditable tax. */
     private const VALUE = 'coalesce(sum(b.goods_value + b.noncreditable_tax_value), 0) as value';
+
+    /** The purchase's payments, each net of its contras (C-45). */
+    private const PAID = 'coalesce(sum(d.amount - coalesce(f.contra_amount, 0)), 0) as paid';
 
     /** A case's audited replacement declarations, each a quantity, a correction taking one back. */
     private const REPLACEMENTS = "a.action = 'PUR.ReturnOutcomeRecorded' and a.entity_type = 'correction_case' and a.after->>'outcome' = 'REPLACEMENT'";
@@ -177,9 +181,11 @@ final class ReturnOutcomes
             throw Refused::rejected('C-46', ['reason' => 'above_open', 'open' => $cap->toString()]);
         }
 
-        $proof = $evidence === null ? null : DB::table('evidence_documents')->where('id', $evidence)->where('company_id', $company)->where('evidence_scope', 'COMPANY')->exists();
+        // The proof is the company's own and one the actor may see: `evidence.view` and its type's family (PJ-08).
+        $type = $evidence === null ? null : DB::table('evidence_documents')->where('id', $evidence)->where('company_id', $company)->where('evidence_scope', 'COMPANY')->value('evidence_type');
+        $authority = $context->authority();
 
-        if ($proof !== true) {
+        if (! is_string($type) || $authority === null || ! EvidenceTypes::mayView($authority, $type, $company)) {
             throw Refused::rejected('C-14', ['reason' => 'evidence']);
         }
 
@@ -315,14 +321,14 @@ final class ReturnOutcomes
         ]);
     }
 
-    /** The purchase value not yet paid or credited: its lines' goods and non-creditable tax, less its payments and its credits. */
+    /** The purchase value not yet paid or credited: its lines' goods and non-creditable tax, less its payments net of their contras and its credits. */
     private static function unpaid(int $purchaseId): Money
     {
         $value = DB::table('purchase_line_balances as b')->join('purchase_lines as l', 'l.id', '=', 'b.purchase_line_id')->where('l.purchase_id', $purchaseId)->selectRaw(self::VALUE)->value('value');
-        $paid = DB::table('disbursements')->where('purchase_id', $purchaseId)->where('kind', 'PURCHASE_PAYMENT')->sum('amount');
+        $paid = DB::table('disbursements as d')->leftJoin('money_fact_balances as f', 'f.disbursement_id', '=', 'd.id')->where('d.purchase_id', $purchaseId)->where('d.kind', 'PURCHASE_PAYMENT')->selectRaw(self::PAID)->value('paid');
         $credited = DB::table('purchase_line_adjustments as a')->join('purchase_lines as l', 'l.id', '=', 'a.purchase_line_id')->where('l.purchase_id', $purchaseId)->where('a.kind', 'RETURN_REFUNDED')->sum('a.amount_delta');
 
-        return Money::max(Money::zero(), Money::of(is_numeric($value) ? (string) $value : '0')->minus(Money::of((string) $paid))->minus(Money::of((string) $credited)));
+        return Money::max(Money::zero(), Money::of(is_numeric($value) ? (string) $value : '0')->minus(Money::of(is_numeric($paid) ? (string) $paid : '0'))->minus(Money::of((string) $credited)));
     }
 
     /** The replacement the line still awaits: expected less received. */

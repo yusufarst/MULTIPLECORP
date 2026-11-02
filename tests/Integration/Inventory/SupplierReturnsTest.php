@@ -1,6 +1,8 @@
 <?php
 
+use App\Modules\INV\Data\ReceiptEntry;
 use App\Modules\OPS\Models\CorrectionCase;
+use App\Modules\PUR\Models\PurchaseLine;
 use Brick\Math\BigDecimal;
 use Brick\Math\RoundingMode;
 use Database\Factories\DOC\DocumentTypeFactory;
@@ -149,6 +151,26 @@ it('takes back each outcome declared in error, never beyond what it declared, an
     returnClean();
 });
 
+it('receives the replacement the case declared, never above it, into the case\'s replaced value, and the case then balances (C-29; C-59; AX-04; criterion 4)', function () {
+    expect(ReturnWorld::returnUnits($this->actor, $this->lot, [AdjustmentWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
+    $case = ReturnWorld::lastCase();
+    $purchase = ReturnWorld::purchaseOf($this->lot);
+    $line = (int) DB::table('purchase_lines')->where('purchase_id', $purchase)->value('id');
+    $half = (string) BigDecimal::of(ReturnWorld::figures($case)['returned'])->dividedBy('2', 2, RoundingMode::Down);
+    $receive = fn (string $qty): string => ReceivingWorld::receive($this->actor, $this->company->id, $purchase, $line, $this->unit, $this->rack, $qty, kind: ReceiptEntry::REPLACEMENT, cites: $case);
+
+    // One unit's cost unrecovered first: the replacement takes what stays open over the units it awaits.
+    expect(ReturnWorld::outcome($this->actor, $case, 'UNRECOVERED', amount: $half))->toBe('COMMITTED')
+        ->and($receive('1'))->toContain('C-29')
+        ->and(ReturnWorld::outcome($this->actor, $case, 'REPLACEMENT', qty: '1'))->toBe('COMMITTED')
+        ->and($receive('2'))->toContain('C-29')
+        ->and($receive('1'))->toBe('COMMITTED')
+        ->and(ReturnWorld::figures($case)['replaced'])->toBe((string) BigDecimal::of(ReturnWorld::figures($case)['returned'])->minus($half))
+        ->and(ReceivingWorld::balance($line)->replacement_received_net_qty_base)->toBe('1.000')
+        ->and(ReturnWorld::close($this->actor, $case))->toBe('COMMITTED');
+    returnClean();
+});
+
 it('awaits one case\'s replacement on a line at a time, each case within its own returned units and the product\'s scale (C-29; C-09; DATABASE §5.7)', function () {
     expect(ReturnWorld::returnUnits($this->actor, $this->lot, [AdjustmentWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
     $first = ReturnWorld::lastCase();
@@ -166,10 +188,11 @@ it('awaits one case\'s replacement on a line at a time, each case within its own
     returnClean();
 });
 
-it('caps a supplier credit at the purchase value still unpaid (WF-PUR-03; DATABASE §4.6; C-46)', function () {
+it('caps a supplier credit at the purchase value still unpaid, a reversed payment unpaid again (WF-PUR-03; DATABASE §4.6; C-45; C-46)', function () {
     $purchase = ReturnWorld::purchaseOf($this->lot);
     $value = BigDecimal::of((string) DB::table('purchase_line_balances as b')->join('purchase_lines as l', 'l.id', '=', 'b.purchase_line_id')->where('l.purchase_id', $purchase)->selectRaw('sum(b.goods_value + b.noncreditable_tax_value) as value')->value('value'));
-    DisbursementFactory::new()->createOne(['company_id' => $this->company->id, 'purchase_id' => $purchase, 'amount' => (string) $value->minus('1000')]);
+    $paid = (string) $value->minus('1000');
+    $payment = DisbursementFactory::new()->createOne(['company_id' => $this->company->id, 'purchase_id' => $purchase, 'amount' => $paid])->id;
     expect(ReturnWorld::returnUnits($this->actor, $this->lot, [AdjustmentWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
     $case = ReturnWorld::lastCase();
     $evidence = ReturnWorld::credit($this->company->id);
@@ -178,6 +201,13 @@ it('caps a supplier credit at the purchase value still unpaid (WF-PUR-03; DATABA
         ->and(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '1000.00', evidence: $evidence))->toBe('COMMITTED')
         ->and(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '0.01', evidence: $evidence))->toContain('C-46')
         ->and(ReturnWorld::figures($case)['refunded'])->toBe('1000.00');
+
+    // Part of the payment reversed: that part is unpaid again (ContraPosting::disbursement; C-45).
+    DB::table('money_fact_balances')->insert(['company_id' => $this->company->id, 'disbursement_id' => $payment, 'fact_kind' => 'OTHER_DISBURSEMENT', 'amount' => $paid, 'contra_amount' => '500.00', 'recorded_at' => now()]);
+
+    expect(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '500.01', evidence: $evidence))->toContain('C-46')
+        ->and(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '500.00', evidence: $evidence))->toBe('COMMITTED')
+        ->and(ReturnWorld::figures($case)['refunded'])->toBe('1500.00');
     returnClean();
 });
 
@@ -267,6 +297,30 @@ it('refuses a lot of another purchase and units of two lots in one return (C-08;
         ->and(DB::table('correction_cases')->where('case_kind', 'PURCHASE_RETURN')->count())->toBe(0);
     returnClean();
 });
+
+it('lets a return and a cost correction of its lot both commit, the case\'s returned cost the corrected one, in both orders on real sessions (M-07; AX-34; LK-13)', function (bool $correctionFirst) {
+    $ids = CostWorld::make($this->company)->ids();
+    [$actor, $rack, $lot] = [$this->actor, $this->rack, $this->lot];
+    $line = (int) DB::table('purchase_lines')->where('purchase_id', ReturnWorld::purchaseOf($lot))->value('id');
+
+    $results = Sessions::run([
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $correctionFirst
+            ? InvoiceWorld::word(CostWorld::resume($ids)->correctPrice(PurchaseLine::query()->findOrFail($line), '132000.00'))
+            : ReturnWorld::returnUnits($actor, $lot, [AdjustmentWorld::pick($lot, $rack, '2')]), 'the first holds the lot'),
+        'second' => static function () use ($correctionFirst, $ids, $line, $actor, $lot, $rack): string {
+            Barrier::await('the first holds the lot');
+
+            return $correctionFirst
+                ? ReturnWorld::returnUnits($actor, $lot, [AdjustmentWorld::pick($lot, $rack, '2')])
+                : InvoiceWorld::word(CostWorld::resume($ids)->correctPrice(PurchaseLine::query()->findOrFail($line), '132000.00'));
+        },
+    ]);
+
+    expect($results)->toBe(['first' => 'COMMITTED', 'second' => 'COMMITTED'])
+        ->and(ReturnWorld::figures(ReturnWorld::lastCase())['returned'])->toBe('26400.00')
+        ->and(returnOnHand($this->product))->toBe('8.000');
+    returnClean();
+})->with(['the correction first' => true, 'the return first' => false]);
 
 it('leaves a return racing a dispatch of the same lot one of them, never both beyond the lot, in both orders on real sessions (M-01; ST-06; LK-13)', function (bool $dispatchFirst) {
     [$actor, $company, $line, $unit, $rack, $lot, $product] = [$this->actor, $this->company->id, $this->line, $this->unit, $this->rack, $this->lot, $this->product];

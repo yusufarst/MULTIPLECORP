@@ -1,5 +1,7 @@
 <?php
 
+use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\INV\Queries\SupplierReturnQueries;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
@@ -95,6 +97,29 @@ it('records an outcome through ROUTE-177 in place, and closes from PG-028 back t
     $this->actingAs($this->returner)->post("/dokumen/kasus/{$case}/tutup", ['command_id' => (string) Str::uuid(), 'lock_version' => $lock, 'alasan' => 'Retur selesai', 'asal' => 'retur'])
         ->assertRedirect("/gudang/retur-pemasok?kasus={$case}");
     expect(DB::table('correction_cases')->where('id', $id)->value('state'))->toBe('CLOSED');
+});
+
+it('lists and takes as a supplier credit\'s proof only evidence the viewer may see, by evidence.view and its family (PJ-08; PERMISSIONS_MATRIX row 91)', function () {
+    expect(ReturnWorld::returnUnits($this->returner->id, $this->lot, [AdjustmentWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
+    $id = ReturnWorld::lastCase();
+    $case = (string) DB::table('correction_cases')->where('id', $id)->value('public_id');
+    $bill = ReturnWorld::credit($this->company->id);
+    $statement = (int) EvidenceDocument::factory()->bankStatement()->create(['company_id' => $this->company->id])->id;
+    $handle = fn (int $evidence): string => (string) DB::table('evidence_documents')->where('id', $evidence)->value('public_id');
+    $blind = Authorization::admin([$this->company->id], ['purchase_return.record', 'stock.view', 'cost.view']);
+    $proofs = fn (object $viewer): array => collect(app(SupplierReturnQueries::class)->proofs($viewer->id, $case, null)['rows'])->pluck('id')->all();
+    $credit = fn (int $evidence): array => ['command_id' => (string) Str::uuid(), 'hasil' => 'CREDIT', 'nilai' => '1000.00', 'bukti' => $handle($evidence), 'alasan' => 'Kredit dari pemasok', 'tanggal' => BusinessDate::today()];
+    $outcome = "/pembelian/{$this->purchase}/retur/{$case}/hasil";
+
+    // A bank statement is finance's family; without evidence.view nothing at all (PJ-08).
+    expect($proofs($this->returner))->toContain($handle($bill))->not->toContain($handle($statement))->and($proofs($blind))->toBe([]);
+    $this->actingAs($this->returner)->post($outcome, $credit($statement))->assertSessionHasErrors('bukti');
+    $this->actingAs($blind)->post($outcome, $credit($bill))->assertSessionHasErrors('bukti');
+    expect(ReturnWorld::outcome($blind->id, $id, 'CREDIT', amount: '1000.00', evidence: $bill))->toContain('C-14')
+        ->and(ReturnWorld::figures($id)['refunded'])->toBe('0.00');
+
+    $this->actingAs($this->returner)->post($outcome, $credit($bill))->assertRedirect("/gudang/retur-pemasok?kasus={$case}");
+    expect(ReturnWorld::figures($id)['refunded'])->toBe('1000.00');
 });
 
 it('answers another company\'s purchase or case as unknown (SM-01; RC-05)', function () {
