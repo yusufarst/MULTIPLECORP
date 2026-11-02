@@ -179,6 +179,7 @@ it('keeps a restoration\'s credit when the closure it followed is superseded (CM
     $shipment = shipped($this, '5');
     expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '3'))->toBe('COMMITTED');
     $wrong = (int) DB::table('delivery_closures')->max('id');
+    $this->travel(1)->seconds();
 
     expect(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '1')]))->toBe('COMMITTED')
         ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '2', supersedes: $wrong))->toBe('COMMITTED')
@@ -216,8 +217,10 @@ it('rejects a likely duplicate closure with its matches until the actor confirms
 
 it('holds back only what a closure closed: an undelivered return before the closure brought back other units (PX-08; SF-RESTORE; criterion 4)', function () {
     $shipment = shipped($this, '5');
-    expect(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '2')]))->toBe('COMMITTED')
-        ->and(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1'))->toBe('COMMITTED')
+    expect(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '2')]))->toBe('COMMITTED');
+    $this->travel(1)->seconds();
+
+    expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '1'))->toBe('COMMITTED')
         ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '3']], $this->proof))->toContain('C-30')
         ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '2']], $this->proof))->toBe('COMMITTED')
         ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '1')]))->toBe('COMMITTED');

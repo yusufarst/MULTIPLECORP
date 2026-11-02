@@ -14,8 +14,9 @@ use Brick\Math\RoundingMode;
 final class ShipmentFigures
 {
     /**
-     * Per shipment line `d`: net shipped, net delivered, closed for refusal or non-delivery, and returned undelivered since the
-     * first such closure, a superseded one included — an UNDELIVERED_RETURN before it brought back other units, which no closure
+     * Per shipment line `d`: net shipped, net delivered, closed for refusal or non-delivery, and returned undelivered after the
+     * first such closure, a superseded one included — strictly after, so a return in the closure's own second releases nothing,
+     * as recorded times are kept to the second — an UNDELIVERED_RETURN before it brought back other units, which no closure
      * held, and one after it keeps its credit when the closure is corrected (PX-08; SF-RESTORE; CM-27).
      */
     public const SQL = <<<'SQL'
@@ -23,7 +24,7 @@ final class ShipmentFigures
         (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id) as delivered,
         (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)) as closed,
         (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
-            and r.recorded_at >= (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT')) as returned
+            and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT')) as returned
         SQL;
 
     /**
