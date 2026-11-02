@@ -36,6 +36,7 @@ type Place = { lot: string; code: string; location: string; rack: string; condit
 type Serial = { handle: string; serial: string; lot: string; location: string; condition: Condition; code: string; rack: string; other: boolean };
 type Units = { find: string | null; places: Place[]; serials: Serial[]; more: boolean; available: string; reservations: Reservation[] };
 type Case = { id: string; kind: string; date: string; lot: string | null; project: string | null; cross: boolean };
+type Cases = { find: string | null; rows: Case[]; more: boolean };
 type Proofs = { find: string | null; rows: { id: string; label: string }[]; more: boolean };
 type Loss = { id: string; type: string; date: string; qty: string; open: string; lot: string; amount: string | null };
 type Failed = { failed: true };
@@ -47,7 +48,7 @@ type Props = {
     search: string | null;
     found: { id: string; name: string; sku: string | null }[];
     units?: Units | null;
-    cases?: Case[] | Failed;
+    cases?: Cases | Failed;
     proofs?: Proofs | Failed;
     losses?: Loss[] | Failed;
     today: string;
@@ -88,7 +89,7 @@ function LossRecord({ loss, today, canReverse }: { loss: Loss; today: string; ca
     );
 }
 
-function Form({ product, action, lot, units, cases, proofs, proofsFailed, today, can, origin, onLeaveGuard }: { product: Product; action: Action; lot: string | null; units: Units; cases: Case[]; proofs: Proofs | null; proofsFailed: boolean; today: string; can: Can; origin: string; onLeaveGuard: (dirty: boolean) => void }) {
+function Form({ product, action, lot, units, cases, proofs, proofsFailed, today, can, origin, onLeaveGuard }: { product: Product; action: Action; lot: string | null; units: Units; cases: Cases | null; proofs: Proofs | null; proofsFailed: boolean; today: string; can: Can; origin: string; onLeaveGuard: (dirty: boolean) => void }) {
     const { t } = useTranslation();
     const from: Condition | null = action === 'kondisi' ? 'USABLE' : action === 'periksa' ? 'UNUSABLE' : null;
     const [quantities, setQuantities] = useState<Record<string, string>>({});
@@ -139,6 +140,16 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
         setKnownProofs((all) => [...all, ...(proofs?.rows ?? [])]);
     }
 
+    // So does the case chosen.
+    const [seenCases, setSeenCases] = useState(cases);
+    const [knownCases, setKnownCases] = useState(cases?.rows ?? []);
+
+    if (cases !== seenCases) {
+        setSeenCases(cases);
+        setKnownCases((all) => [...all, ...(cases?.rows ?? [])]);
+    }
+
+    const caseRows = latest([...knownCases.filter((one) => one.id === caseId), ...(cases?.rows ?? [])], (one) => one.id);
     const offered = (row: { condition: Condition; lot: string }) => (only === null || row.condition === only) && (onlyLot === null || row.lot === onlyLot);
     const places = latest([...knownPlaces.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0), ...units.places], placeKey).filter(offered);
     const serials = latest([...knownSerials.filter((serial) => chosen.includes(serial.handle)), ...units.serials], (serial) => serial.handle).filter(offered);
@@ -150,7 +161,7 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
     const needsCut = Number(short) > 0;
     const covered = decimal.add('0', ...Object.values(cuts).map(figure));
     const needsEvidence = action !== 'periksa';
-    const chosenCase = cases.find((one) => one.id === caseId);
+    const chosenCase = caseRows.find((one) => one.id === caseId);
     const unconfirmed = unidentified && picks.some((pick) => !confirmed.includes(pick.key));
     const blockedByAllocation = chosenCase?.cross === true && allocation.trim() === '';
     const signature = JSON.stringify([picks, date.date, kind, caseId, cuts]);
@@ -313,16 +324,23 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
             {needsCut && (can.reserve
                 ? <ReservationCut shortfall={t('stock.reverse.shortfall', { kurang: short })} unit={product.unit} reservations={units.reservations} cuts={cuts} scale={product.scale} onCut={(id, value) => { setCuts({ ...cuts, [id]: value ?? '' }); }} />
                 : <p role="alert" className="text-body font-medium text-danger-fg">{t('receiving.refusal.reservations')}</p>)}
-            {action === 'penyesuaian' && cases.length > 0 && (
+            {action === 'penyesuaian' && (caseRows.length > 0 || cases?.find != null) && (
                 <FormField label={t('adjustments.field.case')} error={command.errors.kasus}>
                     {(control) => (
                         <NativeSelect {...control} value={caseId} disabled={frozen} onChange={(event) => { setCaseId(event.target.value); }}>
                             <option value="">{t('adjustments.no_case')}</option>
-                            {cases.map((one) => <option key={one.id} value={one.id}>{[one.date, one.lot, one.project].filter((part) => part !== null).join(' · ')}</option>)}
+                            {caseRows.map((one) => <option key={one.id} value={one.id}>{[one.date, one.lot, one.project].filter((part) => part !== null).join(' · ')}</option>)}
                         </NativeSelect>
                     )}
                 </FormField>
             )}
+            {action === 'penyesuaian' && cases !== null && cases.find !== null && (
+                <>
+                    {cases.rows.length === 0 && <p role="status" className="text-body text-text-secondary">{t('adjustments.case_none')}</p>}
+                    <Button variant="ghost" size="sm" className="self-start" disabled={frozen} onClick={() => { router.reload({ only: ['cases'], preserveUrl: true }); }}>{t('adjustments.all_cases')}</Button>
+                </>
+            )}
+            {action === 'penyesuaian' && cases !== null && (cases.more || cases.find !== null) && <ChoicesFind disabled={frozen} label={t('adjustments.find_case')} help={t('adjustments.find_case_help')} onFind={(text) => { router.reload({ only: ['cases'], data: { cari_kasus: text }, preserveUrl: true }); }} />}
             {chosenCase?.cross === true && (
                 <FormField label={t('forms.intercompany_reason')} error={command.errors.alasan_alokasi}>
                     {(control) => <Input {...control} value={allocation} maxLength={500} disabled={frozen} onChange={(event) => { setAllocation(event.target.value); }} />}
@@ -430,7 +448,7 @@ export default function Adjustments({ product, action, lot, search, found, units
                             </div>
                         )}
                         {current !== null && (units === undefined || units === null ? <RegionLoading /> : (
-                            <Form key={current} product={product} action={current} lot={lot} units={units} cases={loaded<Case[]>(cases) ?? []} proofs={loaded<Proofs>(proofs)} proofsFailed={proofs !== undefined && 'failed' in proofs} today={today} can={can} origin={origin} onLeaveGuard={setDirty} />
+                            <Form key={current} product={product} action={current} lot={lot} units={units} cases={loaded<Cases>(cases)} proofs={loaded<Proofs>(proofs)} proofsFailed={proofs !== undefined && 'failed' in proofs} today={today} can={can} origin={origin} onLeaveGuard={setDirty} />
                         ))}
                         {shownLosses !== null && shownLosses.length > 0 && (
                             <section data-slot="adjustment-losses" className="flex min-w-0 flex-col gap-2 max-md:pb-18">

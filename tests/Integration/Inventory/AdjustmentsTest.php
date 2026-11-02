@@ -345,6 +345,21 @@ it('counts a serial repaired twice once, its still damaged sibling keeping the p
     adjustmentClean();
 });
 
+it('keeps a serial damaged at the receipt the project\'s after another unit\'s case loss on it (L-38; CM-11; WF-PRJ-03 predicate 8)', function () {
+    $project = $this->demand['project']->id;
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $lot = AdjustmentWorld::damagedReceipt($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '1', '1000', $project, $this->line, [['serial' => 'SN-RUSAK', 'damaged' => true], ['serial' => 'SN-LAYAK', 'damaged' => false]]);
+    $sound = (int) DB::table('serial_units')->where('serial_key', 'sn-layak')->value('id');
+    expect(AdjustmentWorld::change($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'USABLE', $sound)], evidence: [$this->evidence])))->toBe('COMMITTED');
+    $case = CorrectionCase::factory()->create(['company_id' => $this->company->id, 'case_kind' => 'DAMAGED_UNIT', 'causal_project_id' => $project, 'source_lot_id' => $lot])->id;
+    expect(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($lot, $this->rack, '1', 'UNUSABLE', $sound)], evidence: [$this->evidence]), 'DISPOSAL', $case))->toBe('COMMITTED');
+    DB::table('correction_cases')->where('id', $case)->update(['state' => 'CLOSED', 'closure_outcome' => 'Selesai', 'closed_by' => $this->actor, 'closed_at' => now()]);
+
+    $items = array_map(fn ($item): string => $item->key, app(ReservationPredicate::class)->states([$project], false)[$project][Predicates::STOCK]->items);
+    expect($items)->toContain('projects.item.unusable_units');
+    adjustmentClean();
+});
+
 it('changes a serial\'s condition with its unit, one change from two commands leaving one, and refuses disposing of usable units (C-02; L-13; WF-INV-06)', function () {
     $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2');
     DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);

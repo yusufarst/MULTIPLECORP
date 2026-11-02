@@ -15271,6 +15271,30 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "adjustments.all_cases": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.case_none": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.find_case": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "adjustments.find_case_help": {
+            "task": "TASK-042",
+            "source": "WF-INV-06; CM-11",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "adjustments.no_proof": {
             "task": "TASK-042",
             "source": "WF-INV-06; CM-11",

@@ -325,7 +325,7 @@ final class LossPosting
             return ['project' => $project, 'company' => (int) Row::text($row, 'company_id'), 'open' => $damaged && ! BigDecimal::of((string) $repaired)->isPositive() ? BigDecimal::one() : BigDecimal::zero()];
         }
 
-        $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.lot_id', $lot)->where('c.kind', 'LOSS')->where('c.bearer_project_id', $project)->sum(DB::raw('b.qty_base - b.restored_qty_base'));
+        $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.lot_id', $lot)->where('c.kind', 'LOSS')->where('c.bearer_project_id', $project)->whereNull('c.correction_case_id')->sum(DB::raw('b.qty_base - b.restored_qty_base'));
 
         return ['project' => $project, 'company' => (int) Row::text($row, 'company_id'), 'open' => BigDecimal::of(Row::text($row, 'damaged_qty_base'))->minus((string) $lost)->minus((string) $repaired)];
     }

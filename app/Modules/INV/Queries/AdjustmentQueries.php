@@ -100,17 +100,21 @@ final class AdjustmentQueries
     }
 
     /**
-     * The open cases of a damaged unit of this product within the viewer's scope (CM-11): a lost unit under one of them is that case's single loss outcome.
+     * The open cases of a damaged unit of this product within the viewer's scope (CM-11), newest first, narrowed by lot or project when the list is cut: a lost unit under one of them is that case's single loss outcome.
      *
-     * @return list<array{id: string, kind: string, date: string, lot: ?string, project: ?string, cross: bool}>
+     * @return array{find: ?string, rows: list<array{id: string, kind: string, date: string, lot: ?string, project: ?string, cross: bool}>, more: bool}
      */
-    public function cases(int $viewerId, int $productId): array
+    public function cases(int $viewerId, int $productId, ?string $find = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
+        $like = $find === null ? null : '%'.addcslashes(mb_strtolower($find), '%_\\').'%';
 
-        return array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('correction_cases', (int) Row::text($row, 'id')), 'kind' => Row::text($row, 'case_kind'), 'date' => substr(Row::text($row, 'recorded_at'), 0, 10), 'lot' => Row::nullable($row, 'lot_code'), 'project' => Row::nullable($row, 'project_number'), 'cross' => Row::nullable($row, 'project_company') !== null && Row::nullable($row, 'project_company') !== Row::text($row, 'source_company_id')],
+        $found = array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('correction_cases', (int) Row::text($row, 'id')), 'kind' => Row::text($row, 'case_kind'), 'date' => substr(Row::text($row, 'recorded_at'), 0, 10), 'lot' => Row::nullable($row, 'lot_code'), 'project' => Row::nullable($row, 'project_number'), 'cross' => Row::nullable($row, 'project_company') !== null && Row::nullable($row, 'project_company') !== Row::text($row, 'source_company_id')],
             $viewer->scope->apply(DB::table('correction_cases as k'), 'k.company_id')->join('inventory_lots as i', 'i.id', '=', 'k.source_lot_id')->leftJoin('projects as p', 'p.id', '=', 'k.causal_project_id')->where('i.product_id', $productId)->where('k.state', 'OPEN')->whereIn('k.case_kind', ['SALES_RETURN', 'DAMAGED_UNIT'])
-                ->orderByDesc('k.id')->limit(self::LOSSES)->get(['k.id', 'k.case_kind', 'k.recorded_at', 'i.lot_code', 'i.source_company_id', 'p.project_number', 'p.company_id as project_company'])->all()));
+                ->when($like !== null, fn (Builder $where) => $where->whereRaw("lower(coalesce(i.lot_code, '') || ' ' || coalesce(p.project_number, '')) like ?", [$like]))
+                ->orderByDesc('k.id')->limit(self::LOSSES + 1)->get(['k.id', 'k.case_kind', 'k.recorded_at', 'i.lot_code', 'i.source_company_id', 'p.project_number', 'p.company_id as project_company'])->all()));
+
+        return ['find' => $find, 'rows' => array_slice($found, 0, self::LOSSES), 'more' => count($found) > self::LOSSES];
     }
 
     /**

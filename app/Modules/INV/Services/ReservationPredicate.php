@@ -29,13 +29,18 @@ final class ReservationPredicate implements CompletionPredicateProvider
             join receiving_lines g on g.purchase_line_id = pl.id and g.damaged_qty_base > 0
             join inventory_lots i on i.receiving_line_id = g.id
             where pr.project_id = l.project_id
-                and g.damaged_qty_base > coalesce((select sum(b.qty_base - b.restored_qty_base) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.lot_id = i.id and c.kind = 'LOSS' and c.bearer_project_id = pr.project_id), 0)
-                    + coalesce((select sum(case when fixed.serial_unit_id is null then fixed.qty else least(fixed.qty, 1) end) from (
-                        select e.serial_unit_id, sum(e.qty_delta_base) as qty from stock_movement_entries e join stock_movements m on m.id = e.stock_movement_id
-                        where e.lot_id = i.id and e.condition = 'USABLE' and (e.serial_unit_id is null or exists (select 1 from stock_movement_entries d where d.serial_unit_id = e.serial_unit_id and d.lot_id = i.id and d.movement_type = 'RECEIPT' and d.condition = 'UNUSABLE'))
-                            and ((m.movement_type = 'CONDITION_CHANGE' and e.qty_delta_base > 0) or (m.movement_type = 'MOVEMENT_REVERSAL' and m.reverses_movement_type = 'CONDITION_CHANGE' and e.qty_delta_base < 0))
-                        group by e.serial_unit_id
-                    ) fixed where fixed.qty > 0), 0)
+                and not exists (select 1 from stock_movement_entries d where d.lot_id = i.id and d.movement_type = 'RECEIPT' and d.serial_unit_id is not null)
+                and g.damaged_qty_base > coalesce((select sum(b.qty_base - b.restored_qty_base) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.lot_id = i.id and c.kind = 'LOSS' and c.bearer_project_id = pr.project_id and c.correction_case_id is null), 0)
+                    + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_movements m on m.id = e.stock_movement_id where e.lot_id = i.id and e.condition = 'USABLE' and ((m.movement_type = 'CONDITION_CHANGE' and e.qty_delta_base > 0) or (m.movement_type = 'MOVEMENT_REVERSAL' and m.reverses_movement_type = 'CONDITION_CHANGE' and e.qty_delta_base < 0))), 0)
+            union
+            select i.id from project_lines pr
+            join purchase_lines pl on pl.project_line_id = pr.id
+            join receiving_lines g on g.purchase_line_id = pl.id and g.damaged_qty_base > 0
+            join inventory_lots i on i.receiving_line_id = g.id
+            join stock_movement_entries d on d.lot_id = i.id and d.movement_type = 'RECEIPT' and d.condition = 'UNUSABLE' and d.serial_unit_id is not null
+            join serial_units s on s.id = d.serial_unit_id and s.state = 'IN_STOCK' and s.current_condition = 'UNUSABLE' and s.current_lot_id = i.id
+            where pr.project_id = l.project_id
+                and coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_movements m on m.id = e.stock_movement_id where e.serial_unit_id = s.id and e.condition = 'USABLE' and ((m.movement_type = 'CONDITION_CHANGE' and e.qty_delta_base > 0) or (m.movement_type = 'MOVEMENT_REVERSAL' and m.reverses_movement_type = 'CONDITION_CHANGE' and e.qty_delta_base < 0))), 0) <= 0
         ) causal where exists (select 1 from stock_lot_balances u where u.lot_id = causal.lot_id and u.condition = 'UNUSABLE' and u.qty > 0)) as unusable
         SQL;
 

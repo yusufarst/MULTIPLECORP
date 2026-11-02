@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\INV\Queries\AdjustmentQueries;
+use App\Modules\OPS\Models\CorrectionCase;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Illuminate\Support\Facades\DB;
@@ -176,4 +177,22 @@ it('finds the units a move needs past the first page: a lot with its serials, a 
     expect(collect($bySerial['serials'])->pluck('handle')->all())->toBe([RowHandle::of('serial_units', $serial)])
         ->and(collect($bySerial['places'])->pluck('lot')->all())->toBe([RowHandle::of('inventory_lots', $other)])
         ->and(collect($found((string) DB::table('inventory_lots')->where('id', $other)->value('lot_code'))['serials'])->pluck('handle')->all())->toBe([RowHandle::of('serial_units', $serial)]);
+});
+
+it('reaches a case past the newest by its lot or project, and says the list is cut (CM-11; WF-INV-06)', function () {
+    $queries = app(AdjustmentQueries::class);
+    $lots = [];
+
+    foreach (range(1, AdjustmentQueries::LOSSES + 1) as $index) {
+        $lots[] = StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->demand['unit'], $this->rack, '1');
+        CorrectionCase::factory()->create(['company_id' => $this->company->id, 'case_kind' => 'DAMAGED_UNIT', 'source_lot_id' => end($lots)]);
+    }
+
+    $oldest = (string) DB::table('inventory_lots')->where('id', $lots[0])->value('lot_code');
+    $all = $queries->cases($this->actor->id, $this->product);
+    $found = $queries->cases($this->actor->id, $this->product, $oldest);
+
+    expect($all['more'])->toBeTrue()->and($all['rows'])->toHaveCount(AdjustmentQueries::LOSSES)->and(collect($all['rows'])->pluck('lot')->all())->not->toContain($oldest)
+        ->and($found['more'])->toBeFalse()->and(collect($found['rows'])->pluck('lot')->all())->toBe([$oldest])
+        ->and($queries->cases($this->actor->id, $this->product, 'tidak-ada')['rows'])->toBe([]);
 });
