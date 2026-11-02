@@ -63,6 +63,11 @@ final class CorrectionCasesController extends Controller
         };
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text]);
 
+        // INT-271 on PG-028: a purchase return's "Tutup Kasus" answers on the page that sent it (NAV-028).
+        if ($request->input('asal') === 'retur' && $case->case_kind === 'PURCHASE_RETURN') {
+            return redirect()->to('/gudang/retur-pemasok?'.http_build_query(['kasus' => $case->public_id]), 303);
+        }
+
         return redirect()->to(self::PAGE.'?'.http_build_query(['perusahaan' => self::query($request, 'perusahaan'), 'kasus' => $case->public_id]), 303);
     }
 

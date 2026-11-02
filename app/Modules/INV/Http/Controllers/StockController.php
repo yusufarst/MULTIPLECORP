@@ -9,6 +9,7 @@ use App\Modules\INV\Queries\AdjustmentQueries;
 use App\Modules\INV\Queries\MovementHistory;
 use App\Modules\INV\Queries\ReceivingQueries;
 use App\Modules\INV\Queries\StockViews;
+use App\Modules\INV\Queries\SupplierReturnQueries;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
 use Closure;
@@ -34,6 +35,7 @@ final class StockController extends Controller
         private readonly CostFigures $costs,
         private readonly ReceivingQueries $receiving,
         private readonly AdjustmentQueries $adjustments,
+        private readonly SupplierReturnQueries $returns,
     ) {}
 
     /** ROUTE-018: per product or per rack and condition, the stock value of a holder's own companies deferred (PJ-22). */
@@ -69,7 +71,7 @@ final class StockController extends Controller
             'group' => Inertia::defer(self::group(fn (): array => $this->stock->group($actor, $internal, self::query($request, 'lot_setelah'), self::query($request, 'seri_setelah')))),
             'movements' => Inertia::defer(self::group(fn (): array => $this->history->recent($actor, $internal)), 'movements'),
             'costs' => Inertia::defer(self::group(fn (): array => $this->costs->lotsOfProduct($actor, $internal)), 'costs'),
-            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), ...$this->adjustments->can($actor)],
+            'can' => fn (): array => ['purchase' => $this->history->mayPurchase($actor), ...$this->adjustments->can($actor), 'return' => $this->returns->can($actor)['record']],
             'moving' => Inertia::optional(fn (): array => ['units' => $this->adjustments->screen($actor, $internal), 'racks' => $this->adjustments->racks()]),
             'moving_found' => Inertia::optional(fn (): array => $this->adjustments->screen($actor, $internal, self::query($request, 'cari_unit'))),
             'today' => BusinessDate::today(),

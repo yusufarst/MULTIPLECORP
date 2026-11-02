@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -242,34 +242,45 @@ CAP-06 and AC-06 include purchase returns with reasons and reconciling history, 
 - Migration: N/A — no migration or import code in this Task
 - Other: GAP-028's no-cost-lost proof for a return with an unrecovered share recorded as its evidence
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Inventory/SupplierReturnsTest.php` — after 6 of the lot's 10 dispatched, 5 refused with C-03 and 4 committed; a return racing a dispatch of the same lot, one of them committed, in both orders on real sessions (M-01); one lot of the purchase per return, another purchase's lot refused; `tests/Interaction/SupplierReturnsTest.php` — too much REJECTED with the figure.
+- Criterion 2: `SupplierReturnsTest` — the PURCHASE_RETURN movement and consumptions, the lot's net cost drawn into SUPPLIER_RETURN equal to the case's returned cost, no HPP; a return and a cost correction of its lot both committed in both orders, the returned cost the corrected one (M-07); `tests/Feature/INV/SupplierReturnPagesTest.php` — ROUTE-176 answering on PG-028 with the case.
+- Criterion 3: `SupplierReturnsTest` — a return below the reservations refused without its cut and committed with it.
+- Criterion 4: `SupplierReturnsTest` — a replacement raising the line's expectation within the case's own returned units, the product's scale and one case awaited per line at a time; TASK-039's replacement receipt capped by it and moving the case's replaced value; a refund expected keeping the case open; a supplier credit only with a company proof the actor may see, capped by the open part and the purchase value still unpaid, a reversed payment unpaid again; `SupplierReturnPagesTest` — the proofs listed and taken only by `evidence.view` and their family (PJ-08).
+- Criterion 5: `SupplierReturnsTest` — the unrecovered share once on the owning company; a unit damaged under another company's project charged to that project with its allocation, refused and routed to both companies without the bearer in scope, the authority or the reason, and taken back only with the same authority; `tests/Unit/PUR/ReturnSettlementTest.php` — the split over the consumptions against annex 12 and annex 14.
+- Criterion 6: `SupplierReturnsTest` — the closure refused with C-46 until the case balances, each outcome but a refund corrected never beyond what it declared and the case then balanced and closed; `ReturnSettlementTest` — the closure equation; `SupplierReturnPagesTest` — "Tutup Kasus" only once balanced, back on PG-028; a cost correction after closure reopening the case: TASK-040's `tests/Integration/Costing/CostCorrectionTest.php` on a PURCHASE_RETURN case.
+- Criterion 7: `SupplierReturnsTest` and `SupplierReturnPagesTest` — without `purchase_return.record` the routes refused and the controls absent on PG-016 and PG-019.
+- Criterion 8: `SupplierReturnsTest`, `tests/Interaction/SupplierReturnsTest.php` — one `command_id` replayed on ROUTE-176 and ROUTE-177 with its recorded outcome and one effect, a changed body CONFLICT.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `purchase_return.record`, `cases.close` and `stock.allocate_intercompany` separately granted, a cross-company bearer routed (AZ-08), a credit's proof by PJ-08 (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-028, ROUTE-176, ROUTE-177 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-176 and INT-177 (TL-08) PASS in CI
+- [x] Browser E2E if required: J-PUR-03 on the phone and the desktop (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: PG-028 in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 for another company's purchase, case or lot; SM-25 for the case's cost figures without `cost.view`; PJ-08 for a credit's proof (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `4d558c2`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41505916546 (push) and 41505925307 (pull request #62), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/SupplierReturnsTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 4d558c2, CI ubuntu-24.04 run 41505916546, tests/Browser/E2E/returns.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-028 in both languages — `tests/Browser/Localization/returns.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/ReturnToSupplier`, `Services/SupplierReturns`, `Queries/SupplierReturnQueries`, `Http/Controllers/SupplierReturnController`, `StockController`; PUR's `Actions/RecordReturnOutcome`, `Services/ReturnOutcomes`, `Data/ReturnSettlement`, `Queries/PurchaseDetail`; CST's `CostPosting::unsettleReturn`; OPS's `CorrectionCasesController` (the close's way back to PG-028); `resources/js/Pages/INV/SupplierReturns.tsx`, `ProductStock.tsx`, `PUR/Purchase.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixtures and browser specs; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `a314a48`, `3a327dd`, `ac3259d`, `ddb4475`, `4482232`, `c65c430`, `4d558c2`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-044-purchase-return`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed twice: its review of `ac3259d` found 1 P1 and 1 P2, each fixed with its test in `4482232` and answered on the pull request — a supplier credit's proofs listed and taken without `evidence.view` or the type's family (PJ-08), a reversed payment still counted as paid (C-45); its targeted review of `4482232` COMPLETED with no new finding. `c65c430` and `4d558c2` fix what CI found and were not sent to Codex again, under the Owner's anti-loop directive. ER-06: a fresh read-only review before the pull request found 1 P1 and 6 P2, each fixed with its test in `ac3259d`: the first CI run's five PHPStan errors (fingerprints without the company's public key, a cast of a mixed value, two redundant list wrappers); ROUTE-176 resolving only pool evidence, which C-58 refuses, now taking none; the replacement cap and basis per line rather than per case; the supplier credit not capped by the unpaid purchase value; the credit's sign against DATABASE §3.1; no correction of an outcome, so a case whose returned cost a correction lowered could never close; a cause mixed with none charged to one project. Minor: the lot's "Retur ke Pemasok" on PG-019 added; money in messages formatted; the replacement checked against the product's scale; the reconciliation after each scenario now also the cost families (`CostWorld::differences`). **Found by CI and fixed:** the first run (`3a327dd`) failed only PHPStan, fixed in `ac3259d`; the run of `4482232` found a replacement's scale checked through a method this brick/math lacks (PHPStan, and every replacement in the integration and interaction layers), TASK-044's keys out of the catalogue's order in the registry, the receipt test naming its case as a cited receipt, and the credit-cap test's reversed payment written without its contra fact — each fixed in `c65c430`, whose run passed every test suite and failed only PHPStan on the scale's type, bounded at zero in `4d558c2` as `HandoverPosting` does. A push of `4482232` while `ac3259d`'s runs were still going cancelled them (the workflow cancels a branch's run in progress); the later runs cover that commit's code. **Named, for Planning:** (1) no column holds a case's replacement expectation: the line guard holds it and a case's declarations are read from its audit events, so one case's replacement awaits on a line at a time — TASK-039's receipt divides one case's open cost by the line's awaited units; (2) a partial replacement is costed right only once the case's other outcomes are recorded, because that receipt takes the whole open cost over the units awaited; (3) ROUTE-177 carries both the replacement expectation and the unrecovered share, as INT-177 lists them, though ARCHITECTURE §7 names `PurchasePosting` and `CostPosting`: PUR's service calls both; (4) a supplier credit is a positive RETURN_REFUNDED adjustment of the line and the case's refunded value; `refunded_value` is not yet in the `correction_cases` reconciliation family, because the cost fixtures write the counter without facts and a refund's money arrives with TASK-054, which should register it with both sources; (5) the unpaid value is the lines' goods and non-creditable tax less payments net of contras and earlier credits — charges are left out, which errs low; (6) `{ret}` in ROUTE-177's path is the case's public id; (7) "Tutup Kasus" on PG-028 posts TASK-031's ROUTE-271 with `asal=retur`, which brings the answer back to PG-028; (8) a refund expected is recorded as a note on the case only, its money TASK-054's; (9) a return reversed in error stays TASK-048's (CM-37). **Verification:** TypeScript, ESLint and the repository checks locally; Docker Desktop has not run since a power loss and was left so, so every PHP and browser layer rests on CI (DIR-105). Context7 and Graphify not used: a targeted search of INV, PUR, CST and the specifications.
 
 **SAFE NEXT TASK:**
 

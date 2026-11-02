@@ -767,6 +767,33 @@ final class CostPosting
         $this->cases->post($context, (int) $case, ['unrecovered_value' => $unrecovered->toString()], self::REOPENED);
     }
 
+    /**
+     * An unrecovered share recognized in error taken back (C-24; AX-34): the settlement pair mirrored, SUPPLIER_RETURN +u and
+     * LOSS −u on the bearer its last settlement named, never more than the consumption's settlements still carry.
+     */
+    public function unsettleReturn(CommandContext $context, int $consumptionId, Money $amount, string $businessDate): void
+    {
+        $consumption = self::consumption($consumptionId);
+        $case = Row::nullable($consumption, 'correction_case_id');
+        $settlements = DB::table('cost_attributions')->where('stock_consumption_id', $consumptionId)->where('cause', 'RETURN_SETTLEMENT')->where('cost_class', 'LOSS');
+        $settled = Money::of((string) (clone $settlements)->sum('amount'));
+        $last = (clone $settlements)->orderByDesc('id')->first(['bearer_company_id', 'bearer_project_id', 'allocation_reason']);
+
+        if (Row::text($consumption, 'kind') !== 'PURCHASE_RETURN' || $case === null || $last === null || ! $amount->isPositive() || $amount->compareTo($settled) > 0) {
+            throw new InvalidArgumentException("Consumption {$consumptionId} carries no unrecovered share of {$amount->toString()} to take back.");
+        }
+
+        $project = Row::nullable($last, 'bearer_project_id');
+        $locks = self::consumptionLocks($consumptionId);
+        $context->require($project === null ? $locks : $locks->add('projects', ['id' => (int) $project]));
+        $ledger = new CostLedger($context);
+        $row = [...self::drawOf($consumption), 'bearer_company_id' => (int) Row::text($last, 'bearer_company_id'), 'bearer_project_id' => $project, 'allocation_reason' => Row::nullable($last, 'allocation_reason'),
+            'cause' => 'RETURN_SETTLEMENT', 'reverses_attribution_id' => self::initialOf($consumptionId), 'business_date' => $businessDate];
+        $ledger->attribution([...$row, 'cost_class' => 'SUPPLIER_RETURN', 'amount' => $amount->toString()]);
+        $ledger->attribution([...$row, 'cost_class' => 'LOSS', 'amount' => $amount->negated()->toString()]);
+        $this->cases->post($context, (int) $case, ['unrecovered_value' => $amount->negated()->toString()], self::REOPENED);
+    }
+
     /*
      * Charges (SF-CHARGE; AX-29; AX-32; AX-05).
      */

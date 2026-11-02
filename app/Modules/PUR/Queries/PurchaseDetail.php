@@ -80,6 +80,8 @@ final class PurchaseDetail
                 'evidence' => $viewer->allows('evidence.upload', $company),
                 'receive' => $purchase->state === 'OPEN' && $viewer->allows('stock.receive', $company),
                 'reverse' => $viewer->allows('stock.reverse', $company),
+                // PG-028's "Retur ke Pemasok" from the purchase (TASK-044; ADMIN_FLOW §11 CM-16).
+                'return' => $purchase->state !== 'CANCELLED' && $viewer->allows('purchase_return.record', $company),
             ],
         ];
     }
