@@ -16434,6 +16434,402 @@
             "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "deliveries.tab.awaiting": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.tab.recorded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.none_awaiting": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.none_recorded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.list.more": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.shipped_on": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.no_stock": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.section.lines": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.figure.shipped": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.figure.delivered": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.figure.held": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.figure.remainder": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.serials": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.quantity": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.action.close": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.section.record": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.recipient": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.condition": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.condition_help": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.discrepancy": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.proof": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.proof_help": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.upload_proof": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.section.inspection": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.inspector": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.inspection_result": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.action.record": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.section.records": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.none_for_shipment": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.reversal": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.revise_paper": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.action.issue": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.section.closures": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.kind.REFUSED": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.kind.RETURNED_UNDELIVERED": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.kind.LOST_IN_TRANSIT": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.action.supersede": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.confirm.lost": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.confirm.close": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.confirm.correct": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.closure_kind": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.lost_serials": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.right_quantity": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.field.right_quantity_help": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.validation.discrepancy": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.validation.nothing": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.answer.recorded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.answer.closed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.answer.lost": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.answer.corrected": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.remainder": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.reversed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.not_reversible": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.scale": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.serials": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.supersedes": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deliveries.refusal.lost": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryRecorded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryDuplicateConfirmed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryCorrected": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryClosed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryClosureSuperseded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.LossInTransitRecorded": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryClosedDuplicateConfirmed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.LossInTransitDuplicateConfirmed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DeliveryCorrectedDuplicateConfirmed": {
+            "task": "TASK-045",
+            "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

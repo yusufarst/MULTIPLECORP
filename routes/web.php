@@ -14,6 +14,7 @@ use App\Modules\FIN\Http\Controllers\DeductionsController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
 use App\Modules\FIN\Http\Controllers\PaymentsController;
 use App\Modules\FIN\Http\Controllers\ReceivablesController;
+use App\Modules\FUL\Http\Controllers\DeliveryController;
 use App\Modules\FUL\Http\Controllers\HandoverController;
 use App\Modules\IAM\Authentication\CredentialPageHeaders;
 use App\Modules\IAM\Authentication\SessionController;
@@ -239,6 +240,13 @@ Route::post('/keuangan/mutasi-bank/{id}/koreksi', [BankStatementController::clas
 Route::get('/proyek/{id}/serah-terima', [HandoverController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:handover.record'])->name('ful.handovers.show');
 Route::post('/proyek/{id}/serah-terima', [HandoverController::class, 'store'])->whereUuid('id')->middleware(['auth', 'capability:handover.record'])->name('ful.handovers.record');
 Route::post('/proyek/{id}/serah-terima/{ho}/balikkan', [HandoverController::class, 'reverse'])->whereUuid('id')->whereUuid('ho')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.handovers.reverse');
+Route::get('/gudang/pengiriman', [DeliveryController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ful.deliveries.index');
+Route::get('/gudang/pengiriman/{id}', [DeliveryController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record,delivery.close,fulfillment.correct'])->name('ful.deliveries.show');
+Route::post('/gudang/pengiriman/{id}/catat', [DeliveryController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record'])->name('ful.deliveries.record');
+// ROUTE-202: "Terbitkan" of a delivery's DOC-08 or DOC-10 on PG-036, its {id} the document (TASK-029's ROUTE-222).
+Route::post('/gudang/pengiriman/{id}/dokumen', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('ful.deliveries.document');
+Route::post('/gudang/pengiriman/{id}/tutup', [DeliveryController::class, 'close'])->whereUuid('id')->middleware(['auth', 'capability:delivery.close'])->name('ful.deliveries.close');
+Route::post('/gudang/pengiriman/{id}/koreksi', [DeliveryController::class, 'correct'])->whereUuid('id')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.deliveries.correct');
 
 // PG-065 *Akun Saya* (TASK-023; ROUTE-065, ROUTE-111–ROUTE-118; NAV-065): the account's own self-service, SELF on its
 // own row (AU-13; PJ-17), none carrying a `command_id` (CI-09; RB-03); the sensitive steps behind the step-up (AU-15),

@@ -16,8 +16,8 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 87
 
-DONE: 51
-READY: 3
+DONE: 52
+READY: 2
 IN_PROGRESS: 0
 BLOCKED: 5
 VERIFYING: 0
@@ -25,11 +25,11 @@ TODO: 28
 SUPERSEDED: 0
 
 Progress:
-51 / 87
-Percentage: 58.6 %
+52 / 87
+Percentage: 59.8 %
 
-CURRENT TASK: none in progress — TASK-044 — Purchase return to supplier DONE on its branch `task/TASK-044-purchase-return`, CI PASS on `4d558c2`, its pull request #62 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-045 — Deliveries (Pengiriman) and delivery closure, READY, TASK-046 — Direct shipment (drop-ship), READY, and TASK-059 — Search and scanning, READY; TASK-053 and TASK-055 wait on their dependencies; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-045 — Deliveries (Pengiriman) and delivery closure DONE on its branch `task/TASK-045-deliveries`, CI PASS on `72a33e4`, its pull request #63 squash-merged by the executor once eligible (DIR-096)
+NEXT READY TASK: TASK-046 — Direct shipment (drop-ship), READY, and TASK-059 — Search and scanning, READY; TASK-053 and TASK-055 wait on their dependencies; TASK-056 waits on TASK-041, TASK-046 and TASK-055; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -93,7 +93,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-042](TASK-042.md) — Condition, location moves, adjustments and losses
 - [x] [TASK-043](TASK-043.md) — Stock count (opname) and discrepancies
 - [x] [TASK-044](TASK-044.md) — Purchase return to supplier
-- [ ] [TASK-045](TASK-045.md) — Deliveries (Pengiriman) and delivery closure
+- [x] [TASK-045](TASK-045.md) — Deliveries (Pengiriman) and delivery closure
 - [ ] [TASK-046](TASK-046.md) — Direct shipment (drop-ship)
 - [x] [TASK-047](TASK-047.md) — Service fulfillment and handover
 - [ ] [TASK-048](TASK-048.md) — Client returns (sales return)
@@ -185,7 +185,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-042](TASK-042.md) | Condition, location moves, adjustments and losses | Module · INV | HIGH | DONE | 031, 036, 039, 040 | 043, 048, 057 | NO | AGENT | NONE | YES |
 | [TASK-043](TASK-043.md) | Stock count (opname) and discrepancies | Module · INV | HIGH | DONE | 042 | 055, 058 | NO | AGENT | NONE | YES |
 | [TASK-044](TASK-044.md) | Purchase return to supplier | Module · PUR · INV | HIGH | DONE | 037, 039, 040 | 048, 054, 055 | NO | AGENT | NONE | YES |
-| [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | READY | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
+| [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | DONE | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
 | [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | READY | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |

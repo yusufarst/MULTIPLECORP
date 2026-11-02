@@ -134,8 +134,9 @@ final class DispatchRestoration
             $usable = $item['condition'] === 'USABLE' ? $usable->plus($qty) : $usable;
         }
 
-        // PX-08: what has left and has not been delivered is all that can come back this way (CM-06); after delivery a return is TASK-048's.
-        $outstanding = BigDecimal::of(Row::text($line, 'dispatched'))->minus(Row::text($line, 'delivered'));
+        // PX-08: what has left and has not been delivered is all that can come back this way (CM-06), on the project line and on this
+        // shipment alike — another shipment's undelivered units never let this one's delivered goods back (TASK-045); after delivery a return is TASK-048's.
+        $outstanding = BigDecimal::min(BigDecimal::of(Row::text($line, 'dispatched'))->minus(Row::text($line, 'delivered')), self::undelivered($dispatchLineId));
 
         if ($total->isGreaterThan($outstanding)) {
             throw Refused::rejected('C-30', ['reason' => 'above_undelivered', 'remainder' => StockFigures::plain((string) $outstanding)]);
@@ -274,6 +275,16 @@ final class DispatchRestoration
         $row = DB::table('stock_consumption_balances as b')->where('stock_consumption_id', $consumptionId)->first(['qty_base', 'restored_qty_base', 'reclassified_qty_base', 'substituted_qty_base']);
 
         return $row === null ? '0' : StockFigures::remainder(Row::text($row, 'qty_base'), Row::text($row, 'restored_qty_base'), Row::text($row, 'reclassified_qty_base'), Row::text($row, 'substituted_qty_base'));
+    }
+
+    /** What of this shipment line is still out and not delivered: its consumptions' open quantity less its net deliveries (PX-08). */
+    private static function undelivered(int $dispatchLineId): BigDecimal
+    {
+        $open = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.dispatch_line_id', $dispatchLineId)
+            ->selectRaw('coalesce(sum(b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) as open')->value('open');
+        $delivered = DB::table('delivery_lines')->where('dispatch_line_id', $dispatchLineId)->selectRaw('coalesce(sum(case when reverses_delivery_line_id is null then qty_base else -qty_base end), 0) as delivered')->value('delivered');
+
+        return BigDecimal::of(is_numeric($open) ? (string) $open : '0')->minus(is_numeric($delivered) ? (string) $delivered : '0');
     }
 
     private static function dispatchLine(int $dispatchLineId): object

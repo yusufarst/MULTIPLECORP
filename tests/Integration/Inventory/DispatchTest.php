@@ -14,6 +14,7 @@ use Tests\Support\Authorization;
 use Tests\Support\Concurrency\Barrier;
 use Tests\Support\Concurrency\Sessions;
 use Tests\Support\DatabaseTruncation;
+use Tests\Support\DeliveryWorld;
 use Tests\Support\DispatchWorld;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\ReceivingWorld;
@@ -416,7 +417,8 @@ it('caps a restoration by net dispatched − net delivered, and refuses a likely
     expect(DispatchWorld::restore($this->actor, $this->company->id, $later->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($later->consumption, $this->rack, '1')]))->toContain('L-49');
 
     // Five delivered of the six out: what remains undelivered caps the return, though the consumption holds more.
-    DB::table('project_line_balances')->where('project_line_id', $this->line)->update(['delivered_net_qty_base' => '5']);
+    $courier = ReceivingWorld::actor($this->company, DeliveryWorld::CAPABILITIES)->id;
+    expect(DeliveryWorld::record($courier, $this->line, [[$row->dispatch, '4'], [$later->dispatch, '1']], DeliveryWorld::proof($this->company)))->toBe('COMMITTED');
     expect(DispatchWorld::restore($this->actor, $this->company->id, $row->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($row->consumption, $this->rack, '2')], null, [$first], 'Kembali'))->toContain('C-30');
 });
 

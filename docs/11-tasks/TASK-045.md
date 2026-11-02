@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -246,34 +246,47 @@ CAP-07 and AC-07 require partial and full deliveries with recipient, condition, 
 - Migration: N/A — no migration or import code in this Task
 - Other: CM-06, CM-07 and CM-08's expected end states asserted (TEST_STRATEGY §5)
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Fulfillment/DeliveriesTest.php` — 2 of 5 shipped delivered, then the 3 left, each with recipient, condition and its PRIMARY_PROOF link, ON HAND unchanged; `tests/Unit/FUL/ShipmentFiguresTest.php` — the figures; `tests/Browser/E2E/deliveries.spec.ts` — J-FUL-02 on the phone and the desk (CJ-03).
+- Criterion 2: `DeliveriesTest` — above net shipped − net delivered REJECTED C-30, one `command_id` replayed delivering once; `tests/Interaction/DeliveriesTest.php` — INT-201 with the figure, a changed body CONFLICT; `tests/Feature/FUL/DeliveryPagesTest.php` — ROUTE-201 in place.
+- Criterion 3: `DeliveriesTest` — the DELIVERY_DISCREPANCY case opened in the same command, OPEN.
+- Criterion 4: `DeliveriesTest` — a refusal closed without stock, its goods back once through the restoration capped at the undelivered figure, a delivery after it refused; a restoration before a closure releasing nothing it held; a closure superseded once; a shipment's restoration never bringing back what it delivered; a delivery racing the restoration on real sessions, in both orders (architecture challenge 3b); `DeliveryPagesTest` and `tests/Interaction/DeliveriesTest.php` — ROUTE-203 in place with its reason.
+- Criterion 5: `DeliveriesTest` — "Catat Hilang di Perjalanan" with annex 15's figures: HPP −1,000 / LOSS +1,000 on the consumption, the project's HPP and LOSS total unchanged, net dispatched lowered, refused without `stock.adjust`; two of three serials of one lot lost, each LOST.
+- Criterion 6: `DeliveriesTest` — the exact reversal and the right quantity on the same delivery, once, stock untouched; `DeliveryPagesTest` — ROUTE-204 in place; PG-031 flags an issued paper the correction left behind for its revision on PG-036.
+- Criterion 7: `DeliveriesTest` — after the identity substitution the delivery's lines unchanged and DOC-10's facts naming the serial actually shipped; PG-031 flags an issued paper a substitution left behind.
+- Criterion 8: `DeliveryPagesTest` — DOC-08's draft from an accepted delivery, DOC-10's only once its inspection is recorded, ROUTE-202 issuing the BAST once, a second issue no second number (BD-06); the E2E journey opening the BAST's draft on PG-036 (CJ-15).
+- Criterion 9: `DeliveriesTest` and `tests/Interaction/DeliveriesTest.php` — a likely duplicate delivery, and a likely duplicate closure, REJECTED with the matches until confirmed with a reason, under the acknowledged action.
+- Criterion 10: `DeliveryPagesTest` — the closure's, loss's and correction's controls absent without their capabilities, their routes refused; another company's shipment unknown (SM-01).
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `delivery.record`, `delivery.close`, `fulfillment.correct`, `stock.adjust` and `documents.issue` by their routes and controls (TL-06) PASS in CI, in the Feature and Integration suites
+- [x] Route integrity: ROUTE-030, ROUTE-031, ROUTE-201–ROUTE-204 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-201, INT-203, INT-204, INT-015 (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FUL-02 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the pages in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 and SM-04 as above (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `72a33e4`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41529361445 (push) and 41529367581 (pull request #63), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/DeliveriesTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 72a33e4, CI ubuntu-24.04 run 41529361445, tests/Browser/E2E/deliveries.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-030 and PG-031 in both languages — `tests/Browser/Localization/deliveries.spec.ts` PASS; the keys added with their registry rows, proposed copy; DOC-08's and DOC-10's paper labels written in Indonesian whatever the interface language (LOCALIZATION §3.4)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FUL's `Actions/RecordDelivery`, `CloseDelivery`, `CorrectDelivery`; `Services/DeliveryPosting`, `DeliveryClosures`, `DeliveryFacts`, `DeliverySubjects`, `ServiceHandoverSubjects` (DOC-08's delivery arc); `Data/ShipmentFigures`; `Queries/Deliveries`; `Http/Controllers/DeliveryController`; PRJ's `DemandPosting::delivered`; INV's `DispatchRestoration` (the shipment line's cap); `Support/Guards/Families` (net delivered reconciled); `AppServiceProvider`; `resources/js/Pages/FUL/Deliveries.tsx`, `RecordDelivery.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixtures and browser specs; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `1c308b6`, `036ac75`, `b8aeedf`, `7b0d3eb`, `e755982`, `72a33e4`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-045-deliveries`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex reviewed twice: its review of `b8aeedf` found 1 P1 and 3 P2 — PG-031 closed to an actor holding `delivery.close` or `fulfillment.correct` alone, a superseded closure losing a later restoration's credit, a serialized loss refused when the shipment was entered in an alternate unit, PG-030 with no way past its first 50 rows —, each fixed with its test in `7b0d3eb`; its targeted review of `e755982` found 1 P2, a test still expecting the refusal the count-based fix removed, fixed in `72a33e4`; each answered on the pull request. No further review was requested, under the Owner's anti-loop directive. ER-06: a fresh read-only review before the pull request found 4 P1 and 10 P2, fixed in `b8aeedf` with tests where they were defects: PHPStan and Pint errors; DOC-10 drafted for a delivery without inspection; a serialized loss refused when several serials shared one lot's consumption; a closure's held quantity netted against restorations before it; a restoration capped only by the project line, letting delivered goods back through another shipment's remainder; lost serials and re-read consumptions written outside the lock set; no likely-duplicate warning on ROUTE-203 or ROUTE-204; a paper naming serials not yet delivered; an issued paper a substitution left behind unflagged; net delivered unreconciled. **Found by CI and fixed:** the first run (`036ac75`) passed every browser layer and the integration and interaction suites and failed PHPStan, Pint and DOC-10's draft test, fixed in `b8aeedf`; its run failed only the test of a restoration before a closure, both recorded in one second — recorded times are kept to the second, so only a return strictly after the closure releases its hold, and the ordering tests step the clock (`e755982`); that run failed only the test Codex's re-review named, fixed in `72a33e4`. Every push waited for the branch's running CI to end, as the workflow cancels a run in progress. **Named, for Planning:** (1) DOC-10's inspection facts (inspector and result) are recorded in the delivery's audit event — no column holds them and this Task changes no schema; (2) a restoration cites no closure, so what a refusal or non-delivery closure holds back is released by the UNDELIVERED_RETURN recorded after it; one recorded as DISPATCH_REVERSAL leaves the closure holding; (3) ROUTE-202 is an alias of TASK-029's issue route with `{id}` the document, as TASK-041's Surat Jalan alias is; the page drafts first through ROUTE-221 and issues on PG-036; (4) "Catat Hilang di Perjalanan" sits on PG-031 beside the shipment's line rather than on PG-030; (5) `stock.adjust` for a loss is checked beside `delivery.close` before the envelope, as the envelope checks its own; the bearer is the shipment's project, the command's own company, so AZ-08 cannot arise here; (6) a partial delivery records no serials, so a paper names serials only once its line is wholly delivered; (7) PG-030 shows the 50 newest rows per tab without a cursor or branch filter; (8) a closure or correction on a completed project is refused (L-11) until TASK-055's revalidation exists; (9) the delivery predicate of completion is TASK-055's provider, reading the closures this Task records; (10) the authorization, SM-09 (the upload is TASK-030's) and performance suites for these pages beyond the Feature and Integration coverage, and the E2E issue of the BAST on PG-036, are left to the suites' owners; (11) a delivery of a drop-ship confirmation line is TASK-046's. **Verification:** TypeScript, ESLint and the repository checks locally; Docker Desktop has not run since a power loss and was left so, so every PHP and browser layer rests on CI (DIR-105). Context7 and Graphify not used: a targeted search of FUL, INV, PRJ and DOC.
 
 **SAFE NEXT TASK:**
 

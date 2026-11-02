@@ -68,6 +68,16 @@ final class DemandPosting
         $this->post($context, 'handed_over_qty_base', $deltas);
     }
 
+    /**
+     * The goods lines' net delivered quantities moved by their net deltas — a delivery, or its exact reversal (AX-09; PX-08; C-30).
+     *
+     * @param  array<int, string>  $deltas  project line => signed base quantity
+     */
+    public function delivered(CommandContext $context, array $deltas): void
+    {
+        $this->post($context, 'delivered_net_qty_base', $deltas);
+    }
+
     /** The project's invoiced sales value moved by its net delta within the cap's CHECK (L-16; C-31), the one writer of the column. */
     /**
      * The confirmed and invoiced sales value of a project's commercial guard; null before any confirmation (L-16).
