@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W1 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -262,34 +262,59 @@ Damaged, disposed, shrunk or lost goods must leave usable stock explicitly and n
 - Migration: N/A — no migration or import code in this Task
 - Other: M-04's movement racing a count, run with TASK-043; FX-03's unknown-company loss and damaged-return scenarios as far as this Task reaches them; GAP-028's evidence that no cost is lost or counted twice
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Inventory/AdjustmentsTest.php` — 2 usable units to UNUSABLE on the same lot and rack with reason and evidence, ON HAND unchanged, AVAILABLE down by 2; the deferred trigger refuses an unbalanced change; `tests/Browser/E2E/adjustments.spec.ts`.
+- Criterion 2: `AdjustmentsTest` — a change or loss below the reservations commits only with the actor's cuts covering it, the project's reservation lowered with it.
+- Criterion 3: `AdjustmentsTest` and the E2E spec — the explicit re-inspection with its reason.
+- Criterion 4: `AdjustmentsTest`, `tests/Feature/INV/AdjustmentPagesTest.php` — unidentified units recorded only where every candidate lot is one company's and each is confirmed, the oldest shown first; candidate lots across companies refused L-42 until TASK-043's SF-UNATTRIBUTED (see Notes).
+- Criterion 5: `AdjustmentsTest` — exactly 5 of one lot and condition between racks, a −5/+6 refused by the trigger, no reservation or cost changed; the move from PG-019 on the phone in the E2E spec.
+- Criterion 6: `AdjustmentsTest` — 2 shrunk units of 10,000, one LOSS of 20,000 on the owning company in the same transaction; `AdjustmentPagesTest` — no form offers an increase.
+- Criterion 7: `AdjustmentsTest` — a client-damaged unit's disposal, one LOSS of 50,000 on the project its case names, the case's single outcome; a case open on the lot found though the form names none, several asking the actor.
+- Criterion 8: `AdjustmentsTest` — units damaged at the receipt of a project-linked line charged to that project as far as that damage goes, spent once across racks, a repaired unit no longer the project's and, when the re-inspection is undone, the project's again.
+- Criterion 9: `AdjustmentsTest`, the E2E spec — one allocation on a loss borne by another company's project with its reason and authority; otherwise REJECTED, routed with MSG-14 and an event per company, nothing else committed.
+- Criterion 10: `AdjustmentsTest` over the service (`LossPosting::reclassify`) — the pair HPP −50,000 / LOSS +50,000, no stock movement, the allocation kept, X's cost staying 100,000; the delivery closure's call is TASK-045's.
+- Criterion 11: `AdjustmentsTest` — the exact reversal, several racks and serials to each one's place, an allocated loss with its allocation, a second reversal refused C-55; the reclassification's inverse.
+- Criterion 12: `AdjustmentsTest` — a second loss of one serial, or of quantity no longer held, refused.
+- Criterion 13: `AdjustmentsTest` over the service — a warehouse supplier return's unrecovered share once, cost-only, with its allocation; drop-ship's share stays unbuilt (see Notes).
+- Criterion 14: `AdjustmentsTest`, the E2E spec — a likely duplicate REJECTED with MSG-15 and committed only with the actor's reason naming the match, aggregated by place and net of reversals.
+- Criterion 15: `AdjustmentsTest` — the counted scope's version bumps with each command and nothing is overwritten; the STALE at application is proved with TASK-043, as the contract's "M-04 … run with TASK-043" states.
+- Criterion 16: `AdjustmentPagesTest` — the amount only with `cost.view` of the bearer, the other side masked.
+- Criterion 17: `AdjustmentPagesTest`, the E2E spec — a change or move of another company's lot needs one company in scope, its loss the bearer's.
+- Criterion 18: `AdjustmentPagesTest` — each control absent and each route refused without its capability.
+- Criterion 19: `tests/Interaction/AdjustmentsTest.php` — ROUTE-190 and ROUTE-194–ROUTE-196 replayed after re-authentication with one effect, a changed payload CONFLICT.
+- Criterion 20: `StockWorld::ledgerDifferences` and the allocation checks after each scenario through `adjustmentClean()`.
+
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Unit: `tests/Unit/INV/LossCauseTest.php` PASS in CI (TL-03)
+- [x] Feature and Integration: PASS in CI, the integration layer on real PostgreSQL sessions, a loss racing a dispatch at LK-15 and LK-23 (TL-04, TL-05)
+- [x] Authorization: `stock.condition`, `stock.adjust`, `stock.move`, `stock.reverse`, `stock.allocate_intercompany`, `stock.reserve`, the bearer in scope (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-027, ROUTE-190, ROUTE-194–ROUTE-196 audited (TL-07) PASS in CI
+- [x] Interaction: INT-190, INT-194–INT-196 replayed (TL-08) PASS in CI
+- [x] Browser E2E: J-INV-04, J-INV-06, CJ-05, UXS-15, UXS-22 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Localization (TL-10), Responsive (TL-11), Accessibility (TL-12): PASS in CI
+- [x] Visual breathing room/density: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security: SM-01, SM-04, SM-25 as above (TL-14)
+- [x] Performance: PG-027 within QB-05, the same for one lot and many; a condition change and an adjustment of ten lots proportional to their rows — `tests/Performance/AdjustmentQueriesTest.php` (TL-15)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: every file inside the IN SCOPE areas but the wiring named in the Notes; ER-06's and Codex's points dispositioned
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `24226f0`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41372623673 (push) and 41372627875 (pull request #60), every job PASS in each
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/AdjustmentsTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 24226f0, CI ubuntu-24.04 run 41372623673, tests/Browser/E2E/adjustments.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-027 in both languages — `tests/Browser/Localization/adjustments.spec.ts` PASS; the keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/ChangeCondition`, `Reinspect`, `MoveLocation`, `AdjustStock`, `RecognizeLoss`, `ReverseLoss`, `Data/StockPicks`, `Data/LossCause`, `Services/StockPlaces`, `StockChanges`, `LossPosting`, `LossReversal`, `ReservationPredicate`, `MovementHistory`, `Queries/AdjustmentQueries`, `StockViews`, `Http/Controllers/AdjustmentController`, `StockController`, its README; CST's `CostPosting::reverseReclassification` and `CostFigures::lossesOf`; DOC's `EvidenceController`; `RequireCapability`; `resources/js/Pages/INV/`, `features/inv/move-sheet.tsx`, `proof-sheet.tsx`; the routes, navigation and `lang/`; the tests and fixtures, `tests/Support/RouteAudit.php`; this record: the contract, TASK_PLAN, CHANGELOG, CURRENT_HANDOFF
+- Commit SHA: `cff6b5f`, `ef45b7c`, `493cb56`, `a86fdb0`, `639d6cc`, `0b62279`, `46ec69a`, `ac218d6`, `f8d2f50`, `24226f0`, the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-042-adjustments`
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex: its reviews of the pull request found 12 P2 points, each fixed and answered with its test where the logic allows one: a re-inspection undone counting as repaired, in the loss and in predicate 8; the move sheet and PG-027 unable to reach units past the first 200, by search and by scan; a loss reversal's reason shown past its bearer's side; a serial's receipt damage taken from a lot-wide allowance; a serial repaired twice counted twice; the unit, proof and case searches disappearing when a search narrowed them, the older cases unreachable; a case's loss spending receipt damage; a lot scan keeping serials of the place left; an ambiguous scan choosing a unit; amounts of two bearer companies summed against CS-08. Its review of `24226f0` COMPLETED with no open finding. ER-06: a fresh read-only review before the pull request found 4 P1 and 8 P2 points, each fixed with its test: a loss's reversal needing one consumption per part; receipt damage spent across picks; the case derived from the lot and not the payload, its outcome bound; BD-13 by case and aggregated, `duplicate_reason` in the audit; stale cuts not sent; a refused move keeping its sheet; a short reason shown; re-inspected units excluded; disposal of unusable units only; a replay's AZ-08 state; the route audit reading every parameter; the proofs' failed retry, the lot filter, "Batal", the reversal's answer. The reviewer's challenge to a pool-wide movement was weighed and rejected on the trigger below; the loss reason's leak it found on PG-027 and PG-020 is fixed. **Found in CI and fixed:** on a phone the docked scan field lay over the last loss record and "Balikkan Kerugian" could not be pressed, PG-027 now keeps the space; `CostFigures::lossesOf` applies the company scope first (SM-03); the browser fixture's proof repeated its identity key on a second call; the Company-A-only Admin of the routed loss needs TOTP, its capabilities being ADM_PLUS; `tests/Browser/E2E/stock.spec.ts` (TASK-040) assumed its rack on the first page of the rack view, which a shared database's growth broke intermittently, now searched. **Named, for Planning:** (1) PG-027's movements are pool-wide, the header's company and project NULL: `evidence_links_c58_pool_movement` refuses pool evidence on a company's movement, PJ-08 asks pool evidence for shared stock and DATABASE §4.7 says NULL for pool-wide commands, though PJ-03's list omits these; the bearer stays on the consumption and its cost rows, and a pool loss's reason shows only to its bearer's side; (2) evidence is required on a change or adjustment and is pool evidence only; (3) **the unrecovered share of a drop-ship return is not built**: `unrecovered` and `settleReturn` accept a PURCHASE_RETURN consumption only, while the contract says warehouse and drop-ship alike — TASK-044 and TASK-046 must add the line variant; (4) unidentified units across companies are refused L-42 until TASK-043's SF-UNATTRIBUTED; (5) criterion 15 proves the version bump here, its STALE at application with TASK-043; (6) the reclassification has its service and tests, TASK-045 calls it; (7) PG-018's dense phone row has no move link, PG-019 has it; (8) re-inspection attribution assumes repaired units are receipt-damaged first; (9) ROUTE-196 has no L-49, a second reversal being C-55; (10) language-switch retention on PG-027's form is not verified beyond TL-10's both languages; (11) a fungible unit has no identity, so its re-inspection cycles count at the lot and only a serial's repair is capped at one; (12) PG-024's proof search (TASK-041) still leaves when a search narrows it to one page, the shape fixed on PG-027 here, left for a change of its own. **Verification:** the PHP layers named above, Pint, TypeScript, ESLint and the build ran locally on the way; the full Architecture suite and the browser layers rest on CI, as the machine ran at 60–200 MB free; Docker was not restarted (DIR-105). Context7 and Graphify not used: a targeted search of INV, CST and the specifications.
 
 **SAFE NEXT TASK:**
 

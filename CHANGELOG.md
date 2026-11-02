@@ -767,3 +767,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-041 on its branch `task/TASK-041-dispatch`: PG-023 and the scan-led PG-024; ROUTE-186 with HPP at each lot's cost and the allocation overlay; the Surat Jalan, DOC-03; SF-RESTORE on a dispatch (ROUTE-188); the identity substitution (ROUTE-189). A proof registered from PG-022 or PG-024 now keeps the form in place.
 - Every check passed in fresh CI on `3580f5c`. TASK-041 DONE — progress 48 / 87 —; TASK-045 READY beside TASK-042, TASK-044, TASK-046 and TASK-059.
+
+## Unreleased — 2026-11-02, TASK-042 — Condition, location moves, adjustments and losses
+
+- Built TASK-042 on its branch `task/TASK-042-adjustments`: PG-027 with "Ubah Kondisi", "Periksa Ulang" and "Catat Penyesuaian Stok" (ROUTE-194, ROUTE-195), "Pindah Lokasi" from PG-018 and PG-019 (ROUTE-190), a loss's exact reversal (ROUTE-196), and SF-LOSS as the one loss path; predicate 8 now names a project's unresolved unusable units.
+- Every check passed in fresh CI on `24226f0`. TASK-042 DONE — progress 49 / 87 —; TASK-043 READY beside TASK-044, TASK-045, TASK-046 and TASK-059.
