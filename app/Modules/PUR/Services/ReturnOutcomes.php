@@ -5,6 +5,7 @@ namespace App\Modules\PUR\Services;
 use App\Modules\CST\Services\CostPosting;
 use App\Modules\DOC\Services\EvidenceGuard;
 use App\Modules\OPS\Services\CorrectionCases;
+use App\Modules\PUR\Data\ReturnSettlement;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -226,23 +227,14 @@ final class ReturnOutcomes
         ['company' => $company, 'project' => $project, 'source' => $source] = self::bearerOf($case);
         $crossed = $company !== $source;
         $this->ensureBearer($context, $company, $source, $crossed ? $allocationReason : null);
-        $left = $amount;
+        $carried = [];
 
         foreach (self::consumptions($caseId) as $consumption) {
-            if (! $left->isPositive()) {
-                break;
-            }
-
-            $part = Money::min(Money::of((string) DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->where('cost_class', 'SUPPLIER_RETURN')->sum('amount')), $left);
-
-            if ($part->isPositive()) {
-                $this->cost->settleReturn($context, $consumption, $part, $company, $project, $crossed ? trim((string) $allocationReason) : null, $businessDate);
-                $left = $left->minus($part);
-            }
+            $carried[$consumption] = Money::of((string) DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->where('cost_class', 'SUPPLIER_RETURN')->sum('amount'));
         }
 
-        if ($left->isPositive()) {
-            throw Refused::rejected('C-24', ['reason' => 'above_return']);
+        foreach (ReturnSettlement::split($amount, $carried) ?? throw Refused::rejected('C-24', ['reason' => 'above_return']) as $consumption => $part) {
+            $this->cost->settleReturn($context, $consumption, $part, $company, $project, $crossed ? trim((string) $allocationReason) : null, $businessDate);
         }
 
         return ['amount' => $amount->toString(), ...($crossed ? ['allocated' => 'true', 'allocation_reason' => trim((string) $allocationReason)] : [])];
@@ -263,24 +255,14 @@ final class ReturnOutcomes
 
         ['company' => $company, 'source' => $source] = self::bearerOf($case);
         $this->ensureBearer($context, $company, $source, $company !== $source ? $allocationReason : null);
-
-        $left = $amount;
+        $carried = [];
 
         foreach (array_reverse(self::consumptions($caseId)) as $consumption) {
-            if (! $left->isPositive()) {
-                break;
-            }
-
-            $part = Money::min(Money::of((string) DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->where('cost_class', 'LOSS')->where('cause', 'RETURN_SETTLEMENT')->sum('amount')), $left);
-
-            if ($part->isPositive()) {
-                $this->cost->unsettleReturn($context, $consumption, $part, $businessDate);
-                $left = $left->minus($part);
-            }
+            $carried[$consumption] = Money::of((string) DB::table('cost_attributions')->where('stock_consumption_id', $consumption)->where('cost_class', 'LOSS')->where('cause', 'RETURN_SETTLEMENT')->sum('amount'));
         }
 
-        if ($left->isPositive()) {
-            throw Refused::rejected('C-24', ['reason' => 'above_settled']);
+        foreach (ReturnSettlement::split($amount, $carried) ?? throw Refused::rejected('C-24', ['reason' => 'above_settled']) as $consumption => $part) {
+            $this->cost->unsettleReturn($context, $consumption, $part, $businessDate);
         }
 
         return ['amount' => $amount->toString()];
@@ -383,7 +365,7 @@ final class ReturnOutcomes
     /** What the case's returned cost still awaits: returned − refunded − replaced − unrecovered (C-46). */
     private static function open(object $case): Money
     {
-        return Money::of(Row::text($case, 'returned_cost'))->minus(Money::of(Row::text($case, 'refunded_value')))->minus(Money::of(Row::text($case, 'replaced_value')))->minus(Money::of(Row::text($case, 'unrecovered_value')));
+        return ReturnSettlement::open(Money::of(Row::text($case, 'returned_cost')), Money::of(Row::text($case, 'refunded_value')), Money::of(Row::text($case, 'replaced_value')), Money::of(Row::text($case, 'unrecovered_value')));
     }
 
     /** @return array{line: int, purchase: int, scale: int}|null the purchase line of the case's lot, its product's scale */
