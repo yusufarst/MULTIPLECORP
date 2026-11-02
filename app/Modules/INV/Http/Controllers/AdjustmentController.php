@@ -62,6 +62,7 @@ final class AdjustmentController extends Controller
             'search' => $search,
             'found' => $product !== null || $search === null ? [] : $this->stock->products($actor, $search, false, null)['rows'],
             'units' => fn (): ?array => $internal === null ? null : $this->queries->screen($actor, $internal, $find),
+            'changes' => Inertia::defer(self::group(fn (): array => $internal === null ? [] : $this->queries->changes($internal)), 'details'),
             'cases' => Inertia::defer(self::group(fn (): array => $internal === null ? ['find' => null, 'rows' => [], 'more' => false] : $this->queries->cases($actor, $internal, self::query($request, 'cari_kasus'))), 'details'),
             'proofs' => Inertia::defer(self::group(fn (): array => $this->queries->proofs($actor, self::query($request, 'cari_bukti'))), 'details'),
             'losses' => Inertia::defer(self::group(fn (): array => $internal === null ? [] : $this->lossesOf($actor, $internal)), 'details'),

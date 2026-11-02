@@ -123,3 +123,13 @@ it('answers INT-197, INT-198, INT-199 and INT-200, each replayed with one effect
     [$first, $replay] = countTwice($this, $this->owner, "/gudang/selisih-temuan/{$finding}/surplus", ['command_id' => (string) Str::uuid(), 'perusahaan' => $this->company->public_id, 'dasar_biaya' => '3000', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'alasan' => 'Stok ditemukan', 'tanggal' => $today]);
     expect($first['kind'])->toBe('COMMITTED')->and($replay['kind'])->toBe('COMMITTED')->and(DB::table('inventory_lots')->where('acquisition_kind', 'SURPLUS')->count())->toBe(1);
 });
+
+it('binds a command_id to its target: the same identifier and body on another count is CONFLICT, never the first one\'s replay (CI-02; ER-06 point 10)', function () {
+    $first = (string) DB::table('stock_counts')->where('id', CountWorld::open($this->actor->id, $this->product, $this->rack))->value('public_id');
+    $second = (string) DB::table('stock_counts')->where('id', CountWorld::open($this->actor->id, $this->product, $this->rack))->value('public_id');
+    $line = ['command_id' => (string) Str::uuid(), 'rak' => $this->rackHandle, 'kondisi' => 'USABLE', 'jumlah' => '8'];
+
+    expect(countAnswer($this, $this->actor, "/gudang/stok-opname/{$first}/baris", $line)['kind'])->toBe('COMMITTED')
+        ->and(countAnswer($this, $this->actor, "/gudang/stok-opname/{$second}/baris", $line)['kind'])->toBe('CONFLICT')
+        ->and(DB::table('stock_count_lines')->count())->toBe(1);
+});

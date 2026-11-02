@@ -61,7 +61,7 @@ final class CountApplication
             }
 
             if (Row::text($count, 'purpose') === 'SERIAL_REGISTRATION') {
-                foreach (DB::table('stock_lot_balances')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('qty', '>', 0)->orderBy('lot_id')->pluck('lot_id') as $lot) {
+                foreach (DB::table('stock_lot_balances as lb')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('qty', '>', 0)->orderBy('lot_id')->pluck('lot_id') as $lot) {
                     $set->add('stock_lot_balances', ['lot_id' => is_numeric($lot) ? (int) $lot : 0, 'location_id' => $location, 'condition' => $condition]);
                 }
             }
@@ -148,7 +148,7 @@ final class CountApplication
     private function ensureFresh(CommandContext $context, int $count, int $product, string $publicId): void
     {
         foreach (DB::table('stock_count_scopes')->where('stock_count_id', $count)->get(['location_id', 'condition', 'basis_version']) as $scope) {
-            $live = DB::table('stock_scope_balances')->where('product_id', $product)->where('location_id', (int) Row::text($scope, 'location_id'))->where('condition', Row::text($scope, 'condition'))->value('version');
+            $live = DB::table('stock_scope_balances as sb')->where('product_id', $product)->where('location_id', (int) Row::text($scope, 'location_id'))->where('condition', Row::text($scope, 'condition'))->value('version');
 
             if ((int) (is_numeric($live) ? $live : 0) !== (int) Row::text($scope, 'basis_version')) {
                 $actor = $context->request->actorUserId;
@@ -424,7 +424,7 @@ final class CountApplication
             $counted[$place][] = $line;
         }
 
-        $balances = DB::table('stock_lot_balances')->where('product_id', $product)->where('qty', '>', 0)->get(['lot_id', 'location_id', 'condition', 'qty']);
+        $balances = DB::table('stock_lot_balances as lb')->where('product_id', $product)->where('qty', '>', 0)->get(['lot_id', 'location_id', 'condition', 'qty']);
         $held = [];
 
         foreach ($balances as $row) {

@@ -7,7 +7,7 @@ export async function openCount(page: Page, product: string, rack: string): Prom
     const form = page.locator('[data-slot="count-open"]');
     const rackField = form.getByLabel('Rak');
     await rackField.selectOption({ value: (await rackField.locator('option', { hasText: rack }).getAttribute('value')) ?? '' });
-    await form.getByRole('button', { name: 'Mulai Hitungan' }).click();
+    await form.getByRole('button', { name: 'Mulai Hitungan', exact: true }).click();
     await expect(page.locator('[data-slot="count-detail"]')).toBeVisible();
 }
 

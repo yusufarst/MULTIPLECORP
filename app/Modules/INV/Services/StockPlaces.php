@@ -212,6 +212,16 @@ final class StockPlaces
      */
     public static function refusalState(?string $code, StockPicks $entry, string $type): ?array
     {
+        if ($code === 'L-49' && $entry->pending !== []) {
+            $matches = [];
+
+            foreach ($entry->pending as $pending) {
+                $matches = [...$matches, ...UnattributedCases::likelyPending($entry->productId, $pending['location'], $type === 'CONDITION_CHANGE' ? 'USABLE' : $pending['condition'], BigDecimal::of($pending['qty']), $entry->businessDate)];
+            }
+
+            return ['matches' => array_values(array_unique($matches))];
+        }
+
         if ($code === 'L-49') {
             return ['matches' => self::likelyDuplicates($type, $entry->picks, $entry->businessDate)];
         }

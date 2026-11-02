@@ -51,7 +51,7 @@ final class UnattributedCases
             $set->add('unattributed_loss_cases', ['id' => $case]);
         }
 
-        foreach (DB::table('stock_lot_balances')->where('product_id', $product)->where('location_id', $location)->where('qty', '>', 0)->distinct()->orderBy('lot_id')->pluck('lot_id') as $lot) {
+        foreach (DB::table('stock_lot_balances as lb')->where('product_id', $product)->where('location_id', $location)->where('qty', '>', 0)->distinct()->orderBy('lot_id')->pluck('lot_id') as $lot) {
             $set->add('lot_cost_balances', ['lot_id' => is_numeric($lot) ? (int) $lot : 0]);
         }
 
@@ -98,7 +98,7 @@ final class UnattributedCases
             throw Refused::rejected('L-42', ['reason' => 'one_company']);
         }
 
-        $scope = DB::table('stock_scope_balances')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->first(['pending_reduction_qty']);
+        $scope = DB::table('stock_scope_balances as sb')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->first(['pending_reduction_qty']);
         $prior = $scope === null ? '0' : Row::text($scope, 'pending_reduction_qty');
         [$candidates, $exposures, $total] = self::snapshot($product, $location, $condition);
 
@@ -498,7 +498,7 @@ final class UnattributedCases
             }
 
             $companies[(int) $candidate] = true;
-            $held = DB::table('stock_lot_balances')->where('lot_id', $close['lot'])->where('location_id', (int) Row::text($case, 'location_id'))->where('condition', Row::text($case, 'condition'))->value('qty');
+            $held = DB::table('stock_lot_balances as lb')->where('lot_id', $close['lot'])->where('location_id', (int) Row::text($case, 'location_id'))->where('condition', Row::text($case, 'condition'))->value('qty');
 
             if (! is_string($held) || BigDecimal::of($close['qty'])->isGreaterThan($held)) {
                 throw Refused::rejected('OD-10', ['condition' => 'd', 'available' => is_string($held) ? $held : '0']);
@@ -673,7 +673,7 @@ final class UnattributedCases
 
         foreach ($line['closes'] as $close) {
             $source = DB::table('inventory_lots')->where('id', $close['lot'])->where('product_id', $product)->value('source_company_id');
-            $held = DB::table('stock_lot_balances')->where('lot_id', $close['lot'])->where('location_id', $location)->where('condition', $condition)->value('qty');
+            $held = DB::table('stock_lot_balances as lb')->where('lot_id', $close['lot'])->where('location_id', $location)->where('condition', $condition)->value('qty');
             $seen[$close['lot']] = BigDecimal::of($seen[$close['lot']] ?? '0')->plus($close['qty']);
 
             if (! is_numeric($source) || ! is_string($held) || $seen[$close['lot']]->isGreaterThan($held) || ! BigDecimal::of($close['qty'])->isPositive()) {

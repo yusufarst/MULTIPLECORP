@@ -4,6 +4,7 @@ use App\Modules\INV\Actions\AdjustStock;
 use App\Modules\INV\Actions\ChangeCondition;
 use App\Modules\INV\Data\StockPicks;
 use App\Modules\OPS\Models\CorrectionCase;
+use App\Modules\ORG\Models\Company;
 use App\Support\BusinessDate;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -650,16 +651,20 @@ it('registers a serial on every unit in one movement that changes no quantity, l
         ->and(DB::table('stock_movements')->where('movement_type', 'SERIAL_REGISTRATION')->count())->toBe(1)
         ->and(DB::table('stock_consumptions')->count())->toBe(0);
     countClean();
+});
 
-    // An open finding is settled first by an ordinary count (`DIR-101` F2).
-    $other = DispatchWorld::demand($this->world);
-    StockWorld::lot($this->actor, $this->company, $other['product'], $other['unit'], $this->rack, '1', '1000');
-    $ordinary = CountWorld::open($this->actor, $other['product'], $this->rack);
-    expect(CountWorld::line($this->actor, $ordinary, $other['product'], $this->rack, '2'))->toBe('COMMITTED')
+it('refuses a registration count while the product has an open finding, which an ordinary count settles first (`DIR-101` F2)', function () {
+    StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '1000');
+    $registrar = Authorization::admin([$this->company->id], [...CountWorld::CAPABILITIES, 'products.edit'])->id;
+    $ordinary = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $ordinary, $this->product, $this->rack, '2'))->toBe('COMMITTED')
         ->and(CountWorld::apply($this->actor, CountWorld::entry($ordinary)))->toBe('COMMITTED')
-        ->and(CountWorld::openRegistration($registrar, $other['product']))->toBe('COMMITTED');
+        ->and(CountWorld::openRegistration($registrar, $this->product))->toBe('COMMITTED');
     $registration = (int) DB::table('stock_counts')->orderByDesc('id')->value('id');
-    expect(CountWorld::apply($registrar, CountWorld::entry($registration)))->toContain('C-07');
+
+    expect(CountWorld::apply($registrar, CountWorld::entry($registration)))->toContain('C-07')
+        ->and((bool) DB::table('products')->where('id', $this->product)->value('is_serialized'))->toBeFalse();
+    countClean();
 });
 
 it('leaves a dispatch racing a registration count: one of them, the guards exact, in both orders on real sessions (`DIR-101` F2; LK-14)', function (bool $dispatchFirst) {
@@ -699,10 +704,11 @@ it('leaves a receipt racing an application of its scope committed, the applicati
     StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '3', '1000');
     $count = CountWorld::open($this->actor, $this->product, $this->rack);
     expect(CountWorld::line($this->actor, $count, $this->product, $this->rack, '3'))->toBe('COMMITTED');
-    [$actor, $company, $unit, $rack, $product] = [$this->actor, $this->company, $this->unit, $this->rack, $this->product];
+    // A session reads its company itself: a model does not cross into another process.
+    [$actor, $companyId, $unit, $rack, $product] = [$this->actor, $this->company->id, $this->unit, $this->rack, $this->product];
 
     $results = Sessions::run([
-        'first' => static fn (): int => InvoiceWorld::hold(static fn (): int => StockWorld::lot($actor, $company, $product, $unit, $rack, '1', '1000'), 'the receipt holds the scope'),
+        'first' => static fn (): int => InvoiceWorld::hold(static fn (): int => StockWorld::lot($actor, Company::query()->findOrFail($companyId), $product, $unit, $rack, '1', '1000'), 'the receipt holds the scope'),
         'second' => static function () use ($actor, $count): string {
             Barrier::await('the receipt holds the scope');
 
@@ -724,5 +730,20 @@ it('cancels an open count with its lines kept and no stock changed; a cancelled 
         ->and(CountWorld::line($this->actor, $count, $this->product, $this->rack, '2'))->toContain('C-33')
         ->and(CountWorld::cancel($this->actor, $count, $this->product))->toContain('C-33')
         ->and(CountWorld::apply($this->actor, CountWorld::entry($count)))->toContain('ST-02');
+    countClean();
+});
+
+it('warns of a likely duplicate pending quantity on PG-027 and commits it only with the actor\'s reason, under the acknowledged action (L-49; BD-13; QS-21; ER-06 point 13)', function () {
+    countAcross($this);
+    $entry = fn (array $acknowledged = [], ?string $reason = null) => new StockPicks($this->product, [], [], 'Tidak jelas milik siapa', [$this->evidence], true, $acknowledged, $reason, BusinessDate::today(), false, false, 0, [['location' => $this->rack, 'condition' => 'USABLE', 'qty' => '1']]);
+    $run = fn (StockPicks $picks) => app(AdjustStock::class)->run((string) Str::uuid(), $this->both, $picks, 'SHRINKAGE', null, null, ['acknowledged' => $picks->acknowledged, 'reason' => $picks->duplicateReason]);
+
+    expect(InvoiceWorld::word($run($entry())))->toBe('COMMITTED');
+    $warned = $run($entry());
+    $matches = $warned->state['matches'] ?? [];
+    expect($warned->code)->toBe('L-49')->and($matches)->toHaveCount(1)
+        ->and(InvoiceWorld::word($run($entry($matches, 'Dua kehilangan berbeda'))))->toBe('COMMITTED')
+        ->and(DB::table('unattributed_loss_cases')->count())->toBe(2)
+        ->and(DB::table('audit_events')->where('action', 'INV.UnattributedRecognizedDuplicateConfirmed')->count())->toBe(1);
     countClean();
 });

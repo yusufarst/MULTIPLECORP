@@ -81,19 +81,76 @@ return new class extends Migration
                 for each row execute function stock_count_lines_lot_on_registration();
             SQL);
 
-        $function = DB::selectOne("select pg_get_functiondef('stock_movement_entries_c07_movement_balanced'::regproc) as body");
-        $body = is_object($function) && is_string($function->body ?? null) ? $function->body : '';
-        $anchor = "elsif movement.movement_type = 'IDENTITY_SUBSTITUTION' then";
+        // The net-zero groups gain SERIAL_REGISTRATION per (lot, location, condition); the rest of the function is 000103's (`DIR-101`).
+        DB::unprepared(<<<'SQL'
+            create or replace function stock_movement_entries_c07_movement_balanced() returns trigger
+            language plpgsql as $$
+            declare
+                movement stock_movements%rowtype;
+                case_kind text;
+                broken boolean := false;
+            begin
+                select * into movement from stock_movements where id = new.stock_movement_id;
 
-        if (! str_contains($body, $anchor)) {
-            throw new RuntimeException('The net-zero trigger has changed; this migration names its IDENTITY_SUBSTITUTION branch.');
-        }
-
-        DB::unprepared(str_replace($anchor, <<<'SQL'
-            elsif movement.movement_type = 'SERIAL_REGISTRATION' then
+                if movement.movement_type = 'LOCATION_MOVE' then
+                    broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.lot_id, e.condition having sum(e.qty_delta_base) <> 0);
+                elsif movement.movement_type = 'CONDITION_CHANGE' then
+                    broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.lot_id, e.location_id having sum(e.qty_delta_base) <> 0);
+                elsif movement.movement_type = 'SERIAL_REGISTRATION' then
                     broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.lot_id, e.location_id, e.condition having sum(e.qty_delta_base) <> 0);
                 elsif movement.movement_type = 'IDENTITY_SUBSTITUTION' then
-            SQL, $body));
+                    broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.product_id having sum(e.qty_delta_base) <> 0);
+                elsif movement.movement_type in ('UNATTRIBUTED_RESOLUTION', 'UNATTRIBUTED_RESOLUTION_REVERSAL') then
+                    broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.product_id, e.location_id, e.condition having sum(e.qty_delta_base) <> 0);
+                elsif movement.movement_type = 'UNATTRIBUTED_RECOGNITION' then
+                    select k.case_kind into case_kind from unattributed_loss_cases k where k.id = movement.unattributed_case_id;
+                    if case_kind = 'CONDITION_CHANGE' then
+                        broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id group by e.product_id, e.location_id having sum(e.qty_delta_base) <> 0);
+                    else
+                        broken := exists (select from stock_movement_entries e where e.stock_movement_id = movement.id and e.qty_delta_base > 0);
+                    end if;
+                elsif movement.movement_type = 'UNATTRIBUTED_CONVERSION' then
+                    broken := exists (
+                        select from stock_movement_entries e where e.stock_movement_id = movement.id
+                        group by e.product_id, e.location_id
+                        having sum(e.qty_delta_base) filter (where e.condition = 'USABLE') is distinct from 0
+                            or coalesce(sum(e.qty_delta_base) filter (where e.condition = 'UNUSABLE'), 0)
+                                <> -coalesce(sum(e.qty_delta_base) filter (where e.condition = 'USABLE' and e.qty_delta_base > 0), 0)
+                    );
+                elsif movement.movement_type = 'MOVEMENT_REVERSAL' then
+                    -- Each entry opposes the reversed movement's net at its key: lot, location and condition, or case, location and condition.
+                    broken := exists (
+                        select from stock_movement_entries e
+                        where e.stock_movement_id = movement.id and coalesce(sign((
+                            select sum(o.qty_delta_base) from stock_movement_entries o
+                            where o.stock_movement_id = movement.reverses_movement_id and o.location_id = e.location_id and o.condition = e.condition
+                                and o.lot_id is not distinct from e.lot_id and o.unattributed_case_id is not distinct from e.unattributed_case_id
+                        )), 0) <> -sign(e.qty_delta_base)
+                    );
+                end if;
+
+                -- The lot-less signs by the case's kind: its recognition − in the case's own condition and, for a
+                -- condition change only, + in the other; a resolution, a finding and a conversion's entries under the
+                -- old case clear them with the opposite sign, a resolution's reversal re-opens them (§5.3; §5.8).
+                if movement.movement_type in ('UNATTRIBUTED_RECOGNITION', 'UNATTRIBUTED_CONVERSION', 'UNATTRIBUTED_FOUND', 'UNATTRIBUTED_RESOLUTION', 'UNATTRIBUTED_RESOLUTION_REVERSAL') then
+                    broken := broken or exists (
+                        select from stock_movement_entries e join unattributed_loss_cases k on k.id = e.unattributed_case_id
+                        where e.stock_movement_id = movement.id and sign(e.qty_delta_base) is distinct from
+                            case when e.condition = k.condition then -1 when k.case_kind = 'CONDITION_CHANGE' then 1 end
+                            * case when movement.movement_type in ('UNATTRIBUTED_RECOGNITION', 'UNATTRIBUTED_RESOLUTION_REVERSAL')
+                                or (movement.movement_type = 'UNATTRIBUTED_CONVERSION' and e.unattributed_case_id = movement.unattributed_case_id) then 1 else -1 end
+                    );
+                end if;
+
+                if broken then
+                    raise exception 'A movement''s entries keep its type''s balance and signs (DATABASE §5.3; C-07).'
+                        using errcode = 'check_violation', constraint = 'stock_movement_entries_c07_movement_balanced';
+                end if;
+
+                return null;
+            end
+            $$;
+            SQL);
     }
 
     public function down(): void

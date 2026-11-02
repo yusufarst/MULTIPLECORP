@@ -111,7 +111,7 @@ final class StockCounts
                     throw Refused::rejected('C-02', ['reason' => 'in_stock', 'serial' => $serial]);
                 }
 
-                if ($lot === null || ! DB::table('stock_lot_balances')->where('lot_id', $lot)->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('qty', '>', 0)->exists()) {
+                if ($lot === null || ! DB::table('stock_lot_balances as lb')->where('lot_id', $lot)->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('qty', '>', 0)->exists()) {
                     throw Refused::rejected('C-14', ['reason' => 'lot']);
                 }
             } else {
@@ -192,7 +192,7 @@ final class StockCounts
         ]);
 
         foreach ($scopes as [$place, $state]) {
-            $guard = DB::table('stock_scope_balances')->where('product_id', $product)->where('location_id', $place)->where('condition', $state)->first(['version', 'qty']);
+            $guard = DB::table('stock_scope_balances as sb')->where('product_id', $product)->where('location_id', $place)->where('condition', $state)->first(['version', 'qty']);
             $finding = DB::table('stock_count_findings')->where('product_id', $product)->where('location_id', $place)->where('condition', $state)->where('state', 'OPEN')->value('surplus_qty_base');
             DB::table('stock_count_scopes')->insert([
                 'stock_count_id' => $count, 'product_id' => $product, 'quantity_scale' => is_numeric($scale) ? (int) $scale : 0, 'location_id' => $place, 'condition' => $state, 'basis_version' => $guard === null ? 0 : (int) Row::text($guard, 'version'),
@@ -229,7 +229,7 @@ final class StockCounts
 
         $scopes = [];
 
-        foreach (DB::table('stock_scope_balances')->where('product_id', $product)->where('qty', '>', 0)->orderBy('location_id')->orderBy('condition')->get(['location_id', 'condition']) as $row) {
+        foreach (DB::table('stock_scope_balances as sb')->where('product_id', $product)->where('qty', '>', 0)->orderBy('location_id')->orderBy('condition')->get(['location_id', 'condition']) as $row) {
             $scopes[] = [(int) Row::text($row, 'location_id'), Row::text($row, 'condition')];
         }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Models\StockCountFinding;
 use App\Modules\INV\Queries\DiscrepancyQueries;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -156,4 +157,75 @@ it('keeps a pending case out of the pool\'s company figures: the viewer\'s expos
     expect(DB::table('cost_attributions')->where('cost_class', 'LOSS')->count())->toBe(0)
         ->and($queries->findings($this->owner->id)['rows'])->toBe([])
         ->and(collect($queries->cases($this->owner->id)['rows'])->pluck('pending')->all())->toBe(['2']);
+});
+
+it('shows a resolution\'s reason and decider on PG-020 only to the Owner and a cost.view holder of the company it charged (PJ-07; rows 71, 72; ER-06 point 5)', function () {
+    $other = countPageAcross($this);
+    $case = (int) DB::table('unattributed_loss_cases')->value('id');
+    expect(CountWorld::resolve($this->owner->id, $case, [['company' => $this->foreign->company->id, 'closes' => [['lot' => $other, 'qty' => '2']]]]))->toBe('COMMITTED');
+    $row = fn (object $viewer): ?array => collect($this->actingAs($viewer)->get('/gudang/riwayat-stok')->assertOk()->viewData('page')['props']['list']['rows'])->firstWhere('type', 'UNATTRIBUTED_RESOLUTION');
+    $both = Authorization::admin([$this->company->id, $this->foreign->company->id], ['stock.view']);
+    $charged = Authorization::admin([$this->foreign->company->id], ['stock.view', 'cost.view']);
+
+    expect($row($both))->not->toBeNull()->and($row($both)['reason'])->toBeNull()->and($row($both)['actor'])->toBeNull()
+        ->and($row($charged)['reason'])->toBe('Keputusan Owner atas selisih')->and($row($charged)['actor'])->not->toBeNull()
+        ->and($row($this->owner)['reason'])->toBe('Keputusan Owner atas selisih');
+});
+
+it('reverses an identified loss first when the Owner attributes a finding through ROUTE-197, the rest one flagged lot (AX-07; ER-06 point 8)', function () {
+    $count = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $count, $this->product, $this->rack, '8'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($count, [AdjustmentWorld::pick($this->lot, $this->rack, '2')], evidence: [$this->evidence])))->toBe('COMMITTED');
+    $consumption = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->value('id');
+    $surplus = CountWorld::open($this->applier->id, $this->product, $this->rack);
+    expect(CountWorld::line($this->applier->id, $surplus, $this->product, $this->rack, '10'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->applier->id, CountWorld::entry($surplus)))->toBe('COMMITTED');
+    $finding = countPageProps($this, $this->owner)['findings']['rows'][0];
+    $handle = RowHandle::of('stock_consumptions', $consumption);
+    expect(collect($finding['losses'])->pluck('id')->all())->toContain($handle);
+
+    $this->actingAs($this->owner)->post("/gudang/selisih-temuan/{$finding['id']}/surplus", [
+        'command_id' => (string) Str::uuid(), 'perusahaan' => $this->company->public_id, 'dasar_biaya' => '10000', 'kebijakan_seri' => false, 'kebijakan_skala' => 0,
+        'pulihkan' => [['konsumsi' => $handle, 'jumlah' => '1']], 'alasan' => 'Satu unit ditemukan kembali', 'tanggal' => BusinessDate::today(),
+    ])->assertRedirect('/gudang/selisih-temuan')->assertSessionHas('inertia.flash_data.answer.kind', 'COMMITTED');
+
+    expect((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('1.000')
+        ->and((string) DB::table('inventory_lots')->where('acquisition_kind', 'SURPLUS')->value('acquired_qty_base'))->toBe('1.000')
+        ->and(DB::table('stock_count_findings')->where('state', 'ATTRIBUTED')->count())->toBe(1)
+        ->and((string) DB::table('stock_product_balances')->where('product_id', $this->product)->value('on_hand_qty'))->toBe('10.000');
+});
+
+it('recounts a stale registration count as a registration count (ROUTE-191; `DIR-101` F2; ER-06 point 14)', function () {
+    $registrar = Authorization::admin([$this->company->id], [...CountWorld::CAPABILITIES, 'products.edit']);
+    expect(CountWorld::openRegistration($registrar->id, $this->product))->toBe('COMMITTED');
+    $count = (int) DB::table('stock_counts')->orderByDesc('id')->value('id');
+    // A receipt moves the scope after the registration count started.
+    StockWorld::lot($this->stocker->id, $this->company, $this->product, $this->unit, $this->rack, '1', '1000');
+    expect(CountWorld::apply($registrar->id, CountWorld::entry($count)))->toContain('ST-03');
+    $public = (string) DB::table('stock_counts')->where('id', $count)->value('public_id');
+    $page = $this->actingAs($registrar)->get("/gudang/stok-opname?hitungan={$public}")->assertOk()->viewData('page')['props']['count'];
+    expect($page['state'])->toBe('STALE')->and($page['purpose'])->toBe('SERIAL_REGISTRATION')
+        ->and(file_get_contents(resource_path('js/Pages/INV/StockCounts.tsx')))->toContain("count.purpose === 'SERIAL_REGISTRATION' ? { produk: count.product.id, registrasi: true }");
+
+    // What "Hitung Ulang" sends for it opens a registration count again.
+    $this->actingAs($registrar)->post('/gudang/stok-opname', ['command_id' => (string) Str::uuid(), 'produk' => $this->productId, 'registrasi' => true])->assertRedirect();
+    expect(DB::table('stock_counts')->orderByDesc('id')->first(['purpose', 'state', 'location_id']))->toMatchObject(['purpose' => 'SERIAL_REGISTRATION', 'state' => 'OPEN', 'location_id' => null]);
+});
+
+it('pages PG-029\'s findings by cursor, says a tampered cursor failed, and searches the proofs (QB-05; IP-18; ER-06 point 16)', function () {
+    foreach (range(1, DiscrepancyQueries::PAGE + 1) as $number) {
+        StockCountFinding::factory()->create(['product_id' => $this->product]);
+    }
+
+    $first = countPageProps($this, $this->owner)['findings'];
+    expect($first['rows'])->toHaveCount(DiscrepancyQueries::PAGE)->and($first['more'])->toBeString()->and($first['cursor_failed'])->toBeFalse();
+    $next = countPageProps($this, $this->owner, '/gudang/selisih-temuan?setelah_temuan='.urlencode($first['more']))['findings'];
+    expect($next['rows'])->toHaveCount(1)->and($next['more'])->toBeNull()
+        ->and(collect($first['rows'])->pluck('id')->intersect(collect($next['rows'])->pluck('id'))->all())->toBe([])
+        ->and(countPageProps($this, $this->owner, '/gudang/selisih-temuan?setelah_temuan=rusak')['findings'])->toMatchArray(['rows' => [], 'cursor_failed' => true]);
+
+    $issuer = (string) DB::table('evidence_documents')->where('id', $this->evidence)->value('declared_issuer');
+    $proofs = countPageProps($this, $this->owner, '/gudang/selisih-temuan?cari_bukti='.urlencode($issuer))['proofs'];
+    expect($proofs['find'])->toBe($issuer)->and($proofs['rows'])->not->toBe([])
+        ->and(countPageProps($this, $this->owner, '/gudang/selisih-temuan?cari_bukti=tidak-ada-bukti')['proofs']['rows'])->toBe([]);
 });

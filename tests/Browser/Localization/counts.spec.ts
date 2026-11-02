@@ -18,7 +18,7 @@ for (const [locale, texts] of [
 
         await page.goto(`/gudang/stok-opname?produk=${run.product}`);
         await expect(page.getByRole('heading', { name: new RegExp(texts.counts, 'i'), level: 1 })).toBeVisible();
-        await expect(page.locator('[data-slot="count-open"]').getByRole('button', { name: new RegExp(texts.start, 'i') })).toBeVisible();
+        await expect(page.locator('[data-slot="count-open"]').getByRole('button', { name: texts.start, exact: true })).toBeVisible();
 
         await page.goto('/gudang/selisih-temuan');
         await expect(page.getByRole('heading', { name: new RegExp(texts.discrepancies, 'i'), level: 1 })).toBeVisible();
