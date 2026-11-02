@@ -6,6 +6,13 @@ import { stockRun, type StockRun } from './stock-fixtures';
 
 export type AdjustmentRun = StockRun & { target: string; proof: string };
 
+/** PG-027's deferred details land after each visit of it: a journey types once they have, as WebKit lost values filled while they landed. */
+export async function settledVisit(page: Page, navigate: () => Promise<unknown>): Promise<void> {
+    const landed = page.waitForResponse(async (response) => response.url().includes('/gudang/penyesuaian') && (await response.request().headerValue('x-inertia-partial-data')) !== null);
+    await navigate();
+    await landed;
+}
+
 export async function adjustmentRun(page: Page, run: string, locale: 'id' | 'en' = 'id'): Promise<AdjustmentRun> {
     const stocked = await stockRun(page, run, locale);
     const response = await page.request.post('/__fixtures/adjustments', { data: {} });

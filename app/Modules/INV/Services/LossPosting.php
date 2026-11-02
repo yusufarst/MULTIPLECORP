@@ -95,19 +95,48 @@ final class LossPosting
         DuplicateWarning::check('L-49', $matches, $entry->acknowledged, $entry->duplicateReason);
         $actor = $context->request->actorUserId;
         $commandId = $context->request->commandId;
-        $now = $context->now();
         $bearers = array_values(array_unique(array_map(fn (array $part): string => $part['company'].'|'.($part['project'] ?? ''), $parts)));
         $company = count($bearers) === 1 ? $parts[0]['company'] : null;
+        [$movement, $publicId] = $this->post($context, $entry, $type, $parts, $scale, (string) $reduced, 'INV.AdjustStock', null, $allocationReason);
+        $action = $type === 'LOSS' ? 'INV.LossRecognized' : 'INV.StockAdjusted';
+        $allocated = array_filter($parts, fn (array $part): bool => $part['company'] !== $part['source']) !== [];
+        $this->audit->record(
+            action: $matches === [] ? $action : $action.'DuplicateConfirmed',
+            authorityClass: AuthorityClass::AdmPlus,
+            actorUserId: $actor,
+            companyId: $company,
+            entityType: 'stock_movement',
+            entityId: $movement,
+            entityPublicId: $publicId,
+            reason: $entry->reason,
+            commandId: $commandId,
+            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) array_reduce($parts, fn (BigDecimal $sum, array $part): BigDecimal => $sum->plus($part['qty']), BigDecimal::zero()), 'evidence' => count($entry->evidence), 'cuts' => count($entry->cuts), ...($allocated ? ['allocated' => true, 'allocation_reason' => $allocationReason] : []), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $entry->duplicateReason])]),
+            metadata: ['business_date' => $entry->businessDate],
+        );
+
+        return $movement;
+    }
+
+    /**
+     * The stock-out and its loss as one movement of the pool, as its evidence is (C-58; PJ-08): the bearer and the project are its consumptions' and their cost rows'. A count's application cites its count (DATABASE §5.6), and carries the command's cut where `$cutReduction` is its whole usable reduction.
+     *
+     * @param  list<array{company: int, project: ?int, case: ?int, case_company: ?int, qty: BigDecimal, source: int, pick: array{lot: int, location: int, condition: string, qty: string, serial: ?int}}>  $parts
+     * @return array{int, string} the movement and its public id
+     */
+    public function post(CommandContext $context, StockPicks $entry, string $type, array $parts, int $scale, string $cutReduction, string $routedAction, ?int $countId, ?string $allocationReason): array
+    {
+        $actor = $context->request->actorUserId;
+        $commandId = $context->request->commandId;
+        $now = $context->now();
         $publicId = (string) Str::uuid7();
-        // A movement of the pool, as its evidence is (C-58; PJ-08): the bearer and the project are its consumptions' and their cost rows'.
         $movement = (int) DB::table('stock_movements')->insertGetId([
-            'public_id' => $publicId, 'movement_type' => $type, 'business_date' => $entry->businessDate, 'reason' => $entry->reason,
-            'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
+            'public_id' => $publicId, 'movement_type' => $type, 'business_date' => $entry->businessDate, 'reason' => $entry->reason, 'stock_count_id' => $countId,
+            'command_id' => $commandId, 'command_line_no' => InventoryPosting::lineNo('stock_movements', $context), 'recorded_at' => $now, 'recorded_by' => $actor,
         ]);
         $reserved = null;
 
-        if ($reduced->isPositive() && (InventoryPosting::shortfall($entry->productId, (string) $reduced)->isPositive() || $entry->cuts !== [])) {
-            $reserved = $this->inventory->cut($context, $entry->productId, $entry->cuts, (string) $reduced, $movement, 'INV.AdjustStock');
+        if (BigDecimal::of($cutReduction)->isPositive() && (InventoryPosting::shortfall($entry->productId, $cutReduction)->isPositive() || $entry->cuts !== [])) {
+            $reserved = $this->inventory->cut($context, $entry->productId, $entry->cuts, $cutReduction, $movement, $routedAction);
         }
 
         $consumptions = [];
@@ -142,23 +171,8 @@ final class LossPosting
         }
 
         StockPlaces::linkEvidence($context, $entry->evidence, $movement);
-        $action = $type === 'LOSS' ? 'INV.LossRecognized' : 'INV.StockAdjusted';
-        $allocated = array_filter($parts, fn (array $part): bool => $part['company'] !== $part['source']) !== [];
-        $this->audit->record(
-            action: $matches === [] ? $action : $action.'DuplicateConfirmed',
-            authorityClass: AuthorityClass::AdmPlus,
-            actorUserId: $actor,
-            companyId: $company,
-            entityType: 'stock_movement',
-            entityId: $movement,
-            entityPublicId: $publicId,
-            reason: $entry->reason,
-            commandId: $commandId,
-            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) array_reduce($parts, fn (BigDecimal $sum, array $part): BigDecimal => $sum->plus($part['qty']), BigDecimal::zero()), 'evidence' => count($entry->evidence), 'cuts' => count($entry->cuts), ...($allocated ? ['allocated' => true, 'allocation_reason' => $allocationReason] : []), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $entry->duplicateReason])]),
-            metadata: ['business_date' => $entry->businessDate],
-        );
 
-        return $movement;
+        return [$movement, $publicId];
     }
 
     /**
@@ -362,7 +376,7 @@ final class LossPosting
      *
      * @param  list<array<string, mixed>>  $parts  each with its int `company` and `source`
      */
-    private function ensureBearers(CommandContext $context, array $parts, ?string $reason, int $product): void
+    public function ensureBearers(CommandContext $context, array $parts, ?string $reason, int $product): void
     {
         $authority = $context->authority();
         $capability = $context->request->capability;

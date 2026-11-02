@@ -16,11 +16,12 @@ use Tests\Support\Authorization;
  */
 final class AdjustmentFixture
 {
-    public static function create(): JsonResponse
+    public static function create(Request $request): JsonResponse
     {
         $tag = Str::upper(Str::random(5));
         $rack = LocationFactory::new()->createOne(['code' => "RAK-{$tag}", 'name' => "Rak Tujuan {$tag}"]);
-        EvidenceDocument::factory()->create(['company_id' => null, 'evidence_scope' => 'POOL', 'evidence_type' => 'WAREHOUSE_RECORD', 'declared_issuer' => "Gudang {$tag}", 'issuer_reference' => "CAT/{$tag}", 'identity_key' => "gudang {$tag}|WAREHOUSE_RECORD|cat/{$tag}|2026-10-01"]);
+        // `later`: a proof registered after a recognition a moment ago, a minute on as a person registers it; OD-10 (b) compares the recorded seconds.
+        EvidenceDocument::factory()->create([...($request->boolean('later') ? ['recorded_at' => now()->addMinute()] : []), 'company_id' => null, 'evidence_scope' => 'POOL', 'evidence_type' => 'WAREHOUSE_RECORD', 'declared_issuer' => "Gudang {$tag}", 'issuer_reference' => "CAT/{$tag}", 'identity_key' => "gudang {$tag}|WAREHOUSE_RECORD|cat/{$tag}|2026-10-01"]);
 
         return response()->json(['target' => $rack->code, 'proof' => "Gudang {$tag}"]);
     }

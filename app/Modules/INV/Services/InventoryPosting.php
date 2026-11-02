@@ -71,11 +71,13 @@ final class InventoryPosting
         $lots = [];
         $scopes = [];
         $products = [];
+        // A command may write several movements (a restoration and a flagged lot): its entries are numbered after the ones it already wrote (C-48).
+        $first = self::lineNo('stock_movement_entries', $context);
 
         foreach ($entries as $number => $entry) {
             $ids[] = (int) DB::table('stock_movement_entries')->insertGetId([
                 'stock_movement_id' => $movementId, 'movement_type' => $type, 'product_id' => $entry['product'], 'quantity_scale' => $entry['scale'], 'location_id' => $entry['location'], 'condition' => $entry['condition'],
-                'lot_id' => $entry['lot'], 'unattributed_case_id' => $entry['case'] ?? null, 'serial_unit_id' => $entry['serial'] ?? null, 'stock_restoration_id' => $entry['restoration'] ?? null, 'stock_consumption_id' => $entry['consumption'] ?? null, 'qty_delta_base' => $entry['qty'], 'command_id' => $context->request->commandId, 'command_line_no' => $number + 1, 'recorded_at' => $now,
+                'lot_id' => $entry['lot'], 'unattributed_case_id' => $entry['case'] ?? null, 'serial_unit_id' => $entry['serial'] ?? null, 'stock_restoration_id' => $entry['restoration'] ?? null, 'stock_consumption_id' => $entry['consumption'] ?? null, 'qty_delta_base' => $entry['qty'], 'command_id' => $context->request->commandId, 'command_line_no' => $first + $number, 'recorded_at' => $now,
             ]);
             $lotKey = "{$entry['lot']}|{$entry['location']}|{$entry['condition']}";
             $scopeKey = "{$entry['product']}|{$entry['location']}|{$entry['condition']}";
@@ -504,7 +506,7 @@ final class InventoryPosting
         ]);
     }
 
-    private static function lineNo(string $table, CommandContext $context): int
+    public static function lineNo(string $table, CommandContext $context): int
     {
         return DB::table($table)->where('command_id', $context->request->commandId)->count() + 1;
     }

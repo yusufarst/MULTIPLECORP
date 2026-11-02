@@ -34,8 +34,9 @@ type Action = 'kondisi' | 'periksa' | 'penyesuaian';
 type Product = { public_id: string; name: string; sku: string | null; serialized: boolean; scale: number; unit: string };
 type Place = { lot: string; code: string; location: string; rack: string; condition: Condition; qty: string; other: boolean; oldest: boolean };
 type Serial = { handle: string; serial: string; lot: string; location: string; condition: Condition; code: string; rack: string; other: boolean };
-type Units = { find: string | null; places: Place[]; serials: Serial[]; more: boolean; available: string; reservations: Reservation[] };
+type Units = { find: string | null; places: Place[]; serials: Serial[]; more: boolean; available: string; reservations: Reservation[]; scopes: { location: string; rack: string; condition: Condition; qty: string }[] };
 type Case = { id: string; kind: string; date: string; lot: string | null; project: string | null; cross: boolean };
+type Change = { id: string; rack: string; qty: string };
 type Cases = { find: string | null; rows: Case[]; more: boolean };
 type Proofs = { find: string | null; rows: { id: string; label: string }[]; more: boolean };
 type Loss = { id: string; type: string; date: string; qty: string; open: string; lot: string; amounts: { company: string; amount: string }[] };
@@ -49,6 +50,7 @@ type Props = {
     found: { id: string; name: string; sku: string | null }[];
     units?: Units | null;
     cases?: Cases | Failed;
+    changes?: Change[] | Failed;
     proofs?: Proofs | Failed;
     losses?: Loss[] | Failed;
     today: string;
@@ -89,13 +91,15 @@ function LossRecord({ loss, today, canReverse }: { loss: Loss; today: string; ca
     );
 }
 
-function Form({ product, action, lot, units, cases, proofs, proofsFailed, today, can, origin, onLeaveGuard }: { product: Product; action: Action; lot: string | null; units: Units; cases: Cases | null; proofs: Proofs | null; proofsFailed: boolean; today: string; can: Can; origin: string; onLeaveGuard: (dirty: boolean) => void }) {
+function Form({ product, action, lot, units, cases, changes, proofs, proofsFailed, today, can, origin, onLeaveGuard }: { product: Product; action: Action; lot: string | null; units: Units; cases: Cases | null; changes: Change[]; proofs: Proofs | null; proofsFailed: boolean; today: string; can: Can; origin: string; onLeaveGuard: (dirty: boolean) => void }) {
     const { t } = useTranslation();
     const from: Condition | null = action === 'kondisi' ? 'USABLE' : action === 'periksa' ? 'UNUSABLE' : null;
     const [quantities, setQuantities] = useState<Record<string, string>>({});
     const [chosen, setChosen] = useState<string[]>([]);
     const [unidentified, setUnidentified] = useState(false);
     const [confirmed, setConfirmed] = useState<string[]>([]);
+    const [pendingQty, setPendingQty] = useState<Record<string, string>>({});
+    const [convertQty, setConvertQty] = useState<Record<string, string>>({});
     const [kind, setKind] = useState('DISPOSAL');
     const [caseId, setCaseId] = useState('');
     const [allocation, setAllocation] = useState('');
@@ -156,7 +160,12 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
     const picks = product.serialized
         ? serials.filter((serial) => chosen.includes(serial.handle)).map((serial) => ({ key: serial.handle, lot: serial.lot, location: serial.location, condition: serial.condition, qty: '1', serial: serial.handle }))
         : places.filter((place) => Number(figure(quantities[placeKey(place)] ?? '')) > 0).map((place) => ({ key: placeKey(place), lot: place.lot, location: place.location, condition: place.condition, qty: quantities[placeKey(place)] ?? '0', serial: null as string | null }));
-    const usable = decimal.add('0', ...picks.filter((pick) => pick.condition === 'USABLE').map((pick) => figure(pick.qty)));
+    // Across companies with no evidence: a pending quantity, without naming or counting them (SF-UNATTRIBUTED; PJ-07).
+    const pendingScopes = unidentified && !product.serialized && action !== 'periksa' ? units.scopes.filter((scope) => only === null || scope.condition === only) : [];
+    const pendingRows = pendingScopes.filter((scope) => Number(figure(pendingQty[`${scope.location}|${scope.condition}`] ?? '')) > 0);
+    const conversions = action === 'penyesuaian' && kind === 'DISPOSAL' ? changes : [];
+    const converted = conversions.filter((change) => Number(figure(convertQty[change.id] ?? '')) > 0);
+    const usable = decimal.add('0', ...picks.filter((pick) => pick.condition === 'USABLE').map((pick) => figure(pick.qty)), ...pendingRows.filter((scope) => scope.condition === 'USABLE').map((scope) => figure(pendingQty[`${scope.location}|${scope.condition}`] ?? '')));
     const short = action === 'periksa' ? '0' : decimal.add(usable, `-${units.available}`);
     const needsCut = Number(short) > 0;
     const covered = decimal.add('0', ...Object.values(cuts).map(figure));
@@ -168,8 +177,10 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
     const matches = Array.isArray(command.state.matches) ? (command.state.matches as DuplicateMatch[]) : [];
     const matched = command.answer?.kind === 'REJECTED' && matches.length > 0;
     const warned = matched && sentAs === signature;
-    const dirty = picks.length > 0 || reason !== '' || evidence.length > 0;
-    const ready = picks.length > 0 && !unconfirmed && !blockedByAllocation && (!needsEvidence || evidence.length > 0) && (!needsCut || Number(covered) >= Number(short)) && (!warned || (matches.every((match) => acknowledged.includes(match.id)) && duplicateReason.trim() !== ''));
+    // A pending quantity names no lot and no case: what does goes as its own command.
+    const mixed = (pendingRows.length > 0 || converted.length > 0) && (picks.length > 0 || caseId !== '');
+    const dirty = picks.length > 0 || pendingRows.length > 0 || converted.length > 0 || reason !== '' || evidence.length > 0;
+    const ready = (picks.length > 0 || pendingRows.length > 0 || converted.length > 0) && !mixed && !unconfirmed && !blockedByAllocation && (!needsEvidence || evidence.length > 0) && (!needsCut || Number(covered) >= Number(short)) && (!warned || (matches.every((match) => acknowledged.includes(match.id)) && duplicateReason.trim() !== ''));
     const [seenAnswer, setSeenAnswer] = useState(command.answer);
     const [seenErrors, setSeenErrors] = useState(command.errors);
 
@@ -194,6 +205,8 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
             ...(action === 'penyesuaian' ? { jenis: kind, kasus: caseId === '' ? null : caseId, alasan_alokasi: chosenCase?.cross === true ? allocation : null } : { aksi: action }),
             produk: product.public_id,
             unit: picks.map((pick) => ({ lot: pick.lot, rak: pick.location, kondisi: pick.condition, jumlah: pick.qty, seri: pick.serial, dikonfirmasi: confirmed.includes(pick.key) })),
+            tertunda: pendingRows.map((scope) => ({ rak: scope.location, kondisi: scope.condition, jumlah: pendingQty[`${scope.location}|${scope.condition}`] ?? '0' })),
+            konversi: converted.map((change) => ({ kasus: change.id, jumlah: convertQty[change.id] ?? '0' })),
             tanpa_identitas: unidentified,
             potong: needsCut ? Object.entries(cuts).filter(([, qty]) => Number(figure(qty)) > 0).map(([reservasi, jumlah]) => ({ reservasi, jumlah })) : [],
             bukti: evidence,
@@ -295,6 +308,22 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
                         {t('adjustments.unidentified')}
                     </label>
                     {places.length === 0 && <RegionEmpty text={t('adjustments.none')} />}
+                    {pendingScopes.length > 0 && <p data-slot="adjustment-pending-note" className="text-body text-text-secondary">{t('adjustments.pending_note')}</p>}
+                    {pendingScopes.map((scope) => {
+                        const key = `${scope.location}|${scope.condition}`;
+
+                        return (
+                            <FormField key={key} label={t('adjustments.field.pending', { rak: scope.rack, kondisi: t(`stock.condition.${scope.condition}`) })} className="w-72">
+                                {(control) => <DecimalInput {...control} scale={product.scale} value={pendingQty[key] ?? ''} onValueChange={(next) => { setPendingQty({ ...pendingQty, [key]: next ?? '' }); }} />}
+                            </FormField>
+                        );
+                    })}
+                    {mixed && <p role="status" data-slot="adjustment-mixed" className="text-body font-medium text-danger-fg">{t('adjustments.refusal.mixed')}</p>}
+                    {conversions.map((change) => (
+                        <FormField key={change.id} label={t('adjustments.field.conversion', { rak: change.rack, jumlah: change.qty })} className="w-72">
+                            {(control) => <DecimalInput {...control} scale={product.scale} value={convertQty[change.id] ?? ''} onValueChange={(next) => { setConvertQty({ ...convertQty, [change.id]: next ?? '' }); }} />}
+                        </FormField>
+                    ))}
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
                         {places.map((place) => {
                             const key = placeKey(place);
@@ -393,7 +422,7 @@ function Form({ product, action, lot, units, cases, proofs, proofsFailed, today,
     );
 }
 
-export default function Adjustments({ product, action, lot, search, found, units, cases, proofs, losses, today, can }: Props) {
+export default function Adjustments({ product, action, lot, search, found, units, cases, changes, proofs, losses, today, can }: Props) {
     const { t } = useTranslation();
     const allowed: Action[] = [...(can.condition ? (['kondisi', 'periksa'] as const) : []), ...(can.adjust ? (['penyesuaian'] as const) : [])];
     const current = action !== null && allowed.includes(action) ? action : allowed[0] ?? null;
@@ -449,7 +478,7 @@ export default function Adjustments({ product, action, lot, search, found, units
                             </div>
                         )}
                         {current !== null && (units === undefined || units === null ? <RegionLoading /> : (
-                            <Form key={current} product={product} action={current} lot={lot} units={units} cases={loaded<Cases>(cases)} proofs={loaded<Proofs>(proofs)} proofsFailed={proofs !== undefined && 'failed' in proofs} today={today} can={can} origin={origin} onLeaveGuard={setDirty} />
+                            <Form key={current} product={product} action={current} lot={lot} units={units} cases={loaded<Cases>(cases)} changes={loaded<Change[]>(changes) ?? []} proofs={loaded<Proofs>(proofs)} proofsFailed={proofs !== undefined && 'failed' in proofs} today={today} can={can} origin={origin} onLeaveGuard={setDirty} />
                         ))}
                         {shownLosses !== null && shownLosses.length > 0 && (
                             <section data-slot="adjustment-losses" className="flex min-w-0 flex-col gap-2 max-md:pb-18">

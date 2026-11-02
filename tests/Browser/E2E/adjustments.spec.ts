@@ -1,7 +1,7 @@
 import { expect as base, type Page, test } from '@playwright/test';
 
 import { signedIn } from '../account-fixtures';
-import { adjustmentRun, type AdjustmentRun } from '../adjustment-fixtures';
+import { adjustmentRun, type AdjustmentRun, settledVisit } from '../adjustment-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,7 +21,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await page.setViewportSize({ width, height });
 
         await page.goto(`/gudang/stok/${run.product}`);
-        await page.locator('[data-slot="product-commands"]').getByRole('link', { name: 'Ubah Kondisi' }).click();
+        await settledVisit(page, () => page.locator('[data-slot="product-commands"]').getByRole('link', { name: 'Ubah Kondisi' }).click());
         await expect(page.getByRole('heading', { name: 'Penyesuaian & Kondisi', exact: true })).toBeVisible();
         await expect(lot(page, run.lot, 'Layak pakai')).toContainText('Ambil Lebih Dulu');
         await fill(page, run, 'Layak pakai', '2');
@@ -34,7 +34,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await expect(page.locator('#konten')).toContainText('Kondisi unit tercatat');
 
         // The same again on the same day is a likely duplicate, committed only with the actor's reason (UXS-15).
-        await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=kondisi`);
+        await settledVisit(page, () => page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=kondisi`));
         await fill(page, run, 'Layak pakai', '2');
         await page.getByLabel('Bukti', { exact: true }).selectOption({ index: 1 });
         await page.locator('[data-slot="adjustment-form"]').getByRole('button', { name: 'Ubah Kondisi' }).click();
@@ -48,14 +48,14 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await page.getByRole('alertdialog').getByRole('button', { name: 'Ubah Kondisi' }).click();
         await page.waitForURL(`**/gudang/stok/${run.product}`);
 
-        await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=periksa`);
+        await settledVisit(page, () => page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=periksa`));
         await fill(page, run, 'Tidak layak pakai', '1');
         await page.locator('[data-slot="adjustment-form"]').getByRole('button', { name: 'Periksa Ulang' }).click();
         await page.getByRole('alertdialog').getByLabel('Alasan').fill('Masih berfungsi');
         await page.getByRole('alertdialog').getByRole('button', { name: 'Periksa Ulang' }).click();
         await expect(page.locator('#konten')).toContainText('Hasil periksa ulang tercatat');
 
-        await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
+        await settledVisit(page, () => page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`));
         await expect(page.locator('[data-slot="adjustment-form"]')).toContainText('Kerugian dicatat satu kali');
         await page.getByLabel('Jenis penyesuaian').selectOption({ label: 'Musnahkan' });
         await fill(page, run, 'Tidak layak pakai', '1');
@@ -65,7 +65,7 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
         await page.getByRole('alertdialog').getByRole('button', { name: 'Catat Penyesuaian Stok' }).click();
         await expect(page.locator('#konten')).toContainText('Penyesuaian stok tercatat');
 
-        await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
+        await settledVisit(page, () => page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`));
         const record = page.locator('[data-slot="loss-record"]').first();
         await record.getByRole('button', { name: 'Balikkan Kerugian' }).click();
         await page.getByRole('alertdialog').getByLabel('Alasan').fill('Keliru dicatat');
@@ -92,7 +92,7 @@ test('refuses and routes a loss of another company\'s lot with MSG-14, nothing r
     await signedIn(admin, 'sesuai-admin');
     expect((await admin.request.post('/__fixtures/adjustments/plain', { data: { company: run.company } })).ok()).toBe(true);
 
-    await admin.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
+    await settledVisit(admin, () => admin.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`));
     await admin.getByLabel('Jenis penyesuaian').selectOption({ label: 'Penyusutan' });
     const other = admin.locator('[data-slot="adjustment-lot"]').filter({ hasText: 'perusahaan lain' }).first();
     await other.getByLabel(/Jumlah dari/).fill('1');

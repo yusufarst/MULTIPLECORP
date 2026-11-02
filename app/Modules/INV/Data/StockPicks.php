@@ -12,6 +12,8 @@ final class StockPicks
      * @param  array<int, string>  $cuts  reservation => quantity
      * @param  list<int>  $evidence
      * @param  list<string>  $acknowledged  the likely duplicates the actor confirms (L-49)
+     * @param  list<array{location: int, condition: string, qty: string}>  $pending  unexplained quantities across companies, a pending case each (SF-UNATTRIBUTED)
+     * @param  list<array{case: int, qty: string}>  $conversions  pending condition-changed units disposed of (DATABASE §5.8)
      */
     public function __construct(
         public readonly int $productId,
@@ -26,5 +28,7 @@ final class StockPicks
         public readonly bool $prefilled,
         public readonly bool $serializedSeen,
         public readonly int $scaleSeen,
+        public readonly array $pending = [],
+        public readonly array $conversions = [],
     ) {}
 }

@@ -5,6 +5,7 @@ namespace App\Modules\INV\Actions;
 use App\Modules\INV\Data\StockPicks;
 use App\Modules\INV\Services\StockChanges;
 use App\Modules\INV\Services\StockPlaces;
+use App\Modules\INV\Services\UnattributedCases;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -23,6 +24,7 @@ final class ChangeCondition
 
     public function __construct(
         private readonly CommandEnvelope $envelope,
+        private readonly UnattributedCases $cases,
         private readonly StockChanges $service,
     ) {}
 
@@ -32,6 +34,13 @@ final class ChangeCondition
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, null, self::CAPABILITY, Fingerprint::of(self::TYPE, null, $payload));
 
         return $this->envelope->run($request, function (CommandContext $context) use ($entry): CommandResult {
+            // Across companies with no evidence: a pending case, never a named change (SF-UNATTRIBUTED; Part 4). A conversion sent here is refused there: disposal is `stock.adjust`'s.
+            if ($entry->pending !== [] || $entry->conversions !== []) {
+                $context->lock(UnattributedCases::entryLocks($entry));
+
+                return new CommandResult('stock_movement', $this->cases->recordEntry($context, $entry, 'CONDITION_CHANGE'));
+            }
+
             $context->lock(StockPlaces::locks($entry->productId, $entry->picks, $entry->cuts, $entry->evidence));
 
             return new CommandResult('stock_movement', $this->service->change($context, $entry, false));

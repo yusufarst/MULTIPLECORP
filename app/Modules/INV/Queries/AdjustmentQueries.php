@@ -9,6 +9,7 @@ use App\Modules\INV\Services\InventoryPosting;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Brick\Math\BigDecimal;
 use Closure;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,9 @@ final class AdjustmentQueries
     public const CHOICES = 200;
 
     public const LOSSES = 20;
+
+    /** How many companies' lots hold the place's scope: read for a yes or no, never shown (PJ-07). */
+    private const COMPANIES = '(select count(distinct x.source_company_id) from stock_lot_balances y join inventory_lots x on x.id = y.lot_id where y.product_id = b.product_id and y.location_id = b.location_id and y.condition = b.condition and y.qty > 0) as companies';
 
     private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
 
@@ -49,13 +53,13 @@ final class AdjustmentQueries
     {
         $viewer = $this->capabilities->for($viewerId);
 
-        return ['condition' => $viewer->has('stock.condition'), 'adjust' => $viewer->has('stock.adjust'), 'move' => $viewer->has('stock.move'), 'reverse' => $viewer->has('stock.reverse'), 'reserve' => $viewer->has('stock.reserve'), 'evidence' => $viewer->has('evidence.upload'), 'allocate' => $viewer->has('stock.allocate_intercompany')];
+        return ['condition' => $viewer->has('stock.condition'), 'adjust' => $viewer->has('stock.adjust'), 'move' => $viewer->has('stock.move'), 'count' => $viewer->has('stock.count'), 'reverse' => $viewer->has('stock.reverse'), 'reserve' => $viewer->has('stock.reserve'), 'evidence' => $viewer->has('evidence.upload'), 'allocate' => $viewer->has('stock.allocate_intercompany')];
     }
 
     /**
      * The product's units in QB-05's bound, the oldest usable lot marked; a list longer than CHOICES says so and is narrowed by what is looked for or scanned.
      *
-     * @return array{find: ?string, places: list<array<string, mixed>>, serials: list<array<string, mixed>>, more: bool, available: string, reservations: list<array<string, mixed>>}
+     * @return array{find: ?string, places: list<array<string, mixed>>, serials: list<array<string, mixed>>, more: bool, scopes: list<array<string, mixed>>, available: string, reservations: list<array<string, mixed>>}
      */
     public function screen(int $viewerId, int $productId, ?string $find = null): array
     {
@@ -63,7 +67,7 @@ final class AdjustmentQueries
         $like = $find === null ? null : '%'.addcslashes(mb_strtolower($find), '%_\\').'%';
         $foundPlaces = DB::table('stock_lot_balances as b')->join('inventory_lots as i', 'i.id', '=', 'b.lot_id')->join('locations as l', 'l.id', '=', 'b.location_id')->where('b.product_id', $productId)->where('b.qty', '>', 0)
             ->when($like !== null, fn (Builder $where) => $where->whereRaw("(lower(i.lot_code) like ? or exists (select 1 from serial_units f where f.current_lot_id = i.id and f.current_location_id = b.location_id and f.current_condition = b.condition and f.state = 'IN_STOCK' and lower(f.serial_number) like ?))", [$like, $like]))
-            ->orderBy('i.business_date')->orderBy('i.id')->orderBy('l.code')->limit(self::CHOICES + 1)->get(['i.id', 'i.lot_code', 'i.source_company_id', 'b.qty', 'b.location_id', 'b.condition', 'l.code as rack'])->all();
+            ->orderBy('i.business_date')->orderBy('i.id')->orderBy('l.code')->limit(self::CHOICES + 1)->get(['i.id', 'i.lot_code', 'i.source_company_id', 'b.qty', 'b.location_id', 'b.condition', 'l.code as rack', DB::raw(self::COMPANIES)])->all();
         $places = [];
         $unflagged = $find === null;
 
@@ -84,6 +88,8 @@ final class AdjustmentQueries
             'places' => $places,
             'serials' => $serials,
             'more' => count($foundPlaces) > self::CHOICES || count($foundSerials) > self::CHOICES,
+            // Where the units cannot be tied to one company, as a yes or no: never which or how many (PJ-07; SF-UNATTRIBUTED).
+            'scopes' => self::scopes($places, array_slice($foundPlaces, 0, self::CHOICES)),
             'available' => StockFigures::plain((string) InventoryPosting::available($productId)),
             'reservations' => $viewer->has('stock.reserve') ? $this->stock->reservations($viewer, $productId) : [],
         ];
@@ -184,6 +190,47 @@ final class AdjustmentQueries
     public function reservation(int $productId, string $handle): ?int
     {
         return $this->found("reservations|{$productId}", 'reservations', fn (): array => DB::table('reservations')->where('product_id', $productId)->pluck('id')->all(), $handle);
+    }
+
+    /**
+     * The scopes among the places whose lots belong to several companies, where a pending quantity may be recorded (SF-UNATTRIBUTED).
+     *
+     * @param  list<array<string, mixed>>  $places
+     * @param  list<object>  $rows
+     * @return list<array{location: string, rack: string, condition: string, qty: string}>
+     */
+    private static function scopes(array $places, array $rows): array
+    {
+        $scopes = [];
+
+        foreach ($rows as $index => $row) {
+            if ((int) Row::text($row, 'companies') < 2) {
+                continue;
+            }
+
+            $key = Row::text($row, 'location_id').'|'.Row::text($row, 'condition');
+            $location = $places[$index]['location'] ?? '';
+            $scopes[$key] = ['location' => is_string($location) ? $location : '', 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'qty' => StockFigures::plain((string) BigDecimal::of($scopes[$key]['qty'] ?? '0')->plus(Row::text($row, 'qty')))];
+        }
+
+        return array_values($scopes);
+    }
+
+    /**
+     * The product's pending condition changes a disposal may convert, each once, a pool record (§5.8; PJ-07).
+     *
+     * @return list<array{id: string, rack: string, qty: string}>
+     */
+    public function changes(int $productId): array
+    {
+        return array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('unattributed_loss_cases', (int) Row::text($row, 'id')), 'rack' => Row::text($row, 'rack'), 'qty' => StockFigures::plain(Row::text($row, 'pending_qty_base'))],
+            DB::table('unattributed_loss_cases as k')->join('locations as l', 'l.id', '=', 'k.location_id')->where('k.product_id', $productId)->where('k.case_kind', 'CONDITION_CHANGE')->where('k.pending_qty_base', '>', 0)->whereNotExists(fn (Builder $next) => $next->from('unattributed_loss_cases as n')->whereColumn('n.converted_from_case_id', 'k.id'))->orderBy('k.id')->limit(self::LOSSES)->get(['k.id', 'k.pending_qty_base', 'l.code as rack'])->all()));
+    }
+
+    /** A condition change of the product, a pool record, however much of it is still pending — a replay finds its outcome; what may still convert the command decides (PJ-07; C-35). */
+    public function pendingChange(int $productId, string $handle): ?int
+    {
+        return $this->found("changes|{$productId}", 'unattributed_loss_cases', fn (): array => DB::table('unattributed_loss_cases')->where('product_id', $productId)->where('case_kind', 'CONDITION_CHANGE')->pluck('id')->all(), $handle);
     }
 
     /** An open case of the product's lots within the viewer's scope (CS-04). */
