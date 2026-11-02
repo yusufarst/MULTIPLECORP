@@ -113,7 +113,7 @@ test('resolves a pending case by later evidence as a Company-A-only ADM+ holder,
     await expect(page.locator('[data-slot="count-detail"]')).toContainText('Diterapkan');
 
     // A proof registered after the recognition.
-    const later = await page.request.post('/__fixtures/adjustments', { data: {} });
+    const later = await page.request.post('/__fixtures/adjustments', { data: { later: true } });
     const { proof } = (await later.json()) as { proof: string };
 
     const context = await browser.newContext({ baseURL: test.info().project.use.baseURL, ignoreHTTPSErrors: true, viewport: { width: 1280, height: 900 } });

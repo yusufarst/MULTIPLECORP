@@ -44,6 +44,7 @@ type Count = {
     changes: { id: string; qty: string }[];
     finding: string;
     losses: { id: string; date: string; code: string; open: string }[];
+    losses_across: boolean;
     missing: { serial: string; code: string }[];
 };
 type ListRow = { id: string; state: Count['state']; purpose: Count['purpose']; product: string; rack: string | null; condition: Condition | null; started: string; lines: number };
@@ -203,6 +204,7 @@ function LineForm({ count }: { count: Count }) {
                 </div>
             )}
             {unknown !== null && <Button variant="outline" size="sm" className="self-start" disabled={frozen} onClick={() => { send({ seri: unknown }); }}>{t('counts.record_unexpected', { seri: unknown })}</Button>}
+            {serialized && !registering && count.lines.length === 0 && <Button variant="outline" size="sm" className="self-start" disabled={frozen} pending={line.pending} onClick={() => { send({ jumlah: '0' }); }}>{t('counts.record_none')}</Button>}
             <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError ?? line.errors.seri ?? null} />
         </section>
     );
@@ -247,8 +249,9 @@ function Apply({ count, proofs, proofsFailed, reservations, available, today, ca
     const unconfirmed = unidentified && picks.some((place) => !confirmed.includes(placeKey(place)));
     const matches = Array.isArray(command.state.matches) ? (command.state.matches as DuplicateMatch[]) : [];
     const warned = command.answer?.kind === 'REJECTED' && matches.length > 0;
-    // Named from evidence, or confirmed by the actor where its lots are one company's (BR-INV-04; L-42).
-    const needsEvidence = !serialized && picks.length > 0 && !unidentified;
+    const restoring = Object.values(restored).some((qty) => Number(figure(qty)) > 0);
+    // Named from evidence, or confirmed by the actor where its lots are one company's (BR-INV-04; L-42); a loss reversed from evidence where several companies' losses could explain the surplus (L-15).
+    const needsEvidence = (!serialized && picks.length > 0 && !unidentified) || (restoring && count.losses_across);
     const ready = count.lines.length > 0 && balanced && !unconfirmed && (!needsEvidence || evidence !== '') && (!needsCut || Number(cut) >= Number(need)) && (!warned || (matches.every((match) => acknowledged.includes(match.id)) && duplicateReason.trim() !== ''));
     const [seenAnswer, setSeenAnswer] = useState(command.answer);
 

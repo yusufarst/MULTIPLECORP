@@ -71,6 +71,14 @@ final class LossRestorations
         ];
     }
 
+    /** Whether the open fungible losses a surplus of this scope could reverse belong to several companies: only evidence then says whose units were found (WF-INV-05; L-15). */
+    public static function acrossCompanies(int $product, int $location, string $condition): bool
+    {
+        return DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->join('stock_movement_entries as e', 'e.stock_consumption_id', '=', 'c.id')
+            ->where('c.product_id', $product)->where('e.location_id', $location)->where('e.condition', $condition)->whereNull('e.serial_unit_id')->whereIn('c.kind', ['LOSS', 'UNATTRIBUTED_LOSS'])
+            ->whereRaw('b.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base > 0')->distinct()->count('c.source_company_id') > 1;
+    }
+
     /**
      * Restorations and contras for the quantities; the ledger rows that bring the units back. Never above what is open (C-27).
      *

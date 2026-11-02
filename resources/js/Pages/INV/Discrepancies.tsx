@@ -1,6 +1,6 @@
 // PG-029 *Selisih & Temuan* (ROUTE-029, ROUTE-197–ROUTE-200; NAV-029; SCR-27; SF-UNATTRIBUTED; AX-07; AX-37; OD-08–OD-10; PJ-07; UXS-39; TASK-043): the open findings and pending cases with their recognition snapshot as PJ-07 projects it — the number and identity of other candidate companies only to the Owner. "Tetapkan Surplus" and "Tetapkan Perusahaan" are the Owner's, "Tetapkan dengan Bukti" an ADM+ evidence holder's, "Balikkan Penetapan" the exact reversal, each with its reason (IP-09); a control is absent without its capability.
 import type { FormDataConvertible } from '@inertiajs/core';
-import { router } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 import { ConfirmCommand } from '@/components/confirm-dialog';
@@ -40,6 +40,24 @@ type Props = {
 
 const figure = (value: string) => (/^\d+(\.\d+)?$/.test(value) ? value : '0');
 
+/** A command's success on the page its answer opened, once: the row that sent it may be gone (IP-01). */
+function PageAnswer() {
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
+
+    return flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' ? <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} /> : null;
+}
+
+/** The confirmation closes once an answer arrives, so a refusal shows at its row (IP-01). */
+function useClosedOnAnswer(answer: unknown, close: () => void) {
+    const [seen, setSeen] = useState(answer);
+
+    if (seen !== answer) {
+        setSeen(answer);
+
+        if (answer !== null) close();
+    }
+}
+
 function FindingRow({ finding, companies, today, can }: { finding: Finding; companies: Props['companies']; today: string; can: Can }) {
     const { t } = useTranslation();
     const command = useCommand<Record<string, FormDataConvertible>>(() => `/gudang/selisih-temuan/${finding.id}/surplus`, 'post');
@@ -50,11 +68,12 @@ function FindingRow({ finding, companies, today, can }: { finding: Finding; comp
     const [confirming, setConfirming] = useState(false);
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const frozen = command.pending || command.unknown;
+    useClosedOnAnswer(command.answer, () => { setConfirming(false); });
 
     return (
         <li data-slot="finding-row" className="flex min-w-0 flex-col gap-3 py-3 text-body">
             <p className="flex min-w-0 flex-wrap items-center gap-2"><span className="font-medium">{finding.product}</span><span>{`${finding.rack} · ${t(`stock.condition.${finding.condition}`)}`}</span><span>{`${finding.qty} ${finding.unit}`}</span><span className="text-text-secondary">{finding.date}</span><Badge>{t('discrepancies.state.waiting_owner')}</Badge></p>
-            {command.answer !== null && !confirming && <OutcomeMessage answer={command.answer} action={command.unknown ? <Button variant="outline" size="sm" onClick={command.retry}>{t('actions.try_again')}</Button> : undefined} />}
+            {command.answer !== null && command.answer.kind !== 'COMMITTED' && !confirming && <OutcomeMessage answer={command.answer} action={command.unknown ? <Button variant="outline" size="sm" onClick={command.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {can.surplus && finding.losses.length > 0 && (
                 <fieldset disabled={frozen} data-slot="finding-losses" className="flex min-w-0 flex-col gap-2">
                     <legend className="font-medium">{t('counts.identified_losses')}</legend>
@@ -112,6 +131,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
     const entered = row.lots.filter((lot) => Number(figure(quantities[lot.lot] ?? '')) > 0);
     const companies = [...new Map(row.exposures.map((one) => [one.id, one])).values()];
     const answer = owner.answer ?? proof.answer;
+    useClosedOnAnswer(answer, () => { setConfirming(null); });
     // A lot that came after the recognition has no exposure of its own: the Owner's choice among the candidates.
     const bearerOf = (lot: LiveLot) => bearers[lot.lot] ?? (companies.some((one) => one.id === lot.company_id) ? lot.company_id : companies[0]?.id ?? lot.company_id);
     const lines = () => {
@@ -138,7 +158,7 @@ function CaseRow({ row, proofs, today, can }: { row: Case; proofs: Props['proofs
                 </ul>
             )}
             {row.exposures.length > 0 && <p data-slot="case-exposures" className="text-text-secondary">{row.exposures.map((one) => t('discrepancies.exposure', { perusahaan: one.company, paparan: one.exposure, ditetapkan: one.assigned })).join(' · ')}</p>}
-            {answer !== null && confirming === null && <OutcomeMessage answer={answer} />}
+            {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} />}
             {(can.resolve || can.evidence) && row.lots.length > 0 && (
                 <fieldset disabled={frozen} data-slot="case-lots" className="flex min-w-0 flex-col gap-2">
                     <legend className="font-medium">{t('discrepancies.field.close')}</legend>
@@ -218,13 +238,14 @@ function ResolutionRow({ row, today }: { row: Resolution; today: string }) {
     const [reason, setReason] = useState('');
     const [confirming, setConfirming] = useState(false);
     const kind: TranslationKey = row.kind === 'EVIDENCE_IDENTIFIED' ? 'discrepancies.kind.evidence' : 'discrepancies.kind.owner';
+    useClosedOnAnswer(reverse.answer, () => { setConfirming(false); });
 
     return (
         <li data-slot="resolution-row" className="flex min-w-0 flex-col gap-2 py-3 text-body">
             <p className="flex min-w-0 flex-wrap items-center gap-2"><span className="font-medium">{row.product}</span><span>{row.rack}</span><span className="text-text-secondary">{row.date}</span><Badge>{t(kind)}</Badge></p>
             {row.lines.length > 0 && <p>{row.lines.map((line) => `${line.company}: ${line.qty}`).join(' · ')}</p>}
             {row.actor !== null && <p className="text-text-secondary">{`${row.actor} · ${row.reason ?? ''}`}</p>}
-            {reverse.answer !== null && !confirming && <OutcomeMessage answer={reverse.answer} />}
+            {reverse.answer !== null && reverse.answer.kind !== 'COMMITTED' && !confirming && <OutcomeMessage answer={reverse.answer} />}
             {row.reversible && <Button variant="outline" size="sm" className="self-start" disabled={reverse.pending} onClick={() => { reverse.clear(); setConfirming(true); }}>{t('actions.reverse_resolution')}</Button>}
             <ConfirmCommand
                 open={confirming}
@@ -257,6 +278,7 @@ export default function Discrepancies({ findings, cases, resolutions, companies,
         <AppShell title={t('pages.pg_029.title')} back={{ href: origin, label: t('shell.back') }}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_029.title')} />
+                <PageAnswer />
                 <section data-slot="discrepancy-cases" className="flex min-w-0 flex-col gap-2">
                     <h2 className="text-subhead">{t('discrepancies.section.cases')}</h2>
                     {cases.rows.length === 0 ? <RegionEmpty text={t('discrepancies.no_cases')} /> : <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">{cases.rows.map((row) => <CaseRow key={row.id} row={row} proofs={proofs} today={today} can={can} />)}</ul>}

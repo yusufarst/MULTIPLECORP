@@ -89,7 +89,10 @@ final class StockCounts
         $unit = null;
         $text = null;
 
-        if ($registering || $serialized) {
+        // A serialized scope where no unit is seen is one observation of none, never an invented serial (WF-INV-05).
+        $none = ! $registering && $serialized && ($serial === null || trim($serial) === '') && BigDecimal::of($qty)->isZero();
+
+        if (($registering || $serialized) && ! $none) {
             if ($serial === null || trim($serial) === '') {
                 throw Refused::rejected('C-02', ['reason' => 'serial']);
             }

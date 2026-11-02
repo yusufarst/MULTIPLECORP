@@ -173,12 +173,19 @@ final class CountApplication
             throw Refused::rejected('C-33', ['reason' => 'no_lines']);
         }
 
-        $open = DB::table('stock_count_findings')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('state', 'OPEN')->first(['id', 'surplus_qty_base']);
+        $open = DB::table('stock_count_findings')->where('product_id', $product)->where('location_id', $location)->where('condition', $condition)->where('state', 'OPEN')->first(['id', 'stock_count_id', 'surplus_qty_base']);
         $finding = BigDecimal::of($open === null ? '0' : Row::text($open, 'surplus_qty_base'));
         $serialized = (bool) DB::table('products')->where('id', $product)->value('is_serialized');
         $missing = $serialized ? self::missingSerials($entry->countId, $product) : [];
         $lost = $serialized ? self::lostSerials($entry->countId, $product) : [];
         $system = BigDecimal::of(Row::text($scope, 'system_qty_at_start'));
+
+        // A serialized finding is its serials: one the latest count no longer sees leaves it withdrawn, and this count's unregistered serials become a finding of their own (L-48; C-34).
+        if ($serialized && $open !== null && array_diff(self::unregisteredKeys((int) Row::text($open, 'stock_count_id')), self::unregisteredKeys($entry->countId)) !== []) {
+            $this->settleFinding($context, $entry, $open, $finding, BigDecimal::zero(), $product, $scale, $location, $condition);
+            $open = null;
+            $finding = BigDecimal::zero();
+        }
 
         if ($serialized) {
             // A serial's lines say who is missing and who was never registered; a count never nets them (L-48). A serial recorded elsewhere — dispatched, lost, at another rack — stays what the lines show, corrected through the CM rows and no surplus.
@@ -326,7 +333,7 @@ final class CountApplication
         }
     }
 
-    /** A prior loss reversed only when a serial, a single candidate lot or company, or entry-error evidence identifies the units (AX-06; L-15). */
+    /** A prior loss reversed only when a serial, a single candidate lot or company among the losses it could reverse, or entry-error evidence identifies the units (AX-06; L-15). */
     private function ensureIdentified(int $consumption, int $product, int $location, string $condition, bool $evidence): void
     {
         $found = LossRestorations::of($consumption);
@@ -336,7 +343,7 @@ final class CountApplication
             throw Refused::rejected('C-14', ['reason' => 'consumption']);
         }
 
-        if (! $evidence && UnattributedCases::acrossCompanies($product, $location, $condition)) {
+        if (! $evidence && LossRestorations::acrossCompanies($product, $location, $condition)) {
             throw Refused::rejected('L-15', ['reason' => 'not_identified']);
         }
     }
@@ -537,7 +544,24 @@ final class CountApplication
     /** The serials the count saw that no one ever received: what a surplus finding is, by the Owner's decision alone (L-48). */
     private static function unregisteredLines(int $count): int
     {
-        return DB::table('stock_count_lines as l')->leftJoin('serial_units as s', 's.id', '=', 'l.serial_unit_id')->where('l.stock_count_id', $count)
-            ->where(fn (Builder $seen) => $seen->whereNull('l.serial_unit_id')->orWhere('s.state', 'NEVER_RECEIVED'))->count();
+        return count(self::unregisteredKeys($count));
+    }
+
+    /**
+     * The serials a count saw that no one ever received, by key; an observation of none names no serial.
+     *
+     * @return list<string>
+     */
+    private static function unregisteredKeys(int $count): array
+    {
+        $keys = [];
+
+        foreach (DB::table('stock_count_lines as l')->leftJoin('serial_units as s', 's.id', '=', 'l.serial_unit_id')->where('l.stock_count_id', $count)
+            ->where(fn (Builder $seen) => $seen->whereNotNull('l.unregistered_serial_text')->orWhere('s.state', 'NEVER_RECEIVED'))->orderBy('l.id')->get(['l.unregistered_serial_text', 's.serial_key']) as $line) {
+            $text = Row::nullable($line, 'unregistered_serial_text');
+            $keys[] = $text === null ? Row::text($line, 'serial_key') : ReceivingRecords::serialKey($text);
+        }
+
+        return $keys;
     }
 }

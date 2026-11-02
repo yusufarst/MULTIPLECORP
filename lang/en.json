@@ -3500,6 +3500,7 @@
     "counts.open_finding": "An open finding of :jumlah :satuan waits for the Owner and is part of the counted basis.",
     "counts.record_line": "Record Line",
     "counts.record_unexpected": "Record :seri as a finding",
+    "counts.record_none": "Record no units",
     "counts.field.product": "Product to count",
     "counts.field.rack": "Rack",
     "counts.field.condition": "Condition",

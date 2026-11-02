@@ -5,6 +5,7 @@ namespace App\Modules\INV\Queries;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Data\StockFigures;
 use App\Modules\INV\Services\InventoryPosting;
+use App\Modules\INV\Services\LossRestorations;
 use App\Modules\INV\Services\UnattributedCases;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -109,6 +110,7 @@ final class CountQueries
             'changes' => $ordinary && $condition === 'UNUSABLE' ? $this->pendingChanges($product, (int) $location) : [],
             'finding' => $ordinary ? StockFigures::plain((string) DB::table('stock_count_findings')->where('product_id', $product)->where('location_id', (int) $location)->where('condition', $condition)->where('state', 'OPEN')->sum('surplus_qty_base')) : '0',
             'losses' => $ordinary && $viewer->has('stock.count_apply') ? $this->identifiable($viewerId, $product, (int) $location, $condition) : [],
+            'losses_across' => $ordinary && LossRestorations::acrossCompanies($product, (int) $location, $condition),
             'missing' => $ordinary && $info !== null && (bool) Row::text($info, 'is_serialized') ? $this->missing($id, $product, (int) $location, $condition) : [],
         ];
     }

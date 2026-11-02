@@ -15619,6 +15619,12 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "counts.record_none": {
+            "task": "TASK-043",
+            "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "counts.field.product": {
             "task": "TASK-043",
             "source": "WF-INV-05; SF-UNATTRIBUTED; J-INV-05; J-INV-04",

@@ -68,10 +68,10 @@ final class DiscrepancyController extends Controller
 
         foreach (is_array($input['pulihkan'] ?? null) ? $input['pulihkan'] : [] as $position => $row) {
             $row = is_array($row) ? $row : [];
-            $restored[] = ['consumption' => $this->queries->consumption(self::text($row['konsumsi'] ?? '')) ?? throw ValidationException::withMessages(["pulihkan.{$position}.konsumsi" => self::say('projects.validation.unknown')]), 'qty' => self::text($row['jumlah'] ?? '')];
+            $restored[] = ['consumption' => $this->queries->consumption($finding['product'], self::text($row['konsumsi'] ?? '')) ?? throw ValidationException::withMessages(["pulihkan.{$position}.konsumsi" => self::say('projects.validation.unknown')]), 'qty' => self::text($row['jumlah'] ?? '')];
         }
 
-        $outcome = $attribute->run(self::text($input['command_id']), $actor, $finding, $company, Money::of(self::text($input['dasar_biaya'])), $restored, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $attribute->run(self::text($input['command_id']), $actor, $finding['id'], $company, Money::of(self::text($input['dasar_biaya'])), $restored, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'attributed');
     }
@@ -94,7 +94,7 @@ final class DiscrepancyController extends Controller
 
         foreach (is_array($input['baris']) ? $input['baris'] : [] as $position => $line) {
             $line = is_array($line) ? $line : [];
-            $lines[] = ['company' => $this->queries->company(self::text($line['perusahaan'] ?? '')) ?? throw ValidationException::withMessages(["baris.{$position}.perusahaan" => $unknown]), 'closes' => $this->closes($line['tutup'] ?? [], "baris.{$position}.tutup")];
+            $lines[] = ['company' => $this->queries->company(self::text($line['perusahaan'] ?? '')) ?? throw ValidationException::withMessages(["baris.{$position}.perusahaan" => $unknown]), 'closes' => $this->closes($case['product'], $line['tutup'] ?? [], "baris.{$position}.tutup")];
         }
 
         return $this->answer($resolve->run(self::text($input['command_id']), $actor, $case['id'], $lines, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1])), 'resolved');
@@ -119,7 +119,7 @@ final class DiscrepancyController extends Controller
             $evidence[] = $this->queries->evidence($actor, self::text($publicId)) ?? throw ValidationException::withMessages(["bukti.{$position}" => self::say('projects.validation.unknown')]);
         }
 
-        return $this->answer($resolve->run(self::text($input['command_id']), $actor, $case['id'], $this->closes($input['tutup'], 'tutup'), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1])), 'resolved');
+        return $this->answer($resolve->run(self::text($input['command_id']), $actor, $case['id'], $this->closes($case['product'], $input['tutup'], 'tutup'), $evidence, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1])), 'resolved');
     }
 
     /** ROUTE-200: `{id}` the resolution; an evidence-identified one by its capability or the Owner (OD-10; OD-15). */
@@ -133,13 +133,13 @@ final class DiscrepancyController extends Controller
     }
 
     /** @return list<array{lot: int, qty: string}> */
-    private function closes(mixed $rows, string $field): array
+    private function closes(int $product, mixed $rows, string $field): array
     {
         $closes = [];
 
         foreach (is_array($rows) ? $rows : [] as $position => $row) {
             $row = is_array($row) ? $row : [];
-            $closes[] = ['lot' => $this->queries->lot(self::text($row['lot'] ?? '')) ?? throw ValidationException::withMessages(["{$field}.{$position}.lot" => self::say('projects.validation.unknown')]), 'qty' => self::text($row['jumlah'] ?? '')];
+            $closes[] = ['lot' => $this->queries->lot($product, self::text($row['lot'] ?? '')) ?? throw ValidationException::withMessages(["{$field}.{$position}.lot" => self::say('projects.validation.unknown')]), 'qty' => self::text($row['jumlah'] ?? '')];
         }
 
         return $closes;

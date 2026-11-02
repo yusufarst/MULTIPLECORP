@@ -3500,6 +3500,7 @@
     "counts.open_finding": "Temuan terbuka :jumlah :satuan menunggu Owner dan termasuk dalam dasar hitungan.",
     "counts.record_line": "Catat Baris",
     "counts.record_unexpected": "Catat :seri sebagai temuan",
+    "counts.record_none": "Catat Tanpa Unit",
     "counts.field.product": "Barang yang dihitung",
     "counts.field.rack": "Rak",
     "counts.field.condition": "Kondisi",

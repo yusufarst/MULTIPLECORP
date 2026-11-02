@@ -229,3 +229,18 @@ it('pages PG-029\'s findings by cursor, says a tampered cursor failed, and searc
     expect($proofs['find'])->toBe($issuer)->and($proofs['rows'])->not->toBe([])
         ->and(countPageProps($this, $this->owner, '/gudang/selisih-temuan?cari_bukti=tidak-ada-bukti')['proofs']['rows'])->toBe([]);
 });
+
+it('resolves an old finding\'s handle however many findings follow it; a lot only among the product\'s (PG-029; ROUTE-197)', function () {
+    $old = (int) StockCountFinding::factory()->create(['product_id' => $this->product])->id;
+    $row = (array) DB::table('stock_count_findings')->where('id', $old)->first();
+    unset($row['id']);
+
+    foreach (array_chunk(array_fill(0, 5000, [...$row, 'state' => 'WITHDRAWN']), 500) as $chunk) {
+        DB::table('stock_count_findings')->insert($chunk);
+    }
+
+    $queries = app(DiscrepancyQueries::class);
+    expect($queries->finding(RowHandle::of('stock_count_findings', $old)))->toBe(['id' => $old, 'product' => (int) $this->product])
+        ->and($queries->lot((int) $this->product, RowHandle::of('inventory_lots', $this->lot)))->toBe($this->lot)
+        ->and($queries->lot((int) $this->product + 1000, RowHandle::of('inventory_lots', $this->lot)))->toBeNull();
+});

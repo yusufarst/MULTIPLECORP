@@ -169,24 +169,29 @@ final class DiscrepancyQueries
         return $row === null ? null : ['id' => (int) Row::text($row, 'id'), 'product' => (int) Row::text($row, 'product_id'), 'kind' => Row::text($row, 'case_kind')];
     }
 
-    public function finding(string $handle): ?int
+    /** @return array{id: int, product: int}|null */
+    public function finding(string $handle): ?array
     {
-        return self::found('stock_count_findings', $handle);
+        $id = self::found('stock_count_findings', $handle, DB::table('stock_count_findings'));
+        $product = $id === null ? null : DB::table('stock_count_findings')->where('id', $id)->value('product_id');
+
+        return $id === null || ! is_numeric($product) ? null : ['id' => $id, 'product' => (int) $product];
     }
 
     public function resolution(string $handle): ?int
     {
-        return self::found('unattributed_loss_resolutions', $handle);
+        return self::found('unattributed_loss_resolutions', $handle, DB::table('unattributed_loss_resolutions'));
     }
 
-    public function consumption(string $handle): ?int
+    /** A loss of the product a surplus may reverse. */
+    public function consumption(int $product, string $handle): ?int
     {
-        return self::found('stock_consumptions', $handle);
+        return self::found('stock_consumptions', $handle, DB::table('stock_consumptions')->where('product_id', $product)->whereIn('kind', ['LOSS', 'UNATTRIBUTED_LOSS']));
     }
 
-    public function lot(string $handle): ?int
+    public function lot(int $product, string $handle): ?int
     {
-        return self::found('inventory_lots', $handle);
+        return self::found('inventory_lots', $handle, DB::table('inventory_lots')->where('product_id', $product));
     }
 
     public function company(string $publicId): ?int
@@ -213,14 +218,15 @@ final class DiscrepancyQueries
     }
 
     /** A row by its keyed handle, among the table's rows (RowHandle). */
-    private static function found(string $table, string $handle): ?int
+    /** A handle resolved among every row the action may name, however old: never the newest few alone. */
+    private static function found(string $table, string $handle, Builder $among): ?int
     {
         if (! RowHandle::valid($handle)) {
             return null;
         }
 
-        foreach (DB::table($table)->orderByDesc('id')->limit(5000)->pluck('id') as $id) {
-            if (is_numeric($id) && RowHandle::of($table, (int) $id) === $handle) {
+        foreach ($among->orderByDesc('id')->pluck('id') as $id) {
+            if (is_numeric($id) && hash_equals(RowHandle::of($table, (int) $id), $handle)) {
                 return (int) $id;
             }
         }

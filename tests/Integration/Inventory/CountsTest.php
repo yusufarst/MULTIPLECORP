@@ -747,3 +747,62 @@ it('warns of a likely duplicate pending quantity on PG-027 and commits it only w
         ->and(DB::table('audit_events')->where('action', 'INV.UnattributedRecognizedDuplicateConfirmed')->count())->toBe(1);
     countClean();
 });
+
+it('decides whether a surplus identifies a loss by the losses it could reverse, not by the stock left: two companies\' open losses need evidence (WF-INV-05; L-15; AX-06)', function () {
+    $own = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    $other = StockWorld::lot($this->foreignActor, $this->foreign->company, $this->product, $this->unit, $this->rack, '1', '1000');
+    $first = CountWorld::open($this->both, $this->product, $this->rack);
+    expect(CountWorld::line($this->both, $first, $this->product, $this->rack, '1'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->both, CountWorld::entry($first, [AdjustmentWorld::pick($own, $this->rack, '1'), AdjustmentWorld::pick($other, $this->rack, '1')], evidence: [$this->evidence])))->toBe('COMMITTED');
+    // Only the first company's lot still holds units; both companies' losses are open.
+    $consumption = (int) DB::table('stock_consumptions')->where('kind', 'LOSS')->where('source_company_id', $this->foreign->company->id)->value('id');
+
+    $second = CountWorld::open($this->both, $this->product, $this->rack);
+    expect(CountWorld::line($this->both, $second, $this->product, $this->rack, '2'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->both, CountWorld::entry($second, restored: [['consumption' => $consumption, 'qty' => '1']])))->toContain('L-15')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('0.000')
+        ->and(CountWorld::apply($this->both, CountWorld::entry($second, restored: [['consumption' => $consumption, 'qty' => '1']], evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and((string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base'))->toBe('1.000')
+        ->and(countGuard($this->product)[0])->toBe('2.000');
+    countClean();
+});
+
+it('withdraws a serialized finding whose serial the latest count no longer sees; this count\'s unregistered serial a finding of its own, the one the Owner registers (L-48; C-34; AX-07)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $key = (string) DB::table('serial_units')->where('id', StockWorld::serial($this->product, $lot, $this->rack))->value('serial_key');
+    $first = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1', $key))->toBe('COMMITTED')
+        ->and(CountWorld::line($this->actor, $first, $this->product, $this->rack, '1', 'SN-A'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($first)))->toBe('COMMITTED');
+    $old = (int) DB::table('stock_count_findings')->where('state', 'OPEN')->value('id');
+
+    $second = CountWorld::open($this->actor, $this->product, $this->rack);
+    expect(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', $key))->toBe('COMMITTED')
+        ->and(CountWorld::line($this->actor, $second, $this->product, $this->rack, '1', 'SN-B'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($second)))->toBe('COMMITTED')
+        ->and(DB::table('stock_count_findings')->where('id', $old)->value('state'))->toBe('WITHDRAWN');
+    $finding = DB::table('stock_count_findings')->where('state', 'OPEN')->first(['id', 'stock_count_id', 'surplus_qty_base']);
+
+    expect((int) $finding->stock_count_id)->toBe($second)->and((string) $finding->surplus_qty_base)->toBe('1.000')
+        ->and(CountWorld::attribute($this->owner->id, (int) $finding->id, $this->company->id, '500', [], true))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->where('serial_key', 'sn-b')->value('state'))->toBe('IN_STOCK')
+        ->and(DB::table('serial_units')->where('serial_key', 'sn-a')->exists())->toBeFalse();
+    countClean();
+});
+
+it('applies a serialized count where no unit was seen through its observation of none, each missing serial lost by its lot, never an invented serial (WF-INV-05; L-48; SF-LOSS)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '2', '1000');
+    DB::table('products')->where('id', $this->product)->update(['is_serialized' => true]);
+    $serials = [StockWorld::serial($this->product, $lot, $this->rack), StockWorld::serial($this->product, $lot, $this->rack)];
+    $count = CountWorld::open($this->actor, $this->product, $this->rack);
+
+    expect(CountWorld::apply($this->actor, CountWorld::entry($count, evidence: [$this->evidence])))->toContain('C-33')
+        ->and(CountWorld::line($this->actor, $count, $this->product, $this->rack, '1'))->toContain('C-02')
+        ->and(CountWorld::line($this->actor, $count, $this->product, $this->rack, '0'))->toBe('COMMITTED')
+        ->and(CountWorld::apply($this->actor, CountWorld::entry($count, evidence: [$this->evidence])))->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->whereIn('id', $serials)->pluck('state')->unique()->values()->all())->toBe(['LOST'])
+        ->and(DB::table('stock_count_findings')->count())->toBe(0)
+        ->and(countGuard($this->product)[0])->toBe('0.000');
+    countClean();
+});

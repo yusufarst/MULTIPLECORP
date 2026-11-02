@@ -201,7 +201,7 @@ final class SurplusAttribution
         $seen = [];
 
         foreach (DB::table('stock_count_lines as l')->leftJoin('serial_units as s', 's.id', '=', 'l.serial_unit_id')->where('l.stock_count_id', $count)
-            ->where(fn (Builder $seen) => $seen->whereNull('l.serial_unit_id')->orWhere('s.state', 'NEVER_RECEIVED'))->orderBy('l.id')->get(['l.unregistered_serial_text', 's.serial_number']) as $line) {
+            ->where(fn (Builder $seen) => $seen->whereNotNull('l.unregistered_serial_text')->orWhere('s.state', 'NEVER_RECEIVED'))->orderBy('l.id')->get(['l.unregistered_serial_text', 's.serial_number']) as $line) {
             $seen[] = Row::nullable($line, 'unregistered_serial_text') ?? Row::text($line, 'serial_number');
         }
 
