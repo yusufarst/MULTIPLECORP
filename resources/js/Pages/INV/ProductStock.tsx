@@ -28,7 +28,7 @@ type Props = {
     product: { id: string; name: string; sku: string | null; figures: StockFigures; pending: string | null; below: string | null; serialized: boolean };
     places: { rack: string; condition: 'USABLE' | 'UNUSABLE'; qty: string }[];
     reservations: Reservations;
-    can: { purchase: boolean; condition: boolean; adjust: boolean; move: boolean; count: boolean };
+    can: { purchase: boolean; condition: boolean; adjust: boolean; move: boolean; count: boolean; return: boolean };
     moving?: Moving;
     today: string;
     scale: number;
@@ -47,7 +47,7 @@ function Failed({ group }: { group: 'group' | 'movements' }) {
 
 function Lots() {
     const { t } = useTranslation();
-    const { group, costs, can, product } = usePage().props as unknown as { group?: Group; costs?: Record<string, Cost> | { failed: true }; can: { condition: boolean }; product: { id: string } };
+    const { group, costs, can, product } = usePage().props as unknown as { group?: Group; costs?: Record<string, Cost> | { failed: true }; can: { condition: boolean; return: boolean }; product: { id: string } };
     const [seen, setSeen] = useState<Group | undefined>(undefined);
     const [loading, setLoading] = useState<'lots' | 'serials' | null>(null);
     const [lots, setLots] = useState<Lot[]>([]);
@@ -95,6 +95,7 @@ function Lots() {
                                         {lot.oldest && <Badge>{t('stock.lot.oldest')}</Badge>}
                                         {lot.other && <RelationMarker />}
                                         {can.condition && <a className="underline" href={`/gudang/penyesuaian?produk=${product.id}&aksi=${lot.condition === 'USABLE' ? 'kondisi' : 'periksa'}&lot=${lot.id}`}>{t(lot.condition === 'USABLE' ? 'actions.change_condition' : 'actions.reinspect')}</a>}
+                                        {can.return && !lot.other && lot.kind === 'RECEIPT' && <a className="underline" href={`/gudang/retur-pemasok?produk=${product.id}&lot=${lot.id}`}>{t('pages.pg_028.title')}</a>}
                                     </span>
                                     {!lot.other && <span className="text-caption text-text-secondary">{t('stock.lot.source', { perusahaan: lot.company ?? '' })} · {t('stock.lot.acquired', { jenis: t(`stock.lot.kind.${lot.kind ?? 'RECEIPT'}` as TranslationKey), tanggal: lot.date ?? '', jumlah: lot.acquired ?? '' })}</span>}
                                     {cost !== undefined && <span className="flex flex-wrap items-center gap-2 text-caption text-text-secondary">{t('stock.lot.cost', { nilai: '' })}<Money value={cost.cost} />{cost.flagged !== null && <>{t('stock.lot.flagged', { nilai: '' })}<Money value={cost.flagged} /></>}</span>}

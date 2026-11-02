@@ -5,6 +5,7 @@ namespace App\Modules\INV\Actions;
 use App\Modules\INV\Data\StockPicks;
 use App\Modules\INV\Services\StockPlaces;
 use App\Modules\INV\Services\SupplierReturns;
+use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -29,7 +30,7 @@ final class ReturnToSupplier
     /** @param  array<string, mixed>  $payload  the validated request, the command's fingerprint */
     public function run(string $commandId, int $actorUserId, int $companyId, int $purchaseId, StockPicks $entry, array $payload): Outcome
     {
-        $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companyId, self::CAPABILITY, Fingerprint::of(self::TYPE, $companyId, ['target' => $purchaseId, ...$payload]));
+        $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companyId, self::CAPABILITY, Fingerprint::of(self::TYPE, SaveQuotationDraft::companyKey($companyId), ['target' => $purchaseId, ...$payload]));
 
         return $this->envelope->run($request, function (CommandContext $context) use ($purchaseId, $entry): CommandResult {
             $context->lock(SupplierReturns::locks($purchaseId, $entry));

@@ -50,12 +50,12 @@ final class ReturnWorld
         return (int) DB::table('correction_cases')->where('case_kind', 'PURCHASE_RETURN')->max('id');
     }
 
-    /** ROUTE-177's action: its word. */
-    public static function outcome(int $actor, int $case, string $kind, ?string $qty = null, ?string $amount = null, ?int $evidence = null, ?string $allocation = null, ?string $commandId = null): string
+    /** ROUTE-177's action, or its correction: its word. */
+    public static function outcome(int $actor, int $case, string $kind, ?string $qty = null, ?string $amount = null, ?int $evidence = null, ?string $allocation = null, ?string $commandId = null, bool $correction = false): string
     {
         $company = (int) DB::table('correction_cases')->where('id', $case)->value('company_id');
 
-        return InvoiceWorld::word(app(RecordReturnOutcome::class)->run($commandId ?? (string) Str::uuid(), $actor, $company, $case, $kind, $qty, $amount === null ? null : Money::of($amount), $evidence, $allocation, 'Hasil retur dari pemasok', BusinessDate::today(), false, ['kind' => $kind, 'qty' => $qty, 'amount' => $amount, 'run' => $commandId ?? (string) Str::uuid()]));
+        return InvoiceWorld::word(app(RecordReturnOutcome::class)->run($commandId ?? (string) Str::uuid(), $actor, $company, $case, $kind, $correction, $qty, $amount === null ? null : Money::of($amount), $evidence, $allocation, 'Hasil retur dari pemasok', BusinessDate::today(), false, ['kind' => $kind, 'correction' => $correction, 'qty' => $qty, 'amount' => $amount, 'run' => $commandId ?? (string) Str::uuid()]));
     }
 
     /** ROUTE-271's close of the case: its word. */

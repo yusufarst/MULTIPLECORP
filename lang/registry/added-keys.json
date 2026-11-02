@@ -16381,6 +16381,36 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "returns.refusal.awaited": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.refusal.above_awaited": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.field.correction": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.correction_help": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.correction": {
+            "task": "TASK-044",
+            "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "returns.refusal.above_open": {
             "task": "TASK-044",
             "source": "WF-PUR-03; J-PUR-03; PG-028; SCR-26",

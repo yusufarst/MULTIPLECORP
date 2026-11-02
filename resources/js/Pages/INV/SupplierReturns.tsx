@@ -1,6 +1,6 @@
 // PG-028 "Retur ke Pemasok" (TASK-044; SCR-26; J-PUR-03; NAV-028): the units of one lot of a purchase returned to its
 // supplier with the reason and the cut (ROUTE-176; IP-20), scanned on the phone; the case's outcome (ROUTE-177) and its
-// figures, "Tutup Kasus" only once returned cost = refunded + replaced + unrecovered (ROUTE-271; C-46), its timeline.
+// figures, an earlier outcome corrected, "Tutup Kasus" only once returned cost = refunded + replaced + unrecovered (ROUTE-271; C-46), its timeline.
 import type { FormDataConvertible } from '@inertiajs/core';
 import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
@@ -23,6 +23,7 @@ import { Code, DateText, Money } from '@/components/values';
 import { ChoicesFind } from '@/features/inv/dispatch-line';
 import AppShell from '@/layouts/AppShell';
 import * as decimal from '@/lib/decimal';
+import { money } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { previousPage } from '@/lib/previous-page';
 import { useCommand } from '@/lib/use-command';
@@ -35,7 +36,7 @@ type Condition = 'USABLE' | 'UNUSABLE';
 type Page<Row> = { rows: Row[]; more: string | null; cursor_failed: boolean };
 type Row = { id: string; state: 'OPEN' | 'CLOSED'; date: string; purchase: string; number: string; supplier: string; lot: string; product: string; open: string | null };
 type Unit = { lot: string; rack: string; condition: Condition; serial: string | null; qty: string; cost: string | null };
-type Event = { action: string; reason: string | null; by: string | null; at: string; outcome: string | null };
+type Event = { action: string; reason: string | null; by: string | null; at: string; outcome: string | null; correction: boolean };
 type Detail = {
     id: string;
     state: 'OPEN' | 'CLOSED';
@@ -229,6 +230,9 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
     const outcome = useCommand<Record<string, FormDataConvertible>>(() => `/pembelian/${detail.purchase}/retur/${detail.id}/hasil`, 'post');
     const close = useCommand<Record<string, FormDataConvertible>>(() => `/dokumen/kasus/${detail.id}/tutup`, 'post');
     const [kind, setKind] = useState<OutcomeKind>('REPLACEMENT');
+    // A refund expected is only a note: there is nothing to correct (WF-PUR-03).
+    const [correcting, setCorrecting] = useState(false);
+    const correction = correcting && kind !== 'REFUND';
     const [qty, setQty] = useState('');
     const [amount, setAmount] = useState('');
     const [proof, setProof] = useState('');
@@ -240,7 +244,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
     const frozen = outcome.pending || outcome.unknown || close.pending || close.unknown;
     const answer = outcome.answer ?? close.answer;
     useClosedOnAnswer(answer, () => { setConfirming(null); });
-    const ready = kind === 'REPLACEMENT' ? Number(figure(qty)) > 0 : kind === 'REFUND' ? true : Number(figure(amount)) > 0 && (kind !== 'CREDIT' || proof !== '');
+    const ready = kind === 'REPLACEMENT' ? Number(figure(qty)) > 0 : kind === 'REFUND' ? true : Number(figure(amount)) > 0 && (kind !== 'CREDIT' || correction || proof !== '');
     const open = detail.figures?.open ?? null;
 
     return (
@@ -266,7 +270,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
             )}
             {open !== null && detail.state === 'OPEN' && (Number(open) === 0
                 ? <p data-slot="return-balanced" className="text-body">{t('returns.balanced')}</p>
-                : <p data-slot="return-open" className="text-body font-medium">{t('returns.open_part', { nilai: open })}</p>)}
+                : <p data-slot="return-open" className="text-body font-medium">{t('returns.open_part', { nilai: money(open) })}</p>)}
             <section data-slot="return-units" className="flex min-w-0 flex-col gap-2">
                 <h3 className="text-body font-medium">{t('returns.section.units')}</h3>
                 <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle">
@@ -291,8 +295,15 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                             </NativeSelect>
                         )}
                     </FormField>
+                    {kind !== 'REFUND' && (
+                        <label data-slot="return-correction" className="flex min-h-floor items-center gap-2 text-body">
+                            <Checkbox checked={correcting} onCheckedChange={(checked) => { setCorrecting(checked); }} />
+                            <span>{t('returns.field.correction')}</span>
+                        </label>
+                    )}
+                    {correction && <p className="text-body text-text-secondary">{t('returns.correction_help')}</p>}
                     {kind === 'REPLACEMENT' && (
-                        <FormField label={t('returns.field.replacement_qty')} help={t('returns.replacement_room', { sisa: detail.replacement.room })} error={outcome.errors.jumlah} className="w-48">
+                        <FormField label={t('returns.field.replacement_qty')} help={correction ? undefined : t('returns.replacement_room', { sisa: detail.replacement.room })} error={outcome.errors.jumlah} className="w-48">
                             {(control) => <DecimalInput {...control} scale={detail.scale} value={qty} onValueChange={(next) => { setQty(next ?? ''); }} />}
                         </FormField>
                     )}
@@ -301,7 +312,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                             {(control) => <DecimalInput {...control} kind="money" scale={2} value={amount} onValueChange={(next) => { setAmount(next ?? ''); }} />}
                         </FormField>
                     )}
-                    {kind === 'CREDIT' && (
+                    {kind === 'CREDIT' && !correction && (
                         <div data-slot="return-proof" className="flex min-w-0 flex-col gap-2">
                             {proofsFailed ? <p role="alert" className="text-body text-danger-fg">{t('receiving.list.group_failed')}</p> : (
                                 <FormField label={t('returns.field.proof')} error={outcome.errors.bukti}>
@@ -330,7 +341,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                 <ol className="flex min-w-0 flex-col gap-2">
                     {detail.events.map((event, index) => (
                         <li key={`${event.at}-${String(index)}`} className="flex min-w-0 flex-col text-body">
-                            <span className="font-medium">{`${t(`activity.action.${event.action}` as TranslationKey)}${event.outcome === null ? '' : ` · ${t(`returns.outcome.${event.outcome}` as TranslationKey)}`}`}</span>
+                            <span className="font-medium">{`${t(`activity.action.${event.action}` as TranslationKey)}${event.outcome === null ? '' : ` · ${t(`returns.outcome.${event.outcome}` as TranslationKey)}`}${event.correction ? ` · ${t('returns.correction')}` : ''}`}</span>
                             <span className="text-text-secondary">{`${event.by ?? ''} · ${event.at.slice(0, 16).replace('T', ' ')}`}</span>
                             {event.reason !== null && <span>{event.reason}</span>}
                         </li>
@@ -350,9 +361,10 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                 onConfirm={() => {
                     outcome.submit({
                         hasil: kind,
+                        koreksi: correction,
                         jumlah: kind === 'REPLACEMENT' ? qty : null,
                         nilai: kind === 'REPLACEMENT' || amount === '' ? null : amount,
-                        bukti: kind === 'CREDIT' && proof !== '' ? proof : null,
+                        bukti: kind === 'CREDIT' && !correction && proof !== '' ? proof : null,
                         alasan_alokasi: kind === 'UNRECOVERED' && allocation.trim() !== '' ? allocation : null,
                         alasan: reason,
                         tanggal: date.date,
@@ -404,7 +416,7 @@ export default function SupplierReturns({ list, case: detail, purchase, lot, uni
                                     <span><Code>{row.number}</Code>{` · ${row.supplier}`}</span>
                                     <DateText value={row.date} />
                                     <Badge>{t(row.state === 'OPEN' ? 'status.correction_case.open' : 'status.correction_case.closed')}</Badge>
-                                    {row.open !== null && row.state === 'OPEN' && Number(row.open) !== 0 && <span className="text-text-secondary">{t('returns.list.open', { nilai: row.open })}</span>}
+                                    {row.open !== null && row.state === 'OPEN' && Number(row.open) !== 0 && <span className="text-text-secondary">{t('returns.list.open', { nilai: money(row.open) })}</span>}
                                 </li>
                             ))}
                         </ul>

@@ -22,6 +22,9 @@ final class SupplierReturnQueries
 
     public const PROOFS = 50;
 
+    /** The received lots of a product a lot's handle is looked up among, newest first. */
+    private const LOTS = 5000;
+
     private const SUPPLIER = "pu.supplier_snapshot->>'name' as supplier";
 
     public function __construct(
@@ -64,11 +67,11 @@ final class SupplierReturnQueries
         $tail = $rows === [] ? null : $rows[count($rows) - 1];
 
         return [
-            'rows' => array_values(array_map(fn (object $row): array => [
+            'rows' => array_map(fn (object $row): array => [
                 'id' => Row::text($row, 'public_id'), 'state' => Row::text($row, 'state'), 'date' => substr(Row::text($row, 'recorded_at'), 0, 10),
                 'purchase' => Row::text($row, 'purchase'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier') ?? '', 'lot' => Row::text($row, 'lot_code'), 'product' => Row::text($row, 'product'),
                 'open' => $viewer->allows('cost.view', (int) Row::text($row, 'company_id')) ? self::open($row)->toString() : null,
-            ], $rows)),
+            ], $rows),
             'more' => count($found) > self::PAGE && $tail !== null ? StockCursor::of($viewer, [Row::text($tail, 'state') === 'OPEN' ? 1 : 0, (int) Row::text($tail, 'id')], ['list' => 'returns']) : null,
             'cursor_failed' => false,
         ];
@@ -98,8 +101,8 @@ final class SupplierReturnQueries
         $causalCompany = Row::nullable($row, 'causal_company');
         $line = (int) Row::text($row, 'line');
         $guard = DB::table('purchase_line_balances as b')->where('purchase_line_id', $line)->first(['replacement_expected_qty_base', 'replacement_received_net_qty_base']);
-        $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions as c')->join('inventory_lots as i', 'i.id', '=', 'c.lot_id')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')
-            ->where('r.purchase_line_id', $line)->where('c.kind', 'PURCHASE_RETURN')->sum('c.qty_base'));
+        // A replacement is the case's own: never above the units it returned less what it already declared (C-29).
+        $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $id)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'));
         $expected = BigDecimal::of($guard === null ? '0' : Row::text($guard, 'replacement_expected_qty_base'));
 
         return [
@@ -108,7 +111,7 @@ final class SupplierReturnQueries
             // XL-3: another company's causal project named only within scope.
             'causal' => $causalCompany === null ? null : ($viewer->scope->includes((int) $causalCompany) ? Row::nullable($row, 'project_number') : ''),
             'figures' => $cost ? ['returned' => Money::of(Row::text($row, 'returned_cost'))->toString(), 'refunded' => Money::of(Row::text($row, 'refunded_value'))->toString(), 'replaced' => Money::of(Row::text($row, 'replaced_value'))->toString(), 'unrecovered' => Money::of(Row::text($row, 'unrecovered_value'))->toString(), 'open' => $open->toString()] : null,
-            'replacement' => ['returned' => StockFigures::plain((string) $returnedQty), 'expected' => StockFigures::plain((string) $expected), 'received' => StockFigures::plain($guard === null ? '0' : Row::text($guard, 'replacement_received_net_qty_base')), 'room' => StockFigures::plain((string) $returnedQty->minus($expected))],
+            'replacement' => ['returned' => StockFigures::plain((string) $returnedQty), 'expected' => StockFigures::plain((string) $expected), 'received' => StockFigures::plain($guard === null ? '0' : Row::text($guard, 'replacement_received_net_qty_base')), 'room' => StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), $returnedQty->minus(self::declared($id))))],
             'units' => $this->units($id, $cost),
             'events' => self::events($id),
             'trail' => $this->trail->of($viewer, 'correction_case', Row::text($row, 'public_id')),
@@ -183,7 +186,7 @@ final class SupplierReturnQueries
 
         return [
             'find' => $find,
-            'rows' => array_values(array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'label' => Row::text($row, 'declared_issuer').' · '.Row::text($row, 'issuer_reference').' · '.Row::text($row, 'document_date')], array_slice($found, 0, self::PROOFS))),
+            'rows' => array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'label' => Row::text($row, 'declared_issuer').' · '.Row::text($row, 'issuer_reference').' · '.Row::text($row, 'document_date')], array_slice($found, 0, self::PROOFS)),
             'more' => count($found) > self::PROOFS,
         ];
     }
@@ -198,6 +201,25 @@ final class SupplierReturnQueries
         }
 
         return ['id' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id'), 'public_id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier') ?? ''];
+    }
+
+    /** The purchase a product's received lot came from, for the lot's "Retur ke Pemasok" (ADMIN_FLOW §11 CM-09): its public id, or null outside the viewer's companies. */
+    public function purchaseOfLot(int $viewerId, string $productId, string $handle): ?string
+    {
+        if (preg_match('/^[0-9a-f-]{36}$/i', $productId) !== 1 || ! RowHandle::valid($handle)) {
+            return null;
+        }
+
+        $viewer = $this->capabilities->for($viewerId);
+
+        foreach (DB::table('inventory_lots as i')->join('products as p', 'p.id', '=', 'i.product_id')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')->join('purchases as pu', 'pu.id', '=', 'l.purchase_id')
+            ->where('p.public_id', strtolower($productId))->orderByDesc('i.id')->limit(self::LOTS)->get(['i.id', 'pu.public_id', 'pu.company_id'])->all() as $lot) {
+            if (hash_equals(RowHandle::of('inventory_lots', (int) Row::text($lot, 'id')), $handle)) {
+                return $viewer->allows('purchase_return.record', (int) Row::text($lot, 'company_id')) ? Row::text($lot, 'public_id') : null;
+            }
+        }
+
+        return null;
     }
 
     /** @return array{id: int, company: int, purchase: string}|null a purchase-return case the viewer records outcomes of */
@@ -281,13 +303,39 @@ final class SupplierReturnQueries
         return array_values(array_map(fn (object $row): array => ['lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? ($costs[(int) Row::text($row, 'id')] ?? '0.00') : null], $rows));
     }
 
-    /** @return list<array{action: string, reason: ?string, by: ?string, at: string, outcome: ?string}> the case's own audit events, oldest first (BR-CR-01) */
+    /** @return list<array{action: string, reason: ?string, by: ?string, at: string, outcome: ?string, correction: bool}> the case's own audit events, oldest first (BR-CR-01) */
     private static function events(int $caseId): array
     {
         return array_values(array_map(fn (object $row): array => [
             'action' => Row::text($row, 'action'), 'reason' => Row::nullable($row, 'reason'), 'by' => Row::nullable($row, 'name'), 'at' => Row::text($row, 'occurred_at'),
-            'outcome' => self::outcomeOf(Row::nullable($row, 'after')),
+            'outcome' => self::outcomeOf(Row::nullable($row, 'after')), 'correction' => self::correctionOf(Row::nullable($row, 'after')),
         ], DB::table('audit_events as a')->leftJoin('users as u', 'u.id', '=', 'a.actor_user_id')->where('a.entity_type', 'correction_case')->where('a.entity_id', $caseId)->orderBy('a.occurred_at')->orderBy('a.id')->get(['a.action', 'a.reason', 'a.occurred_at', 'a.after', 'u.name'])->all()));
+    }
+
+    /** Whether an event's after-image takes back an earlier outcome. */
+    private static function correctionOf(?string $after): bool
+    {
+        $decoded = $after === null ? null : json_decode($after, true);
+
+        return is_array($decoded) && ($decoded['correction'] ?? false) === true;
+    }
+
+    /** The replacement the case declared, net of its corrections. */
+    private static function declared(int $caseId): BigDecimal
+    {
+        $net = BigDecimal::zero();
+
+        foreach (DB::table('audit_events')->where('entity_type', 'correction_case')->where('entity_id', $caseId)->where('action', 'PUR.ReturnOutcomeRecorded')->orderBy('id')->pluck('after')->all() as $after) {
+            $decoded = is_string($after) ? json_decode($after, true) : null;
+
+            if (! is_array($decoded) || ($decoded['outcome'] ?? null) !== 'REPLACEMENT' || ! is_string($decoded['quantity'] ?? null)) {
+                continue;
+            }
+
+            $net = ($decoded['correction'] ?? false) === true ? $net->minus($decoded['quantity']) : $net->plus($decoded['quantity']);
+        }
+
+        return $net;
     }
 
     /** The outcome an event's after-image names, if any. */

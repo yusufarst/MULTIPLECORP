@@ -63,15 +63,16 @@ final class SupplierReturns
         $lot = self::ensureOneLot($entry, $purchaseId, $company);
         $reduced = StockPlaces::ensureHeld($entry->picks, $entry->productId, $scale, $entry->serializedSeen);
 
-        // A unit damaged under a case keeps that case's causal project (CM-11): one per return, never chosen in the payload (AZ-08).
-        $causes = array_values(array_unique(array_filter(array_map(fn (array $part): ?int => $part['project'], LossPosting::parts($entry->picks, null)), fn (?int $project): bool => $project !== null)));
+        // A unit damaged under a case keeps that case's causal project (CM-11): one cause per return — a caused unit never shares a return with an uncaused one, whose unrecovered share is the lot's own company's — never chosen in the payload (AZ-08).
+        $causes = array_values(array_unique(array_map(fn (array $part): string => $part['project'] === null ? '' : (string) $part['project'], LossPosting::parts($entry->picks, null))));
 
         if (count($causes) > 1) {
             throw Refused::rejected('C-07', ['reason' => 'mixed_cause']);
         }
 
         $projectId = Row::nullable($purchase, 'project_id');
-        $case = $this->cases->open($context, AuthorityClass::AdmPlus, $company, 'PURCHASE_RETURN', $entry->reason, $projectId === null ? null : (int) $projectId, $causes[0] ?? null, $lot);
+        $cause = ($causes[0] ?? '') === '' ? null : (int) $causes[0];
+        $case = $this->cases->open($context, AuthorityClass::AdmPlus, $company, 'PURCHASE_RETURN', $entry->reason, $projectId === null ? null : (int) $projectId, $cause, $lot);
         // The case is this command's own row: no other session sees it before the commit (CommandContext::created).
         $context->created((new LockSet)->add('correction_cases', ['id' => (int) $case->id]));
         $actor = $context->request->actorUserId;

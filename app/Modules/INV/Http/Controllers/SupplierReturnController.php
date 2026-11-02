@@ -9,6 +9,7 @@ use App\Modules\INV\Queries\AdjustmentQueries;
 use App\Modules\INV\Queries\SupplierReturnQueries;
 use App\Modules\PUR\Actions\RecordReturnOutcome;
 use App\Support\Command\Outcome;
+use App\Support\Localization\Formats;
 use App\Support\Money;
 use Closure;
 use Illuminate\Http\RedirectResponse;
@@ -39,10 +40,19 @@ final class SupplierReturnController extends Controller
         private readonly AdjustmentQueries $adjustments,
     ) {}
 
-    /** ROUTE-028: `?kasus=` one case, `?pembelian=` the form a purchase opens with `?lot=` its chosen lot; the cases otherwise. */
-    public function show(Request $request): Response
+    /** ROUTE-028: `?kasus=` one case, `?pembelian=` the form a purchase opens with `?lot=` its chosen lot, `?produk=` with `?lot=` the lot's own purchase; the cases otherwise. */
+    public function show(Request $request): Response|RedirectResponse
     {
         $actor = self::actor($request);
+        $productId = self::query($request, 'produk');
+
+        if ($productId !== null && self::query($request, 'pembelian') === null) {
+            $handle = self::query($request, 'lot') ?? '';
+            $from = $this->queries->purchaseOfLot($actor, $productId, $handle) ?? throw new NotFoundHttpException;
+
+            return redirect()->to(self::PAGE.'?'.http_build_query(['pembelian' => $from, 'lot' => $handle]));
+        }
+
         $caseId = self::query($request, 'kasus');
         $case = $caseId === null ? null : ($this->queries->detail($actor, $caseId) ?? throw new NotFoundHttpException);
         $purchaseId = self::query($request, 'pembelian');
@@ -63,7 +73,7 @@ final class SupplierReturnController extends Controller
         ]);
     }
 
-    /** ROUTE-176: "Retur ke Pemasok" — units of one lot of the purchase, the reason, the cut; never a cost or a bearer from the payload (CS-04). */
+    /** ROUTE-176: "Retur ke Pemasok" — units of one lot of the purchase, the reason, the cut; never a cost, a bearer or evidence from the payload (CS-04; C-58: a return cites no pool evidence). */
     public function record(Request $request, ReturnToSupplier $return, string $id): RedirectResponse
     {
         $actor = self::actor($request);
@@ -78,8 +88,6 @@ final class SupplierReturnController extends Controller
             'potong' => ['nullable', 'array', 'max:50'],
             'potong.*.reservasi' => ['required', 'string', 'size:32'],
             'potong.*.jumlah' => ['required', self::QUANTITY],
-            'bukti' => ['nullable', 'array', 'max:10'],
-            'bukti.*' => ['required', 'uuid'],
             'alasan' => ['required', 'string', 'min:3', 'max:500'],
             'kebijakan_seri' => ['required', 'boolean'],
             'kebijakan_skala' => ['required', 'integer', 'min:0', 'max:3'],
@@ -107,20 +115,14 @@ final class SupplierReturnController extends Controller
             $cuts[$reservation] = self::text($cut['jumlah'] ?? '');
         }
 
-        $evidence = [];
-
-        foreach (self::strings($input['bukti'] ?? []) as $position => $publicId) {
-            $evidence[] = $this->adjustments->evidence($actor, $publicId) ?? throw ValidationException::withMessages(["bukti.{$position}" => $unknown]);
-        }
-
-        $entry = new StockPicks($product, $picks, $cuts, trim(self::text($input['alasan'])), $evidence, false, [], null, self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']));
+        $entry = new StockPicks($product, $picks, $cuts, trim(self::text($input['alasan'])), [], false, [], null, self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $request->boolean('kebijakan_seri'), (int) self::text($input['kebijakan_skala']));
         $outcome = $return->run(self::text($input['command_id']), $actor, $purchase['company'], $purchase['id'], $entry, array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
         $case = $outcome->kind === Outcome::COMMITTED ? $this->queries->casePublicId($outcome->resultId ?? 0) : null;
 
         return $this->answer($outcome, 'returned', $case, self::PAGE.'?'.http_build_query(['pembelian' => $purchase['public_id'], 'lot' => self::text($input['lot'])]));
     }
 
-    /** ROUTE-177: the outcome on the case, in place (WF-PUR-03). */
+    /** ROUTE-177: the outcome on the case, or its correction (`koreksi`), in place (WF-PUR-03). */
     public function outcome(Request $request, RecordReturnOutcome $record, string $id, string $ret): RedirectResponse
     {
         $actor = self::actor($request);
@@ -132,6 +134,7 @@ final class SupplierReturnController extends Controller
 
         $input = self::validated($request, [
             'hasil' => ['required', Rule::in(RecordReturnOutcome::KINDS)],
+            'koreksi' => ['nullable', 'boolean'],
             'jumlah' => ['nullable', self::QUANTITY],
             'nilai' => ['nullable', self::MONEY],
             'bukti' => ['nullable', 'uuid'],
@@ -143,6 +146,7 @@ final class SupplierReturnController extends Controller
         $kind = self::text($input['hasil']);
         $qty = self::nullable($input['jumlah'] ?? null);
         $value = self::nullable($input['nilai'] ?? null);
+        $correction = $request->boolean('koreksi');
 
         if ($kind === 'REPLACEMENT' && $qty === null) {
             throw ValidationException::withMessages(['jumlah' => self::say('projects.validation.required')]);
@@ -155,11 +159,11 @@ final class SupplierReturnController extends Controller
         $proof = self::nullable($input['bukti'] ?? null);
         $evidence = $proof === null ? null : ($this->queries->evidenceOf($case['company'], $proof) ?? throw ValidationException::withMessages(['bukti' => self::say('projects.validation.unknown')]));
 
-        if ($kind === 'CREDIT' && $evidence === null) {
+        if ($kind === 'CREDIT' && ! $correction && $evidence === null) {
             throw ValidationException::withMessages(['bukti' => self::say('projects.validation.required')]);
         }
 
-        $outcome = $record->run(self::text($input['command_id']), $actor, $case['company'], $case['id'], $kind, $qty, $value === null ? null : Money::of($value), $evidence, self::nullable($input['alasan_alokasi'] ?? null), trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
+        $outcome = $record->run(self::text($input['command_id']), $actor, $case['company'], $case['id'], $kind, $correction, $qty, $value === null ? null : Money::of($value), $evidence, self::nullable($input['alasan_alokasi'] ?? null), trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), array_diff_key($input, ['command_id' => 1, 'tanggal_otomatis' => 1]));
 
         return $this->answer($outcome, 'outcome', strtolower($ret), self::PAGE.'?'.http_build_query(['kasus' => strtolower($ret)]));
     }
@@ -208,8 +212,13 @@ final class SupplierReturnController extends Controller
                 default => self::say('projects.validation.unknown'),
             },
             'C-05', 'C-06' => self::say('receiving.refusal.reservations'),
-            'C-29' => $reason === 'nothing_open' ? self::say('returns.refusal.nothing_open') : self::say('returns.refusal.replacement_room', ['sisa' => self::text($state['remainder'] ?? '0')]),
-            'C-46', 'C-24' => self::say('returns.refusal.above_open', ['sisa' => self::text($state['open'] ?? '0')]),
+            'C-29' => match ($reason) {
+                'nothing_open' => self::say('returns.refusal.nothing_open'),
+                'awaited' => self::say('returns.refusal.awaited'),
+                'above_awaited' => self::say('returns.refusal.above_awaited', ['sisa' => self::text($state['remainder'] ?? '0')]),
+                default => self::say('returns.refusal.replacement_room', ['sisa' => self::text($state['remainder'] ?? '0')]),
+            },
+            'C-46', 'C-24' => self::say('returns.refusal.above_open', ['sisa' => Formats::money(self::text($state['open'] ?? '0'))]),
             'AZ-08' => $reason === 'bearer' ? self::say('messages.msg_14_allocation') : self::say('messages.msg_14'),
             default => self::say('messages.msg_04'),
         };
@@ -253,12 +262,6 @@ final class SupplierReturnController extends Controller
         ])->validate();
 
         return $valid;
-    }
-
-    /** @return list<string> */
-    private static function strings(mixed $values): array
-    {
-        return array_values(array_filter(is_array($values) ? $values : [], is_string(...)));
     }
 
     /** @param  array<string, string>  $replace */

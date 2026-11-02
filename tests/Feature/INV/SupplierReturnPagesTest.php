@@ -49,6 +49,17 @@ function returnBody(object $test, string $qty = '2'): array
     return ['command_id' => (string) Str::uuid(), 'lot' => $test->lotHandle, 'unit' => [['rak' => RowHandle::of('locations', $test->rack), 'kondisi' => 'USABLE', 'jumlah' => $qty]], 'alasan' => 'Rusak dari pemasok', 'kebijakan_seri' => false, 'kebijakan_skala' => 0, 'tanggal' => BusinessDate::today()];
 }
 
+it('opens the lot\'s own purchase from the lot\'s "Retur ke Pemasok", another company\'s lot unknown (ADMIN_FLOW §11 CM-09; ROUTE-028)', function () {
+    $product = (string) DB::table('products')->where('id', $this->product)->value('public_id');
+    $entry = "/gudang/retur-pemasok?produk={$product}&lot={$this->lotHandle}";
+
+    $this->actingAs($this->returner)->get($entry)->assertRedirect("/gudang/retur-pemasok?pembelian={$this->purchase}&lot={$this->lotHandle}");
+    $this->actingAs(ReceivingWorld::actor($this->foreign->company, ReturnWorld::CAPABILITIES))->get($entry)->assertNotFound();
+    $this->actingAs($this->returner)->get("/gudang/retur-pemasok?produk={$product}&lot=".str_repeat('0', 32))->assertNotFound();
+    expect($this->actingAs($this->returner)->get("/gudang/stok/{$product}")->viewData('page')['props']['can']['return'])->toBeTrue()
+        ->and($this->actingAs($this->stocker)->get("/gudang/stok/{$product}")->viewData('page')['props']['can']['return'])->toBeFalse();
+});
+
 it('opens PG-028 by purchase_return.record alone, and the form a purchase opens lists its lots and the chosen lot\'s units (ROUTE-028; AZ-11; criterion 7)', function () {
     $this->actingAs($this->stocker)->get('/gudang/retur-pemasok')->assertForbidden();
     $this->actingAs($this->stocker)->post("/pembelian/{$this->purchase}/retur", returnBody($this))->assertForbidden();
