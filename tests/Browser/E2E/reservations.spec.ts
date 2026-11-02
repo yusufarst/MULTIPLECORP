@@ -40,8 +40,11 @@ test('reserves from Item dan pemenuhan, refused above the availability with it i
     await expect(dialog).toContainText('Tidak ada barang yang bergerak.');
 
     await dialog.getByRole('textbox').fill('9');
+    // The refusal's visit reloads the page's deferred groups; the next quantity is typed once they land, as WebKit lost one filled while they did.
+    const settled = Promise.all(['history', 'predicates', 'documents'].map((group) => page.waitForResponse(async (response) => (await response.request().headerValue('x-inertia-partial-data')) === group)));
     await dialog.getByRole('button', { name: 'Reservasi' }).click();
     await expect(dialog).toContainText('Stok tersedia tidak cukup. Tersedia saat ini: 8.');
+    await settled;
 
     await dialog.getByRole('textbox').fill('3');
     await dialog.getByRole('button', { name: 'Reservasi' }).click();
