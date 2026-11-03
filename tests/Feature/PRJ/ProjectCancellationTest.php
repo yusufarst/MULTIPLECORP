@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\PRJ\Services\ResidualCommands;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -8,6 +9,7 @@ use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\CostWorld;
+use Tests\Support\DropshipWorld;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\PaymentWorld;
 use Tests\Support\RefreshDatabase;
@@ -103,6 +105,20 @@ it('lists the companion corrections as links to their own commands and performs 
     expect(cancellationAnswer($this, $actor, "/proyek/{$project->public_id}/batalkan", cancellationBody($project))['kind'])->toBe('COMMITTED')
         ->and(DB::table('invoices')->where('id', $invoice)->value('state'))->toBe('ISSUED')
         ->and(DB::table('project_line_balances as b')->join('project_lines as l', 'l.id', '=', 'b.project_line_id')->where('l.project_id', $project->id)->sum('b.cancelled_qty_base'))->toEqual(0);
+});
+
+it('leads a direct shipment\'s return to PG-032\'s own flow, not the warehouse return with no eligible line (J-PRJ-04; IP-19; TASK-046; criterion 2)', function () {
+    DocumentTypeFactory::ensure('DOC-03');
+    $world = InvoiceWorld::make();
+    $direct = DropshipWorld::make($world, '10', '10');
+    expect(DropshipWorld::confirm(DropshipWorld::actor($world->company)->id, $direct, '4'))->toBe('COMMITTED');
+    $project = DB::table('projects')->where('id', $direct['project']->id)->first(['public_id']);
+    $actor = Authorization::admin([$world->company->id], ['projects.view', 'projects.cancel', 'projects.cancel_scope', 'stock.view', 'sales_return.record']);
+    $version = (string) $this->actingAs($actor)->get("/proyek/{$project->public_id}")->viewData('page')['version'];
+    $companions = $this->actingAs($actor)->get("/proyek/{$project->public_id}", ['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'PRJ/Journey', 'X-Inertia-Partial-Data' => 'companions'])->json('props.companions');
+
+    expect(array_column($companions, 'kind'))->toBe(['dropship_return', 'scope'])
+        ->and($companions[0]['href'])->toBe("/proyek/{$project->public_id}/kirim-langsung");
 });
 
 it('keeps the facts that stay true after cancellation — open receivables active and collectable — and accepts a residual payment and a late correction, the project staying CANCELLED (L-10; L-11; CM-32; FX-03; criteria 3, 4, 9)', function () {
