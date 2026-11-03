@@ -17,19 +17,19 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 53
-READY: 1
-IN_PROGRESS: 0
+READY: 2
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 0
-TODO: 28
+TODO: 26
 SUPERSEDED: 0
 
 Progress:
 53 / 87
 Percentage: 60.9 %
 
-CURRENT TASK: none in progress — TASK-046 — Direct shipment (drop-ship) DONE on its branch `task/TASK-046-dropship`, CI PASS on `8d3c4f0`, its pull request #64 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-059 — Search and scanning, READY; TASK-053 and TASK-055 wait on their dependencies; TASK-056 waits on TASK-055; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-048 — Client returns (sales return), IN PROGRESS on its branch `task/TASK-048-client-returns` from the merged `main` `586356f` (DIR-096; DIR-102); TASK-046 DONE and squash-merged as `586356f` (pull request #64); TASK-048's READY gate — TASK-042, TASK-044 and TASK-045 DONE — held since TASK-045's DONE record, which left it unchecked
+NEXT READY TASK: TASK-054 — Expenses, disbursements and other cash, READY (its READY gate re-checked at TASK-046's DONE), and TASK-059 — Search and scanning, READY; TASK-053 and TASK-055 wait on their dependencies; TASK-056 waits on TASK-055; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -188,13 +188,13 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-045](TASK-045.md) | Deliveries (Pengiriman) and delivery closure | Module · FUL | HIGH | DONE | 029, 041 | 048, 055 | NO | AGENT | NONE | YES |
 | [TASK-046](TASK-046.md) | Direct shipment (drop-ship) | Module · FUL | HIGH | DONE | 029, 034, 037 | 054, 055, 056 | NO | AGENT | NONE | YES |
 | [TASK-047](TASK-047.md) | Service fulfillment and handover | Module · FUL | STANDARD | DONE | 029, 034 | 055, 056 | NO | AGENT | NONE | YES |
-| [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | TODO | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
+| [TASK-048](TASK-048.md) | Client returns (sales return) | Module · INV · FUL | HIGH | IN_PROGRESS | 042, 044, 045 | 053, 055 | NO | AGENT | NONE | YES |
 | [TASK-049](TASK-049.md) | Invoices and the pre-payment Kuitansi | Module · FIN | HIGH | DONE | 025, 029, 034 | 050, 056 | NO | AGENT | NONE | YES |
 | [TASK-050](TASK-050.md) | Billing, receivables, dispute hold and Owner write-off | Module · FIN | HIGH | DONE | 049 | 051, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-051](TASK-051.md) | Payments, applications and bank statement lines | Module · FIN · DOC | HIGH | DONE | 030, 050 | 052, 053, 060 | NO | AGENT | NONE | YES |
 | [TASK-052](TASK-052.md) | Deduction settlements and contras | Module · FIN | HIGH | DONE | 051 | 053, 054, 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | TODO | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
-| [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | TODO | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
+| [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | READY | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
 | [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | TODO | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
 | [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | TODO | 038, 041, 046, 047, 049, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | TODO | 022, 026, 027, 028, 030, 032, 034, 037, 039, 040, 042, 050, 052, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
