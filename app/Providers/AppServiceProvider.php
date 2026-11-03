@@ -6,6 +6,7 @@ use App\Modules\ADM\Queries\ProjectChecklist;
 use App\Modules\ADM\Services\AdministrationPredicate;
 use App\Modules\ADM\Services\RequirementChanges;
 use App\Modules\ADM\Services\RequirementLifecycle;
+use App\Modules\ADM\Services\RequirementObligations;
 use App\Modules\DOC\Contracts\BankLineCitations;
 use App\Modules\DOC\Contracts\DocumentChangeParticipant;
 use App\Modules\DOC\Contracts\DocumentRenderer;
@@ -20,6 +21,7 @@ use App\Modules\FIN\Services\PaymentCitations;
 use App\Modules\FIN\Services\PaymentPredicate;
 use App\Modules\FIN\Services\ReceiptSubjects;
 use App\Modules\FIN\Services\ReceivablePredicate;
+use App\Modules\FIN\Services\ReceivableObligations;
 use App\Modules\FIN\Services\SettlementDocumentChanges;
 use App\Modules\FUL\Services\DeliverySubjects;
 use App\Modules\FUL\Services\HandoverPredicate;
@@ -29,6 +31,7 @@ use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Services\ReceivingSubjects;
 use App\Modules\INV\Services\ReservationLifecycle;
+use App\Modules\INV\Services\ReservationObligations;
 use App\Modules\INV\Services\ReservationPredicate;
 use App\Modules\ORG\Services\NumberingGoLive;
 use App\Modules\ORG\Services\UnrecordedGoLive;
@@ -36,6 +39,7 @@ use App\Modules\PRJ\Contracts\CompletionPredicateProvider;
 use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
 use App\Modules\PRJ\Contracts\ProjectPartProvider;
 use App\Modules\PRJ\Contracts\ReadinessProvider;
+use App\Modules\PRJ\Contracts\ResidualObligationProvider;
 use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Modules\PRJ\Services\SpkSubjects;
 use App\Modules\PUR\Queries\PurchaseProject;
@@ -104,6 +108,9 @@ class AppServiceProvider extends ServiceProvider
         // INV's part (TASK-039): the receiving event as the subject of its Nota Terima Barang; the dispatch's Surat Jalan through FUL's ShipmentNoteSubjects, one supplier per type.
         $this->app->tag([ReceivingSubjects::class], DocumentSubjectProvider::TAG);
         $this->app->tag([PurchasePredicate::class], CompletionPredicateProvider::TAG);
+
+        // TASK-055: what a Force Complete leaves — FIN's open receivables, INV's release-required reservations, ADM's missing documents (UXS-37; BR-PRJ-04).
+        $this->app->tag([ReceivableObligations::class, ReservationObligations::class, RequirementObligations::class], ResidualObligationProvider::TAG);
         $this->app->tag([PurchaseProject::class], ProjectPartProvider::TAG);
     }
 

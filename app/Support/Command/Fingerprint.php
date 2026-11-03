@@ -29,6 +29,16 @@ final class Fingerprint
         return self::VERSION.':'.hash('sha256', json_encode($canonical, JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
+    /**
+     * The same canonical JSON for any other value a hash binds — a completion snapshot (ST-04).
+     *
+     * @param  array<string, mixed>  $value
+     */
+    public static function canonicalJson(array $value): string
+    {
+        return json_encode(self::canonical($value), JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    }
+
     private static function canonical(mixed $value): mixed
     {
         return match (true) {
