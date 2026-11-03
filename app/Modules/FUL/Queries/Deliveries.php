@@ -6,7 +6,6 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\FUL\Data\ShipmentFigures;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
-use App\Modules\INV\Data\ClientReturns;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -29,19 +28,6 @@ final class Deliveries
 
     /** The evidence a delivery cites as its proof (L-19; PJ-08). */
     public const EVIDENCE = ['DELIVERY_PROOF', 'OTHER'];
-
-    /** A shipment line still awaiting: net shipped above net delivered and what closures hold back. */
-    private const AWAITING = <<<'SQL'
-        exists (select 1 from dispatch_lines d where d.stock_movement_id = m.id and
-            (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id)
-            >
-        SQL
-        // Net delivered: what the client returned is no longer delivered (PX-08; TASK-048).
-        .ClientReturns::NET_DELIVERED.<<<'SQL'
-            + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
-                - (select coalesce(sum(r.qty_base + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e where e.stock_restoration_id = r.id and e.movement_type = 'MOVEMENT_REVERSAL'), 0)), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
-                    and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT'))))
-        SQL;
 
     /** A paper's latest version state and its issued number. */
     private const PAPER = "(select v.state from document_versions v where v.document_id = d.id order by v.id desc limit 1) as state, (select v.formatted_number from document_versions v where v.document_id = d.id and v.state = 'ISSUED' order by v.id desc limit 1) as number, exists (select 1 from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id join delivery_lines dl on dl.dispatch_line_id = c.dispatch_line_id where dl.delivery_id = d.delivery_id and r.kind = 'SUBSTITUTION' and r.recorded_at > (select max(v.recorded_at) from document_versions v where v.document_id = d.id and v.state = 'ISSUED')) as substituted";
@@ -87,7 +73,7 @@ final class Deliveries
         }
 
         $found = DB::table('stock_movements as m')->join('projects as p', 'p.id', '=', 'm.project_id')->join('companies as co', 'co.id', '=', 'p.company_id')->leftJoin('client_organizations as o', 'o.id', '=', 'p.client_organization_id')
-            ->where('m.movement_type', 'DISPATCH')->whereIn('p.company_id', $companies)->whereRaw(self::AWAITING)
+            ->where('m.movement_type', 'DISPATCH')->whereIn('p.company_id', $companies)->whereRaw(ShipmentFigures::AWAITING)
             ->when($after !== null, fn (Builder $older) => $older->whereRaw('m.id < coalesce((select a.id from stock_movements a where a.public_id = ?), 9223372036854775807)', [$after]))->orderByDesc('m.id')->limit(self::PAGE + 1)
             ->get(['m.public_id', 'm.business_date', 'p.project_number', 'p.title', 'o.name as client', 'co.code as company'])->all();
         $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'project' => Row::text($row, 'project_number'), 'title' => Row::text($row, 'title'), 'client' => Row::nullable($row, 'client'), 'company' => $several ? Row::text($row, 'company') : null], array_slice($found, 0, self::PAGE));

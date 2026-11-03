@@ -3995,5 +3995,8 @@
     "projects.item.kuitansi_open": ":jumlah Kuitansi pra-bayar belum ditautkan atau dibatalkan",
     "projects.next.kuitansi": "Tautkan atau batalkan Kuitansi pra-bayar",
     "activity.action.PRJ.ProjectCompleted": "Proyek diselesaikan",
-    "activity.action.PRJ.ProjectForceCompleted": "Proyek diselesaikan paksa"
+    "activity.action.PRJ.ProjectForceCompleted": "Proyek diselesaikan paksa",
+    "projects.item.goods_undelivered": ":jumlah baris barang belum terkirim seluruhnya",
+    "projects.item.shipments_awaiting": ":jumlah pengiriman belum diterima atau ditutup",
+    "projects.item.loss_cases_pending": ":jumlah kasus kehilangan belum terselesaikan"
 }

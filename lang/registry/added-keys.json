@@ -18594,6 +18594,24 @@
             "source": "LG-01; OD-12 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "projects.item.goods_undelivered": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.shipments_awaiting": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.loss_cases_pending": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 8; L-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

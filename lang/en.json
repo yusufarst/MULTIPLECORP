@@ -3995,5 +3995,8 @@
     "projects.item.kuitansi_open": ":jumlah pre-payment Kuitansi not linked or voided",
     "projects.next.kuitansi": "Link or void the pre-payment Kuitansi",
     "activity.action.PRJ.ProjectCompleted": "Project completed",
-    "activity.action.PRJ.ProjectForceCompleted": "Project force-completed"
+    "activity.action.PRJ.ProjectForceCompleted": "Project force-completed",
+    "projects.item.goods_undelivered": ":jumlah goods lines not yet fully delivered",
+    "projects.item.shipments_awaiting": ":jumlah shipments not yet delivered or closed",
+    "projects.item.loss_cases_pending": ":jumlah loss cases still pending"
 }

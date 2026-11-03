@@ -34,14 +34,18 @@ final class HandoverPredicate implements CompletionPredicateProvider
         }
 
         $rows = DB::table('project_lines as l')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')
-            ->whereIn('l.project_id', $projectIds)->where('l.fulfillment_mode', 'SERVICE')->whereNotNull('l.current_pin_id')->groupBy('l.project_id')
-            ->selectRaw('l.project_id, count(*) filter (where b.demand_qty_base > b.handed_over_qty_base + b.cancelled_qty_base) as open')->get();
+            ->whereIn('l.project_id', $projectIds)->whereNotNull('l.current_pin_id')->groupBy('l.project_id')
+            ->selectRaw("l.project_id, count(*) filter (where l.fulfillment_mode = 'SERVICE' and b.demand_qty_base > b.handed_over_qty_base + b.cancelled_qty_base) as open,
+                count(*) filter (where l.fulfillment_mode <> 'SERVICE' and b.demand_qty_base > b.delivered_net_qty_base + b.cancelled_qty_base) as goods")->get();
         $states = [];
 
         foreach ($rows as $row) {
             $open = (int) Row::text($row, 'open');
-            $states[(int) Row::text($row, 'project_id')] = [Predicates::FULFILMENT => new PredicateState(true,
-                $open === 0 ? [] : [new JourneyItem('projects.item.handovers_open', ['jumlah' => (string) $open], 'service')])];
+            $goods = (int) Row::text($row, 'goods');
+            $states[(int) Row::text($row, 'project_id')] = [Predicates::FULFILMENT => new PredicateState(true, [
+                ...($goods === 0 ? [] : [new JourneyItem('projects.item.goods_undelivered', ['jumlah' => (string) $goods], 'delivery')]),
+                ...($open === 0 ? [] : [new JourneyItem('projects.item.handovers_open', ['jumlah' => (string) $open], 'service')]),
+            ])];
         }
 
         return $states;
