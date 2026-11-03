@@ -179,7 +179,7 @@ final class DirectShipments
         $rows = array_slice($found, 0, self::PAGE);
         $tail = $rows === [] ? null : $rows[count($rows) - 1];
 
-        return ['lines' => array_values(array_map(fn (object $row): array => [
+        return ['lines' => array_map(fn (object $row): array => [
             'id' => RowHandle::of('purchase_lines', (int) Row::text($row, 'id')), 'no' => (int) Row::text($row, 'line_no'), 'description' => Row::text($row, 'description'),
             'purchase' => ['id' => Row::text($row, 'purchase'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier'), 'open' => Row::text($row, 'state') === 'OPEN'],
             'unit' => Row::nullable($row, 'unit'), 'base_unit' => Row::nullable($row, 'base_unit'), 'ratio' => (int) Row::text($row, 'ratio_to_base'), 'serialized' => (bool) Row::text($row, 'is_serialized'), 'scale' => (int) Row::text($row, 'quantity_scale'),
@@ -187,7 +187,7 @@ final class DirectShipments
             'remainder' => self::plain((string) BigDecimal::max(BigDecimal::zero(), BigDecimal::min(BigDecimal::of(Row::text($row, 'room')), BigDecimal::of(Row::text($row, 'demand'))))),
             'awaited' => self::plain((string) BigDecimal::of(Row::text($row, 'replacement_expected_qty_base'))->minus(Row::text($row, 'replacement_received_net_qty_base'))),
             'cases' => array_values(array_filter((array) json_decode(Row::text($row, 'cases'), true), is_string(...))),
-        ], $rows)), 'lines_more' => count($found) > self::PAGE && $tail !== null ? StockCursor::of($viewer, [(int) Row::text($tail, 'id')], $binding) : null];
+        ], $rows), 'lines_more' => count($found) > self::PAGE && $tail !== null ? StockCursor::of($viewer, [(int) Row::text($tail, 'id')], $binding) : null];
     }
 
     /**
@@ -230,7 +230,7 @@ final class DirectShipments
         $documentsOf = self::byConfirmation($documents);
         $deliveredOf = self::byConfirmation($delivered);
 
-        return ['confirmations' => array_values(array_map(function (object $header) use ($cost, $linesOf, $correctionsOf, $documentsOf, $deliveredOf): array {
+        return ['confirmations' => array_map(function (object $header) use ($cost, $linesOf, $correctionsOf, $documentsOf, $deliveredOf): array {
             $id = (int) Row::text($header, 'id');
             $rows = $linesOf[$id] ?? [];
             $document = ($documentsOf[$id] ?? [])[0] ?? null;
@@ -250,7 +250,7 @@ final class DirectShipments
                 'document' => $document === null ? null : ['id' => Row::text($document, 'public_id'), 'state' => Row::nullable($document, 'state'), 'number' => Row::nullable($document, 'number')],
                 'standing' => array_reduce($rows, fn (bool $any, object $row): bool => $any || BigDecimal::of(Row::text($row, 'open'))->isPositive(), false),
             ];
-        }, $headers)), 'confirmations_more' => $more];
+        }, $headers), 'confirmations_more' => $more];
     }
 
     /**

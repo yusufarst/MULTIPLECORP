@@ -512,7 +512,7 @@ final class DropshipPosting
             entityPublicId: Row::text($confirmation, 'public_id'),
             reason: $reason,
             commandId: $context->request->commandId,
-            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) $total, 'cases' => array_values(array_column($cases, 'public_id')), ...($lots === [] ? [] : ['lots' => $lots]), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $duplicateReason])]),
+            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) $total, 'cases' => array_column($cases, 'public_id'), ...($lots === [] ? [] : ['lots' => $lots]), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $duplicateReason])]),
             linkage: AuditLinkage::make()->link(AuditRelation::Returns, 'dropship_confirmations', Row::text($confirmation, 'public_id'))->correctionCase($first['public_id']),
             businessDate: $businessDate,
         );
