@@ -1,11 +1,9 @@
 <?php
 
-use App\Modules\PRJ\Actions\CancelProject;
-use App\Modules\PRJ\Models\Project;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Tests\Support\Authorization;
+use Tests\Support\CancellationWorld;
 use Tests\Support\Concurrency\Barrier;
 use Tests\Support\Concurrency\Sessions;
 use Tests\Support\DatabaseTruncation;
@@ -42,14 +40,6 @@ beforeEach(function () {
     expect(ReservationWorld::reserve($this->actor, $this->demand['line'], '5'))->toBe('COMMITTED');
 });
 
-/** AX-27 as its own command, the project's version read as the page would show it; its word. */
-function raceCancel(int $actor, int $projectId): string
-{
-    $project = Project::query()->findOrFail($projectId);
-
-    return InvoiceWorld::word(app(CancelProject::class)->run((string) Str::uuid(), $actor, $project->id, $project->company_id, $project->public_id, $project->lock_version, 'Klien membatalkan kontrak'));
-}
-
 /** The reservations of the line that were both consumed and released: none ever is. */
 function raceDoubleSpent(int $lineId): int
 {
@@ -63,11 +53,11 @@ it('lets a cancellation and a dispatch for the project end with one winner in bo
     [$actor, $company, $line, $unit, $lot, $rack, $project] = [$this->actor, $this->company->id, $this->demand['line'], $this->demand['unit'], $this->lot, $this->rack, $this->demand['project']->id];
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $cancelFirst ? raceCancel($actor, $project) : DispatchWorld::dispatch($actor, $company, $line, $unit, '3', [DispatchWorld::pick($lot, $rack, '3')]), 'the first holds the project'),
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $cancelFirst ? CancellationWorld::cancel($actor, $project) : DispatchWorld::dispatch($actor, $company, $line, $unit, '3', [DispatchWorld::pick($lot, $rack, '3')]), 'the first holds the project'),
         'second' => static function () use ($cancelFirst, $actor, $company, $line, $unit, $lot, $rack, $project): string {
             Barrier::await('the first holds the project');
 
-            return $cancelFirst ? DispatchWorld::dispatch($actor, $company, $line, $unit, '3', [DispatchWorld::pick($lot, $rack, '3')]) : raceCancel($actor, $project);
+            return $cancelFirst ? DispatchWorld::dispatch($actor, $company, $line, $unit, '3', [DispatchWorld::pick($lot, $rack, '3')]) : CancellationWorld::cancel($actor, $project);
         },
     ]);
 
@@ -87,11 +77,11 @@ it('lets a cancellation and a receipt on the project\'s purchase both commit in 
     [$actor, $company, $unit, $rack, $project, $purchaseId, $lineId] = [$this->actor, $this->company->id, $this->demand['unit'], $this->rack, $this->demand['project']->id, $purchase->id, $purchaseLine->id];
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $cancelFirst ? raceCancel($actor, $project) : ReceivingWorld::receive($actor, $company, $purchaseId, $lineId, $unit, $rack, '4'), 'the first holds the project'),
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $cancelFirst ? CancellationWorld::cancel($actor, $project) : ReceivingWorld::receive($actor, $company, $purchaseId, $lineId, $unit, $rack, '4'), 'the first holds the project'),
         'second' => static function () use ($cancelFirst, $actor, $company, $unit, $rack, $project, $purchaseId, $lineId): string {
             Barrier::await('the first holds the project');
 
-            return $cancelFirst ? ReceivingWorld::receive($actor, $company, $purchaseId, $lineId, $unit, $rack, '4') : raceCancel($actor, $project);
+            return $cancelFirst ? ReceivingWorld::receive($actor, $company, $purchaseId, $lineId, $unit, $rack, '4') : CancellationWorld::cancel($actor, $project);
         },
     ]);
 
