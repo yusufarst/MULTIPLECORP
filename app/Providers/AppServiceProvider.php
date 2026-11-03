@@ -40,6 +40,7 @@ use App\Modules\PRJ\Contracts\ProjectLifecycleParticipant;
 use App\Modules\PRJ\Contracts\ProjectPartProvider;
 use App\Modules\PRJ\Contracts\ReadinessProvider;
 use App\Modules\PRJ\Contracts\ResidualObligationProvider;
+use App\Modules\PRJ\Services\ProjectDocumentChanges;
 use App\Modules\PRJ\Services\QuotationSubjects;
 use App\Modules\PRJ\Services\SpkSubjects;
 use App\Modules\PUR\Queries\PurchaseProject;
@@ -111,6 +112,8 @@ class AppServiceProvider extends ServiceProvider
 
         // TASK-055: what a Force Complete leaves — FIN's open receivables, INV's release-required reservations, ADM's missing documents (UXS-37; BR-PRJ-04).
         $this->app->tag([ReceivableObligations::class, ReservationObligations::class, RequirementObligations::class], ResidualObligationProvider::TAG);
+        // PRJ's part of a document's change (SF-REVAL; L-41): a void, a revision's issue or an evidence replacement revalidates the projects it touches.
+        $this->app->tag([ProjectDocumentChanges::class], DocumentChangeParticipant::TAG);
         $this->app->tag([PurchaseProject::class], ProjectPartProvider::TAG);
     }
 
