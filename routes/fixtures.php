@@ -13,6 +13,7 @@ use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\ClientReturnFixture;
 use Tests\Support\Fixtures\ConfirmationFixture;
 use Tests\Support\Fixtures\CountFixture;
+use Tests\Support\Fixtures\CreditFixture;
 use Tests\Support\Fixtures\DeliveryFixture;
 use Tests\Support\Fixtures\DispatchFixture;
 use Tests\Support\Fixtures\DocumentFixture;
@@ -129,6 +130,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-049): a confirmed service project, the layouts' numbering, an evidence, a draft or issued invoice when asked.
     Route::post('__fixtures/invoice', [InvoiceFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/credit', [CreditFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-037): a company with its PURCHASE and PO numbering, suppliers, goods, a bill and a confirmed project with its shortage.
     Route::post('__fixtures/purchase', [PurchaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
