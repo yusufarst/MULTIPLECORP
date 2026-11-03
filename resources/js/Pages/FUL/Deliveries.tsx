@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 const PAGE = '/gudang/pengiriman';
 
 type Awaiting = { id: string; date: string; project: string; title: string; client: string | null; company: string | null };
-type Recorded = { id: string; date: string; recipient: string; project: string; company: string | null; shipment: string | null };
+type Recorded = { id: string; date: string; recipient: string; project: string; company: string | null; shipment: string | null; return?: string | null };
 type Props = { list: { tab: 'menunggu' | 'tercatat'; rows: (Awaiting | Recorded)[]; more: boolean; several: boolean }; can: { record: boolean; close: boolean; correct: boolean } };
 
 /** A recorded delivery's success, shown on the page its answer opened (IP-01; NAV-031). */
@@ -52,6 +52,7 @@ export default function Deliveries({ list, can }: Props) {
                                         <>
                                             {row.shipment === null || !opens ? <span className="font-medium">{row.recipient}</span> : <a className="font-medium underline" href={`${PAGE}/${row.shipment}`}>{row.recipient}</a>}
                                             <Code>{row.project}</Code>
+                                            {typeof row.return === 'string' && <a className="text-caption underline" href={row.return}>{t('pages.pg_034.title')}</a>}
                                         </>
                                     ) : (
                                         <>

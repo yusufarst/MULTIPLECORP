@@ -6,6 +6,7 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Data\ClientReturns as Returned;
+use App\Modules\INV\Queries\StockViews;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\Money;
 use App\Support\RowHandle;
@@ -28,6 +29,7 @@ final class ClientReturns
 
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
+        private readonly StockViews $views,
     ) {}
 
     /** The project, when the viewer holds the capability in its company (CS-03); otherwise not found. */
@@ -43,13 +45,13 @@ final class ClientReturns
     }
 
     /**
-     * ROUTE-034's content, null when the project is not the viewer's to open with `sales_return.record` or `stock.reverse`.
+     * ROUTE-034's content, null when the project is not the viewer's to open with `sales_return.record` (ROUTE-034).
      *
      * @return array<string, mixed>|null
      */
     public function page(int $viewerId, string $publicId): ?array
     {
-        $project = $this->projectOf($viewerId, $publicId, 'sales_return.record') ?? $this->projectOf($viewerId, $publicId, 'stock.reverse');
+        $project = $this->projectOf($viewerId, $publicId, 'sales_return.record');
 
         if ($project === null) {
             return null;
@@ -159,6 +161,20 @@ final class ClientReturns
             : DB::table('stock_restorations as r')->join('dropship_confirmation_lines as l', 'l.id', '=', 'r.dropship_confirmation_line_id')->where('l.dropship_confirmation_id', $confirmationId ?? 0)->whereNull('r.stock_movement_id')->pluck('r.id')->all();
 
         return self::byHandle('stock_restorations', $ids, $handle);
+    }
+
+    /**
+     * IP-20's choices after a reversal is refused for the shortfall (C-06): the active reservations of the original's product,
+     * only to a viewer who may cut them (`stock.reserve`).
+     *
+     * @return list<array{id: string, reserved: string, other: bool, project: array{label: string, href: string}|null}>
+     */
+    public function cutChoices(int $viewerId, int $movementId, int $companyId): array
+    {
+        $viewer = $this->capabilities->for($viewerId);
+        $product = DB::table('stock_movement_entries as e')->join('inventory_lots as i', 'i.id', '=', 'e.lot_id')->where('e.stock_movement_id', $movementId)->orderBy('e.id')->value('i.product_id');
+
+        return is_numeric($product) && $viewer->allows('stock.reserve', $companyId) ? $this->views->reservations($viewer, (int) $product) : [];
     }
 
     /** An active reservation a reversal's cut names, by its handle (IP-20). */

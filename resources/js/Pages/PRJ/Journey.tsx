@@ -59,6 +59,7 @@ type Props = {
     journey: JourneyShape | null;
     financial: { confirmed: string; invoiced: string } | null;
     can: { edit: boolean; discard: boolean };
+    return_href?: string | null;
     fulfilment: Fulfilment & { today: string };
     parts?: { procurement?: { purchases: { id: string; number: string; supplier: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; date: string; remaining: string }[]; can_create: boolean } };
     predicates?: JourneyShape | null | Failed;
@@ -102,7 +103,7 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
-export default function Journey({ project, journey, financial, can, fulfilment, parts, predicates, documents, history }: Props) {
+export default function Journey({ project, journey, financial, can, return_href: returnHref = null, fulfilment, parts, predicates, documents, history }: Props) {
     const { t } = useTranslation();
     const [discarding, setDiscarding] = useState(false);
     const discard = useCommand<Record<string, never>>(() => `/proyek/${project.id}/hapus-draf`, 'post');
@@ -111,6 +112,7 @@ export default function Journey({ project, journey, financial, can, fulfilment, 
     const shown = full ?? journey;
     const actions: MenuAction[] = [
         ...(can.edit ? [{ label: t('actions.edit_project'), onSelect: () => { router.visit(`/proyek/${project.id}/ubah`); } }] : []),
+        ...(returnHref !== null ? [{ label: t('pages.pg_034.title'), onSelect: () => { router.visit(returnHref); } }] : []),
         ...(can.discard ? [{ label: t('actions.discard_draft'), tone: 'danger' as const, onSelect: () => { discard.clear(); setDiscarding(true); } }] : []),
     ];
     const primary = shown?.next?.href ? (

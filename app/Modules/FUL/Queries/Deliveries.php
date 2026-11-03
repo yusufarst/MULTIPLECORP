@@ -77,9 +77,11 @@ final class Deliveries
         if ($tab === 'tercatat') {
             $found = DB::table('deliveries as v')->join('projects as p', 'p.id', '=', 'v.project_id')->join('companies as co', 'co.id', '=', 'v.company_id')
                 ->whereIn('v.company_id', $companies)->when($after !== null, fn (Builder $older) => $older->whereRaw('v.id < coalesce((select a.id from deliveries a where a.public_id = ?), 9223372036854775807)', [$after]))->orderByDesc('v.id')->limit(self::PAGE + 1)
-                ->get(['v.public_id', 'v.business_date', 'v.recipient_name', 'p.project_number', 'co.code as company', DB::raw('(select d.stock_movement_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id where l.delivery_id = v.id order by l.id limit 1) as movement'),
+                ->get(['v.public_id', 'v.business_date', 'v.recipient_name', 'v.company_id', 'p.public_id as project_id', 'p.project_number', 'co.code as company', DB::raw('(select d.stock_movement_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id where l.delivery_id = v.id order by l.id limit 1) as movement'),
                     DB::raw('(select m.public_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id join stock_movements m on m.id = d.stock_movement_id where l.delivery_id = v.id order by l.id limit 1) as shipment')])->all();
-            $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'project' => Row::text($row, 'project_number'), 'company' => $several ? Row::text($row, 'company') : null, 'shipment' => Row::nullable($row, 'shipment')], array_slice($found, 0, self::PAGE));
+            $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'project' => Row::text($row, 'project_number'), 'company' => $several ? Row::text($row, 'company') : null, 'shipment' => Row::nullable($row, 'shipment'),
+                // NAV-034: a delivered record's "Retur dari Klien".
+                'return' => $viewer->allows('sales_return.record', (int) Row::text($row, 'company_id')) ? '/proyek/'.Row::text($row, 'project_id').'/retur' : null], array_slice($found, 0, self::PAGE));
 
             return ['tab' => 'tercatat', 'rows' => $rows, 'more' => count($found) > self::PAGE, 'several' => $several];
         }

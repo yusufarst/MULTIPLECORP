@@ -17256,6 +17256,288 @@
             "source": "ROUTE-177; NAV-028 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "returns_client.keeps_delivery": {
+            "task": "TASK-048",
+            "source": "PG-034; PX-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.section.lines": {
+            "task": "TASK-048",
+            "source": "PG-034; SCR-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.no_lines": {
+            "task": "TASK-048",
+            "source": "PG-034; UXI-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.line_figures": {
+            "task": "TASK-048",
+            "source": "PG-034; PX-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.section.record": {
+            "task": "TASK-048",
+            "source": "PG-034; ROUTE-210 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.line": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; INT-210 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.out": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; C-27 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.serials": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; C-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.quantity": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; INT-210 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.condition": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; CM-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.rack": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; INT-210 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.proof": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; PJ-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.reserve": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; BR-RSV-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.reserve_help": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; BR-RSV-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.action.record": {
+            "task": "TASK-048",
+            "source": "ROUTE-210; INT-210 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.section.cases": {
+            "task": "TASK-048",
+            "source": "PG-034; SCR-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.none": {
+            "task": "TASK-048",
+            "source": "PG-034; UXI-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.state.open": {
+            "task": "TASK-048",
+            "source": "PG-034; NX-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.state.closed": {
+            "task": "TASK-048",
+            "source": "PG-034; NX-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.standing": {
+            "task": "TASK-048",
+            "source": "ROUTE-211; AX-36 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.contra": {
+            "task": "TASK-048",
+            "source": "PG-034; SM-25 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.action.reverse": {
+            "task": "TASK-048",
+            "source": "ROUTE-211; INT-211 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.confirm.record": {
+            "task": "TASK-048",
+            "source": "INT-210; MSG-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.confirm.reverse": {
+            "task": "TASK-048",
+            "source": "INT-211; AX-36; MSG-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.confirm.close": {
+            "task": "TASK-048",
+            "source": "ROUTE-271; IP-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.shortfall": {
+            "task": "TASK-048",
+            "source": "IP-20; C-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.answer.recorded": {
+            "task": "TASK-048",
+            "source": "INT-210; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.answer.reversed": {
+            "task": "TASK-048",
+            "source": "INT-211; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.delivered": {
+            "task": "TASK-048",
+            "source": "C-30; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.open": {
+            "task": "TASK-048",
+            "source": "C-27; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.reversal": {
+            "task": "TASK-048",
+            "source": "C-55; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.not_present": {
+            "task": "TASK-048",
+            "source": "C-03; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.serial": {
+            "task": "TASK-048",
+            "source": "C-02; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.settled": {
+            "task": "TASK-048",
+            "source": "C-46; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.reserved": {
+            "task": "TASK-048",
+            "source": "C-06; IP-20 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.scale": {
+            "task": "TASK-048",
+            "source": "C-09; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.reserve": {
+            "task": "TASK-048",
+            "source": "BR-RSV-03; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.other": {
+            "task": "TASK-048",
+            "source": "MSG-02; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.refusal.policy": {
+            "task": "TASK-048",
+            "source": "ST-09; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.demand": {
+            "task": "TASK-048",
+            "source": "WF-FUL-05; CM-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "cases.step.damaged_outcome": {
+            "task": "TASK-048",
+            "source": "WF-FUL-05; CM-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ClientReturnRecorded": {
+            "task": "TASK-048",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ClientReturnDuplicateConfirmed": {
+            "task": "TASK-048",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.ReturnReversed": {
+            "task": "TASK-048",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns_client.field.reverse_quantity": {
+            "task": "TASK-048",
+            "source": "ROUTE-211; INT-211 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.reverse.consequence": {
+            "task": "TASK-048",
+            "source": "INT-211; AX-36; MSG-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "returns.reverse.dropship": {
+            "task": "TASK-048",
+            "source": "INT-211; CM-15; MSG-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

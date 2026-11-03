@@ -247,7 +247,7 @@ Route::post('/proyek/{id}/kirim-langsung', [DirectShipmentController::class, 'co
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/balikkan', [DirectShipmentController::class, 'reverse'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.dropship.reverse');
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/retur', [DirectShipmentController::class, 'returned'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:sales_return.record'])->name('ful.dropship.return');
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/surat-jalan', [DirectShipmentController::class, 'note'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:documents.issue'])->name('ful.dropship.note');
-Route::get('/proyek/{id}/retur', [ClientReturnController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:sales_return.record,stock.reverse'])->name('ful.returns.show');
+Route::get('/proyek/{id}/retur', [ClientReturnController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:sales_return.record'])->name('ful.returns.show');
 Route::post('/proyek/{id}/retur', [ClientReturnController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:sales_return.record'])->name('ful.returns.record');
 Route::post('/retur/{id}/balikkan', [ClientReturnController::class, 'reverse'])->whereUuid('id')->middleware(['auth', 'capability:stock.reverse'])->name('ful.returns.reverse');
 Route::get('/gudang/pengiriman', [DeliveryController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ful.deliveries.index');

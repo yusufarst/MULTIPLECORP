@@ -36,7 +36,9 @@ type Condition = 'USABLE' | 'UNUSABLE';
 type Page<Row> = { rows: Row[]; more: string | null; cursor_failed: boolean };
 type Row = { id: string; state: 'OPEN' | 'CLOSED'; date: string; purchase: string; number: string; supplier: string; lot: string; product: string; open: string | null };
 // A drop-ship return's unit moved no stock: no rack, no condition, its lot the supplier's shipment reference (CM-15).
-type Unit = { lot: string; rack: string; condition: Condition | null; serial: string | null; qty: string; cost: string | null };
+// ROUTE-211's handles on a unit still returned: a purchase return's movement and consumption, or a drop-ship return's confirmation and restoration.
+type Reversal = { original: string; consumption: string | null; restoration: string | null; standing: string };
+type Unit = { lot: string; rack: string; condition: Condition | null; serial: string | null; qty: string; cost: string | null; reverse?: Reversal | null };
 type Event = { action: string; reason: string | null; by: string | null; at: string; outcome: string | null; correction: boolean };
 type Detail = {
     id: string;
@@ -54,6 +56,7 @@ type Detail = {
     figures: { returned: string; refunded: string; replaced: string; unrecovered: string; open: string } | null;
     replacement: { returned: string; expected: string; received: string; room: string };
     units: Unit[];
+    racks?: { id: string; code: string; name: string }[];
     events: Event[];
     trail: { corrects: CorrectionLink[]; corrected_by: CorrectionLink[] };
     can: { outcome: boolean; close: boolean };
@@ -230,6 +233,12 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
     const { t } = useTranslation();
     const outcome = useCommand<Record<string, FormDataConvertible>>(() => `/pembelian/${detail.purchase}/retur/${detail.id}/hasil`, 'post');
     const close = useCommand<Record<string, FormDataConvertible>>(() => `/dokumen/kasus/${detail.id}/tutup`, 'post');
+    const [reversing, setReversing] = useState<Reversal | null>(null);
+    const reverse = useCommand<Record<string, FormDataConvertible>>(() => `/retur/${reversing?.original ?? ''}/balikkan`, 'post');
+    const [reverseQty, setReverseQty] = useState('');
+    const [reverseRack, setReverseRack] = useState('');
+    const [reverseCondition, setReverseCondition] = useState<Condition>('USABLE');
+    const [reverseReason, setReverseReason] = useState('');
     const [kind, setKind] = useState<OutcomeKind>('REPLACEMENT');
     // A refund expected is only a note: there is nothing to correct (WF-PUR-03).
     const [correcting, setCorrecting] = useState(false);
@@ -242,9 +251,9 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
     const [closeReason, setCloseReason] = useState('');
     const [confirming, setConfirming] = useState<'outcome' | 'close' | null>(null);
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
-    const frozen = outcome.pending || outcome.unknown || close.pending || close.unknown;
-    const answer = outcome.answer ?? close.answer;
-    useClosedOnAnswer(answer, () => { setConfirming(null); });
+    const frozen = outcome.pending || outcome.unknown || close.pending || close.unknown || reverse.pending || reverse.unknown;
+    const answer = outcome.answer ?? close.answer ?? reverse.answer;
+    useClosedOnAnswer(answer, () => { setConfirming(null); setReversing(null); });
     const ready = kind === 'REPLACEMENT' ? Number(figure(qty)) > 0 : kind === 'REFUND' ? true : Number(figure(amount)) > 0 && (kind !== 'CREDIT' || correction || proof !== '');
     const open = detail.figures?.open ?? null;
 
@@ -261,7 +270,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
             </p>
             <p className="text-body text-text-secondary">{detail.reason}</p>
             {detail.causal !== null && <p className="text-body text-text-secondary">{detail.causal === '' ? t('returns.causal_other') : t('returns.causal', { nomor: detail.causal })}</p>}
-            {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && <OutcomeMessage answer={answer} action={outcome.unknown || close.unknown ? <Button variant="outline" size="sm" onClick={outcome.unknown ? outcome.retry : close.retry}>{t('actions.try_again')}</Button> : undefined} />}
+            {answer !== null && answer.kind !== 'COMMITTED' && confirming === null && reversing === null && <OutcomeMessage answer={answer} action={outcome.unknown || close.unknown || reverse.unknown ? <Button variant="outline" size="sm" onClick={outcome.unknown ? outcome.retry : close.unknown ? close.retry : reverse.retry}>{t('actions.try_again')}</Button> : undefined} />}
             {detail.figures !== null && (
                 <dl data-slot="return-figures" className="grid min-w-0 grid-cols-1 gap-x-6 gap-y-2 text-body sm:grid-cols-2">
                     {([['returned', 'cases.counter.returned_cost'], ['refunded', 'cases.counter.refunded_value'], ['replaced', 'cases.counter.replaced_value'], ['unrecovered', 'cases.counter.unrecovered_value']] as const).map(([field, label]) => (
@@ -282,6 +291,16 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                             {unit.serial !== null && <span className="font-mono">{unit.serial}</span>}
                             <span>{unit.qty}</span>
                             {unit.cost !== null && <Money value={unit.cost} />}
+                            {unit.reverse != null && (
+                                <Button variant="ghost" size="sm" disabled={frozen} onClick={() => {
+                                    reverse.clear();
+                                    setReverseQty(unit.reverse?.standing ?? '');
+                                    setReverseRack('');
+                                    setReverseCondition(unit.condition ?? 'USABLE');
+                                    setReverseReason('');
+                                    setReversing(unit.reverse ?? null);
+                                }}>{t('returns_client.action.reverse')}</Button>
+                            )}
                         </li>
                     ))}
                 </ul>
@@ -382,6 +401,45 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                 pending={close.pending}
                 reason={{ value: closeReason, onChange: setCloseReason, error: close.errors.alasan ?? null }}
                 onConfirm={() => { close.submit({ lock_version: detail.lock_version, alasan: closeReason, asal: 'retur' }, () => { setConfirming(null); }); }}
+            />
+            <ConfirmCommand
+                open={reversing !== null && !reverse.unknown}
+                onOpenChange={(next) => { if (!next) setReversing(null); }}
+                title={t('returns_client.action.reverse')}
+                consequence={t(reversing?.restoration != null ? 'returns.reverse.dropship' : 'returns.reverse.consequence')}
+                confirmLabel={t('returns_client.action.reverse')}
+                destructive
+                pending={reverse.pending}
+                blocked={reversing?.consumption != null && (Number(figure(reverseQty)) <= 0 || reverseRack === '')}
+                items={reversing?.consumption == null ? null : (
+                    <div className="flex min-w-0 flex-col gap-3">
+                        <FormField label={t('returns_client.field.reverse_quantity')} help={t('returns_client.standing', { jumlah: reversing.standing })} error={reverse.errors['unit.0.jumlah']}>
+                            {(control) => <DecimalInput {...control} scale={detail.scale} value={reverseQty} onValueChange={(next) => { setReverseQty(next ?? ''); }} />}
+                        </FormField>
+                        <FormField label={t('returns_client.field.rack')} error={reverse.errors['unit.0.rak']}>
+                            {(control) => (
+                                <NativeSelect {...control} value={reverseRack} onChange={(event) => { setReverseRack(event.target.value); }}>
+                                    <option value="">{t('dispatch.substitute.choose')}</option>
+                                    {(detail.racks ?? []).map((rack) => <option key={rack.id} value={rack.id}>{`${rack.code} · ${rack.name}`}</option>)}
+                                </NativeSelect>
+                            )}
+                        </FormField>
+                        <FormField label={t('returns_client.field.condition')} error={reverse.errors['unit.0.kondisi']}>
+                            {(control) => (
+                                <NativeSelect {...control} value={reverseCondition} onChange={(event) => { setReverseCondition(event.target.value === 'UNUSABLE' ? 'UNUSABLE' : 'USABLE'); }}>
+                                    <option value="USABLE">{t('stock.condition.USABLE')}</option>
+                                    <option value="UNUSABLE">{t('stock.condition.UNUSABLE')}</option>
+                                </NativeSelect>
+                            )}
+                        </FormField>
+                    </div>
+                )}
+                reason={{ value: reverseReason, onChange: setReverseReason, error: reverse.errors.alasan ?? null }}
+                onConfirm={() => {
+                    if (reversing === null) return;
+                    const unit = reversing.consumption === null ? { pemulihan: reversing.restoration ?? '' } : { konsumsi: reversing.consumption, jumlah: reverseQty, rak: reverseRack, kondisi: reverseCondition };
+                    reverse.submit({ unit: [unit], alasan: reverseReason, tanggal: today, tanggal_otomatis: true, asal: `${PAGE}?kasus=${detail.id}` }, () => { setReversing(null); });
+                }}
             />
         </section>
     );

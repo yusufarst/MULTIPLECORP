@@ -146,7 +146,7 @@ final class ClientReturnController extends Controller
 
         $outcome = $reverse->run(self::text($input['command_id']), $actor, $original['company'], $movement, $items, $cuts, trim(self::text($input['alasan'])), self::text($input['tanggal']), $request->boolean('tanggal_otomatis'), $payload);
 
-        return $this->answer($outcome, 'reversed', self::text($input['tanggal']), $back);
+        return $this->answer($outcome, 'reversed', self::text($input['tanggal']), $back, $outcome->code === 'C-06' ? $this->returns->cutChoices($actor, $movement, $original['company']) : []);
     }
 
     /** The page a reversal answers on: PG-034 or PG-028 that sent it, never another address. */
@@ -155,7 +155,8 @@ final class ClientReturnController extends Controller
         return preg_match('#^/(proyek/[0-9a-f-]{36}/retur|gudang/retur-pemasok(\?kasus=[0-9a-f-]{36})?)$#', $from) === 1 ? $from : '/gudang/retur-pemasok';
     }
 
-    private function answer(Outcome $outcome, string $done, string $sent, string $page): RedirectResponse
+    /** @param  list<array<string, mixed>>  $choices */
+    private function answer(Outcome $outcome, string $done, string $sent, string $page, array $choices = []): RedirectResponse
     {
         if ($outcome->kind === Outcome::REJECTED && $outcome->code === 'C-50') {
             throw ValidationException::withMessages(['tanggal' => self::say('projects.validation.future')]);
@@ -174,7 +175,7 @@ final class ClientReturnController extends Controller
             default => ['not_processed', self::say('messages.msg_06')],
         };
         Inertia::flash('answer', ['kind' => $outcome->kind, 'code' => $outcome->code, 'cause' => $cause, 'text' => $text, ...($matches === null ? [] : ['state' => ['matches' => $matches]]),
-            ...($outcome->code === 'C-06' ? ['state' => $state] : [])]);
+            ...($outcome->code === 'C-06' ? ['state' => [...$state, 'reservations' => $choices]] : [])]);
 
         return redirect()->to($page, 303);
     }
