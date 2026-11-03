@@ -116,7 +116,8 @@ final class OtherCashList
             'bills' => $expense && $sees('SUPPLIER_BILL') ? self::evidence($company, ['SUPPLIER_BILL'], true) : [],
             'expense_proofs' => $expense ? self::evidence($company, array_values(array_filter(EvidenceTypes::TYPES, fn (string $type): bool => $type !== 'OPENING_SIGNOFF' && ! EvidenceTypes::isAmountBearing($type) && $sees($type))), false) : [],
             'projects' => $expense ? self::projects($company) : [],
-            'purchases' => $cash && $viewer->allows('cost.view', $company) ? self::purchases($company) : [],
+            // Each bounded on its own: cancelled purchases, a supplier refund's only, never crowd out the payable ones.
+            'purchases' => $cash && $viewer->allows('cost.view', $company) ? [...self::purchases($company, false), ...self::purchases($company, true)] : [],
             'expenses' => $disbursement && $viewer->allows('cost.view', $company) ? self::expenses($company) : [],
             'tax_types' => $disbursement ? self::taxTypes() : [],
             'tax_proofs' => $disbursement && $sees('TAX_PAYMENT_PROOF') ? self::evidence($company, ['TAX_PAYMENT_PROOF'], true) : [],
@@ -240,11 +241,11 @@ final class OtherCashList
     }
 
     /** @return list<array{id: string, number: string, supplier: string, cancelled: bool}> */
-    private static function purchases(int $companyId): array
+    private static function purchases(int $companyId, bool $cancelled): array
     {
         $rows = [];
 
-        foreach (DB::table('purchases')->where('company_id', $companyId)->orderByDesc('id')->limit(self::CHOICES)->selectRaw("public_id, purchase_number, state, supplier_snapshot->>'name' as supplier")->get() as $row) {
+        foreach (DB::table('purchases')->where('company_id', $companyId)->where('state', $cancelled ? '=' : '<>', 'CANCELLED')->orderByDesc('id')->limit(self::CHOICES)->selectRaw("public_id, purchase_number, state, supplier_snapshot->>'name' as supplier")->get() as $row) {
             $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier') ?? '', 'cancelled' => Row::text($row, 'state') === 'CANCELLED'];
         }
 
