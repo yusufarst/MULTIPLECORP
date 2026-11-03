@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 57
-READY: 5
-IN_PROGRESS: 0
+READY: 4
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 0
 TODO: 20
@@ -28,8 +28,8 @@ Progress:
 57 / 87
 Percentage: 65.5 %
 
-CURRENT TASK: none in progress — TASK-055 — Project completion and Force Complete DONE on its branch `task/TASK-055-project-completion`, CI PASS on `a9d7a0c`, its pull request #68 squash-merged by the executor once eligible (DIR-096)
-NEXT READY TASK: TASK-056 — Project cancellation, READY (its READY gate — every dependency DONE with TASK-055 — re-checked at TASK-055's DONE), then TASK-057 — Opening import — preparation, dry run, sign-off and commit, READY, TASK-058 — Home, Work and Review — signals and the action queue, READY (re-checked at TASK-055's DONE), TASK-059 — Search and scanning, READY, and TASK-060 — Reports, the consolidated report and exports, READY; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-056 — Project cancellation, IN PROGRESS on its branch `task/TASK-056-project-cancellation` from the merged `main` `1046911` (DIR-096; DIR-102); TASK-055 DONE and squash-merged as `1046911` (pull request #68)
+NEXT READY TASK: TASK-057 — Opening import — preparation, dry run, sign-off and commit, READY, TASK-058 — Home, Work and Review — signals and the action queue, READY, TASK-059 — Search and scanning, READY, and TASK-060 — Reports, the consolidated report and exports, READY; TASK-082 waits on TASK-071 and TASK-078, TASK-062–TASK-069, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -196,7 +196,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-053](TASK-053.md) | Customer credit and refunds | Module · FIN | HIGH | DONE | 048, 051, 052 | 055, 057 | NO | AGENT | NONE | YES |
 | [TASK-054](TASK-054.md) | Expenses, disbursements and other cash | Module · CST · FIN | HIGH | DONE | 030, 036, 037, 044, 046, 052 | 055, 058, 060 | NO | AGENT | NONE | YES |
 | [TASK-055](TASK-055.md) | Project completion and Force Complete | Module · PRJ | HIGH | DONE | 031, 035, 043, 044, 045, 046, 047, 048, 050, 052, 053, 054 | 056, 058 | NO | AGENT | NONE | YES |
-| [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | READY | 038, 041, 046, 047, 049, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-056](TASK-056.md) | Project cancellation | Module · PRJ | HIGH | IN_PROGRESS | 038, 041, 046, 047, 049, 055 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | READY | 022, 026, 027, 028, 030, 032, 034, 037, 039, 040, 042, 050, 052, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
 | [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | READY | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 075 | NO | AGENT | PROPOSED | YES |
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | READY | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
