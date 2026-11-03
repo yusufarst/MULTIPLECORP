@@ -532,7 +532,7 @@ final class ReturnReversal
         $reversed = DB::table('stock_movement_entries as e')->join('stock_restorations as r', 'r.id', '=', 'e.stock_restoration_id')->where('r.correction_case_id', $caseId)->where('r.kind', 'SALES_RETURN')->where('e.movement_type', 'MOVEMENT_REVERSAL')->sum('e.qty_delta_base');
         $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.correction_case_id', $caseId)->where('c.kind', 'LOSS')->sum(DB::raw('b.qty_base - b.restored_qty_base'));
 
-        return BigDecimal::of(is_numeric($back) ? (string) $back : '0')->plus(is_numeric($reversed) ? (string) $reversed : '0')->minus(is_numeric($lost) ? (string) $lost : '0');
+        return BigDecimal::of((string) $back)->plus((string) $reversed)->minus((string) $lost);
     }
 
     /** The place a restoration's units sit at and its reversal guard (LK-14; LK-15; LK-16); its serial (LK-17). */

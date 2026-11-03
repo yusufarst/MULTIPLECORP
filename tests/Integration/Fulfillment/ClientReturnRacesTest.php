@@ -52,7 +52,6 @@ function racedShipment(object $test, string $shipped, string $delivered): object
     return $shipment;
 }
 
-
 it('lets one of two returns of the same delivered units commit, the other REJECTED with nothing left, never both (C-30; LK-19; LK-24; criterion 1)', function () {
     $shipment = racedShipment($this, '2', '2');
     [$actor, $company, $rack, $proof, $dispatch, $consumption] = [$this->actor, $this->company->id, $this->rack, $this->proof, $shipment->dispatch, $shipment->consumption];
