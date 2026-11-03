@@ -38,7 +38,7 @@ function Obligations({ rows }: { rows: Obligation[] }) {
             {rows.map((row, index) => (
                 <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
                     <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
-                    <span>{row.label}</span>
+                    <span>{row.kind === 'case' ? t(`cases.kind.${row.label.toLowerCase()}` as TranslationKey) : row.label}</span>
                     {row.amount !== null && <Money value={row.amount} />}
                     {row.quantity !== null && <span className="text-text-secondary">{row.quantity}</span>}
                 </li>

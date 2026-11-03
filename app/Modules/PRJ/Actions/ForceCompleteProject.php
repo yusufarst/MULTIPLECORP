@@ -47,6 +47,10 @@ final class ForceCompleteProject
                 throw Refused::conflict('ST-04', ['hash' => $read['hash'], 'unmet' => $read['unmet']]);
             }
 
+            if ($read['unmet'] === []) {
+                throw Refused::rejected('AX-26', ['reason' => 'all_met']);
+            }
+
             $this->records->complete($context, $projectId, $companyId, Row::text($project, 'public_id'), $read['snapshot'], $read['unmet'], ['reason' => $reason, 'hash' => $hash]);
 
             return new CommandResult('project', $projectId);

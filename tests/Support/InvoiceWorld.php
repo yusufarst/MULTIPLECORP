@@ -131,7 +131,7 @@ final class InvoiceWorld
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
 
-        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
+        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP'], [SequenceType::Doc08, 'BAST']] as [$type, $prefix]) {
             Numbering::scheme($this->company, $type, "{$year}-01-01", 'YEAR', "{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($this->company, $type, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
         }
@@ -326,17 +326,22 @@ final class InvoiceWorld
         return self::word(app(CompleteProject::class)->run((string) Str::uuid(), $actorUserId, $project->id, $project->company_id, $project->public_id));
     }
 
-    /** Every confirmed line's remainder cancelled through TASK-034's own command, so only the money predicates can stand between the project and its completion (L-12). */
-    public static function readyToComplete(int $projectId): void
+    /**
+     * Every confirmed service line's remainder cancelled through TASK-034's own command — or, with `$handover`, handed over through TASK-047's —, so only the money predicates can stand
+     * between the project and its completion (L-12). ADM's default invoice item is met when the invoiced value equals the confirmed value less the cancelled value: a project without an
+     * invoice completes after a cancellation, one invoiced for its whole value after a handover.
+     */
+    public static function readyToComplete(int $projectId, bool $handover = false): void
     {
-        $actor = Authorization::admin([(int) DB::table('projects')->where('id', $projectId)->value('company_id')], ['projects.view', 'projects.cancel_scope'])->id;
+        $company = (int) DB::table('projects')->where('id', $projectId)->value('company_id');
+        $actor = Authorization::admin([$company], ['projects.view', 'projects.cancel_scope', 'handover.record', 'documents.issue', 'evidence.view'])->id;
 
         foreach (DB::table('project_lines as l')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')->where('l.project_id', $projectId)->whereNotNull('l.current_pin_id')
             ->selectRaw('l.id, b.demand_qty_base - b.handed_over_qty_base - b.delivered_net_qty_base - b.cancelled_qty_base as remainder')->get() as $line) {
             $remainder = (string) ($line->remainder ?? '0');
 
-            if ((float) $remainder > 0 && ($word = ConfirmationRaces::cancel($actor, $projectId, (int) $line->id, $remainder)) !== 'COMMITTED') {
-                throw new RuntimeException("The remainder's cancellation was {$word}.");
+            if ((float) $remainder > 0 && ($word = $handover ? HandoverWorld::record($actor, $projectId, (int) $line->id, $remainder) : ConfirmationRaces::cancel($actor, $projectId, (int) $line->id, $remainder)) !== 'COMMITTED') {
+                throw new RuntimeException("The remainder's ".($handover ? 'handover' : 'cancellation')." was {$word}.");
             }
         }
     }

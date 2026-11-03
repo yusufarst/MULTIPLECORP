@@ -72,6 +72,7 @@ final class ProjectCompletionController extends Controller
             Outcome::COMMITTED => [null, self::say("completion.answer.{$done}")],
             Outcome::REJECTED => [null, match ($outcome->code) {
                 'C-39' => self::say('completion.refusal.unmet', ['syarat' => $conditions]),
+                'AX-26' => self::say('completion.refusal.all_met'),
                 'AZ-01', 'AZ-08', 'OD-12' => self::say('messages.msg_14'),
                 default => self::say('messages.msg_04'),
             }],

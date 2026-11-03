@@ -64,15 +64,18 @@ final class ReservationPredicate implements CompletionPredicateProvider
 
         $rows = DB::table('project_lines as l')->leftJoin('reservations as r', fn (JoinClause $join) => $join->on('r.project_line_id', '=', 'l.id')->where('r.state', 'ACTIVE'))
             ->whereIn('l.project_id', $projectIds)->where('l.fulfillment_mode', 'WAREHOUSE')->groupBy('l.project_id')
-            ->selectRaw('l.project_id, count(r.id) as active, '.self::UNUSABLE)->get();
+            ->selectRaw('l.project_id, count(r.id) as active, (select count(*) from unattributed_loss_cases u where u.causal_project_id = l.project_id and u.pending_qty_base > 0) as losses, '.self::UNUSABLE)->get();
         $states = [];
 
         foreach ($rows as $row) {
             $active = (int) Row::text($row, 'active');
             $unusable = (int) Row::text($row, 'unusable');
+            $losses = (int) Row::text($row, 'losses');
             $states[(int) Row::text($row, 'project_id')] = [Predicates::STOCK => new PredicateState(true, [
                 ...($active === 0 ? [] : [new JourneyItem('projects.item.reservations_active', ['jumlah' => (string) $active], 'warehouse', true)]),
                 ...($unusable === 0 ? [] : [new JourneyItem('projects.item.unusable_units', ['jumlah' => (string) $unusable], 'warehouse', true)]),
+                // L-38; DIR-026: an unexplained loss whose causal project is this one, still pending its resolution (TASK-055).
+                ...($losses === 0 ? [] : [new JourneyItem('projects.item.loss_cases_pending', ['jumlah' => (string) $losses], 'warehouse', true)]),
             ])];
         }
 

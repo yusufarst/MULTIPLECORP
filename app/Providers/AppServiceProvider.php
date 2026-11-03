@@ -20,18 +20,16 @@ use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\FIN\Services\PaymentCitations;
 use App\Modules\FIN\Services\PaymentPredicate;
 use App\Modules\FIN\Services\ReceiptSubjects;
-use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\FIN\Services\ReceivableObligations;
+use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\FIN\Services\SettlementDocumentChanges;
 use App\Modules\FUL\Services\DeliverySubjects;
-use App\Modules\FUL\Services\DeliveryPredicate;
 use App\Modules\FUL\Services\HandoverPredicate;
 use App\Modules\FUL\Services\ServiceHandoverSubjects;
 use App\Modules\FUL\Services\ShipmentNoteSubjects;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\INV\Services\ReceivingSubjects;
-use App\Modules\INV\Services\LossCasePredicate;
 use App\Modules\INV\Services\ReservationLifecycle;
 use App\Modules\INV\Services\ReservationObligations;
 use App\Modules\INV\Services\ReservationPredicate;
@@ -91,7 +89,7 @@ class AppServiceProvider extends ServiceProvider
 
         // INV's parts (TASK-038): a project's reservations fitted to its lifecycle, and the stock predicate's reservations.
         $this->app->tag([ReservationLifecycle::class], ProjectLifecycleParticipant::TAG);
-        $this->app->tag([ReservationPredicate::class, LossCasePredicate::class], CompletionPredicateProvider::TAG);
+        $this->app->tag([ReservationPredicate::class], CompletionPredicateProvider::TAG);
 
         // FIN's parts (TASK-049): the invoice's layouts and pre-payment Kuitansi, and a Kuitansi's links ended with its void or revision.
         $this->app->tag([InvoiceSubjects::class, ReceiptSubjects::class], DocumentSubjectProvider::TAG);
@@ -104,7 +102,7 @@ class AppServiceProvider extends ServiceProvider
 
         // FUL's parts (TASK-047; TASK-046): the BAST's subject, a recorded handover, the Surat Jalan of a dispatch or a direct shipment, and the fulfilment predicate's service lines.
         $this->app->tag([ServiceHandoverSubjects::class, DeliverySubjects::class, ShipmentNoteSubjects::class], DocumentSubjectProvider::TAG);
-        $this->app->tag([HandoverPredicate::class, DeliveryPredicate::class], CompletionPredicateProvider::TAG);
+        $this->app->tag([HandoverPredicate::class], CompletionPredicateProvider::TAG);
 
         // PUR's parts (TASK-037): the purchase as the subject of its PO and Surat Pesanan, predicate 8's remainders, PG-011's *Pengadaan*.
         $this->app->tag([PurchaseSubjects::class], DocumentSubjectProvider::TAG);

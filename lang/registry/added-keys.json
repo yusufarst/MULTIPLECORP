@@ -18612,6 +18612,12 @@
             "source": "WF-PRJ-03 predicate 8; L-38 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "completion.refusal.all_met": {
+            "task": "TASK-055",
+            "source": "AX-26; BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

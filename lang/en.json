@@ -3998,5 +3998,6 @@
     "activity.action.PRJ.ProjectForceCompleted": "Project force-completed",
     "projects.item.goods_undelivered": ":jumlah goods lines not yet fully delivered",
     "projects.item.shipments_awaiting": ":jumlah shipments not yet delivered or closed",
-    "projects.item.loss_cases_pending": ":jumlah loss cases still pending"
+    "projects.item.loss_cases_pending": ":jumlah loss cases still pending",
+    "completion.refusal.all_met": "Every condition holds: complete the project normally."
 }

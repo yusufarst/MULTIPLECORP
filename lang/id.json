@@ -3998,5 +3998,6 @@
     "activity.action.PRJ.ProjectForceCompleted": "Proyek diselesaikan paksa",
     "projects.item.goods_undelivered": ":jumlah baris barang belum terkirim seluruhnya",
     "projects.item.shipments_awaiting": ":jumlah pengiriman belum diterima atau ditutup",
-    "projects.item.loss_cases_pending": ":jumlah kasus kehilangan belum terselesaikan"
+    "projects.item.loss_cases_pending": ":jumlah kasus kehilangan belum terselesaikan",
+    "completion.refusal.all_met": "Semua syarat terpenuhi: selesaikan proyek secara normal."
 }

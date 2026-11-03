@@ -17,6 +17,9 @@ use Illuminate\Support\Facades\DB;
  */
 final class ProjectDocumentChanges implements DocumentChangeParticipant
 {
+    /** WF-PRJ-03's collection documents for residual receivables. */
+    private const COLLECTION = ['DOC-05', 'DOC-07', 'DOC-13'];
+
     public function __construct(private readonly Revalidation $revalidation) {}
 
     public function locks(DocumentChange $change): LockSet
@@ -47,8 +50,8 @@ final class ProjectDocumentChanges implements DocumentChangeParticipant
         $projects = [];
 
         if ($change->isDocument()) {
-            $row = DB::table('documents as d')->leftJoin('invoices as i', 'i.id', '=', 'd.invoice_id')->where('d.id', $change->documentId)->selectRaw('coalesce(d.project_id, i.project_id) as project')->first();
-            $project = $row === null ? null : ($row->project ?? null);
+            // A collection document — DOC-05 in either mode, DOC-07, DOC-13 — or an invoice's own is FIN's: its void or revision is a residual command or FIN's correction (L-11).
+            $project = DB::table('documents')->where('id', $change->documentId)->whereNull('invoice_id')->whereNull('payment_id')->whereNotIn('document_type_code', self::COLLECTION)->value('project_id');
             $projects[] = is_numeric($project) ? (int) $project : 0;
         }
 

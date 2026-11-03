@@ -53,7 +53,8 @@ it('shows PG-012\'s ten conditions, each with its state and, unmet, what is miss
     $this->actingAs($this->actor)->get($this->page)->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/Completion', false)
         ->has('conditions', 10)->where('conditions.0.key', 'fulfilment')->where('conditions.0.met', false)->where('conditions.0.items.0.key', 'projects.item.handovers_open')
         ->where('conditions.0.href', "/proyek/{$this->project->public_id}")->where('conditions.5.key', 'billing')->where('conditions.5.met', true)
-        ->where('unmet', ['fulfilment'])->where('can', ['complete' => true, 'force' => false])->where('force', null));
+        ->where('conditions.4.key', 'administration')->where('conditions.4.met', false)->where('conditions.4.items.0.key', 'projects.item.requirements_invoice')
+        ->where('unmet', ['fulfilment', 'administration'])->where('can', ['complete' => true, 'force' => false])->where('force', null));
 
     // Derived again each time: the line's remainder cancelled, the condition holds at once.
     InvoiceWorld::readyToComplete($this->project->id);
@@ -62,7 +63,7 @@ it('shows PG-012\'s ten conditions, each with its state and, unmet, what is miss
 
 it('completes only on the explicit decision once all ten hold, and never by itself (AX-25; L-12; C-39; criteria 2, 3)', function () {
     $refused = completionAnswer($this, $this->actor, "/proyek/{$this->project->public_id}/selesaikan");
-    expect($refused['kind'])->toBe('REJECTED')->and($refused['code'])->toBe('C-39')->and($refused['state']['unmet'])->toBe(['fulfilment'])->and($refused['text'])->toContain(__('journey.pred.fulfilment'))
+    expect($refused['kind'])->toBe('REJECTED')->and($refused['code'])->toBe('C-39')->and($refused['state']['unmet'])->toBe(['fulfilment', 'administration'])->and($refused['text'])->toContain(__('journey.pred.fulfilment'))
         ->and(completionState($this))->toBe('ACTIVE')->and(DB::table('project_state_transitions')->where('project_id', $this->project->id)->whereIn('transition_kind', ['COMPLETE_NORMAL', 'FORCE_COMPLETE'])->count())->toBe(0);
 
     InvoiceWorld::readyToComplete($this->project->id);
@@ -80,7 +81,9 @@ it('completes only on the explicit decision once all ten hold, and never by itse
 });
 
 it('names one blocker per money condition — billing, receivable, credit, open cases — and delivery or payment alone never completes (C-39; WF-PRJ-03; criteria 2, 14)', function () {
-    InvoiceWorld::readyToComplete($this->project->id);
+    // Confirmed at the 1,000,000 it is invoiced for, its service handed over: only the money facts remain (ADM's default invoice item met once invoiced).
+    $this->project = $this->world->project(['SERVICE'], '4');
+    InvoiceWorld::readyToComplete($this->project->id, true);
     $unmet = fn (): array => app(ProjectCompletion::class)->read($this->project->id)['unmet'];
 
     $invoice = $this->world->issued($this->project, '1000000');
@@ -109,7 +112,7 @@ it('lets only the Owner force-complete, bound to the snapshot shown: a reason re
     InvoiceWorld::bill($invoice, now()->toDateString(), '2099-12-31');
     $url = "/proyek/{$this->project->public_id}/selesaikan-paksa";
     $shown = $this->actingAs($this->owner)->get($this->page)->viewData('page')['props']['force'];
-    expect($shown['unmet'])->toBe(['fulfilment', 'receivable'])->and(collect($shown['obligations'])->firstWhere('kind', 'receivable')['amount'])->toBe('1000000.00');
+    expect($shown['unmet'])->toBe(['fulfilment', 'administration', 'receivable'])->and(collect($shown['obligations'])->firstWhere('kind', 'receivable')['amount'])->toBe('1000000.00');
 
     $this->actingAs($this->owner)->post($url, ['command_id' => (string) Str::uuid(), 'snapshot' => $shown['hash']])->assertSessionHasErrors('alasan');
 
@@ -124,12 +127,12 @@ it('lets only the Owner force-complete, bound to the snapshot shown: a reason re
 
     $transition = DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('transition_kind', 'FORCE_COMPLETE')->first();
     expect(completionState($this))->toBe('COMPLETED_FORCED')->and($transition->reason)->toBe('Klien tidak dapat dihubungi')->and($transition->confirmed_snapshot_hash)->toBe($current['hash'])
-        ->and(json_decode((string) $transition->unmet_predicates, true))->toBe(['fulfilment', 'receivable'])
+        ->and(json_decode((string) $transition->unmet_predicates, true))->toBe(['fulfilment', 'administration', 'receivable'])
         ->and(collect(json_decode((string) $transition->residual_obligations, true))->firstWhere('kind', 'receivable')['amount'])->toBe('600000.00')
         // Nothing fabricated: the receivable stays outstanding and ageing.
         ->and(DB::table('invoice_balances')->where('invoice_id', $invoice)->value('outstanding'))->toBe('600000.00');
 
-    $this->actingAs($this->owner)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('record.kind', 'FORCE_COMPLETE')->where('record.unmet', ['fulfilment', 'receivable'])->where('record.obligations.0.kind', 'receivable'));
+    $this->actingAs($this->owner)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('record.kind', 'FORCE_COMPLETE')->where('record.unmet', ['fulfilment', 'administration', 'receivable'])->where('record.obligations.0.kind', 'receivable'));
 });
 
 it('denies an Admin\'s Force Complete whatever is granted, and no payload names a state or a snapshot (OD-12; WS-02; SM-04; criterion 6)', function () {

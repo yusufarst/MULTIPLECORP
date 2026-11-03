@@ -9,12 +9,11 @@ const expect = base.configure({ timeout: 60_000 });
 
 test.describe.configure({ timeout: 360_000 });
 
-test('J-PRJ-03: completes a project whose ten conditions hold, from PG-011 through PG-012 (L-12; AX-25)', async ({ page }) => {
+test('J-PRJ-03: completes a project whose ten conditions hold on PG-012 (L-12; AX-25)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await completionRun(page, `selesai-${String(Date.now())}`, true);
 
-    await page.goto(`/proyek/${run.project}`);
-    await page.getByRole('link', { name: 'Selesaikan Proyek' }).first().click();
+    await page.goto(`/proyek/${run.project}/penyelesaian`);
     await expect(page.getByRole('heading', { name: 'Penyelesaian Proyek', level: 1 })).toBeVisible();
     await expect(page.locator('[data-slot="completion-condition"][data-met="false"]')).toHaveCount(0);
     await page.getByRole('button', { name: 'Selesaikan Proyek', exact: true }).click();
