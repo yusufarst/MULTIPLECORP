@@ -20,7 +20,7 @@ test('names the refund dialog\'s fields and closes it with nothing sent', async 
     await expect(dialog.getByLabel('Rekening asal')).toBeVisible();
     await expect(dialog.getByLabel('Bukti transfer')).toBeVisible();
     await expect(dialog).toContainText('Kas Keluar');
-    await dialog.getByRole('button', { name: 'Kembali' }).click();
+    await dialog.getByRole('button', { name: 'Kembali', exact: true }).click();
     await expect(dialog).toHaveCount(0);
     await expect(page.locator('[data-slot="credit-refund"]')).toHaveCount(0);
 });

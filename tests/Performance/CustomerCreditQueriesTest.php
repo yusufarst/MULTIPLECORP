@@ -51,6 +51,8 @@ function creditOverpaid(object $test, string $paid): int
 
 it('reads PG-048 in the same number of statements for one credit source and several (QB-02; PFM-01; PFM-02)', function () {
     creditOverpaid($this, '1200000');
+    // The session's first page load writes what later loads only read: measured warm.
+    creditStatements(fn () => $this->actingAs($this->actor)->get('/keuangan/kredit-pelanggan')->assertOk());
     $one = creditStatements(fn () => $this->actingAs($this->actor)->get('/keuangan/kredit-pelanggan')->assertOk());
 
     foreach (range(1, 4) as $round) {
