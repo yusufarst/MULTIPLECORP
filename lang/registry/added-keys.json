@@ -16830,6 +16830,432 @@
             "source": "WF-FUL-02; J-FUL-02; PG-030; PG-031; SCR-28; SCR-29",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "dropship.no_warehouse": {
+            "task": "TASK-046",
+            "source": "BR-INV-11; FS-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.section.lines": {
+            "task": "TASK-046",
+            "source": "PG-032 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.no_lines": {
+            "task": "TASK-046",
+            "source": "PG-032; PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.figure.ordered": {
+            "task": "TASK-046",
+            "source": "PX-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.figure.confirmed": {
+            "task": "TASK-046",
+            "source": "PX-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.figure.remainder": {
+            "task": "TASK-046",
+            "source": "C-29; C-30 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.figure.awaited": {
+            "task": "TASK-046",
+            "source": "DATABASE §5.7 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.section.confirm": {
+            "task": "TASK-046",
+            "source": "ROUTE-205 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.purchase": {
+            "task": "TASK-046",
+            "source": "ROUTE-205 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.reference": {
+            "task": "TASK-046",
+            "source": "BD-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.reference_help": {
+            "task": "TASK-046",
+            "source": "BD-04; MSG-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.replacement": {
+            "task": "TASK-046",
+            "source": "DATABASE §5.7; C-59 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.replacement_help": {
+            "task": "TASK-046",
+            "source": "C-59 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.not_replacement": {
+            "task": "TASK-046",
+            "source": "C-59 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.serials": {
+            "task": "TASK-046",
+            "source": "BD-18; C-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.serials_help": {
+            "task": "TASK-046",
+            "source": "BD-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.quantity": {
+            "task": "TASK-046",
+            "source": "C-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.proof": {
+            "task": "TASK-046",
+            "source": "PJ-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.proof_help": {
+            "task": "TASK-046",
+            "source": "IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.delivered": {
+            "task": "TASK-046",
+            "source": "L-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.client_proof": {
+            "task": "TASK-046",
+            "source": "L-40; PJ-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.destination": {
+            "task": "TASK-046",
+            "source": "CM-14; CM-15 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.rack": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.field.condition": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.destination.GUDANG": {
+            "task": "TASK-046",
+            "source": "ADMIN_FLOW §11 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "dropship.destination.PEMASOK": {
+            "task": "TASK-046",
+            "source": "ADMIN_FLOW §11 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "dropship.condition.USABLE": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.condition.UNUSABLE": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.action.confirm": {
+            "task": "TASK-046",
+            "source": "ROUTE-205 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "dropship.action.note": {
+            "task": "TASK-046",
+            "source": "ROUTE-216 (canonical label)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "dropship.action.reverse": {
+            "task": "TASK-046",
+            "source": "ROUTE-206 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.action.return": {
+            "task": "TASK-046",
+            "source": "ROUTE-207 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.section.confirmations": {
+            "task": "TASK-046",
+            "source": "PG-032 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.none": {
+            "task": "TASK-046",
+            "source": "PG-032; PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.delivered_to": {
+            "task": "TASK-046",
+            "source": "L-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.replacement": {
+            "task": "TASK-046",
+            "source": "C-59 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.line_figures": {
+            "task": "TASK-046",
+            "source": "PX-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.cost": {
+            "task": "TASK-046",
+            "source": "J-FUL-03; PJ-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.kind.DROPSHIP_RETURN": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.kind.DROPSHIP_SUPPLIER_RETURN": {
+            "task": "TASK-046",
+            "source": "CM-15 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.kind.DROPSHIP_CONFIRMATION_REVERSAL": {
+            "task": "TASK-046",
+            "source": "CM-27 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.kind.DROPSHIP_ERROR_REVERSAL": {
+            "task": "TASK-046",
+            "source": "CM-37 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.confirm.consequence": {
+            "task": "TASK-046",
+            "source": "MSG-39; IP-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.confirm.with_delivery": {
+            "task": "TASK-046",
+            "source": "MSG-39; L-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.confirm.reverse": {
+            "task": "TASK-046",
+            "source": "MSG-39; CM-27 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.confirm.return_warehouse": {
+            "task": "TASK-046",
+            "source": "MSG-39; CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.confirm.return_supplier": {
+            "task": "TASK-046",
+            "source": "MSG-39; CM-15 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.validation.nothing": {
+            "task": "TASK-046",
+            "source": "IP-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.answer.confirmed": {
+            "task": "TASK-046",
+            "source": "NAV-032 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.answer.reversed": {
+            "task": "TASK-046",
+            "source": "CM-27 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.answer.returned_warehouse": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.answer.returned_supplier": {
+            "task": "TASK-046",
+            "source": "CM-15 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.policy": {
+            "task": "TASK-046",
+            "source": "ST-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.purchase_closed": {
+            "task": "TASK-046",
+            "source": "AX-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.cap": {
+            "task": "TASK-046",
+            "source": "MSG-02; C-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.demand": {
+            "task": "TASK-046",
+            "source": "MSG-02; C-30 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.delivered": {
+            "task": "TASK-046",
+            "source": "CM-27; CM-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.open": {
+            "task": "TASK-046",
+            "source": "MSG-02; C-27 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.serials": {
+            "task": "TASK-046",
+            "source": "MSG-36; C-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.scale": {
+            "task": "TASK-046",
+            "source": "C-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.case": {
+            "task": "TASK-046",
+            "source": "C-59 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.mode": {
+            "task": "TASK-046",
+            "source": "BR-INV-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.rack": {
+            "task": "TASK-046",
+            "source": "CM-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DropShipConfirmed": {
+            "task": "TASK-046",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DropShipConfirmationReversed": {
+            "task": "TASK-046",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DropShipConfirmationReversalDuplicateConfirmed": {
+            "task": "TASK-046",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DropShipReturned": {
+            "task": "TASK-046",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FUL.DropShipReturnDuplicateConfirmed": {
+            "task": "TASK-046",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.unknown": {
+            "task": "TASK-046",
+            "source": "C-14; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.refusal.other": {
+            "task": "TASK-046",
+            "source": "MSG-02; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "dropship.case_link": {
+            "task": "TASK-046",
+            "source": "ROUTE-177; NAV-028 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

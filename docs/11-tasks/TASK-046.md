@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -224,6 +224,20 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 10. The reversal and the returns are absent without `fulfillment.correct` and `sales_return.record`, each asking its reason (AZ-01; IP-09; SM-04).
 11. Once the row of P11Q-02 (a) is approved, PG-032 issues the company's *Surat Jalan* for a direct shipment through its route, its issuer truthful and its content the shipment's recorded facts, and issuing it changes no stock, cash or obligation (WF-FUL-03; WF-DOC-01; BR-DOC-04; TASK_PLAN §8).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Fulfillment/DirectShipmentTest.php` — a confirmation leaves stock movements, entries, lots, receiving and dispatch lines untouched; PG-032 offers no receiving or dispatch control (`tests/Feature/FUL/DirectShipmentPagesTest.php`).
+- Criterion 2: `DirectShipmentTest` — the line's goods attributed once as INITIAL HPP by cumulative rounding (300000.03 over three units: 100000.00 then 200000.03), the purchase line's confirmed quantity and posted value moved with it; `tests/Unit/FUL/DropshipFiguresTest.php` — the rounding; `tests/Authorization/DirectShipmentAccessTest.php` — the cost only with `cost.view`.
+- Criterion 3: `DirectShipmentTest` — partial confirmations until the purchase line's cap then C-29, above the demand's remainder C-30 (summed over the command's lines), a second confirmation of one shipment reference CONFLICT BD-04, one `command_id` replayed once; `tests/Interaction/DirectShipmentTest.php` — INT-205 with the figure, a changed body CONFLICT; `tests/Integration/Fulfillment/DirectShipmentRacesTest.php` — two partial confirmations racing near the cap (M-35).
+- Criterion 4: `DirectShipmentTest` — each serial DROPSHIPPED once, never IN_STOCK; one already drop-shipped and a count not its serials refused C-02; a line purchased in boxes confirmed by its serials' count in the base unit.
+- Criterion 5: `DirectShipmentTest` and `DirectShipmentPagesTest` — the client's proof with the confirmation records the delivery in the same command, its lines citing the confirmation lines, net delivered moved with net confirmed.
+- Criterion 6: `DirectShipmentTest` — a reversal once with its reason: the HPP contra'd, the purchase line's confirmed quantity and posted value lowered, the serial NEVER_RECEIVED, movement-less; what the client is recorded to have received refused until its delivery is corrected; a replacement reversed takes back its case's replaced value.
+- Criterion 7: `DirectShipmentTest` — one DROPSHIP_RETURN lot whose basis is exactly the HPP contra (300000.00 of 400000.04, 100000.04 left), net confirmed and delivered lowered; several lines in one command each their own lot; a serial returned IN_STOCK at its rack.
+- Criterion 8: `DirectShipmentTest` — movement-less under a PURCHASE_RETURN case per purchase line, its causal project the confirmation's; settled by credit, replacement confirmations carrying the case's basis and an unrecovered share on the causal project with its correction; the case closing only when returned = refunded + replaced + unrecovered; `DirectShipmentPagesTest` — the outcome through ROUTE-177 and the case on PG-028.
+- Criterion 9: `DirectShipmentRacesTest` — a confirmation racing the purchase's cancellation on real sessions, in both orders, never both.
+- Criterion 10: `DirectShipmentAccessTest` — each control only with its capability, the routes refused without it, another company's project and confirmation unknown (SM-01).
+- Criterion 11: `DirectShipmentPagesTest` — the *Surat Jalan* drafted from the recorded facts and issued through ROUTE-216 once, no stock, cash or obligation changed; a wholly reversed confirmation has none.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -247,32 +261,32 @@ AC-06 and AC-20 require drop-ship to record real fulfilment without fake warehou
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `dropship.confirm`, `fulfillment.correct`, `sales_return.record`, `cost.view` and `documents.issue` by their routes and controls (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-032, ROUTE-205–ROUTE-207 and ROUTE-216 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-205–INT-207, INT-015 (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FUL-03 and CJ-01's drop-ship branch (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: the adversarial preflight, ER-06's independent review and Codex's two reviews, each finding fixed with its test
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `8d3c4f0`: fresh CI on GitHub's `ubuntu-24.04` runner on `8d3c4f0`, runs 41592850205 (push) and 41592854236 (pull request #64), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/DirectShipmentTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 8d3c4f0, CI ubuntu-24.04 run 41592850205, tests/Browser/E2E/dropship.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-032 in both languages — `tests/Browser/Localization/dropship.spec.ts` PASS; the keys added with their registry rows, proposed copy; DOC-03's paper labels written in Indonesian whatever the interface language (LOCALIZATION §3.4)
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FUL's `Actions/ConfirmDropShip`, `ReverseDropShipConfirmation`, `ReturnDropShipToSupplier`; `Services/DropshipPosting`, `ShipmentNoteSubjects` (DOC-03's one supplier, the dispatch arc delegated to INV), `DeliveryPosting::direct`; `Queries/DirectShipments`; `Http/Controllers/DirectShipmentController`; INV's `DropshipStock`, `SupplierReturnQueries` (the drop-ship case on ROUTE-177 and PG-028), `ReceivingRecords::replacementBasis`; CST's `CostPosting::settleDropshipReturn` and `unsettleDropshipReturn`; PUR's `ReturnOutcomes` (the drop-ship line variant); PRJ's `DemandPosting::dropship` and the journey's link (`Journey`, `ProjectJourneys`, `ProjectWorkspace`); `Support/Guards/Families` (net confirmed and the drop-ship returns in net delivered reconciled); `AppServiceProvider`; `resources/js/Pages/FUL/DirectShipment.tsx`, `INV/SupplierReturns.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixtures and browser specs
+- Commit SHA: `22c8165`, `7dc1301`, `f8b51e4`, `8d3c4f0` (PHPStan and Pint only), the Owner's identity, no signature and no AI attribution; this record's commit follows them on `task/TASK-046-dropship`, then one more renaming the browser fixture's product after every "Barang …" — the record's first CI showed it pushing a stock spec's own product off PG-018's alphabetical first page on WebKit —, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request found 4 points that would fail CI (a balance-table write outside GuardUpdate's forms, three PHPStan types) and 1 P2 (a return to the warehouse of several lines restarting without end: the return lot's cost guard was not registered as the command's own), each fixed before the first push, with 4 P3 (C-30 summed over the command's lines, the refusals' own messages, the delivered figure net of a CM-37 undoing, ROUTE-216 checking the document's project). Codex reviewed twice: its review of `22c8165` found 2 P1 and 2 P2 — a drop-ship return's case unreachable on ROUTE-177 and PG-028, one case for several purchase lines, a serialized line's count compared through the purchase unit's ratio, PG-032's lines without paging (its confirmations paged with them) —, each fixed with its test in `7dc1301`; its targeted review of `f8b51e4` found nothing; each answered on the pull request. Readings within the approved text, for Planning: (1) a return of a line the client is recorded to have received is `after_delivery` and capped by what it received, otherwise by what the line holds (PX-08); (2) a serialized drop-ship line is one confirmation line per serial in the product's base unit, its returns and reversals entered in the base unit citing the line's snapshot (L-31); (3) a serial may be drop-shipped from NEVER_RECEIVED or RETURNED_TO_SUPPLIER, never IN_STOCK, DROPSHIPPED, DISPATCHED or LOST (BD-18); (4) a supplier return opens one PURCHASE_RETURN case per purchase line, its causal project the confirmation's — the unrecovered share is therefore always borne in the purchase's company; the warehouse return one DROPSHIP_RETURN case per command; (5) a likely duplicate reversal or return compares the confirmation, kind, total quantity and business date through the audit, restorations carrying no business date (BD-13); (6) ROUTE-206 locks AX-10's guards — LK-24, LK-21, LK-22 — in canonical order; (7) DOC-03's one supplier is FUL's, the dispatch arc delegated to INV, and ROUTE-216's `{dsc}` segment names the document issued, as ROUTE-202's did for TASK-045. Gaps for Planning: a delivery recorded after a drop-ship confirmation without the client's proof, and the CM-08 correction of a drop-ship delivery row, belong to neither this contract (OUT OF SCOPE: ROUTE-201–ROUTE-204, TASK-045) nor TASK-045's built routes (shipment lines only) — so a confirmation whose delivery was recorded with it cannot yet be reversed. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 

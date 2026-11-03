@@ -35,7 +35,8 @@ type OutcomeKind = (typeof OUTCOMES)[number];
 type Condition = 'USABLE' | 'UNUSABLE';
 type Page<Row> = { rows: Row[]; more: string | null; cursor_failed: boolean };
 type Row = { id: string; state: 'OPEN' | 'CLOSED'; date: string; purchase: string; number: string; supplier: string; lot: string; product: string; open: string | null };
-type Unit = { lot: string; rack: string; condition: Condition; serial: string | null; qty: string; cost: string | null };
+// A drop-ship return's unit moved no stock: no rack, no condition, its lot the supplier's shipment reference (CM-15).
+type Unit = { lot: string; rack: string; condition: Condition | null; serial: string | null; qty: string; cost: string | null };
 type Event = { action: string; reason: string | null; by: string | null; at: string; outcome: string | null; correction: boolean };
 type Detail = {
     id: string;
@@ -277,7 +278,7 @@ function CaseDetail({ detail, proofs, proofsFailed, today, can }: { detail: Deta
                     {detail.units.map((unit, index) => (
                         <li key={`${unit.lot}-${String(index)}`} className="flex min-w-0 flex-wrap items-center gap-2 py-2 text-body">
                             <Code>{unit.lot}</Code>
-                            <span>{`${unit.rack} · ${t(`stock.condition.${unit.condition}`)}`}</span>
+                            {unit.condition !== null && <span>{`${unit.rack} · ${t(`stock.condition.${unit.condition}`)}`}</span>}
                             {unit.serial !== null && <span className="font-mono">{unit.serial}</span>}
                             <span>{unit.qty}</span>
                             {unit.cost !== null && <Money value={unit.cost} />}

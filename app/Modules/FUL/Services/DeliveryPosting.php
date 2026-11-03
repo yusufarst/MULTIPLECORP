@@ -150,6 +150,38 @@ final class DeliveryPosting
     }
 
     /**
+     * L-40: the delivery of a drop-ship confirmation recorded in its own command, when the client's proof arrived with the
+     * supplier's confirmation — the same rows a delivery writes, each line citing its confirmation line at that line's unit
+     * snapshot, the proof linked; the caller moves the project lines' guards in its one statement and audits it with the
+     * confirmation (AX-08).
+     *
+     * @param  list<array{dropship: int, project_line: int, product: int, scale: int, unit: int, ratio: int, entered: string, base: string}>  $lines
+     * @return array{id: int, public_id: string}
+     */
+    public function direct(CommandContext $context, ProjectRef $project, string $businessDate, string $recipient, ?string $condition, array $lines, int $evidenceId): array
+    {
+        $now = $context->now();
+        $actor = $context->request->actorUserId;
+        $commandId = $context->request->commandId;
+        $delivery = new Delivery;
+        $delivery->forceFill([
+            'company_id' => $project->companyId, 'project_id' => $project->id, 'business_date' => $businessDate, 'recipient_name' => $recipient, 'condition_note' => $condition,
+            'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
+        ])->save();
+        DB::table('delivery_lines')->insert(array_map(fn (array $line, int $number): array => [
+            'delivery_id' => $delivery->id, 'company_id' => $project->companyId, 'project_line_id' => $line['project_line'], 'product_id' => $line['product'], 'quantity_scale' => $line['scale'],
+            'dispatch_line_id' => null, 'dropship_confirmation_line_id' => $line['dropship'], 'entered_qty' => $line['entered'], 'entered_unit_id' => $line['unit'], 'ratio_to_base' => $line['ratio'],
+            'qty_base' => $line['base'], 'reverses_delivery_line_id' => null, 'command_id' => $commandId, 'command_line_no' => $number + 1, 'recorded_at' => $now, 'recorded_by' => $actor,
+        ], $lines, array_keys($lines)));
+        DB::table('evidence_links')->insert([
+            'evidence_document_id' => $evidenceId, 'evidence_scope' => 'COMPANY', 'company_id' => $project->companyId, 'role' => 'PRIMARY_PROOF',
+            'delivery_id' => $delivery->id, 'command_id' => $commandId, 'command_line_no' => self::evidenceLineNo($commandId), 'recorded_at' => $now, 'recorded_by' => $actor,
+        ]);
+
+        return ['id' => $delivery->id, 'public_id' => (string) $delivery->public_id];
+    }
+
+    /**
      * An entry error corrected (CM-08): the exact reversal of the delivery's line, at most once, then the correct quantity
      * on the same delivery when there is one — stock untouched, the guard moved by the net difference. An issued BAST or
      * inspection record of the delivery is revised on PG-036 from the facts that stand after it (WORKFLOWS §8).
@@ -330,6 +362,12 @@ final class DeliveryPosting
         }
 
         return $code === 'L-49' ? ['matches' => self::likelyDuplicates($bases, $businessDate)] : null;
+    }
+
+    /** The next evidence link of the command: a confirmation may link its supplier's proof before the client's (C-48). */
+    private static function evidenceLineNo(string $commandId): int
+    {
+        return DB::table('evidence_links')->where('command_id', $commandId)->count() + 1;
     }
 
     /** @return array<string, mixed> a delivery line at the shipment's unit snapshot */

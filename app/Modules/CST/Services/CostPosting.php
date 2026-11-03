@@ -794,6 +794,101 @@ final class CostPosting
         $this->cases->post($context, (int) $case, ['unrecovered_value' => $amount->negated()->toString()], self::REOPENED);
     }
 
+    /**
+     * A drop-ship supplier return's unrecovered share (DATABASE §5.7; §6.1; L-38): the pair SUPPLIER_RETURN −u / LOSS +u
+     * on the confirmation line with cause RETURN_SETTLEMENT, split over the components the case's SUPPLIER_RETURN still
+     * carries there, the last absorbing the residual; borne by the case's causal project in the line's company — the
+     * purchase's, whose case it is —, and the case's unrecovered figure moved.
+     */
+    public function settleDropshipReturn(CommandContext $context, int $dropshipLineId, int $caseId, Money $unrecovered, int $bearerProjectId, string $businessDate): void
+    {
+        $this->dropshipSettlement($context, $dropshipLineId, $caseId, $unrecovered, $bearerProjectId, $businessDate, false);
+    }
+
+    /**
+     * A drop-ship unrecovered share recognized in error taken back (C-24; AX-34): the settlement pair mirrored on the
+     * components its LOSS still carries, never more, on the bearer the settlements named.
+     */
+    public function unsettleDropshipReturn(CommandContext $context, int $dropshipLineId, int $caseId, Money $amount, string $businessDate): void
+    {
+        $project = DB::table('cost_attributions')->where('dropship_confirmation_line_id', $dropshipLineId)->where('correction_case_id', $caseId)->where('cause', 'RETURN_SETTLEMENT')->where('cost_class', 'LOSS')
+            ->orderByDesc('id')->value('bearer_project_id');
+
+        $this->dropshipSettlement($context, $dropshipLineId, $caseId, $amount, is_numeric($project) ? (int) $project : throw new InvalidArgumentException("Drop-ship line {$dropshipLineId} carries no unrecovered share to take back."), $businessDate, true);
+    }
+
+    private function dropshipSettlement(CommandContext $context, int $dropshipLineId, int $caseId, Money $amount, int $bearerProjectId, string $businessDate, bool $reversed): void
+    {
+        $dropship = self::dropshipLine($dropshipLineId);
+        $company = (int) Row::text($dropship, 'company_id');
+        $bearer = DB::table('projects')->where('id', $bearerProjectId)->value('company_id');
+
+        if (! $amount->isPositive() || ! is_numeric($bearer) || (int) $bearer !== $company) {
+            throw new InvalidArgumentException("Drop-ship line {$dropshipLineId} settles no share of {$amount->toString()} on project {$bearerProjectId}.");
+        }
+
+        $context->require(self::purchaseLocks(self::purchaseOf((int) Row::text($dropship, 'purchase_line_id')))->add('projects', ['id' => $bearerProjectId]));
+        // What the settlement moves from: the case's SUPPLIER_RETURN on the line, or for its reversal the LOSS it recognized.
+        $groups = self::caseGroups($dropshipLineId, $caseId, $reversed ? 'LOSS' : 'SUPPLIER_RETURN', $reversed ? 'RETURN_SETTLEMENT' : null);
+        $carried = Money::sum(Money::zero(), ...array_column($groups, 'net'));
+
+        if ($amount->compareTo($carried) > 0) {
+            throw new InvalidArgumentException("Drop-ship line {$dropshipLineId} carries {$carried->toString()} of case {$caseId}, below {$amount->toString()}.");
+        }
+
+        $parts = CostSplitter::split($amount, array_map(fn (array $group): string => $group['net']->toString(), $groups));
+        $initial = DB::table('cost_attributions')->where('dropship_confirmation_line_id', $dropshipLineId)->where('cause', 'INITIAL')->orderBy('id')->value('id');
+        $ledger = new CostLedger($context);
+
+        foreach ($groups as $index => $group) {
+            $part = $parts[$index] ?? Money::zero();
+
+            if ($part->isZero()) {
+                continue;
+            }
+
+            $loss = $reversed ? $part->negated() : $part;
+            $row = ['dropship_confirmation_line_id' => $dropshipLineId, ...$group['references'], 'cost_component' => $group['component'], 'bearer_company_id' => $company, 'bearer_project_id' => $bearerProjectId,
+                'correction_case_id' => $caseId, 'case_company_id' => $company, 'cause' => 'RETURN_SETTLEMENT', 'reverses_attribution_id' => is_numeric($initial) ? (int) $initial : null, 'business_date' => $businessDate];
+            $ledger->attribution([...$row, 'cost_class' => 'SUPPLIER_RETURN', 'amount' => $loss->negated()->toString()]);
+            $ledger->attribution([...$row, 'cost_class' => 'LOSS', 'amount' => $loss->toString()]);
+        }
+
+        $this->cases->post($context, $caseId, ['unrecovered_value' => ($reversed ? $amount->negated() : $amount)->toString()], self::REOPENED);
+    }
+
+    /**
+     * A drop-ship line's net of a class under one case, by component, in the order a split takes (directGroups()).
+     *
+     * @return list<array{component: string, net: Money, references: array<string, int>}>
+     */
+    private static function caseGroups(int $dropshipLineId, int $caseId, string $class, ?string $cause): array
+    {
+        $rows = DB::table('cost_attributions')->where('dropship_confirmation_line_id', $dropshipLineId)->where('correction_case_id', $caseId)->where('cost_class', $class)
+            ->when($cause !== null, fn (Builder $query): Builder => $query->where('cause', $cause))
+            ->groupBy('cost_component', 'purchase_charge_id', 'purchase_charge_line_share_id', 'respread_from_purchase_line_id', 'allocation_version')
+            ->selectRaw('cost_component, purchase_charge_id, purchase_charge_line_share_id, respread_from_purchase_line_id, allocation_version, sum(amount) as net')->get();
+        $groups = [];
+
+        foreach ($rows as $row) {
+            $net = Money::of(Row::text($row, 'net'));
+
+            if ($net->isPositive()) {
+                $groups[] = ['component' => Row::text($row, 'cost_component'), 'net' => $net, 'references' => array_map('intval', array_filter([
+                    'purchase_charge_id' => Row::nullable($row, 'purchase_charge_id'),
+                    'purchase_charge_line_share_id' => Row::nullable($row, 'purchase_charge_line_share_id'),
+                    'respread_from_purchase_line_id' => Row::nullable($row, 'respread_from_purchase_line_id'),
+                    'allocation_version' => Row::nullable($row, 'allocation_version'),
+                ], fn (?string $value): bool => $value !== null))];
+            }
+        }
+
+        usort($groups, fn (array $a, array $b): int => [self::COMPONENT_ORDER[$a['component']], $a['references']['purchase_charge_id'] ?? 0, $a['references']['purchase_charge_line_share_id'] ?? 0, $a['references']['respread_from_purchase_line_id'] ?? 0]
+            <=> [self::COMPONENT_ORDER[$b['component']], $b['references']['purchase_charge_id'] ?? 0, $b['references']['purchase_charge_line_share_id'] ?? 0, $b['references']['respread_from_purchase_line_id'] ?? 0]);
+
+        return $groups;
+    }
+
     /*
      * Charges (SF-CHARGE; AX-29; AX-32; AX-05).
      */

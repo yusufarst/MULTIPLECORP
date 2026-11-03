@@ -481,7 +481,7 @@ final class ReceivingRecords
         if ($entry->kind === ReceiptEntry::REPLACEMENT) {
             $case = (int) $entry->caseId;
             // Over the units still expected before this receipt: read before the guard moves.
-            $basis = $this->replacementBasis($case, $entry->lineId, $accepted);
+            $basis = self::replacementBasis($case, $entry->lineId, $accepted);
             $this->purchases->move($context, $entry->lineId, ['replacement_received_net_qty_base' => (string) $accepted]);
             $this->cost->basis($context, $lot, 'REPLACEMENT_BASIS', $basis, $entry->businessDate, ['correction_case_id' => $case]);
             $this->cases->post($context, $case, ['replaced_value' => $basis->toString()], self::REPLACEMENT_REVERSED);
@@ -493,8 +493,8 @@ final class ReceivingRecords
         $this->purchases->posted($context, $entry->lineId, $this->cost->receipt($context, $lot, $entry->businessDate));
     }
 
-    /** The replacement's share of what its case's returned cost still awaits, over the units still expected (DATABASE §5.7; PX-03). */
-    private function replacementBasis(int $case, int $lineId, BigDecimal $accepted): Money
+    /** The replacement's share of what its case's returned cost still awaits, over the units still expected (DATABASE §5.7; PX-03): a warehouse receipt's or a drop-ship confirmation's alike. */
+    public static function replacementBasis(int $case, int $lineId, BigDecimal $accepted): Money
     {
         $row = DB::table('correction_cases')->where('id', $case)->first(['returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value']);
         $guard = DB::table('purchase_line_balances as b')->where('purchase_line_id', $lineId)->first(['replacement_expected_qty_base', 'replacement_received_net_qty_base']);

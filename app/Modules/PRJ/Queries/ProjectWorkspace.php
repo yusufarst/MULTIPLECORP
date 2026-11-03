@@ -193,7 +193,7 @@ final class ProjectWorkspace
                 'recorded_at' => Row::text($header, 'recorded_at'),
                 'lock_version' => (int) Row::text($header, 'lock_version'),
             ],
-            'journey' => $facts === null ? null : Journey::derive($facts, [], $money, $edit, $this->quotationHref($viewer, $project), $this->serviceHref($viewer, $project), $this->invoiceHref($viewer, $project), $this->paymentHref($viewer, $project)),
+            'journey' => $facts === null ? null : Journey::derive($facts, [], $money, $edit, $this->quotationHref($viewer, $project), $this->serviceHref($viewer, $project), $this->invoiceHref($viewer, $project), $this->paymentHref($viewer, $project), $this->directHref($viewer, $project)),
             'financial' => $money ? $this->financial($project->id) : null,
             'can' => ['edit' => $edit !== null, 'discard' => $manage && $project->state === 'DRAFT'],
         ];
@@ -211,7 +211,7 @@ final class ProjectWorkspace
         $edit = $viewer->allows('projects.manage', $project->company_id) && in_array($project->state, ['DRAFT', 'ACTIVE'], true) ? "/proyek/{$project->public_id}/ubah" : null;
 
         return $this->journeys->of([$project->id], [$project->id => $viewer->allows('finance.view', $project->company_id)], [$project->id => $edit],
-            [$project->id => $this->quotationHref($viewer, $project)], [$project->id => $this->serviceHref($viewer, $project)], [$project->id => $this->invoiceHref($viewer, $project)], [$project->id => $this->paymentHref($viewer, $project)])[$project->id] ?? null;
+            [$project->id => $this->quotationHref($viewer, $project)], [$project->id => $this->serviceHref($viewer, $project)], [$project->id => $this->invoiceHref($viewer, $project)], [$project->id => $this->paymentHref($viewer, $project)], [$project->id => $this->directHref($viewer, $project)])[$project->id] ?? null;
     }
 
     /** PG-014 for an account that may open the project's quotation: `quotation.manage` with `finance.view`, or `projects.confirm` (ROUTE-014). */
@@ -232,6 +232,12 @@ final class ProjectWorkspace
     private function paymentHref(Authority $viewer, Project $project): ?string
     {
         return $viewer->allows('payment.record', $project->company_id) ? '/keuangan/pembayaran/baru?'.http_build_query(['proyek' => $project->public_id]) : null;
+    }
+
+    /** PG-032 for an account that may confirm the project's direct shipments (ROUTE-032; NAV-032; J-FUL-03). */
+    private function directHref(Authority $viewer, Project $project): ?string
+    {
+        return $viewer->allows('dropship.confirm', $project->company_id) ? "/proyek/{$project->public_id}/kirim-langsung" : null;
     }
 
     /** PG-033 for an account that may record the handover (ROUTE-033; J-FUL-04). */

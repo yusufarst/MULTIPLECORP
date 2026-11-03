@@ -28,6 +28,12 @@ final class SupplierReturnQueries
 
     private const SUPPLIER = "pu.supplier_snapshot->>'name' as supplier";
 
+    /** A drop-ship return's case names no lot: its purchase line is its confirmation line's (CM-15; TASK-046). */
+    private const DROPSHIP_LINE = "(select d.purchase_line_id from stock_restorations s join dropship_confirmation_lines d on d.id = s.dropship_confirmation_line_id where s.correction_case_id = c.id and s.kind = 'DROPSHIP_SUPPLIER_RETURN' order by s.id limit 1)";
+
+    /** The lot a case returned from, or a drop-ship return's supplier shipment reference in its place. */
+    private const LOT = "coalesce(i.lot_code, (select k.supplier_shipment_reference from stock_restorations s join dropship_confirmation_lines d on d.id = s.dropship_confirmation_line_id join dropship_confirmations k on k.id = d.dropship_confirmation_id where s.correction_case_id = c.id and s.kind = 'DROPSHIP_SUPPLIER_RETURN' order by s.id limit 1)) as lot_code";
+
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly AdjustmentQueries $adjustments,
@@ -63,7 +69,7 @@ final class SupplierReturnQueries
                 ->where(fn (Builder $same) => $same->where('c.state', $open === 1 ? 'OPEN' : 'CLOSED')->where('c.id', '<', $last))
                 ->when($open === 1, fn (Builder $closed) => $closed->orWhere('c.state', 'CLOSED'))))
             ->orderByRaw("c.state = 'OPEN' desc")->orderByDesc('c.id')->limit(self::PAGE + 1)
-            ->get(['c.id', 'c.public_id', 'c.state', 'c.company_id', 'c.recorded_at', 'c.returned_cost', 'c.refunded_value', 'c.replaced_value', 'c.unrecovered_value', 'pu.public_id as purchase', 'pu.purchase_number', DB::raw(self::SUPPLIER), 'i.lot_code', 'p.name as product'])->all();
+            ->get(['c.id', 'c.public_id', 'c.state', 'c.company_id', 'c.recorded_at', 'c.returned_cost', 'c.refunded_value', 'c.replaced_value', 'c.unrecovered_value', 'pu.public_id as purchase', 'pu.purchase_number', DB::raw(self::SUPPLIER), DB::raw(self::LOT), 'p.name as product'])->all();
         $rows = array_slice($found, 0, self::PAGE);
         $tail = $rows === [] ? null : $rows[count($rows) - 1];
 
@@ -88,7 +94,7 @@ final class SupplierReturnQueries
         $viewer = $this->capabilities->for($viewerId);
         $row = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? self::cases($this->companies($viewer))->leftJoin('projects as cp', 'cp.id', '=', 'c.causal_project_id')->where('c.public_id', strtolower($publicId))
             ->first(['c.id', 'c.public_id', 'c.state', 'c.company_id', 'c.reason', 'c.lock_version', 'c.recorded_at', 'c.returned_cost', 'c.refunded_value', 'c.replaced_value', 'c.unrecovered_value', 'c.source_lot_id', 'cp.project_number', 'cp.company_id as causal_company',
-                'pu.public_id as purchase', 'pu.purchase_number', DB::raw(self::SUPPLIER), 'i.lot_code', 'p.name as product', 'p.quantity_scale', 'pl.id as line']) : null;
+                'pu.public_id as purchase', 'pu.purchase_number', DB::raw(self::SUPPLIER), DB::raw(self::LOT), 'p.name as product', 'p.quantity_scale', 'pl.id as line']) : null;
 
         if ($row === null) {
             return null;
@@ -103,7 +109,8 @@ final class SupplierReturnQueries
         $line = (int) Row::text($row, 'line');
         $guard = DB::table('purchase_line_balances as b')->where('purchase_line_id', $line)->first(['replacement_expected_qty_base', 'replacement_received_net_qty_base']);
         // A replacement is the case's own: never above the units it returned less what it already declared (C-29).
-        $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $id)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'));
+        $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $id)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
+            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'));
         $expected = BigDecimal::of($guard === null ? '0' : Row::text($guard, 'replacement_expected_qty_base'));
 
         return [
@@ -285,8 +292,8 @@ final class SupplierReturnQueries
     /** @param  list<int>|null  $companies */
     private static function cases(?array $companies): Builder
     {
-        return DB::table('correction_cases as c')->join('inventory_lots as i', 'i.id', '=', 'c.source_lot_id')->join('products as p', 'p.id', '=', 'i.product_id')
-            ->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as pl', 'pl.id', '=', 'r.purchase_line_id')->join('purchases as pu', 'pu.id', '=', 'pl.purchase_id')
+        return DB::table('correction_cases as c')->leftJoin('inventory_lots as i', 'i.id', '=', 'c.source_lot_id')->leftJoin('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')
+            ->join('purchase_lines as pl', 'pl.id', '=', DB::raw('coalesce(r.purchase_line_id, '.self::DROPSHIP_LINE.')'))->join('products as p', 'p.id', '=', 'pl.product_id')->join('purchases as pu', 'pu.id', '=', 'pl.purchase_id')
             ->where('c.case_kind', 'PURCHASE_RETURN')->when($companies !== null, fn (Builder $scoped) => $scoped->whereIn('c.company_id', $companies ?? []));
     }
 
@@ -308,7 +315,16 @@ final class SupplierReturnQueries
             $costs[$key] = Money::of($costs[$key] ?? '0')->plus(Money::of(Row::text($attribution, 'amount')))->toString();
         }
 
-        return array_values(array_map(fn (object $row): array => ['lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? ($costs[(int) Row::text($row, 'id')] ?? '0.00') : null], $rows));
+        $units = array_values(array_map(fn (object $row): array => ['lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? ($costs[(int) Row::text($row, 'id')] ?? '0.00') : null], $rows));
+
+        // A drop-ship return moved no stock: its units are the confirmation lines' restorations, named by the supplier's shipment reference (CM-15).
+        foreach (DB::table('stock_restorations as r')->join('dropship_confirmation_lines as d', 'd.id', '=', 'r.dropship_confirmation_line_id')->join('dropship_confirmations as k', 'k.id', '=', 'd.dropship_confirmation_id')
+            ->leftJoin('serial_units as s', 's.id', '=', 'd.serial_unit_id')->where('r.correction_case_id', $caseId)->where('r.kind', 'DROPSHIP_SUPPLIER_RETURN')->orderBy('r.id')
+            ->get(['r.qty_base', 'k.supplier_shipment_reference', 's.serial_number', DB::raw("(select coalesce(sum(a.amount), 0) from cost_attributions a where a.stock_restoration_id = r.id and a.cost_class = 'SUPPLIER_RETURN') as cost")])->all() as $row) {
+            $units[] = ['lot' => Row::text($row, 'supplier_shipment_reference'), 'rack' => '', 'condition' => null, 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? Money::of(Row::text($row, 'cost'))->toString() : null];
+        }
+
+        return $units;
     }
 
     /** @return list<array{action: string, reason: ?string, by: ?string, at: string, outcome: ?string, correction: bool}> the case's own audit events, oldest first (BR-CR-01) */
