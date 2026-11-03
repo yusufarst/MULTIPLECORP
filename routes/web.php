@@ -10,6 +10,7 @@ use App\Modules\DOC\Http\Controllers\DocumentsController;
 use App\Modules\DOC\Http\Controllers\EvidenceController;
 use App\Modules\DOC\Http\Controllers\FileController;
 use App\Modules\FIN\Http\Controllers\BankStatementController;
+use App\Modules\FIN\Http\Controllers\CustomerCreditController;
 use App\Modules\FIN\Http\Controllers\DeductionsController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
 use App\Modules\FIN\Http\Controllers\PaymentsController;
@@ -229,6 +230,9 @@ Route::post('/keuangan/pembayaran', [PaymentsController::class, 'record'])->midd
 Route::post('/keuangan/pembayaran/{id}/terapkan', [PaymentsController::class, 'apply'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:payment.apply'])->name('fin.payments.apply');
 Route::post('/keuangan/pembayaran/{id}/realokasi', [PaymentsController::class, 'reallocate'])->whereUuid('id')->middleware(['auth', 'capability:payment.reallocate'])->name('fin.payments.reallocate');
 Route::post('/keuangan/pembayaran/{id}/kontra', [PaymentsController::class, 'contra'])->whereUuid('id')->middleware(['auth', 'capability:finance.contra'])->name('fin.payments.contra');
+Route::get('/keuangan/kredit-pelanggan', [CustomerCreditController::class, 'index'])->middleware(['auth', 'capability:finance.view'])->name('fin.credit');
+Route::post('/keuangan/kredit-pelanggan/{id}/kembalikan', [CustomerCreditController::class, 'refund'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:refund.record'])->name('fin.credit.refund');
+Route::post('/keuangan/kredit-pelanggan/proyek/{id}/tahan', [CustomerCreditController::class, 'hold'])->whereUuid('id')->middleware(['auth', 'capability:refund.record'])->name('fin.credit.hold');
 Route::get('/keuangan/potongan', [DeductionsController::class, 'index'])->middleware(['auth', 'capability:settlement.record'])->name('fin.deductions');
 Route::post('/keuangan/potongan', [DeductionsController::class, 'record'])->middleware(['auth', 'capability:settlement.record'])->name('fin.deductions.record');
 Route::post('/keuangan/potongan/{id}/selesaikan-sisa', [DeductionsController::class, 'resolve'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:settlement.record'])->name('fin.deductions.resolve');

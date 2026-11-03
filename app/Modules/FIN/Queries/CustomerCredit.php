@@ -57,6 +57,46 @@ final class CustomerCredit
         ];
     }
 
+    /** The company's active account a refund leaves from, by its handle. */
+    public function accountOf(int $companyId, string $handle): ?int
+    {
+        if (! RowHandle::valid($handle)) {
+            return null;
+        }
+
+        foreach (DB::table('company_bank_accounts')->where('company_id', $companyId)->whereNull('deactivated_at')->pluck('id') as $id) {
+            if (is_numeric($id) && hash_equals(RowHandle::of('company_bank_accounts', (int) $id), $handle)) {
+                return (int) $id;
+            }
+        }
+
+        return null;
+    }
+
+    /** The company's evidence a refund cites, by its public id; the action checks it is transfer evidence (L-29). */
+    public function evidenceOf(int $companyId, string $publicId): ?int
+    {
+        $id = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? DB::table('evidence_documents')->where('public_id', strtolower($publicId))->where('company_id', $companyId)->value('id') : null;
+
+        return is_numeric($id) ? (int) $id : null;
+    }
+
+    /**
+     * The project whose credit is held, when the viewer sees finance in its company; otherwise unknown (CS-03).
+     *
+     * @return array{id: int, company: int}|null
+     */
+    public function projectOf(int $viewerId, string $publicId): ?array
+    {
+        $row = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? DB::table('projects')->where('public_id', strtolower($publicId))->first(['id', 'company_id']) : null;
+
+        if ($row === null || ! $this->capabilities->for($viewerId)->allows('finance.view', (int) Row::text($row, 'company_id'))) {
+            return null;
+        }
+
+        return ['id' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id')];
+    }
+
     /**
      * The clients with credit, a refund or a project's credit, each with its sources, refunds and projects.
      *
