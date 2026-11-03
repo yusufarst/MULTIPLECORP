@@ -787,3 +787,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-045 on its branch `task/TASK-045-deliveries`: PG-030 *Pengiriman* and PG-031 *Catat Pengiriman* — the delivery per shipment line with recipient, condition and proof, a difference opening its case (ROUTE-201); "Tutup Pengiriman" and "Catat Hilang di Perjalanan" (ROUTE-203); "Koreksi Catatan Pengiriman" (ROUTE-204); DOC-08 and DOC-10 from the recorded facts (ROUTE-202).
 - Every check passed in fresh CI on `72a33e4`. TASK-045 DONE — progress 52 / 87 —; TASK-046 and TASK-059 READY.
+
+## Unreleased — 2026-11-03, TASK-046 — Direct shipment (drop-ship)
+
+- Built TASK-046 on its branch `task/TASK-046-dropship`: PG-032 *Kirim Langsung* — "Konfirmasi Kirim Langsung" with the supplier's shipment reference, proof, quantities and serials, the line's actual cost attributed once, and the client's delivery in the same command when its proof arrives with it (ROUTE-205); the reversal of a confirmation recorded in error (ROUTE-206); the client's return to the warehouse into a new lot at its HPP contra, or to the supplier under a purchase-return case settled through ROUTE-177 (ROUTE-207); the direct shipment's *Surat Jalan* (ROUTE-216).
+- Every check passed in fresh CI on `8d3c4f0`. TASK-046 DONE — progress 53 / 87 —; TASK-059 READY.
