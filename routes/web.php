@@ -44,6 +44,7 @@ use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
 use App\Modules\PRJ\Http\Controllers\FulfilmentController;
+use App\Modules\PRJ\Http\Controllers\ProjectCompletionController;
 use App\Modules\PRJ\Http\Controllers\ProjectsController;
 use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
@@ -127,6 +128,11 @@ Route::get('/proyek/{id}', [ProjectsController::class, 'show'])->whereUuid('id')
 Route::get('/proyek/{id}/ubah', [ProjectsController::class, 'edit'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.edit');
 Route::put('/proyek/{id}', [ProjectsController::class, 'update'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.update');
 Route::post('/proyek/{id}/hapus-draf', [ProjectsController::class, 'discard'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.discard');
+// The completion (TASK-055; WF-PRJ-03; J-PRJ-03): PG-012 *Penyelesaian Proyek* (ROUTE-012; NAV-012) to `projects.view`, "Selesaikan Proyek"
+// (ROUTE-161; AX-25) to `projects.complete` and "Selesaikan Paksa" (ROUTE-162; AX-26) to the Owner's `projects.force_complete` (OD-12).
+Route::get('/proyek/{id}/penyelesaian', [ProjectCompletionController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('prj.completion');
+Route::post('/proyek/{id}/selesaikan', [ProjectCompletionController::class, 'complete'])->whereUuid('id')->middleware(['auth', 'capability:projects.complete'])->name('prj.completion.complete');
+Route::post('/proyek/{id}/selesaikan-paksa', [ProjectCompletionController::class, 'force'])->whereUuid('id')->middleware(['auth', 'capability:projects.force_complete'])->name('prj.completion.force');
 // The commercial confirmation and fulfilment planning (TASK-034; WF-PRJ-02; WF-FUL-01): "Konfirmasi Proyek" without a quotation
 // (ROUTE-158) to `projects.confirm`, "Batalkan Sisa" (ROUTE-159) to `projects.cancel_scope` and "Ubah Cara Pemenuhan" (ROUTE-160) to
 // `projects.manage`, each AX-13 or AX-14 command with its `command_id`, answered in place on PG-011.
