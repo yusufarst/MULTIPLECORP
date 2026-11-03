@@ -177,6 +177,17 @@ final class ClientReturns
         return is_numeric($product) && $viewer->allows('stock.reserve', $companyId) ? $this->views->reservations($viewer, (int) $product) : [];
     }
 
+    /**
+     * The projects one command returned from completed to *Aktif* (SF-REVAL; CM-32), by number.
+     *
+     * @return list<string>
+     */
+    public function reactivatedBy(string $commandId): array
+    {
+        return preg_match('/^[0-9a-f-]{36}$/i', $commandId) !== 1 ? [] : array_values(array_map(fn (mixed $number): string => is_scalar($number) ? (string) $number : '',
+            DB::table('project_state_transitions as t')->join('projects as p', 'p.id', '=', 't.project_id')->where('t.command_id', strtolower($commandId))->where('t.transition_kind', 'REVALIDATE')->orderBy('p.project_number')->pluck('p.project_number')->all()));
+    }
+
     /** An active reservation a reversal's cut names, by its handle (IP-20). */
     public function reservationOf(string $handle): ?int
     {

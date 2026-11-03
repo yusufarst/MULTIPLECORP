@@ -3819,5 +3819,6 @@
     "activity.action.INV.ReturnReversed": "Retur dibalik karena tercatat keliru",
     "returns_client.field.reverse_quantity": "Jumlah yang dibalik, satuan dasar",
     "returns.reverse.consequence": "Unit kembali ke stok di rak yang dipilih dan biaya retur pada kasus turun. Catatan retur tetap ada.",
-    "returns.reverse.dropship": "Retur kirim langsung ini dibatalkan seluruhnya: unitnya kembali tercatat terkirim langsung ke klien."
+    "returns.reverse.dropship": "Retur kirim langsung ini dibatalkan seluruhnya: unitnya kembali tercatat terkirim langsung ke klien.",
+    "returns_client.answer.reactivated": "Proyek :nomor kembali Aktif."
 }

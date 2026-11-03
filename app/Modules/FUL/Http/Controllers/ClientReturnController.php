@@ -165,7 +165,7 @@ final class ClientReturnController extends Controller
         $state = $outcome->state;
         $matches = $outcome->code === 'L-49' ? $this->returns->matches(self::strings($state['matches'] ?? null)) : null;
         [$cause, $text] = match ($outcome->kind) {
-            Outcome::COMMITTED => [null, self::say("returns_client.answer.{$done}")],
+            Outcome::COMMITTED => [null, self::say("returns_client.answer.{$done}").self::reactivated($this->returns->reactivatedBy(self::text(request()->input('command_id'))))],
             Outcome::REJECTED => [null, self::refusal($outcome, $matches ?? [])],
             Outcome::CONFLICT => match ($outcome->code) {
                 'ST-08' => ['stale', self::say('messages.msg_16', ['tanggal_lama' => $sent, 'tanggal' => self::text($state['today'] ?? BusinessDate::today())])],
@@ -235,6 +235,16 @@ final class ClientReturnController extends Controller
         $text = __($key, $replace);
 
         return is_string($text) ? $text : $key;
+    }
+
+    /**
+     * SF-REVAL's sentence: each completed project the command returned to *Aktif* (CM-32).
+     *
+     * @param  list<string>  $numbers
+     */
+    private static function reactivated(array $numbers): string
+    {
+        return $numbers === [] ? '' : ' '.self::say('returns_client.answer.reactivated', ['nomor' => implode(', ', $numbers)]);
     }
 
     private static function actor(Request $request): int

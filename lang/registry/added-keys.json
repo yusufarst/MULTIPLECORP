@@ -17538,6 +17538,12 @@
             "source": "INT-211; CM-15; MSG-40 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "returns_client.answer.reactivated": {
+            "task": "TASK-048",
+            "source": "SF-REVAL; CM-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

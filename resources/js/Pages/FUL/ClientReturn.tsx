@@ -11,6 +11,7 @@ import { type BusinessDate, BusinessDateControl } from '@/components/date-field'
 import { DecimalInput, FormField } from '@/components/form';
 import { DuplicateWarning, ReservationCut, type DuplicateMatch, type Reservation } from '@/components/notices';
 import { OutcomeMessage } from '@/components/outcome-message';
+import { ScanField, ScanNotice, useScanGuard } from '@/components/scan-field';
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
 import { Badge } from '@/components/ui/badge';
@@ -57,6 +58,10 @@ export default function ClientReturn({ page, today }: Props) {
     const [lineId, setLineId] = useState(page.lines[0]?.id ?? '');
     const [quantities, setQuantities] = useState<Record<string, string>>({});
     const [picked, setPicked] = useState<string[]>([]);
+    const [inBase, setInBase] = useState(true);
+    const [code, setCode] = useState('');
+    const [scanError, setScanError] = useState<string | null>(null);
+    const guard = useScanGuard({ hasScanField: true });
     const [condition, setCondition] = useState<'USABLE' | 'UNUSABLE'>('USABLE');
     const [rack, setRack] = useState('');
     const [proof, setProof] = useState('');
@@ -81,7 +86,29 @@ export default function ClientReturn({ page, today }: Props) {
     const line = page.lines.find((one) => one.id === lineId) ?? null;
     const units = line === null ? [] : line.serialized
         ? line.consumptions.flatMap((consumption) => consumption.serials.filter((serial) => picked.includes(serial.id)).map((serial) => ({ konsumsi: consumption.id, jumlah: '1', satuan_dasar: true, kondisi: condition, rak: rack, seri: serial.id })))
-        : line.consumptions.filter((consumption) => Number(figure(quantities[consumption.id] ?? '')) > 0).map((consumption) => ({ konsumsi: consumption.id, jumlah: quantities[consumption.id] ?? '0', satuan_dasar: true, kondisi: condition, rak: rack }));
+        : line.consumptions.filter((consumption) => Number(figure(quantities[consumption.id] ?? '')) > 0).map((consumption) => ({ konsumsi: consumption.id, jumlah: quantities[consumption.id] ?? '0', satuan_dasar: inBase, kondisi: condition, rak: rack }));
+    // BR-INV-03: an alternate-unit entry converts at the shipment line's snapshot; a serialized return is unit by unit.
+    const alternate = line !== null && !line.serialized && line.unit !== null && line.unit !== line.base_unit;
+    // PT-20; L-07: only a serial that left on this line's dispatch and is still with the client is taken (MSG-25, MSG-36).
+    const scanned = (typed: string) => {
+        const match = line?.consumptions.flatMap((consumption) => consumption.serials).find((one) => one.serial.toLowerCase() === typed.trim().toLowerCase());
+
+        if (match === undefined) {
+            setScanError(t('messages.msg_25', { kode: typed }));
+
+            return;
+        }
+
+        if (picked.includes(match.id)) {
+            setScanError(t('messages.msg_36', { seri: match.serial }));
+
+            return;
+        }
+
+        setScanError(null);
+        setPicked((current) => [...current, match.id]);
+        setCode('');
+    };
     const matches = Array.isArray(record.state.matches) ? (record.state.matches as DuplicateMatch[]) : [];
     const warned = record.answer?.kind === 'REJECTED' && matches.length > 0;
     const ready = line !== null && units.length > 0 && rack !== '' && proof !== '';
@@ -120,11 +147,27 @@ export default function ClientReturn({ page, today }: Props) {
                         <legend className="text-subhead">{t('returns_client.section.record')}</legend>
                         <FormField label={t('returns_client.field.line')} error={record.errors.baris}>
                             {(control) => (
-                                <NativeSelect {...control} value={lineId} onChange={(event) => { setLineId(event.target.value); setQuantities({}); setPicked([]); }}>
+                                <NativeSelect {...control} value={lineId} onChange={(event) => { setLineId(event.target.value); setQuantities({}); setPicked([]); setInBase(true); setScanError(null); }}>
                                     {page.lines.filter((one) => Number(one.delivered) > 0).map((one) => <option key={one.id} value={one.id}>{`${String(one.no)}. ${one.description} · ${one.delivered} ${one.base_unit ?? ''}`}</option>)}
                                 </NativeSelect>
                             )}
                         </FormField>
+                        {line !== null && line.serialized && (
+                            <>
+                                <ScanNotice notice={guard.notice} />
+                                <ScanField value={code} onValueChange={setCode} onLookup={scanned} error={scanError} />
+                            </>
+                        )}
+                        {alternate && (
+                            <FormField label={t('dispatch.field.unit')}>
+                                {(control) => (
+                                    <NativeSelect {...control} value={inBase ? 'base' : 'line'} onChange={(event) => { setInBase(event.target.value === 'base'); }}>
+                                        <option value="base">{line.base_unit ?? ''}</option>
+                                        <option value="line">{line.unit ?? ''}</option>
+                                    </NativeSelect>
+                                )}
+                            </FormField>
+                        )}
                         {line !== null && line.consumptions.map((consumption, index) => (
                             <div key={consumption.id} data-slot="return-unit" className="flex min-w-0 flex-col gap-2">
                                 <span className="text-caption text-text-secondary"><Code>{consumption.lot}</Code>{` · ${t('returns_client.out', { jumlah: consumption.open })}`}</span>
@@ -139,7 +182,7 @@ export default function ClientReturn({ page, today }: Props) {
                                         ))}
                                     </fieldset>
                                 ) : (
-                                    <FormField label={t('returns_client.field.quantity', { satuan: line.base_unit ?? '' })} error={record.errors[`unit.${String(index)}.jumlah`]} className="w-48">
+                                    <FormField label={t('returns_client.field.quantity', { satuan: (inBase ? line.base_unit : line.unit) ?? '' })} error={record.errors[`unit.${String(index)}.jumlah`]} className="w-48">
                                         {(control) => <DecimalInput {...control} scale={line.scale} value={quantities[consumption.id] ?? ''} onValueChange={(next) => { setQuantities((current) => ({ ...current, [consumption.id]: next ?? '' })); }} />}
                                     </FormField>
                                 )}
