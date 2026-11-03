@@ -24,9 +24,9 @@ use App\Modules\FIN\Services\SettlementDocumentChanges;
 use App\Modules\FUL\Services\DeliverySubjects;
 use App\Modules\FUL\Services\HandoverPredicate;
 use App\Modules\FUL\Services\ServiceHandoverSubjects;
+use App\Modules\FUL\Services\ShipmentNoteSubjects;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
-use App\Modules\INV\Services\DispatchSubjects;
 use App\Modules\INV\Services\ReceivingSubjects;
 use App\Modules\INV\Services\ReservationLifecycle;
 use App\Modules\INV\Services\ReservationPredicate;
@@ -95,14 +95,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->tag([InvoiceDocumentChanges::class, SettlementDocumentChanges::class], DocumentChangeParticipant::TAG);
         $this->app->tag([ReceivablePredicate::class, PaymentPredicate::class], CompletionPredicateProvider::TAG);
 
-        // FUL's parts (TASK-047): the BAST's subject, a recorded handover, and the fulfilment predicate's service lines.
-        $this->app->tag([ServiceHandoverSubjects::class, DeliverySubjects::class], DocumentSubjectProvider::TAG);
+        // FUL's parts (TASK-047; TASK-046): the BAST's subject, a recorded handover, the Surat Jalan of a dispatch or a direct shipment, and the fulfilment predicate's service lines.
+        $this->app->tag([ServiceHandoverSubjects::class, DeliverySubjects::class, ShipmentNoteSubjects::class], DocumentSubjectProvider::TAG);
         $this->app->tag([HandoverPredicate::class], CompletionPredicateProvider::TAG);
 
         // PUR's parts (TASK-037): the purchase as the subject of its PO and Surat Pesanan, predicate 8's remainders, PG-011's *Pengadaan*.
         $this->app->tag([PurchaseSubjects::class], DocumentSubjectProvider::TAG);
-        // INV's part (TASK-039): the receiving event as the subject of its Nota Terima Barang.
-        $this->app->tag([ReceivingSubjects::class, DispatchSubjects::class], DocumentSubjectProvider::TAG);
+        // INV's part (TASK-039): the receiving event as the subject of its Nota Terima Barang; the dispatch's Surat Jalan through FUL's ShipmentNoteSubjects, one supplier per type.
+        $this->app->tag([ReceivingSubjects::class], DocumentSubjectProvider::TAG);
         $this->app->tag([PurchasePredicate::class], CompletionPredicateProvider::TAG);
         $this->app->tag([PurchaseProject::class], ProjectPartProvider::TAG);
     }

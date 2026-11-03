@@ -15,6 +15,7 @@ use Tests\Support\Fixtures\CountFixture;
 use Tests\Support\Fixtures\DeliveryFixture;
 use Tests\Support\Fixtures\DispatchFixture;
 use Tests\Support\Fixtures\DocumentFixture;
+use Tests\Support\Fixtures\DropshipFixture;
 use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
@@ -148,6 +149,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/serials', [DispatchFixture::class, 'serials'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/deliveries', [DeliveryFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/dropship', [DropshipFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-061): a page and more of the run's company's audit events, one without a company, the security events a notice opens.
     Route::post('__fixtures/log', [LogsFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

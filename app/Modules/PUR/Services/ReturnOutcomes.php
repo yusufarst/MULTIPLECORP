@@ -61,6 +61,11 @@ final class ReturnOutcomes
             $set = $set->union(CostPosting::consumptionLocks($consumption));
         }
 
+        // A drop-ship return's cost sits on its confirmation lines, under the purchase's cascade (DATABASE §5.7).
+        if ($line !== null && self::dropshipLines($caseId) !== []) {
+            $set = $set->union(CostPosting::purchaseLocks($line['purchase']));
+        }
+
         return $evidence === null ? $set : $set->union(EvidenceGuard::locks($evidence));
     }
 
@@ -136,7 +141,8 @@ final class ReturnOutcomes
             throw Refused::rejected('C-29', ['reason' => 'awaited']);
         }
 
-        $returned = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $caseId)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'));
+        $returned = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $caseId)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
+            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $caseId)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'));
         $room = $returned->minus(self::declared($caseId));
 
         if ($wanted->isGreaterThan($room)) {
@@ -234,6 +240,23 @@ final class ReturnOutcomes
         ['company' => $company, 'project' => $project, 'source' => $source] = self::bearerOf($case);
         $crossed = $company !== $source;
         $this->ensureBearer($context, $company, $source, $crossed ? $allocationReason : null);
+        $lines = self::dropshipLines($caseId);
+
+        // A drop-ship return's share sits on its confirmation lines, borne by the confirmation's project in the purchase's company (L-38; DATABASE §5.7).
+        if ($lines !== []) {
+            $carried = [];
+
+            foreach ($lines as $dropship) {
+                $carried[$dropship] = Money::of((string) DB::table('cost_attributions')->where('dropship_confirmation_line_id', $dropship)->where('correction_case_id', $caseId)->where('cost_class', 'SUPPLIER_RETURN')->sum('amount'));
+            }
+
+            foreach (ReturnSettlement::split($amount, $carried) ?? throw Refused::rejected('C-24', ['reason' => 'above_return']) as $dropship => $part) {
+                $this->cost->settleDropshipReturn($context, $dropship, $caseId, $part, $project ?? throw Refused::rejected('C-14', ['reason' => 'bearer']), $businessDate);
+            }
+
+            return ['amount' => $amount->toString()];
+        }
+
         $carried = [];
 
         foreach (self::consumptions($caseId) as $consumption) {
@@ -262,6 +285,22 @@ final class ReturnOutcomes
 
         ['company' => $company, 'source' => $source] = self::bearerOf($case);
         $this->ensureBearer($context, $company, $source, $company !== $source ? $allocationReason : null);
+        $lines = self::dropshipLines($caseId);
+
+        if ($lines !== []) {
+            $carried = [];
+
+            foreach (array_reverse($lines) as $dropship) {
+                $carried[$dropship] = Money::of((string) DB::table('cost_attributions')->where('dropship_confirmation_line_id', $dropship)->where('correction_case_id', $caseId)->where('cost_class', 'LOSS')->where('cause', 'RETURN_SETTLEMENT')->sum('amount'));
+            }
+
+            foreach (ReturnSettlement::split($amount, $carried) ?? throw Refused::rejected('C-24', ['reason' => 'above_settled']) as $dropship => $part) {
+                $this->cost->unsettleDropshipReturn($context, $dropship, $caseId, $part, $businessDate);
+            }
+
+            return ['amount' => $amount->toString()];
+        }
+
         $carried = [];
 
         foreach (array_reverse(self::consumptions($caseId)) as $consumption) {
@@ -362,11 +401,13 @@ final class ReturnOutcomes
         return $net;
     }
 
-    /** @return list<int> the purchase-return cases of the line's lots */
+    /** @return list<int> the purchase-return cases of the line's lots and of its drop-ship confirmations */
     private static function casesOfLine(int $lineId): array
     {
-        return array_values(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, DB::table('correction_cases as k')->join('inventory_lots as i', 'i.id', '=', 'k.source_lot_id')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')
-            ->where('r.purchase_line_id', $lineId)->where('k.case_kind', 'PURCHASE_RETURN')->pluck('k.id')->all()));
+        $dropship = DB::table('stock_restorations as s')->join('dropship_confirmation_lines as d', 'd.id', '=', 's.dropship_confirmation_line_id')->where('d.purchase_line_id', $lineId)->where('s.kind', 'DROPSHIP_SUPPLIER_RETURN')->whereNotNull('s.correction_case_id')->distinct()->pluck('s.correction_case_id')->all();
+
+        return array_values(array_unique(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, [...DB::table('correction_cases as k')->join('inventory_lots as i', 'i.id', '=', 'k.source_lot_id')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')
+            ->where('r.purchase_line_id', $lineId)->where('k.case_kind', 'PURCHASE_RETURN')->pluck('k.id')->all(), ...$dropship])));
     }
 
     /** What the case's returned cost still awaits: returned − refunded − replaced − unrecovered (C-46). */
@@ -375,13 +416,21 @@ final class ReturnOutcomes
         return ReturnSettlement::open(Money::of(Row::text($case, 'returned_cost')), Money::of(Row::text($case, 'refunded_value')), Money::of(Row::text($case, 'replaced_value')), Money::of(Row::text($case, 'unrecovered_value')));
     }
 
-    /** @return array{line: int, purchase: int, scale: int}|null the purchase line of the case's lot, its product's scale */
+    /** @return array{line: int, purchase: int, scale: int}|null the purchase line of the case's lot, or of its drop-ship return's confirmation line, its product's scale */
     private static function lineOf(int $caseId): ?array
     {
         $row = DB::table('correction_cases as k')->join('inventory_lots as i', 'i.id', '=', 'k.source_lot_id')->join('receiving_lines as r', 'r.id', '=', 'i.receiving_line_id')->join('purchase_lines as l', 'l.id', '=', 'r.purchase_line_id')
-            ->where('k.id', $caseId)->first(['l.id', 'l.purchase_id', 'i.quantity_scale']);
+            ->where('k.id', $caseId)->first(['l.id', 'l.purchase_id', 'i.quantity_scale'])
+            ?? DB::table('stock_restorations as s')->join('dropship_confirmation_lines as d', 'd.id', '=', 's.dropship_confirmation_line_id')->join('purchase_lines as l', 'l.id', '=', 'd.purchase_line_id')
+                ->where('s.correction_case_id', $caseId)->where('s.kind', 'DROPSHIP_SUPPLIER_RETURN')->orderBy('s.id')->first(['l.id', 'l.purchase_id', 'd.quantity_scale']);
 
         return $row === null ? null : ['line' => (int) Row::text($row, 'id'), 'purchase' => (int) Row::text($row, 'purchase_id'), 'scale' => (int) Row::text($row, 'quantity_scale')];
+    }
+
+    /** @return list<int> the drop-ship confirmation lines the case's supplier returns took back, in their order */
+    private static function dropshipLines(int $caseId): array
+    {
+        return array_values(array_unique(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, DB::table('stock_restorations')->where('correction_case_id', $caseId)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->orderBy('id')->pluck('dropship_confirmation_line_id')->all())));
     }
 
     /** @return list<int> the case's returned consumptions, in their order */

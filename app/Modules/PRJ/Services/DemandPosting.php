@@ -78,6 +78,31 @@ final class DemandPosting
         $this->post($context, 'delivered_net_qty_base', $deltas);
     }
 
+    /**
+     * The drop-ship lines' net confirmed quantities moved by their net deltas — a confirmation, or a return or reversal
+     * of one (AX-08; AX-10; PX-08; C-30) —, with their net delivered where the client had received what came back.
+     *
+     * @param  array<int, string>  $confirmed  project line => signed base quantity
+     * @param  array<int, string>  $delivered  project line => signed base quantity
+     */
+    public function dropship(CommandContext $context, array $confirmed, array $delivered = []): void
+    {
+        $rows = [];
+
+        // Every row of the one statement names both columns (GU-01); a zero delta leaves its column as it is.
+        foreach (array_unique([...array_keys($confirmed), ...array_keys($delivered)]) as $line) {
+            $deltas = ['dropship_confirmed_net_qty_base' => $confirmed[$line] ?? '0', 'delivered_net_qty_base' => $delivered[$line] ?? '0'];
+
+            if (! BigDecimal::of($deltas['dropship_confirmed_net_qty_base'])->isZero() || ! BigDecimal::of($deltas['delivered_net_qty_base'])->isZero()) {
+                $rows[] = ['key' => ['project_line_id' => $line], 'deltas' => $deltas];
+            }
+        }
+
+        if ($rows !== []) {
+            GuardUpdate::apply($context->connection, 'project_line_balances', $rows);
+        }
+    }
+
     /** The project's invoiced sales value moved by its net delta within the cap's CHECK (L-16; C-31), the one writer of the column. */
     /**
      * The confirmed and invoiced sales value of a project's commercial guard; null before any confirmation (L-16).

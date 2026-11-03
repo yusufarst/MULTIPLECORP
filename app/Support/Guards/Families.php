@@ -53,12 +53,20 @@ final class Families
             new Family(
                 'project_line_balances',
                 ['project_line_id'],
-                ['reserved_qty_base', 'handed_over_qty_base', 'delivered_net_qty_base'],
+                ['reserved_qty_base', 'handed_over_qty_base', 'delivered_net_qty_base', 'dropship_confirmed_net_qty_base'],
+                // TASK-046 (PX-08; DATABASE §5.7): net delivered less what the client returned of a drop-ship line it had received, and the
+                // net confirmed of a drop-ship line — its confirmations less their returns and reversals, each net of its CM-37 undoing.
                 <<<'SQL'
                     select b.project_line_id,
                         coalesce((select sum(r.remaining_qty_base) from reservations r where r.project_line_id = b.project_line_id and r.state = 'ACTIVE'), 0) as reserved_qty_base,
                         coalesce((select sum(case when h.reverses_line_id is null then h.qty_base else -h.qty_base end) from service_handover_lines h where h.project_line_id = b.project_line_id), 0) as handed_over_qty_base,
-                        coalesce((select sum(case when d.reverses_delivery_line_id is null then d.qty_base else -d.qty_base end) from delivery_lines d where d.project_line_id = b.project_line_id), 0) as delivered_net_qty_base
+                        coalesce((select sum(case when d.reverses_delivery_line_id is null then d.qty_base else -d.qty_base end) from delivery_lines d where d.project_line_id = b.project_line_id), 0)
+                            - coalesce((select sum(case when r.kind = 'DROPSHIP_ERROR_REVERSAL' then -r.qty_base else r.qty_base end) from stock_restorations r join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
+                                left join stock_restorations o on o.id = r.reverses_restoration_id
+                                where l.project_line_id = b.project_line_id and (r.after_delivery or (r.kind = 'DROPSHIP_ERROR_REVERSAL' and o.after_delivery))), 0) as delivered_net_qty_base,
+                        coalesce((select sum(l.qty_base) from dropship_confirmation_lines l where l.project_line_id = b.project_line_id), 0)
+                            - coalesce((select sum(case when r.kind = 'DROPSHIP_ERROR_REVERSAL' then -r.qty_base else r.qty_base end) from stock_restorations r join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
+                                where l.project_line_id = b.project_line_id), 0) as dropship_confirmed_net_qty_base
                     from project_line_balances b
                     SQL,
                 null,
