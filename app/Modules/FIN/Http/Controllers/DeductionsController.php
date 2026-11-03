@@ -102,7 +102,7 @@ final class DeductionsController extends Controller
         // Row 78: an expense's figures stay on the cost side, refused or replayed (SM-25).
         $masked = $kind === RecordContra::EXPENSE && ! $this->inputs->seesCost($actor, $fact['company']);
 
-        return $this->answer($outcome, 'contraed', self::nullable($input['kembali'] ?? null) ?? '/keuangan/potongan', self::text($input['tanggal']), $masked);
+        return $this->answer($outcome, $kind === 'potongan' ? 'contraed' : "contraed_{$kind}", self::nullable($input['kembali'] ?? null) ?? '/keuangan/potongan', self::text($input['tanggal']), $masked);
     }
 
     /** ROUTE-263. */
