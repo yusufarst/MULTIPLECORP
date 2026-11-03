@@ -138,7 +138,7 @@ function RecordSheet({ kind, branches, form: loaded, today, back, onClose }: { k
                                 {form?.can.upload === true && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading({ types: ['SUPPLIER_BILL'], target: 'extra' }); }}>{t('other_cash.action.upload_bill')}</Button>}
                             </>
                         )}
-                        {kind === 'disbursement' && type === 'PURCHASE_PAYMENT' && <Choice label={t('other_cash.field.purchase')} required value={reference} onChange={setReference} options={(form?.purchases ?? []).map((each) => ({ value: each.id, label: `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />}
+                        {kind === 'disbursement' && type === 'PURCHASE_PAYMENT' && <Choice label={t('other_cash.field.purchase')} required value={reference} onChange={setReference} options={(form?.purchases ?? []).map((each) => ({ value: each.id, label: each.supplier === '' ? each.number : `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />}
                         {kind === 'disbursement' && type === 'EXPENSE_PAYMENT' && <Choice label={t('other_cash.field.expense')} required value={reference} onChange={setReference} options={(form?.expenses ?? []).map((each) => ({ value: each.id, label: `${each.category} · ${each.date} · ${money(each.net)}` }))} error={record.errors.beban} />}
                         {kind === 'disbursement' && type === 'TAX_REMITTANCE' && (
                             <>
@@ -149,7 +149,7 @@ function RecordSheet({ kind, branches, form: loaded, today, back, onClose }: { k
                         )}
                         {kind === 'cashin' && type === 'SUPPLIER_REFUND' && (
                             <>
-                                <Choice label={t('other_cash.field.purchase')} value={reference} onChange={setReference} options={(form?.purchases ?? []).map((each) => ({ value: each.id, label: `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />
+                                <Choice label={t('other_cash.field.purchase')} value={reference} onChange={setReference} options={(form?.purchases ?? []).map((each) => ({ value: each.id, label: each.supplier === '' ? each.number : `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />
                                 <Choice label={t('other_cash.field.return_case')} value={extra} onChange={setExtra} options={(form?.cases ?? []).map((each) => ({ value: each.id, label: t('other_cash.form.case_open', { sisa: money(each.open) }) }))} error={record.errors.retur} help={t('other_cash.form.refund_help')} />
                             </>
                         )}

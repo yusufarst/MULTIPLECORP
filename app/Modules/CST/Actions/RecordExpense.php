@@ -89,7 +89,10 @@ final class RecordExpense
                 throw Refused::rejected('C-14', ['reason' => 'project']);
             }
 
-            if ($sourceBillId !== null && ! DB::table('evidence_documents')->where('id', $sourceBillId)->where('company_id', $companyId)->where('evidence_type', 'SUPPLIER_BILL')->exists()) {
+            $authority = $context->authority();
+
+            if ($sourceBillId !== null && (! DB::table('evidence_documents')->where('id', $sourceBillId)->where('company_id', $companyId)->where('evidence_type', 'SUPPLIER_BILL')->exists()
+                || $authority === null || ! EvidenceTypes::mayView($authority, 'SUPPLIER_BILL', $companyId))) {
                 throw Refused::rejected('C-14', ['reason' => 'bill']);
             }
 
@@ -98,13 +101,16 @@ final class RecordExpense
                 throw Refused::rejected('L-45', ['reason' => 'evidence']);
             }
 
-            $authority = $context->authority();
-
             foreach ($evidence as $document) {
                 $type = DB::table('evidence_documents')->where('id', $document)->where('company_id', $companyId)->where('evidence_scope', 'COMPANY')->value('evidence_type');
 
                 if (! is_string($type) || $authority === null || ! EvidenceTypes::mayView($authority, $type, $companyId)) {
                     throw Refused::rejected('C-14', ['reason' => 'evidence']);
+                }
+
+                // L-43; C-20: an amount-bearing document counts only through its citation, so a bill is never a charge's and, uncited, an expense's too.
+                if (EvidenceTypes::isAmountBearing($type)) {
+                    throw Refused::rejected('L-43', ['reason' => 'amount_bearing']);
                 }
             }
 

@@ -194,7 +194,9 @@ final class RecordDisbursement
      */
     private function remittance(CommandContext $context, int $companyId, Money $money, int $evidenceId, ?int $taxTypeId, string $businessDate): array
     {
-        if (DB::table('evidence_documents')->where('id', $evidenceId)->where('company_id', $companyId)->where('evidence_type', 'TAX_PAYMENT_PROOF')->doesntExist()) {
+        $authority = $context->authority();
+
+        if (DB::table('evidence_documents')->where('id', $evidenceId)->where('company_id', $companyId)->where('evidence_type', 'TAX_PAYMENT_PROOF')->doesntExist() || $authority === null || ! EvidenceTypes::mayView($authority, 'TAX_PAYMENT_PROOF', $companyId)) {
             throw Refused::rejected('C-58', ['reason' => 'tax_evidence']);
         }
 

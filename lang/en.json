@@ -3955,6 +3955,7 @@
     "other_cash.refusal.evidence": "Attach the expense's evidence or its supplier bill.",
     "other_cash.refusal.transfer_scope": "This transfer cannot be cited: both companies must be in your scope. Otherwise the Owner records it.",
     "other_cash.refusal.transfer_capacity": "Not processed: above the transfer's remainder of :sisa.",
+    "other_cash.refusal.bill_as_proof": "A supplier bill is cited through the bill field, not as a plain proof.",
     "other_cash.refusal.cancelled": "This purchase has been cancelled. Reload the page.",
     "deductions.answer.contraed_pengeluaran": "Disbursement contra'd. Both records stay visible.",
     "deductions.answer.contraed_beban": "Expense contra'd. Both records stay visible.",

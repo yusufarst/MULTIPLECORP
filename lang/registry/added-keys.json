@@ -18349,6 +18349,12 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "other_cash.refusal.bill_as_proof": {
+            "task": "TASK-054",
+            "source": "L-43; C-20 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "other_cash.refusal.cancelled": {
             "task": "TASK-054",
             "source": "LR-10; ST-02 (proposed copy)",

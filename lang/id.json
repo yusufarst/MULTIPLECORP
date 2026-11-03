@@ -3955,6 +3955,7 @@
     "other_cash.refusal.evidence": "Lampirkan bukti beban atau tagihan pemasoknya.",
     "other_cash.refusal.transfer_scope": "Transfer ini tidak dapat dikutip: kedua perusahaan harus dalam cakupan Anda. Bila tidak, Owner yang mencatatnya.",
     "other_cash.refusal.transfer_capacity": "Tidak dapat diproses: melebihi sisa transfer :sisa.",
+    "other_cash.refusal.bill_as_proof": "Tagihan pemasok dikutip lewat kolom tagihan, bukan sebagai bukti biasa.",
     "other_cash.refusal.cancelled": "Pembelian ini sudah dibatalkan. Muat ulang halaman.",
     "deductions.answer.contraed_pengeluaran": "Pengeluaran kas dikontra. Kedua catatan tetap terlihat.",
     "deductions.answer.contraed_beban": "Beban dikontra. Kedua catatan tetap terlihat.",

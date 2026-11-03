@@ -235,6 +235,7 @@ final class OtherCashController extends Controller
             'C-46' => self::say('other_cash.refusal.case_open', ['sisa' => self::money($state['open'] ?? '0')]),
             'C-58' => self::say('other_cash.refusal.tax_proof'),
             'L-29' => self::say($reason === 'company_issued' ? 'other_cash.refusal.company_issued' : 'other_cash.refusal.proof'),
+            'L-43' => self::say('other_cash.refusal.bill_as_proof'),
             'L-45' => self::say('other_cash.refusal.evidence'),
             'XL-5' => self::say('other_cash.refusal.transfer_scope'),
             'BR-FIN-07' => self::say('other_cash.refusal.transfer_capacity', ['sisa' => self::money($state['left'] ?? '0')]),

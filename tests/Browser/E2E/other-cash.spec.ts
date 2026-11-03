@@ -12,7 +12,7 @@ test.describe.configure({ timeout: 360_000 });
 async function record(page: Page, action: string, company: string, fill: (sheet: Locator) => Promise<void>): Promise<void> {
     await page.getByRole('button', { name: action, exact: true }).click();
     const sheet = page.getByRole('dialog');
-    await sheet.getByRole('combobox', { name: 'Perusahaan', exact: true }).selectOption({ value: company });
+    await sheet.getByRole('combobox', { name: 'Cabang', exact: true }).selectOption({ value: company });
     await fill(sheet);
     await sheet.getByRole('button', { name: action, exact: true }).click();
     await page.getByRole('alertdialog').getByRole('button', { name: action, exact: true }).click();

@@ -114,9 +114,9 @@ final class OtherCashList
             'accounts' => $cash ? self::accounts($company) : [],
             'proofs' => $cash ? self::evidence($company, array_values(array_filter(OtherCash::PROOF, $sees)), false) : [],
             'bills' => $expense && $sees('SUPPLIER_BILL') ? self::evidence($company, ['SUPPLIER_BILL'], true) : [],
-            'expense_proofs' => $expense ? self::evidence($company, array_values(array_filter(EvidenceTypes::TYPES, fn (string $type): bool => $type !== 'OPENING_SIGNOFF' && $sees($type))), false) : [],
+            'expense_proofs' => $expense ? self::evidence($company, array_values(array_filter(EvidenceTypes::TYPES, fn (string $type): bool => $type !== 'OPENING_SIGNOFF' && ! EvidenceTypes::isAmountBearing($type) && $sees($type))), false) : [],
             'projects' => $expense ? self::projects($company) : [],
-            'purchases' => $cash ? self::purchases($company) : [],
+            'purchases' => $cash ? self::purchases($company, $viewer->allows('cost.view', $company)) : [],
             'expenses' => $disbursement && $viewer->allows('cost.view', $company) ? self::expenses($company) : [],
             'tax_types' => $disbursement ? self::taxTypes() : [],
             'tax_proofs' => $disbursement && $sees('TAX_PAYMENT_PROOF') ? self::evidence($company, ['TAX_PAYMENT_PROOF'], true) : [],
@@ -240,12 +240,12 @@ final class OtherCashList
     }
 
     /** @return list<array{id: string, number: string, supplier: string}> */
-    private static function purchases(int $companyId): array
+    private static function purchases(int $companyId, bool $cost): array
     {
         $rows = [];
 
         foreach (DB::table('purchases')->where('company_id', $companyId)->where('state', '<>', 'CANCELLED')->orderByDesc('id')->limit(self::CHOICES)->selectRaw("public_id, purchase_number, supplier_snapshot->>'name' as supplier")->get() as $row) {
-            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier') ?? ''];
+            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => $cost ? (Row::nullable($row, 'supplier') ?? '') : ''];
         }
 
         return $rows;

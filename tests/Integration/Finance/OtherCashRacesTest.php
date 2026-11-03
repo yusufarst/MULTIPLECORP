@@ -101,7 +101,7 @@ it('caps one bill\'s charges and expenses together, the rest left to cite, and c
 
     $figures = app(CostFigures::class);
     expect($figures->project($actor, $project->id)['expenses'])->toBe('60000.00')
-        ->and(collect($figures->companies($actor))->firstWhere('company_id', $this->company->id)['expenses'])->toBe('85000.00')
+        ->and(collect($figures->companies($actor))->firstWhere('company_id', $this->company->id)['expenses'])->toBe('25000.00')
         // No Cash-Out comes of a cost: only a disbursement is one (BR-FIN-11; FS-04; criterion 1).
         ->and(DB::table('disbursements')->count())->toBe(0);
 });

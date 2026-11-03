@@ -100,7 +100,7 @@ it('records an expense through ROUTE-257: once in its project\'s cost, a company
 
     $company = otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => 'Listrik kantor', 'jumlah' => '30000', 'bukti' => [$this->proof]]);
     expect($company['kind'])->toBe('COMMITTED')
-        ->and(collect(app(CostFigures::class)->companies($this->actor->id))->firstWhere('company_id', $this->company->id)['expenses'])->toBe('100000.00')
+        ->and(collect(app(CostFigures::class)->companies($this->actor->id))->firstWhere('company_id', $this->company->id)['expenses'])->toBe('30000.00')
         ->and(DB::table('evidence_links')->whereNotNull('expense_id')->value('role'))->toBe('PRIMARY_PROOF');
 
     $capped = otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => 'Sewa alat', 'jumlah' => '30001', 'tagihan' => $bill->public_id]);
@@ -110,7 +110,9 @@ it('records an expense through ROUTE-257: once in its project\'s cost, a company
         expect(otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => $reserved, 'jumlah' => '1000', 'bukti' => [$this->proof]])['code'])->toBe('C-23');
     }
 
-    expect(otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => 'Tanpa bukti', 'jumlah' => '1000'])['code'])->toBe('L-45')
+    // L-43: a supplier bill counts only through its citation, never as a plain proof.
+    expect(otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => 'Sewa alat', 'jumlah' => '1000', 'bukti' => [$bill->public_id]])['code'])->toBe('L-43')
+        ->and(otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/beban', ['kategori' => 'Tanpa bukti', 'jumlah' => '1000'])['code'])->toBe('L-45')
         ->and(DB::table('disbursements')->count())->toBe(0)
         ->and(DB::table('audit_events')->where('action', 'CST.ExpenseRecorded')->count())->toBe(2);
 });

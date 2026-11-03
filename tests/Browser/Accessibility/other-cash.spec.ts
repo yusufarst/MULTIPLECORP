@@ -15,7 +15,7 @@ test('names the disbursement form\'s fields and closes its confirmation with not
     await page.goto(`/keuangan/kas-lain?perusahaan=${run.company}`);
     await page.getByRole('button', { name: 'Catat Pengeluaran Kas', exact: true }).click();
     const sheet = page.getByRole('dialog');
-    await sheet.getByRole('combobox', { name: 'Perusahaan', exact: true }).selectOption({ value: run.company });
+    await sheet.getByRole('combobox', { name: 'Cabang', exact: true }).selectOption({ value: run.company });
     await expect(sheet.getByRole('combobox', { name: 'Jenis', exact: true })).toBeVisible();
     await expect(sheet.getByLabel('Jumlah')).toBeVisible();
     await expect(sheet.getByRole('combobox', { name: 'Rekening asal', exact: true })).toBeVisible();

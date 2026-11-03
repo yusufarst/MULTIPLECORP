@@ -31,7 +31,7 @@ final class OtherCashWorld
      */
     public static function expense(int $actorId, int $companyId, ?int $projectId, string $amount, ?int $billId = null, ?array $evidence = null, string $category = 'OPERASIONAL', ?string $commandId = null): Outcome
     {
-        $evidence ??= $billId === null ? [PaymentWorld::proof($companyId, 'OTHER')->id] : [];
+        $evidence ??= $billId === null ? [PaymentWorld::proof($companyId, 'PAYMENT_PROOF')->id] : [];
 
         return app(RecordExpense::class)->run($commandId ?? (string) Str::uuid(), $actorId, $companyId, $projectId, $category, $amount, BusinessDate::today(), false, $billId, $evidence,
             ['company' => $companyId, 'project' => $projectId, 'category' => $category, 'amount' => $amount, 'bill' => $billId, 'evidence' => $evidence]);
