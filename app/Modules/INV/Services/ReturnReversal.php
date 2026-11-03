@@ -3,11 +3,13 @@
 namespace App\Modules\INV\Services;
 
 use App\Modules\CST\Services\CostPosting;
+use App\Modules\INV\Data\StockFigures;
 use App\Modules\OPS\Services\CorrectionCases;
 use App\Modules\OPS\Services\Corrections;
 use App\Modules\PRJ\Services\DemandPosting;
 use App\Modules\PRJ\Services\Revalidation;
 use App\Modules\PUR\Services\PurchasePosting;
+use App\Modules\PUR\Services\ReturnOutcomes;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
@@ -236,6 +238,8 @@ final class ReturnReversal
         $warehouse = Row::text($original, 'movement_type') === 'DROPSHIP_RETURN_RECEIPT';
         $plan = [];
         $seen = [];
+        $asked = [];
+        $byCase = [];
 
         foreach ($items as $item) {
             $restoration = $item['restoration'];
@@ -267,14 +271,30 @@ final class ReturnReversal
             $condition = Row::text($row, 'condition');
             $held = DB::table('stock_lot_balances as b')->where('b.lot_id', $lot)->where('b.location_id', $location)->where('b.condition', $condition)->value('b.qty');
             $serial = Row::nullable($row, 'serial_unit_id');
+            $place = "{$lot}|{$location}|{$condition}";
+            $asked[$place] = ($asked[$place] ?? BigDecimal::zero())->plus($qty);
 
-            // The same lots, serials and condition still present (C-03).
-            if (BigDecimal::of(is_numeric($held) ? (string) $held : '0')->isLessThan($qty)
+            // The same lots, serials and condition still present, the command's items at one place summed (C-03).
+            if (BigDecimal::of(is_numeric($held) ? (string) $held : '0')->isLessThan($asked[$place])
                 || ($serial !== null && ! DB::table('serial_units')->where('id', (int) $serial)->where('state', 'IN_STOCK')->where('current_lot_id', $lot)->where('current_location_id', $location)->where('current_condition', $condition)->exists())) {
                 throw Refused::rejected('C-03', ['reason' => 'not_present']);
             }
 
             $plan[] = ['row' => $row, 'qty' => $qty, 'standing' => $standing, 'lot' => $lot, 'location' => $location, 'condition' => $condition, 'serial' => $serial];
+            $case = Row::nullable($row, 'correction_case_id');
+
+            if (Row::text($row, 'kind') === 'SALES_RETURN' && $case !== null) {
+                $byCase[(int) $case] = ($byCase[(int) $case] ?? BigDecimal::zero())->plus($qty);
+            }
+        }
+
+        // A client's return whose units its case already lost (CM-11) is no longer back to take away: never more than the case still answers for (C-55).
+        foreach ($byCase as $caseId => $wanted) {
+            $back = self::answeredFor($caseId);
+
+            if ($wanted->isGreaterThan($back)) {
+                throw Refused::rejected('C-55', ['reason' => 'above_original', 'open' => StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), $back))]);
+            }
         }
 
         $now = $context->now();
@@ -303,8 +323,29 @@ final class ReturnReversal
         $reserved = null;
 
         // IP-20: usable supply falling below the reservations commits only with the actor's cuts.
-        if ($usable->isPositive() && (InventoryPosting::shortfall($product, (string) $usable)->isPositive() || $cuts !== [])) {
+        if (($usable->isPositive() && InventoryPosting::shortfall($product, (string) $usable)->isPositive()) || $cuts !== []) {
             $reserved = $this->inventory->cut($context, $product, $cuts, (string) $usable, $movement, 'INV.ReverseRestorationOrReturn');
+        }
+
+        // Net dispatched rises again: the line's own reservations must leave it room, cut by the actor where they do not (C-05; C-06; IP-20).
+        $lines = [];
+
+        foreach ($plan as $step) {
+            $line = Row::nullable($step['row'], 'project_line_id');
+
+            if (! $warehouse && $line !== null) {
+                $lines[(int) $line] = ($lines[(int) $line] ?? BigDecimal::zero())->plus($step['qty']);
+            }
+        }
+
+        foreach ($lines as $projectLine => $raised) {
+            $balance = DB::table('project_line_balances')->where('project_line_id', $projectLine)->first(['demand_qty_base', 'reserved_qty_base', 'dispatched_net_qty_base', 'cancelled_qty_base']);
+            $excess = $balance === null ? BigDecimal::zero() : BigDecimal::of(Row::text($balance, 'reserved_qty_base'))->plus(Row::text($balance, 'dispatched_net_qty_base'))->plus(Row::text($balance, 'cancelled_qty_base'))
+                ->plus($raised)->minus(Row::text($balance, 'demand_qty_base'));
+
+            if ($excess->isPositive()) {
+                throw Refused::rejected('C-06', ['reason' => 'line', 'shortfall' => StockFigures::plain((string) $excess), 'covered' => '0']);
+            }
         }
 
         $ids = $this->inventory->ledger($context, $movement, 'MOVEMENT_REVERSAL', $entries, $reserved);
@@ -424,6 +465,8 @@ final class ReturnReversal
         ]);
         $entries = [];
         $number = 0;
+        $case = Row::nullable($original, 'correction_case_id');
+        $openBefore = $case === null ? null : self::caseOpen((int) $case);
 
         foreach ($plan as $step) {
             $row = $step['row'];
@@ -442,6 +485,21 @@ final class ReturnReversal
                 'qty' => $qty, 'restoration' => $restoration, ...(is_numeric($serial) && $step['qty']->isEqualTo(1) ? ['serial' => (int) $serial] : [])];
         }
 
+        if ($case !== null && $openBefore !== null) {
+            // The supplier's outcomes already settled against the return stand: the case's open figure must still hold the cost taken back (C-46).
+            if (self::caseOpen((int) $case)->isNegative()) {
+                throw Refused::rejected('C-46', ['reason' => 'settled', 'open' => $openBefore->toString()]);
+            }
+
+            // A replacement already declared stays within what is still returned (C-29).
+            $returned = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', (int) $case)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
+                ->minus((string) DB::table('stock_restorations')->where('correction_case_id', (int) $case)->where('kind', 'RETURN_ERROR_REVERSAL')->sum('qty_base'));
+
+            if (ReturnOutcomes::declared((int) $case)->isGreaterThan($returned)) {
+                throw Refused::rejected('C-29', ['reason' => 'replaced', 'remainder' => StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), $returned))]);
+            }
+        }
+
         $ids = $this->inventory->ledger($context, $movement, 'RESTORATION', $entries);
 
         foreach ($entries as $index => $entry) {
@@ -451,13 +509,30 @@ final class ReturnReversal
             }
         }
 
-        $case = Row::nullable($original, 'correction_case_id');
         $casePublic = $case === null ? null : DB::table('correction_cases')->where('id', (int) $case)->value('public_id');
         $this->corrections->record($context, 'INV.ReturnReversed', AuthorityClass::AdmPlus, Row::nullable($original, 'company_id') === null ? null : (int) Row::text($original, 'company_id'), 'stock_movement', $movement, $publicId,
             AuditRelation::Reverses, 'stock_movement', Row::text($original, 'public_id'), $reason, AuditChange::created(['reversed' => array_map(fn (array $step): string => (string) $step['qty'], $plan), 'movement' => 'PURCHASE_RETURN']),
             is_string($casePublic) ? $casePublic : null, ['business_date' => $businessDate]);
 
         return $movement;
+    }
+
+    /** A purchase-return case's open figure (C-46): returned less refunded, replaced and unrecovered. */
+    private static function caseOpen(int $caseId): Money
+    {
+        $figures = DB::table('correction_cases')->where('id', $caseId)->first(['returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value']);
+
+        return $figures === null ? Money::zero() : Money::of(Row::text($figures, 'returned_cost'))->minus(Money::of(Row::text($figures, 'refunded_value')))->minus(Money::of(Row::text($figures, 'replaced_value')))->minus(Money::of(Row::text($figures, 'unrecovered_value')));
+    }
+
+    /** What a client's return case still answers for (CM-11): its units back, net of reversals, less what it lost. */
+    private static function answeredFor(int $caseId): BigDecimal
+    {
+        $back = DB::table('stock_restorations')->where('correction_case_id', $caseId)->where('kind', 'SALES_RETURN')->sum('qty_base');
+        $reversed = DB::table('stock_movement_entries as e')->join('stock_restorations as r', 'r.id', '=', 'e.stock_restoration_id')->where('r.correction_case_id', $caseId)->where('r.kind', 'SALES_RETURN')->where('e.movement_type', 'MOVEMENT_REVERSAL')->sum('e.qty_delta_base');
+        $lost = DB::table('stock_consumptions as c')->join('stock_consumption_balances as b', 'b.stock_consumption_id', '=', 'c.id')->where('c.correction_case_id', $caseId)->where('c.kind', 'LOSS')->sum(DB::raw('b.qty_base - b.restored_qty_base'));
+
+        return BigDecimal::of(is_numeric($back) ? (string) $back : '0')->plus(is_numeric($reversed) ? (string) $reversed : '0')->minus(is_numeric($lost) ? (string) $lost : '0');
     }
 
     /** The place a restoration's units sit at and its reversal guard (LK-14; LK-15; LK-16); its serial (LK-17). */

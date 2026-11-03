@@ -110,6 +110,7 @@ final class DispatchRestoration
         }
 
         $baseUnit = Row::text($policy, 'base_unit_id');
+        $overOpen = null;
         $rows = [];
         $seen = [];
         $total = BigDecimal::zero();
@@ -128,8 +129,17 @@ final class DispatchRestoration
             $open = BigDecimal::of(Row::text($consumption, 'qty_base'))->minus(Row::text($consumption, 'restored_qty_base'))->minus(Row::text($consumption, 'reclassified_qty_base'))->minus(Row::text($consumption, 'substituted_qty_base'));
             $already = $seen[$item['consumption']] ?? BigDecimal::zero();
 
-            if (! $qty->isPositive() || $qty->plus($already)->isGreaterThan($open)) {
+            if (! $qty->isPositive()) {
                 throw Refused::rejected('C-27', ['reason' => 'above_open', 'open' => StockFigures::plain((string) $open->minus($already))]);
+            }
+
+            // A client's return answers first with what the client holds (PX-08; C-30), then with the consumption's open quantity.
+            if ($qty->plus($already)->isGreaterThan($open)) {
+                $overOpen ??= ['reason' => 'above_open', 'open' => StockFigures::plain((string) $open->minus($already))];
+
+                if (! $sales) {
+                    throw Refused::rejected('C-27', $overOpen);
+                }
             }
 
             if ($item['serial'] !== null) {
@@ -154,6 +164,10 @@ final class DispatchRestoration
 
         if ($total->isGreaterThan($outstanding)) {
             throw Refused::rejected('C-30', ['reason' => $sales ? 'above_delivered' : 'above_undelivered', 'remainder' => StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), $outstanding))]);
+        }
+
+        if ($overOpen !== null) {
+            throw Refused::rejected('C-27', $overOpen);
         }
 
         $matches = self::likelyDuplicates($lineId, (string) $total, $businessDate, $kind);
@@ -300,7 +314,9 @@ final class DispatchRestoration
         return match ($code) {
             'L-49' => ['matches' => self::likelyDuplicates((int) Row::text($line, 'project_line_id'), (string) $total, $businessDate, $kind)],
             'C-27' => ['open' => self::openOf($items[0]['consumption'] ?? 0)],
-            'C-30' => ['remainder' => StockFigures::remainder(Row::nullable($line, 'dispatched') ?? '0', Row::nullable($line, 'delivered') ?? '0')],
+            'C-30' => ['remainder' => $kind === self::SALES_RETURN
+                ? StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), BigDecimal::min(BigDecimal::of(Row::nullable($line, 'delivered') ?? '0'), self::netDelivered($dispatchLineId))))
+                : StockFigures::remainder(Row::nullable($line, 'dispatched') ?? '0', Row::nullable($line, 'delivered') ?? '0')],
             default => null,
         };
     }

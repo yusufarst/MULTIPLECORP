@@ -4,8 +4,8 @@ namespace App\Modules\FUL\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\FUL\Queries\ClientReturns;
-use App\Modules\INV\Actions\ReverseRestorationOrReturn;
 use App\Modules\INV\Actions\RestoreStock;
+use App\Modules\INV\Actions\ReverseRestorationOrReturn;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
 use App\Support\RowHandle;
@@ -192,6 +192,7 @@ final class ClientReturnController extends Controller
             'C-03' => self::say('returns_client.refusal.not_present'),
             'C-02' => self::say('returns_client.refusal.serial'),
             'C-46' => self::say('returns_client.refusal.settled'),
+            'C-29' => self::say('returns_client.refusal.replaced', ['sisa' => self::text($state['remainder'] ?? '0')]),
             'C-06' => self::say('returns_client.refusal.reserved'),
             'C-09' => self::say('returns_client.refusal.scale'),
             'L-49' => self::say('messages.msg_15', ['daftar_catatan_yang_cocok' => implode('; ', array_column($matches, 'label'))]),

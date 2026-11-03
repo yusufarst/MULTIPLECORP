@@ -390,7 +390,7 @@ final class ReturnOutcomes
     }
 
     /** The replacement the case declared, net of its corrections. */
-    private static function declared(int $caseId): BigDecimal
+    public static function declared(int $caseId): BigDecimal
     {
         $net = BigDecimal::zero();
 

@@ -17544,6 +17544,12 @@
             "source": "SF-REVAL; CM-32 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "returns_client.refusal.replaced": {
+            "task": "TASK-048",
+            "source": "C-29; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

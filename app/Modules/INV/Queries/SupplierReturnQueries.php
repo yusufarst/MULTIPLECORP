@@ -113,7 +113,7 @@ final class SupplierReturnQueries
         $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $id)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
             ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'))
             ->minus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->whereIn('kind', ['RETURN_ERROR_REVERSAL', 'DROPSHIP_ERROR_REVERSAL'])->sum('qty_base'));
-        $expected =BigDecimal::of($guard === null ? '0' : Row::text($guard, 'replacement_expected_qty_base'));
+        $expected = BigDecimal::of($guard === null ? '0' : Row::text($guard, 'replacement_expected_qty_base'));
 
         return [
             'id' => Row::text($row, 'public_id'), 'state' => $state, 'reason' => Row::text($row, 'reason'), 'lock_version' => (int) Row::text($row, 'lock_version'), 'date' => substr(Row::text($row, 'recorded_at'), 0, 10),

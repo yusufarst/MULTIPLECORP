@@ -81,7 +81,7 @@ it('takes back at most net delivered, lowering it and net dispatched, the delive
         ->and(DB::table('deliveries')->count())->toBe(1)
         ->and(ClientReturnWorld::restored($shipment->consumption))->toBe('3.000')
         // Two of the five never reached the client: only those come back by an undelivered return.
-        ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '3')]))->toContain('C-30')
+        ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '3')]))->toContain('C-27')
         ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '2')]))->toBe('COMMITTED')
         ->and(ClientReturnWorld::restored($shipment->consumption))->toBe('5.000')
         ->and(clientReturned($this, $shipment, '1'))->not->toBe('COMMITTED')
@@ -272,5 +272,51 @@ it('undoes a drop-ship supplier return in error once and exactly with one DROPSH
         ->and(ReturnWorld::figures($case)['returned'])->toBe('0.00')
         ->and(DB::table('stock_restorations')->where('kind', 'DROPSHIP_ERROR_REVERSAL')->where('reverses_restoration_id', $restoration)->count())->toBe(1)
         ->and(ClientReturnWorld::reverseDropship($actor, $this->company->id, $confirmation->id, $restoration))->toContain('C-55');
+    returnsClean();
+});
+
+it('refuses a reversal its line\'s own reservations leave no room for, committing it once the actor cuts them (C-05; C-06; IP-20; criterion 7)', function () {
+    $demand = DispatchWorld::demand($this->world, '3');
+    $lot = StockWorld::lot($this->actor, $this->company, $demand['product'], $demand['unit'], $this->rack, '10', '1000');
+    expect(DispatchWorld::dispatch($this->actor, $this->company->id, $demand['line'], $demand['unit'], '3', [DispatchWorld::pick($lot, $this->rack, '3')]))->toBe('COMMITTED');
+    $shipment = DispatchWorld::last($demand['line']);
+    expect(DeliveryWorld::record($this->actor, $demand['line'], [[$shipment->dispatch, '3']], $this->deliveryProof))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::restore($this->actor, $this->company->id, $shipment->dispatch, [DispatchWorld::item($shipment->consumption, $this->rack, '2')], $this->proof, '2'))->toBe('COMMITTED');
+    $return = ClientReturnWorld::last();
+    $reservation = (int) DB::table('reservations')->where('project_line_id', $demand['line'])->where('state', 'ACTIVE')->value('id');
+    $undo = [ClientReturnWorld::undo($return->restoration, '1')];
+
+    expect(ClientReturnWorld::reverse($this->actor, $this->company->id, $return->movement, $undo))->toContain('C-06')
+        ->and(ClientReturnWorld::reverse($this->actor, $this->company->id, $return->movement, $undo, [$reservation => '1']))->toBe('COMMITTED')
+        ->and(DB::table('project_line_balances')->where('project_line_id', $demand['line'])->first(['reserved_qty_base', 'dispatched_net_qty_base']))
+        ->toEqual((object) ['reserved_qty_base' => '1.000', 'dispatched_net_qty_base' => '2.000']);
+    returnsClean();
+});
+
+it('refuses to take back a damaged return its case already disposed of, though another damaged unit of the lot sits at its place (CM-11; CM-37; C-55)', function () {
+    $shipment = clientDelivered($this, '2', '2');
+    expect(clientReturned($this, $shipment, '1', 'UNUSABLE'))->toBe('COMMITTED');
+    $first = ClientReturnWorld::last();
+    expect(clientReturned($this, $shipment, '1', 'UNUSABLE', null))->toContain('L-49');
+    expect(ClientReturnWorld::restore($this->actor, $this->company->id, $shipment->dispatch, [DispatchWorld::item($shipment->consumption, $this->rack, '1', 'UNUSABLE')], $this->proof, acknowledged: [(string) DB::table('stock_movements')->where('id', $first->movement)->value('public_id')], duplicateReason: 'Unit kedua'))->toBe('COMMITTED')
+        ->and(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($this->lot, $this->rack, '1', 'UNUSABLE')], evidence: [AdjustmentWorld::evidence()]), 'DISPOSAL', $first->case))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::held($this->lot, $this->rack, 'UNUSABLE'))->toBe('1.000')
+        ->and(ClientReturnWorld::reverse($this->actor, $this->company->id, $first->movement, [ClientReturnWorld::undo($first->restoration, '1')]))->toContain('C-55');
+    returnsClean();
+});
+
+it('refuses to take back a purchase return its supplier\'s outcomes already settled: a credit above what would stay returned, a replacement declared above it (C-46; C-29; CM-37)', function () {
+    $lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '5', '1000');
+    expect(ReturnWorld::returnUnits($this->actor, $lot, [AdjustmentWorld::pick($lot, $this->rack, '2')]))->toBe('COMMITTED');
+    $case = ReturnWorld::lastCase();
+    $consumption = DB::table('stock_consumptions')->where('kind', 'PURCHASE_RETURN')->sole();
+    $undo = [ClientReturnWorld::unreturn((int) $consumption->id, '1', $this->rack)];
+
+    expect(ReturnWorld::outcome($this->actor, $case, 'REPLACEMENT', qty: '2'))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::reverse($this->actor, $this->company->id, (int) $consumption->stock_movement_id, $undo))->toContain('C-29')
+        ->and(ReturnWorld::outcome($this->actor, $case, 'REPLACEMENT', qty: '2', correction: true))->toBe('COMMITTED')
+        ->and(ReturnWorld::outcome($this->actor, $case, 'CREDIT', amount: '2000.00', evidence: ReturnWorld::credit($this->company->id)))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::reverse($this->actor, $this->company->id, (int) $consumption->stock_movement_id, $undo))->toContain('C-46')
+        ->and(DB::table('stock_restorations')->where('kind', 'RETURN_ERROR_REVERSAL')->count())->toBe(0);
     returnsClean();
 });

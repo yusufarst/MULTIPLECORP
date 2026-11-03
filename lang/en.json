@@ -3820,5 +3820,6 @@
     "returns_client.field.reverse_quantity": "Quantity reversed, base unit",
     "returns.reverse.consequence": "The units come back into stock at the chosen rack and the case's returned cost falls. The return record stays.",
     "returns.reverse.dropship": "This direct-shipment return is undone whole: its units count as shipped directly to the client again.",
-    "returns_client.answer.reactivated": "Project :nomor is Aktif again."
+    "returns_client.answer.reactivated": "Project :nomor is Aktif again.",
+    "returns_client.refusal.replaced": "The replacement already declared is above what is still returned: :sisa. Correct the replacement first."
 }
