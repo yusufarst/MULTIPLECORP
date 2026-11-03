@@ -8,6 +8,7 @@ use App\Support\BusinessDate;
 use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -49,10 +50,12 @@ final class CustomerCredit
         return [
             'branches' => array_values($branches),
             'branch' => $chosen === null ? null : $branches[$chosen]['id'],
-            'groups' => array_map(fn (array $group): array => [...$group,
-                'company' => $branches[$group['company_id']] ?? null,
-                'can' => ['apply' => $viewer->allows('payment.apply', $group['company_id']), 'refund' => $viewer->allows('refund.record', $group['company_id']), 'hold' => $viewer->allows('refund.record', $group['company_id'])],
-            ], $groups),
+            'groups' => array_map(function (array $group) use ($branches, $viewer): array {
+                $company = is_int($group['company_id'] ?? null) ? $group['company_id'] : 0;
+
+                return [...$group, 'company' => $branches[$company] ?? null,
+                    'can' => ['apply' => $viewer->allows('payment.apply', $company), 'refund' => $viewer->allows('refund.record', $company), 'hold' => $viewer->allows('refund.record', $company)]];
+            }, $groups),
             'today' => BusinessDate::today(),
         ];
     }
@@ -106,7 +109,7 @@ final class CustomerCredit
     private function groups(array $companies): array
     {
         $keys = DB::table('application_source_balances as b')->whereIn('b.company_id', $companies)
-            ->where(fn ($either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0)->orWhereExists(fn ($applied) => $applied->from('payment_applications as a')->whereColumn('a.company_id', 'b.company_id')
+            ->where(fn (Builder $either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0)->orWhereExists(fn (Builder $applied) => $applied->from('payment_applications as a')->whereColumn('a.company_id', 'b.company_id')
                 ->whereColumn('a.client_organization_id', 'b.client_organization_id')->where('a.target_kind', 'INVOICE')))
             ->join('client_organizations as o', 'o.id', '=', 'b.client_organization_id')
             ->groupBy('b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name')->orderBy('o.name')->orderBy('b.company_id')->limit(self::PAGE)

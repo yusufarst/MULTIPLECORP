@@ -6,6 +6,7 @@ use App\Modules\FIN\Models\Payment;
 use App\Modules\FIN\Queries\CustomerCredit;
 use App\Modules\FIN\Services\CreditProjects;
 use App\Support\BusinessDate;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
@@ -20,6 +21,11 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Authorization::catalogue();
+
+    foreach (range(1, 14) as $number) {
+        DocumentTypeFactory::ensure(sprintf('DOC-%02d', $number));
+    }
+
     $this->world = InvoiceWorld::make();
     $this->company = $this->world->company;
     $this->project = $this->world->project();

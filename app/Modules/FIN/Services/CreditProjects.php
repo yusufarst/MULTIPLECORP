@@ -82,41 +82,51 @@ final class CreditProjects
             }
         }
 
-        /** @var array<string, array<string, array{at: string, order: int, contra: string, ends: list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>, creates: list<array{id: int, target: string, project: ?int, amount: string, successor: bool}>}>> $commands */
-        $commands = [];
+        /** @var array<string, array<string, array{at: string, order: int}>> $times */
+        $times = [];
+        /** @var array<string, array<string, string>> $contra */
+        $contra = [];
+        /** @var array<string, array<string, list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>>> $ends */
+        $ends = [];
+        /** @var array<string, array<string, list<array{id: int, target: string, project: ?int, amount: string, successor: bool}>>> $creates */
+        $creates = [];
         $key = fn (object $row): string => Row::nullable($row, 'payment_id') !== null ? 'p'.Row::text($row, 'payment_id') : 'c'.Row::text($row, 'opening_customer_credit_id');
-        $slot = function (string $source, string $command, string $at, int $order) use (&$commands): void {
-            $commands[$source][$command] ??= ['at' => $at, 'order' => $order, 'contra' => '0.00', 'ends' => [], 'creates' => []];
-        };
 
         foreach ($applications as $row) {
             $source = $key($row);
             $id = (int) Row::text($row, 'id');
             $project = Row::nullable($row, 'project_id') === null ? null : (int) Row::text($row, 'project_id');
             $command = Row::text($row, 'command_id');
-            $slot($source, $command, Row::nullable($row, 'created_at') ?? Row::text($row, 'recorded_at'), $id);
-            $commands[$source][$command]['creates'][] = ['id' => $id, 'target' => Row::text($row, 'target_kind'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'successor' => Row::nullable($row, 'supersedes_application_id') !== null];
+            $times[$source][$command] ??= ['at' => Row::nullable($row, 'created_at') ?? Row::text($row, 'recorded_at'), 'order' => $id];
+            $creates[$source][$command][] = ['id' => $id, 'target' => Row::text($row, 'target_kind'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'successor' => Row::nullable($row, 'supersedes_application_id') !== null];
             $ended = Row::nullable($row, 'end_command_id');
 
             if ($ended !== null) {
-                $slot($source, $ended, Row::text($row, 'ended_at'), $id);
-                $commands[$source][$ended]['ends'][] = ['id' => $id, 'reason' => Row::text($row, 'end_reason'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'reapplied' => $reapplied[$id] ?? '0.00'];
+                $times[$source][$ended] ??= ['at' => Row::text($row, 'ended_at'), 'order' => $id];
+                $ends[$source][$ended][] = ['id' => $id, 'reason' => Row::text($row, 'end_reason'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'reapplied' => $reapplied[$id] ?? '0.00'];
             }
         }
 
         foreach ($contras as $index => $row) {
             $source = $key($row);
             $command = Row::text($row, 'command_id');
-            $slot($source, $command, Row::text($row, 'recorded_at'), PHP_INT_MAX - count($contras) + $index);
-            $commands[$source][$command]['contra'] = Money::of($commands[$source][$command]['contra'])->plus(Money::of(Row::text($row, 'amount')))->toString();
+            $times[$source][$command] ??= ['at' => Row::text($row, 'recorded_at'), 'order' => PHP_INT_MAX - count($contras) + $index];
+            $contra[$source][$command] = Money::of($contra[$source][$command] ?? '0')->plus(Money::of(Row::text($row, 'amount')))->toString();
         }
 
         $totals = [];
 
         foreach ($sources as $row) {
-            $ordered = array_values($commands[$key($row)] ?? []);
-            usort($ordered, fn (array $a, array $b): int => [$a['at'], $a['order']] <=> [$b['at'], $b['order']]);
-            $replayed = CreditAttribution::replay(Row::text($row, 'gross_amount'), array_map(fn (array $command): array => ['contra' => $command['contra'], 'ends' => $command['ends'], 'creates' => $command['creates']], $ordered));
+            $source = $key($row);
+            $order = $times[$source] ?? [];
+            uasort($order, fn (array $a, array $b): int => [$a['at'], $a['order']] <=> [$b['at'], $b['order']]);
+            $commands = [];
+
+            foreach (array_keys($order) as $command) {
+                $commands[] = ['contra' => $contra[$source][$command] ?? '0.00', 'ends' => $ends[$source][$command] ?? [], 'creates' => $creates[$source][$command] ?? []];
+            }
+
+            $replayed = CreditAttribution::replay(Row::text($row, 'gross_amount'), $commands);
 
             foreach ($replayed['projects'] as $project => $figures) {
                 $totals[$project] = [

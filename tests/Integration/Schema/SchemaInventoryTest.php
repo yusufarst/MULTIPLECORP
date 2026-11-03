@@ -291,6 +291,7 @@ it('stores money as numeric(18,2), quantities as numeric(18,3), rates as numeric
         'tax_rate_versions.rate_percent' => 'numeric(9,6)',
         'purchase_line_tax_components.rate_percent' => 'numeric(9,6)',
         'invoice_tax_components.rate_percent' => 'numeric(9,6)',
+        'projects.credit_held_amount' => 'numeric(18,2)',
     ])
         ->and(columnTypes("data_type = 'date'"))->toEqual(array_fill_keys($dates, 'date'))
         ->and(columnTypes("udt_name = 'daterange'"))->toEqual(array_fill_keys(['company_tax_profiles.effective', 'tax_rate_versions.effective', 'tax_treatment_rules.effective'], 'daterange'))
