@@ -797,3 +797,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-048 on its branch `task/TASK-048-client-returns`: PG-034 *Retur dari Klien* — "Retur dari Klien" (ROUTE-210) taking delivered units back usable or damaged onto their lot at the consumption's cost, net delivered lowered and the delivery kept, one case per lot with its open steps, an optional new reservation; "Balikkan (Tercatat Keliru)" (ROUTE-211) undoing a restoration, a client's return, an undelivered return, a purchase return or a drop-ship supplier return recorded in error, on PG-034 and PG-028; "Tutup Kasus" answering on PG-034; its entries on PG-011 and PG-030.
 - Every check passed in fresh CI on `1a33d38`. TASK-048 DONE — progress 54 / 87 —; TASK-053, TASK-054 and TASK-059 READY.
+
+## Unreleased — 2026-11-03, TASK-053 — Customer credit and refunds
+
+- Built TASK-053 on its branch `task/TASK-053-customer-credit`: PG-048 *Kredit Pelanggan* — credit per client and company traced to its sources, refunds with their backing and shortfall, each project's credit left, arisen and held; "Kembalikan Dana" (ROUTE-256) as a fully backed Cash-Out refund with its transfer proof; "Tahan Kredit" (ROUTE-264) holding a project's credit with its reason (DIR-104); "Terapkan ke Invoice" through ROUTE-252; `projects.credit_held_amount` expand-only.
+- Every check passed in fresh CI on `83f00ac`. TASK-053 DONE — progress 55 / 87 —; TASK-054, TASK-057 and TASK-059 READY.
