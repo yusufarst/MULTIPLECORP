@@ -17550,6 +17550,252 @@
             "source": "C-29; NV-04 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "credit.intro": {
+            "task": "TASK-053",
+            "source": "PG-048; CALC-06; FS-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.branch": {
+            "task": "TASK-053",
+            "source": "PG-048; CS-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.all_branches": {
+            "task": "TASK-053",
+            "source": "PG-048; CS-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.none": {
+            "task": "TASK-053",
+            "source": "PG-048; UXI-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.total": {
+            "task": "TASK-053",
+            "source": "PG-048; CALC-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.section.sources": {
+            "task": "TASK-053",
+            "source": "PG-048; BR-FIN-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.no_sources": {
+            "task": "TASK-053",
+            "source": "PG-048 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.source.payment": {
+            "task": "TASK-053",
+            "source": "PG-048; BR-FIN-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.source.opening": {
+            "task": "TASK-053",
+            "source": "PG-048; BR-XD-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.unevidenced": {
+            "task": "TASK-053",
+            "source": "L-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.section.refunds": {
+            "task": "TASK-053",
+            "source": "PG-048; WF-FIN-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refund.standing": {
+            "task": "TASK-053",
+            "source": "PG-048; L-46 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refund.contra": {
+            "task": "TASK-053",
+            "source": "PG-048; CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refund.shortfall": {
+            "task": "TASK-053",
+            "source": "PG-048; C-44; QS-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refund.case": {
+            "task": "TASK-053",
+            "source": "PG-048; QS-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refund.final": {
+            "task": "TASK-053",
+            "source": "L-46; ADMIN_FLOW §11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.section.projects": {
+            "task": "TASK-053",
+            "source": "PG-048; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.project.left": {
+            "task": "TASK-053",
+            "source": "PG-048; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.project.arisen": {
+            "task": "TASK-053",
+            "source": "PG-048; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.project.held": {
+            "task": "TASK-053",
+            "source": "PG-048; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.amount": {
+            "task": "TASK-053",
+            "source": "ROUTE-256; ROUTE-252 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.capacity": {
+            "task": "TASK-053",
+            "source": "C-13 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.account": {
+            "task": "TASK-053",
+            "source": "ROUTE-256 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.proof": {
+            "task": "TASK-053",
+            "source": "ROUTE-256; IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.field.invoice": {
+            "task": "TASK-053",
+            "source": "ROUTE-252; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.upload_proof": {
+            "task": "TASK-053",
+            "source": "IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.confirm.refund": {
+            "task": "TASK-053",
+            "source": "INT-256; MSG-39; MSG-40 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.confirm.apply": {
+            "task": "TASK-053",
+            "source": "INT-252; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.confirm.hold": {
+            "task": "TASK-053",
+            "source": "INT-264; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.answer.refunded": {
+            "task": "TASK-053",
+            "source": "INT-256; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.answer.held": {
+            "task": "TASK-053",
+            "source": "INT-264; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.amount": {
+            "task": "TASK-053",
+            "source": "C-13; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.capacity": {
+            "task": "TASK-053",
+            "source": "C-13; annex 3 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.unevidenced": {
+            "task": "TASK-053",
+            "source": "L-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.proof": {
+            "task": "TASK-053",
+            "source": "L-29; IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.not_active": {
+            "task": "TASK-053",
+            "source": "ROUTE-264 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.nothing_left": {
+            "task": "TASK-053",
+            "source": "ROUTE-264; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.covered": {
+            "task": "TASK-053",
+            "source": "ROUTE-264; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "credit.refusal.other": {
+            "task": "TASK-053",
+            "source": "MSG-02; NV-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.CreditRefunded": {
+            "task": "TASK-053",
+            "source": "LG-01; QS-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.CreditHeld": {
+            "task": "TASK-053",
+            "source": "LG-01; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
