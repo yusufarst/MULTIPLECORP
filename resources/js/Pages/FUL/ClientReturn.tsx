@@ -112,11 +112,12 @@ export default function ClientReturn({ page, today }: Props) {
     const matches = Array.isArray(record.state.matches) ? (record.state.matches as DuplicateMatch[]) : [];
     const warned = record.answer?.kind === 'REJECTED' && matches.length > 0;
     const ready = line !== null && units.length > 0 && rack !== '' && proof !== '';
-    const answer = reverse.answer ?? close.answer;
+    // A recorded return answers above the form, which closes once nothing delivered is left to take back.
+    const answer = record.answer?.kind === 'COMMITTED' ? record.answer : (reverse.answer ?? close.answer);
 
     const submit = (extra: Payload = {}) => {
         if (line === null) return;
-        record.submit({ baris: line.id, unit: units, alasan: reason, bukti: proof, tanggal: date.date, tanggal_otomatis: !date.chosen, ...(reserve === '' ? {} : { reservasi: reserve }), ...extra });
+        record.submit({ baris: line.id, unit: units, alasan: reason, bukti: proof, tanggal: date.date, tanggal_otomatis: !date.chosen, ...(reserve === '' ? {} : { reservasi: reserve }), ...extra }, () => { setQuantities({}); setPicked([]); setReserve(''); setReason(''); });
     };
 
     return (
@@ -225,11 +226,11 @@ export default function ClientReturn({ page, today }: Props) {
                                     reason={{ value: duplicateReason, onChange: setDuplicateReason, error: record.errors.reason ?? null }} canContinue />
                                 <Button className="self-start" pending={record.pending} disabled={record.frozen} onClick={() => { submit({ acknowledged, reason: duplicateReason }); }}>{t('actions.continue')}</Button>
                             </div>
-                        ) : (!confirming && record.answer !== null && <OutcomeMessage answer={record.answer} action={record.unknown ? <Button variant="outline" size="sm" onClick={record.retry}>{t('actions.try_again')}</Button> : undefined} />)}
+                        ) : (!confirming && record.answer !== null && record.answer.kind !== 'COMMITTED' && <OutcomeMessage answer={record.answer} action={record.unknown ? <Button variant="outline" size="sm" onClick={record.retry}>{t('actions.try_again')}</Button> : undefined} />)}
                         {(['tanggal', 'unit', 'baris'] as const).map((field) => (record.errors[field] === undefined ? null : <p key={field} role="alert" className="text-body text-danger-fg">{record.errors[field]}</p>))}
                         <div className="flex flex-wrap gap-2">
                             <Button variant="outline" render={<a href={`/proyek/${project.id}`} />}>{t('actions.cancel')}</Button>
-                            <Button pending={record.pending} disabled={!ready || record.frozen} onClick={() => { record.clear(); setConfirming(true); }}>{t('returns_client.action.record')}</Button>
+                            <Button pending={record.pending} disabled={!ready || record.frozen} onClick={() => { reverse.clear(); close.clear(); record.clear(); setConfirming(true); }}>{t('returns_client.action.record')}</Button>
                         </div>
                     </fieldset>
                 )}
@@ -252,11 +253,11 @@ export default function ClientReturn({ page, today }: Props) {
                                                 <span>{`${restoration.quantity}${restoration.condition === null ? '' : ` · ${t(`stock.condition.${restoration.condition}` as TranslationKey)}`}`}</span>
                                                 {restoration.standing !== restoration.quantity && <span className="text-caption text-text-secondary">{t('returns_client.standing', { jumlah: restoration.standing })}</span>}
                                                 {can.cost && restoration.contra !== undefined && <span className="text-caption">{t('returns_client.contra', { biaya: restoration.contra })}</span>}
-                                                {can.reverse && Number(restoration.standing) > 0 && <Button variant="ghost" size="sm" onClick={() => { reverse.clear(); setCuts({}); setReverseQty(restoration.standing); setReverseReason(''); setTarget(restoration.movement); setReversing({ caseId: one.id, restoration }); }}>{t('returns_client.action.reverse')}</Button>}
+                                                {can.reverse && Number(restoration.standing) > 0 && <Button variant="ghost" size="sm" onClick={() => { record.clear(); close.clear(); reverse.clear(); setCuts({}); setReverseQty(restoration.standing); setReverseReason(''); setTarget(restoration.movement); setReversing({ caseId: one.id, restoration }); }}>{t('returns_client.action.reverse')}</Button>}
                                             </li>
                                         ))}
                                     </ul>
-                                    {can.close && one.state === 'OPEN' && <Button variant="outline" size="sm" className="self-start" onClick={() => { close.clear(); setCloseReason(''); setClosingCase(one); }}>{t('actions.close_case')}</Button>}
+                                    {can.close && one.state === 'OPEN' && <Button variant="outline" size="sm" className="self-start" onClick={() => { record.clear(); reverse.clear(); close.clear(); setCloseReason(''); setClosingCase(one); }}>{t('actions.close_case')}</Button>}
                                 </li>
                             ))}
                         </ol>

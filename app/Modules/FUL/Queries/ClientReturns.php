@@ -241,7 +241,9 @@ final class ClientReturns
             'description' => Row::text($row, 'description'), 'unit' => Row::nullable($row, 'unit'), 'base_unit' => Row::nullable($row, 'base_unit'), 'ratio' => (int) Row::text($row, 'ratio_to_base'),
             'serialized' => (bool) Row::text($row, 'is_serialized'), 'scale' => (int) Row::text($row, 'quantity_scale'),
             'delivered' => self::plain((string) BigDecimal::max(BigDecimal::zero(), BigDecimal::of(Row::text($row, 'delivered')))), 'returned' => self::plain(Row::text($row, 'returned')),
-            'consumptions' => $byLine[(int) Row::text($row, 'id')] ?? [],
+            // What is still with the client: no more of a consumption than the line's net delivered (PX-08).
+            'consumptions' => array_values(array_map(fn (array $consumption): array => [...$consumption, 'open' => self::plain((string) BigDecimal::min(BigDecimal::of($consumption['open']), BigDecimal::max(BigDecimal::zero(), BigDecimal::of(Row::text($row, 'delivered')))))],
+                $byLine[(int) Row::text($row, 'id')] ?? [])),
         ], array_filter($rows, fn (object $row): bool => BigDecimal::of(Row::text($row, 'delivered'))->isPositive() || BigDecimal::of(Row::text($row, 'returned'))->isPositive())));
     }
 
