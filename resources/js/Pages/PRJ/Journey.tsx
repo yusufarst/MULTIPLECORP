@@ -111,15 +111,20 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 function CancelDialog({ project, companions, onClose }: { project: Project; companions: Companion[] | undefined; onClose: () => void }) {
     const { t } = useTranslation();
     const [reason, setReason] = useState('');
+    const [held, setHeld] = useState(companions);
     const cancel = useCommand<{ alasan: string; versi: number }>(() => `/proyek/${project.id}/batalkan`, 'post');
+
+    // An answer's redirect carries no optional prop: the list loaded when the dialog opened stays (NV-04).
+    if (companions !== undefined && companions !== held) setHeld(companions);
+    const shown = companions ?? held;
     const items = (
         <div className="flex flex-col gap-2" data-slot="cancel-companions">
             <p className="text-body text-text-secondary">{t('projects.cancel.companions')}</p>
-            {companions === undefined ? <RegionLoading /> : companions.length === 0 ? <p className="text-body text-text-secondary">{t('projects.cancel.no_companions')}</p> : (
+            {shown === undefined ? <RegionLoading /> : shown.length === 0 ? <p className="text-body text-text-secondary">{t('projects.cancel.no_companions')}</p> : (
                 <ul role="list" className="flex flex-col gap-1">
-                    {companions.map((companion) => (
+                    {shown.map((companion) => (
                         <li key={companion.href}>
-                            <a href={companion.href} className="text-body text-accent-link underline underline-offset-2">{t(`projects.cancel.companion.${companion.kind}` as TranslationKey, { nomor: companion.label })}</a>
+                            <a href={companion.href} onClick={companion.kind === 'scope' ? onClose : undefined} className="text-body text-accent-link underline underline-offset-2">{t(`projects.cancel.companion.${companion.kind}` as TranslationKey, { nomor: companion.label })}</a>
                         </li>
                     ))}
                 </ul>

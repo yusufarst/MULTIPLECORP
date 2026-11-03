@@ -28,8 +28,12 @@ final class ProjectCancellation
         $viewer = $this->capabilities->for($viewerId);
         $company = $project->company_id;
         $links = [];
+        $lines = DB::table('project_lines as l')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')->where('l.project_id', $project->id)
+            ->selectRaw('coalesce(bool_or(b.delivered_net_qty_base > 0), false) as delivered, coalesce(bool_or(b.demand_qty_base > b.handed_over_qty_base + b.delivered_net_qty_base + b.cancelled_qty_base), false) as remaining')->first();
+        $delivered = $lines !== null && ($lines->delivered ?? false) === true;
+        $remaining = $lines !== null && ($lines->remaining ?? false) === true;
 
-        if ($viewer->allows('sales_return.record', $company)) {
+        if ($delivered && $viewer->allows('sales_return.record', $company)) {
             $links[] = ['kind' => 'return', 'label' => '', 'href' => "/proyek/{$project->public_id}/retur"];
         }
 
@@ -46,7 +50,7 @@ final class ProjectCancellation
             }
         }
 
-        if ($viewer->allows('projects.cancel_scope', $company)) {
+        if ($remaining && $viewer->allows('projects.cancel_scope', $company)) {
             $links[] = ['kind' => 'scope', 'label' => '', 'href' => "/proyek/{$project->public_id}#pemenuhan"];
         }
 

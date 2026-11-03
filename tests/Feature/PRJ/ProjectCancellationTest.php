@@ -92,12 +92,13 @@ it('lists the companion corrections as links to their own commands and performs 
     $world = InvoiceWorld::make();
     $project = $world->project();
     $invoice = $world->issued($project, '1000000');
-    $actor = Authorization::admin([$world->company->id], ['projects.view', 'projects.cancel', 'projects.cancel_scope', 'finance.view', 'sales_return.record']);
+    $actor = Authorization::admin([$world->company->id], ['projects.view', 'projects.cancel', 'projects.cancel_scope', 'finance.view', 'stock.view', 'sales_return.record']);
     $version = (string) $this->actingAs($actor)->get("/proyek/{$project->public_id}")->viewData('page')['version'];
     $companions = $this->actingAs($actor)->get("/proyek/{$project->public_id}", ['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'PRJ/Journey', 'X-Inertia-Partial-Data' => 'companions'])->json('props.companions');
 
-    expect(array_column($companions, 'kind'))->toBe(['return', 'invoice', 'scope'])
-        ->and($companions[1]['href'])->toBe('/keuangan/invoice/'.InvoiceWorld::publicId($invoice));
+    // Nothing delivered yet: no return to record; the whole scope remains to cancel (what is actually being undone).
+    expect(array_column($companions, 'kind'))->toBe(['invoice', 'scope'])
+        ->and($companions[0]['href'])->toBe('/keuangan/invoice/'.InvoiceWorld::publicId($invoice));
 
     expect(cancellationAnswer($this, $actor, "/proyek/{$project->public_id}/batalkan", cancellationBody($project))['kind'])->toBe('COMMITTED')
         ->and(DB::table('invoices')->where('id', $invoice)->value('state'))->toBe('ISSUED')
