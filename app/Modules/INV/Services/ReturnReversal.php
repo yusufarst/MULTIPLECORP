@@ -339,7 +339,7 @@ final class ReturnReversal
         }
 
         foreach ($lines as $projectLine => $raised) {
-            $balance = DB::table('project_line_balances')->where('project_line_id', $projectLine)->first(['demand_qty_base', 'reserved_qty_base', 'dispatched_net_qty_base', 'cancelled_qty_base']);
+            $balance = DB::table('project_line_balances as b')->where('b.project_line_id', $projectLine)->first(['demand_qty_base', 'reserved_qty_base', 'dispatched_net_qty_base', 'cancelled_qty_base']);
             $excess = $balance === null ? BigDecimal::zero() : BigDecimal::of(Row::text($balance, 'reserved_qty_base'))->plus(Row::text($balance, 'dispatched_net_qty_base'))->plus(Row::text($balance, 'cancelled_qty_base'))
                 ->plus($raised)->minus(Row::text($balance, 'demand_qty_base'));
 
