@@ -116,7 +116,7 @@ final class OtherCashList
             'bills' => $expense && $sees('SUPPLIER_BILL') ? self::evidence($company, ['SUPPLIER_BILL'], true) : [],
             'expense_proofs' => $expense ? self::evidence($company, array_values(array_filter(EvidenceTypes::TYPES, fn (string $type): bool => $type !== 'OPENING_SIGNOFF' && ! EvidenceTypes::isAmountBearing($type) && $sees($type))), false) : [],
             'projects' => $expense ? self::projects($company) : [],
-            'purchases' => $cash ? self::purchases($company, $viewer->allows('cost.view', $company)) : [],
+            'purchases' => $cash && $viewer->allows('cost.view', $company) ? self::purchases($company) : [],
             'expenses' => $disbursement && $viewer->allows('cost.view', $company) ? self::expenses($company) : [],
             'tax_types' => $disbursement ? self::taxTypes() : [],
             'tax_proofs' => $disbursement && $sees('TAX_PAYMENT_PROOF') ? self::evidence($company, ['TAX_PAYMENT_PROOF'], true) : [],
@@ -239,13 +239,13 @@ final class OtherCashList
         return $rows;
     }
 
-    /** @return list<array{id: string, number: string, supplier: string}> */
-    private static function purchases(int $companyId, bool $cost): array
+    /** @return list<array{id: string, number: string, supplier: string, cancelled: bool}> */
+    private static function purchases(int $companyId): array
     {
         $rows = [];
 
-        foreach (DB::table('purchases')->where('company_id', $companyId)->where('state', '<>', 'CANCELLED')->orderByDesc('id')->limit(self::CHOICES)->selectRaw("public_id, purchase_number, supplier_snapshot->>'name' as supplier")->get() as $row) {
-            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => $cost ? (Row::nullable($row, 'supplier') ?? '') : ''];
+        foreach (DB::table('purchases')->where('company_id', $companyId)->orderByDesc('id')->limit(self::CHOICES)->selectRaw("public_id, purchase_number, state, supplier_snapshot->>'name' as supplier")->get() as $row) {
+            $rows[] = ['id' => Row::text($row, 'public_id'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier') ?? '', 'cancelled' => Row::text($row, 'state') === 'CANCELLED'];
         }
 
         return $rows;
@@ -391,9 +391,9 @@ final class OtherCashList
     /** @param  list<int>  $companies */
     private static function expenseRows(array $companies): Builder
     {
-        return DB::table('expenses as x')->join('money_fact_balances as f', 'f.expense_id', '=', 'x.id')->leftJoin('projects as p', 'p.id', '=', 'x.project_id')->leftJoin('evidence_documents as b', 'b.id', '=', 'x.source_bill_evidence_id')
+        return DB::table('expenses as x')->leftJoin('projects as p', 'p.id', '=', 'x.project_id')->leftJoin('evidence_documents as b', 'b.id', '=', 'x.source_bill_evidence_id')
             ->whereIn('x.company_id', $companies)
-            ->selectRaw('x.id, x.company_id, x.kind, x.category, x.amount, x.business_date, f.amount - f.contra_amount as net, p.public_id as project, p.project_number, p.title, b.public_id as bill, b.declared_issuer as bill_issuer,
+            ->selectRaw('x.id, x.company_id, x.kind, x.category, x.amount, x.business_date, x.amount - coalesce((select sum(c.amount) from financial_contras c where c.expense_id = x.id), 0) as net, p.public_id as project, p.project_number, p.title, b.public_id as bill, b.declared_issuer as bill_issuer,
                 exists (select 1 from disbursements d join money_fact_balances g on g.disbursement_id = d.id where d.expense_id = x.id and g.contra_amount < g.amount) as paid');
     }
 
@@ -417,7 +417,8 @@ final class OtherCashList
 
         return [
             'id' => Row::text($row, 'public_id'), 'kind' => $kind, 'account' => Row::text($row, 'bank_name').' · '.Row::text($row, 'account_number'),
-            'purchase' => Row::nullable($row, 'purchase'), 'purchase_number' => Row::nullable($row, 'purchase_number'), 'client' => Row::nullable($row, 'client'),
+            // Row 114: a linked purchase on the cost side only (PERMISSIONS_MATRIX §7.1).
+            'purchase' => $viewer->allows('cost.view', $company) ? Row::nullable($row, 'purchase') : null, 'purchase_number' => $viewer->allows('cost.view', $company) ? Row::nullable($row, 'purchase_number') : null, 'client' => Row::nullable($row, 'client'),
             // Row 114: a linked expense's details on the cost side only.
             'expense' => $expenseCompany !== null && $viewer->allows('cost.view', $company) ? Row::nullable($row, 'expense_category') : null,
             'cited' => $kind === 'INTERCOMPANY_TRANSFER_OUT' ? Row::text($row, 'transfer_cited_amount') : null,
@@ -449,7 +450,7 @@ final class OtherCashList
 
         return [
             'category' => Row::text($row, 'category'), 'income' => Row::text($row, 'income_class') === 'INCOME', 'account' => Row::text($row, 'bank_name').' · '.Row::text($row, 'account_number'),
-            'purchase' => Row::nullable($row, 'purchase'), 'purchase_number' => Row::nullable($row, 'purchase_number'),
+            'purchase' => $viewer->allows('cost.view', $company) ? Row::nullable($row, 'purchase') : null, 'purchase_number' => $viewer->allows('cost.view', $company) ? Row::nullable($row, 'purchase_number') : null,
             // INFORMATION_ARCHITECTURE §7: the other company named only when both are in scope.
             'transfer_from' => $other === null ? null : ($viewer->scope->includes((int) $other) ? Row::text($row, 'other_code') : ''),
             'cited_line' => in_array(Row::nullable($row, 'cited_line'), ['1', 'true', 't'], true),

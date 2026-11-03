@@ -102,7 +102,7 @@ final class OtherCashController extends Controller
         $kind = self::text($input['jenis']);
         $account = $this->list->accountOf($company, self::text($input['rekening'])) ?? throw ValidationException::withMessages(['rekening' => self::say('projects.validation.unknown')]);
         $reference = [
-            'purchase' => $kind === 'PURCHASE_PAYMENT' ? self::optional($input, 'pembelian', fn (string $id): ?int => $this->list->publicOf('purchases', $company, $id)) : null,
+            'purchase' => $kind === 'PURCHASE_PAYMENT' ? self::optional($input, 'pembelian', fn (string $id): ?int => $this->list->allows($actor, 'cost.view', $company) ? $this->list->publicOf('purchases', $company, $id) : null) : null,
             'expense' => $kind === 'EXPENSE_PAYMENT' ? self::optional($input, 'beban', fn (string $handle): ?int => $this->list->allows($actor, 'cost.view', $company) ? $this->list->handleOf('expenses', $company, $handle) : null) : null,
             'tax_evidence' => $kind === 'TAX_REMITTANCE' ? self::optional($input, 'bukti_pajak', fn (string $id): ?int => $this->list->publicOf('evidence_documents', $company, $id)) : null,
             'tax_type' => $kind === 'TAX_REMITTANCE' ? self::optional($input, 'jenis_pajak', fn (string $code): ?int => $this->list->taxTypeOf($code)) : null,
@@ -139,7 +139,7 @@ final class OtherCashController extends Controller
         $account = $this->list->accountOf($company, self::text($input['rekening'])) ?? throw ValidationException::withMessages(['rekening' => self::say('projects.validation.unknown')]);
         $refund = $category === 'SUPPLIER_REFUND';
         $reference = [
-            'purchase' => $refund ? self::optional($input, 'pembelian', fn (string $id): ?int => $this->list->publicOf('purchases', $company, $id)) : null,
+            'purchase' => $refund ? self::optional($input, 'pembelian', fn (string $id): ?int => $this->list->allows($actor, 'cost.view', $company) ? $this->list->publicOf('purchases', $company, $id) : null) : null,
             'case' => $refund ? self::optional($input, 'retur', fn (string $id): ?int => $this->list->publicOf('correction_cases', $company, $id)) : null,
             'transfer' => $category === 'INTERCOMPANY_TRANSFER_IN' ? self::optional($input, 'transfer', fn (string $id): ?int => $this->list->transferOf($id)) : null,
             'line' => self::optional($input, 'mutasi', fn (string $handle): ?int => $this->list->handleOf('bank_statement_lines', $company, $handle)),

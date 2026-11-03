@@ -89,7 +89,9 @@ it('offers each form\'s choices for one company only to its capability, evidence
 
     $cashier = Authorization::admin([$this->company->id], ['finance.view', 'cashin.record']);
     $narrow = otherCashForm($this, $cashier);
-    expect($narrow['can']['expense'])->toBeFalse()->and($narrow['bills'])->toBe([])->and($narrow['projects'])->toBe([])->and($narrow['expenses'])->toBe([])->and($narrow['tax_proofs'])->toBe([]);
+    expect($narrow['can']['expense'])->toBeFalse()->and($narrow['bills'])->toBe([])->and($narrow['projects'])->toBe([])->and($narrow['expenses'])->toBe([])->and($narrow['tax_proofs'])->toBe([])
+        // PERMISSIONS_MATRIX §7.1; row 114: purchase references are the cost side's.
+        ->and($narrow['purchases'])->toBe([]);
 });
 
 it('records an expense through ROUTE-257: once in its project\'s cost, a company one the company\'s, the fee category refused, a bill capped with its figure, evidence required (CALC-09; CALC-11; C-23; C-20; L-45; criteria 2, 3)', function () {
@@ -222,4 +224,28 @@ it('corrects a wrong disbursement or expense only by its contra from PG-049, bot
 
     $this->actingAs($this->actor)->get('/keuangan/kas-lain')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.net', '0.00')->where('rows.0.amount', '50000.00')->where('rows.0.can.contra', false));
     $this->actingAs($this->actor)->get('/keuangan/kas-lain?tab=beban')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.net', '0.00')->where('rows.0.can.contra', false));
+});
+
+it('keeps purchase references on the cost side, offers a cancelled purchase only to its supplier\'s refund, and lists a non-attributable charge\'s expense with its origin (row 114; L-08; DATABASE §4.8; Codex P1, P2)', function () {
+    $cost = CostWorld::make($this->company);
+    $open = $cost->purchase();
+    $cancelled = $cost->purchase();
+    DB::table('purchases')->where('id', $cancelled->id)->update(['state' => 'CANCELLED', 'cancelled_by' => $cost->actorId, 'cancelled_at' => now(), 'cancelled_reason' => 'Batal']);
+    $cost->expect($cost->recordNew($open, '12000.00', [], 'NON_ATTRIBUTABLE'));
+    $actor = OtherCashWorld::actor($this->company->id);
+    OtherCashWorld::committed(OtherCashWorld::disburse($actor, $this->company->id, 'PURCHASE_PAYMENT', '5000', $this->accountId, ['purchase' => $open->id]));
+
+    $offered = collect(otherCashForm($this, $this->actor)['purchases'])->keyBy('id');
+    expect($offered[$cancelled->public_id]['cancelled'])->toBeTrue()->and($offered[$open->public_id]['cancelled'])->toBeFalse()
+        ->and(otherCashAnswer($this, $this->actor, '/keuangan/kas-lain/kas-masuk', ['kategori' => 'SUPPLIER_REFUND', 'jumlah' => '3000', 'rekening' => $this->account, 'pembelian' => $cancelled->public_id, 'bukti' => [$this->proof]])['kind'])->toBe('COMMITTED');
+
+    $this->actingAs($this->actor)->get('/keuangan/kas-lain?tab=beban')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.kind', 'PURCHASE_CHARGE')->where('rows.0.net', '12000.00')->where('rows.0.can.contra', false));
+    $this->actingAs($this->actor)->get('/keuangan/kas-lain')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.purchase', $open->public_id));
+
+    // Finance without the cost side: neither the reference in a row nor a purchase named in a command.
+    $finance = Authorization::admin([$this->company->id], ['finance.view', 'evidence.view', 'disbursement.record', 'cashin.record']);
+    $this->actingAs($finance)->get('/keuangan/kas-lain')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.purchase', null)->where('rows.0.purchase_number', null));
+    $this->actingAs($finance)->get('/keuangan/kas-lain?tab=kas-masuk')->assertInertia(fn (AssertableInertia $page) => $page->where('rows.0.purchase', null));
+    $this->actingAs($finance)->post('/keuangan/kas-lain/pengeluaran', ['command_id' => (string) Str::uuid(), 'perusahaan' => $this->company->public_id, 'jenis' => 'PURCHASE_PAYMENT', 'jumlah' => '1000', 'rekening' => $this->account, 'pembelian' => $open->public_id, 'bukti' => [$this->proof], 'tanggal' => $this->today])
+        ->assertSessionHasErrors('pembelian');
 });

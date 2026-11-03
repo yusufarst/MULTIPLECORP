@@ -36,7 +36,7 @@ type Row = {
 };
 type Evidence = { id: string; type: string; label: string; uncited: string | null };
 type Form = {
-    accounts: { id: string; label: string }[]; proofs: Evidence[]; bills: Evidence[]; expense_proofs: Evidence[]; projects: { id: string; number: string; title: string }[]; purchases: { id: string; number: string; supplier: string }[];
+    accounts: { id: string; label: string }[]; proofs: Evidence[]; bills: Evidence[]; expense_proofs: Evidence[]; projects: { id: string; number: string; title: string }[]; purchases: { id: string; number: string; supplier: string; cancelled: boolean }[];
     expenses: { id: string; category: string; date: string; net: string }[]; tax_types: { code: string; name: string }[]; tax_proofs: Evidence[]; cases: { id: string; open: string }[];
     transfers: { id: string; company: string; date: string; left: string }[]; lines: { id: string; account: string; date: string; reference: string; uncited: string }[]; can: Record<Kind, boolean> & { upload: boolean };
 };
@@ -138,7 +138,7 @@ function RecordSheet({ kind, branches, form: loaded, today, back, onClose }: { k
                                 {form?.can.upload === true && <Button variant="outline" size="sm" className="self-start" onClick={() => { setUploading({ types: ['SUPPLIER_BILL'], target: 'extra' }); }}>{t('other_cash.action.upload_bill')}</Button>}
                             </>
                         )}
-                        {kind === 'disbursement' && type === 'PURCHASE_PAYMENT' && <Choice label={t('other_cash.field.purchase')} required value={reference} onChange={setReference} options={(form?.purchases ?? []).map((each) => ({ value: each.id, label: each.supplier === '' ? each.number : `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />}
+                        {kind === 'disbursement' && type === 'PURCHASE_PAYMENT' && <Choice label={t('other_cash.field.purchase')} required value={reference} onChange={setReference} options={(form?.purchases ?? []).filter((each) => !each.cancelled).map((each) => ({ value: each.id, label: each.supplier === '' ? each.number : `${each.number} · ${each.supplier}` }))} error={record.errors.pembelian} />}
                         {kind === 'disbursement' && type === 'EXPENSE_PAYMENT' && <Choice label={t('other_cash.field.expense')} required value={reference} onChange={setReference} options={(form?.expenses ?? []).map((each) => ({ value: each.id, label: `${each.category} · ${each.date} · ${money(each.net)}` }))} error={record.errors.beban} />}
                         {kind === 'disbursement' && type === 'TAX_REMITTANCE' && (
                             <>
