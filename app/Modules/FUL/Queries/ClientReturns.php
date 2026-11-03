@@ -242,8 +242,8 @@ final class ClientReturns
             'serialized' => (bool) Row::text($row, 'is_serialized'), 'scale' => (int) Row::text($row, 'quantity_scale'),
             'delivered' => self::plain((string) BigDecimal::max(BigDecimal::zero(), BigDecimal::of(Row::text($row, 'delivered')))), 'returned' => self::plain(Row::text($row, 'returned')),
             // What is still with the client: no more of a consumption than the line's net delivered (PX-08).
-            'consumptions' => array_values(array_map(fn (array $consumption): array => [...$consumption, 'open' => self::plain((string) BigDecimal::min(BigDecimal::of($consumption['open']), BigDecimal::max(BigDecimal::zero(), BigDecimal::of(Row::text($row, 'delivered')))))],
-                $byLine[(int) Row::text($row, 'id')] ?? [])),
+            'consumptions' => array_map(fn (array $consumption): array => [...$consumption, 'open' => self::plain((string) BigDecimal::min(BigDecimal::of($consumption['open']), BigDecimal::max(BigDecimal::zero(), BigDecimal::of(Row::text($row, 'delivered')))))],
+                $byLine[(int) Row::text($row, 'id')] ?? []),
         ], array_filter($rows, fn (object $row): bool => BigDecimal::of(Row::text($row, 'delivered'))->isPositive() || BigDecimal::of(Row::text($row, 'returned'))->isPositive())));
     }
 
@@ -258,7 +258,7 @@ final class ClientReturns
         $cases = DB::table('correction_cases as k')->leftJoin('inventory_lots as i', 'i.id', '=', 'k.source_lot_id')->where('k.project_id', $projectId)->where('k.case_kind', 'SALES_RETURN')->orderByDesc('k.id')->limit(self::PAGE)
             ->get(['k.id', 'k.public_id', 'k.state', 'k.reason', 'k.lock_version', 'k.recorded_at', 'k.source_lot_id', 'i.lot_code',
                 DB::raw("(select a.metadata->'steps' from audit_events a where a.entity_type = 'correction_case' and a.entity_id = k.id and a.action = 'OPS.CorrectionCaseOpened' order by a.id limit 1) as steps"),
-                DB::raw("exists (select 1 from invoices v where v.void_correction_case_id = k.id) or exists (select 1 from invoice_versions w where w.basis_correction_case_id = k.id) as invoiced_done"),
+                DB::raw('exists (select 1 from invoices v where v.void_correction_case_id = k.id) or exists (select 1 from invoice_versions w where w.basis_correction_case_id = k.id) as invoiced_done'),
                 DB::raw("(select coalesce(sum(b.qty), 0) from stock_lot_balances b where b.lot_id = k.source_lot_id and b.condition = 'UNUSABLE') as unusable_left")])->all();
         $ids = array_map(fn (object $row): int => (int) Row::text($row, 'id'), $cases);
 
@@ -270,7 +270,7 @@ final class ClientReturns
             ->join('project_line_balances as pb', 'pb.project_line_id', '=', 'd.project_line_id')->whereIn('r.correction_case_id', $ids)->orderBy('r.id')
             ->get(['r.id', 'r.correction_case_id', 'r.qty_base', 'r.returned_condition', 'm.public_id as movement', 'm.business_date', 'd.project_line_id',
                 DB::raw("(select coalesce(sum(x.qty_delta_base), 0) from stock_movement_entries x where x.stock_restoration_id = r.id and x.movement_type = 'MOVEMENT_REVERSAL') as reversed"),
-                DB::raw("(select coalesce(-sum(a.amount), 0) from cost_attributions a where a.stock_restoration_id = r.id) as contra"),
+                DB::raw('(select coalesce(-sum(a.amount), 0) from cost_attributions a where a.stock_restoration_id = r.id) as contra'),
                 DB::raw('pb.demand_qty_base - pb.dispatched_net_qty_base - pb.dropship_confirmed_net_qty_base - pb.handed_over_qty_base - pb.cancelled_qty_base as remainder')])->all();
         $byCase = [];
 
@@ -287,12 +287,12 @@ final class ClientReturns
             return [
                 'id' => Row::text($case, 'public_id'), 'state' => Row::text($case, 'state'), 'reason' => Row::nullable($case, 'reason'), 'lock_version' => (int) Row::text($case, 'lock_version'), 'date' => substr(Row::text($case, 'recorded_at'), 0, 10),
                 'lot' => Row::nullable($case, 'lot_code'),
-                'steps' => array_values(array_map(fn (string $step): array => ['key' => $step, 'done' => $done[$step] ?? false], array_values(array_filter(is_array($steps) ? $steps : [], is_string(...))))),
-                'restorations' => array_values(array_map(fn (object $row): array => [
+                'steps' => array_map(fn (string $step): array => ['key' => $step, 'done' => $done[$step] ?? false], array_values(array_filter(is_array($steps) ? $steps : [], is_string(...)))),
+                'restorations' => array_map(fn (object $row): array => [
                     'id' => RowHandle::of('stock_restorations', (int) Row::text($row, 'id')), 'movement' => Row::text($row, 'movement'), 'date' => Row::text($row, 'business_date'),
                     'quantity' => self::plain(Row::text($row, 'qty_base')), 'standing' => self::plain((string) BigDecimal::of(Row::text($row, 'qty_base'))->plus(Row::text($row, 'reversed'))), 'condition' => Row::nullable($row, 'returned_condition'),
                     ...($cost ? ['contra' => Money::of(Row::text($row, 'contra'))->toString()] : []),
-                ], $rows)),
+                ], $rows),
             ];
         }, $cases));
     }

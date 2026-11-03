@@ -223,12 +223,12 @@ final class DispatchRestoration
             $entries[] = ['lot' => $row['lot'], 'product' => $product, 'scale' => $scale, 'location' => $item['location'], 'condition' => $item['condition'], 'qty' => (string) $row['qty'], 'restoration' => $restoration, ...($item['serial'] === null ? [] : ['serial' => $item['serial']])];
         }
 
-        $this->demand->dispatched($context, $lineId, (string) $total->negated());
-
-        // The client's return lowers net delivered; the delivery record itself stays (PX-08; CM-10).
+        // The client's return lowers net delivered first — it never stands above net dispatched (C-30) —; the delivery record itself stays (PX-08; CM-10).
         if ($sales) {
             $this->demand->delivered($context, [$lineId => (string) $total->negated()]);
         }
+
+        $this->demand->dispatched($context, $lineId, (string) $total->negated());
         // The consumed reservation stays CONSUMED: the offer is a new reservation, bound with the restored units counted (L-07; CM-05).
         $reserved = $offered->isPositive() ? $this->inventory->reserveReceived($context, $lineId, (string) $offered, (string) $usable) : null;
         $ids = $this->inventory->ledger($context, $movement, 'RESTORATION', $entries, $reserved);

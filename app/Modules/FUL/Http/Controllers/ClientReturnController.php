@@ -27,9 +27,7 @@ final class ClientReturnController extends Controller
 {
     private const QUANTITY = 'regex:/^\d{1,15}(\.\d{1,3})?$/';
 
-    public function __construct(
-        private readonly ClientReturns $returns,
-    ) {}
+    public function __construct(private readonly ClientReturns $returns) {}
 
     /** ROUTE-034: the shipments the client received, the cases with their steps, the restored units. */
     public function show(Request $request, string $id): Response

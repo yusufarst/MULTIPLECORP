@@ -52,17 +52,17 @@ function racedShipment(object $test, string $shipped, string $delivered): object
     return $shipment;
 }
 
+
 it('lets one of two returns of the same delivered units commit, the other REJECTED with nothing left, never both (C-30; LK-19; LK-24; criterion 1)', function () {
     $shipment = racedShipment($this, '2', '2');
     [$actor, $company, $rack, $proof, $dispatch, $consumption] = [$this->actor, $this->company->id, $this->rack, $this->proof, $shipment->dispatch, $shipment->consumption];
-    $return = static fn (): string => ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof);
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold($return, 'the first holds the shipment'),
-        'second' => static function () use ($return): string {
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof), 'the first holds the shipment'),
+        'second' => static function () use ($actor, $company, $rack, $proof, $dispatch, $consumption): string {
             Barrier::await('the first holds the shipment');
 
-            return $return();
+            return ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof);
         },
     ]);
 
@@ -75,15 +75,17 @@ it('lets one of two returns of the same delivered units commit, the other REJECT
 it('commits a client\'s return and its share of the units racing in both orders, each restoring its own units once (C-27; LK-19; LK-24)', function (bool $salesFirst) {
     $shipment = racedShipment($this, '3', '2');
     [$actor, $company, $rack, $proof, $dispatch, $consumption] = [$this->actor, $this->company->id, $this->rack, $this->proof, $shipment->dispatch, $shipment->consumption];
-    $sales = static fn (): string => ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof);
-    $undelivered = static fn (): string => DispatchWorld::restore($actor, $company, $dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($consumption, $rack, '1')]);
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold($salesFirst ? $sales : $undelivered, 'the first holds the shipment'),
-        'second' => static function () use ($salesFirst, $sales, $undelivered): string {
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $salesFirst
+            ? ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof)
+            : DispatchWorld::restore($actor, $company, $dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($consumption, $rack, '1')]), 'the first holds the shipment'),
+        'second' => static function () use ($salesFirst, $actor, $company, $rack, $proof, $dispatch, $consumption): string {
             Barrier::await('the first holds the shipment');
 
-            return $salesFirst ? $undelivered() : $sales();
+            return $salesFirst
+                ? DispatchWorld::restore($actor, $company, $dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($consumption, $rack, '1')])
+                : ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '2')], $proof);
         },
     ]);
 
@@ -97,15 +99,17 @@ it('commits a client\'s return and its share of the units racing in both orders,
 it('follows the cascade when a return races a cost correction of its lot, the costs reconciling in either order (M-07)', function (bool $returnFirst) {
     $shipment = racedShipment($this, '2', '2');
     [$actor, $company, $rack, $proof, $dispatch, $consumption, $lot] = [$this->actor, $this->company->id, $this->rack, $this->proof, $shipment->dispatch, $shipment->consumption, $this->lot];
-    $return = static fn (): string => ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '1')], $proof);
-    $correct = static fn (): string => DispatchWorld::correctLotCost($actor, $lot, '1200');
 
     $results = Sessions::run([
-        'first' => static fn (): string => InvoiceWorld::hold($returnFirst ? $return : $correct, 'the first holds the lot'),
-        'second' => static function () use ($returnFirst, $return, $correct): string {
+        'first' => static fn (): string => InvoiceWorld::hold(static fn (): string => $returnFirst
+            ? ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '1')], $proof)
+            : DispatchWorld::correctLotCost($actor, $lot, '1200'), 'the first holds the lot'),
+        'second' => static function () use ($returnFirst, $actor, $company, $rack, $proof, $dispatch, $consumption, $lot): string {
             Barrier::await('the first holds the lot');
 
-            return $returnFirst ? $correct() : $return();
+            return $returnFirst
+                ? DispatchWorld::correctLotCost($actor, $lot, '1200')
+                : ClientReturnWorld::restore($actor, $company, $dispatch, [DispatchWorld::item($consumption, $rack, '1')], $proof);
         },
     ]);
 

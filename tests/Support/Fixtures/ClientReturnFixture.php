@@ -48,7 +48,10 @@ final class ClientReturnFixture
             return response()->json(['error' => $word], 422);
         }
 
-        $returned = EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY', 'evidence_type' => 'DELIVERY_PROOF', 'declared_issuer' => 'Foto barang kembali', 'issuer_reference' => 'RET-UJI-'.$request->input('shipment')]);
+        // Its own identity: the factory's sequence starts again in every request (C-49).
+        $reference = 'RET-UJI-'.(string) $request->input('shipment');
+        $returned = EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY', 'evidence_type' => 'DELIVERY_PROOF', 'declared_issuer' => 'Foto barang kembali', 'issuer_reference' => $reference,
+            'identity_key' => 'foto barang kembali|DELIVERY_PROOF|'.strtolower($reference).'|2026-10-01']);
 
         return response()->json([
             'project_id' => DB::table('projects')->where('id', $dispatch->project_id)->value('public_id'),
