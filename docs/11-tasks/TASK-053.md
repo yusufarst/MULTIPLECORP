@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -222,6 +222,17 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 7. Credit and refunds show nothing without `finance.view`, and "Kembalikan Dana" is absent without `refund.record` (AZ-01; SM-04; SM-25).
 8. Each rupiah of a source's rest counts for exactly one project (WF-FIN-06; DIR-104): a payment across two projects blocks only the project its rest counts for, and one credit is never held twice; a source with no application counts for none; project-originated credit held with its reason from PG-048, audited, counts as dispositioned for completion predicate 9, and credit arising afterwards blocks again, even after the held credit was spent; credit neither applied, refunded nor held still blocks it (WF-FIN-06; WF-PRJ-03; TASK_PLAN §8).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Finance/CustomerCreditTest.php` — FX-01 3: a Rp1,200,000 payment against Rp1,000,000 shows Rp200,000 credit for that client and company traced to the payment (PG-048's query), its refund one REFUND application backing a REFUND disbursement — Cash-Out —, the same money then refused for an invoice (C-13); `tests/Unit/FIN/CreditAttributionTest.php` — the derived figures; `tests/Feature/FIN/CustomerCreditPagesTest.php` — PG-048's figures.
+- Criterion 2: `CustomerCreditTest` — a refund of an unevidenced payment's credit, one above the capacity and one without transfer evidence each refused, nothing written; the refund born fully backed (its money fact backed = amount, no shortfall); `CustomerCreditPagesTest` and `tests/Interaction/CustomerCreditTest.php` — the refusal with its figure.
+- Criterion 3: TASK-051's `tests/Feature/FIN/PaymentsTest.php` and `tests/Integration/Finance/PaymentRacesTest.php` and TASK-052's `tests/Feature/FIN/DeductionsTest.php`, now over refunds recorded through ROUTE-256's own action (`PaymentWorld::refund`) — the consumed application offers no move (L-46), only the refund's contra returns it to credit.
+- Criterion 4: `PaymentRacesTest` (FX-04) — the Rp1 contra refused as the attack and committed as the legitimate shortfall at a real commit, the capacity staying nothing; the shortfall resolved by a later payment, the case's figure following.
+- Criterion 5: TASK-051's `ApplyPayment` reused by "Terapkan ke Invoice", PG-048 offering only the client's issued invoices in the company (BR-FIN-07; C-14).
+- Criterion 6: `tests/Integration/Finance/CreditRacesTest.php` — a refund racing an application of the same credit on real sessions, in both orders, one committing and the other C-13, the capacity never above the money; `CustomerCreditTest` and the interaction test — one `command_id` replayed refunds once, a changed body CONFLICT.
+- Criterion 7: `CustomerCreditPagesTest` — PG-048 refused without `finance.view`, its commands absent and refused without `refund.record`, another company's credit unknown; the transfer proofs only to whom may refund (PJ-08).
+- Criterion 8: `CreditAttributionTest` — each rupiah of a source's rest counted for one project: a source with no application none, a payment across two projects only its earliest application's, a released application its own project's, a reallocation's un-reapplied part, a contra's disposed part only, a re-recorded payment's moved application, a refund and its whole or partial contra; `CustomerCreditTest` — a hold with its reason covering what has arisen, refused when covered, when nothing is left or when the project is not active, credit arising afterwards holdable again even after the held credit was spent.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -247,32 +258,32 @@ CAP-10 and AC-10 require excess money to be explicit credit or refund, never pro
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `finance.view`, `refund.record` and `payment.apply` by their routes and controls (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-048, ROUTE-256 and ROUTE-264 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-256 and INT-264 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-06 — the hold and the refund on PG-048 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: one expand-only column with its CHECK and grant; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's two reviews, each finding fixed with its test where one could be written
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `83f00ac`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41641198648 (push) and 41641207974 (pull request #66), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/CustomerCreditTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 83f00ac, CI ubuntu-24.04 run 41641198648, tests/Browser/E2E/credit.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-048 in both languages — `tests/Browser/Localization/credit.spec.ts` PASS; 41 keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: FIN's `Actions/RefundCredit` and `HoldCredit`, `Data/CreditAttribution`, `Services/CreditProjects`, `Queries/CustomerCredit`, `Http/Controllers/CustomerCreditController`; the migration `2026_11_03_000149_prj_add_credit_held_amount_to_projects`; `resources/js/Pages/FIN/CustomerCredit.tsx`, `features/fin/finance-nav.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixtures and browser specs (`PaymentWorld::refund` now through the real action)
+- Commit SHA: from the start commit to `83f00ac` on `task/TASK-053-customer-credit`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review found 2 P1 — a re-recorded payment's moved application never counted, a partial contra's applied part taken whole — and 5 P2 — a partial refund contra giving back the whole refund, a replay order read from the purged command log, the refund's source row unlocked and its lock set not re-derived, PG-048 without paging, transfer proofs shown to whom may not refund —, each fixed, the attribution ones with their tests; its P3 on the hold's sources fixed. Codex reviewed twice: its review of `39bd08d` found 3 P2 — a refund's trail lost through a partial source contra, money given back before the first application left out, no retry for an unknown outcome on PG-048 —, each fixed in `83f00ac`, the first two with their tests; its targeted review of `83f00ac` as the pull request records it; each answered on the pull request. Readings within the approved text, for Planning: (1) the replay orders a source's commands by what they wrote — a row's own time, an ending command's contra, else a successor it created, else its first audit event —, never the purged command log; (2) a successor on the same source carries its ended row's money and trail, one on another source (a re-recording's move) is that source's own new application; (3) money given back before a source's first invoice application stays unattributed until that application's command; (4) the hold's audit names its sources — payments by public id, opening credits by import row. Not done, for Planning: the refund's audit carries no linkage to its source's application row beyond its source's name; `CreditProjects` reads a source's applications and contras in separate READ COMMITTED statements, so a contra committing between them may be counted without its ends for one page load; credit linked to a written-off invoice is not separately listed for the Owner (QS-12, TASK-050's) on PG-048. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 
