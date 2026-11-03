@@ -17796,6 +17796,600 @@
             "source": "LG-01; DIR-104 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "other_cash.intro": {
+            "task": "TASK-054",
+            "source": "PG-049; BR-FIN-01; BR-FIN-11; L-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.tab.pengeluaran": {
+            "task": "TASK-054",
+            "source": "PG-049; SCR-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.tab.beban": {
+            "task": "TASK-054",
+            "source": "PG-049; SCR-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.tab.kas-masuk": {
+            "task": "TASK-054",
+            "source": "PG-049; SCR-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.empty.pengeluaran": {
+            "task": "TASK-054",
+            "source": "PG-049; PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.empty.beban": {
+            "task": "TASK-054",
+            "source": "PG-049; PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.empty.kas-masuk": {
+            "task": "TASK-054",
+            "source": "PG-049; PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind.PURCHASE_PAYMENT": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind.EXPENSE_PAYMENT": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind.TAX_REMITTANCE": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; BR-FIN-17 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind.INTERCOMPANY_TRANSFER_OUT": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind.REFUND": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; WF-FIN-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind_help.PURCHASE_PAYMENT": {
+            "task": "TASK-054",
+            "source": "J-FIN-07; BR-FIN-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind_help.EXPENSE_PAYMENT": {
+            "task": "TASK-054",
+            "source": "BR-FIN-11; FS-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind_help.TAX_REMITTANCE": {
+            "task": "TASK-054",
+            "source": "BR-FIN-17; L-43 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.kind_help.INTERCOMPANY_TRANSFER_OUT": {
+            "task": "TASK-054",
+            "source": "BR-FIN-07; FS-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category.CASHBACK_INCOME": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; BR-FIN-10 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category.OTHER_INCOME": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category.SUPPLIER_REFUND": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; L-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category.INTERCOMPANY_TRANSFER_IN": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category.OTHER_NON_INCOME": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category_help.CASHBACK_INCOME": {
+            "task": "TASK-054",
+            "source": "BR-FIN-10; FS-13 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category_help.OTHER_INCOME": {
+            "task": "TASK-054",
+            "source": "BR-FIN-10 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category_help.SUPPLIER_REFUND": {
+            "task": "TASK-054",
+            "source": "L-08; CM-18; CM-30 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category_help.INTERCOMPANY_TRANSFER_IN": {
+            "task": "TASK-054",
+            "source": "BR-FIN-07; XL-5 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.category_help.OTHER_NON_INCOME": {
+            "task": "TASK-054",
+            "source": "L-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.origin.FEE_DEDUCTION": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.8; C-23 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.origin.TAX_TREATMENT": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.8; L-43 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.origin.PURCHASE_CHARGE": {
+            "task": "TASK-054",
+            "source": "DATABASE §4.8; BR-PUR-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.income": {
+            "task": "TASK-054",
+            "source": "BR-FIN-10 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.non_income": {
+            "task": "TASK-054",
+            "source": "L-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.company_level": {
+            "task": "TASK-054",
+            "source": "CALC-09; CALC-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.transfer_from": {
+            "task": "TASK-054",
+            "source": "XL-5; IA §7 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.cited_by": {
+            "task": "TASK-054",
+            "source": "XL-5; IA §7 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.standing": {
+            "task": "TASK-054",
+            "source": "SF-CONTRA (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.contraed": {
+            "task": "TASK-054",
+            "source": "CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.part_contraed": {
+            "task": "TASK-054",
+            "source": "CM-38; C-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.kind": {
+            "task": "TASK-054",
+            "source": "PG-049 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.category": {
+            "task": "TASK-054",
+            "source": "PG-049 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.cites": {
+            "task": "TASK-054",
+            "source": "PG-049 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.account": {
+            "task": "TASK-054",
+            "source": "PG-049; C-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.from_account": {
+            "task": "TASK-054",
+            "source": "ROUTE-258; C-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.to_account": {
+            "task": "TASK-054",
+            "source": "ROUTE-259; C-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.project": {
+            "task": "TASK-054",
+            "source": "ROUTE-257; CALC-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.bill": {
+            "task": "TASK-054",
+            "source": "ROUTE-257; L-43; C-20 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.purchase": {
+            "task": "TASK-054",
+            "source": "ROUTE-258; ROUTE-259 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.expense": {
+            "task": "TASK-054",
+            "source": "ROUTE-258 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.tax_type": {
+            "task": "TASK-054",
+            "source": "ROUTE-258; BR-FIN-17 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.return_case": {
+            "task": "TASK-054",
+            "source": "ROUTE-259; L-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.transfer": {
+            "task": "TASK-054",
+            "source": "ROUTE-259; XL-5 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.line": {
+            "task": "TASK-054",
+            "source": "ROUTE-259; C-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.proof": {
+            "task": "TASK-054",
+            "source": "L-29; IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.field.note": {
+            "task": "TASK-054",
+            "source": "ROUTE-259 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.disbursement_line": {
+            "task": "TASK-054",
+            "source": "INT-258; BR-FIN-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.expense_line": {
+            "task": "TASK-054",
+            "source": "INT-257; CALC-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.cashin_line": {
+            "task": "TASK-054",
+            "source": "INT-259; BR-FIN-10 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.what": {
+            "task": "TASK-054",
+            "source": "PG-049; PT-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.reference": {
+            "task": "TASK-054",
+            "source": "PG-049; PT-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.category_help": {
+            "task": "TASK-054",
+            "source": "C-23; BR-PUR-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.project_help": {
+            "task": "TASK-054",
+            "source": "CALC-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.bill_help": {
+            "task": "TASK-054",
+            "source": "L-43; C-20 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.refund_help": {
+            "task": "TASK-054",
+            "source": "L-08; DATABASE §6.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.case_open": {
+            "task": "TASK-054",
+            "source": "C-46 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.transfer_help": {
+            "task": "TASK-054",
+            "source": "XL-5; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.transfer_left": {
+            "task": "TASK-054",
+            "source": "BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.transfer_out_help": {
+            "task": "TASK-054",
+            "source": "FS-07; BR-FIN-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.form.line_help": {
+            "task": "TASK-054",
+            "source": "C-19; DATABASE §4.12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.action.contra": {
+            "task": "TASK-054",
+            "source": "CM-38; ROUTE-260 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.action.upload_bill": {
+            "task": "TASK-054",
+            "source": "IP-16 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.confirm.disbursement": {
+            "task": "TASK-054",
+            "source": "INT-258; MSG-39 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.confirm.expense": {
+            "task": "TASK-054",
+            "source": "INT-257; MSG-39 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.confirm.cashin": {
+            "task": "TASK-054",
+            "source": "INT-259; MSG-39 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.confirm.contra_pengeluaran": {
+            "task": "TASK-054",
+            "source": "INT-260; CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.confirm.contra_beban": {
+            "task": "TASK-054",
+            "source": "INT-260; CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.answer.disbursement": {
+            "task": "TASK-054",
+            "source": "INT-258; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.answer.expense": {
+            "task": "TASK-054",
+            "source": "INT-257; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.answer.cashin": {
+            "task": "TASK-054",
+            "source": "INT-259; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.bill": {
+            "task": "TASK-054",
+            "source": "C-20; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.tax_proof_room": {
+            "task": "TASK-054",
+            "source": "C-18; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.tax_proof": {
+            "task": "TASK-054",
+            "source": "C-58 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.tax_rule": {
+            "task": "TASK-054",
+            "source": "BR-FIN-17; FS-13 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.tax_treatment": {
+            "task": "TASK-054",
+            "source": "BR-FIN-17; DATABASE §12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.line": {
+            "task": "TASK-054",
+            "source": "C-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.line_room": {
+            "task": "TASK-054",
+            "source": "C-19; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.reserved_category": {
+            "task": "TASK-054",
+            "source": "C-23; BR-PUR-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.account": {
+            "task": "TASK-054",
+            "source": "C-32 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.case_open": {
+            "task": "TASK-054",
+            "source": "C-46; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.proof": {
+            "task": "TASK-054",
+            "source": "L-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.company_issued": {
+            "task": "TASK-054",
+            "source": "L-29; FL-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.evidence": {
+            "task": "TASK-054",
+            "source": "L-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.transfer_scope": {
+            "task": "TASK-054",
+            "source": "XL-5 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.transfer_capacity": {
+            "task": "TASK-054",
+            "source": "BR-FIN-07; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.bill_as_proof": {
+            "task": "TASK-054",
+            "source": "L-43; C-20 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "other_cash.refusal.cancelled": {
+            "task": "TASK-054",
+            "source": "LR-10; ST-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.answer.contraed_pengeluaran": {
+            "task": "TASK-054",
+            "source": "INT-260; CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "deductions.answer.contraed_beban": {
+            "task": "TASK-054",
+            "source": "INT-260; CM-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.CST.ExpenseRecorded": {
+            "task": "TASK-054",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.DisbursementRecorded": {
+            "task": "TASK-054",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.OtherCashInRecorded": {
+            "task": "TASK-054",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

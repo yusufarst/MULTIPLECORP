@@ -19,6 +19,8 @@ use Tests\Support\CostWorld;
 use Tests\Support\DatabaseTruncation;
 use Tests\Support\DispatchWorld;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\OtherCashWorld;
+use Tests\Support\PaymentWorld;
 use Tests\Support\ReceivingWorld;
 use Tests\Support\ReservationWorld;
 use Tests\Support\ReturnWorld;
@@ -344,3 +346,30 @@ it('leaves a return racing a dispatch of the same lot one of them, never both be
         ->and(returnOnHand($product))->toBe('3.000');
     returnClean();
 })->with(['the dispatch first' => true, 'the return first' => false]);
+
+it('takes a supplier refund through ROUTE-259 as non-income Cash-In, its RETURN_REFUNDED adjustment raising the case\'s refunded figure within what it awaits (L-08; DATABASE §6.1; C-46; TASK-054 criterion 4)', function () {
+    expect(ReturnWorld::returnUnits($this->actor, $this->lot, [AdjustmentWorld::pick($this->lot, $this->rack, '2')]))->toBe('COMMITTED');
+    $case = ReturnWorld::lastCase();
+    $purchase = ReturnWorld::purchaseOf($this->lot);
+    $returned = ReturnWorld::figures($case)['returned'];
+    $half = (string) BigDecimal::of($returned)->dividedBy('2', 2, RoundingMode::Down);
+    $cashier = OtherCashWorld::actor($this->company->id);
+    $account = PaymentWorld::account($this->company->id);
+
+    $above = OtherCashWorld::cashIn($cashier, $this->company->id, 'SUPPLIER_REFUND', (string) BigDecimal::of($returned)->plus('1'), $account, ['case' => $case]);
+    expect($above->code)->toBe('C-46')->and($above->state['open'])->toBe($returned);
+
+    // Another purchase than the case's is refused like an unknown reference.
+    $other = CostWorld::make($this->company)->purchase()->id;
+    expect(OtherCashWorld::cashIn($cashier, $this->company->id, 'SUPPLIER_REFUND', $half, $account, ['case' => $case, 'purchase' => $other])->code)->toBe('C-14');
+
+    $receipt = OtherCashWorld::committed(OtherCashWorld::cashIn($cashier, $this->company->id, 'SUPPLIER_REFUND', $half, $account, ['case' => $case]));
+    expect(DB::table('other_cash_receipts')->where('id', $receipt)->first(['income_class', 'purchase_id', 'correction_case_id']))->toEqual((object) ['income_class' => 'NON_INCOME', 'purchase_id' => $purchase, 'correction_case_id' => $case])
+        ->and(ReturnWorld::figures($case))->toMatchArray(['refunded' => $half, 'state' => 'OPEN'])
+        ->and((string) DB::table('purchase_line_adjustments')->where('kind', 'RETURN_REFUNDED')->where('correction_case_id', $case)->value('amount_delta'))->toBe($half)
+        ->and(DB::table('money_fact_balances')->where('other_cash_receipt_id', $receipt)->value('fact_kind'))->toBe('CASH_IN')
+        // A refund for an overpaid purchase names the purchase alone: no case moves.
+        ->and(OtherCashWorld::cashIn($cashier, $this->company->id, 'SUPPLIER_REFUND', '1000', $account, ['purchase' => $purchase])->kind)->toBe('COMMITTED')
+        ->and(ReturnWorld::figures($case)['refunded'])->toBe($half);
+    returnClean();
+});

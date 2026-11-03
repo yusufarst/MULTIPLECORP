@@ -526,6 +526,26 @@ final class CostPosting
         return $id;
     }
 
+    /**
+     * A MANUAL expense (ROUTE-257; NX-10; CALC-09; CALC-11; DATABASE §4.8): the actual cost of its causal project, or of the company when none, with its money-fact guard; a source bill it
+     * cites directly raises that bill's cited amount under the bill's guard, so one bill caps its charges and expenses together (L-43; C-20). Its evidence is linked by the caller.
+     */
+    public function manualExpense(CommandContext $context, int $companyId, ?int $projectId, string $category, Money $amount, string $businessDate, ?int $sourceBillId): int
+    {
+        if ($sourceBillId !== null) {
+            $this->cite($context, $sourceBillId, $amount);
+        }
+
+        $ledger = new CostLedger($context);
+        $id = $ledger->expense([
+            'company_id' => $companyId, 'project_id' => $projectId, 'kind' => 'MANUAL', 'category' => $category, 'amount' => $amount->toString(), 'business_date' => $businessDate,
+            ...($sourceBillId === null ? [] : ['source_bill_evidence_id' => $sourceBillId, 'source_bill_evidence_type' => 'SUPPLIER_BILL']),
+        ]);
+        GuardUpdate::bear($context->connection, 'money_fact_balances', ['expense_id' => $id], ['company_id' => $companyId, 'fact_kind' => 'EXPENSE', 'amount' => $amount->toString(), 'recorded_at' => $context->now()]);
+
+        return $id;
+    }
+
     /*
      * Consumption.
      */

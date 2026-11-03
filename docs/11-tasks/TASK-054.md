@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -224,6 +224,17 @@ O-05, CAP-11 and AC-11 require actual/direct cost to stay apart from actual Cash
 7. Each form exists only with its capability; expenses are visible only with `cost.view`, cash facts with `finance.view` (AZ-01; RG-06; SM-04; SM-25).
 8. One `command_id` replayed records once; a wrong fact is corrected only by its contra, both visible (CI-05; CM-38; BR-CR-02).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Finance/OtherCashRacesTest.php` — a cost recorded creates no disbursement; a purchase paid once through ROUTE-258's action, a cancelled one refused ST-02 at its header (LR-10); `tests/Feature/FIN/OtherCashPagesTest.php` — the purchase shown paid (`PurchaseCorrections::paid`) only after "Catat Pengeluaran Kas"; TASK-037's `tests/Feature/PUR/PurchasesTest.php` now pays through the real action; J-FIN-07 in `tests/Browser/E2E/other-cash.spec.ts`.
+- Criterion 2: `OtherCashPagesTest` and `OtherCashRacesTest` — a project expense in that project's direct cost once (CALC-09), a company-level one in the company's (CALC-11), FEE_DEDUCTION, TAX_TREATMENT and PURCHASE_CHARGE refused C-23 whatever their case; `tests/Unit/FIN/OtherCashTest.php` — the reserved categories.
+- Criterion 3: `OtherCashRacesTest` — an expense and a purchase charge citing one Rp100,000 bill on real sessions, in both orders, one committing and the other REJECTED C-20; sequentially the expense above the bill's rest refused with its figure, the rest cited to the bill's total, a charge beyond it refused; an amount-bearing document refused as a plain proof (L-43).
+- Criterion 4: TASK-044's `tests/Integration/Inventory/SupplierReturnsTest.php` — a supplier refund through ROUTE-259 as NON_INCOME Cash-In with its RETURN_REFUNDED adjustment, the case's refunded figure raised, above what the case awaits refused C-46, another purchase than the case's refused; a refund for an overpaid or cancelled purchase without a case; `OtherCashPagesTest` — cashback as INCOME; `OtherCashTest` — the income class by category, no formula.
+- Criterion 5: `OtherCashPagesTest` — a remittance citing its TAX_PAYMENT_PROOF within what it proves under the REMITTANCE_NOT_COST rule, its treatment rule recorded, the company's expenses unchanged; no rule refused BR-FIN-17; another evidence type refused C-58.
+- Criterion 6: `OtherCashRacesTest` — two transfers-in citing one Rp500,000 transfer-out on real sessions, one committing, the other REJECTED BR-FIN-07; `OtherCashPagesTest` and `tests/Authorization/OtherCashAccessTest.php` — an Admin without the paying company refused XL-5, the Owner within the net amount, "perusahaan lain" unless both companies are in scope; nothing created in the other company.
+- Criterion 7: `OtherCashAccessTest` and `OtherCashPagesTest` — each form only with its capability, each command forbidden without it, expenses only with `cost.view` (tabs, rows, form, command), purchase references only with `cost.view` (row 114), another company's purchase, project, bill, account or proof answering like an unknown one.
+- Criterion 8: `tests/Interaction/OtherCashTest.php` — one `command_id` replayed records once for INT-257–INT-259, a changed body CONFLICT; `OtherCashPagesTest` — a paid expense's contra refused until its payment's contra, both contras through ROUTE-260 from PG-049, both records visible.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -247,32 +258,32 @@ O-05, CAP-11 and AC-11 require actual/direct cost to stay apart from actual Cash
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `expense.record` with `cost.view`, `disbursement.record`, `cashin.record`, a transfer citation without both companies in scope (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-049, ROUTE-257–ROUTE-259 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-257–INT-259 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FIN-07 — a purchase paid, a project expense citing its bill, received cashback, the payment's contra (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: no schema change; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's two reviews, each finding fixed with its test or answered
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `f392b4a`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41701482594 (push) and 41701493957 (pull request #67), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/OtherCashTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: f392b4a, CI ubuntu-24.04 run 41701482594, tests/Browser/E2E/other-cash.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-049 in both languages — `tests/Browser/Localization/other-cash.spec.ts` PASS; 99 keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: CST's `Actions/RecordExpense` and `CostPosting::manualExpense`; FIN's `Actions/RecordDisbursement` and `RecordOtherCashIn`, `Data/OtherCash`, `Queries/OtherCashList`, `Http/Controllers/OtherCashController` and the contra answer of `DeductionsController`; PUR's `ReturnOutcomes::refundReceived`; `resources/js/Pages/FIN/OtherCash.tsx`, `features/fin/finance-nav.tsx`, `lib/navigation.ts`; `lang/`; the routes; the tests, fixture and browser specs — the earlier Tasks' inserted expenses and disbursements now recorded through the real actions (`OtherCashWorld`)
+- Commit SHA: from the start commit to `f392b4a` on `task/TASK-054-expenses`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. A power loss interrupted the build after its first three commits; the local work was recovered intact and continued (the Owner's recovery directive). ER-06's independent review found 4 P2 — the test helper's default proof outside its actor's family, two company-expense expectations against CALC-11, the browser locators, a supplier bill accepted as a plain proof outside its cap (L-43) —, each fixed, the last with its test; its P3s on PJ-08 for cited evidence fixed. Codex reviewed twice: its review of `94bc9b7` found 2 P1 and 2 P2 — purchase references shown without `cost.view`, cancelled purchases missing from the supplier-refund choices, a non-attributable charge's expense missing from the list, each fixed in `f392b4a` with its test; and no correction path for a recorded other Cash-In, answered on the pull request (below) —; its targeted review of `f392b4a` found 1 P2 — cancelled purchases crowding payable ones out of the bounded payment choices —, fixed in `1611525` (each list bounded on its own), verified with this record by the pull request head's CI. Executor discoveries, for Planning: (1) a TAX_REMITTANCE rule of treatment REMITTANCE_TO_EXPENSE is refused (BR-FIN-17 `treatment`) — `expenses_c58_evidence_by_kind` admits no TAX_TREATMENT expense citing a TAX_PAYMENT_PROOF, and this Task's schema change is NONE; (2) AX-33, CM-38 and ROUTE-260 contra a settlement, expense, disbursement or attribution only, while this contract's rules name a wrong other Cash-In corrected by its contra: no approved command corrects a recorded other Cash-In, its statement-line citation or its transfer-out citation yet (the schema already carries `financial_contras.other_cash_receipt_id`); (3) the other Cash-In's statement-line citation is set at its recording only, its correction with reason being NX-08's on PG-050. Not done, for Planning: the Keuangan menu stays gated on `finance.view`, so a recorder of expenses holding only `cost.view` reaches PG-049 by its address; `correction_cases.refunded_value` stays outside the reconciliation families; a purchase payment racing the purchase's cancellation is asserted at LK-21 sequentially, not on two sessions; an expense payment is not capped by the expense's standing amount. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 

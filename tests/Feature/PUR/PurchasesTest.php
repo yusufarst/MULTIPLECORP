@@ -29,6 +29,7 @@ use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\Numbering;
+use Tests\Support\OtherCashWorld;
 use Tests\Support\Projects;
 use Tests\Support\PurchaseWorld;
 use Tests\Support\RefreshDatabase;
@@ -461,7 +462,8 @@ it('F1: marks a non-stock line, takes it back with its capability, the cancellat
     $this->actingAs($this->actor)->post('/pembelian', PurchaseWorld::payload($this->supplier, [PurchaseWorld::line(Projects::product('SERVICE'), '1', '50000', ['jenis' => 'NONSTOCK'])], ['proyek' => $project->public_id]));
     $serviced = PurchaseWorld::latest($this->company->id);
     $account = CompanyBankAccountFactory::new()->createOne(['company_id' => $this->company->id]);
-    DB::table('disbursements')->insert(['public_id' => (string) Str::uuid(), 'company_id' => $this->company->id, 'business_date' => $this->today, 'amount' => '100.00', 'kind' => 'PURCHASE_PAYMENT', 'company_bank_account_id' => $account->id, 'purchase_id' => $serviced->id, 'recorded_at' => now(), 'recorded_by' => $this->actor->id]);
+    OtherCashWorld::committed(OtherCashWorld::disburse(OtherCashWorld::actor($this->company->id), $this->company->id, 'PURCHASE_PAYMENT', '100.00', $account->id, ['purchase' => $serviced->id]));
+    expect(PurchaseCorrections::paid($serviced->id))->toBeTrue();
     $this->actingAs($this->actor)->post("/pembelian/{$serviced->public_id}/batalkan", reasoned($this));
     expect(purchaseAnswer()['code'])->toBe('C-29')->and(purchaseAnswer()['state']['reason'])->toBe('paid')->and($serviced->fresh()->state)->toBe('OPEN');
 });

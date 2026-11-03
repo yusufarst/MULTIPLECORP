@@ -13,6 +13,7 @@ use App\Modules\FIN\Http\Controllers\BankStatementController;
 use App\Modules\FIN\Http\Controllers\CustomerCreditController;
 use App\Modules\FIN\Http\Controllers\DeductionsController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
+use App\Modules\FIN\Http\Controllers\OtherCashController;
 use App\Modules\FIN\Http\Controllers\PaymentsController;
 use App\Modules\FIN\Http\Controllers\ReceivablesController;
 use App\Modules\FUL\Http\Controllers\ClientReturnController;
@@ -237,6 +238,10 @@ Route::get('/keuangan/potongan', [DeductionsController::class, 'index'])->middle
 Route::post('/keuangan/potongan', [DeductionsController::class, 'record'])->middleware(['auth', 'capability:settlement.record'])->name('fin.deductions.record');
 Route::post('/keuangan/potongan/{id}/selesaikan-sisa', [DeductionsController::class, 'resolve'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:settlement.record'])->name('fin.deductions.resolve');
 Route::post('/keuangan/kontra', [DeductionsController::class, 'contra'])->middleware(['auth', 'capability:finance.contra'])->name('fin.contra');
+Route::get('/keuangan/kas-lain', [OtherCashController::class, 'index'])->middleware(['auth', 'capability:finance.view,expense.record'])->name('fin.other-cash');
+Route::post('/keuangan/kas-lain/beban', [OtherCashController::class, 'expense'])->middleware(['auth', 'capability:expense.record'])->name('fin.other-cash.expense');
+Route::post('/keuangan/kas-lain/pengeluaran', [OtherCashController::class, 'disbursement'])->middleware(['auth', 'capability:disbursement.record'])->name('fin.other-cash.disbursement');
+Route::post('/keuangan/kas-lain/kas-masuk', [OtherCashController::class, 'cashIn'])->middleware(['auth', 'capability:cashin.record'])->name('fin.other-cash.cash-in');
 Route::get('/keuangan/mutasi-bank', [BankStatementController::class, 'index'])->middleware(['auth', 'capability:bank_statement.record'])->name('fin.bank-statement');
 Route::post('/keuangan/mutasi-bank', [BankStatementController::class, 'record'])->middleware(['auth', 'capability:bank_statement.record'])->name('fin.bank-statement.record');
 Route::post('/keuangan/mutasi-bank/{id}/koreksi', [BankStatementController::class, 'correct'])->where('id', '[0-9a-fA-F-]{32,36}')->middleware(['auth', 'capability:cash.correct'])->name('fin.bank-statement.correct');
