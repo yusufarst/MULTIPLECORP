@@ -18,7 +18,8 @@ final class ShipmentFigures
      * Per shipment line `d`: net shipped, net delivered, closed for refusal or non-delivery, and returned undelivered after the
      * first such closure, a superseded one included — strictly after, so a return in the closure's own second releases nothing,
      * as recorded times are kept to the second — an UNDELIVERED_RETURN before it brought back other units, which no closure
-     * held, and one after it keeps its credit when the closure is corrected (PX-08; SF-RESTORE; CM-27).
+     * held, and one after it keeps its credit when the closure is corrected (PX-08; SF-RESTORE; CM-27); one reversed in error
+     * by its MOVEMENT_REVERSAL credits nothing for what it took back (CM-37; TASK-048).
      */
     public const SQL = <<<'SQL'
         (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id) as shipped,
@@ -26,7 +27,7 @@ final class ShipmentFigures
         // Net delivered: the deliveries less what the client returned since, its return never reversing them (PX-08; TASK-048).
         .ClientReturns::NET_DELIVERED." as delivered,\n".<<<'SQL'
         (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id)) as closed,
-        (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
+        (select coalesce(sum(r.qty_base + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e where e.stock_restoration_id = r.id and e.movement_type = 'MOVEMENT_REVERSAL'), 0)), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
             and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT')) as returned
         SQL;
 

@@ -39,7 +39,7 @@ final class Deliveries
         // Net delivered: what the client returned is no longer delivered (PX-08; TASK-048).
         .ClientReturns::NET_DELIVERED.<<<'SQL'
             + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
-                - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
+                - (select coalesce(sum(r.qty_base + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e where e.stock_restoration_id = r.id and e.movement_type = 'MOVEMENT_REVERSAL'), 0)), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
                     and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT'))))
         SQL;
 

@@ -320,3 +320,28 @@ it('refuses to take back a purchase return its supplier\'s outcomes already sett
         ->and(DB::table('stock_restorations')->where('kind', 'RETURN_ERROR_REVERSAL')->count())->toBe(0);
     returnsClean();
 });
+
+it('reopens a closed client\'s return case its restoration\'s reversal reaches, audited (CM-37; BR-CR-04; L-06)', function () {
+    $shipment = clientDelivered($this, '2', '2');
+    expect(clientReturned($this, $shipment, '1'))->toBe('COMMITTED');
+    $return = ClientReturnWorld::last();
+    expect(ReturnWorld::close($this->actor, $return->case))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::reverse($this->actor, $this->company->id, $return->movement, [ClientReturnWorld::undo($return->restoration, '1')]))->toBe('COMMITTED')
+        ->and(DB::table('correction_cases')->where('id', $return->case)->value('state'))->toBe('OPEN')
+        ->and(DB::table('audit_events')->where('action', 'OPS.CorrectionCaseReopened')->where('entity_id', $return->case)->count())->toBe(1);
+    returnsClean();
+});
+
+it('takes a reversed undelivered return\'s credit off the closure it answered, so no more is delivered than stood (CM-27; CM-37; PX-08)', function () {
+    $this->lot = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '10', '1000');
+    expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '5', [DispatchWorld::pick($this->lot, $this->rack, '5')]))->toBe('COMMITTED');
+    $shipment = DispatchWorld::last($this->line);
+    expect(DeliveryWorld::close($this->actor, $this->line, $shipment->dispatch, 'REFUSED', '2'))->toBe('COMMITTED')
+        ->and(DispatchWorld::restore($this->actor, $this->company->id, $shipment->dispatch, 'UNDELIVERED_RETURN', [DispatchWorld::item($shipment->consumption, $this->rack, '2')]))->toBe('COMMITTED');
+    $restoration = DB::table('stock_restorations')->where('kind', 'UNDELIVERED_RETURN')->sole();
+
+    expect(ClientReturnWorld::reverse($this->actor, $this->company->id, (int) $restoration->stock_movement_id, [ClientReturnWorld::undo((int) $restoration->id, '2')]))->toBe('COMMITTED')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '4']], $this->deliveryProof))->toContain('C-30')
+        ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '3']], $this->deliveryProof))->toBe('COMMITTED');
+    returnsClean();
+});

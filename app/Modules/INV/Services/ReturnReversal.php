@@ -38,6 +38,9 @@ final class ReturnReversal
 {
     public const MOVEMENTS = ['RESTORATION', 'PURCHASE_RETURN', 'DROPSHIP_RETURN_RECEIPT'];
 
+    /** The reason a client's return case reached again by a reversal reopens with (CM-37; BR-CR-04). */
+    private const REOPENED = 'A restoration of the case was reversed as recorded in error (CM-37).';
+
     public function __construct(
         private readonly InventoryPosting $inventory,
         private readonly CostPosting $cost,
@@ -408,6 +411,10 @@ final class ReturnReversal
             }
         }
 
+        foreach (array_keys($cases) as $reached) {
+            $this->cases->reopen($context, $reached, self::REOPENED);
+        }
+
         $case = array_key_first($cases);
         $casePublic = $case === null ? null : DB::table('correction_cases')->where('id', $case)->value('public_id');
         $this->corrections->record($context, 'INV.ReturnReversed', AuthorityClass::AdmPlus, Row::nullable($original, 'company_id') === null ? null : (int) Row::text($original, 'company_id'), 'stock_movement', $movement, $publicId,
@@ -480,9 +487,15 @@ final class ReturnReversal
             $this->cost->restore($context, $restoration, $businessDate);
             GuardUpdate::apply($context->connection, 'stock_consumption_balances', [['key' => ['stock_consumption_id' => (int) Row::text($row, 'id')], 'deltas' => ['restored_qty_base' => $qty]]]);
             $serial = DB::table('serial_units as s')->join('stock_movement_entries as e', 'e.id', '=', 's.last_entry_id')->where('e.stock_consumption_id', (int) Row::text($row, 'id'))->where('s.state', 'RETURNED_TO_SUPPLIER')->orderBy('s.id')
-                ->whereNotIn('s.id', array_values(array_filter(array_map(fn (array $entry): ?int => $entry['serial'] ?? null, $entries), is_int(...))) ?: [0])->value('s.id');
+                ->whereNotIn('s.id', array_values(array_filter(array_map(fn (array $entry): ?int => $entry['serial'] ?? null, $entries), is_int(...))) ?: [0])->first(['s.id', 'e.condition']);
+
+            // A serialized unit comes back in the condition it left in: never usable again without its re-inspection (CM-37; BR-INV-06).
+            if ($serial !== null && Row::text($serial, 'condition') !== $step['condition']) {
+                throw Refused::rejected('C-03', ['reason' => 'condition']);
+            }
+
             $entries[] = ['lot' => (int) Row::text($row, 'lot_id'), 'product' => (int) Row::text($row, 'product_id'), 'scale' => (int) Row::text($row, 'quantity_scale'), 'location' => $step['location'], 'condition' => $step['condition'],
-                'qty' => $qty, 'restoration' => $restoration, ...(is_numeric($serial) && $step['qty']->isEqualTo(1) ? ['serial' => (int) $serial] : [])];
+                'qty' => $qty, 'restoration' => $restoration, ...($serial !== null && $step['qty']->isEqualTo(1) ? ['serial' => (int) Row::text($serial, 'id')] : [])];
         }
 
         if ($case !== null && $openBefore !== null) {

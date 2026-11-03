@@ -235,6 +235,37 @@ final class CorrectionCases
     }
 
     /**
+     * A CLOSED case a correction reaches again without moving its counters reopens in that transaction, audited with the
+     * correction's reason, so its steps and the completion predicate it feeds are open again (CM-37; BR-CR-04; L-06).
+     */
+    public function reopen(CommandContext $context, int $caseId, string $reason): void
+    {
+        $context->require(self::locks($caseId));
+        $before = DB::table('correction_cases')->where('id', $caseId)->first(['state', 'company_id', 'public_id']);
+
+        if (! is_object($before) || $before->state !== 'CLOSED') {
+            return;
+        }
+
+        $now = $context->now();
+        $context->connection->update("update correction_cases set state = 'OPEN', reopened_by = ?, reopened_at = ?, reopen_reason = ?, reopen_command_id = ?, lock_version = lock_version + 1, updated_at = ? where id = ?",
+            [$context->request->actorUserId, $now, trim($reason), $context->request->commandId, $now, $caseId]);
+        $this->audit->record(
+            action: 'OPS.CorrectionCaseReopened',
+            authorityClass: AuthorityClass::System,
+            actorUserId: $context->request->actorUserId,
+            companyId: self::int($before->company_id ?? null),
+            entityType: 'correction_case',
+            entityId: $caseId,
+            entityPublicId: is_string($before->public_id ?? null) ? $before->public_id : null,
+            reason: trim($reason),
+            commandId: $context->request->commandId,
+            change: AuditChange::updated(['state' => 'CLOSED'], ['state' => 'OPEN']),
+            linkage: self::caseLinkage($caseId),
+        );
+    }
+
+    /**
      * Whether a purchase-return case still meets its closure after the deltas (C-46): returned cost = refunded +
      * replaced + unrecovered, with no unbacked refund and no residual settlement.
      *
