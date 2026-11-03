@@ -331,10 +331,10 @@ final class InvoiceWorld
      * between the project and its completion (L-12). ADM's default invoice item is met when the invoiced value equals the confirmed value less the cancelled value: a project without an
      * invoice completes after a cancellation, one invoiced for its whole value after a handover.
      */
-    public static function readyToComplete(int $projectId, bool $handover = false): void
+    public static function readyToComplete(int $projectId, bool $handover = false, ?int $actorId = null): void
     {
         $company = (int) DB::table('projects')->where('id', $projectId)->value('company_id');
-        $actor = Authorization::admin([$company], ['projects.view', 'projects.cancel_scope', 'handover.record', 'documents.issue', 'evidence.view'])->id;
+        $actor = $actorId ?? Authorization::admin([$company], ['projects.view', 'projects.cancel_scope', 'handover.record', 'documents.issue', 'evidence.view'])->id;
         $year = substr(BusinessDate::today(), 0, 4);
 
         // The BAST's numbering, started once for the company when a handover needs it (NM-03).
