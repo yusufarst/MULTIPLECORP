@@ -11,6 +11,7 @@ use Tests\Support\Fixtures\AdjustmentFixture;
 use Tests\Support\Fixtures\AdministrationFixture;
 use Tests\Support\Fixtures\CaseFixture;
 use Tests\Support\Fixtures\ClientReturnFixture;
+use Tests\Support\Fixtures\CompletionFixture;
 use Tests\Support\Fixtures\ConfirmationFixture;
 use Tests\Support\Fixtures\CountFixture;
 use Tests\Support\Fixtures\CreditFixture;
@@ -135,6 +136,9 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-054): that company's account and project, an open purchase, a transfer proof and a supplier bill to cite on PG-049.
     Route::post('__fixtures/kas-lain', [OtherCashFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-055): an invoice run's project made ready to complete, or left with its unmet fulfilment for the Force Complete.
+    Route::post('__fixtures/penyelesaian', [CompletionFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-037): a company with its PURCHASE and PO numbering, suppliers, goods, a bill and a confirmed project with its shortage.
     Route::post('__fixtures/purchase', [PurchaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
