@@ -36,6 +36,7 @@ final class PaymentPredicate implements CompletionPredicateProvider
         $rows = DB::select(<<<'SQL'
             select pr.id as project_id, pr.credit_held_amount,
                 (select count(*) from invoices i join payment_applications a on a.invoice_id = i.id and a.state = 'ACTIVE' where i.project_id = pr.id) as applied,
+                exists (select 1 from invoices i join payment_applications a on a.invoice_id = i.id where i.project_id = pr.id) as ever_applied,
                 (select count(distinct p.id) from invoices i join payment_applications a on a.invoice_id = i.id and a.state = 'ACTIVE' join payments p on p.id = a.payment_id
                     where i.project_id = pr.id and p.unevidenced_reason is not null and p.bank_statement_line_id is null
                         and not exists (select 1 from evidence_links k join evidence_documents e on e.id = k.evidence_document_id where k.payment_id = p.id and k.unlinked_at is null and e.evidence_type in ('PAYMENT_PROOF', 'TRANSFER_PROOF', 'BANK_STATEMENT'))) as unevidenced,
@@ -46,7 +47,16 @@ final class PaymentPredicate implements CompletionPredicateProvider
             from projects pr
             where pr.id = any(?::bigint[])
             SQL, ['{'.implode(',', $projectIds).'}']);
-        $credit = CreditProjects::ofProjects($projectIds);
+        // Credit arises only from money once applied to the project: the replay reads only those projects, none when nothing was ever applied (PFM-02).
+        $touched = [];
+
+        foreach ($rows as $row) {
+            if (is_object($row) && ($row->ever_applied ?? false) === true) {
+                $touched[] = (int) Row::text($row, 'project_id');
+            }
+        }
+
+        $credit = $touched === [] ? [] : CreditProjects::ofProjects($touched);
         $states = [];
 
         foreach ($rows as $row) {

@@ -131,7 +131,7 @@ final class InvoiceWorld
         $year = substr(BusinessDate::today(), 0, 4);
         Numbering::goLive("{$year}-01-01");
 
-        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP'], [SequenceType::Doc08, 'BAST']] as [$type, $prefix]) {
+        foreach ([[SequenceType::Doc06, 'INV'], [SequenceType::Doc04, 'NOTA'], [SequenceType::Doc05, 'KW'], [SequenceType::Doc07, 'LMP'], [SequenceType::Doc13, 'SPP']] as [$type, $prefix]) {
             Numbering::scheme($this->company, $type, "{$year}-01-01", 'YEAR', "{$prefix}/{tahun}/{nomor:4}");
             Numbering::started($this->company, $type, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
         }
@@ -335,6 +335,13 @@ final class InvoiceWorld
     {
         $company = (int) DB::table('projects')->where('id', $projectId)->value('company_id');
         $actor = Authorization::admin([$company], ['projects.view', 'projects.cancel_scope', 'handover.record', 'documents.issue', 'evidence.view'])->id;
+        $year = substr(BusinessDate::today(), 0, 4);
+
+        // The BAST's numbering, started once for the company when a handover needs it (NM-03).
+        if ($handover && DB::table('numbering_schemes')->where('company_id', $company)->where('sequence_type', 'DOC-08')->doesntExist()) {
+            Numbering::scheme(Company::query()->findOrFail($company), SequenceType::Doc08, "{$year}-01-01", 'YEAR', 'BAST/{tahun}/{nomor:4}');
+            Numbering::started(Company::query()->findOrFail($company), SequenceType::Doc08, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+        }
 
         foreach (DB::table('project_lines as l')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')->where('l.project_id', $projectId)->whereNotNull('l.current_pin_id')
             ->selectRaw('l.id, b.demand_qty_base - b.handed_over_qty_base - b.delivered_net_qty_base - b.cancelled_qty_base as remainder')->get() as $line) {
