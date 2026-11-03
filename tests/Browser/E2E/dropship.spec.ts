@@ -22,7 +22,7 @@ test('J-FUL-03: confirms a direct shipment with its delivery from the journey, t
     await form.getByLabel('Nomor pengiriman pemasok').fill('SJ-PMS-01');
     await page.locator('[data-slot="dropship-entry"]').first().getByLabel(/^Jumlah dikirim/).fill('3');
     await form.getByLabel('Bukti dari pemasok').selectOption({ value: run.proof });
-    await form.getByLabel(/Bukti terima klien sudah ada/).check();
+    await form.getByRole('checkbox', { name: /Bukti terima klien sudah ada/ }).click();
     await form.getByLabel('Nama penerima').fill('Bu Sari');
     await form.getByLabel('Bukti terima klien', { exact: true }).selectOption({ value: run.proof });
     await form.getByRole('button', { name: 'Konfirmasi Kirim Langsung', exact: true }).click();

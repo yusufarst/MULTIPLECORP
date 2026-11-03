@@ -60,7 +60,7 @@ function dropshipAnswer(object $test, string $url, array $body): array
 }
 
 it('shows PG-032 with the line\'s figures and no receiving or dispatch control, then confirms through ROUTE-205 back to PG-011 (NAV-032; BR-INV-11; criteria 1, 3)', function () {
-    $this->actingAs($this->actor)->get($this->page)->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->component('FUL/DirectShipment')
+    $this->actingAs($this->actor)->get($this->page)->assertOk()->assertInertia(fn (AssertableInertia $page) => $page->component('FUL/DirectShipment', false)
         ->where('page.lines.0.ordered', '6')->where('page.lines.0.remainder', '6')->where('page.confirmations', [])->where('page.can.confirm', true)->missing('page.can.receive'));
 
     $this->actingAs($this->actor)->post($this->page, dropshipBody($this, '4'))->assertRedirect("/proyek/{$this->w['project']->publicId}");
