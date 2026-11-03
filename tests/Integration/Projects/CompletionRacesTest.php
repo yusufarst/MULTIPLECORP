@@ -4,7 +4,6 @@ use App\Modules\DOC\Data\DocumentChange;
 use App\Modules\PRJ\Actions\ForceCompleteProject;
 use App\Modules\PRJ\Queries\ProjectCompletion;
 use App\Modules\PRJ\Services\ProjectDocumentChanges;
-use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandRequest;
@@ -41,14 +40,14 @@ beforeEach(function () {
 });
 
 /** A document's change reaching PRJ's participant inside its own command, the project held as DOC holds it; its word. */
-function completionDocumentChange(int $actorId, int $companyId, int $projectId): string
+function completionDocumentChange(int $actorId, int $companyId, int $projectId, ?array $link = null): string
 {
     $request = new CommandRequest((string) Str::uuid(), 'DOC.ReplaceEvidence', $actorId, $companyId, 'evidence.view', Fingerprint::of('DOC.ReplaceEvidence', 'test', ['project' => $projectId]));
-    $change = new DocumentChange(DocumentChange::EVIDENCE_REPLACED, (int) InvoiceWorld::linkedEvidence($companyId, $projectId)->id, $companyId, 'OTHER', [['link' => 0, 'target' => 'project_id', 'id' => $projectId, 'role' => 'SUPPORTING']]);
+    $change = new DocumentChange(DocumentChange::EVIDENCE_REPLACED, (int) InvoiceWorld::linkedEvidence($companyId, $projectId)->id, $companyId, 'OTHER', [$link ?? ['link' => 0, 'target' => 'project_id', 'id' => $projectId, 'role' => 'SUPPORTING']]);
 
     return InvoiceWorld::word(app(CommandEnvelope::class)->run($request, function (CommandContext $context) use ($change, $projectId): CommandResult {
         $participant = app(ProjectDocumentChanges::class);
-        $context->lock($participant->locks($change)->union(Revalidation::locks($projectId)));
+        $context->lock($participant->locks($change));
         $participant->documentChanged($context, $change);
 
         return new CommandResult('project', $projectId);
@@ -99,4 +98,31 @@ it('leaves a CANCELLED project CANCELLED under a document change (L-11; WF-PRJ-0
     expect(completionDocumentChange($this->world->actorId, $this->project->company_id, $this->project->id))->toBe('COMMITTED')
         ->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('CANCELLED')
         ->and(DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('transition_kind', 'REVALIDATE')->count())->toBe(0);
+});
+
+/** The project force-completed by its Owner on the snapshot as it stands. */
+function completionForced(object $test): void
+{
+    $read = app(ProjectCompletion::class)->read($test->project->id);
+    expect(InvoiceWorld::word(app(ForceCompleteProject::class)->run((string) Str::uuid(), Authorization::owner()->id, $test->project->id, $test->project->company_id, $test->project->public_id, 'Klien menutup kerja sama', $read['hash'])))->toBe('COMMITTED');
+}
+
+it('reaches the projects a payment\'s proof touches through its applications, so its unlink revalidates them (L-41; predicate 10; Codex P1)', function () {
+    $invoice = $this->world->issued($this->project, '1000000');
+    $payment = InvoiceWorld::payment($invoice, '400000');
+    InvoiceWorld::apply($invoice, $payment, '400000');
+    completionForced($this);
+
+    expect(completionDocumentChange($this->world->actorId, $this->project->company_id, $this->project->id, ['link' => 0, 'target' => 'payment_id', 'id' => $payment->id, 'role' => 'PRIMARY_PROOF']))->toBe('COMMITTED')
+        ->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('ACTIVE')
+        ->and((string) DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('transition_kind', 'REVALIDATE')->value('correction_reference'))->toStartWith('DOC.EVIDENCE_REPLACED:');
+});
+
+it('runs an invoice issued on a completed project as a correction that returns it to ACTIVE (L-11; SF-REVAL; criterion 10; Codex P1)', function () {
+    $draft = $this->world->draft($this->project, '1000000');
+    completionForced($this);
+
+    expect(InvoiceWorld::issue($this->world->actorId, $this->project->id, $draft))->toBe('COMMITTED')
+        ->and(DB::table('projects')->where('id', $this->project->id)->value('state'))->toBe('ACTIVE')
+        ->and((string) DB::table('project_state_transitions')->where('project_id', $this->project->id)->where('transition_kind', 'REVALIDATE')->value('correction_reference'))->toStartWith('FIN.InvoiceIssued:');
 });

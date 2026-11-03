@@ -57,12 +57,19 @@ final class ProjectDocumentChanges implements DocumentChangeParticipant
 
         foreach ($change->links as $link) {
             [$table, $anchor] = EvidenceUse::TARGETS[$link['target']] ?? [null, null];
-            $project = match (true) {
-                $link['target'] === 'project_id' => $link['id'],
-                $table !== null && $anchor === 'project' => DB::table($table)->where('id', $link['id'])->value('project_id'),
-                default => null,
+            $found = match (true) {
+                $link['target'] === 'project_id' => [$link['id']],
+                $table !== null && $anchor === 'project' => [DB::table($table)->where('id', $link['id'])->value('project_id')],
+                // A payment's proof is the audit predicate's input of every project its applications reach (predicate 10).
+                $link['target'] === 'payment_id' => DB::table('payment_applications as a')->join('invoices as i', 'i.id', '=', 'a.invoice_id')->where('a.payment_id', $link['id'])->distinct()->pluck('i.project_id')->all(),
+                $link['target'] === 'deduction_settlement_id' => DB::table('deduction_settlements as s')->join('invoices as i', 'i.id', '=', 's.invoice_id')->where('s.id', $link['id'])->pluck('i.project_id')->all(),
+                $link['target'] === 'correction_case_id' => DB::table('correction_cases')->where('id', $link['id'])->selectRaw('coalesce(project_id, causal_project_id) as project')->pluck('project')->all(),
+                default => [],
             };
-            $projects[] = is_numeric($project) ? (int) $project : 0;
+
+            foreach ($found as $project) {
+                $projects[] = is_numeric($project) ? (int) $project : 0;
+            }
         }
 
         return array_values(array_unique(array_filter($projects, fn (int $id): bool => $id > 0)));

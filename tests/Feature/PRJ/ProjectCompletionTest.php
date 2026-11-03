@@ -133,6 +133,11 @@ it('lets only the Owner force-complete, bound to the snapshot shown: a reason re
         ->and(DB::table('invoice_balances')->where('invoice_id', $invoice)->value('outstanding'))->toBe('600000.00');
 
     $this->actingAs($this->owner)->get($this->page)->assertInertia(fn (AssertableInertia $page) => $page->where('record.kind', 'FORCE_COMPLETE')->where('record.unmet', ['fulfilment', 'administration', 'receivable'])->where('record.obligations.0.kind', 'receivable'));
+
+    // Without `finance.view` the receivables are absent from the record, not masked (PJ-04; SM-25).
+    $viewer = Authorization::admin([$this->company->id], ['projects.view']);
+    $record = $this->actingAs($viewer)->get($this->page)->viewData('page')['props']['record'];
+    expect(array_column($record['obligations'], 'kind'))->not->toContain('receivable')->and(json_encode($record))->not->toContain('1000000');
 });
 
 it('denies an Admin\'s Force Complete whatever is granted, and no payload names a state or a snapshot (OD-12; WS-02; SM-04; criterion 6)', function () {

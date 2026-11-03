@@ -123,12 +123,20 @@ final class ProjectCompletion
         $unmet = json_decode(Row::nullable($row, 'unmet_predicates') ?? '[]', true);
         $obligations = json_decode(Row::nullable($row, 'residual_obligations') ?? '[]', true);
         $money = $viewer->allows('finance.view', $project->company_id);
+        $shown = [];
+
+        // The receivables are the finance family's: absent, not masked, without `finance.view` (PJ-04; SM-25).
+        foreach (is_array($obligations) ? $obligations : [] as $item) {
+            if (is_array($item) && ($money || ($item['kind'] ?? null) !== 'receivable')) {
+                $shown[] = ['kind' => is_string($item['kind'] ?? null) ? $item['kind'] : '', 'label' => is_string($item['label'] ?? null) ? $item['label'] : '',
+                    'amount' => is_string($item['amount'] ?? null) ? $item['amount'] : null, 'quantity' => is_string($item['quantity'] ?? null) ? $item['quantity'] : null];
+            }
+        }
 
         return [
             'kind' => Row::text($row, 'transition_kind'), 'reason' => Row::nullable($row, 'reason'), 'by' => Row::nullable($row, 'name'), 'at' => Row::text($row, 'recorded_at'),
             'unmet' => is_array($unmet) ? array_values(array_filter($unmet, 'is_string')) : [],
-            'obligations' => is_array($obligations) ? array_values(array_map(fn (mixed $item): array => is_array($item) ? ['kind' => is_string($item['kind'] ?? null) ? $item['kind'] : '', 'label' => is_string($item['label'] ?? null) ? $item['label'] : '',
-                'amount' => $money && is_string($item['amount'] ?? null) ? $item['amount'] : null, 'quantity' => is_string($item['quantity'] ?? null) ? $item['quantity'] : null] : [], $obligations)) : [],
+            'obligations' => $shown,
         ];
     }
 }
