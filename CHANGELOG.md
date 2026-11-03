@@ -802,3 +802,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-053 on its branch `task/TASK-053-customer-credit`: PG-048 *Kredit Pelanggan* — credit per client and company traced to its sources, refunds with their backing and shortfall, each project's credit left, arisen and held; "Kembalikan Dana" (ROUTE-256) as a fully backed Cash-Out refund with its transfer proof; "Tahan Kredit" (ROUTE-264) holding a project's credit with its reason (DIR-104); "Terapkan ke Invoice" through ROUTE-252; `projects.credit_held_amount` expand-only.
 - Every check passed in fresh CI on `83f00ac`. TASK-053 DONE — progress 55 / 87 —; TASK-054, TASK-057 and TASK-059 READY.
+
+## Unreleased — 2026-11-04, TASK-054 — Expenses, disbursements and other cash
+
+- Built TASK-054 on its branch `task/TASK-054-expenses`: PG-049 *Pengeluaran & Kas Lain* — "Catat Beban" (ROUTE-257) as actual cost of its causal project or company, a cited source bill capping charges and expenses together; "Catat Pengeluaran Kas" (ROUTE-258) as the only Cash-Out against a purchase, an expense, a tax remittance under its rule or a real inter-company transfer out; "Catat Kas Masuk Lain" (ROUTE-259) — cashback and other income as income, supplier refunds as restitution moving a return case's refunded figure, a transfer in within its transfer-out's net amount; the contra through ROUTE-260.
+- Every check passed in fresh CI on `f392b4a`. TASK-054 DONE — progress 56 / 87 —; TASK-055, TASK-057, TASK-059 and TASK-060 READY.
