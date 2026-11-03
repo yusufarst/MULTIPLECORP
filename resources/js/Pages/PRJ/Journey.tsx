@@ -110,14 +110,19 @@ export default function Journey({ project, journey, financial, can, return_href:
     // The predicates group carries the whole journey with its blockers once it arrives; until then the root facts' one.
     const full = predicates !== undefined && predicates !== null && !isFailed(predicates) ? predicates : null;
     const shown = full ?? journey;
+    // PG-012 from the journey (NAV-012): the completion's conditions, and a completed project's record with what a Force Complete left (BR-PRJ-04).
+    const completion = `/proyek/${project.id}/penyelesaian`;
+    const reachesCompletion = ['ACTIVE', 'COMPLETED_NORMAL', 'COMPLETED_FORCED'].includes(project.state);
+    const nextHref = shown?.next?.href ?? (shown?.next?.key === 'projects.next.complete' ? completion : null);
     const actions: MenuAction[] = [
+        ...(reachesCompletion ? [{ label: t('pages.pg_012.title'), onSelect: () => { router.visit(completion); } }] : []),
         ...(can.edit ? [{ label: t('actions.edit_project'), onSelect: () => { router.visit(`/proyek/${project.id}/ubah`); } }] : []),
         ...(returnHref !== null ? [{ label: t('pages.pg_034.title'), onSelect: () => { router.visit(returnHref); } }] : []),
         ...(can.discard ? [{ label: t('actions.discard_draft'), tone: 'danger' as const, onSelect: () => { discard.clear(); setDiscarding(true); } }] : []),
     ];
-    const primary = shown?.next?.href ? (
+    const primary = nextHref !== null && shown?.next ? (
         // The next step's sentence may be long: the button wraps it rather than widening the page (TL-11).
-        <Button size="lg" className="h-auto min-h-control-lg max-w-full shrink whitespace-normal py-2 text-left leading-snug" render={<a href={shown.next.href} />}>
+        <Button size="lg" className="h-auto min-h-control-lg max-w-full shrink whitespace-normal py-2 text-left leading-snug" render={<a href={nextHref} />}>
             {t(shown.next.key as TranslationKey, shown.next.params)}
         </Button>
     ) : undefined;
@@ -159,6 +164,7 @@ export default function Journey({ project, journey, financial, can, return_href:
                 {shown?.outcome != null ? (
                     <Card className="p-4">
                         <p className="text-body text-text-primary">{t('projects.journey.closed')}</p>
+                        {reachesCompletion && <a href={completion} className="text-body text-accent-link underline underline-offset-2">{t('completion.record.open')}</a>}
                     </Card>
                 ) : shown !== null && (
                     <section aria-label={t('journey.track')} className="flex min-w-0 flex-col gap-4">

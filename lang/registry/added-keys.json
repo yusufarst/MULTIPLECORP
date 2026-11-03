@@ -18390,6 +18390,234 @@
             "source": "LG-01 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "completion.intro": {
+            "task": "TASK-055",
+            "source": "PG-012; L-12; L-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.conditions": {
+            "task": "TASK-055",
+            "source": "PG-012; WF-PRJ-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.state.met": {
+            "task": "TASK-055",
+            "source": "PG-012; PT-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.state.unmet": {
+            "task": "TASK-055",
+            "source": "PG-012; PT-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.state.not_applicable": {
+            "task": "TASK-055",
+            "source": "PG-012; BR-PRJ-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.resolve": {
+            "task": "TASK-055",
+            "source": "J-PRJ-03; UXI-26 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.all_met": {
+            "task": "TASK-055",
+            "source": "L-12; UXI-26 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.confirm.complete": {
+            "task": "TASK-055",
+            "source": "INT-161; MSG-39; L-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.force.title": {
+            "task": "TASK-055",
+            "source": "UXS-37; AX-26 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.force.action": {
+            "task": "TASK-055",
+            "source": "ROUTE-162; OD-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.force.statement": {
+            "task": "TASK-055",
+            "source": "UXS-37; BR-PRJ-04; FS-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.force.unmet": {
+            "task": "TASK-055",
+            "source": "UXS-37; C-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.confirm.force": {
+            "task": "TASK-055",
+            "source": "INT-162; MSG-39; MSG-40; ST-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligations.title": {
+            "task": "TASK-055",
+            "source": "UXS-37; BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligations.none": {
+            "task": "TASK-055",
+            "source": "UXS-37 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligation.receivable": {
+            "task": "TASK-055",
+            "source": "BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligation.reservation": {
+            "task": "TASK-055",
+            "source": "BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligation.case": {
+            "task": "TASK-055",
+            "source": "BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.obligation.document": {
+            "task": "TASK-055",
+            "source": "BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.record.normal": {
+            "task": "TASK-055",
+            "source": "AC-21 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.record.forced": {
+            "task": "TASK-055",
+            "source": "AC-21; BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.record.reason": {
+            "task": "TASK-055",
+            "source": "C-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.record.open": {
+            "task": "TASK-055",
+            "source": "NAV-012; BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.answer.completed": {
+            "task": "TASK-055",
+            "source": "INT-161; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.answer.force_completed": {
+            "task": "TASK-055",
+            "source": "INT-162; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.refusal.unmet": {
+            "task": "TASK-055",
+            "source": "C-39; MSG-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.refusal.snapshot_changed": {
+            "task": "TASK-055",
+            "source": "ST-04; UXS-37 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.refusal.not_active": {
+            "task": "TASK-055",
+            "source": "SM:Project; ST-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.credit_undisposed": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 9; DIR-104 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.credit": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 9 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.kuitansi_open": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 9; WF-FIN-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.next.kuitansi": {
+            "task": "TASK-055",
+            "source": "WF-FIN-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectCompleted": {
+            "task": "TASK-055",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectForceCompleted": {
+            "task": "TASK-055",
+            "source": "LG-01; OD-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.goods_undelivered": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.shipments_awaiting": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 2 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.item.loss_cases_pending": {
+            "task": "TASK-055",
+            "source": "WF-PRJ-03 predicate 8; L-38 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "completion.refusal.all_met": {
+            "task": "TASK-055",
+            "source": "AX-26; BR-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

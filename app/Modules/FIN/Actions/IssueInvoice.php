@@ -12,6 +12,7 @@ use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Modules\PRJ\Data\ProjectRef;
+use App\Modules\PRJ\Services\ResidualCommands;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
@@ -44,6 +45,7 @@ final class IssueInvoice
         private readonly DocumentIssuing $issuing,
         private readonly DocumentChain $chain,
         private readonly InvoiceRecords $records,
+        private readonly ResidualCommands $residual,
     ) {}
 
     public function run(string $commandId, int $actorUserId, ProjectRef $project, Invoice $invoice, int $lockVersion, string $layout, string $businessDate, bool $prefilled, ?string $factsDigest = null): Outcome
@@ -66,7 +68,7 @@ final class IssueInvoice
                 throw new AuthorizationException;
             }
 
-            $fresh = DB::table('invoices')->where('id', $invoice->id)->first(['state', 'lock_version', 'current_version_id']);
+            $fresh = DB::table('invoices')->where('id', $invoice->id)->first(['state', 'lock_version', 'current_version_id', DB::raw('(select p.state from projects p where p.id = invoices.project_id) as project_state')]);
 
             if ($fresh === null || $fresh->state === 'VOIDED') {
                 throw Refused::conflict('ST-02', ['state' => 'VOIDED']);
@@ -79,6 +81,9 @@ final class IssueInvoice
             if ((int) Row::text($fresh, 'lock_version') !== $lockVersion) {
                 throw Refused::conflict('ST-01');
             }
+
+            // L-11 (TASK-055): an issue raises the project's outstanding — on a completed project a correction that returns it to ACTIVE (SF-REVAL).
+            $this->residual->apply($context, $project->id, Row::text($fresh, 'project_state'), true, "FIN.InvoiceIssued:{$invoice->public_id}");
 
             // The invoice moved before the layout's precondition reads it.
             $document = $this->issuing->openDraft($context, $subject, $chain);

@@ -807,3 +807,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-054 on its branch `task/TASK-054-expenses`: PG-049 *Pengeluaran & Kas Lain* — "Catat Beban" (ROUTE-257) as actual cost of its causal project or company, a cited source bill capping charges and expenses together; "Catat Pengeluaran Kas" (ROUTE-258) as the only Cash-Out against a purchase, an expense, a tax remittance under its rule or a real inter-company transfer out; "Catat Kas Masuk Lain" (ROUTE-259) — cashback and other income as income, supplier refunds as restitution moving a return case's refunded figure, a transfer in within its transfer-out's net amount; the contra through ROUTE-260.
 - Every check passed in fresh CI on `f392b4a`. TASK-054 DONE — progress 56 / 87 —; TASK-055, TASK-057, TASK-059 and TASK-060 READY.
+
+## Unreleased — 2026-11-04, TASK-055 — Project completion and Force Complete
+
+- Built TASK-055 on its branch `task/TASK-055-project-completion`: PG-012 *Penyelesaian Proyek* with WF-PRJ-03's ten conditions derived each time; "Selesaikan Proyek" (ROUTE-161; AX-25) completing only when all ten hold under the project's lock; the Owner's "Selesaikan Paksa" (ROUTE-162; AX-26) bound to the hash of the snapshot shown, with its reason, unmet conditions and residual obligations recorded; SF-REVAL's materiality and PRJ's part of document changes; the residual-command precondition; the predicate parts WF-PRJ-03 still lacked.
+- Every check passed in fresh CI on `a9d7a0c`. TASK-055 DONE — progress 57 / 87 —; TASK-056, TASK-057, TASK-058, TASK-059 and TASK-060 READY.

@@ -17,9 +17,9 @@ use App\Modules\FIN\Actions\WriteOffReceivable;
 use App\Modules\FIN\Data\InvoiceCorrection;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Models\Payment;
-use App\Modules\FIN\Services\ReceivablePredicate;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
+use App\Modules\PRJ\Actions\CompleteProject;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Models\ProjectStateTransition;
@@ -53,7 +53,7 @@ use RuntimeException;
  */
 final class InvoiceWorld
 {
-    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload', 'billing.record', 'billing.correct', 'receivables.dispute', 'payment.apply', 'payment.reallocate', 'finance.contra'];
+    public const CAPABILITIES = ['projects.view', 'projects.confirm', 'finance.view', 'invoice.issue', 'invoice.correct', 'documents.issue', 'documents.correct', 'payment.record', 'evidence.view', 'evidence.upload', 'billing.record', 'billing.correct', 'receivables.dispute', 'payment.apply', 'payment.reallocate', 'finance.contra', 'projects.complete'];
 
     public ReservationWorld $base;
 
@@ -318,29 +318,39 @@ final class InvoiceWorld
         ProjectStateTransition::factory()->create(['project_id' => $projectId, 'from_state' => $from, 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $actorUserId, 'company_id' => $company]);
     }
 
-    /**
-     * A completion's reading of FIN's predicates under the project's LK-01, standing in for TASK-055's AX-25 (M-26): an unmet one REJECTED C-39, else the project completed; its word.
-     */
+    /** TASK-055's AX-25 through its own action, the ten predicates re-read under the project's LK-01 (M-26); its word. */
     public static function completeInCommand(int $actorUserId, int $projectId): string
     {
         $project = Project::query()->findOrFail($projectId);
-        $request = new CommandRequest((string) Str::uuid(), 'PRJ.SyntheticCompletion', $actorUserId, $project->company_id, 'finance.view', Fingerprint::of('PRJ.SyntheticCompletion', 'test', ['project' => $projectId]));
 
-        return self::word(app(CommandEnvelope::class)->run($request, function (CommandContext $context) use ($project, $projectId, $actorUserId): CommandResult {
-            $context->lock((new LockSet)->add('projects', ['id' => $projectId]));
+        return self::word(app(CompleteProject::class)->run((string) Str::uuid(), $actorUserId, $project->id, $project->company_id, $project->public_id));
+    }
 
-            foreach (app(ReceivablePredicate::class)->states([$projectId], true)[$projectId] ?? [] as $state) {
-                if (! $state->met()) {
-                    throw Refused::rejected('C-39', ['reason' => 'predicate']);
-                }
+    /**
+     * Every confirmed service line's remainder cancelled through TASK-034's own command — or, with `$handover`, handed over through TASK-047's —, so only the money predicates can stand
+     * between the project and its completion (L-12). ADM's default invoice item is met when the invoiced value equals the confirmed value less the cancelled value: a project without an
+     * invoice completes after a cancellation, one invoiced for its whole value after a handover.
+     */
+    public static function readyToComplete(int $projectId, bool $handover = false, ?int $actorId = null): void
+    {
+        $company = (int) DB::table('projects')->where('id', $projectId)->value('company_id');
+        $actor = $actorId ?? Authorization::admin([$company], ['projects.view', 'projects.cancel_scope', 'handover.record', 'documents.issue', 'evidence.view'])->id;
+        $year = substr(BusinessDate::today(), 0, 4);
+
+        // The BAST's numbering, started once for the company when a handover needs it (NM-03).
+        if ($handover && DB::table('numbering_schemes')->where('company_id', $company)->where('sequence_type', 'DOC-08')->doesntExist()) {
+            Numbering::scheme(Company::query()->findOrFail($company), SequenceType::Doc08, "{$year}-01-01", 'YEAR', 'BAST/{tahun}/{nomor:4}');
+            Numbering::started(Company::query()->findOrFail($company), SequenceType::Doc08, CarbonImmutable::parse(((int) $year - 1).'-12-31 03:00:00', 'UTC'));
+        }
+
+        foreach (DB::table('project_lines as l')->join('project_line_balances as b', 'b.project_line_id', '=', 'l.id')->where('l.project_id', $projectId)->whereNotNull('l.current_pin_id')
+            ->selectRaw('l.id, b.demand_qty_base - b.handed_over_qty_base - b.delivered_net_qty_base - b.cancelled_qty_base as remainder')->get() as $line) {
+            $remainder = (string) ($line->remainder ?? '0');
+
+            if ((float) $remainder > 0 && ($word = $handover ? HandoverWorld::record($actor, $projectId, (int) $line->id, $remainder) : ConfirmationRaces::cancel($actor, $projectId, (int) $line->id, $remainder)) !== 'COMMITTED') {
+                throw new RuntimeException("The remainder's ".($handover ? 'handover' : 'cancellation')." was {$word}.");
             }
-
-            $from = DB::table('projects')->where('id', $projectId)->value('state');
-            DB::table('projects')->where('id', $projectId)->update(['state' => 'COMPLETED_NORMAL', 'lock_version' => DB::raw('lock_version + 1')]);
-            ProjectStateTransition::factory()->create(['project_id' => $projectId, 'from_state' => $from, 'to_state' => 'COMPLETED_NORMAL', 'transition_kind' => 'COMPLETE_NORMAL', 'decided_by' => $actorUserId, 'company_id' => $project->company_id]);
-
-            return new CommandResult('project', $projectId);
-        }));
+        }
     }
 
     /** A registered evidence linked to the project, as ROUTE-* LinkEvidence leaves it; its row. */
