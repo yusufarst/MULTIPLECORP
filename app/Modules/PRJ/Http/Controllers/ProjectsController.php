@@ -3,9 +3,11 @@
 namespace App\Modules\PRJ\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Modules\PRJ\Actions\CancelProject;
 use App\Modules\PRJ\Actions\CreateProject;
 use App\Modules\PRJ\Actions\DiscardDraftProject;
 use App\Modules\PRJ\Actions\UpdateProject;
+use App\Modules\PRJ\Queries\ProjectCancellation;
 use App\Modules\PRJ\Queries\ProjectForm;
 use App\Modules\PRJ\Queries\ProjectList;
 use App\Modules\PRJ\Queries\ProjectWorkspace;
@@ -37,6 +39,7 @@ final class ProjectsController extends Controller
         private readonly ProjectList $projects,
         private readonly ProjectWorkspace $workspace,
         private readonly ProjectForm $form,
+        private readonly ProjectCancellation $cancellation,
     ) {}
 
     /** ROUTE-010: PG-010, the page's rows at once and their journey summary deferred — whose request reads the page's rows only. */
@@ -66,6 +69,9 @@ final class ProjectsController extends Controller
             // `cari_bukti`: the checklist's link dialog searching the evidence it chooses from (PT-27; TASK-035).
             'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project, self::query($request, 'cari_bukti'))), 'documents'),
             'history' => Inertia::defer(self::group(fn (): array => $this->workspace->history($actor, $project)), 'history'),
+            // "Batalkan Proyek"'s companion corrections, read when its dialog opens (J-PRJ-04; IP-19); a cancelled project's record with the facts that stay (L-10).
+            'companions' => Inertia::optional(fn (): array => $this->cancellation->companions($actor, $project)),
+            'cancelled' => Inertia::defer(self::group(fn (): ?array => $this->cancellation->record($actor, $project)), 'cancelled'),
         ])->toResponse($request);
     }
 
@@ -138,6 +144,20 @@ final class ProjectsController extends Controller
         return $this->discarded($discard->run(self::text($input['command_id']), $actor, $project), $project->project_number, $actor, $project->public_id, $project->company_id);
     }
 
+    /** ROUTE-163 "Batalkan Proyek" (AX-27; INT-163): the reason required, the project's version as the page showed it; PG-011 with the CANCELLED state. */
+    public function cancel(Request $request, CancelProject $cancel, string $id): RedirectResponse
+    {
+        $actor = self::actor($request);
+        $project = $this->workspace->lookup($actor, $id) ?? throw new NotFoundHttpException;
+        $input = Validator::make($request->only(['command_id', 'alasan', 'versi']), ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:1000'], 'versi' => ['required', 'integer', 'min:0']], [
+            'required' => __('projects.validation.required'), 'uuid' => __('projects.validation.unknown'), 'min' => __('projects.validation.too_short'), 'max' => __('projects.validation.too_long'),
+            'string' => __('projects.validation.choice'), 'integer' => __('projects.validation.unknown'),
+        ])->validate();
+        $outcome = $cancel->run(self::text($input['command_id']), $actor, $project->id, $project->company_id, $project->public_id, (int) self::text($input['versi']), trim(self::text($input['alasan'])));
+
+        return $this->answer($actor, $outcome, "/proyek/{$project->public_id}", 'cancelled', BusinessDate::today(), $project->company_id);
+    }
+
     /** "Buang Draf"'s answer: PG-010 once discarded, the refusal on PG-011. */
     private function discarded(Outcome $outcome, string $number, int $actor, string $publicId, int $companyId): RedirectResponse
     {
@@ -173,6 +193,7 @@ final class ProjectsController extends Controller
                 'BR-PRJ-05' => self::say('projects.refusal.channel_locked'),
                 'L-37' => self::say(($state['reason'] ?? null) === 'downstream' ? 'projects.refusal.downstream' : 'projects.refusal.not_draft'),
                 'L-11' => self::say('projects.refusal.closed'),
+                'AX-27' => self::say(($state['reason'] ?? null) === 'draft' ? 'projects.refusal.cancel_draft' : 'projects.refusal.cancel_closed'),
                 'XL-4' => self::say('projects.refusal.link'),
                 default => self::say('messages.msg_04'),
             }],
