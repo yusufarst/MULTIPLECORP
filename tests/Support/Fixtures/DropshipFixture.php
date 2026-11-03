@@ -64,7 +64,8 @@ final class DropshipFixture
         $supplier = PurchaseWorld::supplier();
         $supplier->forceFill(['name' => "Pemasok Langsung {$tag}"])->save();
         $goods = Projects::product('GOODS', '250000.00');
-        $goods['product']->forceFill(['name' => "Barang Langsung {$tag}"])->save();
+        // Named after every "Barang …" of the other fixtures: PG-018's first page, alphabetical, stays theirs (the stock specs find their product on it).
+        $goods['product']->forceFill(['name' => "Produk Langsung {$tag}"])->save();
         $client = Projects::client();
         Authorization::forget();
         $payload = Projects::payload($company, $client, [$goods]);
