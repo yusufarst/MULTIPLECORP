@@ -182,8 +182,9 @@ final class DropshipPosting
             $serialized = (bool) Row::text($line, 'is_serialized');
             $base = $serialized ? BigDecimal::of(count($serials)) : ReceivingRecords::base($item['quantity'], (int) Row::text($line, 'ratio_to_base'), $scale);
 
-            if ($serialized ? ! BigDecimal::of($item['quantity'] === '' ? '0' : $item['quantity'])->multipliedBy((int) Row::text($line, 'ratio_to_base'))->isEqualTo($base) : $serials !== []) {
-                throw Refused::rejected('C-02', ['reason' => 'serial_count', 'expected' => (string) BigDecimal::of($item['quantity'] === '' ? '0' : $item['quantity'])->multipliedBy((int) Row::text($line, 'ratio_to_base'))]);
+            // The quantity of a serialized line is its count of units in the base unit, whatever unit it was purchased in — the form sends the serials' count.
+            if ($serialized ? ! BigDecimal::of($item['quantity'] === '' ? '0' : $item['quantity'])->isEqualTo($base) : $serials !== []) {
+                throw Refused::rejected('C-02', ['reason' => 'serial_count', 'expected' => $item['quantity']]);
             }
 
             if (! $base->isPositive()) {
@@ -461,15 +462,28 @@ final class DropshipPosting
 
         $matches = self::likelyDuplicates($confirmationId, $kind, (string) $total, $businessDate);
         DuplicateWarning::check('L-49', $matches, $acknowledged, $duplicateReason);
-        $case = $this->cases->open($context, AuthorityClass::AdmPlus, $project->companyId, $to === self::SUPPLIER ? 'PURCHASE_RETURN' : 'DROPSHIP_RETURN', $reason, $project->id, $project->id);
-        $context->created((new LockSet)->add('correction_cases', ['id' => (int) $case->id]));
+        // A supplier settles a purchase return line by line — its replacement, credit and unrecovered share are one purchase line's (DATABASE §5.7; C-46):
+        // one case per purchase line returned; the warehouse's return one case for the command.
+        $cases = [];
+
+        foreach ($plan as $step) {
+            $key = $to === self::SUPPLIER ? (int) Row::text($step['line'], 'purchase_line_id') : 0;
+
+            if (! isset($cases[$key])) {
+                $opened = $this->cases->open($context, AuthorityClass::AdmPlus, $project->companyId, $to === self::SUPPLIER ? 'PURCHASE_RETURN' : 'DROPSHIP_RETURN', $reason, $project->id, $project->id);
+                $context->created((new LockSet)->add('correction_cases', ['id' => (int) $opened->id]));
+                $cases[$key] = ['id' => (int) $opened->id, 'public_id' => (string) $opened->public_id];
+            }
+        }
+
         $confirmed = [];
         $delivered = [];
         $lots = [];
         $number = 0;
 
         foreach ($plan as $step) {
-            $restored = $this->stock->restore($context, $step['item']['line'], ['kind' => $kind, 'qty' => (string) $step['qty'], 'after_delivery' => $step['after'], 'case' => (int) $case->id,
+            $case = $cases[$to === self::SUPPLIER ? (int) Row::text($step['line'], 'purchase_line_id') : 0];
+            $restored = $this->stock->restore($context, $step['item']['line'], ['kind' => $kind, 'qty' => (string) $step['qty'], 'after_delivery' => $step['after'], 'case' => $case['id'],
                 'location' => $locationId, 'condition' => $condition, 'project' => $project->id, 'date' => $businessDate, 'reason' => $reason, 'line_no' => ++$number]);
             $projectLine = (int) Row::text($step['line'], 'project_line_id');
             $confirmed[$projectLine] = (string) BigDecimal::of($confirmed[$projectLine] ?? '0')->minus($step['qty']);
@@ -487,6 +501,7 @@ final class DropshipPosting
 
         $this->demand->dropship($context, $confirmed, $delivered);
         $this->revalidation->revalidate($context, $project->id, Row::text($confirmation, 'public_id'));
+        $first = array_values($cases)[0] ?? throw Refused::rejected('C-14', ['reason' => 'line']);
         $this->audit->record(
             action: $matches === [] ? 'FUL.DropShipReturned' : 'FUL.DropShipReturnDuplicateConfirmed',
             authorityClass: AuthorityClass::AdmPlus,
@@ -497,12 +512,12 @@ final class DropshipPosting
             entityPublicId: Row::text($confirmation, 'public_id'),
             reason: $reason,
             commandId: $context->request->commandId,
-            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) $total, 'case' => (string) $case->public_id, ...($lots === [] ? [] : ['lots' => $lots]), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $duplicateReason])]),
-            linkage: AuditLinkage::make()->link(AuditRelation::Returns, 'dropship_confirmations', Row::text($confirmation, 'public_id'))->correctionCase((string) $case->public_id),
+            change: AuditChange::created(['kind' => $kind, 'quantity' => (string) $total, 'cases' => array_values(array_column($cases, 'public_id')), ...($lots === [] ? [] : ['lots' => $lots]), ...($matches === [] ? [] : ['matches' => $matches, 'duplicate_reason' => $duplicateReason])]),
+            linkage: AuditLinkage::make()->link(AuditRelation::Returns, 'dropship_confirmations', Row::text($confirmation, 'public_id'))->correctionCase($first['public_id']),
             businessDate: $businessDate,
         );
 
-        return (int) $case->id;
+        return $first['id'];
     }
 
     /**

@@ -17250,6 +17250,12 @@
             "source": "MSG-02; NV-04 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "dropship.case_link": {
+            "task": "TASK-046",
+            "source": "ROUTE-177; NAV-028 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -291,3 +291,56 @@ it('confirms a likely duplicate return with its reason, under the acknowledged a
         ->and(DB::table('audit_events')->where('action', 'FUL.DropShipReturnDuplicateConfirmed')->count())->toBe(1)
         ->and(BusinessDate::today())->toBeString();
 });
+
+/**
+ * A second purchase of the world's demand line, of `$count` direct-to-client lines, its line ids.
+ *
+ * @param  array<string, mixed>  $w
+ * @return list<int>
+ */
+function dropshipPurchaseOf(object $test, array $w, int $count, string $qty = '5', ?int $unit = null): array
+{
+    $line = ['handle' => null, 'kind' => 'GOODS', 'product' => $w['product'], 'line' => $w['line'], 'mode' => 'DROPSHIP', 'quantity' => $qty, 'unit' => $unit ?? $w['unit'], 'price' => '100000', 'description' => 'Barang kirim langsung', 'taxes' => []];
+    expect(PurchaseWorld::save(PurchaseWorld::actor($test->company)->id, new PurchaseEntry($test->company->id, $w['project']->id, PurchaseWorld::supplier()->id, BusinessDate::today(), false, null, array_fill(0, $count, $line), [])))->toBe('COMMITTED');
+    $purchase = PurchaseWorld::latest($test->company->id);
+
+    return DB::table('purchase_lines')->where('purchase_id', $purchase->id)->orderBy('line_no')->pluck('id')->map(fn (mixed $id): int => (int) $id)->all();
+}
+
+it('opens one purchase-return case per purchase line a supplier return takes back, each settled on its own line (C-46; C-59; DATABASE §5.7)', function () {
+    $w = DropshipWorld::make($this->world, '20', '1');
+    [$first, $second] = dropshipPurchaseOf($this, $w, 2);
+    $purchase = (int) DB::table('purchase_lines')->where('id', $first)->value('purchase_id');
+    $product = DB::table('products')->where('id', $w['product'])->first(['is_serialized', 'quantity_scale']);
+    $lines = array_map(fn (int $id): array => ['line' => $id, 'quantity' => '1', 'serials' => [], 'serialized' => (bool) $product->is_serialized, 'scale' => (int) $product->quantity_scale], [$first, $second]);
+
+    expect(InvoiceWorld::word(app(ConfirmDropShip::class)->run((string) Str::uuid(), $this->actor, $w['project'], $purchase, 'SJ-1', BusinessDate::today(), false, $lines, DropshipWorld::proof($this->company->id), null, null, ['lines' => $lines])))->toBe('COMMITTED');
+    $confirmation = DropshipWorld::last();
+
+    expect(DropshipWorld::returned($this->actor, $w['project'], $confirmation->id, ReturnDropShipToSupplier::SUPPLIER, [['line' => $confirmation->lines[0], 'quantity' => '1'], ['line' => $confirmation->lines[1], 'quantity' => '1']]))->toBe('COMMITTED');
+
+    $cases = DB::table('stock_restorations as r')->join('dropship_confirmation_lines as d', 'd.id', '=', 'r.dropship_confirmation_line_id')->where('r.kind', 'DROPSHIP_SUPPLIER_RETURN')->orderBy('r.id')->get(['r.correction_case_id', 'd.purchase_line_id']);
+
+    expect($cases->pluck('correction_case_id')->unique()->count())->toBe(2)->and($cases->pluck('purchase_line_id')->all())->toBe([$first, $second]);
+
+    $case = (int) $cases[0]->correction_case_id;
+
+    // One case's replacement is its own line's, never above the one unit it returned.
+    expect(ReturnWorld::outcome($this->actor, $case, 'REPLACEMENT', qty: '2'))->toBe('REJECTED C-29')
+        ->and(ReturnWorld::outcome($this->actor, $case, 'REPLACEMENT', qty: '1'))->toBe('COMMITTED')
+        ->and((string) DropshipWorld::guard($first)->replacement_expected_qty_base)->toBe('1.000')
+        ->and((string) DropshipWorld::guard($second)->replacement_expected_qty_base)->toBe('0.000');
+});
+
+it('confirms a serialized line purchased in boxes by the serials\' count in the base unit (BD-18; C-02; C-09)', function () {
+    $w = DropshipWorld::make($this->world, '20', '1', serialized: true);
+    $box = (int) DB::table('product_units')->where('product_id', $w['product'])->where('ratio_to_base', 12)->value('unit_id');
+    [$line] = dropshipPurchaseOf($this, $w, 1, '1', $box);
+    $purchase = (int) DB::table('purchase_lines')->where('id', $line)->value('purchase_id');
+    $serials = array_map(fn (int $n): string => "SN-BOX-{$n}", range(1, 12));
+    $lines = [['line' => $line, 'quantity' => '12', 'serials' => $serials, 'serialized' => true, 'scale' => (int) DB::table('products')->where('id', $w['product'])->value('quantity_scale')]];
+
+    expect(InvoiceWorld::word(app(ConfirmDropShip::class)->run((string) Str::uuid(), $this->actor, $w['project'], $purchase, 'SJ-BOX', BusinessDate::today(), false, $lines, DropshipWorld::proof($this->company->id), null, null, ['lines' => $lines])))->toBe('COMMITTED')
+        ->and(DB::table('dropship_confirmation_lines')->where('purchase_line_id', $line)->count())->toBe(12)
+        ->and((string) DropshipWorld::guard($line)->dropship_confirmed_net_qty_base)->toBe('12.000');
+});

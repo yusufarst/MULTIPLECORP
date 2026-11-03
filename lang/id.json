@@ -3771,5 +3771,6 @@
     "activity.action.FUL.DropShipReturned": "Retur klien kirim langsung dicatat",
     "activity.action.FUL.DropShipReturnDuplicateConfirmed": "Retur kirim langsung dicatat meski mirip catatan lain",
     "dropship.refusal.unknown": "Baris, bukti atau kasus yang dipilih tidak dikenal untuk proyek ini. Muat ulang lalu pilih kembali.",
-    "dropship.refusal.other": "Tidak dapat diproses. Periksa isian lalu coba lagi."
+    "dropship.refusal.other": "Tidak dapat diproses. Periksa isian lalu coba lagi.",
+    "dropship.case_link": "Catat hasil retur di kasus"
 }

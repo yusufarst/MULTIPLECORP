@@ -31,7 +31,7 @@ type ConfirmedLine = { id: string; no: number; description: string; quantity: st
 type Correction = { kind: string; quantity: string; at: string; case: string | null };
 type Confirmation = { id: string; reference: string; date: string; purchase: string; supplier: string | null; delivery: { recipient: string; date: string } | null; lines: ConfirmedLine[]; corrections: Correction[]; document: { id: string; state: string | null; number: string | null } | null; standing: boolean };
 type Can = { confirm: boolean; reverse: boolean; return: boolean; cost: boolean; issue: boolean; upload: boolean };
-type Page = { project: { id: string; number: string; title: string; client: string | null; open: boolean }; lines: Line[]; confirmations: Confirmation[]; proofs: { id: string; type: string; label: string }[]; racks: { id: string; code: string; name: string }[]; can: Can };
+type Page = { project: { id: string; number: string; title: string; client: string | null; open: boolean }; lines: Line[]; lines_more: string | null; confirmations: Confirmation[]; confirmations_more: string | null; proofs: { id: string; type: string; label: string }[]; racks: { id: string; code: string; name: string }[]; can: Can };
 type Props = { page: Page; today: string };
 type Payload = Record<string, FormDataConvertible>;
 type Correcting = { confirmation: Confirmation; command: 'reverse' | 'return' };
@@ -157,6 +157,12 @@ export default function DirectShipment({ page, today }: Props) {
                             ))}
                         </ul>
                     )}
+                    {page.lines_more !== null && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-caption text-text-secondary">{t('deliveries.list.more')}</span>
+                            <a className="text-body underline" href={`${base}?${new URLSearchParams({ baris: page.lines_more }).toString()}`}>{t('actions.load_more')}</a>
+                        </div>
+                    )}
                 </section>
                 {can.confirm && project.open && purchases.length > 0 && (
                     <fieldset data-slot="dropship-form" disabled={confirm.frozen} className="flex min-w-0 flex-col gap-3">
@@ -258,7 +264,13 @@ export default function DirectShipment({ page, today }: Props) {
                                     {confirmation.corrections.length > 0 && (
                                         <ul role="list" className="flex min-w-0 flex-col gap-1 text-caption text-text-secondary">
                                             {confirmation.corrections.map((correction, index) => (
-                                                <li key={`${correction.kind}-${String(index)}`}>{`${t(`dropship.kind.${correction.kind}` as TranslationKey)} · ${correction.quantity}${correction.case === null ? '' : ` · ${correction.case}`}`}</li>
+                                                <li key={`${correction.kind}-${String(index)}`}>
+                                                    {`${t(`dropship.kind.${correction.kind}` as TranslationKey)} · ${correction.quantity}`}
+                                                    {/* A supplier return's outcome is recorded on its case at PG-028 (ROUTE-177). */}
+                                                    {correction.case !== null && correction.kind === 'DROPSHIP_SUPPLIER_RETURN'
+                                                        ? <>{' · '}<a className="underline" href={`/gudang/retur-pemasok?kasus=${correction.case}`}>{t('dropship.case_link')}</a></>
+                                                        : (correction.case === null ? '' : ` · ${correction.case}`)}
+                                                </li>
                                             ))}
                                         </ul>
                                     )}
@@ -271,6 +283,12 @@ export default function DirectShipment({ page, today }: Props) {
                                 </li>
                             ))}
                         </ol>
+                    )}
+                    {page.confirmations_more !== null && (
+                        <div className="flex flex-wrap items-center gap-2">
+                            <span className="text-caption text-text-secondary">{t('deliveries.list.more')}</span>
+                            <a className="text-body underline" href={`${base}?${new URLSearchParams({ konfirmasi: page.confirmations_more }).toString()}`}>{t('actions.load_more')}</a>
+                        </div>
                     )}
                 </section>
             </div>

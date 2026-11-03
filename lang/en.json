@@ -3771,5 +3771,6 @@
     "activity.action.FUL.DropShipReturned": "Direct shipment client return recorded",
     "activity.action.FUL.DropShipReturnDuplicateConfirmed": "Direct shipment return recorded despite a likely duplicate",
     "dropship.refusal.unknown": "The line, proof or case chosen is not known for this project. Reload and choose it again.",
-    "dropship.refusal.other": "Could not be processed. Check the entries and try again."
+    "dropship.refusal.other": "Could not be processed. Check the entries and try again.",
+    "dropship.case_link": "Record the return's outcome on its case"
 }

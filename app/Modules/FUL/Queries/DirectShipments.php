@@ -6,11 +6,13 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\FUL\Services\DropshipPosting;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Queries\StockCursor;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\Money;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -43,11 +45,12 @@ final class DirectShipments
     }
 
     /**
-     * ROUTE-032: the page's content, null when the project is not the viewer's to open with any of the page's capabilities.
+     * ROUTE-032: the page's content, null when the project is not the viewer's to open with any of the page's capabilities;
+     * the lines and the confirmations each a page at a time, continued after the row a page ended with (D-PF-02; PF-14).
      *
      * @return array<string, mixed>|null
      */
-    public function page(int $viewerId, string $publicId): ?array
+    public function page(int $viewerId, string $publicId, ?string $linesAfter = null, ?string $confirmationsAfter = null): ?array
     {
         $project = $this->projectOf($viewerId, $publicId, 'dropship.confirm') ?? $this->projectOf($viewerId, $publicId, 'fulfillment.correct') ?? $this->projectOf($viewerId, $publicId, 'sales_return.record');
 
@@ -66,8 +69,8 @@ final class DirectShipments
 
         return [
             'project' => ['id' => Row::text($header, 'public_id'), 'number' => Row::text($header, 'project_number'), 'title' => Row::text($header, 'title'), 'client' => Row::nullable($header, 'client'), 'open' => in_array(Row::text($header, 'state'), ['DRAFT', 'ACTIVE'], true)],
-            'lines' => self::lines($project->id),
-            'confirmations' => self::confirmations($project, $cost),
+            ...self::lines($viewer, $project->id, $linesAfter),
+            ...self::confirmations($viewer, $project, $cost, $confirmationsAfter),
             'proofs' => self::proofs($viewer, $company),
             'racks' => array_values(array_map(fn (object $row): array => ['id' => RowHandle::of('locations', (int) Row::text($row, 'id')), 'code' => Row::text($row, 'code'), 'name' => Row::text($row, 'name')],
                 DB::table('locations')->where('is_active', true)->orderBy('code')->get(['id', 'code', 'name'])->all())),
@@ -157,22 +160,26 @@ final class DirectShipments
      * The project's drop-ship purchase lines, by purchase and line number: ordered, confirmed net, the line's normal
      * remainder, the demand's remainder, the replacement awaited and the cases it answers (C-29; C-30; PX-03).
      *
-     * @return list<array<string, mixed>>
+     * @return array{lines: list<array<string, mixed>>, lines_more: ?string}
      */
-    private static function lines(int $projectId): array
+    private static function lines(Authority $viewer, int $projectId, ?string $after): array
     {
-        $rows = DB::table('purchase_lines as l')->join('purchases as p', 'p.id', '=', 'l.purchase_id')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')
+        $binding = ['list' => 'dropship-lines', 'project' => $projectId];
+        $key = $after === null ? null : StockCursor::read($viewer, $after, $binding, 1);
+        $found = DB::table('purchase_lines as l')->join('purchases as p', 'p.id', '=', 'l.purchase_id')->join('purchase_line_balances as b', 'b.purchase_line_id', '=', 'l.id')
             ->join('project_lines as pl', 'pl.id', '=', 'l.project_line_id')->join('project_line_balances as pb', 'pb.project_line_id', '=', 'pl.id')->join('products as pr', 'pr.id', '=', 'l.product_id')
             ->leftJoin('suppliers as s', 's.id', '=', 'p.supplier_id')->leftJoin('units as u', 'u.id', '=', 'l.entered_unit_id')->leftJoin('units as bu', 'bu.id', '=', 'pr.base_unit_id')
-            ->where('pl.project_id', $projectId)->where('l.delivery_mode', 'DROPSHIP')->where('l.kind', 'GOODS')->orderBy('p.id')->orderBy('l.line_no')->limit(self::PAGE)
+            ->where('pl.project_id', $projectId)->where('l.delivery_mode', 'DROPSHIP')->where('l.kind', 'GOODS')->where('l.id', '>', (int) ($key[0] ?? 0))->orderBy('l.id')->limit(self::PAGE + 1)
             ->get(['l.id', 'l.line_no', 'l.ratio_to_base', 'l.entered_qty', 'pl.description', 'pr.is_serialized', 'pr.quantity_scale', 'u.code as unit', 'bu.code as base_unit', 'p.public_id as purchase', 'p.purchase_number', 'p.state', 's.name as supplier',
                 'b.ordered_qty_base', 'b.dropship_confirmed_net_qty_base', 'b.replacement_expected_qty_base', 'b.replacement_received_net_qty_base',
                 DB::raw('b.ordered_qty_base - b.normal_received_net_qty_base - b.closed_qty_base - b.dropship_confirmed_net_qty_base as room'),
                 DB::raw('pb.demand_qty_base - pb.dispatched_net_qty_base - pb.dropship_confirmed_net_qty_base - pb.handed_over_qty_base - pb.cancelled_qty_base as demand'),
                 DB::raw("(select coalesce(json_agg(distinct k.public_id), '[]') from stock_restorations r join dropship_confirmation_lines d on d.id = r.dropship_confirmation_line_id join correction_cases k on k.id = r.correction_case_id
                     where d.purchase_line_id = l.id and r.kind = 'DROPSHIP_SUPPLIER_RETURN' and k.state = 'OPEN') as cases")])->all();
+        $rows = array_slice($found, 0, self::PAGE);
+        $tail = $rows === [] ? null : $rows[count($rows) - 1];
 
-        return array_map(fn (object $row): array => [
+        return ['lines' => array_map(fn (object $row): array => [
             'id' => RowHandle::of('purchase_lines', (int) Row::text($row, 'id')), 'no' => (int) Row::text($row, 'line_no'), 'description' => Row::text($row, 'description'),
             'purchase' => ['id' => Row::text($row, 'purchase'), 'number' => Row::text($row, 'purchase_number'), 'supplier' => Row::nullable($row, 'supplier'), 'open' => Row::text($row, 'state') === 'OPEN'],
             'unit' => Row::nullable($row, 'unit'), 'base_unit' => Row::nullable($row, 'base_unit'), 'ratio' => (int) Row::text($row, 'ratio_to_base'), 'serialized' => (bool) Row::text($row, 'is_serialized'), 'scale' => (int) Row::text($row, 'quantity_scale'),
@@ -180,23 +187,29 @@ final class DirectShipments
             'remainder' => self::plain((string) BigDecimal::max(BigDecimal::zero(), BigDecimal::min(BigDecimal::of(Row::text($row, 'room')), BigDecimal::of(Row::text($row, 'demand'))))),
             'awaited' => self::plain((string) BigDecimal::of(Row::text($row, 'replacement_expected_qty_base'))->minus(Row::text($row, 'replacement_received_net_qty_base'))),
             'cases' => array_values(array_filter((array) json_decode(Row::text($row, 'cases'), true), is_string(...))),
-        ], $rows);
+        ], $rows), 'lines_more' => count($found) > self::PAGE && $tail !== null ? StockCursor::of($viewer, [(int) Row::text($tail, 'id')], $binding) : null];
     }
 
     /**
      * The project's confirmations, newest first: each line's figures and serial, its corrections, the cost with
      * `cost.view` (row 75; PJ-06), its *Surat Jalan*.
      *
-     * @return list<array<string, mixed>>
+     * @return array{confirmations: list<array<string, mixed>>, confirmations_more: ?string}
      */
-    private static function confirmations(ProjectRef $project, bool $cost): array
+    private static function confirmations(Authority $viewer, ProjectRef $project, bool $cost, ?string $after): array
     {
-        $headers = DB::table('dropship_confirmations as c')->join('purchases as p', 'p.id', '=', 'c.purchase_id')->leftJoin('suppliers as s', 's.id', '=', 'p.supplier_id')->where('c.project_id', $project->id)
-            ->orderByDesc('c.id')->limit(self::PAGE)->get(['c.id', 'c.public_id', 'c.supplier_shipment_reference', 'c.business_date', 'p.purchase_number', 's.name as supplier'])->all();
+        $binding = ['list' => 'dropship-confirmations', 'project' => $project->id];
+        $key = $after === null ? null : StockCursor::read($viewer, $after, $binding, 1);
+        $found = DB::table('dropship_confirmations as c')->join('purchases as p', 'p.id', '=', 'c.purchase_id')->leftJoin('suppliers as s', 's.id', '=', 'p.supplier_id')->where('c.project_id', $project->id)
+            ->when($key !== null, fn (Builder $older): Builder => $older->where('c.id', '<', (int) ($key[0] ?? 0)))->orderByDesc('c.id')->limit(self::PAGE + 1)
+            ->get(['c.id', 'c.public_id', 'c.supplier_shipment_reference', 'c.business_date', 'p.purchase_number', 's.name as supplier'])->all();
+        $headers = array_slice($found, 0, self::PAGE);
+        $tail = $headers === [] ? null : $headers[count($headers) - 1];
+        $more = count($found) > self::PAGE && $tail !== null ? StockCursor::of($viewer, [(int) Row::text($tail, 'id')], $binding) : null;
         $ids = array_map(fn (object $row): int => (int) Row::text($row, 'id'), $headers);
 
         if ($ids === []) {
-            return [];
+            return ['confirmations' => [], 'confirmations_more' => null];
         }
 
         $lines = DB::table('dropship_confirmation_lines as d')->join('stock_consumption_balances as b', 'b.dropship_confirmation_line_id', '=', 'd.id')->join('purchase_lines as l', 'l.id', '=', 'd.purchase_line_id')
@@ -217,7 +230,7 @@ final class DirectShipments
         $documentsOf = self::byConfirmation($documents);
         $deliveredOf = self::byConfirmation($delivered);
 
-        return array_map(function (object $header) use ($cost, $linesOf, $correctionsOf, $documentsOf, $deliveredOf): array {
+        return ['confirmations' => array_map(function (object $header) use ($cost, $linesOf, $correctionsOf, $documentsOf, $deliveredOf): array {
             $id = (int) Row::text($header, 'id');
             $rows = $linesOf[$id] ?? [];
             $document = ($documentsOf[$id] ?? [])[0] ?? null;
@@ -237,7 +250,7 @@ final class DirectShipments
                 'document' => $document === null ? null : ['id' => Row::text($document, 'public_id'), 'state' => Row::nullable($document, 'state'), 'number' => Row::nullable($document, 'number')],
                 'standing' => array_reduce($rows, fn (bool $any, object $row): bool => $any || BigDecimal::of(Row::text($row, 'open'))->isPositive(), false),
             ];
-        }, $headers);
+        }, $headers), 'confirmations_more' => $more];
     }
 
     /**

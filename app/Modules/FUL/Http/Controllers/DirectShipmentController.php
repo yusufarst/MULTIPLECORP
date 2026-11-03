@@ -35,11 +35,14 @@ final class DirectShipmentController extends Controller
         private readonly DirectShipments $shipments,
     ) {}
 
-    /** ROUTE-032: the project's direct-to-client lines, its confirmations and their corrections. */
+    /** ROUTE-032: the project's direct-to-client lines and its confirmations with their corrections, each continued by `?baris=` and `?konfirmasi=` (IP-18). */
     public function show(Request $request, string $id): Response
     {
+        $lines = $request->query('baris');
+        $confirmations = $request->query('konfirmasi');
+
         return Inertia::render('FUL/DirectShipment', [
-            'page' => $this->shipments->page(self::actor($request), $id) ?? throw new NotFoundHttpException,
+            'page' => $this->shipments->page(self::actor($request), $id, is_string($lines) ? $lines : null, is_string($confirmations) ? $confirmations : null) ?? throw new NotFoundHttpException,
             'today' => BusinessDate::today(),
         ]);
     }

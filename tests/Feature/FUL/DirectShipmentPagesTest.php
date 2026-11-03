@@ -1,6 +1,8 @@
 <?php
 
 use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\FUL\Actions\ReturnDropShipToSupplier;
+use App\Modules\PUR\Data\PurchaseEntry;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
 use Carbon\CarbonImmutable;
@@ -15,8 +17,10 @@ use Tests\Support\Authorization;
 use Tests\Support\DropshipWorld;
 use Tests\Support\InvoiceWorld;
 use Tests\Support\Numbering;
+use Tests\Support\PurchaseWorld;
 use Tests\Support\ReceivingWorld;
 use Tests\Support\RefreshDatabase;
+use Tests\Support\ReturnWorld;
 
 // TL-04, TL-07 (TASK-046; ROUTE-032; ROUTE-205–ROUTE-207; ROUTE-216; NAV-032; WF-DOC-01; BR-DOC-04; criteria 1, 3, 5–8, 11): PG-032
 // with the lines' figures and no receiving or dispatch control, a confirmation answering on PG-011, each refusal in place
@@ -137,4 +141,39 @@ it('drafts the direct shipment\'s Surat Jalan from its recorded facts and issues
     $this->actingAs($this->actor)->post('/dokumen', ['command_id' => (string) Str::uuid(), 'jenis' => 'DOC-03', 'subjek' => ['dropship_confirmation_id' => $reversed->public_id]]);
 
     expect(DB::table('documents')->where('dropship_confirmation_id', $reversed->id)->count())->toBe(0);
+});
+
+it('records a drop-ship return\'s outcome through ROUTE-177 and shows its case on PG-028, its units by the supplier\'s shipment reference (NX-16; CM-15; C-46)', function () {
+    $settler = DropshipWorld::actor($this->company, ReturnWorld::CAPABILITIES);
+    expect(DropshipWorld::confirm($settler->id, $this->w, '3', 'SJ-PMS-9'))->toBe('COMMITTED');
+    $confirmation = DropshipWorld::last();
+    expect(DropshipWorld::returned($settler->id, $this->w['project'], $confirmation->id, ReturnDropShipToSupplier::SUPPLIER, [['line' => $confirmation->lines[0], 'quantity' => '2']]))->toBe('COMMITTED');
+    $case = (string) DB::table('correction_cases')->where('id', DropshipWorld::lastCase())->value('public_id');
+
+    $this->actingAs($settler)->get('/gudang/retur-pemasok?'.http_build_query(['kasus' => $case]))->assertOk()->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('case.lot', 'SJ-PMS-9')->where('case.number', $this->w['purchase']->purchase_number)->where('case.units.0.lot', 'SJ-PMS-9')->where('case.units.0.condition', null)->where('case.replacement.returned', '2'));
+    Auth::forgetGuards();
+
+    $answer = $this->actingAs($settler)->followingRedirects()->post("/pembelian/{$this->w['purchase']->public_id}/retur/{$case}/hasil", [
+        'command_id' => (string) Str::uuid(), 'hasil' => 'UNRECOVERED', 'nilai' => '50000.00', 'alasan' => 'Ongkos kirim tidak kembali', 'tanggal' => BusinessDate::today(),
+    ])->viewData('page')['flash']['answer'];
+
+    expect($answer['kind'])->toBe('COMMITTED')->and(ReturnWorld::figures(DropshipWorld::lastCase())['unrecovered'])->toBe('50000.00')
+        ->and(DropshipWorld::cost($confirmation->lines[0], 'LOSS'))->toBe('50000.00');
+});
+
+it('continues PG-032\'s lines and confirmations after the row a page ended with (D-PF-02; IP-18; PF-14)', function () {
+    $line = ['handle' => null, 'kind' => 'GOODS', 'product' => $this->w['product'], 'line' => $this->w['line'], 'mode' => 'DROPSHIP', 'quantity' => '1', 'unit' => $this->w['unit'], 'price' => '1000', 'description' => 'Barang kirim langsung', 'taxes' => []];
+    expect(PurchaseWorld::save(PurchaseWorld::actor($this->company)->id, new PurchaseEntry($this->company->id, $this->w['project']->id, PurchaseWorld::supplier()->id, BusinessDate::today(), false, null, array_fill(0, 50, $line), [])))->toBe('COMMITTED');
+
+    $first = $this->actingAs($this->actor)->get($this->page)->assertOk()->viewData('page')['props']['page'];
+    Auth::forgetGuards();
+
+    expect($first['lines'])->toHaveCount(50)->and($first['lines_more'])->toBeString()->and($first['confirmations_more'])->toBeNull();
+
+    $next = $this->actingAs($this->actor)->get($this->page.'?'.http_build_query(['baris' => $first['lines_more']]))->assertOk()->viewData('page')['props']['page'];
+    Auth::forgetGuards();
+
+    expect($next['lines'])->toHaveCount(1)->and($next['lines_more'])->toBeNull()
+        ->and(array_intersect(array_column($first['lines'], 'id'), array_column($next['lines'], 'id')))->toBe([]);
 });
