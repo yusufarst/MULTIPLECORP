@@ -47,7 +47,8 @@ final class RefundCredit
     ) {}
 
     /**
-     * AX-23's lock set: the source (LK-26), the account (LK-03), the transfer evidence (LK-29) and the projects of the invoices the consumed source has been applied to (LK-01).
+     * AX-23's lock set: the source with its payment or opening credit (LK-26) — so its proof is not unlinked meanwhile —, the account (LK-03), the transfer evidence (LK-29)
+     * and the projects of the invoices the consumed source has been applied to (LK-01).
      *
      * @param  array<string, int>  $source  `payment_id` or `opening_customer_credit_id`
      */
@@ -56,7 +57,8 @@ final class RefundCredit
         $invoices = DB::table('payment_applications')->where($source)->where('target_kind', 'INVOICE')->distinct()->pluck('invoice_id')->all();
 
         return PaymentApplications::invoiceLocks(array_values(array_map(fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, $invoices)))
-            ->union(EvidenceGuard::locks($evidenceId))->add('application_source_balances', $source)->add('company_bank_accounts', ['id' => $accountId]);
+            ->union(EvidenceGuard::locks($evidenceId))->add('application_source_balances', $source)->add('company_bank_accounts', ['id' => $accountId])
+            ->add(isset($source['payment_id']) ? 'payments' : 'opening_customer_credits', ['id' => $source['payment_id'] ?? $source['opening_customer_credit_id']]);
     }
 
     /**
@@ -70,6 +72,8 @@ final class RefundCredit
 
         return $this->envelope->run($request, function (CommandContext $context) use ($source, $key, $amount, $accountId, $evidenceId, $reason, $businessDate, $prefilled): CommandResult {
             $context->lock(self::locks($key, $accountId, $evidenceId));
+            // DATA-DEPENDENT: an application committed meanwhile may have reached another project's invoice.
+            $context->require(self::locks($key, $accountId, $evidenceId));
             BusinessDateRule::check($businessDate, $prefilled);
             $money = Money::of($amount);
 
@@ -86,7 +90,7 @@ final class RefundCredit
                 throw Refused::rejected('L-29', ['reason' => 'transfer_proof']);
             }
 
-            if (! DB::table('company_bank_accounts')->where('id', $accountId)->where('company_id', $source['company'])->exists()) {
+            if (! DB::table('company_bank_accounts')->where('id', $accountId)->where('company_id', $source['company'])->whereNull('deactivated_at')->exists()) {
                 throw Refused::rejected('C-14', ['reason' => 'account']);
             }
 

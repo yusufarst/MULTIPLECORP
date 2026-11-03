@@ -39,7 +39,7 @@ type Group = {
     invoices: Invoice[];
     can: { apply: boolean; refund: boolean; hold: boolean };
 };
-type Props = { page: { branches: Branch[]; branch: string | null; groups: Group[]; today: string } };
+type Props = { page: { branches: Branch[]; branch: string | null; groups: Group[]; more: string | null; today: string } };
 type Payload = Record<string, FormDataConvertible>;
 type Acting = { kind: 'refund' | 'apply'; group: Group; source: Source } | { kind: 'hold'; group: Group; project: Project };
 
@@ -165,6 +165,7 @@ export default function CustomerCredit({ page }: Props) {
                         ))}
                     </ol>
                 )}
+                {page.more !== null && <Button variant="outline" className="self-start" render={<a href={`/keuangan/kredit-pelanggan?${new URLSearchParams({ ...(page.branch === null ? {} : { cabang: page.branch }), setelah: page.more }).toString()}`} />}>{t('actions.load_more')}</Button>}
             </div>
             <ConfirmCommand
                 open={acting?.kind === 'refund' && !refund.unknown}

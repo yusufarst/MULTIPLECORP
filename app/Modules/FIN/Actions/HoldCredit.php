@@ -63,8 +63,10 @@ final class HoldCredit
 
             $now = $context->now();
             $context->connection->update('update projects set credit_held_amount = ?::numeric, lock_version = lock_version + 1, updated_at = ? where id = ?', [Money::of($figures['arisen'])->toString(), $now, $projectId]);
-            $sources = DB::table('payment_applications as a')->join('invoices as i', 'i.id', '=', 'a.invoice_id')->leftJoin('payments as p', 'p.id', '=', 'a.payment_id')->where('i.project_id', $projectId)
-                ->distinct()->orderBy('p.public_id')->pluck('p.public_id')->filter()->values()->all();
+            // The sources whose money ever counted for the project: each payment by its public id, each opening credit by its import row (LG-01).
+            $sources = DB::table('payment_applications as a')->join('invoices as i', 'i.id', '=', 'a.invoice_id')->leftJoin('payments as p', 'p.id', '=', 'a.payment_id')
+                ->leftJoin('opening_customer_credits as c', 'c.id', '=', 'a.opening_customer_credit_id')->where('i.project_id', $projectId)
+                ->selectRaw("distinct coalesce(p.public_id::text, 'opening:' || c.import_row_id) as source")->orderBy('source')->pluck('source')->all();
 
             $this->audit->record(
                 action: 'FIN.CreditHeld',

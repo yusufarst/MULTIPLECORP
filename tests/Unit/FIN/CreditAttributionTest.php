@@ -9,9 +9,9 @@ function creditCommand(array $creates = [], array $ends = [], string $contra = '
     return ['contra' => $contra, 'ends' => $ends, 'creates' => $creates];
 }
 
-function creditCreate(int $id, string $amount, ?int $project = null, string $target = 'INVOICE', bool $successor = false): array
+function creditCreate(int $id, string $amount, ?int $project = null, string $target = 'INVOICE', ?int $supersedes = null): array
 {
-    return ['id' => $id, 'target' => $target, 'project' => $project, 'amount' => $amount, 'successor' => $successor];
+    return ['id' => $id, 'target' => $target, 'project' => $project, 'amount' => $amount, 'supersedes' => $supersedes];
 }
 
 function creditEnd(int $id, string $reason, string $amount, ?int $project = null, string $reapplied = '0.00'): array
@@ -46,7 +46,7 @@ it('blocks only the project a payment\'s rest counts for when it pays two, and m
 
 it('counts what a reallocation does not re-apply as released, and an application ended by its source\'s contra as none, the unapplied part of the contra taking the oldest credit (CM-19; CM-21)', function () {
     $paid = creditCommand([creditCreate(1, '300.00', 7)]);
-    $moved = creditCommand([creditCreate(2, '100.00', 9, 'INVOICE', true)], [creditEnd(1, 'REALLOCATED', '300.00', 7, '100.00')]);
+    $moved = creditCommand([creditCreate(2, '100.00', 9, 'INVOICE', 1)], [creditEnd(1, 'REALLOCATED', '300.00', 7, '100.00')]);
 
     expect(CreditAttribution::replay('1000.00', [$paid, $moved])['projects'])->toBe([7 => ['arisen' => '900.00', 'left' => '900.00']])
         ->and(CreditAttribution::replay('1000.00', [$paid, creditCommand([], [creditEnd(1, 'SOURCE_CONTRA', '300.00', 7)], '1000.00')])['projects'])->toBe([7 => ['arisen' => '700.00', 'left' => '0.00']]);
@@ -56,4 +56,30 @@ it('spends a later application from the oldest credit, lowering what is left and
     $replayed = CreditAttribution::replay('1000.00', [creditCommand([creditCreate(1, '400.00', 7)]), creditCommand([creditCreate(2, '250.00', 8)])]);
 
     expect($replayed['projects'])->toBe([7 => ['arisen' => '600.00', 'left' => '350.00']])->and($replayed['unattributed'])->toBe('0.00');
+});
+
+it('takes only a partial contra\'s disposed part as applied, the unapplied rest of the contra taking the oldest credit (CM-19; ER-06)', function () {
+    $paid = creditCommand([creditCreate(1, '60.00', 7)]);
+    // A contra of 60 moving the whole 60 to a re-recorded payment leaves the 40 of credit standing.
+    $moved = creditCommand([], [creditEnd(1, 'RE_RECORDED', '60.00', 7)], '60.00');
+    // A contra of 50 releasing 10 of the 60, its 50 successor staying on the source, takes the 40 of credit.
+    $released = creditCommand([creditCreate(2, '50.00', 7, 'INVOICE', 1)], [creditEnd(1, 'SOURCE_CONTRA', '60.00', 7, '50.00')], '50.00');
+
+    expect(CreditAttribution::replay('100.00', [$paid, $moved])['projects'])->toBe([7 => ['arisen' => '40.00', 'left' => '40.00']])
+        ->and(CreditAttribution::replay('100.00', [$paid, $released])['projects'])->toBe([7 => ['arisen' => '40.00', 'left' => '0.00']]);
+});
+
+it('counts a re-recorded payment\'s moved application as its own first application (CM-19; ER-06)', function () {
+    $replayed = CreditAttribution::replay('100.00', [creditCommand([creditCreate(5, '60.00', 7)])]);
+
+    expect($replayed['projects'])->toBe([7 => ['arisen' => '40.00', 'left' => '40.00']]);
+});
+
+it('gives back a partial refund contra\'s part only, the rest staying with the remaining backing (CM-38; ER-06)', function () {
+    $refunded = [creditCommand([creditCreate(1, '1000.00', 7)]), creditCommand([creditCreate(2, '100.00', null, 'REFUND')])];
+    $partial = creditCommand([creditCreate(3, '70.00', null, 'REFUND', 2)], [creditEnd(2, 'REFUND_CONTRA', '100.00', null, '70.00')]);
+    $rest = creditCommand([], [creditEnd(3, 'REFUND_CONTRA', '70.00')]);
+
+    expect(CreditAttribution::replay('1100.00', [...$refunded, $partial])['projects'])->toBe([7 => ['arisen' => '130.00', 'left' => '30.00']])
+        ->and(CreditAttribution::replay('1100.00', [...$refunded, $partial, $rest])['projects'])->toBe([7 => ['arisen' => '200.00', 'left' => '100.00']]);
 });

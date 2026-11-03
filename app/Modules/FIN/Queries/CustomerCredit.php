@@ -2,6 +2,7 @@
 
 namespace App\Modules\FIN\Queries;
 
+use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\FIN\Services\CreditProjects;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Support\BusinessDate;
@@ -22,10 +23,13 @@ final class CustomerCredit
     /** The clients one page shows. */
     public const PAGE = 50;
 
+    /** The refunds and open invoices one client shows. */
+    public const PER_CLIENT = 50;
+
     public function __construct(private readonly EffectiveCapabilities $capabilities) {}
 
     /** @return array<string, mixed> */
-    public function screen(int $viewerId, ?string $branch): array
+    public function screen(int $viewerId, ?string $branch, ?string $after = null): array
     {
         $viewer = $this->capabilities->for($viewerId);
         $branches = [];
@@ -45,17 +49,21 @@ final class CustomerCredit
         }
 
         $companies = $chosen !== null ? [$chosen] : array_keys($branches);
-        $groups = $companies === [] ? [] : $this->groups($companies);
+        [$groups, $more] = $companies === [] ? [[], null] : $this->groups($companies, $after);
 
         return [
             'branches' => array_values($branches),
             'branch' => $chosen === null ? null : $branches[$chosen]['id'],
             'groups' => array_map(function (array $group) use ($branches, $viewer): array {
                 $company = is_int($group['company_id'] ?? null) ? $group['company_id'] : 0;
+                $refund = $viewer->allows('refund.record', $company);
 
-                return [...$group, 'company' => $branches[$company] ?? null,
-                    'can' => ['apply' => $viewer->allows('payment.apply', $company), 'refund' => $viewer->allows('refund.record', $company), 'hold' => $viewer->allows('refund.record', $company)]];
+                // The transfer proofs and accounts only to whom may refund, and the proofs only within their family (PJ-08).
+                return [...$group, 'company' => $branches[$company] ?? null, 'accounts' => $refund ? $group['accounts'] : [],
+                    'proofs' => $refund && EvidenceTypes::mayView($viewer, 'TRANSFER_PROOF', $company) ? $group['proofs'] : [],
+                    'can' => ['apply' => $viewer->allows('payment.apply', $company), 'refund' => $refund, 'hold' => $refund]];
             }, $groups),
+            'more' => $more,
             'today' => BusinessDate::today(),
         ];
     }
@@ -101,22 +109,31 @@ final class CustomerCredit
     }
 
     /**
-     * The clients with credit, a refund or a project's credit, each with its sources, refunds and projects.
+     * The clients with credit left or a refund short of backing, a page at a time by client name, each with its sources, refunds and projects; and the next page's cursor.
      *
      * @param  list<int>  $companies
-     * @return list<array<string, mixed>>
+     * @return array{list<array<string, mixed>>, ?string}
      */
-    private function groups(array $companies): array
+    private function groups(array $companies, ?string $after): array
     {
-        $keys = DB::table('application_source_balances as b')->whereIn('b.company_id', $companies)
-            ->where(fn (Builder $either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0)->orWhereExists(fn (Builder $applied) => $applied->from('payment_applications as a')->whereColumn('a.company_id', 'b.company_id')
-                ->whereColumn('a.client_organization_id', 'b.client_organization_id')->where('a.target_kind', 'INVOICE')))
-            ->join('client_organizations as o', 'o.id', '=', 'b.client_organization_id')
-            ->groupBy('b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name')->orderBy('o.name')->orderBy('b.company_id')->limit(self::PAGE)
-            ->get(['b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name', DB::raw('sum(b.capacity_amount) as credit')])->all();
+        $cursor = null;
+
+        if (is_string($after) && preg_match('/^([0-9a-f-]{36})\.([0-9a-f-]{36})$/i', $after, $match) === 1) {
+            $cursor = DB::table('client_organizations as o')->crossJoin('companies as c')->where('o.public_id', strtolower($match[1]))->where('c.public_id', strtolower($match[2]))->first(['o.name', 'o.id as client', 'c.id as company']);
+        }
+
+        $found = DB::table('application_source_balances as b')->whereIn('b.company_id', $companies)
+            ->where(fn (Builder $either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0))
+            ->join('client_organizations as o', 'o.id', '=', 'b.client_organization_id')->join('companies as co', 'co.id', '=', 'b.company_id')
+            ->when($cursor !== null, fn (Builder $later) => $later->whereRaw('(o.name, b.client_organization_id, b.company_id) > (?, ?, ?)', [Row::text($cursor ?? (object) [], 'name'), (int) Row::text($cursor ?? (object) [], 'client'), (int) Row::text($cursor ?? (object) [], 'company')]))
+            ->groupBy('b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name', 'co.public_id')->orderBy('o.name')->orderBy('b.client_organization_id')->orderBy('b.company_id')->limit(self::PAGE + 1)
+            ->get(['b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name', 'co.public_id as company_public', DB::raw('sum(b.capacity_amount) as credit')])->all();
+        $keys = array_slice($found, 0, self::PAGE);
+        $last = $keys === [] ? null : $keys[count($keys) - 1];
+        $more = count($found) > self::PAGE && $last !== null ? Row::text($last, 'public_id').'.'.Row::text($last, 'company_public') : null;
 
         if ($keys === []) {
-            return [];
+            return [[], null];
         }
 
         $pairs = array_map(fn (object $row): string => Row::text($row, 'company_id').'|'.Row::text($row, 'client_organization_id'), $keys);
@@ -126,9 +143,11 @@ final class CustomerCredit
             ->orderByRaw('coalesce(p.business_date, c.business_date), b.payment_id, b.opening_customer_credit_id')
             ->get(['b.company_id', 'b.client_organization_id', 'b.payment_id', 'b.opening_customer_credit_id', 'b.capacity_amount', 'b.gross_amount', 'p.public_id as payment', 'p.business_date as paid_on', 'c.business_date as opened_on',
                 DB::raw("(p.id is not null and p.unevidenced_reason is not null and p.bank_statement_line_id is null and not exists (select 1 from evidence_links k join evidence_documents e on e.id = k.evidence_document_id where k.payment_id = p.id and k.unlinked_at is null and e.evidence_type in ('PAYMENT_PROOF', 'TRANSFER_PROOF', 'BANK_STATEMENT'))) as unevidenced")])->all();
-        $refunds = DB::table('disbursements as d')->where('d.kind', 'REFUND')->whereIn('d.company_id', $companies)->whereIn('d.client_organization_id', $clients)->join('money_fact_balances as m', 'm.disbursement_id', '=', 'd.id')
-            ->leftJoin('correction_cases as k', 'k.id', '=', 'm.residual_case_id')->orderByDesc('d.id')->limit(self::PAGE * 4)
-            ->get(['d.public_id', 'd.company_id', 'd.client_organization_id', 'd.business_date', 'd.amount', 'm.backed_amount', 'm.shortfall_amount', 'm.contra_amount', 'k.public_id as case'])->all();
+        $refunds = DB::query()->fromSub(DB::table('disbursements as d')->where('d.kind', 'REFUND')->whereIn('d.company_id', $companies)->whereIn('d.client_organization_id', $clients)->join('money_fact_balances as m', 'm.disbursement_id', '=', 'd.id')
+            ->leftJoin('correction_cases as k', 'k.id', '=', 'm.residual_case_id')
+            ->select(['d.id', 'd.public_id', 'd.company_id', 'd.client_organization_id', 'd.business_date', 'd.amount', 'm.backed_amount', 'm.shortfall_amount', 'm.contra_amount', 'k.public_id as case',
+                DB::raw('row_number() over (partition by d.company_id, d.client_organization_id order by d.id desc) as n')]), 'r')
+            ->where('r.n', '<=', self::PER_CLIENT)->orderByDesc('r.id')->get()->all();
         $projects = [];
 
         foreach (array_unique(array_map(fn (object $row): int => (int) Row::text($row, 'company_id'), $keys)) as $company) {
@@ -139,10 +158,12 @@ final class CustomerCredit
 
         $rows = $projects === [] ? [] : DB::table('projects')->whereIn('id', array_keys($projects))->orderBy('project_number')->get(['id', 'public_id', 'project_number', 'title', 'state', 'company_id', 'client_organization_id', 'credit_held_amount'])->all();
         // "Terapkan ke Invoice": the clients' issued invoices with something outstanding, never another client's or company's (BR-FIN-07; C-14).
-        $invoices = DB::table('invoices as i')->whereIn('i.company_id', $companies)->whereIn('i.client_organization_id', $clients)->where('i.state', 'ISSUED')->join('invoice_balances as v', 'v.invoice_id', '=', 'i.id')->where('v.outstanding', '>', 0)
-            ->leftJoin('projects as p', 'p.id', '=', 'i.project_id')->orderByRaw("coalesce(v.current_due_date, date '9999-12-31'), i.id")->limit(self::PAGE * 4)
-            ->get(['i.public_id', 'i.company_id', 'i.client_organization_id', 'p.project_number', 'v.outstanding',
-                DB::raw("(select n.formatted_number from documents d join document_versions n on n.document_id = d.id where d.invoice_id = i.id and d.document_type_code in ('DOC-04', 'DOC-06') and n.formatted_number is not null order by n.state = 'ISSUED' desc, d.id, n.id desc limit 1) as number")])->all();
+        $invoices = DB::query()->fromSub(DB::table('invoices as i')->whereIn('i.company_id', $companies)->whereIn('i.client_organization_id', $clients)->where('i.state', 'ISSUED')->join('invoice_balances as v', 'v.invoice_id', '=', 'i.id')->where('v.outstanding', '>', 0)
+            ->leftJoin('projects as p', 'p.id', '=', 'i.project_id')
+            ->select(['i.id', 'i.public_id', 'i.company_id', 'i.client_organization_id', 'p.project_number', 'v.outstanding', 'v.current_due_date',
+                DB::raw("(select n.formatted_number from documents d join document_versions n on n.document_id = d.id where d.invoice_id = i.id and d.document_type_code in ('DOC-04', 'DOC-06') and n.formatted_number is not null order by n.state = 'ISSUED' desc, d.id, n.id desc limit 1) as number"),
+                DB::raw("row_number() over (partition by i.company_id, i.client_organization_id order by coalesce(v.current_due_date, date '9999-12-31'), i.id) as n")]), 'x')
+            ->where('x.n', '<=', self::PER_CLIENT)->orderByRaw("coalesce(x.current_due_date, date '9999-12-31'), x.id")->get()->all();
         $accounts = DB::table('company_bank_accounts')->whereIn('company_id', $companies)->whereNull('deactivated_at')->orderBy('id')->get(['id', 'company_id', 'bank_name', 'account_number'])->all();
         $proofs = DB::table('evidence_documents')->whereIn('company_id', $companies)->where('evidence_scope', 'COMPANY')->where('evidence_type', 'TRANSFER_PROOF')->orderByDesc('id')->limit(self::PAGE)
             ->get(['public_id', 'company_id', 'declared_issuer', 'issuer_reference', 'document_date'])->all();
@@ -177,6 +198,6 @@ final class CustomerCredit
             ];
         }
 
-        return $groups;
+        return [$groups, $more];
     }
 }

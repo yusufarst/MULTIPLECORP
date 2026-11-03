@@ -63,22 +63,29 @@ final class CreditProjects
         $credits = array_values(array_filter(array_map(fn (object $row): ?int => Row::nullable($row, 'opening_customer_credit_id') === null ? null : (int) Row::text($row, 'opening_customer_credit_id'), $sources), is_int(...)));
         $ofSources = fn (Builder $where, string $alias) => $where->where(fn (Builder $either) => $either->whereIn("{$alias}.payment_id", $payments === [] ? [0] : $payments)->orWhereIn("{$alias}.opening_customer_credit_id", $credits === [] ? [0] : $credits));
 
-        // The time a command ended a row: its log, else a row it wrote — the contra it named, a successor it created —, else the row's own.
+        // Commands in the order they committed, read from what they wrote and never from the purged command log (JB-08): a row's own time, an ending command's the contra
+        // it named, else a successor it created, else its first audit event; the row's id breaking ties.
         $applications = $ofSources(DB::table('payment_applications as a'), 'a')->leftJoin('invoices as i', 'i.id', '=', 'a.invoice_id')
             ->orderBy('a.id')
             ->get(['a.id', 'a.payment_id', 'a.opening_customer_credit_id', 'a.target_kind', 'a.amount', 'a.end_reason', 'a.command_id', 'a.end_command_id', 'a.supersedes_application_id', 'a.recorded_at', 'i.project_id',
-                DB::raw('(select c.recorded_at from command_log c where c.command_id = a.command_id) as created_at'),
-                DB::raw('coalesce((select c.recorded_at from command_log c where c.command_id = a.end_command_id), (select f.recorded_at from financial_contras f where f.id = a.end_contra_id),
-                    (select min(s.recorded_at) from payment_applications s where s.supersedes_application_id = a.id), a.recorded_at) as ended_at')])->all();
+                DB::raw('(select x.payment_id from payment_applications x where x.id = a.supersedes_application_id) as superseded_payment'),
+                DB::raw('(select x.opening_customer_credit_id from payment_applications x where x.id = a.supersedes_application_id) as superseded_credit'),
+                DB::raw('coalesce((select f.recorded_at from financial_contras f where f.id = a.end_contra_id), (select min(s.recorded_at) from payment_applications s where s.supersedes_application_id = a.id),
+                    (select min(e.occurred_at) from audit_events e where e.command_id = a.end_command_id), a.recorded_at) as ended_at')])->all();
         $contras = $ofSources(DB::table('financial_contras as f'), 'f')->orderBy('f.id')->get(['f.payment_id', 'f.opening_customer_credit_id', 'f.amount', 'f.command_id', 'f.recorded_at'])->all();
 
+        $key = fn (object $row): string => Row::nullable($row, 'payment_id') !== null ? 'p'.Row::text($row, 'payment_id') : 'c'.Row::text($row, 'opening_customer_credit_id');
+        // A successor on the same source carries its ended row's money; one on another source — a re-recording's move — is that source's own new application.
+        $sameSource = fn (object $row): ?int => Row::nullable($row, 'supersedes_application_id') !== null
+            && (Row::nullable($row, 'superseded_payment') !== null ? 'p'.Row::text($row, 'superseded_payment') : 'c'.(Row::nullable($row, 'superseded_credit') ?? '')) === $key($row)
+            ? (int) Row::text($row, 'supersedes_application_id') : null;
         $reapplied = [];
 
         foreach ($applications as $row) {
-            $supersedes = Row::nullable($row, 'supersedes_application_id');
+            $supersedes = $sameSource($row);
 
             if ($supersedes !== null) {
-                $reapplied[(int) $supersedes] = Money::of($reapplied[(int) $supersedes] ?? '0')->plus(Money::of(Row::text($row, 'amount')))->toString();
+                $reapplied[$supersedes] = Money::of($reapplied[$supersedes] ?? '0')->plus(Money::of(Row::text($row, 'amount')))->toString();
             }
         }
 
@@ -88,17 +95,15 @@ final class CreditProjects
         $contra = [];
         /** @var array<string, array<string, list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>>> $ends */
         $ends = [];
-        /** @var array<string, array<string, list<array{id: int, target: string, project: ?int, amount: string, successor: bool}>>> $creates */
+        /** @var array<string, array<string, list<array{id: int, target: string, project: ?int, amount: string, supersedes: ?int}>>> $creates */
         $creates = [];
-        $key = fn (object $row): string => Row::nullable($row, 'payment_id') !== null ? 'p'.Row::text($row, 'payment_id') : 'c'.Row::text($row, 'opening_customer_credit_id');
-
         foreach ($applications as $row) {
             $source = $key($row);
             $id = (int) Row::text($row, 'id');
             $project = Row::nullable($row, 'project_id') === null ? null : (int) Row::text($row, 'project_id');
             $command = Row::text($row, 'command_id');
-            $times[$source][$command] ??= ['at' => Row::nullable($row, 'created_at') ?? Row::text($row, 'recorded_at'), 'order' => $id];
-            $creates[$source][$command][] = ['id' => $id, 'target' => Row::text($row, 'target_kind'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'successor' => Row::nullable($row, 'supersedes_application_id') !== null];
+            $times[$source][$command] ??= ['at' => Row::text($row, 'recorded_at'), 'order' => $id];
+            $creates[$source][$command][] = ['id' => $id, 'target' => Row::text($row, 'target_kind'), 'project' => $project, 'amount' => Row::text($row, 'amount'), 'supersedes' => $sameSource($row)];
             $ended = Row::nullable($row, 'end_command_id');
 
             if ($ended !== null) {

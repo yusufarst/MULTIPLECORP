@@ -9,9 +9,11 @@ use App\Support\Money;
  * credit itself stays per client and company (CALC-06), spendable on any of their invoices or by refund:
  * - before its first invoice-target application a source's rest counts for no project; the rest standing when that command ends counts for that invoice's project;
  * - an invoice-target application ended by its invoice's correction makes its amount the credit of that invoice's project; what a reallocation does not re-apply counts as
- *   released; one ended by its source's contra or by its re-recording makes none, the money being gone;
+ *   released; one ended by its source's contra or by its re-recording makes none, the money being gone — only the part it disposed of, what a successor on the same source
+ *   carries staying applied; a successor on another source (a re-recording's move) is that source's own new application;
  * - later spending — a new application, a refund's backing, the unapplied part of a source's contra — takes the oldest first, each amount remembering its project;
- * - a refund's contra gives back what the refund took to the projects it took it from, which counts as arising again.
+ * - a refund's contra gives back what the refund took to the projects it took it from, which counts as arising again; a partial one gives back its part, the rest staying
+ *   with the backing that remains.
  * What has arisen for a project is the sum of every amount this rule ever made its credit; spending lowers what is left, never what has arisen. Pure.
  */
 final class CreditAttribution
@@ -35,7 +37,7 @@ final class CreditAttribution
     }
 
     /**
-     * @param  list<array{contra: string, ends: list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>, creates: list<array{id: int, target: string, project: ?int, amount: string, successor: bool}>}>  $commands  the source's commands, oldest first
+     * @param  list<array{contra: string, ends: list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>, creates: list<array{id: int, target: string, project: ?int, amount: string, supersedes: ?int}>}>  $commands  the source's commands, oldest first
      * @return array{projects: array<int, array{arisen: string, left: string}>, unattributed: string}
      */
     public static function replay(string $gross, array $commands): array
@@ -49,15 +51,19 @@ final class CreditAttribution
         return $replay->result();
     }
 
-    /** @param  array{contra: string, ends: list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>, creates: list<array{id: int, target: string, project: ?int, amount: string, successor: bool}>}  $command */
+    /** @param  array{contra: string, ends: list<array{id: int, reason: string, project: ?int, amount: string, reapplied: string}>, creates: list<array{id: int, target: string, project: ?int, amount: string, supersedes: ?int}>}  $command */
     private function command(array $command): void
     {
-        // A source's contra takes its applied money with the applications it ends; the rest of it is unapplied money gone, the oldest first.
+        /** @var array<int, list<array{project: ?int, amount: Money}>> $carried */
+        $carried = [];
+
+        // A source's contra takes its applied money with the parts of the applications it disposes of — a released or moved part, a successor on this source carrying
+        // the rest —; the rest of it is unapplied money gone, the oldest first.
         $gone = Money::of($command['contra']);
 
         foreach ($command['ends'] as $end) {
-            if ($end['reason'] === 'SOURCE_CONTRA') {
-                $gone = $gone->minus(Money::of($end['amount']));
+            if (in_array($end['reason'], ['SOURCE_CONTRA', 'RE_RECORDED'], true)) {
+                $gone = $gone->minus(Money::of($end['amount'])->minus(Money::of($end['reapplied'])));
             }
         }
 
@@ -71,9 +77,22 @@ final class CreditAttribution
             } elseif ($end['reason'] === 'REALLOCATED') {
                 $this->arise($end['project'], Money::of($end['amount'])->minus(Money::of($end['reapplied'])));
             } elseif ($end['reason'] === 'REFUND_CONTRA') {
+                // Its part given back where it was taken from, the oldest first; what the remaining backing still holds passes to its successor.
+                $back = Money::of($end['amount'])->minus(Money::of($end['reapplied']));
+                $kept = [];
+
                 foreach ($this->taken[$end['id']] ?? [] as $part) {
-                    $this->arise($part['project'], $part['amount']);
+                    $given = $back->compareTo($part['amount']) > 0 ? $part['amount'] : $back;
+                    $this->arise($part['project'], $given);
+                    $back = $back->minus($given);
+                    $rest = $part['amount']->minus($given);
+
+                    if ($rest->isPositive()) {
+                        $kept[] = ['project' => $part['project'], 'amount' => $rest];
+                    }
                 }
+
+                $carried[$end['id']] = $kept;
             }
         }
 
@@ -81,8 +100,10 @@ final class CreditAttribution
         $first = null;
 
         foreach ($command['creates'] as $create) {
-            // A reallocation's successor carries the money its ended row held: nothing is spent again.
-            if ($create['successor']) {
+            // A successor on this source carries the money its ended row held: nothing is spent again, a refund's backing keeping what it took.
+            if ($create['supersedes'] !== null) {
+                $this->taken[$create['id']] = $carried[$create['supersedes']] ?? [];
+
                 continue;
             }
 

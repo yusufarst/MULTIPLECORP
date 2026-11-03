@@ -32,8 +32,9 @@ final class CustomerCreditController extends Controller
     public function index(Request $request): Response
     {
         $branch = $request->query('cabang');
+        $after = $request->query('setelah');
 
-        return Inertia::render('FIN/CustomerCredit', ['page' => $this->credit->screen(self::actor($request), is_string($branch) ? $branch : null)]);
+        return Inertia::render('FIN/CustomerCredit', ['page' => $this->credit->screen(self::actor($request), is_string($branch) ? $branch : null, is_string($after) ? $after : null)]);
     }
 
     /** ROUTE-256 "Kembalikan Dana": the amount, the account it leaves from, the transfer evidence and the reason (AX-23). */
