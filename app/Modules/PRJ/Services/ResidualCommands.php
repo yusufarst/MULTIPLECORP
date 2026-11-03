@@ -68,7 +68,15 @@ final class ResidualCommands
     {
         $context->require(Revalidation::locks($projectId));
         $state = DB::table('projects')->where('id', $projectId)->value('state');
-        $state = is_string($state) ? $state : '';
+        $this->apply($context, $projectId, is_string($state) ? $state : '', $correction, $correctionReference);
+    }
+
+    /**
+     * The same precondition on the project's state as the command already read it under the project's LK-01, with no statement of its own (QB-13).
+     */
+    public function apply(CommandContext $context, int $projectId, string $state, bool $correction, string $correctionReference = ''): void
+    {
+        $context->require(Revalidation::locks($projectId));
         $decision = self::decision($state, $context->request->commandType, $correction);
 
         if ($decision === self::REJECT) {

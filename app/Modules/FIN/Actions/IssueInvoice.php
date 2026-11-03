@@ -68,7 +68,7 @@ final class IssueInvoice
                 throw new AuthorizationException;
             }
 
-            $fresh = DB::table('invoices')->where('id', $invoice->id)->first(['state', 'lock_version', 'current_version_id']);
+            $fresh = DB::table('invoices')->where('id', $invoice->id)->first(['state', 'lock_version', 'current_version_id', DB::raw('(select p.state from projects p where p.id = invoices.project_id) as project_state')]);
 
             if ($fresh === null || $fresh->state === 'VOIDED') {
                 throw Refused::conflict('ST-02', ['state' => 'VOIDED']);
@@ -83,7 +83,7 @@ final class IssueInvoice
             }
 
             // L-11 (TASK-055): an issue raises the project's outstanding — on a completed project a correction that returns it to ACTIVE (SF-REVAL).
-            $this->residual->ensure($context, $project->id, true, "FIN.InvoiceIssued:{$invoice->public_id}");
+            $this->residual->apply($context, $project->id, Row::text($fresh, 'project_state'), true, "FIN.InvoiceIssued:{$invoice->public_id}");
 
             // The invoice moved before the layout's precondition reads it.
             $document = $this->issuing->openDraft($context, $subject, $chain);
