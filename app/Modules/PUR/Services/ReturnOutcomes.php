@@ -142,7 +142,9 @@ final class ReturnOutcomes
         }
 
         $returned = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $caseId)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
-            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $caseId)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'));
+            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $caseId)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'))
+            // Net of the returns taken back as recorded in error (CM-37; TASK-048).
+            ->minus((string) DB::table('stock_restorations')->where('correction_case_id', $caseId)->whereIn('kind', ['RETURN_ERROR_REVERSAL', 'DROPSHIP_ERROR_REVERSAL'])->sum('qty_base'));
         $room = $returned->minus(self::declared($caseId));
 
         if ($wanted->isGreaterThan($room)) {
@@ -388,7 +390,7 @@ final class ReturnOutcomes
     }
 
     /** The replacement the case declared, net of its corrections. */
-    private static function declared(int $caseId): BigDecimal
+    public static function declared(int $caseId): BigDecimal
     {
         $net = BigDecimal::zero();
 

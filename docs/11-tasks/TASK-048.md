@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W2 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** TODO
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -221,6 +221,18 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 8. A likely duplicate return without a distinguishing reference is REJECTED with the matches until the actor confirms it with a reason; one `command_id` replayed returns once (L-49; BD-13; CI-05).
 9. The return and its reversal are absent without `sales_return.record` and `stock.reverse` (AZ-01; SM-04).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Integration/Fulfillment/ClientReturnsTest.php` — above net delivered REJECTED C-30 with the figure, the units it took never back again by an undelivered return (C-27/C-30); `tests/Integration/Fulfillment/ClientReturnRacesTest.php` — two returns of the same delivered units on real sessions, one committing and the other C-30, and a client's return and an undelivered return of one shipment in both orders, each restoring only its own units (architecture challenge 3b); `tests/Feature/FUL/ClientReturnPagesTest.php` — a serial that did not leave on the line refused at the field; PG-034's scan field takes only the line's serials still with the client (MSG-25, MSG-36).
+- Criterion 2: `ClientReturnsTest` — usable back into usable stock and damaged into UNUSABLE on the original lot, each at its share of the HPP (3,000 → 1,000 + 2,000), FX-03 3's cross-company damaged return with the allocation reversed (CostWorld's overlay reconciled); `tests/Unit/INV/ClientReturnFiguresTest.php` — the proportional contra and its residual (333 + 667), the alternate-unit conversion at the cited snapshot (L-31; BR-INV-03).
+- Criterion 3: `ClientReturnsTest` — net delivered and net dispatched lowered, the delivery lines and record unchanged; the consumed reservation never reactivated, the same-action offer a new one of the usable units, never above them (BR-RSV-03).
+- Criterion 4: `ClientReturnsTest` — after an issued invoice the invoice row unchanged, its correction the case's open step, the case closed by ROUTE-271's command; PG-034 lists the steps with their derived state (`ClientReturnPagesTest`), "Tutup Kasus" answering on PG-034.
+- Criterion 5: `ClientReturnsTest` — the case names the returning project and the source lot; FX-01 16: one unit of a 50,000 lot back damaged with its 50,000 contra, its disposal charging 50,000 to that project once through the case.
+- Criterion 6: `ClientReturnsTest` — a completed project back to *Aktif* through SF-REVAL, PG-034's answer naming it (`returns_client.answer.reactivated`); on a cancelled project the return commits and the project stays CANCELLED.
+- Criterion 7: `ClientReturnsTest` — a client's return, an undelivered return and a purchase return reversed within what stands (C-55), the consumption, its cost and net quantities re-established, never a loss; the units no longer present refused (C-03); IP-20's cut (C-06), also where the line's own reservations leave no room; a damaged return its case already disposed of refused; a purchase return its supplier's outcomes settled refused (C-46, C-29); a drop-ship supplier return undone once by its DROPSHIP_ERROR_REVERSAL; a reversal reopening its closed case; a reversed undelivered return crediting no closure; `tests/Interaction/ClientReturnTest.php` — INT-211.
+- Criterion 8: `ClientReturnsTest` and `tests/Interaction/ClientReturnTest.php` — L-49 with the matches until confirmed with a reason, one `command_id` replayed once, a changed body CONFLICT (CI-05).
+- Criterion 9: `tests/Authorization/ClientReturnAccessTest.php` — ROUTE-034 and ROUTE-210 with `sales_return.record` alone, ROUTE-211 with `stock.reverse` alone, each control absent without it, another company's project and return unknown (SM-01; SM-04).
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -244,32 +256,32 @@ AC-06, AC-12 and AC-21 require returns with reasons that reconcile stock and kee
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `sales_return.record` and `stock.reverse` separately granted, `cost.view` for the contra (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-034, ROUTE-210 and ROUTE-211 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-210, INT-211, INT-015 (TL-08) PASS in CI
+- [x] Browser E2E if required: J-FUL-05 — the return on the phone from PG-030's delivered record, its reversal and the case's closure at the desk (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04 and SM-25 as above (TL-14)
+- [x] Database safety review: no migration; production not touched
+- [x] Final diff review: the adversarial preflight, ER-06's independent review and Codex's two reviews, each finding fixed with its test where one could be written
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `1a33d38`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41619768872 (push) and 41619777045 (pull request #65), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/ClientReturnTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 1a33d38, CI ubuntu-24.04 run 41619768872, tests/Browser/E2E/client-return.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-034 in both languages — `tests/Browser/Localization/client-return.spec.ts` PASS; 49 keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: INV's `Actions/RestoreStock`, `ReverseRestorationOrReturn`, `ReverseDispatch` (its kinds), `Services/DispatchRestoration` (the SALES_RETURN restoration and its cases), `ReturnReversal` (new), `LossPosting` (the case's capacity net of reversals), `Data/ClientReturns` (net delivered), `Queries/SupplierReturnQueries` (PG-028's reversal control, returns net of reversals); CST's `CostPosting` (`unrestore`, `dropshipErrorReversed`, the RETURN_ERROR_REVERSAL contra); OPS's `CorrectionCases` (the demand and damaged-outcome steps, `reopen`) and `CorrectionCasesController` (INT-271 answering on PG-034); PUR's `ReturnOutcomes` (returns net of reversals, `declared` shared); FUL's `Queries/ClientReturns` and `Http/Controllers/ClientReturnController` (new), `Data/ShipmentFigures` and `Queries/Deliveries` (net delivered, closure credit net of reversals, PG-030's entry), `Services/DropshipPosting` (delivered net of reversals); PRJ's `ProjectWorkspace` and `ProjectsController` (PG-011's entry); `Support/Guards/Families`; `resources/js/Pages/FUL/ClientReturn.tsx` (new), `FUL/Deliveries.tsx`, `INV/SupplierReturns.tsx`, `PRJ/Journey.tsx`, `lib/navigation.ts`; `lang/`; the routes; `phpunit.xml` (the test memory limit); the tests, fixtures and browser specs
+- Commit SHA: `d91ef16`–`1a33d38` on `task/TASK-048-client-returns`, the Owner's identity, no signature and no AI attribution; this record's commit follows them with three integration tests (FX-01 16, FX-03 3, a return on a cancelled project), verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review before the pull request found 3 P1 — a missing import that turned every C-55 refusal into an error, a refusal order answering C-27 before the client's C-30, two Pint points — and 3 P2 — a damaged return reversible after its case disposed of the unit, a purchase return reversible though its supplier's outcomes were settled, a reversal ignoring its line's reservations —, each fixed with its test, with P3s on the replayed C-30 figure and the per-place check. The first CI runs found that a return of a wholly delivered shipment lowered net dispatched before net delivered (refused by the line's CHECK) and a sign slip in net delivered; both fixed. Codex reviewed twice: its review of `2b3bde9` found 3 P2 — a reversal leaving its closed case closed, a reversed undelivered return still crediting its closure, a serialized purchase return reversible into another condition —, each fixed in `1a33d38`, the first two with their tests; its targeted review of `1a33d38` found nothing; each answered on the pull request. Readings within the approved text, for Planning: (1) ROUTE-034 is `sales_return.record`'s, so an account with `stock.reverse` alone reverses on PG-028 and through ROUTE-211 but does not open PG-034; (2) one SALES_RETURN case per lot of a return command, its steps fixed at its opening — the demand, the invoice correction once an invoice is issued, the refund once a payment is applied, the damaged units' outcome for UNUSABLE units; PG-034 derives the demand step done when the line has nothing left to fulfil, the invoice step from a void or a revision naming the case, the damaged step when no UNUSABLE unit of the source lot remains, and never the refund step until TASK-053's command exists; PG-040 reads steps' state from audit events only, so it shows the two derived steps open — PG-040's reading is Planning's to align; (3) a client's return cap is the shipment line's net delivered and the project line's, C-30 before C-27; (4) a reversal of a confirmation reversal whose charge parts were re-spread is refused (C-55), the respread not undoable; (5) a reversal raising net dispatched above what the line's reservations leave is refused C-06 with the shortfall, the actor's cut letting it commit (IP-20). Not tested, for Planning: the serialized purchase return's condition rule (no serialized receiving fixture for supplier returns yet); FX-03 18's alternate-unit partial return through PG-034 — its arithmetic is the shared `CostPosting::restore` of `tests/Integration/Costing/CostPostingTest.php` and the conversion this Task's unit test checks; CJ-06's return after billing in the browser — the integration test covers the invoice left unchanged. Gap for Planning: `DeliveryPosting::correct` reversing a delivery after a client return can drive net delivered below zero, refused only by the guard's CHECK with a generic message. The architecture suite's memory limit is raised to 1G (`phpunit.xml`), as TASK-037 raised it to 768M. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 

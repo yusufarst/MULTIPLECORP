@@ -37,8 +37,8 @@
         </include>
     </source>
     <php>
-        <!-- The architecture suite reads every class and its dependencies, TOTP and QR libraries included (TASK-018). -->
-        <ini name="memory_limit" value="768M"/>
+        <!-- The architecture suite reads every class and its dependencies, TOTP and QR libraries included (TASK-018); 768M since TASK-037, 1G since TASK-048. -->
+        <ini name="memory_limit" value="1G"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

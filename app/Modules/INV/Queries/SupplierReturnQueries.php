@@ -103,6 +103,7 @@ final class SupplierReturnQueries
         $id = (int) Row::text($row, 'id');
         $company = (int) Row::text($row, 'company_id');
         $cost = $viewer->allows('cost.view', $company);
+        $reverse = Row::text($row, 'state') === 'OPEN' && $viewer->allows('stock.reverse', $company);
         $state = Row::text($row, 'state');
         $open = self::open($row);
         $causalCompany = Row::nullable($row, 'causal_company');
@@ -110,7 +111,8 @@ final class SupplierReturnQueries
         $guard = DB::table('purchase_line_balances as b')->where('purchase_line_id', $line)->first(['replacement_expected_qty_base', 'replacement_received_net_qty_base']);
         // A replacement is the case's own: never above the units it returned less what it already declared (C-29).
         $returnedQty = BigDecimal::of((string) DB::table('stock_consumptions')->where('correction_case_id', $id)->where('kind', 'PURCHASE_RETURN')->sum('qty_base'))
-            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'));
+            ->plus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->where('kind', 'DROPSHIP_SUPPLIER_RETURN')->sum('qty_base'))
+            ->minus((string) DB::table('stock_restorations')->where('correction_case_id', $id)->whereIn('kind', ['RETURN_ERROR_REVERSAL', 'DROPSHIP_ERROR_REVERSAL'])->sum('qty_base'));
         $expected = BigDecimal::of($guard === null ? '0' : Row::text($guard, 'replacement_expected_qty_base'));
 
         return [
@@ -120,7 +122,9 @@ final class SupplierReturnQueries
             'causal' => $causalCompany === null ? null : ($viewer->scope->includes((int) $causalCompany) ? Row::nullable($row, 'project_number') : ''),
             'figures' => $cost ? ['returned' => Money::of(Row::text($row, 'returned_cost'))->toString(), 'refunded' => Money::of(Row::text($row, 'refunded_value'))->toString(), 'replaced' => Money::of(Row::text($row, 'replaced_value'))->toString(), 'unrecovered' => Money::of(Row::text($row, 'unrecovered_value'))->toString(), 'open' => $open->toString()] : null,
             'replacement' => ['returned' => StockFigures::plain((string) $returnedQty), 'expected' => StockFigures::plain((string) $expected), 'received' => StockFigures::plain($guard === null ? '0' : Row::text($guard, 'replacement_received_net_qty_base')), 'room' => StockFigures::plain((string) BigDecimal::max(BigDecimal::zero(), $returnedQty->minus(self::declared($id))))],
-            'units' => $this->units($id, $cost),
+            'units' => $this->units($id, $cost, $reverse),
+            // The racks a purchase return reversed brings its units back to (ROUTE-211).
+            'racks' => $reverse ? array_values(array_map(fn (object $rack): array => ['id' => RowHandle::of('locations', (int) Row::text($rack, 'id')), 'code' => Row::text($rack, 'code'), 'name' => Row::text($rack, 'name')], DB::table('locations')->where('is_active', true)->orderBy('code')->get(['id', 'code', 'name'])->all())) : [],
             'events' => self::events($id),
             'trail' => $this->trail->of($viewer, 'correction_case', Row::text($row, 'public_id')),
             'can' => [
@@ -304,10 +308,12 @@ final class SupplierReturnQueries
     }
 
     /** @return list<array<string, mixed>> */
-    private function units(int $caseId, bool $cost): array
+    private function units(int $caseId, bool $cost, bool $reverse): array
     {
         $rows = DB::table('stock_consumptions as c')->join('inventory_lots as i', 'i.id', '=', 'c.lot_id')->join('stock_movement_entries as e', 'e.stock_consumption_id', '=', 'c.id')->join('locations as l', 'l.id', '=', 'e.location_id')->leftJoin('serial_units as s', 's.id', '=', 'e.serial_unit_id')
-            ->where('c.correction_case_id', $caseId)->where('c.kind', 'PURCHASE_RETURN')->orderBy('c.id')->get(['c.id', 'c.qty_base', 'i.lot_code', 'l.code as rack', 'e.condition', 's.serial_number'])->all();
+            ->join('stock_movements as m', 'm.id', '=', 'c.stock_movement_id')->where('c.correction_case_id', $caseId)->where('c.kind', 'PURCHASE_RETURN')->whereColumn('e.stock_movement_id', 'c.stock_movement_id')->orderBy('c.id')
+            ->get(['c.id', 'c.qty_base', 'i.lot_code', 'l.code as rack', 'e.condition', 's.serial_number', 'm.public_id as movement',
+                DB::raw("(select coalesce(sum(r.qty_base), 0) from stock_restorations r where r.stock_consumption_id = c.id and r.kind = 'RETURN_ERROR_REVERSAL') as reversed")])->all();
         $costs = [];
 
         foreach ($cost && $rows !== [] ? DB::table('cost_attributions')->whereIn('stock_consumption_id', array_map(fn (object $row): int => (int) Row::text($row, 'id'), $rows))->where('cost_class', 'SUPPLIER_RETURN')->where('cause', 'INITIAL')->get(['stock_consumption_id', 'amount']) : [] as $attribution) {
@@ -315,13 +321,21 @@ final class SupplierReturnQueries
             $costs[$key] = Money::of($costs[$key] ?? '0')->plus(Money::of(Row::text($attribution, 'amount')))->toString();
         }
 
-        $units = array_values(array_map(fn (object $row): array => ['lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? ($costs[(int) Row::text($row, 'id')] ?? '0.00') : null], $rows));
+        // ROUTE-211 "Balikkan (Tercatat Keliru)" on a unit still returned, with `stock.reverse` (CM-37; AX-36).
+        $units = array_values(array_map(function (object $row) use ($cost, $costs, $reverse): array {
+            $standing = BigDecimal::of(Row::text($row, 'qty_base'))->minus(Row::text($row, 'reversed'));
 
-        // A drop-ship return moved no stock: its units are the confirmation lines' restorations, named by the supplier's shipment reference (CM-15).
+            return ['lot' => Row::text($row, 'lot_code'), 'rack' => Row::text($row, 'rack'), 'condition' => Row::text($row, 'condition'), 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? ($costs[(int) Row::text($row, 'id')] ?? '0.00') : null,
+                'reverse' => $reverse && $standing->isPositive() ? ['original' => Row::text($row, 'movement'), 'consumption' => RowHandle::of('stock_consumptions', (int) Row::text($row, 'id')), 'restoration' => null, 'standing' => StockFigures::plain((string) $standing)] : null];
+        }, $rows));
+
+        // A drop-ship return moved no stock: its units are the confirmation lines' restorations, named by the supplier's shipment reference (CM-15); one is undone whole (DROPSHIP_ERROR_REVERSAL).
         foreach (DB::table('stock_restorations as r')->join('dropship_confirmation_lines as d', 'd.id', '=', 'r.dropship_confirmation_line_id')->join('dropship_confirmations as k', 'k.id', '=', 'd.dropship_confirmation_id')
             ->leftJoin('serial_units as s', 's.id', '=', 'd.serial_unit_id')->where('r.correction_case_id', $caseId)->where('r.kind', 'DROPSHIP_SUPPLIER_RETURN')->orderBy('r.id')
-            ->get(['r.qty_base', 'k.supplier_shipment_reference', 's.serial_number', DB::raw("(select coalesce(sum(a.amount), 0) from cost_attributions a where a.stock_restoration_id = r.id and a.cost_class = 'SUPPLIER_RETURN') as cost")])->all() as $row) {
-            $units[] = ['lot' => Row::text($row, 'supplier_shipment_reference'), 'rack' => '', 'condition' => null, 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? Money::of(Row::text($row, 'cost'))->toString() : null];
+            ->get(['r.id', 'r.qty_base', 'k.public_id as confirmation', 'k.supplier_shipment_reference', 's.serial_number', DB::raw("(select coalesce(sum(a.amount), 0) from cost_attributions a where a.stock_restoration_id = r.id and a.cost_class = 'SUPPLIER_RETURN') as cost"),
+                DB::raw('exists (select 1 from stock_restorations x where x.reverses_restoration_id = r.id) as undone')])->all() as $row) {
+            $units[] = ['lot' => Row::text($row, 'supplier_shipment_reference'), 'rack' => '', 'condition' => null, 'serial' => Row::nullable($row, 'serial_number'), 'qty' => StockFigures::plain(Row::text($row, 'qty_base')), 'cost' => $cost ? Money::of(Row::text($row, 'cost'))->toString() : null,
+                'reverse' => $reverse && ! (bool) Row::text($row, 'undone') ? ['original' => Row::text($row, 'confirmation'), 'consumption' => null, 'restoration' => RowHandle::of('stock_restorations', (int) Row::text($row, 'id')), 'standing' => StockFigures::plain(Row::text($row, 'qty_base'))] : null];
         }
 
         return $units;

@@ -6,6 +6,7 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\FUL\Data\ShipmentFigures;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Data\ClientReturns;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -33,9 +34,12 @@ final class Deliveries
     private const AWAITING = <<<'SQL'
         exists (select 1 from dispatch_lines d where d.stock_movement_id = m.id and
             (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id)
-            > (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id)
+            >
+        SQL
+        // Net delivered: what the client returned is no longer delivered (PX-08; TASK-048).
+        .ClientReturns::NET_DELIVERED.<<<'SQL'
             + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
-                - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
+                - (select coalesce(sum(r.qty_base + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e where e.stock_restoration_id = r.id and e.movement_type = 'MOVEMENT_REVERSAL'), 0)), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
                     and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT'))))
         SQL;
 
@@ -73,9 +77,11 @@ final class Deliveries
         if ($tab === 'tercatat') {
             $found = DB::table('deliveries as v')->join('projects as p', 'p.id', '=', 'v.project_id')->join('companies as co', 'co.id', '=', 'v.company_id')
                 ->whereIn('v.company_id', $companies)->when($after !== null, fn (Builder $older) => $older->whereRaw('v.id < coalesce((select a.id from deliveries a where a.public_id = ?), 9223372036854775807)', [$after]))->orderByDesc('v.id')->limit(self::PAGE + 1)
-                ->get(['v.public_id', 'v.business_date', 'v.recipient_name', 'p.project_number', 'co.code as company', DB::raw('(select d.stock_movement_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id where l.delivery_id = v.id order by l.id limit 1) as movement'),
+                ->get(['v.public_id', 'v.business_date', 'v.recipient_name', 'v.company_id', 'p.public_id as project_id', 'p.project_number', 'co.code as company', DB::raw('(select d.stock_movement_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id where l.delivery_id = v.id order by l.id limit 1) as movement'),
                     DB::raw('(select m.public_id from delivery_lines l join dispatch_lines d on d.id = l.dispatch_line_id join stock_movements m on m.id = d.stock_movement_id where l.delivery_id = v.id order by l.id limit 1) as shipment')])->all();
-            $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'project' => Row::text($row, 'project_number'), 'company' => $several ? Row::text($row, 'company') : null, 'shipment' => Row::nullable($row, 'shipment')], array_slice($found, 0, self::PAGE));
+            $rows = array_map(fn (object $row): array => ['id' => Row::text($row, 'public_id'), 'date' => Row::text($row, 'business_date'), 'recipient' => Row::text($row, 'recipient_name'), 'project' => Row::text($row, 'project_number'), 'company' => $several ? Row::text($row, 'company') : null, 'shipment' => Row::nullable($row, 'shipment'),
+                // NAV-034: a delivered record's "Retur dari Klien".
+                'return' => $viewer->allows('sales_return.record', (int) Row::text($row, 'company_id')) ? '/proyek/'.Row::text($row, 'project_id').'/retur' : null], array_slice($found, 0, self::PAGE));
 
             return ['tab' => 'tercatat', 'rows' => $rows, 'more' => count($found) > self::PAGE, 'several' => $several];
         }

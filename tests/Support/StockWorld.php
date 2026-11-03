@@ -192,7 +192,10 @@ final class StockWorld
                 SQL),
             ...DB::select(<<<'SQL'
                 select 'consumption' as guard, b.stock_consumption_id from stock_consumption_balances b
-                where b.stock_consumption_id is not null and (b.restored_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind <> 'SUBSTITUTION'), 0) or b.substituted_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind = 'SUBSTITUTION'), 0))
+                where b.stock_consumption_id is not null and (b.restored_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind <> 'SUBSTITUTION'), 0)
+                    -- A restoration recorded in error and taken back by its MOVEMENT_REVERSAL re-establishes the consumption (CM-37; TASK-048).
+                    + coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_restorations r on r.id = e.stock_restoration_id
+                        where r.stock_consumption_id = b.stock_consumption_id and r.kind <> 'SUBSTITUTION' and e.movement_type = 'MOVEMENT_REVERSAL'), 0) or b.substituted_qty_base <> coalesce((select sum(r.qty_base) from stock_restorations r where r.stock_consumption_id = b.stock_consumption_id and r.kind = 'SUBSTITUTION'), 0))
                 SQL),
         ];
     }

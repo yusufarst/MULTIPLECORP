@@ -196,6 +196,8 @@ final class ProjectWorkspace
             'journey' => $facts === null ? null : Journey::derive($facts, [], $money, $edit, $this->quotationHref($viewer, $project), $this->serviceHref($viewer, $project), $this->invoiceHref($viewer, $project), $this->paymentHref($viewer, $project), $this->directHref($viewer, $project)),
             'financial' => $money ? $this->financial($project->id) : null,
             'can' => ['edit' => $edit !== null, 'discard' => $manage && $project->state === 'DRAFT'],
+            // *Tindakan Lain* › "Retur dari Klien" (NAV-034; ROUTE-034).
+            'return_href' => $project->state !== 'DRAFT' && $viewer->allows('sales_return.record', $project->company_id) ? "/proyek/{$project->public_id}/retur" : null,
         ];
     }
 

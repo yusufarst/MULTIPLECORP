@@ -68,6 +68,13 @@ final class CorrectionCasesController extends Controller
             return redirect()->to('/gudang/retur-pemasok?'.http_build_query(['kasus' => $case->public_id]), 303);
         }
 
+        // INT-271 on PG-034: a client's return's "Tutup Kasus" answers on its project's return page (NAV-034; TASK-048).
+        $project = $request->input('proyek');
+
+        if ($request->input('asal') === 'retur-klien' && $case->case_kind === 'SALES_RETURN' && is_string($project) && preg_match('/^[0-9a-f-]{36}$/i', $project) === 1) {
+            return redirect()->to('/proyek/'.strtolower($project).'/retur', 303);
+        }
+
         return redirect()->to(self::PAGE.'?'.http_build_query(['perusahaan' => self::query($request, 'perusahaan'), 'kasus' => $case->public_id]), 303);
     }
 

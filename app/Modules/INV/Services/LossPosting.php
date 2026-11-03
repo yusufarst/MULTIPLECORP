@@ -308,7 +308,10 @@ final class LossPosting
             return $lost->isPositive() ? BigDecimal::zero() : null;
         }
 
-        return BigDecimal::of((string) $back->sum('qty_base'))->minus($lost);
+        // A client's return reversed in error is no longer back (CM-37; TASK-048).
+        $reversed = DB::table('stock_movement_entries as e')->join('stock_restorations as r', 'r.id', '=', 'e.stock_restoration_id')->where('r.correction_case_id', $case)->where('r.kind', 'SALES_RETURN')->where('e.movement_type', 'MOVEMENT_REVERSAL')->sum('e.qty_delta_base');
+
+        return BigDecimal::of((string) $back->sum('qty_base'))->plus((string) $reversed)->minus($lost);
     }
 
     /**

@@ -14,6 +14,7 @@ use App\Modules\FIN\Http\Controllers\DeductionsController;
 use App\Modules\FIN\Http\Controllers\InvoicesController;
 use App\Modules\FIN\Http\Controllers\PaymentsController;
 use App\Modules\FIN\Http\Controllers\ReceivablesController;
+use App\Modules\FUL\Http\Controllers\ClientReturnController;
 use App\Modules\FUL\Http\Controllers\DeliveryController;
 use App\Modules\FUL\Http\Controllers\DirectShipmentController;
 use App\Modules\FUL\Http\Controllers\HandoverController;
@@ -246,6 +247,9 @@ Route::post('/proyek/{id}/kirim-langsung', [DirectShipmentController::class, 'co
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/balikkan', [DirectShipmentController::class, 'reverse'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:fulfillment.correct'])->name('ful.dropship.reverse');
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/retur', [DirectShipmentController::class, 'returned'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:sales_return.record'])->name('ful.dropship.return');
 Route::post('/proyek/{id}/kirim-langsung/{dsc}/surat-jalan', [DirectShipmentController::class, 'note'])->whereUuid('id')->whereUuid('dsc')->middleware(['auth', 'capability:documents.issue'])->name('ful.dropship.note');
+Route::get('/proyek/{id}/retur', [ClientReturnController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:sales_return.record'])->name('ful.returns.show');
+Route::post('/proyek/{id}/retur', [ClientReturnController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:sales_return.record'])->name('ful.returns.record');
+Route::post('/retur/{id}/balikkan', [ClientReturnController::class, 'reverse'])->whereUuid('id')->middleware(['auth', 'capability:stock.reverse'])->name('ful.returns.reverse');
 Route::get('/gudang/pengiriman', [DeliveryController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ful.deliveries.index');
 Route::get('/gudang/pengiriman/{id}', [DeliveryController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record,delivery.close,fulfillment.correct'])->name('ful.deliveries.show');
 Route::post('/gudang/pengiriman/{id}/catat', [DeliveryController::class, 'record'])->whereUuid('id')->middleware(['auth', 'capability:delivery.record'])->name('ful.deliveries.record');
