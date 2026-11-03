@@ -89,7 +89,7 @@ final class ClientReturnWorld
     /** The consumption's restored quantity. */
     public static function restored(int $consumption): string
     {
-        return (string) DB::table('stock_consumptions')->where('id', $consumption)->value('restored_qty_base');
+        return (string) DB::table('stock_consumption_balances')->where('stock_consumption_id', $consumption)->value('restored_qty_base');
     }
 
     /** The steps the case was opened with (ADMIN_FLOW §11). */
