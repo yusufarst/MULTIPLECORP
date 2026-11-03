@@ -3999,5 +3999,17 @@
     "projects.item.goods_undelivered": ":jumlah goods lines not yet fully delivered",
     "projects.item.shipments_awaiting": ":jumlah shipments not yet delivered or closed",
     "projects.item.loss_cases_pending": ":jumlah loss cases still pending",
-    "completion.refusal.all_met": "Every condition holds: complete the project normally."
+    "completion.refusal.all_met": "Every condition holds: complete the project normally.",
+    "projects.cancel.consequence": "The project is cancelled and can never be reactivated. Its active reservations are released now; afterwards only residual commands and corrections are accepted.",
+    "projects.cancel.companions": "Companion corrections for what is actually undone — each its own command, none performed by this cancellation:",
+    "projects.cancel.no_companions": "No companion correction you can make.",
+    "projects.cancel.companion.return": "Record the client's return",
+    "projects.cancel.companion.invoice": "Void or revise invoice :nomor",
+    "projects.cancel.companion.purchase": "Cancel purchase :nomor or close its remainder",
+    "projects.cancel.companion.scope": "Cancel the remaining scope under Items and fulfilment",
+    "projects.cancel.stays": "The facts that stay true stay recorded: goods the client kept, a legitimately retained DP, received goods as free stock with their provenance, and open receivables active and collectable. Money paid to a supplier comes back as a supplier refund.",
+    "projects.answer.cancelled": "Project cancelled. Its reservations were released.",
+    "projects.refusal.cancel_closed": "This project is already cancelled or completed.",
+    "projects.refusal.cancel_draft": "A draft project is not cancelled but discarded with \"Discard draft\".",
+    "activity.action.PRJ.ProjectCancelled": "Project cancelled"
 }

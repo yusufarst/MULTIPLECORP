@@ -58,14 +58,18 @@ type Props = {
     project: Project;
     journey: JourneyShape | null;
     financial: { confirmed: string; invoiced: string } | null;
-    can: { edit: boolean; discard: boolean };
+    can: { edit: boolean; discard: boolean; cancel?: boolean };
     return_href?: string | null;
     fulfilment: Fulfilment & { today: string };
     parts?: { procurement?: { purchases: { id: string; number: string; supplier: string; state: 'OPEN' | 'CLOSED' | 'CANCELLED'; date: string; remaining: string }[]; can_create: boolean } };
     predicates?: JourneyShape | null | Failed;
     documents?: Documents | Failed;
     history?: History | Failed;
+    companions?: Companion[];
+    cancelled?: Cancelled | null | Failed;
 };
+type Companion = { kind: 'return' | 'invoice' | 'purchase' | 'scope'; label: string; href: string };
+type Cancelled = { reason: string | null; by: string | null; at: string; obligations: { kind: string; label: string; amount: string | null; quantity: string | null }[] };
 
 const SIPLAH_TEXTS = ['external_reference', 'program_code', 'account_code', 'notes'] as const;
 const SIPLAH_AMOUNTS = ['siplah_value', 'real_purchase_value', 'fee_amount', 'va_fee_amount', 'cashback_amount', 'refund_amount'] as const;
@@ -103,9 +107,48 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
     );
 }
 
-export default function Journey({ project, journey, financial, can, return_href: returnHref = null, fulfilment, parts, predicates, documents, history }: Props) {
+/** J-PRJ-04's dialog: the companion corrections for what is actually being undone, each a link to its own command (IP-19), then the reason (MSG-40). */
+function CancelDialog({ project, companions, onClose }: { project: Project; companions: Companion[] | undefined; onClose: () => void }) {
+    const { t } = useTranslation();
+    const [reason, setReason] = useState('');
+    const cancel = useCommand<{ alasan: string; versi: number }>(() => `/proyek/${project.id}/batalkan`, 'post');
+    const items = (
+        <div className="flex flex-col gap-2" data-slot="cancel-companions">
+            <p className="text-body text-text-secondary">{t('projects.cancel.companions')}</p>
+            {companions === undefined ? <RegionLoading /> : companions.length === 0 ? <p className="text-body text-text-secondary">{t('projects.cancel.no_companions')}</p> : (
+                <ul role="list" className="flex flex-col gap-1">
+                    {companions.map((companion) => (
+                        <li key={companion.href}>
+                            <a href={companion.href} className="text-body text-accent-link underline underline-offset-2">{t(`projects.cancel.companion.${companion.kind}` as TranslationKey, { nomor: companion.label })}</a>
+                        </li>
+                    ))}
+                </ul>
+            )}
+            <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
+        </div>
+    );
+
+    return (
+        <ConfirmCommand
+            open
+            onOpenChange={(open) => { if (!open) onClose(); }}
+            title={t('glossary.gl_074')}
+            consequence={t('projects.cancel.consequence')}
+            items={items}
+            reason={{ value: reason, onChange: setReason, error: cancel.errors.alasan }}
+            confirmLabel={t('glossary.gl_074')}
+            destructive
+            pending={cancel.pending}
+            answer={cancel.answer}
+            onConfirm={() => { cancel.submit({ alasan: reason, versi: project.lock_version }, onClose); }}
+        />
+    );
+}
+
+export default function Journey({ project, journey, financial, can, return_href: returnHref = null, fulfilment, parts, predicates, documents, history, companions, cancelled }: Props) {
     const { t } = useTranslation();
     const [discarding, setDiscarding] = useState(false);
+    const [cancelling, setCancelling] = useState(false);
     const discard = useCommand<Record<string, never>>(() => `/proyek/${project.id}/hapus-draf`, 'post');
     // The predicates group carries the whole journey with its blockers once it arrives; until then the root facts' one.
     const full = predicates !== undefined && predicates !== null && !isFailed(predicates) ? predicates : null;
@@ -119,6 +162,7 @@ export default function Journey({ project, journey, financial, can, return_href:
         ...(can.edit ? [{ label: t('actions.edit_project'), onSelect: () => { router.visit(`/proyek/${project.id}/ubah`); } }] : []),
         ...(returnHref !== null ? [{ label: t('pages.pg_034.title'), onSelect: () => { router.visit(returnHref); } }] : []),
         ...(can.discard ? [{ label: t('actions.discard_draft'), tone: 'danger' as const, onSelect: () => { discard.clear(); setDiscarding(true); } }] : []),
+        ...(can.cancel === true ? [{ label: t('glossary.gl_074'), tone: 'danger' as const, onSelect: () => { setCancelling(true); router.reload({ only: ['companions'] }); } }] : []),
     ];
     const primary = nextHref !== null && shown?.next ? (
         // The next step's sentence may be long: the button wraps it rather than widening the page (TL-11).
@@ -165,6 +209,28 @@ export default function Journey({ project, journey, financial, can, return_href:
                     <Card className="p-4">
                         <p className="text-body text-text-primary">{t('projects.journey.closed')}</p>
                         {reachesCompletion && <a href={completion} className="text-body text-accent-link underline underline-offset-2">{t('completion.record.open')}</a>}
+                        {project.state === 'CANCELLED' && (
+                            <Deferred data="cancelled" fallback={<RegionLoading />}>
+                                {isFailed(cancelled) ? <GroupFailed group="cancelled" /> : cancelled === undefined || cancelled === null ? null : (
+                                    <div className="mt-2 flex flex-col gap-2" data-slot="cancelled-record">
+                                        <p className="text-body text-text-secondary">{cancelled.by ?? '—'} · <DateTimeText value={cancelled.at} /></p>
+                                        {cancelled.reason !== null && <p className="text-body text-text-primary">{t('completion.record.reason', { alasan: cancelled.reason })}</p>}
+                                        <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
+                                        {cancelled.obligations.length > 0 && (
+                                            <ul role="list" className="flex flex-col gap-1">
+                                                {cancelled.obligations.map((row, index) => (
+                                                    <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
+                                                        <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
+                                                        <span>{row.label}</span>
+                                                        {row.amount !== null && <Money value={row.amount} />}
+                                                    </li>
+                                                ))}
+                                            </ul>
+                                        )}
+                                    </div>
+                                )}
+                            </Deferred>
+                        )}
                     </Card>
                 ) : shown !== null && (
                     <section aria-label={t('journey.track')} className="flex min-w-0 flex-col gap-4">
@@ -254,7 +320,9 @@ export default function Journey({ project, journey, financial, can, return_href:
                         )}
                     </section>
                 )}
-                <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
+                <div id="pemenuhan" className="min-w-0">
+                    <FulfilmentSection projectId={project.id} lockVersion={project.lock_version} fulfilment={fulfilment} today={fulfilment.today} title={(children) => <Section title={t('fulfilment.title')}>{children}</Section>} />
+                </div>
                 {financial !== null && (
                     <Section title={t('journey.financial')}>
                         <PositionBlock title={t('journey.financial')} lines={[
@@ -346,6 +414,7 @@ export default function Journey({ project, journey, financial, can, return_href:
                 answer={discard.answer?.kind === 'COMMITTED' ? null : discard.answer}
                 onConfirm={() => { discard.submit({}); }}
             />
+            {cancelling && <CancelDialog project={project} companions={companions} onClose={() => { setCancelling(false); }} />}
         </AppShell>
     );
 }

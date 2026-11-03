@@ -18618,6 +18618,78 @@
             "source": "AX-26; BR-PRJ-04 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "projects.cancel.consequence": {
+            "task": "TASK-056",
+            "source": "INT-163; MSG-39; L-11; CM-29 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.companions": {
+            "task": "TASK-056",
+            "source": "J-PRJ-04; IP-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.no_companions": {
+            "task": "TASK-056",
+            "source": "J-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.companion.return": {
+            "task": "TASK-056",
+            "source": "CM-30; ROUTE-034 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.companion.invoice": {
+            "task": "TASK-056",
+            "source": "CM-26; WF-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.companion.purchase": {
+            "task": "TASK-056",
+            "source": "CM-31; WF-PRJ-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.companion.scope": {
+            "task": "TASK-056",
+            "source": "SF-CANCEL-LINE; TASK-034 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.cancel.stays": {
+            "task": "TASK-056",
+            "source": "L-10; CM-30; CM-31; FS-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.answer.cancelled": {
+            "task": "TASK-056",
+            "source": "INT-163; MSG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.cancel_closed": {
+            "task": "TASK-056",
+            "source": "AX-27; SM:Project (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "projects.refusal.cancel_draft": {
+            "task": "TASK-056",
+            "source": "AX-27; L-37 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.PRJ.ProjectCancelled": {
+            "task": "TASK-056",
+            "source": "LG-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
