@@ -173,6 +173,15 @@ final class PaymentWorld
         return ['refund' => $refund, 'application' => (int) DB::table('payment_applications')->where('refund_disbursement_id', $refund)->orderBy('id')->value('id')];
     }
 
+    /** ROUTE-256's action on an evidenced payment's credit by an actor holding `refund.record`, from the account with the transfer proof; its word, for the two-connection harness. */
+    public static function refundInCommand(int $actorId, int $paymentId, string $amount, int $accountId, int $proofId): string
+    {
+        $payment = Payment::query()->findOrFail($paymentId);
+        $source = ['payment' => $paymentId, 'credit' => null, 'company' => $payment->company_id, 'client' => $payment->client_organization_id, 'name' => $payment->public_id];
+
+        return InvoiceWorld::word(app(RefundCredit::class)->run((string) Str::uuid(), $actorId, $source, $amount, $accountId, $proofId, 'Klien meminta dana kembali', BusinessDate::today(), false, ['amount' => $amount, 'run' => (string) Str::uuid()]));
+    }
+
     /** A claimed deduction on the payment, its guard raised as AX-18 raises it. */
     public static function claim(int $paymentId, string $amount): void
     {
