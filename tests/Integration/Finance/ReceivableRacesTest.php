@@ -104,6 +104,7 @@ it('fails a completion racing a hold: it re-reads its predicates under LK-01 (M-
     InvoiceWorld::apply($id, $payment, '999999');
     $actor = $this->world->actorId;
     $project = $this->project->id;
+    InvoiceWorld::readyToComplete($this->project->id);
 
     $results = Sessions::run([
         'hold' => static fn (): string => InvoiceWorld::hold(static fn (): string => InvoiceWorld::holdInCommand($actor, $id), 'the hold holds the project'),
@@ -124,6 +125,7 @@ it('lets a completion through only once a write-off it waited on has cleared the
     $actor = $this->world->actorId;
     $project = $this->project->id;
     $today = $this->today;
+    InvoiceWorld::readyToComplete($this->project->id);
 
     $results = Sessions::run([
         'write-off' => static fn (): string => InvoiceWorld::hold(static fn (): string => InvoiceWorld::writeOffInCommand($owner, $id, '1000000', $today), 'the write-off holds the project'),
@@ -143,6 +145,7 @@ it('revalidates a project a billing correction finds completed, the correction s
     InvoiceWorld::apply($id, InvoiceWorld::payment($id, '1000000'), '1000000');
     $evidence = InvoiceWorld::linkedEvidence($this->world->company->id, $this->project->id)->id;
     $actor = $this->world->actorId;
+    InvoiceWorld::readyToComplete($this->project->id);
     $project = $this->project->id;
     $today = $this->today;
 
