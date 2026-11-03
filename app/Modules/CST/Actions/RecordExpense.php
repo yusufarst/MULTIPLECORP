@@ -8,7 +8,9 @@ use App\Modules\DOC\Services\EvidenceGuard;
 use App\Modules\PRJ\Actions\SaveQuotationDraft;
 use App\Modules\PRJ\Services\Revalidation;
 use App\Support\Audit\AuditChange;
+use App\Support\Audit\AuditLinkage;
 use App\Support\Audit\AuditRecorder;
+use App\Support\Audit\AuditRelation;
 use App\Support\Audit\AuthorityClass;
 use App\Support\Command\BusinessDateRule;
 use App\Support\Command\CommandContext;
@@ -108,10 +110,17 @@ final class RecordExpense
 
             $id = $this->cost->manualExpense($context, $companyId, $projectId, $category, $money, $businessDate, $sourceBillId);
             $now = $context->now();
+            $linkage = AuditLinkage::make();
 
             foreach (array_values(array_unique($evidence)) as $line => $document) {
                 DB::table('evidence_links')->insert(['evidence_document_id' => $document, 'evidence_scope' => 'COMPANY', 'company_id' => $companyId, 'role' => $line === 0 ? 'PRIMARY_PROOF' : 'SUPPORTING', 'expense_id' => $id,
                     'command_id' => $context->request->commandId, 'command_line_no' => $line + 1, 'recorded_at' => $now, 'recorded_by' => $context->request->actorUserId]);
+            }
+
+            // BR-XC-01: the project it costs, the bill it cites and its evidence, by their public identifiers.
+            foreach ([['projects', 'project', $projectId], ['evidence_documents', 'evidence_document', $sourceBillId], ...array_map(fn (int $document): array => ['evidence_documents', 'evidence_document', $document], $evidence)] as [$table, $type, $row]) {
+                $publicId = $row === null ? null : DB::table($table)->where('id', $row)->value('public_id');
+                $linkage = is_string($publicId) ? $linkage->link(AuditRelation::Affects, $type, $publicId) : $linkage;
             }
 
             $handle = RowHandle::of('expenses', $id);
@@ -130,8 +139,8 @@ final class RecordExpense
                 entityPublicId: null,
                 reason: null,
                 commandId: $context->request->commandId,
-                change: AuditChange::created(['amount' => $money->toString(), 'category' => $category, 'project' => $projectId === null ? null : (string) DB::table('projects')->where('id', $projectId)->value('public_id'),
-                    'source_bill' => $sourceBillId === null ? null : RowHandle::of('evidence_documents', $sourceBillId)]),
+                change: AuditChange::created(['amount' => $money->toString(), 'category' => $category, 'company_level' => $projectId === null]),
+                linkage: $linkage,
                 businessDate: $businessDate,
             );
 

@@ -64,9 +64,9 @@ final class OtherCashList
             }
         }
 
-        $tabs = array_values(array_filter(self::TABS, fn (string $each): bool => array_filter($reads, fn (array $read): bool => $read[self::READ[$each]]) !== []));
+        $tabs = array_values(array_filter(self::TABS, fn (string $each): bool => array_filter($reads, fn (array $read): bool => $read[self::READ[$each]] === true) !== []));
         $tab = in_array($tab, $tabs, true) ? (string) $tab : ($tabs[0] ?? 'pengeluaran');
-        $companies = array_values(array_filter($chosen !== null ? [$chosen] : array_keys($branches), fn (int $id): bool => $reads[$id][self::READ[$tab]]));
+        $companies = array_values(array_filter($chosen !== null ? [$chosen] : array_keys($branches), fn (int $id): bool => $reads[$id][self::READ[$tab]] === true));
         $cursor = is_string($after) && $after !== '';
         $page = $companies === [] || ($cursor && ! RowHandle::valid((string) $after)) ? ['rows' => [], 'more' => null] : $this->page($viewer, $companies, $tab, $cursor ? (string) $after : null, $branches);
         $failed = $cursor && $page['rows'] === [];
@@ -251,7 +251,11 @@ final class OtherCashList
         return $rows;
     }
 
-    /** The company's manual expenses still standing, what a payment is against (C-45). @return list<array{id: string, category: string, date: string, net: string}> */
+    /**
+     * The company's manual expenses still standing, what a payment is against (C-45).
+     *
+     * @return list<array{id: string, category: string, date: string, net: string}>
+     */
     private static function expenses(int $companyId): array
     {
         $rows = [];
@@ -276,7 +280,11 @@ final class OtherCashList
         return $rows;
     }
 
-    /** The company's purchase-return cases still awaiting value, what a supplier refund is for (C-46). @return list<array{id: string, open: string}> */
+    /**
+     * The company's purchase-return cases still awaiting value, what a supplier refund is for (C-46).
+     *
+     * @return list<array{id: string, open: string}>
+     */
     private static function cases(int $companyId): array
     {
         $rows = [];
@@ -289,7 +297,11 @@ final class OtherCashList
         return $rows;
     }
 
-    /** XL-5: other companies' transfers-out the viewer may cite into this one, with what each has not yet backed. @return list<array{id: string, company: string, date: string, left: string}> */
+    /**
+     * XL-5: other companies' transfers-out the viewer may cite into this one, with what each has not yet backed.
+     *
+     * @return list<array{id: string, company: string, date: string, left: string}>
+     */
     private static function transfers(Authority $viewer, int $companyId): array
     {
         $rows = [];
@@ -305,7 +317,11 @@ final class OtherCashList
         return $rows;
     }
 
-    /** The company's statement lines with money no Cash-In cites yet (C-19). @return list<array{id: string, account: string, date: string, reference: string, uncited: string}> */
+    /**
+     * The company's statement lines with money no Cash-In cites yet (C-19).
+     *
+     * @return list<array{id: string, account: string, date: string, reference: string, uncited: string}>
+     */
     private static function lines(int $companyId): array
     {
         $rows = [];
@@ -344,10 +360,12 @@ final class OtherCashList
 
         $found = $query->orderByDesc('x.id')->limit(self::PAGE + 1)->get();
         $rows = [];
+        $last = null;
 
         foreach ($found->take(self::PAGE) as $row) {
             $company = (int) Row::text($row, 'company_id');
-            $common = ['handle' => RowHandle::of($table, (int) Row::text($row, 'id')), 'company' => $branches[$company]['code'] ?? '', 'amount' => Row::text($row, 'amount'), 'net' => Row::text($row, 'net'),
+            $last = RowHandle::of($table, (int) Row::text($row, 'id'));
+            $common = ['handle' => $last, 'company' => $branches[$company]['code'] ?? '', 'amount' => Row::text($row, 'amount'), 'net' => Row::text($row, 'net'),
                 'date' => substr(Row::text($row, 'business_date'), 0, 10)];
             $rows[] = [...$common, ...match ($tab) {
                 'beban' => self::expenseRow($viewer, $row, $company),
@@ -355,8 +373,6 @@ final class OtherCashList
                 default => self::disbursementRow($viewer, $row, $company),
             }];
         }
-
-        $last = $rows === [] ? null : $rows[count($rows) - 1]['handle'];
 
         return ['rows' => $rows, 'more' => $found->count() > self::PAGE ? $last : null];
     }
