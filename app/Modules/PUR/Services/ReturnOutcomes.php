@@ -209,6 +209,33 @@ final class ReturnOutcomes
     }
 
     /**
+     * A supplier refund received for the case (ROUTE-259; NX-10; L-08): its RETURN_REFUNDED adjustment of the line and the case's refunded figure, never above what the case still awaits (C-46). The caller holds `locks()`.
+     *
+     * @return int the purchase the case's line belongs to
+     */
+    public function refundReceived(CommandContext $context, int $caseId, int $companyId, Money $amount, string $reason): int
+    {
+        $context->require(self::locks($caseId, null));
+        $case = DB::table('correction_cases')->where('id', $caseId)->where('company_id', $companyId)->first(['case_kind', 'returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value']);
+        $line = $case === null || Row::text($case, 'case_kind') !== 'PURCHASE_RETURN' ? null : self::lineOf($caseId);
+
+        if ($case === null || $line === null) {
+            throw Refused::rejected('C-14', ['reason' => 'case']);
+        }
+
+        $open = self::open($case);
+
+        if ($amount->compareTo($open) > 0) {
+            throw Refused::rejected('C-46', ['reason' => 'above_open', 'open' => $open->toString()]);
+        }
+
+        $this->adjust($context, $caseId, $companyId, $line['line'], $amount, $reason);
+        $this->cases->post($context, $caseId, ['refunded_value' => $amount->toString()], self::REOPENED);
+
+        return $line['purchase'];
+    }
+
+    /**
      * A supplier credit recorded in error taken back: never more than the case's credits (C-46).
      *
      * @param  array{line: int, purchase: int, scale: int}  $line
