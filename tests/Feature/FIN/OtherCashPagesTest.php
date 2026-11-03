@@ -51,8 +51,7 @@ function otherCashAnswer(object $test, object $actor, string $url, array $body):
 function otherCashForm(object $test, object $actor): array
 {
     $version = (string) $test->actingAs($actor)->get('/keuangan/kas-lain')->viewData('page')['version'];
-    $form = $test->actingAs($actor)->withHeaders(['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'FIN/OtherCash', 'X-Inertia-Partial-Data' => 'form'])
-        ->get('/keuangan/kas-lain?untuk='.$test->company->public_id)->json('props.form');
+    $form = $test->actingAs($actor)->get('/keuangan/kas-lain?untuk='.$test->company->public_id, ['X-Inertia' => 'true', 'X-Inertia-Version' => $version, 'X-Inertia-Partial-Component' => 'FIN/OtherCash', 'X-Inertia-Partial-Data' => 'form'])->json('props.form');
     Auth::forgetGuards();
 
     return is_array($form) ? $form : [];

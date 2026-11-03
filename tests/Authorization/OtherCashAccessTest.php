@@ -46,10 +46,10 @@ it('forbids each command without its own capability, whatever else is held (AZ-0
     expect(DB::table('disbursements')->count())->toBe(1)->and(DB::table('other_cash_receipts')->count())->toBe(0)->and(DB::table('expenses')->count())->toBe(0);
 });
 
-it('records an expense only with cost.view beside expense.record, unknown otherwise (RG-06; SM-25; criterion 7)', function () {
+it('records an expense only with cost.view beside expense.record, its prerequisite, forbidden otherwise (RG-06; SM-25; criterion 7)', function () {
     $blind = Authorization::admin([$this->company->id], ['finance.view', 'evidence.view', 'expense.record']);
 
-    $this->actingAs($blind)->post('/keuangan/kas-lain/beban', ($this->body)(['kategori' => 'Sewa']))->assertNotFound();
+    $this->actingAs($blind)->post('/keuangan/kas-lain/beban', ($this->body)(['kategori' => 'Sewa']))->assertForbidden();
     $this->actingAs($blind)->get('/keuangan/kas-lain')->assertInertia(fn (AssertableInertia $page) => $page->where('tabs', ['pengeluaran', 'kas-masuk'])->where('branches.0.can.expense', false));
 
     $seeing = Authorization::admin([$this->company->id], ['cost.view', 'evidence.view', 'finance.view', 'expense.record']);
