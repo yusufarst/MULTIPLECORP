@@ -25,6 +25,7 @@ use Tests\Support\Fixtures\HandoverFixture;
 use Tests\Support\Fixtures\InvoiceFixture;
 use Tests\Support\Fixtures\LogsFixture;
 use Tests\Support\Fixtures\NumberingFixture;
+use Tests\Support\Fixtures\OtherCashFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
@@ -131,6 +132,9 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     // TL-09–TL-12 (TASK-049): a confirmed service project, the layouts' numbering, an evidence, a draft or issued invoice when asked.
     Route::post('__fixtures/invoice', [InvoiceFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/credit', [CreditFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-054): that company's account and project, an open purchase, a transfer proof and a supplier bill to cite on PG-049.
+    Route::post('__fixtures/kas-lain', [OtherCashFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-037): a company with its PURCHASE and PO numbering, suppliers, goods, a bill and a confirmed project with its shortage.
     Route::post('__fixtures/purchase', [PurchaseFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

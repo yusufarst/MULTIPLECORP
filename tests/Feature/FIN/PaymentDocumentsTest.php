@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\OtherCashWorld;
 use Tests\Support\PaymentWorld;
 use Tests\Support\RefreshDatabase;
 
@@ -153,9 +154,7 @@ it('carries money recovered for a written-off invoice, listed for the Owner, and
 
 it('cites another company\'s transfer-out within its cap, both in scope, otherwise the Owner records it (XL-5; BR-FIN-07 b; DATABASE §11.5)', function () {
     $sender = InvoiceWorld::make();
-    $account = PaymentWorld::account($sender->company->id);
-    $transfer = DB::table('disbursements')->insertGetId(['public_id' => (string) Str::uuid(), 'company_id' => $sender->company->id, 'business_date' => $this->today, 'amount' => '500000', 'kind' => 'INTERCOMPANY_TRANSFER_OUT', 'company_bank_account_id' => $account, 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => $sender->actorId]);
-    DB::table('money_fact_balances')->insert(['disbursement_id' => $transfer, 'company_id' => $sender->company->id, 'fact_kind' => 'TRANSFER_OUT', 'amount' => '500000', 'recorded_at' => now()]);
+    $transfer = OtherCashWorld::transferOut($sender->company->id, '500000');
 
     // One company out of scope: the Admin cannot, the Owner can.
     expect(PaymentWorld::record($this->world->actorId, $this->company->id, $this->client, '300000', ['transferFrom' => $transfer])->code)->toBe('XL-5');

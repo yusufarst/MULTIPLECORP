@@ -15,6 +15,7 @@ use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\Evidence;
 use Tests\Support\InvoiceWorld;
+use Tests\Support\OtherCashWorld;
 use Tests\Support\PaymentWorld;
 use Tests\Support\RefreshDatabase;
 use Tests\Support\SettlementWorld;
@@ -354,11 +355,9 @@ it('nets a company-level expense\'s contra in CALC-11 (C-23; CALC-11)', function
 
 it('refuses a paid expense\'s contra until its disbursement is contra\'d, and releases a bill it cites (AX-33; C-18; L-43)', function () {
     $bill = SettlementWorld::evidence($this->company->id, 'SUPPLIER_BILL', '50000');
-    DB::table('evidence_balances')->where('evidence_document_id', $bill->id)->update(['cited_amount' => '50000.00']);
     $manual = SettlementWorld::manualExpense($this->company->id, $this->project->id, '50000', $bill->id);
-    $account = PaymentWorld::account($this->company->id);
-    $paying = DB::table('disbursements')->insertGetId(['public_id' => (string) Str::uuid(), 'company_id' => $this->company->id, 'business_date' => $this->today, 'amount' => '50000', 'kind' => 'EXPENSE_PAYMENT', 'company_bank_account_id' => $account, 'expense_id' => $manual, 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => $this->actor->id]);
-    DB::table('money_fact_balances')->insert(['company_id' => $this->company->id, 'disbursement_id' => $paying, 'fact_kind' => 'OTHER_DISBURSEMENT', 'amount' => '50000', 'recorded_at' => now()]);
+    expect(deductionEvidence($bill->id)->cited_amount)->toBe('50000.00');
+    $paying = OtherCashWorld::committed(OtherCashWorld::disburse(OtherCashWorld::actor($this->company->id), $this->company->id, 'EXPENSE_PAYMENT', '50000', PaymentWorld::account($this->company->id), ['expense' => $manual]));
 
     $refused = SettlementWorld::contra($this->actor->id, $this->company->id, RecordContra::EXPENSE, $manual, '50000');
     expect($refused->code)->toBe('C-45')->and($refused->state['reason'])->toBe('expense_paid');

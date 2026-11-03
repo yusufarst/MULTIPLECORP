@@ -91,13 +91,10 @@ final class SettlementWorld
         return app(ResolveResidualSettlement::class)->run($commandId ?? (string) Str::uuid(), $actorId, $companyId, $settlementId, $invoiceId, $paymentId, $issuerEvidenceId, 'Bukti penerbit', BusinessDate::today(), false, ['settlement' => $settlementId, 'invoice' => $invoiceId, 'payment' => $paymentId]);
     }
 
-    /** A manual expense with its money-fact guard, as TASK-054 will post it; its id. */
+    /** A manual expense through ROUTE-257's own action (TASK-054), recorded by the company's Owner, a bill it names cited; its id. */
     public static function manualExpense(int $companyId, ?int $projectId, string $amount, ?int $billId = null): int
     {
-        $id = DB::table('expenses')->insertGetId(['company_id' => $companyId, 'project_id' => $projectId, 'kind' => 'MANUAL', 'category' => 'OPERASIONAL', 'amount' => $amount, 'source_bill_evidence_id' => $billId, 'source_bill_evidence_type' => $billId === null ? null : 'SUPPLIER_BILL', 'business_date' => BusinessDate::today(), 'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => DB::table('users')->orderBy('id')->value('id')]);
-        DB::table('money_fact_balances')->insert(['company_id' => $companyId, 'expense_id' => $id, 'fact_kind' => 'EXPENSE', 'amount' => $amount, 'recorded_at' => now()]);
-
-        return $id;
+        return OtherCashWorld::committed(OtherCashWorld::expense(Authorization::owner()->id, $companyId, $projectId, $amount, $billId));
     }
 
     /** A settlement left RESIDUAL by its payment's contra, as CM-19 leaves it; the case's id. */
