@@ -4004,6 +4004,7 @@
     "projects.cancel.companions": "Companion corrections for what is actually undone — each its own command, none performed by this cancellation:",
     "projects.cancel.no_companions": "No companion correction you can make.",
     "projects.cancel.companion.return": "Record the client's return",
+    "projects.cancel.companion.dropship_return": "Record the direct shipment's return",
     "projects.cancel.companion.invoice": "Void or revise invoice :nomor",
     "projects.cancel.companion.purchase": "Cancel purchase :nomor or close its remainder",
     "projects.cancel.companion.scope": "Cancel the remaining scope under Items and fulfilment",

@@ -18643,6 +18643,12 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "projects.cancel.companion.dropship_return": {
+            "task": "TASK-056",
+            "source": "CM-30; ROUTE-032 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "projects.cancel.companion.invoice": {
             "task": "TASK-056",
             "source": "CM-26; WF-PRJ-04 (proposed copy)",

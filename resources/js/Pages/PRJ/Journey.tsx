@@ -68,7 +68,7 @@ type Props = {
     companions?: Companion[];
     cancelled?: Cancelled | null | Failed;
 };
-type Companion = { kind: 'return' | 'invoice' | 'purchase' | 'scope'; label: string; href: string };
+type Companion = { kind: 'return' | 'dropship_return' | 'invoice' | 'purchase' | 'scope'; label: string; href: string };
 type Cancelled = { reason: string | null; by: string | null; at: string; obligations: { kind: string; label: string; amount: string | null; quantity: string | null }[] };
 
 const SIPLAH_TEXTS = ['external_reference', 'program_code', 'account_code', 'notes'] as const;
