@@ -81,7 +81,7 @@ const RUNTIME_PRIVILEGES = [
     'evidence_balances' => ['SELECT, INSERT', ['proven_amount', 'cited_amount', 'expensed_amount']],
     'evidence_links' => ['SELECT, INSERT', ['unlinked_at', 'unlinked_by', 'unlink_reason']],
     // TASK-007: DELETE on the draft tables only, through their draft triggers (§19)
-    'projects' => ['SELECT, INSERT, DELETE', ['client_organization_id', 'client_unit_id', 'client_contact_id', 'client_address_id', 'channel', 'state', 'title', 'deadline', 'linked_project_id', 'link_reason', 'lock_version', 'updated_at']],
+    'projects' => ['SELECT, INSERT, DELETE', ['credit_held_amount', 'client_organization_id', 'client_unit_id', 'client_contact_id', 'client_address_id', 'channel', 'state', 'title', 'deadline', 'linked_project_id', 'link_reason', 'lock_version', 'updated_at']],
     'project_siplah_details' => ['SELECT, INSERT', ['external_reference', 'program_code', 'account_code', 'siplah_value', 'real_purchase_value', 'fee_amount', 'va_fee_amount', 'cashback_amount', 'refund_amount', 'notes', 'locked_at', 'lock_version', 'updated_at']],
     'project_lines' => ['SELECT, INSERT, DELETE', ['kind', 'product_id', 'quantity_scale', 'description', 'entered_qty', 'entered_unit_id', 'ratio_to_base', 'qty_base', 'unit_price', 'fulfillment_mode', 'current_pin_id', 'lock_version', 'updated_at']],
     'quotation_revisions' => ['SELECT, INSERT, DELETE', ['state', 'valid_until', 'decided_by', 'decided_at', 'decision_reason', 'lock_version', 'updated_at']],
