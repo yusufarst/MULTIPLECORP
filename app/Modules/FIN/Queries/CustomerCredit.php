@@ -109,7 +109,7 @@ final class CustomerCredit
     }
 
     /**
-     * The clients with credit left or a refund short of backing, a page at a time by client name, each with its sources, refunds and projects; and the next page's cursor.
+     * The clients with credit left, a refund short of backing or a refund to show, a page at a time by client name, each with its sources, refunds and projects; and the next page's cursor.
      *
      * @param  list<int>  $companies
      * @return array{list<array<string, mixed>>, ?string}
@@ -123,7 +123,8 @@ final class CustomerCredit
         }
 
         $found = DB::table('application_source_balances as b')->whereIn('b.company_id', $companies)
-            ->where(fn (Builder $either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0))
+            ->where(fn (Builder $either) => $either->where('b.capacity_amount', '>', 0)->orWhere('b.refund_shortfall_amount', '>', 0)
+                ->orWhereExists(fn (Builder $refunded) => $refunded->from('disbursements as d')->where('d.kind', 'REFUND')->whereColumn('d.company_id', 'b.company_id')->whereColumn('d.client_organization_id', 'b.client_organization_id')))
             ->join('client_organizations as o', 'o.id', '=', 'b.client_organization_id')->join('companies as co', 'co.id', '=', 'b.company_id')
             ->when($cursor !== null, fn (Builder $later) => $later->whereRaw('(o.name, b.client_organization_id, b.company_id) > (?, ?, ?)', [Row::text($cursor ?? (object) [], 'name'), (int) Row::text($cursor ?? (object) [], 'client'), (int) Row::text($cursor ?? (object) [], 'company')]))
             ->groupBy('b.company_id', 'b.client_organization_id', 'o.public_id', 'o.name', 'co.public_id')->orderBy('o.name')->orderBy('b.client_organization_id')->orderBy('b.company_id')->limit(self::PAGE + 1)
