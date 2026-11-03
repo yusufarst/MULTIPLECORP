@@ -21,7 +21,8 @@ final class ReverseDispatch
 
     public const CAPABILITY = 'stock.reverse';
 
-    public const KINDS = DispatchRestoration::KINDS;
+    /** The dispatch's own restorations; a client's return is ROUTE-210's, under `sales_return.record` (TASK-048). */
+    public const KINDS = ['DISPATCH_REVERSAL', 'UNDELIVERED_RETURN'];
 
     public function __construct(
         private readonly CommandEnvelope $envelope,

@@ -55,6 +55,8 @@ final class DropshipPosting
         - coalesce((select sum(r.qty_base) from stock_restorations r where r.dropship_confirmation_line_id = d.id and r.kind in ('DROPSHIP_RETURN', 'DROPSHIP_SUPPLIER_RETURN') and r.after_delivery), 0)
         + coalesce((select sum(e.qty_base) from stock_restorations e join stock_restorations o on o.id = e.reverses_restoration_id
             where e.dropship_confirmation_line_id = d.id and e.kind = 'DROPSHIP_ERROR_REVERSAL' and o.after_delivery), 0)
+        - coalesce((select sum(x.qty_delta_base) from stock_movement_entries x join stock_restorations r on r.id = x.stock_restoration_id
+            where r.dropship_confirmation_line_id = d.id and r.kind = 'DROPSHIP_RETURN' and r.after_delivery and x.movement_type = 'MOVEMENT_REVERSAL'), 0)
         SQL;
 
     public function __construct(

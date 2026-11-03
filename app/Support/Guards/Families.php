@@ -65,13 +65,17 @@ final class Families
                             - coalesce((select sum(case when r.kind = 'DROPSHIP_ERROR_REVERSAL' then -r.qty_base else r.qty_base end) from stock_restorations r join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
                                 left join stock_restorations o on o.id = r.reverses_restoration_id
                                 where l.project_line_id = b.project_line_id and (r.after_delivery or (r.kind = 'DROPSHIP_ERROR_REVERSAL' and o.after_delivery))), 0)
+                            - coalesce((select sum(x.qty_delta_base) from stock_movement_entries x join stock_restorations r on r.id = x.stock_restoration_id join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
+                                where l.project_line_id = b.project_line_id and r.kind = 'DROPSHIP_RETURN' and r.after_delivery and x.movement_type = 'MOVEMENT_REVERSAL'), 0)
                             - coalesce((select sum(r.qty_base) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id join dispatch_lines dl on dl.id = c.dispatch_line_id
                                 where dl.project_line_id = b.project_line_id and r.kind = 'SALES_RETURN'), 0)
                             - coalesce((select sum(e.qty_delta_base) from stock_movement_entries e join stock_restorations r on r.id = e.stock_restoration_id join stock_consumptions c on c.id = r.stock_consumption_id
                                 join dispatch_lines dl on dl.id = c.dispatch_line_id where dl.project_line_id = b.project_line_id and r.kind = 'SALES_RETURN' and e.movement_type = 'MOVEMENT_REVERSAL'), 0) as delivered_net_qty_base,
                         coalesce((select sum(l.qty_base) from dropship_confirmation_lines l where l.project_line_id = b.project_line_id), 0)
                             - coalesce((select sum(case when r.kind = 'DROPSHIP_ERROR_REVERSAL' then -r.qty_base else r.qty_base end) from stock_restorations r join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
-                                where l.project_line_id = b.project_line_id), 0) as dropship_confirmed_net_qty_base
+                                where l.project_line_id = b.project_line_id), 0)
+                            - coalesce((select sum(x.qty_delta_base) from stock_movement_entries x join stock_restorations r on r.id = x.stock_restoration_id join dropship_confirmation_lines l on l.id = r.dropship_confirmation_line_id
+                                where l.project_line_id = b.project_line_id and r.kind = 'DROPSHIP_RETURN' and x.movement_type = 'MOVEMENT_REVERSAL'), 0) as dropship_confirmed_net_qty_base
                     from project_line_balances b
                     SQL,
                 null,

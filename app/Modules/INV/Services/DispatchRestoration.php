@@ -89,6 +89,11 @@ final class DispatchRestoration
         $context->require($this->locks($dispatchLineId, $items));
         $sales = $kind === self::SALES_RETURN;
 
+        // A client's return is `sales_return.record`'s command alone, a dispatch's restoration `stock.reverse`'s (RG-06; AZ-01).
+        if ($sales !== ($context->request->capability === 'sales_return.record')) {
+            throw Refused::rejected('AZ-01', ['reason' => 'kind']);
+        }
+
         if (! in_array($kind, self::KINDS, true) || $items === []) {
             throw Refused::rejected('C-27', ['reason' => 'kind']);
         }
