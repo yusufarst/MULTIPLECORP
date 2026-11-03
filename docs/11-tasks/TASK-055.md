@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -241,6 +241,23 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 13. The same `command_id` replayed for either command returns its recorded outcome and never writes a second transition (CI-05; INT-161; INT-162).
 14. A project with no credit left, or with nothing arisen beyond what its hold covers, meets predicate 9's credit condition; credit neither applied, refunded nor held is one blocker, credit arising after a hold is one blocker even after the held credit was spent, and a payment across projects blocks only the project its rest counts for (WF-PRJ-03 predicate 9; WF-FIN-06; DIR-104; TASK_PLAN §8).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PRJ/ProjectCompletionTest.php` — PG-012's ten conditions, each with its state, the unmet one's items and where it is resolved, derived again after the facts change.
+- Criterion 2: `ProjectCompletionTest` — "Selesaikan Proyek" REJECTED C-39 with the unmet conditions named and nothing written; one blocker per condition for fulfilment, administration, billing, receivable, payment's credit and open cases; delivery or full payment alone never completing; the parts of predicates 1, 2, 8 and 9 this Task completed covered through the journey and completion reads.
+- Criterion 3: `ProjectCompletionTest` — a project whose ten conditions hold stays ACTIVE until the explicit command.
+- Criterion 4: `ProjectCompletionTest` — the Owner's Force Complete bound to the snapshot's hash with a mandatory reason, its transition holding the snapshot, unmet conditions, residual obligations, reason, hash and actor; a missing reason at its field; C-38 refusing a FORCE_COMPLETE without reason, snapshot or hash.
+- Criterion 5: `tests/Integration/Projects/CompletionRacesTest.php` — M-27 on real sessions: a dispute hold changing the snapshot while the Force Complete waits answers CONFLICT ST-04, the project unchanged, then confirmed again; `ProjectCompletionTest` — the same over HTTP.
+- Criterion 6: `ProjectCompletionTest` — an Admin's Force Complete, granted or not, denied; a forged state ignored; another company's project unknown.
+- Criterion 7: `ProjectCompletionTest` — the force-completed project's record keeps its unmet conditions and residual obligations, the receivable still outstanding, nothing fabricated; without `finance.view` the receivables absent.
+- Criterion 8: TASK-050's `tests/Integration/Finance/ReceivableRacesTest.php` now through the real AX-25 — a completion racing a hold REJECTED, one waiting on a write-off committing, a billing correction after a completion revalidating the project.
+- Criterion 9: `CompletionRacesTest` — a document change returning a completed project to ACTIVE with one REVALIDATE linked to it, the completion kept, a payment's proof reaching its projects, a CANCELLED project left CANCELLED; ReceivableRacesTest — a correction's revalidation.
+- Criterion 10: `tests/Unit/PRJ/CompletionTest.php` — the residual-command decision on each state; `CompletionRacesTest` — an invoice issued on a completed project running as a correction.
+- Criterion 11: the predicates read by the lines' modes (WF-PRJ-03) — service lines through handover or cancellation in the tests; goods lines through delivery net of returns (predicate 1's part completed here).
+- Criterion 12: DOC's readiness counts failed renditions, and ADM's items are satisfied only by issued versions (TASK-029; TASK-035), read unchanged by AX-25.
+- Criterion 13: `ProjectCompletionTest` and `tests/Interaction/ProjectCompletionTest.php` — one `command_id` replayed for either command, one transition.
+- Criterion 14: `ProjectCompletionTest` — credit left blocking predicate 9 until held, the hold covering what had arisen.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -266,32 +283,32 @@ CAP-18 and AC-21 require a system-evaluated completion gate that delivery or ful
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05); PASS in CI
+- [x] Authorization: `projects.view`, `projects.complete`, the Owner's `projects.force_complete`, the Admin's denial (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-012, ROUTE-161 and ROUTE-162 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-161 and INT-162 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-PRJ-03 on the desktop and UXS-37's Force Complete on the phone (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the page in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-05 and SM-25 as above (TL-14)
+- [x] Database safety review: no schema change; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's two reviews, each finding fixed with its test or answered
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `a9d7a0c`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41729303463 (push) and 41729308528 (pull request #68), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/ProjectCompletionTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: a9d7a0c, CI ubuntu-24.04 run 41729303463, tests/Browser/E2E/completion.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-012 in both languages — `tests/Browser/Localization/completion.spec.ts` PASS; 38 keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: PRJ's `Actions/CompleteProject` and `ForceCompleteProject`, `Queries/ProjectCompletion`, `Data/CompletionSnapshot` and `Materiality`, `Services/CompletionRecords`, `ProjectDocumentChanges` and `ResidualCommands`, `Contracts/ResidualObligationProvider`, `Http/Controllers/ProjectCompletionController`; FIN's `PaymentPredicate`, `ReceivableObligations` and `IssueInvoice`; FUL's `HandoverPredicate` and `ShipmentFigures`; INV's `ReservationPredicate` and `ReservationObligations`; ADM's `RequirementObligations`; `Support/Command/Fingerprint`; the service provider; `resources/js/Pages/PRJ/Completion.tsx` and `Journey.tsx`; `lang/`; the routes; the tests, fixture and browser specs (`InvoiceWorld::completeInCommand` now through the real action)
+- Commit SHA: from the start commit to `a9d7a0c` on `task/TASK-055-project-completion`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review found 5 P1 — the fixtures not meeting ADM's default invoice item, a document void's revalidation pre-empting FIN's own correction reference, the route list's order, PG-010/PG-011's statement budgets exceeded by the new predicate parts, the providers' import order — and 2 P2 — collection documents reopening completed projects, the E2E entry —, each fixed; its P3 on a Force Complete with nothing unmet fixed (refused, AX-26). Codex reviewed twice: its review of `79e18a8` found 3 P1 — an invoice issued on a completed project unchecked, payment evidence not reaching its projects, receivables shown masked without `finance.view` —, each fixed in `6e6f2d7` with its test; its targeted review of `6e6f2d7` found no issue; `a9d7a0c` then read the issue's precondition on the project state the invoice's read already carries, holding IssueInvoice's statement budget (QB-13). Executor discoveries, for Planning: (1) the predicate parts the plan's earlier Tasks were to provide were partly absent although those Tasks are DONE — goods-line fulfilment (1), shipments awaiting delivery (2), pending unexplained-loss cases (8), credit disposition and open pre-payment Kuitansi (9) — and were completed here as WF-PRJ-03's table states them, folded into the existing providers' statements so PG-010 and PG-011 stay within their budgets; (2) predicate 8's open count findings carry no link to a project, so no finding touches one as the table reads; (3) predicate 9's disbursement correction cases have no case kind (TASK-054 opened none); (4) predicate 10's delivery, closure and settlement evidence is required by each command when it records them, so the audit predicate reads only flagged payments; (5) the residual-command precondition `ResidualCommands` is PRJ's; IssueInvoice applies it, the other project-bound commands keep their own L-11 refusals until each module's Task adopts it; (6) the contract's "COMPLETE_FORCED" is the schema's FORCE_COMPLETE kind. Not done, for Planning: C-38's CHECK does not require the unmet predicates or the residual obligations (written always by the action); the concurrency proofs live under `tests/Integration/`, not `tests/Concurrency/`. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 
