@@ -36,6 +36,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD keuangan/pembayaran/baru', 'POST keuangan/pembayaran', 'POST keuangan/pembayaran/{id}/terapkan', 'POST keuangan/pembayaran/{id}/realokasi', 'POST keuangan/pembayaran/{id}/kontra', 'GET|HEAD keuangan/potongan', 'POST keuangan/potongan', 'POST keuangan/potongan/{id}/selesaikan-sisa', 'POST keuangan/kontra', 'GET|HEAD keuangan/mutasi-bank', 'POST keuangan/mutasi-bank', 'POST keuangan/mutasi-bank/{id}/koreksi',
         'GET|HEAD proyek/{id}/serah-terima', 'POST proyek/{id}/serah-terima', 'POST proyek/{id}/serah-terima/{ho}/balikkan',
         'GET|HEAD proyek/{id}/kirim-langsung', 'POST proyek/{id}/kirim-langsung', 'POST proyek/{id}/kirim-langsung/{dsc}/balikkan', 'POST proyek/{id}/kirim-langsung/{dsc}/retur', 'POST proyek/{id}/kirim-langsung/{dsc}/surat-jalan',
+        'GET|HEAD proyek/{id}/retur', 'POST proyek/{id}/retur', 'POST retur/{id}/balikkan',
         'GET|HEAD gudang/pengiriman', 'GET|HEAD gudang/pengiriman/{id}', 'POST gudang/pengiriman/{id}/catat', 'POST gudang/pengiriman/{id}/dokumen', 'POST gudang/pengiriman/{id}/tutup', 'POST gudang/pengiriman/{id}/koreksi',
         'GET|HEAD akun', 'PUT akun/kata-sandi', 'POST akun/verifikasi-dua-langkah', 'DELETE akun/verifikasi-dua-langkah', 'POST akun/kode-pemulihan',
         'POST akun/kode-pemulihan/baru', 'POST akun/google', 'DELETE akun/google', 'PUT akun/bahasa',
