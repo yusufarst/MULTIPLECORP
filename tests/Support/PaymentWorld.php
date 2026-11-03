@@ -8,6 +8,7 @@ use App\Modules\FIN\Actions\ContraPayment;
 use App\Modules\FIN\Actions\CorrectBankCitation;
 use App\Modules\FIN\Actions\ReallocateApplication;
 use App\Modules\FIN\Actions\RecordPayment;
+use App\Modules\FIN\Actions\RefundCredit;
 use App\Modules\FIN\Actions\VoidInvoice;
 use App\Modules\FIN\Data\ContraEntry;
 use App\Modules\FIN\Data\InvoiceCorrection;
@@ -21,9 +22,10 @@ use Database\Factories\DOC\EvidenceDocumentFactory;
 use Database\Factories\ORG\CompanyBankAccountFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use RuntimeException;
 
 /**
- * TASK-051's world (TL-04; TL-05; TL-08): the company's accounts, statement lines and proofs, a payment through ROUTE-251's own action, and until TASK-052 and TASK-053 exist the synthetic refund the dispositions act on, its guards moved as AX-23 will move them.
+ * TASK-051's world (TL-04; TL-05; TL-08): the company's accounts, statement lines and proofs, a payment through ROUTE-251's own action, and a refund through ROUTE-256's (TASK-053) for the dispositions to act on.
  * Static, so the closures of the two-connection harness can call them (Sessions::run).
  */
 final class PaymentWorld
@@ -145,22 +147,30 @@ final class PaymentWorld
     }
 
     /**
-     * A refund of `$amount` backed by an application of the payment, as AX-23 will commit it (synthetic until TASK-053).
+     * A refund of `$amount` of the payment's credit through ROUTE-256's own action (AX-23), its payment evidenced first (L-29), from a new account of the company with its transfer proof.
      *
      * @return array{refund: int, application: int}
      */
-    public static function refund(int $paymentId, string $amount): array
+    public static function refund(int $paymentId, string $amount, ?string $commandId = null): array
     {
         $payment = Payment::query()->findOrFail($paymentId);
-        $actor = DB::table('users')->orderBy('id')->value('id');
-        $refund = DB::table('disbursements')->insertGetId(['public_id' => (string) Str::uuid(), 'company_id' => $payment->company_id, 'client_organization_id' => $payment->client_organization_id, 'business_date' => BusinessDate::today(), 'amount' => $amount, 'kind' => 'REFUND', 'company_bank_account_id' => self::account($payment->company_id),
-            'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => $actor]);
-        DB::table('money_fact_balances')->insert(['disbursement_id' => $refund, 'company_id' => $payment->company_id, 'fact_kind' => 'REFUND', 'amount' => $amount, 'backed_amount' => $amount, 'recorded_at' => now()]);
-        $application = DB::table('payment_applications')->insertGetId(['company_id' => $payment->company_id, 'client_organization_id' => $payment->client_organization_id, 'payment_id' => $paymentId, 'refund_disbursement_id' => $refund, 'target_kind' => 'REFUND', 'amount' => $amount, 'business_date' => BusinessDate::today(),
-            'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => $actor]);
-        DB::table('application_source_balances')->where('payment_id', $paymentId)->update(['refund_backed_amount' => DB::raw("refund_backed_amount + {$amount}")]);
 
-        return ['refund' => $refund, 'application' => $application];
+        if (! DB::table('evidence_links')->where('payment_id', $paymentId)->whereNull('unlinked_at')->exists()) {
+            DB::table('evidence_links')->insert(['evidence_document_id' => self::proof($payment->company_id)->id, 'evidence_scope' => 'COMPANY', 'company_id' => $payment->company_id, 'role' => 'PRIMARY_PROOF', 'payment_id' => $paymentId,
+                'command_id' => (string) Str::uuid(), 'command_line_no' => 1, 'recorded_at' => now(), 'recorded_by' => DB::table('users')->orderBy('id')->value('id')]);
+        }
+
+        $actor = Authorization::admin([$payment->company_id], ['finance.view', 'refund.record'])->id;
+        $source = ['payment' => $paymentId, 'credit' => null, 'company' => $payment->company_id, 'client' => $payment->client_organization_id, 'name' => $payment->public_id];
+        $outcome = app(RefundCredit::class)->run($commandId ?? (string) Str::uuid(), $actor, $source, $amount, self::account($payment->company_id), self::proof($payment->company_id, 'TRANSFER_PROOF')->id, 'Klien meminta dana kembali', BusinessDate::today(), false, ['amount' => $amount]);
+
+        if ($outcome->kind !== Outcome::COMMITTED) {
+            throw new RuntimeException("The refund was {$outcome->kind} {$outcome->code}.");
+        }
+
+        $refund = (int) $outcome->resultId;
+
+        return ['refund' => $refund, 'application' => (int) DB::table('payment_applications')->where('refund_disbursement_id', $refund)->orderBy('id')->value('id')];
     }
 
     /** A claimed deduction on the payment, its guard raised as AX-18 raises it. */
