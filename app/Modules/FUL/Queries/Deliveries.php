@@ -6,6 +6,7 @@ use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\FUL\Data\ShipmentFigures;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\INV\Data\ClientReturns;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\RowHandle;
 use App\Support\Search\Row;
@@ -33,7 +34,10 @@ final class Deliveries
     private const AWAITING = <<<'SQL'
         exists (select 1 from dispatch_lines d where d.stock_movement_id = m.id and
             (select coalesce(sum(c.qty_base - b.restored_qty_base - b.reclassified_qty_base - b.substituted_qty_base), 0) from stock_consumptions c join stock_consumption_balances b on b.stock_consumption_id = c.id where c.dispatch_line_id = d.id)
-            > (select coalesce(sum(case when x.reverses_delivery_line_id is null then x.qty_base else -x.qty_base end), 0) from delivery_lines x where x.dispatch_line_id = d.id)
+            >
+        SQL
+        // Net delivered: what the client returned is no longer delivered (PX-08; TASK-048).
+        .ClientReturns::NET_DELIVERED.<<<'SQL'
             + greatest(0, (select coalesce(sum(k.closed_qty_base), 0) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT' and not exists (select 1 from delivery_closures s where s.supersedes_id = k.id))
                 - (select coalesce(sum(r.qty_base), 0) from stock_restorations r join stock_consumptions c on c.id = r.stock_consumption_id where c.dispatch_line_id = d.id and r.kind = 'UNDELIVERED_RETURN'
                     and r.recorded_at > (select min(k.recorded_at) from delivery_closures k where k.dispatch_line_id = d.id and k.closure_kind <> 'LOST_IN_TRANSIT'))))

@@ -57,6 +57,7 @@ final class CostPosting
         'SALES_RETURN' => ['HPP', 'RESTORATION_CONTRA'],
         'SUBSTITUTION' => ['HPP', 'SUBSTITUTION'],
         'LOSS_REVERSAL' => ['LOSS', 'LOSS_REVERSAL'],
+        'RETURN_ERROR_REVERSAL' => ['SUPPLIER_RETURN', 'RESTORATION_CONTRA'],
     ];
 
     /** The consumption kinds each restoration reverses (DATABASE §6.2; L-31). */
@@ -66,7 +67,11 @@ final class CostPosting
         'SALES_RETURN' => ['DISPATCH'],
         'SUBSTITUTION' => ['DISPATCH'],
         'LOSS_REVERSAL' => ['LOSS', 'UNATTRIBUTED_LOSS'],
+        'RETURN_ERROR_REVERSAL' => ['PURCHASE_RETURN'],
     ];
+
+    /** The lot restorations a reversal in error may take back (CM-37; AX-36): never a loss's, never a substitution's. */
+    public const UNDOABLE = ['DISPATCH_REVERSAL', 'UNDELIVERED_RETURN', 'SALES_RETURN'];
 
     /** The basis kinds a lot other than a normal receipt carries (DATABASE §6.3), with the acquisition each needs. */
     private const BASIS_KINDS = ['OPENING_COST', 'SURPLUS_FLAGGED_BASIS', 'DROPSHIP_RETURN_BASIS', 'REPLACEMENT_BASIS'];
@@ -583,8 +588,116 @@ final class CostPosting
             'correction_case_id' => Row::nullable($restoration, 'correction_case_id') ?? Row::nullable($consumption, 'correction_case_id'),
             'case_company_id' => Row::nullable($restoration, 'case_company_id') ?? Row::nullable($consumption, 'case_company_id')]);
         $ledger->flush();
+        $case = Row::nullable($consumption, 'correction_case_id');
+
+        // A purchase return recorded in error taken back (CM-37; AX-36): its case's returned cost, and so its refund expectation, lowered by the contra (C-46).
+        if (Row::text($restoration, 'kind') === 'RETURN_ERROR_REVERSAL' && $case !== null && ! $contra->isZero()) {
+            $this->cases->post($context, (int) $case, ['returned_cost' => $contra->negated()->toString()], self::REOPENED);
+        }
 
         return $id;
+    }
+
+    /**
+     * A lot restoration recorded in error taken back (CM-37; AX-36; C-55): of the contra it wrote, the proportional share over
+     * what of the restoration still stands, the reversal taking its last unit absorbing the residual — the same class and
+     * cause, positive, naming the restoration and reversing its contra row —, the consumption re-established on its bearer
+     * and the units' cost leaving the lot again. The caller moves the restoration's reversed quantity after this call.
+     */
+    public function unrestore(CommandContext $context, int $restorationId, string $qty, string $standing, string $businessDate): Money
+    {
+        $restoration = DB::table('stock_restorations')->where('id', $restorationId)->first(['stock_consumption_id', 'kind', 'correction_case_id', 'case_company_id']);
+        $kind = is_object($restoration) ? Row::text($restoration, 'kind') : '';
+
+        if (! is_object($restoration) || ! in_array($kind, self::UNDOABLE, true) || Row::nullable($restoration, 'stock_consumption_id') === null) {
+            throw new InvalidArgumentException("Restoration {$restorationId} is no lot restoration a reversal takes back.");
+        }
+
+        [$class, $cause] = self::RESTORATION[$kind];
+        $consumption = self::consumption((int) Row::text($restoration, 'stock_consumption_id'));
+        $context->require(self::consumptionLocks((int) Row::text($consumption, 'id')));
+        $rows = DB::table('cost_attributions')->where('stock_restoration_id', $restorationId)->where('cost_class', $class)->where('cause', $cause);
+        $contraRow = (clone $rows)->where('amount', '<', 0)->orderBy('id')->value('id');
+        $amount = CostSplitter::draw(Money::of((string) (clone $rows)->sum('amount'))->negated(), $qty, $standing);
+        $ledger = new CostLedger($context);
+        $ledger->move('lot_cost_balances', ['lot_id' => (int) Row::text($consumption, 'lot_id')], ['remaining_qty_base' => '-'.$qty, 'remaining_cost' => $amount->negated()->toString()]);
+
+        if (! $amount->isZero()) {
+            $ledger->attribution([...self::drawOf($consumption), 'cost_class' => $class, 'cause' => $cause, 'amount' => $amount->toString(), 'stock_restoration_id' => $restorationId,
+                'reverses_attribution_id' => is_numeric($contraRow) ? (int) $contraRow : null, 'business_date' => $businessDate,
+                // The case the contra named, as restore() wrote it (CM-10).
+                'correction_case_id' => Row::nullable($restoration, 'correction_case_id') ?? Row::nullable($consumption, 'correction_case_id'),
+                'case_company_id' => Row::nullable($restoration, 'case_company_id') ?? Row::nullable($consumption, 'case_company_id')]);
+        }
+
+        $ledger->flush();
+
+        return $amount;
+    }
+
+    /**
+     * A drop-ship supplier return or confirmation reversal recorded in error undone once and exactly (CM-37; C-55; DATABASE
+     * §5.7): every cost row the restoration wrote mirrored on the line, naming the undoing restoration and the row it
+     * reverses — the supplier return's units' cost back on the project and off its case's returned cost (C-46), the
+     * confirmation reversal's goods and tax returned for PUR to raise the line's posted values again. A confirmation reversal
+     * whose charge parts were re-spread over other receipts cannot be mirrored and is refused (C-55).
+     */
+    public function dropshipErrorReversed(CommandContext $context, int $errorRestorationId, string $businessDate): ReceiptPosted
+    {
+        $error = DB::table('stock_restorations')->where('id', $errorRestorationId)->first(['kind', 'reverses_restoration_id', 'reverses_restoration_kind', 'dropship_confirmation_line_id']);
+
+        if (! is_object($error) || Row::text($error, 'kind') !== 'DROPSHIP_ERROR_REVERSAL' || Row::nullable($error, 'reverses_restoration_id') === null) {
+            throw new InvalidArgumentException("Restoration {$errorRestorationId} undoes no drop-ship restoration.");
+        }
+
+        $original = (int) Row::text($error, 'reverses_restoration_id');
+        $kind = Row::text($error, 'reverses_restoration_kind');
+        $dropship = self::dropshipLine((int) Row::text($error, 'dropship_confirmation_line_id'));
+        $context->require(self::purchaseLocks(self::purchaseOf((int) Row::text($dropship, 'purchase_line_id'))));
+        $rows = DB::table('cost_attributions')->where('stock_restoration_id', $original)->orderBy('id')
+            ->get(['id', 'cost_class', 'cause', 'amount', 'cost_component', 'purchase_charge_id', 'purchase_charge_line_share_id', 'respread_from_purchase_line_id', 'allocation_version',
+                'bearer_company_id', 'bearer_project_id', 'correction_case_id', 'case_company_id', 'allocation_reason'])->all();
+
+        if ($kind === 'DROPSHIP_CONFIRMATION_REVERSAL' && array_filter($rows, fn (object $row): bool => Row::nullable($row, 'cost_component') === 'CHARGE') !== []) {
+            throw Refused::rejected('C-55', ['reason' => 'charge_respread']);
+        }
+
+        $ledger = new CostLedger($context);
+        $posted = ReceiptPosted::none();
+        $returned = [];
+
+        foreach ($rows as $row) {
+            $amount = Money::of(Row::text($row, 'amount'))->negated();
+            $ledger->attribution([
+                'dropship_confirmation_line_id' => (int) Row::text($error, 'dropship_confirmation_line_id'), 'cost_class' => Row::text($row, 'cost_class'), 'cause' => Row::text($row, 'cause'), 'amount' => $amount->toString(),
+                'cost_component' => Row::nullable($row, 'cost_component'), 'purchase_charge_id' => Row::nullable($row, 'purchase_charge_id'), 'purchase_charge_line_share_id' => Row::nullable($row, 'purchase_charge_line_share_id'),
+                'respread_from_purchase_line_id' => Row::nullable($row, 'respread_from_purchase_line_id'), 'allocation_version' => Row::nullable($row, 'allocation_version'),
+                'bearer_company_id' => (int) Row::text($row, 'bearer_company_id'), 'bearer_project_id' => Row::nullable($row, 'bearer_project_id'), 'correction_case_id' => Row::nullable($row, 'correction_case_id'),
+                'case_company_id' => Row::nullable($row, 'case_company_id'), 'allocation_reason' => Row::nullable($row, 'allocation_reason'),
+                'stock_restoration_id' => $errorRestorationId, 'reverses_attribution_id' => (int) Row::text($row, 'id'), 'business_date' => $businessDate,
+            ]);
+            $case = Row::nullable($row, 'correction_case_id');
+
+            if (Row::text($row, 'cost_class') === 'SUPPLIER_RETURN' && $case !== null) {
+                $returned[(int) $case] = ($returned[(int) $case] ?? Money::zero())->plus($amount);
+            }
+
+            if ($kind === 'DROPSHIP_CONFIRMATION_REVERSAL') {
+                $posted = $posted->plus(match (Row::nullable($row, 'cost_component')) {
+                    'GOODS' => new ReceiptPosted($amount, Money::zero()),
+                    'NONCREDITABLE_TAX' => new ReceiptPosted(Money::zero(), $amount),
+                    default => ReceiptPosted::none(),
+                });
+            }
+        }
+
+        $ledger->flush();
+
+        foreach ($returned as $case => $amount) {
+            $this->cases->post($context, $case, ['returned_cost' => $amount->toString()], self::REOPENED);
+        }
+
+        return $posted;
     }
 
     /**

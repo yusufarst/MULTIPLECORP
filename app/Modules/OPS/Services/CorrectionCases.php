@@ -28,7 +28,7 @@ final class CorrectionCases
     public const KINDS = ['SALES_RETURN', 'DELIVERY_DISCREPANCY', 'DAMAGED_UNIT', 'PURCHASE_RETURN', 'DROPSHIP_RETURN', 'PAYMENT_CORRECTION', 'INVOICE_CORRECTION', 'OPENING_CORRECTION', 'OTHER'];
 
     /** The companion corrections a case may wait for (CM-10, CM-12; ADMIN_FLOW §11), each a module's command. */
-    public const STEPS = ['stock_return', 'invoice_correction', 'refund', 'replacement', 'delivery_correction', 'payment_rerecord'];
+    public const STEPS = ['stock_return', 'invoice_correction', 'refund', 'replacement', 'delivery_correction', 'payment_rerecord', 'demand', 'damaged_outcome'];
 
     /** The guard counters of DATABASE §3.1, each one posting service's (C-61). */
     public const COUNTERS = ['unbacked_refund_amount', 'residual_settlement_amount', 'returned_cost', 'refunded_value', 'replaced_value', 'unrecovered_value'];
