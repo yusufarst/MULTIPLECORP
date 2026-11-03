@@ -792,3 +792,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-046 on its branch `task/TASK-046-dropship`: PG-032 *Kirim Langsung* — "Konfirmasi Kirim Langsung" with the supplier's shipment reference, proof, quantities and serials, the line's actual cost attributed once, and the client's delivery in the same command when its proof arrives with it (ROUTE-205); the reversal of a confirmation recorded in error (ROUTE-206); the client's return to the warehouse into a new lot at its HPP contra, or to the supplier under a purchase-return case settled through ROUTE-177 (ROUTE-207); the direct shipment's *Surat Jalan* (ROUTE-216).
 - Every check passed in fresh CI on `8d3c4f0`. TASK-046 DONE — progress 53 / 87 —; TASK-059 READY.
+
+## Unreleased — 2026-11-03, TASK-048 — Client returns (sales return)
+
+- Built TASK-048 on its branch `task/TASK-048-client-returns`: PG-034 *Retur dari Klien* — "Retur dari Klien" (ROUTE-210) taking delivered units back usable or damaged onto their lot at the consumption's cost, net delivered lowered and the delivery kept, one case per lot with its open steps, an optional new reservation; "Balikkan (Tercatat Keliru)" (ROUTE-211) undoing a restoration, a client's return, an undelivered return, a purchase return or a drop-ship supplier return recorded in error, on PG-034 and PG-028; "Tutup Kasus" answering on PG-034; its entries on PG-011 and PG-030.
+- Every check passed in fresh CI on `1a33d38`. TASK-048 DONE — progress 54 / 87 —; TASK-053, TASK-054 and TASK-059 READY.
