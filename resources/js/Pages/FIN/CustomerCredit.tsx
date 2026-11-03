@@ -69,9 +69,12 @@ export default function CustomerCredit({ page }: Props) {
     const apply = useCommand<Payload>(() => (acting?.kind === 'apply' ? `/keuangan/pembayaran/${acting.source.id}/terapkan` : ''), 'post');
     const hold = useCommand<Payload>(() => (acting?.kind === 'hold' ? `/keuangan/kredit-pelanggan/proyek/${acting.project.id}/tahan` : ''), 'post');
     const answer = refund.answer ?? apply.answer ?? hold.answer;
-    useClosedOnAnswer(answer, () => { setActing(null); });
+    // INT-017: an outcome that never arrived keeps its target, so "Coba Lagi" resends the same command before any other may start (IP-02).
+    const pending = [refund, apply, hold].find((command) => command.unknown) ?? null;
+    useClosedOnAnswer(answer, () => { if (![refund, apply, hold].some((command) => command.unknown)) setActing(null); });
 
     const open = (next: Acting) => {
+        if (pending !== null) return;
         refund.clear();
         apply.clear();
         hold.clear();
@@ -99,7 +102,7 @@ export default function CustomerCredit({ page }: Props) {
                     </FormField>
                 )}
                 <p className="text-body text-text-secondary">{t('credit.intro')}</p>
-                {answer !== null && acting === null && <OutcomeMessage answer={answer} />}
+                {answer !== null && (acting === null || pending !== null) && <OutcomeMessage answer={answer} action={pending === null ? undefined : <Button variant="outline" size="sm" onClick={pending.retry}>{t('actions.try_again')}</Button>} />}
                 {page.groups.length === 0 ? <RegionEmpty text={t('credit.none')} /> : (
                     <ol className="flex min-w-0 flex-col gap-4">
                         {page.groups.map((group) => (

@@ -76,24 +76,29 @@ final class CreditAttribution
                 $this->arise($end['project'], Money::of($end['amount']));
             } elseif ($end['reason'] === 'REALLOCATED') {
                 $this->arise($end['project'], Money::of($end['amount'])->minus(Money::of($end['reapplied'])));
-            } elseif ($end['reason'] === 'REFUND_CONTRA') {
-                // Its part given back where it was taken from, the oldest first; what the remaining backing still holds passes to its successor.
-                $back = Money::of($end['amount'])->minus(Money::of($end['reapplied']));
-                $kept = [];
+            }
 
-                foreach ($this->taken[$end['id']] ?? [] as $part) {
-                    $given = $back->compareTo($part['amount']) > 0 ? $part['amount'] : $back;
+            // Whatever ended a row, the part it disposed of leaves its trail — given back where it was taken from by a refund's contra, gone with a source's contra or
+            // re-recording —, and what a successor on this source still holds keeps the rest of the trail, the oldest first.
+            $disposed = Money::of($end['amount'])->minus(Money::of($end['reapplied']));
+            $kept = [];
+
+            foreach ($this->taken[$end['id']] ?? [] as $part) {
+                $given = $disposed->compareTo($part['amount']) > 0 ? $part['amount'] : $disposed;
+                $disposed = $disposed->minus($given);
+
+                if ($end['reason'] === 'REFUND_CONTRA') {
                     $this->arise($part['project'], $given);
-                    $back = $back->minus($given);
-                    $rest = $part['amount']->minus($given);
-
-                    if ($rest->isPositive()) {
-                        $kept[] = ['project' => $part['project'], 'amount' => $rest];
-                    }
                 }
 
-                $carried[$end['id']] = $kept;
+                $rest = $part['amount']->minus($given);
+
+                if ($rest->isPositive()) {
+                    $kept[] = ['project' => $part['project'], 'amount' => $rest];
+                }
             }
+
+            $carried[$end['id']] = $kept;
         }
 
         $invoiced = false;
@@ -156,6 +161,13 @@ final class CreditAttribution
     private function arise(?int $project, Money $amount): void
     {
         if (! $amount->isPositive()) {
+            return;
+        }
+
+        // Before the source's first invoice application, money given back is unattributed rest again, which that application's command will attribute.
+        if ($project === null && ! $this->attributed) {
+            $this->unattributed = $this->unattributed->plus($amount);
+
             return;
         }
 

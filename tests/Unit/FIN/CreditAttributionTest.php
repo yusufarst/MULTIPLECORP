@@ -83,3 +83,26 @@ it('gives back a partial refund contra\'s part only, the rest staying with the r
     expect(CreditAttribution::replay('1100.00', [...$refunded, $partial])['projects'])->toBe([7 => ['arisen' => '130.00', 'left' => '30.00']])
         ->and(CreditAttribution::replay('1100.00', [...$refunded, $partial, $rest])['projects'])->toBe([7 => ['arisen' => '200.00', 'left' => '100.00']]);
 });
+
+it('keeps a refund\'s trail through a partial source contra, its contra giving the rest back to the project it came from (CM-19; CM-38; Codex)', function () {
+    $commands = [
+        creditCommand([creditCreate(1, '100.00', 7)]),
+        creditCommand([], [creditEnd(1, 'INVOICE_CORRECTED', '100.00', 7)]),
+        creditCommand([creditCreate(2, '100.00', null, 'REFUND')]),
+        // The payment's contra of 30 leaves the refund 30 short: its backing of 70 stays with the successor.
+        creditCommand([creditCreate(3, '70.00', null, 'REFUND', 2)], [creditEnd(2, 'SOURCE_CONTRA', '100.00', null, '70.00')], '30.00'),
+        creditCommand([], [creditEnd(3, 'REFUND_CONTRA', '70.00')]),
+    ];
+
+    expect(CreditAttribution::replay('100.00', $commands)['projects'])->toBe([7 => ['arisen' => '170.00', 'left' => '70.00']]);
+});
+
+it('spends money a refund\'s contra gave back before the first invoice application, and attributes its rest then (Codex)', function () {
+    $commands = [
+        creditCommand([creditCreate(1, '100.00', null, 'REFUND')]),
+        creditCommand([], [creditEnd(1, 'REFUND_CONTRA', '100.00')]),
+        creditCommand([creditCreate(2, '60.00', 7)]),
+    ];
+
+    expect(CreditAttribution::replay('100.00', $commands))->toBe(['projects' => [7 => ['arisen' => '40.00', 'left' => '40.00']], 'unattributed' => '0.00']);
+});
