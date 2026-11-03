@@ -345,3 +345,50 @@ it('takes a reversed undelivered return\'s credit off the closure it answered, s
         ->and(DeliveryWorld::record($this->actor, $this->line, [[$shipment->dispatch, '3']], $this->deliveryProof))->toBe('COMMITTED');
     returnsClean();
 });
+
+it('FX-01 16: takes one delivered unit of a 50,000 lot back damaged into UNUSABLE with its 50,000 contra and a case naming the project, its disposal charging 50,000 to that project once (BR-INV-13; DIR-024 D-3; annex 16)', function () {
+    $priced = StockWorld::lot($this->actor, $this->company, $this->product, $this->unit, $this->rack, '1', '50000');
+    expect(DispatchWorld::dispatch($this->actor, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($priced, $this->rack, '1')]))->toBe('COMMITTED');
+    $unit = DispatchWorld::last($this->line);
+    expect(DeliveryWorld::record($this->actor, $this->line, [[$unit->dispatch, '1']], $this->deliveryProof))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::restore($this->actor, $this->company->id, $unit->dispatch, [DispatchWorld::item($unit->consumption, $this->rack, '1', 'UNUSABLE')], $this->proof))->toBe('COMMITTED');
+    $case = ClientReturnWorld::last();
+
+    expect(ClientReturnWorld::held($priced, $this->rack, 'UNUSABLE'))->toBe('1.000')
+        ->and(CostWorld::rows($unit->consumption))->toBe(['HPP INITIAL 50000.00', 'HPP RESTORATION_CONTRA -50000.00'])
+        ->and(DB::table('correction_cases')->where('id', $case->case)->first(['state', 'causal_project_id', 'source_lot_id']))
+        ->toEqual((object) ['state' => 'OPEN', 'causal_project_id' => $this->demand['project']->id, 'source_lot_id' => $priced])
+        ->and(AdjustmentWorld::adjust($this->actor, AdjustmentWorld::entry($this->product, [AdjustmentWorld::pick($priced, $this->rack, '1', 'UNUSABLE')], evidence: [AdjustmentWorld::evidence()]), 'DISPOSAL', $case->case))->toBe('COMMITTED')
+        ->and((string) DB::table('cost_attributions as a')->join('stock_consumptions as c', 'c.id', '=', 'a.stock_consumption_id')->where('c.kind', 'LOSS')->where('c.bearer_project_id', $this->demand['project']->id)->sum('a.amount'))->toBe('50000.00');
+    returnsClean();
+});
+
+it('FX-03 3: takes another company\'s unit back damaged onto its own lot with the HPP contra and the allocation reversed with it, net allocation 0 (L-44; C-28; XL-3; BR-INV-05)', function () {
+    $foreign = InvoiceWorld::make();
+    $owner = ReceivingWorld::actor($foreign->company, StockWorld::CAPABILITIES)->id;
+    $lot = StockWorld::lot($owner, $foreign->company, $this->product, $this->unit, $this->rack, '5', '50000');
+    $allowed = ReceivingWorld::actor($this->company, array_values(array_unique([...ClientReturnWorld::CAPABILITIES, 'stock.allocate_intercompany'])))->id;
+    expect(DispatchWorld::dispatch($allowed, $this->company->id, $this->line, $this->unit, '1', [DispatchWorld::pick($lot, $this->rack, '1')], 'Stok perusahaan sendiri habis'))->toBe('COMMITTED');
+    $shipment = DispatchWorld::last($this->line);
+    expect(DeliveryWorld::record($allowed, $this->line, [[$shipment->dispatch, '1']], $this->deliveryProof))->toBe('COMMITTED')
+        ->and(ClientReturnWorld::restore($allowed, $this->company->id, $shipment->dispatch, [DispatchWorld::item($shipment->consumption, $this->rack, '1', 'UNUSABLE')], $this->proof))->toBe('COMMITTED');
+    $case = ClientReturnWorld::last();
+
+    expect((int) $shipment->source_company_id)->toBe($foreign->company->id)
+        ->and(ClientReturnWorld::held($lot, $this->rack, 'UNUSABLE'))->toBe('1.000')
+        ->and(CostWorld::rows($shipment->consumption))->toBe(['HPP INITIAL 50000.00', 'HPP RESTORATION_CONTRA -50000.00'])
+        ->and(DB::table('correction_cases')->where('id', $case->case)->first(['company_id', 'causal_project_id', 'source_lot_id']))
+        ->toEqual((object) ['company_id' => $this->company->id, 'causal_project_id' => $this->demand['project']->id, 'source_lot_id' => $lot]);
+    returnsClean();
+});
+
+it('changes only what it corrects on a cancelled project: the return commits and the project stays cancelled (BR-CR-05; L-11; criterion 6)', function () {
+    $shipment = clientDelivered($this, '2', '2');
+    DB::table('projects')->where('id', $this->demand['project']->id)->update(['state' => 'CANCELLED']);
+
+    expect(clientReturned($this, $shipment, '1'))->toBe('COMMITTED')
+        ->and(DB::table('projects')->where('id', $this->demand['project']->id)->value('state'))->toBe('CANCELLED')
+        ->and(DB::table('project_state_transitions')->where('project_id', $this->demand['project']->id)->where('transition_kind', 'REVALIDATE')->count())->toBe(0)
+        ->and(DeliveryWorld::delivered($this->line))->toBe('1.000');
+    returnsClean();
+});
