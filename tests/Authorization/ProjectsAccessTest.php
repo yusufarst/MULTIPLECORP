@@ -43,9 +43,9 @@ it('opens PG-010 and PG-011 with projects.view only, "Buat Proyek" and Tindakan 
     $this->actingAs($viewer)->get('/proyek')->assertOk()
         ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/Projects', false)->where('can.create', false)->has('rows', 1));
     $this->actingAs($viewer)->get("/proyek/{$this->project->public_id}")->assertOk()
-        ->assertInertia(fn (AssertableInertia $page) => $page->where('can', ['edit' => false, 'discard' => false]));
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('can', ['edit' => false, 'discard' => false, 'cancel' => false]));
     $this->actingAs($this->manager)->get("/proyek/{$this->project->public_id}")
-        ->assertInertia(fn (AssertableInertia $page) => $page->where('can', ['edit' => true, 'discard' => true]));
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('can', ['edit' => true, 'discard' => true, 'cancel' => false]));
 });
 
 it('runs PG-013 and its three commands with projects.manage only, writing nothing otherwise (ROUTE-013, ROUTE-151–ROUTE-153; SM-04)', function () {

@@ -3999,5 +3999,18 @@
     "projects.item.goods_undelivered": ":jumlah baris barang belum terkirim seluruhnya",
     "projects.item.shipments_awaiting": ":jumlah pengiriman belum diterima atau ditutup",
     "projects.item.loss_cases_pending": ":jumlah kasus kehilangan belum terselesaikan",
-    "completion.refusal.all_met": "Semua syarat terpenuhi: selesaikan proyek secara normal."
+    "completion.refusal.all_met": "Semua syarat terpenuhi: selesaikan proyek secara normal.",
+    "projects.cancel.consequence": "Proyek dibatalkan dan tidak dapat diaktifkan kembali. Semua reservasi aktifnya dilepas sekarang; setelah ini hanya perintah sisa dan koreksi yang diterima.",
+    "projects.cancel.companions": "Koreksi pendamping untuk apa yang benar-benar dibatalkan — masing-masing perintahnya sendiri, tidak dilakukan oleh pembatalan ini:",
+    "projects.cancel.no_companions": "Tidak ada koreksi pendamping yang dapat Anda lakukan.",
+    "projects.cancel.companion.return": "Catat retur dari klien",
+    "projects.cancel.companion.dropship_return": "Catat retur kirim langsung",
+    "projects.cancel.companion.invoice": "Batalkan atau revisi invoice :nomor",
+    "projects.cancel.companion.purchase": "Batalkan pembelian :nomor atau tutup sisanya",
+    "projects.cancel.companion.scope": "Batalkan sisa lingkup di Item dan pemenuhan",
+    "projects.cancel.stays": "Fakta yang tetap benar tetap tercatat: barang yang diterima klien, DP yang sah ditahan, barang yang sudah diterima sebagai stok bebas dengan asal-usulnya, dan piutang terbuka tetap aktif dan dapat ditagih. Uang yang sudah dibayar ke pemasok kembali sebagai pengembalian dana pemasok.",
+    "projects.answer.cancelled": "Proyek dibatalkan. Reservasinya dilepas.",
+    "projects.refusal.cancel_closed": "Proyek ini sudah dibatalkan atau diselesaikan.",
+    "projects.refusal.cancel_draft": "Draf proyek tidak dibatalkan, tetapi dibuang dengan \"Buang Draf\".",
+    "activity.action.PRJ.ProjectCancelled": "Proyek dibatalkan"
 }

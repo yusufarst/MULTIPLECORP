@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -228,6 +228,18 @@ BR-PRJ-01 allows cancellation at any stage but unwinds nothing silently: deliver
 8. The same `command_id` replayed returns the recorded outcome and never a second transition or release (CI-05).
 9. A late correction on a cancelled project — FX-03's scenario — changes only the facts it corrects (L-11; TEST_STRATEGY §5).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/PRJ/ProjectCancellationTest.php` — "Batalkan Proyek" moving an ACTIVE project to CANCELLED with one CANCEL transition holding its reason, every active reservation of its lines released in the same action, RESERVED falling to zero, the audit ADM_PLUS.
+- Criterion 2: `ProjectCancellationTest` — the companion corrections listed as links to their own commands for what is actually being undone — the warehouse return when goods were dispatched, a direct shipment's return to PG-032's own flow, each invoice, each open purchase, the remaining scope —, the issued invoice and the scope left untouched by the cancellation.
+- Criterion 3: `ProjectCancellationTest` — the cancelled record's reason, actor and date with the open receivable active and collectable (absent without `finance.view`); `tests/Integration/Projects/CancellationRacesTest.php` — goods received on the project's purchase after the cancellation arriving as free stock.
+- Criterion 4: `ProjectCancellationTest` — a residual payment and a late correction accepted with the project staying CANCELLED (TASK-055's residual-command precondition), "Selesaikan Proyek" refused.
+- Criterion 5: `ProjectCancellationTest` — an already cancelled, a completed and a draft project REJECTED AX-27 with their texts, a stale version CONFLICT ST-01, nothing written.
+- Criterion 6: `CancellationRacesTest` on real PostgreSQL sessions — a cancellation racing a dispatch and one racing a receipt in both orders, one winner, no reservation both consumed and released, AVAILABLE ≥ 0, the guards reconciled after every scenario.
+- Criterion 7: `ProjectCancellationTest` and `tests/Authorization/ProjectsAccessTest.php` — the reason refused at its field; without `projects.cancel` no control and the route forbidden; another company's project unknown.
+- Criterion 8: `ProjectCancellationTest` and `tests/Interaction/ProjectCancellationTest.php` — one `command_id` replayed returning the recorded outcome, one transition and one release.
+- Criterion 9: `ProjectCancellationTest` — FX-03's late correction on the cancelled project changing only the facts it corrects.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -251,32 +263,32 @@ BR-PRJ-01 allows cancellation at any stage but unwinds nothing silently: deliver
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Feature (TL-04), Integration on real PostgreSQL sessions (TL-05), Performance (QB-02); PASS in CI
+- [x] Authorization: `projects.cancel` (ADM_PLUS), the Admin without it, another company (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-163 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-163 with one `command_id` replayed (TL-08) PASS in CI
+- [x] Browser E2E if required: J-PRJ-04 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the dialog and record in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-05 and SM-25 as above (TL-14)
+- [x] Database safety review: no schema change; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's reviews, each finding fixed with its test
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `4b54ccd`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 41747056341 (push) and 41747064406 (pull request #69), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/ProjectCancellationTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 4b54ccd, CI ubuntu-24.04 run 41747056341, tests/Browser/E2E/cancellation.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-011's cancellation dialog and record in both languages — `tests/Browser/Localization/cancellation.spec.ts` PASS; 13 keys added with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: PRJ's `Actions/CancelProject`, `Queries/ProjectCancellation` and `ProjectWorkspace`, `Http/Controllers/ProjectsController`; `resources/js/Pages/PRJ/Journey.tsx`; `lang/`; the routes; the tests, `tests/Support/CancellationWorld.php` and the browser specs
+- Commit SHA: from the start commit to `4b54ccd` on `task/TASK-056-project-cancellation`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review found PG-011's `can` arrays lacking the cancel control in the access tests, companions listed for what was not being undone and the dialog losing its list across an answer, each fixed. Codex's review found 1 P1 — a drop-ship project's return linked to the warehouse return, which has no eligible line for a direct shipment —, fixed with its test by leading it to PG-032's own return flow, offered from the confirmation as PG-032 accepts it (the test caught the first fix reading a recorded delivery); its targeted re-review of `298daf5` found no major issue. J-FIN-07's WebKit run (TASK-054's spec) failed twice on this branch: the branch's options arriving by a partial reload re-rendered the sheet while the amount was being filled, so the spec now fills once that reload has landed; a person typing an amount while those options load could see it cleared, a small race left for Planning. For Planning: (1) FUL's own L-11 checks (DeliveryPosting, HandoverPosting, the drop-ship confirmation) still refuse a closed project, as TASK-046's approved tests assert, so a residual delivery or handover on a CANCELLED project is not accepted until FUL adopts TASK-055's residual-command precondition; (2) the CANCEL transition's reason is required by the action and the form (INT-163), not by a CHECK on `project_state_transitions`; (3) CURRENT_HANDOFF's first line carries an accumulated run of earlier rows, left as found. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 

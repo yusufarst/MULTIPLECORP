@@ -127,6 +127,7 @@ Route::post('/proyek', [ProjectsController::class, 'store'])->middleware(['auth'
 Route::get('/proyek/{id}', [ProjectsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('prj.projects.show');
 Route::get('/proyek/{id}/ubah', [ProjectsController::class, 'edit'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.edit');
 Route::put('/proyek/{id}', [ProjectsController::class, 'update'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.update');
+Route::post('/proyek/{id}/batalkan', [ProjectsController::class, 'cancel'])->whereUuid('id')->middleware(['auth', 'capability:projects.cancel'])->name('prj.projects.cancel');
 Route::post('/proyek/{id}/hapus-draf', [ProjectsController::class, 'discard'])->whereUuid('id')->middleware(['auth', 'capability:projects.manage'])->name('prj.projects.discard');
 // The completion (TASK-055; WF-PRJ-03; J-PRJ-03): PG-012 *Penyelesaian Proyek* (ROUTE-012; NAV-012) to `projects.view`, "Selesaikan Proyek"
 // (ROUTE-161; AX-25) to `projects.complete` and "Selesaikan Paksa" (ROUTE-162; AX-26) to the Owner's `projects.force_complete` (OD-12).

@@ -812,3 +812,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-055 on its branch `task/TASK-055-project-completion`: PG-012 *Penyelesaian Proyek* with WF-PRJ-03's ten conditions derived each time; "Selesaikan Proyek" (ROUTE-161; AX-25) completing only when all ten hold under the project's lock; the Owner's "Selesaikan Paksa" (ROUTE-162; AX-26) bound to the hash of the snapshot shown, with its reason, unmet conditions and residual obligations recorded; SF-REVAL's materiality and PRJ's part of document changes; the residual-command precondition; the predicate parts WF-PRJ-03 still lacked.
 - Every check passed in fresh CI on `a9d7a0c`. TASK-055 DONE — progress 57 / 87 —; TASK-056, TASK-057, TASK-058, TASK-059 and TASK-060 READY.
+
+## Unreleased — 2026-11-04, TASK-056 — Project cancellation
+
+- Built TASK-056 on its branch `task/TASK-056-project-cancellation`: PG-011's "Batalkan Proyek" (ROUTE-163; AX-27) moving an ACTIVE project to CANCELLED with its reason under the project's lock and releasing every active reservation in the same action; the dialog listing the companion corrections for what is actually being undone as links to their own commands, none performed; the cancelled record's reason, actor, date and the obligations that stay true.
+- Every check passed in fresh CI on `4b54ccd`. TASK-056 DONE — progress 58 / 87 —; TASK-057, TASK-058, TASK-059 and TASK-060 READY.

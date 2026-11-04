@@ -12,7 +12,10 @@ test.describe.configure({ timeout: 360_000 });
 async function record(page: Page, action: string, company: string, fill: (sheet: Locator) => Promise<void>): Promise<void> {
     await page.getByRole('button', { name: action, exact: true }).click();
     const sheet = page.getByRole('dialog');
+    // The branch's options arrive by a partial reload; a field filled while it lands can be rewritten by React's re-render (WebKit), so the sheet is filled once it has.
+    const loaded = page.waitForResponse(async (response) => (await response.request().headerValue('x-inertia-partial-data')) === 'form');
     await sheet.getByRole('combobox', { name: 'Cabang' }).selectOption({ value: company });
+    await loaded;
     await fill(sheet);
     await sheet.getByRole('button', { name: action, exact: true }).click();
     await page.getByRole('alertdialog').getByRole('button', { name: action, exact: true }).click();
