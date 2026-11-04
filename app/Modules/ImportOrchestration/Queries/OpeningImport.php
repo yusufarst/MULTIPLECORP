@@ -41,7 +41,7 @@ final class OpeningImport
         $owner = $viewer->allows('import.commit');
         $companies = [];
 
-        foreach (DB::table('companies')->where('is_active', true)->orderBy('code')->get(['id', 'public_id', 'code', 'name']) as $company) {
+        foreach (DB::table('companies')->where('is_active', true)->orderBy('code')->get(['id', 'public_id', 'code', 'legal_name as name']) as $company) {
             if ($owner || $viewer->allows('import.prepare', (int) Row::text($company, 'id'))) {
                 $companies[] = ['id' => Row::text($company, 'public_id'), 'code' => Row::text($company, 'code'), 'name' => Row::text($company, 'name')];
             }
