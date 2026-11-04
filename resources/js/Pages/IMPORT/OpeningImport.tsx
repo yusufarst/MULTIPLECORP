@@ -26,6 +26,7 @@ import { useUpload } from '@/lib/use-upload';
 
 type State = 'PREPARED' | 'DRY_RUN_RUNNING' | 'DRY_RUN_FAILED' | 'DRY_RUN_PASSED' | 'SIGNED_OFF' | 'COMMITTING' | 'STOPPED' | 'COMMITTED' | 'ABORTED';
 type RowError = { field?: string; reason?: string; code?: string };
+type Totals = { company: string; stock_qty: string | null; stock_cost: string | null; receivables: string | null; credits: string | null };
 type Signoff = { by: string; at: string | null } | null;
 type Summary = {
     id: string; kind: string; cutoff: string; state: State; companies: string[]; counts: Record<string, number>; prepared_by: string; recorded_at: string;
@@ -34,7 +35,8 @@ type Summary = {
 type Detail = Summary & {
     report: { state: string | null; finished_at: string | null };
     problems: { row: number; kind: string; identity: string; state: string; errors: RowError[] }[];
-    totals: { company: string; stock_qty: string | null; stock_cost: string | null; receivables: string | null; credits: string | null }[];
+    totals: Totals[];
+    committed_totals: Totals[];
     facts: { row: number; kind: string; identity: string; target: string }[];
 };
 type Props = {
@@ -200,6 +202,42 @@ function CorrectDialog({ batch, fact, onClose }: { batch: Detail; fact: Detail['
     );
 }
 
+/** The control totals per company, each figure shown only to its family (PJ-22). */
+function TotalsTable({ rows, title, note }: { rows: Totals[]; title: string; note: string }) {
+    const { t } = useTranslation();
+
+    return rows.length === 0 ? null : (
+        <section className="flex min-w-0 flex-col gap-2" aria-label={title}>
+            <h3 className="text-label font-semibold text-text-primary">{title}</h3>
+            <p className="text-caption text-text-secondary">{note}</p>
+            <div className="overflow-x-auto">
+                <table className="w-full text-body">
+                    <thead>
+                        <tr className="text-left text-caption text-text-secondary">
+                            <th className="py-1 pr-4 font-medium">{t('import.field.company')}</th>
+                            <th className="py-1 pr-4 text-right font-medium">{t('import.totals.stock_qty')}</th>
+                            <th className="py-1 pr-4 text-right font-medium">{t('import.totals.stock_cost')}</th>
+                            <th className="py-1 pr-4 text-right font-medium">{t('import.totals.receivables')}</th>
+                            <th className="py-1 text-right font-medium">{t('import.totals.credits')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {rows.map((row) => (
+                            <tr key={row.company} className="border-t border-border-subtle">
+                                <td className="py-1 pr-4"><Code>{row.company}</Code></td>
+                                <td className="py-1 pr-4 text-right tabular-nums">{row.stock_qty ?? '—'}</td>
+                                <td className="py-1 pr-4 text-right">{row.stock_cost === null ? '—' : <Money value={row.stock_cost} />}</td>
+                                <td className="py-1 pr-4 text-right">{row.receivables === null ? '—' : <Money value={row.receivables} />}</td>
+                                <td className="py-1 text-right">{row.credits === null ? '—' : <Money value={row.credits} />}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    );
+}
+
 function Report({ batch }: { batch: Detail }) {
     const { t } = useTranslation();
 
@@ -213,36 +251,8 @@ function Report({ batch }: { batch: Detail }) {
                     </div>
                 ))}
             </dl>
-            {batch.totals.length > 0 && (
-                <section className="flex min-w-0 flex-col gap-2" aria-label={t('import.totals.title')}>
-                    <h3 className="text-label font-semibold text-text-primary">{t('import.totals.title')}</h3>
-                    <p className="text-caption text-text-secondary">{t('import.totals.note')}</p>
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-body">
-                            <thead>
-                                <tr className="text-left text-caption text-text-secondary">
-                                    <th className="py-1 pr-4 font-medium">{t('import.field.company')}</th>
-                                    <th className="py-1 pr-4 text-right font-medium">{t('import.totals.stock_qty')}</th>
-                                    <th className="py-1 pr-4 text-right font-medium">{t('import.totals.stock_cost')}</th>
-                                    <th className="py-1 pr-4 text-right font-medium">{t('import.totals.receivables')}</th>
-                                    <th className="py-1 text-right font-medium">{t('import.totals.credits')}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {batch.totals.map((row) => (
-                                    <tr key={row.company} className="border-t border-border-subtle">
-                                        <td className="py-1 pr-4"><Code>{row.company}</Code></td>
-                                        <td className="py-1 pr-4 text-right tabular-nums">{row.stock_qty ?? '—'}</td>
-                                        <td className="py-1 pr-4 text-right">{row.stock_cost === null ? '—' : <Money value={row.stock_cost} />}</td>
-                                        <td className="py-1 pr-4 text-right">{row.receivables === null ? '—' : <Money value={row.receivables} />}</td>
-                                        <td className="py-1 text-right">{row.credits === null ? '—' : <Money value={row.credits} />}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-            )}
+            <TotalsTable rows={batch.totals} title={t('import.totals.title')} note={t('import.totals.note')} />
+            <TotalsTable rows={batch.committed_totals} title={t('import.totals.committed')} note={t('import.totals.committed_note')} />
             {batch.problems.length > 0 && (
                 <section className="flex min-w-0 flex-col gap-2" aria-label={t('import.problems.title')}>
                     <h3 className="text-label font-semibold text-text-primary">{t('import.problems.title')}</h3>

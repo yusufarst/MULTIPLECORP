@@ -3,7 +3,7 @@
 namespace App\Modules\ImportOrchestration\Services;
 
 use App\Modules\IAM\Data\Authority;
-use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Support\Command\CommandContext;
 use App\Support\Command\LockSet;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -72,8 +72,8 @@ final class Batches
     /** An active Owner, whose authority the dry run's actions run under on the rolled-back copy (JB-05). */
     public static function owner(): ?int
     {
-        $id = DB::table('user_roles')->join('roles', 'roles.id', '=', 'user_roles.role_id')->join('users', 'users.id', '=', 'user_roles.user_id')
-            ->where('roles.code', 'OWNER')->where('users.is_active', true)->orderBy('users.id')->value('users.id');
+        $id = DB::table('user_roles as ur')->join('role_capabilities as rc', 'rc.role_id', '=', 'ur.role_id')->join('capabilities as c', 'c.id', '=', 'rc.capability_id')
+            ->join('users as u', 'u.id', '=', 'ur.user_id')->where('c.code', 'import.commit')->where('u.is_active', true)->orderBy('u.id')->value('u.id');
 
         return is_numeric($id) ? (int) $id : null;
     }

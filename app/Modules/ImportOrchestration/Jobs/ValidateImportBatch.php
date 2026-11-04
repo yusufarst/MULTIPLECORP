@@ -4,10 +4,11 @@ namespace App\Modules\ImportOrchestration\Jobs;
 
 use App\Modules\ImportOrchestration\Actions\DryRunImport;
 use App\Modules\ImportOrchestration\Data\ImportRowData;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Batches;
 use App\Modules\ImportOrchestration\Services\BatchRows;
+use App\Modules\ImportOrchestration\Services\Preparation;
 use App\Modules\ImportOrchestration\Services\RowRunner;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Jobs\PlatformJob;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -61,13 +62,17 @@ final class ValidateImportBatch extends PlatformJob implements ShouldBeUnique
 
         try {
             foreach ($candidates as $row) {
-                $results[$row->id] = $actor === null ? ['state' => 'REFUSED', 'errors' => [['field' => '', 'reason' => 'denied']]] : $runner->run($row, $actor, dryRun: true);
+                // A twin committed since the preparation — another batch's same row or the same seed — keeps the row from the commit (C-47; UXS-19).
+                $twin = $this->twin($row, $batch);
+                $results[$row->id] = $twin ?? ($actor === null ? ['state' => 'REFUSED', 'errors' => [['field' => '', 'reason' => 'denied']]] : $runner->run($row, $actor, dryRun: true));
             }
+
+            $totals = $rows->factTotals($batch->id);
         } finally {
             DB::rollBack();
         }
 
-        $this->record($batch, $candidates, $results, $rows);
+        $this->record($batch, $candidates, $results, $totals);
     }
 
     public function failed(?Throwable $error): void
@@ -84,10 +89,11 @@ final class ValidateImportBatch extends PlatformJob implements ShouldBeUnique
     /**
      * @param  list<ImportRowData>  $candidates
      * @param  array<int, array{state: string, errors: list<array<string, mixed>>}>  $results
+     * @param  array<int, array<string, string>>  $totals
      */
-    private function record(ImportBatch $batch, array $candidates, array $results, BatchRows $rows): void
+    private function record(ImportBatch $batch, array $candidates, array $results, array $totals): void
     {
-        DB::transaction(function () use ($batch, $candidates, $results, $rows): void {
+        DB::transaction(function () use ($batch, $candidates, $results, $totals): void {
             $locked = ImportBatch::query()->whereKey($batch->id)->lockForUpdate()->first();
 
             if ($locked === null || ! $this->current($locked) || $locked->state !== 'PREPARED') {
@@ -95,8 +101,6 @@ final class ValidateImportBatch extends PlatformJob implements ShouldBeUnique
             }
 
             $now = CarbonImmutable::now();
-            $valid = [];
-
             foreach ($candidates as $row) {
                 $result = $results[$row->id] ?? null;
 
@@ -106,24 +110,43 @@ final class ValidateImportBatch extends PlatformJob implements ShouldBeUnique
 
                 $passed = $result['state'] === 'COMMITTED';
                 DB::table('import_rows')->where('id', $row->id)->whereIn('validation_state', ['VALID', 'INVALID'])->update([
-                    'validation_state' => $passed ? 'VALID' : 'INVALID', 'updated_at' => $now,
-                    'errors' => $passed ? null : json_encode(array_map(fn (array $error): array => [...$error, 'stage' => self::STAGE], $result['errors']), JSON_THROW_ON_ERROR),
+                    'validation_state' => $passed ? 'VALID' : ($result['state'] === 'DUPLICATE' ? 'DUPLICATE' : 'INVALID'), 'updated_at' => $now,
+                    'errors' => $passed ? null : json_encode(array_map(fn (array $error): array => $result['state'] === 'DUPLICATE' ? $error : [...$error, 'stage' => self::STAGE], $result['errors']), JSON_THROW_ON_ERROR),
                 ]);
 
-                if ($passed) {
-                    $valid[] = $row;
-                }
             }
 
             $counts = DB::table('import_rows')->where('import_batch_id', $batch->id)->groupBy('validation_state')->selectRaw('validation_state, count(*) as total')->pluck('total', 'validation_state')->all();
             $passed = ($counts['INVALID'] ?? 0) === 0 && ($counts['VALID'] ?? 0) > 0;
             $locked->forceFill([
                 'state' => $passed ? 'DRY_RUN_PASSED' : 'PREPARED',
-                'control_totals' => $rows->totals($valid),
+                'control_totals' => $totals,
                 'dry_run_report' => ['state' => $passed ? 'PASSED' : 'INVALID', 'request' => $this->request, 'counts' => $counts, 'finished_at' => $now->toIso8601String()],
                 'lock_version' => $locked->lock_version + 1,
             ])->save();
         });
+    }
+
+    /**
+     * A committed twin of the row: DUPLICATE when its company lies in the batch's scope or it has none, INVALID with MSG-18's
+     * reason alone otherwise (UXS-19); null when the row's identity is free.
+     *
+     * @return array{state: string, errors: list<array<string, mixed>>}|null
+     */
+    private function twin(ImportRowData $row, ImportBatch $batch): ?array
+    {
+        $twin = DB::table('import_rows')->where('import_kind', $row->kind)->where('import_identity', $row->identity)->where('validation_state', 'COMMITTED')
+            ->where('id', '<>', $row->id)->first(['company_id']);
+
+        if ($twin === null) {
+            return null;
+        }
+
+        $company = is_numeric($twin->company_id) ? (int) $twin->company_id : null;
+
+        return $company === null || in_array($company, $batch->company_scope, true)
+            ? ['state' => 'DUPLICATE', 'errors' => [['field' => 'id', 'reason' => 'committed']]]
+            : ['state' => 'INVALID', 'errors' => [['field' => '', 'reason' => Preparation::UNDISCLOSED]]];
     }
 
     /** Whether the batch still waits for this request (DryRunImport's token). */

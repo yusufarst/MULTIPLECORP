@@ -4148,5 +4148,8 @@
     "activity.action.FIN.OpeningReceivableCorrected": "Corrected an opening receivable",
     "activity.action.FIN.OpeningCreditRecorded": "Recorded opening customer credit",
     "activity.action.FIN.OpeningCreditContraed": "Contra'd opening customer credit",
-    "activity.action.OPS.LegacyArchiveItemRecorded": "Recorded a legacy archive item"
+    "activity.action.OPS.LegacyArchiveItemRecorded": "Recorded a legacy archive item",
+    "import.totals.committed": "Imported totals per company",
+    "import.totals.committed_note": "Read from the recorded opening facts: stock per company equals its opening lots, receivables the imported remainders, credits the signed evidence.",
+    "import.reason.failed": "failed to process; check it, then Resume"
 }

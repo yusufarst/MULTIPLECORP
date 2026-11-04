@@ -180,7 +180,7 @@ final class MovementReversal
             throw Refused::rejected('C-55', ['reason' => 'type']);
         }
 
-        [$movement, $publicId, $quantity] = $this->inverse($context, $original, $cuts, $reason, $businessDate);
+        [$movement, $publicId, $quantity] = $this->inverse($context, $original, $cuts, $reason, $businessDate, unconsumed: true);
 
         foreach (DB::table('stock_movement_entries as e')->join('inventory_lots as i', 'i.id', '=', 'e.lot_id')->where('e.stock_movement_id', $movement)
             ->groupBy('i.id', 'i.import_row_id')->selectRaw('i.id, i.import_row_id, -sum(e.qty_delta_base) as qty')->get() as $lot) {
@@ -200,7 +200,7 @@ final class MovementReversal
      * @param  array<int, string>  $cuts
      * @return array{int, string, string}
      */
-    private function inverse(CommandContext $context, object $original, array $cuts, string $reason, string $businessDate): array
+    private function inverse(CommandContext $context, object $original, array $cuts, string $reason, string $businessDate, bool $unconsumed = false): array
     {
         $movementId = (int) Row::text($original, 'id');
         $type = Row::text($original, 'movement_type');
@@ -221,6 +221,12 @@ final class MovementReversal
             $condition = Row::text($entry, 'condition');
             $key = self::key((int) $lot, $location, $condition);
             $take = BigDecimal::min($qty->abs(), $left[$key] ?? BigDecimal::zero());
+
+            // CM-33: an opening fact is corrected within the unconsumed quantity, what is still at its place.
+            if ($unconsumed && ! $qty->isNegative()) {
+                $held = DB::table('stock_lot_balances as b')->where('b.lot_id', (int) $lot)->where('b.location_id', $location)->where('b.condition', $condition)->value('b.qty');
+                $take = BigDecimal::min($take, BigDecimal::of(is_string($held) ? $held : '0'));
+            }
 
             if (! $take->isPositive()) {
                 continue;

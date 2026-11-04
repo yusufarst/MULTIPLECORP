@@ -48,7 +48,7 @@ final class RecordOpeningReceivable
         return $this->envelope->run($request, function (CommandContext $context) use ($companyId, $entry): CommandResult {
             $context->lock($entry['project'] === null ? new LockSet : (new LockSet)->add('projects', ['id' => $entry['project']]));
 
-            if ($entry['project'] !== null && DB::table('projects')->where('id', $entry['project'])->value('company_id') !== $companyId) {
+            if ($entry['project'] !== null && DB::table('projects')->where('id', $entry['project'])->where('company_id', $companyId)->where('client_organization_id', $entry['client'])->doesntExist()) {
                 throw Refused::rejected('CS-04', ['field' => 'proyek']);
             }
 

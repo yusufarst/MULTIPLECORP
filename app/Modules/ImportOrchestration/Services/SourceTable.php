@@ -265,6 +265,7 @@ final class SourceTable
                     $cell['formula'] => self::FORMULA,
                     $cell['type'] === 's' => $strings[(int) $cell['value']] ?? '',
                     $cell['type'] === 'b' => $cell['value'] === '1' ? 'TRUE' : 'FALSE',
+                    in_array($cell['type'], ['', 'n'], true) && preg_match('/^-?\d+\.\d+$/', $cell['value']) === 1 => str_replace('.', ',', $cell['value']),
                     default => $cell['value'],
                 };
                 $cell = null;

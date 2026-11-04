@@ -6,9 +6,10 @@ use App\Modules\ImportOrchestration\Data\Cells;
 use App\Modules\ImportOrchestration\Data\ImportRowData;
 use App\Modules\ImportOrchestration\Services\RowRefused;
 use App\Modules\PTY\Actions\AddClientUnit;
-use App\Modules\PTY\Models\ClientOrganization;
-use App\Modules\PTY\Models\ClientUnit;
+use App\Modules\PTY\Queries\ClientDirectory;
 use App\Support\Command\Outcome;
+use App\Support\RowHandle;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A client's further unit with its address and PIC (IMP-01), through PTY's ordinary AddClientUnit: the unit, then its
@@ -18,7 +19,10 @@ final class ClientUnitKind implements ImportKind
 {
     public const CODE = 'CLIENT_UNIT';
 
-    public function __construct(private readonly AddClientUnit $units) {}
+    public function __construct(
+        private readonly AddClientUnit $units,
+        private readonly ClientDirectory $clients,
+    ) {}
 
     public function code(): string
     {
@@ -48,7 +52,7 @@ final class ClientUnitKind implements ImportKind
     public function steps(ImportRowData $row): array
     {
         $steps = [function (string $commandId, int $actor) use ($row): Outcome {
-            $organization = ClientOrganization::query()->whereKey(References::client($row->text('client'), 'klien'))->first() ?? throw new RowRefused('klien', 'reference');
+            $organization = $this->clients->find($this->organization(References::client($row->text('client'), 'klien'))) ?? throw new RowRefused('klien', 'reference');
             $address = $row->nullable('address') === null ? null : ['label' => $row->text('unit'), 'address_lines' => $row->text('address'), 'city' => $row->nullable('city')];
 
             return $this->units->unit($commandId, $actor, $organization, $row->text('unit'), $address);
@@ -56,7 +60,8 @@ final class ClientUnitKind implements ImportKind
 
         if ($row->nullable('pic') !== null) {
             $steps[] = function (string $commandId, int $actor, array $done) use ($row): Outcome {
-                $unit = ClientUnit::query()->whereKey(References::result($done, 0, 'unit'))->first() ?? throw new RowRefused('unit', 'reference');
+                $organization = $this->clients->find($this->organization(References::client($row->text('client'), 'klien'))) ?? throw new RowRefused('klien', 'reference');
+                $unit = $this->clients->unitOf($organization, RowHandle::of('client_units', References::result($done, 0, 'unit'))) ?? throw new RowRefused('unit', 'reference');
 
                 return $this->units->contact($commandId, $actor, $unit, ['name' => $row->text('pic'), 'position' => $row->nullable('position'), 'phone' => $row->nullable('phone'), 'email' => $row->nullable('email')]);
             };
@@ -68,5 +73,13 @@ final class ClientUnitKind implements ImportKind
     public function totals(array $payload): array
     {
         return [];
+    }
+
+    /** The client organization's public id, read through PTY's query class (ARCHITECTURE §3). */
+    private function organization(int $id): string
+    {
+        $publicId = DB::table('client_organizations')->where('id', $id)->value('public_id');
+
+        return is_string($publicId) ? $publicId : throw new RowRefused('klien', 'reference');
     }
 }

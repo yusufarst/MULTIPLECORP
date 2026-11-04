@@ -4,9 +4,9 @@ namespace App\Modules\ImportOrchestration\Actions;
 
 use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
 use App\Modules\ImportOrchestration\Kinds\SeedRows;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Batches;
 use App\Modules\ImportOrchestration\Services\RowRunner;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -17,6 +17,8 @@ use App\Support\Command\CommandResult;
 use App\Support\Command\Fingerprint;
 use App\Support\Command\Outcome;
 use App\Support\Command\Refused;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * `IMPORT CommitImport` (ROUTE-275; INT-275; NX-13; AX-28; OD-13; IMP-05; IMP-06): the Owner's "Jalankan Impor" — and
@@ -59,8 +61,13 @@ final class CommitImport
             $now = $context->now();
             $resumed = $row->committed_at !== null;
             // A resume clears the refusal or failure recorded on the row it resumes from (NX-13); a row begun keeps its mark.
-            $context->connection->table('import_rows')->where('import_batch_id', $row->id)->where('validation_state', 'VALID')->whereNotNull('errors')
-                ->whereRaw('not (errors @> ?::jsonb)', [json_encode([['reason' => RowRunner::IN_PROGRESS]])])->update(['errors' => null, 'updated_at' => $now]);
+            $context->connection->table('import_rows')->where('import_batch_id', $row->id)->where('validation_state', 'VALID')->whereRaw(RowRunner::REFUSED)
+                ->update(['errors' => DB::raw(RowRunner::KEEP_BEGUN), 'updated_at' => $now]);
+            // The validation run again at the commit request (IMP-05): a row whose twin committed meanwhile is a duplicate, never committed twice (C-47).
+            $context->connection->table('import_rows as r')->where('r.import_batch_id', $row->id)->where('r.validation_state', 'VALID')
+                ->whereExists(fn (Builder $twins) => $twins->from('import_rows as t')->whereColumn('t.import_kind', 'r.import_kind')->whereColumn('t.import_identity', 'r.import_identity')
+                    ->where('t.validation_state', 'COMMITTED'))
+                ->update(['validation_state' => 'DUPLICATE', 'errors' => json_encode([['field' => 'id', 'reason' => 'committed']]), 'updated_at' => $now]);
             $context->connection->table('import_batches')->where('id', $row->id)->update([
                 'committed_by' => $context->request->actorUserId, 'committed_at' => $now, 'lock_version' => $row->lock_version + 1, 'updated_at' => $now,
             ]);

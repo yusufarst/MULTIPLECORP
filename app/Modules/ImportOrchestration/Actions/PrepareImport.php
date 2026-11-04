@@ -2,14 +2,13 @@
 
 namespace App\Modules\ImportOrchestration\Actions;
 
-use App\Modules\DOC\Models\FileObject;
 use App\Modules\DOC\Services\FileStore;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\ImportOrchestration\Kinds\Kinds;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Preparation;
 use App\Modules\ImportOrchestration\Services\SourceRefused;
 use App\Modules\ImportOrchestration\Services\SourceTable;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -64,8 +63,11 @@ final class PrepareImport
     public function run(string $commandId, int $actorUserId, string $kind, string $filePublicId, string $cutoff, array $companyPublicIds): Outcome
     {
         // Criterion 15: the source is the preparer's own import-source upload; another account's answers as not found.
-        $file = FileObject::query()->where('public_id', strtolower($filePublicId))->where('purpose', 'IMPORT_SOURCE')->where('uploaded_by', $actorUserId)->first()
-            ?? throw (new ModelNotFoundException)->setModel(FileObject::class, [$filePublicId]);
+        $row = DB::table('file_objects')->where('public_id', strtolower($filePublicId))->where('purpose', 'IMPORT_SOURCE')->where('uploaded_by', $actorUserId)
+            ->first(['id', 'public_id', 'sha256', 'storage_key', 'storage_disk', 'original_filename'])
+            ?? throw (new ModelNotFoundException)->setModel(ImportBatch::class, [$filePublicId]);
+        $file = ['id' => (int) Row::text($row, 'id'), 'public_id' => Row::text($row, 'public_id'), 'sha256' => Row::text($row, 'sha256'),
+            'storage_key' => Row::text($row, 'storage_key'), 'storage_disk' => Row::nullable($row, 'storage_disk'), 'original_filename' => Row::nullable($row, 'original_filename')];
         $publics = array_values(array_unique(array_map('strtolower', $companyPublicIds)));
         sort($publics);
         $companies = array_values(array_map(static fn (mixed $id): int => is_numeric($id) ? (int) $id : 0, DB::table('companies')->whereIn('public_id', $publics)->orderBy('id')->pluck('id')->all()));
@@ -75,7 +77,7 @@ final class PrepareImport
         }
 
         $request = new CommandRequest($commandId, self::TYPE, $actorUserId, $companies[0], self::CAPABILITY,
-            Fingerprint::of(self::TYPE, null, ['kind' => $kind, 'file' => $file->public_id, 'cutoff' => $cutoff, 'companies' => $publics]));
+            Fingerprint::of(self::TYPE, null, ['kind' => $kind, 'file' => $file['public_id'], 'cutoff' => $cutoff, 'companies' => $publics]));
         $prepared = ['rows' => [], 'hidden' => []];
 
         // Parsed outside every transaction (ARCHITECTURE §15); a replay of a recorded outcome needs no parse.
@@ -84,7 +86,7 @@ final class PrepareImport
                 $path = $this->local($file);
 
                 try {
-                    $table = $this->table->read($path, strtolower(pathinfo($file->original_filename ?? '', PATHINFO_EXTENSION)));
+                    $table = $this->table->read($path, strtolower(pathinfo($file['original_filename'] ?? '', PATHINFO_EXTENSION)));
                 } finally {
                     @unlink($path);
                 }
@@ -119,7 +121,7 @@ final class PrepareImport
                 }
             }
 
-            if (DB::table('import_batches')->where('source_file_id', $file->id)->exists()) {
+            if (DB::table('import_batches')->where('source_file_id', $file['id'])->exists()) {
                 throw Refused::rejected('C-47', ['reason' => 'file']);
             }
 
@@ -127,7 +129,7 @@ final class PrepareImport
             $now = $context->now();
             $batch = new ImportBatch;
             $batch->forceFill([
-                'import_kind' => $kind, 'source_file_id' => $file->id, 'source_sha256' => $file->sha256, 'cutoff_date' => $cutoff, 'company_scope' => $companies,
+                'import_kind' => $kind, 'source_file_id' => $file['id'], 'source_sha256' => $file['sha256'], 'cutoff_date' => $cutoff, 'company_scope' => $companies,
                 'state' => 'PREPARED', 'prepared_by' => $context->request->actorUserId, 'command_id' => $context->request->commandId, 'command_line_no' => 1,
             ])->save();
 
@@ -152,7 +154,7 @@ final class PrepareImport
                 businessDate: $cutoff,
                 metadata: ['companies' => $companies, 'counts' => $counts],
             );
-            $this->announce($context, $batch->public_id, $file->public_id, $companies, $prepared['hidden']);
+            $this->announce($context, $batch->public_id, $file['public_id'], $companies, $prepared['hidden']);
 
             return new CommandResult('import_batch', $batch->id);
         });
@@ -163,10 +165,11 @@ final class PrepareImport
      * outside the preparer's scope, the answer is MSG-18 alone and the collision is recorded for the Owner (DP-18).
      *
      * @param  list<int>  $companies
+     * @param  array{id: int, public_id: string, sha256: string, storage_key: string, storage_disk: string|null, original_filename: string|null}  $file
      */
-    private function collision(CommandContext $context, string $kind, FileObject $file, string $cutoff, array $companies): void
+    private function collision(CommandContext $context, string $kind, array $file, string $cutoff, array $companies): void
     {
-        $twin = DB::table('import_batches')->where('import_kind', $kind)->where('source_sha256', $file->sha256)->first(['public_id', 'company_scope']);
+        $twin = DB::table('import_batches')->where('import_kind', $kind)->where('source_sha256', $file['sha256'])->first(['public_id', 'company_scope']);
 
         if ($twin === null) {
             return;
@@ -184,7 +187,7 @@ final class PrepareImport
         $related = is_string($twin->public_id) ? $twin->public_id : '';
 
         throw Refused::conflict(self::OUTSIDE_SCOPE, [], function (ConnectionInterface $connection) use ($actor, $commandId, $file, $related, $companies, $outside, $kind, $cutoff): void {
-            $this->events->recordUndisclosed(SecurityEventKind::ImportCollisionUndisclosed, $actor, $commandId, 'file_object', $file->public_id, 'import_batch', $related,
+            $this->events->recordUndisclosed(SecurityEventKind::ImportCollisionUndisclosed, $actor, $commandId, 'file_object', $file['public_id'], 'import_batch', $related,
                 $companies[0], array_values($outside)[0], 'MSG-18', details: ['kind' => $kind, 'cutoff' => $cutoff, 'scope' => $companies]);
         });
     }
@@ -203,11 +206,15 @@ final class PrepareImport
         }
     }
 
-    /** The stored source copied to a private temporary file, read there and removed. */
-    private function local(FileObject $file): string
+    /**
+     * The stored source copied to a private temporary file, read there and removed.
+     *
+     * @param  array{id: int, public_id: string, sha256: string, storage_key: string, storage_disk: string|null, original_filename: string|null}  $file
+     */
+    private function local(array $file): string
     {
         $path = tempnam(sys_get_temp_dir(), 'import-');
-        $source = $this->files->stream($file->storage_key, $file->storage_disk);
+        $source = $this->files->stream($file['storage_key'], $file['storage_disk']);
         $target = $path === false ? false : fopen($path, 'wb');
 
         if ($path === false || $target === false) {

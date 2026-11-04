@@ -19512,6 +19512,24 @@
             "source": "PT-18 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "import.totals.committed": {
+            "task": "TASK-057",
+            "source": "IMP-11; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.committed_note": {
+            "task": "TASK-057",
+            "source": "IMP-11; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.failed": {
+            "task": "TASK-057",
+            "source": "JB-07; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

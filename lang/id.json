@@ -4148,5 +4148,8 @@
     "activity.action.FIN.OpeningReceivableCorrected": "Mengoreksi piutang awal",
     "activity.action.FIN.OpeningCreditRecorded": "Mencatat kredit pelanggan awal",
     "activity.action.FIN.OpeningCreditContraed": "Mengontra kredit pelanggan awal",
-    "activity.action.OPS.LegacyArchiveItemRecorded": "Mencatat arsip dokumen lama"
+    "activity.action.OPS.LegacyArchiveItemRecorded": "Mencatat arsip dokumen lama",
+    "import.totals.committed": "Total hasil impor per perusahaan",
+    "import.totals.committed_note": "Dihitung dari fakta pembuka yang tercatat: stok per perusahaan sama dengan lot awalnya, piutang dengan sisa yang diimpor, kredit dengan bukti yang ditandatangani.",
+    "import.reason.failed": "gagal diproses; periksa lalu Lanjutkan"
 }

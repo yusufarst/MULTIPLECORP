@@ -37,7 +37,7 @@ it('imports products and locations, then opening stock with its cost and serials
         ->and(DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->where('source_company_id', $world->company->id)->sum('acquired_qty_base'))->toEqual(17)
         ->and(DB::table('serial_units')->where('state', 'IN_STOCK')->count())->toBe(2)
         ->and(DB::table('stock_movements')->where('movement_type', 'OPENING')->count())->toBe(2)
-        ->and($stock->control_totals[$world->company->id] ?? null)->toMatchArray(['stock_qty' => '5.000', 'stock_cost' => '9750000.00'])
+        ->and($stock->control_totals[$world->company->id]['stock_qty'] ?? null)->toEqual(17)->and($stock->control_totals[$world->company->id]['stock_cost'] ?? null)->toEqual(9750000)
         ->and(DB::table('stock_product_balances')->sum('reserved_qty'))->toEqual(0);
 });
 
@@ -112,4 +112,21 @@ it('corrects a wrong opening fact on its record only — stock within what is un
     // Never by importing again: the same identities are duplicates of their committed twins.
     $again = ImportWorld::batch($world->prepare('OPENING_STOCK', $world->source([['id' => 'S1', 'perusahaan' => $code, 'produk' => 'KURSI-1', 'lokasi' => 'RAK-B1', 'jumlah' => '5', 'biaya' => '500000']])));
     expect(DB::table('import_rows')->where('import_batch_id', $again->id)->where('import_identity', 'S1')->value('validation_state'))->toBe('DUPLICATE');
+});
+
+it('recovers on a dry run run again a row the first one refused once its cause is removed, and asks both sign-offs again (IMP-04; L-33; ER-06)', function () {
+    $world = ImportWorld::make();
+    $batch = ImportWorld::batch($world->prepare('OPENING_STOCK', $world->source([['id' => 'S1', 'perusahaan' => $world->company->code, 'produk' => 'BANGKU-1', 'lokasi' => 'RAK-Z', 'jumlah' => '2', 'biaya' => '200']])));
+    $world->dryRun($batch);
+    expect($batch->refresh()->state)->toBe('PREPARED')->and(DB::table('import_rows')->where('import_batch_id', $batch->id)->where('import_identity', 'S1')->value('validation_state'))->toBe('INVALID');
+
+    $world->import('PRODUCT', [['id' => 'P1', 'jenis' => 'barang', 'sku' => 'BANGKU-1', 'nama' => 'Bangku', 'satuan' => 'UNIT']]);
+    $world->import('LOCATION', [['id' => 'L1', 'kode' => 'RAK-Z', 'nama' => 'Rak Z']]);
+    $world->dryRun($batch);
+    expect($batch->refresh()->state)->toBe('DRY_RUN_PASSED')->and(DB::table('import_rows')->where('import_batch_id', $batch->id)->where('import_identity', 'S1')->value('validation_state'))->toBe('VALID')
+        ->and(DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->count())->toBe(0);
+
+    $world->signOff($batch, $world->admin->id);
+    $world->dryRun($batch);
+    expect($batch->refresh()->admin_signoff_by)->toBeNull()->and($batch->state)->toBe('DRY_RUN_PASSED');
 });

@@ -5,10 +5,9 @@ namespace App\Modules\ImportOrchestration\Services;
 use App\Modules\ImportOrchestration\Data\ImportRowData;
 use App\Modules\ImportOrchestration\Kinds\Kinds;
 use App\Modules\ImportOrchestration\Kinds\SeedRows;
-use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Support\Search\Row;
 use Brick\Math\BigDecimal;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -29,7 +28,7 @@ final class BatchRows
             ->orderByRaw("case when import_kind like 'NUMBER_SEED:%' then 0 else 1 end")->orderBy('row_number');
 
         if (! $withRefusals) {
-            $query->where(fn (Builder $rows) => $rows->whereNull('errors')->orWhereRaw('errors @> ?::jsonb', [json_encode([['reason' => RowRunner::IN_PROGRESS]])]));
+            $query->whereRaw('not ('.RowRunner::REFUSED.')');
         }
 
         if ($limit !== null) {
@@ -68,6 +67,35 @@ final class BatchRows
                 $totals[$row->companyId][$measure] = (string) BigDecimal::of($current)->plus(BigDecimal::of($value));
             }
         }
+
+        return $totals;
+    }
+
+    /**
+     * The control totals per company of the facts the batch's rows created — stock in base quantity and its opening cost,
+     * the receivables' remainders, the credits — read from the facts themselves (IMP-04; IMP-11): the dry run's copy
+     * before its rollback, the committed facts after the commit.
+     *
+     * @return array<int, array<string, string>>
+     */
+    public function factTotals(int $batchId): array
+    {
+        $rows = DB::table('import_rows')->where('import_batch_id', $batchId)->select('id');
+        $totals = [];
+        $add = function (string $measure, iterable $sums) use (&$totals): void {
+            foreach ($sums as $sum) {
+                if (! is_object($sum)) {
+                    continue;
+                }
+
+                $totals[(int) Row::text($sum, 'company')][$measure] = (string) BigDecimal::of(Row::nullable($sum, 'total') ?? '0');
+            }
+        };
+
+        $add('stock_qty', DB::table('inventory_lots')->whereIn('import_row_id', $rows)->groupBy('source_company_id')->selectRaw('source_company_id as company, sum(acquired_qty_base) as total')->get());
+        $add('stock_cost', DB::table('lot_cost_entries')->where('entry_kind', 'OPENING_COST')->whereIn('import_row_id', $rows)->groupBy('source_company_id')->selectRaw('source_company_id as company, sum(amount) as total')->get());
+        $add('receivables', DB::table('invoices as i')->join('invoice_balances as b', 'b.invoice_id', '=', 'i.id')->whereIn('i.import_row_id', $rows)->groupBy('i.company_id')->selectRaw('i.company_id as company, sum(b.gross_value) as total')->get());
+        $add('credits', DB::table('opening_customer_credits')->whereIn('import_row_id', $rows)->groupBy('company_id')->selectRaw('company_id as company, sum(amount) as total')->get());
 
         return $totals;
     }

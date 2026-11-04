@@ -3,8 +3,8 @@
 namespace App\Modules\ImportOrchestration\Actions;
 
 use App\Modules\ImportOrchestration\Jobs\ValidateImportBatch;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Batches;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
@@ -52,6 +52,8 @@ final class DryRunImport
             $token = (string) Str::uuid();
             $context->connection->table('import_batches')->where('id', $row->id)->update([
                 'state' => 'PREPARED', 'lock_version' => $row->lock_version + 1, 'updated_at' => $context->now(),
+                // L-33: a sign-off approves the report it saw; a new dry run asks both again.
+                'admin_signoff_by' => null, 'admin_signoff_at' => null, 'owner_signoff_by' => null, 'owner_signoff_at' => null,
                 'dry_run_report' => json_encode(['state' => self::PENDING, 'request' => $token, 'requested_at' => $context->now()->toIso8601String(), 'requested_by' => $context->request->actorUserId], JSON_THROW_ON_ERROR),
             ]);
             $this->audit->record(

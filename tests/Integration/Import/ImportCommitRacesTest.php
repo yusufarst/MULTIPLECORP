@@ -1,6 +1,6 @@
 <?php
 
-use App\Modules\ImportOrchestration\Jobs\ImportSweep;
+use App\Modules\ImportOrchestration\Sweeps\ImportSweep;
 use Illuminate\Support\Facades\DB;
 use Tests\Support\Concurrency\Sessions;
 use Tests\Support\DatabaseTruncation;

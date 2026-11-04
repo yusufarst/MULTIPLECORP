@@ -2,13 +2,15 @@
 
 namespace App\Modules\ImportOrchestration\Jobs;
 
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\BatchRows;
 use App\Modules\ImportOrchestration\Services\RowRunner;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Jobs\PlatformJob;
 use Carbon\CarbonImmutable;
 use Illuminate\Contracts\Queue\ShouldBeUniqueUntilProcessing;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 /**
  * JB-07, the commit (AX-28; IMP-06; ARCHITECTURE §11): one chunk of the batch's VALID rows in commit order, each row
@@ -55,11 +57,20 @@ final class CommitImportRows extends PlatformJob implements ShouldBeUniqueUntilP
         }
 
         foreach ($chunk as $row) {
-            $result = $runner->run($row, $batch->committed_by, dryRun: false);
+            try {
+                $result = $runner->run($row, $batch->committed_by, dryRun: false);
+            } catch (Throwable $error) {
+                // A row that fails unexpectedly stops the batch with its reason, never a silent loop (JB-07; P3).
+                Log::error('An import row failed during its commit.', ['import_row_id' => $row->id, 'error' => $error::class]);
+                $result = ['state' => 'REFUSED', 'errors' => [['field' => '', 'reason' => 'failed']]];
+            }
 
             if ($result['state'] !== 'COMMITTED') {
-                DB::table('import_rows')->where('id', $row->id)->where('validation_state', 'VALID')
-                    ->update(['errors' => json_encode($result['errors'], JSON_THROW_ON_ERROR), 'updated_at' => CarbonImmutable::now()]);
+                $begun = DB::table('import_rows')->where('id', $row->id)->whereRaw('errors @> ?::jsonb', [json_encode([['reason' => RowRunner::IN_PROGRESS]])])->exists();
+                DB::table('import_rows')->where('id', $row->id)->where('validation_state', 'VALID')->update([
+                    'errors' => json_encode([...$result['errors'], ...($begun ? [['field' => '', 'reason' => RowRunner::IN_PROGRESS]] : [])], JSON_THROW_ON_ERROR),
+                    'updated_at' => CarbonImmutable::now(),
+                ]);
 
                 return;
             }
@@ -71,8 +82,7 @@ final class CommitImportRows extends PlatformJob implements ShouldBeUniqueUntilP
     /** Whether a row of the batch stopped it with its refusal, awaiting an Owner's resume. */
     public static function stopped(int $batchId): bool
     {
-        return DB::table('import_rows')->where('import_batch_id', $batchId)->where('validation_state', 'VALID')->whereNotNull('errors')
-            ->whereRaw('not (errors @> ?::jsonb)', [json_encode([['reason' => RowRunner::IN_PROGRESS]])])->exists();
+        return DB::table('import_rows')->where('import_batch_id', $batchId)->where('validation_state', 'VALID')->whereRaw(RowRunner::REFUSED)->exists();
     }
 
     /** COMMITTED once no VALID row remains, re-read under the batch's lock. */

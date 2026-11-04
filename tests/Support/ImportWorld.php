@@ -11,7 +11,7 @@ use App\Modules\ImportOrchestration\Actions\DryRunImport;
 use App\Modules\ImportOrchestration\Actions\PrepareImport;
 use App\Modules\ImportOrchestration\Actions\SignOffImport;
 use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
-use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Support\Command\Outcome;

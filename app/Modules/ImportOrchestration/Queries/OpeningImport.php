@@ -8,8 +8,9 @@ use App\Modules\ImportOrchestration\Kinds\Kinds;
 use App\Modules\ImportOrchestration\Kinds\OpeningCreditKind;
 use App\Modules\ImportOrchestration\Kinds\OpeningReceivableKind;
 use App\Modules\ImportOrchestration\Kinds\OpeningStockKind;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Batches;
-use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ImportOrchestration\Services\BatchRows;
 use App\Support\Search\Row;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -27,7 +28,10 @@ final class OpeningImport
 
     private const ROWS = 200;
 
-    public function __construct(private readonly EffectiveCapabilities $capabilities) {}
+    public function __construct(
+        private readonly EffectiveCapabilities $capabilities,
+        private readonly BatchRows $rows,
+    ) {}
 
     public function viewer(int $viewerId): Authority
     {
@@ -79,6 +83,45 @@ final class OpeningImport
         return $batch !== null && Batches::reaches($this->viewer($viewerId), $batch->company_scope) ? $batch : null;
     }
 
+    /** A batch's public id by its row id. */
+    public function publicIdOf(?int $id): ?string
+    {
+        $publicId = $id === null ? null : DB::table('import_batches')->where('id', $id)->value('public_id');
+
+        return is_string($publicId) ? $publicId : null;
+    }
+
+    /**
+     * An OPENING stock movement by its public id (ROUTE-213).
+     *
+     * @return array{id: int, company: int}|null
+     */
+    public function openingMovement(string $publicId): ?array
+    {
+        $row = DB::table('stock_movements')->where('public_id', strtolower($publicId))->where('movement_type', 'OPENING')->first(['id', 'company_id']);
+
+        return $row === null ? null : ['id' => (int) Row::text($row, 'id'), 'company' => (int) Row::text($row, 'company_id')];
+    }
+
+    /**
+     * An opening receivable or credit (ROUTE-214): an OPENING invoice by its public id, or a batch's committed row by its number;
+     * its kind, company, record and batch. Authorized by its command's `finance.contra` in that company, never by the import's scope.
+     *
+     * @return array{kind: string, company: int, entity: int, batch: string|null}|null
+     */
+    public function openingFact(string $id, int $rowNumber): ?array
+    {
+        $invoice = DB::table('invoices')->where('public_id', strtolower($id))->where('origin', 'OPENING')->value('import_row_id');
+        $rows = DB::table('import_rows')->where('validation_state', 'COMMITTED')->whereIn('import_kind', [OpeningReceivableKind::CODE, OpeningCreditKind::CODE]);
+        $row = (is_numeric($invoice)
+            ? $rows->where('id', (int) $invoice)
+            : $rows->where('import_batch_id', DB::table('import_batches')->where('public_id', strtolower($id))->value('id'))->where('row_number', $rowNumber))
+            ->first(['import_kind', 'company_id', 'result_entity_id', 'import_batch_id']);
+
+        return $row === null ? null : ['kind' => Row::text($row, 'import_kind'), 'company' => (int) Row::text($row, 'company_id'), 'entity' => (int) Row::text($row, 'result_entity_id'),
+            'batch' => $this->publicIdOf((int) Row::text($row, 'import_batch_id'))];
+    }
+
     /** @return array<string, mixed> */
     private function summary(ImportBatch $batch): array
     {
@@ -109,9 +152,32 @@ final class OpeningImport
                 'state' => Row::text($row, 'validation_state'), 'errors' => is_array($errors) ? array_values(array_filter($errors, 'is_array')) : []];
         }
 
+        $totals = $this->projected($viewer, is_array($batch->control_totals) ? $batch->control_totals : [], $codes);
+        $committed = $batch->state === 'COMMITTED' || $batch->committed_at !== null ? $this->projected($viewer, $this->rows->factTotals($batch->id), $codes) : [];
+        $report = is_array($batch->dry_run_report) ? $batch->dry_run_report : [];
+
+        return [
+            ...$this->summary($batch),
+            'report' => ['state' => is_string($report['state'] ?? null) ? $report['state'] : null, 'finished_at' => is_string($report['finished_at'] ?? null) ? $report['finished_at'] : null],
+            'problems' => $problems,
+            'totals' => $totals,
+            'committed_totals' => $committed,
+            'facts' => $batch->state === 'COMMITTED' || $batch->committed_at !== null ? $this->facts($viewer, $batch) : [],
+        ];
+    }
+
+    /**
+     * Totals per company by family (PJ-22): stock quantity with `stock.view`, its cost with `cost.view`, receivables and credits with `finance.view`.
+     *
+     * @param  array<mixed>  $source
+     * @param  array<mixed>  $codes
+     * @return list<array{company: string, stock_qty: string|null, stock_cost: string|null, receivables: string|null, credits: string|null}>
+     */
+    private function projected(Authority $viewer, array $source, array $codes): array
+    {
         $totals = [];
 
-        foreach (is_array($batch->control_totals) ? $batch->control_totals : [] as $company => $values) {
+        foreach ($source as $company => $values) {
             if (! is_array($values)) {
                 continue;
             }
@@ -126,15 +192,7 @@ final class OpeningImport
             ];
         }
 
-        $report = is_array($batch->dry_run_report) ? $batch->dry_run_report : [];
-
-        return [
-            ...$this->summary($batch),
-            'report' => ['state' => is_string($report['state'] ?? null) ? $report['state'] : null, 'finished_at' => is_string($report['finished_at'] ?? null) ? $report['finished_at'] : null],
-            'problems' => $problems,
-            'totals' => $totals,
-            'facts' => $batch->state === 'COMMITTED' || $batch->committed_at !== null ? $this->facts($viewer, $batch) : [],
-        ];
+        return $totals;
     }
 
     /**

@@ -28,6 +28,12 @@ final class RowRunner
 {
     public const IN_PROGRESS = 'in_progress';
 
+    /** A row stopped by a refusal: an error other than the mark of a row begun (SQL over `errors`). */
+    public const REFUSED = "errors is not null and exists (select from jsonb_array_elements(errors) as e where e->>'reason' <> 'in_progress')";
+
+    /** The row's begun mark, kept with a refusal and through a resume, so a batch with a begun row is never aborted (IMP-06). */
+    public const KEEP_BEGUN = "case when errors @> '[{\"reason\": \"in_progress\"}]'::jsonb then '[{\"field\": \"\", \"reason\": \"in_progress\"}]'::jsonb else null end";
+
     /** The result of a seed row NM-03's period rule no longer admits: the row recorded SKIPPED, no counter written. */
     public const SKIPPED = 'skipped';
 
@@ -96,7 +102,8 @@ final class RowRunner
 
             $state = $connection->table('import_rows')->where('id', $row->id)->lock('for update')->value('validation_state');
 
-            if ($state !== 'VALID') {
+            // The dry run tries again a row an earlier dry run refused (INVALID on the copy); a committed row is always done (BD-11).
+            if ($state !== 'VALID' && ! ($dryRun && $state === 'INVALID')) {
                 throw Refused::conflict('BD-11');
             }
 

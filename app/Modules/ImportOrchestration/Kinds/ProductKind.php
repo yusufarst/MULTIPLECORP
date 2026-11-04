@@ -7,12 +7,13 @@ use App\Modules\CAT\Actions\ChangeDefaultPrice;
 use App\Modules\CAT\Actions\CreateProduct;
 use App\Modules\CAT\Actions\RegisterBarcode;
 use App\Modules\CAT\Actions\UpdateProduct;
-use App\Modules\CAT\Models\Product;
+use App\Modules\CAT\Queries\ProductCatalog;
 use App\Modules\ImportOrchestration\Data\Cells;
 use App\Modules\ImportOrchestration\Data\ImportRowData;
 use App\Modules\ImportOrchestration\Services\RowRefused;
 use App\Support\Command\Outcome;
 use Closure;
+use Illuminate\Support\Facades\DB;
 
 /**
  * A current product (IMP-01) with its base unit, serial policy, barcode, an alternate unit and its default prices,
@@ -29,6 +30,7 @@ final class ProductKind implements ImportKind
         private readonly RegisterBarcode $barcodes,
         private readonly AddAlternateUnit $units,
         private readonly ChangeDefaultPrice $prices,
+        private readonly ProductCatalog $catalog,
     ) {}
 
     public function code(): string
@@ -73,7 +75,12 @@ final class ProductKind implements ImportKind
 
     public function steps(ImportRowData $row): array
     {
-        $product = static fn (array $done): Product => Product::query()->whereKey(References::result($done, 0, 'sku'))->first() ?? throw new RowRefused('sku', 'reference');
+        // The product the first step created, read through CAT's query class (ARCHITECTURE §3).
+        $product = static function (array $done): string {
+            $publicId = DB::table('products')->where('id', References::result($done, 0, 'sku'))->value('public_id');
+
+            return is_string($publicId) ? $publicId : throw new RowRefused('sku', 'reference');
+        };
         $steps = [fn (string $commandId, int $actor): Outcome => $this->create->run($commandId, $actor, [
             'kind' => $row->text('kind'), 'sku' => $row->nullable('sku'), 'name' => $row->text('name'),
             'unit_code' => $row->text('unit_code'), 'unit_name' => $row->nullable('unit_name') ?? $row->text('unit_code'), 'quantity_scale' => (int) $row->text('scale'),
@@ -81,18 +88,18 @@ final class ProductKind implements ImportKind
 
         if (($row->payload['serialized'] ?? false) === true) {
             $steps[] = function (string $commandId, int $actor, array $done) use ($product): Outcome {
-                $found = $product($done);
+                $found = $this->catalog->find($product($done)) ?? throw new RowRefused('sku', 'reference');
 
                 return $this->update->policy($commandId, $actor, $found, $found->lock_version, true, 0);
             };
         }
 
         if ($row->nullable('barcode') !== null) {
-            $steps[] = fn (string $commandId, int $actor, array $done): Outcome => $this->barcodes->run($commandId, $actor, $product($done), 'MANUFACTURER', $row->text('barcode'));
+            $steps[] = fn (string $commandId, int $actor, array $done): Outcome => $this->barcodes->run($commandId, $actor, $this->catalog->find($product($done)) ?? throw new RowRefused('sku', 'reference'), 'MANUFACTURER', $row->text('barcode'));
         }
 
         if ($row->nullable('alternate') !== null) {
-            $steps[] = fn (string $commandId, int $actor, array $done): Outcome => $this->units->run($commandId, $actor, $product($done), $row->text('alternate'),
+            $steps[] = fn (string $commandId, int $actor, array $done): Outcome => $this->units->run($commandId, $actor, $this->catalog->find($product($done)) ?? throw new RowRefused('sku', 'reference'), $row->text('alternate'),
                 $row->nullable('alternate_name') ?? $row->text('alternate'), (int) $row->text('ratio'));
         }
 
@@ -111,11 +118,11 @@ final class ProductKind implements ImportKind
     }
 
     /**
-     * @param  Closure(array<mixed>): Product  $product
+     * @param  Closure(array<mixed>): string  $product
      * @return Closure(string, int, list<Outcome>): Outcome
      */
     private function price(Closure $product, string $kind, string $amount, ImportRowData $row): Closure
     {
-        return fn (string $commandId, int $actor, array $done): Outcome => $this->prices->run($commandId, $actor, $product($done), $kind, $amount, ClientKind::reason($row));
+        return fn (string $commandId, int $actor, array $done): Outcome => $this->prices->run($commandId, $actor, $this->catalog->find($product($done)) ?? throw new RowRefused('sku', 'reference'), $kind, $amount, ClientKind::reason($row));
     }
 }

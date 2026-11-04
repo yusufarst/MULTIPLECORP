@@ -68,7 +68,7 @@ it('reads the first worksheet of an XLSX through its relationships and shared st
         .'</sheetData></worksheet>';
     $rows = (new SourceTable)->read(xlsxFile(workbook($sheet)), 'xlsx');
 
-    expect($rows[0])->toBe(['number' => 2, 'cells' => ['id' => 'P1', 'nama' => 'Meja Guru', 'jumlah' => '12.5']])
+    expect($rows[0])->toBe(['number' => 2, 'cells' => ['id' => 'P1', 'nama' => 'Meja Guru', 'jumlah' => '12,5']])
         ->and($rows[1]['cells']['jumlah'])->toBe(SourceTable::FORMULA);
 
     $cells = new Cells($rows[1]['cells']);
@@ -97,4 +97,14 @@ it('reads typed values and names each unreadable one with its column and reason 
         ->and($cells->errors)->toBe([
             ['field' => 'jumlah', 'reason' => 'scale'], ['field' => 'salah', 'reason' => 'date'], ['field' => 'minus', 'reason' => 'negative'], ['field' => 'hilang', 'reason' => 'required'],
         ]);
+});
+
+it('reads Indonesian thousands as thousands, never as decimals, and a leading zero group as decimals (WF-MIG-01; ER-06)', function () {
+    $cells = new Cells(['ribuan' => '250.000', 'jumlah' => '1.500', 'pecahan' => '0.125', 'koma' => '12,5']);
+
+    expect($cells->decimal('ribuan', 2))->toBe('250000.00')
+        ->and($cells->decimal('jumlah', 3))->toBe('1500.000')
+        ->and($cells->decimal('pecahan', 3))->toBe('0.125')
+        ->and($cells->decimal('koma', 2))->toBe('12.50')
+        ->and($cells->errors)->toBe([]);
 });

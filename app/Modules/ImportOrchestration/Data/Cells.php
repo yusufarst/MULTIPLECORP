@@ -172,17 +172,19 @@ final class Cells
         return null;
     }
 
-    /** "1.250.000,50" or "1,250,000.50" or "1250000.50" as "1250000.50"; anything else null. */
+    /** "1.250.000,50", "250.000", "12,5", "1,250,000.50" or "1250000.50" as a plain decimal; anything else null. */
     public static function plainNumber(string $value): ?string
     {
         $value = str_replace([' ', "\u{00A0}", 'Rp', 'rp'], '', $value);
 
-        if (preg_match('/^-?\d+(\.\d+)?$/', $value) === 1) {
-            return $value;
+        // The Indonesian convention of a source typed by a person: a dot groups thousands, a comma marks the decimals (XLSX
+        // numbers arrive with a comma, SourceTable). "250.000" is two hundred and fifty thousand, never 250.
+        if (preg_match('/^-?[1-9]\d{0,2}(\.\d{3})+(,\d+)?$/', $value) === 1 || preg_match('/^-?\d+,\d+$/', $value) === 1) {
+            return str_replace(['.', ','], ['', '.'], $value);
         }
 
-        if (preg_match('/^-?\d{1,3}(\.\d{3})+(,\d+)?$/', $value) === 1 || preg_match('/^-?\d+,\d+$/', $value) === 1) {
-            return str_replace(['.', ','], ['', '.'], $value);
+        if (preg_match('/^-?\d+(\.\d+)?$/', $value) === 1) {
+            return $value;
         }
 
         if (preg_match('/^-?\d{1,3}(,\d{3})+(\.\d+)?$/', $value) === 1) {

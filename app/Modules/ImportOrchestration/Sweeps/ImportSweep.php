@@ -1,9 +1,11 @@
 <?php
 
-namespace App\Modules\ImportOrchestration\Jobs;
+namespace App\Modules\ImportOrchestration\Sweeps;
 
 use App\Modules\ImportOrchestration\Actions\DryRunImport;
-use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
+use App\Modules\ImportOrchestration\Jobs\ValidateImportBatch;
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Support\Jobs\OwedWork;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\DB;

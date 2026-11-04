@@ -2,8 +2,8 @@
 
 namespace App\Modules\ImportOrchestration\Actions;
 
+use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ImportOrchestration\Services\Batches;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\Audit\AuditChange;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;

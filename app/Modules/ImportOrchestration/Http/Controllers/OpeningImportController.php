@@ -11,16 +11,12 @@ use App\Modules\ImportOrchestration\Actions\PrepareImport;
 use App\Modules\ImportOrchestration\Actions\SignOffImport;
 use App\Modules\ImportOrchestration\Kinds\Kinds;
 use App\Modules\ImportOrchestration\Kinds\OpeningCreditKind;
-use App\Modules\ImportOrchestration\Kinds\OpeningReceivableKind;
 use App\Modules\ImportOrchestration\Queries\OpeningImport;
 use App\Modules\INV\Actions\ReverseOpeningMovement;
-use App\Modules\OPS\Models\ImportBatch;
 use App\Support\BusinessDate;
 use App\Support\Command\Outcome;
-use App\Support\Search\Row;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
@@ -52,14 +48,12 @@ final class OpeningImportController extends Controller
         $companies = array_values(array_map(fn (mixed $id): string => self::text($id), is_array($input['perusahaan']) ? $input['perusahaan'] : []));
         $outcome = $prepare->run(self::text($input['command_id']), self::actor($request), self::text($input['jenis']), self::text($input['berkas']), self::text($input['tanggal']), $companies);
 
-        $batch = $outcome->kind === Outcome::COMMITTED && $outcome->resultId !== null ? ImportBatch::query()->whereKey($outcome->resultId)->value('public_id') : null;
-
-        return $this->answer($outcome, 'prepared', is_string($batch) ? $batch : null);
+        return $this->answer($outcome, 'prepared', $outcome->kind === Outcome::COMMITTED ? $this->page->publicIdOf($outcome->resultId) : null);
     }
 
     public function dryRun(Request $request, DryRunImport $dryRun, string $id): RedirectResponse
     {
-        $batch = $this->batch($request, $id);
+        $batch = $this->page->lookup(self::actor($request), $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, ['command_id' => ['required', 'uuid']]);
 
         return $this->answer($dryRun->run(self::text($input['command_id']), self::actor($request), $batch), 'dry_run', $batch->public_id);
@@ -67,7 +61,7 @@ final class OpeningImportController extends Controller
 
     public function signOff(Request $request, SignOffImport $signOff, string $id): RedirectResponse
     {
-        $batch = $this->batch($request, $id);
+        $batch = $this->page->lookup(self::actor($request), $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'bukti' => ['required', 'uuid']]);
 
         return $this->answer($signOff->run(self::text($input['command_id']), self::actor($request), $batch, self::text($input['bukti'])), 'signed', $batch->public_id);
@@ -75,7 +69,7 @@ final class OpeningImportController extends Controller
 
     public function commit(Request $request, CommitImport $commit, string $id): RedirectResponse
     {
-        $batch = $this->batch($request, $id);
+        $batch = $this->page->lookup(self::actor($request), $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, ['command_id' => ['required', 'uuid']]);
 
         return $this->answer($commit->run(self::text($input['command_id']), self::actor($request), $batch), 'committing', $batch->public_id);
@@ -83,7 +77,7 @@ final class OpeningImportController extends Controller
 
     public function abort(Request $request, AbortImport $abort, string $id): RedirectResponse
     {
-        $batch = $this->batch($request, $id);
+        $batch = $this->page->lookup(self::actor($request), $id) ?? throw new NotFoundHttpException;
         $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:1000']]);
 
         return $this->answer($abort->run(self::text($input['command_id']), self::actor($request), $batch, trim(self::text($input['alasan']))), 'aborted', $batch->public_id);
@@ -93,8 +87,8 @@ final class OpeningImportController extends Controller
     public function reverseStock(Request $request, ReverseOpeningMovement $reverse, string $id): RedirectResponse
     {
         $input = self::validated($request, ['command_id' => ['required', 'uuid'], 'alasan' => ['required', 'string', 'min:3', 'max:1000'], 'batch' => ['nullable', 'uuid']]);
-        $movement = DB::table('stock_movements')->where('public_id', strtolower($id))->where('movement_type', 'OPENING')->first(['id', 'company_id']) ?? throw new NotFoundHttpException;
-        $outcome = $reverse->run(self::text($input['command_id']), self::actor($request), (int) Row::text($movement, 'company_id'), (int) Row::text($movement, 'id'), [], trim(self::text($input['alasan'])), BusinessDate::today(), false);
+        $movement = $this->page->openingMovement($id) ?? throw new NotFoundHttpException;
+        $outcome = $reverse->run(self::text($input['command_id']), self::actor($request), $movement['company'], $movement['id'], [], trim(self::text($input['alasan'])), BusinessDate::today(), false);
 
         return $this->answer($outcome, 'corrected', is_string($input['batch'] ?? null) ? $input['batch'] : null);
     }
@@ -102,24 +96,17 @@ final class OpeningImportController extends Controller
     /** ROUTE-214: an opening receivable or credit of the batch, named by its row, corrected once its applications are disposed (CM-33). */
     public function correctFinance(Request $request, ContraOpeningFact $contra, string $id): RedirectResponse
     {
-        $batch = $this->batch($request, $id);
         $input = self::validated($request, [
-            'command_id' => ['required', 'uuid'], 'baris' => ['required', 'integer', 'min:1'], 'alasan' => ['required', 'string', 'min:3', 'max:1000'],
+            'command_id' => ['required', 'uuid'], 'baris' => ['nullable', 'integer', 'min:1'], 'alasan' => ['required', 'string', 'min:3', 'max:1000'],
             'nilai' => ['nullable', 'regex:/^\d{1,15}(\.\d{1,2})?$/'], 'ppn' => ['nullable', 'regex:/^\d{1,15}(\.\d{1,2})?$/'], 'jumlah' => ['nullable', 'regex:/^\d{1,15}(\.\d{1,2})?$/'],
         ]);
-        $row = DB::table('import_rows')->where('import_batch_id', $batch->id)->where('row_number', (int) self::text($input['baris']))->where('validation_state', 'COMMITTED')
-            ->whereIn('import_kind', [OpeningReceivableKind::CODE, OpeningCreditKind::CODE])->first(['import_kind', 'company_id', 'result_entity_id']) ?? throw new NotFoundHttpException;
-        $kind = Row::text($row, 'import_kind') === OpeningCreditKind::CODE ? ContraOpeningFact::CREDIT : ContraOpeningFact::RECEIVABLE;
-        $outcome = $contra->run(self::text($input['command_id']), self::actor($request), (int) Row::text($row, 'company_id'), $kind, (int) Row::text($row, 'result_entity_id'),
+        $fact = $this->page->openingFact($id, (int) self::text($input['baris'] ?? 0)) ?? throw new NotFoundHttpException;
+        $kind = $fact['kind'] === OpeningCreditKind::CODE ? ContraOpeningFact::CREDIT : ContraOpeningFact::RECEIVABLE;
+        $outcome = $contra->run(self::text($input['command_id']), self::actor($request), $fact['company'], $kind, $fact['entity'],
             ['sales' => self::nullable($input['nilai'] ?? null), 'tax' => self::nullable($input['ppn'] ?? null), 'amount' => self::nullable($input['jumlah'] ?? null)],
             trim(self::text($input['alasan'])), BusinessDate::today(), false);
 
-        return $this->answer($outcome, 'corrected', $batch->public_id);
-    }
-
-    private function batch(Request $request, string $id): ImportBatch
-    {
-        return $this->page->lookup(self::actor($request), $id) ?? throw new NotFoundHttpException;
+        return $this->answer($outcome, 'corrected', $fact['batch']);
     }
 
     /** The command's answer on PG-058, the batch chosen; a refusal in business words, MSG-18 alone for a collision outside scope. */

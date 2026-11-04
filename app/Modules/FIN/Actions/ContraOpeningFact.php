@@ -122,7 +122,7 @@ final class ContraOpeningFact
         $context->lock((new LockSet)->add('opening_customer_credits', ['id' => $id])->add('application_source_balances', $key));
         $credit = DB::table('opening_customer_credits')->where('id', $id)->where('company_id', $companyId)->first(['id', 'import_row_id'])
             ?? throw Refused::rejected('CM-33', ['reason' => 'unknown']);
-        $source = DB::table('application_source_balances')->where($key)->first(['net_amount', 'capacity_amount']);
+        $source = DB::table('application_source_balances as s')->where('s.opening_customer_credit_id', $id)->first(['s.net_amount', 's.capacity_amount']);
 
         // CM-33: the credit is contra'd only after its applications are disposed; never beyond what it still holds (AX-33).
         if (DB::table('payment_applications')->where('opening_customer_credit_id', $id)->where('state', 'ACTIVE')->exists() || $source === null) {
