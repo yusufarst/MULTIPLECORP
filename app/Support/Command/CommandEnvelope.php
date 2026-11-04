@@ -137,6 +137,9 @@ final class CommandEnvelope
                     throw new LogicException('An action locks through its context, re-authorizing the actor, before it commits (RV-01; §6 phase B).');
                 }
 
+                // A driven command's driver writes what its row owes in the same transaction (AX-28; CI-08).
+                DrivenWork::finish($context, $result);
+
                 $connection->statement('set constraints all immediate');
                 $connection->commit();
             } catch (Refused $refusal) {

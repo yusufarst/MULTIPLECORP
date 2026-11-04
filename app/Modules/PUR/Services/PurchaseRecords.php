@@ -74,11 +74,13 @@ final class PurchaseRecords
     }
 
     /**
-     * The purchase saved OPEN; its id.
+     * The purchase saved OPEN; its id. `$opening`: an open purchase of the opening import, of origin OPENING and keyed to its row, keeping its legacy number
+     * when it fits the company's PURCHASE scheme and drawing one otherwise (DATABASE §24; `DIR-079` CB-01; C-47).
      *
      * @param  array<int, array{id: int, treatment: string}|null>  $rules  the treatment of each tax type on the business date, ORG's reading
+     * @param  array{import_row: int, number: string|null}|null  $opening
      */
-    public function record(CommandContext $context, PurchaseEntry $entry, array $rules): int
+    public function record(CommandContext $context, PurchaseEntry $entry, array $rules, ?array $opening = null): int
     {
         BusinessDateRule::check($entry->businessDate, $entry->prefilled);
         $this->ensureRoots($entry);
@@ -89,14 +91,15 @@ final class PurchaseRecords
         }
 
         $lines = $this->prepared($entry, $rules);
-        $number = $this->numbers->draw($context, $entry->companyId, SequenceType::Purchase, $entry->businessDate);
+        $kept = $opening === null || $opening['number'] === null ? null : $this->numbers->keep($context, $entry->companyId, SequenceType::Purchase, $entry->businessDate, $opening['number']);
+        $number = $kept ?? $this->numbers->draw($context, $entry->companyId, SequenceType::Purchase, $entry->businessDate);
         $now = $context->now();
         $commandId = $context->request->commandId;
         $actor = $context->request->actorUserId;
         $id = DB::table('purchases')->insertGetId([
             'public_id' => (string) Str::uuid7(), 'company_id' => $entry->companyId, 'purchase_number' => $number->formatted, 'period_key' => $number->periodKey, 'sequence_no' => $number->sequenceNo,
             'supplier_id' => $entry->supplierId, 'supplier_snapshot' => json_encode(['name' => Row::text($supplier, 'name'), 'npwp' => Row::nullable($supplier, 'npwp'), 'address' => Row::nullable($supplier, 'address_lines'), 'city' => Row::nullable($supplier, 'city')], JSON_THROW_ON_ERROR),
-            'project_id' => $entry->projectId, 'business_date' => $entry->businessDate, 'supplier_reference' => $entry->reference, 'state' => 'OPEN', 'origin' => 'LIVE',
+            'project_id' => $entry->projectId, 'business_date' => $entry->businessDate, 'supplier_reference' => $entry->reference, 'state' => 'OPEN', 'origin' => $opening === null ? 'LIVE' : 'OPENING', 'import_row_id' => $opening['import_row'] ?? null,
             'command_id' => $commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor, 'updated_at' => $now,
         ]);
         $lineIds = $this->insertLines($context, $id, $entry->companyId, $lines, 0);
