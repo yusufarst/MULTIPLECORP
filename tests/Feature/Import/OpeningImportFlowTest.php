@@ -1,7 +1,12 @@
 <?php
 
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\FIN\Actions\ContraOpeningFact;
+use App\Modules\INV\Actions\ReverseOpeningMovement;
+use App\Support\BusinessDate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Tests\Support\Authorization;
 use Tests\Support\ImportWorld;
 use Tests\Support\RefreshDatabase;
 
@@ -75,4 +80,36 @@ it('imports clients and suppliers, an open project with its MIGRATION confirmati
         ->and(DB::table('payments')->count())->toBe(0)
         ->and($credits->control_totals[$world->company->id]['credits'] ?? null)->toBe('300000.00')
         ->and($documents->state)->toBe('COMMITTED')->and(DB::table('legacy_archive_items')->where('legacy_reference', 'INV-LAMA-0')->exists())->toBeTrue();
+});
+
+it('corrects a wrong opening fact on its record only — stock within what is unconsumed, a receivable and a credit once their applications are disposed — never by importing again (CM-33; criterion 11)', function () {
+    $world = ImportWorld::make();
+    $code = $world->company->code;
+    $world->import('PRODUCT', [['id' => 'P1', 'jenis' => 'barang', 'sku' => 'KURSI-1', 'nama' => 'Kursi', 'satuan' => 'UNIT']]);
+    $world->import('LOCATION', [['id' => 'L1', 'kode' => 'RAK-B1', 'nama' => 'Rak B1']]);
+    $world->import('CLIENT', [['id' => 'K1', 'nama' => 'SMP 2 Contoh', 'unit' => 'TU', 'pic_nama' => 'Pak Budi']]);
+    $world->import('OPENING_STOCK', [['id' => 'S1', 'perusahaan' => $code, 'produk' => 'KURSI-1', 'lokasi' => 'RAK-B1', 'jumlah' => '6', 'biaya' => '600000']]);
+    $world->import('OPENING_RECEIVABLE', [['id' => 'F1', 'perusahaan' => $code, 'klien' => 'K1', 'nomor_faktur' => 'LAMA-9', 'tanggal_tagih' => "{$world->year}-09-01", 'nilai' => '1000000']]);
+    $evidence = EvidenceDocument::factory()->create(['company_id' => $world->company->id, 'evidence_scope' => 'COMPANY']);
+    $world->import('OPENING_CREDIT', [['id' => 'C1', 'perusahaan' => $code, 'klien' => 'K1', 'nilai' => '250000', 'bukti' => $evidence->public_id]]);
+    $actor = Authorization::admin([$world->company->id], ['stock.view', 'stock.reverse', 'finance.view', 'finance.contra']);
+    $today = BusinessDate::today();
+
+    $movement = (int) DB::table('stock_movements')->where('movement_type', 'OPENING')->value('id');
+    $reversed = app(ReverseOpeningMovement::class)->run((string) Str::uuid(), $actor->id, $world->company->id, $movement, [], 'Jumlah salah', $today, false);
+    expect($reversed->kind)->toBe('COMMITTED')
+        ->and(DB::table('stock_product_balances')->sum('on_hand_qty'))->toEqual(0)
+        ->and(DB::table('lot_cost_balances')->sum('remaining_cost'))->toEqual(0);
+
+    $invoice = (int) DB::table('invoices')->where('origin', 'OPENING')->value('id');
+    $corrected = app(ContraOpeningFact::class)->run((string) Str::uuid(), $actor->id, $world->company->id, 'piutang', $invoice, ['sales' => '400000', 'tax' => '0', 'amount' => null], 'Sisa salah', $today, false);
+    $credit = (int) DB::table('opening_customer_credits')->value('id');
+    $contra = app(ContraOpeningFact::class)->run((string) Str::uuid(), $actor->id, $world->company->id, 'kredit', $credit, ['sales' => null, 'tax' => null, 'amount' => null], 'Kredit tidak ada', $today, false);
+
+    expect($corrected->kind)->toBe('COMMITTED')->and(DB::table('invoice_balances')->where('invoice_id', $invoice)->value('gross_value'))->toEqual(400000)
+        ->and($contra->kind)->toBe('COMMITTED')->and(DB::table('application_source_balances')->where('opening_customer_credit_id', $credit)->value('net_amount'))->toEqual(0);
+
+    // Never by importing again: the same identities are duplicates of their committed twins.
+    $again = ImportWorld::batch($world->prepare('OPENING_STOCK', $world->source([['id' => 'S1', 'perusahaan' => $code, 'produk' => 'KURSI-1', 'lokasi' => 'RAK-B1', 'jumlah' => '5', 'biaya' => '500000']])));
+    expect(DB::table('import_rows')->where('import_batch_id', $again->id)->where('import_identity', 'S1')->value('validation_state'))->toBe('DUPLICATE');
 });

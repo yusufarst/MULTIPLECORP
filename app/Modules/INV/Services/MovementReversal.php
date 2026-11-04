@@ -39,6 +39,9 @@ final class MovementReversal
         private readonly AuditRecorder $audit,
     ) {}
 
+    /** An opening import's stock movement: reversed only by "Koreksi Data Awal" (ROUTE-213; CM-33), never by ROUTE-212. */
+    public const OPENING = 'OPENING';
+
     public static function reversible(string $type): bool
     {
         return in_array($type, self::BY_INVERSE, true) || in_array($type, self::BY_RESTORATION, true);
@@ -56,7 +59,7 @@ final class MovementReversal
         $header = DB::table('stock_movements')->where('id', $movementId)->first(['movement_type', 'stock_count_id']);
         $type = $header === null ? '' : Row::text($header, 'movement_type');
         $count = $header === null ? null : Row::nullable($header, 'stock_count_id');
-        $inverse = in_array($type, self::BY_INVERSE, true);
+        $inverse = in_array($type, [...self::BY_INVERSE, self::OPENING], true);
 
         if ($count !== null) {
             $set->add('stock_counts', ['id' => (int) $count]);
@@ -80,6 +83,10 @@ final class MovementReversal
                         $set->add('stock_reversal_balances', ['reversed_movement_id' => $movementId, 'lot_id' => (int) $lot, 'location_id' => $location, 'condition' => $either]);
                     }
                 }
+            }
+
+            if ($lot !== null && $type === self::OPENING) {
+                $set->add('lot_cost_balances', ['lot_id' => (int) $lot]);
             }
 
             if ($lot !== null && $type === 'SURPLUS_ATTRIBUTION') {
@@ -151,6 +158,38 @@ final class MovementReversal
         $company = Row::nullable($original, 'company_id');
         $this->corrections->record($context, 'INV.MovementReversed', $type === 'SURPLUS_ATTRIBUTION' ? AuthorityClass::OwnerOnly : AuthorityClass::AdmPlus, $company === null ? null : (int) $company, 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($original, 'public_id'), $reason,
             AuditChange::updated(['movement_type' => $type], ['reversed' => $quantity]), null, ['business_date' => $businessDate, 'cuts' => $cuts]);
+
+        return $movement;
+    }
+
+    /**
+     * ROUTE-213 (CM-33; IMP-06): a wrong opening stock fact corrected by its import identity — the OPENING movement's
+     * MOVEMENT_REVERSAL within the unconsumed quantity still at its place (C-03), reservations cut first when the stock
+     * they hold is taken (SF-RSV-CUT), the serials taken back, and the lot's opening basis reversed with its units —; its
+     * movement. A wrong opening fact is never imported again.
+     *
+     * @param  array<int, string>  $cuts  reservation => quantity
+     */
+    public function reverseOpening(CommandContext $context, int $movementId, array $cuts, string $reason, string $businessDate, bool $prefilled): int
+    {
+        BusinessDateRule::check($businessDate, $prefilled);
+        $context->require($this->locks($movementId, $cuts));
+        $original = DB::table('stock_movements')->where('id', $movementId)->first(['id', 'public_id', 'movement_type', 'company_id', 'project_id']);
+
+        if ($original === null || Row::text($original, 'movement_type') !== self::OPENING) {
+            throw Refused::rejected('C-55', ['reason' => 'type']);
+        }
+
+        [$movement, $publicId, $quantity] = $this->inverse($context, $original, $cuts, $reason, $businessDate);
+
+        foreach (DB::table('stock_movement_entries as e')->join('inventory_lots as i', 'i.id', '=', 'e.lot_id')->where('e.stock_movement_id', $movement)
+            ->groupBy('i.id', 'i.import_row_id')->selectRaw('i.id, i.import_row_id, -sum(e.qty_delta_base) as qty')->get() as $lot) {
+            $this->cost->reverseBasis($context, (int) Row::text($lot, 'id'), Row::text($lot, 'qty'), $businessDate, ['import_row_id' => (int) Row::text($lot, 'import_row_id')]);
+        }
+
+        $company = Row::nullable($original, 'company_id');
+        $this->corrections->record($context, 'INV.OpeningMovementReversed', AuthorityClass::AdmPlus, $company === null ? null : (int) $company, 'stock_movement', $movement, $publicId, AuditRelation::Reverses, 'stock_movement', Row::text($original, 'public_id'), $reason,
+            AuditChange::updated(['movement_type' => self::OPENING], ['reversed' => $quantity]), null, ['business_date' => $businessDate, 'cuts' => $cuts]);
 
         return $movement;
     }
