@@ -77,8 +77,8 @@ final class RecordOpeningReceivable
             ]);
             $context->connection->table('invoices')->where('id', $invoice->id)->update(['current_version_id' => $version, 'updated_at' => $now]);
             $act = (int) $context->connection->table('invoice_billing_acts')->insertGetId([
-                'invoice_id' => $invoice->id, 'company_id' => $companyId, 'billed_at' => $entry['billed_at'], 'due_date' => $entry['due_date'], 'kind' => 'OPENING', 'import_row_id' => $entry['import_row'],
-                'reason' => "Saldo awal faktur {$entry['reference']}", 'command_id' => $context->request->commandId, 'command_line_no' => 3, 'recorded_at' => $now, 'recorded_by' => $actor,
+                'invoice_id' => $invoice->id, 'billed_at' => $entry['billed_at'], 'due_date' => $entry['due_date'], 'kind' => 'OPENING', 'import_row_id' => $entry['import_row'],
+                'reason' => "Saldo awal faktur {$entry['reference']}", 'decided_by' => $actor, 'command_id' => $context->request->commandId, 'command_line_no' => 3, 'recorded_at' => $now, 'recorded_by' => $actor,
             ]);
             $this->receivable->bear($context, $invoice->id, $companyId, $sales->toString(), $tax->toString(), $sales->plus($tax)->toString(), $act, $entry['due_date']);
             $this->audit->record(

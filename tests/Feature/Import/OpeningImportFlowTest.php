@@ -1,0 +1,78 @@
+<?php
+
+use App\Modules\DOC\Models\EvidenceDocument;
+use Illuminate\Support\Facades\DB;
+use Tests\Support\ImportWorld;
+use Tests\Support\RefreshDatabase;
+
+// TL-04, TL-16 (TASK-057; WF-MIG-01; AX-28; IMP-01; IMP-03; IMP-04; DATABASE §24; FX-09): masters, then opening stock, each batch
+// prepared from a synthetic source, dry-run on the rolled-back copy, signed off by the Admin and the Owner and committed row by row
+// through the modules' ordinary actions, its seeds first.
+
+uses(RefreshDatabase::class);
+
+it('imports products and locations, then opening stock with its cost and serials, the control totals per company beside it (IMP-01; IMP-04; BR-INV-12; criteria 3, 9, 10)', function () {
+    $world = ImportWorld::make();
+
+    $products = $world->import('PRODUCT', [
+        ['id' => 'P1', 'jenis' => 'barang', 'sku' => 'LAPTOP-1', 'nama' => 'Laptop', 'satuan' => 'UNIT', 'serial' => 'ya', 'harga_beli' => '5000000'],
+        ['id' => 'P2', 'jenis' => 'barang', 'sku' => 'KERTAS-A4', 'nama' => 'Kertas A4', 'satuan' => 'RIM', 'satuan_lain' => 'DUS', 'rasio' => '5'],
+    ]);
+    expect($products->state)->toBe('COMMITTED')->and(ImportWorld::counts($products))->toMatchArray(['COMMITTED' => 4]);
+
+    $locations = $world->import('LOCATION', [['id' => 'L1', 'kode' => 'RAK-A1', 'nama' => 'Rak A1']]);
+    expect($locations->state)->toBe('COMMITTED');
+
+    $stock = $world->import('OPENING_STOCK', [
+        ['id' => 'S1', 'perusahaan' => $world->company->code, 'produk' => 'LAPTOP-1', 'lokasi' => 'RAK-A1', 'jumlah' => '2', 'biaya' => '9000000', 'serial' => 'SN-1;SN-2'],
+        ['id' => 'S2', 'perusahaan' => $world->company->code, 'produk' => 'KERTAS-A4', 'lokasi' => 'RAK-A1', 'jumlah' => '3', 'satuan' => 'DUS', 'biaya' => '750000'],
+    ]);
+
+    expect($stock->state)->toBe('COMMITTED')
+        ->and(DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->where('source_company_id', $world->company->id)->sum('acquired_qty_base'))->toEqual(17)
+        ->and(DB::table('serial_units')->where('state', 'IN_STOCK')->count())->toBe(2)
+        ->and(DB::table('stock_movements')->where('movement_type', 'OPENING')->count())->toBe(2)
+        ->and($stock->control_totals[$world->company->id] ?? null)->toMatchArray(['stock_qty' => '5.000', 'stock_cost' => '9750000.00'])
+        ->and(DB::table('stock_product_balances')->sum('reserved_qty'))->toEqual(0);
+});
+
+it('imports clients and suppliers, an open project with its MIGRATION confirmation, open purchases keeping a fitting legacy number, receivables, credit and archive items (IMP-01; IMP-07; BR-FIN-14; L-50; criteria 8, 9)', function () {
+    $world = ImportWorld::make();
+    $code = $world->company->code;
+    $world->import('PRODUCT', [['id' => 'P1', 'jenis' => 'barang', 'sku' => 'MEJA-1', 'nama' => 'Meja', 'satuan' => 'UNIT', 'harga_jual' => '1500000']]);
+    $world->import('CLIENT', [['id' => 'K1', 'nama' => 'SMAN 1 Contoh', 'unit' => 'Tata Usaha', 'alamat' => 'Jl. Contoh 1', 'kota' => 'Yogyakarta', 'pic_nama' => 'Bu Rina']]);
+    $world->import('SUPPLIER', [['id' => 'V1', 'nama' => 'CV Pemasok Contoh', 'kota' => 'Sleman']]);
+
+    $projects = $world->import('OPEN_PROJECT', [
+        ['id' => 'J1', 'perusahaan' => $code, 'klien' => 'K1', 'judul' => 'Pengadaan meja', 'produk' => 'MEJA-1', 'jumlah' => '10', 'harga' => '1500000'],
+        ['id' => 'J1', 'perusahaan' => $code, 'produk' => 'MEJA-1', 'jumlah' => '2', 'harga' => '1400000', 'keterangan' => 'Meja guru'],
+    ]);
+    $project = DB::table('projects')->where('import_row_id', DB::table('import_rows')->where('import_batch_id', $projects->id)->where('import_kind', 'OPEN_PROJECT')->value('id'))->first();
+    expect($projects->state)->toBe('COMMITTED')->and($project->origin)->toBe('OPENING')->and($project->state)->toBe('ACTIVE')
+        ->and(DB::table('project_lines')->where('project_id', $project->id)->count())->toBe(2)
+        ->and(DB::table('commercial_confirmations')->where('project_id', $project->id)->value('kind'))->toBe('MIGRATION')
+        ->and(DB::table('reservations')->count())->toBe(0);
+
+    $purchases = $world->import('OPEN_PURCHASE', [
+        ['id' => 'B1', 'perusahaan' => $code, 'pemasok' => 'V1', 'proyek' => 'J1', 'tanggal' => "{$world->year}-11-02", 'nomor' => "PO/{$world->year}/0007", 'produk' => 'MEJA-1', 'jumlah' => '4', 'harga' => '900000', 'baris_proyek' => '1'],
+        ['id' => 'B2', 'perusahaan' => $code, 'pemasok' => 'V1', 'tanggal' => "{$world->year}-12-01", 'nomor' => 'LAMA-15', 'produk' => 'MEJA-1', 'jumlah' => '3', 'harga' => '900000'],
+    ]);
+    $numbers = DB::table('purchases')->where('origin', 'OPENING')->orderBy('id')->pluck('purchase_number')->all();
+    expect($purchases->state)->toBe('COMMITTED')->and($numbers[0])->toBe("PO/{$world->year}/0007")->and($numbers[1])->toBe("PO/{$world->year}/0021");
+
+    $evidence = EvidenceDocument::factory()->create(['company_id' => $world->company->id, 'evidence_scope' => 'COMPANY']);
+    $receivables = $world->import('OPENING_RECEIVABLE', [
+        ['id' => 'F1', 'perusahaan' => $code, 'klien' => 'K1', 'proyek' => 'J1', 'nomor_faktur' => 'INV-LAMA-1', 'tanggal_tagih' => "{$world->year}-10-01", 'jatuh_tempo' => "{$world->year}-10-31", 'nilai' => '2000000', 'ppn' => '220000'],
+        ['id' => 'F2', 'perusahaan' => $code, 'klien' => 'K1', 'nomor_faktur' => 'INV-LAMA-2', 'tanggal_tagih' => "{$world->year}-06-01", 'nilai' => '500000'],
+    ]);
+    $credits = $world->import('OPENING_CREDIT', [['id' => 'C1', 'perusahaan' => $code, 'klien' => 'K1', 'nilai' => '300000', 'bukti' => $evidence->public_id]]);
+    $documents = $world->import('LEGACY_DOCUMENT', [['id' => 'D1', 'perusahaan' => $code, 'jenis' => 'Faktur', 'nomor' => 'INV-LAMA-0', 'keterangan' => 'Faktur tahun lalu']]);
+
+    expect(DB::table('invoices')->where('origin', 'OPENING')->orderBy('id')->pluck('aging_basis')->all())->toBe(['DUE_DATE', 'MIGRASI'])
+        ->and(DB::table('invoice_balances')->sum('gross_value'))->toEqual(2720000)
+        ->and(DB::table('project_commercial_balances')->where('project_id', $project->id)->value('invoiced_sales_value'))->toEqual(0)
+        ->and(DB::table('application_source_balances')->whereNotNull('opening_customer_credit_id')->value('gross_amount'))->toEqual(300000)
+        ->and(DB::table('payments')->count())->toBe(0)
+        ->and($credits->control_totals[$world->company->id]['credits'] ?? null)->toBe('300000.00')
+        ->and($documents->state)->toBe('COMMITTED')->and(DB::table('legacy_archive_items')->where('legacy_reference', 'INV-LAMA-0')->exists())->toBeTrue();
+});
