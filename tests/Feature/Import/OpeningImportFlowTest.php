@@ -3,9 +3,12 @@
 use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\FIN\Actions\ContraOpeningFact;
 use App\Modules\INV\Actions\ReverseOpeningMovement;
+use App\Modules\OPS\Models\ImportBatch;
 use App\Support\BusinessDate;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\Str;
+use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\ImportWorld;
 use Tests\Support\RefreshDatabase;
@@ -129,4 +132,40 @@ it('recovers on a dry run run again a row the first one refused once its cause i
     $world->signOff($batch, $world->admin->id);
     $world->dryRun($batch);
     expect($batch->refresh()->admin_signoff_by)->toBeNull()->and($batch->state)->toBe('DRY_RUN_PASSED');
+});
+
+it('records the product a row created when its barcode is its last step, and takes back only the serials still in stock (Codex P1, P2; CM-33)', function () {
+    $world = ImportWorld::make();
+    $code = $world->company->code;
+    $products = $world->import('PRODUCT', [['id' => 'P9', 'jenis' => 'barang', 'nama' => 'Proyektor', 'satuan' => 'UNIT', 'serial' => 'ya', 'barcode' => '8991234567890']]);
+    $row = DB::table('import_rows')->where('import_batch_id', $products->id)->where('import_identity', 'P9')->first(['result_entity_type', 'result_entity_id']);
+    expect($row->result_entity_type)->toBe('product')->and(DB::table('products')->where('id', $row->result_entity_id)->value('name'))->toBe('Proyektor');
+
+    $world->import('LOCATION', [['id' => 'L1', 'kode' => 'RAK-P', 'nama' => 'Rak P']]);
+    $world->import('OPENING_STOCK', [['id' => 'S1', 'perusahaan' => $code, 'produk' => 'P9', 'lokasi' => 'RAK-P', 'jumlah' => '2', 'biaya' => '2000', 'serial' => 'SN-A;SN-B']]);
+    // One serial has left since the import: what is left at the rack is the other one.
+    $lot = (int) DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->value('id');
+    DB::table('serial_units')->where('serial_number', 'SN-A')->update(['state' => 'DISPATCHED', 'current_lot_id' => null, 'current_location_id' => null, 'current_condition' => null]);
+    DB::table('stock_lot_balances')->where('lot_id', $lot)->update(['qty' => '1']);
+
+    $actor = Authorization::admin([$world->company->id], ['stock.view', 'stock.reverse']);
+    $movement = (int) DB::table('stock_movements')->where('movement_type', 'OPENING')->value('id');
+    $outcome = app(ReverseOpeningMovement::class)->run((string) Str::uuid(), $actor->id, $world->company->id, $movement, [], 'Serial keliru', BusinessDate::today(), false);
+
+    expect($outcome->kind)->toBe('COMMITTED')
+        ->and(DB::table('serial_units')->where('serial_number', 'SN-B')->value('state'))->toBe('NEVER_RECEIVED')
+        ->and(DB::table('serial_units')->where('serial_number', 'SN-A')->value('state'))->toBe('DISPATCHED');
+});
+
+it('opens an older batch by its address beyond the recent list, which continues by its cursor (Codex P1; IP-18)', function () {
+    $world = ImportWorld::make();
+    $oldest = ImportBatch::factory()->create(['company_scope' => [$world->company->id]]);
+    ImportBatch::factory()->count(51)->create(['company_scope' => [$world->company->id]]);
+    $hot = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($hot, 'http://localhost:5173');
+    Vite::useHotFile($hot);
+
+    $this->actingAs($world->admin)->get("/data-master/impor?batch={$oldest->public_id}")
+        ->assertInertia(fn (AssertableInertia $page) => $page->where('batch.id', $oldest->public_id)->has('batches', 50)->whereNot('more', null));
+    @unlink($hot);
 });

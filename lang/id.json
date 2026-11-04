@@ -4151,5 +4151,6 @@
     "activity.action.OPS.LegacyArchiveItemRecorded": "Mencatat arsip dokumen lama",
     "import.totals.committed": "Total hasil impor per perusahaan",
     "import.totals.committed_note": "Dihitung dari fakta pembuka yang tercatat: stok per perusahaan sama dengan lot awalnya, piutang dengan sisa yang diimpor, kredit dengan bukti yang ditandatangani.",
-    "import.reason.failed": "gagal diproses; periksa lalu Lanjutkan"
+    "import.reason.failed": "gagal diproses; periksa lalu Lanjutkan",
+    "import.more": "Tampilkan batch yang lebih lama"
 }

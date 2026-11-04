@@ -39,7 +39,7 @@ final class OpeningImport
     }
 
     /** @return array<string, mixed> */
-    public function page(int $viewerId, ?string $chosen): array
+    public function page(int $viewerId, ?string $chosen, ?string $after = null): array
     {
         $viewer = $this->viewer($viewerId);
         $owner = $viewer->allows('import.commit');
@@ -52,25 +52,35 @@ final class OpeningImport
         }
 
         $batches = [];
-        $selected = null;
+        $query = ImportBatch::query()->orderByDesc('id');
 
-        foreach (ImportBatch::query()->orderByDesc('id')->limit(self::LIMIT * 4)->get() as $batch) {
-            if (! Batches::reaches($viewer, $batch->company_scope) || count($batches) >= self::LIMIT) {
-                continue;
-            }
-
-            $batches[] = $this->summary($batch);
-
-            if ($chosen !== null && $batch->public_id === strtolower($chosen)) {
-                $selected = $batch;
-            }
+        // PJ-20 in the query: an Admin's batches are those whose every company lies in the Admin's scope.
+        if (! $owner) {
+            $scope = array_map(fn (array $company): string => $company['id'], $companies);
+            $query->whereRaw('company_scope <@ (select coalesce(array_agg(id), array[]::bigint[]) from companies where public_id = any(?::uuid[]))', ['{'.implode(',', $scope).'}']);
         }
+
+        $before = $after === null ? null : DB::table('import_batches')->where('public_id', strtolower($after))->value('id');
+
+        if (is_numeric($before)) {
+            $query->where('id', '<', (int) $before);
+        }
+
+        $page = $query->limit(self::LIMIT + 1)->get()->all();
+
+        foreach (array_slice($page, 0, self::LIMIT) as $batch) {
+            $batches[] = $this->summary($batch);
+        }
+
+        $selected = $chosen === null ? null : $this->lookup($viewerId, $chosen);
+        $last = $batches === [] ? null : $batches[array_key_last($batches)]['id'];
 
         return [
             'can' => ['prepare' => $owner || $companies !== [], 'commit' => $owner],
             'kinds' => Kinds::codes(),
             'companies' => $companies,
             'batches' => $batches,
+            'more' => count($page) > self::LIMIT ? $last : null,
             'batch' => $selected === null ? null : $this->detail($viewer, $selected),
         ];
     }

@@ -208,6 +208,7 @@ final class MovementReversal
         $guards = [];
         $originals = self::originals($movementId);
         $left = $this->remaining($movementId, $originals);
+        $held = [];
 
         foreach (self::entries($movementId) as $entry) {
             $lot = Row::nullable($entry, 'lot_id');
@@ -224,8 +225,16 @@ final class MovementReversal
 
             // CM-33: an opening fact is corrected within the unconsumed quantity, what is still at its place.
             if ($unconsumed && ! $qty->isNegative()) {
-                $held = DB::table('stock_lot_balances as b')->where('b.lot_id', (int) $lot)->where('b.location_id', $location)->where('b.condition', $condition)->value('b.qty');
-                $take = BigDecimal::min($take, BigDecimal::of(is_string($held) ? $held : '0'));
+                if (! isset($held[$key])) {
+                    $there = DB::table('stock_lot_balances as b')->where('b.lot_id', (int) $lot)->where('b.location_id', $location)->where('b.condition', $condition)->value('b.qty');
+                    $held[$key] = BigDecimal::of(is_string($there) ? $there : '0');
+                }
+
+                $serialId = Row::nullable($entry, 'serial_unit_id');
+                $inStock = $serialId === null || DB::table('serial_units')->where('id', (int) $serialId)->where('state', 'IN_STOCK')->where('current_lot_id', (int) $lot)
+                    ->where('current_location_id', $location)->where('current_condition', $condition)->exists();
+                $take = $inStock ? BigDecimal::min($take, $held[$key]) : BigDecimal::zero();
+                $held[$key] = $held[$key]->minus($take);
             }
 
             if (! $take->isPositive()) {

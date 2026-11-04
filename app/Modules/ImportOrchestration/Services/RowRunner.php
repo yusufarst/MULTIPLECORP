@@ -64,7 +64,8 @@ final class RowRunner
                     continue;
                 }
 
-                $outcome = DrivenWork::within($commandId, $this->driver($row, $index === $last, $dryRun), fn (): Outcome => $step($commandId, $actor, $done));
+                $created = $done === [] ? null : new CommandResult($done[0]->resultType, $done[0]->resultId);
+                $outcome = DrivenWork::within($commandId, $this->driver($row, $index === $last, $dryRun, $created), fn (): Outcome => $step($commandId, $actor, $done));
 
                 if ($outcome->kind !== Outcome::COMMITTED) {
                     return ['state' => 'REFUSED', 'errors' => [['field' => '', 'reason' => 'refused', 'code' => $outcome->code ?? $outcome->kind, 'detail' => $outcome->state]]];
@@ -90,9 +91,11 @@ final class RowRunner
      *
      * @return Closure(CommandContext, CommandResult): void
      */
-    private function driver(ImportRowData $row, bool $last, bool $dryRun): Closure
+    private function driver(ImportRowData $row, bool $last, bool $dryRun, ?CommandResult $created = null): Closure
     {
-        return function (CommandContext $context, CommandResult $result) use ($row, $last, $dryRun): void {
+        return function (CommandContext $context, CommandResult $result) use ($row, $last, $dryRun, $created): void {
+            // A row of several steps records what its first step created (a product, a client unit), never a later step's barcode or price.
+            $result = $created ?? $result;
             $connection = $context->connection;
             $batch = $connection->table('import_batches')->where('id', $row->batchId)->lock('for share')->first(['state', 'committed_at']);
 

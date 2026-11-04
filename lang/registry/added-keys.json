@@ -19530,6 +19530,12 @@
             "source": "JB-07; PG-058 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "import.more": {
+            "task": "TASK-057",
+            "source": "PT-08; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

@@ -44,6 +44,7 @@ type Props = {
     kinds: string[];
     companies: { id: string; code: string; name: string }[];
     batches: Summary[];
+    more: string | null;
     batch: Detail | null;
 };
 
@@ -278,7 +279,7 @@ function Report({ batch }: { batch: Detail }) {
 
 export default function OpeningImport() {
     const { t } = useTranslation();
-    const { can, kinds, companies, batches, batch, flash } = usePage<Props & { flash: { answer?: { kind: string; text?: string } } }>().props;
+    const { can, kinds, companies, batches, more, batch, flash } = usePage<Props & { flash: { answer?: { kind: string; text?: string } } }>().props;
     const [preparing, setPreparing] = useState(false);
     const [signing, setSigning] = useState(false);
     const [committing, setCommitting] = useState(false);
@@ -318,6 +319,7 @@ export default function OpeningImport() {
                         ))}
                     </ul>
                 )}
+                {more !== null && <a href={`/data-master/impor?setelah=${more}`} className="self-start text-body text-accent-link underline underline-offset-2">{t('import.more')}</a>}
                 {batch !== null && (
                     <Card className="flex min-w-0 flex-col gap-4 p-4" data-slot="import-batch">
                         <div className="flex flex-wrap items-center justify-between gap-3">

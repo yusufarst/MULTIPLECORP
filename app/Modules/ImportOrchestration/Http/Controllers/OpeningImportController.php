@@ -35,8 +35,9 @@ final class OpeningImportController extends Controller
     public function show(Request $request): Response
     {
         $chosen = $request->query('batch');
+        $after = $request->query('setelah');
 
-        return Inertia::render('IMPORT/OpeningImport', $this->page->page(self::actor($request), is_string($chosen) ? $chosen : null));
+        return Inertia::render('IMPORT/OpeningImport', $this->page->page(self::actor($request), is_string($chosen) ? $chosen : null, is_string($after) ? $after : null));
     }
 
     public function prepare(Request $request, PrepareImport $prepare): RedirectResponse
