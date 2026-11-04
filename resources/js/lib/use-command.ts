@@ -68,7 +68,7 @@ export function useCommand<P extends Record<string, FormDataConvertible>>(url: (
                     given.kind === 'COMMITTED'
                         ? { kind: 'COMMITTED', text: given.text }
                         : given.kind === 'CONFLICT'
-                          ? { kind: 'CONFLICT', cause: given.cause === 'stale' ? 'stale' : 'recorded', text: given.text }
+                          ? { kind: 'CONFLICT', cause: given.cause === 'stale' || given.cause === 'import_outside_scope' ? given.cause : 'recorded', text: given.text }
                           : given.kind === 'PENDING'
                             ? { kind: 'PENDING', text: given.text }
                             : { kind: 'REJECTED', text: given.text },

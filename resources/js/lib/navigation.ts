@@ -97,6 +97,7 @@ export const MODULES: Entry[] = [
             { pg: 'PG-055', href: '/data-master/pemasok' },
             { pg: 'PG-056', href: '/data-master/produk' },
             { pg: 'PG-057', href: '/data-master/lokasi-rak' },
+            { pg: 'PG-058', href: '/data-master/impor', allowed: (account) => has('import.commit')(account) || scoped('import.prepare')(account) },
         ],
     },
     {
