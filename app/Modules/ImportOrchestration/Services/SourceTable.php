@@ -26,7 +26,7 @@ final class SourceTable
     private const MAXIMUM_UNCOMPRESSED_BYTES = 100 * 1024 * 1024;
 
     /** The mark a formula cell carries in place of its value: the row is refused, the cached value never read. */
-    public const FORMULA = "\0formula";
+    public const FORMULA = "\u{E000}formula";
 
     /**
      * @return list<array{number: int, cells: array<string, string>}>

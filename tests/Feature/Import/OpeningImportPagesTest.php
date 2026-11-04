@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\RequireStepUp;
+use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -146,7 +147,7 @@ it('stops the batch at a refused row, keeps what committed, and commits it once 
         ->and(DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->count())->toBe(2);
 
     // Rerunning the whole batch's commit finds every row done (BD-11).
-    \App\Modules\ImportOrchestration\Jobs\CommitImportRows::dispatchSync($batch->id);
+    CommitImportRows::dispatchSync($batch->id);
     expect(DB::table('inventory_lots')->where('acquisition_kind', 'OPENING')->count())->toBe(2);
 });
 

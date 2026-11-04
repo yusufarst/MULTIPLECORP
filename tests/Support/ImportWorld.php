@@ -10,6 +10,7 @@ use App\Modules\ImportOrchestration\Actions\CommitImport;
 use App\Modules\ImportOrchestration\Actions\DryRunImport;
 use App\Modules\ImportOrchestration\Actions\PrepareImport;
 use App\Modules\ImportOrchestration\Actions\SignOffImport;
+use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
 use App\Modules\OPS\Models\ImportBatch;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
@@ -141,6 +142,14 @@ final class ImportWorld
         $this->commit($batch);
 
         return $batch->refresh();
+    }
+
+    /** JB-07's chunk run in this process, as a racing session runs it: its word. */
+    public static function chunk(int $batchId): string
+    {
+        CommitImportRows::dispatchSync($batchId);
+
+        return 'done';
     }
 
     /** @return array<string, int> the batch's rows by state */
