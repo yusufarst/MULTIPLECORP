@@ -29,6 +29,7 @@ use App\Modules\IAM\Http\Controllers\SetPasswordController;
 use App\Modules\IAM\Http\Controllers\SignInController;
 use App\Modules\IAM\Http\Controllers\TotpEnrolmentController;
 use App\Modules\IAM\Http\Controllers\TwoFactorChallengeController;
+use App\Modules\ImportOrchestration\Http\Controllers\OpeningImportController;
 use App\Modules\INV\Http\Controllers\AdjustmentController;
 use App\Modules\INV\Http\Controllers\CountController;
 use App\Modules\INV\Http\Controllers\DiscrepancyController;
@@ -155,6 +156,14 @@ Route::post('/proyek/{id}/penawaran/jawaban', [QuotationsController::class, 'ans
 // `command_id` (CI-01).
 Route::get('/data-master/lokasi-rak', [LocationsController::class, 'show'])->middleware(['auth', 'capability:stock.view'])->name('inv.locations');
 Route::post('/data-master/lokasi-rak', [LocationsController::class, 'save'])->middleware(['auth', 'capability:warehouse.manage'])->name('inv.locations.save');
+Route::get('/data-master/impor', [OpeningImportController::class, 'show'])->middleware(['auth', 'capability:import.prepare'])->name('import.batches');
+Route::post('/data-master/impor', [OpeningImportController::class, 'prepare'])->middleware(['auth', 'capability:import.prepare'])->name('import.batches.prepare');
+Route::post('/data-master/impor/{id}/uji', [OpeningImportController::class, 'dryRun'])->whereUuid('id')->middleware(['auth', 'capability:import.prepare'])->name('import.batches.dry-run');
+Route::post('/data-master/impor/{id}/setujui', [OpeningImportController::class, 'signOff'])->whereUuid('id')->middleware(['auth', 'capability:import.prepare'])->name('import.batches.sign-off');
+Route::post('/data-master/impor/{id}/terapkan', [OpeningImportController::class, 'commit'])->whereUuid('id')->middleware(['auth', 'capability:import.commit', 'step-up'])->name('import.batches.commit');
+Route::post('/data-master/impor/{id}/batalkan', [OpeningImportController::class, 'abort'])->whereUuid('id')->middleware(['auth', 'capability:import.commit', 'step-up'])->name('import.batches.abort');
+Route::post('/gudang/riwayat-stok/{id}/koreksi-data-awal', [OpeningImportController::class, 'reverseStock'])->whereUuid('id')->middleware(['auth', 'capability:stock.reverse'])->name('inv.opening.reverse');
+Route::post('/keuangan/data-awal/{id}/koreksi', [OpeningImportController::class, 'correctFinance'])->whereUuid('id')->middleware(['auth', 'capability:finance.contra'])->name('fin.opening.correct');
 
 // TASK-038 — PG-025 *Reservasi* and its commands (WF-INV-02; AX-01; AX-02): ROUTE-025, ROUTE-184 and ROUTE-185, `stock.reserve`
 // with its prerequisites `stock.view` and `projects.view` (PERMISSIONS_MATRIX §4).
