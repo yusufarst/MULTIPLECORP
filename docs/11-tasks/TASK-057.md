@@ -8,7 +8,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 and 2026-10-20 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -257,6 +257,24 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 14. Once the row of P11Q-02 (a) is approved, "Batalkan Batch" aborts with its reason a batch that committed no row, so that none of its rows commits afterwards, and is refused for a batch with a committed row (IMP-06; PRQ-06; ADMIN_FLOW §13; TASK_PLAN §8).
 15. A batch takes as its source only an import-source upload its own preparer made; another account's upload answers as not found, proven by an authorization test — the database holds a source file to one batch, not to its preparer (DIR-089 (5); FL-01; PJ-20; IDOR).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Import/OpeningImportPagesTest.php` — a batch prepared from the preparer's own CSV with every company in scope, each malformed and repeated row surfaced with its number and reasons; `tests/Unit/Import/SourceTableTest.php` — CSV and XLSX read as data only, a formula refused, a DTD refused unread, Indonesian thousands read as such.
+- Criterion 2: `OpeningImportPagesTest` — the same source refused (C-47), a collision outside scope answered with MSG-18 alone and IMPORT_COLLISION_UNDISCLOSED written, a row whose committed twin lies outside scope INVALID with MSG-18 alone; `tests/Browser/E2E/opening-import.spec.ts` — UXS-19 on the CI stack.
+- Criterion 3: `tests/Feature/Import/OpeningImportFlowTest.php` — the dry run on the rolled-back copy, the batch *Uji Coba Lolos* only when no row is invalid, the control totals per company read from the facts the copy created, a refused row recovered when the dry run runs again; a failed run reported with "Jalankan Uji Coba Lagi".
+- Criterion 4: `OpeningImportPagesTest` — both sign-offs with their evidence before the Owner's commit, the step-up asked (423), an Admin's commit unknown; `tests/Authorization/ImportAccessTest.php`.
+- Criterion 5: `OpeningImportPagesTest` — a batch without its seed row refused with the missing type and period.
+- Criterion 6: `tests/Integration/Import/ImportCommitRacesTest.php` on real PostgreSQL sessions — two commits of one batch racing, a lost chunk swept (JB-09), one lot per legacy row; `OpeningImportPagesTest` — a whole batch rerun and a resume by another Owner creating nothing twice.
+- Criterion 7: `OpeningImportPagesTest` — a refused row stopping the batch with its reason, committed rows staying committed, the row committing once its cause is removed and another Owner resumes.
+- Criterion 8: `OpeningImportFlowTest` — a fitting legacy purchase number kept and the other drawn after the seed; `OpeningImportPagesTest` — a kept number at its seed refused (NM-08), surfaced by the dry run.
+- Criterion 9: `OpeningImportFlowTest` — opening lots with company, cost, conversion snapshot and serials in base quantities; receivables of origin OPENING with their due date or the *migrasi* bucket, outside the project invoice cap; opening credit an application source, no payment; archived documents creating no current effect.
+- Criterion 10: `ImportCommitRacesTest` — the committed facts equal to the control totals, the guards reconciled after each scenario; PG-058 shows the committed facts' totals beside the dry run's.
+- Criterion 11: `OpeningImportFlowTest` — "Koreksi Data Awal" reversing an opening stock movement with its opening basis, an opening receivable corrected down through an ENTRY_ERROR version and an opening credit contra'd once their applications are disposed, the same identity re-imported only as a duplicate.
+- Criterion 12: `OpeningImportFlowTest` — no opening fact reserves stock.
+- Criterion 13: `tests/Interaction/OpeningImportTest.php` — each NX-13 command replayed with its `command_id` returning its recorded outcome.
+- Criterion 14: `OpeningImportPagesTest` — "Batalkan Batch" with its reason aborting a batch that committed no row, none of its rows committing after, refused for a committed batch.
+- Criterion 15: `OpeningImportPagesTest` — another account's upload answering as not found.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -280,32 +298,32 @@ CAP-15 and AC-17 require day one to start from reconciled current masters, openi
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration on real PostgreSQL sessions (TL-05) and the opening-import suite (TL-16); PASS in CI
+- [x] Authorization: `import.prepare` with every company in scope, `import.commit` for the Owner, `stock.reverse` and `finance.contra` (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-058, ROUTE-213, ROUTE-214 and ROUTE-272–ROUTE-276 audited (TL-07) PASS in CI
+- [x] Interaction behavior: INT-272–INT-276 replayed, INT-275's and INT-276's step-up expiring (TL-08) PASS in CI
+- [x] Browser E2E if required: J-MIG-01 and UXS-19 (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: PG-058 in the shared components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-09, SM-12 and SM-23 as above (TL-14)
+- [x] Database safety review: no schema change; production not touched
+- [x] Final diff review: ER-06's independent review and Codex's review, each finding fixed with its test or answered
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3231fa7`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 42096583288 (push) and 42096590448 (pull request #70), every job PASS in each; TL-15 and TL-16 in the same runs
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes/RouteAuditTest.php`, PASS
+- Interaction evidence: `tests/Interaction/OpeningImportTest.php` PASS
+- Browser evidence: `E2E: PASS — Evidence: 3231fa7, CI ubuntu-24.04 run 42096583288, tests/Browser/E2E/opening-import.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-058 and its dialogs in both languages — `tests/Browser/Localization/opening-import.spec.ts` PASS; 140 keys added in each language with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — the XLSX reader is the platform's ZipArchive and XMLReader, no package added
+- Files changed: the import orchestration (`app/Modules/ImportOrchestration`: the reader, the kinds, the batch commands, the jobs, the sweep, the status read, PG-058's query and controller, its own Batch model); `Support/Command/DrivenWork` and its call in the envelope; INV's `RecordOpeningStock`, `ReverseOpeningMovement` and `MovementReversal::reverseOpening`; FIN's `RecordOpeningReceivable`, `RecordOpeningCredit` and `ContraOpeningFact`; PRJ's `RecordOpeningProject` and `ProjectRecords::create`; PUR's `RecordOpeningPurchase` and `PurchaseRecords::record`; ORG's `NumberAllocator::keep`; OPS's `RecordLegacyArchiveItem`; DOC's `EvidenceRegistry::registerOpeningSignoff`; the routes and fixtures; `config/inertia.php`'s page path; `composer.lock` (the Symfony patch update); `resources/js/Pages/IMPORT/OpeningImport.tsx`, the navigation, the badges and `use-command`; `lang/`; the tests, `tests/Support/ImportWorld.php` and the browser specs
+- Commit SHA: from the start commit to `3231fa7` on `task/TASK-057-opening-import`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. ER-06's independent review found 2 P1 — a dry run run again never recovering a row the first refused; Indonesian thousands read as decimals — and 5 P2 — sign-offs surviving a new dry run, the begun mark of a multi-step row lost, ROUTE-214 gated by the import's scope and a stock correction refused rather than limited to the unconsumed quantity, the control totals not read from the facts and the commit not re-validated —, each fixed with its test; its P3 on an unexpected row failure fixed (a FAILED reason stops the batch). Codex: one review of `4d0dc7c` — 2 P1 and 1 P2: a multi-step product row recording its last step's barcode, an older batch unreachable by its address, a serialized opening correction taking back dispatched serials —, each fixed in `15dbad9` with its test and answered on the pull request; one targeted re-review of `0ab315f` — 2 P2: PG-058's list scoped by the active companies rather than the Admin's grants, and a malformed cursor reaching the uuid column —, each fixed in `f18e8df` with its test and answered; no further review asked, the review loop's bound of one review and one targeted re-review reached. The first CI on `fed6bb5` (runs 41777208989 and 41777215779) failed in Feature and every browser layer, its root causes fixed in `0ab315f`: the Inertia testing page finder named `resources/js/pages`, absent on a case-sensitive file system, now `js/Pages`; PG-058 read the command's answer from its props, where `Inertia::flash` never puts it, and threw before its first render, now it reads `usePage().flash`; the preparation sheet's section title shared the upload field's accessible name, now *Sumber data*; UXS-19's twin fixture called `factory()` on the orchestration's Batch, which inherits no factory attribute, now `ImportBatchFactory`; the responsive spec asserts PG-058 `[desk]` (NAV-058) — readable at 390 px, its commands on the desktop only, its preparation sheet at 768 px. The CI on `0ab315f` (runs 42086516720 and 42086522443) failed in three places, fixed in `3231fa7`: TL-14's PHP audit refused nine Symfony advisories reported on 2026-11-04, after `main`'s last CI, which bar every branch — `symfony/http-foundation`, `symfony/http-kernel` and `symfony/routing` 7.4.21 → 7.4.23 and `symfony/serializer` 8.1.9 → 8.1.11, a patch update on the locked lines with no package added or removed and `composer.json` unchanged (SX-05), outside TASK-057's scope and taken in its pull request because the gate blocks its merge; PG-058's empty list offered "Siapkan Batch" on the phone, now hidden below the tablet width as PG-059's is (`[desk]`); the Admin's sign-off fixture made its account from the factory's sequence, which starts again in every request (C-49), so the second browser's run in one database met a taken e-mail, now an e-mail of its own; J-MIG-01's legacy identities are now the run's own. Executor discoveries and decisions, for Planning: (1) each row commits through its module's ordinary actions under its driven identity; a new `DrivenWork` hook in the envelope writes the import row in the same transaction as the fact; a master row whose module needs several commands (a product's serial policy, barcode, alternate unit and prices; a client unit's PIC) runs them as steps under derived identities, the row committing with the last; (2) the dry run acts as an active Owner on its rolled-back copy, so the modules' own capabilities check the rows as the commit will; (3) a likely duplicate name (PF-21) is acknowledged by the import with its reason, the preparer having reviewed the dry run; (4) the signed totals stay on the steward's signed papers — the OPENING_SIGNOFF evidence —; PG-058 shows the dry run's totals and, after the commit, the committed facts' totals beside them; no field records the signed figures; (5) LEGACY_DOCUMENT evidence is registered through the ordinary evidence pages, whose registration requires the uploader's own file, while the import writes the identified archive items; (6) an opening invoice's legacy number is kept in its OPENING billing act's reason, the schema holding no column for it; (7) "Koreksi Data Awal" runs from PG-058's committed facts — ROUTE-214 also by the opening invoice's public id —, no record page shows it yet, and ROUTE-213 cuts no reservation itself (an opening lot is reserved only after the import); (8) the dry run holds one transaction for the whole batch, to be measured at AS-04's volume in the rehearsal (IMP-13; TASK-077); (9) an opening receivable is corrected down by a new version of basis ENTRY_ERROR — the schema has no void basis for an opening correction and no contra original for an invoice. No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 
