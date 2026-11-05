@@ -28,6 +28,8 @@ final class OpeningImport
 
     private const ROWS = 200;
 
+    private const UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i';
+
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly BatchRows $rows,
@@ -54,13 +56,21 @@ final class OpeningImport
         $batches = [];
         $query = ImportBatch::query()->orderByDesc('id');
 
-        // PJ-20 in the query: an Admin's batches are those whose every company lies in the Admin's scope.
+        // PJ-20 in the query, as Batches::reaches decides one batch: an Admin's batches are those whose every company lies
+        // in the scope of the Admin's `import.prepare` — by the grants, never by the active companies a batch is prepared
+        // for, so a deactivated company's batches stay listed while its grants stand (DeactivateCompany; CS-02).
         if (! $owner) {
-            $scope = array_map(fn (array $company): string => $company['id'], $companies);
-            $query->whereRaw('company_scope <@ (select coalesce(array_agg(id), array[]::bigint[]) from companies where public_id = any(?::uuid[]))', ['{'.implode(',', $scope).'}']);
+            if (! $viewer->has('import.prepare')) {
+                $query->whereRaw('false');
+            } elseif ($viewer->scope->all) {
+                $query->whereRaw('cardinality(company_scope) > 0');
+            } else {
+                $query->whereRaw('cardinality(company_scope) > 0 and company_scope <@ ?::bigint[]', ['{'.implode(',', $viewer->scope->companyIds).'}']);
+            }
         }
 
-        $before = $after === null ? null : DB::table('import_batches')->where('public_id', strtolower($after))->value('id');
+        // An unknown or malformed cursor starts from the newest (IP-18); only a well-formed one reaches the uuid column.
+        $before = $after === null || preg_match(self::UUID, $after) !== 1 ? null : DB::table('import_batches')->where('public_id', strtolower($after))->value('id');
 
         if (is_numeric($before)) {
             $query->where('id', '<', (int) $before);
@@ -88,7 +98,7 @@ final class OpeningImport
     /** A batch the viewer reaches, by its public id; null for an unknown or denied one alike (DP-05). */
     public function lookup(int $viewerId, string $publicId): ?ImportBatch
     {
-        $batch = preg_match('/^[0-9a-f-]{36}$/i', $publicId) === 1 ? ImportBatch::query()->where('public_id', strtolower($publicId))->first() : null;
+        $batch = preg_match(self::UUID, $publicId) === 1 ? ImportBatch::query()->where('public_id', strtolower($publicId))->first() : null;
 
         return $batch !== null && Batches::reaches($this->viewer($viewerId), $batch->company_scope) ? $batch : null;
     }

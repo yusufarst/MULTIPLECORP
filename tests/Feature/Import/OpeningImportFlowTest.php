@@ -4,6 +4,8 @@ use App\Modules\DOC\Models\EvidenceDocument;
 use App\Modules\FIN\Actions\ContraOpeningFact;
 use App\Modules\INV\Actions\ReverseOpeningMovement;
 use App\Modules\OPS\Models\ImportBatch;
+use App\Modules\ORG\Actions\DeactivateCompany;
+use App\Modules\ORG\Models\Company;
 use App\Support\BusinessDate;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
@@ -167,5 +169,26 @@ it('opens an older batch by its address beyond the recent list, which continues 
 
     $this->actingAs($world->admin)->get("/data-master/impor?batch={$oldest->public_id}")
         ->assertInertia(fn (AssertableInertia $page) => $page->where('batch.id', $oldest->public_id)->has('batches', 50)->whereNot('more', null));
+    @unlink($hot);
+});
+
+it('lists an Admin\'s batches by their grants, a deactivated company\'s kept, and starts from the newest for a malformed cursor (Codex P2; PJ-20; IP-18)', function () {
+    $world = ImportWorld::make();
+    $kept = ImportBatch::factory()->create(['company_scope' => [$world->company->id]]);
+    ImportBatch::factory()->create(['company_scope' => [$world->company->id, Company::factory()->create()->id]]);
+    expect(app(DeactivateCompany::class)->run((string) Str::uuid(), $world->owner->id, $world->company->refresh(), $world->company->lock_version, 'Tidak beroperasi lagi')->kind)->toBe('COMMITTED');
+    $hot = tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($hot, 'http://localhost:5173');
+    Vite::useHotFile($hot);
+
+    // The deactivated company's batch stays listed while the Admin's grant stands; one with a company outside it never.
+    $this->actingAs($world->admin)->get('/data-master/impor')
+        ->assertInertia(fn (AssertableInertia $page) => $page->has('batches', 1)->where('batches.0.id', $kept->public_id)->where('companies', [])->where('can.prepare', false));
+
+    // A malformed cursor or batch address never reaches the uuid column: the page renders from the newest.
+    foreach (['setelah=bukan-uuid', 'setelah='.str_repeat('-', 36), 'batch='.str_repeat('-', 36)] as $query) {
+        $this->actingAs($world->admin)->get("/data-master/impor?{$query}")->assertOk()
+            ->assertInertia(fn (AssertableInertia $page) => $page->has('batches', 1)->where('batch', null));
+    }
     @unlink($hot);
 });
