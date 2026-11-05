@@ -29,7 +29,8 @@ async function prepare(page: Page, run: ImportRun | (Omit<ImportRun, 'company'> 
 test('J-MIG-01: prepares a batch, dry-runs it, signs it off with the Admin and imports it behind the step-up (WF-MIG-01; INT-272–INT-275)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await importRun(page, `impor-${String(Date.now())}`);
-    const batch = await prepare(page, run, 'LOCATION', [{ id: 'L1', kode: `RAK-${run.code}-1`, nama: 'Rak satu' }, { id: 'L2', kode: `RAK-${run.code}-2`, nama: 'Rak dua' }], 'lokasi.csv');
+    // The run's own legacy identities, so a second browser in one database imports its rows rather than meeting the first's twins.
+    const batch = await prepare(page, run, 'LOCATION', [{ id: `L1-${run.code}`, kode: `RAK-${run.code}-1`, nama: 'Rak satu' }, { id: `L2-${run.code}`, kode: `RAK-${run.code}-2`, nama: 'Rak dua' }], 'lokasi.csv');
     await expect(batch.locator('[data-status="import_batch.PREPARED"]')).toBeVisible();
 
     await batch.getByRole('button', { name: 'Jalankan Uji Coba', exact: true }).click();
@@ -64,7 +65,7 @@ test('J-MIG-01: prepares a batch, dry-runs it, signs it off with the Admin and i
 test('J-MIG-01: surfaces a malformed row with its number and reason and keeps the batch from passing (WF-MIG-01; FL-06)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await importRun(page, `impor-salah-${String(Date.now())}`);
-    const batch = await prepare(page, run, 'LOCATION', [{ id: 'L1', kode: `RAK-${run.code}-1`, nama: 'Rak satu' }, { id: 'L2', kode: '', nama: 'Tanpa kode' }], 'salah.csv');
+    const batch = await prepare(page, run, 'LOCATION', [{ id: `L1-${run.code}`, kode: `RAK-${run.code}-1`, nama: 'Rak satu' }, { id: `L2-${run.code}`, kode: '', nama: 'Tanpa kode' }], 'salah.csv');
     const problems = batch.locator('[data-slot="import-problems"]');
 
     await expect(problems).toContainText('Baris 3');

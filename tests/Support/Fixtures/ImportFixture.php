@@ -65,7 +65,19 @@ final class ImportFixture
     public static function signOff(Request $request, SignOffImport $signOff): JsonResponse
     {
         $batch = ImportBatch::query()->where('public_id', (string) $request->input('batch'))->firstOrFail();
-        $admin = Authorization::admin($batch->company_scope, ['import.prepare', 'projects.view', 'evidence.upload']);
+        // An Admin of the run's own: the factories' sequences start again in every request (C-49), so a factory's
+        // e-mail of a second run in one database may already be taken.
+        $admin = User::factory()->create(['email' => 'admin-impor-'.Str::lower(Str::random(12)).'@contoh.test']);
+        DB::table('user_roles')->insert(['user_id' => $admin->id, 'role_id' => DB::table('roles')->where('code', 'ADMIN_OPERASIONAL')->value('id'), 'granted_at' => now()]);
+
+        foreach ($batch->company_scope as $companyId) {
+            Authorization::grantCompany($admin, $companyId);
+        }
+
+        foreach (['import.prepare', 'projects.view', 'evidence.upload'] as $capability) {
+            Authorization::grant($admin, $capability);
+        }
+
         $upload = FileObject::factory()->create(['company_id' => null, 'purpose' => 'UPLOAD', 'uploaded_by' => $admin->id]);
         $outcome = $signOff->run((string) Str::uuid(), $admin->id, $batch, $upload->public_id);
 

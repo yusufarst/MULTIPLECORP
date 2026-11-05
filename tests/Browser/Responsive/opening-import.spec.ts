@@ -28,7 +28,8 @@ test('shows PG-058 without a sideways scroll at 390 px, its commands on the desk
 test('shows PG-058 and its preparation sheet without a sideways scroll at 768 px', async ({ page }) => {
     await opened(page, 768);
 
-    await page.getByRole('button', { name: 'Siapkan Batch', exact: true }).filter({ visible: true }).click();
+    // The header's command, there whether the list is empty (its empty state offers the same command) or not.
+    await page.locator('[data-slot="page-header"]').getByRole('button', { name: 'Siapkan Batch', exact: true }).click();
     await expect(page.getByRole('dialog', { name: 'Siapkan Batch' })).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
 });

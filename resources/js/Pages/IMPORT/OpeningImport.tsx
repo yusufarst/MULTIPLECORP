@@ -306,7 +306,8 @@ export default function OpeningImport() {
                 <PageHeader title={t('pages.pg_058.title')} primary={can.prepare ? <Button size="lg" onClick={() => { setPreparing(true); }}><Plus aria-hidden />{t('import.action.prepare')}</Button> : undefined} />
                 {flash.answer?.kind === 'COMMITTED' && typeof flash.answer.text === 'string' && <OutcomeMessage answer={{ kind: 'COMMITTED', text: flash.answer.text }} />}
                 <p className="text-body text-text-secondary">{t('import.intro')}</p>
-                {batches.length === 0 ? <RegionEmpty text={t('import.empty')} action={can.prepare ? <Button onClick={() => { setPreparing(true); }}>{t('import.action.prepare')}</Button> : undefined} /> : (
+                {/* PG-058 `[desk]` (NAV-058): the command on the desktop only, as the header's, so the phone reads the empty list. */}
+                {batches.length === 0 ? <RegionEmpty text={t('import.empty')} action={can.prepare ? <Button className="max-md:hidden" onClick={() => { setPreparing(true); }}>{t('import.action.prepare')}</Button> : undefined} /> : (
                     <ul role="list" className="flex min-w-0 flex-col divide-y divide-border-subtle rounded-md border border-border-subtle" data-slot="import-batches">
                         {batches.map((row) => (
                             <li key={row.id}>
