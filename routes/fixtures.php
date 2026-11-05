@@ -23,6 +23,7 @@ use Tests\Support\Fixtures\EvidenceFixture;
 use Tests\Support\Fixtures\FilesFixture;
 use Tests\Support\Fixtures\GoogleFixture;
 use Tests\Support\Fixtures\HandoverFixture;
+use Tests\Support\Fixtures\ImportFixture;
 use Tests\Support\Fixtures\InvoiceFixture;
 use Tests\Support\Fixtures\LogsFixture;
 use Tests\Support\Fixtures\NumberingFixture;
@@ -136,6 +137,12 @@ Route::middleware(['web', 'auth'])->group(function (): void {
 
     // TL-09–TL-12 (TASK-054): that company's account and project, an open purchase, a transfer proof and a supplier bill to cite on PG-049.
     Route::post('__fixtures/kas-lain', [OtherCashFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+
+    // TL-09–TL-12 (TASK-057): a company's schemes and seeds for the cutoff, an Admin's sign-off, a batch's owed job run here, a committed twin of another company.
+    Route::post('__fixtures/impor', [ImportFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/impor/setujui', [ImportFixture::class, 'signOff'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/impor/kerjakan', [ImportFixture::class, 'work'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/impor/kembar', [ImportFixture::class, 'twin'])->withoutMiddleware(PreventRequestForgery::class);
 
     // TL-09–TL-12 (TASK-055): an invoice run's project made ready to complete, or left with its unmet fulfilment for the Force Complete.
     Route::post('__fixtures/penyelesaian', [CompletionFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);

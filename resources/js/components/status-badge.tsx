@@ -154,6 +154,8 @@ export const STATUS = {
     },
     import_batch: {
         PREPARED: f('status.import_batch.prepared', 'neutral', CircleDashed),
+        DRY_RUN_RUNNING: f('status.import_batch.dry_run_running', 'info', Ellipsis),
+        DRY_RUN_FAILED: f('status.import_batch.dry_run_failed', 'warning', CirclePause),
         DRY_RUN_PASSED: f('status.import_batch.dry_run_passed', 'info', CircleCheck),
         SIGNED_OFF: f('status.import_batch.signed_off', 'info', BadgeCheck),
         COMMITTING: f('status.import_batch.committing', 'info', Ellipsis),

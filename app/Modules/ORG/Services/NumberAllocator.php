@@ -54,6 +54,48 @@ final class NumberAllocator
     }
 
     /**
+     * An opening record's legacy number kept when it fits the company's scheme on its business date (`DIR-079` CB-01;
+     * NM-08): the number the scheme formats for one of the digit runs it holds, in that date's period — null when it
+     * fits none, the record then drawing its number. A kept number must lie below its period's committed seed, the
+     * counter's first number after every legacy number (NM-03), or it is REJECTED, so no number is ever issued twice.
+     */
+    public function keep(CommandContext $context, int $companyId, SequenceType $type, string $businessDate, string $legacy): ?DrawnNumber
+    {
+        $scheme = $this->state->schemeOn($companyId, $type, $businessDate);
+
+        if ($scheme === null) {
+            return null;
+        }
+
+        $period = NumberingPeriod::of($businessDate, $scheme->period_granularity);
+        preg_match_all('/\d+/', $legacy, $runs);
+        $sequence = null;
+
+        foreach (array_unique($runs[0]) as $run) {
+            $candidate = (int) $run;
+
+            if ($candidate > 0 && NumberFormat::format($scheme->format_template, $period->key, $candidate) === $legacy) {
+                $sequence = $candidate;
+                break;
+            }
+        }
+
+        if ($sequence === null) {
+            return null;
+        }
+
+        $key = ['company_id' => $companyId, 'sequence_type' => $type->value, 'period_key' => $period->key];
+        $context->lock((new LockSet)->add('number_sequences', $key));
+        $seed = $context->connection->table('number_sequences')->where($key)->value('seed_value');
+
+        if (! is_numeric($seed) || $sequence >= (int) $seed) {
+            throw Refused::rejected('NM-08', ['nomor' => $legacy, 'periode' => $period->key]);
+        }
+
+        return new DrawnNumber($scheme->id, $period->key, $sequence, $legacy);
+    }
+
+    /**
      * The counter's lock (LK-31) for a command that reads its clock before it draws — an invoice's issue and correction write their record first (AX-16; AX-22) —, so
      * the draw finds it held; none where the day has no scheme, whose draw is REJECTED (C-10).
      */

@@ -2,6 +2,7 @@
 
 namespace App\Modules\DOC\Services;
 
+use App\Modules\DOC\Data\EvidenceIdentity;
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\DOC\Data\FileFamilies;
 use App\Modules\DOC\Models\EvidenceBalance;
@@ -11,6 +12,7 @@ use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Data\Authority;
 use App\Support\Audit\AuditRecorder;
 use App\Support\Audit\AuthorityClass;
+use App\Support\BusinessDate;
 use App\Support\Command\CommandContext;
 use App\Support\Command\CommandEnvelope;
 use App\Support\Command\CommandLog;
@@ -335,6 +337,34 @@ final class EvidenceRegistry
     }
 
     /** A version's row — the next number of its evidence —, its file the actor's own upload. */
+    /**
+     * The opening import's sign-off evidence (L-33; PJ-20): the signer's own pool upload registered as pool OPENING_SIGNOFF
+     * evidence with its version and guard, linked to the import batch; its public id. The import orchestration signs
+     * through it — RegisterEvidence refuses the type.
+     */
+    public function registerOpeningSignoff(CommandContext $context, FileObject $file, int $batchId, string $batchPublicId): string
+    {
+        $now = $context->now();
+        $actor = $context->request->actorUserId;
+        $name = DB::table('users')->where('id', $actor)->value('name');
+        $issuer = is_string($name) ? $name : 'Owner';
+        $evidence = new EvidenceDocument;
+        $evidence->forceFill([
+            'evidence_scope' => 'POOL', 'company_id' => null, 'evidence_type' => 'OPENING_SIGNOFF', 'declared_issuer' => $issuer, 'issuer_reference' => null,
+            'document_date' => BusinessDate::today(), 'identity_key' => EvidenceIdentity::key($issuer, 'OPENING_SIGNOFF', $batchPublicId, BusinessDate::today()),
+            'proven_amount' => null, 'command_id' => $context->request->commandId, 'command_line_no' => 1, 'recorded_at' => $now, 'recorded_by' => $actor,
+        ])->save();
+        $version = $this->addVersion($context, $evidence, $file, null, $now);
+        $evidence->forceFill(['current_version_id' => $version->id])->save();
+        $this->bearGuard($evidence, null, $now);
+        $context->connection->table('evidence_links')->insert([
+            'evidence_document_id' => $evidence->id, 'evidence_scope' => 'POOL', 'company_id' => null, 'role' => 'PRIMARY_PROOF', 'import_batch_id' => $batchId,
+            'command_id' => $context->request->commandId, 'command_line_no' => 2, 'recorded_at' => $now, 'recorded_by' => $actor,
+        ]);
+
+        return $evidence->public_id;
+    }
+
     public function addVersion(CommandContext $context, EvidenceDocument $evidence, FileObject $file, ?string $reason, CarbonImmutable $now): EvidenceDocumentVersion
     {
         $last = EvidenceDocumentVersion::query()->where('evidence_document_id', $evidence->id)->max('version_no');

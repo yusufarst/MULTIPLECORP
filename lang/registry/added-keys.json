@@ -18696,6 +18696,846 @@
             "source": "LG-01 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "import.intro": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.empty": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.form.intro": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.form.batch": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.form.choose": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.form.source": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.form.companies_first": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.kind": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.cutoff": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.companies": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.company": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.source": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.source_limits": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.signoff": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.signoff_limits": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.value": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.value_help": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.amount": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.field.amount_help": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.prepare": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.dry_run": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.dry_run_again": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.sign_off": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.commit": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.resume": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.abort": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.action.correct": {
+            "task": "TASK-057",
+            "source": "CM-33; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.CLIENT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.CLIENT_UNIT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.SUPPLIER": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.PRODUCT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.LOCATION": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.OPENING_STOCK": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.OPEN_PROJECT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.OPEN_PURCHASE": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.OPENING_RECEIVABLE": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.OPENING_CREDIT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.kind.LEGACY_DOCUMENT": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.count.VALID": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.count.INVALID": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.count.DUPLICATE": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.count.SKIPPED": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.count.COMMITTED": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.title": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.note": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.stock_qty": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.stock_cost": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.receivables": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.credits": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.problems.title": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.problems.row": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.report.running": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.report.failed": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.progress": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.stopped": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.signoff.admin": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.signoff.owner": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.signoff.none": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.signoff.intro": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.prepared_by": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.facts.title": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.facts.never_again": {
+            "task": "TASK-057",
+            "source": "CM-33; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.confirm.commit": {
+            "task": "TASK-057",
+            "source": "MSG-39; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.confirm.abort": {
+            "task": "TASK-057",
+            "source": "MSG-39; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.confirm.correct": {
+            "task": "TASK-057",
+            "source": "MSG-39; CM-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.prepared": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.dry_run": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.signed": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.committing": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.aborted": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.answer.corrected": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.same_file": {
+            "task": "TASK-057",
+            "source": "C-47 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.same_source": {
+            "task": "TASK-057",
+            "source": "C-47 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.seed": {
+            "task": "TASK-057",
+            "source": "NM-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.signed": {
+            "task": "TASK-057",
+            "source": "L-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.unsigned": {
+            "task": "TASK-057",
+            "source": "L-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.state": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.committed": {
+            "task": "TASK-057",
+            "source": "IMP-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.correction_applications": {
+            "task": "TASK-057",
+            "source": "CM-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.correction_state": {
+            "task": "TASK-057",
+            "source": "CM-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.correction_value": {
+            "task": "TASK-057",
+            "source": "CM-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.correction_unknown": {
+            "task": "TASK-057",
+            "source": "CM-33 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.moved_on": {
+            "task": "TASK-057",
+            "source": "C-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.above_net": {
+            "task": "TASK-057",
+            "source": "C-45 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.refusal.not_opening": {
+            "task": "TASK-057",
+            "source": "C-55 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.empty": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.header": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.unreadable": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.encoding": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.package": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.rows": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.columns": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.source.cell": {
+            "task": "TASK-057",
+            "source": "FL-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.required": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.unknown": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.too_short": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.too_long": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.date": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.future": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.validation.number": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.required": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.too_long": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.number": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.scale": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.zero": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.negative": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.date": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.choice": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.formula": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.extra_column": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.repeat": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.committed": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.reference": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.company_scope": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.before": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.serial_policy": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.format": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.refused": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.denied": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.in_progress": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "status.import_batch.dry_run_running": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "status.import_batch.dry_run_failed": {
+            "task": "TASK-057",
+            "source": "ADMIN_FLOW §13; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.BatchPrepared": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.DryRunRequested": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.BatchSignedOff": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.CommitRequested": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.CommitResumed": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.BatchAborted": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.IMPORT.NumberSeedCommitted": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.OpeningStockRecorded": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.INV.OpeningMovementReversed": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.OpeningReceivableRecorded": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.OpeningReceivableCorrected": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.OpeningCreditRecorded": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.FIN.OpeningCreditContraed": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "activity.action.OPS.LegacyArchiveItemRecorded": {
+            "task": "TASK-057",
+            "source": "PT-18 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.committed": {
+            "task": "TASK-057",
+            "source": "IMP-11; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.totals.committed_note": {
+            "task": "TASK-057",
+            "source": "IMP-11; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.reason.failed": {
+            "task": "TASK-057",
+            "source": "JB-07; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "import.more": {
+            "task": "TASK-057",
+            "source": "PT-08; PG-058 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }

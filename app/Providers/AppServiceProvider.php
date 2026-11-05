@@ -29,6 +29,8 @@ use App\Modules\FUL\Services\ServiceHandoverSubjects;
 use App\Modules\FUL\Services\ShipmentNoteSubjects;
 use App\Modules\IAM\Policies\CapabilityGates;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ImportOrchestration\Queries\ImportStatus;
+use App\Modules\ImportOrchestration\Sweeps\ImportSweep;
 use App\Modules\INV\Services\ReceivingSubjects;
 use App\Modules\INV\Services\ReservationLifecycle;
 use App\Modules\INV\Services\ReservationObligations;
@@ -46,6 +48,7 @@ use App\Modules\PRJ\Services\SpkSubjects;
 use App\Modules\PUR\Queries\PurchaseProject;
 use App\Modules\PUR\Services\PurchasePredicate;
 use App\Modules\PUR\Services\PurchaseSubjects;
+use App\Support\Jobs\OwedWork;
 use App\Support\Localization\Locales;
 use App\Support\Status\StatusRead;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -75,7 +78,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bindIf(RenditionTemplate::class, MustacheTemplates::class);
 
         // ROUTE-285's kinds; the export and import kinds join with TASK-060 and TASK-057 (TASK-022).
-        $this->app->tag([RenditionStatus::class], StatusRead::TAG);
+        $this->app->tag([RenditionStatus::class, ImportStatus::class], StatusRead::TAG);
+        $this->app->tag([ImportSweep::class], OwedWork::TAG);
 
         // The issuing modules' document subjects (ARCHITECTURE §3): PRJ's quotation and company HPS (TASK-033), its company SPK (TASK-034).
         $this->app->tag([QuotationSubjects::class, SpkSubjects::class], DocumentSubjectProvider::TAG);

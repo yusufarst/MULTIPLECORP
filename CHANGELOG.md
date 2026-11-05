@@ -817,3 +817,9 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-056 on its branch `task/TASK-056-project-cancellation`: PG-011's "Batalkan Proyek" (ROUTE-163; AX-27) moving an ACTIVE project to CANCELLED with its reason under the project's lock and releasing every active reservation in the same action; the dialog listing the companion corrections for what is actually being undone as links to their own commands, none performed; the cancelled record's reason, actor, date and the obligations that stay true.
 - Every check passed in fresh CI on `4b54ccd`. TASK-056 DONE — progress 58 / 87 —; TASK-057, TASK-058, TASK-059 and TASK-060 READY.
+
+## Unreleased — 2026-11-06, TASK-057 — Opening import — preparation, dry run, sign-off and commit
+
+- Built TASK-057 on its branch `task/TASK-057-opening-import`: PG-058 *Impor Data Awal* — "Siapkan Batch" from a UTF-8 CSV or XLSX read as data only, the dry run on a rolled-back copy with the control totals per company, the Admin's and the Owner's sign-off, the Owner's commit behind the step-up row by row through each module's ordinary actions with deterministic identities in resumable chunks, its numbering seeds first, and the abort of a batch that committed no row; the eleven import kinds of IMP-01 with their opening facts; "Koreksi Data Awal" on opening stock, receivables and credit (CM-33).
+- Updated the locked `symfony/http-foundation`, `symfony/http-kernel` and `symfony/routing` to 7.4.23 and `symfony/serializer` to 8.1.11 for the Symfony advisories of 2026-11-04 that TL-14's PHP audit refuses (SX-05); no package added or removed.
+- Every check passed in fresh CI on `3231fa7`. TASK-057 DONE — progress 59 / 87 —; TASK-058, TASK-059 and TASK-060 READY.

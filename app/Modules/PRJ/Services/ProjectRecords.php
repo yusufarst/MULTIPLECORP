@@ -72,7 +72,8 @@ final class ProjectRecords
      *
      * @throws Refused C-54 for an inactive company; C-10 when the period may create no counter (NM-03)
      */
-    public function create(CommandContext $context, ProjectInput $input, string $businessDate): Project
+    /** `$importRow`: an open project of the opening import, of origin OPENING and keyed to its row (DATABASE §24; C-47). */
+    public function create(CommandContext $context, ProjectInput $input, string $businessDate, ?int $importRow = null): Project
     {
         $this->companies->ensureOpenForNewBusiness($context, $input->companyId);
         $this->ensureLink($context, $input);
@@ -86,6 +87,8 @@ final class ProjectRecords
             'project_number' => $drawn->formatted,
             'period_key' => $drawn->periodKey,
             'sequence_no' => $drawn->sequenceNo,
+            'origin' => $importRow === null ? 'LIVE' : 'OPENING',
+            'import_row_id' => $importRow,
             'state' => 'DRAFT',
             'command_id' => $context->request->commandId,
             'command_line_no' => 1,
