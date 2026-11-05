@@ -4018,7 +4018,7 @@
     "import.form.intro": "Upload the source file, choose the kind of data, the cutoff date and its companies. The file is read as data only.",
     "import.form.batch": "Batch",
     "import.form.choose": "Choose",
-    "import.form.source": "Source file",
+    "import.form.source": "Source data",
     "import.form.companies_first": "Choose the companies first, then upload the file.",
     "import.field.kind": "Kind of data",
     "import.field.cutoff": "Cutoff date",

@@ -13,6 +13,7 @@ use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\ORG\Services\NumberingState;
 use Carbon\CarbonImmutable;
+use Database\Factories\OPS\ImportBatchFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -91,8 +92,11 @@ final class ImportFixture
     /** A committed opening stock row of another company under the identity given, the twin a batch of this company collides with (UXS-19). */
     public static function twin(Request $request): JsonResponse
     {
-        $company = Company::factory()->create();
-        $batch = ImportBatch::factory()->create(['import_kind' => 'OPENING_STOCK', 'company_scope' => [$company->id], 'state' => 'COMMITTED']);
+        // Their own identities: the factories' sequences start again in every request (C-49).
+        $tag = Str::upper(Str::random(8));
+        $company = Company::factory()->create(['code' => "K{$tag}", 'legal_name' => "CV Kembar {$tag}"]);
+        // The factory of the batch's own table: the orchestration's Batch inherits no factory attribute.
+        $batch = ImportBatchFactory::new()->createOne(['import_kind' => 'OPENING_STOCK', 'source_sha256' => hash('sha256', "kembar-{$tag}"), 'company_scope' => [$company->id], 'state' => 'COMMITTED']);
         DB::table('import_rows')->insert([
             'import_batch_id' => $batch->id, 'row_number' => 2, 'import_kind' => 'OPENING_STOCK', 'import_identity' => (string) $request->input('identity'), 'company_id' => $company->id,
             'normalized_payload' => '{}', 'validation_state' => 'COMMITTED', 'recorded_at' => now(), 'updated_at' => now(),

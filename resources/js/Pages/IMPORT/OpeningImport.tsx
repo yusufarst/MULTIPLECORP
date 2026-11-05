@@ -279,7 +279,9 @@ function Report({ batch }: { batch: Detail }) {
 
 export default function OpeningImport() {
     const { t } = useTranslation();
-    const { can, kinds, companies, batches, more, batch, flash } = usePage<Props & { flash: { answer?: { kind: string; text?: string } } }>().props;
+    const { can, kinds, companies, batches, more, batch } = usePage<Props>().props;
+    // The command's answer is the page's flash data, never a prop (Inertia::flash).
+    const flash = usePage().flash as { answer?: { kind?: unknown; text?: unknown } };
     const [preparing, setPreparing] = useState(false);
     const [signing, setSigning] = useState(false);
     const [committing, setCommitting] = useState(false);

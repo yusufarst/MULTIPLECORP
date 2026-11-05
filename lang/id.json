@@ -4018,7 +4018,7 @@
     "import.form.intro": "Unggah file sumber, pilih jenis data, tanggal batas dan perusahaannya. File dibaca sebagai data saja.",
     "import.form.batch": "Batch",
     "import.form.choose": "Pilih",
-    "import.form.source": "File sumber",
+    "import.form.source": "Sumber data",
     "import.form.companies_first": "Pilih perusahaan terlebih dahulu, lalu unggah file.",
     "import.field.kind": "Jenis data",
     "import.field.cutoff": "Tanggal batas",

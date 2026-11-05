@@ -30,13 +30,13 @@ test('J-MIG-01: prepares a batch, dry-runs it, signs it off with the Admin and i
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await importRun(page, `impor-${String(Date.now())}`);
     const batch = await prepare(page, run, 'LOCATION', [{ id: 'L1', kode: `RAK-${run.code}-1`, nama: 'Rak satu' }, { id: 'L2', kode: `RAK-${run.code}-2`, nama: 'Rak dua' }], 'lokasi.csv');
-    await expect(batch).toContainText('Disiapkan');
+    await expect(batch.locator('[data-status="import_batch.PREPARED"]')).toBeVisible();
 
     await batch.getByRole('button', { name: 'Jalankan Uji Coba', exact: true }).click();
     await expect(page.locator('#konten')).toContainText('Uji coba dijalankan.');
     const id = batchOf(page);
     await work(page, id);
-    await expect(batch).toContainText('Uji Coba Lolos');
+    await expect(batch.locator('[data-status="import_batch.DRY_RUN_PASSED"]')).toBeVisible();
 
     await batch.getByRole('button', { name: 'Setujui Hasil Uji Coba' }).click();
     const sheet = page.getByRole('dialog', { name: 'Setujui Hasil Uji Coba' });
@@ -46,7 +46,7 @@ test('J-MIG-01: prepares a batch, dry-runs it, signs it off with the Admin and i
     await expect(page.locator('#konten')).toContainText('Persetujuan dicatat.');
     await adminSignOff(page, id);
     await page.reload();
-    await expect(batch).toContainText('Disetujui Bersama');
+    await expect(batch.locator('[data-status="import_batch.SIGNED_OFF"]')).toBeVisible();
 
     await batch.getByRole('button', { name: 'Jalankan Impor' }).click();
     const confirm = page.getByRole('alertdialog', { name: 'Jalankan Impor' });
@@ -57,7 +57,7 @@ test('J-MIG-01: prepares a batch, dry-runs it, signs it off with the Admin and i
     await stepUp.getByRole('button', { name: 'Lanjutkan' }).click();
     await expect(page.locator('#konten')).toContainText('Impor dijalankan.');
     await work(page, id);
-    await expect(batch).toContainText('Selesai Diimpor');
+    await expect(batch.locator('[data-status="import_batch.COMMITTED"]')).toBeVisible();
     await expect(batch.locator('[data-slot="import-counts"]')).toContainText('Terimpor');
 });
 
@@ -70,8 +70,9 @@ test('J-MIG-01: surfaces a malformed row with its number and reason and keeps th
     await expect(problems).toContainText('Baris 3');
     await expect(problems).toContainText('kode: wajib diisi');
     await batch.getByRole('button', { name: 'Jalankan Uji Coba', exact: true }).click();
+    await expect(page.locator('#konten')).toContainText('Uji coba dijalankan.');
     await work(page, batchOf(page));
-    await expect(batch).toContainText('Disiapkan');
+    await expect(batch.locator('[data-status="import_batch.PREPARED"]')).toBeVisible();
     await expect(batch.getByRole('button', { name: 'Jalankan Uji Coba Lagi' })).toBeVisible();
 });
 
