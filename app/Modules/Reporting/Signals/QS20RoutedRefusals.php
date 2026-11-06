@@ -2,6 +2,7 @@
 
 namespace App\Modules\Reporting\Signals;
 
+use App\Modules\OPS\Data\AuditCodes;
 use App\Support\RecordAddress;
 use App\Support\Search\Row;
 use Illuminate\Database\Query\Builder;

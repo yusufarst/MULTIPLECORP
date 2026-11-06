@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\Reporting\Signals;
+namespace App\Modules\OPS\Data;
 
 /**
  * The audit action codes the review signals read (PF-10; DIR-088): the acknowledged variant — a duplicate warning
