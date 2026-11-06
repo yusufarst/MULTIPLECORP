@@ -56,7 +56,7 @@ async function enrolNewDevice(page: Page): Promise<void> {
     expect(await page.evaluate(() => JSON.stringify(window.history.state))).not.toContain(key);
 
     await page.getByRole('button', { name: 'Lanjutkan' }).click();
-    await page.waitForURL((url) => url.pathname === '/');
+    await page.waitForURL((url) => ['/beranda', '/pekerjaan'].includes(url.pathname));
 }
 
 test('signs in with the password and then one code, a wrong code answered generically (ROUTE-002, ROUTE-104; AU-16)', async ({ page }) => {
@@ -72,7 +72,7 @@ test('signs in with the password and then one code, a wrong code answered generi
 
     await page.getByLabel('Kode 6 digit dari aplikasi autentikator').fill(totp(key ?? ''));
     await page.getByRole('button', { name: 'Verifikasi' }).click();
-    await page.waitForURL((url) => url.pathname === '/');
+    await page.waitForURL((url) => ['/beranda', '/pekerjaan'].includes(url.pathname));
     await expect(page.getByRole('button', { name: /Menu akun/ })).toContainText('Rani Uji');
 });
 
