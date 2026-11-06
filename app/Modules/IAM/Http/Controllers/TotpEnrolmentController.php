@@ -60,7 +60,8 @@ final class TotpEnrolmentController
             return TwoFactorAnswers::mismatch($request);
         }
 
-        return Inertia::render('Auth/TotpEnrolment', ['stage' => 'codes', 'replacing' => false])
+        // "Lanjutkan" then loads the landing page of ROUTE-104 (TASK-058).
+        return Inertia::render('Auth/TotpEnrolment', ['stage' => 'codes', 'replacing' => false, 'landing' => Landing::of($request->user())])
             ->flash(['recovery_codes' => $codes])
             ->toResponse($request);
     }
