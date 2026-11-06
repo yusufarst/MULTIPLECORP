@@ -8,7 +8,7 @@ Amendment: on 2026-10-20 the Owner's decision [DIR-088](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -235,6 +235,22 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 12. A new Admin without any company grant sees MSG-38 on *Pekerjaan* and nothing above S0 (RG-04; J-ACC-01).
 13. IX-13's partial indexes over the acknowledged and the routed action codes, and the routed codes' `(command_id)` index, exist with the literal lists QS-14, QS-20 and QS-21's queries write, and each query uses its index in `EXPLAIN`; no code is invented (DIR-088; PERFORMANCE §12).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: each signal a Reporting query class of one statement — a branch per company of its audience, each bounded at 21 rows, a pool signal one branch — `tests/Feature/Reporting/HomePagesTest.php` (another company's rows never read, counts per company) and `tests/Performance/HomeQueriesTest.php` (the statements per group); QS-08, QS-12's bank lines and QS-20's every-company test the three reads beyond scope, returning nothing from there.
+- Criterion 2: `HomePagesTest` — Pekerjaan's groups by read class, billing only with `finance.view`, the project part of a line hidden without `projects.view`; QS-14, QS-23 and the attribution parts of QS-18 and QS-22 read only with their Owner capabilities, QS-20 only with every affected company in scope.
+- Criterion 3: `HomePagesTest` and `tests/Browser/E2E/home.spec.ts` — an Admin's `/beranda` and `/tinjauan` the not-found page, no entry for either.
+- Criterion 4: the signals read the guards and facts at each read, nothing stored; `HomePagesTest` — a reservation committed moves the line from QS-01 to QS-24 at the next read.
+- Criterion 5: each row's address by the viewer's capability (INT-019), `HomePagesTest` — PG-025 for `stock.reserve`, no link without the record's view; a record gone out of scope answers MSG-09 on its own page.
+- Criterion 6: `HomeQueriesTest` — G1 ≤ 10, each signal group ≤ 12, G5 ≤ 7 statements, its six reads in one REPEATABLE READ snapshot; QB-10's 1 s is TASK-068's and TASK-079's on staging.
+- Criterion 7: the one-company view's *Umur piutang* chart of defined values with its table, the *migrasi* bucket included; the KPIs label and value only.
+- Criterion 8: `OwnerNotices` — one bounded statement over the security events since the Owner's previous sign-in, neutral types with time and link, nothing marked read.
+- Criterion 9: `tests/Feature/OPS/ReviewQueueTest.php` and `home.spec.ts` — *Tinjauan*'s four tabs, the undisclosed items with both records, newest first within the window, the divider, "Muat Lagi" skipping nothing, no approve, dismiss or read control.
+- Criterion 10: row lists and one figures table, the operational queues folded; no KPI wall, decorative chart, banner or greeting.
+- Criterion 11: "Muat Ulang" and a poll every 60 s naming the groups' props, sent as an async request the client marks background (RB-05), never extending the session.
+- Criterion 12: `HomePagesTest` — an account without a company grant sees MSG-38 on Pekerjaan and no group.
+- Criterion 13: `HomePagesTest` — IX-13's three partial indexes over the literal code lists the queries write; `HomeQueriesTest` — QS-20's and QS-21's plans use them.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -258,32 +274,32 @@ CAP-17 and AC-23 give the Owner group and company summaries and every Admin the 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Feature (TL-04) and Performance (TL-15) PASS in CI
+- [x] Authorization: OWNER_ONLY views, read classes per group and signal (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-006, ROUTE-007 and ROUTE-008 audited (TL-07) PASS in CI
+- [x] Interaction behavior: the landing page of ROUTE-104 and the row addresses (TL-08) PASS in CI
+- [x] Browser E2E if required: the home pages and the review queue (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the shared signal groups and tables (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01, SM-04, SM-23 and SM-25 as above (TL-14)
+- [x] Database safety review: expand-only partial indexes; production not touched
+- [x] Final diff review: Codex's review, each finding fixed with its test and answered
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `3679c2f`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 42259130068 (push) and 42259143287 (pull request #71), every job PASS in each
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php`, `tests/Routes` PASS
+- Interaction evidence: `tests/Interaction` PASS — the sign-in tests landing on ROUTE-104's page
+- Browser evidence: `E2E: PASS — Evidence: 3679c2f, CI ubuntu-24.04 run 42259130068, tests/Browser/E2E/home.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-006–PG-008 in both languages — `tests/Browser/Localization/home.spec.ts` PASS; 83 keys added in each language with their registry rows, proposed copy
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — `recharts` 3.8.0 (MIT) installed project-locally, recorded in TOOLCHAIN
+- Files changed: `app/Modules/Reporting` (the signal register, `Beranda`, `WorkQueue`, `HomeGroups`, `OwnerNotices`, `PeriodFigures`, `HomeController`); OPS's `ReviewQueue`, `ReviewController` and `Data/AuditCodes`; IAM's `PreviousSignIn` and `Authentication/Landing` with the sign-in redirects; `app/Support/RecordAddress.php`; the routes; the IX-13 migration; `resources/js` (the three pages, `features/home`, `components/ui/chart.tsx`, the signal group, the navigation); `lang/`; `package.json`; TOOLCHAIN; the tests
+- Commit SHA: from the start commit to `3679c2f` on `task/TASK-058-home-work-review`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. Codex: one review of `b43dc5d` — 3 P2: QS-15 bounding the ACTIVE projects before judging them, the review cursor losing its microseconds, Beranda's decisions unreachable on the phone —, each fixed in `57ad10b` with its test where one applies and answered; one targeted re-review of `8e62404` — 1 P2: the phone's decisions not folded after two rows —, fixed in `6c2e622` and answered; no further review asked, the review loop's bound of one review and one targeted re-review reached. The first CI on `b43dc5d` failed on tests that still expected the unserved `/` after sign-in and on BootTest's route registry; fixed in `8e62404`; the CI on `8e62404` found the enrolment's "Lanjutkan" still loading the root, fixed in `3679c2f` by the landing page from the server. On `3679c2f` the pull request run's failed jobs were run once more for two WebKit specs this Task does not touch — Administration's E2E and Stock's responsive check, both passing in the push run of the same commit —, then passed. Executor discoveries and decisions, for Planning: (1) no route served `/`, where every sign-in landed; ROUTE-104's landing page — PG-006 with `review.view`, otherwise PG-007 — now answers each sign-in, a recovery code, an enrolment and a signed-in account opening a sign-in page, with no new route; (2) QS-20's refused action is stored only in `metadata.routed_action`, which a signal may not read: QS-20 names the routed code and the target event, the other companies' events carrying the entity type `company`; (3) a row whose committed twin lies outside the preparer's scope is INVALID with an IMPORT_COLLISION_UNDISCLOSED event, never DUPLICATE: *Tinjauan*'s *Keamanan* tab lists the event and its *Impor* tab the commit-time DUPLICATE rows; (4) the built IX-07 index also covers RENDERING, which DATABASE §20 does not list; (5) no index finds a released reservation by its line, so QS-04 reaches the CUT events through the open lines of QS-01; (6) QS-15 judges every ACTIVE project of a company — its open root — and bounds only the blocked ones; (7) the four KPIs and the figures table read G5: *Gabungan* only with `reports.consolidated`, otherwise each company's row; "Rincian angka" appears once PG-052 is built (TASK-060). No approved document changed by this Task
 
 **SAFE NEXT TASK:**
 
