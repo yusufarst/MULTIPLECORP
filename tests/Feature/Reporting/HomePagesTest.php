@@ -5,6 +5,7 @@ use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Data\AuditCodes;
 use App\Modules\Reporting\Queries\HomeGroups;
+use App\Modules\Reporting\Signals\Context;
 use App\Modules\Reporting\Signals\QS01UnreservedDemand;
 use App\Modules\Reporting\Signals\QS02Shortage;
 use App\Modules\Reporting\Signals\QS23OverdueProjects;
@@ -33,7 +34,7 @@ afterEach(function () {
     @unlink($this->hot);
 });
 
-function homeContext(int $userId, ?string $view = null): App\Modules\Reporting\Signals\Context
+function homeContext(int $userId, ?string $view = null): Context
 {
     return app(HomeGroups::class)->context(app(EffectiveCapabilities::class)->for($userId), $view);
 }
