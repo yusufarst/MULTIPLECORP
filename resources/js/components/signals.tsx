@@ -11,7 +11,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useTranslation } from '@/lib/i18n';
 import { cn } from '@/lib/utils';
 
-export type SignalRow = { id: string; condition: ReactNode; company: string; subject: ReactNode; age: ReactNode; href: string };
+export type SignalRow = { id: string; condition: ReactNode; company: string; subject: ReactNode; age: ReactNode; href: string | null };
 export type SignalState = { phase: 'loading' } | { phase: 'error'; reference: string } | { phase: 'ready'; rows: SignalRow[] };
 
 // PT-21's signal group and queue row (DESIGN_SYSTEM §9.5): the heading with its bounded per-company counts ("20+")
@@ -31,7 +31,8 @@ export function SignalGroup({
     counts: { company: string; count: string }[];
     state: SignalState;
     empty: string;
-    seeAll: string;
+    /** The worklist behind "Lihat Semua"; none where the signal has no list of its own. */
+    seeAll?: string | null;
     onReload: () => void;
 }) {
     const { t } = useTranslation();
@@ -49,9 +50,11 @@ export function SignalGroup({
                             <Icon icon={ChevronDown} size="sm" className="text-text-tertiary group-data-[panel-open]/signal:rotate-180 md:hidden" />
                         </CollapsibleTrigger>
                     </h3>
-                    <TextLink href={seeAll} className="shrink-0 text-label">
-                        {t('actions.see_all')}
-                    </TextLink>
+                    {seeAll !== undefined && seeAll !== null && (
+                        <TextLink href={seeAll} className="shrink-0 text-label">
+                            {t('actions.see_all')}
+                        </TextLink>
+                    )}
                 </div>
                 <CollapsiblePanel keepMounted className="max-md:data-[closed]:hidden md:block!">
                     {state.phase === 'loading' && <RegionLoading />}
@@ -62,10 +65,14 @@ export function SignalGroup({
                             {state.rows.slice(0, 5).map((row) => (
                                 <li key={row.id} className="flex min-h-row min-w-0 flex-wrap items-center gap-x-3 gap-y-1 py-2 md:min-h-control-lg">
                                     <span className="text-body text-text-primary">{row.condition}</span>
-                                    <CompanyTag code={row.company} />
-                                    <TextLink href={row.href} className="min-w-0 truncate">
-                                        {row.subject}
-                                    </TextLink>
+                                    {row.company !== '' && <CompanyTag code={row.company} />}
+                                    {row.href === null ? (
+                                        <span className="min-w-0 truncate text-body text-text-primary">{row.subject}</span>
+                                    ) : (
+                                        <TextLink href={row.href} className="min-w-0 truncate">
+                                            {row.subject}
+                                        </TextLink>
+                                    )}
                                     <span className="ml-auto text-caption whitespace-nowrap text-text-tertiary">{row.age}</span>
                                 </li>
                             ))}

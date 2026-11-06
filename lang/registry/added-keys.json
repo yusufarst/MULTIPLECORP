@@ -19536,6 +19536,504 @@
             "source": "PT-08; PG-058 (proposed copy)",
             "indonesian": "proposed",
             "english": "proposed"
+        },
+        "signals.qs_01_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_01_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_02_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_02_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_03_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_03_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_04_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_04_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_05_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_05_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_06_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_06_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_07_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_07_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_08_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_09_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_10_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_11_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_receivable_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_12_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_12_kind.credit": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_12_kind.payment": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_12_kind.bank_line": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_13_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_15_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_15_kind.unmet": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_15_kind.not_invoiced": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_15_kind.over_invoiced": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_16_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_17_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_17_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_18_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_18_kind.finding": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_18_kind.stale": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_18_attribution_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_19_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_21_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_22_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_22_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_23_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_23_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_24_title": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.qs_24_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "signals.amount_row": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.1 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.billing": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.figures": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.direct_cost": {
+            "task": "TASK-058",
+            "source": "BUSINESS_RULES CALC-09",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.cash_out": {
+            "task": "TASK-058",
+            "source": "BUSINESS_RULES CALC-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.disputed_tpl": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.bucket_migrasi": {
+            "task": "TASK-058",
+            "source": "BR-FIN-14",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.notices": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.notice.LINK_USED": {
+            "task": "TASK-058",
+            "source": "ADMIN_FLOW MSG-29",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.notice.NEW_ADDRESS": {
+            "task": "TASK-058",
+            "source": "SECURITY LG-07",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.decisions_empty": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_006.gabungan_note": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_007.next_tpl": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.conditions": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.activity": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.tab.aktivitas": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.tab.keamanan": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.tab.bukti": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.tab.impor": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.window": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.window.hari_ini": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.window.7_hari": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.window.30_hari": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.window.rentang": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.divider_tpl": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.open": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.pool": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.no_company": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.related": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.row_tpl": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.condition.recovered": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.condition.unbacked_refund": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.condition.outstanding_after_payment": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.col_condition": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.col_company": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.col_amount": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.col_since": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.conditions_empty": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.empty": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_008.all_companies": {
+            "task": "TASK-058",
+            "source": "INFORMATION_ARCHITECTURE §9.2",
+            "indonesian": "proposed",
+            "english": "proposed"
         }
     }
 }
