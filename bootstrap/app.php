@@ -11,6 +11,7 @@ use App\Http\Middleware\SetLocale;
 use App\Http\Middleware\StartSessionUnlessBackground;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Authentication\EnforceSessionLimits;
+use App\Modules\IAM\Authentication\Landing;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests;
@@ -57,7 +58,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // A guest's document request goes to sign-in, PG-001 (TASK-017); an Inertia or JSON one answers 401 instead.
         $middleware->redirectGuestsTo('/masuk');
         // A signed-in account opening a sign-in page goes to its landing page (NAV-001).
-        $middleware->redirectUsersTo('/');
+        $middleware->redirectUsersTo(fn (Request $request): string => Landing::of($request->user()));
 
         // A background request reads the session and never writes it, so it extends no session (RV-06; RB-05).
         $middleware->web(replace: [StartSession::class => StartSessionUnlessBackground::class]);

@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Http\Controllers;
 
 use App\Http\Middleware\RequireStepUp;
+use App\Modules\IAM\Authentication\Landing;
 use App\Modules\IAM\Authentication\SecondFactorRefused;
 use App\Modules\IAM\Authentication\TwoFactorAnswers;
 use App\Modules\IAM\Authentication\TwoFactorChallenge;
@@ -24,7 +25,7 @@ final class TotpEnrolmentController
     public function show(Request $request, TwoFactorSteps $steps): Response
     {
         if (! TwoFactorChallenge::enrolmentOnly($request)) {
-            return redirect('/');
+            return redirect(Landing::of($request->user()));
         }
 
         $enrolment = $steps->enrolment($request);

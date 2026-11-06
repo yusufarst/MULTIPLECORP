@@ -41,6 +41,7 @@ use App\Modules\INV\Http\Controllers\StockController;
 use App\Modules\INV\Http\Controllers\SupplierReturnController;
 use App\Modules\OPS\Http\Controllers\CorrectionCasesController;
 use App\Modules\OPS\Http\Controllers\LogsController;
+use App\Modules\OPS\Http\Controllers\ReviewController;
 use App\Modules\ORG\Http\Controllers\CompaniesController;
 use App\Modules\ORG\Http\Controllers\NumberingController;
 use App\Modules\ORG\Http\Controllers\TaxController;
@@ -51,6 +52,7 @@ use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
 use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\PUR\Http\Controllers\PurchasesController;
+use App\Modules\Reporting\Http\Controllers\HomeController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use Illuminate\Support\Facades\Route;
 
@@ -344,6 +346,12 @@ Route::post('/dokumen/kasus/{id}/tutup', [CorrectionCasesController::class, 'clo
 // TASK-061: the Owner's two log pages, read-only (ROUTE-063; ROUTE-064; OD-14).
 Route::get('/aktivitas/riwayat', [LogsController::class, 'history'])->middleware(['auth', 'capability:audit.view'])->name('ops.activity');
 Route::get('/aktivitas/log-keamanan', [LogsController::class, 'security'])->middleware(['auth', 'capability:security_log.view'])->name('ops.security-log');
+
+// ROUTE-006–ROUTE-008 (TASK-058; IA §9): the home pages and the Owner review queue; their deferred groups and polls are
+// the page's own GET partially reloaded as background requests (ROUTE-285; RB-05). Neither runs a command.
+Route::get('/beranda', [HomeController::class, 'beranda'])->middleware(['auth', 'capability:review.view'])->name('reporting.beranda');
+Route::get('/pekerjaan', [HomeController::class, 'work'])->middleware(['auth', 'access:s0'])->name('reporting.work');
+Route::get('/tinjauan', [ReviewController::class, 'show'])->middleware(['auth', 'capability:review.view'])->name('ops.review');
 Route::post('/dokumen', [DocumentsController::class, 'save'])->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.save');
 Route::get('/dokumen/{id}', [DocumentsController::class, 'show'])->whereUuid('id')->middleware(['auth', 'capability:projects.view'])->name('doc.documents.show');
 Route::post('/dokumen/{id}/terbitkan', [DocumentsController::class, 'issue'])->whereUuid('id')->middleware(['auth', 'capability:documents.issue'])->name('doc.documents.issue');
