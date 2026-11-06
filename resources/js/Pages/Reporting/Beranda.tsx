@@ -83,22 +83,33 @@ function Decisions({ data }: { data: Attention | Failed | undefined }) {
     }
 
     const reviewed = data.review.counts.map((count) => `${count.company === '' ? t('pages.pg_008.no_company') : count.company} ${count.count}`).join(' · ');
-    const above = data.notices.length + (reviewed === '' ? 0 : 1);
     const signalled = data.signals.reduce((sum, signal) => sum + signal.rows.length, 0);
-    const total = above + signalled;
-    // On the phone two rows show first: the signals wait behind "Lihat semua keputusan" only when two rows already stand above them.
-    const folded = !all && above >= 2 && signalled > 0;
+    const total = data.notices.length + (reviewed === '' ? 0 : 1) + signalled;
+    // On the phone the first two decision rows show — the notices, then the review row, then the signals' rows in their
+    // order —, the rest behind "Lihat semua keputusan" (IA §9; R1 b). The desktop shows them all.
+    const folded = !all && total > 2;
+    const notices = folded ? Math.min(data.notices.length, 2) : data.notices.length;
+    const reviewShown = !folded || notices < 2;
+    const budget = folded ? Math.max(0, 2 - notices - (reviewShown && reviewed !== '' ? 1 : 0)) : Number.POSITIVE_INFINITY;
+    const phoneSignals = data.signals.reduce<{ left: number; list: SignalRead[] }>(
+        (acc, signal) => {
+            const rows = signal.rows.slice(0, acc.left);
+
+            return rows.length === 0 ? acc : { left: acc.left - rows.length, list: [...acc.list, { ...signal, rows }] };
+        },
+        { left: budget, list: [] },
+    ).list;
 
     return (
         <div className="flex min-w-0 flex-col gap-4">
             {data.notices.length > 0 && (
                 <ul role="list" aria-label={t('pages.pg_006.notices')} className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                    {data.notices.map((notice) => {
+                    {data.notices.map((notice, index) => {
                         const kind = `security_log.kind.${notice.kind}`;
                         const text = notice.kind === 'LINK_USED' || notice.kind === 'NEW_ADDRESS' ? t(`pages.pg_006.notice.${notice.kind}`, { v: notice.account ?? '' }) : has(kind) ? t(kind) : notice.kind;
 
                         return (
-                        <li key={notice.key} className="flex min-h-row min-w-0 flex-wrap items-center gap-x-3 gap-y-1 py-2">
+                        <li key={notice.key} className={cn('flex min-h-row min-w-0 flex-wrap items-center gap-x-3 gap-y-1 py-2', index >= notices && 'max-md:hidden')}>
                             <TextLink href={notice.href} className="min-w-0">
                                 {text}
                             </TextLink>
@@ -108,7 +119,7 @@ function Decisions({ data }: { data: Attention | Failed | undefined }) {
                     })}
                 </ul>
             )}
-            <div className="flex min-h-row min-w-0 flex-wrap items-center gap-x-3 gap-y-1">
+            <div className={cn('flex min-h-row min-w-0 flex-wrap items-center gap-x-3 gap-y-1', !reviewShown && 'max-md:hidden')}>
                 {reviewed === '' ? (
                     <span className="text-body text-text-secondary">{t('signals.qs_14_empty')}</span>
                 ) : (
@@ -121,6 +132,11 @@ function Decisions({ data }: { data: Attention | Failed | undefined }) {
             <div className={cn('min-w-0', folded && 'max-md:hidden')}>
                 <SignalSection data={data.signals} reload={reloadOf('attention')} owner />
             </div>
+            {folded && phoneSignals.length > 0 && (
+                <div className="min-w-0 md:hidden" data-slot="decisions-phone">
+                    <SignalSection data={phoneSignals} reload={reloadOf('attention')} owner />
+                </div>
+            )}
             {folded && (
                 <Button variant="ghost" size="sm" className="self-start md:hidden" onClick={() => { setAll(true); }}>
                     {t('pages.pg_006.all_decisions_tpl', { v: String(total) })}
