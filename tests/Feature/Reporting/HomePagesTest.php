@@ -4,12 +4,16 @@ use App\Modules\IAM\Authentication\Landing;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\OPS\Data\AuditCodes;
+use App\Modules\ORG\Models\Company;
 use App\Modules\Reporting\Queries\HomeGroups;
 use App\Modules\Reporting\Signals\Context;
 use App\Modules\Reporting\Signals\QS01UnreservedDemand;
 use App\Modules\Reporting\Signals\QS02Shortage;
+use App\Modules\Reporting\Signals\QS15CompletionBlockers;
 use App\Modules\Reporting\Signals\QS23OverdueProjects;
 use App\Modules\Reporting\Signals\QS24DispatchReady;
+use Database\Factories\OPS\CorrectionCaseFactory;
+use Database\Factories\PRJ\ProjectFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Inertia\Testing\AssertableInertia;
@@ -130,4 +134,17 @@ it('builds IX-13\'s partial indexes over the very codes the review signals read 
     foreach (AuditCodes::ROUTED as $code) {
         expect($predicate('audit_events_ix13_routed'))->toContain("'{$code}'")->and($predicate('audit_events_ix13_routed_command'))->toContain("'{$code}'");
     }
+});
+
+it('finds a blocked project behind twenty-one unblocked ACTIVE ones, bounding only the blocked (QS-15; Codex P2)', function () {
+    $company = Company::factory()->create();
+    $projects = ProjectFactory::new()->count(22)->create(['company_id' => $company->id, 'period_key' => '2019', 'state' => 'ACTIVE']);
+    $blocked = $projects->last();
+    CorrectionCaseFactory::new()->createOne(['company_id' => $company->id, 'project_id' => $blocked->id, 'state' => 'OPEN']);
+    $viewer = Authorization::admin([$company->id], ['projects.view'])->id;
+
+    $read = app(QS15CompletionBlockers::class)->read(homeContext($viewer));
+
+    expect(array_column($read['rows'] ?? [], 'subject'))->toBe([$blocked->project_number])
+        ->and($read['counts'] ?? [])->toBe([['company' => $company->code, 'count' => '1']]);
 });

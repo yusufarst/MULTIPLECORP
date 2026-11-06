@@ -83,7 +83,11 @@ function Decisions({ data }: { data: Attention | Failed | undefined }) {
     }
 
     const reviewed = data.review.counts.map((count) => `${count.company === '' ? t('pages.pg_008.no_company') : count.company} ${count.count}`).join(' · ');
-    const total = data.notices.length + (reviewed === '' ? 0 : 1) + data.signals.reduce((sum, signal) => sum + signal.rows.length, 0);
+    const above = data.notices.length + (reviewed === '' ? 0 : 1);
+    const signalled = data.signals.reduce((sum, signal) => sum + signal.rows.length, 0);
+    const total = above + signalled;
+    // On the phone two rows show first: the signals wait behind "Lihat semua keputusan" only when two rows already stand above them.
+    const folded = !all && above >= 2 && signalled > 0;
 
     return (
         <div className="flex min-w-0 flex-col gap-4">
@@ -114,10 +118,10 @@ function Decisions({ data }: { data: Attention | Failed | undefined }) {
                     </>
                 )}
             </div>
-            <div className={cn('min-w-0', !all && 'max-md:hidden')}>
+            <div className={cn('min-w-0', folded && 'max-md:hidden')}>
                 <SignalSection data={data.signals} reload={reloadOf('attention')} owner />
             </div>
-            {total > 2 && !all && (
+            {folded && (
                 <Button variant="ghost" size="sm" className="self-start md:hidden" onClick={() => { setAll(true); }}>
                     {t('pages.pg_006.all_decisions_tpl', { v: String(total) })}
                 </Button>

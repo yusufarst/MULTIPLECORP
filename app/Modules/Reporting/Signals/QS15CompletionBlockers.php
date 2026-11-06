@@ -10,8 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * QS-15 (WORKFLOWS §10; IA §9.1; PERFORMANCE §7): completion blockers per project, invoicing above delivered value and
- * confirmed value not yet invoiced — a group of its own (QB-10). One statement reads, per company, its oldest ACTIVE
- * projects on `projects (company_id, state, id)` (IX-14) with their commercial guard and their delivered value from
+ * confirmed value not yet invoiced — a group of its own (QB-10). One statement reads, per company, its ACTIVE
+ * projects — the company's open root, its cost following its open work (PF-24) — on `projects (company_id, state, id)` (IX-14) with their commercial guard and their delivered value from
  * the pins; then the ten completion predicates of TASK-055 run as one set query each over those project ids, never
  * one per project (PRJ ProjectJourneys). RD-03; the money items only with `finance.view` in the company (RD-04;
  * PJ-22): a project's money items and blockers leave the row for a viewer without the family. A blocked project opens
@@ -51,10 +51,11 @@ final class QS15CompletionBlockers extends Signal
             return null;
         }
 
-        $union = $this->branch($context, $companies[0])->limit(self::BOUND + 1);
+        // Every ACTIVE project is judged, so a blocked one is never left behind unblocked ones; only the blocked are bounded.
+        $union = $this->branch($context, $companies[0]);
 
         foreach (array_slice($companies, 1) as $company) {
-            $union->unionAll($this->branch($context, $company)->limit(self::BOUND + 1));
+            $union->unionAll($this->branch($context, $company));
         }
 
         $projects = $union->get()->all();
@@ -87,9 +88,11 @@ final class QS15CompletionBlockers extends Signal
                 $found[] = ['kind' => 'over_invoiced', 'value' => Row::text($project, 'over_invoiced'), 'href' => '/proyek/'.Row::text($project, 'target')];
             }
 
-            if ($found !== []) {
-                $perCompany[$company] = ($perCompany[$company] ?? 0) + 1;
+            if ($found === [] || ($perCompany[$company] ?? 0) > self::BOUND) {
+                continue;
             }
+
+            $perCompany[$company] = ($perCompany[$company] ?? 0) + 1;
 
             foreach ($found as $item) {
                 $rows[] = ['id' => $item['kind'].$id, 'company' => $context->code($company), 'subject' => Row::text($project, 'project_number'), 'ref' => $item['kind'],

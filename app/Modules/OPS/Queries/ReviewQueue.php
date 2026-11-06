@@ -346,7 +346,8 @@ final class ReviewQueue
         }
 
         try {
-            return [CarbonImmutable::parse($parts[1])->toIso8601ZuluString(), (int) $parts[2]];
+            // Microseconds kept: the events of one second stay apart, so "Muat Lagi" skips none (CONCURRENCY keyset order).
+            return [CarbonImmutable::parse($parts[1])->utc()->format('Y-m-d H:i:s.uP'), (int) $parts[2]];
         } catch (InvalidArgumentException) {
             return null;
         }
