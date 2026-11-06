@@ -279,7 +279,7 @@ it('confirms the enrolment with one code: the four fields together, eight codes 
         ->and(securityEvents('TOTP_ENROLLED'))->toBe(1);
 
     // A confirmed secret is never shown again: PG-004 is the enrolment-only session's alone.
-    $this->get('/verifikasi-dua-langkah')->assertRedirect('/');
+    $this->get('/verifikasi-dua-langkah')->assertRedirect('/beranda');
     $this->getJson('/__test/halaman')->assertOk();
 });
 

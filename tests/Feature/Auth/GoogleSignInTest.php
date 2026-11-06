@@ -177,7 +177,7 @@ it('throttles the redirect and the callback per client address (AU-05)', functio
 });
 
 it('never starts a sign-in from an authenticated session (AU-22)', function () {
-    $this->actingAs($this->user)->get('/masuk/google')->assertRedirect('/');
+    $this->actingAs($this->user)->get('/masuk/google')->assertRedirect('/pekerjaan');
     expect(app(GoogleIdentities::class)->accountFor('sub-laras')?->id)->toBe($this->user->id);
 });
 
