@@ -21,7 +21,7 @@ type Flash = { qr?: unknown; key?: unknown; recovery_codes?: unknown };
 export default function TotpEnrolment({ stage, replacing }: { stage: 'enrol' | 'codes'; replacing: boolean }) {
     const { t } = useTranslation();
     const id = useId();
-    const page = usePage<{ errors: Record<string, string | undefined> }>();
+    const page = usePage<{ errors: Record<string, string | undefined>; landing?: string }>();
     const flash = page.flash as Flash;
     const form = useForm({ code: '' });
     const [password, setPassword] = useState('');
@@ -60,7 +60,7 @@ export default function TotpEnrolment({ stage, replacing }: { stage: 'enrol' | '
                     size="lg"
                     onClick={() => {
                         router.clearHistory();
-                        window.location.assign('/');
+                        window.location.assign(page.props.landing ?? '/pekerjaan');
                     }}
                 >
                     {t('pages.pg_004.continue')}

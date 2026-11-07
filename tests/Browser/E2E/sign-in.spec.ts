@@ -33,7 +33,7 @@ test('signs in after AU-04\'s generic answer and logs out with MSG-35 (ROUTE-101
 
     await page.getByLabel('Kata sandi', { exact: true }).fill(password);
     await page.getByRole('button', { name: 'Masuk', exact: true }).click();
-    await page.waitForURL((url) => url.pathname === '/');
+    await page.waitForURL((url) => ['/beranda', '/pekerjaan'].includes(url.pathname));
     await expect(page.getByRole('button', { name: /Menu akun/ })).toContainText('Rani Uji');
 
     await page.getByRole('button', { name: /Menu akun/ }).click();
@@ -63,7 +63,7 @@ test('sets the password once from the link, the token out of the address, then s
     await expect(page.getByRole('status')).toContainText('Kata sandi tersimpan. Masuk untuk melanjutkan.');
 
     await signIn(page, email, 'Rapat-Gudang-24!');
-    await page.waitForURL((url) => url.pathname === '/');
+    await page.waitForURL((url) => ['/beranda', '/pekerjaan'].includes(url.pathname));
 
     // Used once: the same link answers MSG-28.
     await page.context().clearCookies();

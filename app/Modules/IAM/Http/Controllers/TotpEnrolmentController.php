@@ -3,6 +3,7 @@
 namespace App\Modules\IAM\Http\Controllers;
 
 use App\Http\Middleware\RequireStepUp;
+use App\Modules\IAM\Authentication\Landing;
 use App\Modules\IAM\Authentication\SecondFactorRefused;
 use App\Modules\IAM\Authentication\TwoFactorAnswers;
 use App\Modules\IAM\Authentication\TwoFactorChallenge;
@@ -24,7 +25,7 @@ final class TotpEnrolmentController
     public function show(Request $request, TwoFactorSteps $steps): Response
     {
         if (! TwoFactorChallenge::enrolmentOnly($request)) {
-            return redirect('/');
+            return redirect(Landing::of($request->user()));
         }
 
         $enrolment = $steps->enrolment($request);
@@ -59,7 +60,8 @@ final class TotpEnrolmentController
             return TwoFactorAnswers::mismatch($request);
         }
 
-        return Inertia::render('Auth/TotpEnrolment', ['stage' => 'codes', 'replacing' => false])
+        // "Lanjutkan" then loads the landing page of ROUTE-104 (TASK-058).
+        return Inertia::render('Auth/TotpEnrolment', ['stage' => 'codes', 'replacing' => false, 'landing' => Landing::of($request->user())])
             ->flash(['recovery_codes' => $codes])
             ->toResponse($request);
     }

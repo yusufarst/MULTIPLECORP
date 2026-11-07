@@ -84,7 +84,7 @@ it('shows PG-001 only without a session and answers ROUTE-101 by its one generic
     $this->postJson('/masuk', ['email' => '', 'password' => ''])->assertStatus(422)->assertJsonValidationErrors(['email', 'password']);
 
     signInAgain('dimas@contoh.test');
-    $this->get('/masuk')->assertRedirect('/');
+    $this->get('/masuk')->assertRedirect('/pekerjaan');
 });
 
 it('logs out to PG-001 and confirms the password only with a session (INT-108, INT-109)', function () {

@@ -6,7 +6,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Laravel\Fortify\Contracts\LoginResponse;
-use Laravel\Fortify\Fortify;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -26,7 +25,7 @@ final class SignInResponses implements LoginResponse
     public function toResponse($request): Response
     {
         $enrolmentOnly = TwoFactorChallenge::enrolmentOnly($request);
-        $target = $enrolmentOnly ? self::ENROLMENT : redirect()->intended(Fortify::redirects('login', '/'))->getTargetUrl();
+        $target = $enrolmentOnly ? self::ENROLMENT : redirect()->intended(Landing::of($request->user()))->getTargetUrl();
 
         if ($request->header('X-Inertia')) {
             return Inertia::location($target);

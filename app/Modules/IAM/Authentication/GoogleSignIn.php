@@ -63,7 +63,7 @@ final class GoogleSignIn
 
         // A signed-in session never starts a sign-in: it goes home, as the `guest` middleware sent it (AU-22).
         if ($request->user() !== null) {
-            return redirect('/');
+            return redirect(Landing::of($request->user()));
         }
 
         if (! self::enabled()) {

@@ -23,7 +23,7 @@ afterEach(fn () => @unlink($this->hotFile));
 
 it('offers INT-102 to a guest only, with a client configured (INT-102; GLC-09)', function () {
     $this->get('/masuk/google')->assertRedirectContains('accounts.google.com');
-    $this->actingAs(User::factory()->create())->get('/masuk/google')->assertRedirect('/');
+    $this->actingAs(User::factory()->create())->get('/masuk/google')->assertRedirect('/pekerjaan');
 });
 
 it('answers INT-103\'s denied and unknown callbacks alike on PG-001, creating and linking nothing (INT-103; AU-22, AU-23)', function () {

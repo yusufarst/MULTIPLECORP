@@ -42,7 +42,7 @@ it('offers PG-002\'s code steps only with a pending attempt, and names each answ
     // Success: the session established with TOTP.
     $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk()->assertExactJson(['signed_in' => true]);
     $this->getJson('/__test/halaman')->assertOk();
-    $this->get('/masuk/verifikasi')->assertRedirect('/');
+    $this->get('/masuk/verifikasi')->assertRedirect('/pekerjaan');
 });
 
 it('offers PG-004\'s confirmation only to the enrolment-only session (INT-107; SM-02)', function () {
@@ -56,7 +56,7 @@ it('offers PG-004\'s confirmation only to the enrolment-only session (INT-107; S
     // A full session, established with TOTP, is refused it.
     $this->postJson('/masuk', ['email' => 'laras@contoh.test', 'password' => 'Kata-Sandi-Uji-9']);
     $this->postJson('/masuk/verifikasi', ['code' => TwoFactor::code()])->assertOk();
-    $this->get('/verifikasi-dua-langkah')->assertRedirect('/');
+    $this->get('/verifikasi-dua-langkah')->assertRedirect('/pekerjaan');
     $this->postJson('/verifikasi-dua-langkah', ['code' => '000000'])->assertForbidden();
     $this->postJson('/keluar')->assertNoContent();
 

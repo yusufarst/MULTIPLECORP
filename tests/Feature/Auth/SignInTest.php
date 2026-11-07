@@ -121,7 +121,7 @@ it('loads the next page as a full document after the sign-in page\'s request (AU
 
     $this->post('/masuk', ['email' => 'laras@contoh.test', 'password' => 'Kata-Sandi-Uji-9'], ['X-Inertia' => 'true', 'X-Inertia-Version' => $version])
         ->assertStatus(409)
-        ->assertHeader('X-Inertia-Location', url('/'));
+        ->assertHeader('X-Inertia-Location', url('/pekerjaan'));
 });
 
 it('throttles five failures a minute per identifier and address, without locking the account (AU-05; criterion 2)', function () {
@@ -221,5 +221,5 @@ it('confirms the password for the step-up, a wrong one answered, throttled and r
 it('shows the sign-in page to a guest and sends a signed-in account to its landing page (NAV-001)', function () {
     $this->get('/masuk')->assertOk()->assertInertia(fn ($page) => $page->component('Auth/SignIn', false)->where('notice', null));
 
-    $this->actingAs($this->user)->get('/masuk')->assertRedirect('/');
+    $this->actingAs($this->user)->get('/masuk')->assertRedirect('/pekerjaan');
 });

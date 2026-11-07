@@ -8,6 +8,10 @@ import { administrationRun } from '../administration-fixtures';
 // marking it *Tidak Berlaku* with its reason; PG-039 listing what stays open with its filters in the address; on the
 // phone what is missing with its upload.
 
+// The journey's eight dialog steps, each reloading PG-011 with its deferred groups, take about 30 s on WebKit in CI:
+// the suite's budget for a long journey, not the 30 s default it ran out of on its last step (PR #71).
+test.describe.configure({ timeout: 300_000 });
+
 test('builds a project\'s checklist, links the client\'s original and marks an eligible item Tidak Berlaku (J-ADM-01; criteria 1, 3, 5, 6)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await administrationRun(page, `administrasi-${String(Date.now())}`);

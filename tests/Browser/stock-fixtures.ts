@@ -1,4 +1,4 @@
-import { type Page } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
 import { numberingCompany } from './numbering-fixtures';
 import { purchaseRun, type PurchaseRun } from './purchase-fixtures';
@@ -17,4 +17,17 @@ export async function stockRun(page: Page, run: string, locale: 'id' | 'en' = 'i
     }
 
     return { ...purchased, other, ...((await response.json()) as Pick<StockRun, 'product' | 'name' | 'sku' | 'rack' | 'movement' | 'lot' | 'other_code' | 'other_name'>) };
+}
+
+/**
+ * PG-018's search by product name. The page loads its deferred value exposure after the first render; a term typed
+ * while that reload lands was lost once on WebKit (PR #71: the field was empty right after the fill and "Cari" sent
+ * `cari=`), so the search waits for the deferred region to settle and checks the field holds the term before it submits.
+ */
+export async function searchStock(page: Page, name: string): Promise<void> {
+    const form = page.locator('form[role="search"]');
+    await expect(page.locator('[data-region-state="loading"]')).toHaveCount(0, { timeout: 60_000 });
+    await form.getByLabel('Cari produk').fill(name);
+    await expect(form.getByLabel('Cari produk')).toHaveValue(name);
+    await form.getByRole('button', { name: 'Cari', exact: true }).click();
 }
