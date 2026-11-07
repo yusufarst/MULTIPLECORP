@@ -1,15 +1,16 @@
 // PG-009 *Cari* (ROUTE-009; NAV-009; SCR-08; INFORMATION_ARCHITECTURE §8.1, §10; IP-15; IP-17; TASK-059): one field
-// "Cari atau pindai kode" for typed and scanned codes (D-IA-04), its results by type from ROUTE-281 — an exact code
-// match first under "Kode Cocok", then products, clients, suppliers and projects by name, at most one page — and only
-// those whose page exists and the account may open (RC-06; PJ-10). Enter only looks up (GAP-015): a scanned code —
-// or a typed one the search cannot place — goes to ROUTE-282's exact lookup for an account with `stock.view`; one
-// match opens its stock PG-019, several are listed for the user's choice and none is chosen for them (MSG-37), an
-// unknown code says so with "Daftarkan Barcode" when the account may register one, nothing created (MSG-25). The term
-// lives in the field only, never in the address, the title or the history (IA §11; DP-02). "Kembali" and Esc return to
-// the page search was opened from (NV-01). Full-screen on the phone (D-IA-04), the field first.
+// "Cari atau pindai kode" for typed and scanned codes alike (D-IA-04), its results by type from ROUTE-281 — an exact
+// code match first under "Kode Cocok", then products, clients, suppliers and projects by name, at most one page — and
+// only those whose page exists and the account may open (RC-06; PJ-10). Enter only looks up (GAP-015), and decides on
+// the search's answer to that very term, waiting for it when it is not in yet: one exact hit opens it, several are
+// listed and none is chosen for the user (PF-19); no exact hit goes to ROUTE-282's exact lookup for an account with
+// `stock.view` — one match opens its stock PG-019, several are listed for the user's choice (MSG-37), an unknown code
+// says so with "Daftarkan Barcode" when the account may register one, nothing created (MSG-25), the scanner limiter's
+// refusal MSG-20. The term lives in the field only, never in the address, the title or the history (IA §11; DP-02).
+// "Kembali" and Esc return to the page search was opened from (NV-01). Full-screen on the phone (D-IA-04).
 import { Link, router, usePage } from '@inertiajs/react';
 import { Search } from 'lucide-react';
-import { type KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { type KeyboardEvent, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { PageHeader } from '@/components/page-header';
 import { RegionEmpty } from '@/components/region-state';
@@ -18,13 +19,13 @@ import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group';
 import { Spinner } from '@/components/ui/spinner';
-import { lookUp, type Scan, type ScanMatch } from '@/features/inv/scan-client';
+import { lookUpOutcome, type ScanMatch, type ScanOutcome } from '@/features/inv/scan-client';
 import AppShell from '@/layouts/AppShell';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints, type SearchResult, targetOf } from '@/lib/navigation';
 import { returnTarget } from '@/lib/previous-page';
-import { BurstDetector, SCAN_TARGET } from '@/lib/scanner';
-import { outcomeFor, search, type Settled } from '@/lib/search-client';
+import { SCAN_TARGET } from '@/lib/scanner';
+import { outcomeFor, search, type SearchOutcome, type Settled } from '@/lib/search-client';
 
 type Props = { can: { scan: boolean } };
 
@@ -42,8 +43,11 @@ const TYPE_LABELS: Record<string, TranslationKey> = {
 
 const DEBOUNCE_MS = 250;
 
-/** What the last Enter's exact lookup answered: the candidates to choose from, or a message. */
-type Scanned = { code: string; scan: Scan | null };
+/** The router's page changes, so the return target is read once the previous page is known (NV-01). */
+const onNavigate = (changed: () => void) => router.on('navigate', changed);
+
+/** What the last exact lookup answered: the candidates to choose from, or a message. */
+type Scanned = { code: string; outcome: ScanOutcome };
 
 function ResultRow({ row, href, exact }: { row: SearchResult; href: string; exact: boolean }) {
     const { t } = useTranslation();
@@ -66,11 +70,17 @@ function ResultRow({ row, href, exact }: { row: SearchResult; href: string; exac
 
 function Candidates({ scanned }: { scanned: Scanned }) {
     const { t } = useTranslation();
-    const { scan, code } = scanned;
+    const { outcome, code } = scanned;
 
-    if (scan === null) {
+    if (outcome.kind === 'limited') {
+        return <p role="alert" className="text-body text-text-primary">{outcome.message}</p>;
+    }
+
+    if (outcome.kind === 'failed') {
         return <p role="alert" className="text-body text-text-primary">{t('messages.msg_06')}</p>;
     }
+
+    const { scan } = outcome;
 
     if (scan.kind === 'unknown' || scan.matches.length === 0) {
         return (
@@ -83,9 +93,10 @@ function Candidates({ scanned }: { scanned: Scanned }) {
         );
     }
 
+    // Several matches are feedback for the user's choice, announced politely (IP-15; TL-12).
     return (
         <section data-slot="scan-candidates" aria-labelledby="scan-candidates" className="flex min-w-0 flex-col gap-2">
-            <p id="scan-candidates" role="alert" className="text-body text-text-primary">{t('messages.msg_37', { kode: code })}</p>
+            <p id="scan-candidates" role="status" className="text-body text-text-primary">{t('messages.msg_37', { kode: code })}</p>
             <ul className="flex min-w-0 flex-col gap-1">
                 {scan.matches.map((match: ScanMatch) => (
                     <li key={`${match.kind}:${match.product}:${match.serial ?? match.lot ?? ''}`}>
@@ -103,15 +114,70 @@ function Candidates({ scanned }: { scanned: Scanned }) {
 export default function Cari({ can }: Props) {
     const { t } = useTranslation();
     const account = usePage<{ auth: AccountHints }>().props.auth;
+    const origin = useSyncExternalStore(onNavigate, () => returnTarget(account));
     const [term, setTerm] = useState('');
     const [settled, setSettled] = useState<Settled | null>(null);
     const [scanned, setScanned] = useState<Scanned | null>(null);
     const latest = useRef(0);
-    // The answer of the last exact lookup only: a changed term or a later lookup leaves an earlier answer unshown.
-    const lookups = useRef(0);
-    const detector = useRef(new BurstDetector());
-    const field = useRef<HTMLInputElement>(null);
+    // The term an Enter waits on while its search answer is not in; cleared by any change to the field.
+    const waiting = useRef<string | null>(null);
+    // The page's live exact lookup: a later lookup, a changed term or leaving the page withdraws it, so no late answer
+    // shows or opens anything (IP-15).
+    const page = useRef<{ lookup: AbortController | null }>({ lookup: null });
     const guard = useScanGuard({ hasScanField: true });
+
+    const withdraw = () => {
+        page.current.lookup?.abort();
+        page.current.lookup = null;
+    };
+
+    const scanLookup = (code: string) => {
+        withdraw();
+        const controller = new AbortController();
+        page.current.lookup = controller;
+
+        void lookUpOutcome(code, controller.signal).then((outcome) => {
+            if (controller.signal.aborted) {
+                return;
+            }
+
+            page.current.lookup = null;
+            const only = outcome.kind === 'answer' && outcome.scan.kind === 'match' && outcome.scan.matches.length === 1 ? outcome.scan.matches[0] : undefined;
+
+            if (only !== undefined) {
+                router.visit(`/gudang/stok/${only.product}`);
+
+                return;
+            }
+
+            setScanned({ code, outcome: outcome.kind === 'answer' && outcome.scan.kind === 'match' ? { kind: 'answer', scan: { ...outcome.scan, kind: 'ambiguous' } } : outcome });
+        });
+    };
+
+    // Enter's decision on the search's answer to the code (PF-19): one exact hit opens it, several are listed and none
+    // chosen, none goes to the exact scan lookup.
+    const decide = (code: string, outcome: SearchOutcome) => {
+        const rows = outcome.kind === 'answer' ? outcome.answer.exact : [];
+
+        if (rows.length === 1 && rows[0] !== undefined) {
+            const target = targetOf(rows[0], account);
+
+            if (target !== null) {
+                router.visit(target);
+            }
+
+            return;
+        }
+
+        if (rows.length === 0 && can.scan) {
+            scanLookup(code);
+        }
+    };
+    const decision = useRef(decide);
+
+    useEffect(() => {
+        decision.current = decide;
+    });
 
     useEffect(() => {
         const text = term.trim();
@@ -124,8 +190,15 @@ export default function Cari({ can }: Props) {
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             void search(text, [], controller.signal).then((outcome) => {
-                if (request === latest.current) {
-                    setSettled({ term: text, outcome });
+                if (request !== latest.current) {
+                    return;
+                }
+
+                setSettled({ term: text, outcome });
+
+                if (waiting.current === text) {
+                    waiting.current = null;
+                    decision.current(text, outcome);
                 }
             });
         }, DEBOUNCE_MS);
@@ -136,6 +209,27 @@ export default function Cari({ can }: Props) {
         };
     }, [term]);
 
+    useEffect(() => {
+        const state = page.current;
+        // Esc closes the search without a result, from anywhere on the page but an open dialog (NAV-009; NV-01).
+        const escape = (event: globalThis.KeyboardEvent) => {
+            if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || document.querySelector('[role="dialog"], [role="alertdialog"]') !== null) {
+                return;
+            }
+
+            event.preventDefault();
+            router.visit(returnTarget(account));
+        };
+
+        document.addEventListener('keydown', escape);
+
+        return () => {
+            document.removeEventListener('keydown', escape);
+            state.lookup?.abort();
+            state.lookup = null;
+        };
+    }, [account]);
+
     const current = outcomeFor(settled, term);
     const answer = current?.kind === 'answer' ? current.answer : null;
     const open = (row: SearchResult) => targetOf(row, account);
@@ -143,65 +237,26 @@ export default function Cari({ can }: Props) {
     const groups = (answer?.groups ?? []).map((group) => ({ type: group.type, rows: group.rows.filter((row) => open(row) !== null) })).filter((group) => group.rows.length > 0);
     const text = term.trim();
 
-    const scanLookup = (code: string) => {
-        const asked = ++lookups.current;
-
-        void lookUp(code).then((scan) => {
-            if (asked !== lookups.current) {
-                return;
-            }
-
-            if (scan?.kind === 'match' && scan.matches.length === 1 && scan.matches[0] !== undefined) {
-                router.visit(`/gudang/stok/${scan.matches[0].product}`);
-
-                return;
-            }
-
-            setScanned({ code, scan: scan?.kind === 'match' ? { ...scan, kind: 'ambiguous' } : scan });
-        });
-    };
-
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-        if (event.key === 'Escape') {
-            event.preventDefault();
-            router.visit(returnTarget(account));
-
-            return;
-        }
-
-        const burst = detector.current.feed(event.key, event.timeStamp);
-
-        if (event.key !== 'Enter') {
+        // A key that composes text is not yet the term (IME): neither Enter nor Esc acts on it.
+        if (event.nativeEvent.isComposing || event.key === 'Process' || event.key !== 'Enter') {
             return;
         }
 
         // Enter only looks up: no command is sent from this page (IP-15; GAP-015).
         event.preventDefault();
-        const code = (burst?.code ?? text).trim();
 
-        if (code === '') {
+        if (text === '') {
             return;
         }
 
-        if (burst !== null) {
-            setTerm(code);
-
-            if (can.scan) {
-                scanLookup(code);
-            }
+        if (current === null) {
+            waiting.current = text;
 
             return;
         }
 
-        // A typed code: one exact hit opens it; several are listed for the user, none chosen for them (PF-19).
-        const only = exact.length === 1 && exact[0] !== undefined ? open(exact[0]) : null;
-
-        if (only !== null) {
-            router.visit(only);
-        } else if (can.scan && exact.length === 0 && groups.length === 0) {
-            // Nothing the search placed — or its answer not in yet: the exact lookup only, never a guess (IP-15).
-            scanLookup(code);
-        }
+        decide(text, current);
     };
 
     const notice = current?.kind === 'limited'
@@ -217,10 +272,10 @@ export default function Cari({ can }: Props) {
     const nothing = answer !== null && exact.length === 0 && groups.length === 0 && scanned === null;
 
     return (
-        <AppShell title={t('pages.pg_009.title')} back={{ href: returnTarget(account), label: t('shell.back') }}>
+        <AppShell title={t('pages.pg_009.title')} back={{ href: origin, label: t('shell.back') }}>
             <div className="flex min-w-0 flex-col gap-6">
                 <PageHeader title={t('pages.pg_009.title')} />
-                <Button variant="outline" size="sm" className="self-start max-md:hidden" render={<Link href={returnTarget(account)} />}>{t('shell.back')}</Button>
+                <Button variant="outline" size="sm" className="self-start max-md:hidden" render={<Link href={origin} />}>{t('shell.back')}</Button>
                 <ScanNotice notice={guard.notice} />
                 <div role="search" aria-label={t('pages.pg_009.title')} className="flex min-w-0 flex-col gap-2">
                     <InputGroup className="max-md:h-floor md:max-w-search">
@@ -228,7 +283,6 @@ export default function Cari({ can }: Props) {
                             <Icon icon={Search} size="row" />
                         </InputGroupAddon>
                         <InputGroupInput
-                            ref={field}
                             {...{ [SCAN_TARGET]: 'search' }}
                             aria-label={t('shell.search')}
                             placeholder={t('shell.search')}
@@ -244,7 +298,8 @@ export default function Cari({ can }: Props) {
                             onChange={(event) => {
                                 setTerm(event.target.value);
                                 setScanned(null);
-                                lookups.current++;
+                                waiting.current = null;
+                                withdraw();
                             }}
                             onKeyDown={onKeyDown}
                         />
