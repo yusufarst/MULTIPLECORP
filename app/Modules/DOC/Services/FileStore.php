@@ -51,6 +51,20 @@ final class FileStore
         $this->disk()->put($key, $bytes);
     }
 
+    /**
+     * Writes a stream under a key that holds none yet, so a large file — an export (JB-03) — never sits in memory whole.
+     *
+     * @param  resource  $stream
+     */
+    public function writeStream(string $key, $stream): void
+    {
+        if ($this->disk()->exists($key)) {
+            throw new LogicException('Stored bytes are never overwritten (DATABASE §22).');
+        }
+
+        $this->disk()->writeStream($key, $stream);
+    }
+
     /** Writes a derivative only when it is absent, so a re-run writes nothing that exists (JB-04). */
     public function writeOnce(string $key, string $bytes, ?string $disk = null): bool
     {

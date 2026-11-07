@@ -4,7 +4,6 @@ namespace App\Modules\IAM\Services;
 
 use App\Modules\IAM\Authentication\CredentialLinks;
 use App\Modules\IAM\Data\Authority;
-use App\Modules\IAM\Data\CapabilityCatalogue;
 use App\Modules\IAM\Enums\BuiltinRole;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Recovery\AccountHistory;
@@ -220,7 +219,7 @@ final class AccountAccess
         $withheld = [];
 
         foreach ($requests as $request) {
-            if (! $this->covers($authority, self::array($request->company_ids), self::array($request->capability_codes), self::array($request->masking_context))) {
+            if (! $authority->covers(self::array($request->company_ids), self::array($request->capability_codes), self::array($request->masking_context))) {
                 $withheld[] = $request->id;
             }
         }
@@ -292,23 +291,6 @@ final class AccountAccess
      * @param  list<string>  $capabilities
      * @param  list<string>  $masking
      */
-    private function covers(Authority $authority, array $companies, array $capabilities, array $masking): bool
-    {
-        foreach ($companies as $company) {
-            if (! is_numeric($company) || ! $authority->scope->includes((int) $company)) {
-                return false;
-            }
-        }
-
-        foreach ([...$capabilities, ...array_filter($masking, fn (string $entry): bool => CapabilityCatalogue::has($entry))] as $capability) {
-            if (! $authority->has($capability)) {
-                return false;
-            }
-        }
-
-        return $authority->active;
-    }
-
     /**
      * A PostgreSQL array column's values.
      *

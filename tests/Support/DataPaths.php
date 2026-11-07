@@ -16,12 +16,12 @@ final class DataPaths
      */
     public const PATHS = [
         'DP-01' => [['tests/Integration/Authorization/CompanyScopeTest.php'], []],
-        'DP-02' => [['tests/Integration/Audit/LogQueriesTest.php', 'tests/Integration/Authorization/CompanyScopeTest.php', 'tests/Authorization/CompanyViewTest.php', 'tests/Feature/SearchRouteTest.php'], []],
+        'DP-02' => [['tests/Integration/Audit/LogQueriesTest.php', 'tests/Integration/Authorization/CompanyScopeTest.php', 'tests/Authorization/CompanyViewTest.php', 'tests/Feature/SearchRouteTest.php', 'tests/Feature/Reporting/ReportsPagesTest.php'], []],
         'DP-03' => [['tests/Integration/Authorization/CompanyScopeTest.php', 'tests/Integration/Authorization/RevocationRaceTest.php', 'tests/Integration/Projection/ScopedReferencesTest.php'], ['TASK-013']],
         'DP-04' => [['tests/Routes/RouteAuditTest.php'], []],
-        'DP-05' => [[], ['TASK-022', 'TASK-029', 'TASK-030', 'TASK-057', 'TASK-060']],
+        'DP-05' => [['tests/Integration/Reporting/ExportJobTest.php'], ['TASK-022', 'TASK-029', 'TASK-030', 'TASK-057']],
         'DP-06' => [['tests/Integration/Reporting/SearchTest.php'], ['TASK-059']],
-        'DP-07' => [[], ['TASK-022', 'TASK-060']],
+        'DP-07' => [['tests/Integration/Reporting/ExportJobTest.php', 'tests/Authorization/ReportsAccessTest.php'], []],
         'DP-08' => [['tests/Integration/Projection/ScopedAggregatesTest.php', 'tests/Authorization/CompanyViewTest.php'], ['TASK-058']],
         'DP-09' => [[], ['TASK-017', 'TASK-060']],
         'DP-10' => [[], ['TASK-058']],

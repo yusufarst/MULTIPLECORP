@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 61
-READY: 1
-IN_PROGRESS: 0
+READY: 0
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 0
 TODO: 20
@@ -28,8 +28,8 @@ Progress:
 61 / 87
 Percentage: 70.1 %
 
-CURRENT TASK: none in progress — TASK-059 — Search and scanning DONE on its branch `task/TASK-059-search-scanning`, CI PASS on `480662a`, its pull request #72 squash-merged by the executor once eligible (DIR-096; DIR-106)
-NEXT READY TASK: TASK-060 — Reports, the consolidated report and exports, READY; TASK-062–TASK-069 wait on TASK-060 (re-checked at TASK-059's DONE), TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-060 — Reports, the consolidated report and exports, IN PROGRESS on its branch `task/TASK-060-reports-exports` from the merged `main` `16be7b6` (DIR-096; DIR-102); TASK-059 DONE and squash-merged as `16be7b6` (pull request #72)
+NEXT READY TASK: none READY; TASK-062–TASK-069 wait on TASK-060, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -200,7 +200,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-057](TASK-057.md) | Opening import — preparation, dry run, sign-off and commit | Module · Import orchestration · OPS | HIGH | DONE | 022, 026, 027, 028, 030, 032, 034, 037, 039, 040, 042, 050, 052, 053 | 062, 063, 064, 065, 066, 067, 068, 069, 077, 087 | NO | AGENT | NONE | YES |
 | [TASK-058](TASK-058.md) | Home, Work and Review — signals and the action queue | Module · Reporting | STANDARD | DONE | 043, 054, 055 | 062, 063, 064, 065, 066, 067, 068, 069, 075 | NO | AGENT | PROPOSED | YES |
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | DONE | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | READY | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
+| [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | IN_PROGRESS | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
