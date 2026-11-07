@@ -25,7 +25,7 @@ import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import { type AccountHints, type SearchResult, targetOf } from '@/lib/navigation';
 import { returnTarget } from '@/lib/previous-page';
 import { SCAN_TARGET } from '@/lib/scanner';
-import { outcomeFor, search, type SearchOutcome, type Settled } from '@/lib/search-client';
+import { enterDecision, outcomeFor, search, type SearchOutcome, type Settled } from '@/lib/search-client';
 
 type Props = { can: { scan: boolean } };
 
@@ -45,6 +45,9 @@ const DEBOUNCE_MS = 250;
 
 /** The router's page changes, so the return target is read once the previous page is known (NV-01). */
 const onNavigate = (changed: () => void) => router.on('navigate', changed);
+
+/** A key that composes text is not yet the term (IME): Safari confirms a composition with an Enter whose keyCode is 229. */
+const composing = (event: globalThis.KeyboardEvent) => event.isComposing || event.key === 'Process' || Reflect.get(event, 'keyCode') === 229;
 
 /** What the last exact lookup answered: the candidates to choose from, or a message. */
 type Scanned = { code: string; outcome: ScanOutcome };
@@ -119,6 +122,8 @@ export default function Cari({ can }: Props) {
     const [settled, setSettled] = useState<Settled | null>(null);
     const [scanned, setScanned] = useState<Scanned | null>(null);
     const latest = useRef(0);
+    // The last answer as soon as it arrives, before its render: an Enter between the two decides on it, never waits forever.
+    const answered = useRef<Settled | null>(null);
     // The term an Enter waits on while its search answer is not in; cleared by any change to the field.
     const waiting = useRef<string | null>(null);
     // The page's live exact lookup: a later lookup, a changed term or leaving the page withdraws it, so no late answer
@@ -157,19 +162,11 @@ export default function Cari({ can }: Props) {
     // Enter's decision on the search's answer to the code (PF-19): one exact hit opens it, several are listed and none
     // chosen, none goes to the exact scan lookup.
     const decide = (code: string, outcome: SearchOutcome) => {
-        const rows = outcome.kind === 'answer' ? outcome.answer.exact : [];
+        const decision = enterDecision(outcome, can.scan, (row) => targetOf(row, account));
 
-        if (rows.length === 1 && rows[0] !== undefined) {
-            const target = targetOf(rows[0], account);
-
-            if (target !== null) {
-                router.visit(target);
-            }
-
-            return;
-        }
-
-        if (rows.length === 0 && can.scan) {
+        if (decision.kind === 'open') {
+            router.visit(decision.href);
+        } else if (decision.kind === 'lookup') {
             scanLookup(code);
         }
     };
@@ -194,6 +191,7 @@ export default function Cari({ can }: Props) {
                     return;
                 }
 
+                answered.current = { term: text, outcome };
                 setSettled({ term: text, outcome });
 
                 if (waiting.current === text) {
@@ -209,26 +207,43 @@ export default function Cari({ can }: Props) {
         };
     }, [term]);
 
+    const back = useRef(origin);
+
+    useEffect(() => {
+        back.current = origin;
+    });
+
     useEffect(() => {
         const state = page.current;
+        const pending = waiting;
+        // Leaving the page — Esc, "Kembali", a result, a link of the shell — withdraws what is still pending, so a late
+        // answer never overrides the visit the user chose (IP-15). A reload of this page's own props leaves it alone.
+        const leaving = router.on('before', (event) => {
+            if (event.detail.visit.url.pathname !== window.location.pathname) {
+                state.lookup?.abort();
+                state.lookup = null;
+                pending.current = null;
+            }
+        });
         // Esc closes the search without a result, from anywhere on the page but an open dialog (NAV-009; NV-01).
         const escape = (event: globalThis.KeyboardEvent) => {
-            if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing || document.querySelector('[role="dialog"], [role="alertdialog"]') !== null) {
+            if (event.key !== 'Escape' || event.defaultPrevented || composing(event) || document.querySelector('[role="dialog"], [role="alertdialog"]') !== null) {
                 return;
             }
 
             event.preventDefault();
-            router.visit(returnTarget(account));
+            router.visit(back.current);
         };
 
         document.addEventListener('keydown', escape);
 
         return () => {
+            leaving();
             document.removeEventListener('keydown', escape);
             state.lookup?.abort();
             state.lookup = null;
         };
-    }, [account]);
+    }, []);
 
     const current = outcomeFor(settled, term);
     const answer = current?.kind === 'answer' ? current.answer : null;
@@ -239,7 +254,7 @@ export default function Cari({ can }: Props) {
 
     const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         // A key that composes text is not yet the term (IME): neither Enter nor Esc acts on it.
-        if (event.nativeEvent.isComposing || event.key === 'Process' || event.key !== 'Enter') {
+        if (composing(event.nativeEvent) || event.key !== 'Enter') {
             return;
         }
 
@@ -250,13 +265,15 @@ export default function Cari({ can }: Props) {
             return;
         }
 
-        if (current === null) {
+        const known = current ?? (answered.current?.term === text ? answered.current.outcome : null);
+
+        if (known === null) {
             waiting.current = text;
 
             return;
         }
 
-        decide(text, current);
+        decide(text, known);
     };
 
     const notice = current?.kind === 'limited'

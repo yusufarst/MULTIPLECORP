@@ -1,0 +1,61 @@
+Owner directive received in session during execution, 2026-11-07 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — PR #72 CODEX UNAVAILABILITY EXCEPTION
+PRIORITY: HIGH — UNBLOCK TASK-059 WITHOUT ADDITIONAL PAID SERVICES
+I, the Owner, authorize a narrowly scoped, one-time exception request for the Codex review requirement on TASK-059 / PR #72, subject to the project's formal CHANGE_CONTROL and governance requirements.
+This authorization applies ONLY to PR #72. It does not automatically modify the review requirements for future tasks.
+1. Record the facts accurately
+Codex code review is unavailable because the account has reached its review usage limit.
+Two review requests were unsuccessful.
+Neither counts as a successful Codex review.
+Record the exact failure evidence in the PR and CURRENT_HANDOFF.
+Do not purchase credits, upgrade subscriptions, or repeatedly request unavailable reviews.
+2. Formalize the Owner exception
+Use the approved CHANGE_CONTROL mechanism to record this explicit Owner decision:
+"For PR #72 only, an appropriately independent, evidence-backed review may substitute for the unavailable Codex review, provided that all required CI checks pass, all material findings are resolved, and every other mandatory merge condition remains satisfied."
+Preserve the existing security, authorization, company-scope, scanner, and data-integrity requirements.
+If existing governance prohibits this exception even with explicit Owner approval, do not silently bypass it. Identify the required formal governance change, prepare the narrowest compliant record, and report the exact remaining approval dependency.
+Do not classify CODEX_TIMEOUT or a quota failure as PASS.
+3. Independently verify the final changes
+The independent review previously found eight issues, all reportedly fixed in `e1013c1`.
+Before using it as substitute evidence, obtain an independent read-only verification of the final material delta, including those eight fixes.
+The reviewer must check:
+
+* Search results never selecting ambiguous matches automatically.
+* Enter behavior while search results are pending.
+* Scanner lookup cancellation on navigation.
+* HTTP 429 and MSG-20.
+* Company-scope and authorization isolation.
+* IME, Escape, and live-region behavior.
+* Browser regression coverage.
+* All affected shared scan-client callers.
+
+The independent reviewer must not modify implementation code.
+Fix any genuinely material findings and verify the affected behavior.
+Avoid an unbounded review loop.
+4. Require complete CI evidence
+The latest reported HEAD is `e1013c1`.
+The CI push and PR runs are still undergoing verification.
+Wait for their actual conclusions.
+All required checks must pass on the final HEAD.
+Do not merge using previous successful CI from `e2827de`.
+Do not weaken tests or conceal failures.
+5. Finalize and merge when eligible
+Once the formal exception is effective, independent review is satisfactory, and required CI is green:
+
+1. Record the independent review evidence and the precise Codex exception.
+2. Complete TASK-059's DONE record.
+3. Verify final CI and required gates.
+4. Squash-merge PR #72 using the approved HEAD-matching workflow.
+5. Verify remote main and task counters.
+6. Continue TASK-060 autonomously.
+
+Do not request routine Owner confirmation.
+Do not deploy to production without its separate mandatory release authorization.
+6. Prevent the same blocker on every subsequent task
+If the Codex quota remains unavailable for TASK-060 or later tasks, do not automatically reuse this exception.
+Instead, prepare one formal, reusable proposal under CHANGE_CONTROL for a secure fallback review process during external reviewer unavailability.
+That proposal requires separate Owner approval before taking effect.
+Continue all independently authorized work in the meantime.
+OWNER OBJECTIVE: MAXIMUM SAFE EXECUTION SPEED, NO UNNECESSARY PAID SERVICES, NO FALSE REVIEW PASSES.
+Respond to the Owner in Indonesian and continue the authorized work.
