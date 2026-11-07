@@ -48,6 +48,8 @@ use App\Modules\PRJ\Services\SpkSubjects;
 use App\Modules\PUR\Queries\PurchaseProject;
 use App\Modules\PUR\Services\PurchasePredicate;
 use App\Modules\PUR\Services\PurchaseSubjects;
+use App\Modules\Reporting\Exports\ExportSweep;
+use App\Modules\Reporting\Exports\OwnExports;
 use App\Support\Jobs\OwedWork;
 use App\Support\Localization\Locales;
 use App\Support\Status\StatusRead;
@@ -59,6 +61,7 @@ use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
+use Inertia\Inertia;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -77,9 +80,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bindIf(DocumentRenderer::class, WeasyPrintRenderer::class);
         $this->app->bindIf(RenditionTemplate::class, MustacheTemplates::class);
 
-        // ROUTE-285's kinds; the export and import kinds join with TASK-060 and TASK-057 (TASK-022).
-        $this->app->tag([RenditionStatus::class, ImportStatus::class], StatusRead::TAG);
-        $this->app->tag([ImportSweep::class], OwedWork::TAG);
+        // ROUTE-285's kinds, the export's with TASK-060 and the import's with TASK-057 (TASK-022); JB-09's sweeps of the two jobs.
+        $this->app->tag([RenditionStatus::class, ImportStatus::class, OwnExports::class], StatusRead::TAG);
+        $this->app->tag([ImportSweep::class, ExportSweep::class], OwedWork::TAG);
 
         // The issuing modules' document subjects (ARCHITECTURE §3): PRJ's quotation and company HPS (TASK-033), its company SPK (TASK-034).
         $this->app->tag([QuotationSubjects::class, SpkSubjects::class], DocumentSubjectProvider::TAG);
@@ -180,6 +183,18 @@ class AppServiceProvider extends ServiceProvider
                 $minutes = max(1, (int) ceil((is_numeric($retry) ? (int) $retry : 3600) / 60));
 
                 return response()->json(['message' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])], 429, $headers);
+            }));
+
+        // WS-12's export limiter: 10 export requests an hour per account (ROUTE-283; H6-04), beside the admission's two at
+        // once; its answer is MSG-20 with the minutes left, in place on the page that asked.
+        RateLimiter::for('exports', fn (Request $request): Limit => Limit::perHour(10)
+            ->by('exports:'.self::scalar($request->user()?->getAuthIdentifier()))
+            ->response(function (Request $request, array $headers) {
+                $retry = $headers['Retry-After'] ?? 3600;
+                $minutes = max(1, (int) ceil((is_numeric($retry) ? (int) $retry : 3600) / 60));
+                Inertia::flash('answer', ['kind' => 'REJECTED', 'code' => 'MSG-20', 'cause' => null, 'text' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])]);
+
+                return back(303);
             }));
 
         // LOCALIZATION §3.6: a catalogue key missing in a language is shown in its canonical Indonesian text,

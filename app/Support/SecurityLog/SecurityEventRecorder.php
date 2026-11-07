@@ -45,6 +45,8 @@ final class SecurityEventRecorder
         'capability',
         // UPLOAD_REJECTED: the purpose the upload was refused for (SECURITY FL-01–FL-06; TASK-022).
         'purpose',
+        // EXPORT_REQUESTED and EXPORT_DOWNLOADED: the report, its file format, its period and company codes (DP-07; TASK-060).
+        'report', 'format', 'period', 'companies',
     ];
 
     private const MAXIMUM_DETAIL_LENGTH = 200;

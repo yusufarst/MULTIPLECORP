@@ -1,5 +1,7 @@
 # Reporting
 
-Tier 7 of [ARCHITECTURE §3](../../../docs/04-architecture/ARCHITECTURE.md#3-modules). Empty: its Tasks add the code.
+Tier 7 of [ARCHITECTURE §3](../../../docs/04-architecture/ARCHITECTURE.md#3-modules). It owns no business table and only reads; its one operational store is `export_requests` (CONCURRENCY_IDEMPOTENCY H6-04), whose behaviour is TASK-060's.
 
-Tables: none — it owns no table and only reads, through each module's query classes.
+- `Queries/` — the home pages, the work queue and search (TASK-058; TASK-059).
+- `Reports/` — PG-051's and PG-052's reports (TASK-060; ARCHITECTURE §14): one read-only query class per report (`Report`), each implementing its CALC- definitions with the scope inside every statement before aggregation (CS-07), its tables one section per company and never a total across companies (CS-08; D-IA-12). `Reports::read` reads a report in one REPEATABLE READ snapshot (TX-10) for the page and its print view; the export reads the same tables through the same keyed chunks (`Keyed`), so it never shows more than the page (PF-28). The filters are whitelisted address keys (`Period`, `Filters`).
+- `Exports/` — ROUTE-283's admission (`RequestExport`: the requester's row lock, two at once, the row bound at admission), the job `GenerateExport` (JB-03: the shared overlap lock, the claim by conditional update, RV-07's re-authorization, the recorded context alone — `ExportContext` —, the private EXPORT file), the streaming XLSX writer over ZipArchive with FL-09's typed and neutralized cells (`XlsxWriter`, `CellText`), the PDF through FL-08's renderer (`ExportFile`), PG-053's and ROUTE-285's read of the requester's own requests (`OwnExports`) and JB-09's sweep (`ExportSweep`).
