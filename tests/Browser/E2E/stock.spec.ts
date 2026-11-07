@@ -1,7 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { signedIn } from '../account-fixtures';
-import { stockRun } from '../stock-fixtures';
+import { searchStock, stockRun } from '../stock-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -14,8 +14,7 @@ test('shows the four quantities with the formula, per product and per rack, the 
     const run = await stockRun(page, `stok-${String(Date.now())}`);
 
     await page.goto('/gudang/stok');
-    await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
-    await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
+    await searchStock(page, run.name);
     await expect(page.getByRole('heading', { name: 'Stok', exact: true })).toBeVisible();
     await expect(page.locator('[data-slot="stock-formula"]')).toContainText('Tersedia');
     const row = page.getByRole('row').filter({ hasText: run.name });
@@ -28,8 +27,7 @@ test('shows the four quantities with the formula, per product and per rack, the 
     await page.getByRole('button', { name: 'Per Rak' }).click();
     await expect(page.getByRole('table', { name: 'Per Rak' })).toBeVisible();
     // The suite shares one database: a rack's random code can sort past the first page.
-    await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
-    await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
+    await searchStock(page, run.name);
     await expect(page.getByRole('row').filter({ hasText: run.rack }).first()).toBeVisible();
 });
 
@@ -89,8 +87,7 @@ test('shows a pending quantity as its own line on PG-018 and PG-019 (UXS-39; PJ-
     expect(pending.ok()).toBe(true);
 
     await page.goto('/gudang/stok');
-    await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
-    await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
+    await searchStock(page, run.name);
     await expect(page.locator('[data-slot="stock-pending"]').first()).toContainText('menunggu penetapan Owner');
     await page.goto(`/gudang/stok/${run.product}`);
     await expect(page.locator('[data-slot="stock-pending"]')).toContainText('menunggu penetapan Owner');

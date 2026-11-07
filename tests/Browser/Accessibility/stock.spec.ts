@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect as base, test } from '@playwright/test';
 
 import { atRest } from '../evidence-fixtures';
-import { stockRun } from '../stock-fixtures';
+import { searchStock, stockRun } from '../stock-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -19,8 +19,7 @@ for (const width of [390, 1280]) {
         await page.setViewportSize({ width, height: 900 });
 
         await page.goto('/gudang/stok');
-        await page.locator('form[role="search"]').getByLabel('Cari produk').fill(run.name);
-        await page.locator('form[role="search"]').getByRole('button', { name: 'Cari', exact: true }).click();
+        await searchStock(page, run.name);
         await expect(page.locator('#konten')).toContainText(run.name);
         await atRest(page);
         expect((await new AxeBuilder({ page }).withTags(TAGS).analyze()).violations).toEqual([]);
