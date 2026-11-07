@@ -260,6 +260,8 @@ export function ReportPage({ props, path, title, back, links }: { props: ReportP
             </div>
             <div className="print:hidden">
                 <PageHeader title={title} back={back} primary={primary} actions={[{ label: t('actions.print'), onSelect: () => { window.print(); } }, ...links]} />
+                {/* The header shows its primary action from the tablet up; on the phone "Ekspor" stands under it (PT-03). */}
+                {primary !== undefined && <div className="md:hidden">{primary}</div>}
             </div>
             {answer !== null && <OutcomeMessage answer={answer} />}
             {reports.length > 1 && (
