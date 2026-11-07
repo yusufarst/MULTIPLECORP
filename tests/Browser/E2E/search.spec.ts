@@ -69,7 +69,15 @@ test('discards a burst while focus is outside a field that accepts scans (IP-15;
 
     await page.goto('/cari');
     await page.locator('#konten').getByRole('link', { name: 'Kembali' }).focus();
-    await scan(page, 'KODELUAR1234');
+    // A keyboard wedge types faster than the runner's key events travel (a loaded CI runner can space them past the
+    // burst gap), so the burst is played inside the page as a scanner delivers it — as components.spec.ts does.
+    await page.evaluate(() => {
+        const target = document.activeElement ?? document.body;
+
+        for (const key of [...Array.from('KODELUAR1234'), 'Enter']) {
+            target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }));
+        }
+    });
     await expect(page.getByRole('alert').filter({ hasText: 'Kode terpindai diabaikan.' })).toBeVisible();
     await expect(page).toHaveURL(/\/cari$/);
 });

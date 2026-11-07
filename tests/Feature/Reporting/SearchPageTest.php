@@ -1,6 +1,7 @@
 <?php
 
 use App\Modules\ORG\Models\Company;
+use Illuminate\Support\Facades\Vite;
 use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\RefreshDatabase;
@@ -13,6 +14,14 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Authorization::catalogue();
+    // The page's HTML names its assets; a hot file stands in for the build the Feature layer runs without.
+    $this->hot = (string) tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($this->hot, 'http://localhost:5173');
+    Vite::useHotFile($this->hot);
+});
+
+afterEach(function () {
+    @unlink($this->hot);
 });
 
 it('shows PG-009 to every active account, scanning with stock.view only (ROUTE-009; S0; S1)', function () {
