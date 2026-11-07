@@ -160,9 +160,16 @@ class AppServiceProvider extends ServiceProvider
                 return response()->json(['message' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])], 429, $headers);
             }));
 
-        // WS-12's scanner limiter: exact lookups in a burst a warehouse's scanning makes, apart from free-text search (ROUTE-282; QB-06).
+        // WS-12's scanner limiter: exact lookups in a burst a warehouse's scanning makes, apart from free-text search (ROUTE-282; QB-06);
+        // its answer is MSG-20 with the minutes left, read by the scan field that asked (TM-43).
         RateLimiter::for('scanner', fn (Request $request): Limit => Limit::perMinute(300)
-            ->by('scanner:'.self::scalar($request->user()?->getAuthIdentifier())));
+            ->by('scanner:'.self::scalar($request->user()?->getAuthIdentifier()))
+            ->response(function (Request $request, array $headers): JsonResponse {
+                $retry = $headers['Retry-After'] ?? 60;
+                $minutes = max(1, (int) ceil((is_numeric($retry) ? (int) $retry : 60) / 60));
+
+                return response()->json(['message' => trans_choice('messages.msg_20', $minutes, ['count' => $minutes])], 429, $headers);
+            }));
 
         // WS-12's upload limiter: 60 uploads an hour per account in front of the durable count and byte budget of H6-07
         // (ROUTE-228); its answer is MSG-20 with the minutes left, read by the upload field.

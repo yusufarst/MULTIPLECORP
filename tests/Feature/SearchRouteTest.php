@@ -3,6 +3,8 @@
 use App\Modules\CAT\Models\Product;
 use App\Modules\ORG\Models\Company;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Vite;
+use Inertia\Testing\AssertableInertia;
 use Tests\Support\Authorization;
 use Tests\Support\RefreshDatabase;
 
@@ -36,8 +38,16 @@ it('refuses a guest, a term over 100 characters and a type outside the whitelist
 });
 
 it('takes no term from the address (DP-02)', function () {
-    // ROUTE-281 is a POST; a GET of `/cari` is PG-009's view (TASK-059), until then PG-005, the term unread.
-    $this->actingAs($this->viewer)->getJson('/cari?q=kertas')->assertNotFound()->assertDontSee('kertas');
+    // ROUTE-281 is a POST; a GET of `/cari` is PG-009's view (TASK-059), which reads no term and answers none.
+    $hot = (string) tempnam(sys_get_temp_dir(), 'vite-hot-');
+    file_put_contents($hot, 'http://localhost:5173');
+    Vite::useHotFile($hot);
+
+    $this->actingAs($this->viewer)->get('/cari?q=kertas')->assertOk()->assertInertia(function (AssertableInertia $page) {
+        $page->component('Reporting/Cari')->missing('exact')->missing('groups');
+        expect(json_encode($page->toArray()['props']))->not->toContain('kertas');
+    });
+    @unlink($hot);
 });
 
 it('answers the 61st search in a minute with MSG-20, per account (WS-12; TM-43; criterion 4)', function () {

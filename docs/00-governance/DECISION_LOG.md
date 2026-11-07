@@ -221,6 +221,7 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | DIR-103 | 2026-11-01 | The Owner's directives on avoidable CI delays: TL-09–TL-12 in parallel on runners of their own under the Browser check's name, the DONE record's accuracy kept, no required check passed over | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVES_CI_2026-11-01.txt) — [details](#dir-103--the-owners-directives-on-avoidable-ci-delays) |
 | DIR-104 | 2026-11-01 | Owner decision — P11Q-08 option (a), one project for each rupiah of a payment's rest, what a hold covers; Change 16 | [Exact transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt) — [details](#dir-104--the-owners-decision-on-p11q-08) |
 | DIR-105 | 2026-11-01 | The Owner's directive on the CI root causes: each browser layer's evidence is the artifact of its latest job on the tested commit, fail-closed; the stock specs' selector and label | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt) — [details](#dir-105--the-owners-directive-on-the-ci-root-causes) |
+| DIR-106 | 2026-11-07 | The Owner's one-time exception for pull request #72 (TASK-059) only: Codex's review unavailable at its usage limit, an independent evidence-backed review in its place, every other merge condition kept; no later pull request | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_PR72-CODEX-EXCEPTION_2026-11-07.txt) — [details](#dir-106--the-owners-codex-exception-for-pull-request-72) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 | APPR-028 | 2026-11-01 | Explicit Owner approval — P11Q-08 option (a), the attribution rule of TASK_PLAN §8 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt), item 1 — [details](#dir-104--the-owners-decision-on-p11q-08) |
 
@@ -2665,6 +2666,26 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **APPR-026 — the canonical text, approved by the Owner after it was shown (part 3):** W1–W4 — DATABASE §28's runtime privileges and its header's amendment line; TASK-022's amendment line and DATABASE IMPACT ASSESSMENT; TASK_PLAN's Change 14. Level 1 under CHANGE_CONTROL — locks made available to the role that must take them, no table, column, behaviour, visibility or V1 requirement changed —, approved by the Owner on 2026-10-27.
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
+
+## DIR-106 — The Owner's Codex exception for pull request #72
+
+- **Source/date:** [EXECUTION_OWNER_DIRECTIVE_PR72-CODEX-EXCEPTION_2026-11-07.txt](sources/EXECUTION_OWNER_DIRECTIVE_PR72-CODEX-EXCEPTION_2026-11-07.txt), the Owner's message received in session on 2026-11-07 (WIB), transcribed as received.
+- **The facts:** Codex's code review of pull request #72 did not run. Its connector answered at its usage limit twice: on the pull request's opening, on `32c05b1` (comments 6703405789 and 6703406133, 2026-11-07T06:32Z, review state `failed`), and to the request for a review (comment 6703849903, answered by 6703851491 at 07:20:36Z). Neither is a review, a pass or a CODEX_TIMEOUT. No credit was bought and no further request sent.
+- **What DIR-096 requires:** a merge is eligible only when Codex's review is COMPLETED with its valid P1/P2 findings fixed, or past its 10-minute limit (CODEX_TIMEOUT, never a pass) with the available findings examined and, for a security-sensitive or data-integrity-critical change, the narrowly necessary independent checks done. A review that never starts for want of quota meets neither. DIR-096 is the Owner's own directive, recorded as Level 1 under CHANGE_CONTROL, so the Owner may amend it; no locked decision (Level 3) and no RELEASE_PLAN gate is touched.
+- **The exception, in the Owner's words:** "For PR #72 only, an appropriately independent, evidence-backed review may substitute for the unavailable Codex review, provided that all required CI checks pass, all material findings are resolved, and every other mandatory merge condition remains satisfied."
+- **Its conditions:**
+  - one independent review of the change by a reviewer that did not write it and is given the code, not the author's conclusions;
+  - every material finding fixed and its behavior verified;
+  - one independent read-only verification of the final head, the earlier findings included;
+  - every required CI check passed on the final head, never on an earlier commit;
+  - every other DIR-096 condition kept. The security, authorization, company-scope, scanner and data-integrity requirements are unchanged.
+  - The evidence is recorded in the pull request, CURRENT_HANDOFF and TASK-059's DONE record.
+- **What it does not change:**
+  - DIR-096 for any other pull request;
+  - CODEX_TIMEOUT and a quota failure, never counted as a pass;
+  - DEFINITION_OF_DONE, ER-06 and any gate.
+  - If Codex is unavailable again, this exception is not reused: a reusable fallback goes to the Owner as a proposal under CHANGE_CONTROL and takes effect only with the Owner's separate approval.
+- **The amendments:** this entry and its register row, a Level 1 record of an Owner directive, and CURRENT_HANDOFF's row. No Task is added, no V1 requirement dropped.
 
 ## DIR-105 — The Owner's directive on the CI root causes
 

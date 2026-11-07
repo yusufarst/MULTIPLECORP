@@ -54,6 +54,7 @@ use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\PUR\Http\Controllers\PurchasesController;
 use App\Modules\Reporting\Http\Controllers\HomeController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
+use App\Modules\Reporting\Http\Controllers\SearchPageController;
 use Illuminate\Support\Facades\Route;
 
 // Every route is a ROUTE_CONTRACTS row, added by the Task that builds it.
@@ -372,6 +373,9 @@ Route::get('/status/{kind}/{id}', ['uses' => StatusController::class, Background
 // ROUTE-281 `Reporting Search` (TASK-016): the shell's type-ahead, PG-009 and every lookup inside a form; every
 // active account (S0), each result under its own view capability (PJ-10); read-only, no `command_id`; WS-12's
 // search limiter. It reads the session and never writes it back, so a search beside a command never erases its answer.
+// ROUTE-009 `Reporting ShowSearch`, PG-009 *Cari* (TASK-059; NAV-009): every active account (S0), the page without a
+// term — the field asks ROUTE-281 and, for a scanned code, ROUTE-282 —, so the term never enters the address (IA §11).
+Route::get('/cari', SearchPageController::class)->middleware(['auth', 'access:s0'])->name('reporting.search.page');
 Route::post('/cari', ['uses' => SearchController::class, BackgroundRequest::READS_SESSION_ONLY => true])
     ->middleware(['auth', 'access:s0', 'throttle:search'])
     ->name('reporting.search');

@@ -38,3 +38,26 @@ export async function search(term: string, types: string[] = [], signal?: AbortS
         return { kind: 'failed' };
     }
 }
+
+/** What Enter does with the search's answer to its own term (PF-19; IP-15; GAP-015): one exact hit opens it — when the
+    account may open it —, several are listed and none is chosen for the user, none goes to the exact scan lookup for
+    an account that may scan. A limited or failed search places nothing, so it goes to the scan lookup too. */
+export type EnterDecision = { kind: 'open'; href: string } | { kind: 'list' } | { kind: 'lookup' } | { kind: 'none' };
+
+export function enterDecision(outcome: SearchOutcome, canScan: boolean, open: (row: SearchResult) => string | null): EnterDecision {
+    const rows = outcome.kind === 'answer' ? outcome.answer.exact : [];
+
+    if (rows.length > 1) {
+        return { kind: 'list' };
+    }
+
+    const only = rows[0];
+
+    if (only !== undefined) {
+        const href = open(only);
+
+        return href === null ? { kind: 'none' } : { kind: 'open', href };
+    }
+
+    return canScan ? { kind: 'lookup' } : { kind: 'none' };
+}

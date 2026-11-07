@@ -146,10 +146,17 @@ it('INT-282: looks a scan up with no effect and no command_id, under the scanner
     expect(RateLimiter::limiter('scanner'))->not->toBeNull();
 
     $hits = 0;
+    $limited = null;
 
     foreach (range(1, 305) as $ignored) {
-        $hits += $this->actingAs($this->actor)->post('/gudang/pindai', ['kode' => 'X'])->getStatusCode() === 429 ? 1 : 0;
+        $answer = $this->actingAs($this->actor)->postJson('/gudang/pindai', ['kode' => 'X']);
+
+        if ($answer->getStatusCode() === 429) {
+            $hits++;
+            $limited = $answer;
+        }
     }
 
-    expect($hits)->toBeGreaterThan(0);
+    // The limit is answered with MSG-20, the scan field's message, not the framework's (WS-12; TM-43; TASK-059 criterion 8).
+    expect($hits)->toBeGreaterThan(0)->and($limited?->json('message'))->toBe('Terlalu banyak percobaan. Coba lagi dalam 1 menit.');
 });
