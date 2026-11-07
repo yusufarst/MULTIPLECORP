@@ -30,10 +30,13 @@ final class RequestExport
 
     public const FORMATS = ['xlsx', 'pdf'];
 
-    /** PF-28's row bound: 200,000 as its starting value, P9's disk guard able to lower it (`exports.row_bound`). */
-    public static function bound(): int
+    /** A PDF's bound: one document rendered whole, so it stays far below the workbook's (an executor's choice under PF-28). */
+    public const PDF_ROW_BOUND = 5_000;
+
+    /** PF-28's row bound: 200,000 as its starting value for a workbook, P9's disk guard able to lower it (`exports.row_bound`); a PDF's own. */
+    public static function bound(string $format = 'xlsx'): int
     {
-        return config()->integer('exports.row_bound', self::ROW_BOUND);
+        return $format === 'pdf' ? config()->integer('exports.pdf_row_bound', self::PDF_ROW_BOUND) : config()->integer('exports.row_bound', self::ROW_BOUND);
     }
 
     public function __construct(private readonly SecurityEventRecorder $events) {}
@@ -43,7 +46,7 @@ final class RequestExport
      */
     public function __invoke(Authority $viewer, Report $report, Filters $filters, string $format, ?string $ip, ?string $userAgent): array
     {
-        if (Reports::count($report, $viewer, $filters) > self::bound()) {
+        if (Reports::count($report, $viewer, $filters) > self::bound($format)) {
             return ['admitted' => false, 'id' => null, 'message' => 'messages.msg_21'];
         }
 

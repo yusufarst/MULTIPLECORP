@@ -11,8 +11,10 @@ use App\Modules\DOC\Contracts\BankLineCitations;
 use App\Modules\DOC\Contracts\DocumentChangeParticipant;
 use App\Modules\DOC\Contracts\DocumentRenderer;
 use App\Modules\DOC\Contracts\DocumentSubjectProvider;
+use App\Modules\DOC\Contracts\ExportFiles;
 use App\Modules\DOC\Contracts\RenditionTemplate;
 use App\Modules\DOC\Queries\RenditionStatus;
+use App\Modules\DOC\Services\ExportFileStore;
 use App\Modules\DOC\Services\MustacheTemplates;
 use App\Modules\DOC\Services\WeasyPrintRenderer;
 use App\Modules\FIN\Services\InvoiceDocumentChanges;
@@ -79,6 +81,8 @@ class AppServiceProvider extends ServiceProvider
         // FL-08's renderer (DIR-099 C1) and the layouts' one template set, which the composer reads too (TASK-022; TASK-029).
         $this->app->bindIf(DocumentRenderer::class, WeasyPrintRenderer::class);
         $this->app->bindIf(RenditionTemplate::class, MustacheTemplates::class);
+        // DOC's part of an export (TASK-060): the private EXPORT file, stored and read for its requester alone.
+        $this->app->bindIf(ExportFiles::class, ExportFileStore::class);
 
         // ROUTE-285's kinds, the export's with TASK-060 and the import's with TASK-057 (TASK-022); JB-09's sweeps of the two jobs.
         $this->app->tag([RenditionStatus::class, ImportStatus::class, OwnExports::class], StatusRead::TAG);

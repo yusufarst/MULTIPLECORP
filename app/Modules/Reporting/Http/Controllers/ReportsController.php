@@ -4,7 +4,7 @@ namespace App\Modules\Reporting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\IAM\Data\Authority;
-use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\IAM\Queries\AccountAuthority;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Report;
 use App\Modules\Reporting\Reports\Reports;
@@ -23,7 +23,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 final class ReportsController extends Controller
 {
-    public function __construct(private readonly Reports $reports, private readonly EffectiveCapabilities $capabilities) {}
+    public function __construct(private readonly Reports $reports, private readonly AccountAuthority $capabilities) {}
 
     public function show(Request $request): Response
     {

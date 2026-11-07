@@ -4,10 +4,16 @@ import { cn } from '@/lib/utils';
 
 // PT-05's table (DESIGN_SYSTEM §9.2, §10): the reference's frame scrolling only inside itself (WCAG 1.4.10's
 // exception), a sticky header row in the label style, 36 px rows on hairline rules, no zebra stripes; numbers
-// right-aligned in tabular figures; the hovered and the focused row tinted, the focused row outlined.
-export function Table({ className, frameClassName, ...props }: ComponentProps<'table'> & { frameClassName?: string }) {
+// right-aligned in tabular figures; the hovered and the focused row tinted, the focused row outlined. A table wide enough
+// to scroll on the phone names its frame (`scrollLabel`), which becomes a focusable region so the keyboard reaches what
+// scrolls (WCAG 2.1.1; axe's scrollable-region-focusable).
+export function Table({ className, frameClassName, scrollLabel, ...props }: ComponentProps<'table'> & { frameClassName?: string; scrollLabel?: string }) {
     return (
-        <div data-slot="table-frame" className={cn('relative w-full min-w-0 overflow-x-auto', frameClassName)}>
+        <div
+            data-slot="table-frame"
+            className={cn('relative w-full min-w-0 overflow-x-auto', scrollLabel !== undefined && 'focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus', frameClassName)}
+            {...(scrollLabel === undefined ? {} : { role: 'region', 'aria-label': scrollLabel, tabIndex: 0 })}
+        >
             <table data-slot="table" className={cn('w-full caption-bottom border-collapse text-body', className)} {...props} />
         </div>
     );

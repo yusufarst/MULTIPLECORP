@@ -2,7 +2,7 @@
 
 namespace App\Modules\Reporting\Exports;
 
-use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\IAM\Queries\AccountAuthority;
 use App\Support\Search\Row;
 use App\Support\Status\StatusRead;
 use Carbon\CarbonImmutable;
@@ -29,7 +29,7 @@ final class OwnExports implements StatusRead
 
     private const COLUMNS = ['id', 'report_code', 'filters', 'company_ids', 'capability_codes', 'masking_context', 'state', 'claim_count', 'file_object_id', 'expires_at', 'recorded_at'];
 
-    public function __construct(private readonly EffectiveCapabilities $capabilities) {}
+    public function __construct(private readonly AccountAuthority $capabilities) {}
 
     public function kind(): string
     {
@@ -97,7 +97,7 @@ final class OwnExports implements StatusRead
                 'requested_at' => CarbonImmutable::parse(Row::text($request, 'recorded_at'))->toIso8601ZuluString(),
                 'expires_at' => $state === 'READY' && Row::nullable($request, 'expires_at') !== null ? CarbonImmutable::parse(Row::text($request, 'expires_at'))->toIso8601ZuluString() : null,
                 'href' => $state === 'READY' ? self::href(Row::text($request, 'id')) : null,
-                'again' => array_filter(['laporan' => Row::text($request, 'report_code'), ...array_intersect_key($filters, array_flip(['periode', 'dari', 'sampai', 'perusahaan', 'bentuk']))], is_string(...)),
+                'again' => array_filter(['laporan' => Row::text($request, 'report_code'), ...array_intersect_key($filters, array_flip(['dari', 'sampai', 'perusahaan', 'bentuk'])), 'periode' => 'rentang'], is_string(...)),
             ];
         }
 
@@ -118,7 +118,8 @@ final class OwnExports implements StatusRead
         }
 
         $expires = Row::nullable($request, 'expires_at');
-        $covered = ExportContext::stored($request->company_ids ?? null, $request->capability_codes ?? null, $request->masking_context ?? null)->coveredBy($this->capabilities->for($userId));
+        $current = $this->capabilities->for($userId);
+        $covered = $current->has('reports.export') && ExportContext::stored($request->company_ids ?? null, $request->capability_codes ?? null, $request->masking_context ?? null)->coveredBy($current);
 
         return $covered && Row::nullable($request, 'file_object_id') !== null && ($expires === null || CarbonImmutable::parse($expires)->isFuture()) ? 'READY' : 'WITHHELD';
     }

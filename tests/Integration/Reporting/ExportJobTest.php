@@ -1,8 +1,9 @@
 <?php
 
+use App\Modules\DOC\Contracts\ExportFiles;
 use App\Modules\DOC\Models\FileObject;
-use App\Modules\DOC\Services\FileStore;
 use App\Modules\IAM\Models\User;
+use App\Modules\IAM\Queries\AccountAuthority;
 use App\Modules\IAM\Services\AccountAccess;
 use App\Modules\IAM\Services\EffectiveCapabilities;
 use App\Modules\Reporting\Exports\ExportFile;
@@ -12,6 +13,7 @@ use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
 use App\Support\BusinessDate;
 use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -34,6 +36,11 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     Storage::fake('files');
     Authorization::catalogue();
+
+    foreach (range(1, 14) as $number) {
+        DocumentTypeFactory::ensure(sprintf('DOC-%02d', $number));
+    }
+
     $this->hot = (string) tempnam(sys_get_temp_dir(), 'vite-hot-');
     file_put_contents($this->hot, 'http://localhost:5173');
     Vite::useHotFile($this->hot);
@@ -165,7 +172,7 @@ it('withholds an export whose requester lost a company or capability before or d
     // Revoked after the request, before the job: the job withholds it with nothing written (RV-07).
     Authorization::revoke($this->requester, 'finance.view');
     app(EffectiveCapabilities::class)->forget();
-    (new GenerateExport($request->id))->handle(app(EffectiveCapabilities::class), app(Reports::class), app(ExportFile::class), app(FileStore::class));
+    (new GenerateExport($request->id))->handle(app(AccountAuthority::class), app(Reports::class), app(ExportFile::class), app(ExportFiles::class));
 
     expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('WITHHELD')
         ->and(DB::table('export_requests')->where('id', $request->id)->value('file_object_id'))->toBeNull();
@@ -200,6 +207,22 @@ it('marks a READY export WITHHELD in the access change that revokes a view capab
     $this->actingAs($this->requester)->get("/laporan/ekspor/{$request->id}/unduh")->assertNotFound();
 });
 
+it('withholds an export whose requester lost reports.export before the job, and bounds a PDF far below a workbook (RV-07; PF-28)', function () {
+    Queue::fake();
+    exportAsk($this, $this->requester)->assertRedirect('/laporan/ekspor');
+    $request = latestExport($this->requester->id);
+    Authorization::revoke($this->requester, 'reports.export');
+    (new GenerateExport($request->id))->handle(app(AccountAuthority::class), app(Reports::class), app(ExportFile::class), app(ExportFiles::class));
+    expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('WITHHELD');
+
+    Authorization::grant($this->requester, 'reports.export');
+    app(EffectiveCapabilities::class)->forget();
+    config(['exports.pdf_row_bound' => 0]);
+    exportAsk($this, $this->requester, ['bentuk' => 'pdf'])->assertRedirect();
+    expect(exportAnswer())->toBe('Data melebihi batas satu ekspor. Persempit periode, lalu minta lagi.');
+    exportAsk($this, $this->requester)->assertRedirect('/laporan/ekspor');
+});
+
 it('finds a request only within its requester\'s own: another account\'s identifier and file answer as not found (criteria 13, 14; DIR-088; DIR-089 (5); H6-04)', function () {
     exportAsk($this, $this->requester)->assertRedirect('/laporan/ekspor');
     $request = latestExport($this->requester->id);
@@ -226,7 +249,10 @@ it('generates the period the request resolved, not the preset again on the day t
 
     $this->travel(40)->days();
     app(EffectiveCapabilities::class)->forget();
-    (new GenerateExport($request->id))->handle(app(EffectiveCapabilities::class), app(Reports::class), app(ExportFile::class), app(FileStore::class));
+    (new GenerateExport($request->id))->handle(app(AccountAuthority::class), app(Reports::class), app(ExportFile::class), app(ExportFiles::class));
+    expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('READY');
+    // Back to the request's day for the download, so the session's own lifetime plays no part.
+    $this->travelBack();
     $response = $this->actingAs($this->requester)->get("/laporan/ekspor/{$request->id}/unduh");
 
     expect(sheetRows($response->streamedContent())[4][5])->toBe('n:1000000.00');
@@ -246,7 +272,7 @@ it('fails a request claimed three times and sweeps a stale claim and a lost disp
     $request = latestExport($this->requester->id);
 
     DB::table('export_requests')->where('id', $request->id)->update(['state' => 'RUNNING', 'claim_count' => 3, 'claimed_at' => now()->subMinute()]);
-    (new GenerateExport($request->id))->handle(app(EffectiveCapabilities::class), app(Reports::class), app(ExportFile::class), app(FileStore::class));
+    (new GenerateExport($request->id))->handle(app(AccountAuthority::class), app(Reports::class), app(ExportFile::class), app(ExportFiles::class));
     expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('FAILED');
 
     DB::table('export_requests')->where('id', $request->id)->update(['state' => 'RUNNING', 'claim_count' => 1, 'claimed_at' => now()->subMinutes(16)]);

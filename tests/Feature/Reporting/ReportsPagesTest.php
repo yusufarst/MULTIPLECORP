@@ -6,6 +6,8 @@ use App\Modules\ORG\Models\Company;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
 use App\Support\BusinessDate;
+use Carbon\CarbonImmutable;
+use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Vite;
 use Inertia\Testing\AssertableInertia;
@@ -23,6 +25,11 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Authorization::catalogue();
+
+    foreach (range(1, 14) as $number) {
+        DocumentTypeFactory::ensure(sprintf('DOC-%02d', $number));
+    }
+
     $this->hot = (string) tempnam(sys_get_temp_dir(), 'vite-hot-');
     file_put_contents($this->hot, 'http://localhost:5173');
     Vite::useHotFile($this->hot);
@@ -146,6 +153,27 @@ it('gives the Owner the consolidated figures with Gabungan, the sums of the comp
     expect($rows)->toHaveCount(3)->and(array_column($rows, 0))->toBe([$facts['world']->company->code, 'ZZZ', null])
         ->and($gabungan[1])->toBe('1000000.00')->and($gabungan[5])->toBe('400000.00')->and($gabungan[7])->toBe('0.00');
     expect($facts['project'])->toBeInt();
+});
+
+it('reads every open invoice across keyed chunks, ordered by due date, each in its bucket (CALC-05; CALC-07; PF-28)', function () {
+    $world = InvoiceWorld::make();
+    $project = $world->project();
+    $today = CarbonImmutable::parse(BusinessDate::today());
+
+    foreach ([5, -40, -10] as $days) {
+        InvoiceWorld::bill($world->issued($project, '300000.00'), $today->toDateString(), $today->addDays($days)->toDateString());
+    }
+
+    // One row a chunk, so every boundary is a keyset step.
+    config(['exports.chunk' => 1]);
+    $owner = Authorization::owner()->id;
+    $tables = reportTables($owner, 'piutang', ['perusahaan' => $world->company->code]);
+    $rows = reportTable($tables, 'rincian')['sections'][0]['rows'];
+
+    expect($rows)->toHaveCount(3)
+        ->and(array_column($rows, 2))->toBe([$today->subDays(40)->toDateString(), $today->subDays(10)->toDateString(), $today->addDays(5)->toDateString()])
+        ->and(array_column($rows, 3))->toBe(['pages.pg_006.bucket_31_60', 'pages.pg_006.bucket_1_30', 'pages.pg_006.bucket_current'])
+        ->and(reportTable($tables, 'rincian')['sections'][0]['total'][4])->toBe('900000.00');
 });
 
 it('reads each report within QB-11: at most six statements in one snapshot (criterion 11; PF-27; TX-10)', function () {

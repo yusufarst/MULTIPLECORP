@@ -115,7 +115,7 @@ final class ExportFile
             $out[] = match ($column->kind) {
                 'label' => $cell === null ? null : self::text($cell),
                 'company' => $cell ?? self::text('pages.pg_006.view.gabungan'),
-                'date' => $cell === null ? null : CarbonImmutable::parse($cell)->format('d/m/Y'),
+                'date' => $cell === null || $cell === '' ? null : CarbonImmutable::parse($cell)->format('d/m/Y'),
                 default => $cell,
             };
         }

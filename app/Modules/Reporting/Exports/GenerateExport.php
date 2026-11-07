@@ -2,9 +2,8 @@
 
 namespace App\Modules\Reporting\Exports;
 
-use App\Modules\DOC\Enums\FilePurpose;
-use App\Modules\DOC\Services\FileStore;
-use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\DOC\Contracts\ExportFiles;
+use App\Modules\IAM\Queries\AccountAuthority;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
 use App\Modules\Reporting\Reports\Snapshot;
@@ -61,7 +60,7 @@ final class GenerateExport extends PlatformJob
         return [...parent::middleware(), (new WithoutOverlapping(self::LOCK))->shared()->releaseAfter(30)->expireAfter(self::LOCK_SECONDS)];
     }
 
-    public function handle(EffectiveCapabilities $capabilities, Reports $reports, ExportFile $files, FileStore $store): void
+    public function handle(AccountAuthority $capabilities, Reports $reports, ExportFile $files, ExportFiles $store): void
     {
         $request = $this->claim();
 
@@ -73,7 +72,7 @@ final class GenerateExport extends PlatformJob
         $context = ExportContext::stored($request->company_ids ?? null, $request->capability_codes ?? null, $request->masking_context ?? null);
         $current = $capabilities->fresh($requester);
 
-        if (! $context->coveredBy($current)) {
+        if (! $current->has('reports.export') || ! $context->coveredBy($current)) {
             self::mark($this->requestId, 'WITHHELD');
 
             return;
@@ -94,7 +93,7 @@ final class GenerateExport extends PlatformJob
             $path = Snapshot::read(function () use ($report, $viewer, $keys, $format, $directory, $at, $files): ?string {
                 $filters = Filters::of($viewer, $keys, BusinessDate::today());
 
-                return Reports::count($report, $viewer, $filters) > RequestExport::bound() ? null : $files->write($report, $viewer, $filters, $format, $directory, $at);
+                return Reports::count($report, $viewer, $filters) > RequestExport::bound($format) ? null : $files->write($report, $viewer, $filters, $format, $directory, $at);
             });
 
             if ($path === null) {
@@ -103,7 +102,7 @@ final class GenerateExport extends PlatformJob
                 return;
             }
 
-            $this->finish($store, $path, $format, $requester, $at);
+            $this->finish($store, $path, $format, $requester, $at, (int) Row::text($request, 'claim_count'));
         } finally {
             File::deleteDirectory($directory);
         }
@@ -120,57 +119,16 @@ final class GenerateExport extends PlatformJob
         return $claimed === 1 ? DB::table('export_requests')->where('id', $this->requestId)->first() : null;
     }
 
-    private function finish(FileStore $store, string $path, string $format, int $requester, CarbonImmutable $at): void
+    private function finish(ExportFiles $files, string $path, string $format, int $requester, CarbonImmutable $at, int $claim): void
     {
-        $key = $store->newKey();
-        $stream = fopen($path, 'rb');
-
-        if ($stream === false) {
-            throw new LogicException('An export file could not be read back.');
-        }
-
-        try {
-            $store->writeStream($key, $stream);
-        } finally {
-            if (is_resource($stream)) {
-                fclose($stream);
-            }
-        }
-
-        try {
-            $ready = DB::transaction(function () use ($store, $key, $path, $format, $requester, $at): bool {
-                $file = $store->register($key, [
-                    'purpose' => FilePurpose::Export->value,
-                    'mime_type' => $format === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    'sha256' => (string) hash_file('sha256', $path),
-                    'size_bytes' => (int) filesize($path),
-                    'company_id' => null,
-                    'uploaded_by' => $requester,
-                    'original_filename' => null,
-                    'sensitivity' => FilePurpose::Export->sensitivity(),
-                ]);
-
-                $ready = DB::table('export_requests')->where('id', $this->requestId)->where('state', 'RUNNING')
-                    ->update(['state' => 'READY', 'file_object_id' => $file->id, 'expires_at' => $at->addHours(self::KEPT_HOURS)]);
-
-                if ($ready !== 1) {
-                    // Withheld or failed meanwhile: the file's row rolls back, and its bytes are removed below.
-                    throw new ExportDefeated;
-                }
-
-                return true;
-            });
-        } catch (ExportDefeated) {
-            $ready = false;
-        } catch (Throwable $failure) {
-            $store->disk()->delete($key);
-
-            throw $failure;
-        }
+        $mime = $format === 'pdf' ? 'application/pdf' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        // Bound to this run's own claim: a later claim of the same request — an expired lock's — owns the request now;
+        // a WITHHELD or FAILED mark defeats it, and DOC removes the row and bytes it wrote (JB-03; RV-08).
+        $ready = $files->store($path, $mime, $requester, fn (int $file): bool => DB::table('export_requests')->where('id', $this->requestId)->where('state', 'RUNNING')->where('claim_count', $claim)
+            ->update(['state' => 'READY', 'file_object_id' => $file, 'expires_at' => $at->addHours(self::KEPT_HOURS)]) === 1);
 
         if (! $ready) {
-            $store->disk()->delete($key);
-            Log::info('An export finished after it was withheld or failed; its file was removed (JB-03).', ['export' => $this->requestId]);
+            Log::info('An export finished after it was withheld, failed or claimed again; its file was removed (JB-03).', ['export' => $this->requestId]);
         }
     }
 

@@ -121,8 +121,8 @@ function TableSection({ table, section }: { table: ReportTable; section: Section
             {section.rows.length === 0 ? (
                 <RegionEmpty text={t('pages.pg_051.empty')} />
             ) : (
-                <div className="min-w-0 overflow-x-auto">
-                    <Table aria-label={caption} className="text-label">
+                <div className="min-w-0">
+                    <Table aria-label={caption} scrollLabel={caption} className="text-label">
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
                                 {table.columns.map((column) => (

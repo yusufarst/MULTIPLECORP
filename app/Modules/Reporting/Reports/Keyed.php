@@ -9,6 +9,7 @@ use Illuminate\Database\Query\Builder;
 /**
  * A statement read in keyed chunks (PF-28; QB-15): ordered by a unique key, each chunk starting after the last row of
  * the one before — never an offset —, so an export's memory is bounded by one chunk; the page reads the same chunks.
+ * Every key is NOT NULL — a nullable column is keyed through a coalesce —, since a row comparison with NULL is never true.
  */
 final class Keyed
 {
@@ -18,8 +19,9 @@ final class Keyed
      * @param  array<literal-string, string>  $keys  the key's SQL expressions, ascending, each with the alias it is selected as
      * @return Generator<int, object>
      */
-    public static function rows(Builder $query, array $keys, int $size = self::CHUNK): Generator
+    public static function rows(Builder $query, array $keys, ?int $size = null): Generator
     {
+        $size ??= max(1, config()->integer('exports.chunk', self::CHUNK));
         $after = null;
         $expressions = implode(', ', array_keys($keys));
         $marks = implode(', ', array_fill(0, count($keys), '?'));

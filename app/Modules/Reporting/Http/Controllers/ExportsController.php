@@ -4,21 +4,18 @@ namespace App\Modules\Reporting\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Modules\DOC\Http\FileResponses;
-use App\Modules\DOC\Models\FileObject;
-use App\Modules\DOC\Services\FileStore;
-use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\IAM\Queries\AccountAuthority;
+use App\Modules\Reporting\Exports\ExportDelivery;
 use App\Modules\Reporting\Exports\GenerateExport;
 use App\Modules\Reporting\Exports\OwnExports;
 use App\Modules\Reporting\Exports\RequestExport;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
 use App\Support\BusinessDate;
-use App\Support\Search\Row;
 use App\Support\SecurityLog\SecurityEventKind;
 use App\Support\SecurityLog\SecurityEventRecorder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -37,7 +34,7 @@ final class ExportsController extends Controller
     public function __construct(
         private readonly OwnExports $exports,
         private readonly Reports $reports,
-        private readonly EffectiveCapabilities $capabilities,
+        private readonly AccountAuthority $capabilities,
         private readonly SecurityEventRecorder $events,
     ) {}
 
@@ -72,29 +69,14 @@ final class ExportsController extends Controller
         return redirect('/laporan/ekspor')->with('export', $answer['id']);
     }
 
-    public function download(Request $request, FileStore $store, string $id): StreamedResponse
+    public function download(Request $request, ExportDelivery $delivery, string $id): StreamedResponse
     {
         $user = $this->userId($request);
-        $export = $this->exports->find($user, $id);
-
-        if ($export === null || $this->exports->shown($user, $export) !== 'READY') {
-            // RV-08: a READY request the requester's grants no longer cover, escaped its mark, is withheld now.
-            if ($export !== null && ($export->state ?? null) === 'READY') {
-                DB::table('export_requests')->where('id', Row::text($export, 'id'))->where('state', 'READY')->whereRaw('expires_at > now()')->update(['state' => 'WITHHELD']);
-            }
-
-            throw new NotFoundHttpException;
-        }
-
-        $file = FileObject::query()->whereKey($export->file_object_id ?? 0)->where('purpose', 'EXPORT')->where('uploaded_by', $user)->first() ?? throw new NotFoundHttpException;
-        $filters = json_decode(is_string($export->filters ?? null) ? $export->filters : '{}', true);
-        $filters = is_array($filters) ? $filters : [];
-        $format = ($filters['bentuk'] ?? 'xlsx') === 'pdf' ? 'pdf' : 'xlsx';
-        $name = 'laporan-'.(is_string($export->report_code ?? null) ? $export->report_code : 'ekspor').'-'.(is_string($filters['dari'] ?? null) ? $filters['dari'] : '').'-'.(is_string($filters['sampai'] ?? null) ? $filters['sampai'] : '').'.'.$format;
+        $file = $delivery->download($user, $id) ?? throw new NotFoundHttpException;
         $this->events->record(SecurityEventKind::ExportDownloaded, userId: $user, routeName: 'reporting.exports.download', targetPublicId: $id, ipAddress: $request->ip(), userAgent: $request->userAgent(),
-            details: ['report' => is_string($export->report_code ?? null) ? $export->report_code : null, 'format' => $format]);
+            details: ['report' => $file['report'], 'format' => $file['format']]);
 
-        return FileResponses::attachment($store->stream($file->storage_key, $file->storage_disk), $file->mime_type, $file->size_bytes, $name);
+        return FileResponses::attachment($file['download']->stream, $file['download']->mimeType, $file['download']->size, $file['name']);
     }
 
     private function userId(Request $request): int

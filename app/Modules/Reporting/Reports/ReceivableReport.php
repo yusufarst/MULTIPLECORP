@@ -43,7 +43,7 @@ final class ReceivableReport implements Report
         $open = fn (): Builder => DB::table('invoice_balances as b')->whereIn('b.company_id', $companies)->where('b.outstanding', '>', 0)->whereNotNull('b.current_billing_act_id');
         $ages = $open()->groupByRaw('b.company_id, 2')->select(['b.company_id', DB::raw($bucket.' as bucket'), DB::raw('sum(b.outstanding) as outstanding'), DB::raw('coalesce(sum(b.outstanding) filter (where '.self::DISPUTED.'), 0) as disputed')]);
         $invoices = DB::query()->fromSub($open()->join('invoices as i', 'i.id', '=', 'b.invoice_id')->leftJoin('client_organizations as o', 'o.id', '=', 'i.client_organization_id')
-            ->select(['b.invoice_id as id', 'b.company_id', 'b.current_due_date', 'b.outstanding', 'o.name as client', DB::raw($bucket.' as bucket'), DB::raw(self::DISPUTED.' as disputed'), DB::raw(SalesReport::NUMBER)]), 'q')
+            ->select(['b.invoice_id as id', 'b.company_id', 'b.current_due_date', DB::raw("coalesce(b.current_due_date, date '9999-12-31') as due_key"), 'b.outstanding', 'o.name as client', DB::raw($bucket.' as bucket'), DB::raw(self::DISPUTED.' as disputed'), DB::raw(SalesReport::NUMBER)]), 'q')
             ->select('q.*');
 
         return [
@@ -65,8 +65,8 @@ final class ReceivableReport implements Report
                 fn (): int => count($companies) * count(AgingCalculator::BUCKETS)),
             new Table('rincian', [new Column('number'), new Column('client'), new Column('due_date', 'date'), new Column('bucket', 'label'), new Column('outstanding', 'money', true), new Column('disputed', 'label')], $companies,
                 function () use ($invoices): iterable {
-                    foreach (Keyed::rows($invoices, ['q.company_id' => 'company_id', 'q.current_due_date' => 'current_due_date', 'q.id' => 'id']) as $row) {
-                        yield [(int) Row::text($row, 'company_id'), [Row::nullable($row, 'number'), Row::nullable($row, 'client'), Row::text($row, 'current_due_date'), self::label(Row::text($row, 'bucket')),
+                    foreach (Keyed::rows($invoices, ['q.company_id' => 'company_id', 'q.due_key' => 'due_key', 'q.id' => 'id']) as $row) {
+                        yield [(int) Row::text($row, 'company_id'), [Row::nullable($row, 'number'), Row::nullable($row, 'client'), Row::nullable($row, 'current_due_date'), self::label(Row::text($row, 'bucket')),
                             Row::text($row, 'outstanding'), in_array(Row::text($row, 'disputed'), ['1', 'true', 't'], true) ? 'pages.pg_051.disputed' : null]];
                     }
                 },
