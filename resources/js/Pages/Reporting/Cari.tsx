@@ -187,7 +187,9 @@ export default function Cari({ can }: Props) {
         const controller = new AbortController();
         const timer = window.setTimeout(() => {
             void search(text, [], controller.signal).then((outcome) => {
-                if (request !== latest.current) {
+                // A withdrawn search — a changed term, or the page left by any means, browser Back included — answers
+                // nothing: its "failed" is not the term's answer and decides no Enter.
+                if (request !== latest.current || controller.signal.aborted) {
                     return;
                 }
 
