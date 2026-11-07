@@ -56,9 +56,15 @@ export default function AppShell({ title, back, focused = false, children, built
     const [help, setHelp] = useState(false);
     const [leaving, setLeaving] = useState(false);
     const searchInput = useRef<HTMLInputElement>(null);
+    // On PG-009 the page's own field is the one search entry (D-IA-04): the top bar's is not shown, and Ctrl K and the
+    // phone's *Cari* focus the page's field.
+    const onSearchPage = pathname === '/cari';
+    const focusPageSearch = () => document.querySelector<HTMLInputElement>('#konten [data-scan-target="search"]')?.focus();
 
     useShortcut({ key: 'k', ctrl: true }, () => {
-        if (window.matchMedia('(min-width: 48rem)').matches) {
+        if (onSearchPage) {
+            focusPageSearch();
+        } else if (window.matchMedia('(min-width: 48rem)').matches) {
             searchInput.current?.focus();
         } else {
             setPhoneSearch(true);
@@ -101,10 +107,14 @@ export default function AppShell({ title, back, focused = false, children, built
                             </Button>
                         )}
                         <p className="min-w-0 flex-1 truncate text-m-heading font-semibold text-text-primary md:hidden">{title}</p>
-                        <div className="min-w-0 flex-1 max-md:hidden md:max-w-search">
-                            <GlobalSearch account={account} built={built} inputRef={searchInput} />
-                        </div>
-                        <Kbd className="max-lg:hidden">{t('shell.search_kbd')}</Kbd>
+                        {onSearchPage ? <div className="min-w-0 flex-1 max-md:hidden" /> : (
+                            <>
+                                <div className="min-w-0 flex-1 max-md:hidden md:max-w-search">
+                                    <GlobalSearch account={account} built={built} inputRef={searchInput} />
+                                </div>
+                                <Kbd className="max-lg:hidden">{t('shell.search_kbd')}</Kbd>
+                            </>
+                        )}
                         <div className="ml-auto flex shrink-0 items-center gap-2">
                             <div className="max-md:hidden">
                                 <CreateMenu account={account} built={built} />
@@ -124,7 +134,14 @@ export default function AppShell({ title, back, focused = false, children, built
                     account={account}
                     pathname={pathname}
                     onSearch={() => {
-                        setPhoneSearch(true);
+                        // The phone's *Cari* is PG-009, full-screen and taking scans, once built (NAV-009; D-IA-04).
+                        if (onSearchPage) {
+                            focusPageSearch();
+                        } else if (built.has('PG-009')) {
+                            router.visit('/cari');
+                        } else {
+                            setPhoneSearch(true);
+                        }
                     }}
                     onMore={() => {
                         setMore(true);

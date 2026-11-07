@@ -52,7 +52,7 @@ it('registers only the routes of the Tasks built, each a ROUTE_CONTRACTS row', f
         'GET|HEAD dokumen/kasus', 'POST dokumen/kasus/{id}/tutup', 'GET|HEAD aktivitas/riwayat', 'GET|HEAD aktivitas/log-keamanan', 'GET|HEAD beranda', 'GET|HEAD pekerjaan', 'GET|HEAD tinjauan', 'POST dokumen', 'GET|HEAD dokumen/{id}', 'POST dokumen/{id}/terbitkan', 'POST dokumen/{id}/revisi', 'POST dokumen/{id}/batalkan',
         'GET|HEAD berkas/{id}/tampil',
         'GET|HEAD berkas/{id}/unduh', 'GET|HEAD berkas/{id}/gambar-kecil', 'GET|HEAD status/{kind}/{id}',
-        'POST cari', 'GET|HEAD {fallbackPlaceholder}',
+        'GET|HEAD cari', 'POST cari', 'GET|HEAD {fallbackPlaceholder}',
     ]);
 });
 
