@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -223,6 +223,18 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 8. The search and scanner limiters refuse with MSG-20 at their limits, the scanner's separate from search (WS-12; TM-43).
 9. The type-ahead's and the exact scan lookup's query counts stay within QB-03 and QB-06 in CI; their times — 200 ms and 150 ms at 1x and 10x — are measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI (PFM-06; QB-03; QB-06; PERFORMANCE_TARGETS §1).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: TASK-016's `tests/Integration/Reporting/SearchTest.php` — a barcode or SKU one hit, several projects sharing a number within scope listed and none chosen, a serial listing the products that share it; on PG-009 `tests/Frontend/search-enter.test.ts` — Enter opens a single exact hit, lists several of any types and chooses none, never opens another in place of a hit the account cannot open — and `tests/Browser/E2E/search.spec.ts` — a typed SKU under "Kode Cocok" opened by Enter.
+- Criterion 2: `SearchTest` — names equal to or beginning with the term first, at most twenty, a term without a trigram by prefix only with MSG-24, more than 200 candidates cut with MSG-23, LIKE wildcards taken literally; PG-009 shows MSG-24, MSG-23 and MSG-20 in its status line.
+- Criterion 3: `SearchTest` — an out-of-scope project answered like a missing one, an invoice and a document by number within scope only, a client unit and a PIC only to `projects.view` with a company in scope; `tests/Performance/SearchQueriesTest.php` — a company-scoped title search reaching the projects through an index condition on the company. ROUTE-009 carries no result (`tests/Feature/Reporting/SearchPageTest.php`).
+- Criterion 4: `SearchPageTest` and `tests/Feature/SearchRouteTest.php` — no prop of PG-009 carries a term the address holds, ROUTE-281 takes none from the address; the E2E — the address and the title never holding the SKU, before and after it opens.
+- Criterion 5: TASK-039's `tests/Feature/INV/ReceivingTest.php` and `tests/Interaction/ReceivingTest.php` — the scan answering a product, an unknown code with its offer only with `products.edit`, an ambiguous one choosing none, nothing created; on PG-009 the E2E — an unknown scanned code answered with MSG-25 and only the two lookups asked, a scanned SKU opening PG-019 — and the unit test's list of several. A serial's state is refused by the operation's own command (out of scope here, TASK-039–TASK-048).
+- Criterion 6: the E2E — the burst played into the field looks up only, a burst while focus is on a link discarded with its notice and its Enter withheld; PG-009 sends no command (its page has no form and every Enter is withheld).
+- Criterion 7: TASK-039's scan field on the warehouse pages — "Cari Produk" beside it, at the bottom above the action bar on the phone (`tests/Browser/E2E/stock.spec.ts`, the receiving specs); PG-009 takes a typed SKU in the same field, full-screen on the phone (`tests/Browser/Responsive/search.spec.ts`, the E2E's phone case).
+- Criterion 8: `SearchRouteTest` — the 61st search in a minute answered with MSG-20, per account; `tests/Interaction/ReceivingTest.php` — the scanner's own limiter, now answering MSG-20 with the minutes left; PG-009 shows the scanner's MSG-20 in place.
+- Criterion 9: `SearchQueriesTest` — the product type-ahead within QB-03's three statements, the same for one product and sixty; `tests/Performance/ReceivingQueriesTest.php` — the scan lookup within QB-06's two. Times are measured on staging by TASK-068's scripts in TASK-079, never reported as met from CI.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -246,32 +258,33 @@ CAP-17 and AC-23 require fast authorized lookup of product, SKU, barcode, projec
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03, `search-enter.test.ts`), Feature (TL-04), Integration (TL-05) and Performance (TL-15) PASS in CI
+- [x] Authorization: ROUTE-009 to every active account, scanning offered with `stock.view` only; each result under its view capability (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-009, ROUTE-281 and ROUTE-282 in `tests/Feature/BootTest.php` (TL-07) PASS in CI
+- [x] Interaction behavior: INT-005 and INT-006 — the term never in the address, the scanner's limiter apart from search, now with MSG-20 (TL-08) PASS in CI
+- [x] Browser E2E if required: `search.spec.ts` (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the shared input group, lists and region states (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 through the scoped search and lookup tests; SM-14 through both limiters (TL-14)
+- [x] Database safety review: no schema change, no migration; read-only routes; production not touched
+- [x] Final diff review: an independent review in place of Codex's unavailable review under DIR-106, its material findings fixed and verified
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `480662a`: fresh CI on GitHub's `ubuntu-24.04` runner, runs 42360718993 (push) and 42360723101 (pull request #72), every job PASS in each
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php` and `tests/Feature/SearchRouteTest.php` PASS — GET `/cari` is PG-009, reading no term
+- Interaction evidence: `tests/Interaction/ReceivingTest.php` PASS — INT-282 with the scanner's MSG-20
+- Browser evidence: `E2E: PASS — Evidence: 480662a, CI ubuntu-24.04 run 42360718993, tests/Browser/E2E/search.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-009 and its scan message in both languages — `tests/Browser/Localization/search.spec.ts` PASS; no key added, the page uses the catalogue's existing keys
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — no credit bought for the unavailable review (DIR-106)
+- Files changed: `app/Modules/Reporting/Http/Controllers/SearchPageController.php`; `routes/web.php`; `app/Providers/AppServiceProvider.php` (the scanner limiter's MSG-20); `resources/js` (`Pages/Reporting/Cari.tsx`, `layouts/AppShell.tsx`, `lib/navigation.ts`, `lib/search-client.ts`, `features/inv/scan-client.ts`); the tests; DECISION_LOG's DIR-106 with its source transcript
+- Commit SHA: from the start commit to `480662a` on `task/TASK-059-search-scanning`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI. One commit precedes the record after the tested one: the search answer of a withdrawn request — a changed term, or the page left by browser Back — no longer decides a waiting Enter, the final verification's minor finding, verified by the head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. **Codex's review did not run:** its connector answered at its usage limit on the pull request's opening (comments 6703405789 and 6703406133, review state `failed`) and to the request for a review (6703851491) — neither a review, a pass nor a CODEX_TIMEOUT. Under the Owner's one-time exception DIR-106, for pull request #72 only, an independent review took its place: a reviewer given the code, not the author's conclusions, found 8 issues in `e2827de` — among them an Enter before the search's answer opening one record of an ambiguous code, a late lookup acting after the user left, the return target one page off on the first render, a scanner 429 shown as MSG-06 —, each fixed in `e1013c1`; an independent read-only verification of `e1013c1` confirmed them and found two material defects — a late answer overriding the user's own visit, the scanner limiter's 429 not MSG-20 —, both fixed in `480662a` with their tests (`search-enter.test.ts`, INT-282's message), and one targeted check of that commit closed the review. The first CI on `32c05b1` failed on the Feature layer's PG-009 requests without a Vite build and on a burst test whose key events a loaded runner spaced past the burst gap; fixed in `e2827de`. Executor decisions, for Planning: (1) the phone's *Cari* in the bottom bar opens PG-009 once built, and on PG-009 the page's field is the one search entry — the top bar's is not shown and Ctrl K focuses the page's field (D-IA-04); (2) on PG-009 a typed and a scanned code take one path (D-IA-04): Enter decides on ROUTE-281's exact lookup of the term first, then ROUTE-282's for an account with `stock.view` — so a scanned project or document number opens its record and a lot code its stock —; whether criterion 5's "only to the exact lookup" means ROUTE-282 alone is for Planning; (3) a scanner's 429 now answers MSG-20 like the search's. No approved document changed by this Task besides DIR-106
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

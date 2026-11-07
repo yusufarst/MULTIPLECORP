@@ -828,3 +828,8 @@ This is a change summary; current state and approval authority live in their [ow
 
 - Built TASK-058 on its branch `task/TASK-058-home-work-review`: the signal register QS-01–QS-24, each a Reporting query class of one bounded statement read with the scope first; PG-006 *Beranda* — the Owner's decisions with the security notices, the four KPIs, *Angka Periode* in one snapshot with the receivables position and the ageing chart, the projects needing attention and the operational queues —, PG-007 *Pekerjaan* and PG-008 *Tinjauan*; IX-13's partial indexes over the acknowledged and the routed audit codes; ROUTE-104's landing page.
 - Every check passed in fresh CI on `3679c2f`. TASK-058 DONE — progress 60 / 87 —; TASK-059 and TASK-060 READY.
+
+## Unreleased — 2026-11-07, TASK-059 — Search and scanning
+
+- Built TASK-059 on its branch `task/TASK-059-search-scanning`: ROUTE-009 and PG-009 *Cari* over ROUTE-281's search and ROUTE-282's exact scan lookup — results by type with "Kode Cocok" first, Enter deciding on the search's answer to its own term and never choosing one of several, a scanned code opening PG-019, an unknown one MSG-25 with "Daftarkan Barcode", the term never in the address —; the phone's *Cari* opening PG-009; the scanner limiter answering MSG-20.
+- Every check passed in fresh CI on `480662a`. Codex's review unavailable at its usage limit — an independent review in its place under the Owner's one-time exception DIR-106. TASK-059 DONE — progress 61 / 87 —; TASK-060 READY.
