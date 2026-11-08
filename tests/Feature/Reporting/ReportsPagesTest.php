@@ -155,6 +155,51 @@ it('gives the Owner the consolidated figures with Gabungan, the sums of the comp
     expect($facts['project'])->toBeInt();
 });
 
+it('reproduces FX-01\'s AC-10 baseline: sales value on issue, no receivable before billing, Cash-In per payment, the receivable closed (criterion 2; FX-01 annex 1; CALC-05; CALC-08; CALC-14)', function () {
+    $annex = (require base_path('tests/Fixtures/FX-01.php'))['entries'][1]['values'];
+    $world = InvoiceWorld::make();
+    $invoice = $world->issued($world->project(), number_format($annex['invoice'], 2, '.', ''));
+    $owner = Authorization::owner()->id;
+    $keys = ['perusahaan' => $world->company->code];
+    $money = fn (int $amount): string => number_format($amount, 2, '.', '');
+
+    expect(reportTable(reportTables($owner, 'penjualan', $keys), 'penjualan')['sections'][0]['total'][4])->toBe($money($annex['sales_value']))
+        ->and(reportTable(reportTables($owner, 'piutang', $keys), 'rincian')['sections'][0]['rows'])->toBe([])
+        ->and(reportTable(reportTables($owner, 'arus-kas', $keys), 'arus-kas')['sections'][0]['rows'])->toBe([]);
+
+    InvoiceWorld::bill($invoice, BusinessDate::today(), CarbonImmutable::parse(BusinessDate::today())->addDays(30)->toDateString());
+    expect(reportTable(reportTables($owner, 'piutang', $keys), 'rincian')['sections'][0]['total'][4])->toBe($money($annex['outstanding_when_billed']));
+
+    InvoiceWorld::apply($invoice, InvoiceWorld::payment($invoice, $money($annex['payment_1'])), $money($annex['payment_1']));
+    expect(reportTable(reportTables($owner, 'piutang', $keys), 'rincian')['sections'][0]['total'][4])->toBe($money($annex['outstanding_after_payment_1']));
+
+    InvoiceWorld::apply($invoice, InvoiceWorld::payment($invoice, $money($annex['payment_2'])), $money($annex['payment_2']));
+    $payments = reportTable(reportTables($owner, 'pembayaran', $keys), 'pembayaran')['sections'][0];
+
+    expect(reportTable(reportTables($owner, 'piutang', $keys), 'rincian')['sections'][0]['rows'])->toBe([])
+        ->and(array_column($payments['rows'], 4))->toEqualCanonicalizing([$money($annex['payment_1']), $money($annex['payment_2'])])
+        ->and(reportTable(reportTables($owner, 'arus-kas', $keys), 'arus-kas')['sections'][0]['total'][1])->toBe($money($annex['payment_1'] + $annex['payment_2']));
+});
+
+it('keeps FX-01\'s output tax out of revenue and profit, shown as recorded beside the sales value (criteria 1, 2; FX-01 annex 13; BR-FIN-17; CALC-08)', function () {
+    $annex = (require base_path('tests/Fixtures/FX-01.php'))['entries'][13]['values'];
+    $world = InvoiceWorld::make();
+    $world->tax();
+    $project = $world->project(['SERVICE'], '40');
+    $money = fn (int $amount): string => number_format($amount, 2, '.', '');
+    $invoice = $world->issued($project, $money($annex['sales_value']));
+    InvoiceWorld::payment($invoice, $money($annex['transfer']));
+    $owner = Authorization::owner()->id;
+    $keys = ['perusahaan' => $world->company->code];
+    $sales = reportTable(reportTables($owner, 'penjualan', $keys), 'penjualan')['sections'][0]['total'];
+    $profit = reportTables($owner, 'laba', $keys);
+
+    expect([$sales[4], $sales[5], $sales[6]])->toBe([$money($annex['sales_value']), $money($annex['output_tax']), $money($annex['billed'])])
+        ->and(reportTable($profit, 'proyek')['sections'][0]['rows'][0][2])->toBe($money($annex['operating_revenue']))
+        ->and(reportTable($profit, 'perusahaan')['sections'][0]['rows'][0][0])->toBe($money($annex['operating_revenue']))
+        ->and(reportTable(reportTables($owner, 'arus-kas', $keys), 'arus-kas')['sections'][0]['total'][1])->toBe($money($annex['cash_in']));
+});
+
 it('reads every open invoice across keyed chunks, ordered by due date, each in its bucket (CALC-05; CALC-07; PF-28)', function () {
     $world = InvoiceWorld::make();
     $project = $world->project();

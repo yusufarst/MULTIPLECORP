@@ -91,7 +91,9 @@ final class GenerateExport extends PlatformJob
 
         try {
             $path = Snapshot::read(function () use ($report, $viewer, $keys, $format, $directory, $at, $files): ?string {
-                $filters = Filters::of($viewer, $keys, BusinessDate::today());
+                // The request's own day, so an export asked before midnight and run after it ages receivables as the page did.
+                $day = is_string($keys['hari'] ?? null) && preg_match('/^\d{4}-\d{2}-\d{2}$/', $keys['hari']) === 1 ? $keys['hari'] : BusinessDate::today();
+                $filters = Filters::of($viewer, $keys, $day);
 
                 return Reports::count($report, $viewer, $filters) > RequestExport::bound($format) ? null : $files->write($report, $viewer, $filters, $format, $directory, $at);
             });

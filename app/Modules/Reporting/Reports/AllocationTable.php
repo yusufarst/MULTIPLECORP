@@ -11,7 +11,8 @@ use Illuminate\Support\Facades\DB;
  * The inter-company allocation report (J-INV-07; RD-07; DATABASE §6.5; PJ-05; PJ-06): every cost row of the period
  * drawn from one company's lot for another company, of a side among the report's companies, each side seeing what it
  * may — the source side the draw with the bearer, its project, reason and actor masked; the bearer side the cost in
- * full with the source masked —, unless the other company is among them too; the lot's code to holders of
+ * full with the source masked —, unless the other company is in the viewer's scope too, whatever the company filter;
+ * the lot's code to holders of
  * `stock.view` only. The Owner, every company in view, sees both sides. A row stands in its bearer's section when the
  * bearer is among the companies, else in its source's; on PG-052 the report is one section of every company's rows.
  */
@@ -42,16 +43,16 @@ final class AllocationTable
             new Column('project'), new Column('class', 'label'), new Column('amount', 'money', true), new Column('reason'), new Column('authorized_by')];
 
         return new Table('alokasi', $columns, $pooled ? null : $companies,
-            function () use ($query, $filters, $stock, $pooled): iterable {
+            function () use ($query, $viewer, $filters, $stock, $pooled): iterable {
                 foreach (Keyed::rows($query, $pooled ? ['q.business_date' => 'business_date', 'q.id' => 'id'] : ['q.section' => 'section', 'q.business_date' => 'business_date', 'q.id' => 'id']) as $row) {
-                    $source = $filters->code((int) Row::text($row, 'source_company_id'));
-                    $bearer = $filters->code((int) Row::text($row, 'bearer_company_id'));
+                    $source = $viewer->scope->includes((int) Row::text($row, 'source_company_id')) ? $filters->code((int) Row::text($row, 'source_company_id')) : null;
+                    $bearer = $viewer->scope->includes((int) Row::text($row, 'bearer_company_id')) ? $filters->code((int) Row::text($row, 'bearer_company_id')) : null;
                     yield [$pooled ? null : (int) Row::text($row, 'section'), [
                         Row::text($row, 'business_date'), Row::text($row, 'product'), Row::text($row, 'unit'), Row::text($row, 'qty_base'),
                         $stock ? Row::text($row, 'lot_code') : null,
-                        // PJ-06: the source company only when it is among the report's companies too.
+                        // PJ-06: the source company only when it is in the viewer's scope too.
                         $source,
-                        // PJ-05: the bearer, its project, reason and actor only when the bearer company is among them too.
+                        // PJ-05: the bearer, its project, reason and actor only when the bearer company is in the viewer's scope too.
                         $bearer,
                         $bearer === null ? null : Row::nullable($row, 'project_number'),
                         'pages.pg_051.class.'.strtolower(Row::text($row, 'cost_class')),

@@ -17,6 +17,7 @@ final class Filters
     /**
      * @param  array<int, array{code: string, name: string}>  $companies  in scope and filter, by id, ordered by code
      * @param  list<array{code: string, name: string}>  $choices  every company of the scope, for the filter control
+     * @param  array<int, string>  $scope  every company of the scope, by id: its code
      */
     private function __construct(
         public readonly Period $period,
@@ -24,6 +25,7 @@ final class Filters
         public readonly array $companies,
         public readonly array $choices,
         public readonly string $today,
+        private readonly array $scope = [],
     ) {}
 
     /**
@@ -41,7 +43,7 @@ final class Filters
         $asked = self::text($keys['perusahaan'] ?? null);
         $chosen = array_filter($all, fn (array $company): bool => $company['code'] === $asked);
 
-        return new self($period, $chosen === [] ? null : $asked, $chosen === [] ? $all : $chosen, array_values($all), $today);
+        return new self($period, $chosen === [] ? null : $asked, $chosen === [] ? $all : $chosen, array_values($all), $today, array_map(fn (array $company): string => $company['code'], $all));
     }
 
     /** @return list<int> */
@@ -50,9 +52,21 @@ final class Filters
         return array_keys($this->companies);
     }
 
+    /**
+     * Every company of the viewer's scope, the filter aside: what PJ-05 and PJ-06 call "in scope", and the company set
+     * an export records (DP-07), so its file masks exactly as the page did.
+     *
+     * @return list<int>
+     */
+    public function scopeIds(): array
+    {
+        return array_keys($this->scope);
+    }
+
+    /** A company's code when it is in the viewer's scope; otherwise nothing. */
     public function code(int $companyId): ?string
     {
-        return $this->companies[$companyId]['code'] ?? null;
+        return $this->scope[$companyId] ?? $this->companies[$companyId]['code'] ?? null;
     }
 
     /**

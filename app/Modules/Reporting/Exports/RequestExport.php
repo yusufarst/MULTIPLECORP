@@ -65,7 +65,7 @@ final class RequestExport
             $id = DB::table('export_requests')->insertGetId([
                 'requested_by' => $viewer->userId,
                 'report_code' => $report->code(),
-                'filters' => json_encode([...$filters->keys(), 'bentuk' => $format], JSON_THROW_ON_ERROR),
+                'filters' => json_encode([...$filters->keys(), 'bentuk' => $format, 'hari' => $filters->today], JSON_THROW_ON_ERROR),
                 ...$context->columns(),
                 'state' => 'PENDING',
                 'recorded_at' => $now,

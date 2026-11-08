@@ -61,6 +61,7 @@ export default function EksporSaya({ rows, more, tab }: Props) {
     const { t } = useTranslation();
     const label = useLabel();
     const [answer, setAnswer] = useState<Answer | null>(null);
+    const [asking, setAsking] = useState<string | null>(null);
     const reload = useCallback(() => {
         router.reload({ only: ['rows', 'more'] });
     }, []);
@@ -70,8 +71,12 @@ export default function EksporSaya({ rows, more, tab }: Props) {
     };
     const again = (row: Row) => {
         setAnswer(null);
+        setAsking(row.id);
         router.post('/laporan/ekspor', row.again, {
             preserveScroll: true,
+            onFinish: () => {
+                setAsking(null);
+            },
             onSuccess: (page) => {
                 const given = (page.flash as { answer?: { text?: unknown } }).answer;
 
@@ -121,7 +126,7 @@ export default function EksporSaya({ rows, more, tab }: Props) {
                                         </Button>
                                     )}
                                     {(row.state === 'FAILED' || row.state === 'WITHHELD') && (
-                                        <Button size="sm" variant="outline" onClick={() => { again(row); }}>
+                                        <Button size="sm" variant="outline" disabled={asking !== null} onClick={() => { again(row); }}>
                                             {t('actions.request_again')}
                                         </Button>
                                     )}

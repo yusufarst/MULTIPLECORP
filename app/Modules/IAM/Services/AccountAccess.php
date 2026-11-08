@@ -287,11 +287,6 @@ final class AccountAccess
     }
 
     /**
-     * @param  list<string>  $companies
-     * @param  list<string>  $capabilities
-     * @param  list<string>  $masking
-     */
-    /**
      * A PostgreSQL array column's values.
      *
      * @return list<string>

@@ -202,6 +202,7 @@ export function ReportPage({ props, path, title, back, links }: { props: ReportP
     const user = (usePage().props as { auth?: { name?: string | null } }).auth?.name ?? '';
 
     const visit = (patch: Partial<Filters> & { laporan?: string }) => {
+        setAnswer(null);
         const query: Record<string, string> = { laporan: report, periode: filters.periode, ...(filters.perusahaan === null ? {} : { perusahaan: filters.perusahaan }) };
 
         if ((patch.periode ?? filters.periode) === 'rentang') {

@@ -1,14 +1,17 @@
 <?php
 
 use App\Modules\DOC\Contracts\ExportFiles;
+use App\Modules\DOC\Data\Download;
 use App\Modules\DOC\Models\FileObject;
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Queries\AccountAuthority;
 use App\Modules\IAM\Services\AccountAccess;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\Reporting\Exports\CellText;
 use App\Modules\Reporting\Exports\ExportFile;
 use App\Modules\Reporting\Exports\ExportSweep;
 use App\Modules\Reporting\Exports\GenerateExport;
+use App\Modules\Reporting\Reports\Column;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
 use App\Support\BusinessDate;
@@ -131,7 +134,10 @@ it('admits a request with its recorded context, generates the page\'s rows as a 
     // The same rows as the page's read for the same filters and context (criterion 6; ARCHITECTURE §14).
     $viewer = app(EffectiveCapabilities::class)->for($this->requester->id);
     $page = Reports::read(app(Reports::class)->find('penjualan') ?? throw new RuntimeException, $viewer, Filters::of($viewer, ['periode' => 'bulan-ini'], BusinessDate::today()));
-    expect(count($page[0]['sections'][0]['rows']))->toBe(count($rows) - 5);
+    $columns = array_map(fn (array $column): Column => new Column($column['key'], $column['kind'], $column['total']), $page[0]['columns']);
+    $expected = array_map(fn (array $cells): array => array_map(fn (?string $cell, int $at): string => $cell === null ? '' : (in_array($columns[$at]->kind, ['money', 'qty', 'percent'], true) ? 'n:'.$cell : CellText::neutral($cell)), $cells, array_keys($cells)), array_map(fn (array $row): array => ExportFile::cells($columns, $row), $page[0]['sections'][0]['rows']));
+    expect(array_map(fn (array $row): array => array_slice($row, 1), array_slice($rows, 4, count($expected))))->toBe($expected)
+        ->and(count($rows))->toBe(4 + count($expected) + 1);
 
     $this->actingAs($this->requester)->get("/status/ekspor/{$request->id}")->assertOk()->assertJson(['state' => 'READY', 'file' => "/laporan/ekspor/{$request->id}/unduh"]);
     expect(DB::table('security_events')->whereIn('event_kind', ['EXPORT_REQUESTED', 'EXPORT_DOWNLOADED'])->where('user_id', $this->requester->id)->count())->toBe(2);
@@ -177,6 +183,57 @@ it('withholds an export whose requester lost a company or capability before or d
     expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('WITHHELD')
         ->and(DB::table('export_requests')->where('id', $request->id)->value('file_object_id'))->toBeNull();
     $this->actingAs($this->requester)->get("/laporan/ekspor/{$request->id}/unduh")->assertNotFound();
+});
+
+it('withholds an export revoked during generation: its READY defeated, its file row rolled back and its bytes removed (criterion 8; M-23; RV-08; JB-03)', function () {
+    Queue::fake();
+    exportAsk($this, $this->requester)->assertRedirect('/laporan/ekspor');
+    $request = latestExport($this->requester->id);
+    $files = app(ExportFiles::class);
+    $requester = $this->requester;
+
+    // The access change runs between the snapshot's file and its READY: RV-08's mark in its own transaction.
+    $during = new class($files, $requester) implements ExportFiles
+    {
+        public function __construct(private readonly ExportFiles $inner, private readonly User $requester) {}
+
+        public function store(string $path, string $mimeType, int $requesterId, Closure $attach): bool
+        {
+            Authorization::revoke($this->requester, 'finance.view');
+            app(AccountAccess::class)->withholdExports($this->requester->id, CarbonImmutable::now());
+
+            return $this->inner->store($path, $mimeType, $requesterId, $attach);
+        }
+
+        public function stream(int $fileId, int $requesterId): ?Download
+        {
+            return $this->inner->stream($fileId, $requesterId);
+        }
+    };
+
+    // The disk already holds the invoice's rendition from the world's setup; the job must leave nothing beside it.
+    $before = Storage::disk('files')->allFiles();
+    (new GenerateExport($request->id))->handle(app(AccountAuthority::class), app(Reports::class), app(ExportFile::class), $during);
+
+    expect(DB::table('export_requests')->where('id', $request->id)->value('state'))->toBe('WITHHELD')
+        ->and(DB::table('export_requests')->where('id', $request->id)->value('file_object_id'))->toBeNull()
+        ->and(DB::table('file_objects')->where('purpose', 'EXPORT')->where('uploaded_by', $this->requester->id)->exists())->toBeFalse()
+        ->and(Storage::disk('files')->allFiles())->toBe($before);
+    app(EffectiveCapabilities::class)->forget();
+    $this->actingAs($this->requester)->get("/laporan/ekspor/{$request->id}/unduh")->assertNotFound();
+});
+
+it('answers the eleventh export request in an hour with MSG-20 in place (WS-12; ROUTE-283)', function () {
+    Queue::fake();
+
+    foreach (range(1, 10) as $ask) {
+        exportAsk($this, $this->requester)->assertRedirect('/laporan/ekspor');
+        DB::table('export_requests')->where('requested_by', $this->requester->id)->update(['state' => 'READY']);
+    }
+
+    exportAsk($this, $this->requester)->assertRedirect();
+    expect(exportAnswer())->toStartWith('Terlalu banyak percobaan.')
+        ->and(DB::table('export_requests')->where('requested_by', $this->requester->id)->count())->toBe(10);
 });
 
 it('refuses a READY export once the requester\'s grants no longer cover its context, marking it withheld (criterion 8; RV-08; M-23)', function () {
@@ -228,15 +285,18 @@ it('finds a request only within its requester\'s own: another account\'s identif
     $request = latestExport($this->requester->id);
     $other = User::query()->findOrFail(Authorization::admin([$this->world->company->id], ['finance.view', 'reports.export'])->id);
     $owner = User::query()->findOrFail(Authorization::owner()->id);
+    $file = FileObject::query()->findOrFail($request->file_object_id)->public_id;
+    expect($file)->toMatch('/^[0-9a-f-]{36}$/');
 
     foreach ([$other, $owner] as $stranger) {
         $this->actingAs($stranger)->get("/laporan/ekspor/{$request->id}/unduh")->assertNotFound();
         $this->actingAs($stranger)->get("/status/ekspor/{$request->id}")->assertNotFound();
         // The file itself through ROUTE-226 answers the same: an export file is served only through its request.
-        $this->actingAs($stranger)->get("/berkas/{$request->file_object_id}/unduh")->assertNotFound();
+        $this->actingAs($stranger)->get("/berkas/{$file}/unduh")->assertNotFound();
     }
 
-    $this->actingAs($this->requester)->get('/berkas/'.$request->file_object_id.'/unduh')->assertNotFound();
+    // Its own requester too: an export file is served only through its request (DIR-089 (5)), never by ROUTE-226.
+    $this->actingAs($this->requester)->get("/berkas/{$file}/unduh")->assertNotFound();
     $this->actingAs($other)->get('/laporan/ekspor/0190a0a0-0000-7000-8000-000000000000/unduh')->assertNotFound();
     $this->actingAs($other)->get('/laporan/ekspor')->assertOk()->assertInertia(fn ($page) => $page->component('Reporting/EksporSaya')->where('rows', []));
     $this->actingAs($this->requester)->get('/laporan/ekspor')->assertOk()->assertInertia(fn ($page) => $page->where('rows.0.id', $request->id)->where('rows.0.state', 'READY'));

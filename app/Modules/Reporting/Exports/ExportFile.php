@@ -39,7 +39,7 @@ final class ExportFile
         foreach ($report->tables($viewer, $filters) as $table) {
             $writer->sheet(self::text('pages.pg_051.table.'.$table->key));
             $writer->row([self::text('pages.pg_051.report.'.$report->code())]);
-            $writer->row([self::filterLine($filters, $at)]);
+            $writer->row([self::filterLine($filters, $at, $report->code())]);
             $writer->row([]);
             $pooled = $table->sections === null;
             $writer->row([...($pooled ? [] : [self::text('pages.pg_051.export.company')]), ...array_map(fn (Column $column): string => self::text('pages.pg_051.col.'.$column->key), $table->columns)]);
@@ -123,11 +123,16 @@ final class ExportFile
         return $out;
     }
 
-    public static function filterLine(Filters $filters, CarbonImmutable $at): string
+    /** The reports that read a position today, which the period does not bound. */
+    public const POSITIONS = ['stok', 'piutang'];
+
+    public static function filterLine(Filters $filters, CarbonImmutable $at, string $report = ''): string
     {
         $companies = implode(', ', array_map(fn (array $company): string => $company['code'], $filters->companies));
+        $period = in_array($report, self::POSITIONS, true) ? self::text('pages.pg_051.position').' '.CarbonImmutable::parse($filters->today)->format('d/m/Y')
+            : CarbonImmutable::parse($filters->period->from)->format('d/m/Y').' – '.CarbonImmutable::parse($filters->period->to)->format('d/m/Y');
 
-        return self::text('pages.pg_051.export.period').': '.CarbonImmutable::parse($filters->period->from)->format('d/m/Y').' – '.CarbonImmutable::parse($filters->period->to)->format('d/m/Y')
+        return self::text('pages.pg_051.export.period').': '.$period
             .($companies === '' ? '' : ' · '.self::text('pages.pg_051.export.company').': '.$companies)
             .' · '.self::text('pages.pg_051.export.generated').': '.$at->setTimezone('Asia/Jakarta')->format('d/m/Y H:i').' WIB';
     }
@@ -144,7 +149,7 @@ final class ExportFile
     {
         $e = fn (?string $text): string => htmlspecialchars($text ?? '', ENT_QUOTES | ENT_HTML5, 'UTF-8');
         $html = '<!doctype html><html lang="id"><head><meta charset="utf-8"><style>@page{size:A4 landscape;margin:12mm}body{font-family:sans-serif;font-size:8pt;color:#111}h1{font-size:12pt;margin:0 0 2mm}h2{font-size:10pt;margin:5mm 0 1mm}p{margin:0 0 3mm}table{width:100%;border-collapse:collapse}th,td{border-bottom:0.5pt solid #bbb;padding:1mm;text-align:left;vertical-align:top}td.n{text-align:right;white-space:nowrap}tr.t td{font-weight:bold}</style></head><body>';
-        $html .= '<h1>'.$e(self::text('pages.pg_051.report.'.$report->code())).'</h1><p>'.$e(self::filterLine($filters, $at)).'</p>';
+        $html .= '<h1>'.$e(self::text('pages.pg_051.report.'.$report->code())).'</h1><p>'.$e(self::filterLine($filters, $at, $report->code())).'</p>';
 
         foreach ($report->tables($viewer, $filters) as $table) {
             $pooled = $table->sections === null;

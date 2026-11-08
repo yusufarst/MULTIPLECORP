@@ -2,6 +2,7 @@
 
 use App\Modules\IAM\Models\User;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Models\Company;
 use App\Modules\Reporting\Exports\ExportContext;
 use App\Modules\Reporting\Reports\Filters;
 use App\Modules\Reporting\Reports\Reports;
@@ -81,6 +82,17 @@ it('shows the Owner both sides on PG-052 in one section, and an Admin of both ea
     expect($byCompany)->toEqual([$this->a->company->code => 0, $this->b->company->code => 1]);
 });
 
+it('masks a side by the viewer\'s scope, never by the company filter: the Owner and an Admin of both see both sides of a filtered allocation (criterion 10; PJ-05; PJ-06; RD-07)', function () {
+    $owner = Authorization::owner()->id;
+    $both = Authorization::admin([$this->a->company->id, $this->b->company->id], ['cost.view'])->id;
+    $consolidated = accessTable($owner, 'alokasi', 'alokasi', ['perusahaan' => $this->a->company->code])['sections'][0]['rows'][0];
+    $filtered = accessTable($both, 'pembelian', 'alokasi', ['perusahaan' => $this->a->company->code])['sections'];
+
+    expect(array_slice($consolidated, 5, 3))->toBe([$this->a->company->code, $this->b->company->code, $this->number])
+        ->and($consolidated[10])->toBe('Stok A dipakai untuk proyek B')
+        ->and($filtered)->toHaveCount(1)->and(array_slice($filtered[0]['rows'][0], 5, 3))->toBe([$this->a->company->code, $this->b->company->code, $this->number]);
+});
+
 it('keeps a company\'s purchase lines and stock value to holders of cost.view in its own section (RD-05; PJ-22; CALC-03)', function () {
     $source = Authorization::admin([$this->a->company->id], ['cost.view', 'stock.view'])->id;
     $stockOnly = Authorization::admin([$this->a->company->id], ['stock.view'])->id;
@@ -102,14 +114,16 @@ it('records an export\'s context and narrows the job\'s read to it, a capability
     $report = app(Reports::class)->find('pembelian') ?? throw new RuntimeException;
     $context = ExportContext::of($report, $viewer, Filters::of($viewer, ['perusahaan' => $this->b->company->code], BusinessDate::today()));
 
-    expect($context->companies)->toBe([$this->b->company->id])->and($context->capabilities)->toBe(['cost.view'])->and($context->masking)->toBe([])
+    // The scope the page masked by, the filter aside (PJ-05; PJ-06): the filter is a recorded key.
+    expect($context->companies)->toEqualCanonicalizing([$this->a->company->id, $this->b->company->id])->and($context->capabilities)->toBe(['cost.view'])->and($context->masking)->toBe([])
         ->and($context->coveredBy($viewer))->toBeTrue();
 
     // stock.view granted since: the job's read still masks the lot code, as the request recorded (DP-07).
     Authorization::grant(User::query()->findOrFail($user), 'stock.view');
     $now = app(EffectiveCapabilities::class)->fresh($user);
     $narrow = $context->narrow($now);
-    expect($narrow->has('stock.view'))->toBeFalse()->and($narrow->scope->includes($this->a->company->id))->toBeFalse()->and($narrow->scope->includes($this->b->company->id))->toBeTrue();
+    expect($narrow->has('stock.view'))->toBeFalse()->and($narrow->scope->includes($this->a->company->id))->toBeTrue()->and($narrow->scope->includes($this->b->company->id))->toBeTrue()
+        ->and($narrow->scope->includes(Company::factory()->createOne()->id))->toBeFalse();
 
     $stored = ExportContext::stored(...array_values($context->columns()));
     expect($stored->companies)->toBe($context->companies)->and($stored->capabilities)->toBe($context->capabilities)->and($stored->masking)->toBe([]);

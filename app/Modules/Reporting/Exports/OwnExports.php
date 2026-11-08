@@ -92,7 +92,7 @@ final class OwnExports implements StatusRead
                 'format' => is_string($filters['bentuk'] ?? null) ? $filters['bentuk'] : 'xlsx',
                 'from' => is_string($filters['dari'] ?? null) ? $filters['dari'] : null,
                 'to' => is_string($filters['sampai'] ?? null) ? $filters['sampai'] : null,
-                'companies' => array_values(array_filter(array_map(fn (string $id): ?string => $codes[(int) $id] ?? null, self::array($request->company_ids ?? null)))),
+                'companies' => is_string($filters['perusahaan'] ?? null) ? [$filters['perusahaan']] : array_values(array_filter(array_map(fn (string $id): ?string => $codes[(int) $id] ?? null, self::array($request->company_ids ?? null)))),
                 'state' => $state,
                 'requested_at' => CarbonImmutable::parse(Row::text($request, 'recorded_at'))->toIso8601ZuluString(),
                 'expires_at' => $state === 'READY' && Row::nullable($request, 'expires_at') !== null ? CarbonImmutable::parse(Row::text($request, 'expires_at'))->toIso8601ZuluString() : null,

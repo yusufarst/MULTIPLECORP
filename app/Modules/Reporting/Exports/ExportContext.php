@@ -24,7 +24,8 @@ final class ExportContext
 
     public static function of(Report $report, Authority $viewer, Filters $filters): self
     {
-        return new self($filters->companyIds(), $report->opens($viewer), $report->masking($viewer));
+        // The scope the page masked by, the company filter aside — the filter itself is among the recorded keys (PJ-05; PJ-06).
+        return new self($filters->scopeIds(), $report->opens($viewer), $report->masking($viewer));
     }
 
     /** From a request's columns, PostgreSQL arrays. */
