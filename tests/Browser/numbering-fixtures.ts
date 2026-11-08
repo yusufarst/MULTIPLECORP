@@ -2,6 +2,8 @@ import { createHmac } from 'node:crypto';
 
 import { type Page } from '@playwright/test';
 
+import { landed } from './account-fixtures';
+
 // PG-061's browser fixtures (TASK-021): an Owner with a confirmed TOTP signed in through PG-001 and PG-002, and a
 // synthetic company for the run with go-live — whose store is TASK-077's — armed or cleared (routes/fixtures.php).
 
@@ -34,7 +36,7 @@ export async function ownerSignedIn(page: Page, run: string, locale: 'id' | 'en'
     await page.waitForURL('**/masuk/verifikasi');
     await page.getByLabel('Kode 6 digit dari aplikasi autentikator').fill(totp(account.secret));
     await page.getByRole('button', { name: 'Verifikasi' }).click();
-    await page.waitForURL((url) => !url.pathname.startsWith('/masuk'));
+    await landed(page);
 }
 
 /** A company for the run; go-live recorded on the day given, or cleared, for this browser context's own requests. */

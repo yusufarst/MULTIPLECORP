@@ -1,6 +1,6 @@
 import { type Page } from '@playwright/test';
 
-import { totp } from './account-fixtures';
+import { landed, totp } from './account-fixtures';
 import { numberingCompany, ownerSignedIn } from './numbering-fixtures';
 
 // TASK-057's browser fixture (routes/fixtures.php; ImportFixture): the Owner signed in, a company of the run whose PROJECT and PURCHASE schemes cover the
@@ -62,7 +62,7 @@ export async function preparerSignedIn(page: Page, run: string): Promise<string>
     await page.waitForURL('**/masuk/verifikasi');
     await page.getByLabel('Kode 6 digit dari aplikasi autentikator').fill(totp(account.secret));
     await page.getByRole('button', { name: 'Verifikasi' }).click();
-    await page.waitForURL((url) => !url.pathname.startsWith('/masuk'));
+    await landed(page);
 
     return account.id;
 }

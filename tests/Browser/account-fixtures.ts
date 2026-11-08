@@ -53,7 +53,19 @@ export async function signIn(page: Page, account: Account, password = account.pa
         await page.getByRole('button', { name: 'Verifikasi' }).click();
     }
 
+    await landed(page);
+}
+
+/**
+ * Signed in and landed: the landing page's heading shown and every deferred group of it answered. *Beranda* and
+ * *Pekerjaan* load their groups as background requests right after the first response (TASK-058; PF-43); a test that
+ * moves on at once cancels them in the browser while the server still computes them, and the next command waits behind
+ * them — past 5 s on a loaded WebKit runner. Waiting for the groups' own settled state, not a time, removes that wait.
+ */
+export async function landed(page: Page): Promise<void> {
     await page.waitForURL((url) => !url.pathname.startsWith('/masuk'));
+    await expect(page.getByRole('heading', { level: 1 })).toBeVisible({ timeout: 60_000 });
+    await expect(page.locator('[data-region-state="loading"]')).toHaveCount(0, { timeout: 60_000 });
 }
 
 /** A fresh account for the run — with a confirmed TOTP unless `plain`, an Owner with it when `owner` —, signed in. */
