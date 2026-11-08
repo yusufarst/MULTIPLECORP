@@ -2,8 +2,10 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 
 // TASK-062's shared journey checks (TEST_STRATEGY §7, §8, §16; AICWDF §25; TS-11): every critical journey watches its
 // page's console and network from its first step — a critical console error or a critical failed request fails it —,
-// keeps both captures as attachments of its evidence, and compares ReconcileGuards' differences before and after it,
-// clean when it adds none (the browser database is shared by every spec of a run).
+// keeps both captures as attachments of its evidence, and ends with ReconcileGuards reporting no discrepancy at all for
+// its records: every guard family reconciled, each difference traced to the company owning its record, none allowed for
+// the journey's own companies — created for its run, so no other spec of the shared browser database writes them —, and
+// a difference tracing to no company counted as the journey's (fail-closed).
 
 type Captured = { console: string[]; failed: string[]; requests: number };
 
@@ -48,18 +50,20 @@ export async function clean(captured: Captured, testInfo: TestInfo): Promise<voi
     expect(captured.failed, 'no critical failed request (TEST_STRATEGY §8)').toEqual([]);
 }
 
-export async function guardDifferences(page: Page): Promise<string[]> {
-    const response = await page.request.get('/__fixtures/rekonsiliasi');
+/**
+ * TS-11: ReconcileGuards over every family reports no discrepancy for the journey's records — the companies it ran on,
+ * named by their public identifiers. The whole database's count is attached as evidence beside it.
+ */
+export async function guardsClean(page: Page, testInfo: TestInfo, companies: string[]): Promise<void> {
+    expect(companies.length, 'a journey names the companies it ran on').toBeGreaterThan(0);
+    const response = await page.request.get(`/__fixtures/rekonsiliasi?perusahaan=${companies.map(encodeURIComponent).join(',')}`);
 
     if (!response.ok()) {
         throw new Error(`The reconciliation fixture failed: ${String(response.status())} ${await response.text()}`);
     }
 
-    return ((await response.json()) as { differences: string[] }).differences;
-}
-
-/** TS-11: the journey added no difference between a guard and its facts. */
-export async function guardsClean(page: Page, before: string[]): Promise<void> {
-    const after = await guardDifferences(page);
-    expect(after.filter((difference) => !before.includes(difference)), 'ReconcileGuards clean after the journey (TS-11)').toEqual([]);
+    const answer = (await response.json()) as { differences: string[]; all: number; families: number };
+    await testInfo.attach('reconcile-guards.json', { body: JSON.stringify(answer, null, 2), contentType: 'application/json' });
+    expect(answer.families, 'every guard family reconciled').toBeGreaterThan(0);
+    expect(answer.differences, 'ReconcileGuards reports no discrepancy after the journey (TS-11)').toEqual([]);
 }
