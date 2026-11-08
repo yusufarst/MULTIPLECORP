@@ -52,7 +52,9 @@ use App\Modules\PRJ\Http\Controllers\QuotationsController;
 use App\Modules\PTY\Http\Controllers\ClientsController;
 use App\Modules\PTY\Http\Controllers\SuppliersController;
 use App\Modules\PUR\Http\Controllers\PurchasesController;
+use App\Modules\Reporting\Http\Controllers\ExportsController;
 use App\Modules\Reporting\Http\Controllers\HomeController;
+use App\Modules\Reporting\Http\Controllers\ReportsController;
 use App\Modules\Reporting\Http\Controllers\SearchController;
 use App\Modules\Reporting\Http\Controllers\SearchPageController;
 use Illuminate\Support\Facades\Route;
@@ -343,6 +345,17 @@ Route::post('/proyek/{id}/persyaratan/{req}/longgarkan', [RequirementsController
 Route::post('/keputusan/{id}/ganti', [RequirementsController::class, 'supersede'])->where('id', '[0-9a-f]{32}')->middleware(['auth', 'capability:decisions.supersede'])->name('adm.decisions.supersede');
 Route::get('/dokumen/kasus', [CorrectionCasesController::class, 'index'])->middleware(['auth', 'capability:projects.view'])->name('ops.cases');
 Route::post('/dokumen/kasus/{id}/tutup', [CorrectionCasesController::class, 'close'])->whereUuid('id')->middleware(['auth', 'capability:cases.close'])->name('ops.cases.close');
+
+// TASK-060: the reports and their exports (ROUTE-051–ROUTE-053; ROUTE-283; ROUTE-284; PF-27–PF-29). PG-051 opens to
+// any of its reports' view capabilities, each report by its read class (RD-02–RD-06); PG-052 is the Owner's
+// (`reports.consolidated`; OD-14); PG-053, the request and the download `reports.export`, the requester only (H6-04),
+// the request also by the report's own capabilities and WS-12's exports limiter; the download an ordinary request
+// authorized at request time (RB-04; RV-08), a denied and an unknown request answering alike (AZ-11).
+Route::get('/laporan', [ReportsController::class, 'show'])->middleware(['auth', 'capability:stock.view,projects.view,finance.view,cost.view,profit.view'])->name('reporting.reports');
+Route::get('/laporan/gabungan', [ReportsController::class, 'consolidated'])->middleware(['auth', 'capability:reports.consolidated'])->name('reporting.consolidated');
+Route::get('/laporan/ekspor', [ExportsController::class, 'index'])->middleware(['auth', 'capability:reports.export'])->name('reporting.exports');
+Route::post('/laporan/ekspor', [ExportsController::class, 'store'])->middleware(['auth', 'capability:reports.export', 'throttle:exports'])->name('reporting.exports.request');
+Route::get('/laporan/ekspor/{id}/unduh', [ExportsController::class, 'download'])->whereUuid('id')->middleware(['auth', 'capability:reports.export'])->name('reporting.exports.download');
 
 // TASK-061: the Owner's two log pages, read-only (ROUTE-063; ROUTE-064; OD-14).
 Route::get('/aktivitas/riwayat', [LogsController::class, 'history'])->middleware(['auth', 'capability:audit.view'])->name('ops.activity');

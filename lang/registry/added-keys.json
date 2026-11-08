@@ -55,6 +55,690 @@
             "indonesian": "proposed",
             "english": "proposed"
         },
+        "pages.pg_051.export": {
+            "task": "TASK-060",
+            "source": "GL glossary.gl_173; ROUTE-283",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_051.export_xlsx": {
+            "task": "TASK-060",
+            "source": "ROUTE-283 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.export_pdf": {
+            "task": "TASK-060",
+            "source": "ROUTE-283 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.empty": {
+            "task": "TASK-060",
+            "source": "TASK-060 empty state (PT-19; proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.position": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.as_of": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.print_line": {
+            "task": "TASK-060",
+            "source": "DESIGN_SYSTEM §17 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.print_footer": {
+            "task": "TASK-060",
+            "source": "DESIGN_SYSTEM §17 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.filter.period": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.filter.from": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.filter.to": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.filter.company": {
+            "task": "TASK-060",
+            "source": "INT-007 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.filter.company_all": {
+            "task": "TASK-060",
+            "source": "INT-007 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.preset.bulan-ini": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.preset.bulan-lalu": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.preset.kuartal-ini": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.preset.tahun-ini": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.preset.rentang": {
+            "task": "TASK-060",
+            "source": "GR-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.stok": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.pembelian": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.penjualan": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.piutang": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.pembayaran": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.laba": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.arus-kas": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-051 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.gabungan": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-052 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.report.alokasi": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-052; J-INV-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.posisi": {
+            "task": "TASK-060",
+            "source": "CALC-01 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.selisih": {
+            "task": "TASK-060",
+            "source": "MSG-41; BR-INV-13 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.reservasi": {
+            "task": "TASK-060",
+            "source": "CALC-02 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.nilai": {
+            "task": "TASK-060",
+            "source": "PJ-22 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.paparan": {
+            "task": "TASK-060",
+            "source": "MSG-41; PJ-22 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.penerimaan": {
+            "task": "TASK-060",
+            "source": "CALC-03 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.pengiriman": {
+            "task": "TASK-060",
+            "source": "CALC-04 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.alokasi": {
+            "task": "TASK-060",
+            "source": "J-INV-07; PJ-05; PJ-06 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.penjualan": {
+            "task": "TASK-060",
+            "source": "CALC-08 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.umur": {
+            "task": "TASK-060",
+            "source": "CALC-07; D-IA-15 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.rincian": {
+            "task": "TASK-060",
+            "source": "CALC-05 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.pembayaran": {
+            "task": "TASK-060",
+            "source": "CALC-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.proyek": {
+            "task": "TASK-060",
+            "source": "CALC-10 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.perusahaan": {
+            "task": "TASK-060",
+            "source": "CALC-11 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.arus-kas": {
+            "task": "TASK-060",
+            "source": "CALC-14 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.table.angka": {
+            "task": "TASK-060",
+            "source": "CALC-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.note.selisih": {
+            "task": "TASK-060",
+            "source": "MSG-41 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.note.paparan": {
+            "task": "TASK-060",
+            "source": "MSG-41 (canonical company form)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_051.class.hpp": {
+            "task": "TASK-060",
+            "source": "CALC-09 (canonical term)",
+            "indonesian": "canonical",
+            "english": "proposed"
+        },
+        "pages.pg_051.class.loss": {
+            "task": "TASK-060",
+            "source": "CALC-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.class.supplier_return": {
+            "task": "TASK-060",
+            "source": "CALC-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.disputed": {
+            "task": "TASK-060",
+            "source": "CALC-07 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.export.company": {
+            "task": "TASK-060",
+            "source": "LOCALIZATION §3.4 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.export.total": {
+            "task": "TASK-060",
+            "source": "CS-08 per-company total (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.export.period": {
+            "task": "TASK-060",
+            "source": "LOCALIZATION §3.4 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.export.generated": {
+            "task": "TASK-060",
+            "source": "LOCALIZATION §3.4 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.tab.semua": {
+            "task": "TASK-060",
+            "source": "INFORMATION_ARCHITECTURE §8.6 PG-053 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.tab.berjalan": {
+            "task": "TASK-060",
+            "source": "IP-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.tab.siap": {
+            "task": "TASK-060",
+            "source": "IP-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.tab.gagal": {
+            "task": "TASK-060",
+            "source": "IP-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.empty": {
+            "task": "TASK-060",
+            "source": "PT-19 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.requested": {
+            "task": "TASK-060",
+            "source": "IP-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.failed": {
+            "task": "TASK-060",
+            "source": "IP-12 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.withheld": {
+            "task": "TASK-060",
+            "source": "RV-08; UXS-23 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_053.expires": {
+            "task": "TASK-060",
+            "source": "FL-09 (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.sku": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.product": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.unit": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.on_hand": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.reserved": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.unusable": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.available": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.pending": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.project": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.remaining": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.value": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.exposure": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.number": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.date": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.supplier": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.item": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.ordered": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.received": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.demand": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.delivered": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.quantity": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.lot": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.source": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.bearer": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.class": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.amount": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.reason": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.authorized_by": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.client": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.sales_value": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.output_tax": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.gross": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.bucket": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.outstanding": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.disputed": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.due_date": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.method": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.reference": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.contra": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.net": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.title": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.revenue": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.direct_cost": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.profit": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.margin": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.project_profit": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.other_income": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.company_cost": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.cash_in": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.cash_out": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.company": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
+        "pages.pg_051.col.receivable": {
+            "task": "TASK-060",
+            "source": "TASK-060 report column (proposed copy)",
+            "indonesian": "proposed",
+            "english": "proposed"
+        },
         "outcome.committed": {
             "task": "TASK-015",
             "source": "DESIGN_SYSTEM §12.2",

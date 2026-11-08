@@ -10,7 +10,7 @@ Amendment: on 2026-10-23 the Owner's decision [DIR-089](../00-governance/DECISIO
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -237,6 +237,23 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 13. An export request is found by its UUIDv7 identifier only within its requester's own requests: another account's identifier, on ROUTE-284 and on ROUTE-285's export status, answers as not found and reveals no state, file or context (IDOR; DIR-088; H6-04; DP-07).
 14. The export job writes its file to its own request only, and the file is served only through that request to its requester; another account's request or file answers as not found, proven by an authorization test — the database holds an export file to one request, not to its requester (DIR-089 (5); FL-09; IDOR).
 
+**CRITERIA DISPOSITIONS:**
+
+- Criterion 1: `tests/Feature/Reporting/ReportsPagesTest.php` — an expense on the project a cost and no Cash-Out, its payment the Cash-Out with the cost not counted twice; the output tax beside the sales value and out of revenue and profit on FX-01's tax settlement (annex 13); no SPJ, SIPLAH or reference value read by any report.
+- Criterion 2: `ReportsPagesTest` — FX-01's AC-10 baseline (annex 1): sales value on issue, no receivable before billing, the receivable activated on billing and closed by the two payments, each a Cash-In; annex 13's sales value, output tax, billed total, operating revenue and Cash-In; a previous period holding none of today's facts (CALC-13).
+- Criterion 3: `ReportsPagesTest` — an Admin's sections one per company with their own totals and none across them; PG-052 the Owner's alone, an Admin's request answering as PG-005 (OD-14); `tests/Authorization/ReportsAccessTest.php` — the allocation report one section per company, each row once.
+- Criterion 4: `ReportsPagesTest` — a company outside the scope ignored, the scope standing; a company in scope narrowing; every statement filtered by the companies inside it, before grouping.
+- Criterion 5: `ReportsAccessTest` — a pending quantity as the company's own exposure only, another company's view empty; the pool's pending line apart from every company's figures.
+- Criterion 6: `tests/Integration/Reporting/ExportJobTest.php` — the file's cells equal the page's rows for the same filters and recorded context; a formula-led text neutralized, numbers typed; Indonesian title, headers and labels; the period the request resolved, not the job's day's; `tests/Unit/Reporting/ExportCellsTest.php` — every FL-09 lead character and its full-width variant.
+- Criterion 7: `ExportJobTest` — a third request while two are in progress MSG-22, a stale claim not counted; a request above the row bound MSG-21 at admission (UXH-11's choice below); the eleventh in an hour MSG-20; PG-053's five states to the requester only; `tests/Browser/E2E/reports.spec.ts` — the third concurrent export refused in place.
+- Criterion 8: `ExportJobTest` — a capability revoked before the job and `reports.export` lost withhold it with nothing written; a revocation during generation defeats READY, rolls the file row back and leaves no bytes; a READY export no longer covered refused like a nonexistent one and marked WITHHELD; RV-08's mark by the access change.
+- Criterion 9: `ExportJobTest` — the download an ordinary request through the authorizing controller with FL-07's attachment headers, no signed link; the E2E download.
+- Criterion 10: `ReportsAccessTest` — the source side the draw with the bearer, its project, reason and actor masked; the bearer side the cost in full with the source masked, the lot code with `stock.view` only; the Owner both sides, a company filter never masking a side in scope.
+- Criterion 11: `ReportsPagesTest` — every report within QB-11's six statements in one snapshot; the export read in keyed chunks through a streaming writer, a chunk of one proving the keyset. QB-11's 1 s and PFM-16's 60 s at 10x are TASK-068's scripts measured in TASK-079, never reported as met from CI.
+- Criterion 12: the print view is the page itself, its filters as a line of text with its header and footer — `reports.spec.ts` in print media.
+- Criterion 13: `ExportJobTest` — another account's identifier and an unknown one answer as not found on ROUTE-284 and ROUTE-285, revealing nothing.
+- Criterion 14: `ExportJobTest` — the export file served only through its request to its requester; ROUTE-226, asked for that file by its own public identifier, answers as not found to its requester, another Admin and the Owner.
+
 **TEST REQUIREMENTS:**
 
 - Lint: TL-01
@@ -260,32 +277,33 @@ CAP-11 and AC-11 require reports that keep the five concepts apart — sales val
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: Unit (TL-03), Feature (TL-04), Integration (TL-05) and Performance (TL-15) PASS in CI
+- [x] Authorization: each report's read class, `reports.consolidated`, `reports.export`, the requester-only lookup and file (TL-06) PASS in CI
+- [x] Route integrity: ROUTE-051–ROUTE-053, ROUTE-283 and ROUTE-284 in `tests/Feature/BootTest.php` and the route audit (TL-07) PASS in CI
+- [x] Interaction behavior: INT-283 and INT-284 — authorization at request time, the denied and unknown cases alike, in `ExportJobTest` (TL-08) PASS in CI
+- [x] Browser E2E if required: `reports.spec.ts` (TL-09) PASS in CI on Chromium and WebKit
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the shared table, filters and region states (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: SM-01 and SM-25 through the scope and projection tests; SM-11 through FL-09's cells and the export withheld after a revocation; SM-04 through PG-052's denial (TL-14)
+- [x] Database safety review: no schema change, no migration; the one write path is `export_requests` and DOC's EXPORT file; production not touched
+- [x] Final diff review: Codex unavailable — the fallback review under CR-001 (DIR-107), its material findings fixed and verified
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `fd32ed5`: fresh CI on GitHub's `ubuntu-24.04` runner — run 42467075350 (pull request #73, attempt 2) every job PASS; run 42467071714 (push) every job PASS but the WebKit E2E layer, where in each attempt one spec outside this Task waited past 5 s for its command's answer (`reservations.spec.ts`, `quotations.spec.ts`), the same specs passing in the other run. This record's head is proven by its own fresh CI, every job required to PASS before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: `tests/Feature/BootTest.php` and `tests/Routes/RouteAuditTest.php` PASS — the five routes declared, each behind its capability
+- Interaction evidence: `tests/Integration/Reporting/ExportJobTest.php` PASS — INT-283's answers in place and INT-284's authorization at request time
+- Browser evidence: `E2E: PASS — Evidence: fd32ed5, CI ubuntu-24.04 run 42467071714, tests/Browser/E2E/reports.spec.ts on Chromium and WebKit`
+- Localization evidence: PG-051–PG-053 in both languages — `tests/Browser/Localization/reports.spec.ts` PASS; the export Indonesian in both, asserted on the file; 117 keys added with their registry entries
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — no package added (the XLSX writer is the platform's ZipArchive, the PDF FL-08's renderer), no Codex credit bought
+- Files changed: `app/Modules/Reporting` (`Reports/`, `Exports/`, the two controllers, its README); `app/Modules/DOC/Contracts/ExportFiles.php`, `Services/ExportFileStore.php`, `Services/ExportNotAttached.php`, `Services/FileStore.php` (`writeStream`); `app/Modules/IAM/Data/Authority.php` (`covers`, moved from AccountAccess), `Queries/AccountAuthority.php`; `app/Support/SecurityLog/SecurityEventRecorder.php` (four detail keys); `app/Providers/AppServiceProvider.php`; `routes/web.php`, `routes/fixtures.php`; `resources/js` (`Pages/Reporting/Laporan.tsx`, `LaporanGabungan.tsx`, `EksporSaya.tsx`, `features/reporting/report-view.tsx`, `components/ui/table.tsx`'s `scrollLabel`, `lib/navigation.ts`); `lang`; the tests; CR-001, DIR-107 and APPR-029 with their source transcript
+- Commit SHA: from the start commit to `fd32ed5` on `task/TASK-060-reports-exports`, the Owner's identity, no signature and no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria as CRITERIA DISPOSITIONS states. **Codex's review did not run:** its connector answered at its usage limit on the pull request's opening (comment 6708226490) and to the request for a review (6708240278) — neither a review, a pass nor a CODEX_TIMEOUT; no credit bought. **The fallback review under CR-001** (the Owner's approval, DIR-107 and APPR-029): an adversarial preflight of the first commit `cf20e55` — 1 material (NULL due dates across keyed chunks) and 4 minor, fixed in `b470541` —, not represented as the full review; then the full-diff review of `16be7b6..6391e48` by a read-only reviewer that did not write the change, given the code and the contract: 4 material findings — the allocation masked by the company filter rather than the scope, criterion 14's ROUTE-226 check proving nothing, no test of a revocation during generation, no FX-01 figures — and 9 minor, fixed in `fd32ed5`; one targeted read-only verification of the fixes closed it. The first CI on `cf20e55` found the module-tier and thin-controller rules broken by DOC's and IAM's services, the document types a fresh database lacks and the phone table frame's keyboard access; a later run's phone layer found no "Ekspor" on the phone — each fixed. Reruns, each diagnosed: a run crossing 00:00 WIB (17:00 UTC) refused its worlds' dates by C-50 (a separate session is proposed for it); and WebKit-only specs outside this Task timed out waiting 5 s for a command's answer, a different spec in every attempt of this branch while TASK-059's commit, rerun as a control on the same day, passed. Its trace showed the command's POST waiting about 4.5 s on the server behind the five deferred groups of *Beranda* that the sign-in landed on and the test left at once, cancelled in the browser but still computed (TASK-058; PF-43), the growing browser database tipping it past 5 s. The browser fixtures' sign-in now waits for the landing page's heading and for every deferred group to answer (\`landed()\` in \`tests/Browser/account-fixtures.ts\`) — a settled state, no sleep and no raised assertion timeout. **Executor decisions, for Planning:** (1) UXH-11 and IP-12's choice: the row bound is checked at admission by the report's own bounded counts (PF-28's "refused … instead of failing midway"), and the job counts again, ending *Gagal* if the rows grew past it; (2) a PDF, rendered whole, has its own bound of 5,000 rows (`exports.pdf_row_bound`), the workbook PF-28's 200,000 (`exports.row_bound`); (3) a READY export is kept 24 hours, then *Tidak Tersedia* (FL-09 "kept briefly"; HO-29's cleanup is P9's); (4) the masking context records the capabilities that widen a report — a project's number, a value, a lot code —, and the company set the whole scope the page masked by, the filter among the recorded keys, so a revocation of any of them withholds the export; (5) the stock and receivable reports are positions as of today, the period not bounding them; (6) the allocation report sections a row under its bearer when the bearer is among the companies, else its source, so a section can mix incoming and outgoing allocations; (7) the page carries every row of its period with no pagination, and above 1,000 rows a table adds keyset statements beyond QB-11's six — TASK-068 measures it; (8) INT-283 and INT-284 are tested in the integration suite, not a `tests/Interaction` file, and the browser does not reach the row bound (a test cannot hold 200,000 rows); (9) the verification's two minor notes, left as they are: an export recording the whole scope is withheld when any company of it is revoked, even where its file holds none of that company's rows — conservative under DP-07, never a leak —, and a stock export's position line names the request's day while the job reads the stock when it runs, the two differing only across midnight. No approved document changed by this Task besides CR-001, DIR-107 and APPR-029
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
