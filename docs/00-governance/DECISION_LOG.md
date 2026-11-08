@@ -222,8 +222,10 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | DIR-104 | 2026-11-01 | Owner decision — P11Q-08 option (a), one project for each rupiah of a payment's rest, what a hold covers; Change 16 | [Exact transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt) — [details](#dir-104--the-owners-decision-on-p11q-08) |
 | DIR-105 | 2026-11-01 | The Owner's directive on the CI root causes: each browser layer's evidence is the artifact of its latest job on the tested commit, fail-closed; the stock specs' selector and label | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt) — [details](#dir-105--the-owners-directive-on-the-ci-root-causes) |
 | DIR-106 | 2026-11-07 | The Owner's one-time exception for pull request #72 (TASK-059) only: Codex's review unavailable at its usage limit, an independent evidence-backed review in its place, every other merge condition kept; no later pull request | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_PR72-CODEX-EXCEPTION_2026-11-07.txt) — [details](#dir-106--the-owners-codex-exception-for-pull-request-72) |
+| DIR-107 | 2026-11-08 | The Owner's approval of CR-001 amending DIR-096's review requirement as CR-001 specifies — a fallback review only while Codex is demonstrably unavailable, its seven conditions mandatory, never counted as a Codex pass, revocable; resume TASK-060 and the authorized pipeline | [Exact transcript](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt) — [details](#dir-107-and-appr-029--the-owners-approval-of-cr-001) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 | APPR-028 | 2026-11-01 | Explicit Owner approval — P11Q-08 option (a), the attribution rule of TASK_PLAN §8 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt), item 1 — [details](#dir-104--the-owners-decision-on-p11q-08) |
+| APPR-029 | 2026-11-08 | Explicit Owner approval — CR-001, the standing fallback review while Codex is unavailable, ACCEPTED | [Exact approval transcript](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt) — [details](#dir-107-and-appr-029--the-owners-approval-of-cr-001) |
 
 ## Approval register
 
@@ -2666,6 +2668,21 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **APPR-026 — the canonical text, approved by the Owner after it was shown (part 3):** W1–W4 — DATABASE §28's runtime privileges and its header's amendment line; TASK-022's amendment line and DATABASE IMPACT ASSESSMENT; TASK_PLAN's Change 14. Level 1 under CHANGE_CONTROL — locks made available to the role that must take them, no table, column, behaviour, visibility or V1 requirement changed —, approved by the Owner on 2026-10-27.
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
+
+## DIR-107 and APPR-029 — The Owner's approval of CR-001
+
+- **Source/date:** [EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt), the Owner's message received in session on 2026-11-08 (WIB), transcribed as received.
+- **The decision, in the Owner's words:** "I explicitly approve CR-001, “A fallback review while the external reviewer is unavailable,” as a standing, reusable review fallback under CHANGE_CONTROL. This approval amends the applicable DIR-096 review requirement only as specified in CR-001."
+- **The amendment to DIR-096:** a pull request whose Codex review is demonstrably unavailable — a usage-limit or outage answer, or no answer past its 10-minute limit — may meet DIR-096's review condition through [CR-001](changes/CR-001-fallback-review.md)'s fallback review, under all seven of its conditions. Everything else in DIR-096 is unchanged.
+- **The Owner's conditions:**
+  - the fallback only while Codex is demonstrably unavailable, and it never counts as a successful Codex review;
+  - the reviewer read-only, not an author of the change, examining the complete pull request diff against the Task's contract, authorization, security, data integrity, concurrency and regression;
+  - one independent review and one targeted verification; every material finding fixed; a further verification while a material defect remains;
+  - every CI, DEFINITION_OF_DONE and merge gate unchanged;
+  - no paid Codex credit or subscription;
+  - revocable by the Owner at any time.
+- **Its first use:** TASK-060's pull request #73. TASK-060's preflight of `cf20e55` reviewed the first commit only, so it is not represented as the full-diff review; a full-diff review of the final head follows, as the Owner directs.
+- **The amendments:** this entry and its two register rows, the source transcript, CR-001's status ACCEPTED, and CURRENT_HANDOFF's rows — a Level 1 record of an Owner decision under CHANGE_CONTROL. No Task is added, no V1 requirement dropped.
 
 ## DIR-106 — The Owner's Codex exception for pull request #72
 

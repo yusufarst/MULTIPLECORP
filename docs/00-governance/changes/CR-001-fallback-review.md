@@ -1,8 +1,8 @@
 # CR-001 — A fallback review while the external reviewer is unavailable
 
-Status: PROPOSED — OWNER DECISION REQUIRED | Date: 2026-11-07 | Raised by: the executor, under CHANGE_CONTROL ([Lightweight records](../CHANGE_CONTROL.md#lightweight-records)) | Decision owner: the Owner
+Status: ACCEPTED — the Owner's explicit approval of 2026-11-08, [DIR-107 and APPR-029](../DECISION_LOG.md#dir-107-and-appr-029--the-owners-approval-of-cr-001) | Date: 2026-11-07, accepted 2026-11-08 | Raised by: the executor, under CHANGE_CONTROL ([Lightweight records](../CHANGE_CONTROL.md#lightweight-records)) | Decision owner: the Owner
 
-Not in force. Nothing below is applied until the Owner approves it in their own words, transcribed into the repository as CHANGE_CONTROL's [approval evidence](../CHANGE_CONTROL.md#approval-evidence) requires. Until then [DIR-096](../DECISION_LOG.md#dir-096--standing-execution-directives)'s merge rule stands unchanged, and [DIR-106](../DECISION_LOG.md#dir-106--the-owners-codex-exception-for-pull-request-72)'s exception stays pull request #72's alone — it is not reused (the Owner's directive of 2026-11-07, §6).
+In force from 2026-11-08: the Owner approved it in their own words ([transcript](../sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt)), amending [DIR-096](../DECISION_LOG.md#dir-096--standing-execution-directives)'s review requirement only as specified here; the Owner may revoke it at any time. The Owner's approval adds that the reviewer examines the complete pull request diff against the Task's contract, authorization, security, data integrity, concurrency and regression, and that a fallback review never counts as a successful Codex review. [DIR-106](../DECISION_LOG.md#dir-106--the-owners-codex-exception-for-pull-request-72)'s exception stays pull request #72's alone.
 
 ## Problem
 
