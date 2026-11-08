@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 87
 
 DONE: 62
-READY: 6
-IN_PROGRESS: 0
+READY: 5
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 0
 TODO: 14
@@ -28,8 +28,8 @@ Progress:
 62 / 87
 Percentage: 71.3 %
 
-CURRENT TASK: none in progress — TASK-060 — Reports, the consolidated report and exports DONE on its branch `task/TASK-060-reports-exports`, CI PASS on `fd32ed5`, its pull request #73 squash-merged by the executor once eligible (DIR-096; DIR-107)
-NEXT READY TASK: TASK-062 — Critical journeys A, READY, with TASK-063, TASK-064, TASK-065, TASK-067 and TASK-068 (re-checked at TASK-060's DONE); TASK-066 waits on TASK-062–TASK-065, TASK-069 on TASK-062–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-062 — Critical journeys A, IN PROGRESS on its branch `task/TASK-062-critical-journeys-a` from the merged `main` `da11dde` (DIR-096; DIR-102); TASK-060 DONE and squash-merged as `da11dde` (pull request #73)
+NEXT READY TASK: TASK-063 — Critical journeys B, READY, with TASK-064, TASK-065, TASK-067 and TASK-068; TASK-066 waits on TASK-062–TASK-065, TASK-069 on TASK-062–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 16 of 2026-11-01 — DIR-104, the Owner's decision on P11Q-08 (APPR-028): one project for each rupiah of a payment's rest, what a hold covers; ROUTE-264 · INT-264; TASK-053 and TASK-055 TODO
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -202,7 +202,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | DONE | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | DONE | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
