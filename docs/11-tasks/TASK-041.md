@@ -30,6 +30,7 @@ Dispatch is the single physical subtraction for warehouse fulfilment — deliver
 
 - TASK-045 — Deliveries (Pengiriman) and delivery closure
 - TASK-056 — Project cancellation
+- TASK-088 — Defect D1 — PG-024's ambiguous-code candidates and "Cari Produk" (UXS-34)
 
 **PARALLEL SAFE:** NO — it consumes reservations, lots and serials and draws lot cost under the product, lot, serial, reservation, line and lot-cost guards (LK-13–LK-19, LK-23) that every inventory Task shares
 

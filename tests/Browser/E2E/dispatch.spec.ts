@@ -90,6 +90,43 @@ test('refuses and routes another company\'s lot without the authority, with MSG-
     await context.close();
 });
 
+test('lists an ambiguous code\'s candidates for the user\'s choice and finds a line with "Cari Produk" (CJ-07; UXS-34; IP-15; MSG-37; TASK-088)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    const run = await dispatchRun(page, `keluar-kembar-${String(Date.now())}`);
+    const made = await page.request.post('/__fixtures/dispatch/kembar', { data: { product: run.product } });
+    expect(made.ok(), await made.text()).toBe(true);
+    const twin = (await made.json()) as { code: string; name: string };
+
+    await page.goto(`/gudang/barang-keluar/${run.project}`);
+    const field = page.getByRole('textbox', { name: 'Pindai atau ketik kode' });
+    await field.fill(twin.code);
+    await field.press('Enter');
+    await expect(page.getByRole('alert').filter({ hasText: `Kode ${twin.code} cocok dengan lebih dari satu barang. Pilih yang dimaksud.` }).locator('visible=true')).toBeVisible();
+
+    // The two candidates, neither chosen for the user; the other product is not on the project and is refused as a scan of it would be.
+    const candidates = page.locator('[data-slot="scan-candidates"]').getByRole('button');
+    await expect(candidates).toHaveCount(2);
+    await candidates.filter({ hasText: twin.name }).click();
+    await expect(page.getByRole('alert').filter({ hasText: twin.name }).locator('visible=true')).toBeVisible();
+    await expect(page.locator('[data-slot="scan-candidates"]')).toHaveCount(0);
+
+    // The project's own product among them opens its line.
+    await field.fill(twin.code);
+    await field.press('Enter');
+    await expect(candidates).toHaveCount(2);
+    await candidates.filter({ hasNotText: twin.name }).click();
+    await expect(page.getByRole('status').filter({ hasText: 'dibuka' }).locator('visible=true')).toBeVisible();
+    await expect(page.locator('[data-slot="scan-candidates"]')).toHaveCount(0);
+
+    // "Cari Produk" beside the field filters the project's lines and closes again.
+    await page.getByRole('button', { name: 'Cari Produk' }).click();
+    await page.getByRole('textbox', { name: 'Cari Produk' }).fill('tidak-ada-barang');
+    await expect(page.locator('[data-slot="dispatch-lines"] li')).toHaveCount(0);
+    await page.getByRole('button', { name: 'Cari Produk' }).click();
+    await expect(page.getByRole('textbox', { name: 'Cari Produk' })).toHaveCount(0);
+    await expect(page.locator('[data-slot="dispatch-lines"] li')).toHaveCount(1);
+});
+
 test('scans its serials, one announced twice and a code unknown, then corrects the unit shipped with its proof (CJ-07; UXS-34; IP-15; CM-36; criteria 5, 13)', async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     const run = await dispatchRun(page, `keluar-pindai-${String(Date.now())}`);
