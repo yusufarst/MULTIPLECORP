@@ -223,6 +223,7 @@ This is an evidence index. Rules live in the linked owning documents. Entries di
 | DIR-105 | 2026-11-01 | The Owner's directive on the CI root causes: each browser layer's evidence is the artifact of its latest job on the tested commit, fail-closed; the stock specs' selector and label | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_CI-ROOT-CAUSE_2026-11-01.txt) — [details](#dir-105--the-owners-directive-on-the-ci-root-causes) |
 | DIR-106 | 2026-11-07 | The Owner's one-time exception for pull request #72 (TASK-059) only: Codex's review unavailable at its usage limit, an independent evidence-backed review in its place, every other merge condition kept; no later pull request | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_PR72-CODEX-EXCEPTION_2026-11-07.txt) — [details](#dir-106--the-owners-codex-exception-for-pull-request-72) |
 | DIR-107 | 2026-11-08 | The Owner's approval of CR-001 amending DIR-096's review requirement as CR-001 specifies — a fallback review only while Codex is demonstrably unavailable, its seven conditions mandatory, never counted as a Codex pass, revocable; resume TASK-060 and the authorized pipeline | [Exact transcript](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt) — [details](#dir-107-and-appr-029--the-owners-approval-of-cr-001) |
+| DIR-108 | 2026-11-11 | The Owner's narrow amendment to DIR-102: up to three implementation helper agents within the same active Task, under one primary Executor, mutually exclusive file ownership, no two Tasks at once, no concurrent suites on a shared test database, never in place of ER-06's or CR-001's reviewer; continuous execution through the eligible AGENT Tasks; one operator request for the outstanding inputs | [Exact transcript](sources/EXECUTION_OWNER_DIRECTIVE_INTRA-TASK-HELPERS_2026-11-11.txt) — [details](#dir-108--the-owners-intra-task-helper-amendment-to-dir-102) |
 | APPR-027 | 2026-10-31 | Explicit Owner approval — OF04_FACTS_DRAFT's F1, F2 and F3 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISIONS_CHANGE-4_2026-10-31.txt), item 2 — [details](#dir-101--the-owners-decisions-on-p11q-07-of-04-and-the-labels) |
 | APPR-028 | 2026-11-01 | Explicit Owner approval — P11Q-08 option (a), the attribution rule of TASK_PLAN §8 | [Exact approval transcript](sources/EXECUTION_OWNER_DECISION_P11Q-08_2026-11-01.txt), item 1 — [details](#dir-104--the-owners-decision-on-p11q-08) |
 | APPR-029 | 2026-11-08 | Explicit Owner approval — CR-001, the standing fallback review while Codex is unavailable, ACCEPTED | [Exact approval transcript](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt) — [details](#dir-107-and-appr-029--the-owners-approval-of-cr-001) |
@@ -2669,6 +2670,21 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **Built by TASK-022 before it is DONE:** C1, C2, (L) and reading (1), with TOOLCHAIN's row.
 - **The amendments, Level 1 under CHANGE_CONTROL as the Owner directs — the narrowest that record the decisions:** this entry, its register and index rows, DATABASE W1–W2, TASK-022 W3, TASK_PLAN's Change 14 (W4), TOOLCHAIN's row and CURRENT_HANDOFF's readings. No new planning phase opens; GAP-053 stays OPEN for TASK-029's template and P8's tests.
 
+## DIR-108 — The Owner's intra-Task helper amendment to DIR-102
+
+- **Source/date:** [EXECUTION_OWNER_DIRECTIVE_INTRA-TASK-HELPERS_2026-11-11.txt](sources/EXECUTION_OWNER_DIRECTIVE_INTRA-TASK-HELPERS_2026-11-11.txt), the Owner's message received in session on 2026-11-11 (WIB), transcribed as received.
+- **The amendment, in the Owner's words:** "I approve a narrowly bounded amendment to DIR-102 permitting up to three implementation helper agents within the SAME active Task".
+- **Its conditions, all binding:**
+  - exactly one primary Executor keeps the Task, its branch, integration, commits, reviews, CI and merge;
+  - each helper owns its files exclusively, named before it starts; no overlapping writes, no Git operation, no watcher of its own;
+  - no two Tasks run at once; no two test suites modify a shared test database at the same time;
+  - a helper never replaces the independent read-only reviewer ER-06 or CR-001 requires;
+  - the primary Executor integrates the helpers' work, then runs the complete mandatory verification;
+  - helpers are used only where they save measurable wall-clock time worth their cost and integration risk; where safe isolation is impossible, the work proceeds sequentially.
+- **What it does not change:** every other DIR-102 rule — one active Task, `PARALLEL SAFE` as the plan states it, one watcher —, DIR-096's gates, DIR-107's fallback review, V1's scope, Git safety and production safety.
+- **The rest of the directive:** continuous execution through the eligible AGENT Tasks after each merge, without routine confirmation between them; HUMAN OPERATOR and OWNER Tasks kept with their actors; one concise, credential-free request to the operator for the outstanding inputs, prepared without stopping implementation.
+- **The amendments:** this entry and its register row, the source transcript, and DIR-102's amendment line — a Level 1 record of an Owner decision under CHANGE_CONTROL. No Task is added, no V1 requirement dropped.
+
 ## DIR-107 and APPR-029 — The Owner's approval of CR-001
 
 - **Source/date:** [EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt](sources/EXECUTION_OWNER_APPROVAL_CR-001_2026-11-08.txt), the Owner's message received in session on 2026-11-08 (WIB), transcribed as received.
@@ -2740,6 +2756,7 @@ The hashes are of Git blob content with LF line endings; DECISION_LOG's own SHA-
 - **What it is:** an optimization of DIR-096's execution: minimal context per Task, one substantive review by risk then targeted delta verification, targeted tests then the mandatory final CI, the next READY Task right after a verified merge, a short progress block in each reply. The target of 48 hours is an aim, never a reason to claim DONE.
 - **What it does not change:** every gate, V1's scope, `PARALLEL SAFE`, one primary executor and one active Task, one watcher, the Owner's merge exceptions and change control. A proposal for parallel execution comes to the Owner as a change control and starts nothing by itself.
 - **The amendments:** this entry and its index row, a Level 1 record of an Owner directive under CHANGE_CONTROL. No Task is added, no V1 requirement dropped.
+- **Amended by [DIR-108](#dir-108--the-owners-intra-task-helper-amendment-to-dir-102) (2026-11-11):** up to three implementation helper agents within the same active Task under one primary Executor, on its stated conditions; its other rules unchanged.
 
 ## DIR-101 — The Owner's decisions on P11Q-07, OF-04 and the labels
 
