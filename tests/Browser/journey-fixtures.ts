@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises';
 import { expect, type Page, type TestInfo } from '@playwright/test';
 
 // TASK-062's shared journey checks (TEST_STRATEGY §7, §8, §16; AICWDF §25; TS-11): every critical journey watches its
@@ -66,9 +67,19 @@ export function watch(page: Page): Captured {
     return captured;
 }
 
-/** The journey's evidence (TEST_STRATEGY §16): the captures attached, then no critical console error or failed request. */
+/**
+ * A capture written into the test's own output directory and attached by path, so that a passing journey's evidence stays in
+ * the run's browser artifact as a failing one's does (TEST_STRATEGY §16) — a body attachment alone is not kept on a pass.
+ */
+async function keep(testInfo: TestInfo, name: string, value: unknown): Promise<void> {
+    const path = testInfo.outputPath(name);
+    await writeFile(path, JSON.stringify(value, null, 2));
+    await testInfo.attach(name, { path, contentType: 'application/json' });
+}
+
+/** The journey's evidence (TEST_STRATEGY §16): the captures kept, then no critical console error or failed request. */
 export async function clean(captured: Captured, testInfo: TestInfo): Promise<void> {
-    await testInfo.attach('console-and-network.json', { body: JSON.stringify(captured, null, 2), contentType: 'application/json' });
+    await keep(testInfo, 'console-and-network.json', captured);
     expect(captured.console, 'no critical console error (TEST_STRATEGY §8)').toEqual([]);
     expect(captured.failed, 'no critical failed request (TEST_STRATEGY §8)').toEqual([]);
     expect(captured.csp.filter((violation) => !(captured.engine === 'webkit' && violation === ENGINE_SELECT)), 'no CSP violation (WS-08)').toEqual([]);
@@ -87,7 +98,7 @@ export async function guardsClean(page: Page, testInfo: TestInfo, companies: str
     }
 
     const answer = (await response.json()) as { differences: string[]; all: number; families: number };
-    await testInfo.attach('reconcile-guards.json', { body: JSON.stringify(answer, null, 2), contentType: 'application/json' });
+    await keep(testInfo, 'reconcile-guards.json', answer);
     expect(answer.families, 'every guard family reconciled').toBeGreaterThan(0);
     expect(answer.differences, 'ReconcileGuards reports no discrepancy after the journey (TS-11)').toEqual([]);
 }
