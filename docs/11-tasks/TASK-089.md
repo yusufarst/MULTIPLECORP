@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 17, created through the executor feedback loop from TASK-062's defect D2 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -197,32 +197,33 @@ TASK-062's CJ-01 UXS-44 test, in fresh CI on `dd851d3` (runs 42941402230 and 429
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: every PHP layer PASS in CI, with `ProjectCancellationTest`'s new test of PG-011's groups
+- [x] Authorization: N/A — unchanged; the record's own read rules (TASK-056), its finance figures still behind `finance.view`
+- [x] Route integrity: N/A — ROUTE-011's path, methods and prop names unchanged; the route audit (TL-07) PASS in CI
+- [x] Interaction behavior: N/A — no INT- row changes
+- [x] Browser E2E if required: the E2E layer on Chromium and WebKit; CJ-01's UXS-44 runs in TASK-062's verification on the merged code
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: unchanged components (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: N/A — no new surface; the CI security layer (TL-14) PASS
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of `4d409b4` on pull request #76 completed with no finding (its state comment: has_any_findings false)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key; the page's existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), first head `4d409b4`: fresh CI on GitHub's `ubuntu-24.04` runner — run 42985531006 (pull request #76) every job PASS but the E2E layer, where one test outside this Task failed on WebKit; run 42985507372 (push) every layer PASS but the E2E job, whose 334 tests all finished — 332 PASS, the one pre-existing skip, none failed — and whose Playwright process then did not exit before the job's 45-minute limit. Diagnosed from the evidence, not rerun: the failed test, `parties.spec.ts:65` (TASK-026's client archive), waited 5 s for "Diarsipkan" while its archive command's answer was still in flight — the dialog's "Arsipkan" disabled, no response in the trace, no error status —; the same test passed on WebKit in the push run on the same commit (16.7 s against Chromium's 6.5 s), and no file it touches is in this diff; the class matches TASK-060's record of a WebKit command answer past 5 s in a spec outside the Task. No timeout raised, no assertion changed. This record's head is proven by its own fresh CI, every job required to PASS before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — the route unchanged; the route audit PASS
+- Interaction evidence: N/A — no INT- row changes
+- Browser evidence: `E2E: PASS — Evidence: <this record's head>, CI ubuntu-24.04, tests/Browser/E2E on Chromium and WebKit`, as its pull request's checks show before the merge
+- Localization evidence: no new key; the record's existing keys in both languages
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — no package added, no credit bought
+- Files changed: `app/Modules/PRJ/Http/Controllers/ProjectsController.php`; `resources/js/Pages/PRJ/Journey.tsx`; `tests/Feature/PRJ/ProjectCancellationTest.php`; `docs/11-tasks/TASK_PLAN.md`, `TASK-089.md`; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: `4d409b4` on `task/TASK-089-journey-deferred-groups`, the Owner's identity, no AI attribution; this record's commit follows it, verified by the pull request head's CI
+- Notes: criterion 1 PASS by the feature test — three groups for an ACTIVE and a CANCELLED project, the record in the page's own answer; criterion 2 is proven by TASK-062's CJ-01 UXS-44 on Chromium and WebKit once TASK-062's branch carries this fix and TASK-088's. The way the contract first named — the record joining an existing group — was set aside and the contract amended at the start: Inertia asks a group of two props as one request naming both, which still fails the one-group-per-part rule. Observed for Planning, not changed here: WebKit's E2E commands on the CI runner answer about 2.5 times slower than Chromium's, so a 5 s wait after a command occasionally expires in a spec outside the Task under test; and a Playwright process that did not exit after its last test (run 42985507372)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
