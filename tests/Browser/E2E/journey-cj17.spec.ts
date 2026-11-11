@@ -165,8 +165,10 @@ test('CJ-17 / UXS-37: the Owner force-completes with the snapshot, a change mean
     // The confirmation of the stale snapshot answers CONFLICT, the current snapshot shown again with the added document, the reason kept (ST-04).
     await dialog.getByRole('button', { name: 'Selesaikan Paksa' }).click();
     await expect(dialog).toContainText('Kondisi proyek berubah sejak halaman dibuka. Periksa ringkasan terbaru, lalu konfirmasi lagi.');
-    const missing = obligations.getByRole('listitem').filter({ hasText: added });
+    // The page behind the open modal dialog is outside the accessibility tree: the refreshed snapshot is read in the DOM.
+    const missing = obligations.locator('li').filter({ hasText: added });
     await expect(missing).toHaveCount(1);
+    await expect(missing).toBeVisible();
     await expect(missing).toContainText('Dokumen kurang');
     await expect(dialog.getByLabel('Alasan')).toHaveValue(reason);
     await expect(page.locator('[data-slot="completion-record"]')).toHaveCount(0);

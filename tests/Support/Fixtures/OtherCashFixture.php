@@ -3,12 +3,15 @@
 namespace Tests\Support\Fixtures;
 
 use App\Modules\DOC\Models\EvidenceDocument;
+use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Modules\PUR\Models\Purchase;
+use App\Support\Search\Row;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Tests\Support\Numbering;
 
 /**
  * TL-09–TL-12 (TASK-054; J-FIN-07; CJ-14): over InvoiceFixture's company with its account and confirmed project, an open purchase to pay, a transfer proof to cite and a supplier bill of
@@ -27,6 +30,22 @@ final class OtherCashFixture
         // Their own identities: the factory's sequence starts again in every request (C-49).
         $tag = Str::upper(Str::random(6));
         $purchase = Purchase::factory()->create(['company_id' => $company->id, 'purchase_number' => "PB-{$tag}"]);
+        // The factory numbers the purchase without a counter: the company's PURCHASE counter starts above it, as the allocator's would
+        // stand after issuing it, so a journey's ReconcileGuards finds the numbering consistent (TASK-063).
+        $numbered = DB::table('purchases')->where('id', $purchase->id)->first(['period_key', 'sequence_no']);
+
+        if ($numbered !== null) {
+            $period = Row::text($numbered, 'period_key');
+            $next = (int) Row::text($numbered, 'sequence_no') + 1;
+            $counter = DB::table('number_sequences')->where('company_id', $company->id)->where('sequence_type', SequenceType::Purchase->value)->where('period_key', $period);
+            $stored = $counter->value('next_value');
+
+            if ($stored === null) {
+                Numbering::seed($company, SequenceType::Purchase, $period, $next);
+            } elseif (is_numeric($stored) && (int) $stored < $next) {
+                $counter->update(['next_value' => $next]);
+            }
+        }
         $proof = EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY', 'evidence_type' => 'TRANSFER_PROOF', 'declared_issuer' => "Transfer keluar {$tag}", 'issuer_reference' => "TK-{$tag}",
             'identity_key' => 'transfer keluar '.strtolower($tag).'|TRANSFER_PROOF|tk-'.strtolower($tag).'|2026-10-01']);
         $bill = EvidenceDocument::factory()->create(['company_id' => $company->id, 'evidence_scope' => 'COMPANY', 'evidence_type' => 'SUPPLIER_BILL', 'declared_issuer' => "Pemasok sewa {$tag}", 'issuer_reference' => "PS-{$tag}", 'proven_amount' => '100000',

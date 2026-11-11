@@ -78,7 +78,8 @@ test('CJ-15: a document drafted from the recorded facts in the composer at the d
     await expect(paperFact(page, paper, 'Sisa Tagihan')).toHaveText('Rp600.000');
     await expect(paper).toContainText('Sejumlah Rp600.000');
     await expect(paper).toContainText(/enam ratus ribu rupiah/i);
-    await expect(paper).not.toContainText('Pembayaran ditransfer ke');
+    // The draft starts with the company's first account as its destination (TASK-029's SaveDocumentDraft), on the paper already.
+    await expect(paper).toContainText('Pembayaran ditransfer ke');
 
     // Previewing never writes (D-DS-20; GAP-053): no command leaves the page while the draft is composed at any width.
     const writes: string[] = [];
@@ -91,6 +92,8 @@ test('CJ-15: a document drafted from the recorded facts in the composer at the d
     // The live preview: the bank destination entered in the form is on the paper at once.
     const [bankName = '', accountNumber = '', holder = ''] = ((await bank.locator('option').nth(1).textContent()) ?? '').split(' · ');
     expect(accountNumber).not.toBe('');
+    await bank.selectOption({ index: 0 });
+    await expect(paper).not.toContainText('Pembayaran ditransfer ke');
     await bank.selectOption({ index: 1 });
     await expect(paper).toContainText('Pembayaran ditransfer ke');
     await expect(paper).toContainText(bankName);

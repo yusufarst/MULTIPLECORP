@@ -95,13 +95,13 @@ export function ageing(due: string, today: string): { days: number; list: string
 export async function reportRows(section: Locator): Promise<{ header: string[]; rows: string[][]; total: string[] | null }> {
     const read = await section.locator('table').evaluate((table) => {
         const value = (cell: Element): string => {
-            const text = (cell.querySelector('data')?.getAttribute('value') ?? cell.querySelector('time')?.getAttribute('datetime') ?? cell.textContent ?? '').trim();
+            const text = (cell.querySelector('data')?.getAttribute('value') ?? cell.querySelector('time')?.getAttribute('datetime') ?? cell.textContent).trim();
 
             return text === '—' ? '' : text;
         };
 
         return {
-            header: Array.from(table.querySelectorAll('thead th'), (cell) => (cell.textContent ?? '').trim()),
+            header: Array.from(table.querySelectorAll('thead th'), (cell) => cell.textContent.trim()),
             body: Array.from(table.querySelectorAll('tbody tr'), (row) => ({ total: row.getAttribute('data-slot') === 'section-total', cells: Array.from(row.querySelectorAll('td'), value) })),
         };
     });

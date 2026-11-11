@@ -265,7 +265,8 @@ test('CJ-06 backdating: an Admin\'s invoice backdated with its mark, MSG-17 for 
     const context = await browser.newContext({ baseURL: test.info().project.use.baseURL, ignoreHTTPSErrors: true, viewport: DESK, extraHTTPHeaders: { 'X-Fixture-Go-Live': run.goLive } });
     const admin = await context.newPage();
     const capturedAdmin = watch(admin);
-    await signedIn(admin, 'cj06-admin', { plain: true });
+    // AU-18: `invoice.issue` makes the Admin a high-risk account, whose session is ended unless established with TOTP.
+    await signedIn(admin, 'cj06-admin');
     await invoiceAdmin(admin, run.company);
     const adminContent = admin.locator('#konten');
 

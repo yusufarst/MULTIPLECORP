@@ -25,7 +25,10 @@ final class ReturnFixture
             return response()->json(['error' => 'not signed in'], 401);
         }
 
-        Authorization::grantCompany($user, $company->id);
+        // A run composed over another fixture of the same company (TASK-063's CJ-06) already holds its active grant: one active grant per company.
+        if (DB::table('user_company_grants')->where('user_id', $user->id)->where('company_id', $company->id)->whereNull('revoked_at')->doesntExist()) {
+            Authorization::grantCompany($user, $company->id);
+        }
 
         foreach (['stock.view', 'cost.view', 'projects.view', 'evidence.view', 'stock.reserve', 'purchase_return.record', 'cases.close'] as $capability) {
             Authorization::grant($user, $capability);
