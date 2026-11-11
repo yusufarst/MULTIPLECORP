@@ -39,6 +39,7 @@ BR-PRJ-01 allows cancellation at any stage but unwinds nothing silently: deliver
 - TASK-067 — Localization completeness and the per-page copy lists
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
+- TASK-089 — Defect D2 — PG-011 within three deferred groups (PF-34, UXS-44)
 
 **PARALLEL SAFE:** NO — it changes the project's state under LK-01 and releases reservations under the product guards that dispatch and receiving also hold
 

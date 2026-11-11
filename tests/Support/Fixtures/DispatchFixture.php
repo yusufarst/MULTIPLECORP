@@ -8,6 +8,7 @@ use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
 use App\Support\BusinessDate;
 use Carbon\CarbonImmutable;
+use Database\Factories\CAT\ProductBarcodeFactory;
 use Database\Factories\DOC\DocumentTypeFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\Numbering;
+use Tests\Support\Projects;
 
 /**
  * TL-09–TL-12 (TASK-041): over StockFixture's world, DOC-03's numbering for the Surat Jalan's draft; the signed-in plain account's dispatch capability without the inter-company authority, for the routed refusal (UXS-22); the run's serialized units for the scanner flow.
@@ -57,6 +59,24 @@ final class DispatchFixture
     }
 
     /** The signed-in plain account: a Company-A-only Admin with `stock.dispatch` and no `stock.allocate_intercompany`. */
+    /** One code two products answer — the run's product by a barcode, another by its SKU —, for an ambiguous scan (UXS-34; TASK-088); the code and the other product's name. */
+    public static function twin(Request $request): JsonResponse
+    {
+        $product = DB::table('products')->where('public_id', (string) $request->input('product'))->value('id');
+
+        if (! is_numeric($product)) {
+            return response()->json(['error' => 'unknown product'], 422);
+        }
+
+        $tag = Str::upper(Str::random(6));
+        $code = "KEMBAR-{$tag}";
+        $twin = Projects::product();
+        $twin['product']->forceFill(['name' => "Barang Kembar {$tag}", 'sku' => $code])->save();
+        ProductBarcodeFactory::new()->createOne(['product_id' => (int) $product, 'code' => $code]);
+
+        return response()->json(['code' => $code, 'name' => "Barang Kembar {$tag}"]);
+    }
+
     public static function plain(Request $request): JsonResponse
     {
         $user = $request->user();

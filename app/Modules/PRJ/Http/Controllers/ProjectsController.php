@@ -69,9 +69,11 @@ final class ProjectsController extends Controller
             // `cari_bukti`: the checklist's link dialog searching the evidence it chooses from (PT-27; TASK-035).
             'documents' => Inertia::defer(self::group(fn (): array => $this->workspace->documents($actor, $project, self::query($request, 'cari_bukti'))), 'documents'),
             'history' => Inertia::defer(self::group(fn (): array => $this->workspace->history($actor, $project)), 'history'),
-            // "Batalkan Proyek"'s companion corrections, read when its dialog opens (J-PRJ-04; IP-19); a cancelled project's record with the facts that stay (L-10).
+            // "Batalkan Proyek"'s companion corrections, read when its dialog opens (J-PRJ-04; IP-19).
             'companions' => Inertia::optional(fn (): array => $this->cancellation->companions($actor, $project)),
-            'cancelled' => Inertia::defer(self::group(fn (): ?array => $this->cancellation->record($actor, $project)), 'cancelled'),
+            // A cancelled project's record with the facts that stay (L-10), with the page: no read unless the project is CANCELLED,
+            // and never a fourth deferred group (PF-34; UXN-14; TASK-089). Its failure answers this part alone, as a group's does.
+            'cancelled' => self::group(fn (): ?array => $this->cancellation->record($actor, $project)),
         ])->toResponse($request);
     }
 

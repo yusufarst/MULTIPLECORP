@@ -215,26 +215,24 @@ export default function Journey({ project, journey, financial, can, return_href:
                         <p className="text-body text-text-primary">{t('projects.journey.closed')}</p>
                         {reachesCompletion && <a href={completion} className="text-body text-accent-link underline underline-offset-2">{t('completion.record.open')}</a>}
                         {project.state === 'CANCELLED' && (
-                            <Deferred data="cancelled" fallback={<RegionLoading />}>
-                                {isFailed(cancelled) ? <GroupFailed group="cancelled" /> : cancelled === undefined || cancelled === null ? null : (
-                                    <div className="mt-2 flex flex-col gap-2" data-slot="cancelled-record">
-                                        <p className="text-body text-text-secondary">{cancelled.by ?? '—'} · <DateTimeText value={cancelled.at} /></p>
-                                        {cancelled.reason !== null && <p className="text-body text-text-primary">{t('completion.record.reason', { alasan: cancelled.reason })}</p>}
-                                        <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
-                                        {cancelled.obligations.length > 0 && (
-                                            <ul role="list" className="flex flex-col gap-1">
-                                                {cancelled.obligations.map((row, index) => (
-                                                    <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
-                                                        <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
-                                                        <span>{row.label}</span>
-                                                        {row.amount !== null && <Money value={row.amount} />}
-                                                    </li>
-                                                ))}
-                                            </ul>
-                                        )}
-                                    </div>
-                                )}
-                            </Deferred>
+                            isFailed(cancelled) ? <GroupFailed group="cancelled" /> : cancelled === undefined || cancelled === null ? null : (
+                                <div className="mt-2 flex flex-col gap-2" data-slot="cancelled-record">
+                                    <p className="text-body text-text-secondary">{cancelled.by ?? '—'} · <DateTimeText value={cancelled.at} /></p>
+                                    {cancelled.reason !== null && <p className="text-body text-text-primary">{t('completion.record.reason', { alasan: cancelled.reason })}</p>}
+                                    <p className="text-body text-text-secondary">{t('projects.cancel.stays')}</p>
+                                    {cancelled.obligations.length > 0 && (
+                                        <ul role="list" className="flex flex-col gap-1">
+                                            {cancelled.obligations.map((row, index) => (
+                                                <li key={`${row.kind}-${String(index)}`} className="flex flex-wrap items-baseline gap-2 text-body text-text-primary">
+                                                    <span className="font-semibold">{t(`completion.obligation.${row.kind}` as TranslationKey)}</span>
+                                                    <span>{row.label}</span>
+                                                    {row.amount !== null && <Money value={row.amount} />}
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    )}
+                                </div>
+                            )
                         )}
                     </Card>
                 ) : shown !== null && (

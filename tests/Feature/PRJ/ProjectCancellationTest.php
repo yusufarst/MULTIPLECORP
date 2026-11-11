@@ -146,6 +146,23 @@ it('keeps the facts that stay true after cancellation — open receivables activ
         ->and(ResidualCommands::decision('CANCELLED', 'FIN.CorrectBilling', true))->toBe(ResidualCommands::ACCEPT);
 });
 
+it('keeps PG-011 within three deferred groups, a cancelled project\'s record arriving with the page (PF-34; UXN-14; UXS-44; L-10; TASK-089)', function () {
+    $world = InvoiceWorld::make();
+    $project = $world->project();
+    $actor = Authorization::admin([$world->company->id], ['projects.view', 'projects.cancel', 'finance.view']);
+
+    // An ACTIVE project: the three groups, and no cancelled record.
+    $active = $this->actingAs($actor)->get("/proyek/{$project->public_id}")->assertOk()->viewData('page');
+    expect(array_keys($active['deferredProps']))->toEqualCanonicalizing(['predicates', 'documents', 'history'])
+        ->and($active['props']['cancelled'])->toBeNull();
+
+    // Cancelled: still the three groups; the record is in the page's own answer.
+    expect(cancellationAnswer($this, $actor, "/proyek/{$project->public_id}/batalkan", cancellationBody($project))['kind'])->toBe('COMMITTED');
+    $cancelled = $this->actingAs($actor)->get("/proyek/{$project->public_id}")->assertOk()->viewData('page');
+    expect(array_keys($cancelled['deferredProps']))->toEqualCanonicalizing(['predicates', 'documents', 'history'])
+        ->and($cancelled['props']['cancelled']['reason'])->toBe('Klien membatalkan kontrak');
+});
+
 it('shows no control and forbids the route without projects.cancel; another company\'s project is unknown; one command_id replayed once (W4-23; AZ-11; CI-05; criteria 7, 8)', function () {
     $world = InvoiceWorld::make();
     $project = $world->project();

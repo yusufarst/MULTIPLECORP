@@ -183,6 +183,7 @@ Route::middleware(['web', 'auth'])->group(function (): void {
     Route::post('__fixtures/dispatch', [DispatchFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/plain', [DispatchFixture::class, 'plain'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dispatch/serials', [DispatchFixture::class, 'serials'])->withoutMiddleware(PreventRequestForgery::class);
+    Route::post('__fixtures/dispatch/kembar', [DispatchFixture::class, 'twin'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/deliveries', [DeliveryFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/dropship', [DropshipFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
     Route::post('__fixtures/client-returns', [ClientReturnFixture::class, 'create'])->withoutMiddleware(PreventRequestForgery::class);
