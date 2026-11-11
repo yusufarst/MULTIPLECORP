@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 17, created through the executor feedback loop from TASK-062's defect D2 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** IN_PROGRESS
 
 **RISK CLASS:** STANDARD
 
@@ -12,7 +12,7 @@ Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-tas
 
 **OBJECTIVE:**
 
-Bring PG-011, *Perjalanan Proyek*, back within three deferred groups — predicates, documents and *Riwayat* — by loading the cancelled project's record (TASK-056) with an existing group, so that UXS-44 holds and TASK-062's CJ-01 passes.
+Bring PG-011, *Perjalanan Proyek*, back within three deferred groups — predicates, documents and *Riwayat* — by loading the cancelled project's record (TASK-056) with the page itself instead of as a fourth group, so that UXS-44 holds and TASK-062's CJ-01 passes.
 
 **WHY THIS EXISTS:**
 
@@ -30,7 +30,7 @@ TASK-062's CJ-01 UXS-44 test, in fresh CI on `dd851d3` (runs 42941402230 and 429
 
 **IN SCOPE:**
 
-- ROUTE-011's props: the cancelled record (L-10) loaded in an existing deferred group of PG-011, the page keeping its three groups — predicates, documents, *Riwayat* — and showing the record as before
+- ROUTE-011's props: the cancelled record (L-10) read with the page — nothing read unless the project is CANCELLED —, its failure answering that part alone as a group's does (PT-19), the page keeping its three groups — predicates, documents, *Riwayat* — and showing the record as before. Joining an existing group was set aside: a group of two props is asked as one request naming both props, which still breaks the one-group-per-part rule UXS-44 checks
 - a feature test of the page's deferred groups
 
 **OUT OF SCOPE:**
@@ -125,7 +125,7 @@ TASK-062's CJ-01 UXS-44 test, in fresh CI on `dd851d3` (runs 42941402230 and 429
 **GRAPHIFY / IMPACT ANALYSIS:**
 
 - Graph freshness: N/A — one controller action
-- Pre-change questions: which group the record joins without delaying the page's first answer
+- Pre-change questions: whether the record can come with the page without delaying it — it reads nothing for a project that is not CANCELLED
 - Expected affected areas: PG-011 only
 
 **UI / UX REQUIREMENTS:**
@@ -146,13 +146,13 @@ TASK-062's CJ-01 UXS-44 test, in fresh CI on `dd851d3` (runs 42941402230 and 429
 - Secondary actions: unchanged
 - Destructive actions: unchanged
 - Redundancy constraints: none added
-- Loading state: the record loads with its group's loading state
+- Loading state: none — the record arrives with the page
 - Empty state: unchanged
-- Error state: the group's error state
+- Error state: the part's own failure state, as a group's (PT-19)
 
 **ROUTE IMPACT:**
 
-- ROUTE-011's response: one deferred group fewer; its path, methods and props unchanged
+- ROUTE-011's response: one deferred group fewer, the record among the page's own props; its path, methods and prop names unchanged
 
 **INTERACTION CONTRACTS:**
 
@@ -179,7 +179,7 @@ TASK-062's CJ-01 UXS-44 test, in fresh CI on `dd851d3` (runs 42941402230 and 429
 - Lint: TL-01
 - Typecheck: TL-02
 - Unit: N/A
-- Feature: ROUTE-011's deferred groups counted, the cancelled record present in its group
+- Feature: ROUTE-011's deferred groups — predicates, documents, history — for an ACTIVE and a CANCELLED project, the cancelled record in the page's own answer
 - Integration: N/A
 - Authorization: N/A — unchanged
 - Route integrity: N/A — the route unchanged
