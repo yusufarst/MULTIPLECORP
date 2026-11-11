@@ -13,10 +13,11 @@ import { ScanField, ScanNotice, useScanGuard } from '@/components/scan-field';
 import { UnsentInputDialog } from '@/components/session-dialogs';
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { Input } from '@/components/ui/input';
 import { Code, DateText } from '@/components/values';
 import { type Choices, type DispatchLine, DispatchLineForm } from '@/features/inv/dispatch-line';
 import { type DispatchRecord, type Proofs, ReverseDispatchDialog, SubstituteDialog } from '@/features/inv/dispatch-record';
-import { lookUp } from '@/features/inv/scan-client';
+import { lookUp, type ScanMatch } from '@/features/inv/scan-client';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
 import { previousPage } from '@/lib/previous-page';
@@ -69,6 +70,9 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
     const [code, setCode] = useState('');
     const [result, setResult] = useState<string | null>(null);
     const [scanError, setScanError] = useState<string | null>(null);
+    // UXS-34: an ambiguous code's candidates for the user's choice, and "Cari Produk"'s filter over the project's lines (null while closed).
+    const [candidates, setCandidates] = useState<ScanMatch[]>([]);
+    const [filter, setFilter] = useState<string | null>(null);
     const [unsent, setUnsent] = useState<Record<string, boolean>>({});
     const [leaving, setLeaving] = useState<(() => void) | null>(null);
     const [correction, setCorrection] = useState<Correction | null>(null);
@@ -117,20 +121,6 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
         knownNow.current = known;
     }, [known]);
 
-    // A scanned unit the line's list did not hold is asked of the server; added here when its answer arrives.
-    useEffect(() => {
-        if (absorbed === null || absorbed.find === null) return;
-
-        const answered = waiting.current.filter((one) => one.line === absorbed.line && one.serial === absorbed.find);
-        waiting.current = waiting.current.filter((one) => !answered.includes(one));
-        const line = lines.find((one) => one.handle === absorbed.line);
-
-        if (line !== undefined) {
-            for (const one of answered) addSerial(line, one.serial, true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new answer settles a waiting scan
-    }, [absorbed]);
-
     // IP-15: one scan target, focused on entering the step.
     useEffect(() => {
         scanRef.current?.focus();
@@ -165,7 +155,8 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
         setUnsent((all) => (all[handle] === next ? all : { ...all, [handle]: next }));
     }, []);
     const lineOf = (product: string) => lines.find((line) => line.product === product && open.includes(line)) ?? lines.find((line) => line.product === product);
-    const clear = () => { setResult(null); setScanError(null); };
+    const clear = () => { setResult(null); setScanError(null); setCandidates([]); };
+    const shown = filter === null || filter === '' ? lines : lines.filter((line) => `${line.name} ${line.sku ?? ''} ${line.description}`.toLowerCase().includes(filter.toLowerCase()));
     function addSerial(line: DispatchLine, serial: string, settled = false) {
         const row = knownNow.current[line.handle]?.serials.find((one) => one.serial.toLowerCase() === serial.toLowerCase());
 
@@ -200,6 +191,39 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
         setCurrent(line.handle);
         setResult(t('receiving.scan.serial_added', { seri: serial }));
     }
+    // A match, scanned alone or chosen among an ambiguous code's candidates, resolves the same way.
+    const resolve = (match: ScanMatch, code: string) => {
+        const line = lineOf(match.product);
+
+        if (line === undefined) {
+            setScanError(t('dispatch.scan.not_on_project', { barang: match.name }));
+
+            return;
+        }
+
+        if (match.kind === 'serial') {
+            addSerial(line, match.serial ?? code);
+
+            return;
+        }
+
+        setCurrent(line.handle);
+        setResult(t('receiving.scan.opened', { barang: line.name }));
+    };
+    // A scanned unit the line's list did not hold is asked of the server; added here when its answer arrives.
+    useEffect(() => {
+        if (absorbed === null || absorbed.find === null) return;
+
+        const answered = waiting.current.filter((one) => one.line === absorbed.line && one.serial === absorbed.find);
+        waiting.current = waiting.current.filter((one) => !answered.includes(one));
+        const line = lines.find((one) => one.handle === absorbed.line);
+
+        if (line !== undefined) {
+            for (const one of answered) addSerial(line, one.serial, true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new answer settles a waiting scan
+    }, [absorbed]);
+
     const scanned = (typed: string) => {
         clear();
         void lookUp(typed).then((scan) => {
@@ -211,6 +235,7 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
 
             if (scan.kind === 'ambiguous') {
                 setScanError(t('messages.msg_37', { kode: scan.code }));
+                setCandidates(scan.matches);
 
                 return;
             }
@@ -223,22 +248,7 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                 return;
             }
 
-            const line = lineOf(match.product);
-
-            if (line === undefined) {
-                setScanError(t('dispatch.scan.not_on_project', { barang: match.name }));
-
-                return;
-            }
-
-            if (match.kind === 'serial') {
-                addSerial(line, match.serial ?? scan.code);
-
-                return;
-            }
-
-            setCurrent(line.handle);
-            setResult(t('receiving.scan.opened', { barang: line.name }));
+            resolve(match, scan.code);
         });
     };
     // The Surat Jalan opens PG-036: a POST the visit guard does not see, so an unsent line asks MSG-35 here (NV-05).
@@ -265,19 +275,22 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                 {closed && <p role="status" className="text-body text-text-secondary">{t('dispatch.refusal.project_state')}</p>}
                 {lines.length === 0 ? <RegionEmpty text={t('dispatch.list.no_lines')} /> : (
                     <div className="grid min-w-0 gap-6 md:grid-cols-3">
-                        <ul role="list" data-slot="dispatch-lines" className="flex min-w-0 flex-col divide-y divide-border-subtle">
-                            {lines.map((line) => (
-                                <li key={line.handle}>
-                                    <button type="button" aria-current={line.handle === current ? 'true' : undefined} className={cn('flex min-h-floor w-full min-w-0 items-center justify-between gap-3 px-2 py-2 text-left text-body', line.handle === current && 'bg-surface-sunken font-medium')} onClick={() => { setCurrent(line.handle); }}>
-                                        <span className="min-w-0">{`${String(line.no)}. ${line.name}`}</span>
-                                        <span className="flex shrink-0 items-center gap-2 tabular-nums text-text-secondary">
-                                            {Number(line.remaining) === 0 && <Icon icon={Check} size="sm" />}
-                                            {line.remaining}
-                                        </span>
-                                    </button>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="flex min-w-0 flex-col gap-3">
+                            {filter !== null && <Input aria-label={t('pt20.search')} value={filter} onChange={(event) => { setFilter(event.target.value); }} />}
+                            <ul role="list" data-slot="dispatch-lines" className="flex min-w-0 flex-col divide-y divide-border-subtle">
+                                {shown.map((line) => (
+                                    <li key={line.handle}>
+                                        <button type="button" aria-current={line.handle === current ? 'true' : undefined} className={cn('flex min-h-floor w-full min-w-0 items-center justify-between gap-3 px-2 py-2 text-left text-body', line.handle === current && 'bg-surface-sunken font-medium')} onClick={() => { setCurrent(line.handle); }}>
+                                            <span className="min-w-0">{`${String(line.no)}. ${line.name}`}</span>
+                                            <span className="flex shrink-0 items-center gap-2 tabular-nums text-text-secondary">
+                                                {Number(line.remaining) === 0 && <Icon icon={Check} size="sm" />}
+                                                {line.remaining}
+                                            </span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                         <div className="min-w-0 md:col-span-2">
                             {lines.map((line) => (
                                 <DispatchLineForm key={line.handle} line={line} url={`/gudang/barang-keluar/${project.id}/keluarkan`} closed={closed} today={today} choices={known[line.handle] ?? null} failed={unread[line.handle] === true} onRetry={() => { load(line.handle); }}
@@ -286,6 +299,15 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
                             ))}
                         </div>
                     </div>
+                )}
+                {candidates.length > 0 && (
+                    <ul role="list" data-slot="scan-candidates" className="flex min-w-0 flex-col gap-1">
+                        {candidates.map((candidate) => (
+                            <li key={`${candidate.kind}-${candidate.product}-${candidate.serial ?? ''}`}>
+                                <Button variant="outline" size="sm" onClick={() => { clear(); resolve(candidate, candidate.serial ?? ''); }}>{`${candidate.name}${candidate.serial === undefined ? '' : ` · ${candidate.serial}`}`}</Button>
+                            </li>
+                        ))}
+                    </ul>
                 )}
                 {(records.length > 0 || olderFailed) && (
                     <section id="barang-keluar-tercatat" data-slot="dispatch-records" className="flex min-w-0 flex-col gap-3">
@@ -327,7 +349,7 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
             {correction !== null && correction.kind === 'SUBSTITUTION' && <SubstituteDialog key={correction.record.id} record={correction.record} choices={known[correction.record.handle] ?? null} proofs={proofs ?? null} company={project.company_id} canEvidence={can.evidence} canCorrect={can.correct_document} today={today} onClose={() => { setCorrection(null); }} onDone={() => { setCorrection(null); setEarlier([]); setDone(t('dispatch.answer.substituted')); }} onFind={(text) => { load(correction.record.handle, text); }} onFindProof={loadProofs} />}
             <UnsentInputDialog open={leaving !== null} kind="leave" onStay={() => { setLeaving(null); }}
                 onLeave={() => { const go = leaving; departing.current = true; setLeaving(null); go?.(); }} />
-            <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} result={result} error={scanError} />
+            <ScanField dock inputRef={scanRef} value={code} onValueChange={setCode} onLookup={scanned} onSearch={() => { setFilter((value) => (value === null ? '' : null)); }} result={result} error={scanError} />
         </AppShell>
     );
 }
