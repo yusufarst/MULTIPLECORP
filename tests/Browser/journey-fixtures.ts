@@ -7,17 +7,36 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 // the journey's own companies — created for its run, so no other spec of the shared browser database writes them —, and
 // a difference tracing to no company counted as the journey's (fail-closed).
 
-type Captured = { console: string[]; failed: string[]; requests: number };
+type Captured = { console: string[]; failed: string[]; csp: string[]; requests: number; engine: string };
+
+/**
+ * WebKit's own report on the internal styling of every native `<select>` (TASK-015's components-csp.spec.ts proves it comes
+ * from the engine with no library on the page): set aside on WebKit alone, exactly as that spec does. Every other CSP
+ * violation fails the journey.
+ */
+const ENGINE_SELECT = 'style-src-attr SELECT inline';
 
 /** Requests a journey may see fail by design: none — a step that expects a refusal answers 422 or 409, never these. */
 const CRITICAL = new Set([404, 405, 419, 500, 502, 503, 504]);
 
 export function watch(page: Page): Captured {
-    const captured: Captured = { console: [], failed: [], requests: 0 };
+    const captured: Captured = { console: [], failed: [], csp: [], requests: 0, engine: page.context().browser()?.browserType().name() ?? '' };
+
+    // Every CSP violation of every page the journey loads, as components-csp.spec.ts records them (WS-08).
+    void page.exposeFunction('__journeyCsp', (violation: string) => {
+        captured.csp.push(violation);
+    });
+    void page.addInitScript(() => {
+        document.addEventListener('securitypolicyviolation', (event) => {
+            const report = Reflect.get(window, '__journeyCsp') as ((violation: string) => void) | undefined;
+            report?.(`${event.violatedDirective} ${(event.target as Element | null)?.tagName ?? ''} ${event.blockedURI}`.trim());
+        });
+    });
 
     page.on('console', (message) => {
         // A response's status is judged once, by the network capture below; the browser's own line about it is not a second error.
-        if (message.type() === 'error' && !message.text().startsWith('Failed to load resource')) {
+        // A CSP refusal is judged once, by its securitypolicyviolation record above; the console's line about it is not a second error.
+        if (message.type() === 'error' && !message.text().startsWith('Failed to load resource') && !message.text().startsWith('Refused to apply')) {
             captured.console.push(message.text().slice(0, 300));
         }
     });
@@ -52,6 +71,7 @@ export async function clean(captured: Captured, testInfo: TestInfo): Promise<voi
     await testInfo.attach('console-and-network.json', { body: JSON.stringify(captured, null, 2), contentType: 'application/json' });
     expect(captured.console, 'no critical console error (TEST_STRATEGY §8)').toEqual([]);
     expect(captured.failed, 'no critical failed request (TEST_STRATEGY §8)').toEqual([]);
+    expect(captured.csp.filter((violation) => !(captured.engine === 'webkit' && violation === ENGINE_SELECT)), 'no CSP violation (WS-08)').toEqual([]);
 }
 
 /**
