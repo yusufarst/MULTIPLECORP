@@ -121,20 +121,6 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
         knownNow.current = known;
     }, [known]);
 
-    // A scanned unit the line's list did not hold is asked of the server; added here when its answer arrives.
-    useEffect(() => {
-        if (absorbed === null || absorbed.find === null) return;
-
-        const answered = waiting.current.filter((one) => one.line === absorbed.line && one.serial === absorbed.find);
-        waiting.current = waiting.current.filter((one) => !answered.includes(one));
-        const line = lines.find((one) => one.handle === absorbed.line);
-
-        if (line !== undefined) {
-            for (const one of answered) addSerial(line, one.serial, true);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new answer settles a waiting scan
-    }, [absorbed]);
-
     // IP-15: one scan target, focused on entering the step.
     useEffect(() => {
         scanRef.current?.focus();
@@ -171,25 +157,6 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
     const lineOf = (product: string) => lines.find((line) => line.product === product && open.includes(line)) ?? lines.find((line) => line.product === product);
     const clear = () => { setResult(null); setScanError(null); setCandidates([]); };
     const shown = filter === null || filter === '' ? lines : lines.filter((line) => `${line.name} ${line.sku ?? ''} ${line.description}`.toLowerCase().includes(filter.toLowerCase()));
-    // A match, scanned alone or chosen among an ambiguous code's candidates, resolves the same way.
-    const resolve = (match: ScanMatch, code: string) => {
-        const line = lineOf(match.product);
-
-        if (line === undefined) {
-            setScanError(t('dispatch.scan.not_on_project', { barang: match.name }));
-
-            return;
-        }
-
-        if (match.kind === 'serial') {
-            addSerial(line, match.serial ?? code);
-
-            return;
-        }
-
-        setCurrent(line.handle);
-        setResult(t('receiving.scan.opened', { barang: line.name }));
-    };
     function addSerial(line: DispatchLine, serial: string, settled = false) {
         const row = knownNow.current[line.handle]?.serials.find((one) => one.serial.toLowerCase() === serial.toLowerCase());
 
@@ -224,6 +191,39 @@ export default function DispatchGoods({ project, lines, dispatches, older, older
         setCurrent(line.handle);
         setResult(t('receiving.scan.serial_added', { seri: serial }));
     }
+    // A match, scanned alone or chosen among an ambiguous code's candidates, resolves the same way.
+    const resolve = (match: ScanMatch, code: string) => {
+        const line = lineOf(match.product);
+
+        if (line === undefined) {
+            setScanError(t('dispatch.scan.not_on_project', { barang: match.name }));
+
+            return;
+        }
+
+        if (match.kind === 'serial') {
+            addSerial(line, match.serial ?? code);
+
+            return;
+        }
+
+        setCurrent(line.handle);
+        setResult(t('receiving.scan.opened', { barang: line.name }));
+    };
+    // A scanned unit the line's list did not hold is asked of the server; added here when its answer arrives.
+    useEffect(() => {
+        if (absorbed === null || absorbed.find === null) return;
+
+        const answered = waiting.current.filter((one) => one.line === absorbed.line && one.serial === absorbed.find);
+        waiting.current = waiting.current.filter((one) => !answered.includes(one));
+        const line = lines.find((one) => one.handle === absorbed.line);
+
+        if (line !== undefined) {
+            for (const one of answered) addSerial(line, one.serial, true);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps -- only a new answer settles a waiting scan
+    }, [absorbed]);
+
     const scanned = (typed: string) => {
         clear();
         void lookUp(typed).then((scan) => {

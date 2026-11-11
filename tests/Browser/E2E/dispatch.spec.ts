@@ -158,7 +158,12 @@ test('scans its serials, one announced twice and a code unknown, then corrects t
     await page.locator('[data-slot="dispatch-record"]').getByRole('button', { name: 'Koreksi Nomor Seri atau Lot' }).click();
     const dialog = page.getByRole('alertdialog');
     await dialog.getByLabel('Nomor seri yang tercatat').selectOption({ label: serials[0] });
-    await dialog.getByLabel('Nomor seri yang sebenarnya terkirim').selectOption({ index: 1 });
+    // The line's choices are read again after the dispatch: the unit just shipped is no longer in stock and never offered as
+    // the one actually shipped. Choosing before that answer lands picked it from the earlier list (WebKit, run 42966079617).
+    const shipped = dialog.getByLabel('Nomor seri yang sebenarnya terkirim');
+    await expect(shipped.locator('option', { hasText: serials[0] })).toHaveCount(0);
+    await shipped.selectOption((await shipped.locator('option', { hasText: serials[1] }).getAttribute('value')) ?? '');
+    await expect(shipped).not.toHaveValue('');
     await dialog.getByRole('button', { name: 'Tambah Bukti' }).click();
 
     const sheet = page.getByRole('dialog', { name: 'Unggah Dokumen' });
@@ -171,6 +176,7 @@ test('scans its serials, one announced twice and a code unknown, then corrects t
 
     // The dialog comes back with what was entered.
     await expect(dialog.getByLabel('Nomor seri yang tercatat')).toHaveValue(/.+/);
+    await expect(shipped.locator('option:checked')).toContainText(serials[1]);
     await dialog.getByLabel('Alasan').fill('Nomor keliru dicatat');
     await dialog.getByRole('button', { name: 'Koreksi Nomor Seri atau Lot' }).click();
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
