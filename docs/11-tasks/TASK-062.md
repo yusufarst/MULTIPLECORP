@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -244,32 +244,33 @@ AICWDF §26 and TEST_STRATEGY §7 make the critical UI journeys a browser proof 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI on the suite's code (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI on the suite's code (TL-02)
+- [x] Relevant automated tests: `tests/Integration/Guards/JourneyReconciliationTest.php` — the reconciliation fixture clean, a tampered balance and a number issued past its counter each reported for the owning company alone, the refusals — and every other PHP layer PASS in CI
+- [x] Authorization: N/A — the denial suites are TASK-069's; each journey runs with the capabilities its steps need
+- [x] Route integrity: N/A — the crawl and audit are TASK-069's; each journey's network capture flags any 404, 405, 419 or 5xx, none found; the route audit (TL-07) PASS in CI
+- [x] Interaction behavior: N/A — the INT- tests are the module Tasks'; the journeys walk them
+- [x] Browser E2E if required: CJ-01, CJ-02, CJ-03, CJ-05, CJ-07 and CJ-08 with their journeys and UX scenarios PASS on Chromium and WebKit (TL-09), run 43002544038 (push) and run 43002550825 (pull request #74), tested commit `29ceb97`
+- [x] Responsive/adaptive if required: the journeys at their own phone (390 CSS px) and desktop widths; TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: N/A — no page built; TASK-065's gate
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: no credential in the suite — accounts and secrets generated per run; every journey's CSP capture clean but WebKit's own `<select>` report (TASK-015); TL-14 PASS in CI
+- [x] Database safety review: test data only — the fixtures write synthetic companies created for each run on the CI stack's database; no schema change; production not touched
+- [x] Final diff review: Codex's review of `a01a0b7` raised one P2 — the verified families missing from the reconciliation —, fixed in `d094c68`; its targeted re-review of `29ceb97` on pull request #74 completed with no finding (its state comment: has_any_findings false)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `29ceb97`: fresh CI on GitHub's `ubuntu-24.04` runner — run 43002544038 (push) and run 43002550825 (pull request #74) every job PASS; the E2E layer 357 PASS, the one pre-existing skip, none failed. The same on the synced head `ec5ace6` (runs 42997021765 and 42997030181). This record's head is proven by its own fresh CI before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route of the application is added or changed; the test-only routes `__fixtures/rekonsiliasi`, `__fixtures/jurnal`, `__fixtures/jurnal/jejak` and `__fixtures/journey-c/stok`, `/kembar`, `/siplah` exist only in the fixtures' routes
+- Interaction evidence: N/A — no INT- contract built
+- Browser evidence: `E2E: PASS — Evidence: 29ceb97, CI ubuntu-24.04 run 43002544038, tests/Browser/E2E/journey-cj01.spec.ts, journey-cj02, journey-cj03, journey-cj05, journey-cj07, journey-cj08 on Chromium and WebKit — CJ-01's three supply branches, UXS-41 and UXS-44 at the desktop; CJ-03 and CJ-07 at 390 px and the desktop; CJ-02, CJ-05, CJ-08 as their devices name —; each test's console-and-network.json and reconcile-guards.json in the run's browser-evidence-e2e artifact, the traces kept for a failure`. The 24 captures of run 43002544038: no critical console error, no critical failed request, ReconcileGuards 0 differences over 14 families (the 13 of `Families::all()` and `Families::verifications()`) for every journey's companies; the 165 CSP entries all WebKit's `style-src-attr SELECT inline` engine report, set aside on WebKit alone as TASK-015's spec does; the whole shared database's count (9 after Chromium, 19 after WebKit, other specs' companies) attached beside it
+- Localization evidence: N/A — the journeys run in the default Indonesian interface and assert its copy; both languages are TASK-067's
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — Playwright only; TestSprite not adopted, optional by the Owner's decision (DIR-087; TOOLCHAIN), never a condition of completion; no credit bought
+- Files changed: `tests/Browser/E2E/journey-cj01.spec.ts`, `journey-cj02.spec.ts`, `journey-cj03.spec.ts`, `journey-cj05.spec.ts`, `journey-cj07.spec.ts`, `journey-cj08.spec.ts`; `tests/Browser/journey-fixtures.ts`, `journey-a-fixtures.ts`, `journey-c-fixtures.ts`; `tests/Support/Fixtures/GuardsFixture.php`, `JourneyFixture.php`, `JourneyStockFixture.php`; `tests/Integration/Guards/JourneyReconciliationTest.php`; `routes/fixtures.php`; `tests/Browser/E2E/shell.spec.ts` (the session-end wait below); `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`; on the same branch, the Owner's records DIR-108 (`docs/00-governance/DECISION_LOG.md`, its source) and the operator input request (`docs/handoff/OPERATOR_INPUT_REQUEST.md`). No application code
+- Commit SHA: `d5d9a7f` to `29ceb97` on `task/TASK-062-critical-journeys-a`, `main` merged in at `ec5ace6` — never rebased —, the Owner's identity, no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria 1–8 PASS by the journeys above — criterion 5 after D1, criterion 1's UXS-44 after D2. **Defects found and sent to their owners (criterion 8):** D1, PG-024 without an ambiguous code's candidates or "Cari Produk" (TASK-041's behaviour), and D2, PG-011 with a fourth deferred group (TASK-056's), each a defect Task by Change 17 — TASK-088 and TASK-089, DONE and merged as `e74cf34` and `fe81b0d` —; no expected value, requirement or assertion changed here. **Suite fixes, not defects:** the first CI runs' console noise (Inertia's 409 location answer and requests cancelled by navigation), the trace fixture's empty project, a hidden duplicate link, the Owner's *Pembelian* behind "Menu lengkap", CJ-07's reservation at receipt, and WebKit's engine CSP report — each traced to the suite, none to the application. **A race in the shared suite, found on this record's first head `6333ac4`:** `shell.spec.ts` (TASK-016) paused a fixed 300 ms after its fixture ended the session, and in run 43007891666 the ending took 678 ms, so the command went out before it and no sign-in dialog came (its trace: `POST /__fixtures/shell/kedaluwarsa` 28.669–29.347, `POST /__fixtures/shell/perintah` at 29.020 answered 303); its four pauses now wait for that request's own answer, no assertion changed. Diagnosed, not rerun. **And on its second head `c49d1b9`:** CJ-08 on WebKit (run 43012262376) pressed "Tambah Potongan" while its disclosure's panel was still revealing from height 0 — the trace's frame at the press shows the panel shut, the press point (318, 806.8) inside the trigger's box (y 763.8–807.8) —, so no deduction row came; the step now waits until the button is fully revealed (`toBeInViewport` with ratio 1, which counts the panel's clipping), no pause and no timeout added The reconciliation is fail-closed: a difference whose company cannot be traced counts as the journey's. Helpers under DIR-108 wrote the journey specifications on separate files; integration, commits, review and CI stayed with the executor
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

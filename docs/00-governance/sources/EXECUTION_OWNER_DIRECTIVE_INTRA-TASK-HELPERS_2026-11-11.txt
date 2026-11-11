@@ -1,0 +1,53 @@
+Owner directive received in session during execution, 2026-11-11 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — CONTINUOUS MAXIMUM SAFE EXECUTION SPEED
+PRIORITY: Finish all eligible MULTIPLECORP AGENT Tasks as fast as safely possible, ideally today.
+I reaffirm DIR-096, DIR-102, and DIR-107. Continuous autonomous execution is already authorized. Do not pause for routine Owner approvals, repeated progress messages, or decisions that existing rules already authorize.
+1. RESUME EXECUTION IMMEDIATELY
+Verify the current HEAD, worktree, CI, and active Task.
+Continue TASK-062 from its existing work. Complete all six critical journeys, required assertions, and evidence without restarting or discarding valid work.
+Do not end a turn with only a statement of what you intend to do next if executable work remains and the platform supports continuation.
+2. NARROW OWNER AUTHORIZATION — INTRA-TASK PARALLEL HELPERS
+I approve a narrowly bounded amendment to DIR-102 permitting up to three implementation helper agents within the SAME active Task, subject to these conditions:
+
+* Exactly one primary Executor retains responsibility for the Task, branch, integration, commits, reviews, CI, and merge.
+* Helpers work on mutually exclusive files with explicit file ownership.
+* No two Tasks execute simultaneously.
+* No concurrent test suites modify a shared test database.
+* No duplicate watcher, conflicting Git operations, or overlapping file writes.
+* Helpers do not replace the independent read-only reviewer required by ER-06 or CR-001.
+* Integration is performed by the primary Executor, followed by complete mandatory verification.
+* Use helpers only when measurable wall-clock savings justify their cost and integration risk.
+
+Record this Owner authorization through CHANGE_CONTROL with its source transcript before applying the amendment. Keep every other DIR-102 restriction unchanged.
+If safe isolation is impossible, proceed sequentially without stopping work.
+3. OPTIMIZE EXECUTION
+Minimize context loading and repeated investigation. Reuse verified helpers, fixtures, tests, and source knowledge.
+Batch coherent changes before CI rather than pushing after every small edit.
+Run targeted checks first, then the full required CI on the final head. Never weaken tests, omit acceptance criteria, bypass review, or use previous-head CI as proof.
+Keep exactly one watcher. Use supported event-driven continuation instead of unnecessary model polling.
+4. AUTOMATIC TASK CONTINUATION
+After every eligible squash-merge:
+
+1. Verify the merged commit on remote main.
+2. Reconcile TASK_PLAN, completion evidence, and CURRENT_HANDOFF.
+3. Select the lowest-numbered READY AGENT Task with satisfied dependencies.
+4. Immediately start implementation in the same active execution flow.
+5. Repeat until no eligible AGENT Task remains.
+
+Do not request routine confirmation between Tasks.
+If the platform cannot resume execution after a completed turn, identify that exact limitation and use the existing supported continuation mechanism where possible. Never claim autonomous background execution that is not actually running.
+5. BLOCKERS AND OPERATOR INPUTS
+Continue independent READY work when another Task is blocked.
+Keep HUMAN OPERATOR and OWNER Tasks exclusively with their authorized actors. Never fabricate their evidence or access production infrastructure.
+Prepare one concise, credential-free operator request covering OPI-26, OPI-03, and the remaining critical inputs, without stopping active implementation.
+6. NON-NEGOTIABLE GATES
+Preserve all security, company isolation, financial and inventory integrity, concurrency, idempotency, authorization, regression, accessibility, localization, production-safety, Git-safety, CI, and review requirements.
+Use CR-001 only when Codex is demonstrably unavailable, with all seven conditions satisfied. Never count fallback review as Codex pass.
+No paid services, additional V1 scope, force push, bypassed checks, or production actions.
+7. REPORTING
+Report only at meaningful checkpoints, material defects, genuine blockers, or Owner decisions.
+Each report must contain actual progress and the next executable action. Do not treat a progress report as a shutdown.
+The objective is maximum verified throughput, not the appearance of activity.
+START NOW: Continue TASK-062, use the newly authorized intra-Task helper arrangement only after recording its narrow change-control amendment, and keep executing the eligible Task pipeline automatically.
+Respond to me in concise Bahasa Indonesia. Do not stop after acknowledging this directive.

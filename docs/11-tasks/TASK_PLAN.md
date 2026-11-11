@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 89
 
-DONE: 64
+DONE: 65
 READY: 5
 IN_PROGRESS: 0
 BLOCKED: 5
-VERIFYING: 1
+VERIFYING: 0
 TODO: 14
 SUPERSEDED: 0
 
 Progress:
-64 / 89
-Percentage: 71.9 %
+65 / 89
+Percentage: 73.0 %
 
-CURRENT TASK: none in progress — TASK-089 — Defect D2 — PG-011 within three deferred groups DONE on its branch `task/TASK-089-journey-deferred-groups`, its pull request #76 squash-merged by the executor once its head's fresh CI passes (DIR-096); TASK-062 VERIFYING, its verification resumed next on its branch synced with `main`
-NEXT READY TASK: TASK-062's verification resumed — its dependencies TASK-088 and TASK-089 DONE —; TASK-063, TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-062–TASK-065, TASK-069 on TASK-062–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-062 — Critical journeys A DONE on its branch `task/TASK-062-critical-journeys-a`, every journey PASS on Chromium and WebKit on `29ceb97`, its pull request #74 squash-merged by the executor once its head's fresh CI passes (DIR-096); TASK-088 and TASK-089, its defects D1 and D2, merged before it
+NEXT READY TASK: TASK-063 — Critical journeys B, READY, with TASK-064, TASK-065, TASK-067 and TASK-068 (re-checked at TASK-062's DONE); TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 17 of 2026-11-11 — TASK-062's defects D1 and D2 as the defect Tasks TASK-088 (PG-024, UXS-34) and TASK-089 (PG-011, PF-34 and UXS-44); TASK-062 VERIFYING, depending on both
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -110,7 +110,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-059](TASK-059.md) — Search and scanning
 - [x] [TASK-060](TASK-060.md) — Reports, the consolidated report and exports
 - [x] [TASK-061](TASK-061.md) — Activity history and security log
-- [ ] [TASK-062](TASK-062.md) — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
+- [x] [TASK-062](TASK-062.md) — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
 - [ ] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
 - [ ] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
 - [ ] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
@@ -204,7 +204,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-059](TASK-059.md) | Search and scanning | Module · Reporting · INV | HIGH | DONE | 027, 029, 032, 040 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | DONE | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
-| [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | VERIFYING | 004, 023, 024, 056, 057, 058, 059, 060, 061, 088, 089 | 066, 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 088, 089 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
