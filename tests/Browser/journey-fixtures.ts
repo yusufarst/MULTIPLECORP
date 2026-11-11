@@ -16,11 +16,15 @@ export function watch(page: Page): Captured {
     const captured: Captured = { console: [], failed: [], requests: 0 };
 
     page.on('console', (message) => {
-        if (message.type() === 'error') {
+        // A response's status is judged once, by the network capture below; the browser's own line about it is not a second error.
+        if (message.type() === 'error' && !message.text().startsWith('Failed to load resource')) {
             captured.console.push(message.text().slice(0, 300));
         }
     });
     page.on('pageerror', (error) => {
+        // Inertia raises a network error for a request the browser cancelled as the page moved on (WebKit names it so);
+        // a request that truly failed is caught below by requestfailed, which leaves out only the cancellations.
+        if (error.message.startsWith('HttpNetworkError')) return;
         captured.console.push(`pageerror: ${error.message.slice(0, 300)}`);
     });
     page.on('response', (response) => {

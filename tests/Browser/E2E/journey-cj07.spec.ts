@@ -79,6 +79,8 @@ for (const [name, width, height] of [['phone', 390, 844], ['desktop', 1280, 900]
 
         // A quantity item scanned once, its quantity entered and recorded by the line's own command (IP-15 8; AX-04).
         await fillLine(page, '4', run.rack);
+        // The four units reserved for the project in the same command (D-UX-12), so PG-023 lists the line to dispatch.
+        await currentLine(page).getByRole('textbox', { name: 'Reservasi untuk Proyek Ini' }).fill('4');
         await currentLine(page).getByRole('textbox', { name: 'Nomor surat jalan pemasok' }).fill(`SJ-${name}-1`);
         // UXS-35: a scan while the confirmation is open is discarded with its Enter — nothing looked up, nothing pressed.
         await currentLine(page).getByRole('button', { name: 'Catat Barang Masuk' }).click();

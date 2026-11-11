@@ -123,7 +123,8 @@ final class JourneyFixture
             return response()->json(['message' => 'The journey names its company and product by their public identifiers.'], 422);
         }
 
-        $project = DB::table('projects')->where('company_id', $company->id)->where('public_id', strtolower((string) $request->query('proyek', '')))->value('id');
+        $asked = strtolower((string) $request->query('proyek', ''));
+        $project = preg_match('/^[0-9a-f-]{36}$/', $asked) === 1 ? DB::table('projects')->where('company_id', $company->id)->where('public_id', $asked)->value('id') : null;
         $project = is_numeric($project) ? (int) $project : 0;
         $movements = [];
 

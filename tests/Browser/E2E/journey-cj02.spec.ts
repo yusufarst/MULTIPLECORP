@@ -1,4 +1,4 @@
-import { expect as base, test } from '@playwright/test';
+import { expect as base, type Page, test } from '@playwright/test';
 
 import { clean, guardsClean, watch } from '../journey-fixtures';
 import { addPurchaseLine, chooseSupplier, purchaseRun } from '../purchase-fixtures';
@@ -15,6 +15,18 @@ const expect = base.configure({ timeout: 60_000 });
 test.describe.configure({ timeout: 300_000 });
 
 const UUID = /\/pembelian\/[0-9a-f-]{36}$/;
+
+/** PG-015 through the shell: the Owner's primary entries hold no *Pembelian*, so *Menu lengkap* opens it when it is shut (shell.spec.ts). */
+async function openPurchases(page: Page): Promise<void> {
+    const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
+    const purchases = nav.getByRole('link', { name: 'Pembelian' });
+
+    if (!(await purchases.isVisible())) {
+        await nav.getByRole('button', { name: 'Menu lengkap' }).click();
+    }
+
+    await purchases.click();
+}
 
 test('CJ-02: a project bought from two suppliers on one demand, one purchase with its PO and one without, and a replenishment, none moving cash or stock (J-PUR-01; J-PUR-02; AC-05)', async ({ page }, testInfo) => {
     await page.setViewportSize({ width: 1280, height: 900 });
@@ -89,7 +101,7 @@ test('CJ-02: a project bought from two suppliers on one demand, one purchase wit
     await expect(page.getByRole('list', { name: 'Baris terkonfirmasi' }).getByRole('listitem')).toHaveCount(1);
 
     // J-PUR-02 from PG-015: a replenishment, its company an explicit field (WF-PUR-02), no PO.
-    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    await openPurchases(page);
     await page.waitForURL('**/pembelian');
     await expect(page.getByRole('heading', { name: 'Pembelian', exact: true })).toBeVisible();
     await content.getByRole('link', { name: 'Buat Pembelian' }).first().click();
@@ -112,7 +124,7 @@ test('CJ-02: a project bought from two suppliers on one demand, one purchase wit
     await expect(content).toContainText('Belum ada dokumen. PO bersifat opsional.');
 
     // PG-015 filtered to the run's company: the three purchases, two of them the project's, each supplier's own.
-    await page.getByRole('navigation', { name: 'Navigasi utama' }).getByRole('link', { name: 'Pembelian' }).click();
+    await openPurchases(page);
     await page.waitForURL('**/pembelian');
     await content.getByLabel(/^Perusahaan/).selectOption(run.company);
     await page.waitForURL(new RegExp(`perusahaan=${run.company}`));

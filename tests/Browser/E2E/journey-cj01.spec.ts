@@ -78,7 +78,7 @@ async function onJourney(page: Page, go: () => Promise<unknown>): Promise<Record
 /** Back to PG-011 by the project's link on the page shown (PG-016's facts, PG-043's header). */
 async function toProject(page: Page, flow: Flow): Promise<void> {
     await onJourney(page, async () => {
-        await page.locator('#konten').locator(`a[href="/proyek/${flow.project}"]`).first().click();
+        await page.locator('#konten').locator(`a[href="/proyek/${flow.project}"]:visible`).first().click();
         await page.waitForURL(PROJECT_URL);
     });
 }
