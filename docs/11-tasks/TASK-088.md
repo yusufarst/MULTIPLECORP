@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 17, created through the executor feedback loop from TASK-062's defect D1 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -200,32 +200,33 @@ TASK-062's CJ-07, in fresh CI on `dd851d3` (runs 42941402230 and 42941406273), f
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01) — the React Compiler's read-before-declaration error of `a9cf81d` fixed in `77c81e2`
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: every PHP layer PASS in CI; the new browser test below
+- [x] Authorization: N/A — unchanged; PG-024's `stock.dispatch` and the lookup's own authorization
+- [x] Route integrity: N/A — no route added or changed; the route audit (TL-07) PASS in CI; the test fixture `__fixtures/dispatch/kembar` exists only in the fixtures' routes
+- [x] Interaction behavior: `dispatch.spec.ts` — "lists an ambiguous code's candidates for the user's choice and finds a line with \"Cari Produk\"" PASS in CI on Chromium and WebKit
+- [x] Browser E2E if required: `dispatch.spec.ts` (TL-09) PASS in CI on Chromium and WebKit; CJ-07 runs in TASK-062's verification on the merged code
+- [x] Responsive/adaptive if required: TL-11 PASS in CI; the new test at 390 CSS px
+- [x] Visual breathing room/density if UI: existing components and tokens only (TEST_STRATEGY §9)
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: N/A — no new surface; the CI security layer (TL-14) PASS
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of `77c81e2` on pull request #75 completed with no finding (its state comment: has_any_findings false; 👍 on the request 6789520803); its one P1 on `a9cf81d`, naming a commit `a3fc752` that does not exist here, answered with the evidence in its thread
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key; the page's existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `77c81e2`: fresh CI on GitHub's `ubuntu-24.04` runner — run 42970091717 (push) and run 42970101026 (pull request #75) every job PASS. The first head `a9cf81d` failed lint (`DispatchGoods.tsx:133:41`, `addSerial` read before its declaration) and one WebKit test in `dispatch.spec.ts` (run 42966079617). That test was diagnosed from its trace, not rerun: both selects resolved to one handle, `{ index: 1 }` having chosen the unit just dispatched from the line's pre-dispatch choices, which the reload then dropped. The test now waits for the settled choices, asserts the shipped unit is not offered, chooses by name and asserts the choice survives the evidence sheet. This record's head is proven by its own fresh CI before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route added or changed; the route audit PASS
+- Interaction evidence: the new `dispatch.spec.ts` test — MSG-37 with two candidates, the off-project candidate refused, the project's own opening its line, "Cari Produk" filtering and closing
+- Browser evidence: `E2E: PASS — Evidence: 77c81e2, CI ubuntu-24.04 run 42970091717, tests/Browser/E2E/dispatch.spec.ts on Chromium and WebKit`
+- Localization evidence: no new key — MSG-37, `pt20.search` and the scan answers already in both languages; the localization layer PASS
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — no package added, no credit bought
+- Files changed: `resources/js/Pages/INV/DispatchGoods.tsx`; `tests/Browser/E2E/dispatch.spec.ts`; `tests/Support/Fixtures/DispatchFixture.php` (`twin`); `routes/fixtures.php`; Change 17's documents — `docs/11-tasks/TASK_PLAN.md`, `TASK-041.md`, `TASK-056.md`, `TASK-062.md`, `TASK-088.md`, `TASK-089.md` —; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: `a9cf81d` and `77c81e2` on `task/TASK-088-dispatch-scan-candidates`, the Owner's identity, no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria 1 and 2 PASS by the new test; criterion 3 is proven by TASK-062's CJ-07 on Chromium and WebKit at both widths once TASK-062's branch carries this fix and TASK-089's. Codex's P1 on PR #75 named a commit `a3fc752` authored by "Codex": no such commit exists in this repository (the API answers 422), every commit of the pull request has the Owner as author and committer, and the finding was answered in its thread with that evidence, no history rewritten. Observed for Planning, not changed here: SubstituteDialog offers the line's earlier serials until the post-dispatch choices arrive, so for a moment the unit just dispatched is selectable as the one "actually shipped" (TASK-041's dialog)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
