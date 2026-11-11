@@ -126,6 +126,18 @@ final class DocumentDetail
             $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
 
         $sequence = SequenceType::tryFrom($document->document_type_code);
+        // A BASE_SUFFIX revision keeps its predecessor's period and number, drawing nothing (DocumentIssuing::number; NM-07): its
+        // date names that period, never the date's own.
+        $retained = null;
+
+        if ($draft->supersedes_version_id !== null) {
+            $previous = DocumentVersion::query()->whereKey($draft->supersedes_version_id)->first(['numbering_scheme_id', 'period_key', 'sequence_no']);
+
+            if ($previous !== null && $previous->numbering_scheme_id !== null && $previous->period_key !== null && $previous->sequence_no !== null
+                && DB::table('numbering_schemes')->where('id', $previous->numbering_scheme_id)->value('revision_format') === 'BASE_SUFFIX') {
+                $retained = $previous->period_key;
+            }
+        }
 
         return [
             'id' => $draft->public_id,
@@ -139,7 +151,8 @@ final class DocumentDetail
             'paper' => $paper,
             'facts' => $facts === null ? null : DocumentChain::factsDigest($facts),
             // UXS-14: the period a backdated issue's number follows, by the type's schemes (NM-05).
-            'number_periods' => $sequence === null ? [] : $this->numbering->periods($document->company_id, $sequence),
+            'number_periods' => $sequence === null || $retained !== null ? [] : $this->numbering->periods($document->company_id, $sequence),
+            'retained_period' => $retained,
         ];
     }
 

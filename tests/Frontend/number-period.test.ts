@@ -10,19 +10,19 @@ const schemes = [
     { from: '2026-07-01', granularity: 'MONTH' },
 ];
 
-test('names the period of the scheme in force on the day', () => {
+void test('names the period of the scheme in force on the day', () => {
     assert.equal(numberPeriod(schemes, '2025-12-31'), '2025');
     assert.equal(numberPeriod(schemes, '2026-06-30'), '2026');
     assert.equal(numberPeriod(schemes, '2026-07-01'), '2026-07');
     assert.equal(numberPeriod(schemes, '2026-11-20'), '2026-11');
 });
 
-test('names no period before the first scheme, nor for a type without one', () => {
+void test('names no period before the first scheme, nor for a type without one', () => {
     assert.equal(numberPeriod(schemes, '2024-12-31'), null);
     assert.equal(numberPeriod([], '2026-11-20'), null);
 });
 
-test('gives a control no periodOf when the form draws no number of the type', () => {
+void test('gives a control no periodOf when the form draws no number of the type', () => {
     assert.equal(periodOf(undefined), undefined);
     assert.equal(periodOf(null), undefined);
     assert.equal(periodOf(schemes)?.('2026-10-20'), '2026-10');

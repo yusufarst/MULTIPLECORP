@@ -42,7 +42,7 @@ type Version = {
     supersedes: string | null;
     rendition: Rendition | null;
 };
-type Draft = { number_periods: NumberPeriods; id: string; version_no: number; lock_version: number; business_date: string | null; bank_account: string | null; bank_accounts: Bank[]; states_bank: boolean; revision_of: string | null; paper: Paper | null; facts: string | null };
+type Draft = { number_periods: NumberPeriods; retained_period: string | null; id: string; version_no: number; lock_version: number; business_date: string | null; bank_account: string | null; bank_accounts: Bank[]; states_bank: boolean; revision_of: string | null; paper: Paper | null; facts: string | null };
 type Props = {
     document: { id: string; type: string; type_name: string; mode: string; company: { id: string | null; code: string | null; name: string | null }; invoice: string | null; prepayment: 'open_not_linked' | 'linked' | null };
     versions: Version[];
@@ -105,7 +105,7 @@ function DraftComposer({ document, draft, today, canIssue, issue }: { document: 
     const form = (
         <FormSection title={t('documents.draft.title', { versi: draft.version_no })}>
             {draft.revision_of !== null && <p className="text-body text-text-secondary">{t('documents.draft.revision_of', { nomor: draft.revision_of })}</p>}
-            <BusinessDateControl today={today} value={date} onChange={setDate} periodOf={periodOf(draft.number_periods)} />
+            <BusinessDateControl today={today} value={date} onChange={setDate} periodOf={draft.retained_period === null ? periodOf(draft.number_periods) : () => draft.retained_period} />
             {draft.states_bank && (
                 <FormField label={t('documents.draft.bank')} error={save.errors.rekening ?? issue.errors.rekening}>
                     {(control) => (

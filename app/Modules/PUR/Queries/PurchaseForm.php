@@ -51,7 +51,7 @@ final class PurchaseForm
 
         $products = $product === null ? [] : $this->products([$product]);
 
-        $periods = $this->numbering->periodsOfCompanies(array_values(array_column($companies, 'internal')), SequenceType::Purchase);
+        $periods = $this->numbering->periodsOfCompanies(array_column($companies, 'internal'), SequenceType::Purchase);
 
         return [
             // UXS-14: each company's PURCHASE schemes, for the period a backdated purchase's number follows (NM-05).
