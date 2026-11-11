@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 18, created through the executor feedback loop from TASK-063's defect D3 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -199,32 +199,33 @@ TASK-063's CJ-06 and the code it walks show that `BusinessDateControl` renders t
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: `tests/Frontend/number-period.test.ts` (TL-03); `ProjectsTest`'s PG-013 schemes, `InvoicesTest`'s composer schemes by layout, `DocumentsTest`'s revision — a NEW_NUMBER revision offering the type's schemes, a BASE_SUFFIX one its retained period — (TL-04); every layer PASS in CI
+- [x] Authorization: N/A — unchanged; each page's own capabilities
+- [x] Route integrity: N/A — no route added or changed; the route audit (TL-07) PASS
+- [x] Interaction behavior: `documents.spec.ts` — a backdated PG-036 draft names its number's period beside "Tanggal Mundur"
+- [x] Browser E2E if required: the E2E layer PASS in CI on Chromium and WebKit; CJ-06's UXS-14 step in TASK-063 once TASK-091 lets its calendar open in the issue dialog
+- [x] Responsive/adaptive if required: TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: the control's existing caption line
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: N/A — no new surface; TL-14 PASS
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of `9378d92` on pull request #78 raised one P2 — a BASE_SUFFIX revision keeps its predecessor's period, so its date must not announce the date's own —, fixed in `bf30a86`; its targeted re-review of `bf30a86` completed with no finding; `1364148` only reorders a test after it
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `1364148`: fresh CI on GitHub's `ubuntu-24.04` runner — run 43069486002 (push) and run 43069492607 (pull request #78) every job PASS. The first heads failed lint (`9378d92`: the frontend test's unhandled promises, a redundant `array_values`) and one feature test (`bf30a86`: the new read of PG-036 consumed the revision's flashed answer before its assertion), each fixed in the suite. This record's head is proven by its own fresh CI before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `documents.spec.ts`'s backdated draft test
+- Browser evidence: `E2E: PASS — Evidence: 1364148, CI ubuntu-24.04 run 43069486002, tests/Browser/E2E/documents.spec.ts on Chromium and WebKit`
+- Localization evidence: no new key — `date.number_period` and `date.backdated` already in both languages
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `app/Modules/ORG/Services/NumberingState.php` (`periods`, `periodsOfCompanies`); `app/Modules/DOC/Queries/DocumentDetail.php`; `app/Modules/FIN/Queries/InvoiceComposer.php`; `app/Modules/PRJ/Queries/QuotationWorkspace.php`, `ProjectForm.php`; `app/Modules/FUL/Queries/ServiceHandovers.php`; `app/Modules/PUR/Queries/PurchaseForm.php`; `resources/js/lib/number-period.ts`; `resources/js/components/date-field.tsx`; `resources/js/Pages/DOC/Document.tsx`, `FIN/InvoiceComposer.tsx`, `PRJ/Quotation.tsx`, `PRJ/ProjectForm.tsx`, `FUL/ServiceHandover.tsx`, `PUR/RecordPurchase.tsx`; the tests above; Change 18's documents — `docs/11-tasks/TASK_PLAN.md`, `TASK-015.md`, `TASK-021.md`, `TASK-029.md`, `TASK-063.md`, `TASK-090.md`–`TASK-092.md` —; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: `9378d92` to `1364148` on `task/TASK-090-backdated-period-line`, the Owner's identity, no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criterion 1 PASS by the feature and browser tests — the period of the scheme in force on the chosen day, `YYYY` or `YYYY-MM`, none before the first scheme, a BASE_SUFFIX revision naming its retained period —; criterion 2 is proven by TASK-063's CJ-06 once TASK-091 is DONE. The invoice issue's line follows the chosen layout (DOC-06 or DOC-04), which may be numbered differently. An invoice's revise and void dialog draws no new period number and takes no line
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

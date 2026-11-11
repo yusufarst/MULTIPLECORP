@@ -16,20 +16,20 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 92
 
-DONE: 65
+DONE: 66
 READY: 6
-IN_PROGRESS: 1
+IN_PROGRESS: 0
 BLOCKED: 5
 VERIFYING: 1
 TODO: 14
 SUPERSEDED: 0
 
 Progress:
-65 / 92
-Percentage: 70.7 %
+66 / 92
+Percentage: 71.7 %
 
-CURRENT TASK: TASK-090 — Defect D3 — the number's period on a backdated numbered command IN_PROGRESS on its branch `task/TASK-090-backdated-period-line`; TASK-063 VERIFYING — its CJ-06 and CJ-15 wait on TASK-090, TASK-091 and TASK-092 (Change 18)
-NEXT READY TASK: TASK-091 — Defect D4, then TASK-092 — Defect D5, READY, then TASK-063's verification resumed; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: none in progress — TASK-090 — Defect D3 — the number's period on a backdated numbered command DONE on its branch `task/TASK-090-backdated-period-line`, CI PASS on `1364148`, its pull request #78 squash-merged by the executor once its head's fresh CI passes (DIR-096); TASK-063 VERIFYING, waiting on TASK-091 and TASK-092
+NEXT READY TASK: TASK-091 — Defect D4 — a popover opened inside a modal layer stacks above it, READY, then TASK-092 — Defect D5, then TASK-063's verification resumed; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 18 of 2026-11-11 — TASK-063's defects D3, D4 and D5 as the defect Tasks TASK-090 (UXS-14's period line), TASK-091 (a popover inside a modal) and TASK-092 (the composer's resize loop); TASK-063 VERIFYING, depending on all three
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -138,7 +138,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [ ] [TASK-087](TASK-087.md) — Cutover and go-live
 - [x] [TASK-088](TASK-088.md) — Defect D1 — PG-024's ambiguous-code candidates and "Cari Produk" (UXS-34)
 - [x] [TASK-089](TASK-089.md) — Defect D2 — PG-011 within three deferred groups (PF-34, UXS-44)
-- [ ] [TASK-090](TASK-090.md) — Defect D3 — the number's period on a backdated numbered command (UXS-14)
+- [x] [TASK-090](TASK-090.md) — Defect D3 — the number's period on a backdated numbered command (UXS-14)
 - [ ] [TASK-091](TASK-091.md) — Defect D4 — a popover opened inside a modal layer stacks above it
 - [ ] [TASK-092](TASK-092.md) — Defect D5 — the composer's paper fit without a resize-observer loop
 
@@ -235,7 +235,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-087](TASK-087.md) | Cutover and go-live | Operations · Operations | HIGH | TODO | 057, 077, 083, 085, 086 | — | NO | HUMAN OPERATOR | NONE | NO |
 | [TASK-088](TASK-088.md) | Defect D1 — PG-024's ambiguous-code candidates and "Cari Produk" (UXS-34) | Module · INV | STANDARD | DONE | 041 | 062 | NO | AGENT | NONE | YES |
 | [TASK-089](TASK-089.md) | Defect D2 — PG-011 within three deferred groups (PF-34, UXS-44) | Module · PRJ | STANDARD | DONE | 056 | 062 | NO | AGENT | NONE | YES |
-| [TASK-090](TASK-090.md) | Defect D3 — the number's period on a backdated numbered command (UXS-14) | Platform · UI | STANDARD | IN_PROGRESS | 015, 021 | 063 | NO | AGENT | NONE | YES |
+| [TASK-090](TASK-090.md) | Defect D3 — the number's period on a backdated numbered command (UXS-14) | Platform · UI | STANDARD | DONE | 015, 021 | 063 | NO | AGENT | NONE | YES |
 | [TASK-091](TASK-091.md) | Defect D4 — a popover opened inside a modal layer stacks above it | Platform · UI | STANDARD | READY | 015 | 063 | NO | AGENT | NONE | YES |
 | [TASK-092](TASK-092.md) | Defect D5 — the composer's paper fit without a resize-observer loop | Module · DOC | STANDARD | READY | 029 | 063 | NO | AGENT | NONE | YES |
 
