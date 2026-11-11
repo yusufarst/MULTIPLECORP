@@ -5,6 +5,8 @@ namespace App\Modules\PUR\Queries;
 use App\Modules\DOC\Data\EvidenceTypes;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Modules\PUR\Services\PurchaseTaxes;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -21,6 +23,7 @@ final class PurchaseForm
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly SupplierPrices $prices,
+        private readonly NumberingState $numbering,
     ) {}
 
     /** @return array<string, mixed> */
@@ -48,8 +51,11 @@ final class PurchaseForm
 
         $products = $product === null ? [] : $this->products([$product]);
 
+        $periods = $this->numbering->periodsOfCompanies(array_values(array_column($companies, 'internal')), SequenceType::Purchase);
+
         return [
-            'companies' => array_map(fn (array $item): array => array_diff_key($item, ['internal' => true]), $companies),
+            // UXS-14: each company's PURCHASE schemes, for the period a backdated purchase's number follows (NM-05).
+            'companies' => array_map(fn (array $item): array => [...array_diff_key($item, ['internal' => true]), 'number_periods' => $periods[$item['internal']] ?? []], $companies),
             'company' => $internal === null ? null : $chosen,
             'project' => $chosenProject === null ? null : array_diff_key($chosenProject, ['internal' => true]),
             'supplement' => $origin === null ? null : ['number' => $origin['number'], 'supplier' => $origin['supplier']],

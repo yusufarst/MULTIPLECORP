@@ -29,6 +29,8 @@ A consistent, accessible, comfortable interface in natural Indonesian is V1's ex
 - TASK-016 — Application shell, navigation and the company context
 - TASK-017 — Password sign-in, sessions and credential links
 - TASK-022 — Jobs, files and the document renderer
+- TASK-090 — Defect D3 — the number's period on a backdated numbered command (UXS-14)
+- TASK-091 — Defect D4 — a popover opened inside a modal layer stacks above it
 
 **PARALLEL SAFE:** NO — every page Task composes these components
 

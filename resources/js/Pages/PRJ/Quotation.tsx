@@ -32,6 +32,7 @@ import AppShell from '@/layouts/AppShell';
 import { add } from '@/lib/decimal';
 import { dateLong, quantity as formatQuantity } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
+import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { type CommandForm, useCommand } from '@/lib/use-command';
 
 type Line = { handle: string; product: string; description: string; quantity: string; unit: string; ratio: number; scale: number; price?: string; value?: string };
@@ -43,6 +44,8 @@ type Props = {
     current: Current | null;
     taxes: TaxRule[];
     today: string;
+    /** UXS-14: the quotation numbering's schemes, for the period a backdated issue's number follows. */
+    number_periods: NumberPeriods;
     can: { manage: boolean; approve: boolean; reject: boolean; supersede: string | null };
 };
 type Entered = { handle: string; product: string; unit: string; description: string; quantity: string | null; price: string | null };
@@ -68,7 +71,7 @@ function Answered({ command }: { command: { answer: Answer | null; unknown: bool
 }
 
 // The draft's form keeps the version it was read at: a newer one (another Admin's save) never replaces the input silently (IP-03).
-function DraftComposer({ project, draft, taxes, today, money, issue }: { project: NonNullable<Props['project']>; draft: Current; taxes: TaxRule[]; today: string; money: boolean; issue: CommandForm<Payload> }) {
+function DraftComposer({ project, draft, taxes, today, periods, money, issue }: { project: NonNullable<Props['project']>; draft: Current; taxes: TaxRule[]; today: string; periods: NumberPeriods; money: boolean; issue: CommandForm<Payload> }) {
     const { t } = useTranslation();
     const name = t('quotations.paper');
     const save = useCommand<Payload>(() => `/proyek/${project.id}/penawaran`, 'post');
@@ -219,7 +222,7 @@ function DraftComposer({ project, draft, taxes, today, money, issue }: { project
                 consequence={t('quotations.confirm.issue_consequence')}
                 items={
                     <div className="flex min-w-0 flex-col gap-3">
-                        <BusinessDateControl today={today} value={date} onChange={setDate} />
+                        <BusinessDateControl today={today} value={date} onChange={setDate} periodOf={periodOf(periods)} />
                         {validUntil !== null && <p>{t('quotations.confirm.valid_until', { tanggal: dateLong(validUntil) })}</p>}
                         {issue.errors.tanggal !== undefined && <p className="text-danger">{issue.errors.tanggal}</p>}
                     </div>
@@ -255,7 +258,7 @@ function IssuedLines({ current, money }: { current: Current; money: boolean }) {
     );
 }
 
-export default function Quotation({ project, revisions, current, taxes, today, can }: Props) {
+export default function Quotation({ project, revisions, current, taxes, today, number_periods: numberPeriods, can }: Props) {
     const { t } = useTranslation();
     const id = project?.id ?? '';
     const latest = revisions[0] ?? null;
@@ -332,7 +335,7 @@ export default function Quotation({ project, revisions, current, taxes, today, c
                         ) : undefined}
                     />
                 ) : current.state === 'DRAFT' && can.manage ? (
-                    <DraftComposer key={current.id} project={project} draft={current} taxes={taxes} today={today} money={money} issue={issue} />
+                    <DraftComposer key={current.id} project={project} draft={current} taxes={taxes} today={today} periods={numberPeriods} money={money} issue={issue} />
                 ) : (
                     <IssuedLines current={current} money={money} />
                 )}

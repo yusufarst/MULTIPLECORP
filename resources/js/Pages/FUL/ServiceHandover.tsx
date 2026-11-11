@@ -30,6 +30,7 @@ import { type BastLine, liveBast } from '@/features/ful/handover';
 import AppShell from '@/layouts/AppShell';
 import { dateLong, dateTime, quantity as formatQuantity } from '@/lib/format';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
+import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
@@ -48,6 +49,8 @@ type Props = {
     paper: Paper | null;
     evidence: EvidenceOption[];
     today: string;
+    /** UXS-14: the BAST numbering's schemes, for the period a backdated issue's number follows. */
+    number_periods: NumberPeriods;
     can: { record: boolean; upload: boolean };
 };
 type Entered = Record<string, { quantity: string; scope: string }>;
@@ -128,7 +131,7 @@ function Recorded({ handover, previewing, onPreview, onReverse, onIssue, prepari
     );
 }
 
-export default function ServiceHandover({ project, lines, handovers, older, after, paper, evidence, today, can }: Props) {
+export default function ServiceHandover({ project, lines, handovers, older, after, paper, evidence, today, number_periods: numberPeriods, can }: Props) {
     const { t } = useTranslation();
     const id = project?.id ?? '';
     const [entered, setEntered] = useState<Entered>({});
@@ -372,7 +375,7 @@ export default function ServiceHandover({ project, lines, handovers, older, afte
                 consequence={t('handover.bast.consequence')}
                 items={
                     <div className="flex min-w-0 flex-col gap-3">
-                        <BusinessDateControl today={today} value={issueDate} onChange={setIssueDate} />
+                        <BusinessDateControl today={today} value={issueDate} onChange={setIssueDate} periodOf={periodOf(numberPeriods)} />
                         {issue.errors.tanggal !== undefined && <p className="text-danger">{issue.errors.tanggal}</p>}
                     </div>
                 }

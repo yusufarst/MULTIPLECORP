@@ -153,7 +153,10 @@ it('composes a draft from confirmed lines at their pinned price, exact on the pi
     expect($row->line_sales_value)->toBe('1000000.00')->and($row->entered_qty)->toBe('4.000')->and($row->project_line_id)->toBe($line);
 
     $this->actingAs($this->actor)->get('/keuangan/invoice/baru?invoice='.InvoiceWorld::publicId($id))->assertInertia(fn (AssertableInertia $page) => $page->component('FIN/InvoiceComposer', false)
-        ->where('draft.kind', 'ITEMIZED')->where('draft.sales', '1000000.00')->where('remaining', '2500000.00')->where('paper.number', null)->where('paper.draft', true));
+        ->where('draft.kind', 'ITEMIZED')->where('draft.sales', '1000000.00')->where('remaining', '2500000.00')->where('paper.number', null)->where('paper.draft', true)
+        // UXS-14 (TASK-090): each layout's schemes, for the period a backdated issue's number follows.
+        ->where('number_periods.DOC-06', [['from' => substr(BusinessDate::today(), 0, 4).'-01-01', 'granularity' => 'YEAR']])
+        ->where('number_periods.DOC-04', [['from' => substr(BusinessDate::today(), 0, 4).'-01-01', 'granularity' => 'YEAR']]));
     $this->actingAs($this->actor)->get('/keuangan/invoice/'.InvoiceWorld::publicId($id))->assertRedirect('/keuangan/invoice/baru?invoice='.InvoiceWorld::publicId($id));
 });
 

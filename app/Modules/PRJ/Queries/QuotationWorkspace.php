@@ -9,6 +9,8 @@ use App\Modules\DOC\Services\DocumentPaper;
 use App\Modules\DOC\Services\IssuerIdentity;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Modules\PRJ\Models\Project;
 use App\Modules\PRJ\Services\QuotationRecords;
 use App\Modules\PRJ\Services\QuotationSubjects;
@@ -34,6 +36,7 @@ final class QuotationWorkspace
         private readonly QuotationSubjects $subjects,
         private readonly IssuerIdentity $identity,
         private readonly ProjectWorkspace $projects,
+        private readonly NumberingState $numbering,
     ) {}
 
     public function viewer(int $viewerId): Authority
@@ -107,6 +110,8 @@ final class QuotationWorkspace
             'current' => $current === null ? null : $this->current($current, $money, $project),
             'taxes' => $money ? QuotationRecords::rules($project->company_id) : [],
             'today' => $today,
+            // UXS-14: the period a backdated quotation's number follows (NM-05).
+            'number_periods' => $this->numbering->periods($project->company_id, SequenceType::Doc01),
             'can' => [
                 'manage' => $manage && in_array($state, ['DRAFT', 'ACTIVE'], true),
                 'approve' => $viewer->allows('projects.confirm', $project->company_id) && in_array($state, ['DRAFT', 'ACTIVE'], true),

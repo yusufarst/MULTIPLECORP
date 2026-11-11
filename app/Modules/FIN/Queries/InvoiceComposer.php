@@ -12,6 +12,8 @@ use App\Modules\FIN\Models\Invoice;
 use App\Modules\FIN\Services\InvoiceRecords;
 use App\Modules\FIN\Services\InvoiceSubjects;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Modules\ORG\Services\OutputTaxes;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\BusinessDate;
@@ -32,6 +34,7 @@ final class InvoiceComposer
         private readonly IssuerIdentity $identity,
         private readonly OutputTaxes $outputTaxes,
         private readonly InvoiceSubjects $subjects,
+        private readonly NumberingState $numbering,
     ) {}
 
     /** The composer exists for a holder of `invoice.issue` with `finance.view` of the project's company (ROUTE-042; criterion 12). */
@@ -80,6 +83,8 @@ final class InvoiceComposer
             'draft' => $draftPayload,
             'issued' => $draft === null || $draft->state === 'DRAFT' ? null : ['id' => $draft->public_id, 'number' => InvoiceSubjects::number($draft->id)],
             'today' => $today,
+            // UXS-14: the period a backdated issue's number follows, for each layout the issue may take (NM-05).
+            'number_periods' => [SequenceType::Doc06->value => $this->numbering->periods($project->companyId, SequenceType::Doc06), SequenceType::Doc04->value => $this->numbering->periods($project->companyId, SequenceType::Doc04)],
             'can' => ['issue' => $viewer->allows('invoice.issue', $project->companyId)],
         ];
     }

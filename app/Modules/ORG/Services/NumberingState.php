@@ -61,6 +61,34 @@ final class NumberingState
             ->orderBy('effective_from')->get()->all());
     }
 
+    /**
+     * The type's schemes as a form reads them (UXS-14; NM-05): each scheme's first day and granularity, oldest first,
+     * so a backdated business date names the period its number follows — the scheme in force on that day.
+     *
+     * @return list<array{from: string, granularity: string}>
+     */
+    public function periods(int $companyId, SequenceType $type): array
+    {
+        return array_map(fn (NumberingScheme $scheme): array => ['from' => $scheme->effective_from->toDateString(), 'granularity' => $scheme->period_granularity], $this->schemes($companyId, $type));
+    }
+
+    /**
+     * The same for several companies in one read, keyed by each company's id — a form whose company is chosen on it.
+     *
+     * @param  list<int>  $companyIds
+     * @return array<int, list<array{from: string, granularity: string}>>
+     */
+    public function periodsOfCompanies(array $companyIds, SequenceType $type): array
+    {
+        $periods = array_fill_keys($companyIds, []);
+
+        foreach (NumberingScheme::query()->whereIn('company_id', $companyIds)->where('sequence_type', $type->value)->orderBy('effective_from')->get() as $scheme) {
+            $periods[$scheme->company_id][] = ['from' => $scheme->effective_from->toDateString(), 'granularity' => $scheme->period_granularity];
+        }
+
+        return $periods;
+    }
+
     /** The scheme in force on a day: the latest whose `effective_from` is not after it (NM-03). */
     public function schemeOn(int $companyId, SequenceType $type, string $day): ?NumberingScheme
     {

@@ -99,3 +99,36 @@ test('lists the document on PG-035 and finds it by its exact number (ROUTE-035; 
     await page.getByRole('button', { name: 'Cari' }).click();
     await expect(content.getByRole('cell', { name: number })).toBeVisible();
 });
+
+test('names the period a backdated draft\'s number follows beside its "Tanggal Mundur" mark (UXS-14; PT-25; NM-05; TASK-090)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const { id: document } = await documentDraft(page, `dokumen-mundur-${stamp()}`);
+    const content = page.locator('#konten');
+
+    await page.goto(`/dokumen/${document}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
+    await expect(content.getByText('Tanggal Mundur')).toHaveCount(0);
+    await expect(content.getByText(/^Nomor mengikuti periode/)).toHaveCount(0);
+
+    // The server's business day is WIB's; the first of its month is backdated, or the previous month's first on the first.
+    const today = new Date(Date.now() + 7 * 3_600_000).toISOString().slice(0, 10);
+    const [year = 0, month = 1] = today.split('-').map(Number);
+    const sameMonth = !today.endsWith('-01');
+    const day = sameMonth ? `${today.slice(0, 8)}01` : new Date(Date.UTC(year, month - 2, 1)).toISOString().slice(0, 10);
+
+    await content.getByRole('button', { name: 'Ubah' }).first().click();
+
+    if (!sameMonth) {
+        await page.getByRole('button', { name: 'Bulan sebelumnya' }).click();
+    }
+
+    await page.locator(`[data-day="${day}"] button`).click();
+    await expect(content.getByText('Tanggal Mundur')).toBeVisible();
+
+    // The fixture numbers the type yearly from 1 January (DocumentFixture): the period is the day's year, none before it.
+    if (day.slice(0, 4) === today.slice(0, 4)) {
+        await expect(content.getByText(`Nomor mengikuti periode ${day.slice(0, 4)}`)).toBeVisible();
+    } else {
+        await expect(content.getByText(/^Nomor mengikuti periode/)).toHaveCount(0);
+    }
+});
