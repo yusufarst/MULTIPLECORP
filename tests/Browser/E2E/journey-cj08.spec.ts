@@ -111,7 +111,12 @@ test('CJ-08: a SIPLAH project\'s references as entered and its net settlement as
     await proof.selectOption({ value: (await proof.locator('option', { hasText: `Bank Uji ${run.code}` }).getAttribute('value')) ?? '' });
     await page.getByTestId('application').getByLabel(/^Diterapkan/).fill('9700000');
     await page.getByRole('button', { name: 'Klien membayar setelah potongan' }).click();
-    await page.getByRole('button', { name: 'Tambah Potongan' }).click();
+    // The disclosure's panel reveals its body by animating its height from 0 (GF-42): its button is pressed once it is fully
+    // shown, as a person would — pressed while still clipped, the press fell on the trigger above it (WebKit, run 43012262376).
+    const addClaim = page.getByRole('button', { name: 'Tambah Potongan' });
+    await addClaim.scrollIntoViewIfNeeded();
+    await expect(addClaim).toBeInViewport({ ratio: 1 });
+    await addClaim.click();
     await page.getByLabel('Nama biaya').fill('BIAYA_SIPLAH');
     await page.getByLabel(/^Jumlah/).last().fill('300000');
     await expect(page.getByRole('alertdialog')).toHaveCount(0);
