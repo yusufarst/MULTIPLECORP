@@ -66,6 +66,19 @@ final class GuardsFixture
             }
         }
 
-        return response()->json(['differences' => $journey, 'all' => $all, 'families' => count(Families::all())]);
+        // The verified families too (DATABASE §3.1), as ReconcileGuards runs them: a number issued above its counter. Their
+        // key carries its company; a violation of none is the journey's, fail-closed.
+        foreach (Families::verifications() as $verification) {
+            foreach ($reconciler->violations(DB::connection(), $verification) as $violation) {
+                $all++;
+                $company = $violation['key']['company_id'] ?? null;
+
+                if (! is_numeric($company) || in_array((int) $company, $companies, true)) {
+                    $journey[] = json_encode($violation, JSON_THROW_ON_ERROR);
+                }
+            }
+        }
+
+        return response()->json(['differences' => $journey, 'all' => $all, 'families' => count(Families::all()) + count(Families::verifications())]);
     }
 }
