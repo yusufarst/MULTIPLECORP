@@ -18,6 +18,16 @@ async function open(page: Page, persona: 'owner' | 'admin' | 'gudang', width = 1
     return run;
 }
 
+/**
+ * The fixture's "Sesi Berakhir" ends the session server-side by its own request; the next step waits for that answer, never a
+ * fixed pause — a pause of 300 ms let a command out before the session had ended (run 43007891666: 678 ms).
+ */
+async function endSession(page: Page): Promise<void> {
+    const ended = page.waitForResponse((response) => new URL(response.url()).pathname === '/__fixtures/shell/kedaluwarsa' && response.request().method() === 'POST');
+    await page.getByRole('button', { name: 'Sesi Berakhir' }).click();
+    expect((await ended).ok(), 'the session ended').toBe(true);
+}
+
 test('shows the Owner the primary entries, *Menu lengkap* and every "Buat" item (INT-003, INT-004)', async ({ page }) => {
     await open(page, 'owner');
     const nav = page.getByRole('navigation', { name: 'Navigasi utama' }).first();
@@ -123,8 +133,7 @@ test('searches with the term in the request body only, an exact code first (IP-1
 test('signs in again in place after the session ends: the input kept, the command replayed once (IP-11; HO-02; criterion 7)', async ({ page }) => {
     await open(page, 'admin');
     await page.getByLabel('Alasan').fill('Termin pertama');
-    await page.getByRole('button', { name: 'Sesi Berakhir' }).click();
-    await page.waitForTimeout(300);
+    await endSession(page);
 
     await page.getByRole('button', { name: 'Catat Pembayaran' }).click();
     const dialog = page.getByRole('alertdialog', { name: 'Masuk lagi untuk melanjutkan' });
@@ -233,8 +242,7 @@ test('replays a command whose answer was lost, after signing in again, with the 
     await expect(unknown).toBeVisible({ timeout: VISIT });
     const pending = await page.locator('[data-pending-command]').getAttribute('data-pending-command');
 
-    await page.getByRole('button', { name: 'Sesi Berakhir' }).click();
-    await page.waitForTimeout(300);
+    await endSession(page);
     await unknown.getByRole('button', { name: 'Coba Lagi' }).click();
 
     const dialog = page.getByRole('alertdialog', { name: 'Masuk lagi untuk melanjutkan' });
@@ -252,8 +260,7 @@ test('replays a command whose answer was lost, after signing in again, with the 
 test('loads the page afresh when another person signs in, before anything is uncovered or resent (IP-11; UXH-02)', async ({ page }) => {
     await open(page, 'admin');
     await page.getByLabel('Alasan').fill('Termin pertama');
-    await page.getByRole('button', { name: 'Sesi Berakhir' }).click();
-    await page.waitForTimeout(300);
+    await endSession(page);
     await page.getByRole('button', { name: 'Catat Pembayaran' }).click();
 
     const dialog = page.getByRole('alertdialog', { name: 'Masuk lagi untuk melanjutkan' });
@@ -271,8 +278,7 @@ test('loads the page afresh when another person signs in, before anything is unc
 
 test('warns of the unsent input before "Keluar" from the dialog, then loads sign-in afresh (IP-11; MSG-35)', async ({ page }) => {
     await open(page, 'admin');
-    await page.getByRole('button', { name: 'Sesi Berakhir' }).click();
-    await page.waitForTimeout(300);
+    await endSession(page);
     await page.getByRole('button', { name: 'Catat Pembayaran' }).click();
 
     const dialog = page.getByRole('alertdialog', { name: 'Masuk lagi untuk melanjutkan' });
