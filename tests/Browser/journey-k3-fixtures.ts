@@ -115,7 +115,7 @@ export async function shownStatuses(page: Page): Promise<ShownStatus[]> {
                 status,
                 family,
                 state,
-                label: (element.textContent ?? '').replace(/\s+/g, ' ').trim(),
+                label: element.textContent.replace(/\s+/g, ' ').trim(),
                 shape,
                 iconHidden: icon?.getAttribute('aria-hidden') === 'true',
                 iconSize: Math.round(box?.width ?? 0),
