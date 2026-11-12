@@ -31,10 +31,11 @@ import AppShell from '@/layouts/AppShell';
 import * as decimal from '@/lib/decimal';
 import { type TranslationKey, useTranslation } from '@/lib/i18n';
 import type { AccountHints } from '@/lib/navigation';
+import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
-type Company = { id: string; code: string; name: string; money: boolean; taxes: string[] };
+type Company = { id: string; code: string; name: string; money: boolean; taxes: string[]; number_periods: NumberPeriods };
 type Product = { id: string; name: string; sku: string | null; kind: 'GOODS' | 'SERVICE'; scale: number; units: { code: string; name: string; ratio: number }[]; price?: string | null };
 type Unit = {
     handle: string;
@@ -305,7 +306,7 @@ export default function ProjectForm({ companies, project, client, today }: Props
                 <PageHeader
                     title={pageTitle}
                     back={{ label: t('dialogs.back'), href: origin }}
-                    date={project === null || chosen?.id !== project.company ? <BusinessDateControl today={today} value={date} onChange={(next) => { setDate(next); touch(); }} /> : undefined}
+                    date={project === null || chosen?.id !== project.company ? <BusinessDateControl today={today} value={date} onChange={(next) => { setDate(next); touch(); }} periodOf={periodOf(chosen?.number_periods)} /> : undefined}
                 />
                 {summary.length > 0 && <ValidationSummary fields={summary} />}
                 {stale !== null && <StaleComparison fields={stale} onReapply={reapply} onDiscard={discardMine} />}

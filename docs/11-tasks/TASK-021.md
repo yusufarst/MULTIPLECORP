@@ -36,6 +36,7 @@ Business numbers are legal identity: C-10 makes them unique per company, type an
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
 - TASK-076 — Operator runbooks — Owner-account recovery, key compromise, Scenario B and key rotation
 - TASK-077 — Cutover tooling — the numbering go-live command, the post-import refresh and the rehearsal procedure
+- TASK-090 — Defect D3 — the number's period on a backdated numbered command (UXS-14)
 
 **PARALLEL SAFE:** NO — it owns the counters every issuing Task draws from
 

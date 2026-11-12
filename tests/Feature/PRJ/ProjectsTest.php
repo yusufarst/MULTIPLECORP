@@ -287,6 +287,18 @@ it('refuses a line whose quantity the product\'s scale cannot hold, or whose mod
     ]]))->assertSessionHasErrors(['baris.0.jumlah', 'baris.1.mode']);
 });
 
+it('gives each company offered on PG-013 its PROJECT schemes, so a backdated date names its number\'s period (UXS-14; NM-05; TASK-090)', function () {
+    $year = substr(BusinessDate::today(), 0, 4);
+    // A later scheme of the type turns the numbering monthly; the form carries both, oldest first.
+    Numbering::scheme($this->company, SequenceType::Project, "{$year}-07-01", 'MONTH', 'PRJ/{tahun}/{bulan}/{nomor:4}');
+
+    $this->actingAs($this->admin)->get('/proyek/baru')
+        ->assertOk()
+        ->assertInertia(fn (AssertableInertia $page) => $page->component('PRJ/ProjectForm', false)
+            ->where('companies.0.id', $this->company->public_id)
+            ->where('companies.0.number_periods', [['from' => "{$year}-01-01", 'granularity' => 'YEAR'], ['from' => "{$year}-07-01", 'granularity' => 'MONTH']]));
+});
+
 it('renders PG-013 with the companies in scope, the chosen client\'s rows and the chosen product, prices to finance.view only (ROUTE-013; criterion 12)', function () {
     $this->actingAs($this->admin)->get('/proyek/baru?klien='.$this->client['organization']->public_id.'&produk='.$this->goods['product']->public_id)
         ->assertOk()

@@ -13,6 +13,8 @@ use App\Modules\FUL\Services\HandoverFacts;
 use App\Modules\FUL\Services\ServiceHandoverSubjects;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Modules\PRJ\Data\ProjectRef;
 use App\Support\BusinessDate;
 use App\Support\RowHandle;
@@ -39,6 +41,7 @@ final class ServiceHandovers
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly IssuerIdentity $identity,
+        private readonly NumberingState $numbering,
     ) {}
 
     /**
@@ -126,6 +129,8 @@ final class ServiceHandovers
             'paper' => $header === null || ! DocumentAccess::mayViewContent($viewer, ServiceHandoverSubjects::BAST, $company) ? null : $this->paper($company, $header),
             'evidence' => $canRecord && $viewer->allows('evidence.view', $company) ? $this->evidenceOptions($viewer, $company) : [],
             'today' => BusinessDate::today(),
+            // UXS-14: the period a backdated BAST's number follows (NM-05).
+            'number_periods' => $this->numbering->periods($company, SequenceType::Doc08),
             'can' => ['record' => $canRecord, 'upload' => $viewer->allows('evidence.upload', $company)],
         ];
     }

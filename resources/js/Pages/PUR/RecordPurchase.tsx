@@ -19,10 +19,11 @@ import { type Bill, type Charge, blankCharge, chargePayload, ChargeFields } from
 import { blankLine, estimatedTotal, type Demand, type Line, linePayload, type Previous, type Product, PurchaseLines, type Tax, useLineProducts } from '@/features/pur/purchase-lines';
 import AppShell from '@/layouts/AppShell';
 import { useTranslation } from '@/lib/i18n';
+import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
-type Company = { id: string; code: string; name: string };
+type Company = { id: string; code: string; name: string; number_periods: NumberPeriods };
 type Project = { id: string; number: string; title: string; state: string; company: string; company_code: string; company_name: string; demand: Demand[] };
 type Prefill = { demand: string; product: Product; quantity: string; mode: 'WAREHOUSE' | 'DROPSHIP'; label: string };
 type Props = {
@@ -118,7 +119,7 @@ export default function RecordPurchase({ companies, company, project, supplement
     return (
         <AppShell title={t('pages.pg_017.title')} back={{ href: origin, label: project !== null ? project.number : t('pages.pg_015.title') }}>
             <div className="flex min-w-0 flex-col gap-6 pb-16">
-                <PageHeader title={t('pages.pg_017.title')} crumbs={[{ label: t('pages.pg_015.title'), href: '/pembelian' }]} date={<BusinessDateControl today={today} value={date} onChange={(value) => { setDate(value); touch(); }} />} />
+                <PageHeader title={t('pages.pg_017.title')} crumbs={[{ label: t('pages.pg_015.title'), href: '/pembelian' }]} date={<BusinessDateControl today={today} value={date} onChange={(value) => { setDate(value); touch(); }} periodOf={periodOf(companies.find((option) => option.id === (project?.company ?? chosenCompany))?.number_periods)} />} />
                 {summary.length > 0 && <ValidationSummary fields={summary} />}
                 <FormSection title={t('purchases.form.source')}>
                     {supplement !== null && <p className="text-body text-text-secondary">{t('purchases.form.supplement', { nomor: supplement.number })}</p>}

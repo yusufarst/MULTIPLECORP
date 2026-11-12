@@ -5,6 +5,8 @@ namespace App\Modules\PRJ\Queries;
 use App\Modules\CAT\Data\Quantity;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Modules\PRJ\Data\LineInput;
 use App\Modules\PRJ\Data\ProjectInput;
 use App\Modules\PRJ\Models\Project;
@@ -37,6 +39,7 @@ final class ProjectForm
     public function __construct(
         private readonly EffectiveCapabilities $capabilities,
         private readonly ClientDirectory $clients,
+        private readonly NumberingState $numbering,
     ) {}
 
     public function viewer(int $viewerId): Authority
@@ -169,7 +172,7 @@ final class ProjectForm
      * The companies a new project may be started in, each with whether its prices are visible and the output taxes in
      * force today; for an amendment also the project's own, which it may keep.
      *
-     * @return list<array{id: string, code: string, name: string, money: bool, taxes: list<string>}>
+     * @return list<array{id: string, code: string, name: string, money: bool, taxes: list<string>, number_periods: list<array{from: string, granularity: string}>}>
      */
     private function companies(Authority $viewer, ?int $own): array
     {
@@ -185,6 +188,8 @@ final class ProjectForm
         }
 
         $taxes = $this->taxes(array_values(array_filter($ids, fn (int $id): bool => $viewer->allows('finance.view', $id))));
+        // UXS-14: each company's PROJECT schemes, for the period a backdated project's number follows (NM-05).
+        $periods = $this->numbering->periodsOfCompanies($ids, SequenceType::Project);
         $companies = [];
 
         foreach ($rows as $row) {
@@ -192,7 +197,7 @@ final class ProjectForm
 
             if (in_array($id, $ids, true)) {
                 $companies[] = ['id' => Row::text($row, 'public_id'), 'code' => Row::text($row, 'code'), 'name' => Row::text($row, 'legal_name'),
-                    'money' => $viewer->allows('finance.view', $id), 'taxes' => $taxes[$id] ?? []];
+                    'money' => $viewer->allows('finance.view', $id), 'taxes' => $taxes[$id] ?? [], 'number_periods' => $periods[$id] ?? []];
             }
         }
 

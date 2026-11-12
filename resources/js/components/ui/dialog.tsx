@@ -4,6 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { PopupLayerProvider } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // PT-16's dialog and sheet (DESIGN_SYSTEM §9.4, §10, §11): the reference's application-level dialog, centred,
@@ -55,7 +56,7 @@ export function DialogContent({
                 )}
                 {...props}
             >
-                {children}
+                <PopupLayerProvider value="z-(--z-modal)">{children}</PopupLayerProvider>
                 {closeLabel !== undefined && (
                     <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" className="absolute top-3 right-3" aria-label={closeLabel} />}>
                         <Icon icon={X} size="sm" />

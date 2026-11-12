@@ -99,3 +99,107 @@ test('lists the document on PG-035 and finds it by its exact number (ROUTE-035; 
     await page.getByRole('button', { name: 'Cari' }).click();
     await expect(content.getByRole('cell', { name: number })).toBeVisible();
 });
+
+test('names the period a backdated draft\'s number follows beside its "Tanggal Mundur" mark (UXS-14; PT-25; NM-05; TASK-090)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const { id: document } = await documentDraft(page, `dokumen-mundur-${stamp()}`);
+    const content = page.locator('#konten');
+
+    await page.goto(`/dokumen/${document}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
+    await expect(content.getByText('Tanggal Mundur')).toHaveCount(0);
+    await expect(content.getByText(/^Nomor mengikuti periode/)).toHaveCount(0);
+
+    // The server's business day is WIB's; the first of its month is backdated, or the previous month's first on the first.
+    const today = new Date(Date.now() + 7 * 3_600_000).toISOString().slice(0, 10);
+    const [year = 0, month = 1] = today.split('-').map(Number);
+    const sameMonth = !today.endsWith('-01');
+    const day = sameMonth ? `${today.slice(0, 8)}01` : new Date(Date.UTC(year, month - 2, 1)).toISOString().slice(0, 10);
+
+    await content.getByRole('button', { name: 'Ubah' }).first().click();
+
+    if (!sameMonth) {
+        await page.getByRole('button', { name: 'Bulan sebelumnya' }).click();
+    }
+
+    await page.locator(`[data-day="${day}"] button`).click();
+    await expect(content.getByText('Tanggal Mundur')).toBeVisible();
+
+    // The fixture numbers the type yearly from 1 January (DocumentFixture): the period is the day's year, none before it.
+    if (day.slice(0, 4) === today.slice(0, 4)) {
+        await expect(content.getByText(`Nomor mengikuti periode ${day.slice(0, 4)}`)).toBeVisible();
+    } else {
+        await expect(content.getByText(/^Nomor mengikuti periode/)).toHaveCount(0);
+    }
+});
+
+test('fits the paper across the composer\'s widths without a resize-observer loop or any page error (DESIGN_SYSTEM §14.3; TEST_STRATEGY §8; TASK-092)', async ({ page }) => {
+    const errors: string[] = [];
+    // A request the next navigation cancels surfaces as Inertia's HttpNetworkError, no failure (journey-fixtures.ts).
+    page.on('pageerror', (error) => { if (!error.message.startsWith('HttpNetworkError')) errors.push(error.message); });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const { id: document } = await documentDraft(page, `dokumen-lebar-${stamp()}`);
+
+    await page.goto(`/dokumen/${document}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
+    const composer = page.locator('[data-slot="document-composer"]');
+    const frame = page.locator('[data-slot="paper-frame"]:visible').first();
+    const fitted = async () => {
+        await expect(frame).toBeVisible();
+        await expect.poll(() => frame.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+    };
+
+    // Each band's composition with its own preview opened — the desktop's beside the form, the tablet's "Pratinjau" tab, the
+    // phone's "Pratinjau" step in its full dialog —, the paper fitted to its frame: never wider than the frame's own width.
+    for (const [width, band] of [[1280, 'desktop'], [1279, 'desktop'], [1025, 'desktop'], [1024, 'tablet'], [390, 'phone'], [1280, 'desktop']] as const) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(composer).toHaveAttribute('data-band', band);
+
+        if (band === 'desktop') {
+            await fitted();
+        } else if (band === 'tablet') {
+            await composer.getByRole('tab', { name: 'Pratinjau' }).click();
+            await fitted();
+        } else {
+            await composer.getByRole('button', { name: 'Pratinjau', exact: true }).click();
+            const preview = page.getByRole('dialog');
+            await expect(preview.locator('[data-slot="paper-frame"]')).toBeVisible();
+            await fitted();
+            await preview.getByRole('button', { name: 'Kembali' }).click();
+            await expect(preview).toHaveCount(0);
+        }
+    }
+
+    expect(errors, 'no page error while the composer moves across its widths (TEST_STRATEGY §8)').toEqual([]);
+});
+
+test.describe('with the frame\'s scrollbar drawn as a classic one', () => {
+    // Only this test injects a style of its own: the scrollbar a non-overlay system draws, which takes the frame's width.
+    test.use({ bypassCSP: true });
+
+    test('keeps the paper within its available width as a lower and a taller viewport make the frame\'s scrollbar come and go (TASK-092; Codex on pull request #80)', async ({ page }, testInfo) => {
+        const errors: string[] = [];
+        // A request the next navigation cancels surfaces as Inertia's HttpNetworkError, no failure (journey-fixtures.ts).
+        page.on('pageerror', (error) => { if (!error.message.startsWith('HttpNetworkError')) errors.push(error.message); });
+        await page.setViewportSize({ width: 1280, height: 1600 });
+        const { id: document } = await documentDraft(page, `dokumen-gulir-${stamp()}`);
+
+        await page.goto(`/dokumen/${document}`);
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
+        await page.addStyleTag({ content: '[data-slot="paper-frame"]::-webkit-scrollbar { width: 15px; height: 15px; } [data-slot="paper-frame"]::-webkit-scrollbar-thumb { background: #8a8a8a; }' });
+        const composer = page.locator('[data-slot="document-composer"]');
+        const frame = page.locator('[data-slot="paper-frame"]:visible').first();
+        await expect(composer).toHaveAttribute('data-band', 'desktop');
+        await expect(frame).toBeVisible();
+        testInfo.annotations.push({ type: 'scrollbar gutter', description: `${String(await frame.evaluate((element) => (element as HTMLElement).offsetWidth - element.clientWidth - 2))} px` });
+
+        // The frame's height follows the viewport's: tall, the paper needs no scrollbar; low, it scrolls; tall again, it does not.
+        for (const [height, scrolls] of [[1600, false], [500, true], [1600, false]] as const) {
+            await page.setViewportSize({ width: 1280, height });
+            await expect.poll(() => frame.evaluate((element) => element.scrollHeight - element.clientHeight > 1)).toBe(scrolls);
+            await expect.poll(() => frame.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        }
+
+        expect(errors, 'no page error while the frame\'s scrollbar comes and goes (TEST_STRATEGY §8)').toEqual([]);
+    });
+});

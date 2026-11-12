@@ -4,6 +4,7 @@ import type { ComponentProps, ReactNode } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Icon } from '@/components/ui/icon';
+import { PopupLayerProvider } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // PT-16's Sheet (DESIGN_SYSTEM §9.4): from the right on the desktop, 480–640 px wide, for longer forms, filters
@@ -34,7 +35,7 @@ export function SheetContent({
                 )}
                 {...props}
             >
-                {children}
+                <PopupLayerProvider value="z-(--z-sheet)">{children}</PopupLayerProvider>
                 {closeLabel !== undefined && (
                     <SheetPrimitive.Close render={<Button variant="ghost" size="icon-sm" className="absolute top-[calc(var(--space-3)+var(--safe-top))] right-3 md:top-3" aria-label={closeLabel} />}>
                         <Icon icon={X} size="sm" />

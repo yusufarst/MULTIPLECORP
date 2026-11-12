@@ -3,6 +3,7 @@ import { Check } from 'lucide-react';
 import type { ReactNode } from 'react';
 
 import { Icon } from '@/components/ui/icon';
+import { usePopupLayer } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // The reference's menu — "Tindakan Lain", a row's "⋯", the account menu (DESIGN_SYSTEM §10): a body-level
@@ -19,13 +20,15 @@ export function DropdownMenuContent({
     align = 'end',
     ...props
 }: MenuPrimitive.Popup.Props & Pick<MenuPrimitive.Positioner.Props, 'align'> & { children?: ReactNode }) {
+    const layer = usePopupLayer();
+
     return (
         <MenuPrimitive.Portal>
-            <MenuPrimitive.Backdrop className="fixed inset-0 z-(--z-popover) bg-scrim md:hidden" />
+            <MenuPrimitive.Backdrop className={cn('fixed inset-0 bg-scrim md:hidden', layer)} />
             <MenuPrimitive.Positioner
                 align={align}
                 sideOffset={4}
-                className="z-(--z-popover) outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:w-full!"
+                className={cn(layer, 'outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:w-full!')}
             >
                 <MenuPrimitive.Popup
                     data-slot="dropdown-menu-content"
