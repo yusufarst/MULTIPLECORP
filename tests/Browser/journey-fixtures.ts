@@ -8,7 +8,7 @@ import { expect, type Page, type TestInfo } from '@playwright/test';
 // the journey's own companies — created for its run, so no other spec of the shared browser database writes them —, and
 // a difference tracing to no company counted as the journey's (fail-closed).
 
-type Captured = { console: string[]; failed: string[]; csp: string[]; requests: number; engine: string };
+type Captured = { console: string[]; failed: string[]; csp: string[]; requests: number; engine: string; pending: Promise<void>[] };
 
 /**
  * WebKit's own report on the internal styling of every native `<select>` (TASK-015's components-csp.spec.ts proves it comes
@@ -30,7 +30,7 @@ function owedThumbnail(method: string, path: string, status: number): boolean {
 }
 
 export function watch(page: Page): Captured {
-    const captured: Captured = { console: [], failed: [], csp: [], requests: 0, engine: page.context().browser()?.browserType().name() ?? '' };
+    const captured: Captured = { console: [], failed: [], csp: [], requests: 0, engine: page.context().browser()?.browserType().name() ?? '', pending: [] };
 
     // Every CSP violation of every page the journey loads, as components-csp.spec.ts records them (WS-08).
     void page.exposeFunction('__journeyCsp', (violation: string) => {
@@ -73,12 +73,16 @@ export function watch(page: Page): Captured {
         const failed = `${request.method()} ${new URL(request.url()).pathname} ${reason}`;
 
         // Headless WebKit shows no PDF inline: it interrupts the frame of an inline rendition the server answered in full
-        // (run 43216792494: 200, application/pdf, inline). Set aside on WebKit alone, only once that answer is OK; the
-        // journey asserts the rendition's own response. Any other interrupted frame stays a failure.
-        if (captured.engine === 'webkit' && reason === 'Frame load interrupted') {
-            void request.response().then((response) => {
-                if (response === null || !response.ok()) captured.failed.push(failed);
-            });
+        // (run 43216792494). Set aside on WebKit alone, for that request alone — GET of ROUTE-226's inline rendition
+        // (`/berkas/{uuid}/tampil`) answered 200, `application/pdf`, `inline` —, decided before clean() reads the capture;
+        // the journey asserts the rendition's own response. Any other interrupted frame stays a failure.
+        if (captured.engine === 'webkit' && reason === 'Frame load interrupted' && request.method() === 'GET' && /^\/berkas\/[0-9a-f-]{36}\/tampil$/.test(new URL(request.url()).pathname)) {
+            captured.pending.push(request.response().then(async (response) => {
+                const headers = response === null ? {} : await response.allHeaders();
+                const pdf = response !== null && response.status() === 200 && (headers['content-type'] ?? '').startsWith('application/pdf') && (headers['content-disposition'] ?? '').startsWith('inline');
+
+                if (!pdf) captured.failed.push(failed);
+            }));
 
             return;
         }
@@ -101,6 +105,8 @@ async function keep(testInfo: TestInfo, name: string, value: unknown): Promise<v
 
 /** The journey's evidence (TEST_STRATEGY §16): the captures kept, then no critical console error or failed request. */
 export async function clean(captured: Captured, testInfo: TestInfo): Promise<void> {
+    // Every deferred decision on a captured request is made before the capture is read.
+    await Promise.all(captured.pending);
     await keep(testInfo, 'console-and-network.json', captured);
     expect(captured.console, 'no critical console error (TEST_STRATEGY §8)').toEqual([]);
     expect(captured.failed, 'no critical failed request (TEST_STRATEGY §8)').toEqual([]);
