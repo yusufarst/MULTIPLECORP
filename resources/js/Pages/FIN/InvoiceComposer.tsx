@@ -24,6 +24,7 @@ import AppShell from '@/layouts/AppShell';
 import { add, multiply, round } from '@/lib/decimal';
 import { money } from '@/lib/format';
 import { useTranslation } from '@/lib/i18n';
+import { type NumberPeriods, periodOf } from '@/lib/number-period';
 import { isBackground } from '@/lib/session-core';
 import { useCommand } from '@/lib/use-command';
 
@@ -39,6 +40,8 @@ type Props = {
     draft: Draft | null;
     issued: { id: string; number: string | null } | null;
     today: string;
+    /** UXS-14: each layout's numbering schemes, for the period a backdated issue's number follows. */
+    number_periods: Record<string, NumberPeriods>;
     can: { issue: boolean };
 };
 type ValueLine = { description: string; value: string };
@@ -52,7 +55,7 @@ function Answered({ command }: { command: { answer: Answer | null; unknown: bool
     );
 }
 
-export default function InvoiceComposer({ project, lines, confirmed, remaining, taxes, paper, draft, issued, today, can }: Props) {
+export default function InvoiceComposer({ project, lines, confirmed, remaining, taxes, paper, draft, issued, today, number_periods: numberPeriods, can }: Props) {
     const { t } = useTranslation();
     const [kind, setKind] = useState<'ITEMIZED' | 'VALUE_ONLY'>(draft?.kind ?? 'VALUE_ONLY');
     const [date, setDate] = useState<BusinessDate>({ date: draft?.business_date ?? today, chosen: draft !== null && draft.business_date !== today });
@@ -238,7 +241,7 @@ export default function InvoiceComposer({ project, lines, confirmed, remaining, 
                 consequence={t('invoices.confirm.issue_consequence')}
                 items={
                     <div className="flex min-w-0 flex-col gap-3">
-                        <BusinessDateControl today={today} value={date} onChange={setDate} />
+                        <BusinessDateControl today={today} value={date} onChange={setDate} periodOf={periodOf(numberPeriods[layout])} />
                         {issue.errors.tanggal !== undefined && <p className="text-danger">{issue.errors.tanggal}</p>}
                         <FormField label={t('invoices.confirm.layout')}>
                             {() => (

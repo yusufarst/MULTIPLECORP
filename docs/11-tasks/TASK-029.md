@@ -40,6 +40,7 @@ CAP-08 and AC-08 require a company-correct catalogue of fourteen selectable docu
 - TASK-049 — Invoices and the pre-payment Kuitansi
 - TASK-059 — Search and scanning
 - TASK-074 — Backup tooling, the off-server copy and the drill procedures
+- TASK-092 — Defect D5 — the composer's paper fit without a resize-observer loop
 
 **PARALLEL SAFE:** NO — it owns the document chain (LK-30), the issue's draw at LK-31 and the template contract that every issuing Task builds on
 

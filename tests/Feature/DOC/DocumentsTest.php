@@ -229,6 +229,9 @@ it('revises an issued version — the predecessor current until the revision iss
         ->and($first->fresh()?->state)->toBe('ISSUED')
         ->and(DocumentVersion::query()->where('document_id', $document->id)->where('state', 'DRAFT')->value('supersedes_version_id'))->toBe($first->id)
         ->and(DB::table('audit_events')->where('action', 'DOC.DocumentRevisionDrafted')->value('reason'))->toBe('Nama sekolah keliru');
+    // UXS-14 (TASK-090), once the answer is read: a NEW_NUMBER revision draws on its date, so PG-036 offers the type's schemes.
+    $this->actingAs($this->corrector)->get("/dokumen/{$document->public_id}")->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('draft.retained_period', null)->where('draft.number_periods.0.granularity', 'YEAR'));
 
     issueDocument($this, $document);
     expect($first->fresh()?->state)->toBe('SUPERSEDED')
@@ -237,6 +240,9 @@ it('revises an issued version — the predecessor current until the revision iss
     // BASE_SUFFIX: the base number with the next suffix, no counter drawn.
     DB::table('numbering_schemes')->where('company_id', $this->company->id)->update(['revision_format' => 'BASE_SUFFIX']);
     $this->actingAs($this->corrector)->post("/dokumen/{$document->public_id}/revisi", ['command_id' => (string) Str::uuid(), 'alasan' => 'Alamat keliru']);
+    // A BASE_SUFFIX revision keeps its predecessor's period: PG-036 names that one, never the chosen date's.
+    $this->actingAs($this->corrector)->get("/dokumen/{$document->public_id}")->assertInertia(fn (AssertableInertia $page) => $page
+        ->where('draft.retained_period', $this->year)->where('draft.number_periods', []));
     issueDocument($this, $document);
     expect(DocumentVersion::query()->where('document_id', $document->id)->where('state', 'ISSUED')->first(['formatted_number', 'revision_suffix'])?->only(['formatted_number', 'revision_suffix']))
         ->toBe(['formatted_number' => "CTH/SPK/{$this->year}/0002-R1", 'revision_suffix' => 1])

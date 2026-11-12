@@ -14,6 +14,8 @@ use App\Modules\DOC\Services\IssuerIdentity;
 use App\Modules\DOC\Services\Renditions;
 use App\Modules\IAM\Data\Authority;
 use App\Modules\IAM\Services\EffectiveCapabilities;
+use App\Modules\ORG\Enums\SequenceType;
+use App\Modules\ORG\Services\NumberingState;
 use App\Support\BusinessDate;
 use App\Support\Search\Row;
 use Illuminate\Support\Facades\DB;
@@ -32,6 +34,7 @@ final class DocumentDetail
         private readonly EffectiveCapabilities $capabilities,
         private readonly DocumentSubjects $subjects,
         private readonly IssuerIdentity $identity,
+        private readonly NumberingState $numbering,
     ) {}
 
     /** @return array<string, mixed> */
@@ -122,6 +125,20 @@ final class DocumentDetail
             $bank === null ? null : ['bank_name' => $bank['bank_name'], 'account_number' => $bank['account_number'], 'account_holder' => $bank['account_holder'], 'branch' => $bank['branch']], $draft->business_date?->format('Y-m-d') ?? BusinessDate::today(), null, true,
             $identity['assets']['logo'] === null ? null : '/berkas/'.$identity['assets']['logo']['public_id'].'/unduh');
 
+        $sequence = SequenceType::tryFrom($document->document_type_code);
+        // A BASE_SUFFIX revision keeps its predecessor's period and number, drawing nothing (DocumentIssuing::number; NM-07): its
+        // date names that period, never the date's own.
+        $retained = null;
+
+        if ($draft->supersedes_version_id !== null) {
+            $previous = DocumentVersion::query()->whereKey($draft->supersedes_version_id)->first(['numbering_scheme_id', 'period_key', 'sequence_no']);
+
+            if ($previous !== null && $previous->numbering_scheme_id !== null && $previous->period_key !== null && $previous->sequence_no !== null
+                && DB::table('numbering_schemes')->where('id', $previous->numbering_scheme_id)->value('revision_format') === 'BASE_SUFFIX') {
+                $retained = $previous->period_key;
+            }
+        }
+
         return [
             'id' => $draft->public_id,
             'version_no' => $draft->version_no,
@@ -133,6 +150,9 @@ final class DocumentDetail
             'revision_of' => $draft->supersedes_version_id === null ? null : DocumentVersion::query()->whereKey($draft->supersedes_version_id)->value('formatted_number'),
             'paper' => $paper,
             'facts' => $facts === null ? null : DocumentChain::factsDigest($facts),
+            // UXS-14: the period a backdated issue's number follows, by the type's schemes (NM-05).
+            'number_periods' => $sequence === null || $retained !== null ? [] : $this->numbering->periods($document->company_id, $sequence),
+            'retained_period' => $retained,
         ];
     }
 

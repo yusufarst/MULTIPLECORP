@@ -62,13 +62,14 @@ export function BusinessDateControl({
     today: string;
     value: BusinessDate;
     onChange: (value: BusinessDate) => void;
-    /** On a numbered document: the numbering period a day falls in, as the document type's numbering states it. */
-    periodOf?: (day: string) => string;
+    /** On a numbered command: the numbering period a day falls in, as its type's numbering states it — null before any scheme. */
+    periodOf?: (day: string) => string | null;
     fixed?: boolean;
 }) {
     const { t } = useTranslation();
     const [open, setOpen] = useState(false);
     const backdated = value.date < today;
+    const period = periodOf === undefined ? null : periodOf(value.date);
     const line = value.chosen ? t('date.chosen', { tanggal: format.date(value.date) }) : t('date.today', { tanggal: format.date(value.date) });
 
     return (
@@ -108,7 +109,7 @@ export function BusinessDateControl({
                 </>
             )}
             {value.chosen && backdated && <Mark kind="backdated" />}
-            {value.chosen && backdated && periodOf !== undefined && <span className="basis-full text-caption">{t('date.number_period', { periode: periodOf(value.date) })}</span>}
+            {value.chosen && backdated && period !== null && <span className="basis-full text-caption">{t('date.number_period', { periode: period })}</span>}
         </div>
     );
 }
