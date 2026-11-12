@@ -214,7 +214,16 @@ export function commandsTo(page: Page, path: string): Sent[] {
 
 /** The distinct identifiers among some sent commands. */
 export function identities(sent: Sent[]): string[] {
-    return [...new Set(sent.map((one) => String(one.body.command_id ?? '')))];
+    return [...new Set(sent.map((one) => {
+        const id = one.body.command_id;
+
+        // Every sent command carries its intent's identifier (CI-05): a missing or malformed one is a failure, never a value.
+        if (typeof id !== 'string' || !/^[0-9a-f-]{36}$/i.test(id)) {
+            throw new Error(`a sent command without a valid command_id: ${JSON.stringify(id)}`);
+        }
+
+        return id;
+    }))];
 }
 
 /** A project row held FOR UPDATE for `seconds` (SQ-14's lock wait), answered when the hold ends; awaited only once it is in place. */
