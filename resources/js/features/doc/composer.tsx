@@ -77,18 +77,34 @@ function PaperFrame({ nodes, zoom, label, className }: { nodes: ReactNode; zoom:
             inner.style.marginBottom = scale === 1 ? '' : `${String(-(1 - scale) * inner.offsetHeight)}px`;
             inner.style.marginRight = scale === 1 ? '' : `${String(-(1 - scale) * inner.offsetWidth)}px`;
         };
-        const observer = new ResizeObserver(fit);
+        // The fit changes the sheet's margins, and so the frame's scrolled extent: applied in the next frame, outside the
+        // observer's delivery, and whenever the paper's available width changes — the frame's content box, which a classic
+        // scrollbar narrows —, never on a change of its height alone: no loop a browser reports as a page error (TASK-092;
+        // TEST_STRATEGY §8). The frame reserves its scrollbar's gutter, so a scrollbar coming or going never changes that
+        // width and cannot make the fit and the scrollbar undo each other.
+        let width = -1;
+        let pending = 0;
+        const observer = new ResizeObserver((entries) => {
+            const next = Math.round(entries[0]?.contentRect.width ?? outer.clientWidth);
+
+            if (next === width) return;
+
+            width = next;
+            cancelAnimationFrame(pending);
+            pending = requestAnimationFrame(fit);
+        });
         observer.observe(outer);
         fit();
 
         return () => {
+            cancelAnimationFrame(pending);
             observer.disconnect();
         };
     }, [zoom, nodes]);
 
     return (
         // The paper's scrolling frame is reachable by keyboard (§15; 2.1.1).
-        <div ref={frame} role="region" aria-label={label} tabIndex={0} data-slot="paper-frame" className={cn('min-w-0 overflow-auto rounded-md border border-border-subtle bg-surface-sunken p-px focus-visible:outline-2 focus-visible:outline-focus', className)}>
+        <div ref={frame} role="region" aria-label={label} tabIndex={0} data-slot="paper-frame" className={cn('min-w-0 overflow-auto [scrollbar-gutter:stable] rounded-md border border-border-subtle bg-surface-sunken p-px focus-visible:outline-2 focus-visible:outline-focus', className)}>
             <div ref={sheet} className="w-max shadow-raised">
                 {nodes}
             </div>
