@@ -64,7 +64,8 @@ final class ShellFixture
             }
         }
 
-        return response()->noContent();
+        // As SignInResponses answers a JSON sign-in (TASK-093: the dialog reads success only from that answer).
+        return response()->json(['signed_in' => true]);
     }
 
     public static function confirm(Request $request): Response
@@ -75,7 +76,8 @@ final class ShellFixture
 
         Cache::put('shell-fixture:'.self::run($request).':confirmed', true, 600);
 
-        return response()->noContent();
+        // As ConfirmPasswordController answers (TASK-093).
+        return response()->json(['confirmed' => true]);
     }
 
     public static function command(Request $request, bool $stepUp): Response

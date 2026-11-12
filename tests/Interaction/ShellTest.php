@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SessionDeadline;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Services\CommandAuthorization;
 use App\Modules\ORG\Models\Company;
@@ -84,4 +85,36 @@ it('shows a command refused after its company grant was revoked as IP-21\'s not-
         ->and($response->json('component'))->toBe(SystemAnswer::PAGE)
         ->and($response->json('props.kind'))->toBe('not_found')
         ->and($response->json('outcome'))->toBeNull();
+});
+
+it('gives every authenticated response the session\'s opaque account key outside the page data, distinct for two accounts whose hints match, none for a guest (UXH-02; WS-07; TASK-093)', function () {
+    $first = Authorization::admin([$this->b->id], ['projects.view']);
+    $second = Authorization::admin([$this->b->id], ['projects.view']);
+    $second->forceFill(['name' => $first->name])->save();
+    expect(shellHints($second->fresh()))->toBe(shellHints($first));
+
+    $keyOf = fn (object $user): ?string => $this->actingAs($user)->get('/pekerjaan')->headers->get(SessionDeadline::ACCOUNT_HEADER);
+    $one = $keyOf($first);
+    $other = $keyOf($second->fresh());
+
+    expect($one)->toMatch('/^[0-9a-f]{32}$/')
+        ->and($other)->toMatch('/^[0-9a-f]{32}$/')
+        ->and($one)->not->toBe($other)
+        ->and($keyOf($first))->toBe($one)
+        ->and($one)->not->toContain((string) $first->id)
+        ->and(shellHints($first))->not->toHaveKey('account');
+
+    // The first load carries it in the root view, as it does the deadline.
+    expect($this->actingAs($first)->get('/pekerjaan')->getContent())->toContain('<meta name="session-account" content="'.$one.'">');
+
+    auth()->logout();
+    expect($this->get('/masuk')->headers->get(SessionDeadline::ACCOUNT_HEADER))->toBeNull();
+});
+
+it('redirects a signed-in session\'s sign-in request without checking its password, the answer the dialog must never read as a success (IP-11; TASK-093)', function () {
+    $admin = Authorization::admin([$this->b->id], ['projects.view']);
+
+    $this->actingAs($admin)
+        ->postJson('/masuk', ['email' => $admin->email, 'password' => 'bukan-kata-sandinya'])
+        ->assertRedirect();
 });
