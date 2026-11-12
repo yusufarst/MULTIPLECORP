@@ -68,9 +68,22 @@ export function watch(page: Page): Captured {
         const reason = request.failure()?.errorText ?? '';
 
         // A request the browser cancels because the page moved on is no failure (WebKit and Chromium name it so).
-        if (!/cancel|abort/i.test(reason)) {
-            captured.failed.push(`${request.method()} ${new URL(request.url()).pathname} ${reason}`);
+        if (/cancel|abort/i.test(reason)) return;
+
+        const failed = `${request.method()} ${new URL(request.url()).pathname} ${reason}`;
+
+        // Headless WebKit shows no PDF inline: it interrupts the frame of an inline rendition the server answered in full
+        // (run 43216792494: 200, application/pdf, inline). Set aside on WebKit alone, only once that answer is OK; the
+        // journey asserts the rendition's own response. Any other interrupted frame stays a failure.
+        if (captured.engine === 'webkit' && reason === 'Frame load interrupted') {
+            void request.response().then((response) => {
+                if (response === null || !response.ok()) captured.failed.push(failed);
+            });
+
+            return;
         }
+
+        captured.failed.push(failed);
     });
 
     return captured;
