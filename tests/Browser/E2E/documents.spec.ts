@@ -132,3 +132,28 @@ test('names the period a backdated draft\'s number follows beside its "Tanggal M
         await expect(content.getByText(/^Nomor mengikuti periode/)).toHaveCount(0);
     }
 });
+
+test('fits the paper across the composer\'s widths without a resize-observer loop or any page error (DESIGN_SYSTEM §14.3; TEST_STRATEGY §8; TASK-092)', async ({ page }) => {
+    const errors: string[] = [];
+    page.on('pageerror', (error) => { errors.push(error.message); });
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const { id: document } = await documentDraft(page, `dokumen-lebar-${stamp()}`);
+
+    await page.goto(`/dokumen/${document}`);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('SPK');
+    const composer = page.locator('[data-slot="document-composer"]');
+    const frame = page.locator('[data-slot="paper-frame"]:visible').first();
+
+    // Each band's composition, the paper fitted to its frame wherever the frame shows: never wider than the frame's own width.
+    for (const [width, band] of [[1280, 'desktop'], [1279, 'desktop'], [1025, 'desktop'], [1024, 'tablet'], [390, 'phone'], [1280, 'desktop']] as const) {
+        await page.setViewportSize({ width, height: 900 });
+        await expect(composer).toHaveAttribute('data-band', band);
+
+        if (band === 'desktop') {
+            await expect(frame).toBeVisible();
+            await expect.poll(() => frame.evaluate((element) => element.scrollWidth - element.clientWidth)).toBeLessThanOrEqual(1);
+        }
+    }
+
+    expect(errors, 'no page error while the composer moves across its widths (TEST_STRATEGY §8)').toEqual([]);
+});

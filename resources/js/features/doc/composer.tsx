@@ -77,11 +77,25 @@ function PaperFrame({ nodes, zoom, label, className }: { nodes: ReactNode; zoom:
             inner.style.marginBottom = scale === 1 ? '' : `${String(-(1 - scale) * inner.offsetHeight)}px`;
             inner.style.marginRight = scale === 1 ? '' : `${String(-(1 - scale) * inner.offsetWidth)}px`;
         };
-        const observer = new ResizeObserver(fit);
+        // The fit changes the sheet's margins, and so the frame's scrolled extent: applied in the next frame, outside the
+        // observer's delivery, and only when the frame's own width changed (its border box, which a scrollbar coming or
+        // going leaves as it is) — never the loop a browser reports as a page error (TASK-092; TEST_STRATEGY §8).
+        let width = outer.getBoundingClientRect().width;
+        let pending = 0;
+        const observer = new ResizeObserver((entries) => {
+            const next = entries[0]?.borderBoxSize[0]?.inlineSize ?? outer.getBoundingClientRect().width;
+
+            if (next === width) return;
+
+            width = next;
+            cancelAnimationFrame(pending);
+            pending = requestAnimationFrame(fit);
+        });
         observer.observe(outer);
         fit();
 
         return () => {
+            cancelAnimationFrame(pending);
             observer.disconnect();
         };
     }, [zoom, nodes]);
