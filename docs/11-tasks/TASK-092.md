@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 18, created through the executor feedback loop from TASK-063's defect D5 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -197,32 +197,33 @@ TASK-063's CJ-15, in fresh CI on `2bdc2a4` (WebKit), captured the page error "Re
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: every layer in this head's CI
+- [x] Authorization: N/A — unchanged
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: `documents.spec.ts` — the composer across its widths with each band's preview opened, and the frame's classic scrollbar coming and going with the viewport's height
+- [x] Browser E2E if required: those tests on Chromium and WebKit (TL-09); CJ-15 in TASK-063's verification on the merged code
+- [x] Responsive/adaptive if required: the desktop, tablet and phone previews each asserted fitted
+- [x] Visual breathing room/density if UI: unchanged but the frame's reserved scrollbar gutter, which only a classic-scrollbar system draws
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: N/A — no new surface
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of `732bf33` on pull request #80 raised one P2 — the border-box guard skipped a refit when a classic scrollbar narrowed the available width —, fixed in this head with the Owner's coverage finding; its targeted re-review of this head before the merge (DIR-096's bounded loop); the delta checked by the executor, not a second full review (Owner's direction of 2026-11-12)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and pull request #80's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit). The first head `732bf33`'s runs were superseded by this head before they finished
+- Build result: TL-13 in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `documents.spec.ts`'s two composer tests
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, tests/Browser/E2E/documents.spec.ts on Chromium and WebKit`, as pull request #80's checks show before the merge
+- Localization evidence: no new key
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `resources/js/features/doc/composer.tsx`; `tests/Browser/E2E/documents.spec.ts`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: `732bf33` and this head on `task/TASK-092-composer-fit`, the Owner's identity, no AI attribution
+- Notes: the fit runs in the next animation frame, outside the observer's delivery, whenever the paper's available width — the frame's content box — changes, never on a change of height alone; the frame reserves its scrollbar's gutter (`scrollbar-gutter: stable`), so on a classic-scrollbar system a scrollbar coming or going leaves the available width as it is and the fit and the scrollbar cannot undo each other in the band of heights where a smaller scale would remove the scrollbar. The regression test draws the frame's scrollbar as a classic one (a style injected with CSP bypassed for that test alone), and records the gutter's measured width as an annotation. Criterion 1 PASS by the tests; criterion 2 is proven by TASK-063's CJ-15 on the merged code
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
