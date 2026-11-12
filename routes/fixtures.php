@@ -35,6 +35,7 @@ use Tests\Support\Fixtures\OtherCashFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\ReauthFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ReturnFixture;
@@ -71,6 +72,9 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
 // TL-09–TL-12 (TASK-017): a synthetic account and its reset link for one run, so the sign-in, reset and logout
 // journeys run against the real routes of PG-001 and PG-003.
 Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
+// TL-09 (TASK-093): an account's session aged past the idle limit; the recorded outcome of commands by command_id.
+Route::post('__fixtures/reauth/usang', [ReauthFixture::class, 'age']);
+Route::get('__fixtures/reauth/perintah', [ReauthFixture::class, 'commands']);
 
 // TL-09–TL-12 (TASK-019): the faked Google — sign-in on with a synthetic client and the token exchange answered
 // locally — for the Google journey, armed and disarmed by the run.

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\RequireStepUp;
 use App\Http\Middleware\SessionDeadline;
 use App\Http\Responses\SystemAnswer;
 use App\Modules\IAM\Services\CommandAuthorization;
@@ -117,4 +118,22 @@ it('redirects a signed-in session\'s sign-in request without checking its passwo
     $this->actingAs($admin)
         ->postJson('/masuk', ['email' => $admin->email, 'password' => 'bukan-kata-sandinya'])
         ->assertRedirect();
+});
+
+it('confirms a signed-in session\'s dialog only for that account\'s own e-mail and password — another account\'s correct credentials refused and recorded as a wrong password is (AU-15; UXH-02; TASK-093)', function () {
+    $admin = Authorization::admin([$this->b->id], ['projects.view']);
+    $other = Authorization::admin([$this->b->id], ['projects.view']);
+    $other->forceFill(['name' => $admin->name])->save();
+    $failed = fn (): int => DB::table('security_events')->where('event_kind', 'PASSWORD_CONFIRMATION_FAILED')->count();
+
+    $this->actingAs($admin)
+        ->postJson('/konfirmasi-kata-sandi', ['email' => $other->email, 'password' => 'kata-sandi-contoh'])
+        ->assertUnprocessable()->assertJsonMissingPath('confirmed')->assertJsonPath('message', __('messages.msg_19'));
+    $this->postJson('/konfirmasi-kata-sandi', ['email' => $admin->email, 'password' => 'bukan-kata-sandinya'])
+        ->assertUnprocessable()->assertJsonMissingPath('confirmed');
+    expect($failed())->toBe(2)
+        ->and(session()->has(RequireStepUp::CONFIRMED_AT))->toBeFalse();
+
+    $this->postJson('/konfirmasi-kata-sandi', ['email' => '  '.mb_strtoupper($admin->email).' ', 'password' => 'kata-sandi-contoh'])
+        ->assertOk()->assertExactJson(['confirmed' => true]);
 });

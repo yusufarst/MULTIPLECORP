@@ -52,6 +52,10 @@ export type ReauthGateway = {
     confirmPassword: (password: string) => Promise<GatewayAnswer>;
     /** AU-16's code step after the password, a TOTP code or a recovery code (ROUTE-104, ROUTE-105). */
     verifyCode?: (code: string, recovery: boolean) => Promise<GatewayAnswer>;
+    /** TASK-093: a session still signed in (a 419 that did not end it) proves the dialog's account by AU-15's password
+        confirmation of that very account — its e-mail and password checked by the server —, never by a sign-in the guest
+        guard would redirect unchecked. */
+    confirmSession?: (credentials: Credentials) => Promise<GatewayAnswer>;
 };
 
 /** A JSON POST of the dialog, its answer read in place. */
@@ -85,6 +89,7 @@ export async function postAnswer(url: string, body: unknown): Promise<GatewayAns
 export const applicationGateway: ReauthGateway = {
     signIn: (credentials) => postAnswer('/masuk', credentials),
     confirmPassword: (password) => postAnswer('/konfirmasi-kata-sandi', { password }),
+    confirmSession: (credentials) => postAnswer('/konfirmasi-kata-sandi', { email: credentials.email, password: credentials.password }),
     verifyCode: (code, recovery) => postAnswer(recovery ? '/masuk/verifikasi/pemulihan' : '/masuk/verifikasi', recovery ? { recovery_code: code } : { code }),
 };
 
@@ -311,6 +316,17 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
 
     const signIn = async (credentials: Credentials) => {
         setPending(true);
+        // TASK-093: the session the dialog covers may still be signed in (a 419 that did not end it): its account is
+        // proved by the server's password confirmation of that account, e-mail included; an ended session signs in
+        // anew, with its second factor. Neither path reads a redirect or a page as a success (dialogAnswer).
+        const live = gateway.confirmSession === undefined ? null : await sessionAccount(pageRef.current);
+
+        if (live !== null && live.key !== null && gateway.confirmSession !== undefined) {
+            await signedInAs(await gateway.confirmSession(credentials), false);
+
+            return;
+        }
+
         await signedInAs(await gateway.signIn(credentials), false);
     };
 
