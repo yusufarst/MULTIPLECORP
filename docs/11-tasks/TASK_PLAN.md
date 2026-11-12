@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 92
 
 DONE: 68
-READY: 4
-IN_PROGRESS: 0
+READY: 3
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 1
 TODO: 14
@@ -28,7 +28,7 @@ Progress:
 68 / 92
 Percentage: 73.9 %
 
-CURRENT TASK: none in progress — TASK-092 — Defect D5 — the composer's paper fit without a resize-observer loop DONE on its branch `task/TASK-092-composer-fit`, its record in its final code commit (DIR-103), its pull request #80 squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-063 VERIFYING, its verification resumed next on its branch synced with `main`
+CURRENT TASK: TASK-064 — Critical journeys C IN_PROGRESS on its branch `task/TASK-064-critical-journeys-c` from the merged `main` `82f9e08`, started under DIR-109's CI-wait pipelining while TASK-063 (VERIFYING) awaits its fresh CI on its own branch
 NEXT READY TASK: TASK-063's verification resumed — TASK-090, TASK-091 and TASK-092 DONE —; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 18 of 2026-11-11 — TASK-063's defects D3, D4 and D5 as the defect Tasks TASK-090 (UXS-14's period line), TASK-091 (a popover inside a modal) and TASK-092 (the composer's resize loop); TASK-063 VERIFYING, depending on all three
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
@@ -209,7 +209,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 088, 089 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | VERIFYING | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
+| [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
