@@ -164,3 +164,40 @@ test('shows a saved draft as it will issue after the project moved on, an edit r
     await expect(page.getByRole('button', { name: 'Terbitkan Invoice' })).toBeDisabled();
 });
 
+
+test('opens the business date\'s calendar above the issue dialog and backdates the issue, its number\'s period named (PT-25; IP-07; UXS-14; TASK-091)', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await invoiceRun(page, `invoice-mundur-${String(Date.now())}`);
+
+    await page.goto(`/keuangan/invoice/baru?proyek=${run.project}`);
+    await expect(page.getByRole('heading', { name: new RegExp(`Invoice baru — ${run.number}`) })).toBeVisible();
+    await page.getByLabel(/^Keterangan/).fill('Termin mundur');
+    await page.getByRole('textbox', { name: /^Nilai/ }).fill('1000000');
+    await page.getByRole('button', { name: 'Simpan Draf' }).click();
+    await expect(page.locator('#konten').getByText('Draf invoice tersimpan.')).toBeVisible();
+    await page.getByRole('button', { name: 'Terbitkan Invoice' }).click();
+    const dialog = page.getByRole('alertdialog');
+    await expect(dialog).not.toContainText('Tanggal Mundur');
+
+    // The calendar opened from inside the dialog sits above it: its month control and its day take the press (DESIGN_SYSTEM §5).
+    const today = new Date(Date.now() + 7 * 3_600_000).toISOString().slice(0, 10);
+    const [year = 0, month = 1] = today.split('-').map(Number);
+    const day = new Date(Date.UTC(year, month - 2, 20)).toISOString().slice(0, 10);
+    await dialog.getByRole('button', { name: 'Ubah' }).click();
+    const previous = page.getByRole('button', { name: 'Bulan sebelumnya' });
+    await expect(previous).toBeInViewport({ ratio: 1 });
+    await previous.click();
+    await page.locator(`[data-day="${day}"] button`).click();
+
+    await expect(dialog).toContainText('Tanggal Mundur');
+
+    // UXS-14 (TASK-090): the invoice fixture numbers yearly from 1 January — the period is the day's year, none before it.
+    if (day.slice(0, 4) === today.slice(0, 4)) {
+        await expect(dialog).toContainText(`Nomor mengikuti periode ${day.slice(0, 4)}`);
+    } else {
+        await expect(dialog).not.toContainText('Nomor mengikuti periode');
+    }
+
+    await dialog.getByRole('button', { name: 'Kembali' }).click();
+    await expect(dialog).toHaveCount(0);
+});

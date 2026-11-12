@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 92
 
 DONE: 66
-READY: 6
-IN_PROGRESS: 0
+READY: 5
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 1
 TODO: 14
@@ -28,8 +28,8 @@ Progress:
 66 / 92
 Percentage: 71.7 %
 
-CURRENT TASK: none in progress — TASK-090 — Defect D3 — the number's period on a backdated numbered command DONE on its branch `task/TASK-090-backdated-period-line`, CI PASS on `1364148`, its pull request #78 squash-merged by the executor once its head's fresh CI passes (DIR-096); TASK-063 VERIFYING, waiting on TASK-091 and TASK-092
-NEXT READY TASK: TASK-091 — Defect D4 — a popover opened inside a modal layer stacks above it, READY, then TASK-092 — Defect D5, then TASK-063's verification resumed; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
+CURRENT TASK: TASK-091 — Defect D4 — a popover opened inside a modal layer stacks above it IN_PROGRESS on its branch `task/TASK-091-popup-layer` from the merged `main` `c9848df`; TASK-090 DONE and squash-merged as `c9848df` (pull request #78); TASK-063 VERIFYING, waiting on TASK-091 and TASK-092
+NEXT READY TASK: TASK-092 — Defect D5 — the composer's paper fit without a resize-observer loop, READY, then TASK-063's verification resumed; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 18 of 2026-11-11 — TASK-063's defects D3, D4 and D5 as the defect Tasks TASK-090 (UXS-14's period line), TASK-091 (a popover inside a modal) and TASK-092 (the composer's resize loop); TASK-063 VERIFYING, depending on all three
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -236,7 +236,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-088](TASK-088.md) | Defect D1 — PG-024's ambiguous-code candidates and "Cari Produk" (UXS-34) | Module · INV | STANDARD | DONE | 041 | 062 | NO | AGENT | NONE | YES |
 | [TASK-089](TASK-089.md) | Defect D2 — PG-011 within three deferred groups (PF-34, UXS-44) | Module · PRJ | STANDARD | DONE | 056 | 062 | NO | AGENT | NONE | YES |
 | [TASK-090](TASK-090.md) | Defect D3 — the number's period on a backdated numbered command (UXS-14) | Platform · UI | STANDARD | DONE | 015, 021 | 063 | NO | AGENT | NONE | YES |
-| [TASK-091](TASK-091.md) | Defect D4 — a popover opened inside a modal layer stacks above it | Platform · UI | STANDARD | READY | 015 | 063 | NO | AGENT | NONE | YES |
+| [TASK-091](TASK-091.md) | Defect D4 — a popover opened inside a modal layer stacks above it | Platform · UI | STANDARD | IN_PROGRESS | 015 | 063 | NO | AGENT | NONE | YES |
 | [TASK-092](TASK-092.md) | Defect D5 — the composer's paper fit without a resize-observer loop | Module · DOC | STANDARD | READY | 029 | 063 | NO | AGENT | NONE | YES |
 
 Stage: Foundation, Platform, Module (the modules in their workflows' order), Verification, Release, Operations. Executor: AGENT, an Execution Agent under this plan's rules; HUMAN OPERATOR, the named operator; OWNER, the Owner — with the client where the Task says so. DB impact: PROPOSED for the five schema Tasks, which create every table of DATABASE §4 expand-only — TASK-005 also the infrastructure stores outside the 125 business tables that [PERMISSIONS_MATRIX §7.2](../05-security/PERMISSIONS_MATRIX.md#72-table-classification) names: the session table, the credential-token store of SECURITY AU-11, the export requests of CONCURRENCY_IDEMPOTENCY H6-04 and the failed-job table, but not the queue, cache, lock and job-batch tables it also names, their stores being Valkey and V1 dispatching no framework batch —, and for TASK-013, which adds C-50's trigger, and TASK-058, which adds IX-13's two partial indexes deferred from TASK-005 (DIR-088), TASK-029, which seeds the fourteen rows of `document_types`, and TASK-030, which adds the type-free evidence identity index (DIR-089); NONE for every other Task, which uses those tables — a missing column is an executor discovery for Planning, never a silent schema change. A BLOCKED status names the input it waits on — an operator's, the Owner's or the client's input of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), a P11 question or DEP-05 (§2).

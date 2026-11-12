@@ -1,6 +1,7 @@
 import { Tooltip as TooltipPrimitive } from '@base-ui/react/tooltip';
 import type { ReactNode } from 'react';
 
+import { usePopupLayer } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // A tooltip (DESIGN_SYSTEM §10): only what is also on the screen or behind a tap — touch has no hover (§11);
@@ -10,9 +11,11 @@ export const Tooltip = TooltipPrimitive.Root;
 export const TooltipTrigger = TooltipPrimitive.Trigger;
 
 export function TooltipContent({ className, children, side = 'top', ...props }: TooltipPrimitive.Popup.Props & { side?: TooltipPrimitive.Positioner.Props['side']; children?: ReactNode }) {
+    const layer = usePopupLayer();
+
     return (
         <TooltipPrimitive.Portal>
-            <TooltipPrimitive.Positioner side={side} sideOffset={6} className="z-(--z-popover)">
+            <TooltipPrimitive.Positioner side={side} sideOffset={6} className={layer}>
                 <TooltipPrimitive.Popup
                     data-slot="tooltip-content"
                     className={cn(

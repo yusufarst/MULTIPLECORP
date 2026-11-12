@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import { Icon } from '@/components/ui/icon';
 import { InputGroup } from '@/components/ui/input-group';
+import { usePopupLayer } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // The type-ahead lookup (DESIGN_SYSTEM §10 "Select and lookup"; PT-27; IP-17): the field with its listbox
@@ -25,9 +26,11 @@ export function ComboboxInput({ className, children, ...props }: Omit<ComboboxPr
 }
 
 export function ComboboxContent({ className, children, ...props }: ComboboxPrimitive.Popup.Props & { children?: ReactNode }) {
+    const layer = usePopupLayer();
+
     return (
         <ComboboxPrimitive.Portal>
-            <ComboboxPrimitive.Positioner sideOffset={4} align="start" className="z-(--z-popover)">
+            <ComboboxPrimitive.Positioner sideOffset={4} align="start" className={layer}>
                 <ComboboxPrimitive.Popup
                     data-slot="combobox-content"
                     data-motion
