@@ -1,0 +1,318 @@
+Owner directive received in session during execution, 2026-11-12 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — MAXIMUM EXECUTION ACCELERATION
+MULTIPLECORP — 12 NOVEMBER 2026
+PRIORITY: CRITICAL
+EXECUTION DEADLINE: 12 NOVEMBER 2026, 23:59 WIB
+MODE: MAXIMUM SAFE THROUGHPUT — MINIMUM IDLE TIME — NO UNNECESSARY WAITING
+Saya sebagai Project Owner memberikan arahan tegas untuk mempercepat penyelesaian seluruh Task MULTIPLECORP yang dapat dikerjakan secara sah dan aman.
+Tujuan utama adalah menyelesaikan sebanyak mungkin dari total 92 Task hari ini, dengan target seluruh Task yang dapat diselesaikan oleh AGENT mencapai DONE dan seluruh Task lain memiliki status serta penyebab penundaan yang jelas.
+JANGAN mengartikan arahan ini sebagai izin untuk memalsukan DONE, melewati acceptance criteria, menggabungkan kode yang gagal, menyentuh production, atau mengabaikan dependency.
+Arahan ini berlaku untuk sesi eksekusi hari ini. Tidak ada izin permanen mengubah governance.
+1. PERINTAH UTAMA
+Mulai sekarang, prioritaskan kemajuan implementasi, bukan aktivitas administratif berulang.
+Saya tidak ingin Executor menghabiskan sebagian besar waktu hanya untuk:
+
+* Menunggu GitHub Actions menyelesaikan seluruh workflow ketika masih ada pekerjaan independen.
+* Melakukan pemeriksaan yang sama berulang kali tanpa adanya perubahan.
+* Membaca ulang seluruh dokumen governance pada setiap Task.
+* Menjalankan audit menyeluruh ketika hanya diperlukan perbaikan terarah.
+* Membuka siklus review yang sama tanpa temuan baru.
+* Membuat perencanaan tambahan untuk pekerjaan yang kontraknya sudah APPROVED.
+* Mengirim laporan kemajuan panjang yang tidak menghasilkan perubahan nyata.
+
+SETIAP AKTIVITAS HARUS MENGHASILKAN SALAH SATU DARI EMPAT HAL: KODE, TES, BUKTI VERIFIKASI, ATAU PENYELESAIAN BLOCKER.
+Jangan memperbanyak pekerjaan demi terlihat sibuk.
+Jangan memperbanyak Task hanya untuk merapikan backlog.
+Jangan memperlambat pelaksanaan dengan analisis ulang terhadap keputusan yang sudah final.
+2. CEK KONDISI REPOSITORY SEBELUM BERTINDAK
+Lakukan satu pemeriksaan ringkas:
+
+1. HEAD terbaru `main`.
+2. HEAD PR #80 (TASK-092).
+3. HEAD PR #77 (TASK-063).
+4. Status CI terbaru yang benar-benar berlaku.
+5. Status Codex terakhir.
+6. TASK_PLAN, CURRENT_HANDOFF, dependency dan blocker.
+7. Worktree dan proses yang masih aktif.
+
+Kondisi terakhir yang diketahui Owner:
+
+* Total Task: 92.
+* TASK-090 dan TASK-091 sudah merged.
+* TASK-092 pada PR #80, dengan perbaikan CI pada `d79c781`.
+* TASK-063 pada PR #77, masih VERIFYING.
+* Berikutnya TASK-064, TASK-065, TASK-067 dan TASK-068.
+* Beberapa Task release/operations menunggu OPI, DEP-05, atau pekerjaan manusia.
+
+Gunakan keadaan aktual dari GitHub, bukan menganggap informasi tersebut pasti masih berlaku.
+Bedakan status yang sudah committed pada branch dengan status yang sudah merged ke `main`.
+Jangan mengulang pekerjaan yang telah selesai.
+3. PROTOKOL PERCEPATAN DAN GOVERNANCE
+Saya mengarahkan penerapan mekanisme CI-WAIT PIPELINING khusus untuk tanggal 12 November 2026.
+Tujuannya adalah agar waktu tunggu CI bisa digunakan untuk pekerjaan Task independen, bukan menjadi waktu menganggur.
+Karena mekanisme ini dapat berbeda dari aturan satu Task aktif pada TASK_PLAN, AGENT_OPERATING_MODEL, dan DIR-096, lakukan terlebih dahulu pencatatan arahan Owner ini melalui mekanisme CHANGE_CONTROL yang berlaku.
+Gunakan source record append-only dan nomor keputusan yang benar. Jangan mengarang DIR number dan jangan mengubah sumber historis.
+Batas pengecualian hanya penjadwalan pekerjaan selama CI berjalan.
+Tidak ada pengecualian untuk:
+
+* Definition of Done.
+* Acceptance criteria.
+* Dependency yang wajib DONE.
+* Syarat merge.
+* Keamanan data.
+* Batas akses operator.
+* Scope V1.
+* Persyaratan review.
+* Larangan rewrite history.
+* Verifikasi dari commit yang tepat.
+
+Apabila CHANGE_CONTROL tidak mengizinkan pengecualian tersebut tanpa keputusan tambahan, jangan melanggarnya diam-diam. Gunakan waktu tunggu untuk persiapan read-only Task berikutnya, analisis dampak, fixture, dan rancangan tes yang tidak mengubah Task lain.
+4. PERATURAN BARU MENUNGGU CI
+JANGAN MENUNGGU CI SECARA PASIF BERULANG KALI.
+Atur workflow berikut.
+A. Setelah commit dan push
+Segera:
+
+1. Buka atau perbarui PR.
+2. Mulai CI yang diperlukan.
+3. Minta Codex sesuai batas review yang telah ditetapkan.
+4. Jalankan satu watcher yang mencatat SHA, run ID, status, dan hasil.
+5. Jangan menjalankan banyak polling manual terhadap workflow yang sama.
+
+B. Jika CI belum selesai setelah 8 menit
+Jika mekanisme pipelining telah sah dicatat:
+
+* Tinggalkan CI berjalan tanpa membatalkannya.
+* Catat Task tersebut sebagai menunggu verifikasi, bukan DONE.
+* Pilih pekerjaan independen berikutnya yang sudah eligible.
+* Mulai pekerjaan itu pada branch/worktree terpisah.
+* Jangan menggabungkan perubahan dari Task yang belum terverifikasi.
+* Jangan menggunakan hasil Task yang belum DONE sebagai dependency yang sudah terpenuhi.
+
+Satu Executor utama tetap memegang kendali. Maksimum tiga helper agent sesuai DIR-108. Jangan membuka Executor utama kedua.
+Maksimum dua PR implementasi yang belum diverifikasi dapat berada dalam antrean sekaligus. Setelah batas itu tercapai, selesaikan antrean CI/review yang ada sebelum menambahkan PR implementasi baru.
+C. Jika CI gagal
+Klasifikasikan secara konkret:
+BLOCKING FAILURE
+Kegagalan yang memengaruhi keselamatan data, correctness, dependency berikutnya, authorization, money, inventory, idempotency, migrations, atau kontrak antar-Task.
+Tindakan: perbaiki sebelum pekerjaan dependen dilanjutkan.
+ISOLATED FAILURE
+Kegagalan yang sudah direproduksi dan terbukti hanya memengaruhi Task tersebut, sementara Task lain independen.
+Tindakan: simpan dalam antrean perbaikan yang jelas. Pekerjaan independen boleh dilanjutkan dalam batas pipelining, tetapi Task gagal tetap VERIFYING dan PR tetap tidak boleh merged.
+INFRASTRUCTURE / FLAKE
+Kegagalan yang mempunyai bukti konkret sebagai gangguan runner atau flake.
+Tindakan: lakukan rerun job gagal sesuai DIR-096 dan bukti diagnosis. Jangan mengubah assertion atau menandainya flake tanpa bukti.
+UNCERTAIN FAILURE
+Akar penyebab belum diketahui.
+Tindakan: jangan mengasumsikan aman. Lakukan diagnosis minimum sampai dampaknya bisa diklasifikasikan.
+D. Penuntasan antrean
+Jangan menunggu seluruh Task selesai dikodekan untuk memperbaiki kegagalan yang menghalangi dependensi.
+Perbaikan yang independen boleh dikelompokkan dalam sesi penuntasan, tetapi seluruh PR wajib lulus gate masing-masing sebelum merge.
+Tujuan pipelining adalah menghilangkan idle time, bukan menimbun puluhan PR gagal.
+5. PRIORITAS EKSEKUSI
+Gunakan urutan berdasarkan dependency, bukan sekadar nomor Task.
+PRIORITAS 1 — TUTUP RANTAI VERIFIKASI YANG SUDAH TERBUKA
+TASK-092:
+
+* Periksa CI terbaru PR #80.
+* Jika seluruh gate sudah hijau, merge segera sesuai DIR-096.
+* Gunakan exact HEAD dan `--match-head-commit`.
+* Verifikasi tree `main` identik dengan tree yang dites.
+* Jangan ulangi review yang sudah bersih tanpa alasan material.
+
+TASK-063:
+
+* Sinkronkan PR #77 dengan `main` menggunakan merge, bukan rebase.
+* Pastikan D1–D5 yang relevan sudah masuk.
+* Jalankan CJ-06 dan CJ-15 pada Chromium dan WebKit.
+* Jalankan verifikasi lain yang diwajibkan kontrak.
+* Pertahankan seluruh assertion.
+* Perbaiki temuan nyata secara terarah.
+* Tutup Task setelah seluruh persyaratan DONE terpenuhi.
+
+PRIORITAS 2 — TASK VERIFIKASI YANG INDEPENDEN
+Segera kerjakan Task yang telah READY sesuai dependency:
+
+* TASK-064 — Critical Journeys C.
+* TASK-065 — UI/UX consistency.
+* TASK-067 — Localization.
+* TASK-068 — Performance.
+
+Gunakan persyaratan tiap Task apa adanya.
+Bila suatu Task membutuhkan perubahan pada modul yang sudah DONE, identifikasi pemilik defect dan gunakan mekanisme feedback yang disetujui. Jangan mengubah acceptance criteria supaya tes hijau.
+PRIORITAS 3 — TASK VERIFIKASI DEPENDEN
+Setelah prerequisites DONE:
+
+* TASK-066 — Accessibility.
+* TASK-069 — Security, routes dan dead interactions.
+* TASK-070 — Full release regression.
+
+Jangan menganggap hasil pemeriksaan sebagian sebagai kelulusan seluruh Task.
+PRIORITAS 4 — RELEASE ENGINEERING
+Kerjakan Task AGENT yang sudah eligible, termasuk TASK-072, 074, 075, 076 dan 077, sesuai dependency serta input operator yang benar-benar tersedia.
+Siapkan semua kode, prosedur, runbook, automated checks, serta artefak yang diizinkan kontraknya.
+Jangan menjalankan pekerjaan HUMAN OPERATOR atau OWNER sebagai pengganti mereka.
+PRIORITAS 5 — OPERATIONS DAN RELEASE
+TASK-071, 078–087 dan Task operations lainnya mengikuti executor, dependency, serta otorisasi masing-masing.
+Persiapkan artefak yang memang boleh dibuat agent. Minta input manusia yang diperlukan.
+Jangan menjalankan tindakan production, staging, VPS, deployment, migrasi nyata, credential management, atau go-live yang menjadi wewenang operator.
+Jangan menyatakan semuanya DONE hanya karena kode aplikasi selesai.
+6. SEGERA SELESAIKAN PERMINTAAN OPERATOR
+Ini prioritas sangat tinggi.
+JANGAN TUNDA PERMINTAAN OPI SAMPAI AKHIR PEKERJAAN AGENT.
+Segera identifikasi dan ajukan secara resmi input yang masih kurang, khususnya:
+
+* OPI-26 — input akses dari klien untuk TASK-071.
+* OPI-03 — prasyarat TASK-072.
+* OPI-05 — prasyarat TASK-075.
+* DEP-05 — prasyarat TASK-081.
+* OPI-04, OPI-28, OPI-31 dan OPI-32 — prasyarat TASK-084.
+
+Jelaskan secara singkat kepada pihak yang berwenang:
+
+1. Identitas input yang diminta.
+2. Task yang diblokir.
+3. Apa tindakan atau keputusan yang harus diberikan.
+4. Dokumen tempat hasilnya dicatat.
+5. Task lanjutan yang baru bisa dimulai setelah input sah.
+
+Jangan mengarang isi input atau menganggap input telah diberikan hanya karena permintaannya dikirim.
+Jangan meminta credential, password atau secret untuk ditempel di chat.
+Untuk input yang memerlukan tindakan Owner atau operator, minta secara konkret dan lanjutkan pekerjaan lain yang independen.
+7. ATURAN IMPLEMENTASI KODE
+Untuk setiap Task:
+
+1. Baca hanya konteks minimum yang diperlukan.
+2. Pastikan acceptance criteria.
+3. Pastikan dependency yang relevan sudah DONE.
+4. Buat perubahan terkecil yang memenuhi kontrak.
+5. Tambahkan tes yang membuktikan perilakunya.
+6. Jalankan pemeriksaan lokal yang tersedia.
+7. Commit dengan identitas Owner.
+8. Push tanpa force.
+9. Mulai CI.
+10. Review sesuai aturan.
+11. Catat evidence dengan SHA yang benar.
+12. Merge hanya ketika eligible.
+13. Perbarui TASK_PLAN dan CURRENT_HANDOFF secara konsisten.
+
+DILARANG KERAS:
+
+* Menghapus atau melemahkan tes.
+* Mengubah expected value tanpa keputusan yang sah.
+* Menambah kebutuhan bisnis baru secara sepihak.
+* Mengubah database schema di luar otorisasi.
+* Melakukan force push, reset, rebase, amend pushed commit atau history rewrite.
+* Mengabaikan kegagalan CI yang material.
+* Mengubah status menjadi DONE tanpa bukti.
+* Mengakses production/VPS tanpa otorisasi.
+* Menggunakan layanan berbayar tanpa persetujuan.
+* Mengubah konfigurasi repository atau branch protection tanpa wewenang.
+* Menambahkan atribusi AI pada commit atau PR.
+* Menjalankan tes bersamaan pada database yang sama.
+
+Review dilakukan maksimal satu initial review dan satu targeted re-review sesuai arahan Owner terdahulu, kecuali aturan yang lebih tinggi mengharuskan eskalasi. Jangan menutup temuan terbuka dengan klaim tanpa bukti.
+8. OPTIMALKAN HELPER AGENT
+Gunakan DIR-108 secara efektif.
+Maksimum tiga helper agent di bawah satu Executor utama.
+Delegasikan hanya pekerjaan yang aman, terpisah, dan berguna, misalnya:
+
+* Membaca kontrak dan menelusuri call sites.
+* Menganalisis kegagalan CI.
+* Meninjau diff terbatas.
+* Menyusun matriks tes.
+* Menyiapkan bahan handoff atau bukti.
+* Memeriksa kesiapan dependency.
+
+Jangan menjalankan tiga helper yang melakukan pekerjaan sama.
+Jangan biarkan helper mengubah file yang sedang ditulis Executor tanpa koordinasi.
+Jangan menjalankan beberapa browser test terhadap database bersama.
+Executor utama bertanggung jawab penuh atas seluruh hasil.
+9. KEBIJAKAN DEFECT DAN REGRESI
+Regresi yang benar-benar terbukti tidak boleh disembunyikan.
+Tetapi JANGAN MEMBUKA TASK BARU HANYA KARENA SUATU PEKERJAAN MEMERLUKAN PERBAIKAN KECIL.
+Untuk defect pada Task yang masih aktif, perbaiki dalam Task itu.
+Untuk regresi pada Task yang telah DONE, gunakan mekanisme defect dan CHANGE_CONTROL yang berlaku. Jangan menambahkan Task tanpa aturan dan bukti.
+Jangan mengulang planning keseluruhan.
+Prioritaskan verifikasi keterkaitan antar-Task, terutama pada TASK-064 sampai TASK-069.
+Jika sebuah regresi material memengaruhi keuangan, stok, keamanan, atau ketepatan data, jangan menundanya secara membabi buta demi mengejar jumlah DONE.
+Gunakan tes regresi yang terarah dan pertahankan invariants yang disetujui.
+10. PENGHEMATAN WAKTU
+Hilangkan pekerjaan yang tidak menambah bukti atau kode.
+Aturan operasional:
+
+* Tidak ada audit repository menyeluruh pada setiap Task.
+* Tidak ada pengulangan pembacaan seluruh governance tanpa perubahan yang relevan.
+* Tidak ada review baru untuk perubahan test-only yang benar-benar nonmaterial setelah review bersih, kecuali gate mewajibkannya.
+* Tidak ada polling CI manual berulang ketika watcher sudah bekerja.
+* Tidak ada pembuatan dokumen administratif yang tidak diperlukan.
+* Tidak ada refactor kosmetik.
+* Tidak ada dependency baru tanpa kebutuhan.
+* Tidak ada diskusi desain ulang untuk kontrak yang telah APPROVED.
+* Tidak ada pembatalan CI hanya karena ingin mempercepat Task lain, kecuali run tersebut memang superseded atau harus dibatalkan menurut aturan yang berlaku.
+
+Manfaatkan CI secara paralel dengan persiapan pekerjaan independen.
+Jangan memulai tes lokal kedua ketika tes pertama masih menggunakan database yang sama.
+Jangan melewatkan verifikasi yang diwajibkan hanya untuk menghemat waktu.
+11. MANAJEMEN WAKTU HARI INI
+Deadline operasional adalah 12 November 2026 pukul 23.59 WIB.
+Sampai tenggat tersebut, jalankan antrean kerja secara terus-menerus dalam sesi eksekusi aktif, selama tools dan otorisasi tersedia.
+JANGAN BERHENTI SETELAH MENYELESAIKAN SATU TASK APABILA MASIH ADA TASK ELIGIBLE.
+Setiap selesai satu Task:
+
+1. Perbarui state berdasarkan bukti.
+2. Periksa Task yang baru memenuhi READY gate.
+3. Pilih Task prioritas tertinggi.
+4. Lanjutkan tanpa meminta persetujuan ulang untuk pekerjaan yang sudah diotorisasi.
+
+Jika suatu Task blocked, jangan berhenti pada Task tersebut. Catat blocker, ajukan input dan lanjutkan pekerjaan independen lain.
+Jika CI menunggu, terapkan prosedur pipelining yang sudah disahkan.
+Jika semua pekerjaan AGENT yang eligible selesai, lanjutkan penuntasan antrean perbaikan, review dan bukti sampai tidak ada lagi pekerjaan yang dapat diselesaikan dengan otorisasi yang tersedia.
+Tidak ada jaminan seluruh 92 Task dapat DONE hari ini apabila dependency, verifikasi, atau input manusia belum tersedia. Jangan mengarang keberhasilan untuk memenuhi target waktu.
+12. PELAPORAN SANGAT RINGKAS
+Jangan kirim laporan panjang setiap beberapa menit.
+Berikan pembaruan ketika terjadi perubahan material: Task selesai, PR merged, kegagalan material, atau blocker yang memerlukan tindakan Owner.
+Gunakan format:
+MULTIPLECORP EXECUTION
+
+* Main HEAD:
+* DONE / TOTAL:
+* Task aktif:
+* PR menunggu CI:
+* PR gagal:
+* Blocker:
+* Task berikutnya:
+* Tindakan Owner/operator yang diperlukan:
+
+Jangan mengirim puluhan pesan seperti "sedang membaca", "akan mengecek", atau "menunggu hasil".
+Jangan melaporkan keberhasilan sebelum terbukti.
+13. TARGET PENUTUPAN HARI
+Sebelum pukul 23.59 WIB, hasil yang saya inginkan adalah:
+
+1. Seluruh Task AGENT yang dapat diselesaikan hari ini diselesaikan dengan bukti nyata.
+2. Seluruh PR yang memenuhi gate telah merged secara sah.
+3. Seluruh Task VERIFYING yang dapat dituntaskan sudah dituntaskan.
+4. Setiap CI gagal mempunyai diagnosis dan status penyelesaian yang jelas.
+5. Seluruh blocker operator dan Owner sudah diminta secara resmi, tanpa mengarang hasilnya.
+6. Seluruh Task yang tidak dapat selesai mempunyai alasan spesifik: dependency, input, verifikasi, atau kewenangan manusia.
+7. TASK_PLAN dan CURRENT_HANDOFF sesuai keadaan repository.
+8. Tidak ada kerusakan data, kehilangan histori, atau pelanggaran scope.
+9. Tidak ada klaim DONE palsu.
+10. Tidak ada pekerjaan independen yang sengaja dibiarkan menunggu tanpa alasan.
+
+Jika seluruh 92 Task benar-benar memenuhi Definition of Done hari ini, laporkan 92/92 DONE dengan buktinya.
+Jika tidak, laporkan angka yang sebenarnya dan daftar terpendek dari hal-hal yang masih menghalangi penyelesaian.
+14. PERINTAH FINAL
+EXECUTE, DO NOT REPLAN THE PROJECT.
+NO UNNECESSARY IDLE TIME.
+NO REPEATED AUDITS WITHOUT A MATERIAL TRIGGER.
+NO UNNECESSARY APPROVAL REQUESTS FOR ALREADY AUTHORIZED TASKS.
+NO FALSE COMPLETION.
+NO MERGING FAILED OR UNVERIFIED CODE.
+NO UNAUTHORIZED PRODUCTION ACTIONS.
+FINISH EVERY ELIGIBLE TASK AS FAST AS CORRECTNESS AND GOVERNANCE ALLOW.
+Saya tidak ingin Executor berhenti hanya karena satu CI masih berjalan, selama ada pekerjaan independen yang sah dan aman untuk dikerjakan.
+Prioritas saya adalah kemajuan nyata dengan kode yang benar, bukan sekadar menunggu semua indikator menjadi hijau sebelum melakukan pekerjaan lain.
+Mulai dari status repository terbaru sekarang. Catat arahan percepatan melalui CHANGE_CONTROL yang berlaku, jalankan Task eligible menurut dependency, dan gunakan seluruh waktu kerja yang tersedia hari ini secara produktif.
+JANGAN BERHENTI PADA LAPORAN RENCANA. LAKSANAKAN.
