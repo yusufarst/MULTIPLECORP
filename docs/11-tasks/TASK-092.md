@@ -213,7 +213,7 @@ TASK-063's CJ-15, in fresh CI on `2bdc2a4` (WebKit), captured the page error "Re
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and pull request #80's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit). The first head `732bf33`'s runs were superseded by this head before they finished
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and pull request #80's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit). The first head `732bf33`'s runs were superseded by this head before they finished; `83804fe` failed TypeScript (an element's `offsetWidth` read without its type) and, on WebKit, the two new tests' own page-error capture, which counted the sign-in landing's request cancelled by the next navigation (Inertia's `HttpNetworkError`) — the class `journey-fixtures.ts` already sets aside —, both fixed in the suite
 - Build result: TL-13 in the same runs
 - Route evidence: N/A — no route added or changed
 - Interaction evidence: `documents.spec.ts`'s two composer tests

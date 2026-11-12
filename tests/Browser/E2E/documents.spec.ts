@@ -135,7 +135,8 @@ test('names the period a backdated draft\'s number follows beside its "Tanggal M
 
 test('fits the paper across the composer\'s widths without a resize-observer loop or any page error (DESIGN_SYSTEM §14.3; TEST_STRATEGY §8; TASK-092)', async ({ page }) => {
     const errors: string[] = [];
-    page.on('pageerror', (error) => { errors.push(error.message); });
+    // A request the next navigation cancels surfaces as Inertia's HttpNetworkError, no failure (journey-fixtures.ts).
+    page.on('pageerror', (error) => { if (!error.message.startsWith('HttpNetworkError')) errors.push(error.message); });
     await page.setViewportSize({ width: 1280, height: 900 });
     const { id: document } = await documentDraft(page, `dokumen-lebar-${stamp()}`);
 
@@ -178,7 +179,8 @@ test.describe('with the frame\'s scrollbar drawn as a classic one', () => {
 
     test('keeps the paper within its available width as a lower and a taller viewport make the frame\'s scrollbar come and go (TASK-092; Codex on pull request #80)', async ({ page }, testInfo) => {
         const errors: string[] = [];
-        page.on('pageerror', (error) => { errors.push(error.message); });
+        // A request the next navigation cancels surfaces as Inertia's HttpNetworkError, no failure (journey-fixtures.ts).
+        page.on('pageerror', (error) => { if (!error.message.startsWith('HttpNetworkError')) errors.push(error.message); });
         await page.setViewportSize({ width: 1280, height: 1600 });
         const { id: document } = await documentDraft(page, `dokumen-gulir-${stamp()}`);
 
@@ -189,7 +191,7 @@ test.describe('with the frame\'s scrollbar drawn as a classic one', () => {
         const frame = page.locator('[data-slot="paper-frame"]:visible').first();
         await expect(composer).toHaveAttribute('data-band', 'desktop');
         await expect(frame).toBeVisible();
-        testInfo.annotations.push({ type: 'scrollbar gutter', description: `${String(await frame.evaluate((element) => element.offsetWidth - element.clientWidth - 2))} px` });
+        testInfo.annotations.push({ type: 'scrollbar gutter', description: `${String(await frame.evaluate((element) => (element as HTMLElement).offsetWidth - element.clientWidth - 2))} px` });
 
         // The frame's height follows the viewport's: tall, the paper needs no scrollbar; low, it scrolls; tall again, it does not.
         for (const [height, scrolls] of [[1600, false], [500, true], [1600, false]] as const) {
