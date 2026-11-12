@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-11 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 18, created through the executor feedback loop from TASK-063's defect D4 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -199,32 +199,33 @@ TASK-063's CJ-06, in fresh CI on `2bdc2a4`, found on Chromium and WebKit that "U
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI (TL-02)
+- [x] Relevant automated tests: every layer PASS in CI, the shared components' own specs among them
+- [x] Authorization: N/A — unchanged
+- [x] Route integrity: N/A — no route added or changed; the route audit (TL-07) PASS
+- [x] Interaction behavior: `invoices.spec.ts` — the calendar opened in the invoice issue dialog moves to the previous month and backdates the issue, "Tanggal Mundur" and TASK-090's period line in the dialog, which then closes with "Kembali"
+- [x] Browser E2E if required: that test PASS on Chromium and WebKit (TL-09); CJ-06 in TASK-063's verification on the merged code
+- [x] Responsive/adaptive if required: TL-11 PASS in CI; the phone's select and menu backdrops take the same layer
+- [x] Visual breathing room/density if UI: unchanged — only the popups' layer
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: N/A — no new surface; TL-14 PASS
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of `29da1e5` on pull request #79 completed with no finding
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16), tested commit `29da1e5`: fresh CI on GitHub's `ubuntu-24.04` runner — run 43174185665 (push) and run 43174211299 (pull request #79) every job PASS; the E2E layer 361 PASS, the one pre-existing skip, none failed. This record's head is proven by its own fresh CI before the merge
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `invoices.spec.ts`'s calendar-in-dialog test
+- Browser evidence: `E2E: PASS — Evidence: 29da1e5, CI ubuntu-24.04 run 43174185665, tests/Browser/E2E/invoices.spec.ts on Chromium and WebKit`
+- Localization evidence: no new key
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `resources/js/components/ui/layer.ts` (new); `resources/js/components/ui/alert-dialog.tsx`, `dialog.tsx`, `sheet.tsx` (the provider); `popover.tsx`, `combobox.tsx`, `tooltip.tsx`, `select.tsx`, `dropdown-menu.tsx` (the layer taken); `tests/Browser/E2E/invoices.spec.ts`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`
+- Commit SHA: `29da1e5` on `task/TASK-091-popup-layer`, the Owner's identity, no AI attribution; this record's commit follows it, verified by the pull request head's CI
+- Notes: criteria 1 and 2 PASS — a popup opened inside a dialog, an alert dialog or a sheet takes that layer's own `z` and, portaled after it, stacks above it; one opened from the page keeps `--z-popover`; DESIGN_SYSTEM §5's tokens and order unchanged. Criterion 3 is proven by TASK-063's CJ-06 on the merged code. No drawer component exists, so the contract's drawer case has nothing to change
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 

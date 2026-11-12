@@ -1,6 +1,7 @@
 import { AlertDialog as AlertDialogPrimitive } from '@base-ui/react/alert-dialog';
 import type { ComponentProps, ReactNode } from 'react';
 
+import { PopupLayerProvider } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // PT-16's AlertDialog for short confirmations — irreversible, destructive, step-up, re-authentication
@@ -36,7 +37,7 @@ export function AlertDialogContent({
                 )}
                 {...props}
             >
-                {children}
+                <PopupLayerProvider value="z-(--z-modal)">{children}</PopupLayerProvider>
             </AlertDialogPrimitive.Popup>
         </AlertDialogPrimitive.Portal>
     );

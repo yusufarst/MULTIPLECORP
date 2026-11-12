@@ -1,6 +1,7 @@
 import { Popover as PopoverPrimitive } from '@base-ui/react/popover';
 import type { ReactNode } from 'react';
 
+import { usePopupLayer } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // A body-level popover (DESIGN_SYSTEM §10 "Popover, tooltip and long text"): never clipped, the menu radius and
@@ -18,9 +19,11 @@ export function PopoverContent({
     sideOffset = 6,
     ...props
 }: PopoverPrimitive.Popup.Props & Pick<PopoverPrimitive.Positioner.Props, 'side' | 'align' | 'sideOffset'> & { children?: ReactNode }) {
+    const layer = usePopupLayer();
+
     return (
         <PopoverPrimitive.Portal>
-            <PopoverPrimitive.Positioner side={side} align={align} sideOffset={sideOffset} className="z-(--z-popover)">
+            <PopoverPrimitive.Positioner side={side} align={align} sideOffset={sideOffset} className={layer}>
                 <PopoverPrimitive.Popup
                     data-slot="popover-content"
                     data-motion

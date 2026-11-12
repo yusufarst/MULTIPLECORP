@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 
 import { Icon } from '@/components/ui/icon';
 import { fieldBoxClass } from '@/components/ui/input';
+import { usePopupLayer } from '@/components/ui/layer';
 import { cn } from '@/lib/utils';
 
 // The reference's custom select (DESIGN_SYSTEM §10 "Select and lookup"; §5.3): a combobox trigger on the
@@ -32,13 +33,15 @@ export function SelectValue({ className, ...props }: SelectPrimitive.Value.Props
 }
 
 export function SelectContent({ className, children, ...props }: SelectPrimitive.Popup.Props & { children?: ReactNode }) {
+    const layer = usePopupLayer();
+
     return (
         <SelectPrimitive.Portal>
-            <SelectPrimitive.Backdrop className="fixed inset-0 z-(--z-popover) md:hidden" />
+            <SelectPrimitive.Backdrop className={cn('fixed inset-0 md:hidden', layer)} />
             <SelectPrimitive.Positioner
                 sideOffset={4}
                 alignItemWithTrigger={false}
-                className="z-(--z-popover) outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:w-full!"
+                className={cn(layer, 'outline-none max-md:fixed! max-md:inset-x-0! max-md:top-auto! max-md:bottom-0! max-md:transform-none! max-md:w-full!')}
             >
                 <SelectPrimitive.Popup
                     data-slot="select-content"
