@@ -141,7 +141,9 @@ export default function OwnAccount({ account, totp, google, last_login: lastLogi
                         className="flex min-w-0 flex-col gap-4 md:max-w-96"
                         onSubmit={(event) => {
                             event.preventDefault();
-                            password.put('/akun/kata-sandi', { preserveScroll: true, onFinish: () => { password.reset(); } });
+                            // IP-11 (TASK-095, D9): the fields are cleared on a known outcome — changed or refused —, never when a
+                            // 401 ends the request: the in-place re-authentication covers the page with the input kept in memory.
+                            password.put('/akun/kata-sandi', { preserveScroll: true, onSuccess: () => { password.reset(); }, onError: () => { password.reset(); } });
                         }}
                     >
                         <FormField label={t('account.password.current')} required error={password.errors.current_password}>

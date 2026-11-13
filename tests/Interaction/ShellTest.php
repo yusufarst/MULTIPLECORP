@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Vite;
+use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\RefreshDatabase;
 
@@ -139,4 +140,29 @@ it('confirms a signed-in session\'s dialog only for that account\'s own e-mail a
 
     $this->postJson('/konfirmasi-kata-sandi', ['email' => '  '.mb_strtoupper($admin->email).' ', 'password' => 'kata-sandi-contoh'])
         ->assertOk()->assertExactJson(['confirmed' => true]);
+});
+
+it('answers an address the account\'s capability refuses with PG-005 carrying the shell\'s hints and language, as an unknown address does (IP-21; AZ-11; WS-07)', function () {
+    $admin = Authorization::admin([$this->b->id], ['projects.view']);
+    $admin->forceFill(['name' => 'Admin Uji Sistem'])->save();
+    $headers = ['X-Inertia' => 'true', 'X-Inertia-Version' => (string) app(HandleInertiaRequests::class)->version(request())];
+
+    // The review queue is the Owner's (`review.view`): the Admin's request is refused by the route's own capability.
+    $refused = $this->actingAs($admin)->get('/tinjauan', $headers);
+    $unknown = $this->actingAs($admin)->get('/tinjauan-'.Str::lower(Str::random(8)), $headers);
+
+    foreach ([$refused, $unknown] as $response) {
+        expect($response->status())->toBe(404)
+            ->and($response->json('component'))->toBe(SystemAnswer::PAGE)
+            ->and($response->json('props.kind'))->toBe('not_found')
+            ->and($response->json('props.auth.name'))->toBe($admin->name)
+            ->and($response->json('props.locale'))->toBe('id');
+    }
+
+    expect(array_keys($refused->json('props')))->toEqualCanonicalizing(array_keys($unknown->json('props')));
+
+    // The first load of the refused address carries the hints in the root view too, so the page renders.
+    $document = $this->actingAs($admin)->get('/tinjauan');
+    expect($document->status())->toBe(404)
+        ->and($document->getContent())->toContain('Admin Uji Sistem');
 });

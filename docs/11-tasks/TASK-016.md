@@ -41,6 +41,7 @@ IA §6–§7 and NAVIGATION_CONTRACTS define one shell and one company context m
 - TASK-031 — Correction cases
 - TASK-061 — Activity history and security log
 - TASK-093 — Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11)
+- TASK-095 — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) (Change 20)
 
 **PARALLEL SAFE:** NO — every page Task renders inside the shell
 
