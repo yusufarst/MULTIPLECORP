@@ -50,6 +50,18 @@ async function typeDay(page: Page, label: string, day: string): Promise<void> {
     await field.fill(dmy(day));
 }
 
+/**
+ * A filter changed through the page's own control, then its address and the deferred `tables` reload that follows it
+ * (PT-19): a field typed while that reload lands is re-rendered under the typing — WebKit lost a typed day so —, so
+ * the next field is typed only once the page has settled.
+ */
+async function filtered(page: Page, change: () => Promise<void>, address: RegExp): Promise<void> {
+    const tables = page.waitForResponse((response) => response.request().headers()['x-inertia-partial-data'] === 'tables' && address.test(response.url()));
+    await change();
+    await page.waitForURL(address);
+    await tables;
+}
+
 /** "Ekspor" → "Ekspor Excel", the page's own export of its report and filters (ROUTE-283). */
 async function exportExcel(page: Page): Promise<void> {
     await page.getByRole('button', { name: 'Ekspor', exact: true }).click();
@@ -132,10 +144,8 @@ test('CJ-14: receivables with their ageing, the reports by company and date, an 
     await page.waitForURL(/laporan=penjualan/);
     await content.getByRole('combobox', { name: 'Perusahaan', exact: true }).selectOption(run.code);
     await page.waitForURL(new RegExp(`perusahaan=${run.code}`));
-    await page.getByLabel('Periode').selectOption('rentang');
-    await page.waitForURL(/periode=rentang/);
-    await typeDay(page, 'Sampai tanggal', older.today);
-    await page.waitForURL(new RegExp(`sampai=${older.today}`));
+    await filtered(page, async () => { await page.getByLabel('Periode').selectOption('rentang'); }, /periode=rentang/);
+    await filtered(page, () => typeDay(page, 'Sampai tanggal', older.today), new RegExp(`sampai=${older.today}`));
     await typeDay(page, 'Dari tanggal', older.due);
     await page.waitForURL(new RegExp(`dari=${older.due}`));
 
