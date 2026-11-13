@@ -184,6 +184,17 @@ export async function idleExpired(page: Page, account: K2Account): Promise<void>
     expect(after.sessions, 'the account has a session to end').toBeGreaterThan(0);
 }
 
+/**
+ * The idle limit passed for an account whose page was read under FX-08's clock before midnight: that request wrote its
+ * session's last activity on the day before, so the session may already be past the limit — and purged by the session
+ * store's sweep —; whichever it is, no session of the account stays active and its next request is a guest's (AU-07).
+ */
+export async function idleEnded(page: Page, account: K2Account): Promise<void> {
+    const after = await sessionOf(page, account, 'age', 3_700);
+    const limit = Math.floor(Date.now() / 1000) - 3_600;
+    expect(after.sessions === 0 || (after.last_activity !== null && after.last_activity < limit), 'no session of the account stays active').toBe(true);
+}
+
 /** The `command_log` rows of the identifiers given — the recorded outcomes (CI-05). */
 export async function recorded(page: Page, ids: string[]): Promise<Recorded[]> {
     const response = await page.request.get(`/__fixtures/k2/perintah?ids=${ids.join('%2C')}`);

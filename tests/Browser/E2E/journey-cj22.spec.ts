@@ -31,7 +31,10 @@ async function greyscale(page: Page, testInfo: TestInfo, name: string): Promise<
     await page.evaluate(() => {
         document.documentElement.style.filter = 'grayscale(1)';
     });
-    await testInfo.attach(`${name}-greyscale.png`, { body: await page.screenshot({ fullPage: true }), contentType: 'image/png' });
+    // The whole page as evidence while it fits the engines' 32,767-pixel bound; a longer page — the shared database's lists grow
+    // with every run — keeps its viewport. The checks are the DOM's either way.
+    const height = await page.evaluate(() => document.documentElement.scrollHeight);
+    await testInfo.attach(`${name}-greyscale.png`, { body: await page.screenshot({ fullPage: height < 32_000 }), contentType: 'image/png' });
     await page.evaluate(() => {
         document.documentElement.style.filter = '';
     });

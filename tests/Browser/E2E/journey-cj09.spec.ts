@@ -221,11 +221,12 @@ test('CJ-09 on the desktop: an Admin of A registers a file identical to evidence
     const inB = await registerOrder(page, b.company, bytes, 'sp-b.pdf', `SMA Uji B ${stamp}`, `SP/B/${stamp}`);
     await expect(inB.getByText('Versi 1')).toBeVisible();
 
-    // An Admin of A only, with *Lihat bukti* and *Unggah bukti* — a high-risk view, so signed in with TOTP (AU-18).
+    // An Admin of A only, with *Lihat bukti* and *Unggah bukti* — a high-risk view, so signed in with TOTP (AU-18) — and the
+    // client order's family view, `projects.view`, without which no evidence type is choosable for the upload (PJ-08).
     const { context, admin } = await adminPage(page, DESK);
     const capturedAdmin = watch(admin);
     const account = await signedIn(admin, 'cj09-bukti-a');
-    await grantSelf(admin, [a.company], ['evidence.view', 'evidence.upload']);
+    await grantSelf(admin, [a.company], ['evidence.view', 'evidence.upload', 'projects.view']);
 
     // An ordinary registration first, then the same bytes as B's: both answers alike — the evidence's own sheet, version 1
     // current, no warning, flag, note or reason, nothing naming B (UXS-18; IP-16).

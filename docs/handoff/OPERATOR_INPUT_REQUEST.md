@@ -161,3 +161,21 @@ Hanya membaca: jangan memasang, menjalankan, menghentikan, me-reload, atau mengu
 7. **Omitted:** OPI-23, OPI-25, OPI-01/24, OPI-09, DEP-03/04/06/09/11 and P9Q-15; yet REQ L28 lists OPI-06 though L33 excludes OWNER Tasks.
 8. **Pointers** (REQ L5): OPI-21–25 and OPI-32 are BACKUP_RECOVERY §7's, DEP-05 V1_SCOPE's; the last column lists Tasks, not gates.
 9. **OPI-28** (REQ L24) re-asks the holder already recorded (`INFRASTRUCTURE.md` L227).
+
+## Received from the Owner as operator — 2026-11-13 (status of TASK-071's inputs)
+
+The Owner, the designated human operator (OPI-01), reported on 2026-11-13 in session the checks it made itself on the VPS; recorded here by role and figure only — no address, host name, path, account name or credential, and the second application not named (INF-07). The executor never accessed the VPS. TASK-071 stays BLOCKED until every input below is VERIFIED and recorded in its approved record (TASK-071's criteria).
+
+| Input | Status | What was verified (non-sensitive) | Still owed |
+|---|---|---|---|
+| OPI-26 | PARTIAL | Provider panel access confirmed; an administrative shell through the provider's browser console confirmed | An independent SSH login (key-based client) configured and confirmed by the Owner — OPI-26 stays pending until then, as the Owner directed |
+| OPI-03 | VERIFIED | Docker Engine 29.9.3 and Docker Compose 5.7.1 installed, a test container run; host Nginx active, an unmatched HTTP request answered 404; UFW active with SSH, HTTP and HTTPS allowed; Git installed; no Coolify reported — Docker Compose applies (DIR-110) | — |
+| OPI-02 | PARTIAL | Ubuntu 24.04.5 LTS (kernel 6.8); 4 vCPU; about 15 GiB usable memory; about 192 GiB disk available before any deployment | The bandwidth allowance and its period; the used-disk figure beside the available one |
+| OPI-21 | PARTIAL | Nothing deployed yet, so U₀ is the host's own use; about 192 GiB available | U₀ as a measured figure (used disk less the second application's), recorded at staging |
+| OPI-27 | PARTIAL | The second application is not deployed yet: no resource use today; its own deployment directory created apart from MULTIPLECORP's, both empty, operator-only permissions | Its expected CPU, memory, disk and bandwidth and its backup, maintenance and deployment windows, from the client |
+| OPI-22 | OUTSTANDING | — (MULTIPLECORP's deployment directory exists apart, operator-only) | The backup directory's volume and permissions, apart from the second application's backups |
+| OPI-29 | OUTSTANDING | — | Each provider-side feature and whether it is active |
+| OPI-30 | OUTSTANDING | — | The domain and the staging name, kept in the private record |
+| OPI-05 | OUTSTANDING | — | The zero-cost alert channel confirmed, its §4C.4 record first |
+
+The host was rebooted after the setup; Docker, Nginx, SSH and UFW stayed active. Neither production application is deployed; no staging or production deployment is started by this record.

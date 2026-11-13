@@ -8,6 +8,7 @@ import {
     expect,
     grant,
     holdProject,
+    idleEnded,
     idleExpired,
     identities,
     merged,
@@ -282,7 +283,8 @@ test('CJ-21 two Admins on one draft, then a prefilled date across WIB midnight: 
     await a.page.route(matcher, beforeMidnight);
     await openQuotation(a.page, q);
     await a.page.unroute(matcher, beforeMidnight);
-    await idleExpired(page, a.account);
+    // The page read under the clock before midnight wrote its session's last activity on the day before (FX-08).
+    await idleEnded(page, a.account);
     const sentIssue = commandsTo(a.page, `${path}/terbitkan`);
     await a.page.getByRole('button', { name: 'Terbitkan Penawaran' }).click();
     const issuing = a.page.getByRole('alertdialog', { name: 'Terbitkan Penawaran?' });
