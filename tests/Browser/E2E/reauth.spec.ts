@@ -34,7 +34,7 @@ async function draftPage(page: Page, run: string): Promise<{ account: Account; p
     const company = await numberingCompany(page, `${String(new Date().getFullYear())}-01-01`);
     const account = await scopedAccount(page, run, company);
     await signIn(page, account);
-    const made = await page.request.post('/__fixtures/penawaran', { data: { company, lines: 1, stage: 'draft' } });
+    const made = await page.request.post('/__fixtures/penawaran', { data: { company, lines: 1, stage: 'draft', actor: 'owner' } });
     expect(made.ok(), await made.text()).toBe(true);
     const quotation = (await made.json()) as { project: string; number: string };
     const path = `/proyek/${quotation.project}/penawaran`;

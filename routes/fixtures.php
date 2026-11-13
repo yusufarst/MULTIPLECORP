@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SessionDeadline;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
@@ -48,7 +49,9 @@ use Tests\Support\Fixtures\StockFixture;
 // and CSRF token — a page before sign-in stores nothing (INT-001) —, so they touch no database — but for the
 // sign-in journeys' account, which the migrated stack keeps (scripts/verify.sh).
 
-Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(function (): void {
+// SessionDeadline gives the shell stub's answers the account key a signed-in page carries (TASK-093; UXH-02); with no
+// session and no account it adds nothing to the other pages here.
+Route::middleware([SetLocale::class, HandleInertiaRequests::class, SessionDeadline::class])->group(function (): void {
     // TL-09–TL-12 (TASK-014): INT-001's switch on a page with a field, before sign-in, so the switch is shown to
     // keep the unsent input and the layout (LOCALIZATION §3.7).
     Route::get('__fixtures/bahasa', fn () => Inertia::render('Fixtures/LanguageSwitch'));
