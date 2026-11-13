@@ -33,7 +33,8 @@ async function greyscale(page: Page, testInfo: TestInfo, name: string): Promise<
     });
     // The whole page as evidence while it fits the engines' 32,767-pixel bound; a longer page — the shared database's lists grow
     // with every run — keeps its viewport. The checks are the DOM's either way.
-    const height = await page.evaluate(() => document.documentElement.scrollHeight);
+    // The bound is in device pixels: WebKit's desktop profile draws at a scale factor of 2.
+    const height = await page.evaluate(() => document.documentElement.scrollHeight * window.devicePixelRatio);
     await testInfo.attach(`${name}-greyscale.png`, { body: await page.screenshot({ fullPage: height < 32_000 }), contentType: 'image/png' });
     await page.evaluate(() => {
         document.documentElement.style.filter = '';
