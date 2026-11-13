@@ -1,0 +1,140 @@
+Owner directive received in session during execution, 2026-11-13 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — IMMEDIATE RELEASE FREEZE
+MULTIPLECORP — TARGET PRODUCTION 14 NOVEMBER 2026
+PRIORITY: CRITICAL — OVERRIDES PREVIOUS SCHEDULING PRIORITIES WHERE FORMALLY PERMITTED
+Saya sebagai Project Owner memerintahkan perubahan prioritas eksekusi MULTIPLECORP.
+TARGET: PRODUCTION-READY SECEPAT MUNGKIN, DENGAN TARGET GO-LIVE 14 NOVEMBER 2026.
+Target tanggal bukan izin untuk melewati keamanan, backup, atau verifikasi wajib.
+Saya tidak menerima lagi pola eksekusi yang terus menghasilkan Task defect baru tanpa pernah menutup rangkaian pekerjaan.
+Saat ini terdapat 94 Task pada branch terbaru. HENTIKAN PERTAMBAHAN TASK OTOMATIS.
+Jangan otomatis membuat TASK-095, TASK-096, dan seterusnya hanya karena perjalanan browser menemukan ketidaksesuaian baru.
+1. BERLAKUKAN RELEASE FREEZE SEKARANG
+Mulai saat ini:
+
+* Tidak ada fitur baru.
+* Tidak ada refactor kosmetik.
+* Tidak ada penambahan acceptance criteria.
+* Tidak ada perluasan cakupan perjalanan pengujian.
+* Tidak ada pembuatan Task defect otomatis.
+* Tidak ada audit menyeluruh baru tanpa alasan material.
+* Tidak ada pembukaan fase planning baru.
+* Tidak ada perubahan desain atau arsitektur yang tidak diperlukan untuk blocker production.
+
+Semua temuan baru harus diklasifikasikan berdasarkan dampak aktual.
+P0 — CRITICAL: kehilangan/korupsi data, akses ilegal, replay command lintas akun, kebocoran data, atau integritas keuangan/stok. WAJIB DIPERBAIKI.
+P1 — RELEASE BLOCKER: autentikasi rusak, alur bisnis utama gagal, layar penting crash, atau kewajiban keamanan/operasional production tidak terpenuhi. WAJIB DIPERBAIKI.
+P2 — NONCRITICAL: masalah UX atau fungsi sekunder dengan dampak terbatas dan workaround yang terbukti. Boleh ditunda hanya jika sesuai kontrak dan penerimaan risikonya disahkan Owner.
+P3 — MINOR: kosmetik atau ketidaksesuaian nonmaterial. Tunda sampai setelah release.
+Jangan menurunkan severity tanpa bukti.
+Jangan menyembunyikan defect.
+Jika governance mensyaratkan Task terpisah untuk defect pada modul DONE, gunakan CHANGE_CONTROL untuk mengusulkan mekanisme perbaikan terkonsolidasi pada release stabilization. Jangan melanggar aturan diam-diam, tetapi juga jangan membuat Task baru tanpa arahan Owner.
+2. PERUBAHAN PRIORITAS
+Urutan kerja sekarang:
+PERTAMA — TUNTASKAN PR #82 (TASK-093).
+Perbaikan autentikasi dan pemisahan akun adalah blocker keamanan.
+
+* Periksa CI pada head terbaru.
+* Perbaiki hanya kegagalan material.
+* Pastikan wrong-password refusal dan correct-password recovery berfungsi.
+* Pastikan tidak ada replay lintas akun.
+* Pastikan seluruh tes wajib lulus.
+* Merge secara sah.
+
+KEDUA — TUNTASKAN PR #77 (TASK-063).
+
+* Sinkronkan dengan main setelah PR #82.
+* Perbaiki kegagalan dependency audit melalui perubahan dependency yang terverifikasi.
+* Jalankan verifikasi final.
+* Merge jika seluruh gate terpenuhi.
+
+KETIGA — TUNTASKAN TASK-094.
+Perbaiki input PG-014 yang tidak terkunci ketika hasil command belum diketahui.
+Tidak perlu memperluas Task ini ke masalah lain.
+KEEMPAT — STABILKAN TASK-064.
+Klasifikasikan dan tutup kegagalan yang sudah ditemukan:
+
+* CJ-09: halaman 404 kosong akibat shared props/middleware — perbaiki sebagai release blocker jika terbukti.
+* CJ-10: form kehilangan isian setelah 401 — nilai dampak terhadap data, perbaiki bila material.
+* CJ-12: fixture e-mail bentrok — perbaiki fixture.
+* CJ-13: koreksi urutan tes sesuai kontrak, jangan ubah produk yang benar.
+* CJ-19: diagnosis terarah.
+* CJ-21: gunakan hasil perbaikan D6/D7.
+* CJ-22: perbaiki assertion tes yang bertentangan dengan DESIGN_SYSTEM.
+* QS-14: tutup kekurangan cakupan yang benar-benar diwajibkan.
+* CJ-16: tetap NOT RUN sampai bukti staging tersedia.
+
+Jangan membuat TASK-095/096 secara otomatis untuk CJ-09 dan CJ-10. Catat dan tangani melalui jalur release stabilization/CHANGE_CONTROL yang sah.
+3. SEGERA PRIORITASKAN KESIAPAN PRODUCTION
+Jangan terus menempatkan seluruh release engineering di belakang pekerjaan UI.
+Sambil CI berjalan, identifikasi dan siapkan semua artefak AGENT yang dibutuhkan untuk:
+
+* TASK-072 — deployment definition.
+* TASK-074 — backup tooling.
+* TASK-075 — monitoring.
+* TASK-076 — operator runbooks.
+* TASK-077 — cutover tooling.
+* TASK-070 — full release regression.
+
+Kerjakan hanya bagian yang eligible dan sesuai dependency.
+Untuk bagian yang membutuhkan OPI atau tindakan operator, siapkan runbook dan daftar bukti, tetapi jangan mengarang bahwa operasinya telah dilakukan.
+Pastikan seluruh pekerjaan AGENT yang diperlukan untuk staging dan production mendapat prioritas lebih tinggi daripada perbaikan kosmetik.
+4. JANGAN MENUNGGU 94/94 UNTUK MULAI RELEASE READINESS
+Pisahkan tiga indikator:
+
+1. Code readiness: seluruh fungsi dan defect blocking telah diperbaiki serta diuji.
+2. Operational readiness: VPS, deployment, backup, restore, monitoring, staging dan runbook telah dibuktikan.
+3. Business readiness: data awal, migrasi, reconciliation, UAT dan persetujuan Owner telah terpenuhi.
+
+Angka DONE saja tidak membuktikan readiness.
+Jangan menyatakan production siap tanpa ketiganya.
+Jangan pula menunda persiapan operasional hanya karena masih ada CI nonblocking yang berjalan.
+5. GO/NO-GO 14 NOVEMBER
+Siapkan keputusan berbasis bukti.
+GO hanya bila:
+
+* Tidak ada P0/P1 terbuka.
+* CI dan regression gate yang diwajibkan lulus pada commit release yang benar.
+* Autentikasi, otorisasi, isolasi company, inventory dan finance terverifikasi.
+* Akses dan inventaris VPS disahkan operator.
+* Tidak ada gangguan terhadap aplikasi produksi kedua.
+* Deployment staging dan smoke checks lulus.
+* Backup lokal dan salinan off-server memenuhi kontrak.
+* Restore drill wajib lulus.
+* Domain, HTTPS dan secret configuration siap.
+* Monitoring dan alert delivery terbukti.
+* Migrasi/reconciliation yang relevan dan UAT selesai.
+* Operator dan Owner mengesahkan release.
+
+Jika salah satu gate wajib tidak terpenuhi: NO-GO untuk penggunaan data riil.
+Jangan mengganti bukti dengan waiver sembarangan.
+Jika target go-live 14 November tidak dapat tercapai, berikan tanggal paling awal yang realistis berdasarkan blocker konkret, bukan perkiraan tanpa dasar.
+6. PENGENDALIAN WAKTU
+DIR-109 secara eksplisit berlaku hanya pada 12 November. Jangan mengasumsikannya masih berlaku pada 13–14 November.
+Catat arahan percepatan terbaru melalui CHANGE_CONTROL bila perlu, terbatas pada penjadwalan dan release stabilization, bukan pengecualian keselamatan.
+Gunakan maksimal tiga helper sesuai DIR-108.
+Pertahankan isolasi worktree dan database.
+Jangan membuang waktu pada polling CI berulang.
+Jangan menjalankan tes sama berulang kali tanpa perubahan atau bukti flake.
+Jangan membuat PR tambahan selama antrean masih melampaui batas yang berlaku.
+7. LAPORAN YANG SAYA MINTA SEKARANG
+Bukan laporan planning panjang.
+Beri saya RELEASE READINESS — 14 NOVEMBER 2026 yang hanya berisi:
+
+1. Status aplikasi: READY / NOT READY.
+2. Seluruh P0/P1 yang masih terbuka.
+3. PR yang harus merged.
+4. CI yang wajib lulus.
+5. Task AGENT yang wajib selesai sebelum production.
+6. Tindakan operator dan Owner yang masih dibutuhkan.
+7. Bukti staging, backup, restore, monitoring dan UAT yang masih kosong.
+8. Keputusan awal GO / NO-GO beserta blocker spesifik.
+9. Urutan tindakan terpendek menuju production.
+
+Tutup masalah yang sudah diketahui terlebih dahulu.
+STOP AUTOMATIC TASK PROLIFERATION.
+FIX RELEASE BLOCKERS.
+FINISH THE OPEN PRS.
+PREPARE DEPLOYMENT AND OPERATOR EVIDENCE.
+DO NOT SACRIFICE SECURITY OR DATA INTEGRITY TO MEET A DATE.
+EXECUTE IMMEDIATELY.

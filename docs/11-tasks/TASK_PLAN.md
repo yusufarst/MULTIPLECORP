@@ -16,19 +16,19 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 94
 
-DONE: 69
+DONE: 70
 READY: 4
 IN_PROGRESS: 0
 BLOCKED: 5
-VERIFYING: 2
+VERIFYING: 1
 TODO: 14
 SUPERSEDED: 0
 
 Progress:
-69 / 94
-Percentage: 73.4 %
+70 / 94
+Percentage: 74.5 %
 
-CURRENT TASK: none in progress — TASK-093 — Defect D6 — the in-place re-authentication's account and password DONE on its branch `task/TASK-093-reauth-identity`, its record in its final code commit (DIR-103), its pull request #82 squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-064 VERIFYING — its CJ-21 waits on TASK-094 (Change 19); TASK-063 VERIFYING on its own branch
+CURRENT TASK: none in progress — TASK-063 — Critical journeys B DONE on its branch `task/TASK-063-critical-journeys-b`, its record in its final commit (DIR-103), its pull request #77 squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-094 READY next; TASK-064 VERIFYING — its CJ-21 waits on TASK-094 (Change 19)
 NEXT READY TASK: TASK-063's verification resumed — TASK-090, TASK-091 and TASK-092 DONE —; TASK-064, TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-063–TASK-065, TASK-069 on TASK-063–TASK-066 and TASK-068, TASK-077 on TASK-072, TASK-082 on TASK-071 and TASK-078, TASK-076 and TASK-085 on their other dependencies; TASK-071 once the client's access OPI-26 is recorded
 LAST TASK PLAN CHANGE: Change 19 of 2026-11-12 — TASK-064's defects D6 (UXH-02's account and the re-authentication's password, security) and D7 (PG-014's inputs while an outcome is unknown) as TASK-093 and TASK-094; TASK-064 VERIFYING, depending on both
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
@@ -111,7 +111,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-060](TASK-060.md) — Reports, the consolidated report and exports
 - [x] [TASK-061](TASK-061.md) — Activity history and security log
 - [x] [TASK-062](TASK-062.md) — Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH
-- [ ] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
+- [x] [TASK-063](TASK-063.md) — Critical journeys B — finance, corrections, reports, documents, completion and the checklist
 - [ ] [TASK-064](TASK-064.md) — Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status
 - [ ] [TASK-065](TASK-065.md) — UI/UX consistency gate, the responsive matrix and the anti-slop audit
 - [ ] [TASK-066](TASK-066.md) — Accessibility — WCAG 2.2 AA across every page
@@ -210,7 +210,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-060](TASK-060.md) | Reports, the consolidated report and exports | Module · Reporting | HIGH | DONE | 022, 037, 051, 054 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-061](TASK-061.md) | Activity history and security log | Module · OPS | HIGH | DONE | 010, 016 | 062, 063, 064, 065, 066, 067, 068, 069 | NO | AGENT | NONE | YES |
 | [TASK-062](TASK-062.md) | Critical journeys A — the golden flow, purchasing, fulfilment, counts, scanning and SIPLAH | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 088, 089 | 066, 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | VERIFYING | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
+| [TASK-063](TASK-063.md) | Critical journeys B — finance, corrections, reports, documents, completion and the checklist | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 090, 091, 092 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | VERIFYING | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |

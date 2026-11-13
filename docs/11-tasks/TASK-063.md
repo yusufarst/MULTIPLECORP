@@ -6,7 +6,7 @@ Approval: [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-ta
 
 Written by WF-PC5-W's writer of bundle W3 of run PC-5 on 2026-10-19 under [DIR-084](../00-governance/DECISION_LOG.md#dir-083-dir-084-obs-033-and-tech-040--og-3-decisions-appr-012appr-015-run-pc-5-and-p11) SP-99; the Owner approved P11 with the [Task plan](TASK_PLAN.md) at OG-4 (DIR-085 OF-07). **No Task starts before the freeze record, from which the execution authorization is in force (DIR-085 OF-09).** References are by identifier and link; a rule is never copied beyond the sentence this Task needs, and where a line and its source differ, the source wins.
 
-**STATUS:** VERIFYING
+**STATUS:** DONE
 
 **RISK CLASS:** STANDARD
 
@@ -245,32 +245,33 @@ These journeys carry the money, the corrections and the documents across modules
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint PASS in CI on the suite's code (TL-01)
+- [x] Typecheck: PHPStan and TypeScript PASS in CI on the suite's code (TL-02)
+- [x] Relevant automated tests: every PHP layer PASS in CI; the journeys' fixtures exercised by the journeys themselves
+- [x] Authorization: N/A — the denial suites are TASK-069's; each journey runs with the capabilities its steps need, high-risk ones signed in with TOTP (AU-18)
+- [x] Route integrity: N/A — the crawl and audit are TASK-069's; each journey's network capture flags any 404, 405, 419 or 5xx, none found; the route audit (TL-07) PASS in CI
+- [x] Interaction behavior: N/A — the INT- tests are the module Tasks'; the journeys walk them
+- [x] Browser E2E if required: CJ-04, CJ-06, CJ-14, CJ-15, CJ-17 and CJ-20 — eleven tests — PASS on Chromium and WebKit (TL-09), runs 43378627278 (push) and 43378630576 (pull request #77) on `7b9f207`
+- [x] Responsive/adaptive if required: the journeys at their own phone and desktop widths; TL-11 PASS in CI
+- [x] Visual breathing room/density if UI: N/A — no page built; TASK-065's gate
+- [x] Production build: TL-13 PASS in CI
+- [x] Security checks if required: no credential in the suite — accounts and secrets generated per run; every journey's CSP capture clean but WebKit's own `<select>` report (TASK-015); TL-14 PASS once TASK-093's phpseclib 4.0.3 is merged in (below)
+- [x] Database safety review: test data only — synthetic companies created for each run on the CI stack's database; no schema change; production not touched
+- [x] Final diff review: Codex's review of `9063230` on pull request #77 raised one P1 — CJ-06's invoice Admin signed in without TOTP before a high-risk grant, so the session would end on its next request —, fixed in `2bdc2a4` (the Admin signed in with TOTP); its targeted re-review of this record's head before the merge (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: the route audit for the routes this Task adds or changes, or N/A with its reason
-- Interaction evidence: the INT- tests of this Task, or N/A with its reason
-- Browser evidence: `E2E: PASS — Evidence: …` for its journeys (DOD-18), or N/A with its reason
-- Localization evidence: both languages on every page it changes (DOD-16), or N/A with its reason
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): tested commit `7b9f207`, fresh CI on GitHub's `ubuntu-24.04` runner — runs 43378627278 (push) and 43378630576 (pull request #77): every browser layer PASS, the E2E layer 387 PASS, the one pre-existing skip (WebKit's native-select CSP check, Chromium-skipped), none failed; *Verify* failed TL-14 alone — phpseclib's advisory GHSA-w3p9-g4p2-h3rr, reported 2026-11-02 and refusing every branch —, cleared by TASK-093's phpseclib 4.0.3, merged in with `main` at `35dd8ff`. This record's head is proven by its own fresh CI, every job required to PASS, before the merge (DIR-103)
+- Build result: TL-13 PASS in the same runs
+- Route evidence: N/A — no route of the application is added or changed; the test-only routes `__fixtures/journey-b1/*`, `journey-b2/*` and `journey-b3/*` exist only in the fixtures' routes
+- Interaction evidence: N/A — no INT- contract built
+- Browser evidence: `E2E: PASS — Evidence: 7b9f207, CI ubuntu-24.04 run 43378630576, tests/Browser/E2E/journey-cj04.spec.ts, journey-cj06, journey-cj14, journey-cj15, journey-cj17, journey-cj20 on Chromium and WebKit; each test's console-and-network.json and reconcile-guards.json in the run's browser-evidence-e2e artifact`. The 22 captures: no critical console error and no failed request; ReconcileGuards without a difference over its 14 families for every journey; the 167 CSP entries all WebKit's `style-src-attr SELECT inline` engine report, set aside on WebKit alone as TASK-015's spec does; WebKit's interrupted inline-PDF frame set aside once — CJ-15's GET `/berkas/{uuid}/tampil`, its answer checked 200, `application/pdf`, `inline` before `clean()` —, no other request in any journey
+- Localization evidence: N/A — the journeys run in the default Indonesian interface and assert its copy; both languages are TASK-067's
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE — Playwright only; TestSprite not adopted, optional by the Owner's decision (DIR-087; TOOLCHAIN), never a condition of completion
+- Files changed: `tests/Browser/E2E/journey-cj04.spec.ts`, `journey-cj06.spec.ts`, `journey-cj14.spec.ts`, `journey-cj15.spec.ts`, `journey-cj17.spec.ts`, `journey-cj20.spec.ts`; `tests/Browser/journey-fixtures.ts`, `journey-b1-fixtures.ts`, `journey-b2-fixtures.ts`, `journey-b3-fixtures.ts`; `tests/Support/Fixtures/JourneyFinanceFixture.php`, `JourneyDocumentFixture.php`, `JourneyCompletionFixture.php`, `OtherCashFixture.php`, `ReturnFixture.php`; `routes/fixtures.php`; `docs/11-tasks/TASK_PLAN.md`, this file; `docs/handoff/CURRENT_HANDOFF.md`; on the same branch, the Owner's records DIR-109, DIR-110, DIR-111 and DIR-112 with APPR-030 (`docs/00-governance/DECISION_LOG.md`, their sources) and the operator input request (`docs/handoff/OPERATOR_INPUT_REQUEST.md`). No application code
+- Commit SHA: `53046d8` to `7b9f207` on `task/TASK-063-critical-journeys-b`, `main` merged in at `724255e` and `35dd8ff` — never rebased —, the Owner's identity, no AI attribution; this record's commit follows them, verified by the pull request head's CI
+- Notes: criteria PASS by the journeys above, their figures exact against FX-01. **Defects found and sent to their owners:** D3, a backdated numbered command not naming its number's period (UXS-14); D4, a popover opened inside a modal layer stacking under it; D5, the composer's resize-observer loop — each a defect Task by Change 18, TASK-090, TASK-091 and TASK-092, DONE and merged —; no expected value, requirement or assertion changed here. **Suite fixes, not defects:** the first CI run's findings traced to the suite or its fixtures (`2bdc2a4`), the returns fixture's second active grant (`ef1a1eb`), headless WebKit's interrupted inline-PDF frame set aside for ROUTE-226's rendition alone (`7d81ded`, narrowed in `d578aee`), and CJ-14's next date typed only after the period change's deferred `tables` reload has landed — the push run 43224786936 on `d578aee` had lost a typed day to that reload on WebKit (`7b9f207`, no sleep, no assertion changed)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
