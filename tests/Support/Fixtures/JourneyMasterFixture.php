@@ -76,8 +76,11 @@ final class JourneyMasterFixture
             app(CatalogueSync::class)->run();
         }
 
-        // The actions' actor: an Owner of this fixture, never the Admin the journey signs in as.
-        $owner = Authorization::owner();
+        // The actions' actor: an Owner of this fixture, never the Admin the journey signs in as. Its e-mail is the run's:
+        // the factory's sequence starts again with every request, so its first address would repeat on the shared test
+        // database once the journey runs a second time (users_email_lower_unique).
+        $owner = User::factory()->create(['email' => "pemilik-cari-{$bulk}@contoh.test"]);
+        DB::table('user_roles')->insert(['user_id' => $owner->id, 'role_id' => DB::table('roles')->where('code', 'OWNER')->value('id'), 'granted_at' => now()]);
         $year = substr(BusinessDate::today(), 0, 4);
         $mine = self::world($owner, $year, ucfirst($bulk).' Proyek ', self::BULK, null);
         $theirs = self::world($owner, $year, ucfirst($bulk).' Proyek Luar ', self::OUTSIDE, ucfirst($hidden).' Rahasia');

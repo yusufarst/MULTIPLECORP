@@ -57,8 +57,26 @@ async function antiSlop(page: Page, where: string): Promise<void> {
     const text = await content.innerText();
     expect(text, `${where}: no greeting (SLOP-20; §16)`).not.toMatch(GREETING);
     expect(text, `${where}: no emoji as decoration (SLOP-22)`).not.toMatch(EMOJI);
+    // SLOP-26 as DESIGN_SYSTEM §5.2 and §7 state it: a page title on the reference's scale — at most `--text-title` (32 px at
+    // the canvas; the phone's title smaller) — and the display size only on the sign-in, never a hero; both sizes read from the
+    // page's own tokens.
     const h1 = page.getByRole('heading', { level: 1 });
-    expect(await h1.evaluate((heading) => parseFloat(getComputedStyle(heading).fontSize)), `${where}: no heading above 20 px (SLOP-26; PT-03)`).toBeLessThanOrEqual(20);
+    const scale = await page.evaluate(() => {
+        const measure = (size: string): number => {
+            const probe = document.createElement('span');
+            probe.style.fontSize = size;
+            document.body.append(probe);
+            const px = parseFloat(getComputedStyle(probe).fontSize);
+            probe.remove();
+
+            return px;
+        };
+
+        return { title: measure('var(--text-title)'), display: measure('var(--text-display)') };
+    });
+    const titleSize = await h1.evaluate((heading) => parseFloat(getComputedStyle(heading).fontSize));
+    expect(titleSize, `${where}: the page title at most --text-title (SLOP-26; DESIGN_SYSTEM §5.2; PT-03)`).toBeLessThanOrEqual(scale.title);
+    expect(titleSize, `${where}: never the sign-in's display size (SLOP-26)`).toBeLessThan(scale.display);
     await expect(content.locator('section [data-slot="card"]'), `${where}: no KPI cards — counts are inline text in signal rows (SLOP-18; PT-21)`).toHaveCount(0);
     expect(await content.locator('[data-slot="metric-strip"]').count(), `${where}: key figures in one strip at most, never a wall of tiles (SLOP-18)`).toBeLessThanOrEqual(1);
     await expect(content.getByRole('banner'), `${where}: no banner in the page (SLOP-19; PT-03)`).toHaveCount(0);

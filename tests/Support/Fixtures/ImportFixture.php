@@ -8,6 +8,8 @@ use App\Modules\ImportOrchestration\Actions\DryRunImport;
 use App\Modules\ImportOrchestration\Actions\SignOffImport;
 use App\Modules\ImportOrchestration\Jobs\CommitImportRows;
 use App\Modules\ImportOrchestration\Jobs\ValidateImportBatch;
+use App\Modules\ImportOrchestration\Kinds\Kinds;
+use App\Modules\ImportOrchestration\Kinds\OpeningStockKind;
 use App\Modules\ImportOrchestration\Models\Batch as ImportBatch;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
@@ -101,16 +103,26 @@ final class ImportFixture
         return response()->json(['state' => $batch->refresh()->state]);
     }
 
-    /** A committed opening stock row of another company under the identity given, the twin a batch of this company collides with (UXS-19). */
-    public static function twin(Request $request): JsonResponse
+    /**
+     * A committed row of another company under the identity given — opening stock, or the import kind named —, the twin a batch of this
+     * company collides with: at its preparation (UXS-19), or at its commit when the twin committed after it (IMP-05; DP-18).
+     */
+    public static function twin(Request $request, Kinds $kinds): JsonResponse
     {
+        $kind = $request->input('kind', OpeningStockKind::CODE);
+
+        // Only a kind whose rows carry a company has a twin in another company: a rack, a product or a client is a record of none.
+        if (! is_string($kind) || ! in_array($kind, Kinds::codes(), true) || ! $kinds->of($kind)->companyBound()) {
+            return response()->json(['message' => 'The twin names an import kind whose rows carry a company.'], 422);
+        }
+
         // Their own identities: the factories' sequences start again in every request (C-49).
         $tag = Str::upper(Str::random(8));
         $company = Company::factory()->create(['code' => "K{$tag}", 'legal_name' => "CV Kembar {$tag}"]);
         // The factory of the batch's own table: the orchestration's Batch inherits no factory attribute.
-        $batch = ImportBatchFactory::new()->createOne(['import_kind' => 'OPENING_STOCK', 'source_sha256' => hash('sha256', "kembar-{$tag}"), 'company_scope' => [$company->id], 'state' => 'COMMITTED']);
+        $batch = ImportBatchFactory::new()->createOne(['import_kind' => $kind, 'source_sha256' => hash('sha256', "kembar-{$tag}"), 'company_scope' => [$company->id], 'state' => 'COMMITTED']);
         DB::table('import_rows')->insert([
-            'import_batch_id' => $batch->id, 'row_number' => 2, 'import_kind' => 'OPENING_STOCK', 'import_identity' => (string) $request->input('identity'), 'company_id' => $company->id,
+            'import_batch_id' => $batch->id, 'row_number' => 2, 'import_kind' => $kind, 'import_identity' => (string) $request->input('identity'), 'company_id' => $company->id,
             'normalized_payload' => '{}', 'validation_state' => 'COMMITTED', 'recorded_at' => now(), 'updated_at' => now(),
         ]);
 

@@ -2,7 +2,7 @@ import { expect as base, type Page, test } from '@playwright/test';
 
 import { type Account, signedIn, signIn, stepUp } from '../account-fixtures';
 import { evidenceCompany, uniquePdf } from '../evidence-fixtures';
-import { importRun, PASSWORD, prepareCompany } from '../import-fixtures';
+import { adminSignOff, batchOf, importRun, PASSWORD, prepareCompany, work } from '../import-fixtures';
 import { clean, guardsClean, watch } from '../journey-fixtures';
 import { box, confirmationAged, merged, noDecisionControl, openAccess, prepareBatch, previewAccess, registerOrder, reviewSources, toggle } from '../journey-k1-fixtures';
 import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
@@ -16,12 +16,12 @@ const expect = base.configure({ timeout: 60_000 });
 // - a high-risk Owner command on PG-060: the session's first asks the step-up, the next within 15 minutes does not, and once the
 //   last confirmation is older than 15 minutes the password dialog opens above the open confirmation, the form behind it keeps its
 //   input, and the same `command_id` is sent after it (UXS-26; MSG-27; H7-09) — the decision then on PG-008's *Aktivitas*;
-// - PG-008 with every QS-14 source the run can make: the ADM_PLUS and OWNER_ONLY events and an acknowledged duplicate warning
-//   (QS-21) on *Aktivitas*; AUTHORIZATION_ANOMALY, EVIDENCE_DUPLICATE_UNDISCLOSED and IMPORT_COLLISION_UNDISCLOSED on *Keamanan*;
-//   pool evidence on *Bukti Gudang Bersama*; an import row whose committed twin lies outside its batch's scope on *Impor*; money
-//   recovered for a written-off invoice and an invoice left outstanding after a payment under *Kondisi yang Masih Terbuka* — each
-//   linking to its record, with no approve, dismiss or read control anywhere (UXS-40). A refund with an unbacked remainder has no
-//   fixture the browser suite can compose without a guard difference and is not made here (reported with the run).
+// - PG-008 with every QS-14 source: the ADM_PLUS and OWNER_ONLY events and an acknowledged duplicate warning (QS-21) on
+//   *Aktivitas*; AUTHORIZATION_ANOMALY, EVIDENCE_DUPLICATE_UNDISCLOSED and IMPORT_COLLISION_UNDISCLOSED on *Keamanan*; pool
+//   evidence on *Bukti Gudang Bersama*; an import row whose committed twin lies outside its batch's scope on *Impor*; money
+//   recovered for a written-off invoice, a refund with an unbacked remainder (a refunded credit's payment then partly contra'd, each
+//   through its command's own action; L-46; C-44) and an invoice left outstanding after a payment under *Kondisi yang Masih
+//   Terbuka* — each linking to its record, with no approve, dismiss or read control anywhere (UXS-40).
 // Each journey watches its console and network and ends with ReconcileGuards clean for its companies (TS-11).
 
 test.describe.configure({ timeout: 300_000 });
@@ -209,9 +209,38 @@ test('CJ-13 review queue: an access grant, an evidence match and an import colli
     await expect(evidenceMatch.getByRole('link', { name: `Catatan terkait · ${other.code}` })).toBeVisible();
     await noDecisionControl(page);
 
+    // The Admin's second batch: a legacy document of the run's company whose twin is not committed yet, dry-run to *Uji Coba
+    // Lolos* and signed off by the Owner and an Admin (OD-13); its twin then committed in a company outside the batch's scope,
+    // and the Owner's "Jalankan Impor" — within AU-15's 15 minutes of the grant's password, so none is asked — runs the
+    // validation again and marks the row DUPLICATE (IMP-05; C-47). A kind whose rows carry a company and name no master: a
+    // rack is a pool record of no company (CS-05), so its twin never lies outside a scope.
+    const legacy = `D-${stamp}`;
+    const documents = await prepareBatch(admin, scoped, 'LEGACY_DOCUMENT', [{ id: legacy, perusahaan: scoped.code, jenis: 'Faktur', nomor: `LAMA-${stamp}` }], 'dokumen.csv');
+    await documents.getByRole('button', { name: 'Jalankan Uji Coba', exact: true }).click();
+    await expect(admin.locator('#konten')).toContainText('Uji coba dijalankan.');
+    const id = batchOf(admin);
+    await work(page, id);
+    const committing = page.locator('[data-slot="import-batch"]');
+    await expect(committing.locator('[data-status="import_batch.DRY_RUN_PASSED"]')).toBeVisible();
+    await committing.getByRole('button', { name: 'Setujui Hasil Uji Coba' }).click();
+    const approval = page.getByRole('dialog', { name: 'Setujui Hasil Uji Coba' });
+    await approval.getByLabel('Bukti persetujuan').setInputFiles({ name: 'persetujuan.pdf', mimeType: 'application/pdf', buffer: uniquePdf() });
+    await expect(approval.getByText('persetujuan.pdf')).toBeVisible();
+    await approval.getByRole('button', { name: 'Setujui Hasil Uji Coba' }).click();
+    await expect(page.locator('#konten')).toContainText('Persetujuan dicatat.');
+    await adminSignOff(page, id);
+    await page.reload();
+    await expect(committing.locator('[data-status="import_batch.SIGNED_OFF"]')).toBeVisible();
+    await fixture(page, '/__fixtures/impor/kembar', { identity: legacy, kind: 'LEGACY_DOCUMENT' });
+    await committing.getByRole('button', { name: 'Jalankan Impor' }).click();
+    await page.getByRole('alertdialog', { name: 'Jalankan Impor' }).getByRole('button', { name: 'Jalankan Impor' }).click();
+    await expect(page.locator('#konten')).toContainText('Impor dijalankan.');
+    await work(page, id);
+    await expect(committing.locator('[data-status="import_batch.COMMITTED"]')).toBeVisible();
+
     // *Impor*: the DUPLICATE row whose twin lies outside the batch's scope, by its preparer, linked to its batch (DP-18).
-    await review(page, `tab=impor&pelaku=${preparer.id}`, ['Stok awal']);
-    const row = page.locator('[data-slot="review-items"] li').filter({ hasText: 'Stok awal' }).first();
+    await review(page, `tab=impor&pelaku=${preparer.id}`, ['Dokumen lama']);
+    const row = page.locator('[data-slot="review-items"] li').filter({ hasText: 'Dokumen lama' }).first();
     await expect(row).toContainText(/Baris \d+/);
     await expect(row.getByRole('link', { name: 'Buka Catatan' })).toBeVisible();
     await noDecisionControl(page);
@@ -227,7 +256,7 @@ test('CJ-13 review queue: an access grant, an evidence match and an import colli
     await context.close();
 });
 
-test('CJ-13 review queue: an acknowledged duplicate on Aktivitas, an anomaly on Keamanan, pool evidence on Bukti Gudang Bersama and the open conditions of recovered money and an invoice outstanding after a payment, with no decision control (UXS-40; QS-14; QS-21; criterion 5)', async ({ page }, testInfo) => {
+test('CJ-13 review queue: an acknowledged duplicate on Aktivitas, an anomaly on Keamanan, pool evidence on Bukti Gudang Bersama and the open conditions of recovered money, a refund with an unbacked remainder and an invoice outstanding after a payment, with no decision control (UXS-40; QS-14; QS-21; criterion 5)', async ({ page }, testInfo) => {
     const captured = watch(page);
     await page.setViewportSize(DESK);
     await ownerSignedIn(page, `cj13-kondisi-${String(Date.now())}`);
@@ -261,7 +290,13 @@ test('CJ-13 review queue: an acknowledged duplicate on Aktivitas, an anomaly on 
     const recovered = await numberingCompany(page, YEAR_START);
     const recoveredRun = await fixture<{ code: string }>(page, '/__fixtures/invoice', { company: recovered, stage: 'issued', lines: 1, billed: true, written_off: '500000', recovery: '200000' });
 
-    // *Kondisi yang Masih Terbuka*: each condition with its company and a link to its invoice.
+    // TASK-053's refund (AX-23; L-46; C-44): a Rp200,000 payment with its proof, unapplied, refunded in full from the company's
+    // account with a transfer proof, then Rp100,000 of it contra'd as wrongly recorded (TASK-051) — the Rp100,000 of the refund it
+    // no longer backs an unbacked remainder on the case the contra opens.
+    const refunded = await numberingCompany(page, YEAR_START);
+    const refundedRun = await fixture<{ code: string }>(page, '/__fixtures/invoice', { company: refunded, stage: 'issued', lines: 1, bank: true, paid: '200000', refund: '200000', unbacked: '100000' });
+
+    // *Kondisi yang Masih Terbuka*: each condition with its company and a link to its invoice — the refund's to its case.
     await page.goto('/tinjauan');
     const conditions = page.getByRole('table', { name: 'Kondisi yang Masih Terbuka' });
     await expect(conditions).toBeVisible();
@@ -271,6 +306,9 @@ test('CJ-13 review queue: an acknowledged duplicate on Aktivitas, an anomaly on 
     const recovery = conditions.getByRole('row').filter({ hasText: 'Uang pulihan dari invoice yang dihapusbukukan belum dipakai' }).filter({ hasText: recoveredRun.code });
     await expect(recovery).toHaveCount(1);
     await expect(recovery.getByRole('link', { name: 'Buka Catatan' })).toHaveAttribute('href', /\/keuangan\/invoice\/[0-9a-f-]{36}$/);
+    const unbacked = conditions.getByRole('row').filter({ hasText: 'Pengembalian dana dengan sisa tanpa dasar' }).filter({ hasText: refundedRun.code });
+    await expect(unbacked).toHaveCount(1);
+    await expect(unbacked.getByRole('link', { name: 'Buka Catatan' })).toHaveAttribute('href', /\/dokumen\/kasus\?kasus=[0-9a-f-]{36}$/);
     await noDecisionControl(page);
 
     // *Aktivitas*: the acknowledged warning (QS-21) and the write-off (OWNER_ONLY), by the Owner.
@@ -290,6 +328,6 @@ test('CJ-13 review queue: an acknowledged duplicate on Aktivitas, an anomaly on 
     await expect(pool.getByRole('link', { name: 'Buka Catatan' })).toBeVisible();
     await noDecisionControl(page);
 
-    await guardsClean(page, testInfo, [twin.company, paid, recovered]);
+    await guardsClean(page, testInfo, [twin.company, paid, recovered, refunded]);
     await clean(captured, testInfo);
 });

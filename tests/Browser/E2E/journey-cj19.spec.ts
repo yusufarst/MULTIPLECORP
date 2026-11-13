@@ -152,7 +152,20 @@ test('CJ-19: the masters set up by the Owner, a numbering scheme, an Admin\'s pr
     await sheet.getByRole('button', { name: 'Tambah Rak' }).click();
     await expect(sheet).toBeHidden();
     await expect(content.getByText('Rak ditambahkan.')).toBeVisible();
-    await expect(page.getByRole('list', { name: 'Rak' }).getByRole('listitem').filter({ hasText: rack })).toContainText('Rak master');
+    // The list is ordered by code and paged with "Muat Lagi": on the shared CI database other runs' racks come first, so the
+    // new rack is reached as an Admin reaches it — page by page.
+    const racks = page.getByRole('list', { name: 'Rak' }).getByRole('listitem');
+    const added = racks.filter({ hasText: rack });
+    for (let turn = 0; turn < 20 && (await added.count()) === 0; turn += 1) {
+        const more = content.getByRole('button', { name: 'Muat Lagi' });
+
+        if ((await more.count()) === 0) break;
+
+        const shown = await racks.count();
+        await more.click();
+        await expect.poll(() => racks.count()).toBeGreaterThan(shown);
+    }
+    await expect(added).toContainText('Rak master');
     await page.getByRole('button', { name: 'Atur Stok Minimum' }).last().click();
     await page.getByRole('combobox', { name: 'Produk' }).fill(product);
     await page.getByRole('option', { name: product }).click();
