@@ -75,14 +75,16 @@ test('freezes the draft while a save is in flight or its outcome unknown, the re
     const save = page.getByRole('button', { name: 'Simpan Draf' });
     const unknown = page.getByText('Belum dapat dipastikan apakah tindakan ini tersimpan. Tekan Coba Lagi — sistem tidak akan mencatat dua kali.');
     const saved = page.getByText('Draf penawaran tersimpan.');
+    // The fieldset carries the `disabled` attribute; Playwright counts only form controls as disabled, so the fields themselves
+    // are asserted below.
     const frozen = async () => {
-        await expect(draft).toBeDisabled();
+        await expect(draft).toHaveAttribute('disabled', '');
         for (const field of [valid, price, description]) await expect(field).toBeDisabled();
         await expect(page.getByRole('button', { name: /^Hapus baris/ }).first()).toBeDisabled();
         await expect(save).toBeDisabled();
     };
     const editable = async () => {
-        await expect(draft).toBeEnabled();
+        await expect(draft).not.toHaveAttribute('disabled');
         for (const field of [valid, price, description]) await expect(field).toBeEditable();
     };
 

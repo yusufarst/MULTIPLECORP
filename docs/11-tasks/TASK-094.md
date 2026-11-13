@@ -213,7 +213,7 @@ TASK-064's CJ-21 test 1, in fresh CI on `f976270`, found on Chromium and WebKit 
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and the pull request's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and the pull request's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit). The first head `2c811da` (runs 43396651174, 43396659384) failed only this Task's own test on both engines: it asserted the `<fieldset>` itself disabled, which Playwright counts only for form controls although the element carried `disabled`; the test now reads the attribute and asserts each field, the line's removal and the save disabled — no product change; every other test PASS (391), and Codex's review of `2c811da` without finding
 - Build result: TL-13 in the same runs
 - Route evidence: N/A — no route added or changed
 - Interaction evidence: `tests/Browser/E2E/quotations.spec.ts`'s TASK-094 test
