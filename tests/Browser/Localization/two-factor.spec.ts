@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
+
 // TL-10 (TASK-018; INT-001): PG-002 and PG-004 in both languages — no key shown as itself, the document title
 // "{nama layar} · MultipleCorp" —; PG-002, before sign-in, in the language carried as `bahasa` across the sign-in
 // pages (NV-07), PG-004, inside the enrolment-only session, in the account's own language (AU-13).
@@ -20,6 +22,7 @@ for (const [lang, challenge, enrolment] of [['id', 'Masukkan kode verifikasi', '
             await expect(page.getByRole('heading', { level: 1 })).toHaveText(kind === 'totp' ? challenge : enrolment);
             await expect(page).toHaveTitle(/ · MultipleCorp$/);
             expect(await page.locator('body').innerText()).not.toMatch(KEY_SHOWN);
+            await auditPage(page, lang, kind === 'totp' ? 'PG-002' : 'PG-004');
             await page.context().clearCookies();
         }
     });

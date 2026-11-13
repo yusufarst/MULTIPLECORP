@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { invoiceRun } from '../invoice-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -21,14 +22,17 @@ for (const [locale, texts] of [
         await expect(page.getByRole('tab', { name: texts.all })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.credit })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.proof })).toBeVisible();
+        await auditPage(page, locale, 'PG-045');
 
         await page.goto(`/keuangan/pembayaran/baru?invoice=${run.invoice ?? ''}`);
         await expect(page.getByRole('heading', { name: texts.record, exact: true })).toBeVisible();
         await expect(page.getByLabel(new RegExp(`^${texts.method}`))).toBeVisible();
+        await auditPage(page, locale, 'PG-046');
 
         await page.goto(`/keuangan/mutasi-bank?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { name: texts.bank, exact: true })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.lines })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.action })).toBeVisible();
+        await auditPage(page, locale, 'PG-050');
     });
 }

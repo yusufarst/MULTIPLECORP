@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { completionRun } from '../completion-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -20,5 +21,6 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.title, level: 1 })).toBeVisible();
         await expect(page.getByRole('heading', { name: texts.conditions, level: 2 })).toBeVisible();
         await expect(page.locator('[data-slot="completion-force"]').getByRole('button', { name: texts.force })).toBeVisible();
+        await auditPage(page, locale, 'PG-012');
     });
 }

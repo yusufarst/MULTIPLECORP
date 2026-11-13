@@ -1,5 +1,6 @@
 import { expect as base, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { stockRun } from '../stock-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -20,14 +21,17 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.stock, exact: true })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.places })).toBeVisible();
         await expect(page.getByRole('button', { name: texts.products })).toBeVisible();
+        await auditPage(page, locale, 'PG-018');
 
         await page.goto(`/gudang/stok/${run.product}`);
         for (const label of texts.detail) await expect(page.locator('[data-slot="inventory-block"]')).toContainText(label);
         await expect(page.getByRole('heading', { name: texts.section, exact: true })).toBeVisible();
+        await auditPage(page, locale, 'PG-019');
 
         await page.goto(`/gudang/riwayat-stok?produk=${run.product}&jenis=CONDITION_CHANGE`);
         await expect(page.getByRole('heading', { name: texts.history, exact: true })).toBeVisible();
         await page.getByRole('button', { name: texts.reverse, exact: true }).first().click();
         await expect(page.getByRole('alertdialog', { name: texts.title })).toBeVisible();
+        await auditPage(page, locale, 'PG-020 with the reversal dialog');
     });
 }

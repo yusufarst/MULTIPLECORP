@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { signedIn } from '../account-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-024; LOCALIZATION §3.7; DOD-16): PG-060 in both languages — the title, the directory's action, an
 // account's sections and the access section's line for the Owner's own account in the account's own language.
@@ -20,6 +21,7 @@ for (const locale of ['id', 'en'] as const) {
         await page.goto('/pengaturan/pengguna');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(copy.title);
         await expect(page.getByRole('button', { name: copy.create })).toBeVisible();
+        await auditPage(page, locale, 'PG-060');
 
         await page.goto(`/pengaturan/pengguna?akun=${owner.id}&bagian=profil`);
         for (const section of copy.sections) {
@@ -28,5 +30,6 @@ for (const locale of ['id', 'en'] as const) {
 
         await page.getByRole('tab', { name: copy.sections[1] }).click();
         await expect(page.getByText(copy.self)).toBeVisible({ timeout: 15_000 });
+        await auditPage(page, locale, 'PG-060, an account\'s access');
     });
 }

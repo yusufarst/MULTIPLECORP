@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { deliveryRun } from '../delivery-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -19,8 +20,10 @@ for (const [locale, texts] of [
         await page.goto('/gudang/pengiriman');
         await expect(page.getByRole('heading', { name: texts.list, level: 1 })).toBeVisible();
         await expect(page.getByRole('link', { name: texts.awaiting })).toBeVisible();
+        await auditPage(page, locale, 'PG-030');
         await page.goto(`/gudang/pengiriman/${run.shipment}`);
         await expect(page.getByRole('heading', { name: texts.record, level: 1 })).toBeVisible();
         await expect(page.locator('[data-slot="delivery-lines"]')).toContainText(texts.lines);
+        await auditPage(page, locale, 'PG-031');
     });
 }

@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { importRun } from '../import-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -19,9 +20,12 @@ for (const [locale, texts] of [
         await page.goto('/beranda');
         await expect(page.getByRole('heading', { name: texts.home, level: 1 })).toBeVisible();
         await expect(page.getByRole('region', { name: texts.decisions })).toBeVisible();
+        await auditPage(page, locale, 'PG-006');
         await page.goto('/pekerjaan');
         await expect(page.getByRole('heading', { name: texts.work, level: 1 })).toBeVisible();
+        await auditPage(page, locale, 'PG-007');
         await page.goto('/tinjauan');
         await expect(page.getByRole('region', { name: texts.conditions })).toBeVisible();
+        await auditPage(page, locale, 'PG-008');
     });
 }

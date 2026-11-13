@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { quotationRun } from '../quotation-fixtures';
 
 // TL-10 (TASK-033; LOCALIZATION §3, §3.4; DOD-16): PG-014 and PG-037 in both languages — keys of the catalogue, never
@@ -21,9 +22,11 @@ for (const [locale, texts] of [
         await expect(page.getByRole('button', { name: texts.issue })).toBeVisible();
         await expect(page.locator('[data-slot="paper-frame"]').first()).toContainText('Penawaran Harga');
         await expect(page.locator('[data-slot="paper-frame"]').first()).toContainText('Berlaku sampai');
+        await auditPage(page, locale, 'PG-014');
 
         await page.goto(`/dokumen/penawaran?perusahaan=${run.company}`);
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.list);
         await expect(page.getByRole('row').filter({ hasText: run.number })).toContainText(texts.draft);
+        await auditPage(page, locale, 'PG-037');
     });
 }

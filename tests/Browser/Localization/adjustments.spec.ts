@@ -1,6 +1,7 @@
 import { expect as base, test } from '@playwright/test';
 
 import { adjustmentRun } from '../adjustment-fixtures';
+import { auditPage } from '../localization-audit';
 
 const expect = base.configure({ timeout: 60_000 });
 
@@ -19,8 +20,10 @@ for (const [locale, texts] of [
         await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=kondisi`);
         await expect(page.getByRole('heading', { name: new RegExp(texts.page, 'i'), level: 1 })).toBeVisible();
         await expect(page.locator('[data-slot="adjustment-form"]').getByRole('button', { name: new RegExp(texts.action, 'i') })).toBeVisible();
+        await auditPage(page, locale, 'PG-027, the condition change');
 
         await page.goto(`/gudang/penyesuaian?produk=${run.product}&aksi=penyesuaian`);
         await expect(page.locator('[data-slot="adjustment-form"]')).toContainText(texts.statement);
+        await auditPage(page, locale, 'PG-027, the stock adjustment');
     });
 }

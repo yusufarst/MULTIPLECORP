@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { signedIn } from '../account-fixtures';
+import { auditPage } from '../localization-audit';
 
 // TL-10 (TASK-023; LOCALIZATION §3.7; DOD-16): PG-065 and the account menu in both languages — the title, the
 // sections, the language choice and the menu's items in the account's own language.
@@ -27,11 +28,13 @@ for (const locale of ['id', 'en'] as const) {
 
         await expect(page.getByLabel(copy.language)).toHaveValue(locale);
         await expect(page.getByRole('button', { name: copy.replace })).toBeVisible();
+        await auditPage(page, locale, 'PG-065');
 
         await page.getByRole('button', { name: copy.menu }).click();
         await expect(page.getByRole('menuitem', { name: copy.title })).toBeVisible();
         await expect(page.getByRole('menuitemcheckbox', { name: locale === 'id' ? 'Bahasa Indonesia' : 'Indonesian' })).toHaveAttribute('aria-checked', locale === 'id' ? 'true' : 'false');
         await expect(page.getByRole('menuitemcheckbox', { name: 'English' })).toHaveAttribute('aria-checked', locale === 'en' ? 'true' : 'false');
         await expect(page.getByRole('menuitem', { name: copy.logout })).toBeVisible();
+        await auditPage(page, locale, 'PG-065 with the account menu');
     });
 }

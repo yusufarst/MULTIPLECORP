@@ -1,5 +1,6 @@
 import { expect as base, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { returnRun } from '../return-fixtures';
 
 const expect = base.configure({ timeout: 60_000 });
@@ -20,5 +21,6 @@ for (const [locale, texts] of [
         await expect(page.getByRole('heading', { name: texts.title, level: 1 })).toBeVisible();
         await expect(page.locator('[data-slot="return-list"]')).toContainText(texts.list);
         await expect(page.locator('[data-slot="return-form"]').getByLabel(texts.lot)).toBeVisible();
+        await auditPage(page, locale, 'PG-028');
     });
 }

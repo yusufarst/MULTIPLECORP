@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { evidenceCompany } from '../evidence-fixtures';
+import { auditPage } from '../localization-audit';
 import { ownerSignedIn } from '../numbering-fixtures';
 
 // TL-10 (TASK-030; LOCALIZATION §3; DOD-16): PG-038 and its upload sheet in both languages — keys of the catalogue,
@@ -17,10 +18,12 @@ for (const [locale, texts] of [
         await page.goto(`/dokumen/bukti?cabang=${company}`);
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.title);
         await expect(page.getByText(texts.empty)).toBeVisible();
+        await auditPage(page, locale, 'PG-038');
 
         await page.getByRole('button', { name: texts.upload, exact: true }).filter({ visible: true }).first().click();
         const sheet = page.getByRole('dialog', { name: texts.sheet });
         await expect(sheet.getByLabel(texts.type)).toBeVisible();
         await expect(sheet.getByRole('button', { name: texts.register })).toBeVisible();
+        await auditPage(page, locale, 'PG-038 with the upload sheet');
     });
 }

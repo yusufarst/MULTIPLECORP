@@ -1,5 +1,7 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
+
 // TL-10 (TASK-016): the shell's labels in both languages — no key shown as itself, the document title
 // "{nama layar} · MultipleCorp" (H7-10).
 
@@ -14,5 +16,6 @@ for (const [lang, entry] of [['id', 'Pekerjaan'], ['en', 'Work']] as const) {
         await expect(page.getByRole('navigation').first().getByRole('link').first()).toHaveText(entry);
         await expect(page).toHaveTitle(/ · MultipleCorp$/);
         expect(await page.locator('body').innerText()).not.toMatch(KEY_SHOWN);
+        await auditPage(page, lang, 'the shell');
     });
 }

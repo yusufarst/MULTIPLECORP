@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { auditPage } from '../localization-audit';
 import { numberingCompany, ownerSignedIn } from '../numbering-fixtures';
 
 // TL-10 (TASK-025; LOCALIZATION §3; DOD-16): PG-059 and PG-062 in both languages — keys of the catalogue, never
@@ -15,12 +16,15 @@ for (const [locale, texts] of [
 
         await page.goto('/pengaturan/perusahaan');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.companies);
+        await auditPage(page, locale, 'PG-059');
         await page.goto(`/pengaturan/perusahaan?perusahaan=${company}`);
         await expect(page.getByRole('heading', { name: texts.readiness })).toBeVisible();
         await expect(page.getByRole('tab', { name: texts.accounts })).toBeVisible();
+        await auditPage(page, locale, 'PG-059, a company');
 
         await page.goto('/pengaturan/pajak');
         await expect(page.getByRole('heading', { level: 1 })).toHaveText(texts.tax);
         await expect(page.getByRole('tab', { name: texts.rates })).toBeVisible();
+        await auditPage(page, locale, 'PG-062');
     });
 }

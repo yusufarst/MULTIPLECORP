@@ -17,8 +17,8 @@ Baseline Total Tasks: 87
 Current Total Tasks: 95
 
 DONE: 73
-READY: 3
-IN_PROGRESS: 0
+READY: 2
+IN_PROGRESS: 1
 BLOCKED: 5
 VERIFYING: 0
 TODO: 14
@@ -28,8 +28,8 @@ Progress:
 73 / 95
 Percentage: 76.8 %
 
-CURRENT TASK: none in progress — TASK-064 — Critical journeys C DONE on its branch `task/TASK-064-critical-journeys-c`, its record in its final commit (DIR-103), its pull request #81 squash-merged by the executor once that head's fresh CI passes (DIR-096); CJ-16 NOT RUN until the operator's staging run (TASK-081)
-NEXT READY TASK: TASK-064's stabilization once TASK-095 is DONE (DIR-112); TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-064 and TASK-065, TASK-069 on TASK-064–TASK-066 and TASK-068, TASK-070 on TASK-064–TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
+CURRENT TASK: TASK-067 — Localization completeness and the per-page copy lists IN_PROGRESS on its branch `task/TASK-067-localization-completeness` from the merged `main` `74b4167`, started once TASK-064 was merged (DIR-114, DIR-115)
+NEXT READY TASK: TASK-068 and TASK-065 READY, each after TASK-067, one at a time (DIR-112); TASK-066 waits on TASK-065, TASK-069 on TASK-065, TASK-066 and TASK-068, TASK-070 on TASK-065–TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 20 of 2026-11-13 — TASK-064's defects D8 (a capability-refused address's PG-005 without the shared props), D9 (PG-065's password input cleared by a 401) and D10 (PG-013's unit and PIC after MSG-17) as the one combined defect Task TASK-095, the Owner's Option A and its extension (APPR-030, APPR-031); TASK-064 VERIFYING, depending on it
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
 PAID SERVICE EXCEPTIONS: none (TestSprite only as DIR-083 OE-01 states; TASK-004)
@@ -215,7 +215,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-064](TASK-064.md) | Critical journeys C — isolation, sign-in, access, search, approvals, import, language, masters, command identity and status | Verification · Verification | STANDARD | DONE | 004, 023, 024, 056, 057, 058, 059, 060, 061, 093, 094, 095 | 066, 069, 070, 081 | NO | AGENT | NONE | YES |
 | [TASK-065](TASK-065.md) | UI/UX consistency gate, the responsive matrix and the anti-slop audit | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 066, 069, 070 | NO | AGENT | NONE | YES |
 | [TASK-066](TASK-066.md) | Accessibility — WCAG 2.2 AA across every page | Verification · Verification | STANDARD | TODO | 004, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065 | 069, 070 | NO | AGENT | NONE | YES |
-| [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
+| [TASK-067](TASK-067.md) | Localization completeness and the per-page copy lists | Verification · Verification | STANDARD | IN_PROGRESS | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 070 | NO | AGENT | NONE | YES |
 | [TASK-068](TASK-068.md) | Performance targets and query budgets in CI | Verification · Verification | STANDARD | READY | 004, 023, 024, 056, 057, 058, 059, 060, 061 | 069, 070, 079 | NO | AGENT | NONE | YES |
 | [TASK-069](TASK-069.md) | Security test matrix, route integrity and zero dead interactions | Verification · Verification | HIGH | TODO | 004, 020, 023, 024, 056, 057, 058, 059, 060, 061, 062, 063, 064, 065, 066, 068 | 070 | NO | AGENT | NONE | YES |
 | [TASK-070](TASK-070.md) | Full release regression and the device UAT's preparation | Verification · Verification | STANDARD | TODO | 062, 063, 064, 065, 066, 067, 068, 069 | 081, 086 | NO | AGENT | NONE | YES |
