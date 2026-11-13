@@ -138,3 +138,48 @@ test('links Google through the faked provider with a current code, then unlinks 
     await expect(page.getByText('Tautan Google dilepas. Sesi lain akun ini telah diakhiri.')).toBeVisible({ timeout: VISIT });
     await expect(page.getByText('Belum tertaut')).toBeVisible();
 });
+
+// TASK-095 (D9; IP-11; AU-12): the password change a 401 interrupts keeps its typed values on the page while the in-place
+// dialog covers it — in the page's memory only —, is sent once after the sign-in with the same values, and the fields are
+// cleared once the change is known.
+test('keeps the password change\'s input across a 401, sends it once after the in-place sign-in and keeps it nowhere else (IP-11; TASK-095)', async ({ page }) => {
+    const account = await signedIn(page, 'akun-401', { plain: true });
+    const fresh = 'Pelangi-Biru#8493';
+    const sent: { current: unknown; password: unknown }[] = [];
+    page.on('request', (request) => {
+        if (new URL(request.url()).pathname === '/akun/kata-sandi' && request.method() !== 'GET') {
+            const body = request.postDataJSON() as Record<string, unknown>;
+            sent.push({ current: body.current_password, password: body.password });
+        }
+    });
+
+    await page.goto('/akun');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Akun Saya', { timeout: VISIT });
+    const current = page.getByLabel('Kata sandi saat ini');
+    const next = page.getByLabel(/^Kata sandi baru/);
+    const again = page.getByLabel(/^Ulangi kata sandi baru/);
+    await current.fill(account.password);
+    await next.fill(fresh);
+    await again.fill(fresh);
+
+    // The session ends by its idle limit; the submission answers 401 and the dialog covers the page.
+    expect((await page.request.post('/__fixtures/reauth/usang', { data: { account: account.id } })).ok()).toBe(true);
+    await page.getByRole('button', { name: 'Ubah Kata Sandi' }).click();
+    const dialog = page.getByRole('alertdialog', { name: 'Masuk lagi untuk melanjutkan' });
+    await expect(dialog).toBeVisible({ timeout: VISIT });
+    await expect(current, 'the typed value stays on the covered page (IP-11)').toHaveValue(account.password);
+    await expect(next).toHaveValue(fresh);
+    await expect(again).toHaveValue(fresh);
+    await nothingKept(page, [account.password, fresh]);
+    expect(sent).toHaveLength(1);
+
+    await dialog.getByLabel('E-mail').fill(account.email);
+    await dialog.getByLabel('Kata sandi', { exact: true }).fill(account.password);
+    await dialog.getByRole('button', { name: 'Lanjutkan' }).click();
+    await expect(dialog).toHaveCount(0, { timeout: VISIT });
+    await expect(page.getByText('Kata sandi diubah. Sesi lain akun ini telah diakhiri.')).toBeVisible({ timeout: VISIT });
+    expect(sent, 'sent once more, with the same values').toEqual([{ current: account.password, password: fresh }, { current: account.password, password: fresh }]);
+    await expect(current, 'cleared once the change is known').toHaveValue('');
+    await expect(next).toHaveValue('');
+    await nothingKept(page, [account.password, fresh]);
+});

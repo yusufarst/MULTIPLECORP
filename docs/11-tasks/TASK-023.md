@@ -36,6 +36,7 @@ SECURITY AU-13 gives every authenticated account self-service of its own credent
 - TASK-067 — Localization completeness and the per-page copy lists
 - TASK-068 — Performance targets and query budgets in CI
 - TASK-069 — Security test matrix, route integrity and zero dead interactions
+- TASK-095 — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) (Change 20)
 
 **PARALLEL SAFE:** NO — its identity steps run on the account row (LK-03) and the TOTP and Google state that the sign-in pipeline of TASK-017–TASK-019 reads
 

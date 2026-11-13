@@ -33,6 +33,7 @@ CAP-04 and AC-04 need one hub where staff find a project's number, company, clie
 - TASK-035 — Administrative checklist and document readiness
 - TASK-057 — Opening import — preparation, dry run, sign-off and commit
 - TASK-059 — Search and scanning
+- TASK-095 — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) (Change 20)
 
 **PARALLEL SAFE:** NO — the project row (LK-01) and PG-011's journey frame are what every later project Task extends
 

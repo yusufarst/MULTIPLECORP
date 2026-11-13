@@ -9,7 +9,7 @@
 // period (IP-07; NM-08). The answer in place, the input kept (IP-01; IP-03; IP-14); leaving with unsent input asks first
 // (MSG-35; NV-02).
 import { router, usePage } from '@inertiajs/react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { ActionBar } from '@/components/action-bar';
 import { type BusinessDate, BusinessDateControl, DateField } from '@/components/date-field';
@@ -115,6 +115,16 @@ export default function ProjectForm({ companies, project, client, today }: Props
     const canCreateClient = page.props.auth.capabilities.includes('parties.manage');
     const amend = project !== null;
     const command = useCommand<Payload>(() => (project === null ? '/proyek' : `/proyek/${project.id}`), project === null ? 'post' : 'put');
+    // C-10's "Mulai Penomoran" address arrives with the answer's flash only; it is kept with the answer that brought it, so the
+    // client's context read again after the refusal (D10) — a visit with no flash — does not take the Owner's action away.
+    const [startLink, setStartLink] = useState<{ answer: object; href: string } | null>(null);
+    const flashLink = flash.answer?.link ?? null;
+
+    if (command.answer !== null && flashLink !== null && (startLink?.answer !== command.answer || startLink.href !== flashLink)) {
+        setStartLink({ answer: command.answer, href: flashLink });
+    }
+
+    const numberingAction = startLink !== null && startLink.answer === command.answer && command.answer.kind === 'REJECTED' ? startLink.href : null;
     const [date, setDate] = useState<BusinessDate>({ date: today, chosen: false });
     const [company, setCompany] = useState(project?.company ?? (companies.length === 1 ? (companies[0]?.id ?? '') : ''));
     const [chosenClient, setChosenClient] = useState<LookupResult | null>(project !== null && client !== null ? { id: client.id, code: '', label: client.name } : null);
@@ -169,6 +179,27 @@ export default function ProjectForm({ companies, project, client, today }: Props
         };
     }, [dirty]);
 
+    // The chosen client's units and PICs, read by a partial reload; `asked` is the client a reload is pending for.
+    const asked = useRef<string | null>(null);
+    const askClient = (id: string) => {
+        asked.current = id;
+        router.reload({ only: ['client'], data: { klien: id }, preserveUrl: true });
+    };
+    const chosenClientId = chosenClient?.id ?? null;
+    const clientId = client?.id ?? null;
+
+    // UXS-28 (TASK-095, D10): a refusal's answer — MSG-17 among them — loads the page again without the chosen client's
+    // units and PICs, so the unit and PIC the form still holds would show empty; they are read once more for the client still
+    // chosen, the values themselves untouched. A client the answer leaves out is not asked again.
+    useEffect(() => {
+        if (clientId !== null && clientId === chosenClientId) {
+            asked.current = null;
+        } else if (chosenClientId !== null && asked.current !== chosenClientId) {
+            asked.current = chosenClientId;
+            router.reload({ only: ['client'], data: { klien: chosenClientId }, preserveUrl: true });
+        }
+    }, [clientId, chosenClientId]);
+
     const chooseClient = (next: LookupResult | null) => {
         setChosenClient(next);
         setUnit('');
@@ -177,7 +208,7 @@ export default function ProjectForm({ companies, project, client, today }: Props
         touch();
 
         if (next !== null) {
-            router.reload({ only: ['client'], data: { klien: next.id }, preserveUrl: true });
+            askClient(next.id);
         }
     };
     const chooseProduct = (key: string, next: LookupResult | null) => {
@@ -563,8 +594,8 @@ export default function ProjectForm({ companies, project, client, today }: Props
                     )}
                 </FormSection>
             </div>
-            <ActionBar label={pageTitle} answer={command.answer} answerAction={flash.answer?.link != null && command.answer?.kind === 'REJECTED' ? (
-                <Button variant="outline" size="sm" render={<a href={flash.answer.link} />}>{t('projects.action.start_numbering')}</Button>
+            <ActionBar label={pageTitle} answer={command.answer} answerAction={numberingAction !== null ? (
+                <Button variant="outline" size="sm" render={<a href={numberingAction} />}>{t('projects.action.start_numbering')}</Button>
             ) : undefined}>
                 <Button variant="outline" size="lg" onClick={() => { router.visit(origin); }}>{t('actions.cancel')}</Button>
                 <Button size="lg" disabled={command.pending} onClick={submit}>{project === null ? t('projects.action.save_new') : t('projects.action.save')}</Button>
