@@ -58,8 +58,9 @@ async function antiSlop(page: Page, where: string): Promise<void> {
     expect(text, `${where}: no greeting (SLOP-20; §16)`).not.toMatch(GREETING);
     expect(text, `${where}: no emoji as decoration (SLOP-22)`).not.toMatch(EMOJI);
     // SLOP-26 as DESIGN_SYSTEM §5.2 and §7 state it: a page title on the reference's scale — at most `--text-title` (32 px at
-    // the canvas; the phone's title smaller) — and the display size only on the sign-in, never a hero; both sizes read from the
-    // page's own tokens.
+    // the canvas; the phone's title smaller) — and the display size only on the sign-in, never a hero. The title's token is read
+    // from the page; the display's — 44 × `--tu` in §5.2 — is computed from the unit, since a page that uses no display text
+    // carries no `--text-display` (Tailwind emits only the theme variables in use).
     const h1 = page.getByRole('heading', { level: 1 });
     const scale = await page.evaluate(() => {
         const measure = (size: string): number => {
@@ -72,8 +73,9 @@ async function antiSlop(page: Page, where: string): Promise<void> {
             return px;
         };
 
-        return { title: measure('var(--text-title)'), display: measure('var(--text-display)') };
+        return { title: measure('var(--text-title)'), display: measure('calc(44 * var(--tu))') };
     });
+    expect(scale.display, 'the display size measured above the title size (the probe resolved)').toBeGreaterThan(scale.title);
     const titleSize = await h1.evaluate((heading) => parseFloat(getComputedStyle(heading).fontSize));
     expect(titleSize, `${where}: the page title at most --text-title (SLOP-26; DESIGN_SYSTEM §5.2; PT-03)`).toBeLessThanOrEqual(scale.title);
     expect(titleSize, `${where}: never the sign-in's display size (SLOP-26)`).toBeLessThan(scale.display);
