@@ -147,6 +147,9 @@ test('keeps the client\'s unit and PIC shown and choosable after MSG-17, the ref
     expect(await unit.locator('option').allTextContents()).toEqual(options.unit);
     expect(await pic.locator('option').allTextContents()).toEqual(options.pic);
     await expect(page.getByLabel(/^Judul proyek/)).toHaveValue('Proyek tanpa penomoran D10');
+    // The Owner's way to the numbering stays with the refusal once the client's context is read again (C-10).
+    const startNumbering = page.getByRole('link', { name: 'Mulai Penomoran' });
+    await expect(startNumbering).toHaveAttribute('href', new RegExp(`/pengaturan/penomoran\\?perusahaan=${run.company}`));
 
     // A retry while the numbering is still not started: refused again, a new intent with the same values (IP-02).
     await page.getByRole('button', { name: 'Buat Proyek' }).click();
@@ -158,6 +161,7 @@ test('keeps the client\'s unit and PIC shown and choosable after MSG-17, the ref
     expect(page.url()).toContain('/proyek/baru');
     await expect(unit).toHaveValue(chosen.unit, { timeout: 15_000 });
     await expect(pic).toHaveValue(chosen.pic);
+    await expect(startNumbering).toHaveAttribute('href', new RegExp(`/pengaturan/penomoran\\?perusahaan=${run.company}`));
 });
 
 test('creates and reads a project on the phone — the header, its next step and the track first (J-PRJ-01 on the phone; NAV-011)', async ({ page }) => {
