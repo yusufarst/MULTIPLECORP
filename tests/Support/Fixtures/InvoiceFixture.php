@@ -4,6 +4,7 @@ namespace Tests\Support\Fixtures;
 
 use App\Modules\FIN\Actions\IssueInvoice;
 use App\Modules\FIN\Actions\SaveInvoiceDraft;
+use App\Modules\FIN\Data\ContraEntry;
 use App\Modules\FIN\Models\Invoice;
 use App\Modules\ORG\Enums\SequenceType;
 use App\Modules\ORG\Models\Company;
@@ -17,6 +18,7 @@ use Database\Factories\DOC\DocumentTypeFactory;
 use Database\Factories\DOC\EvidenceDocumentFactory;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Tests\Support\Authorization;
 use Tests\Support\InvoiceWorld;
@@ -146,7 +148,7 @@ final class InvoiceFixture
 
         if ($request->boolean('bank')) {
             $account = PaymentWorld::account($company->id);
-            PaymentWorld::proof($company->id, 'PAYMENT_PROOF', 'Bank Uji '.$company->code);
+            $proof = PaymentWorld::proof($company->id, 'PAYMENT_PROOF', 'Bank Uji '.$company->code);
             PaymentWorld::proof($company->id, 'BANK_STATEMENT', 'Rekening Koran '.$company->code);
             $lineAmount = $request->input('line');
 
@@ -155,9 +157,11 @@ final class InvoiceFixture
             }
 
             $paid = $request->input('paid');
+            $refund = $request->input('refund');
 
             if (is_string($paid) && $invoice !== null) {
-                $outcome = PaymentWorld::record($actor, $company->id, $invoice->client_organization_id, $paid, ['accountId' => $account, 'applications' => $request->boolean('apply') ? [$invoice->id => $paid] : []]);
+                // A payment whose credit is refunded carries its proof, linked by its own command (L-29).
+                $outcome = PaymentWorld::record($actor, $company->id, $invoice->client_organization_id, $paid, ['accountId' => $account, 'applications' => $request->boolean('apply') ? [$invoice->id => $paid] : [], 'evidence' => is_string($refund) ? [$proof->id] : []]);
 
                 if ($outcome->kind !== 'COMMITTED') {
                     return response()->json(['error' => "paid {$outcome->kind} {$outcome->code}"], 500);
@@ -174,6 +178,29 @@ final class InvoiceFixture
 
                     if (is_string($settled)) {
                         SettlementWorld::fee($actor, $invoice->id, $outcome->resultId, $settled, $advice->id, 'BIAYA_BANK');
+                    }
+                }
+
+                // TASK-053 (AX-23; L-46; C-44): the unapplied payment's whole credit refunded through its own command from the account with a transfer proof and, with
+                // `unbacked`, that much of the payment contra'd as wrongly recorded through TASK-051's own command (AX-20), the part of the refund it backed disposed as
+                // SHORTFALL — a typed shortfall on the case the contra opens: the refund with an unbacked remainder of the Owner's review queue (QS-14).
+                if (is_string($refund) && is_int($outcome->resultId)) {
+                    $transfer = PaymentWorld::proof($company->id, 'TRANSFER_PROOF', 'Transfer Balik '.$company->code);
+                    $refunded = PaymentWorld::refundInCommand($actor, $outcome->resultId, $refund, $account, $transfer->id);
+
+                    if ($refunded !== 'COMMITTED') {
+                        return response()->json(['error' => "refund {$refunded}"], 500);
+                    }
+
+                    $unbacked = $request->input('unbacked');
+
+                    if (is_string($unbacked)) {
+                        $application = (int) DB::table('payment_applications')->where('payment_id', $outcome->resultId)->where('target_kind', 'REFUND')->where('state', 'ACTIVE')->value('id');
+                        $contra = PaymentWorld::contraInCommand($actor, $outcome->resultId, $unbacked, [$application => ['action' => ContraEntry::SHORTFALL, 'amount' => $unbacked]]);
+
+                        if ($contra !== 'COMMITTED') {
+                            return response()->json(['error' => "contra {$contra}"], 500);
+                        }
                     }
                 }
             }

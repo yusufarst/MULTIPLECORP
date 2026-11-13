@@ -1,0 +1,198 @@
+Owner directive received in session during execution, 2026-11-13 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+MULTIPLECORP — EMERGENCY OWNER DIRECTIVE
+STOP TASK PROLIFERATION. FINISH THE RELEASE.
+DATE: 13 November 2026
+PRIORITY: CRITICAL
+MODE: RELEASE CLOSURE — MAXIMUM SAFE THROUGHPUT
+AUTHORITY: PROJECT OWNER
+1. IMMEDIATE OWNER INSTRUCTION
+I am dissatisfied with the repeated cycle of discovering defects, creating more Tasks, running CI, and creating further Tasks.
+THIS CYCLE MUST STOP.
+The goal is no longer to expand the backlog or achieve perfect cosmetic coverage.
+The goal is to complete the approved V1 scope, eliminate genuine release blockers, and reach production readiness as quickly as safely possible.
+FREEZE AUTOMATIC TASK CREATION AT 95 TASKS.
+Do not create TASK-096, TASK-097, or any subsequent Task automatically.
+For newly discovered issues:
+
+* First determine whether the issue is caused by a test, fixture, environment, or actual product behavior.
+* Correct test and fixture mistakes within the existing owning Task.
+* Record product defects with severity and evidence.
+* Do not automatically convert every defect into another Task.
+* For nonblocking issues, use the approved risk-acceptance or deferral process.
+* For P0/P1 findings, fix them before release through an authorized mechanism.
+* If the existing governance mandates a separate defect Task, do not silently bypass that rule. Escalate the smallest necessary Change Control decision to the Owner instead of creating Tasks unilaterally.
+
+Do not expand TASK-095 beyond its expressly approved D8/D9/D10 scope.
+Do not weaken acceptance criteria, remove tests, hide security problems, or mark unfinished work DONE.
+I WANT FEWER OPEN ITEMS AND MORE VERIFIED MERGES.
+2. CLOSE THE TWO EXISTING PULL REQUESTS
+The last externally verified repository state was:
+
+* `main`: `47a43fc`
+* PR #83 / TASK-094: MERGED
+* PR #84 / TASK-095: head `ca122dc`
+* PR #81 / TASK-064: head `af83391`
+* PR #84 and PR #81: CI running
+
+Verify these values against current GitHub state before acting.
+PR #84 — TASK-095
+Do not reopen the D8/D9/D10 planning discussion.
+The approved scope is final.
+When CI results become available:
+
+1. Examine failed gates only.
+2. Fix actual defects in the smallest appropriate batch.
+3. Preserve all security and regression assertions.
+4. Do not start another broad architecture review without a material trigger.
+5. Obtain fresh required CI for the final commit.
+6. Complete the authorized Codex review procedure.
+7. Squash-merge immediately once all required gates pass.
+8. Verify the tested tree matches the merged tree.
+
+PR #81 — TASK-064
+The existing journey corrections are already prepared and pushed.
+Do not rebuild them from scratch.
+After TASK-095 merges:
+
+1. Merge current `main` into the TASK-064 branch.
+2. Resolve only actual conflicts.
+3. Execute the remaining mandatory journey tests.
+4. Investigate failures by root cause.
+5. Fix faulty fixtures and assertions without changing correct product behavior.
+6. Do not turn minor test issues into new product Tasks.
+7. Preserve the CJ-16 staging requirement and its accurate NOT RUN status until executed.
+8. Complete DONE only when its mandatory conditions are met.
+9. Merge after final CI and review eligibility.
+
+Do not leave either PR waiting merely because another independent task could be prepared.
+CLOSE THE CURRENT PR QUEUE BEFORE OPENING FURTHER IMPLEMENTATION PRs.
+3. CHANGE THE PRIMARY PERFORMANCE METRIC
+From now on, report:
+
+* Verified Tasks completed on `main`.
+* Pull requests successfully merged.
+* Release blockers actually resolved.
+* Mandatory tests passed.
+* Operator evidence received.
+* Remaining critical path to production.
+
+Do not use the number of new Tasks, new test files, helper activities, or investigation messages as indicators of progress.
+An investigation that produces another investigation is not a completed deliverable.
+A prepared branch that never merges is not completed work.
+An unverified DONE record is not release evidence.
+4. EXECUTE FASTER
+Use the fastest workflow permitted by current governance.
+
+* Start required CI as soon as a complete, coherent change is ready.
+* Do not wait for unrelated documentation before starting verification.
+* Use targeted local tests to diagnose actual failures.
+* Avoid repeatedly running a complete suite without code changes or new evidence.
+* Use a single CI watcher where appropriate.
+* Do not repeatedly poll a running workflow.
+* While CI is running, prepare authorized independent work.
+* Do not run simultaneous suites against a shared database.
+* Use up to three helper agents under DIR-108.
+* Keep worktrees and write ownership isolated.
+* Do not exceed applicable PR queue limits.
+* Do not assume expired scheduling exceptions are still active.
+
+Never merge failed or unverified code.
+Never fabricate PASS evidence.
+Never sacrifice financial, inventory, authentication, or authorization correctness for speed.
+5. PRODUCTION READINESS IS NOW THE CRITICAL PATH
+Stop treating release engineering as something to begin only after all UI verification is complete.
+The Owner has received full access to the VPS.
+The Owner is also the designated human operator under the current infrastructure contract.
+Prepare the operator workflow immediately.
+The agent must not access or operate the VPS.
+The Owner will perform the actual host inspection, staging deployment, backups, restores, and authorized production operations.
+Immediately provide a concise read-only checklist for the human operator to verify:
+
+* OPI-26: successful VPS and provider-panel access.
+* OPI-03: installed services, Docker Compose/Coolify, Nginx, and firewall.
+* OPI-02: measured OS, disk, CPU, RAM, and bandwidth.
+* OPI-27: the other production application's resource usage and maintenance windows.
+* OPI-29: provider-side features.
+* OPI-21/22: disk baseline and isolated backup-directory arrangement.
+* OPI-30: staging and production domain readiness.
+* OPI-05: alert channel readiness.
+
+Keep host identifiers, credentials, secrets, IP addresses, sensitive paths, and private production data outside repository and agent conversations.
+Record verified non-sensitive facts only in their approved records.
+Once TASK-071's complete prerequisites are genuinely satisfied, update its status through the approved process and start eligible release-engineering work immediately.
+Prioritize deployment definition, backup tooling, restore procedures, monitoring, staging rehearsal, migration preparation, and UAT readiness.
+Do not disturb the second production application.
+6. HANDLE REMAINING VERIFICATION TASKS EFFICIENTLY
+For TASK-065 through TASK-070 and remaining eligible Tasks:
+
+* Use their existing approved requirements.
+* Do not invent new requirements.
+* Do not add optional polishing.
+* Use existing test coverage where it already proves the required behavior.
+* Fix confirmed release blockers.
+* Correct invalid tests in their owning Task.
+* Record permissible nonblocking deferrals through the proper authority.
+* Complete each Task with its required evidence.
+* Merge promptly when eligible.
+
+Do not assume that every Task can be skipped or deferred; the approved V1 release gate remains binding.
+The target is to reduce the time between actual implementation, required verification, and merge.
+7. STRICT OWNER ESCALATION POLICY
+Do not repeatedly ask the Owner for routine technical choices.
+You already have authorization to implement the approved architecture and the existing Owner decisions.
+Escalate only when there is a genuine need for:
+
+* A new scope decision.
+* Formal acceptance of residual risk.
+* An additional paid service.
+* Modification of an approved binding requirement.
+* A mandatory new defect Task that cannot be accommodated under current governance.
+* An irreversible or high-impact production action.
+* Another expressly reserved Owner decision.
+
+Present the issue, evidence, recommendation, and exact requested decision together.
+Do not stop all independent work while waiting for that answer.
+8. NO FALSE PRODUCTION PROMISE
+The target is production as soon as possible.
+Do not declare GO before the mandatory gates are met.
+At minimum, production requires verified application behavior, security, CI, operational configuration, staging, backups and restore, monitoring, migration reconciliation where required, UAT, and authorized GO approval.
+If production cannot be achieved on 14 November, state the specific remaining blockers rather than generating a speculative date.
+Do not prolong the work with nonessential perfectionism.
+Do not conceal genuine release risks.
+9. MANDATORY LANGUAGE RULE
+EVERY RESPONSE ADDRESSED TO THE PROJECT OWNER MUST BE WRITTEN IN BAHASA INDONESIA.
+This includes progress reports, status updates, questions, explanations, blocker reports, and final summaries.
+Technical source code, file paths, identifiers, and internal instructions may use English.
+Do not send English progress narration to the Owner.
+10. WHAT TO DO RIGHT NOW
+Do not produce another lengthy plan.
+Execute:
+
+1. Check the latest CI and review results for PR #84 and #81.
+2. Prioritize finalizing PR #84, then PR #81.
+3. Do not create another defect Task automatically.
+4. Prepare the Owner's manual VPS inspection checklist now.
+5. Continue eligible independent release preparation while CI runs.
+6. When a PR becomes eligible, merge it promptly with exact-head verification.
+7. Move directly to the next eligible release-critical Task.
+8. Keep all records accurate and all mandatory gates intact.
+
+Report only meaningful progress using this short format:
+MULTIPLECORP — RELEASE CLOSURE
+
+* Main HEAD:
+* DONE / TOTAL:
+* PR merged:
+* PR waiting or failed:
+* P0/P1 still open:
+* Operator prerequisites verified:
+* Operational blockers:
+* Next concrete execution action:
+* GO/NO-GO:
+
+NO MORE AUTOMATIC TASK PROLIFERATION.
+NO MORE UNNECESSARY PLANNING CYCLES.
+NO IDLE CI WAITING WHERE AUTHORIZED WORK EXISTS.
+FINISH EXISTING WORK. MERGE VERIFIED CODE. PREPARE PRODUCTION.
+EXECUTE NOW.

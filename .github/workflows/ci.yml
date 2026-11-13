@@ -92,7 +92,10 @@ jobs:
   browser-layer:
     name: Browser layer — ${{ matrix.layer }}
     runs-on: ubuntu-24.04
-    timeout-minutes: 45
+    # The E2E layer took 42 min with TASK-064's journeys (run 43414463682) and two pull-request runs were stopped at 45 min while
+    # four layers shared the runners (runs 43414467272, 43415693072), then took 53.8 min while two runs shared them (run 43443557669):
+    # the job's bound, not a test's, raised for the suite's size.
+    timeout-minutes: 80
     strategy:
       fail-fast: false
       matrix:

@@ -103,7 +103,10 @@ it('gives every authenticated response the session\'s opaque account key outside
         ->and($other)->toMatch('/^[0-9a-f]{32}$/')
         ->and($one)->not->toBe($other)
         ->and($keyOf($first))->toBe($one)
-        ->and($one)->not->toContain((string) $first->id)
+        // Never the identifier, nor a digest anyone could recompute from it: the key is keyed by the application's secret.
+        // (A substring check on a hex digest fails at random: `…6980` contains the id 80.)
+        ->and($one)->not->toBe((string) $first->id)
+        ->and($one)->not->toBe(substr(hash('sha256', 'session-account|'.$first->id), 0, 32))
         ->and(shellHints($first))->not->toHaveKey('account');
 
     // The first load carries it in the root view, as it does the deadline.
