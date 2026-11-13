@@ -29,12 +29,14 @@ export function runId(prefix: string, testInfo: TestInfo): string {
 
 /** The captures of every page a journey opened, as one (journey-cj06.spec.ts's merge). */
 export function merged(...all: Captured[]): Captured {
+    // Read live, so each page's deferred decisions (`pending`) and the failures they add are seen when clean() reads them.
     return {
-        console: all.flatMap((one) => one.console),
-        failed: all.flatMap((one) => one.failed),
-        csp: all.flatMap((one) => one.csp),
-        requests: all.reduce((sum, one) => sum + one.requests, 0),
+        get console() { return all.flatMap((one) => one.console); },
+        get failed() { return all.flatMap((one) => one.failed); },
+        get csp() { return all.flatMap((one) => one.csp); },
+        get requests() { return all.reduce((sum, one) => sum + one.requests, 0); },
         engine: all[0]?.engine ?? '',
+        get pending() { return all.flatMap((one) => one.pending); },
     };
 }
 

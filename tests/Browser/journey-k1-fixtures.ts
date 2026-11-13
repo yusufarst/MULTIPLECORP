@@ -56,12 +56,14 @@ export async function reviewSources(page: Page): Promise<ReviewSources> {
 
 /** Several pages' captures as one journey's evidence (TEST_STRATEGY §16). */
 export function merged(...captures: Captured[]): Captured {
+    // Read live, so each page's deferred decisions (`pending`) and the failures they add are seen when clean() reads them.
     return {
-        console: captures.flatMap((captured) => captured.console),
-        failed: captures.flatMap((captured) => captured.failed),
-        csp: captures.flatMap((captured) => captured.csp),
-        requests: captures.reduce((sum, captured) => sum + captured.requests, 0),
+        get console() { return captures.flatMap((captured) => captured.console); },
+        get failed() { return captures.flatMap((captured) => captured.failed); },
+        get csp() { return captures.flatMap((captured) => captured.csp); },
+        get requests() { return captures.reduce((sum, captured) => sum + captured.requests, 0); },
         engine: captures[0]?.engine ?? '',
+        get pending() { return captures.flatMap((captured) => captured.pending); },
     };
 }
 
