@@ -110,6 +110,56 @@ test('refuses a creation in a period whose numbering has not started with the Ow
     expect(page.url()).toContain('/proyek/baru');
 });
 
+// TASK-095 (D10; UXS-28; C-10; IP-02): after MSG-17 the client's context stays, so the unit and PIC the form holds are shown
+// and choosable as before — the client's own options only —; the refused command carried them, and a retry is a new intent
+// with the same values, the refusal having ended the first (REJECTED).
+test('keeps the client\'s unit and PIC shown and choosable after MSG-17, the refused command\'s values intact and a retry a new intent (UXS-28; IP-02; TASK-095)', async ({ page }) => {
+    test.setTimeout(120_000);
+    await page.setViewportSize({ width: 1280, height: 900 });
+    const run = await projectRun(page, `d10-${String(Date.now())}`, { numbered: false });
+    const sent: { command_id: unknown; unit: unknown; pic: unknown }[] = [];
+    page.on('request', (request) => {
+        if (request.method() === 'POST' && new URL(request.url()).pathname === '/proyek') {
+            const body = request.postDataJSON() as Record<string, unknown>;
+            sent.push({ command_id: body.command_id, unit: body.unit, pic: body.pic });
+        }
+    });
+
+    await page.goto('/proyek/baru');
+    await fillParties(page, run, 'Proyek tanpa penomoran D10');
+    const unit = page.getByLabel(/^Unit/);
+    const pic = page.getByLabel(/^PIC/);
+    const chosen = { unit: await unit.inputValue(), pic: await pic.inputValue() };
+    const options = { unit: await unit.locator('option').allTextContents(), pic: await pic.locator('option').allTextContents() };
+    expect(chosen.unit).not.toBe('');
+    expect(chosen.pic).not.toBe('');
+
+    await page.getByRole('button', { name: 'Buat Proyek' }).click();
+    await expect(page.getByText(/belum dimulai/).first()).toBeVisible();
+    expect(sent, 'the refused command carried the values chosen').toEqual([{ command_id: expect.any(String) as unknown, unit: chosen.unit, pic: chosen.pic }]);
+
+    // The client's context back: the chosen unit and PIC shown, enabled, with the client's own options and no other.
+    await expect(page.getByRole('combobox', { name: 'Klien' })).toHaveValue(new RegExp(run.client));
+    await expect(unit).toHaveValue(chosen.unit, { timeout: 15_000 });
+    await expect(unit).toBeEnabled();
+    await expect(pic).toHaveValue(chosen.pic);
+    await expect(pic).toBeEnabled();
+    expect(await unit.locator('option').allTextContents()).toEqual(options.unit);
+    expect(await pic.locator('option').allTextContents()).toEqual(options.pic);
+    await expect(page.getByLabel(/^Judul proyek/)).toHaveValue('Proyek tanpa penomoran D10');
+
+    // A retry while the numbering is still not started: refused again, a new intent with the same values (IP-02).
+    await page.getByRole('button', { name: 'Buat Proyek' }).click();
+    await expect.poll(() => sent.length).toBe(2);
+    await expect(page.getByText(/belum dimulai/).first()).toBeVisible();
+    expect(sent[1]?.unit).toBe(chosen.unit);
+    expect(sent[1]?.pic).toBe(chosen.pic);
+    expect(sent[1]?.command_id, 'the refusal ended the first intent').not.toBe(sent[0]?.command_id);
+    expect(page.url()).toContain('/proyek/baru');
+    await expect(unit).toHaveValue(chosen.unit, { timeout: 15_000 });
+    await expect(pic).toHaveValue(chosen.pic);
+});
+
 test('creates and reads a project on the phone — the header, its next step and the track first (J-PRJ-01 on the phone; NAV-011)', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const run = await projectRun(page, `ponsel-${String(Date.now())}`);

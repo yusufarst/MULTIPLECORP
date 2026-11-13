@@ -30,6 +30,7 @@ Company isolation and default-deny on the server are invariant 2 of EXECUTION_CO
 - TASK-012 — Field projection, read classes and cross-company links
 - TASK-013 — Command envelope, command identity, idempotency and the lock order
 - TASK-016 — Application shell, navigation and the company context
+- TASK-095 — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) (Change 20)
 
 **PARALLEL SAFE:** NO — every route and command Task relies on it
 

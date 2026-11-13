@@ -9,7 +9,7 @@
 // period (IP-07; NM-08). The answer in place, the input kept (IP-01; IP-03; IP-14); leaving with unsent input asks first
 // (MSG-35; NV-02).
 import { router, usePage } from '@inertiajs/react';
-import { type ReactNode, useEffect, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { ActionBar } from '@/components/action-bar';
 import { type BusinessDate, BusinessDateControl, DateField } from '@/components/date-field';
@@ -169,6 +169,27 @@ export default function ProjectForm({ companies, project, client, today }: Props
         };
     }, [dirty]);
 
+    // The chosen client's units and PICs, read by a partial reload; `asked` is the client a reload is pending for.
+    const asked = useRef<string | null>(null);
+    const askClient = (id: string) => {
+        asked.current = id;
+        router.reload({ only: ['client'], data: { klien: id }, preserveUrl: true });
+    };
+    const chosenClientId = chosenClient?.id ?? null;
+    const clientId = client?.id ?? null;
+
+    // UXS-28 (TASK-095, D10): a refusal's answer — MSG-17 among them — loads the page again without the chosen client's
+    // units and PICs, so the unit and PIC the form still holds would show empty; they are read once more for the client still
+    // chosen, the values themselves untouched. A client the answer leaves out is not asked again.
+    useEffect(() => {
+        if (clientId !== null && clientId === chosenClientId) {
+            asked.current = null;
+        } else if (chosenClientId !== null && asked.current !== chosenClientId) {
+            asked.current = chosenClientId;
+            router.reload({ only: ['client'], data: { klien: chosenClientId }, preserveUrl: true });
+        }
+    }, [clientId, chosenClientId]);
+
     const chooseClient = (next: LookupResult | null) => {
         setChosenClient(next);
         setUnit('');
@@ -177,7 +198,7 @@ export default function ProjectForm({ companies, project, client, today }: Props
         touch();
 
         if (next !== null) {
-            router.reload({ only: ['client'], data: { klien: next.id }, preserveUrl: true });
+            askClient(next.id);
         }
     };
     const chooseProduct = (key: string, next: LookupResult | null) => {
