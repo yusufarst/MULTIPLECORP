@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-12 | Owner: Planning
 
 Approval: a Level 1 defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 19, created through the executor feedback loop from TASK-064's defect D7 within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** READY
+**STATUS:** IN_PROGRESS
 
 **RISK CLASS:** STANDARD
 
