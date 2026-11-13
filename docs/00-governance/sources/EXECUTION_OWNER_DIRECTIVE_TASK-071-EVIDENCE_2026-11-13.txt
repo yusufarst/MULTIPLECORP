@@ -1,0 +1,15 @@
+Owner directive received in session during execution, 2026-11-13 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+OWNER DIRECTIVE — TASK-071 EVIDENCE CORRECTION AND RELEASE CLOSURE
+I have reviewed your latest release-closure report and the approved TASK-071 and INFRASTRUCTURE requirements.
+Please correct the operator-input interpretation as follows:
+
+1. OPI-26: The human Owner has confirmed access to the provider management panel and has successfully operated the VPS through its browser-based administrative console. INFRASTRUCTURE §9 requires operator access granted by the client, not necessarily separate SSH-key authentication. Record the operator-access grant as VERIFIED. Keep independent SSH-key authentication and root-access hardening as outstanding security work, without misrepresenting them as completed.
+2. OPI-21 / OPI-02: The Owner previously measured the root filesystem at approximately 193 GiB total, 799 MiB used, and 192 GiB available before Docker, Nginx, and Ubuntu updates. This is valid historical measured evidence, not the final post-installation disk baseline. Request only a refreshed read-only disk measurement when needed. The VPS package advertises a 16 TB bandwidth allowance, but its accounting period remains unverified.
+3. OPI-27: Neither application has been deployed. Record zero currently deployed application workload, but do not substitute zero for future production capacity requirements. Obtain or establish justified pre-staging resource reservations and maintenance windows for both applications.
+4. OPI-22, OPI-29, OPI-30, and OPI-05: Keep their actual unverified requirements outstanding. Do not infer PASS from assumptions or initial installation.
+5. Do not create new TASKs, weaken security or release requirements, or grant any AI agent access to the VPS.
+6. Continue PR #81 on the current exact head. Merge only after mandatory CI and review gates pass. Then proceed with TASK-067 as planned.
+7. Do not add unnecessary operator requests that are not explicitly required by the approved contracts. Present remaining operator actions in the minimum practical sequence.
+
+MANDATORY: All user-facing messages, progress reports, and summaries must be written in Bahasa Indonesia.
