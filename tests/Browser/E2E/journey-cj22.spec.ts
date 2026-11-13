@@ -10,7 +10,7 @@ const expect = base.configure({ timeout: 60_000 });
 // show — the company's readiness list, the project list, the design system's gallery, *Beranda* and *Pekerjaan* — is a text label with a
 // shape cue, the shape hidden from assistive technology beside the label, two states of a family never told apart by hue alone: what stays
 // when colour is removed (greyscale) or confused (colour blindness) is the label and the shape, which the DOM carries independently of any
-// colour. Each page is also kept in greyscale as evidence. UXS-43: *Beranda*'s anti-slop audit — its row lists and one figures table, no
+// colour. Each page is also kept in greyscale as evidence, on Chromium (`greyscale` below). UXS-43: *Beranda*'s anti-slop audit — its row lists and one figures table, no
 // KPI-card wall, no chart but the ageing chart of defined values with its labels and data table, no banner, no greeting, no emoji, no heading
 // above 20 px — and *Pekerjaan*'s the same. The console and network clean, ReconcileGuards clean for the run's company (TS-11).
 
@@ -28,6 +28,14 @@ type Faces = Map<string, Map<string, { label: string; shape: string }>>;
  * content security policy would refuse —, a screenshot kept, the filter removed. The assertions are the DOM's, not the picture's.
  */
 async function greyscale(page: Page, testInfo: TestInfo, name: string): Promise<void> {
+    // On WebKit, Playwright's own screenshot step appends and removes a `<style>body {}</style>` to sync the page's animations
+    // (its WebKit page delegate's `shouldToggleStyleSheetToSyncAnimations`), which the page's content security policy refuses and
+    // reports — a report of the test tool, not of the page, that the journey's CSP watch would count (WS-08). The picture is kept
+    // on Chromium; every check of this journey, the DOM's, runs on both engines.
+    if (page.context().browser()?.browserType().name() === 'webkit') {
+        return;
+    }
+
     await page.evaluate(() => {
         document.documentElement.style.filter = 'grayscale(1)';
     });
