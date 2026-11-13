@@ -16,19 +16,19 @@ PROJECT TASK STATUS
 Baseline Total Tasks: 87
 Current Total Tasks: 95
 
-DONE: 71
+DONE: 72
 READY: 3
-IN_PROGRESS: 1
+IN_PROGRESS: 0
 BLOCKED: 5
 VERIFYING: 1
 TODO: 14
 SUPERSEDED: 0
 
 Progress:
-71 / 95
-Percentage: 74.7 %
+72 / 95
+Percentage: 75.8 %
 
-CURRENT TASK: TASK-095 — Defects D8, D9 and D10 IN_PROGRESS on its branch `task/TASK-095-release-stabilization` (APPR-030, APPR-031); TASK-064 VERIFYING — its CJ-09, CJ-10 and CJ-19 wait on TASK-095 (Change 20)
+CURRENT TASK: none in progress — TASK-095 — Defects D8, D9 and D10 DONE on its branch `task/TASK-095-release-stabilization`, its record in its final commit (DIR-103), its pull request squash-merged by the executor once that head's fresh CI passes (DIR-096); TASK-064 VERIFYING — its stabilization next (DIR-112)
 NEXT READY TASK: TASK-064's stabilization once TASK-095 is DONE (DIR-112); TASK-065, TASK-067 and TASK-068 READY; TASK-066 waits on TASK-064 and TASK-065, TASK-069 on TASK-064–TASK-066 and TASK-068, TASK-070 on TASK-064–TASK-069; TASK-072, TASK-074–TASK-077 and the operator's Tasks on TASK-071, which waits on the operator's inputs (OPERATOR_INPUT_REQUEST)
 LAST TASK PLAN CHANGE: Change 20 of 2026-11-13 — TASK-064's defects D8 (a capability-refused address's PG-005 without the shared props), D9 (PG-065's password input cleared by a 401) and D10 (PG-013's unit and PIC after MSG-17) as the one combined defect Task TASK-095, the Owner's Option A and its extension (APPR-030, APPR-031); TASK-064 VERIFYING, depending on it
 ADDITIONAL RECURRING PRODUCTION COST: 0 — target 0 (COST_POLICY)
@@ -143,7 +143,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 - [x] [TASK-092](TASK-092.md) — Defect D5 — the composer's paper fit without a resize-observer loop
 - [x] [TASK-093](TASK-093.md) — Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11)
 - [x] [TASK-094](TASK-094.md) — Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02)
-- [ ] [TASK-095](TASK-095.md) — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28)
+- [x] [TASK-095](TASK-095.md) — Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28)
 
 ## 4. The Task list
 
@@ -243,7 +243,7 @@ The counters are computed by script from the list in §4 and reconcile with it.
 | [TASK-092](TASK-092.md) | Defect D5 — the composer's paper fit without a resize-observer loop | Module · DOC | STANDARD | DONE | 029 | 063 | NO | AGENT | NONE | YES |
 | [TASK-093](TASK-093.md) | Defect D6 — the in-place re-authentication resumes only its own account and only on a checked password (UXH-02; IP-11) | Platform · UI | HIGH | DONE | 016 | 064 | NO | AGENT | NONE | YES |
 | [TASK-094](TASK-094.md) | Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02) | Module · PRJ | STANDARD | DONE | 033 | 064 | NO | AGENT | NONE | YES |
-| [TASK-095](TASK-095.md) | Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) | Platform · UI | HIGH | IN_PROGRESS | 011, 016, 023, 032 | 064 | NO | AGENT | NONE | YES |
+| [TASK-095](TASK-095.md) | Defects D8, D9 and D10 — a refused address's PG-005 with the shell's props; PG-065's password input across a 401; PG-013's unit and PIC after MSG-17 (IP-21; IP-11; UXS-28) | Platform · UI | HIGH | DONE | 011, 016, 023, 032 | 064 | NO | AGENT | NONE | YES |
 
 Stage: Foundation, Platform, Module (the modules in their workflows' order), Verification, Release, Operations. Executor: AGENT, an Execution Agent under this plan's rules; HUMAN OPERATOR, the named operator; OWNER, the Owner — with the client where the Task says so. DB impact: PROPOSED for the five schema Tasks, which create every table of DATABASE §4 expand-only — TASK-005 also the infrastructure stores outside the 125 business tables that [PERMISSIONS_MATRIX §7.2](../05-security/PERMISSIONS_MATRIX.md#72-table-classification) names: the session table, the credential-token store of SECURITY AU-11, the export requests of CONCURRENCY_IDEMPOTENCY H6-04 and the failed-job table, but not the queue, cache, lock and job-batch tables it also names, their stores being Valkey and V1 dispatching no framework batch —, and for TASK-013, which adds C-50's trigger, and TASK-058, which adds IX-13's two partial indexes deferred from TASK-005 (DIR-088), TASK-029, which seeds the fourteen rows of `document_types`, and TASK-030, which adds the type-free evidence identity index (DIR-089); NONE for every other Task, which uses those tables — a missing column is an executor discovery for Planning, never a silent schema change. A BLOCKED status names the input it waits on — an operator's, the Owner's or the client's input of [RELEASE_PLAN §9](../10-release/RELEASE_PLAN.md#9-the-go-live-checklist), a P11 question or DEP-05 (§2).
 

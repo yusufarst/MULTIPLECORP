@@ -4,7 +4,7 @@ Status: APPROVED | Updated: 2026-11-13 | Owner: Planning
 
 Approval: the one combined defect Task of [TASK_PLAN §7](TASK_PLAN.md#7-controlled-task-plan-changes) Change 20, which the Owner approved as Option A ([APPR-030](../00-governance/DECISION_LOG.md#dir-112-and-appr-030--the-owners-final-directive-and-option-a); DIR-112) from TASK-064's findings D8 and D9 and extended to D10 ([APPR-031](../00-governance/DECISION_LOG.md#dir-113-and-appr-031--d10-in-task-095-and-the-acceleration-of-2026-11-13); DIR-113) within [APPR-016](../00-governance/DECISION_LOG.md#appr-016--p11-task-plan-tasks-and-feature-coverage-matrix-approved)'s plan, under DIR-111's release freeze; it changes no requirement, acceptance criterion, route or expected value. References are by identifier and link; where a line and its source differ, the source wins.
 
-**STATUS:** IN_PROGRESS
+**STATUS:** DONE
 
 **RISK CLASS:** HIGH
 
@@ -210,32 +210,33 @@ TASK-064's journeys in fresh CI on `c1f8732` (run 43226273874), on Chromium and 
 
 **TEST CHECKLIST:**
 
-- [ ] Lint
-- [ ] Typecheck
-- [ ] Relevant automated tests
-- [ ] Authorization
-- [ ] Route integrity
-- [ ] Interaction behavior
-- [ ] Browser E2E if required
-- [ ] Responsive/adaptive if required
-- [ ] Visual breathing room/density if UI
-- [ ] Production build
-- [ ] Security checks if required
-- [ ] Database safety review
-- [ ] Final diff review
+- [x] Lint: Pint and ESLint in this head's CI (TL-01)
+- [x] Typecheck: PHPStan and TypeScript in this head's CI (TL-02)
+- [x] Relevant automated tests: `tests/Interaction/ShellTest.php` — a capability-refused address and an unknown one answered alike, PG-005 with the account's hints and language, the root view carrying them on a first load —; every layer in this head's CI
+- [x] Authorization: the route audit (TL-07) and every denial suite unchanged and green; `access-denied.spec.ts` — the refusal's 404 kept, a guest still sent to sign-in, the Owner still admitted
+- [x] Route integrity: N/A — no route added or changed
+- [x] Interaction behavior: `access-denied.spec.ts` (D8), `own-account.spec.ts`'s TASK-095 test (D9) and `projects.spec.ts`'s TASK-095 test (D10)
+- [x] Browser E2E if required: those tests on Chromium and WebKit (TL-09); CJ-09, CJ-10 and CJ-19 in TASK-064's verification on the merged code
+- [x] Responsive/adaptive if required: N/A — compositions unchanged
+- [x] Visual breathing room/density if UI: N/A — no visual change
+- [x] Production build: TL-13 in this head's CI
+- [x] Security checks if required: every route's `auth` and `capability` decisions unchanged, only their order after the language, the shared props and the session headers; nothing of a refused record rendered; PG-065's values kept in the page's memory only — `nothingKept` over history and storage while covered and after —; PG-013's options the chosen client's own, from the same partial reload as before
+- [x] Database safety review: no schema change, no migration, no write path; production not touched
+- [x] Final diff review: Codex's review of this pull request before the merge (DIR-096's bounded loop)
 
 **COMPLETION EVIDENCE:**
 
-- Test outputs: each required layer's result in [TEST_STRATEGY §16](../08-testing/TEST_STRATEGY.md#16-evidence)'s form, tied to the tested commit (DOD-04)
-- Build result: the production build of TL-13
-- Route evidence: N/A — no route is added or changed
-- Interaction evidence: the browser test named in TEST REQUIREMENTS
-- Browser evidence: `E2E: PASS — Evidence: …` on Chromium and WebKit
-- Localization evidence: no new key unless named in IN SCOPE; existing keys in both languages
-- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE (DOD-20)
-- Files changed: the list, every one inside the IN SCOPE areas
-- Commit SHA: the commit under the Owner's identity, with no AI attribution
-- Notes: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
+- Test outputs (TEST_STRATEGY §16): this record's head, its fresh CI on GitHub's `ubuntu-24.04` runner — the push run and the pull request's run —, every job required to PASS before the merge, as the pull request's checks show (DIR-103: the record in the final code commit)
+- Build result: TL-13 in the same runs
+- Route evidence: N/A — no route added or changed
+- Interaction evidence: `tests/Interaction/ShellTest.php`'s TASK-095 test
+- Browser evidence: `E2E: PASS — Evidence: this head, CI ubuntu-24.04, tests/Browser/E2E/access-denied.spec.ts, own-account.spec.ts and projects.spec.ts on Chromium and WebKit`, as the pull request's checks show before the merge
+- Localization evidence: no new key; the refused address's PG-005 in the account's language
+- Cost evidence/exception if applicable: ADDITIONAL RECURRING COST CHANGE: NONE
+- Files changed: `bootstrap/app.php`; `resources/js/Pages/IAM/OwnAccount.tsx`; `resources/js/Pages/PRJ/ProjectForm.tsx`; `tests/Interaction/ShellTest.php`; `tests/Browser/E2E/access-denied.spec.ts`, `own-account.spec.ts`, `projects.spec.ts`; `docs/11-tasks/TASK_PLAN.md`, this file, `TASK-011.md`, `TASK-016.md`, `TASK-023.md`, `TASK-032.md`, `TASK-064.md` (Change 20's mirrors); `docs/handoff/CURRENT_HANDOFF.md`; on the same branch, the Owner's record DIR-113 with APPR-031 (`docs/00-governance/DECISION_LOG.md`, its source)
+- Commit SHA: this branch's commits on `task/TASK-095-release-stabilization` from `main`, the Owner's identity, no AI attribution
+- Notes: **D8** — confirmed first by a server probe against `main` (`e07cc1f`): the Admin's `/tinjauan` answered PG-005 with `props.auth` null; with `SetLocale`, `HandleInertiaRequests` and `SessionDeadline` placed before the authentication middleware in the priority list the same probe passed — the fix; the framework's priority list had moved the route's `auth` and `capability` ahead of them. **D9** — reproduced deterministically on Chromium against `main`: the 401'd request carried the typed values, the fields shown were cleared, the replay after the sign-in sent the same values once (303) and changed the password, nothing was kept in storage or history; fixed by clearing the fields on a known outcome only (`onSuccess`, `onError`), never when a 401 ends the request. **D10** — reproduced deterministically on Chromium against `main`: the refused request carried the chosen unit and PIC, the client's name stayed, the unit showed its placeholder and the PIC was empty and disabled; fixed by reading the chosen client's units and PICs again — once per client — when the page's answer comes back without them, the values the form holds untouched. The local stack's answers took 8–11 s each on this workstation, so the probes ran locally and the regression evidence is CI's (DIR-105)
+- Notes, DOD: each non-applicable item with its reason (DOD-03); the DONE update of TASK_PLAN, this file and CURRENT_HANDOFF (AICWDF §22.3)
 
 **SAFE NEXT TASK:**
 
