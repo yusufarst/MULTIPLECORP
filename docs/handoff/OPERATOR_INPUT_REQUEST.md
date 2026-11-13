@@ -89,3 +89,75 @@ This addendum is prepared at the Owner's request so the Executor can act without
 - The Executor **must not** mark OPI-26, OPI-03, OPI-05, OPI-32, DEP-05 or any operator/Owner Task DONE solely because this file exists.
 - Where a Task requires an explicit factual record in a different approved document, the human operator/Owner records it there. Do not substitute this addendum for required evidence.
 - All unresolved facts should be reported together in a compact operator action list, without sending the same question repeatedly.
+
+## Operator handoff — owed inputs and the Owner's read-only steps (2026-11-13, DIR-112)
+
+Prepared on 2026-11-13 under DIR-112 §8 from INFRASTRUCTURE §9, BACKUP_RECOVERY §7, RELEASE_PLAN §9, V1_SCOPE and the contracts of TASK-071–TASK-087. Nothing here is evidence; each input stays owed until its human actor records it (DIR-083 OE-14). **No secret, password, key, token, IP address, host name, port or account name in a chat or the repository.**
+
+Legend: REQ `docs/handoff/OPERATOR_INPUT_REQUEST.md`; INF §9 `docs/09-operations/INFRASTRUCTURE.md#9-the-operators-inputs`; BKR §7 `docs/09-operations/BACKUP_RECOVERY.md#7-the-operators-inputs`, both restated in `docs/10-release/RELEASE_PLAN.md#9-the-go-live-checklist`; UAT = TASK-086's record; operator = the Owner today.
+
+### 1. Owed inputs
+
+| ID | Responsible | Information needed | Recorded in | Blocks | Non-sensitive summary enough? | Access / authorization? |
+|---|---|---|---|---|---|---|
+| ***Before staging*** | | | | | | |
+| OPI-26 | Client grants; operator records | VPS (and panel) access for the operator, never an agent | INF §9, by role | TASK-071 → TASK-072, TASK-075, TASK-078, TASK-082 | Yes; credentials stay with operator | Yes: client's grant |
+| OPI-03 | Operator | Docker, Compose, Coolify, Nginx, other services, firewall tool, public-HTTPS proxy | INF §9 | TASK-071, TASK-072 | Yes; no rules, ports, paths | Yes: VPS |
+| OPI-02 | Operator | Measured free disk, usage, OS, bandwidth period | INF §9 | TASK-071; feeds TASK-079 | Yes: figures | Yes: VPS, panel |
+| OPI-21 | Operator | Staging: U₀, free space; go-live: DB, F, L, D after import | BKR §7 | TASK-071; TASK-079, TASK-087 (GLC-05) | Yes: figures | Yes: VPS |
+| OPI-22 | Operator | Backup directory's volume and permissions | BKR §7, by role | TASK-071 | Yes; path kept privately | Yes: VPS |
+| OPI-27 | Operator; client (windows) | Second application's CPU, memory, disk, bandwidth; its backup, maintenance, deployment windows | INF §9 | TASK-071; feeds TASK-078, TASK-079, TASK-081, TASK-084 | Yes; never its name | Yes: VPS, client |
+| OPI-29 | Operator; client and Owner decide (GLC-24) | Each provider-side feature, active or not, verified on the panel | INF §9 | TASK-071, TASK-078, TASK-084 | Yes; no provider name | Yes: panel |
+| OPI-30 | Operator keeps | Domain and staging name | Private record; INF §9 "kept, never recorded here" | TASK-071; read by TASK-072, TASK-078, TASK-082 | **No**: host names stay private | No |
+| OPI-05 | Operator confirms | Zero-cost channel to the Owner's phone (Telegram recommended); sole control or not; §4C.4 record first | INF §9; COST_POLICY | TASK-071, TASK-075, TASK-080 | Yes; token and chat ID secret, VPS environment only | Yes: free bot account |
+| ***Before go-live*** | | | | | | |
+| OPI-04 | Operator | DNS provider; edge proxy or not | INF §9 | TASK-084 | Yes; no records | Yes: domain holder |
+| OPI-28 | Client (holder) | Provider account's second factor, confirmed by the holder | INF §9 | TASK-084 (GLC-22) | Yes; no account name | Yes: provider account |
+| OPI-31 | Operator, from client | Every administrative-access holder, second application's included | INF §9, by role | TASK-084 | Yes: roles only | Yes: client |
+| OPI-32 | Operator names; Owner or client holds | Existing off-server destination; key custodian apart from the VPS | BKR §7, by role | TASK-084 (GLC-20) | Yes; keys in the operator's secret store, never with the copy | Yes: holder's storage |
+| OPI-07 | Operator | Worker memory, Argon2id timing, PostgreSQL behaviour on staging | INF §9 | Measured in TASK-079 → TASK-084 | Yes: figures | Yes: VPS |
+| OPI-08 | Operator | Outbound HTTPS to Google and the breached-password range service | INF §9 | Tested in TASK-084 (GLC-08) | Yes: PASS/FAIL | Yes: VPS |
+| OPI-25 | Operator | Backup and restore-drill durations | BKR §7 | Measured in TASK-079; feeds TASK-081, TASK-084 | Yes: figures | Yes: VPS |
+| OPI-23 | Operator proposes; Owner approves | Backup time (03:00 WIB recommended) against OPI-27, OPI-25 | BKR §7 | TASK-084 (GLC-22) | Yes | Yes: Owner's approval |
+| OPI-06 | Owner | Google Cloud access for the OAuth clients; sign-in off until then (GLC-09) | INF §9; COST_POLICY | TASK-082 | Yes; client secret only in environment configuration | Yes: Owner's Google Cloud |
+| OPI-01/24 | Owner; client designates | Alternate operator and backup-duty alternate | INF §9; BKR §7 | TASK-083 (GLC-21) → TASK-087 | Yes; contacts in the private contact record | Yes: client; host access only while acting |
+| OPI-09 | Operator | Role answered; owed: the installation audit event | That event | TASK-085 (GLC-13) | **No**: identity only in the event | Yes: production host |
+| DEP-05 | Data steward; Owner (boundary) | Sanitized structures, counts, control totals; cutover boundary | Private, outside the repository (IMP-12) | TASK-081; feeds TASK-077, TASK-079, TASK-087 | **No**: legacy data never in repository, staging or chat; agents get counts | Yes: legacy data |
+| DEP-03 | Validators | Scanners, phones/browsers, printing tested | UAT | TASK-086 | Yes | Yes: real devices |
+| DEP-04 | Owner, Admin | Sanitized examples, fields, print outputs validated | UAT | TASK-086 (GLC-17) | Yes; sanitized only | No |
+| DEP-06 | Owner, Admin Operasional | Availability (review hours), acceptance evidence | UAT | TASK-086, TASK-087 | Yes | No |
+| DEP-09 | Operator | Users, volumes, office network observations | TASK-079; UAT | TASK-079, TASK-086 | Yes | Yes: office observation |
+| DEP-11 | Account holders; operator | Authenticator phones; range-service HTTPS (OPI-08) | UAT; INF §9 | TASK-084, TASK-085, TASK-086 | Yes; no TOTP secrets | Yes: own phones; VPS |
+| ***Also required, not listed*** | | | | | | |
+| P9Q-15 | Client with Owner | Who settles a dispute between recovered pre-window Owners | TASK-076 runbook (INF §7.3 step 4) | TASK-083 (GLC-21) | Yes: role | Yes: client's decision |
+| GLC-16 | Operator, Owner | Private incident and Owner contact records | Outside repository and VPS | TASK-084 | **No**: contacts private | No |
+| CB-10 | Operator | Free external uptime check, §4C.4 record first | COST_POLICY | TASK-080 (GLC-11) | Yes | Yes: free external service |
+| GLC-12 | Owner | `main` protection (TASK-073 settings) | TASK-084 record | TASK-084 | Yes | Yes: GitHub admin |
+
+DEP-01, DEP-02, DEP-08 and DEP-10 fall under OPI-02/21/25, OPI-22/32, OPI-05, OPI-06.
+
+### 2. Sebelum staging — langkah untuk Owner sebagai operator (Bahasa Indonesia, DIR-112)
+
+Hanya membaca: jangan memasang, menjalankan, menghentikan, me-reload, atau mengubah apa pun di VPS, firewall, proxy bersama, maupun aplikasi kedua (INF-07); alat yang belum ada menunggu TASK-078. **Rahasia — kata sandi, kunci, token, alamat IP, nama host, port, nama akun — tidak pernah ditempel ke chat maupun ke repositori.**
+
+1. **OPI-26:** klien memberi Anda, sebagai operator, akses VPS (dan panel penyedia). Catat hanya "diberikan kepada operator".
+2. **Catatan pribadi** di luar repositori dan di luar percakapan AI: untuk setiap input, ID-nya, dari mana dibaca, oleh peran apa, tanggal (WIB), dan faktanya — ini bukti penyelesaian TASK-071.
+3. **OPI-02:** jalankan `cat /etc/os-release`, `free -m`, `df -h`; periode kuota bandwidth dari panel.
+4. **OPI-03:** jalankan `docker --version`, `docker compose version`, `nginx -v`, `docker ps --filter name=coolify`, `systemctl list-units --type=service --state=running`, `systemctl is-active ufw firewalld nftables`, `sudo ss -tlnp` (untuk melihat proses yang melayani HTTPS publik). Catat nama dan versi saja — tanpa port, alamat, atau aturan.
+5. **OPI-27 dan OPI-21:** CPU, memori, dan bandwidth seluruh host dari grafik panel selama periode yang representatif; disk aplikasi kedua (K) dan jendela pemeliharaannya dari klien — jangan pernah membuka atau mengubah aplikasi kedua. Sebelum MULTIPLECORP dipasang, U₀ = disk terpakai − K.
+6. **OPI-29:** di panel, setiap fitur penyedia (backup/snapshot, keamanan, konfigurasi, otomasi, AI) dan apakah aktif; jangan mengubah apa pun.
+7. **OPI-30 dan OPI-22:** nama domain/staging dan path `<BACKUP_DIR>` hanya di catatan pribadi; volume itu terpisah dari backup aplikasi kedua, izin hanya untuk operator (SX-07); jangan membuat apa pun.
+8. **OPI-05:** pastikan kanal tanpa biaya ke ponsel Anda (Telegram direkomendasikan, DIR-110) dan apakah hanya Anda yang mengendalikannya; tulis catatan §4C.4-nya (batas, kuota, lock-in, jalan keluar, portabilitas) sebelum dipakai; token dan chat ID hanya di penyimpanan rahasia Anda.
+9. **Pencatatan:** Anda — bukan executor — memperbarui baris INF §9, BKR §7, dan RELEASE_PLAN §9 berdasarkan peran atau angka, diringkas di TASK-071 dalam bentuk TEST_STRATEGY §16; commit dengan identitas Anda, tanpa atribusi AI; pemindai rahasia CI (SM-15) harus lulus, tanpa detail host (AC-7). Input yang belum bisa diperoleh tetap terutang dan TASK-071 tetap BLOCKED (AC-8).
+
+### 3. Inconsistencies
+
+1. **OPI-21/22 missing** from REQ's staging table (L9–16), though `TASK-071.md` L44–45 (AC-2, AC-5) and `BACKUP_RECOVERY.md` L188–189 need them before staging; only the addendum adds them (L74, L80).
+2. **OPI-05 timing:** REQ L22, `INFRASTRUCTURE.md` L220 and `RELEASE_PLAN.md` L208 say go-live; `TASK-071.md` L46 (AC-6, AC-8) makes it a TASK-071 input, gating TASK-078; TASK_PLAN §4 has TASK-075 BLOCKED on it.
+3. **Chains:** REQ L11 omits TASK-075, TASK-082 (`TASK-071.md` L27–32); L13's OPI-02 → TASK-072 is unsupported, TASK-072 waiting on OPI-03 only (`TASK-072.md` L9, L43).
+4. **OPI-30** (REQ L16) asks for names its own L5 forbids (`INFRASTRUCTURE.md` L229; `TASK-071.md` L281); the addendum corrects it (L65); readers TASK-072, TASK-082 omitted (`TASK-071.md` L159, L191).
+5. **OPI-07/08** (REQ L27) are produced inside TASK-079 and TASK-084 (`TASK-079.md` L38; `TASK-084.md` L39), not prerequisites.
+6. **DEP-05** (REQ L29) also feeds TASK-079 and TASK-077 (`TASK-079.md` L43; `TASK-077.md` L41); `BACKUP_RECOVERY.md` L59 uses the counts before staging.
+7. **Omitted:** OPI-23, OPI-25, OPI-01/24, OPI-09, DEP-03/04/06/09/11 and P9Q-15; yet REQ L28 lists OPI-06 though L33 excludes OWNER Tasks.
+8. **Pointers** (REQ L5): OPI-21–25 and OPI-32 are BACKUP_RECOVERY §7's, DEP-05 V1_SCOPE's; the last column lists Tasks, not gates.
+9. **OPI-28** (REQ L24) re-asks the holder already recorded (`INFRASTRUCTURE.md` L227).
