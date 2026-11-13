@@ -5,9 +5,12 @@ import { IdleWarning, ReauthDialog, StepUpDialog, UnsentInputDialog } from '@/co
 import { useTranslation } from '@/lib/i18n';
 import type { AccountHints } from '@/lib/navigation';
 
+import { receiveAccountKey, sessionAccountKey } from './session-account';
 import {
+    ACCOUNT_HEADER,
     BACKGROUND_HEADER,
     DEADLINE_HEADER,
+    dialogAnswer,
     IDLE_MINUTES,
     IDLE_WARNING_MINUTES,
     type Interruption,
@@ -49,6 +52,10 @@ export type ReauthGateway = {
     confirmPassword: (password: string) => Promise<GatewayAnswer>;
     /** AU-16's code step after the password, a TOTP code or a recovery code (ROUTE-104, ROUTE-105). */
     verifyCode?: (code: string, recovery: boolean) => Promise<GatewayAnswer>;
+    /** TASK-093: a session still signed in (a 419 that did not end it) proves the dialog's account by AU-15's password
+        confirmation of that very account — its e-mail and password checked by the server —, never by a sign-in the guest
+        guard would redirect unchecked. */
+    confirmSession?: (credentials: Credentials) => Promise<GatewayAnswer>;
 };
 
 /** A JSON POST of the dialog, its answer read in place. */
@@ -68,17 +75,11 @@ export async function postAnswer(url: string, body: unknown): Promise<GatewayAns
             return { outcome: 'limited', message: typeof answer.message === 'string' ? answer.message : null, minutes: Math.max(1, Math.ceil((Number.isNaN(retry) ? 60 : retry) / 60)) };
         }
 
-        const reply = (await response.json().catch(() => ({}))) as { two_factor?: unknown; enrolment_only?: unknown; location?: unknown; expired?: unknown };
+        const reply = (await response.json().catch(() => ({}))) as Record<string, unknown>;
+        // TASK-093: only the endpoint's own JSON success counts — never a redirect followed to a page (dialogAnswer).
+        const outcome = dialogAnswer(response.status, response.redirected, response.headers.get('Content-Type'), reply);
 
-        if (!response.ok) {
-            return { outcome: reply.expired === true ? 'expired' : 'failed' };
-        }
-
-        if (reply.two_factor === true) {
-            return { outcome: 'two_factor' };
-        }
-
-        return reply.enrolment_only === true && typeof reply.location === 'string' ? { outcome: 'enrolment', location: reply.location } : { outcome: 'ok' };
+        return outcome === 'enrolment' && typeof reply.location === 'string' ? { outcome: 'enrolment', location: reply.location } : { outcome: outcome === 'enrolment' ? 'failed' : outcome };
     } catch {
         return { outcome: 'failed' };
     }
@@ -88,12 +89,13 @@ export async function postAnswer(url: string, body: unknown): Promise<GatewayAns
 export const applicationGateway: ReauthGateway = {
     signIn: (credentials) => postAnswer('/masuk', credentials),
     confirmPassword: (password) => postAnswer('/konfirmasi-kata-sandi', { password }),
+    confirmSession: (credentials) => postAnswer('/konfirmasi-kata-sandi', { email: credentials.email, password: credentials.password }),
     verifyCode: (code, recovery) => postAnswer(recovery ? '/masuk/verifikasi/pemulihan' : '/masuk/verifikasi', recovery ? { recovery_code: code } : { code }),
 };
 
 /** The new session's account hints for the open address — a background partial read of `auth` that sends
-    nothing of the page and changes nothing on screen. */
-async function sessionAccount(page: { version: string | null; component: string }): Promise<AccountHints | null> {
+    nothing of the page and changes nothing on screen —, with the session's opaque account key (TASK-093). */
+async function sessionAccount(page: { version: string | null; component: string }): Promise<{ hints: AccountHints; key: string | null } | null> {
     try {
         const response = await fetch(window.location.href, {
             credentials: 'same-origin',
@@ -108,8 +110,9 @@ async function sessionAccount(page: { version: string | null; component: string 
             },
         });
         const answer = response.headers.get('X-Inertia') === null ? null : ((await response.json()) as { props?: { auth?: AccountHints } });
+        const hints = answer?.props?.auth;
 
-        return answer?.props?.auth ?? null;
+        return hints === undefined ? null : { hints, key: response.headers.get(ACCOUNT_HEADER) };
     } catch {
         return null;
     }
@@ -136,6 +139,7 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
     const current = useRef<VisitLike | null>(null);
     const replay = useRef<Replay | null>(null);
     const covered = useRef<AccountHints | null>(null);
+    const coveredKey = useRef<string | null>(null);
     const lastActivity = useRef(0);
     const accountRef = useRef(account);
     const pageRef = useRef({ version: page.version, component: page.component });
@@ -191,6 +195,7 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
 
                 replay.current = current.current === null ? null : replayOf(current.current);
                 covered.current = accountRef.current;
+                coveredKey.current = sessionAccountKey();
                 setError(null);
                 setOpen(kind);
 
@@ -198,6 +203,11 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
             }),
             http.onResponse((response) => {
                 const deadline = response.headers[DEADLINE_HEADER];
+                const accountKey = response.headers[ACCOUNT_HEADER];
+
+                if (typeof accountKey === 'string') {
+                    receiveAccountKey(accountKey);
+                }
 
                 if (typeof deadline === 'string') {
                     receiveDeadline(deadline);
@@ -292,7 +302,7 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
         // UXH-02: the covered page's account, or the full document load before anything is uncovered or resent.
         const signedIn = await sessionAccount(pageRef.current);
 
-        if (signedIn === null || covered.current === null || !sameAccount(covered.current, signedIn)) {
+        if (signedIn === null || covered.current === null || !sameAccount(covered.current, signedIn.hints, coveredKey.current, signedIn.key)) {
             router.clearHistory();
             window.location.reload();
 
@@ -306,6 +316,17 @@ export function SessionGuard({ gateway = applicationGateway, children }: { gatew
 
     const signIn = async (credentials: Credentials) => {
         setPending(true);
+        // TASK-093: the session the dialog covers may still be signed in (a 419 that did not end it): its account is
+        // proved by the server's password confirmation of that account, e-mail included; an ended session signs in
+        // anew, with its second factor. Neither path reads a redirect or a page as a success (dialogAnswer).
+        const live = gateway.confirmSession === undefined ? null : await sessionAccount(pageRef.current);
+
+        if (live !== null && live.key !== null && gateway.confirmSession !== undefined) {
+            await signedInAs(await gateway.confirmSession(credentials), false);
+
+            return;
+        }
+
         await signedInAs(await gateway.signIn(credentials), false);
     };
 

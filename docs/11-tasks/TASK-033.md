@@ -28,6 +28,7 @@ CAP-04 and AC-04 require quotation drafts, sent revisions with their validity, r
 **BLOCKS:**
 
 - TASK-034 — Commercial confirmation and fulfillment planning
+- TASK-094 — Defect D7 — PG-014's inputs frozen while a save's outcome is unknown (IP-02; D-UX-02)
 
 **PARALLEL SAFE:** NO — the quotation revisions live under the project's row (LK-01) and their approval is the confirmation TASK-034 extends
 

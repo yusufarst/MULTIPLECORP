@@ -9,6 +9,11 @@
             {{-- AU-08's absolute deadline outside the page data, for the first load (UXH-11; TASK-016). --}}
             <meta name="session-deadline" content="{{ $sessionDeadline }}">
         @endif
+        @php($sessionAccount = \App\Http\Middleware\SessionDeadline::accountOf(request()))
+        @if ($sessionAccount !== null)
+            {{-- UXH-02's account key outside the page data, for the first load (TASK-093). --}}
+            <meta name="session-account" content="{{ $sessionAccount }}">
+        @endif
         <title>{{ config('app.name') }}</title>
         @vite(['resources/js/app.tsx', "resources/js/Pages/{$page['component']}.tsx"])
         @inertiaHead

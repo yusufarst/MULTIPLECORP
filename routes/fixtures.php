@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\HandleInertiaRequests;
+use App\Http\Middleware\SessionDeadline;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Http\Request;
@@ -38,6 +39,7 @@ use Tests\Support\Fixtures\OtherCashFixture;
 use Tests\Support\Fixtures\ProjectFixture;
 use Tests\Support\Fixtures\PurchaseFixture;
 use Tests\Support\Fixtures\QuotationFixture;
+use Tests\Support\Fixtures\ReauthFixture;
 use Tests\Support\Fixtures\ReceivingFixture;
 use Tests\Support\Fixtures\ReservationFixture;
 use Tests\Support\Fixtures\ReturnFixture;
@@ -50,7 +52,9 @@ use Tests\Support\Fixtures\StockFixture;
 // and CSRF token — a page before sign-in stores nothing (INT-001) —, so they touch no database — but for the
 // sign-in journeys' account, which the migrated stack keeps (scripts/verify.sh).
 
-Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(function (): void {
+// SessionDeadline gives the shell stub's answers the account key a signed-in page carries (TASK-093; UXH-02); with no
+// session and no account it adds nothing to the other pages here.
+Route::middleware([SetLocale::class, HandleInertiaRequests::class, SessionDeadline::class])->group(function (): void {
     // TL-09–TL-12 (TASK-014): INT-001's switch on a page with a field, before sign-in, so the switch is shown to
     // keep the unsent input and the layout (LOCALIZATION §3.7).
     Route::get('__fixtures/bahasa', fn () => Inertia::render('Fixtures/LanguageSwitch'));
@@ -74,6 +78,10 @@ Route::middleware([SetLocale::class, HandleInertiaRequests::class])->group(funct
 // TL-09–TL-12 (TASK-017): a synthetic account and its reset link for one run, so the sign-in, reset and logout
 // journeys run against the real routes of PG-001 and PG-003.
 Route::post('__fixtures/akun', [AccountFixture::class, 'create']);
+// TL-09 (TASK-093): an account's session aged past the idle limit; the recorded outcome of commands by command_id.
+Route::post('__fixtures/reauth/usang', [ReauthFixture::class, 'age']);
+Route::get('__fixtures/reauth/perintah', [ReauthFixture::class, 'commands']);
+Route::post('__fixtures/reauth/lingkup', [ReauthFixture::class, 'scope']);
 
 // TL-09–TL-12 (TASK-019): the faked Google — sign-in on with a synthetic client and the token exchange answered
 // locally — for the Google journey, armed and disarmed by the run.
