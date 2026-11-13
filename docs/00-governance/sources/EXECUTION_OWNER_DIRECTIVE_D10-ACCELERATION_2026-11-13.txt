@@ -1,0 +1,197 @@
+Owner directive received in session during execution, 2026-11-13 (WIB), Claude Code Desktop on the Owner's workstation, transcribed as received.
+
+MULTIPLECORP — OWNER EXECUTION ACCELERATION DIRECTIVE
+APPROVAL TO INCLUDE D10 IN TASK-095 — CLOSE, PUSH, VERIFY, MERGE
+PRIORITY: CRITICAL
+DATE: 13 NOVEMBER 2026
+MODE: FASTEST SAFE EXECUTION — RELEASE STABILIZATION
+TARGET: PRODUCTION AS SOON AS ALL MANDATORY RELEASE GATES PASS
+0. MANDATORY COMMUNICATION LANGUAGE
+All responses, progress reports, status updates, questions, blocker notifications, explanations, and final summaries addressed to me must be written entirely in Bahasa Indonesia.
+Technical code, commands, paths, and identifiers may remain in English.
+This requirement applies to the primary Executor and all helper-agent findings communicated to me.
+1. FINAL OWNER DECISION — D10
+I APPROVE OPTION (A).
+Include D10 (CJ-19 / PG-013) in the existing combined stabilization Task TASK-095, together with D8 and D9.
+Do not create TASK-096 for D10.
+Do not ask me to make this decision again.
+The authorized combined scope is now:
+
+* D8: access-denied PG-005 page crashes due to missing shared authentication props.
+* D9: PG-065 clears its password input after an interrupted HTTP 401 request, violating IP-11.
+* D10: PG-013 loses the visible Unit/PIC selection after MSG-17 because the page reload loses the client context, violating UXS-28.
+
+D10 must preserve the correct existing business behavior, including command identity and retry protection.
+Confirm D10 with deterministic browser evidence before implementing its correction.
+The existing report indicates that Unit/PIC values remain in client state and that the request payload is still correct. Preserve that behavior while correcting the displayed input state.
+After correction, verify:
+
+1. The selected client context remains available.
+2. Unit and PIC remain visible after MSG-17.
+3. The fields do not become incorrectly empty or disabled.
+4. No unauthorized option becomes selectable.
+5. The original pending command data is not corrupted.
+6. Retrying follows the approved idempotency rules.
+7. Chromium and WebKit tests pass.
+8. No unrelated PG-013 behavior changes.
+
+This decision extends the previously approved D8/D9 combined scope. Record the new Owner authorization through the appropriate CHANGE_CONTROL mechanism before expanding TASK-095.
+Do not rewrite historical approval transcripts.
+Use a narrowly scoped addendum or decision record under the current governance rules.
+ONE TASK FOR D8 + D9 + D10. NO NEW DEFECT TASK.
+2. IMMEDIATE EXECUTION ACCELERATION
+I want execution accelerated substantially.
+DO NOT SPEND TIME WAITING FOR CI WHEN THERE IS INDEPENDENT, AUTHORIZED WORK AVAILABLE.
+Adopt this workflow, subject to the current valid governance and PR queue limits:
+
+1. Finish the smallest correct implementation batch.
+2. Run the relevant fast local checks.
+3. Commit using the Owner's established identity.
+4. Push immediately once the changes are ready for review and CI.
+5. Start the required CI.
+6. Request Codex review according to the existing review limits.
+7. While CI runs, work on independent eligible preparation in a separate worktree.
+8. Return to the PR as soon as a material result arrives.
+9. Diagnose failed gates specifically.
+10. Merge immediately once all mandatory gates pass on the exact final HEAD.
+
+Do not delay a push simply to prepare the next Task's entire contract, additional documentation, or unrelated fixes.
+Do not push knowingly broken or incomplete code merely to create activity.
+Do not repeatedly poll the same CI workflow manually.
+Do not run overlapping tests against a shared database.
+Do not restart full reviews without a material trigger.
+Do not open more unverified PRs than the current governance permits.
+Optimize for completed, verified merges — not activity, messages, or Task creation.
+3. PR #83 — CLOSE IMMEDIATELY WHEN ELIGIBLE
+The last verified state:
+
+* PR #83: TASK-094.
+* HEAD: `a21e8bb`.
+* Both CI runs were in progress.
+* The previous E2E failure was associated with an incorrect Playwright assertion against a disabled fieldset.
+* The correction had already been pushed.
+
+Check the current state before taking action.
+If both CI runs and all required gates are green:
+
+* Verify the exact tested SHA.
+* Confirm review requirements are satisfied.
+* Squash-merge with the approved exact-head procedure.
+* Verify `main` and tree equivalence.
+* Update the final Task state correctly.
+* Continue immediately to TASK-095.
+
+If any required check fails, inspect the actual error and correct only that failure.
+Do not reopen earlier completed investigations without new evidence.
+4. TASK-095 — IMPLEMENT THE THREE DEFECTS IN ONE BATCH
+The combined D8/D9 Task has already been prepared locally.
+Preserve that completed preparation.
+Add D10 under this new Owner approval.
+Use the existing TASK-095 worktree and approved CHANGE_CONTROL process.
+Do not reconstruct the worktree unnecessarily.
+Do not rewrite the contract from scratch if its existing contents are correct.
+Implement:
+D8: correct middleware ordering and verify access-denied pages without weakening authorization.
+D9: preserve password form input when interrupted, while maintaining approved password-security boundaries and clearing behavior after a known result.
+D10: retain and display the correct Unit/PIC options following the documented MSG-17 rejection.
+Reuse existing regression fixtures wherever appropriate.
+Run targeted lint, TypeScript, server tests, and focused browser tests when practical.
+Once the implementation and required Task record are ready, push and open the PR without unnecessary delay.
+Get fresh CI and Codex evidence.
+Use the authorized review loop.
+Merge only after all mandatory gates are satisfied.
+5. TASK-064 — FINISH THE EXISTING JOURNEYS
+The current local preparation already covers:
+
+* CJ-12: unique factory email.
+* CJ-19 WebKit: paginated rack list, using "Muat Lagi".
+* CJ-22: heading assertion derived from approved design tokens.
+* CJ-13: corrected batch preparation and duplicate-commit sequence.
+
+Preserve this completed work.
+Finish the remaining CJ-13 test and fixture correction.
+Do not modify correctly functioning product behavior to satisfy an invalid test.
+After TASK-095 is merged, synchronize TASK-064 and run the required targeted journeys.
+D10 must be covered by CJ-19.
+Maintain the approved QS-14 coverage requirement.
+Keep CJ-16 as NOT RUN until the required staging test is genuinely executed.
+Do not mark the Task DONE prematurely.
+6. STOP UNCONTROLLED TASK PROLIFERATION
+I explicitly reject automatic Task creation for every newly observed symptom.
+For new findings:
+
+* First determine whether the failure comes from the test, fixture, environment, or product.
+* Fix test and fixture mistakes in their existing verification Task.
+* For product defects, assess production impact and contractual obligations.
+* Consolidate only when CHANGE_CONTROL permits.
+* Do not extend TASK-095 beyond D8/D9/D10 without a further authorization.
+* Do not silently defer a confirmed P0/P1.
+* Do not create another Task without applying the approved defect-governance process.
+
+P2 issues must not automatically trigger a new planning cycle. If a P2 can legitimately be deferred, present a concrete risk acceptance request instead of expanding the backlog.
+RELEASE STABILIZATION, NOT ENDLESS TASK EXPANSION.
+7. USE PARALLEL WORK PRODUCTIVELY
+The primary Executor remains accountable.
+Use up to three helper agents under DIR-108 when beneficial.
+Suitable independent work includes:
+
+* Reviewing CI failure evidence.
+* Preparing targeted tests.
+* Preparing TASK-064 fixture corrections.
+* Reading release-engineering prerequisites.
+* Preparing an operator handoff from approved documents.
+
+Do not assign helpers overlapping write ownership.
+Do not run multiple tests against the same database.
+Do not turn preparation work into unauthorized execution of a BLOCKED Task.
+Do not extend expired scheduling exceptions without the required CHANGE_CONTROL authorization.
+8. PRODUCTION AND VPS CRITICAL PATH
+I have already informed you that I have obtained full access to the VPS as the designated human operator.
+Do not continue reporting VPS access as "not received" without considering this new Owner statement.
+However, keep OPI-26 pending verification until I confirm successful SSH and, where applicable, provider-panel access.
+Prepare the shortest possible read-only operator procedure to collect OPI-02, OPI-03, OPI-21, OPI-22, OPI-27, OPI-29, OPI-30, and OPI-05.
+I will execute the authorized host inspections as the human operator.
+You must not access the VPS, receive credentials, operate production, or interact with the second production application.
+As soon as the required operator evidence is recorded and TASK-071 is legitimately DONE, prioritize the AGENT-owned release-engineering Tasks whose READY gates become satisfied.
+Do not let noncritical UI polishing displace mandatory staging, deployment, backup, restore, monitoring, and cutover preparation.
+9. COMMUNICATION — SHORT AND ACTIONABLE
+Do not send lengthy explanations for routine implementation steps.
+Send updates when:
+
+* A PR is merged.
+* A material CI failure is diagnosed.
+* A security or data-integrity blocker is confirmed.
+* An Owner/operator action is actually required.
+* A Task becomes DONE.
+
+Each update should contain:
+
+* Main HEAD.
+* DONE/TOTAL.
+* PR HEAD and CI status.
+* What actually changed.
+* The next executable action.
+* Any genuine blocker.
+
+All updates must be in Bahasa Indonesia.
+10. FINAL ORDER
+Execute in this order, adjusting only for verified dependencies and authorization:
+
+1. Finish PR #83 as soon as its mandatory gates pass.
+2. Synchronize TASK-095 with `main`.
+3. Record the Owner-approved D10 scope extension correctly.
+4. Implement D8/D9/D10 together.
+5. Push and verify TASK-095.
+6. Merge TASK-095 when eligible.
+7. Stabilize PR #81 / TASK-064.
+8. Continue the remaining eligible verification and release-engineering Tasks.
+9. Obtain operational evidence through the human operator.
+10. Move toward the earliest safe production GO decision.
+
+DO NOT STOP AT ANOTHER PLAN.
+DO NOT CREATE TASK-096 FOR D10.
+PUSH COMPLETED WORK PROMPTLY.
+USE CI WAITING TIME PRODUCTIVELY.
+DO NOT BYPASS TESTING, SECURITY, OR MANDATORY MERGE GATES.
+PRODUCTION READINESS IS THE PRIORITY.
+EXECUTE NOW.

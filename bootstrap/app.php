@@ -77,6 +77,13 @@ return Application::configure(basePath: dirname(__DIR__))
         // The session's limits are judged before the authentication middleware admits the request, so a session past
         // its absolute limit, of an inactive account or of a changed password is a guest's at once (AU-07, AU-09).
         $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: EnforceSessionLimits::class);
+
+        // The interface language, the shared props and the session's headers before the route's own `auth` and
+        // `capability`, which the priority list would otherwise move ahead of them: an address the account cannot open
+        // answers PG-005 with the shell's hints and its language, never a page without them (IP-21; AZ-11; WS-07).
+        $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: SetLocale::class);
+        $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: HandleInertiaRequests::class);
+        $middleware->prependToPriorityList(before: AuthenticatesRequests::class, prepend: SessionDeadline::class);
     })
     ->withSchedule(function (Schedule $schedule): void {
         // One cron entry runs the scheduler each minute (TASK-072's); every task is overlap-protected on the store
