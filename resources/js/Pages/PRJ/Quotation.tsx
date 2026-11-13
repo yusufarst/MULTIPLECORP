@@ -142,8 +142,10 @@ function DraftComposer({ project, draft, taxes, today, periods, money, issue }: 
     };
     const lineError = (index: number, field: string): string | undefined => save.errors[`baris.${String(index)}.${field}`];
 
+    // IP-02; D-UX-02 (TASK-094): while the save is in flight or its outcome unknown, the draft's inputs and lines are frozen,
+    // so nothing is edited under the intent awaiting its answer; "Coba Lagi" resends the same command_id and payload.
     const form = (
-        <div className="flex min-w-0 flex-col gap-6">
+        <fieldset data-slot="quotation-draft" disabled={save.frozen} className="flex min-w-0 flex-col gap-6">
             {stale !== null && <StaleComparison fields={stale} onReapply={reapply} onDiscard={discardMine} />}
             <FormSection title={t('quotations.form.title', { n: base.no })}>
                 <FormField label={t('quotations.field.valid_until')} required error={save.errors.berlaku ?? issue.errors.berlaku} help={t('quotations.form.valid_help')}>
@@ -187,7 +189,7 @@ function DraftComposer({ project, draft, taxes, today, periods, money, issue }: 
                 {(save.errors.baris ?? '') !== '' && <p className="text-body text-danger">{save.errors.baris}</p>}
                 <p className="text-body text-text-secondary">{t('quotations.form.subset')}</p>
             </FormSection>
-        </div>
+        </fieldset>
     );
     const finalize = (
         <div className="flex min-w-0 flex-col gap-3">
